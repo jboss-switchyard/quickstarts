@@ -20,12 +20,22 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco;
+package org.jboss.esb.cinco.internal.handlers;
 
-public interface ExchangeFactory {
+import org.jboss.esb.cinco.ExchangeEvent;
+import org.jboss.esb.cinco.ExchangeHandler;
 
-	Exchange createExchange(String patternURI);
-	InOnlyExchange createInOnlyExchange();
-	InOutExchange createInOutExchange();
-	RobustInOnlyExchange createRobustInOnlyExchange();
+public abstract class BaseHandler implements ExchangeHandler {
+
+	@Override
+	public void handleReceive(ExchangeEvent event) {
+		// NOP - handled by subclasses
+		
+	}
+
+	@Override
+	public void handleSend(ExchangeEvent event) {
+		// NOP - handled by subclasses
+	}
+
 }

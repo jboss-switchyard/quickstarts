@@ -31,5 +31,5 @@ public interface ServiceRegistry {
 	void registerService(QName serviceName, ExchangeEndpoint endpoint);
 	void unregisterService(QName serviceName, ExchangeEndpoint endpoint);
 	
-	List<ExchangeEndpoint> getChannels(QName serviceName);
+	List<ExchangeEndpoint> getEndpoints(QName serviceName);
 }

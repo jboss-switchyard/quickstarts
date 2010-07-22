@@ -39,6 +39,8 @@ import org.jboss.esb.cinco.spi.ServiceRegistry;
 public class ExchangeChannelImpl 
 	implements ExchangeChannel, ExchangeEndpoint, Runnable {
 	
+	private volatile boolean _isActive;
+	private Thread _deliveryThread;
 	private ServiceRegistry _registry;
 	private HandlerChain 	_handlers = new DefaultHandlerChain();
 	private Set<QName> 		_services = new HashSet<QName>();
@@ -55,6 +57,8 @@ public class ExchangeChannelImpl
 		for (QName service : _services) {
 			_registry.unregisterService(service, this);
 		}
+		
+		stopDelivery();
 	}
 
 	@Override
@@ -95,11 +99,26 @@ public class ExchangeChannelImpl
 	}
 	
 	public void run() {
-		
+		while (_isActive) {
+			try {
+				Exchange exchange = _exchanges.take();
+				_handlers.handleReceive(Events.createEvent(this, exchange));
+			}
+			catch (InterruptedException intEx) {
+				// signal to interrupt blocking receive - not an error
+			}
+		}
 	}
 	
 	private void startDelivery() {
-		
+		_isActive = true;
+		_deliveryThread = new Thread(this);
+		_deliveryThread.start();
+	}
+	
+	private void stopDelivery() {
+		_isActive = false;
+		_deliveryThread.interrupt();
 	}
 
 }

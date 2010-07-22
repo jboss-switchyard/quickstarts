@@ -20,47 +20,36 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco.internal;
+package org.jboss.esb.cinco.internal.handlers;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.jboss.esb.cinco.event.ExchangeInEvent;
 import org.jboss.esb.cinco.spi.ExchangeEndpoint;
 import org.jboss.esb.cinco.spi.ServiceRegistry;
 
-public class DefaultServiceRegistry implements ServiceRegistry {
+public class AddressingHandler extends BaseHandler {
 	
-	private Map<QName, List<ExchangeEndpoint>> _serviceEndpoints = 
-		new HashMap<QName, List<ExchangeEndpoint>>();
-
-	@Override
-	public synchronized List<ExchangeEndpoint> getEndpoints(QName serviceName) {
-		List<ExchangeEndpoint> endpoints = _serviceEndpoints.get(serviceName);
-		if (endpoints == null) {
-			endpoints = Collections.emptyList();
-		}
-		return endpoints;
+	private ServiceRegistry _registry;
+	
+	public AddressingHandler(ServiceRegistry registry) {
+		_registry = registry;
 	}
 
-	@Override
-	public synchronized void registerService(QName serviceName, ExchangeEndpoint endpoint) {
-		List<ExchangeEndpoint> endpoints = _serviceEndpoints.get(serviceName);
-		if (endpoints == null) {
-			endpoints = new ArrayList<ExchangeEndpoint>();
+	public void handleSend(ExchangeInEvent event) {
+		QName service = event.getExchange().getService();
+		List<ExchangeEndpoint> endpoints = _registry.getEndpoints(service);
+		
+		if (endpoints.isEmpty()) {
+			// this is a temp hack - we should set error on the exchange and
+			// redirect it into the sending channel
+			throw new RuntimeException("No endpoints for service " + service);
 		}
-		endpoints.add(endpoint);
+		
+		// Endpoint selection is arbitrary at the moment
+		endpoints.get(0).process(event.getExchange());
 	}
 
-	@Override
-	public synchronized void unregisterService(QName serviceName, ExchangeEndpoint endpoint) {
-		List<ExchangeEndpoint> endpoints = _serviceEndpoints.get(serviceName);
-		if (endpoints != null) {
-			endpoints.remove(endpoint);
-		}
-	}
 }

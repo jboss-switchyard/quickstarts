@@ -22,7 +22,7 @@
 
 package org.jboss.esb.cinco;
 
-public interface RobustInOnly extends Exchange {
+public interface RobustInOnlyExchange extends Exchange {
 
 	String PATTERN_URI = "http://www.w3.org/ns/wsdl/robust-in-only";
 	

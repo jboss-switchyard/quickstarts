@@ -22,46 +22,31 @@
 
 package org.jboss.esb.cinco.internal;
 
-import org.jboss.esb.cinco.Exchange;
-import org.jboss.esb.cinco.ExchangeFactory;
-import org.jboss.esb.cinco.InOnlyExchange;
 import org.jboss.esb.cinco.InOutExchange;
-import org.jboss.esb.cinco.RobustInOnlyExchange;
+import org.jboss.esb.cinco.Message;
 
-public class ExchangeFactoryImpl implements ExchangeFactory {
-	
-	
-	@Override
-	public Exchange createExchange(String patternURI) {
-		// this logic is pretty hacky -- need a finder method/class to discover
-		// exchange impls based on uri
-		if (InOnlyExchange.PATTERN_URI.equals(patternURI)) {
-			return createInOnlyExchange();
-		}
-		else if (RobustInOnlyExchange.PATTERN_URI.equals(patternURI)) {
-			return createRobustInOnlyExchange();
-		}
-		else if (InOutExchange.PATTERN_URI.equals(patternURI)) {
-			return createInOutExchange();
-		}
-		else {
-			return null;
-		}
+public class InOutExchangeImpl  extends ExchangeImpl implements InOutExchange {
+
+	public InOutExchangeImpl() {
+		super(PATTERN_URI);
 	}
 
 	@Override
-	public InOnlyExchange createInOnlyExchange() {
-		return new InOnlyExchangeImpl();
+	public Message getFault() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public InOutExchange createInOutExchange() {
-		return new InOutExchangeImpl();
+	public Message getIn() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public RobustInOnlyExchange createRobustInOnlyExchange() {
-		return new RobustInOnlyExchangeImpl();
+	public Message getOut() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
