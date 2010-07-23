@@ -24,6 +24,7 @@ package org.jboss.esb.cinco.internal;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.xml.namespace.QName;
 
@@ -35,6 +36,7 @@ import org.jboss.esb.cinco.Message;
 public class ExchangeImpl implements Exchange {
 	
 	private Throwable _error;
+	private String _exchangeId;
 	private String _patternURI;
 	private ExchangeState _state;
 	private QName _service;
@@ -44,6 +46,7 @@ public class ExchangeImpl implements Exchange {
 	
 	ExchangeImpl(String patternURI) {
 		_patternURI = patternURI;
+		_exchangeId = UUID.randomUUID().toString();
 	}
 
 	@Override
@@ -102,6 +105,11 @@ public class ExchangeImpl implements Exchange {
 	@Override
 	public Throwable getError() {
 		return _error;
+	}
+
+	@Override
+	public String getId() {
+		return _exchangeId;
 	}
 	
 }

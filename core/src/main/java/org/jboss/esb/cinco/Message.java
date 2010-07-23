@@ -30,6 +30,7 @@ public interface Message {
 
 	void setContent(Object content);
 	Object getContent();
+	<T> T getContent(Class<T> type);
 	
 	void setProperty(String name, Object val);
 	Object getProperty(String name);

@@ -28,4 +28,7 @@ public interface RobustInOnlyExchange extends Exchange {
 	
 	Message getIn();
 	Message getFault();
+
+	void setIn(Message message);
+	void setFault(Message message);
 }

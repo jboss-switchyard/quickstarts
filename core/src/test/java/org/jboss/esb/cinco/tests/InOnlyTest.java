@@ -22,27 +22,48 @@
 
 package org.jboss.esb.cinco.tests;
 
-import org.jboss.esb.cinco.ExchangeEvent;
-import org.jboss.esb.cinco.ExchangeHandler;
+import javax.xml.namespace.QName;
+
+import org.jboss.esb.cinco.internal.Environment;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 public class InOnlyTest {
+	
+	private final QName SERVICE_1 = new QName("service1");
+	private Environment _env;
 
 	@Before
 	public void setUp() throws Exception {
-		
+		_env = new Environment();
 	}
 	
 	@After
 	public void tearDown() throws Exception {
-		
+		_env.destroy();
 	}
 	
 	@Test
 	public void testOneWaySingle() throws Exception {
+		// Create a consumer instance
+		OneWayConsumer consumer = new OneWayConsumer(
+				_env.getExchangeFactory(), 
+				_env.getExchangeChannelFactory().createChannel());
 		
+		// Create a provider instance
+		OneWayProvider provider = new OneWayProvider(
+				_env.getExchangeChannelFactory().createChannel());
+		
+		provider.provideService(SERVICE_1);
+		consumer.invokeService(SERVICE_1, null);
+		
+		// wait a sec, since this is async
+		Thread.sleep(200);
+		
+		Assert.assertTrue(provider.getReceiveCount() == consumer.getSendCount());
+		Assert.assertTrue(consumer.getActiveCount() == 0);
 	}
 	
 }

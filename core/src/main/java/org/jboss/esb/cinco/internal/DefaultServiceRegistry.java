@@ -52,6 +52,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
 		List<ExchangeEndpoint> endpoints = _serviceEndpoints.get(serviceName);
 		if (endpoints == null) {
 			endpoints = new ArrayList<ExchangeEndpoint>();
+			_serviceEndpoints.put(serviceName, endpoints);
 		}
 		endpoints.add(endpoint);
 	}

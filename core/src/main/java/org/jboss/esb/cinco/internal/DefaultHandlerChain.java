@@ -32,7 +32,7 @@ import org.jboss.esb.cinco.HandlerChain;
 public class DefaultHandlerChain implements HandlerChain {
 	
 	private LinkedList<HandlerRef> _chain = new LinkedList<HandlerRef>();
-
+	
 	@Override
 	public synchronized void addFirst(String handlerName, ExchangeHandler handler) {
 		_chain.addFirst(new HandlerRef(handlerName, handler));

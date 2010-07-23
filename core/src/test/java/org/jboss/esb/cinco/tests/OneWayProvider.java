@@ -20,22 +20,35 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco.internal.handlers;
+package org.jboss.esb.cinco.tests;
 
-import org.jboss.esb.cinco.ExchangeEvent;
-import org.jboss.esb.cinco.ExchangeHandler;
+import javax.xml.namespace.QName;
 
-public abstract class BaseHandler implements ExchangeHandler {
+import org.jboss.esb.cinco.BaseHandler;
+import org.jboss.esb.cinco.ExchangeChannel;
+import org.jboss.esb.cinco.event.ExchangeInEvent;
 
-	@Override
-	public void handleReceive(ExchangeEvent event) {
-		// NOP - handled by subclasses
-		
+public class OneWayProvider extends BaseHandler {
+	
+	private ExchangeChannel _channel;
+	private int _receiveCount;
+	
+	public OneWayProvider(ExchangeChannel channel) {
+		_channel = channel;
+		_channel.getHandlerChain().addLast("me", this);
+	}
+	
+	public void provideService(QName serviceName) {
+		_channel.registerService(serviceName);
+	}
+	
+	public void handleReceive(ExchangeInEvent event) {
+		_receiveCount++;
+		event.getExchange().done();
 	}
 
-	@Override
-	public void handleSend(ExchangeEvent event) {
-		// NOP - handled by subclasses
+	public int getReceiveCount() {
+		return _receiveCount;
 	}
-
+	
 }

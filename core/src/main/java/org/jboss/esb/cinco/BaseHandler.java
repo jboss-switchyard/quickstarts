@@ -20,10 +20,20 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco.message;
+package org.jboss.esb.cinco;
 
-import org.jboss.esb.cinco.Message;
 
-public interface ObjectMessage extends Message {
+public abstract class BaseHandler implements ExchangeHandler {
+
+	@Override
+	public void handleReceive(ExchangeEvent event) {
+		// NOP - handled by subclasses
+		
+	}
+
+	@Override
+	public void handleSend(ExchangeEvent event) {
+		// NOP - handled by subclasses
+	}
 
 }

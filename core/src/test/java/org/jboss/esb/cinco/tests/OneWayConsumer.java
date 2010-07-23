@@ -22,21 +22,64 @@
 
 package org.jboss.esb.cinco.tests;
 
-import org.jboss.esb.cinco.ExchangeEvent;
-import org.jboss.esb.cinco.ExchangeHandler;
+import java.util.HashMap;
+import java.util.Map;
 
-public class OneWayConsumer implements ExchangeHandler {
+import javax.xml.namespace.QName;
 
-	@Override
-	public void handleReceive(ExchangeEvent event) {
-		// TODO Auto-generated method stub
+import org.jboss.esb.cinco.BaseHandler;
+import org.jboss.esb.cinco.Exchange;
+import org.jboss.esb.cinco.ExchangeChannel;
+import org.jboss.esb.cinco.ExchangeFactory;
+import org.jboss.esb.cinco.InOnlyExchange;
+import org.jboss.esb.cinco.Message;
+import org.jboss.esb.cinco.event.ExchangeCompleteEvent;
+
+public class OneWayConsumer extends BaseHandler {
+	
+	private ExchangeFactory _exchangeFactory;
+	private ExchangeChannel _channel;
+	private int _completeCount;
+	private int _sendCount;
+	private Map<String, Exchange> _activeExchanges = 
+		new HashMap<String, Exchange>();
+	
+	public OneWayConsumer(ExchangeFactory exchangeFactory, 
+			ExchangeChannel channel) {
+		_exchangeFactory = exchangeFactory;
+		_channel = channel;
+		_channel.getHandlerChain().addLast("me", this);
+	}
+	
+	public void invokeService(QName serviceName, Message requestMessage) {
+		// Create a new InOnly exchange to invoke the service
+		InOnlyExchange inOnly = _exchangeFactory.createInOnlyExchange();
+		inOnly.setService(serviceName);
+		inOnly.setIn(requestMessage);
 		
+		// Add it to the list of active exchanges
+		_activeExchanges.put(inOnly.getId(), inOnly);
+		_sendCount++;
+		
+		// Send the exchange to a service provider
+		_channel.send(inOnly);
+	}
+	
+	public void handleReceive(ExchangeCompleteEvent event) {
+		// Remove the exchange from our list of active exchanges
+		_activeExchanges.remove(event.getExchange().getId());
+		_completeCount++;
 	}
 
-	@Override
-	public void handleSend(ExchangeEvent event) {
-		// TODO Auto-generated method stub
-		
+	public int getActiveCount() {
+		return _activeExchanges.size();
 	}
-
+	
+	public int getCompletedCount() {
+		return _completeCount;
+	}
+	
+	public int getSendCount() {
+		return _sendCount;
+	}
 }

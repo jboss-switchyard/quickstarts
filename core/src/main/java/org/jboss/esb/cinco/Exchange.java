@@ -29,6 +29,7 @@ public interface Exchange {
 	ExchangeContext getContext();
 	String getPattern();
 	ExchangeState getState();
+	String getId();
 	
 	void setService(QName service);
 	QName getService();

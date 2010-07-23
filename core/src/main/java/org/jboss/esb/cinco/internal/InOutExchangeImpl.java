@@ -45,5 +45,19 @@ public class InOutExchangeImpl  extends ExchangeImpl implements InOutExchange {
 	public Message getOut() {
 		return getMessage(Messages.OUT);
 	}
+	
+	@Override
+	public void setIn(Message message) {
+		setMessage(Messages.IN, message);
+	}
+	
+	@Override
+	public void setOut(Message message) {
+		setMessage(Messages.OUT, message);
+	}
 
+	@Override
+	public void setFault(Message message) {
+		setMessage(Messages.FAULT, message);
+	}
 }

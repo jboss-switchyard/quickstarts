@@ -29,4 +29,8 @@ public interface InOutExchange extends Exchange {
 	Message getIn();
 	Message getOut();
 	Message getFault();
+	
+	void setIn(Message message);
+	void setOut(Message message);
+	void setFault(Message message);
 }

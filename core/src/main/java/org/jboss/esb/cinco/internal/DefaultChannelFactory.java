@@ -27,23 +27,34 @@ import java.util.List;
 
 import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangeChannelFactory;
+import org.jboss.esb.cinco.HandlerChain;
+import org.jboss.esb.cinco.internal.handlers.AddressingHandler;
 import org.jboss.esb.cinco.spi.ServiceRegistry;
 
 public class DefaultChannelFactory implements ExchangeChannelFactory {
 	
+	private HandlerChain _systemHandlers;
 	private ServiceRegistry _registry;
-
+	
 	private List<ExchangeChannelImpl> _channels = 
 		new ArrayList<ExchangeChannelImpl>();
 	
 	DefaultChannelFactory(ServiceRegistry registry) {
 		_registry = registry;
+		
+		// Build out the system handlers chain.  It would be cleaner if we 
+		// handled this via config.
+		_systemHandlers = new DefaultHandlerChain();
+		_systemHandlers.addFirst("addressing", new AddressingHandler(_registry));
 	}
 	
 	@Override
 	public ExchangeChannel createChannel() {
 		ExchangeChannelImpl channel = new ExchangeChannelImpl(_registry);
 		_channels.add(channel);
+		
+		// Add system handlers to channel
+		channel.getHandlerChain().addLast("system handlers", _systemHandlers);
 		return channel;
 	}
 

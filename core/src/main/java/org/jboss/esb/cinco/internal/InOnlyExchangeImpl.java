@@ -36,4 +36,9 @@ public class InOnlyExchangeImpl extends ExchangeImpl implements InOnlyExchange {
 		return getMessage(Messages.IN);
 	}
 
+	@Override
+	public void setIn(Message message) {
+		setMessage(Messages.IN, message);
+	}
+
 }

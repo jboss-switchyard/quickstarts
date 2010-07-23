@@ -42,4 +42,13 @@ public class RobustInOnlyExchangeImpl extends ExchangeImpl
 		return getMessage(Messages.IN);
 	}
 
+	@Override
+	public void setIn(Message message) {
+		setMessage(Messages.IN, message);
+	}
+
+	@Override
+	public void setFault(Message message) {
+		setMessage(Messages.FAULT, message);
+	}
 }

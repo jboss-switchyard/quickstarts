@@ -22,7 +22,6 @@
 
 package org.jboss.esb.cinco;
 
-import java.util.List;
 
 public interface HandlerChain extends ExchangeHandler {
 

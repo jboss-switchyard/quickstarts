@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.jboss.esb.cinco.BaseHandler;
 import org.jboss.esb.cinco.event.ExchangeInEvent;
 import org.jboss.esb.cinco.spi.ExchangeEndpoint;
 import org.jboss.esb.cinco.spi.ServiceRegistry;

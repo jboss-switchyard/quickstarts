@@ -27,4 +27,5 @@ public interface InOnlyExchange extends Exchange {
 	String PATTERN_URI = "http://www.w3.org/ns/wsdl/in-only";
 	
 	Message getIn();
+	void setIn(Message message);
 }
