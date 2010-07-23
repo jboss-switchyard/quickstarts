@@ -22,28 +22,31 @@
 
 package org.jboss.esb.cinco.internal;
 
-import org.jboss.esb.cinco.InOutExchange;
-import org.jboss.esb.cinco.Message;
+import org.jboss.esb.cinco.ExchangeChannelFactory;
+import org.jboss.esb.cinco.ExchangeFactory;
 
-public class InOutExchangeImpl  extends ExchangeImpl implements InOutExchange {
+public class Environment {
+	
+	private DefaultChannelFactory _channelFactory;
+	private ExchangeFactoryImpl _exchangeFactory;
+	private DefaultServiceRegistry	_registry;
 
-	public InOutExchangeImpl() {
-		super(PATTERN_URI);
+	public Environment() {
+		_exchangeFactory = new ExchangeFactoryImpl();
+		_registry = new DefaultServiceRegistry();
+		_channelFactory = new DefaultChannelFactory(_registry);
 	}
-
-	@Override
-	public Message getFault() {
-		return getMessage(Messages.FAULT);
+	
+	public void destroy() {
+		
 	}
-
-	@Override
-	public Message getIn() {
-		return getMessage(Messages.IN);
+	
+	public ExchangeChannelFactory getExchangeChannelFactory() {
+		return _channelFactory;
 	}
-
-	@Override
-	public Message getOut() {
-		return getMessage(Messages.OUT);
+	
+	public ExchangeFactory getExchangeFactory() {
+		return _exchangeFactory;
 	}
-
+	 
 }

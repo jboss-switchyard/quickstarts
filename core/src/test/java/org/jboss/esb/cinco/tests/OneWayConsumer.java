@@ -20,30 +20,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco.internal;
+package org.jboss.esb.cinco.tests;
 
-import org.jboss.esb.cinco.InOutExchange;
-import org.jboss.esb.cinco.Message;
+import org.jboss.esb.cinco.ExchangeEvent;
+import org.jboss.esb.cinco.ExchangeHandler;
 
-public class InOutExchangeImpl  extends ExchangeImpl implements InOutExchange {
+public class OneWayConsumer implements ExchangeHandler {
 
-	public InOutExchangeImpl() {
-		super(PATTERN_URI);
+	@Override
+	public void handleReceive(ExchangeEvent event) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
-	public Message getFault() {
-		return getMessage(Messages.FAULT);
-	}
-
-	@Override
-	public Message getIn() {
-		return getMessage(Messages.IN);
-	}
-
-	@Override
-	public Message getOut() {
-		return getMessage(Messages.OUT);
+	public void handleSend(ExchangeEvent event) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

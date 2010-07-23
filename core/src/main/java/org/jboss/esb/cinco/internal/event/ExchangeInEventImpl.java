@@ -26,6 +26,7 @@ import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.Message;
 import org.jboss.esb.cinco.event.ExchangeInEvent;
+import org.jboss.esb.cinco.internal.Messages;
 
 public class ExchangeInEventImpl extends ExchangeEventImpl 
 	implements ExchangeInEvent {
@@ -36,7 +37,7 @@ public class ExchangeInEventImpl extends ExchangeEventImpl
 
 	@Override
 	public Message getIn() {
-		return getExchange().getMessage("in");
+		return getExchange().getMessage(Messages.IN);
 	}
 
 }

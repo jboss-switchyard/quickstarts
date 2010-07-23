@@ -22,6 +22,7 @@
 
 package org.jboss.esb.cinco.internal;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.jboss.esb.cinco.ExchangeEvent;
@@ -29,43 +30,63 @@ import org.jboss.esb.cinco.ExchangeHandler;
 import org.jboss.esb.cinco.HandlerChain;
 
 public class DefaultHandlerChain implements HandlerChain {
+	
+	private LinkedList<HandlerRef> _chain = new LinkedList<HandlerRef>();
 
 	@Override
-	public void add(String handlerName, ExchangeHandler handler) {
-		// TODO Auto-generated method stub
-
+	public synchronized void addFirst(String handlerName, ExchangeHandler handler) {
+		_chain.addFirst(new HandlerRef(handlerName, handler));
 	}
 
 	@Override
-	public void addBefore(String handlerName, ExchangeHandler handler,
-			String beforeName) {
-		// TODO Auto-generated method stub
-
+	public synchronized void addLast(String handlerName, ExchangeHandler handler) {
+		_chain.addLast(new HandlerRef(handlerName, handler));
 	}
-
+	
 	@Override
-	public List<String> listHandlers() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ExchangeHandler remove(String handlerName) {
-		// TODO Auto-generated method stub
-		return null;
+	public synchronized ExchangeHandler remove(String handlerName) {
+		ExchangeHandler handler = null;
+		
+		for (HandlerRef ref : _chain) {
+			if (ref.name.equals(handlerName)) {
+				handler = ref.handler;
+				_chain.remove(ref);
+				break;
+			}
+		}
+		
+		return handler;
 	}
 
 	@Override
 	public void handleSend(ExchangeEvent event) {
-		// TODO Auto-generated method stub
-		
+		// This is super basic at the moment
+		for (HandlerRef ref : listHandlers()) {
+			ref.handler.handleSend(event);
+		}
 	}
 	
 	@Override
 	public void handleReceive(ExchangeEvent event) {
-		// TODO Auto-generated method stub
-		
+		// This is super basic at the moment
+		for (HandlerRef ref : listHandlers()) {
+			ref.handler.handleReceive(event);
+		}
 	}
 	
-
+	private synchronized List<HandlerRef> listHandlers() {
+		return new LinkedList<HandlerRef>(_chain);
+	}
+	
+	// sweet little struct
+	private class HandlerRef {
+		
+		HandlerRef(String name,ExchangeHandler handler) {
+			this.handler = handler;
+			this.name = name;
+		}
+		
+		ExchangeHandler handler;
+		String name;
+	}
 }

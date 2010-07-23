@@ -33,8 +33,7 @@ public class InOnlyExchangeImpl extends ExchangeImpl implements InOnlyExchange {
 	
 	@Override
 	public Message getIn() {
-		// TODO Auto-generated method stub
-		return null;
+		return getMessage(Messages.IN);
 	}
 
 }

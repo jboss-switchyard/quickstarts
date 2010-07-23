@@ -26,6 +26,7 @@ import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.Message;
 import org.jboss.esb.cinco.event.ExchangeOutEvent;
+import org.jboss.esb.cinco.internal.Messages;
 
 public class ExchangeOutEventImpl extends ExchangeEventImpl 
 	implements ExchangeOutEvent {
@@ -36,6 +37,6 @@ public class ExchangeOutEventImpl extends ExchangeEventImpl
 
 	@Override
 	public Message getOut() {
-		return getExchange().getMessage("out");
+		return getExchange().getMessage(Messages.OUT);
 	}
 }

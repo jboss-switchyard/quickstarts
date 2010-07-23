@@ -34,14 +34,12 @@ public class RobustInOnlyExchangeImpl extends ExchangeImpl
 
 	@Override
 	public Message getFault() {
-		// TODO Auto-generated method stub
-		return null;
+		return getMessage(Messages.FAULT);
 	}
 
 	@Override
 	public Message getIn() {
-		// TODO Auto-generated method stub
-		return null;
+		return getMessage(Messages.IN);
 	}
 
 }

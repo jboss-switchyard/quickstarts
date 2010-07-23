@@ -22,28 +22,8 @@
 
 package org.jboss.esb.cinco.internal;
 
-import org.jboss.esb.cinco.InOutExchange;
-import org.jboss.esb.cinco.Message;
-
-public class InOutExchangeImpl  extends ExchangeImpl implements InOutExchange {
-
-	public InOutExchangeImpl() {
-		super(PATTERN_URI);
-	}
-
-	@Override
-	public Message getFault() {
-		return getMessage(Messages.FAULT);
-	}
-
-	@Override
-	public Message getIn() {
-		return getMessage(Messages.IN);
-	}
-
-	@Override
-	public Message getOut() {
-		return getMessage(Messages.OUT);
-	}
-
+public final class Messages {
+	public static final String IN = "in";
+	public static final String OUT = "out";
+	public static final String FAULT = "fault";
 }

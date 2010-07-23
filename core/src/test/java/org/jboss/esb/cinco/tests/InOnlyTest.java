@@ -20,13 +20,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco.internal;
+package org.jboss.esb.cinco.tests;
 
-public class Bootstrap {
+import org.jboss.esb.cinco.ExchangeEvent;
+import org.jboss.esb.cinco.ExchangeHandler;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-	public Bootstrap() {
+public class InOnlyTest {
+
+	@Before
+	public void setUp() throws Exception {
 		
 	}
 	
+	@After
+	public void tearDown() throws Exception {
+		
+	}
+	
+	@Test
+	public void testOneWaySingle() throws Exception {
+		
+	}
 	
 }

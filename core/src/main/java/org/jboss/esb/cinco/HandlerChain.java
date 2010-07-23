@@ -26,8 +26,7 @@ import java.util.List;
 
 public interface HandlerChain extends ExchangeHandler {
 
-	void add(String handlerName, ExchangeHandler handler);
-	void addBefore(String handlerName, ExchangeHandler handler, String beforeName);
+	void addFirst(String handlerName, ExchangeHandler handler);
+	void addLast(String handlerName, ExchangeHandler handler);
 	ExchangeHandler remove(String handlerName);
-	List<String> listHandlers();
 }
