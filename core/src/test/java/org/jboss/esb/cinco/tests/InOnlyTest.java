@@ -60,7 +60,7 @@ public class InOnlyTest {
 		consumer.invokeService(SERVICE_1, null);
 		
 		// wait a sec, since this is async
-		Thread.sleep(200);
+		Thread.sleep(80000);
 		
 		Assert.assertTrue(provider.getReceiveCount() == consumer.getSendCount());
 		Assert.assertTrue(consumer.getActiveCount() == 0);

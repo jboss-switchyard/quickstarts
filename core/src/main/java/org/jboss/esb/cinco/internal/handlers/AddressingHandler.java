@@ -39,7 +39,8 @@ public class AddressingHandler extends BaseHandler {
 		_registry = registry;
 	}
 
-	public void handleSend(ExchangeInEvent event) {
+	@Override
+	public void exchangeIn(ExchangeInEvent event) {
 		QName service = event.getExchange().getService();
 		List<ExchangeEndpoint> endpoints = _registry.getEndpoints(service);
 		

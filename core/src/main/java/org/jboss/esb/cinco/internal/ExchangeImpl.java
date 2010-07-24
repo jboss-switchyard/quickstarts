@@ -92,7 +92,6 @@ public class ExchangeImpl implements Exchange {
 	@Override
 	public void done() {
 		setState(ExchangeState.DONE);
-		
 	}
 
 	@Override

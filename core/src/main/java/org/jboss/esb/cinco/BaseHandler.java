@@ -22,18 +22,60 @@
 
 package org.jboss.esb.cinco;
 
+import org.jboss.esb.cinco.event.ExchangeCompleteEvent;
+import org.jboss.esb.cinco.event.ExchangeErrorEvent;
+import org.jboss.esb.cinco.event.ExchangeFaultEvent;
+import org.jboss.esb.cinco.event.ExchangeInEvent;
+import org.jboss.esb.cinco.event.ExchangeOutEvent;
+
 
 public abstract class BaseHandler implements ExchangeHandler {
 
 	@Override
 	public void handleReceive(ExchangeEvent event) {
-		// NOP - handled by subclasses
-		
+		handleEvent(event);
 	}
 
 	@Override
 	public void handleSend(ExchangeEvent event) {
+		handleEvent(event);
+	} 
+	
+	public void exchangeIn(ExchangeInEvent event) {
+		// NOP - handled by subclasses
+	}
+	
+	public void exchangeOut(ExchangeOutEvent event) {
+		// NOP - handled by subclasses
+	}
+	
+	public void exchangeFault(ExchangeFaultEvent event) {
+		// NOP - handled by subclasses
+	}
+	
+	public void exchangeComplete(ExchangeCompleteEvent event) {
+		// NOP - handled by subclasses
+	}
+	
+	public void exchangeError(ExchangeErrorEvent event) {
 		// NOP - handled by subclasses
 	}
 
+	private void handleEvent(ExchangeEvent event) {
+		if (event instanceof ExchangeInEvent) {
+			exchangeIn((ExchangeInEvent)event);
+		}
+		else if (event instanceof ExchangeOutEvent) {
+			exchangeOut((ExchangeOutEvent)event);
+		}
+		else if (event instanceof ExchangeFaultEvent) {
+			exchangeFault((ExchangeFaultEvent)event);
+		}
+		else if (event instanceof ExchangeCompleteEvent) {
+			exchangeComplete((ExchangeCompleteEvent)event);
+		}
+		else if (event instanceof ExchangeErrorEvent) {
+			exchangeError((ExchangeErrorEvent)event);
+		}
+	}
 }

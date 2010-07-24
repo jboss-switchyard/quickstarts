@@ -98,6 +98,7 @@ public class ExchangeChannelImpl
 		
 	}
 	
+	@Override
 	public void run() {
 		while (_isActive) {
 			try {

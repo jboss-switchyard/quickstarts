@@ -42,9 +42,11 @@ public class OneWayProvider extends BaseHandler {
 		_channel.registerService(serviceName);
 	}
 	
-	public void handleReceive(ExchangeInEvent event) {
+	@Override
+	public void exchangeIn(ExchangeInEvent event) {
 		_receiveCount++;
 		event.getExchange().done();
+		_channel.send(event.getExchange());
 	}
 
 	public int getReceiveCount() {

@@ -65,14 +65,15 @@ public class OneWayConsumer extends BaseHandler {
 		_channel.send(inOnly);
 	}
 	
-	public void handleReceive(ExchangeCompleteEvent event) {
+	@Override
+	public void exchangeComplete(ExchangeCompleteEvent event) {
 		// Remove the exchange from our list of active exchanges
 		_activeExchanges.remove(event.getExchange().getId());
 		_completeCount++;
 	}
 
 	public int getActiveCount() {
-		return _activeExchanges.size();
+		return _activeExchanges.keySet().size();
 	}
 	
 	public int getCompletedCount() {
