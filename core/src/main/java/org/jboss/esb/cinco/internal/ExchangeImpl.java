@@ -32,10 +32,13 @@ import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeContext;
 import org.jboss.esb.cinco.ExchangeState;
 import org.jboss.esb.cinco.Message;
+import org.jboss.esb.cinco.spi.ExchangeEndpoint;
 
 public class ExchangeImpl implements Exchange {
 	
 	private Throwable _error;
+	private ExchangeEndpoint _sendEndpoint;
+	private ExchangeEndpoint _recvEndpoint;
 	private String _exchangeId;
 	private String _patternURI;
 	private ExchangeState _state;
@@ -111,4 +114,19 @@ public class ExchangeImpl implements Exchange {
 		return _exchangeId;
 	}
 	
+	public ExchangeEndpoint getSendingEndpoint() {
+		return _sendEndpoint;
+	}
+	
+	public ExchangeEndpoint getReceivingEndpoint() {
+		return _recvEndpoint;
+	}
+	
+	public void setSendingEndpoint(ExchangeEndpoint endpoint) {
+		_sendEndpoint = endpoint;
+	}
+
+	public void setReceivingEndpoint(ExchangeEndpoint endpoint) {
+		_recvEndpoint = endpoint;
+	}
 }

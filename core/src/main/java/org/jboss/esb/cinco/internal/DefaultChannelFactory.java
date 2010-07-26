@@ -29,6 +29,7 @@ import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangeChannelFactory;
 import org.jboss.esb.cinco.HandlerChain;
 import org.jboss.esb.cinco.internal.handlers.AddressingHandler;
+import org.jboss.esb.cinco.internal.handlers.DeliveryHandler;
 import org.jboss.esb.cinco.spi.ServiceRegistry;
 
 public class DefaultChannelFactory implements ExchangeChannelFactory {
@@ -46,6 +47,7 @@ public class DefaultChannelFactory implements ExchangeChannelFactory {
 		// handled this via config.
 		_systemHandlers = new DefaultHandlerChain();
 		_systemHandlers.addFirst("addressing", new AddressingHandler(_registry));
+		_systemHandlers.addLast("delivery", new DeliveryHandler());
 	}
 	
 	@Override

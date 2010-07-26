@@ -22,39 +22,30 @@
 
 package org.jboss.esb.cinco.internal.handlers;
 
-import java.util.List;
-
 import org.jboss.esb.cinco.BaseHandler;
-import org.jboss.esb.cinco.event.ExchangeInEvent;
+import org.jboss.esb.cinco.ExchangeEvent;
 import org.jboss.esb.cinco.internal.ExchangeImpl;
 import org.jboss.esb.cinco.spi.ExchangeEndpoint;
-import org.jboss.esb.cinco.spi.ServiceRegistry;
 
-public class AddressingHandler extends BaseHandler {
+public class DeliveryHandler extends BaseHandler {
 	
-	private ServiceRegistry _registry;
-	
-	public AddressingHandler(ServiceRegistry registry) {
-		_registry = registry;
-	}
 
 	@Override
-	public void exchangeIn(ExchangeInEvent event) {		
+	public void handleSend(ExchangeEvent event) {
 		ExchangeImpl exchange = (ExchangeImpl)event.getExchange();
+		ExchangeEndpoint receiver = exchange.getReceivingEndpoint();
 		
-		// find the receiving endpoint
-		List<ExchangeEndpoint> endpoints = 
-			_registry.getEndpoints(exchange.getService());
-		
-		if (endpoints.isEmpty()) {
-			// this is a temp hack - we should set error on the exchange and
-			// redirect it into the sending channel
-			throw new RuntimeException(
-					"No endpoints for service " + exchange.getService());
+		if (exchange.getSendingEndpoint() == null) {
+			// first time this has been sent
+			exchange.setSendingEndpoint((ExchangeEndpoint)event.getChannel());
+		}
+		else {
+			// this is a return path, so flip sender and receiver
+			exchange.setReceivingEndpoint(exchange.getSendingEndpoint());
+			exchange.setSendingEndpoint(receiver);
 		}
 		
-		// Endpoint selection is arbitrary at the moment
-		exchange.setReceivingEndpoint(endpoints.get(0));
+		exchange.getReceivingEndpoint().process(exchange);
 	}
 
 }
