@@ -22,10 +22,7 @@
 
 package org.jboss.esb.cinco;
 
-public interface InOnlyExchange extends Exchange {
+public interface MessageFactory {
 
-	String PATTERN_URI = "http://www.w3.org/ns/wsdl/in-only";
-	
-	Message getIn();
-	void setIn(Message message);
+	public Message createMessage();
 }

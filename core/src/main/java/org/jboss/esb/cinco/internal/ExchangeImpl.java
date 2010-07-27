@@ -30,26 +30,32 @@ import javax.xml.namespace.QName;
 
 import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeContext;
-import org.jboss.esb.cinco.ExchangeState;
+import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.Message;
 import org.jboss.esb.cinco.spi.ExchangeEndpoint;
 
 public class ExchangeImpl implements Exchange {
 	
-	private Throwable _error;
-	private ExchangeEndpoint _sendEndpoint;
-	private ExchangeEndpoint _recvEndpoint;
-	private String _exchangeId;
-	private String _patternURI;
-	private ExchangeState _state;
-	private QName _service;
-	private Map<String, Message> _messages = 
-		new HashMap<String, Message>();
-	private ExchangeContext _context = new ExchangeContextImpl();
+	public static final String IN_MSG = "in";
+	public static final String OUT_MSG = "out";
+	public static final String FAULT_MSG = "fault";
 	
-	ExchangeImpl(String patternURI) {
-		_patternURI = patternURI;
+	private Throwable 				_error;
+	private ExchangeEndpoint 		_sendEndpoint;
+	private ExchangeEndpoint 		_recvEndpoint;
+	private String 					_exchangeId;
+	private ExchangePattern 		_pattern;
+	private ExchangeState 			_state;
+	private QName 					_service;
+	private Map<String, Message> 	_messages = 
+		new HashMap<String, Message>();
+	private ExchangeContext 		_context = 
+		new ExchangeContextImpl();
+	
+	ExchangeImpl(ExchangePattern pattern) {
+		_pattern = pattern;
 		_exchangeId = UUID.randomUUID().toString();
+		_state = ExchangeState.NEW;
 	}
 
 	@Override
@@ -58,13 +64,8 @@ public class ExchangeImpl implements Exchange {
 	}
 
 	@Override
-	public Message getMessage(String name) {
-		return _messages.get(name);
-	}
-
-	@Override
-	public String getPattern() {
-		return _patternURI;
+	public ExchangePattern getPattern() {
+		return _pattern;
 	}
 
 	@Override
@@ -73,37 +74,15 @@ public class ExchangeImpl implements Exchange {
 	}
 
 	@Override
-	public void setMessage(String name, Message message) {
-		_messages.put(name, message);
-		setState(ExchangeState.fromString(name));
-	}
-
-	@Override
 	public void setService(QName service) {
 		_service = service;
 	}
-
-	@Override
-	public ExchangeState getState() {
-		return _state;
-	}
 	
-	void setState(ExchangeState state) {
-		_state = state;
-	}
-
-	@Override
-	public void done() {
-		setState(ExchangeState.DONE);
-	}
-
 	@Override
 	public void setError(Throwable error) {
-		setState(ExchangeState.ERROR);
 		_error = error;
 	}
 	
-
 	@Override
 	public Throwable getError() {
 		return _error;
@@ -113,6 +92,37 @@ public class ExchangeImpl implements Exchange {
 	public String getId() {
 		return _exchangeId;
 	}
+
+	@Override
+	public Message getIn() {
+		return getMessage(IN_MSG);
+	}
+
+	@Override
+	public Message getOut() {
+		return getMessage(OUT_MSG);
+	}
+
+	@Override
+	public void setFault(Message message) {
+		setMessage(FAULT_MSG, message);
+	}
+	
+	@Override
+	public Message getFault() {
+		return getMessage(FAULT_MSG);
+	}
+
+	@Override
+	public void setIn(Message message) {
+		setMessage(IN_MSG, message);
+	}
+
+	@Override
+	public void setOut(Message message) {
+		setMessage(OUT_MSG, message);
+	}
+	
 	
 	public ExchangeEndpoint getSendingEndpoint() {
 		return _sendEndpoint;
@@ -129,4 +139,22 @@ public class ExchangeImpl implements Exchange {
 	public void setReceivingEndpoint(ExchangeEndpoint endpoint) {
 		_recvEndpoint = endpoint;
 	}
+	
+	public Message getMessage(String name) {
+		return _messages.get(name);
+	}
+	
+	public ExchangeState getState() {
+		return _state;
+	}
+	
+	public void setState(ExchangeState state) {
+		_state = state;
+	}
+
+	public void setMessage(String name, Message message) {
+		_messages.put(name, message);
+	}
+
+
 }

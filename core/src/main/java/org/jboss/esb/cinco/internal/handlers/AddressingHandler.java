@@ -42,19 +42,21 @@ public class AddressingHandler extends BaseHandler {
 	public void exchangeIn(ExchangeInEvent event) {		
 		ExchangeImpl exchange = (ExchangeImpl)event.getExchange();
 		
-		// find the receiving endpoint
-		List<ExchangeEndpoint> endpoints = 
-			_registry.getEndpoints(exchange.getService());
-		
-		if (endpoints.isEmpty()) {
-			// this is a temp hack - we should set error on the exchange and
-			// redirect it into the sending channel
-			throw new RuntimeException(
-					"No endpoints for service " + exchange.getService());
+		if (exchange.getReceivingEndpoint() == null) {
+			// find the receiving endpoint
+			List<ExchangeEndpoint> endpoints = 
+				_registry.getEndpoints(exchange.getService());
+			
+			if (endpoints.isEmpty()) {
+				// this is a temp hack - we should set error on the exchange and
+				// redirect it into the sending channel
+				throw new RuntimeException(
+						"No endpoints for service " + exchange.getService());
+			}
+			
+			// Endpoint selection is arbitrary at the moment
+			exchange.setReceivingEndpoint(endpoints.get(0));
 		}
-		
-		// Endpoint selection is arbitrary at the moment
-		exchange.setReceivingEndpoint(endpoints.get(0));
 	}
 
 }

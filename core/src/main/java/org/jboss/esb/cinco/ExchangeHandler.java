@@ -23,7 +23,7 @@
 package org.jboss.esb.cinco;
 
 public interface ExchangeHandler {
-
+	
 	void handleSend(ExchangeEvent event);
 	void handleReceive(ExchangeEvent event);
 }

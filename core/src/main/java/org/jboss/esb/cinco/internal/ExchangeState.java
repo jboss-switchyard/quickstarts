@@ -22,33 +22,14 @@
 
 package org.jboss.esb.cinco.internal;
 
-import org.jboss.esb.cinco.Message;
-import org.jboss.esb.cinco.RobustInOnlyExchange;
 
-public class RobustInOnlyExchangeImpl extends ExchangeImpl 
-	implements RobustInOnlyExchange {
+public enum ExchangeState {
 	
-	public RobustInOnlyExchangeImpl() {
-		super(PATTERN_URI);
-	}
-
-	@Override
-	public Message getFault() {
-		return getMessage(Messages.FAULT);
-	}
-
-	@Override
-	public Message getIn() {
-		return getMessage(Messages.IN);
-	}
-
-	@Override
-	public void setIn(Message message) {
-		setMessage(Messages.IN, message);
-	}
-
-	@Override
-	public void setFault(Message message) {
-		setMessage(Messages.FAULT, message);
-	}
+	NEW,		// just created
+	IN,			// in message
+	FAULT,		// fault message
+	OUT,		// out message
+	DONE,		// completed without error
+	ERROR;		// completed with error
+	
 }

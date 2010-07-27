@@ -22,62 +22,64 @@
 
 package org.jboss.esb.cinco.tests;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.xml.namespace.QName;
 
 import org.jboss.esb.cinco.BaseHandler;
 import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeChannel;
-import org.jboss.esb.cinco.ExchangeFactory;
-import org.jboss.esb.cinco.InOnlyExchange;
 import org.jboss.esb.cinco.Message;
-import org.jboss.esb.cinco.event.ExchangeCompleteEvent;
+import org.jboss.esb.cinco.event.ExchangeErrorEvent;
+import org.jboss.esb.cinco.event.ExchangeFaultEvent;
+import org.jboss.esb.cinco.event.ExchangeOutEvent;
+import org.jboss.esb.cinco.internal.Environment;
 
-public class OneWayConsumer extends BaseHandler {
+public class BaseConsumer extends BaseHandler {
 	
-	private ExchangeFactory _exchangeFactory;
 	private ExchangeChannel _channel;
-	private int _completeCount;
+	private int _errorCount;
+	private int _faultCount;
+	private int _outCount;
 	private int _sendCount;
-	private Map<String, Exchange> _activeExchanges = 
-		new HashMap<String, Exchange>();
 	
-	public OneWayConsumer(ExchangeFactory exchangeFactory, 
-			ExchangeChannel channel) {
-		_exchangeFactory = exchangeFactory;
-		_channel = channel;
+	public BaseConsumer(Environment env) {
+		_channel = env.getExchangeChannelFactory().createChannel();
 		_channel.getHandlerChain().addLast("me", this);
 	}
 	
-	public void invokeService(QName serviceName, Message requestMessage) {
-		// Create a new InOnly exchange to invoke the service
-		InOnlyExchange inOnly = _exchangeFactory.createInOnlyExchange();
-		inOnly.setService(serviceName);
-		inOnly.setIn(requestMessage);
+	public void invokeService(
+			Exchange exchange, QName serviceName, Message requestMessage) {
 		
-		// Add it to the list of active exchanges
-		_activeExchanges.put(inOnly.getId(), inOnly);
+		exchange.setService(serviceName);
+		exchange.setIn(requestMessage);
+		
 		_sendCount++;
 		
 		// Send the exchange to a service provider
-		_channel.send(inOnly);
+		_channel.send(exchange);
 	}
 	
-	@Override
-	public void exchangeComplete(ExchangeCompleteEvent event) {
-		// Remove the exchange from our list of active exchanges
-		_activeExchanges.remove(event.getExchange().getId());
-		_completeCount++;
+	public void exchangeOut(ExchangeOutEvent event) {
+		_outCount++;
+	}
+	
+	public void exchangeFault(ExchangeFaultEvent event) {
+		_faultCount++;
+	}
+	
+	public void exchangeError(ExchangeErrorEvent event) {
+		_errorCount++;
+	}
+	
+	public int getFaultCount() {
+		return _faultCount;
 	}
 
-	public int getActiveCount() {
-		return _activeExchanges.keySet().size();
+	public int getErrorCount() {
+		return _errorCount;
 	}
-	
-	public int getCompletedCount() {
-		return _completeCount;
+
+	public int getOutCount() {
+		return _outCount;
 	}
 	
 	public int getSendCount() {

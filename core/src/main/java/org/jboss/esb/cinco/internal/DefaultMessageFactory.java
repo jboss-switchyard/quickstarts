@@ -20,10 +20,16 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco.event;
+package org.jboss.esb.cinco.internal;
 
-import org.jboss.esb.cinco.ExchangeEvent;
+import org.jboss.esb.cinco.Message;
+import org.jboss.esb.cinco.MessageFactory;
 
-public interface ExchangeCompleteEvent extends ExchangeEvent {
+public class DefaultMessageFactory implements MessageFactory {
 
+	@Override
+	public Message createMessage() {
+		return new MessageImpl();
+	}
+	
 }

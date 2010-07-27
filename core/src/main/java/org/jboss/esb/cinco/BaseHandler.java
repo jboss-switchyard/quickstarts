@@ -22,7 +22,6 @@
 
 package org.jboss.esb.cinco;
 
-import org.jboss.esb.cinco.event.ExchangeCompleteEvent;
 import org.jboss.esb.cinco.event.ExchangeErrorEvent;
 import org.jboss.esb.cinco.event.ExchangeFaultEvent;
 import org.jboss.esb.cinco.event.ExchangeInEvent;
@@ -53,10 +52,6 @@ public abstract class BaseHandler implements ExchangeHandler {
 		// NOP - handled by subclasses
 	}
 	
-	public void exchangeComplete(ExchangeCompleteEvent event) {
-		// NOP - handled by subclasses
-	}
-	
 	public void exchangeError(ExchangeErrorEvent event) {
 		// NOP - handled by subclasses
 	}
@@ -70,9 +65,6 @@ public abstract class BaseHandler implements ExchangeHandler {
 		}
 		else if (event instanceof ExchangeFaultEvent) {
 			exchangeFault((ExchangeFaultEvent)event);
-		}
-		else if (event instanceof ExchangeCompleteEvent) {
-			exchangeComplete((ExchangeCompleteEvent)event);
 		}
 		else if (event instanceof ExchangeErrorEvent) {
 			exchangeError((ExchangeErrorEvent)event);

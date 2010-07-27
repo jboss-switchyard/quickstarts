@@ -31,7 +31,7 @@ import javax.xml.namespace.QName;
 
 import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeChannel;
-import org.jboss.esb.cinco.ExchangeEvent;
+import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.HandlerChain;
 import org.jboss.esb.cinco.spi.ExchangeEndpoint;
 import org.jboss.esb.cinco.spi.ServiceRegistry;
@@ -75,8 +75,8 @@ public class ExchangeChannelImpl
 
 	@Override
 	public void send(Exchange exchange) {
-		ExchangeEvent event = Events.createEvent(this, exchange);
-		_handlers.handleSend(event);
+		nextState((ExchangeImpl)exchange);
+		_handlers.handleSend(Events.createEvent(this, exchange));
 	}
 
 	@Override
@@ -120,6 +120,34 @@ public class ExchangeChannelImpl
 	private void stopDelivery() {
 		_isActive = false;
 		_deliveryThread.interrupt();
+	}
+	
+	private void nextState(ExchangeImpl exchange) throws IllegalStateException {
+		switch (exchange.getState()) {
+		case NEW :
+			exchange.setState(ExchangeState.IN);
+			break;
+		case IN : 
+			// Error is valid for all MEPs in this state
+			if (exchange.getError() != null) {
+				exchange.setState(ExchangeState.ERROR);
+				break;
+			}
+
+			// Set the state based on the messages in the exchange
+			if (exchange.getPattern().equals(ExchangePattern.IN_ONLY)) {
+				throw new IllegalStateException("Invalid state transition for pattern");
+			}
+			else if (exchange.getFault() != null) {
+				exchange.setState(ExchangeState.FAULT);
+			}
+			else {
+				exchange.setState(ExchangeState.OUT);
+			}
+			break;
+		case OUT : case FAULT : case ERROR :
+			throw new IllegalStateException("Invalid state transition for pattern");
+		}
 	}
 
 }

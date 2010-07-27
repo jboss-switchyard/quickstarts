@@ -25,16 +25,23 @@ package org.jboss.esb.cinco.tests;
 import javax.xml.namespace.QName;
 
 import org.jboss.esb.cinco.BaseHandler;
+import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeChannel;
+import org.jboss.esb.cinco.Message;
+import org.jboss.esb.cinco.MessageFactory;
 import org.jboss.esb.cinco.event.ExchangeInEvent;
+import org.jboss.esb.cinco.internal.Environment;
+import org.jboss.esb.cinco.internal.ExchangeState;
 
-public class OneWayProvider extends BaseHandler {
-	
+public class BaseProvider extends BaseHandler {
 	private ExchangeChannel _channel;
 	private int _receiveCount;
+	private ExchangeState _nextState;
+	private Message _replyMessage;
 	
-	public OneWayProvider(ExchangeChannel channel) {
-		_channel = channel;
+	public BaseProvider(Environment env, ExchangeState nextState) {
+		_nextState = nextState;
+		_channel = env.getExchangeChannelFactory().createChannel();
 		_channel.getHandlerChain().addLast("me", this);
 	}
 	
@@ -45,8 +52,33 @@ public class OneWayProvider extends BaseHandler {
 	@Override
 	public void exchangeIn(ExchangeInEvent event) {
 		_receiveCount++;
-		event.getExchange().done();
+		
+		Exchange exchange = event.getExchange();
+		
+		switch(_nextState) {
+		case OUT :
+			exchange.setOut(_replyMessage);
+			break;
+		case FAULT :
+			exchange.setFault(_replyMessage);
+			break;
+		case ERROR :
+			exchange.setError(new Exception());
+			break;
+		case DONE :
+			return;
+		}
+		
 		_channel.send(event.getExchange());
+	}
+	
+	public void setReply(Message message) {
+		_replyMessage = message;
+	}
+
+	
+	public void setNextState(ExchangeState state) {
+		_nextState = state;
 	}
 
 	public int getReceiveCount() {

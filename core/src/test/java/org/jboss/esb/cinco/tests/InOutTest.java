@@ -35,9 +35,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class InOnlyTest {
+public class InOutTest {
 	
-	private final QName SERVICE_1 = new QName("InOnlyTest");
+	private final QName SERVICE_1 = new QName("InOutTest");
 	private Environment _env;
 	private BaseConsumer _consumer;
 	private BaseProvider _provider;
@@ -53,9 +53,8 @@ public class InOnlyTest {
 		// Create a consumer instance
 		_consumer = new BaseConsumer(_env);
 		// Create a provider instance
-		_provider = new BaseProvider(_env, ExchangeState.DONE);
+		_provider = new BaseProvider(_env, ExchangeState.OUT);
 		_provider.setReply(_messageFactory.createMessage());
-		
 	}
 	
 	@After
@@ -64,10 +63,10 @@ public class InOnlyTest {
 	}
 	
 	@Test
-	public void testInOnlySuccess() throws Exception {
+	public void testInOutSuccess() throws Exception {
 		
 		Exchange inOnly = _exchangeFactory.createExchange(
-				ExchangePattern.IN_ONLY);
+				ExchangePattern.IN_OUT);
 		_provider.provideService(SERVICE_1);
 		_consumer.invokeService(inOnly, SERVICE_1, null);
 		
@@ -75,16 +74,35 @@ public class InOnlyTest {
 		Thread.sleep(200);
 		
 		Assert.assertTrue(_provider.getReceiveCount() == _consumer.getSendCount());
+		Assert.assertTrue(_consumer.getOutCount() == 1);
 	}
 
 	@Test
-	public void testInOnlyError() throws Exception {
+	public void testInOutFault() throws Exception {
+
+		// set our provider to return a fault
+		_provider.setNextState(ExchangeState.FAULT);
+		
+		Exchange inOnly = _exchangeFactory.createExchange(
+				ExchangePattern.IN_OUT);
+		_provider.provideService(SERVICE_1);
+		_consumer.invokeService(inOnly, SERVICE_1, null);
+		
+		// wait a sec, since this is async
+		Thread.sleep(200);
+		
+		Assert.assertTrue(_provider.getReceiveCount() == _consumer.getSendCount());
+		Assert.assertTrue(_consumer.getFaultCount() == 1);
+	}
+
+	@Test
+	public void testInOutError() throws Exception {
 		
 		// set our provider to return an error
 		_provider.setNextState(ExchangeState.ERROR);
 		
 		Exchange inOnly = _exchangeFactory.createExchange(
-				ExchangePattern.IN_ONLY);
+				ExchangePattern.IN_OUT);
 		_provider.provideService(SERVICE_1);
 		_consumer.invokeService(inOnly, SERVICE_1, null);
 		

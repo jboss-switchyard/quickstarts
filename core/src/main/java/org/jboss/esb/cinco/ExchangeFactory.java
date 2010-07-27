@@ -24,8 +24,5 @@ package org.jboss.esb.cinco;
 
 public interface ExchangeFactory {
 
-	Exchange createExchange(String patternURI);
-	InOnlyExchange createInOnlyExchange();
-	InOutExchange createInOutExchange();
-	RobustInOnlyExchange createRobustInOnlyExchange();
+	Exchange createExchange(ExchangePattern pattern);
 }

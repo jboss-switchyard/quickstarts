@@ -22,42 +22,64 @@
 
 package org.jboss.esb.cinco.internal;
 
-import org.jboss.esb.cinco.InOutExchange;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.activation.DataSource;
+
 import org.jboss.esb.cinco.Message;
 
-public class InOutExchangeImpl  extends ExchangeImpl implements InOutExchange {
-
-	public InOutExchangeImpl() {
-		super(PATTERN_URI);
-	}
-
-	@Override
-	public Message getFault() {
-		return getMessage(Messages.FAULT);
-	}
-
-	@Override
-	public Message getIn() {
-		return getMessage(Messages.IN);
-	}
-
-	@Override
-	public Message getOut() {
-		return getMessage(Messages.OUT);
-	}
+public class MessageImpl implements Message {
 	
+	private Map<String, Object> _properties = 
+		new HashMap<String, Object>();
+	private Object _content;
+	private Map<String, DataSource> _attachments = 
+		new HashMap<String, DataSource>();
+
 	@Override
-	public void setIn(Message message) {
-		setMessage(Messages.IN, message);
-	}
-	
-	@Override
-	public void setOut(Message message) {
-		setMessage(Messages.OUT, message);
+	public void addAttachment(String name, DataSource attachment) {
+		_attachments.put(name, attachment);
 	}
 
 	@Override
-	public void setFault(Message message) {
-		setMessage(Messages.FAULT, message);
+	public DataSource getAttachment(String name) {
+		return _attachments.get(name);
 	}
+
+	@Override
+	public Map<String, DataSource> getAttachmentMap() {
+		return new HashMap<String, DataSource>(_attachments);
+	}
+
+	@Override
+	public Object getContent() {
+		return _content;
+	}
+
+	@Override
+	public <T> T getContent(Class<T> type) {
+		return type.cast(_content);
+	}
+
+	@Override
+	public Object getProperty(String name) {
+		return _properties.get(name);
+	}
+
+	@Override
+	public Map<String, Object> getPropertyMap() {
+		return new HashMap<String, Object>(_properties);
+	}
+
+	@Override
+	public void setContent(Object content) {
+		_content = content;
+	}
+
+	@Override
+	public void setProperty(String name, Object val) {
+		_properties.put(name, val);
+	}
+
 }

@@ -24,44 +24,13 @@ package org.jboss.esb.cinco.internal;
 
 import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeFactory;
-import org.jboss.esb.cinco.InOnlyExchange;
-import org.jboss.esb.cinco.InOutExchange;
-import org.jboss.esb.cinco.RobustInOnlyExchange;
+import org.jboss.esb.cinco.ExchangePattern;
 
 public class ExchangeFactoryImpl implements ExchangeFactory {
 	
-	
 	@Override
-	public Exchange createExchange(String patternURI) {
-		// this logic is pretty hacky -- need a finder method/class to discover
-		// exchange impls based on uri
-		if (InOnlyExchange.PATTERN_URI.equals(patternURI)) {
-			return createInOnlyExchange();
-		}
-		else if (RobustInOnlyExchange.PATTERN_URI.equals(patternURI)) {
-			return createRobustInOnlyExchange();
-		}
-		else if (InOutExchange.PATTERN_URI.equals(patternURI)) {
-			return createInOutExchange();
-		}
-		else {
-			return null;
-		}
-	}
-
-	@Override
-	public InOnlyExchange createInOnlyExchange() {
-		return new InOnlyExchangeImpl();
-	}
-
-	@Override
-	public InOutExchange createInOutExchange() {
-		return new InOutExchangeImpl();
-	}
-
-	@Override
-	public RobustInOnlyExchange createRobustInOnlyExchange() {
-		return new RobustInOnlyExchangeImpl();
+	public Exchange createExchange(ExchangePattern pattern) {
+		return new ExchangeImpl(pattern);
 	}
 
 }

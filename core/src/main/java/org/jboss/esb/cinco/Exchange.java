@@ -27,17 +27,21 @@ import javax.xml.namespace.QName;
 public interface Exchange {
 	
 	ExchangeContext getContext();
-	String getPattern();
-	ExchangeState getState();
+	ExchangePattern getPattern();
 	String getId();
 	
 	void setService(QName service);
 	QName getService();
 
-	void setMessage(String name, Message message);
-	Message getMessage(String name);
+	void setIn(Message message);
+	Message getIn();
+	
+	void setOut(Message message);
+	Message getOut();
+
+	void setFault(Message message);
+	Message getFault();
 	
 	void setError(Throwable error);
 	Throwable getError();
-	void done();
 }

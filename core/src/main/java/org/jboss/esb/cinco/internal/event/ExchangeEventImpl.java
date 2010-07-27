@@ -25,7 +25,6 @@ package org.jboss.esb.cinco.internal.event;
 import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangeEvent;
-import org.jboss.esb.cinco.ExchangeState;
 
 public class ExchangeEventImpl implements ExchangeEvent {
 
@@ -45,11 +44,6 @@ public class ExchangeEventImpl implements ExchangeEvent {
 	@Override
 	public Exchange getExchange() {
 		return _exchange;
-	}
-
-	@Override
-	public ExchangeState getState() {
-		return _exchange.getState();
 	}
 
 }

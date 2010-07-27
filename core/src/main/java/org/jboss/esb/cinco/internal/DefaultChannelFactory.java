@@ -59,5 +59,9 @@ public class DefaultChannelFactory implements ExchangeChannelFactory {
 		channel.getHandlerChain().addLast("system handlers", _systemHandlers);
 		return channel;
 	}
+	
+	List<ExchangeChannelImpl> getChannels() {
+		return new ArrayList<ExchangeChannelImpl>(_channels);
+	}
 
 }

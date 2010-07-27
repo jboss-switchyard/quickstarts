@@ -25,7 +25,6 @@ package org.jboss.esb.cinco.internal;
 import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangeEvent;
-import org.jboss.esb.cinco.internal.event.ExchangeCompleteEventImpl;
 import org.jboss.esb.cinco.internal.event.ExchangeErrorEventImpl;
 import org.jboss.esb.cinco.internal.event.ExchangeFaultEventImpl;
 import org.jboss.esb.cinco.internal.event.ExchangeInEventImpl;
@@ -34,9 +33,7 @@ import org.jboss.esb.cinco.internal.event.ExchangeOutEventImpl;
 public class Events {
 
 	public static ExchangeEvent createEvent(ExchangeChannel channel, Exchange exchange) {
-		switch (exchange.getState()) {
-		case DONE :
-			return new ExchangeCompleteEventImpl(channel, exchange);
+		switch (((ExchangeImpl)exchange).getState()) {
 		case ERROR :
 			return new ExchangeErrorEventImpl(channel, exchange);
 		case FAULT :
