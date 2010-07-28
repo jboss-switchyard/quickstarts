@@ -20,43 +20,17 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco.internal;
+package org.jboss.esb.cinco.spi;
 
-import org.jboss.esb.cinco.ExchangeChannel;
-import org.jboss.esb.cinco.ExchangeChannelFactory;
-import org.jboss.esb.cinco.ExchangeFactory;
-import org.jboss.esb.cinco.MessageFactory;
+import java.util.Map;
 
-public class Environment {
-	
-	private DefaultChannelFactory _channelFactory;
-	private ExchangeFactoryImpl _exchangeFactory;
-	private DefaultServiceRegistry	_registry;
-	private MessageFactory _messageFactory;
+import org.jboss.esb.cinco.ExchangePattern;
 
-	public Environment() {
-		_exchangeFactory = new ExchangeFactoryImpl();
-		_registry = new DefaultServiceRegistry();
-		_channelFactory = new DefaultChannelFactory(_registry);
-		_messageFactory = new DefaultMessageFactory();
-	}
+public interface ServiceContext {
+
+	enum Role {CONSUMER, PROVIDER};
 	
-	public void destroy() {
-		for (ExchangeChannel channel : _channelFactory.getChannels()) {
-			channel.close();
-		}
-	}
-	
-	public MessageFactory getMessageFactory() {
-		return _messageFactory;
-	}
-	
-	public ExchangeChannelFactory getExchangeChannelFactory() {
-		return _channelFactory;
-	}
-	
-	public ExchangeFactory getExchangeFactory() {
-		return _exchangeFactory;
-	}
-	 
+	Role getRole();
+	ExchangePattern getPattern();
+	Map<String, Object> getConfig();
 }

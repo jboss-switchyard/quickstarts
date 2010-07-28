@@ -20,21 +20,39 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco;
+package org.jboss.esb.cinco.tests;
 
-import javax.xml.namespace.QName;
+import org.jboss.esb.cinco.ExchangeChannel;
+import org.jboss.esb.cinco.ExchangeChannelFactory;
+import org.jboss.esb.cinco.MessageFactory;
+import org.jboss.esb.cinco.internal.DefaultChannelFactory;
+import org.jboss.esb.cinco.internal.DefaultMessageFactory;
+import org.jboss.esb.cinco.internal.DefaultServiceRegistry;
 
-public interface ExchangeChannel {
+public class Environment {
 	
-	Exchange createExchange(ExchangePattern pattern);
-	
-	void registerService(QName serviceName);
-	void unregisterService(QName serviceName);
+	private DefaultChannelFactory _channelFactory;
+	private DefaultServiceRegistry	_registry;
+	private MessageFactory _messageFactory;
 
-	void send(Exchange exchange);
+	public Environment() {
+		_registry = new DefaultServiceRegistry();
+		_channelFactory = new DefaultChannelFactory(_registry);
+		_messageFactory = new DefaultMessageFactory();
+	}
 	
-	void setHandlerChain(HandlerChain handlers);
-	HandlerChain getHandlerChain();
+	public void destroy() {
+		for (ExchangeChannel channel : _channelFactory.getChannels()) {
+			channel.close();
+		}
+	}
 	
-	void close();
+	public MessageFactory getMessageFactory() {
+		return _messageFactory;
+	}
+	
+	public ExchangeChannelFactory getExchangeChannelFactory() {
+		return _channelFactory;
+	}
+	 
 }

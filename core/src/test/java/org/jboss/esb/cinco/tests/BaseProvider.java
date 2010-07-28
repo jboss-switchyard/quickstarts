@@ -28,9 +28,7 @@ import org.jboss.esb.cinco.BaseHandler;
 import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.Message;
-import org.jboss.esb.cinco.MessageFactory;
 import org.jboss.esb.cinco.event.ExchangeInEvent;
-import org.jboss.esb.cinco.internal.Environment;
 import org.jboss.esb.cinco.internal.ExchangeState;
 
 public class BaseProvider extends BaseHandler {

@@ -20,9 +20,40 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco;
+package org.jboss.esb.cinco.framework.internal;
 
-public interface ExchangeFactory {
+import java.util.Map;
 
-	Exchange createExchange(ExchangePattern pattern);
+import org.jboss.esb.cinco.ExchangePattern;
+import org.jboss.esb.cinco.spi.ServiceContext;
+
+public class ServiceContextImpl implements ServiceContext {
+
+	private Role _role;
+	private ExchangePattern _pattern;
+	private Map<String,Object> _config;
+	
+	public ServiceContextImpl(Role role, 
+			ExchangePattern pattern, 
+			Map<String,Object> config) {
+		_role = role;
+		_config = config;
+		_pattern = pattern;
+	}
+	
+	@Override
+	public Map<String, Object> getConfig() {
+		return _config;
+	}
+
+	@Override
+	public Role getRole() {
+		return _role;
+	}
+
+	@Override
+	public ExchangePattern getPattern() {
+		return _pattern;
+	}
+
 }

@@ -30,14 +30,39 @@ import org.jboss.esb.cinco.event.ExchangeOutEvent;
 
 public abstract class BaseHandler implements ExchangeHandler {
 
+	public enum Direction {SEND, RECEIVE};
+	
+	private boolean _sendEnabled;
+	private boolean _recvEnabled;
+	
+	public BaseHandler() {
+		_sendEnabled = true;
+		_recvEnabled = true;
+	}
+	
+	public BaseHandler(Direction ... eventFilter) {
+		for (Direction d : eventFilter) {
+			if (d.equals(Direction.RECEIVE)) {
+				_recvEnabled = true;
+			}
+			else if (d.equals(Direction.SEND)) {
+				_sendEnabled = true;
+			}
+		}
+	}
+	
 	@Override
 	public void handleReceive(ExchangeEvent event) {
-		handleEvent(event);
+		if (_recvEnabled) {
+			handleEvent(event);
+		}
 	}
 
 	@Override
 	public void handleSend(ExchangeEvent event) {
-		handleEvent(event);
+		if (_sendEnabled) {
+			handleEvent(event);
+		}
 	} 
 	
 	public void exchangeIn(ExchangeInEvent event) {

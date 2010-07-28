@@ -150,5 +150,10 @@ public class ExchangeChannelImpl
 		}
 	}
 
+	@Override
+	public Exchange createExchange(ExchangePattern pattern) {
+		return new ExchangeImpl(pattern);
+	}
+
 }
 

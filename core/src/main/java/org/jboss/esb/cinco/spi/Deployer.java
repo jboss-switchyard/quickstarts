@@ -20,21 +20,15 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco;
+package org.jboss.esb.cinco.spi;
 
 import javax.xml.namespace.QName;
 
-public interface ExchangeChannel {
-	
-	Exchange createExchange(ExchangePattern pattern);
-	
-	void registerService(QName serviceName);
-	void unregisterService(QName serviceName);
+public interface Deployer {
 
-	void send(Exchange exchange);
-	
-	void setHandlerChain(HandlerChain handlers);
-	HandlerChain getHandlerChain();
-	
-	void close();
+	String getServiceType();
+	void deploy(QName service, ServiceContext context);
+	void stop(QName service);
+	void start(QName service);
+	void undeploy(QName service);
 }

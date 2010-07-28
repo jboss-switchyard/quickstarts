@@ -9,7 +9,16 @@
 	</parent>
 	
 	<groupId>org.jboss.esb.cinco</groupId>
-	<artifactId>core</artifactId>
+	<artifactId>framework</artifactId>
 	<version>${version.esb}</version>
-	<name>JBoss ESB : Core</name>
+	<name>JBoss ESB : Framework</name>
+	
+	
+    <dependencies>
+        <dependency>
+            <groupId>org.jboss.esb.cinco</groupId>
+            <artifactId>core</artifactId>
+            <version>${version.esb}</version>
+        </dependency>
+    </dependencies>
 </project>

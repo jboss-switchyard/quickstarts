@@ -40,7 +40,7 @@ public class DefaultChannelFactory implements ExchangeChannelFactory {
 	private List<ExchangeChannelImpl> _channels = 
 		new ArrayList<ExchangeChannelImpl>();
 	
-	DefaultChannelFactory(ServiceRegistry registry) {
+	public DefaultChannelFactory(ServiceRegistry registry) {
 		_registry = registry;
 		
 		// Build out the system handlers chain.  It would be cleaner if we 
@@ -60,7 +60,7 @@ public class DefaultChannelFactory implements ExchangeChannelFactory {
 		return channel;
 	}
 	
-	List<ExchangeChannelImpl> getChannels() {
+	public List<ExchangeChannelImpl> getChannels() {
 		return new ArrayList<ExchangeChannelImpl>(_channels);
 	}
 

@@ -27,11 +27,11 @@ import javax.xml.namespace.QName;
 import org.jboss.esb.cinco.BaseHandler;
 import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeChannel;
+import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.Message;
 import org.jboss.esb.cinco.event.ExchangeErrorEvent;
 import org.jboss.esb.cinco.event.ExchangeFaultEvent;
 import org.jboss.esb.cinco.event.ExchangeOutEvent;
-import org.jboss.esb.cinco.internal.Environment;
 
 public class BaseConsumer extends BaseHandler {
 	
@@ -47,8 +47,9 @@ public class BaseConsumer extends BaseHandler {
 	}
 	
 	public void invokeService(
-			Exchange exchange, QName serviceName, Message requestMessage) {
+			ExchangePattern pattern, QName serviceName, Message requestMessage) {
 		
+		Exchange exchange = _channel.createExchange(pattern);
 		exchange.setService(serviceName);
 		exchange.setIn(requestMessage);
 		

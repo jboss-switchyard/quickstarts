@@ -7,6 +7,7 @@
 	<name>JBoss ESB : Parent</name>
 	<packaging>pom</packaging>
 	<properties>
+	    <version.esb>5.0.0-SNAPSHOT</version.esb>
 		<version.junit>4.6</version.junit>
 	</properties>
 	<build>

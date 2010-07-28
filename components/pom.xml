@@ -2,16 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jboss.esb.cinco</groupId>
-	    <artifactId>jboss-esb</artifactId>
+	    <artifactId>components</artifactId>
 	    <version>>5.0.0-SNAPSHOT</version>
-	    <name>JBoss ESB</name>
+	    <name>JBoss ESB : Components</name>
 
 	    <modules>
-	        <module>parent</module>
-	        <module>core</module>
-	        <module>framework</module>
-	        <module>components</module>
-	        <module>test</module>
+	        <module>file</module>
 	    </modules>
 
 	    <packaging>pom</packaging>

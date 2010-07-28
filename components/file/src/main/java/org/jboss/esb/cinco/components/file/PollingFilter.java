@@ -20,17 +20,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco.internal;
+package org.jboss.esb.cinco.components.file;
 
-import org.jboss.esb.cinco.Exchange;
-import org.jboss.esb.cinco.ExchangeFactory;
-import org.jboss.esb.cinco.ExchangePattern;
+import java.io.File;
+import java.io.FileFilter;
 
-public class ExchangeFactoryImpl implements ExchangeFactory {
+public class PollingFilter implements FileFilter {
+
+	private String _pattern;
+	
+	PollingFilter(String pattern) {
+		_pattern = pattern;
+	}
 	
 	@Override
-	public Exchange createExchange(ExchangePattern pattern) {
-		return new ExchangeImpl(pattern);
+	public boolean accept(File pathname) {
+		System.out.println(pathname.getName());
+		return true;
 	}
-
+	
 }

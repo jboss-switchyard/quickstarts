@@ -20,21 +20,27 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco;
+package org.jboss.esb.cinco.components.file;
 
-import javax.xml.namespace.QName;
+import org.jboss.esb.cinco.BaseHandler;
+import org.jboss.esb.cinco.Exchange;
+import org.jboss.esb.cinco.Message;
+import org.jboss.esb.cinco.event.ExchangeInEvent;
 
-public interface ExchangeChannel {
-	
-	Exchange createExchange(ExchangePattern pattern);
-	
-	void registerService(QName serviceName);
-	void unregisterService(QName serviceName);
+public class FileSpool extends BaseHandler {
 
-	void send(Exchange exchange);
+	private FileServiceConfig _config;
 	
-	void setHandlerChain(HandlerChain handlers);
-	HandlerChain getHandlerChain();
+	public FileSpool(FileServiceConfig config) {
+		super(BaseHandler.Direction.RECEIVE);
+		_config = config;
+	}
+
+	@Override
+	public void exchangeIn(ExchangeInEvent event) {
+		Exchange exchange = event.getExchange();
+		Message inMsg = exchange.getIn();
+		
+	}
 	
-	void close();
 }

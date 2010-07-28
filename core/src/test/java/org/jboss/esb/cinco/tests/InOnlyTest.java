@@ -24,11 +24,8 @@ package org.jboss.esb.cinco.tests;
 
 import javax.xml.namespace.QName;
 
-import org.jboss.esb.cinco.Exchange;
-import org.jboss.esb.cinco.ExchangeFactory;
 import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.MessageFactory;
-import org.jboss.esb.cinco.internal.Environment;
 import org.jboss.esb.cinco.internal.ExchangeState;
 import org.junit.After;
 import org.junit.Assert;
@@ -41,13 +38,11 @@ public class InOnlyTest {
 	private Environment _env;
 	private BaseConsumer _consumer;
 	private BaseProvider _provider;
-	private ExchangeFactory _exchangeFactory;
 	private MessageFactory _messageFactory;
 
 	@Before
 	public void setUp() throws Exception {
 		_env = new Environment();
-		_exchangeFactory = _env.getExchangeFactory();
 		_messageFactory = _env.getMessageFactory();
 
 		// Create a consumer instance
@@ -66,10 +61,8 @@ public class InOnlyTest {
 	@Test
 	public void testInOnlySuccess() throws Exception {
 		
-		Exchange inOnly = _exchangeFactory.createExchange(
-				ExchangePattern.IN_ONLY);
 		_provider.provideService(SERVICE_1);
-		_consumer.invokeService(inOnly, SERVICE_1, null);
+		_consumer.invokeService(ExchangePattern.IN_ONLY, SERVICE_1, null);
 		
 		// wait a sec, since this is async
 		Thread.sleep(200);
@@ -83,10 +76,8 @@ public class InOnlyTest {
 		// set our provider to return an error
 		_provider.setNextState(ExchangeState.ERROR);
 		
-		Exchange inOnly = _exchangeFactory.createExchange(
-				ExchangePattern.IN_ONLY);
 		_provider.provideService(SERVICE_1);
-		_consumer.invokeService(inOnly, SERVICE_1, null);
+		_consumer.invokeService(ExchangePattern.IN_ONLY, SERVICE_1, null);
 		
 		// wait a sec, since this is async
 		Thread.sleep(200);

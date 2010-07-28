@@ -20,21 +20,32 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco;
+package org.jboss.esb.cinco.framework.internal;
 
-import javax.xml.namespace.QName;
+import org.jboss.esb.cinco.ExchangeChannelFactory;
+import org.jboss.esb.cinco.MessageFactory;
+import org.jboss.esb.cinco.spi.ManagedContext;
 
-public interface ExchangeChannel {
+public class ManagedContextImpl implements ManagedContext {
 	
-	Exchange createExchange(ExchangePattern pattern);
+	private ExchangeChannelFactory _channelFactory;
+	private MessageFactory _messageFactory;
 	
-	void registerService(QName serviceName);
-	void unregisterService(QName serviceName);
+	public ManagedContextImpl(ExchangeChannelFactory channelFactory,
+			MessageFactory messageFactory) {
+		
+		_channelFactory = channelFactory;
+		_messageFactory = messageFactory;
+	}
 
-	void send(Exchange exchange);
-	
-	void setHandlerChain(HandlerChain handlers);
-	HandlerChain getHandlerChain();
-	
-	void close();
+	@Override
+	public ExchangeChannelFactory getChannelFactory() {
+		return _channelFactory;
+	}
+
+	@Override
+	public MessageFactory getMessageFactory() {
+		return _messageFactory;
+	}
+
 }
