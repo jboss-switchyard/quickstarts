@@ -33,7 +33,7 @@ import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.Message;
 import org.jboss.esb.cinco.MessageFactory;
 
-public class FilePoll implements Runnable{
+public class FilePoll implements Runnable {
 
 	private static final String WORK_DIR = "work";
 	
@@ -85,20 +85,19 @@ public class FilePoll implements Runnable{
 	
 	
 	private void initDirs() {
-		_pollDir = new File(_config.getTargetDir());
+		_pollDir = _config.getTargetDir();
+		_workDir = new File(_pollDir, WORK_DIR);
+		
 		if (_workDir.exists()) {
 			if (!_workDir.isDirectory()) {
 				throw new RuntimeException(
 						"Work directory blocked by file: " + _workDir.getAbsolutePath());
 			}
-			else {
-				if (!_workDir.mkdir()) {
-					throw new RuntimeException(
-							"Failed to create work directory: " + _workDir.getAbsolutePath());
-				}
-			}
 		}
-		_workDir = new File(_pollDir, WORK_DIR);
+		else if (!_workDir.mkdir()) {
+				throw new RuntimeException(
+						"Failed to create work directory: " + _workDir.getAbsolutePath());
+		}
 	}
 
 }

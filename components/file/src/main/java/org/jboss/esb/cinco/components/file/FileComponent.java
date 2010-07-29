@@ -24,7 +24,9 @@ package org.jboss.esb.cinco.components.file;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.namespace.QName;
 
@@ -39,26 +41,28 @@ public class FileComponent implements Managed, Deployer {
 	private static final String SERVICE_TYPE = "file";
 	
 	private ManagedContext _context;
-	private ExchangeChannel	_exchangeChannel;
-	private ScheduledExecutorService _pollingPool;
+	private ExchangeChannel	_channel;
+	private ScheduledExecutorService _scheduler;
+	private Map<QName, Future> _consumers = 
+		new HashMap<QName, Future>();
 	private Map<QName, FileServiceConfig> _consumedServices = 
 		new HashMap<QName, FileServiceConfig>();
 	private Map<QName, FileServiceConfig> _providedServices = 
 		new HashMap<QName, FileServiceConfig>();
 
 	public FileComponent() {
-		_pollingPool = Executors.newScheduledThreadPool(2);
+		_scheduler = Executors.newScheduledThreadPool(2);
 	}
 
 	@Override
 	public void init(ManagedContext context) {
 		_context = context;
-		_exchangeChannel = _context.getChannelFactory().createChannel();
+		_channel = _context.getChannelFactory().createChannel();
 	}
 
 	@Override
 	public void destroy() {
-		_exchangeChannel.close();
+		_channel.close();
 	}
 
 
@@ -70,17 +74,16 @@ public class FileComponent implements Managed, Deployer {
 	@Override
 	public void start(QName service) {
 		if (_consumedServices.containsKey(service)) {
-			
+			createConsumer(_consumedServices.get(service));
 		}
 		else {
-			
 		}
 	}
 	
 	@Override
 	public void deploy(QName service, ServiceContext context) {
 		
-		FileServiceConfig config = new FileServiceConfig(context);
+		FileServiceConfig config = new FileServiceConfig(service, context);
 		// This would be a great time to validate the config
 		
 		if (context.getRole().equals(ServiceContext.Role.CONSUMER)) {
@@ -94,6 +97,7 @@ public class FileComponent implements Managed, Deployer {
 	@Override
 	public void stop(QName service) {
 		if (_consumedServices.containsKey(service)) {
+			_consumers.get(service).cancel(true);
 		}
 		else {
 		}
@@ -105,6 +109,14 @@ public class FileComponent implements Managed, Deployer {
 		// blech - this sucks
 		_consumedServices.remove(service);
 		_providedServices.remove(service);
+	}
+	
+	private void createConsumer(FileServiceConfig config) {
+		FilePoll consumer = new FilePoll(config.getServiceName(), config, 
+				_channel, _context.getMessageFactory());
+		Future scheduledConsumer = _scheduler.scheduleAtFixedRate(
+				consumer, 0, 3, TimeUnit.SECONDS);
+		_consumers.put(config.getServiceName(), scheduledConsumer);
 	}
 	
 }

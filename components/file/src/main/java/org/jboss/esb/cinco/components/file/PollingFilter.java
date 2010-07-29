@@ -34,9 +34,8 @@ public class PollingFilter implements FileFilter {
 	}
 	
 	@Override
-	public boolean accept(File pathname) {
-		System.out.println(pathname.getName());
-		return true;
+	public boolean accept(File file) {
+		return file.isFile() && file.getName().matches(_pattern);
 	}
 	
 }

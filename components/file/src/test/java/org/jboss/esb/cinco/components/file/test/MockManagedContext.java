@@ -20,20 +20,32 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco.spi;
+package org.jboss.esb.cinco.components.file.test;
 
-import java.util.Map;
+import org.jboss.esb.cinco.ExchangeChannelFactory;
+import org.jboss.esb.cinco.MessageFactory;
+import org.jboss.esb.cinco.internal.DefaultChannelFactory;
+import org.jboss.esb.cinco.internal.DefaultMessageFactory;
+import org.jboss.esb.cinco.internal.DefaultServiceRegistry;
+import org.jboss.esb.cinco.spi.ManagedContext;
+import org.jboss.esb.cinco.spi.ServiceRegistry;
 
-import javax.xml.namespace.QName;
+public class MockManagedContext implements ManagedContext {
 
-import org.jboss.esb.cinco.ExchangePattern;
-
-public interface ServiceContext {
-
-	enum Role {CONSUMER, PROVIDER};
+	private ServiceRegistry _registry = new DefaultServiceRegistry();
 	
-	Role getRole();
-	QName getServiceReference();
-	ExchangePattern getPattern();
-	Map<String, Object> getConfig();
+	public MockManagedContext() {
+		
+	}
+	
+	@Override
+	public ExchangeChannelFactory getChannelFactory() {
+		return new DefaultChannelFactory(_registry);
+	}
+
+	@Override
+	public MessageFactory getMessageFactory() {
+		return new DefaultMessageFactory();
+	}
+
 }

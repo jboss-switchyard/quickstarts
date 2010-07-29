@@ -20,20 +20,65 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco.spi;
+package org.jboss.esb.cinco.components.file.test;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
 
 import org.jboss.esb.cinco.ExchangePattern;
+import org.jboss.esb.cinco.components.file.FileServiceConfig;
+import org.jboss.esb.cinco.spi.ServiceContext;
 
-public interface ServiceContext {
+public class FileServiceContext implements ServiceContext {
 
-	enum Role {CONSUMER, PROVIDER};
+	private ExchangePattern _pattern;
+	private Role _role;
+	private QName _serviceRef;
+	private Map<String, Object> _config = new HashMap<String, Object>();
 	
-	Role getRole();
-	QName getServiceReference();
-	ExchangePattern getPattern();
-	Map<String, Object> getConfig();
+	public FileServiceContext() {
+	}
+	
+	@Override
+	public Map<String, Object> getConfig() {
+		return _config;
+	}
+
+	@Override
+	public ExchangePattern getPattern() {
+		return _pattern;
+	}
+
+	@Override
+	public Role getRole() {
+		return _role;
+	}
+
+	@Override
+	public QName getServiceReference() {
+		return _serviceRef;
+	}
+	
+	public void setRole(Role role) {
+		_role = role;
+	}
+	
+	public void setPattern(ExchangePattern pattern) {
+		_pattern = pattern;
+	}
+	
+	public void setServiceReference(QName serviceRef) {
+		_serviceRef = serviceRef;
+	}
+	
+	public void setTargetPath(String path) {
+		_config.put(FileServiceConfig.PATH_KEY, path);
+	}
+	
+	public void setFilter(String filter) {
+		_config.put(FileServiceConfig.FILTER_KEY, filter);
+	}
+
 }

@@ -33,6 +33,7 @@ import org.jboss.esb.cinco.event.ExchangeInEvent;
 
 public class FileSpool extends BaseHandler {
 
+	private int _msgCount;
 	private FileServiceConfig _config;
 	private QName _service;
 	
@@ -48,8 +49,13 @@ public class FileSpool extends BaseHandler {
 		Message inMsg = exchange.getIn();
 		
 		try {
-			FileUtil.writeContent(inMsg.getContent(String.class), 
-				new File(_config.getTargetDir()));
+			// Naive approach to file naming : service name + counter
+			File target = new File(
+					_config.getTargetDir(), _service.getLocalPart() + 
+					"_" + (++_msgCount) + ".txt");
+			
+			// Create the file using content from the message
+			FileUtil.writeContent(inMsg.getContent(String.class), target);
 		}
 		catch (java.io.IOException ioEx) {
 			exchange.setError(ioEx);

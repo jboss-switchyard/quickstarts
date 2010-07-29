@@ -22,22 +22,28 @@
 
 package org.jboss.esb.cinco.components.file;
 
+import java.io.File;
+
+import javax.xml.namespace.QName;
+
 import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.spi.ServiceContext;
 
 public class FileServiceConfig {
 
-	private static final String PATH_KEY = "file.service.path";
-	private static final String FILTER_KEY = "file.service.filter";
+	public static final String PATH_KEY = "file.service.path";
+	public static final String FILTER_KEY = "file.service.filter";
 	
 	private ServiceContext _context;
+	private QName _serviceName;
 	
-	public FileServiceConfig(ServiceContext context) {
+	public FileServiceConfig(QName serviceName, ServiceContext context) {
 		_context = context;
+		_serviceName = serviceName;
 	}
 	
-	public String getTargetDir() {
-		return (String)_context.getConfig().get(PATH_KEY);
+	public File getTargetDir() {
+		return new File((String)_context.getConfig().get(PATH_KEY));
 	}
 	
 	public String getFilter() {
@@ -50,5 +56,9 @@ public class FileServiceConfig {
 	
 	public ServiceContext getContext() {
 		return _context;
+	}
+	
+	public QName getServiceName() {
+		return _serviceName;
 	}
 }
