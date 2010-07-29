@@ -81,6 +81,7 @@ public class FileComponent implements Managed, Deployer {
 	public void deploy(QName service, ServiceContext context) {
 		
 		FileServiceConfig config = new FileServiceConfig(context);
+		// This would be a great time to validate the config
 		
 		if (context.getRole().equals(ServiceContext.Role.CONSUMER)) {
 			_consumedServices.put(service, config);

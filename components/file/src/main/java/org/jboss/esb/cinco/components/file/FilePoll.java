@@ -24,8 +24,6 @@ package org.jboss.esb.cinco.components.file;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileReader;
-import java.nio.CharBuffer;
 
 import javax.xml.namespace.QName;
 
@@ -71,7 +69,7 @@ public class FilePoll implements Runnable{
 	
 	public void send(File file) {
 		try {
-			String content = getContent(file);
+			String content = FileUtil.readContent(file);
 			Message message = _messageFactory.createMessage();
 			message.setContent(content);
 			
@@ -85,14 +83,6 @@ public class FilePoll implements Runnable{
 		}
 	}
 	
-	
-	// Temp Hack : Assume the content can be interpreted as a string
-	private String getContent(File file) throws java.io.IOException {
-		FileReader rfile = new FileReader(file);
-		CharBuffer buff = CharBuffer.allocate((int)file.length());
-		rfile.read(buff);
-		return buff.toString();
-	}
 	
 	private void initDirs() {
 		_pollDir = new File(_config.getTargetDir());

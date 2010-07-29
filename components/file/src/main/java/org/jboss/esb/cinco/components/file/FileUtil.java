@@ -23,38 +23,53 @@
 package org.jboss.esb.cinco.components.file;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.CharBuffer;
 
-import javax.xml.namespace.QName;
-
-import org.jboss.esb.cinco.BaseHandler;
-import org.jboss.esb.cinco.Exchange;
-import org.jboss.esb.cinco.Message;
-import org.jboss.esb.cinco.event.ExchangeInEvent;
-
-public class FileSpool extends BaseHandler {
-
-	private FileServiceConfig _config;
-	private QName _service;
+public class FileUtil {
 	
-	public FileSpool(QName service, FileServiceConfig config) {
-		super(BaseHandler.Direction.RECEIVE);
-		_service = service;
-		_config = config;
-	}
-
-	@Override
-	public void exchangeIn(ExchangeInEvent event) {
-		Exchange exchange = event.getExchange();
-		Message inMsg = exchange.getIn();
+	/**
+	 * Returns the content of a file as a string.  This is a just a temp
+	 * example and definitely not recommended as a general purpose message
+	 * processing approach.
+	 * @param file file to read
+	 * @return string containing files content
+	 * @throws java.io.IOException kaboom!
+	 */
+	public static String readContent(File file) throws java.io.IOException {
+		
+		FileReader rfile = null;
+		String content = null;
 		
 		try {
-			FileUtil.writeContent(inMsg.getContent(String.class), 
-				new File(_config.getTargetDir()));
+			rfile = new FileReader(file);
+			CharBuffer buff = CharBuffer.allocate((int)file.length());
+			rfile.read(buff);
+			content = buff.toString();
 		}
-		catch (java.io.IOException ioEx) {
-			exchange.setError(ioEx);
+		finally {
+			if (rfile != null) {
+				rfile.close();
+			}
 		}
 		
+		return content;
 	}
 	
+	public static void writeContent(String content, File dest) 
+	throws IOException {
+		FileWriter wfile = null;
+		
+		try {
+			wfile = new FileWriter(dest);
+			wfile.write(content);
+		}
+		finally {
+			if (wfile != null) {
+				wfile.close();
+			}
+		}
+	}
 }
