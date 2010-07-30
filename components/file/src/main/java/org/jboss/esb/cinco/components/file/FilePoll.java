@@ -45,12 +45,12 @@ public class FilePoll implements Runnable {
 	private MessageFactory		_messageFactory;
 	private QName				_service;
 	
-	public FilePoll(QName service, FileServiceConfig config, 
-			ExchangeChannel channel, MessageFactory messageFactory) {
+	public FilePoll(FileServiceConfig config, ExchangeChannel channel, 
+			MessageFactory messageFactory) {
 		
 		_config = config;
 		_channel = channel;
-		_service = service;
+		_service = config.getServiceName();
 		_messageFactory = messageFactory;
 		
 		initDirs();

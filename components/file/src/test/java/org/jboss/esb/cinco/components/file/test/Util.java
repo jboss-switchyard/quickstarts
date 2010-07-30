@@ -20,10 +20,41 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco.components.file;
+package org.jboss.esb.cinco.components.file.test;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
-public interface FileListener {
-	void fileAvailable(File file);
+public class Util {
+	
+	public static void copyFile(File source, File dest) throws java.io.IOException {
+		FileInputStream fis = new FileInputStream(source);
+		FileOutputStream fos = new FileOutputStream(dest);
+		
+		try {
+			byte[] buf = new byte[4 * 1024];
+			int count;
+			while ((count = fis.read(buf)) != -1) {
+				fos.write(buf, 0, count);
+			}
+		}
+		finally {
+			if (fis != null) {
+				fis.close();
+			}
+			if (fos != null) {
+				fos.close();
+			}
+		}
+	}
+	
+	public static void delete(File file) {
+		if (file.isDirectory()) {
+			for (File child : file.listFiles()) {
+				delete(child);
+			}
+		}
+		file.delete();
+	}
 }

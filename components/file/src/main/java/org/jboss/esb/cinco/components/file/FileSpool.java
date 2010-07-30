@@ -23,6 +23,8 @@
 package org.jboss.esb.cinco.components.file;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -34,25 +36,32 @@ import org.jboss.esb.cinco.event.ExchangeInEvent;
 public class FileSpool extends BaseHandler {
 
 	private int _msgCount;
-	private FileServiceConfig _config;
-	private QName _service;
+	private Map<QName, FileServiceConfig> _services = 
+		new HashMap<QName, FileServiceConfig>();
 	
-	public FileSpool(QName service, FileServiceConfig config) {
+	public FileSpool() {
 		super(BaseHandler.Direction.RECEIVE);
-		_service = service;
-		_config = config;
+	}
+	
+	public void addService(FileServiceConfig config) {
+		_services.put(config.getServiceName(), config);
+	}
+	
+	public void removeService(FileServiceConfig config) {
+		_services.remove(config.getServiceName());
 	}
 
 	@Override
 	public void exchangeIn(ExchangeInEvent event) {
 		Exchange exchange = event.getExchange();
 		Message inMsg = exchange.getIn();
+		QName service = exchange.getService();
 		
 		try {
 			// Naive approach to file naming : service name + counter
 			File target = new File(
-					_config.getTargetDir(), _service.getLocalPart() + 
-					"_" + (++_msgCount) + ".txt");
+					_services.get(service).getTargetDir(), 
+					service.getLocalPart() + "_" + (++_msgCount) + ".txt");
 			
 			// Create the file using content from the message
 			FileUtil.writeContent(inMsg.getContent(String.class), target);

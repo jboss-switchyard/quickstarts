@@ -43,6 +43,7 @@ public class FileComponent implements Managed, Deployer {
 	private ManagedContext _context;
 	private ExchangeChannel	_channel;
 	private ScheduledExecutorService _scheduler;
+	private FileSpool _provider;
 	private Map<QName, Future> _consumers = 
 		new HashMap<QName, Future>();
 	private Map<QName, FileServiceConfig> _consumedServices = 
@@ -58,6 +59,8 @@ public class FileComponent implements Managed, Deployer {
 	public void init(ManagedContext context) {
 		_context = context;
 		_channel = _context.getChannelFactory().createChannel();
+		_provider = new FileSpool();
+		_channel.getHandlerChain().addLast("file-spooler", _provider);
 	}
 
 	@Override
@@ -77,6 +80,7 @@ public class FileComponent implements Managed, Deployer {
 			createConsumer(_consumedServices.get(service));
 		}
 		else {
+			_channel.registerService(service);
 		}
 	}
 	
@@ -91,6 +95,7 @@ public class FileComponent implements Managed, Deployer {
 		}
 		else {
 			_providedServices.put(service, config);
+			_provider.addService(config);
 		}
 	}
 
@@ -100,20 +105,23 @@ public class FileComponent implements Managed, Deployer {
 			_consumers.get(service).cancel(true);
 		}
 		else {
+			_channel.unregisterService(service);
 		}
 	}
 
 	@Override
 	public void undeploy(QName service) {
-		
-		// blech - this sucks
-		_consumedServices.remove(service);
-		_providedServices.remove(service);
+		if (_consumedServices.containsKey(service)) {
+			_consumedServices.remove(service);
+		}
+		else {
+			_provider.removeService(_providedServices.remove(service));
+		}
 	}
 	
 	private void createConsumer(FileServiceConfig config) {
-		FilePoll consumer = new FilePoll(config.getServiceName(), config, 
-				_channel, _context.getMessageFactory());
+		FilePoll consumer = new FilePoll(
+				config, _channel, _context.getMessageFactory());
 		Future scheduledConsumer = _scheduler.scheduleAtFixedRate(
 				consumer, 0, 3, TimeUnit.SECONDS);
 		_consumers.put(config.getServiceName(), scheduledConsumer);

@@ -26,7 +26,10 @@ import java.io.File;
 
 import javax.xml.namespace.QName;
 
+import org.jboss.esb.cinco.Exchange;
+import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangePattern;
+import org.jboss.esb.cinco.Message;
 import org.jboss.esb.cinco.components.file.FileComponent;
 import org.jboss.esb.cinco.spi.ManagedContext;
 import org.jboss.esb.cinco.spi.ServiceContext.Role;
@@ -36,11 +39,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-public class FileConsumerTest {
-	private final QName SERVICE = new QName("TEST_SERVICE");
+public class FileProviderTest {
+	private final QName IN_ONLY_SERVICE = new QName("IN_ONLY_SERVICE");
+	private final QName IN_OUT_SERVICE = new QName("IN_OUT_SERVICE");
 	
-	private File _testMsg = new File("target/test-classes/message.txt");
-	private File _testRoot = new File("target/test/FileConsumerTest");
+	private File _testRoot = new File("target/test/FileProviderTest");
 	private File _requestDir = new File(_testRoot, "request");
 	private File _replyDir = new File(_testRoot, "reply");
 	
@@ -57,38 +60,42 @@ public class FileConsumerTest {
 		_fileComponent = new FileComponent();
 		_fileComponent.init(_context);
 		_serviceContext = new FileServiceContext();
-		_serviceContext.setRole(Role.CONSUMER);
+		_serviceContext.setRole(Role.PROVIDER);
 		
 		_requestDir.mkdirs();
 		_replyDir.mkdirs();
-		Util.copyFile(_testMsg, new File(_requestDir, "test.txt"));
-		
-		// this is necessary so that there is actually a service available to invoke
-		_context.getChannelFactory().createChannel().registerService(SERVICE);
 	}
 	
 	@After
 	public void tearDown() throws Exception {
 		_fileComponent.destroy();
-		Util.delete(_testRoot);
 	}
 
 	@Test
 	public void testInOnly() throws Exception {
 		
-		File workDir = new File(_requestDir, "work");
-		
 		_serviceContext.setPattern(ExchangePattern.IN_ONLY);
 		_serviceContext.setTargetPath(_requestDir.getAbsolutePath());
-		_serviceContext.setFilter(".*");
-		_fileComponent.deploy(SERVICE, _serviceContext);
-		_fileComponent.start(SERVICE);
+		_fileComponent.deploy(IN_ONLY_SERVICE, _serviceContext);
+		_fileComponent.start(IN_ONLY_SERVICE);
 		
-		// wait for the file poller to pick up any test files
+		invokeService(IN_ONLY_SERVICE, ExchangePattern.IN_ONLY, "InOnly Test");
+		
+		// wait for the file spooler to pick up the message and write the file
 		Thread.sleep(500);
 		
-		_fileComponent.stop(SERVICE);
+		_fileComponent.stop(IN_ONLY_SERVICE);
 		
-		Assert.assertTrue(workDir.listFiles().length == 1);
+		Assert.assertTrue(_requestDir.listFiles().length == 1);
+	}
+	
+	private void invokeService(QName service, ExchangePattern pattern, String content) {
+		ExchangeChannel channel = _context.getChannelFactory().createChannel();
+		Exchange exchange = channel.createExchange(pattern);
+		Message message = _context.getMessageFactory().createMessage();
+		message.setContent(content);
+		exchange.setIn(message);
+		exchange.setService(service);
+		channel.send(exchange);
 	}
 }
