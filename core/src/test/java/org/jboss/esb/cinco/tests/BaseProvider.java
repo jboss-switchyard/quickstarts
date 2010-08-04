@@ -37,9 +37,9 @@ public class BaseProvider extends BaseHandler {
 	private ExchangeState _nextState;
 	private Message _replyMessage;
 	
-	public BaseProvider(Environment env, ExchangeState nextState) {
+	public BaseProvider(ExchangeChannel channel, ExchangeState nextState) {
 		_nextState = nextState;
-		_channel = env.getExchangeChannelFactory().createChannel();
+		_channel = channel;
 		_channel.getHandlerChain().addLast("me", this);
 	}
 	

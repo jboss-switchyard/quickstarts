@@ -20,5 +20,11 @@
             <artifactId>core</artifactId>
             <version>${version.esb}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.esb.cinco</groupId>
+            <artifactId>core</artifactId>
+            <version>${version.esb}</version>
+            <classifier>tests</classifier>
+        </dependency>
     </dependencies>
 </project>

@@ -25,6 +25,7 @@ package org.jboss.esb.cinco.components.file.test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 
 public class Util {
 	
@@ -56,5 +57,13 @@ public class Util {
 			}
 		}
 		file.delete();
+	}
+	
+	public static FilenameFilter createFilter(final String regex) {
+		return new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return name.matches(regex);
+			}
+		};
 	}
 }

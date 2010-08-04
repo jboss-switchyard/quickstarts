@@ -48,7 +48,8 @@ public class InOnlyTest {
 		// Create a consumer instance
 		_consumer = new BaseConsumer(_env);
 		// Create a provider instance
-		_provider = new BaseProvider(_env, ExchangeState.DONE);
+		_provider = new BaseProvider(
+				_env.getExchangeChannelFactory().createChannel(), ExchangeState.DONE);
 		_provider.setReply(_messageFactory.createMessage());
 		
 	}

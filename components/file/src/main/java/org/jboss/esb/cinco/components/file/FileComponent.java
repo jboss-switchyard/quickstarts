@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.namespace.QName;
 
 import org.jboss.esb.cinco.ExchangeChannel;
+import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.spi.Deployer;
 import org.jboss.esb.cinco.spi.Managed;
 import org.jboss.esb.cinco.spi.ManagedContext;
@@ -43,8 +44,8 @@ public class FileComponent implements Managed, Deployer {
 	private ManagedContext _context;
 	private ExchangeChannel	_channel;
 	private ScheduledExecutorService _scheduler;
-	private FileSpool _provider;
-	private Map<QName, Future> _consumers = 
+	private FileSpool _spooler;
+	private Map<QName, Future> _pollers = 
 		new HashMap<QName, Future>();
 	private Map<QName, FileServiceConfig> _consumedServices = 
 		new HashMap<QName, FileServiceConfig>();
@@ -59,8 +60,8 @@ public class FileComponent implements Managed, Deployer {
 	public void init(ManagedContext context) {
 		_context = context;
 		_channel = _context.getChannelFactory().createChannel();
-		_provider = new FileSpool();
-		_channel.getHandlerChain().addLast("file-spooler", _provider);
+		_spooler = new FileSpool();
+		_channel.getHandlerChain().addLast("file-spooler", _spooler);
 	}
 
 	@Override
@@ -77,10 +78,15 @@ public class FileComponent implements Managed, Deployer {
 	@Override
 	public void start(QName service) {
 		if (_consumedServices.containsKey(service)) {
-			createConsumer(_consumedServices.get(service));
+			createPoller(_consumedServices.get(service));
 		}
 		else {
 			_channel.registerService(service);
+			FileServiceConfig config = _providedServices.get(service);
+			if (config.getPattern().equals(ExchangePattern.IN_OUT)) {
+				// we need to set up a polling thread for replies
+				createPoller(config);
+			}
 		}
 	}
 	
@@ -95,17 +101,18 @@ public class FileComponent implements Managed, Deployer {
 		}
 		else {
 			_providedServices.put(service, config);
-			_provider.addService(config);
+			_spooler.addService(config);
 		}
 	}
 
 	@Override
 	public void stop(QName service) {
-		if (_consumedServices.containsKey(service)) {
-			_consumers.get(service).cancel(true);
-		}
-		else {
+		if (_providedServices.containsKey(service)) {
 			_channel.unregisterService(service);
+		}
+		
+		if (_pollers.containsKey(service)) {
+			_pollers.get(service).cancel(true);
 		}
 	}
 
@@ -115,16 +122,16 @@ public class FileComponent implements Managed, Deployer {
 			_consumedServices.remove(service);
 		}
 		else {
-			_provider.removeService(_providedServices.remove(service));
+			_spooler.removeService(_providedServices.remove(service));
 		}
 	}
 	
-	private void createConsumer(FileServiceConfig config) {
+	private void createPoller(FileServiceConfig config) {
 		FilePoll consumer = new FilePoll(
 				config, _channel, _context.getMessageFactory());
 		Future scheduledConsumer = _scheduler.scheduleAtFixedRate(
 				consumer, 0, 3, TimeUnit.SECONDS);
-		_consumers.put(config.getServiceName(), scheduledConsumer);
+		_pollers.put(config.getServiceName(), scheduledConsumer);
 	}
 	
 }

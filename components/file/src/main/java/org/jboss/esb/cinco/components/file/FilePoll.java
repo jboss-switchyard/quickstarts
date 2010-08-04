@@ -73,9 +73,10 @@ public class FilePoll implements Runnable {
 			Message message = _messageFactory.createMessage();
 			message.setContent(content);
 			
-			Exchange exchange = _channel.createExchange(ExchangePattern.IN_ONLY);
+			Exchange exchange = _channel.createExchange(_config.getPattern());
 			exchange.setIn(message);
 			exchange.setService(_service);
+			exchange.getContext().put("targetDir", _pollDir.getAbsolutePath());
 			_channel.send(exchange);
 		}
 		catch (Exception ex) {

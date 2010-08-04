@@ -26,11 +26,13 @@ import java.io.File;
 
 import javax.xml.namespace.QName;
 
+import org.jboss.esb.cinco.BaseHandler;
 import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.Message;
 import org.jboss.esb.cinco.components.file.FileComponent;
+import org.jboss.esb.cinco.event.ExchangeOutEvent;
 import org.jboss.esb.cinco.spi.ManagedContext;
 import org.jboss.esb.cinco.spi.ServiceContext.Role;
 import org.junit.After;
@@ -40,16 +42,16 @@ import org.junit.Test;
 
 
 public class FileProviderTest {
-	private final QName IN_ONLY_SERVICE = new QName("IN_ONLY_SERVICE");
-	private final QName IN_OUT_SERVICE = new QName("IN_OUT_SERVICE");
+	private final QName IN_ONLY_SERVICE = new QName("provider-in-only");
+	private final QName IN_OUT_SERVICE = new QName("provider-in-out");
 	
 	private File _testRoot = new File("target/test/FileProviderTest");
-	private File _requestDir = new File(_testRoot, "request");
-	private File _replyDir = new File(_testRoot, "reply");
 	
 	private ManagedContext _context;
 	private FileServiceContext _serviceContext;
 	private FileComponent _fileComponent;
+	private ExchangeChannel _channel;
+	private ReplyHandler _replyHandler;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -61,9 +63,11 @@ public class FileProviderTest {
 		_fileComponent.init(_context);
 		_serviceContext = new FileServiceContext();
 		_serviceContext.setRole(Role.PROVIDER);
+		_channel = _context.getChannelFactory().createChannel();
+		_replyHandler = new ReplyHandler();
+		_channel.getHandlerChain().addLast("counter", _replyHandler);
 		
-		_requestDir.mkdirs();
-		_replyDir.mkdirs();
+		_testRoot.mkdirs();
 	}
 	
 	@After
@@ -75,7 +79,7 @@ public class FileProviderTest {
 	public void testInOnly() throws Exception {
 		
 		_serviceContext.setPattern(ExchangePattern.IN_ONLY);
-		_serviceContext.setTargetPath(_requestDir.getAbsolutePath());
+		_serviceContext.setTargetPath(_testRoot.getAbsolutePath());
 		_fileComponent.deploy(IN_ONLY_SERVICE, _serviceContext);
 		_fileComponent.start(IN_ONLY_SERVICE);
 		
@@ -86,16 +90,49 @@ public class FileProviderTest {
 		
 		_fileComponent.stop(IN_ONLY_SERVICE);
 		
-		Assert.assertTrue(_requestDir.listFiles().length == 1);
+		File[] requests = _testRoot.listFiles(Util.createFilter(".*request"));
+		Assert.assertTrue(requests.length == 1);
+	}
+	
+
+	@Test
+	public void testInOut() throws Exception {
+		
+		_serviceContext.setPattern(ExchangePattern.IN_OUT);
+		_serviceContext.setTargetPath(_testRoot.getAbsolutePath());
+		_fileComponent.deploy(IN_OUT_SERVICE, _serviceContext);
+		_fileComponent.start(IN_OUT_SERVICE);
+		
+		invokeService(IN_OUT_SERVICE, ExchangePattern.IN_OUT, "InOut Test");
+		
+		// wait for the file spooler to pick up the message and write the file
+		Thread.sleep(500);
+		
+		_fileComponent.stop(IN_OUT_SERVICE);
+		
+		// verify that the request message was created
+		File[] requests = _testRoot.listFiles(Util.createFilter(".*request"));
+		Assert.assertTrue(requests.length == 1);
+		
+		// verify that the reply was received by the consuming channel
+		//Assert.assertTrue(_replyHandler._receiveCount == 1);
 	}
 	
 	private void invokeService(QName service, ExchangePattern pattern, String content) {
-		ExchangeChannel channel = _context.getChannelFactory().createChannel();
-		Exchange exchange = channel.createExchange(pattern);
+		Exchange exchange = _channel.createExchange(pattern);
 		Message message = _context.getMessageFactory().createMessage();
 		message.setContent(content);
 		exchange.setIn(message);
 		exchange.setService(service);
-		channel.send(exchange);
+		_channel.send(exchange);
+	}
+	
+
+	class ReplyHandler extends BaseHandler {
+		int _receiveCount;
+		public void exchangeOut(ExchangeOutEvent event) {
+			++_receiveCount;
+		}
 	}
 }
+

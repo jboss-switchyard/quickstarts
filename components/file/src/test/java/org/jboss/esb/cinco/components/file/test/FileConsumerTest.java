@@ -27,9 +27,12 @@ import java.io.File;
 import javax.xml.namespace.QName;
 
 import org.jboss.esb.cinco.ExchangePattern;
+import org.jboss.esb.cinco.Message;
 import org.jboss.esb.cinco.components.file.FileComponent;
+import org.jboss.esb.cinco.internal.ExchangeState;
 import org.jboss.esb.cinco.spi.ManagedContext;
 import org.jboss.esb.cinco.spi.ServiceContext.Role;
+import org.jboss.esb.cinco.tests.BaseProvider;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -37,12 +40,11 @@ import org.junit.Test;
 
 
 public class FileConsumerTest {
-	private final QName SERVICE = new QName("TEST_SERVICE");
+	private final QName IN_ONLY_SERVICE = new QName("consumer-in-only");
+	private final QName IN_OUT_SERVICE = new QName("consumer-in-out");
 	
 	private File _testMsg = new File("target/test-classes/message.txt");
 	private File _testRoot = new File("target/test/FileConsumerTest");
-	private File _requestDir = new File(_testRoot, "request");
-	private File _replyDir = new File(_testRoot, "reply");
 	
 	private ManagedContext _context;
 	private FileServiceContext _serviceContext;
@@ -53,42 +55,68 @@ public class FileConsumerTest {
 		// clean up from last run
 		Util.delete(_testRoot);
 		
+		_testRoot.mkdirs();
+		
 		_context = new MockManagedContext();
 		_fileComponent = new FileComponent();
 		_fileComponent.init(_context);
 		_serviceContext = new FileServiceContext();
 		_serviceContext.setRole(Role.CONSUMER);
 		
-		_requestDir.mkdirs();
-		_replyDir.mkdirs();
-		Util.copyFile(_testMsg, new File(_requestDir, "test.txt"));
-		
-		// this is necessary so that there is actually a service available to invoke
-		_context.getChannelFactory().createChannel().registerService(SERVICE);
+		Util.copyFile(_testMsg, new File(_testRoot, "test.request"));
 	}
 	
 	@After
 	public void tearDown() throws Exception {
 		_fileComponent.destroy();
-		Util.delete(_testRoot);
 	}
 
 	@Test
 	public void testInOnly() throws Exception {
 		
-		File workDir = new File(_requestDir, "work");
+		BaseProvider provider = new BaseProvider(
+				_context.getChannelFactory().createChannel(), ExchangeState.DONE);
+		provider.provideService(IN_ONLY_SERVICE);
 		
 		_serviceContext.setPattern(ExchangePattern.IN_ONLY);
-		_serviceContext.setTargetPath(_requestDir.getAbsolutePath());
-		_serviceContext.setFilter(".*");
-		_fileComponent.deploy(SERVICE, _serviceContext);
-		_fileComponent.start(SERVICE);
+		_serviceContext.setTargetPath(_testRoot.getAbsolutePath());
+		_serviceContext.setFilter(".*request");
+		_fileComponent.deploy(IN_ONLY_SERVICE, _serviceContext);
+		_fileComponent.start(IN_ONLY_SERVICE);
 		
 		// wait for the file poller to pick up any test files
 		Thread.sleep(500);
 		
-		_fileComponent.stop(SERVICE);
+		_fileComponent.stop(IN_ONLY_SERVICE);
 		
-		Assert.assertTrue(workDir.listFiles().length == 1);
+		Assert.assertTrue(provider.getReceiveCount() == 1);
+	}
+	
+
+	@Test
+	public void testInOut() throws Exception {
+		
+		BaseProvider provider = new BaseProvider(
+				_context.getChannelFactory().createChannel(), ExchangeState.OUT);
+		Message replyMsg = _context.getMessageFactory().createMessage();
+		replyMsg.setContent("Reply Message");
+		provider.setReply(replyMsg);
+		provider.provideService(IN_OUT_SERVICE);
+		
+		_serviceContext.setPattern(ExchangePattern.IN_OUT);
+		_serviceContext.setTargetPath(_testRoot.getAbsolutePath());
+		_serviceContext.setFilter(".*request");
+		_fileComponent.deploy(IN_OUT_SERVICE, _serviceContext);
+		_fileComponent.start(IN_OUT_SERVICE);
+		
+		// wait for the file poller to pick up any test files
+		Thread.sleep(500);
+		
+		_fileComponent.stop(IN_OUT_SERVICE);
+		
+		Assert.assertTrue(provider.getReceiveCount() == 1);
+
+		File[] replies = _testRoot.listFiles(Util.createFilter(".*reply"));
+		Assert.assertTrue(replies.length == 1);
 	}
 }
