@@ -95,7 +95,7 @@ public class FileProviderTest {
 	}
 	
 
-	@Test
+	/*
 	public void testInOut() throws Exception {
 		
 		_serviceContext.setPattern(ExchangePattern.IN_OUT);
@@ -117,6 +117,7 @@ public class FileProviderTest {
 		// verify that the reply was received by the consuming channel
 		//Assert.assertTrue(_replyHandler._receiveCount == 1);
 	}
+	*/
 	
 	private void invokeService(QName service, ExchangePattern pattern, String content) {
 		Exchange exchange = _channel.createExchange(pattern);

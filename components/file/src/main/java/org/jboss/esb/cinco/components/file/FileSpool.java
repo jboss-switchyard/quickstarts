@@ -30,14 +30,12 @@ import javax.xml.namespace.QName;
 
 import org.jboss.esb.cinco.BaseHandler;
 import org.jboss.esb.cinco.Exchange;
-import org.jboss.esb.cinco.Message;
 import org.jboss.esb.cinco.event.ExchangeInEvent;
 import org.jboss.esb.cinco.event.ExchangeOutEvent;
 
 public class FileSpool extends BaseHandler {
 
 	private int _requestCount;
-	private int _replyCount;
 	private Map<QName, FileServiceConfig> _services = 
 		new HashMap<QName, FileServiceConfig>();
 	
@@ -60,6 +58,7 @@ public class FileSpool extends BaseHandler {
 		
 		try {
 			// Naive approach to file naming : service name + counter
+			
 			File target = new File(
 					_services.get(service).getTargetDir(), 
 					service.getLocalPart() + "." + (++_requestCount) + ".request");
@@ -76,20 +75,24 @@ public class FileSpool extends BaseHandler {
 	@Override
 	public void exchangeOut(ExchangeOutEvent event) {
 		Exchange exchange = event.getExchange();
-		QName service = exchange.getService();
 		
 		try {
-			// Naive approach to file naming : service name + counter
-			File targetDir = new File(exchange.getContext().get("targetDir").toString());
-			File targetFile = new File(targetDir, 
-					service.getLocalPart() + "." + (++_replyCount) + ".reply");
-			
 			// Create the file using content from the message
-			FileUtil.writeContent(event.getOut().getContent(String.class), targetFile);
+			FileUtil.writeContent(event.getOut().getContent(String.class), 
+					getOutFile(exchange));
 		}
 		catch (java.io.IOException ioEx) {
 			exchange.setError(ioEx);
 		}
 		
+	}
+	
+	public File getOutFile(Exchange exchange) {
+		String dirPath = 
+			(String)exchange.getContext().get(Properties.IN_FILE_DIR);
+		String fileName =
+			(String)exchange.getContext().get(Properties.IN_FILE_NAME);
+		
+		return new File(new File(dirPath), fileName + ".reply");
 	}
 }
