@@ -22,42 +22,29 @@
 
 package org.jboss.esb.cinco.internal;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import javax.xml.namespace.QName;
 
 import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.HandlerChain;
 import org.jboss.esb.cinco.spi.ExchangeEndpoint;
-import org.jboss.esb.cinco.spi.ServiceRegistry;
 
 public class ExchangeChannelImpl 
 	implements ExchangeChannel, ExchangeEndpoint, Runnable {
 	
 	private volatile boolean _isActive;
 	private Thread _deliveryThread;
-	private ServiceRegistry _registry;
 	private HandlerChain 	_handlers = new DefaultHandlerChain();
-	private Set<QName> 		_services = new HashSet<QName>();
 	private BlockingQueue<Exchange> _exchanges = 
 		new LinkedBlockingQueue<Exchange>();
 	
-	ExchangeChannelImpl(ServiceRegistry registry) {
-		_registry = registry;
+	ExchangeChannelImpl() {
 		startDelivery();
 	}
 
-	@Override
 	public void close() {
-		for (QName service : _services) {
-			_registry.unregisterService(service, this);
-		}
-		
 		stopDelivery();
 	}
 
@@ -67,30 +54,11 @@ public class ExchangeChannelImpl
 	}
 
 	@Override
-	public void registerService(QName serviceName) {
-		_registry.registerService(serviceName, this);
-		_services.add(serviceName);
-
-	}
-
-	@Override
 	public void send(Exchange exchange) {
 		nextState((ExchangeImpl)exchange);
 		_handlers.handleSend(Events.createEvent(this, exchange));
 	}
 
-	@Override
-	public void setHandlerChain(HandlerChain handlers) {
-		_handlers = handlers;
-
-	}
-
-	@Override
-	public void unregisterService(QName serviceName) {
-		_registry.unregisterService(serviceName, this);
-		_services.remove(serviceName);
-
-	}
 
 	@Override
 	public void process(Exchange exchange) {

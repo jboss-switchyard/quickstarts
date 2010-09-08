@@ -22,11 +22,20 @@
 
 package org.jboss.esb.cinco.tests;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
+import org.jboss.esb.cinco.BaseHandler;
+import org.jboss.esb.cinco.Exchange;
+import org.jboss.esb.cinco.ExchangeChannel;
+import org.jboss.esb.cinco.ExchangeEvent;
 import org.jboss.esb.cinco.ExchangePattern;
-import org.jboss.esb.cinco.MessageFactory;
-import org.jboss.esb.cinco.internal.ExchangeState;
+import org.jboss.esb.cinco.ServiceDomain;
+import org.jboss.esb.cinco.event.ExchangeErrorEvent;
+import org.jboss.esb.cinco.event.ExchangeInEvent;
+import org.jboss.esb.cinco.internal.ServiceDomains;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -34,57 +43,48 @@ import org.junit.Test;
 
 public class InOnlyTest {
 	
-	private final QName SERVICE_1 = new QName("InOnlyTest");
-	private Environment _env;
-	private BaseConsumer _consumer;
-	private BaseProvider _provider;
-	private MessageFactory _messageFactory;
+	// where the magic happens
+	private ServiceDomain _domain;
+	// event counters used by tests
+	private List<ExchangeEvent> inEvents = new LinkedList<ExchangeEvent>();
 
 	@Before
 	public void setUp() throws Exception {
-		_env = new Environment();
-		_messageFactory = _env.getMessageFactory();
-
-		// Create a consumer instance
-		_consumer = new BaseConsumer(_env);
-		// Create a provider instance
-		_provider = new BaseProvider(
-				_env.getExchangeChannelFactory().createChannel(), ExchangeState.DONE);
-		_provider.setReply(_messageFactory.createMessage());
-		
+		_domain = ServiceDomains.getDomain();
 	}
 	
 	@After
 	public void tearDown() throws Exception {
-		_env.destroy();
+		inEvents.clear();
 	}
 	
 	@Test
 	public void testInOnlySuccess() throws Exception {
+		final QName serviceName = new QName("inOnlySuccess");
+		// Provide the service
+		ExchangeChannel providerChannel = _domain.createChannel();
+		providerChannel.getHandlerChain().addFirst("provider", 
+				new BaseHandler() {
+					public void exchangeIn(ExchangeInEvent event) {
+						inEvents.add(event);
+					}
+		});
+		_domain.registerService(serviceName, providerChannel);
 		
-		_provider.provideService(SERVICE_1);
-		_consumer.invokeService(ExchangePattern.IN_ONLY, SERVICE_1, null);
+		// Consume the service
+		ExchangeChannel consumerChannel = _domain.createChannel();
+		Exchange exchange = consumerChannel.createExchange(ExchangePattern.IN_ONLY);
+		exchange.setService(serviceName);
+		consumerChannel.send(exchange);
 		
 		// wait a sec, since this is async
 		Thread.sleep(200);
-		
-		Assert.assertTrue(_provider.getReceiveCount() == _consumer.getSendCount());
+		Assert.assertTrue(inEvents.size() == 1);
 	}
 
 	@Test
 	public void testInOnlyError() throws Exception {
-		
-		// set our provider to return an error
-		_provider.setNextState(ExchangeState.ERROR);
-		
-		_provider.provideService(SERVICE_1);
-		_consumer.invokeService(ExchangePattern.IN_ONLY, SERVICE_1, null);
-		
-		// wait a sec, since this is async
-		Thread.sleep(200);
-		
-		Assert.assertTrue(_provider.getReceiveCount() == _consumer.getSendCount());
-		Assert.assertTrue(_consumer.getErrorCount() == 1);
+		// Test a handler throwing an error here!
 	}
 
 }

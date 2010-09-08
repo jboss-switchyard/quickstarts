@@ -22,7 +22,11 @@
 
 package org.jboss.esb.cinco;
 
-public interface MessageFactory {
+import org.jboss.esb.cinco.internal.MessageImpl;
 
-	public Message createMessage();
+public class MessageFactory {
+
+	public static Message createMessage() {
+		return new MessageImpl();
+	}
 }

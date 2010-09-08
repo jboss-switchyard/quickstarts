@@ -9,9 +9,9 @@
 	</parent>
 	
 	<groupId>org.jboss.esb.cinco</groupId>
-	<artifactId>bootstrap</artifactId>
+	<artifactId>deploy</artifactId>
 	<version>${version.esb}</version>
-	<name>JBoss ESB : Bootstrapper</name>
+	<name>JBoss ESB : Deployment</name>
 	
 	
     <dependencies>

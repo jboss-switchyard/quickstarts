@@ -32,10 +32,6 @@ public interface Message {
 	Object getContent();
 	<T> T getContent(Class<T> type);
 	
-	void setProperty(String name, Object val);
-	Object getProperty(String name);
-	Map<String, Object> getPropertyMap();
-	
 	void addAttachment(String name, DataSource attachment);
 	DataSource getAttachment(String name);
 	Map<String, DataSource> getAttachmentMap();

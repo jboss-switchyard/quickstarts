@@ -22,26 +22,26 @@
 
 package org.jboss.esb.cinco.internal;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 import org.jboss.esb.cinco.ExchangeChannel;
-import org.jboss.esb.cinco.ExchangeChannelFactory;
 import org.jboss.esb.cinco.HandlerChain;
+import org.jboss.esb.cinco.ServiceDomain;
 import org.jboss.esb.cinco.internal.handlers.AddressingHandler;
 import org.jboss.esb.cinco.internal.handlers.DeliveryHandler;
 import org.jboss.esb.cinco.spi.ServiceRegistry;
 
-public class DefaultChannelFactory implements ExchangeChannelFactory {
+public class RootDomain implements ServiceDomain {
 	
 	private HandlerChain _systemHandlers;
 	private ServiceRegistry _registry;
+	private Set<QName> _services = new HashSet<QName>();
 	
-	private List<ExchangeChannelImpl> _channels = 
-		new ArrayList<ExchangeChannelImpl>();
-	
-	public DefaultChannelFactory(ServiceRegistry registry) {
-		_registry = registry;
+	public RootDomain() {
+		_registry = new DefaultServiceRegistry();
 		
 		// Build out the system handlers chain.  It would be cleaner if we 
 		// handled this via config.
@@ -52,16 +52,31 @@ public class DefaultChannelFactory implements ExchangeChannelFactory {
 	
 	@Override
 	public ExchangeChannel createChannel() {
-		ExchangeChannelImpl channel = new ExchangeChannelImpl(_registry);
-		_channels.add(channel);
-		
+		 ExchangeChannel channel = new ExchangeChannelImpl();
 		// Add system handlers to channel
 		channel.getHandlerChain().addLast("system handlers", _systemHandlers);
 		return channel;
 	}
 	
-	public List<ExchangeChannelImpl> getChannels() {
-		return new ArrayList<ExchangeChannelImpl>(_channels);
+
+	@Override
+	public synchronized void close() {
+		
+	}
+	
+
+	@Override
+	public void registerService(QName serviceName, ExchangeChannel channel) {
+		_registry.registerService(serviceName, (ExchangeChannelImpl)channel);
+		_services.add(serviceName);
+
+	}
+	
+	@Override
+	public void unregisterService(QName serviceName, ExchangeChannel channel) {
+		_registry.unregisterService(serviceName, (ExchangeChannelImpl)channel);
+		_services.remove(serviceName);
+
 	}
 
 }

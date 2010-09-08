@@ -31,8 +31,6 @@ import org.jboss.esb.cinco.Message;
 
 public class MessageImpl implements Message {
 	
-	private Map<String, Object> _properties = 
-		new HashMap<String, Object>();
 	private Object _content;
 	private Map<String, DataSource> _attachments = 
 		new HashMap<String, DataSource>();
@@ -63,23 +61,8 @@ public class MessageImpl implements Message {
 	}
 
 	@Override
-	public Object getProperty(String name) {
-		return _properties.get(name);
-	}
-
-	@Override
-	public Map<String, Object> getPropertyMap() {
-		return new HashMap<String, Object>(_properties);
-	}
-
-	@Override
 	public void setContent(Object content) {
 		_content = content;
-	}
-
-	@Override
-	public void setProperty(String name, Object val) {
-		_properties.put(name, val);
 	}
 
 }

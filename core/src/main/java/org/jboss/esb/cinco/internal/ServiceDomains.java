@@ -20,32 +20,32 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco.framework.internal;
+package org.jboss.esb.cinco.internal;
 
-import org.jboss.esb.cinco.ExchangeChannelFactory;
-import org.jboss.esb.cinco.MessageFactory;
-import org.jboss.esb.cinco.spi.ManagedContext;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class ManagedContextImpl implements ManagedContext {
+import org.jboss.esb.cinco.ServiceDomain;
+
+public class ServiceDomains {
+	public static final String ROOT_DOMAIN = "org.jboss.esb.domains.root";
+
+	private static ConcurrentHashMap<String, ServiceDomain> _domains = 
+		new ConcurrentHashMap<String, ServiceDomain>();
 	
-	private ExchangeChannelFactory _channelFactory;
-	private MessageFactory _messageFactory;
-	
-	public ManagedContextImpl(ExchangeChannelFactory channelFactory,
-			MessageFactory messageFactory) {
+	public synchronized static ServiceDomain getDomain() {
+		if (!_domains.contains(ROOT_DOMAIN)) {
+			_domains.put(ROOT_DOMAIN, new RootDomain());
+		}
 		
-		_channelFactory = channelFactory;
-		_messageFactory = messageFactory;
+		return getDomain(ROOT_DOMAIN);
 	}
-
-	@Override
-	public ExchangeChannelFactory getChannelFactory() {
-		return _channelFactory;
+	
+	public static ServiceDomain getDomain(String domainName) {
+		return _domains.get(domainName);
 	}
-
-	@Override
-	public MessageFactory getMessageFactory() {
-		return _messageFactory;
+	
+	public static Set<String> getDomainNames() {
+		return _domains.keySet();
 	}
-
 }

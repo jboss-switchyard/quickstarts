@@ -20,13 +20,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco.spi;
+package org.jboss.esb.cinco;
 
-import org.jboss.esb.cinco.ExchangeChannelFactory;
-import org.jboss.esb.cinco.MessageFactory;
+import javax.xml.namespace.QName;
 
-public interface ManagedContext {
-
-	MessageFactory getMessageFactory();
-	ExchangeChannelFactory getChannelFactory();
+public interface ServiceDomain {
+	
+	ExchangeChannel createChannel();
+	void registerService(QName serviceName, ExchangeChannel channel);
+	void unregisterService(QName serviceName, ExchangeChannel channel);
+	void close();
 }

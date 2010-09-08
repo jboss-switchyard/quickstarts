@@ -7,7 +7,9 @@
 	    <name>JBoss ESB : Components</name>
 
 	    <modules>
+	        <!-- 9/7/10 : broken do to domain refactoring
 	        <module>file</module>
+	        -->
 	    </modules>
 
 	    <packaging>pom</packaging>

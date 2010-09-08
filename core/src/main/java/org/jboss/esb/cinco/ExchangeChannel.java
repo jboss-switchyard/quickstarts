@@ -22,19 +22,10 @@
 
 package org.jboss.esb.cinco;
 
-import javax.xml.namespace.QName;
 
 public interface ExchangeChannel {
 	
 	Exchange createExchange(ExchangePattern pattern);
-	
-	void registerService(QName serviceName);
-	void unregisterService(QName serviceName);
-
 	void send(Exchange exchange);
-	
-	void setHandlerChain(HandlerChain handlers);
 	HandlerChain getHandlerChain();
-	
-	void close();
 }

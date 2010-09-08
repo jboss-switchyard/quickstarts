@@ -9,7 +9,6 @@
 	    <modules>
 	        <module>parent</module>
 	        <module>core</module>
-	        <module>bootstrap</module>
 	        <module>components</module>
 	        <module>test</module>
 	    </modules>

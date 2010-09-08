@@ -22,11 +22,23 @@
 
 package org.jboss.esb.cinco.tests;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
+import org.jboss.esb.cinco.BaseHandler;
+import org.jboss.esb.cinco.Exchange;
+import org.jboss.esb.cinco.ExchangeChannel;
+import org.jboss.esb.cinco.ExchangeEvent;
 import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.MessageFactory;
-import org.jboss.esb.cinco.internal.ExchangeState;
+import org.jboss.esb.cinco.ServiceDomain;
+import org.jboss.esb.cinco.event.ExchangeErrorEvent;
+import org.jboss.esb.cinco.event.ExchangeFaultEvent;
+import org.jboss.esb.cinco.event.ExchangeInEvent;
+import org.jboss.esb.cinco.event.ExchangeOutEvent;
+import org.jboss.esb.cinco.internal.ServiceDomains;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -34,73 +46,128 @@ import org.junit.Test;
 
 public class InOutTest {
 	
-	private final QName SERVICE_1 = new QName("InOutTest");
-	private Environment _env;
-	private BaseConsumer _consumer;
-	private BaseProvider _provider;
-	private MessageFactory _messageFactory;
+	// where the magic happens
+	private ServiceDomain _domain;
+	// event counters used by tests
+	private List<ExchangeEvent> inEvents = new LinkedList<ExchangeEvent>();
+	private List<ExchangeEvent> outEvents = new LinkedList<ExchangeEvent>();
+	private List<ExchangeEvent> faultEvents = new LinkedList<ExchangeEvent>();
+	private List<ExchangeEvent> errorEvents = new LinkedList<ExchangeEvent>();
 
 	@Before
 	public void setUp() throws Exception {
-		_env = new Environment();
-		_messageFactory = _env.getMessageFactory();
-
-		// Create a consumer instance
-		_consumer = new BaseConsumer(_env);
-		// Create a provider instance
-		_provider = new BaseProvider(
-				_env.getExchangeChannelFactory().createChannel(), ExchangeState.OUT);
-		_provider.setReply(_messageFactory.createMessage());
+		_domain = ServiceDomains.getDomain();
 	}
 	
 	@After
 	public void tearDown() throws Exception {
-		_env.destroy();
+		inEvents.clear();
+		outEvents.clear();
+		faultEvents.clear();
+		errorEvents.clear();
 	}
 	
 	@Test
 	public void testInOutSuccess() throws Exception {
+		final QName serviceName = new QName("inOutSuccess");
+		// Provide the service
+		ExchangeChannel providerChannel = _domain.createChannel();
+		providerChannel.getHandlerChain().addFirst("provider", 
+				new BaseHandler() {
+					public void exchangeIn(ExchangeInEvent event) {
+						inEvents.add(event);
+						Exchange inEx = event.getExchange();
+						inEx.setOut(MessageFactory.createMessage());
+						event.getChannel().send(inEx);
+					}
+		});
+		_domain.registerService(serviceName, providerChannel);
 		
-		_provider.provideService(SERVICE_1);
-		_consumer.invokeService(ExchangePattern.IN_OUT, SERVICE_1, null);
+		// Consume the service
+		ExchangeChannel consumerChannel = _domain.createChannel();
+		consumerChannel.getHandlerChain().addFirst("consumer", 
+				new BaseHandler() {
+					public void exchangeOut(ExchangeOutEvent event) {
+						outEvents.add(event);
+					}
+		});
+		Exchange exchange = consumerChannel.createExchange(ExchangePattern.IN_OUT);
+		exchange.setService(serviceName);
+		consumerChannel.send(exchange);
 		
 		// wait a sec, since this is async
 		Thread.sleep(200);
-		
-		Assert.assertTrue(_provider.getReceiveCount() == _consumer.getSendCount());
-		Assert.assertTrue(_consumer.getOutCount() == 1);
-	}
-
-	@Test
-	public void testInOutFault() throws Exception {
-
-		// set our provider to return a fault
-		_provider.setNextState(ExchangeState.FAULT);
-		
-		_provider.provideService(SERVICE_1);
-		_consumer.invokeService(ExchangePattern.IN_OUT, SERVICE_1, null);
-		
-		// wait a sec, since this is async
-		Thread.sleep(200);
-		
-		Assert.assertTrue(_provider.getReceiveCount() == _consumer.getSendCount());
-		Assert.assertTrue(_consumer.getFaultCount() == 1);
+		Assert.assertTrue(inEvents.size() == 1);
+		Assert.assertTrue(outEvents.size() == 1);
 	}
 
 	@Test
 	public void testInOutError() throws Exception {
+		final QName serviceName = new QName("inOutError");
+		// Provide the service
+		ExchangeChannel providerChannel = _domain.createChannel();
+		providerChannel.getHandlerChain().addFirst("provider", 
+				new BaseHandler() {
+					public void exchangeIn(ExchangeInEvent event) {
+						inEvents.add(event);
+						Exchange inEx = event.getExchange();
+						inEx.setError(new Exception("bad things happened!"));
+						event.getChannel().send(inEx);
+					}
+		});
+		_domain.registerService(serviceName, providerChannel);
 		
-		// set our provider to return an error
-		_provider.setNextState(ExchangeState.ERROR);
-		
-		_provider.provideService(SERVICE_1);
-		_consumer.invokeService(ExchangePattern.IN_OUT, SERVICE_1, null);
+		// Consume the service
+		ExchangeChannel consumerChannel = _domain.createChannel();
+		consumerChannel.getHandlerChain().addFirst("consumer", 
+				new BaseHandler() {
+					public void exchangeError(ExchangeErrorEvent event) {
+						errorEvents.add(event);
+					}
+		});
+		Exchange exchange = consumerChannel.createExchange(ExchangePattern.IN_OUT);
+		exchange.setService(serviceName);
+		consumerChannel.send(exchange);
 		
 		// wait a sec, since this is async
 		Thread.sleep(200);
-		
-		Assert.assertTrue(_provider.getReceiveCount() == _consumer.getSendCount());
-		Assert.assertTrue(_consumer.getErrorCount() == 1);
+		Assert.assertTrue(inEvents.size() == 1);
+		Assert.assertTrue(errorEvents.size() == 1);
 	}
+	
 
+	@Test
+	public void testInOutFault() throws Exception {
+		final QName serviceName = new QName("inOutFault");
+		// Provide the service
+		ExchangeChannel providerChannel = _domain.createChannel();
+		providerChannel.getHandlerChain().addFirst("provider", 
+				new BaseHandler() {
+					public void exchangeIn(ExchangeInEvent event) {
+						inEvents.add(event);
+						Exchange inEx = event.getExchange();
+						inEx.setFault(MessageFactory.createMessage());
+						event.getChannel().send(inEx);
+					}
+		});
+		_domain.registerService(serviceName, providerChannel);
+		
+		// Consume the service
+		ExchangeChannel consumerChannel = _domain.createChannel();
+		consumerChannel.getHandlerChain().addFirst("consumer", 
+				new BaseHandler() {
+					public void exchangeFault(ExchangeFaultEvent event) {
+						faultEvents.add(event);
+					}
+		});
+		Exchange exchange = consumerChannel.createExchange(ExchangePattern.IN_OUT);
+		exchange.setService(serviceName);
+		consumerChannel.send(exchange);
+		
+		// wait a sec, since this is async
+		Thread.sleep(200);
+		Assert.assertTrue(inEvents.size() == 1);
+		Assert.assertTrue(faultEvents.size() == 1);
+	}
+	
 }
