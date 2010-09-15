@@ -30,38 +30,38 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.jboss.esb.cinco.spi.ExchangeEndpoint;
+import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.spi.ServiceRegistry;
 
 public class DefaultServiceRegistry implements ServiceRegistry {
 	
-	private Map<QName, List<ExchangeEndpoint>> _serviceEndpoints = 
-		new HashMap<QName, List<ExchangeEndpoint>>();
+	private Map<QName, List<ExchangeChannel>> _services = 
+		new HashMap<QName, List<ExchangeChannel>>();
 
 	@Override
-	public synchronized List<ExchangeEndpoint> getEndpoints(QName serviceName) {
-		List<ExchangeEndpoint> endpoints = _serviceEndpoints.get(serviceName);
-		if (endpoints == null) {
-			endpoints = Collections.emptyList();
+	public synchronized List<ExchangeChannel> getChannels(QName serviceName) {
+		List<ExchangeChannel> channels = _services.get(serviceName);
+		if (channels == null) {
+			channels = Collections.emptyList();
 		}
-		return endpoints;
+		return channels;
 	}
 
 	@Override
-	public synchronized void registerService(QName serviceName, ExchangeEndpoint endpoint) {
-		List<ExchangeEndpoint> endpoints = _serviceEndpoints.get(serviceName);
-		if (endpoints == null) {
-			endpoints = new ArrayList<ExchangeEndpoint>();
-			_serviceEndpoints.put(serviceName, endpoints);
+	public synchronized void registerService(QName serviceName, ExchangeChannel endpoint) {
+		List<ExchangeChannel> channels = _services.get(serviceName);
+		if (channels == null) {
+			channels = new ArrayList<ExchangeChannel>();
+			_services.put(serviceName, channels);
 		}
-		endpoints.add(endpoint);
+		channels.add(endpoint);
 	}
 
 	@Override
-	public synchronized void unregisterService(QName serviceName, ExchangeEndpoint endpoint) {
-		List<ExchangeEndpoint> endpoints = _serviceEndpoints.get(serviceName);
-		if (endpoints != null) {
-			endpoints.remove(endpoint);
+	public synchronized void unregisterService(QName serviceName, ExchangeChannel endpoint) {
+		List<ExchangeChannel> channels = _services.get(serviceName);
+		if (channels != null) {
+			channels.remove(endpoint);
 		}
 	}
 }

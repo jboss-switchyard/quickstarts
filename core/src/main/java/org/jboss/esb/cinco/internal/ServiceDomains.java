@@ -35,7 +35,7 @@ public class ServiceDomains {
 	
 	public synchronized static ServiceDomain getDomain() {
 		if (!_domains.contains(ROOT_DOMAIN)) {
-			_domains.put(ROOT_DOMAIN, new RootDomain());
+			_domains.put(ROOT_DOMAIN, new DomainImpl());
 		}
 		
 		return getDomain(ROOT_DOMAIN);

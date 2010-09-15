@@ -33,7 +33,6 @@ import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangeEvent;
 import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.ServiceDomain;
-import org.jboss.esb.cinco.event.ExchangeErrorEvent;
 import org.jboss.esb.cinco.event.ExchangeInEvent;
 import org.jboss.esb.cinco.internal.ServiceDomains;
 import org.junit.After;
@@ -51,11 +50,13 @@ public class InOnlyTest {
 	@Before
 	public void setUp() throws Exception {
 		_domain = ServiceDomains.getDomain();
+		_domain.start();
 	}
 	
 	@After
 	public void tearDown() throws Exception {
 		inEvents.clear();
+		_domain.stop();
 	}
 	
 	@Test

@@ -29,5 +29,7 @@ public interface ServiceDomain {
 	ExchangeChannel createChannel();
 	void registerService(QName serviceName, ExchangeChannel channel);
 	void unregisterService(QName serviceName, ExchangeChannel channel);
-	void close();
+	
+	void start();
+	void stop();
 }

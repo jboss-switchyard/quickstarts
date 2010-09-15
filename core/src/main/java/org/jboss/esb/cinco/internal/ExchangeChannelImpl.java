@@ -29,24 +29,16 @@ import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.HandlerChain;
-import org.jboss.esb.cinco.spi.ExchangeEndpoint;
 
-public class ExchangeChannelImpl 
-	implements ExchangeChannel, ExchangeEndpoint, Runnable {
+public class ExchangeChannelImpl implements ExchangeChannel {
 	
-	private volatile boolean _isActive;
-	private Thread _deliveryThread;
-	private HandlerChain 	_handlers = new DefaultHandlerChain();
+	private HandlerChain _handlers = new DefaultHandlerChain();
 	private BlockingQueue<Exchange> _exchanges = 
 		new LinkedBlockingQueue<Exchange>();
 	
 	ExchangeChannelImpl() {
-		startDelivery();
 	}
 
-	public void close() {
-		stopDelivery();
-	}
 
 	@Override
 	public HandlerChain getHandlerChain() {
@@ -60,35 +52,14 @@ public class ExchangeChannelImpl
 	}
 
 
-	@Override
-	public void process(Exchange exchange) {
-		_exchanges.add(exchange);
-		
+	public void deliver(Exchange exchange) {
+		_exchanges.offer(exchange);
 	}
 	
-	@Override
-	public void run() {
-		while (_isActive) {
-			try {
-				Exchange exchange = _exchanges.take();
-				_handlers.handleReceive(Events.createEvent(this, exchange));
-			}
-			catch (InterruptedException intEx) {
-				// signal to interrupt blocking receive - not an error
-			}
-		}
+	public Exchange receive() throws InterruptedException {
+		return _exchanges.take();
 	}
 	
-	private void startDelivery() {
-		_isActive = true;
-		_deliveryThread = new Thread(this);
-		_deliveryThread.start();
-	}
-	
-	private void stopDelivery() {
-		_isActive = false;
-		_deliveryThread.interrupt();
-	}
 	
 	private void nextState(ExchangeImpl exchange) throws IllegalStateException {
 		switch (exchange.getState()) {

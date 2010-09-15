@@ -23,9 +23,10 @@
 package org.jboss.esb.cinco.internal.handlers;
 
 import org.jboss.esb.cinco.BaseHandler;
+import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangeEvent;
+import org.jboss.esb.cinco.internal.ExchangeChannelImpl;
 import org.jboss.esb.cinco.internal.ExchangeImpl;
-import org.jboss.esb.cinco.spi.ExchangeEndpoint;
 
 public class DeliveryHandler extends BaseHandler {
 	
@@ -33,19 +34,19 @@ public class DeliveryHandler extends BaseHandler {
 	@Override
 	public void handleSend(ExchangeEvent event) {
 		ExchangeImpl exchange = (ExchangeImpl)event.getExchange();
-		ExchangeEndpoint receiver = exchange.getReceivingEndpoint();
+		ExchangeChannel receiver = exchange.getReceivingChannel();
 		
-		if (exchange.getSendingEndpoint() == null) {
+		if (exchange.getSendingChannel() == null) {
 			// first time this has been sent
-			exchange.setSendingEndpoint((ExchangeEndpoint)event.getChannel());
+			exchange.setSendingChannel(event.getChannel());
 		}
 		else {
 			// this is a return path, so flip sender and receiver
-			exchange.setReceivingEndpoint(exchange.getSendingEndpoint());
-			exchange.setSendingEndpoint(receiver);
+			exchange.setReceivingChannel(exchange.getSendingChannel());
+			exchange.setSendingChannel(receiver);
 		}
 		
-		exchange.getReceivingEndpoint().process(exchange);
+		((ExchangeChannelImpl)exchange.getReceivingChannel()).deliver(exchange);
 	}
 
 }

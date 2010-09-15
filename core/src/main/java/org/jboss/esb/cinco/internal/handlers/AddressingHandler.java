@@ -25,9 +25,9 @@ package org.jboss.esb.cinco.internal.handlers;
 import java.util.List;
 
 import org.jboss.esb.cinco.BaseHandler;
+import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.event.ExchangeInEvent;
 import org.jboss.esb.cinco.internal.ExchangeImpl;
-import org.jboss.esb.cinco.spi.ExchangeEndpoint;
 import org.jboss.esb.cinco.spi.ServiceRegistry;
 
 public class AddressingHandler extends BaseHandler {
@@ -42,20 +42,20 @@ public class AddressingHandler extends BaseHandler {
 	public void exchangeIn(ExchangeInEvent event) {		
 		ExchangeImpl exchange = (ExchangeImpl)event.getExchange();
 		
-		if (exchange.getReceivingEndpoint() == null) {
-			// find the receiving endpoint
-			List<ExchangeEndpoint> endpoints = 
-				_registry.getEndpoints(exchange.getService());
+		if (exchange.getReceivingChannel() == null) {
+			// find the receiving channel
+			List<ExchangeChannel> channels = 
+				_registry.getChannels(exchange.getService());
 			
-			if (endpoints.isEmpty()) {
-				// this is a temp hack - we should set error on the exchange and
-				// redirect it into the sending channel
+			if (channels.isEmpty()) {
+				// TODO: this is a temp hack - we should set error on the exchange 
+				// and redirect it into the sending channel
 				throw new RuntimeException(
 						"No endpoints for service " + exchange.getService());
 			}
 			
 			// Endpoint selection is arbitrary at the moment
-			exchange.setReceivingEndpoint(endpoints.get(0));
+			exchange.setReceivingChannel(channels.get(0));
 		}
 	}
 

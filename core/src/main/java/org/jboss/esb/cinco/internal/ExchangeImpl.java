@@ -29,10 +29,10 @@ import java.util.UUID;
 import javax.xml.namespace.QName;
 
 import org.jboss.esb.cinco.Exchange;
+import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangeContext;
 import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.Message;
-import org.jboss.esb.cinco.spi.ExchangeEndpoint;
 
 public class ExchangeImpl implements Exchange {
 	
@@ -41,8 +41,8 @@ public class ExchangeImpl implements Exchange {
 	public static final String FAULT_MSG = "fault";
 	
 	private Throwable 				_error;
-	private ExchangeEndpoint 		_sendEndpoint;
-	private ExchangeEndpoint 		_recvEndpoint;
+	private ExchangeChannel 		_sendChannel;
+	private ExchangeChannel 		_recvChannel;
 	private String 					_exchangeId;
 	private ExchangePattern 		_pattern;
 	private ExchangeState 			_state;
@@ -124,20 +124,20 @@ public class ExchangeImpl implements Exchange {
 	}
 	
 	
-	public ExchangeEndpoint getSendingEndpoint() {
-		return _sendEndpoint;
+	public ExchangeChannel getSendingChannel() {
+		return _sendChannel;
 	}
 	
-	public ExchangeEndpoint getReceivingEndpoint() {
-		return _recvEndpoint;
+	public ExchangeChannel getReceivingChannel() {
+		return _recvChannel;
 	}
 	
-	public void setSendingEndpoint(ExchangeEndpoint endpoint) {
-		_sendEndpoint = endpoint;
+	public void setSendingChannel(ExchangeChannel channel) {
+		_sendChannel = channel;
 	}
 
-	public void setReceivingEndpoint(ExchangeEndpoint endpoint) {
-		_recvEndpoint = endpoint;
+	public void setReceivingChannel(ExchangeChannel channel) {
+		_recvChannel = channel;
 	}
 	
 	public Message getMessage(String name) {

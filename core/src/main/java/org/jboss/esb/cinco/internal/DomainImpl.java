@@ -22,11 +22,13 @@
 
 package org.jboss.esb.cinco.internal;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.PriorityBlockingQueue;
 
 import javax.xml.namespace.QName;
 
+import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.HandlerChain;
 import org.jboss.esb.cinco.ServiceDomain;
@@ -34,13 +36,16 @@ import org.jboss.esb.cinco.internal.handlers.AddressingHandler;
 import org.jboss.esb.cinco.internal.handlers.DeliveryHandler;
 import org.jboss.esb.cinco.spi.ServiceRegistry;
 
-public class RootDomain implements ServiceDomain {
+public class DomainImpl implements ServiceDomain {
 	
+	private ExecutorService _executor;
 	private HandlerChain _systemHandlers;
 	private ServiceRegistry _registry;
-	private Set<QName> _services = new HashSet<QName>();
-	
-	public RootDomain() {
+	private PriorityBlockingQueue<ExchangeChannel> _channels = 
+		new PriorityBlockingQueue<ExchangeChannel>();
+	private volatile boolean _started;
+
+	public DomainImpl() {
 		_registry = new DefaultServiceRegistry();
 		
 		// Build out the system handlers chain.  It would be cleaner if we 
@@ -55,28 +60,80 @@ public class RootDomain implements ServiceDomain {
 		 ExchangeChannel channel = new ExchangeChannelImpl();
 		// Add system handlers to channel
 		channel.getHandlerChain().addLast("system handlers", _systemHandlers);
+		
+		// If the domain is started, we need to schedule a delivery thread
+		synchronized (this) {
+			if (_started) {
+				_executor.submit(new Delivery(channel));
+			}
+		}
 		return channel;
 	}
 	
 
 	@Override
-	public synchronized void close() {
+	public synchronized void start() {
+		if (_started == true) {
+			return;
+		}
 		
+		// TODO : this needs to be configurable and the current strategy of
+		//        one thread per channel is pretty hacky
+		_executor = Executors.newFixedThreadPool(50);
+		for (ExchangeChannel channel : _channels) {
+			_executor.submit(new Delivery(channel));
+		}
+		_started = true;
+	}
+	
+	@Override
+	public synchronized void stop() {
+		if (_started != true) {
+			return;
+		}
+		
+		_started = false;
+		// TODO : handle this better - shutdown, await, etc.
+		_executor.shutdownNow();
 	}
 	
 
 	@Override
 	public void registerService(QName serviceName, ExchangeChannel channel) {
-		_registry.registerService(serviceName, (ExchangeChannelImpl)channel);
-		_services.add(serviceName);
+		_registry.registerService(serviceName, channel);
+		_channels.put(channel);
+	}
+
+
+	@Override
+	public void unregisterService(QName serviceName, ExchangeChannel channel) {
+		_registry.unregisterService(serviceName, channel);
+		_channels.remove(channel);
 
 	}
 	
-	@Override
-	public void unregisterService(QName serviceName, ExchangeChannel channel) {
-		_registry.unregisterService(serviceName, (ExchangeChannelImpl)channel);
-		_services.remove(serviceName);
+	class Delivery implements Runnable {
 
+		private ExchangeChannelImpl _channel;
+		
+		Delivery(ExchangeChannel channel) {
+			_channel = (ExchangeChannelImpl)channel;
+		}
+		
+		@Override
+		public void run() {
+			while (_started) {
+				try {
+					Exchange ex = _channel.receive();
+					_channel.getHandlerChain().handleReceive(
+							Events.createEvent(_channel, ex));
+				}
+				catch (InterruptedException intEx) {
+					// signal to interrupt blocking receive - not an error
+				}
+			}
+		}
+		
+		
 	}
-
 }

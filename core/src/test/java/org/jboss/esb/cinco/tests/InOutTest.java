@@ -57,10 +57,12 @@ public class InOutTest {
 	@Before
 	public void setUp() throws Exception {
 		_domain = ServiceDomains.getDomain();
+		_domain.start();
 	}
 	
 	@After
 	public void tearDown() throws Exception {
+		_domain.stop();
 		inEvents.clear();
 		outEvents.clear();
 		faultEvents.clear();
