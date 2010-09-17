@@ -22,6 +22,7 @@
 
 package org.jboss.esb.cinco.internal;
 
+import org.jboss.esb.cinco.Direction;
 import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangeEvent;
@@ -32,16 +33,17 @@ import org.jboss.esb.cinco.internal.event.ExchangeOutEventImpl;
 
 public class Events {
 
-	public static ExchangeEvent createEvent(ExchangeChannel channel, Exchange exchange) {
+	public static ExchangeEvent createEvent(
+			ExchangeChannel channel, Exchange exchange, Direction direction) {
 		switch (((ExchangeImpl)exchange).getState()) {
 		case ERROR :
-			return new ExchangeErrorEventImpl(channel, exchange);
+			return new ExchangeErrorEventImpl(channel, exchange, direction);
 		case FAULT :
-			return new ExchangeFaultEventImpl(channel, exchange);
+			return new ExchangeFaultEventImpl(channel, exchange, direction);
 		case OUT :
-			return new ExchangeOutEventImpl(channel, exchange);
+			return new ExchangeOutEventImpl(channel, exchange, direction);
 		case IN :
-			return new ExchangeInEventImpl(channel, exchange);
+			return new ExchangeInEventImpl(channel, exchange, direction);
 		default :
 			return null;
 		}

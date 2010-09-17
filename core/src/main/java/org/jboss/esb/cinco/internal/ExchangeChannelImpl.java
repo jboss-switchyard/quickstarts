@@ -25,9 +25,11 @@ package org.jboss.esb.cinco.internal;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.jboss.esb.cinco.Direction;
 import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangePattern;
+import org.jboss.esb.cinco.ExchangeState;
 import org.jboss.esb.cinco.HandlerChain;
 
 public class ExchangeChannelImpl implements ExchangeChannel {
@@ -48,7 +50,7 @@ public class ExchangeChannelImpl implements ExchangeChannel {
 	@Override
 	public void send(Exchange exchange) {
 		nextState((ExchangeImpl)exchange);
-		_handlers.handleSend(Events.createEvent(this, exchange));
+		_handlers.handle(Events.createEvent(this, exchange, Direction.SEND));
 	}
 
 

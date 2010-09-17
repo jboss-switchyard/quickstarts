@@ -22,6 +22,7 @@
 
 package org.jboss.esb.cinco.internal.event;
 
+import org.jboss.esb.cinco.Direction;
 import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.Message;
@@ -30,8 +31,9 @@ import org.jboss.esb.cinco.event.ExchangeFaultEvent;
 public class ExchangeFaultEventImpl extends ExchangeEventImpl 
 	implements ExchangeFaultEvent {
 
-	public ExchangeFaultEventImpl(ExchangeChannel channel, Exchange exchange) {
-		super(channel, exchange);
+	public ExchangeFaultEventImpl(
+			ExchangeChannel channel, Exchange exchange, Direction direction) {
+		super(channel, exchange, direction);
 	}
 
 	@Override

@@ -22,17 +22,24 @@
 
 package org.jboss.esb.cinco.internal.handlers;
 
-import org.jboss.esb.cinco.BaseHandler;
+import org.jboss.esb.cinco.Direction;
 import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangeEvent;
+import org.jboss.esb.cinco.ExchangeHandler;
 import org.jboss.esb.cinco.internal.ExchangeChannelImpl;
 import org.jboss.esb.cinco.internal.ExchangeImpl;
 
-public class DeliveryHandler extends BaseHandler {
+public class DeliveryHandler implements ExchangeHandler {
 	
 
 	@Override
-	public void handleSend(ExchangeEvent event) {
+	public void handle(ExchangeEvent event) {
+		
+		// Delivery is only required for sent exchanges
+		if (event.getDirection() != Direction.SEND) {
+			return;
+		}
+		
 		ExchangeImpl exchange = (ExchangeImpl)event.getExchange();
 		ExchangeChannel receiver = exchange.getReceivingChannel();
 		

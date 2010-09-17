@@ -22,18 +22,25 @@
 
 package org.jboss.esb.cinco.internal.event;
 
+import org.jboss.esb.cinco.Direction;
 import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangeEvent;
+import org.jboss.esb.cinco.ExchangeState;
+import org.jboss.esb.cinco.internal.ExchangeImpl;
 
 public class ExchangeEventImpl implements ExchangeEvent {
 
 	private ExchangeChannel _channel;
 	private Exchange _exchange;
+	private Direction _direction;
+	private boolean _halted;
 	
-	public ExchangeEventImpl(ExchangeChannel channel, Exchange exchange) {
+	public ExchangeEventImpl(
+			ExchangeChannel channel, Exchange exchange, Direction direction) {
 		_channel = channel;
 		_exchange = exchange;
+		_direction = direction;
 	}
 	
 	@Override
@@ -46,4 +53,22 @@ public class ExchangeEventImpl implements ExchangeEvent {
 		return _exchange;
 	}
 
+	@Override
+	public Direction getDirection() {
+		return _direction;
+	}
+
+	@Override
+	public ExchangeState getState() {
+		return ((ExchangeImpl)_exchange).getState();
+	}
+
+	@Override
+	public void halt() {
+		_halted = true;
+	}
+
+	public boolean isHalted() {
+		return _halted;
+	}
 }

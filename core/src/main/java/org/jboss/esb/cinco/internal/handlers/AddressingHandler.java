@@ -25,6 +25,7 @@ package org.jboss.esb.cinco.internal.handlers;
 import java.util.List;
 
 import org.jboss.esb.cinco.BaseHandler;
+import org.jboss.esb.cinco.Direction;
 import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.event.ExchangeInEvent;
 import org.jboss.esb.cinco.internal.ExchangeImpl;
@@ -35,6 +36,7 @@ public class AddressingHandler extends BaseHandler {
 	private ServiceRegistry _registry;
 	
 	public AddressingHandler(ServiceRegistry registry) {
+		super(Direction.SEND);
 		_registry = registry;
 	}
 

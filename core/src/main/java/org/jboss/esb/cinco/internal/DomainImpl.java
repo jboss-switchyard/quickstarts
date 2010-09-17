@@ -28,6 +28,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 
 import javax.xml.namespace.QName;
 
+import org.jboss.esb.cinco.Direction;
 import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.HandlerChain;
@@ -125,8 +126,8 @@ public class DomainImpl implements ServiceDomain {
 			while (_started) {
 				try {
 					Exchange ex = _channel.receive();
-					_channel.getHandlerChain().handleReceive(
-							Events.createEvent(_channel, ex));
+					_channel.getHandlerChain().handle(
+							Events.createEvent(_channel, ex, Direction.RECEIVE));
 				}
 				catch (InterruptedException intEx) {
 					// signal to interrupt blocking receive - not an error

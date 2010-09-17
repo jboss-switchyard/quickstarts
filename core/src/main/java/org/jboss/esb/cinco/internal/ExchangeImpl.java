@@ -32,6 +32,7 @@ import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangeContext;
 import org.jboss.esb.cinco.ExchangePattern;
+import org.jboss.esb.cinco.ExchangeState;
 import org.jboss.esb.cinco.Message;
 
 public class ExchangeImpl implements Exchange {

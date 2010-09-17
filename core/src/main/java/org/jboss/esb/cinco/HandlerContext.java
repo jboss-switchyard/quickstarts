@@ -20,24 +20,9 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco.internal.event;
+package org.jboss.esb.cinco;
 
-import org.jboss.esb.cinco.Direction;
-import org.jboss.esb.cinco.Exchange;
-import org.jboss.esb.cinco.ExchangeChannel;
-import org.jboss.esb.cinco.Message;
-import org.jboss.esb.cinco.event.ExchangeOutEvent;
-
-public class ExchangeOutEventImpl extends ExchangeEventImpl 
-	implements ExchangeOutEvent {
-
-	public ExchangeOutEventImpl(
-			ExchangeChannel channel, Exchange exchange, Direction direction) {
-		super(channel, exchange, direction);
-	}
-
-	@Override
-	public Message getOut() {
-		return getExchange().getOut();
-	}
+public interface HandlerContext {
+	Direction getDirection();
+	ExchangeChannel getChannel();
 }

@@ -59,20 +59,14 @@ public class DefaultHandlerChain implements HandlerChain {
 	}
 
 	@Override
-	public void handleSend(ExchangeEvent event) {
-		// This is super basic at the moment
+	public void handle(ExchangeEvent event) {
 		for (HandlerRef ref : listHandlers()) {
-			ref.handler.handleSend(event);
+			ref.handler.handle(event);
+			// check to see if the last handler asked for a halt
+			
 		}
 	}
 	
-	@Override
-	public void handleReceive(ExchangeEvent event) {
-		// This is super basic at the moment
-		for (HandlerRef ref : listHandlers()) {
-			ref.handler.handleReceive(event);
-		}
-	}
 	
 	private synchronized List<HandlerRef> listHandlers() {
 		return new LinkedList<HandlerRef>(_chain);

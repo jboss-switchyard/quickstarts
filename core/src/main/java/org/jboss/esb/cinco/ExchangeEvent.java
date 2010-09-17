@@ -23,7 +23,9 @@
 package org.jboss.esb.cinco;
 
 public interface ExchangeEvent {
-
 	Exchange getExchange();
+	ExchangeState getState();
+	Direction getDirection();
 	ExchangeChannel getChannel();
+	void halt();
 }
