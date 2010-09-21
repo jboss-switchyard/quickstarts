@@ -49,8 +49,7 @@ public class ExchangeChannelImpl implements ExchangeChannel {
 
 	@Override
 	public void send(Exchange exchange) {
-		nextState((ExchangeImpl)exchange);
-		_handlers.handle(Events.createEvent(this, exchange, Direction.SEND));
+		send((ExchangeImpl)exchange);
 	}
 
 
@@ -62,38 +61,18 @@ public class ExchangeChannelImpl implements ExchangeChannel {
 		return _exchanges.take();
 	}
 	
-	
-	private void nextState(ExchangeImpl exchange) throws IllegalStateException {
-		switch (exchange.getState()) {
-		case NEW :
-			exchange.setState(ExchangeState.IN);
-			break;
-		case IN : 
-			// Error is valid for all MEPs in this state
-			if (exchange.getError() != null) {
-				exchange.setState(ExchangeState.ERROR);
-				break;
-			}
-
-			// Set the state based on the messages in the exchange
-			if (exchange.getPattern().equals(ExchangePattern.IN_ONLY)) {
-				throw new IllegalStateException("Invalid state transition for pattern");
-			}
-			else if (exchange.getFault() != null) {
-				exchange.setState(ExchangeState.FAULT);
-			}
-			else {
-				exchange.setState(ExchangeState.OUT);
-			}
-			break;
-		case OUT : case FAULT : case ERROR :
-			throw new IllegalStateException("Invalid state transition for pattern");
-		}
-	}
 
 	@Override
 	public Exchange createExchange(ExchangePattern pattern) {
 		return new ExchangeImpl(pattern);
+	}
+	
+	void send(ExchangeImpl exchange) {
+		ExchangeState nextState = ExchangeUtil.nextState(exchange);
+		if (nextState != null) {
+			exchange.setState(nextState);
+			_handlers.handle(Events.createEvent(this, exchange, Direction.SEND));
+		}
 	}
 
 }

@@ -20,10 +20,33 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco.message;
+package org.jboss.esb.cinco.internal;
 
-import org.jboss.esb.cinco.Message;
+import org.jboss.esb.cinco.ExchangeState;
 
-public interface StreamMessage extends Message {
-
+public class ExchangeUtil {
+	
+	public static ExchangeState nextState(ExchangeImpl exchange) {
+		ExchangeState nextState = null;
+		
+		switch (exchange.getState()) {
+		case NEW :
+			nextState = ExchangeState.IN;
+			break;
+		case IN : 
+			// Error is valid for all MEPs in this state
+			if (exchange.getError() != null) {
+				nextState = ExchangeState.ERROR;
+			}
+			else if (exchange.getFault() != null) {
+				nextState = ExchangeState.FAULT;
+			}
+			else {
+				nextState = ExchangeState.OUT;
+			}
+			break;
+		}
+		
+		return nextState;
+	}
 }

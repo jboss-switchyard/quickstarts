@@ -32,14 +32,14 @@ import org.jboss.esb.cinco.internal.ExchangeImpl;
 public class ExchangeEventImpl implements ExchangeEvent {
 
 	private ExchangeChannel _channel;
-	private Exchange _exchange;
+	private ExchangeImpl _exchange;
 	private Direction _direction;
 	private boolean _halted;
 	
 	public ExchangeEventImpl(
 			ExchangeChannel channel, Exchange exchange, Direction direction) {
 		_channel = channel;
-		_exchange = exchange;
+		_exchange = (ExchangeImpl)exchange;
 		_direction = direction;
 	}
 	
@@ -67,7 +67,7 @@ public class ExchangeEventImpl implements ExchangeEvent {
 	public void halt() {
 		_halted = true;
 	}
-
+	
 	public boolean isHalted() {
 		return _halted;
 	}

@@ -34,6 +34,7 @@ public interface Message {
 	
 	void addAttachment(String name, DataSource attachment);
 	DataSource getAttachment(String name);
+	DataSource removeAttachment(String name);
 	Map<String, DataSource> getAttachmentMap();
 	
 }

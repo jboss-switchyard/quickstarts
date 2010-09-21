@@ -31,5 +31,4 @@ public enum ExchangeState {
 	OUT,		// out message
 	DONE,		// completed without error
 	ERROR;		// completed with error
-	
 }

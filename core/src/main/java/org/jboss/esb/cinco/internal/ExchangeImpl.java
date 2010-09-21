@@ -157,5 +157,4 @@ public class ExchangeImpl implements Exchange {
 		_messages.put(name, message);
 	}
 
-
 }

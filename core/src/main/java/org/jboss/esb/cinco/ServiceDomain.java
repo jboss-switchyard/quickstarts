@@ -27,6 +27,7 @@ import javax.xml.namespace.QName;
 public interface ServiceDomain {
 	
 	ExchangeChannel createChannel();
+	
 	void registerService(QName serviceName, ExchangeChannel channel);
 	void unregisterService(QName serviceName, ExchangeChannel channel);
 	

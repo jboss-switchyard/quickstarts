@@ -33,6 +33,7 @@ import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangeEvent;
 import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.ServiceDomain;
+import org.jboss.esb.cinco.event.ExchangeErrorEvent;
 import org.jboss.esb.cinco.event.ExchangeInEvent;
 import org.jboss.esb.cinco.internal.ServiceDomains;
 import org.junit.After;
@@ -46,6 +47,7 @@ public class InOnlyTest {
 	private ServiceDomain _domain;
 	// event counters used by tests
 	private List<ExchangeEvent> inEvents = new LinkedList<ExchangeEvent>();
+	private List<ExchangeEvent> errEvents = new LinkedList<ExchangeEvent>();
 
 	@Before
 	public void setUp() throws Exception {
@@ -85,7 +87,35 @@ public class InOnlyTest {
 
 	@Test
 	public void testInOnlyError() throws Exception {
-		// Test a handler throwing an error here!
+		final QName serviceName = new QName("inOnlyError");
+		// Provide the service
+		ExchangeChannel providerChannel = _domain.createChannel();
+		providerChannel.getHandlerChain().addFirst("provider", 
+				new BaseHandler() {
+					public void exchangeIn(ExchangeInEvent event) {
+						inEvents.add(event);
+					}
+		});
+		_domain.registerService(serviceName, providerChannel);
+		
+		// Consume the service
+		ExchangeChannel consumerChannel = _domain.createChannel();
+		Exchange exchange = consumerChannel.createExchange(ExchangePattern.IN_ONLY);
+		consumerChannel.getHandlerChain().addFirst("error handler", 
+				new BaseHandler() {
+					public void exchangeError(ExchangeErrorEvent event) {
+						errEvents.add(event);
+					}
+		});
+		exchange.setService(new QName("blahBlahService"));
+		consumerChannel.send(exchange);
+		
+		// wait a sec, since this is async
+		Thread.sleep(200);
+		// provider should not have received message
+		Assert.assertTrue(inEvents.size() == 0);
+		// consumer should have received an error
+		Assert.assertTrue(errEvents.size() == 1);
 	}
 
 }

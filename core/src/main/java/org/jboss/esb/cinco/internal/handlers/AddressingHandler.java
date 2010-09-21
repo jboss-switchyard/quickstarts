@@ -27,7 +27,9 @@ import java.util.List;
 import org.jboss.esb.cinco.BaseHandler;
 import org.jboss.esb.cinco.Direction;
 import org.jboss.esb.cinco.ExchangeChannel;
+import org.jboss.esb.cinco.ExchangeState;
 import org.jboss.esb.cinco.event.ExchangeInEvent;
+import org.jboss.esb.cinco.internal.Events;
 import org.jboss.esb.cinco.internal.ExchangeImpl;
 import org.jboss.esb.cinco.spi.ServiceRegistry;
 
@@ -50,10 +52,16 @@ public class AddressingHandler extends BaseHandler {
 				_registry.getChannels(exchange.getService());
 			
 			if (channels.isEmpty()) {
-				// TODO: this is a temp hack - we should set error on the exchange 
-				// and redirect it into the sending channel
-				throw new RuntimeException(
-						"No endpoints for service " + exchange.getService());
+				// could not find a registered service - set the exchange
+				// to error and halt processing of the current event
+				event.halt();
+				exchange.setError(new Exception(
+						"No endpoints for service " + exchange.getService()));
+				exchange.setState(ExchangeState.ERROR);
+				event.getChannel().getHandlerChain().handle(
+						Events.createEvent(event.getChannel(), exchange, Direction.RECEIVE));
+				
+				return;
 			}
 			
 			// Endpoint selection is arbitrary at the moment

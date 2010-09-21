@@ -28,6 +28,7 @@ import java.util.List;
 import org.jboss.esb.cinco.ExchangeEvent;
 import org.jboss.esb.cinco.ExchangeHandler;
 import org.jboss.esb.cinco.HandlerChain;
+import org.jboss.esb.cinco.internal.event.ExchangeEventImpl;
 
 public class DefaultHandlerChain implements HandlerChain {
 	
@@ -60,13 +61,18 @@ public class DefaultHandlerChain implements HandlerChain {
 
 	@Override
 	public void handle(ExchangeEvent event) {
+		handle((ExchangeEventImpl)event);
+	}
+	
+	private void handle(ExchangeEventImpl event) {
 		for (HandlerRef ref : listHandlers()) {
 			ref.handler.handle(event);
 			// check to see if the last handler asked for a halt
-			
+			if (event.isHalted()) {
+				break;
+			}
 		}
 	}
-	
 	
 	private synchronized List<HandlerRef> listHandlers() {
 		return new LinkedList<HandlerRef>(_chain);

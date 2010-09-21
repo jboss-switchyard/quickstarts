@@ -22,7 +22,17 @@
 
 package org.jboss.esb.cinco;
 
-public interface HandlerContext {
-	Direction getDirection();
-	ExchangeChannel getChannel();
+public class EsbException extends Exception{
+
+	public EsbException(String message) {
+		super(message);
+	}
+	
+	public EsbException(Throwable cause) {
+		super(cause);
+	}
+	
+	public EsbException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

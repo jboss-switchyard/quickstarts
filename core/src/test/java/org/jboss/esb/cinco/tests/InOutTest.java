@@ -32,7 +32,7 @@ import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangeEvent;
 import org.jboss.esb.cinco.ExchangePattern;
-import org.jboss.esb.cinco.MessageFactory;
+import org.jboss.esb.cinco.MessageBuilder;
 import org.jboss.esb.cinco.ServiceDomain;
 import org.jboss.esb.cinco.event.ExchangeErrorEvent;
 import org.jboss.esb.cinco.event.ExchangeFaultEvent;
@@ -79,7 +79,7 @@ public class InOutTest {
 					public void exchangeIn(ExchangeInEvent event) {
 						inEvents.add(event);
 						Exchange inEx = event.getExchange();
-						inEx.setOut(MessageFactory.createMessage());
+						inEx.setOut(MessageBuilder.newInstance().buildMessage());
 						event.getChannel().send(inEx);
 					}
 		});
@@ -148,7 +148,7 @@ public class InOutTest {
 					public void exchangeIn(ExchangeInEvent event) {
 						inEvents.add(event);
 						Exchange inEx = event.getExchange();
-						inEx.setFault(MessageFactory.createMessage());
+						inEx.setFault(MessageBuilder.newInstance().buildMessage());
 						event.getChannel().send(inEx);
 					}
 		});

@@ -20,49 +20,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco.internal;
+package org.jboss.esb.cinco;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-import javax.activation.DataSource;
+import org.jboss.esb.cinco.internal.message.DefaultMessageBuilder;
 
-import org.jboss.esb.cinco.Message;
+public abstract class MessageBuilder {
 
-public class MessageImpl implements Message {
+	public static MessageBuilder newInstance() {
+		return new DefaultMessageBuilder();
+	}
 	
-	private Object _content;
-	private Map<String, DataSource> _attachments = 
-		new HashMap<String, DataSource>();
-
-	@Override
-	public void addAttachment(String name, DataSource attachment) {
-		_attachments.put(name, attachment);
+	public static MessageBuilder newInstance(String type) {
+		return new DefaultMessageBuilder();
 	}
+	
+	public abstract Message buildMessage();
+	
+	public abstract String getMessageType();
 
-	@Override
-	public DataSource getAttachment(String name) {
-		return _attachments.get(name);
-	}
-
-	@Override
-	public Map<String, DataSource> getAttachmentMap() {
-		return new HashMap<String, DataSource>(_attachments);
-	}
-
-	@Override
-	public Object getContent() {
-		return _content;
-	}
-
-	@Override
-	public <T> T getContent(Class<T> type) {
-		return type.cast(_content);
-	}
-
-	@Override
-	public void setContent(Object content) {
-		_content = content;
-	}
-
+	public abstract void writeMessage(Message message, OutputStream out) 
+		throws java.io.IOException, EsbException;
+	public abstract Message readMessage(InputStream in)
+		throws java.io.IOException, EsbException;
 }
