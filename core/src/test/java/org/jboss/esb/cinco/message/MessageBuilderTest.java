@@ -20,43 +20,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco.internal.message;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+package org.jboss.esb.cinco.message;
 
 import junit.framework.Assert;
 
-import org.jboss.esb.cinco.Message;
 import org.jboss.esb.cinco.MessageBuilder;
-import org.junit.Before;
+import org.jboss.esb.cinco.internal.message.DefaultMessageBuilder;
 import org.junit.Test;
 
-public class DefaultMessageBuilderTest {
+public class MessageBuilderTest {
 	
-	private MessageBuilder _builder;
-	
-	@Before
-	public void setUp() throws Exception {
-		_builder = MessageBuilder.newInstance();
+	@Test
+	public void testNewInstanceDefault() throws Exception {
+		MessageBuilder builder = MessageBuilder.newInstance();
+		Assert.assertTrue(builder instanceof DefaultMessageBuilder);
 	}
 	
 	@Test
-	public void testReadWriteMessage() throws Exception {
-		//create a message and fill it with some stuff
-		Message origMsg =_builder.buildMessage();
-		origMsg.setContent("howdy folks!");
-		
-		// create a stream sink and write the message to it
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		_builder.writeMessage(origMsg, bos);
-		bos.flush();
-		
-		// now try and read the message back in and compare it to the orig
-		Message newMsg = _builder.readMessage(
-				new ByteArrayInputStream(bos.toByteArray()));
-		Assert.assertNotNull(newMsg);
-		Assert.assertEquals(origMsg.getContent(), newMsg.getContent());
+	public void testNewInstanceTyped() throws Exception {
+		MessageBuilder defaultBuilder = 
+			MessageBuilder.newInstance(DefaultMessage.class);
+		Assert.assertTrue(defaultBuilder instanceof DefaultMessageBuilder);
+		MessageBuilder streamBuilder = 
+			MessageBuilder.newInstance(StreamMessage.class);
+		Assert.assertTrue(streamBuilder instanceof DefaultMessageBuilder);
 	}
-	
 }

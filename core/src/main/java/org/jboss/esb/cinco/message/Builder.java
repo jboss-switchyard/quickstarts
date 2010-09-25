@@ -20,54 +20,17 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco.internal.message;
+package org.jboss.esb.cinco.message;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import javax.activation.DataSource;
+import org.jboss.esb.cinco.MessageBuilder;
 
-import org.jboss.esb.cinco.Message;
-
-public class DefaultMessage implements Message {
-	
-	private Object _content;
-	private Map<String, DataSource> _attachments = 
-		new HashMap<String, DataSource>();
-
-	@Override
-	public void addAttachment(String name, DataSource attachment) {
-		_attachments.put(name, attachment);
-	}
-
-	@Override
-	public DataSource getAttachment(String name) {
-		return _attachments.get(name);
-	}
-
-	@Override
-	public DataSource removeAttachment(String name) {
-		return _attachments.remove(name);
-	}
-
-	@Override
-	public Map<String, DataSource> getAttachmentMap() {
-		return new HashMap<String, DataSource>(_attachments);
-	}
-
-	@Override
-	public Object getContent() {
-		return _content;
-	}
-
-	@Override
-	public <T> T getContent(Class<T> type) {
-		return type.cast(_content);
-	}
-
-	@Override
-	public void setContent(Object content) {
-		_content = content;
-	}
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface Builder {
+	Class<? extends MessageBuilder> value();
 }

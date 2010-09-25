@@ -20,43 +20,56 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco.internal.message;
+package org.jboss.esb.cinco.message;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
-import junit.framework.Assert;
+import javax.activation.DataSource;
 
 import org.jboss.esb.cinco.Message;
-import org.jboss.esb.cinco.MessageBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.jboss.esb.cinco.internal.message.DefaultMessageBuilder;
 
-public class DefaultMessageBuilderTest {
+@Builder(DefaultMessageBuilder.class)
+public class DefaultMessage implements Message {
 	
-	private MessageBuilder _builder;
-	
-	@Before
-	public void setUp() throws Exception {
-		_builder = MessageBuilder.newInstance();
+	private Object _content;
+	private Map<String, DataSource> _attachments = 
+		new HashMap<String, DataSource>();
+
+	@Override
+	public void addAttachment(String name, DataSource attachment) {
+		_attachments.put(name, attachment);
 	}
-	
-	@Test
-	public void testReadWriteMessage() throws Exception {
-		//create a message and fill it with some stuff
-		Message origMsg =_builder.buildMessage();
-		origMsg.setContent("howdy folks!");
-		
-		// create a stream sink and write the message to it
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		_builder.writeMessage(origMsg, bos);
-		bos.flush();
-		
-		// now try and read the message back in and compare it to the orig
-		Message newMsg = _builder.readMessage(
-				new ByteArrayInputStream(bos.toByteArray()));
-		Assert.assertNotNull(newMsg);
-		Assert.assertEquals(origMsg.getContent(), newMsg.getContent());
+
+	@Override
+	public DataSource getAttachment(String name) {
+		return _attachments.get(name);
 	}
-	
+
+	@Override
+	public DataSource removeAttachment(String name) {
+		return _attachments.remove(name);
+	}
+
+	@Override
+	public Map<String, DataSource> getAttachmentMap() {
+		return new HashMap<String, DataSource>(_attachments);
+	}
+
+	@Override
+	public Object getContent() {
+		return _content;
+	}
+
+	@Override
+	public <T> T getContent(Class<T> type) {
+		return type.cast(_content);
+	}
+
+	@Override
+	public void setContent(Object content) {
+		_content = content;
+	}
+
 }

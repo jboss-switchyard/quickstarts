@@ -24,50 +24,54 @@ package org.jboss.esb.cinco.internal.message;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
 import org.jboss.esb.cinco.EsbException;
 import org.jboss.esb.cinco.Message;
 import org.jboss.esb.cinco.MessageBuilder;
-import org.jboss.esb.cinco.message.DefaultMessage;
+import org.jboss.esb.cinco.message.StreamMessage;
 
-public class DefaultMessageBuilder extends MessageBuilder {
+public class StreamMessageBuilder extends MessageBuilder {
 	
 	public static final String TYPE = 
-		"org.jboss.esb.cinco.messageType.default";
+		"org.jboss.esb.cinco.messageType.stream";
+	private static final int WRITE_BUFFER = 8 * 1024;
 	
 	@Override
-	public Message buildMessage() {
-		return new DefaultMessage();
+	public StreamMessage buildMessage() {
+		return new StreamMessage();
 	}
 	
 	@Override
-	public Message readMessage(InputStream in) 
+	public StreamMessage readMessage(InputStream in) 
 			throws IOException, EsbException {
 		// TODO : ignoring attachments at the moment
-		Message msg = new DefaultMessage();
-		ObjectInputStream ois = new ObjectInputStream(in);
-		try {
-			msg.setContent(ois.readObject());
-		}
-		catch (ClassNotFoundException cnfEx) {
-			throw new EsbException(
-					"Failed to load content class for message", cnfEx);
-		}
-		
+		StreamMessage msg = new StreamMessage();
+		msg.setContent(in);
 		return msg;
 	}
 
 	@Override
 	public void writeMessage(Message message, OutputStream out)
 			throws IOException, EsbException {
-		// TODO : ignoring attachments at the moment
-		ObjectOutputStream oos = new ObjectOutputStream(out);
-		oos.writeObject(message.getContent());
-		oos.flush();
+		if (!(message instanceof StreamMessage)) {
+			throw new EsbException(
+					"Invalid message type for StreamBuilder writeMessage: " +
+					message.getClass().getName());
+		}
+		writeMessage((StreamMessage)message, out);
 	}
 	
+	public void writeMessage(StreamMessage message, OutputStream out) 
+			throws IOException, EsbException {
+		// TODO : ignoring attachments at the moment
+		byte[] buf = new byte[WRITE_BUFFER];
+		int count;
+		InputStream in = message.getContent();
+		while ((count = in.read(buf)) != -1) {
+			out.write(buf, 0, count);
+		}
+		out.flush();
+	}
 
 }

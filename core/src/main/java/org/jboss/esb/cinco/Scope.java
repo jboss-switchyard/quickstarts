@@ -22,35 +22,9 @@
 
 package org.jboss.esb.cinco;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import org.jboss.esb.cinco.internal.message.DefaultMessageBuilder;
-import org.jboss.esb.cinco.message.Builder;
-
-public abstract class MessageBuilder {
-
-	public static final MessageBuilder newInstance() {
-		return new DefaultMessageBuilder();
-	}
-	
-	public static final MessageBuilder newInstance(
-			Class<? extends Message> messageType) 
-			throws EsbException {
-		
-		Builder builderInfo = messageType.getAnnotation(Builder.class);
-		try {
-			return builderInfo.value().newInstance();
-		}
-		catch (Exception ex) {
-			throw new EsbException("Failed to load builder class for message", ex);
-		}
-	}
-	
-	public abstract Message buildMessage();
-
-	public abstract void writeMessage(Message message, OutputStream out) 
-		throws java.io.IOException, EsbException;
-	public abstract Message readMessage(InputStream in)
-		throws java.io.IOException, EsbException;
+public enum Scope {
+	EXCHANGE,
+	IN,
+	OUT,
+	FAULT;
 }
