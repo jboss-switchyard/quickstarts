@@ -26,6 +26,7 @@ import junit.framework.Assert;
 
 import org.jboss.esb.cinco.MessageBuilder;
 import org.jboss.esb.cinco.internal.message.DefaultMessageBuilder;
+import org.jboss.esb.cinco.internal.message.StreamMessageBuilder;
 import org.junit.Test;
 
 public class MessageBuilderTest {
@@ -43,6 +44,6 @@ public class MessageBuilderTest {
 		Assert.assertTrue(defaultBuilder instanceof DefaultMessageBuilder);
 		MessageBuilder streamBuilder = 
 			MessageBuilder.newInstance(StreamMessage.class);
-		Assert.assertTrue(streamBuilder instanceof DefaultMessageBuilder);
+		Assert.assertTrue(streamBuilder instanceof StreamMessageBuilder);
 	}
 }
