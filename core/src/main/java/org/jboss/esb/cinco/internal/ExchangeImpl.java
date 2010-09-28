@@ -28,12 +28,13 @@ import java.util.UUID;
 
 import javax.xml.namespace.QName;
 
+import org.jboss.esb.cinco.Context;
 import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeChannel;
-import org.jboss.esb.cinco.ExchangeContext;
 import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.ExchangeState;
 import org.jboss.esb.cinco.Message;
+import org.jboss.esb.cinco.Scope;
 
 public class ExchangeImpl implements Exchange {
 	
@@ -50,18 +51,24 @@ public class ExchangeImpl implements Exchange {
 	private QName 					_service;
 	private Map<String, Message> 	_messages = 
 		new HashMap<String, Message>();
-	private ExchangeContext 		_context = 
-		new ExchangeContextImpl();
+	private HashMap<Scope, Context> _context =
+		new HashMap<Scope, Context>();
 	
 	ExchangeImpl(ExchangePattern pattern) {
 		_pattern = pattern;
 		_exchangeId = UUID.randomUUID().toString();
 		_state = ExchangeState.NEW;
+		initContext();
 	}
 
 	@Override
-	public ExchangeContext getContext() {
-		return _context;
+	public Context getContext() {
+		return _context.get(Scope.EXCHANGE);
+	}
+
+	@Override
+	public Context getContext(Scope scope) {
+		return _context.get(scope);
 	}
 
 	@Override
@@ -156,5 +163,11 @@ public class ExchangeImpl implements Exchange {
 	public void setMessage(String name, Message message) {
 		_messages.put(name, message);
 	}
-
+	
+	// Builds the context layers for this exchange
+	private void initContext() {
+		for (Scope scope : Scope.values()) {
+			_context.put(scope, new BaseContext());
+		}
+	}
 }

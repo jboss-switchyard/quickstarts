@@ -20,30 +20,44 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco;
+package org.jboss.esb.cinco.internal;
 
-import javax.xml.namespace.QName;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-public interface Exchange {
-	
-	Context getContext();
-	Context getContext(Scope scope);
-	
-	ExchangePattern getPattern();
-	String getId();
-	
-	void setService(QName service);
-	QName getService();
+import org.jboss.esb.cinco.Context;
 
-	void setIn(Message message);
-	Message getIn();
+public class BaseContext implements Context {
 	
-	void setOut(Message message);
-	Message getOut();
+	private ConcurrentHashMap<String, Object> _properties = 
+		new ConcurrentHashMap<String, Object>();
 
-	void setFault(Message message);
-	Message getFault();
-	
-	void setError(Throwable error);
-	Throwable getError();
+	@Override
+	public Object getProperty(String name) {
+		return _properties.get(name);
+	}
+
+	@Override
+	public Map<String, Object> getProperties() {
+		// create a shallow copy to prevent against direct modification of
+		// underlying context map
+		return new HashMap<String, Object>(_properties);
+	}
+
+	@Override
+	public boolean hasProperty(String name) {
+		return _properties.containsKey(name);
+	}
+
+	@Override
+	public Object removeProperty(String name) {
+		return _properties.remove(name);
+	}
+
+	@Override
+	public void setProperty(String name, Object val) {
+		_properties.put(name, val);
+	}
+
 }

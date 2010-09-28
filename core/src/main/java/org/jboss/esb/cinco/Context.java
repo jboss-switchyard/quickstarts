@@ -22,28 +22,13 @@
 
 package org.jboss.esb.cinco;
 
-import javax.xml.namespace.QName;
+import java.util.Map;
 
-public interface Exchange {
-	
-	Context getContext();
-	Context getContext(Scope scope);
-	
-	ExchangePattern getPattern();
-	String getId();
-	
-	void setService(QName service);
-	QName getService();
 
-	void setIn(Message message);
-	Message getIn();
-	
-	void setOut(Message message);
-	Message getOut();
-
-	void setFault(Message message);
-	Message getFault();
-	
-	void setError(Throwable error);
-	Throwable getError();
+public interface Context {
+	Object getProperty(String name);
+	Map<String, Object> getProperties();
+	boolean hasProperty(String name);
+	Object removeProperty(String name);
+	void setProperty(String name, Object val);
 }

@@ -22,8 +22,13 @@
 
 package org.jboss.esb.cinco;
 
-import java.util.Map;
+import javax.xml.namespace.QName;
 
-public interface ExchangeContext extends Map<String, Object> {
+
+
+public interface ExchangeContext extends Context {
+	
+	void setService(QName service);
+	QName getService();
 
 }
