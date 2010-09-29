@@ -24,7 +24,6 @@ package org.jboss.esb.cinco.internal.message;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.util.Arrays;
 
 import junit.framework.Assert;

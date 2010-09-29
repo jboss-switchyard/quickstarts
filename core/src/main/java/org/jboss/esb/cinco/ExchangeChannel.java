@@ -25,7 +25,10 @@ package org.jboss.esb.cinco;
 
 public interface ExchangeChannel {
 	
+	// Exchange factory methods
 	Exchange createExchange(ExchangePattern pattern);
+	Exchange createExchange(ExchangePattern pattern, Exchange relatesTo);
+	
 	void send(Exchange exchange);
 	HandlerChain getHandlerChain();
 }

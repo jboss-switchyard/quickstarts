@@ -22,6 +22,7 @@
 
 package org.jboss.esb.cinco.internal;
 
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -31,6 +32,7 @@ import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.ExchangeState;
 import org.jboss.esb.cinco.HandlerChain;
+import org.jboss.esb.cinco.Scope;
 
 public class ExchangeChannelImpl implements ExchangeChannel {
 	
@@ -73,6 +75,22 @@ public class ExchangeChannelImpl implements ExchangeChannel {
 			exchange.setState(nextState);
 			_handlers.handle(Events.createEvent(this, exchange, Direction.SEND));
 		}
+	}
+
+
+	@Override
+	public Exchange createExchange(ExchangePattern pattern, Exchange relatesTo) {
+		Exchange exchange = createExchange(pattern);
+		
+		// propagate the correlation context
+		Map<String, Object> correlationProps = 
+			relatesTo.getContext(Scope.CORRELATION).getProperties();
+		for (String key : correlationProps.keySet()) {
+			exchange.getContext(Scope.CORRELATION).setProperty(
+					key, correlationProps.get(key));
+		}
+		
+		return exchange;
 	}
 
 }

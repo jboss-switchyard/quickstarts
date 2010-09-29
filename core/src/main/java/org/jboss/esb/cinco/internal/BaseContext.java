@@ -59,5 +59,4 @@ public class BaseContext implements Context {
 	public void setProperty(String name, Object val) {
 		_properties.put(name, val);
 	}
-
 }
