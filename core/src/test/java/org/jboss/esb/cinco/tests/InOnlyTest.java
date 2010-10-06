@@ -47,7 +47,7 @@ public class InOnlyTest {
 	private ServiceDomain _domain;
 	// event counters used by tests
 	private List<ExchangeEvent> inEvents = new LinkedList<ExchangeEvent>();
-	private List<ExchangeEvent> errEvents = new LinkedList<ExchangeEvent>();
+	//private List<ExchangeEvent> errEvents = new LinkedList<ExchangeEvent>();
 
 	@Before
 	public void setUp() throws Exception {

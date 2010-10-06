@@ -26,10 +26,8 @@ import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
 
-import org.jboss.esb.cinco.Context;
 import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangePattern;
-import org.jboss.esb.cinco.Scope;
 import org.junit.Before;
 import org.junit.Test;
 

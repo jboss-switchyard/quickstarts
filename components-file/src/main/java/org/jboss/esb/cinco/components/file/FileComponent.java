@@ -45,8 +45,8 @@ public class FileComponent implements Managed, Deployer {
 	private ExchangeChannel	_channel;
 	private ScheduledExecutorService _scheduler;
 	private FileSpool _spooler;
-	private Map<QName, Future> _pollers = 
-		new HashMap<QName, Future>();
+	private Map<QName, Future<?>> _pollers = 
+		new HashMap<QName, Future<?>>();
 	private Map<QName, FileServiceConfig> _consumedServices = 
 		new HashMap<QName, FileServiceConfig>();
 	private Map<QName, FileServiceConfig> _providedServices = 
@@ -129,7 +129,7 @@ public class FileComponent implements Managed, Deployer {
 	private void createPoller(FileServiceConfig config) {
 		FilePoll consumer = new FilePoll(
 				config, _channel, _context.getMessageFactory());
-		Future scheduledConsumer = _scheduler.scheduleAtFixedRate(
+		Future<?> scheduledConsumer = _scheduler.scheduleAtFixedRate(
 				consumer, 0, 3, TimeUnit.SECONDS);
 		_pollers.put(config.getServiceName(), scheduledConsumer);
 	}

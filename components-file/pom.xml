@@ -11,11 +11,11 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jboss.esb.cinco</groupId>
-	<artifactId>core</artifactId>
+	<artifactId>components-file</artifactId>
 	<packaging>jar</packaging>
-	<name>JBoss ESB: Core (core)</name>
+	<name>JBoss ESB: File Components (components-file)</name>
 	<version>${project.parent.version}</version>
-	<description>The core library.</description>
+	<description>The file components library.</description>
 	<url>http://jboss.org/jbossesb/</url>
 	<build>
 		<plugins>
@@ -23,7 +23,10 @@
 	</build>
 	<dependencies>
 		<!-- internal dependencies -->
-		<!-- N/A -->
+		<dependency>
+			<groupId>org.jboss.esb.cinco</groupId>
+			<artifactId>core</artifactId>
+		</dependency>
 		<!-- external dependencies -->
 		<dependency>
 			<groupId>log4j</groupId>
