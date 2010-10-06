@@ -22,7 +22,6 @@
 
 package org.jboss.esb.cinco;
 
-import org.jboss.esb.cinco.event.ExchangeErrorEvent;
 import org.jboss.esb.cinco.event.ExchangeFaultEvent;
 import org.jboss.esb.cinco.event.ExchangeInEvent;
 import org.jboss.esb.cinco.event.ExchangeOutEvent;
@@ -50,7 +49,7 @@ public abstract class BaseHandler implements ExchangeHandler {
 	}
 
 	@Override
-	public void handle(ExchangeEvent event) {
+	public void handle(ExchangeEvent event) throws HandlerException {
 		switch (event.getDirection()) {
 		case SEND :
 			if (_sendEnabled) {
@@ -66,23 +65,19 @@ public abstract class BaseHandler implements ExchangeHandler {
 	}
 	
 	
-	public void exchangeIn(ExchangeInEvent event) {
+	public void exchangeIn(ExchangeInEvent event) throws HandlerException {
 		// NOP - handled by subclasses
 	}
 	
-	public void exchangeOut(ExchangeOutEvent event) {
+	public void exchangeOut(ExchangeOutEvent event) throws HandlerException {
 		// NOP - handled by subclasses
 	}
 	
-	public void exchangeFault(ExchangeFaultEvent event) {
-		// NOP - handled by subclasses
-	}
-	
-	public void exchangeError(ExchangeErrorEvent event) {
+	public void exchangeFault(ExchangeFaultEvent event) throws HandlerException {
 		// NOP - handled by subclasses
 	}
 
-	public void dispatchEvent(ExchangeEvent event) {
+	public void dispatchEvent(ExchangeEvent event) throws HandlerException {
 		if (event instanceof ExchangeInEvent) {
 			exchangeIn((ExchangeInEvent)event);
 		}
@@ -91,9 +86,6 @@ public abstract class BaseHandler implements ExchangeHandler {
 		}
 		else if (event instanceof ExchangeFaultEvent) {
 			exchangeFault((ExchangeFaultEvent)event);
-		}
-		else if (event instanceof ExchangeErrorEvent) {
-			exchangeError((ExchangeErrorEvent)event);
 		}
 	}
 }

@@ -20,11 +20,11 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco.event;
+package org.jboss.esb.cinco.spi;
 
-import org.jboss.esb.cinco.ExchangeEvent;
+import org.jboss.esb.cinco.Exchange;
 
-public interface ExchangeErrorEvent extends ExchangeEvent {
+public interface Endpoint {
 
-	Throwable getCause();
+	void send(Exchange exchange);
 }

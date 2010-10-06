@@ -24,5 +24,5 @@ package org.jboss.esb.cinco;
 
 public interface ExchangeHandler {
 	
-	void handle(ExchangeEvent event);
+	void handle(ExchangeEvent event) throws HandlerException;
 }

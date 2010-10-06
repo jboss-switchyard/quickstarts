@@ -20,12 +20,30 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco;
+package org.jboss.esb.cinco.internal.event;
 
-public interface ExchangeEvent {
-	Exchange getExchange();
-	Direction getDirection();
-	String getState();
-	void halt();
-	boolean isHalted();
+
+public enum ExchangeState {
+	IN,
+	OUT,
+	FAULT,
+	UNKNOWN;
+
+	/*
+	 * Provide case-insensitive matching for string literals.
+	 */
+	public static ExchangeState fromString(String state) {
+		if (IN.toString().equalsIgnoreCase(state)) {
+			return ExchangeState.IN;
+		}
+		else if (OUT.toString().equalsIgnoreCase(state)) {
+			return ExchangeState.OUT;
+		}
+		else if (FAULT.toString().equalsIgnoreCase(state)) {
+			return ExchangeState.FAULT;
+		}
+		else {
+			return ExchangeState.UNKNOWN;
+		}
+	}
 }

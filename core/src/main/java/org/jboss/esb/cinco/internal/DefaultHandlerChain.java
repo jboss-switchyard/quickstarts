@@ -28,6 +28,7 @@ import java.util.List;
 import org.jboss.esb.cinco.ExchangeEvent;
 import org.jboss.esb.cinco.ExchangeHandler;
 import org.jboss.esb.cinco.HandlerChain;
+import org.jboss.esb.cinco.HandlerException;
 import org.jboss.esb.cinco.internal.event.ExchangeEventImpl;
 
 public class DefaultHandlerChain implements HandlerChain {
@@ -60,11 +61,11 @@ public class DefaultHandlerChain implements HandlerChain {
 	}
 
 	@Override
-	public void handle(ExchangeEvent event) {
+	public void handle(ExchangeEvent event) throws HandlerException {
 		handle((ExchangeEventImpl)event);
 	}
 	
-	private void handle(ExchangeEventImpl event) {
+	private void handle(ExchangeEventImpl event) throws HandlerException {
 		for (HandlerRef ref : listHandlers()) {
 			ref.handler.handle(event);
 			// check to see if the last handler asked for a halt

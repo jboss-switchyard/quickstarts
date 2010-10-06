@@ -22,119 +22,95 @@
 
 package org.jboss.esb.cinco.internal;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.PriorityBlockingQueue;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.jboss.esb.cinco.Direction;
 import org.jboss.esb.cinco.Exchange;
-import org.jboss.esb.cinco.ExchangeChannel;
+import org.jboss.esb.cinco.ExchangeHandler;
+import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.HandlerChain;
+import org.jboss.esb.cinco.Service;
 import org.jboss.esb.cinco.ServiceDomain;
 import org.jboss.esb.cinco.internal.handlers.AddressingHandler;
 import org.jboss.esb.cinco.internal.handlers.DeliveryHandler;
+import org.jboss.esb.cinco.spi.Endpoint;
+import org.jboss.esb.cinco.spi.EndpointProvider;
 import org.jboss.esb.cinco.spi.ServiceRegistry;
 
 public class DomainImpl implements ServiceDomain {
 	
-	private ExecutorService _executor;
 	private HandlerChain _systemHandlers;
 	private ServiceRegistry _registry;
-	private PriorityBlockingQueue<ExchangeChannel> _channels = 
-		new PriorityBlockingQueue<ExchangeChannel>();
-	private volatile boolean _started;
+	private EndpointProvider _endpointProvider;
 
 	public DomainImpl() {
 		_registry = new DefaultServiceRegistry();
+		_endpointProvider  = new DefaultEndpointProvider();
 		
 		// Build out the system handlers chain.  It would be cleaner if we 
 		// handled this via config.
 		_systemHandlers = new DefaultHandlerChain();
-		_systemHandlers.addFirst("addressing", new AddressingHandler(_registry));
+		_systemHandlers.addLast("addressing", new AddressingHandler(_registry));
 		_systemHandlers.addLast("delivery", new DeliveryHandler());
-	}
-	
-	@Override
-	public ExchangeChannel createChannel() {
-		 ExchangeChannel channel = new ExchangeChannelImpl();
-		// Add system handlers to channel
-		channel.getHandlerChain().addLast("system handlers", _systemHandlers);
-		
-		// If the domain is started, we need to schedule a delivery thread
-		synchronized (this) {
-			if (_started) {
-				_executor.submit(new Delivery(channel));
-			}
-		}
-		return channel;
 	}
 	
 
 	@Override
-	public synchronized void start() {
-		if (_started == true) {
-			return;
-		}
+	public Exchange createExchange(QName service, ExchangePattern pattern) {
+		return createExchange(service, pattern, null);
+	}
+
+
+
+	@Override
+	public Exchange createExchange(
+			QName service, ExchangePattern pattern, ExchangeHandler handler) {
+		// setup the system handlers
+		HandlerChain handlers = new DefaultHandlerChain();
+		handlers.addLast("system.handlers", _systemHandlers);
+		// create the exchange
+		ExchangeImpl exchange = new ExchangeImpl(service, pattern, handlers);
 		
-		// TODO : this needs to be configurable and the current strategy of
-		//        one thread per channel is pretty hacky
-		_executor = Executors.newFixedThreadPool(50);
-		for (ExchangeChannel channel : _channels) {
-			_executor.submit(new Delivery(channel));
+		if (handler != null) {
+			// A response handler was specified, so setup a reply endpoint
+			Endpoint ep = _endpointProvider.createEndpoint(handler);
+			exchange.setSource(ep);
 		}
-		_started = true;
+		return exchange;
+	}
+
+
+
+	@Override
+	public List<Service> getServices() {
+		return _registry.getServices();
+	}
+
+
+
+	@Override
+	public List<Service> getServices(QName serviceName) {
+		return _registry.getServices(serviceName);
+	}
+
+
+
+	@Override
+	public Service registerService(QName serviceName, ExchangeHandler handler) {
+		Endpoint ep = _endpointProvider.createEndpoint(handler);
+		HandlerChain handlers = new DefaultHandlerChain();
+		handlers.addLast("provider", handler);
+		return _registry.registerService(serviceName, ep, handlers, this);
+	}
+
+	@Override
+	public synchronized void start() {
+		// nothing to do now
 	}
 	
 	@Override
 	public synchronized void stop() {
-		if (_started != true) {
-			return;
-		}
-		
-		_started = false;
-		// TODO : handle this better - shutdown, await, etc.
-		_executor.shutdownNow();
-	}
-	
-
-	@Override
-	public void registerService(QName serviceName, ExchangeChannel channel) {
-		_registry.registerService(serviceName, channel);
-		_channels.put(channel);
-	}
-
-
-	@Override
-	public void unregisterService(QName serviceName, ExchangeChannel channel) {
-		_registry.unregisterService(serviceName, channel);
-		_channels.remove(channel);
-
-	}
-	
-	class Delivery implements Runnable {
-
-		private ExchangeChannelImpl _channel;
-		
-		Delivery(ExchangeChannel channel) {
-			_channel = (ExchangeChannelImpl)channel;
-		}
-		
-		@Override
-		public void run() {
-			while (_started) {
-				try {
-					Exchange ex = _channel.receive();
-					_channel.getHandlerChain().handle(
-							Events.createEvent(_channel, ex, Direction.RECEIVE));
-				}
-				catch (InterruptedException intEx) {
-					// signal to interrupt blocking receive - not an error
-				}
-			}
-		}
-		
-		
+		// nothing to do now
 	}
 }

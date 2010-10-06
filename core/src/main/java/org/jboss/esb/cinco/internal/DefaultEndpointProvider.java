@@ -20,12 +20,42 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco;
+package org.jboss.esb.cinco.internal;
 
-public interface ExchangeEvent {
-	Exchange getExchange();
-	Direction getDirection();
-	String getState();
-	void halt();
-	boolean isHalted();
+import org.jboss.esb.cinco.Direction;
+import org.jboss.esb.cinco.Exchange;
+import org.jboss.esb.cinco.ExchangeEvent;
+import org.jboss.esb.cinco.ExchangeHandler;
+import org.jboss.esb.cinco.HandlerException;
+import org.jboss.esb.cinco.spi.Endpoint;
+import org.jboss.esb.cinco.spi.EndpointProvider;
+
+public class DefaultEndpointProvider implements EndpointProvider {
+
+	@Override
+	public Endpoint createEndpoint(ExchangeHandler handler) {
+		return new DefaultEndpoint(handler);
+	}
+}
+
+class DefaultEndpoint implements Endpoint {
+	
+	private ExchangeHandler _handler;
+	
+	DefaultEndpoint(ExchangeHandler handler) {
+		_handler = handler;
+	}
+
+	@Override
+	public void send(Exchange exchange) {
+		ExchangeEvent event = Events.createEvent(exchange, Direction.RECEIVE);
+		
+		try {
+			_handler.handle(event);
+		}
+		catch (HandlerException handlerEx) {
+			// TODO : this needs to be mapped to a fault
+		}
+	}
+	
 }

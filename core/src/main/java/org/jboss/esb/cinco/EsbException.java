@@ -24,6 +24,8 @@ package org.jboss.esb.cinco;
 
 public class EsbException extends Exception{
 
+	private static final long serialVersionUID = -7629551190832648296L;
+
 	public EsbException(String message) {
 		super(message);
 	}

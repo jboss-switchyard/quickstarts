@@ -36,6 +36,8 @@ public interface Context {
 		"org.jboss.esb.cinco.context.correlation.id";
 	public static final String MESSAGE_ID = 
 		"org.jboss.esb.cinco.context.message.id";
+	public static final String MESSAGE_NAME = 
+		"org.jboss.esb.cinco.context.message.name";
 	
 	Object getProperty(String name);
 	Map<String, Object> getProperties();

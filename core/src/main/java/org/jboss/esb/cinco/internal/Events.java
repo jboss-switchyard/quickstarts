@@ -22,30 +22,34 @@
 
 package org.jboss.esb.cinco.internal;
 
+import org.jboss.esb.cinco.Context;
 import org.jboss.esb.cinco.Direction;
 import org.jboss.esb.cinco.Exchange;
-import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangeEvent;
-import org.jboss.esb.cinco.internal.event.ExchangeErrorEventImpl;
+import org.jboss.esb.cinco.Scope;
+import org.jboss.esb.cinco.internal.event.ExchangeEventImpl;
 import org.jboss.esb.cinco.internal.event.ExchangeFaultEventImpl;
 import org.jboss.esb.cinco.internal.event.ExchangeInEventImpl;
 import org.jboss.esb.cinco.internal.event.ExchangeOutEventImpl;
+import org.jboss.esb.cinco.internal.event.ExchangeState;
 
 public class Events {
-
+	
 	public static ExchangeEvent createEvent(
-			ExchangeChannel channel, Exchange exchange, Direction direction) {
-		switch (((ExchangeImpl)exchange).getState()) {
-		case ERROR :
-			return new ExchangeErrorEventImpl(channel, exchange, direction);
-		case FAULT :
-			return new ExchangeFaultEventImpl(channel, exchange, direction);
-		case OUT :
-			return new ExchangeOutEventImpl(channel, exchange, direction);
+			Exchange exchange, Direction direction) {
+		
+		String msgName = (String)exchange.getContext(Scope.MESSAGE).
+			getProperty(Context.MESSAGE_NAME);
+		
+		switch (ExchangeState.fromString(msgName)) {
 		case IN :
-			return new ExchangeInEventImpl(channel, exchange, direction);
+			return new ExchangeInEventImpl(exchange, direction);
+		case OUT :
+			return new ExchangeOutEventImpl(exchange, direction);
+		case FAULT :
+			return new ExchangeFaultEventImpl(exchange, direction);
 		default :
-			return null;
+			return new ExchangeEventImpl(exchange, msgName, direction);
 		}
 	}
 }

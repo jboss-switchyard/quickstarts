@@ -29,11 +29,11 @@ import javax.xml.namespace.QName;
 
 import org.jboss.esb.cinco.BaseHandler;
 import org.jboss.esb.cinco.Exchange;
-import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangeEvent;
+import org.jboss.esb.cinco.ExchangeHandler;
 import org.jboss.esb.cinco.ExchangePattern;
+import org.jboss.esb.cinco.MessageBuilder;
 import org.jboss.esb.cinco.ServiceDomain;
-import org.jboss.esb.cinco.event.ExchangeErrorEvent;
 import org.jboss.esb.cinco.event.ExchangeInEvent;
 import org.jboss.esb.cinco.internal.ServiceDomains;
 import org.junit.After;
@@ -61,6 +61,30 @@ public class InOnlyTest {
 		_domain.stop();
 	}
 	
+	/** NEW WAY **/
+	@Test
+	public void testInOnlySuccess() throws Exception {
+		final QName serviceName = new QName("inOnlySuccess");
+		
+		// Provide the service
+		ExchangeHandler provider = new BaseHandler() {
+					public void exchangeIn(ExchangeInEvent event) {
+						inEvents.add(event);
+					}
+		};
+		_domain.registerService(serviceName, provider);
+		
+		// Consume the service
+		Exchange exchange = _domain.createExchange(serviceName, ExchangePattern.IN_ONLY);
+		exchange.sendIn(MessageBuilder.newInstance().buildMessage());
+		
+		// wait a sec, since this is async
+		Thread.sleep(200);
+		Assert.assertTrue(inEvents.size() == 1);
+	}
+	
+	
+	/**  OLD WAY
 	@Test
 	public void testInOnlySuccess() throws Exception {
 		final QName serviceName = new QName("inOnlySuccess");
@@ -84,7 +108,9 @@ public class InOnlyTest {
 		Thread.sleep(200);
 		Assert.assertTrue(inEvents.size() == 1);
 	}
+	*/
 
+	/** OLD WAY
 	@Test
 	public void testInOnlyError() throws Exception {
 		final QName serviceName = new QName("inOnlyError");
@@ -117,5 +143,6 @@ public class InOnlyTest {
 		// consumer should have received an error
 		Assert.assertTrue(errEvents.size() == 1);
 	}
+	**/
 
 }

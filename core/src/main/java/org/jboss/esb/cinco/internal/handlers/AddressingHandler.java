@@ -24,49 +24,49 @@ package org.jboss.esb.cinco.internal.handlers;
 
 import java.util.List;
 
-import org.jboss.esb.cinco.BaseHandler;
 import org.jboss.esb.cinco.Direction;
-import org.jboss.esb.cinco.ExchangeChannel;
-import org.jboss.esb.cinco.ExchangeState;
-import org.jboss.esb.cinco.event.ExchangeInEvent;
-import org.jboss.esb.cinco.internal.Events;
+import org.jboss.esb.cinco.ExchangeEvent;
+import org.jboss.esb.cinco.ExchangeHandler;
+import org.jboss.esb.cinco.HandlerException;
+import org.jboss.esb.cinco.Service;
 import org.jboss.esb.cinco.internal.ExchangeImpl;
+import org.jboss.esb.cinco.internal.ServiceRegistration;
 import org.jboss.esb.cinco.spi.ServiceRegistry;
 
-public class AddressingHandler extends BaseHandler {
+public class AddressingHandler implements ExchangeHandler {
 	
 	private ServiceRegistry _registry;
 	
 	public AddressingHandler(ServiceRegistry registry) {
-		super(Direction.SEND);
 		_registry = registry;
 	}
-
+	
 	@Override
-	public void exchangeIn(ExchangeInEvent event) {		
+	public void handle(ExchangeEvent event) throws HandlerException {
+		
+		// Delivery is only required for sent exchanges
+		if (event.getDirection() != Direction.SEND) {
+			return;
+		}
+		
 		ExchangeImpl exchange = (ExchangeImpl)event.getExchange();
 		
-		if (exchange.getReceivingChannel() == null) {
+		if (exchange.getTarget() == null) {
 			// find the receiving channel
-			List<ExchangeChannel> channels = 
-				_registry.getChannels(exchange.getService());
+			List<Service> serviceList = 
+				_registry.getServices(exchange.getService());
 			
-			if (channels.isEmpty()) {
+			if (serviceList.isEmpty()) {
 				// could not find a registered service - set the exchange
-				// to error and halt processing of the current event
-				event.halt();
-				exchange.setError(new Exception(
-						"No endpoints for service " + exchange.getService()));
-				exchange.setState(ExchangeState.ERROR);
-				event.getChannel().getHandlerChain().handle(
-						Events.createEvent(event.getChannel(), exchange, Direction.RECEIVE));
-				
-				return;
+				throw new HandlerException(
+						"No endpoints for service " + exchange.getService());
 			}
 			
 			// Endpoint selection is arbitrary at the moment
-			exchange.setReceivingChannel(channels.get(0));
+			ServiceRegistration sr = (ServiceRegistration)serviceList.get(0);
+			exchange.setTarget(sr.getEndpoint());
 		}
+		
 	}
 
 }

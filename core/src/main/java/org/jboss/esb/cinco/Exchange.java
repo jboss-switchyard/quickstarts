@@ -28,22 +28,16 @@ public interface Exchange {
 	
 	Context getContext();
 	Context getContext(Scope scope);
-	
-	ExchangePattern getPattern();
+
 	String getId();
-	
-	void setService(QName service);
+	ExchangePattern getPattern();
 	QName getService();
-
-	void setIn(Message message);
-	Message getIn();
 	
-	void setOut(Message message);
-	Message getOut();
-
-	void setFault(Message message);
-	Message getFault();
+	Message getMessage();
 	
-	void setError(Throwable error);
-	Throwable getError();
+	void sendIn(Message in) throws EsbException;
+	void sendOut(Message out) throws EsbException;
+	void sendFault(Message fault) throws EsbException;
+	void send(Message message, String name) throws EsbException;
+	
 }

@@ -24,21 +24,21 @@ package org.jboss.esb.cinco.internal.event;
 
 import org.jboss.esb.cinco.Direction;
 import org.jboss.esb.cinco.Exchange;
-import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.Message;
 import org.jboss.esb.cinco.event.ExchangeInEvent;
 
 public class ExchangeInEventImpl extends ExchangeEventImpl 
 	implements ExchangeInEvent {
+	
+	private static String MSG_STATE = "in";
 
-	public ExchangeInEventImpl(
-			ExchangeChannel channel, Exchange exchange, Direction direction) {
-		super(channel, exchange, direction);
+	public ExchangeInEventImpl(Exchange exchange, Direction direction) {
+		super(exchange, MSG_STATE, direction);
 	}
 
 	@Override
 	public Message getIn() {
-		return getExchange().getIn();
+		return getExchange().getMessage();
 	}
 
 }

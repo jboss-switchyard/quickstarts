@@ -22,6 +22,8 @@
 
 package org.jboss.esb.cinco.internal;
 
+import javax.xml.namespace.QName;
+
 import junit.framework.Assert;
 
 import org.jboss.esb.cinco.Context;
@@ -39,7 +41,7 @@ public class ExchangeImplTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		_exchange = new ExchangeImpl(ExchangePattern.IN_ONLY);
+		_exchange = new ExchangeImpl(new QName("bleh"), ExchangePattern.IN_ONLY, null);
 	}
 	
 	@Test
@@ -52,7 +54,7 @@ public class ExchangeImplTest {
 	@Test
 	public void testContextIsolation() {
 		Context exchangeContext = _exchange.getContext(Scope.EXCHANGE);
-		Context inMsgContext = _exchange.getContext(Scope.IN);
+		Context inMsgContext = _exchange.getContext(Scope.MESSAGE);
 		
 		exchangeContext.setProperty("exchangeProp", "exchangeVal");
 		inMsgContext.setProperty("inMsgProp", "inMsgVal");

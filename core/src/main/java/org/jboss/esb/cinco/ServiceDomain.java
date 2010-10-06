@@ -22,14 +22,18 @@
 
 package org.jboss.esb.cinco;
 
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
 public interface ServiceDomain {
+
+	Exchange createExchange(QName service, ExchangePattern pattern);
+	Exchange createExchange(QName service, ExchangePattern pattern, ExchangeHandler handler);
 	
-	ExchangeChannel createChannel();
-	
-	void registerService(QName serviceName, ExchangeChannel channel);
-	void unregisterService(QName serviceName, ExchangeChannel channel);
+	Service registerService(QName serviceName, ExchangeHandler handler);
+	List<Service> getServices();
+	List<Service> getServices(QName serviceName);
 	
 	void start();
 	void stop();

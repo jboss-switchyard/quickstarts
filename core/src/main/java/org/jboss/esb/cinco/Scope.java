@@ -25,7 +25,5 @@ package org.jboss.esb.cinco;
 public enum Scope {
 	CORRELATION,
 	EXCHANGE,
-	IN,
-	OUT,
-	FAULT;
+	MESSAGE;
 }

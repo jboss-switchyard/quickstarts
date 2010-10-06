@@ -23,12 +23,7 @@
 package org.jboss.esb.cinco;
 
 
-public interface ExchangeChannel {
+public interface Service {
 	
-	// Exchange factory methods
-	Exchange createExchange(ExchangePattern pattern);
-	Exchange createExchange(ExchangePattern pattern, Exchange relatesTo);
-	
-	void send(Exchange exchange);
-	HandlerChain getHandlerChain();
+	void unregister();
 }

@@ -23,41 +23,42 @@
 package org.jboss.esb.cinco.internal;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.xml.namespace.QName;
 
 import org.jboss.esb.cinco.Context;
+import org.jboss.esb.cinco.Direction;
+import org.jboss.esb.cinco.EsbException;
 import org.jboss.esb.cinco.Exchange;
-import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangePattern;
-import org.jboss.esb.cinco.ExchangeState;
+import org.jboss.esb.cinco.HandlerChain;
+import org.jboss.esb.cinco.HandlerException;
 import org.jboss.esb.cinco.Message;
 import org.jboss.esb.cinco.Scope;
+import org.jboss.esb.cinco.spi.Endpoint;
 
 public class ExchangeImpl implements Exchange {
 	
-	public static final String IN_MSG = "in";
-	public static final String OUT_MSG = "out";
-	public static final String FAULT_MSG = "fault";
+	public static final String IN_MSG 		= "in";
+	public static final String OUT_MSG	 	= "out";
+	public static final String FAULT_MSG 	= "fault";
 	
-	private Throwable 				_error;
-	private ExchangeChannel 		_sendChannel;
-	private ExchangeChannel 		_recvChannel;
-	private String 					_exchangeId;
-	private ExchangePattern 		_pattern;
-	private ExchangeState 			_state;
-	private QName 					_service;
-	private Map<String, Message> 	_messages = 
-		new HashMap<String, Message>();
+	private String 			_exchangeId;
+	private ExchangePattern	_pattern;
+	private QName 			_service;
+	private Message 		_message;
+	private HandlerChain	_handlers;
+	private Endpoint		_source;
+	private Endpoint		_target;
 	private HashMap<Scope, Context> _context =
 		new HashMap<Scope, Context>();
 	
-	ExchangeImpl(ExchangePattern pattern) {
+	ExchangeImpl(QName service, ExchangePattern pattern, HandlerChain handlers) {
+		_service = service;
 		_pattern = pattern;
+		_handlers = handlers;
 		_exchangeId = UUID.randomUUID().toString();
-		_state = ExchangeState.NEW;
 		initContext();
 	}
 
@@ -82,88 +83,59 @@ public class ExchangeImpl implements Exchange {
 	}
 
 	@Override
-	public void setService(QName service) {
-		_service = service;
-	}
-	
-	@Override
-	public void setError(Throwable error) {
-		_error = error;
-	}
-	
-	@Override
-	public Throwable getError() {
-		return _error;
-	}
-
-	@Override
 	public String getId() {
 		return _exchangeId;
 	}
+	
 
 	@Override
-	public Message getIn() {
-		return getMessage(IN_MSG);
-	}
-
-	@Override
-	public Message getOut() {
-		return getMessage(OUT_MSG);
+	public Message getMessage() {
+		return _message;
 	}
 
 	@Override
-	public void setFault(Message message) {
-		setMessage(FAULT_MSG, message);
-	}
-	
-	@Override
-	public Message getFault() {
-		return getMessage(FAULT_MSG);
-	}
-
-	@Override
-	public void setIn(Message message) {
-		setMessage(IN_MSG, message);
+	public void send(Message message, String name) throws EsbException {
+		getContext(Scope.MESSAGE).setProperty(Context.MESSAGE_NAME, name);
+		
+		try {
+			_handlers.handle(Events.createEvent(this, Direction.SEND));
+		}
+		catch (HandlerException handlerEx) {
+			throw new EsbException(handlerEx);
+		}
 	}
 
 	@Override
-	public void setOut(Message message) {
-		setMessage(OUT_MSG, message);
-	}
-	
-	
-	public ExchangeChannel getSendingChannel() {
-		return _sendChannel;
-	}
-	
-	public ExchangeChannel getReceivingChannel() {
-		return _recvChannel;
-	}
-	
-	public void setSendingChannel(ExchangeChannel channel) {
-		_sendChannel = channel;
+	public void sendFault(Message fault) throws EsbException {
+		send(fault, FAULT_MSG);
 	}
 
-	public void setReceivingChannel(ExchangeChannel channel) {
-		_recvChannel = channel;
-	}
-	
-	public Message getMessage(String name) {
-		return _messages.get(name);
-	}
-	
-	public ExchangeState getState() {
-		return _state;
-	}
-	
-	public void setState(ExchangeState state) {
-		_state = state;
+	@Override
+	public void sendIn(Message in) throws EsbException {
+		send(in, IN_MSG);
 	}
 
-	public void setMessage(String name, Message message) {
-		_messages.put(name, message);
+	@Override
+	public void sendOut(Message out) throws EsbException {
+		send(out, OUT_MSG);
 	}
 	
+	public Endpoint getSource() {
+		return _source;
+	}
+	
+	public Endpoint getTarget() {
+		return _target;
+	}
+	
+	public void setTarget(Endpoint target) {
+		_target = target;
+	}
+	
+	public void setSource(Endpoint source) {
+		_source = source;
+	}
+
 	// Builds the context layers for this exchange
 	private void initContext() {
 		for (Scope scope : Scope.values()) {

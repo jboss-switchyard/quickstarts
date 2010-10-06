@@ -22,46 +22,64 @@
 
 package org.jboss.esb.cinco.internal;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.jboss.esb.cinco.ExchangeChannel;
+import org.jboss.esb.cinco.HandlerChain;
+import org.jboss.esb.cinco.Service;
+import org.jboss.esb.cinco.ServiceDomain;
 import org.jboss.esb.cinco.spi.ServiceRegistry;
 
 public class DefaultServiceRegistry implements ServiceRegistry {
 	
-	private Map<QName, List<ExchangeChannel>> _services = 
-		new HashMap<QName, List<ExchangeChannel>>();
+	private Map<QName, List<ServiceRegistration>> _services = 
+		new HashMap<QName, List<ServiceRegistration>>();
+
+	
 
 	@Override
-	public synchronized List<ExchangeChannel> getChannels(QName serviceName) {
-		List<ExchangeChannel> channels = _services.get(serviceName);
-		if (channels == null) {
-			channels = Collections.emptyList();
+	public synchronized List<Service> getServices() {
+		LinkedList<Service> serviceList = new LinkedList<Service>();
+		for (List<ServiceRegistration> services : _services.values()) {
+			serviceList.addAll(services);
 		}
-		return channels;
+		
+		return serviceList;
 	}
 
 	@Override
-	public synchronized void registerService(QName serviceName, ExchangeChannel endpoint) {
-		List<ExchangeChannel> channels = _services.get(serviceName);
-		if (channels == null) {
-			channels = new ArrayList<ExchangeChannel>();
-			_services.put(serviceName, channels);
+	public synchronized List<Service> getServices(QName serviceName) {
+		return new LinkedList<Service>(_services.get(serviceName));
+	}
+	
+	@Override
+	public synchronized Service registerService(QName serviceName,
+			org.jboss.esb.cinco.spi.Endpoint endpoint, HandlerChain handlers,
+			ServiceDomain domain) {
+		
+		ServiceRegistration sr = new ServiceRegistration(
+				serviceName, endpoint, handlers, this, domain);
+		
+		List<ServiceRegistration> serviceList = _services.get(serviceName);
+		if (serviceList == null) {
+			serviceList = new LinkedList<ServiceRegistration>();
+			 _services.put(serviceName, serviceList);
 		}
-		channels.add(endpoint);
+		
+		serviceList.add(sr);
+		return sr;
 	}
 
 	@Override
-	public synchronized void unregisterService(QName serviceName, ExchangeChannel endpoint) {
-		List<ExchangeChannel> channels = _services.get(serviceName);
-		if (channels != null) {
-			channels.remove(endpoint);
+	public synchronized void unregisterService(Service service) {
+		List<ServiceRegistration> serviceList = _services.get(service);
+		if (serviceList != null) {
+			serviceList.remove(service);
 		}
 	}
+
 }

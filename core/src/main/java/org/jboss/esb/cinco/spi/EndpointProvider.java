@@ -20,15 +20,12 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco;
+package org.jboss.esb.cinco.spi;
 
+import org.jboss.esb.cinco.ExchangeHandler;
 
-public enum ExchangeState {
+public interface EndpointProvider {
 	
-	NEW,		// just created
-	IN,			// in message
-	FAULT,		// fault message
-	OUT,		// out message
-	DONE,		// completed without error
-	ERROR;		// completed with error
+	Endpoint createEndpoint(ExchangeHandler handler);
+	
 }

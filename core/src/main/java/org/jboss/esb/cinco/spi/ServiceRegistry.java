@@ -26,12 +26,15 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.jboss.esb.cinco.ExchangeChannel;
+import org.jboss.esb.cinco.HandlerChain;
+import org.jboss.esb.cinco.Service;
+import org.jboss.esb.cinco.ServiceDomain;
 
 public interface ServiceRegistry {
 
-	void registerService(QName serviceName, ExchangeChannel channel);
-	void unregisterService(QName serviceName, ExchangeChannel channel);
+	Service registerService(QName serviceName, Endpoint endpoint, HandlerChain handlers, ServiceDomain domain);
+	void unregisterService(Service service);
 	
-	List<ExchangeChannel> getChannels(QName serviceName);
+	List<Service> getServices();
+	List<Service> getServices(QName serviceName);
 }

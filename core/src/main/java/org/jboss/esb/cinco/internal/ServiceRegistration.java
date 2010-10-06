@@ -22,31 +22,54 @@
 
 package org.jboss.esb.cinco.internal;
 
-import org.jboss.esb.cinco.ExchangeState;
+import javax.xml.namespace.QName;
 
-public class ExchangeUtil {
+import org.jboss.esb.cinco.HandlerChain;
+import org.jboss.esb.cinco.Service;
+import org.jboss.esb.cinco.ServiceDomain;
+import org.jboss.esb.cinco.spi.Endpoint;
+import org.jboss.esb.cinco.spi.ServiceRegistry;
+
+public class ServiceRegistration implements Service {
 	
-	public static ExchangeState nextState(ExchangeImpl exchange) {
-		ExchangeState nextState = null;
+	private ServiceRegistry _registry;
+	private ServiceDomain _domain;
+	private Endpoint _endpoint;
+	private QName _serviceName;
+	private HandlerChain _handlers;
+	
+	ServiceRegistration(QName serviceName, 
+			Endpoint endpoint, 
+			HandlerChain handlers, 
+			ServiceRegistry registry, 
+			ServiceDomain domain) {
 		
-		switch (exchange.getState()) {
-		case NEW :
-			nextState = ExchangeState.IN;
-			break;
-		case IN : 
-			// Error is valid for all MEPs in this state
-			if (exchange.getError() != null) {
-				nextState = ExchangeState.ERROR;
-			}
-			else if (exchange.getFault() != null) {
-				nextState = ExchangeState.FAULT;
-			}
-			else {
-				nextState = ExchangeState.OUT;
-			}
-			break;
-		}
-		
-		return nextState;
+		_serviceName = serviceName;
+		_endpoint = endpoint;
+		_handlers = handlers;
+		_registry = registry;
+		_domain = domain;
 	}
+	
+	@Override
+	public void unregister() {
+		_registry.unregisterService(this);
+	}
+	
+	public Endpoint getEndpoint() {
+		return _endpoint;
+	}
+	
+	public ServiceDomain getDomain() {
+		return _domain;
+	}
+	
+	public QName getName() {
+		return _serviceName;
+	}
+	
+	public HandlerChain getHandlers() {
+		return _handlers;
+	}
+
 }
