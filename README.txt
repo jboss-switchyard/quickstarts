@@ -18,7 +18,8 @@ Maven:
 
 Eclipse:
 --------
-- Tested version = JBDS 3.0.0
+- Tested version = JBoss Developer Studio 3.0.0
+- 'mvn eclipse:clean; mvn eclipse:eclipse' (creates .project, .classpath, .settings/)
 - Window -> Preferences -> Java -> Build Path -> Classpath Variables -> [New...]
 	Name: M2_REPO
 	Path: /home/<you>/.m2/repository (<you> == jdoe, for example)
