@@ -4,150 +4,29 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	
 	<groupId>org.jboss.esb.cinco</groupId>
 	<artifactId>jboss-esb</artifactId>
+    <version>5.0.0-SNAPSHOT</version>
+    
 	<packaging>pom</packaging>
+	
 	<name>JBoss ESB</name>
-	<version>5.0.0-SNAPSHOT</version>
 	<description>JBoss ESB 5</description>
 	<url>http://jboss.org/jbossesb</url>
+	
+    <organization>
+        <name>JBoss by Red Hat</name>
+        <url>http://jboss.org</url>
+    </organization>
 	<issueManagement>
-		<url>https://jira.jboss.org/browse/JBESB</url>
+		<!-- JIRA details to follow -->
 	</issueManagement>
-	<inceptionYear>2007</inceptionYear>
-	<mailingLists>
-		<mailingList>
-			<name>JBoss ESB Google Group</name>
-			<subscribe>http://groups.google.com/group/jbossesb/subscribe</subscribe>
-			<unsubscribe>http://groups.google.com/group/jbossesb/subscribe</unsubscribe>
-			<post>jbossesb@googlegroups.com</post>
-			<archive>http://groups.google.com/group/jbossesb/topics</archive>
-		</mailingList>
-	</mailingLists>
-	<developers>
-		<developer>
-			<id>mbojan</id>
-			<name>Magesh Bojan</name>
-			<email>mbojan@redhat.com</email>
-			<!--
-			<url></url>
-			-->
-			<organization>JBoss by Red Hat</organization>
-			<organizationUrl>http://jboss.org</organizationUrl>
-			<!--
-			<roles>
-				<role></role>
-			</roles>
-			<timezone></timezone>
-			-->
-		</developer>
-		<developer>
-			<id>kbabo</id>
-			<name>Keith Babo</name>
-			<email>kbabo@redhat.com</email>
-			<!--
-			<url></url>
-			-->
-			<organization>JBoss by Red Hat</organization>
-			<organizationUrl>http://jboss.org</organizationUrl>
-			<!--
-			<roles>
-				<role></role>
-			</roles>
-			<timezone></timezone>
-			-->
-		</developer>
-		<developer>
-			<id>kconner</id>
-			<name>Kevin Conner</name>
-			<email>kconner@redhat.com</email>
-			<!--
-			<url></url>
-			-->
-			<organization>JBoss by Red Hat</organization>
-			<organizationUrl>http://jboss.org</organizationUrl>
-			<!--
-			<roles>
-				<role></role>
-			</roles>
-			<timezone></timezone>
-			-->
-		</developer>
-		<developer>
-			<id>tcunning</id>
-			<name>Thomas Cunningham</name>
-			<email>tcunning@redhat.com</email>
-			<!--
-			<url></url>
-			-->
-			<organization>JBoss by Red Hat</organization>
-			<organizationUrl>http://jboss.org</organizationUrl>
-			<!--
-			<roles>
-				<role></role>
-			</roles>
-			<timezone></timezone>
-			-->
-		</developer>
-		<developer>
-			<id>tfennell</id>
-			<name>Thomas Fennelly</name>
-			<email>tfennell@redhat.com</email>
-			<!--
-			<url></url>
-			-->
-			<organization>JBoss by Red Hat</organization>
-			<organizationUrl>http://jboss.org</organizationUrl>
-			<!--
-			<roles>
-				<role></role>
-			</roles>
-			<timezone></timezone>
-			-->
-		</developer>
-		<developer>
-			<id>dward</id>
-			<name>David Ward</name>
-			<email>david@jboss.org</email>
-			<url>http://community.jboss.org/people/dward</url>
-			<organization>JBoss by Red Hat</organization>
-			<organizationUrl>http://jboss.org</organizationUrl>
-			<roles>
-				<role>Senior Software Developer</role>
-			</roles>
-			<timezone>-5</timezone>
-		</developer>
-	</developers>
-	<contributors>
-		<!--
-		<contributor>
-			<name></name>
-			<email></email>
-			<url></url>
-			<organization></organization>
-			<organizationUrl></organizationUrl>
-			<roles>
-				<role></role>
-			</roles>
-			<timezone></timezone>
-		</contributor>
-		-->
-	</contributors>
-	<licenses>
-		<license>
-			<!-- TODO: is this right? -->
-			<name>GNU General Public License</name>
-			<url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
-		</license>
-	</licenses>
 	<scm>
 		<connection>scm:git:ssh//github.com/kcbabo/jboss-esb.git</connection>
 		<url>http://github.com/kcbabo/jboss-esb</url>
 	</scm>
-	<organization>
-		<name>JBoss by Red Hat</name>
-		<url>http://jboss.org</url>
-	</organization>
+	
 	<properties>
 		<!--
 		http://maven.apache.org/general.html#encoding-warning
@@ -155,11 +34,15 @@
 		-->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	
+    <modules>
+        <module>core</module>
+        <!-- TODO: update java in components-file to match design changes in core!
+        <module>components-file</module>
+        -->
+    </modules>
+	
 	<build>
-		<pluginManagement>
-			<plugins>
-			</plugins>
-		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -231,18 +114,6 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-clean-plugin</artifactId>
-				<version>2.4.1</version>
-				<configuration>
-					<filesets>
-						<fileset>
-							<directory>target-ant</directory>
-						</fileset>
-					</filesets>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-eclipse-plugin</artifactId>
 				<version>2.8</version>
 				<configuration>
@@ -268,128 +139,35 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!--
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.2-beta-5</version>
-				<configuration>
-					<descriptors>
-						<descriptor>file:${basedir}/src/main/assembly/bin.xml</descriptor>
-						<descriptor>file:${basedir}/src/main/assembly/bin-with-dependencies.xml</descriptor>
-					</descriptors>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.5</version>
-			</plugin>
-			-->
 		</plugins>
-		<extensions>
-			<!--
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ftp</artifactId>
-				<version>1.0-beta-6</version>
-			</extension>
-			-->
-		</extensions>
 	</build>
-	<modules>
-		<module>core</module>
-		<!-- TODO: update java in components-file to match design changes in core!
-		<module>components-file</module>
-		-->
-	</modules>
 	<repositories>
 		<repository>
-			<id>repo1.maven.org</id>
-			<url>http://repo1.maven.org/maven2</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>repository.jboss.org</id>
-			<url>http://repository.jboss.org/maven2</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<!--
-		<repository>
-			<id>snapshots.jboss.org</id>
-			<url>http://snapshots.jboss.org/maven2</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>snapshots-people.apache.org</id>
-			<url>http://people.apache.org/repo/m2-snapshot-repository</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		-->
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Maven Repository Group</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+            <layout>default</layout>
+            <releases>
+                <updatePolicy>always</updatePolicy>
+            </releases>
+            <snapshots>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
-			<id>repo1.maven.org</id>
-			<url>http://repo1.maven.org/maven2</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-		<pluginRepository>
-			<id>repository.jboss.org</id>
-			<url>http://repository.jboss.org/maven2</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-		<!--
-		<pluginRepository>
-			<id>snapshots.jboss.org</id>
-			<url>http://snapshots.jboss.org/maven2</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-		<pluginRepository>
-			<id>snapshots-people.apache.org</id>
-			<url>http://people.apache.org/repo/m2-snapshot-repository</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-		-->
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Maven Repository Group</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+            <layout>default</layout>
+            <releases>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </pluginRepository>
 	</pluginRepositories>
 	<dependencies>
 		<dependency>
