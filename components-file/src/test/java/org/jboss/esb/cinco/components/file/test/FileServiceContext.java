@@ -22,47 +22,27 @@
 
 package org.jboss.esb.cinco.components.file.test;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.xml.namespace.QName;
 
+import org.jboss.esb.cinco.Context;
 import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.components.file.FileServiceConfig;
-import org.jboss.esb.cinco.spi.ServiceContext;
+import org.jboss.esb.cinco.internal.BaseContext;
 
-public class FileServiceContext implements ServiceContext {
+public class FileServiceContext extends BaseContext {
 
 	private ExchangePattern _pattern;
-	private Role _role;
 	private QName _serviceRef;
-	private Map<String, Object> _config = new HashMap<String, Object>();
 	
 	public FileServiceContext() {
 	}
-	
-	@Override
-	public Map<String, Object> getConfig() {
-		return _config;
-	}
 
-	@Override
 	public ExchangePattern getPattern() {
 		return _pattern;
 	}
-
-	@Override
-	public Role getRole() {
-		return _role;
-	}
-
-	@Override
+	
 	public QName getServiceReference() {
 		return _serviceRef;
-	}
-	
-	public void setRole(Role role) {
-		_role = role;
 	}
 	
 	public void setPattern(ExchangePattern pattern) {
@@ -74,11 +54,10 @@ public class FileServiceContext implements ServiceContext {
 	}
 	
 	public void setTargetPath(String path) {
-		_config.put(FileServiceConfig.PATH_KEY, path);
+		setProperty(FileServiceConfig.PATH_KEY, path);
 	}
 	
 	public void setFilter(String filter) {
-		_config.put(FileServiceConfig.FILTER_KEY, filter);
+		setProperty(FileServiceConfig.FILTER_KEY, filter);
 	}
-
 }

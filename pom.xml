@@ -37,9 +37,7 @@
 	
     <modules>
         <module>core</module>
-        <!-- TODO: update java in components-file to match design changes in core!
         <module>components-file</module>
-        -->
     </modules>
 	
 	<build>
@@ -270,7 +268,6 @@
 				<scope>compile</scope>
 				<optional>false</optional>
 			</dependency>
-			<!-- TODO: update java in components-file to match design changes in core!
 			<dependency>
 				<groupId>org.jboss.esb.cinco</groupId>
 				<artifactId>components-file</artifactId>
@@ -278,7 +275,6 @@
 				<scope>compile</scope>
 				<optional>false</optional>
 			</dependency>
-			-->
 			<!-- external dependencies -->
 			<dependency>
 				<groupId>log4j</groupId>

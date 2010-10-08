@@ -29,6 +29,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.jboss.esb.cinco.BaseHandler;
+import org.jboss.esb.cinco.Direction;
 import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.event.ExchangeInEvent;
 import org.jboss.esb.cinco.event.ExchangeOutEvent;
@@ -40,7 +41,7 @@ public class FileSpool extends BaseHandler {
 		new HashMap<QName, FileServiceConfig>();
 	
 	public FileSpool() {
-		super(BaseHandler.Direction.RECEIVE);
+		super(Direction.RECEIVE);
 	}
 	
 	public void addService(FileServiceConfig config) {
@@ -67,7 +68,8 @@ public class FileSpool extends BaseHandler {
 			FileUtil.writeContent(event.getIn().getContent(String.class), target);
 		}
 		catch (java.io.IOException ioEx) {
-			exchange.setError(ioEx);
+			//exchange.setError(ioEx);
+			ioEx.printStackTrace();
 		}
 		
 	}
@@ -82,16 +84,17 @@ public class FileSpool extends BaseHandler {
 					getOutFile(exchange));
 		}
 		catch (java.io.IOException ioEx) {
-			exchange.setError(ioEx);
+			//exchange.setError(ioEx);
+			ioEx.printStackTrace();
 		}
 		
 	}
 	
 	public File getOutFile(Exchange exchange) {
 		String dirPath = 
-			(String)exchange.getContext().get(Properties.IN_FILE_DIR);
+			(String)exchange.getContext().getProperty(Properties.IN_FILE_DIR);
 		String fileName =
-			(String)exchange.getContext().get(Properties.IN_FILE_NAME);
+			(String)exchange.getContext().getProperty(Properties.IN_FILE_NAME);
 		
 		return new File(new File(dirPath), fileName + ".reply");
 	}

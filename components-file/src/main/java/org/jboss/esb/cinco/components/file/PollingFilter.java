@@ -33,7 +33,6 @@ public class PollingFilter implements FileFilter {
 		_pattern = pattern;
 	}
 	
-	@Override
 	public boolean accept(File file) {
 		return file.isFile() && file.getName().matches(_pattern);
 	}

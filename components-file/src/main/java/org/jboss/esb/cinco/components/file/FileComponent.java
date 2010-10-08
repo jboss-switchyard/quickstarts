@@ -30,19 +30,20 @@ import java.util.concurrent.TimeUnit;
 
 import javax.xml.namespace.QName;
 
-import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangePattern;
-import org.jboss.esb.cinco.spi.Deployer;
-import org.jboss.esb.cinco.spi.Managed;
-import org.jboss.esb.cinco.spi.ManagedContext;
-import org.jboss.esb.cinco.spi.ServiceContext;
+import org.jboss.esb.cinco.Context;
+import org.jboss.esb.cinco.MessageBuilder;
+import org.jboss.esb.cinco.ServiceDomain;
+import org.jboss.esb.cinco.internal.DomainImpl;
+import org.jboss.esb.cinco.internal.ServiceRegistration;
 
-public class FileComponent implements Managed, Deployer {
+public class FileComponent {
 	
 	private static final String SERVICE_TYPE = "file";
 	
-	private ManagedContext _context;
-	private ExchangeChannel	_channel;
+	private ServiceDomain _domain;
+	private ServiceRegistration _sr;
+	private Context _context;
 	private ScheduledExecutorService _scheduler;
 	private FileSpool _spooler;
 	private Map<QName, Future<?>> _pollers = 
@@ -54,61 +55,45 @@ public class FileComponent implements Managed, Deployer {
 
 	public FileComponent() {
 		_scheduler = Executors.newScheduledThreadPool(2);
+		_domain = new DomainImpl();
 	}
 
-	@Override
-	public void init(ManagedContext context) {
+	public void init(Context context) {
 		_context = context;
-		_channel = _context.getChannelFactory().createChannel();
 		_spooler = new FileSpool();
-		_channel.getHandlerChain().addLast("file-spooler", _spooler);
+		//_channel.getHandlerChain().addLast("file-spooler", _spooler);
 	}
 
-	@Override
 	public void destroy() {
-		_channel.close();
 	}
 
-
-	@Override
 	public String getServiceType() {
 		return SERVICE_TYPE;
 	}
 
-	@Override
 	public void start(QName service) {
 		if (_consumedServices.containsKey(service)) {
 			createPoller(_consumedServices.get(service));
 		}
 		else {
-			_channel.registerService(service);
+			_sr = (ServiceRegistration) _domain.registerService(service, _spooler);
 			FileServiceConfig config = _providedServices.get(service);
-			if (config.getPattern().equals(ExchangePattern.IN_OUT)) {
+			if (config.getExchangePattern().equals(ExchangePattern.IN_OUT)) {
 				// we need to set up a polling thread for replies
 				createPoller(config);
 			}
 		}
 	}
 	
-	@Override
-	public void deploy(QName service, ServiceContext context) {
-		
-		FileServiceConfig config = new FileServiceConfig(service, context);
-		// This would be a great time to validate the config
-		
-		if (context.getRole().equals(ServiceContext.Role.CONSUMER)) {
-			_consumedServices.put(service, config);
-		}
-		else {
-			_providedServices.put(service, config);
-			_spooler.addService(config);
-		}
+	public void deploy(QName service, Context context, ExchangePattern exchangePattern) {		
+		FileServiceConfig config = new FileServiceConfig(service, exchangePattern, context);
+		_spooler.addService(config);
+		_providedServices.put(service, config);
 	}
 
-	@Override
 	public void stop(QName service) {
 		if (_providedServices.containsKey(service)) {
-			_channel.unregisterService(service);
+			_sr.unregister();	
 		}
 		
 		if (_pollers.containsKey(service)) {
@@ -116,7 +101,6 @@ public class FileComponent implements Managed, Deployer {
 		}
 	}
 
-	@Override
 	public void undeploy(QName service) {
 		if (_consumedServices.containsKey(service)) {
 			_consumedServices.remove(service);
@@ -128,10 +112,9 @@ public class FileComponent implements Managed, Deployer {
 	
 	private void createPoller(FileServiceConfig config) {
 		FilePoll consumer = new FilePoll(
-				config, _channel, _context.getMessageFactory());
+				config, MessageBuilder.newInstance(), _domain);
 		Future<?> scheduledConsumer = _scheduler.scheduleAtFixedRate(
 				consumer, 0, 3, TimeUnit.SECONDS);
 		_pollers.put(config.getServiceName(), scheduledConsumer);
-	}
-	
+	}	
 }

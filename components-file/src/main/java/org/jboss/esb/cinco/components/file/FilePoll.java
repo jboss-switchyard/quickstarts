@@ -28,10 +28,10 @@ import java.io.FileFilter;
 import javax.xml.namespace.QName;
 
 import org.jboss.esb.cinco.Exchange;
-import org.jboss.esb.cinco.ExchangeChannel;
 import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.Message;
-import org.jboss.esb.cinco.MessageFactory;
+import org.jboss.esb.cinco.MessageBuilder;
+import org.jboss.esb.cinco.ServiceDomain;
 
 public class FilePoll implements Runnable {
 
@@ -41,17 +41,15 @@ public class FilePoll implements Runnable {
 	private File 				_workDir;
 	private FileServiceConfig	_config;
 	private FileFilter 			_pollFilter;
-	private ExchangeChannel		_channel;
-	private MessageFactory		_messageFactory;
+	private MessageBuilder		_messageBuilder;
 	private QName				_service;
+	private ServiceDomain		_domain;
 	
-	public FilePoll(FileServiceConfig config, ExchangeChannel channel, 
-			MessageFactory messageFactory) {
-		
+	public FilePoll(FileServiceConfig config, MessageBuilder messageFactory, ServiceDomain domain) {
+		_domain = domain;
 		_config = config;
-		_channel = channel;
 		_service = config.getServiceName();
-		_messageFactory = messageFactory;
+		_messageBuilder = messageFactory;
 		
 		initDirs();
 		_pollFilter = new PollingFilter(config.getFilter());
@@ -70,15 +68,13 @@ public class FilePoll implements Runnable {
 	public void send(File file) {
 		try {
 			String content = FileUtil.readContent(file);
-			Message message = _messageFactory.createMessage();
+			Message message = _messageBuilder.buildMessage();
 			message.setContent(content);
 			
-			Exchange exchange = _channel.createExchange(_config.getPattern());
-			exchange.setIn(message);
-			exchange.setService(_service);
-			exchange.getContext().put(Properties.IN_FILE_DIR, _pollDir.getAbsolutePath());
-			exchange.getContext().put(Properties.IN_FILE_NAME, file.getName());
-			_channel.send(exchange);
+			Exchange exchange = _domain.createExchange(_service, _config.getExchangePattern());
+			exchange.getContext().setProperty(Properties.IN_FILE_DIR, _pollDir.getAbsolutePath());
+			exchange.getContext().setProperty(Properties.IN_FILE_NAME, file.getName());
+			exchange.sendIn(message);
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();

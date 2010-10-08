@@ -27,34 +27,38 @@ import java.io.File;
 import javax.xml.namespace.QName;
 
 import org.jboss.esb.cinco.ExchangePattern;
-import org.jboss.esb.cinco.spi.ServiceContext;
+import org.jboss.esb.cinco.Context;
 
 public class FileServiceConfig {
 
 	public static final String PATH_KEY = "file.service.path";
 	public static final String FILTER_KEY = "file.service.filter";
 	
-	private ServiceContext _context;
+	private Context _context;
 	private QName _serviceName;
 	
-	public FileServiceConfig(QName serviceName, ServiceContext context) {
+	private ExchangePattern _pattern;
+	
+	public FileServiceConfig(QName serviceName, ExchangePattern pattern, 
+			Context context) {
 		_context = context;
 		_serviceName = serviceName;
+		_pattern = pattern;
 	}
 	
 	public File getTargetDir() {
-		return new File((String)_context.getConfig().get(PATH_KEY));
+		return new File((String)_context.getProperty(PATH_KEY));
 	}
 	
 	public String getFilter() {
-		return (String)_context.getConfig().get(FILTER_KEY);
+		return (String)_context.getProperty(FILTER_KEY);
+	}
+		
+	public ExchangePattern getExchangePattern() {
+		return _pattern;
 	}
 	
-	public ExchangePattern getPattern() {
-		return _context.getPattern();
-	}
-	
-	public ServiceContext getContext() {
+	public Context getContext() {
 		return _context;
 	}
 	

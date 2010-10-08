@@ -22,15 +22,10 @@
 
 package org.jboss.esb.cinco.components.file.test;
 
-import org.jboss.esb.cinco.ExchangeChannelFactory;
-import org.jboss.esb.cinco.MessageFactory;
-import org.jboss.esb.cinco.internal.DefaultChannelFactory;
-import org.jboss.esb.cinco.internal.DefaultMessageFactory;
 import org.jboss.esb.cinco.internal.DefaultServiceRegistry;
-import org.jboss.esb.cinco.spi.ManagedContext;
 import org.jboss.esb.cinco.spi.ServiceRegistry;
 
-public class MockManagedContext implements ManagedContext {
+public class MockManagedContext {
 
 	private ServiceRegistry _registry = new DefaultServiceRegistry();
 	
@@ -38,14 +33,4 @@ public class MockManagedContext implements ManagedContext {
 		
 	}
 	
-	@Override
-	public ExchangeChannelFactory getChannelFactory() {
-		return new DefaultChannelFactory(_registry);
-	}
-
-	@Override
-	public MessageFactory getMessageFactory() {
-		return new DefaultMessageFactory();
-	}
-
 }

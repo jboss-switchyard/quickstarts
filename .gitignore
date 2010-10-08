@@ -2,3 +2,6 @@
 .classpath
 .settings/
 target/
+bin/
+components-file/bin/
+core/bin/
