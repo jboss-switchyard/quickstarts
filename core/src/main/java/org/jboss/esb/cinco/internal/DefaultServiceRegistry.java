@@ -22,6 +22,7 @@
 
 package org.jboss.esb.cinco.internal;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,9 +53,14 @@ public class DefaultServiceRegistry implements ServiceRegistry {
 	}
 
 	@Override
-	public synchronized List<Service> getServices(QName serviceName) {
-		return new LinkedList<Service>(_services.get(serviceName));
-	}
+    public synchronized List<Service> getServices(QName serviceName) {
+        List<ServiceRegistration> services = _services.get(serviceName);
+        if (services == null) {
+            return Collections.emptyList();
+        }
+        
+        return new LinkedList<Service>(services);
+    }
 	
 	@Override
 	public synchronized Service registerService(QName serviceName,
