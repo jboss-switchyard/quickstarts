@@ -26,9 +26,18 @@ import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
 
+import org.jboss.esb.cinco.BaseHandler;
 import org.jboss.esb.cinco.Context;
+import org.jboss.esb.cinco.Direction;
+import org.jboss.esb.cinco.Exchange;
+import org.jboss.esb.cinco.ExchangeHandler;
 import org.jboss.esb.cinco.ExchangePattern;
+import org.jboss.esb.cinco.Message;
+import org.jboss.esb.cinco.MessageBuilder;
 import org.jboss.esb.cinco.Scope;
+import org.jboss.esb.cinco.ServiceDomain;
+import org.jboss.esb.cinco.event.ExchangeInEvent;
+import org.jboss.esb.cinco.event.ExchangeOutEvent;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,10 +47,12 @@ import org.junit.Test;
 public class ExchangeImplTest {
 	
 	private ExchangeImpl _exchange;
+	private ServiceDomain _domain;
 	
 	@Before
 	public void setUp() throws Exception {
 		_exchange = new ExchangeImpl(new QName("bleh"), ExchangePattern.IN_ONLY, null);
+		_domain = ServiceDomains.getDomain();
 	}
 	
 	@Test
@@ -64,5 +75,50 @@ public class ExchangeImplTest {
 		
 		Assert.assertTrue(inMsgContext.hasProperty("inMsgProp"));
 		Assert.assertFalse(inMsgContext.hasProperty("exchangeProp"));
+	}
+	
+	/**
+	 * Make sure that the current message is set correctly when an exchange
+	 * is sent.
+	 */
+	@Test
+	public void testGetMessage() throws Exception {
+		
+		final QName serviceName = new QName("bleh");
+		final String inMsgContent = "in message";
+		final String outMsgContent = "out message";
+		
+		// create a handler to test that the in and out content match
+		// expected result from getMessage()
+		ExchangeHandler handler = new BaseHandler(Direction.RECEIVE) {
+			public void exchangeIn(ExchangeInEvent event) {
+				Assert.assertEquals(
+						event.getExchange().getMessage().getContent(), 
+						inMsgContent);
+				
+				Message outMsg = MessageBuilder.newInstance().buildMessage();
+				outMsg.setContent(outMsgContent);
+				try {
+					event.getExchange().sendOut(outMsg);
+				}
+				catch (Exception ex) {
+					Assert.fail(ex.toString());
+				}
+			}
+			
+			public void exchangeOut(ExchangeOutEvent event) {
+				Assert.assertEquals(
+						event.getExchange().getMessage().getContent(), 
+						outMsgContent);
+			}
+		};
+		
+		_domain.registerService(serviceName, handler);
+		Exchange exchange = _domain.createExchange(
+				serviceName, ExchangePattern.IN_OUT, handler);
+		Message inMsg = MessageBuilder.newInstance().buildMessage();
+		inMsg.setContent(inMsgContent);
+		exchange.sendIn(inMsg);
+		
 	}
 }

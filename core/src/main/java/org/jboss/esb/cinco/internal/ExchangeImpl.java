@@ -96,6 +96,7 @@ public class ExchangeImpl implements Exchange {
 	@Override
 	public void send(Message message, String name) throws EsbException {
 		getContext(Scope.MESSAGE).setProperty(Context.MESSAGE_NAME, name);
+		_message = message;
 		
 		try {
 			_handlers.handle(Events.createEvent(this, Direction.SEND));
