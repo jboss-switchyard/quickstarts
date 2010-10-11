@@ -68,6 +68,11 @@ public class ExchangeImpl implements Exchange {
 	}
 
 	@Override
+	public Context createContext() {
+		return new BaseContext();
+	}
+
+	@Override
 	public Context getContext(Scope scope) {
 		return _context.get(scope);
 	}
@@ -94,8 +99,11 @@ public class ExchangeImpl implements Exchange {
 	}
 
 	@Override
-	public void send(Message message, String name) throws EsbException {
-		getContext(Scope.MESSAGE).setProperty(Context.MESSAGE_NAME, name);
+	public void send(Message message, Context messageContext, String name) 
+	throws EsbException {
+		messageContext.setProperty(Context.MESSAGE_NAME, name);
+		setContext(Scope.MESSAGE, messageContext);
+		
 		_message = message;
 		
 		try {
@@ -108,17 +116,33 @@ public class ExchangeImpl implements Exchange {
 
 	@Override
 	public void sendFault(Message fault) throws EsbException {
-		send(fault, FAULT_MSG);
+		send(fault, createContext(), FAULT_MSG);
 	}
 
 	@Override
 	public void sendIn(Message in) throws EsbException {
-		send(in, IN_MSG);
+		send(in, createContext(), IN_MSG);
 	}
 
 	@Override
 	public void sendOut(Message out) throws EsbException {
-		send(out, OUT_MSG);
+		send(out, createContext(), OUT_MSG);
+	}
+	
+
+	@Override
+	public void sendFault(Message fault, Context faultContext) throws EsbException {
+		send(fault, faultContext, FAULT_MSG);
+	}
+
+	@Override
+	public void sendIn(Message in, Context inContext) throws EsbException {
+		send(in, inContext, IN_MSG);
+	}
+
+	@Override
+	public void sendOut(Message out, Context outContext) throws EsbException {
+		send(out, outContext, OUT_MSG);
 	}
 	
 	public Endpoint getSource() {
@@ -135,6 +159,11 @@ public class ExchangeImpl implements Exchange {
 	
 	public void setSource(Endpoint source) {
 		_source = source;
+	}
+
+
+	private void setContext(Scope scope, Context context) {
+		_context.put(scope, context);
 	}
 
 	// Builds the context layers for this exchange

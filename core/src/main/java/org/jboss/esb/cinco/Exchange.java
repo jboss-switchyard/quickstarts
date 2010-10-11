@@ -26,6 +26,7 @@ import javax.xml.namespace.QName;
 
 public interface Exchange {
 	
+	Context createContext();
 	Context getContext();
 	Context getContext(Scope scope);
 
@@ -38,6 +39,10 @@ public interface Exchange {
 	void sendIn(Message in) throws EsbException;
 	void sendOut(Message out) throws EsbException;
 	void sendFault(Message fault) throws EsbException;
-	void send(Message message, String name) throws EsbException;
+	
+	void sendIn(Message in, Context inContext) throws EsbException;
+	void sendOut(Message in, Context outContext) throws EsbException;
+	void sendFault(Message in, Context faultContext) throws EsbException;
+	void send(Message message, Context messageContext, String name) throws EsbException;
 	
 }
