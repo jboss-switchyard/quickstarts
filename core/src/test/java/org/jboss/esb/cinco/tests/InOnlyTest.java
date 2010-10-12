@@ -52,13 +52,11 @@ public class InOnlyTest {
 	@Before
 	public void setUp() throws Exception {
 		_domain = ServiceDomains.getDomain();
-		_domain.start();
 	}
 	
 	@After
 	public void tearDown() throws Exception {
 		inEvents.clear();
-		_domain.stop();
 	}
 	
 	/** NEW WAY **/

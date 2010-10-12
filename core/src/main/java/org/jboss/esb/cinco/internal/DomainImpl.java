@@ -80,37 +80,11 @@ public class DomainImpl implements ServiceDomain {
 		return exchange;
 	}
 
-
-
-	@Override
-	public List<Service> getServices() {
-		return _registry.getServices();
-	}
-
-
-
-	@Override
-	public List<Service> getServices(QName serviceName) {
-		return _registry.getServices(serviceName);
-	}
-
-
-
 	@Override
 	public Service registerService(QName serviceName, ExchangeHandler handler) {
 		Endpoint ep = _endpointProvider.createEndpoint(handler);
 		HandlerChain handlers = new DefaultHandlerChain();
 		handlers.addLast("provider", handler);
 		return _registry.registerService(serviceName, ep, handlers, this);
-	}
-
-	@Override
-	public synchronized void start() {
-		// nothing to do now
-	}
-	
-	@Override
-	public synchronized void stop() {
-		// nothing to do now
 	}
 }
