@@ -36,13 +36,13 @@ public interface Exchange {
 	
 	Message getMessage();
 	
-	void sendIn(Message in) throws EsbException;
-	void sendOut(Message out) throws EsbException;
-	void sendFault(Message fault) throws EsbException;
+	void sendIn(Message in);
+	void sendOut(Message out);
+	void sendFault(Message fault);
 	
-	void sendIn(Message in, Context inContext) throws EsbException;
-	void sendOut(Message in, Context outContext) throws EsbException;
-	void sendFault(Message in, Context faultContext) throws EsbException;
-	void send(Message message, Context messageContext, String name) throws EsbException;
+	void sendIn(Message in, Context inContext);
+	void sendOut(Message in, Context outContext);
+	void sendFault(Message in, Context faultContext);
+	void send(Message message, Context messageContext, String name);
 	
 }

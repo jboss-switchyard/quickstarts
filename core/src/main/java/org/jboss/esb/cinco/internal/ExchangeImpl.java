@@ -100,48 +100,42 @@ public class ExchangeImpl implements Exchange {
 
 	@Override
 	public void send(Message message, Context messageContext, String name) 
-	throws EsbException {
+	{
 		messageContext.setProperty(Context.MESSAGE_NAME, name);
 		setContext(Scope.MESSAGE, messageContext);
 		
 		_message = message;
-		
-		try {
-			_handlers.handle(Events.createEvent(this, Direction.SEND));
-		}
-		catch (HandlerException handlerEx) {
-			throw new EsbException(handlerEx);
-		}
+		_handlers.handle(Events.createEvent(this, Direction.SEND));
 	}
 
 	@Override
-	public void sendFault(Message fault) throws EsbException {
+	public void sendFault(Message fault) {
 		send(fault, createContext(), FAULT_MSG);
 	}
 
 	@Override
-	public void sendIn(Message in) throws EsbException {
+	public void sendIn(Message in) {
 		send(in, createContext(), IN_MSG);
 	}
 
 	@Override
-	public void sendOut(Message out) throws EsbException {
+	public void sendOut(Message out) {
 		send(out, createContext(), OUT_MSG);
 	}
 	
 
 	@Override
-	public void sendFault(Message fault, Context faultContext) throws EsbException {
+	public void sendFault(Message fault, Context faultContext) {
 		send(fault, faultContext, FAULT_MSG);
 	}
 
 	@Override
-	public void sendIn(Message in, Context inContext) throws EsbException {
+	public void sendIn(Message in, Context inContext) {
 		send(in, inContext, IN_MSG);
 	}
 
 	@Override
-	public void sendOut(Message out, Context outContext) throws EsbException {
+	public void sendOut(Message out, Context outContext) {
 		send(out, outContext, OUT_MSG);
 	}
 	

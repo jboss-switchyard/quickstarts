@@ -61,13 +61,20 @@ public class DefaultHandlerChain implements HandlerChain {
 	}
 
 	@Override
-	public void handle(ExchangeEvent event) throws HandlerException {
+	public void handle(ExchangeEvent event){
 		handle((ExchangeEventImpl)event);
 	}
 	
-	private void handle(ExchangeEventImpl event) throws HandlerException {
+	private void handle(ExchangeEventImpl event) {
 		for (HandlerRef ref : listHandlers()) {
-			ref.handler.handle(event);
+			try {
+				ref.handler.handle(event);
+			}
+			catch (HandlerException handlerEx) {
+				event.halt();
+				// TODO - map to fault here
+			}
+			
 			// check to see if the last handler asked for a halt
 			if (event.isHalted()) {
 				break;
