@@ -25,37 +25,30 @@ package org.jboss.esb.cinco.internal;
 import org.jboss.esb.cinco.Direction;
 import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangeEvent;
-import org.jboss.esb.cinco.ExchangeHandler;
-import org.jboss.esb.cinco.HandlerException;
+import org.jboss.esb.cinco.HandlerChain;
 import org.jboss.esb.cinco.spi.Endpoint;
 import org.jboss.esb.cinco.spi.EndpointProvider;
 
 public class DefaultEndpointProvider implements EndpointProvider {
 
 	@Override
-	public Endpoint createEndpoint(ExchangeHandler handler) {
-		return new DefaultEndpoint(handler);
+	public Endpoint createEndpoint(HandlerChain handlerChain) {
+		return new DefaultEndpoint(handlerChain);
 	}
 }
 
 class DefaultEndpoint implements Endpoint {
 	
-	private ExchangeHandler _handler;
+	private HandlerChain _handlerChain;
 	
-	DefaultEndpoint(ExchangeHandler handler) {
-		_handler = handler;
+	DefaultEndpoint(HandlerChain handlerChain) {
+		_handlerChain = handlerChain;
 	}
 
 	@Override
 	public void send(Exchange exchange) {
 		ExchangeEvent event = Events.createEvent(exchange, Direction.RECEIVE);
-		
-		try {
-			_handler.handle(event);
-		}
-		catch (HandlerException handlerEx) {
-			// TODO : this needs to be mapped to a fault
-		}
+		_handlerChain.handle(event);
 	}
 	
 }

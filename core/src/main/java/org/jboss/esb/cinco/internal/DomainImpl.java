@@ -77,7 +77,9 @@ public class DomainImpl implements ServiceDomain {
 		
 		if (handler != null) {
 			// A response handler was specified, so setup a reply endpoint
-			Endpoint ep = _endpointProvider.createEndpoint(handler);
+			HandlerChain replyChain = new DefaultHandlerChain();
+			replyChain.addLast("reply handler", handler);
+			Endpoint ep = _endpointProvider.createEndpoint(replyChain);
 			exchange.setSource(ep);
 		}
 		return exchange;
@@ -85,9 +87,9 @@ public class DomainImpl implements ServiceDomain {
 
 	@Override
 	public Service registerService(QName serviceName, ExchangeHandler handler) {
-		Endpoint ep = _endpointProvider.createEndpoint(handler);
 		HandlerChain handlers = new DefaultHandlerChain();
 		handlers.addLast("provider", handler);
+		Endpoint ep = _endpointProvider.createEndpoint(handlers);
 		return _registry.registerService(serviceName, ep, handlers, this);
 	}
 

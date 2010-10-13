@@ -29,11 +29,9 @@ import javax.xml.namespace.QName;
 
 import org.jboss.esb.cinco.Context;
 import org.jboss.esb.cinco.Direction;
-import org.jboss.esb.cinco.EsbException;
 import org.jboss.esb.cinco.Exchange;
 import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.HandlerChain;
-import org.jboss.esb.cinco.HandlerException;
 import org.jboss.esb.cinco.Message;
 import org.jboss.esb.cinco.Scope;
 import org.jboss.esb.cinco.spi.Endpoint;

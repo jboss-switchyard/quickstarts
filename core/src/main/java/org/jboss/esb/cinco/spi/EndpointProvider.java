@@ -22,10 +22,10 @@
 
 package org.jboss.esb.cinco.spi;
 
-import org.jboss.esb.cinco.ExchangeHandler;
+import org.jboss.esb.cinco.HandlerChain;
 
 public interface EndpointProvider {
 	
-	Endpoint createEndpoint(ExchangeHandler handler);
+	Endpoint createEndpoint(HandlerChain handlerChain);
 	
 }
