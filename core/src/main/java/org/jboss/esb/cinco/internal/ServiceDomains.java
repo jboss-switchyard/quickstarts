@@ -25,7 +25,10 @@ package org.jboss.esb.cinco.internal;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.jboss.esb.cinco.EsbException;
 import org.jboss.esb.cinco.ServiceDomain;
+import org.jboss.esb.cinco.spi.EndpointProvider;
+import org.jboss.esb.cinco.spi.ServiceRegistry;
 
 public class ServiceDomains {
 	public static final String ROOT_DOMAIN = "org.jboss.esb.domains.root";
@@ -33,12 +36,37 @@ public class ServiceDomains {
 	private static ConcurrentHashMap<String, ServiceDomain> _domains = 
 		new ConcurrentHashMap<String, ServiceDomain>();
 	
+	// This is a temporary hack to provide a shared registry and endpoint
+	// provider for all domains.  Once we provide initialization properties
+	// for a domain, we can remove these and do this a bit more dynamically.
+	private static ServiceRegistry _registry = 
+		new DefaultServiceRegistry();
+	private static EndpointProvider _endpointProvider = 
+		new DefaultEndpointProvider();
+	
 	public synchronized static ServiceDomain getDomain() {
-		if (!_domains.contains(ROOT_DOMAIN)) {
-			_domains.put(ROOT_DOMAIN, new DomainImpl());
+		if (!_domains.containsKey(ROOT_DOMAIN)) {
+			try {
+				createDomain(ROOT_DOMAIN);
+			}
+			catch (EsbException esbEx) {
+				// obligatory "this should never happen" text
+				throw new RuntimeException(esbEx);
+			}
 		}
 		
 		return getDomain(ROOT_DOMAIN);
+	}
+	
+	public synchronized static ServiceDomain createDomain(String name) 
+	throws EsbException {
+		if (_domains.containsKey(name)) {
+			throw new EsbException("Domain already exists: " + name);
+		}
+		
+		ServiceDomain domain = new DomainImpl(name, _registry, _endpointProvider);
+		_domains.put(name, domain);
+		return domain;
 	}
 	
 	public static ServiceDomain getDomain(String domainName) {

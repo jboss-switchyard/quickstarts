@@ -20,12 +20,39 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco;
+package org.jboss.esb.cinco.internal;
 
-import javax.xml.namespace.QName;
+import junit.framework.Assert;
 
+import org.jboss.esb.cinco.ServiceDomain;
+import org.junit.Test;
 
-public interface Service {
-	QName getName();
-	void unregister();
+/**
+ *  Unit tests for the ServiceDomains class.
+ */
+public class ServiceDomainsTest {
+	
+	@Test
+	public void testGetDomain() {
+		// Should return the default domain
+		ServiceDomain domain = ServiceDomains.getDomain();
+		Assert.assertEquals(domain.getName(), ServiceDomains.ROOT_DOMAIN);
+		
+		// Multiple calls should return the same domain
+		ServiceDomain domain2 = ServiceDomains.getDomain();
+		Assert.assertEquals(domain, domain2);
+	}
+	
+	@Test
+	public void testCreateDomain() throws Exception {
+		final String DOMAIN1 = "foo";
+		final String DOMAIN2 = "bar";
+		ServiceDomain domain = ServiceDomains.createDomain(DOMAIN1);
+		Assert.assertEquals(domain.getName(), DOMAIN1);
+		
+		// Multiple calls should return the same domain
+		ServiceDomain domain2 = ServiceDomains.createDomain(DOMAIN2);
+		Assert.assertNotSame(domain, domain2);
+	}
+	
 }

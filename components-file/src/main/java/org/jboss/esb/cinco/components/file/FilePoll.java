@@ -28,7 +28,6 @@ import java.io.FileFilter;
 import javax.xml.namespace.QName;
 
 import org.jboss.esb.cinco.Exchange;
-import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.Message;
 import org.jboss.esb.cinco.MessageBuilder;
 import org.jboss.esb.cinco.ServiceDomain;

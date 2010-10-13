@@ -26,6 +26,8 @@ import javax.xml.namespace.QName;
 
 public interface ServiceDomain {
 
+	String getName() ;
+	
 	Exchange createExchange(QName service, ExchangePattern pattern);
 	Exchange createExchange(QName service, ExchangePattern pattern, ExchangeHandler handler);
 	

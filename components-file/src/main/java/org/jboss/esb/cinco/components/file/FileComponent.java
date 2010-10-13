@@ -30,11 +30,12 @@ import java.util.concurrent.TimeUnit;
 
 import javax.xml.namespace.QName;
 
-import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.Context;
+import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.MessageBuilder;
+import org.jboss.esb.cinco.Service;
 import org.jboss.esb.cinco.ServiceDomain;
-import org.jboss.esb.cinco.internal.DomainImpl;
+import org.jboss.esb.cinco.internal.ServiceDomains;
 import org.jboss.esb.cinco.internal.ServiceRegistration;
 
 public class FileComponent {
@@ -42,7 +43,7 @@ public class FileComponent {
 	private static final String SERVICE_TYPE = "file";
 	
 	private ServiceDomain _domain;
-	private ServiceRegistration _sr;
+	private Service _service;
 	private Context _context;
 	private ScheduledExecutorService _scheduler;
 	private FileSpool _spooler;
@@ -55,7 +56,7 @@ public class FileComponent {
 
 	public FileComponent() {
 		_scheduler = Executors.newScheduledThreadPool(2);
-		_domain = new DomainImpl();
+		_domain = ServiceDomains.getDomain();
 	}
 
 	public void init(Context context) {
@@ -76,7 +77,7 @@ public class FileComponent {
 			createPoller(_consumedServices.get(service));
 		}
 		else {
-			_sr = (ServiceRegistration) _domain.registerService(service, _spooler);
+			_service = _domain.registerService(service, _spooler);
 			FileServiceConfig config = _providedServices.get(service);
 			if (config.getExchangePattern().equals(ExchangePattern.IN_OUT)) {
 				// we need to set up a polling thread for replies
@@ -93,7 +94,7 @@ public class FileComponent {
 
 	public void stop(QName service) {
 		if (_providedServices.containsKey(service)) {
-			_sr.unregister();	
+			_service.unregister();	
 		}
 		
 		if (_pollers.containsKey(service)) {

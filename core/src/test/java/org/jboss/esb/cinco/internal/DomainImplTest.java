@@ -41,7 +41,7 @@ public class DomainImplTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		_domain = new DomainImpl();
+		_domain = new DomainImpl("test", null, null);
 	}
 	
 	@Test
@@ -52,21 +52,5 @@ public class DomainImplTest {
 		Assert.assertEquals(ExchangePattern.IN_OUT, inOut.getPattern());
 	}
 	
-	/** Disabled for the moment
-	@Test
-	public void testCreateExchangeCorrelation() {
-		final String correlationId = "foo123";
-		// create the relatesTo exchange
-		Exchange ex1 = _domain.createExchange(SERVICE, ExchangePattern.IN_ONLY);
-		ex1.getContext(Scope.CORRELATION).setProperty(Context.CORRELATION_ID, correlationId);
-		ex1.getContext(Scope.MESSAGE).setProperty(Context.MESSAGE_ID, "bar789");
-		
-		// create a new exchange and use ex1 as relatesTo
-		Exchange ex2 = _domain.createExchange(SERVICE, ExchangePattern.IN_ONLY, ex1);
-		// make sure correlation context is propagated and nothing else
-		Assert.assertEquals(correlationId, 
-				ex2.getContext(Scope.CORRELATION).getProperty(Context.CORRELATION_ID));
-		Assert.assertFalse(ex2.getContext(Scope.IN).hasProperty(Context.MESSAGE_ID));
-	}
-	*/
+	
 }

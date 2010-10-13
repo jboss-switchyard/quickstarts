@@ -24,6 +24,7 @@ package org.jboss.esb.cinco.internal;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,20 @@ public class DefaultServiceRegistry implements ServiceRegistry {
 	private Map<QName, List<ServiceRegistration>> _services = 
 		new HashMap<QName, List<ServiceRegistration>>();
 
-	
+	@Override
+	public List<Service> getServicesForDomain(String domainName) {
+		List<Service> domainServices = getServices();
+		// Using an explicit iterator because we are removing elements
+		for (Iterator<Service> i = domainServices.iterator(); i.hasNext(); ) {
+			ServiceRegistration sr = (ServiceRegistration)i.next();
+			// prune services that do not match the specified domain
+			if (!sr.getDomain().getName().equals(domainName)) {
+				i.remove();
+			}
+		}
+		
+		return domainServices;
+	}
 
 	@Override
 	public synchronized List<Service> getServices() {
@@ -82,7 +96,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
 
 	@Override
 	public synchronized void unregisterService(Service service) {
-		List<ServiceRegistration> serviceList = _services.get(service);
+		List<ServiceRegistration> serviceList = _services.get(service.getName());
 		if (serviceList != null) {
 			serviceList.remove(service);
 		}

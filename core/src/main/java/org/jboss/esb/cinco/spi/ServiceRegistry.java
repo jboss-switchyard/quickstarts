@@ -37,4 +37,5 @@ public interface ServiceRegistry {
 	
 	List<Service> getServices();
 	List<Service> getServices(QName serviceName);
+	List<Service> getServicesForDomain(String domainName);
 }

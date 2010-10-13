@@ -63,7 +63,8 @@ public class ServiceRegistration implements Service {
 	public ServiceDomain getDomain() {
 		return _domain;
 	}
-	
+
+	@Override
 	public QName getName() {
 		return _serviceName;
 	}

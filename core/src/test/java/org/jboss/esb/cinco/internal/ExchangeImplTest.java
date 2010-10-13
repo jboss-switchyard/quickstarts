@@ -35,6 +35,7 @@ import org.jboss.esb.cinco.ExchangePattern;
 import org.jboss.esb.cinco.Message;
 import org.jboss.esb.cinco.MessageBuilder;
 import org.jboss.esb.cinco.Scope;
+import org.jboss.esb.cinco.Service;
 import org.jboss.esb.cinco.ServiceDomain;
 import org.jboss.esb.cinco.event.ExchangeInEvent;
 import org.jboss.esb.cinco.event.ExchangeOutEvent;
@@ -127,7 +128,7 @@ public class ExchangeImplTest {
 			}
 		};
 		
-		_domain.registerService(serviceName, handler);
+		Service service = _domain.registerService(serviceName, handler);
 		Exchange exchange = _domain.createExchange(
 				serviceName, ExchangePattern.IN_OUT, handler);
 		Message inMsg = MessageBuilder.newInstance().buildMessage();
@@ -135,6 +136,9 @@ public class ExchangeImplTest {
 		inCtx.setProperty(sharedPropName, inPropVal);
 		inCtx.setProperty(inPropName, inPropVal);
 		exchange.sendIn(inMsg, inCtx);
+		
+		// clean up
+		service.unregister();
 		
 	}
 	
@@ -174,12 +178,14 @@ public class ExchangeImplTest {
 			}
 		};
 		
-		_domain.registerService(serviceName, handler);
+		Service service = _domain.registerService(serviceName, handler);
 		Exchange exchange = _domain.createExchange(
 				serviceName, ExchangePattern.IN_OUT, handler);
 		Message inMsg = MessageBuilder.newInstance().buildMessage();
 		inMsg.setContent(inMsgContent);
 		exchange.sendIn(inMsg);
-		
+
+		// clean up
+		service.unregister();
 	}
 }

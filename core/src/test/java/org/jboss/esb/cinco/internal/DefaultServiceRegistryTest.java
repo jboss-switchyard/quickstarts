@@ -23,13 +23,13 @@
 package org.jboss.esb.cinco.internal;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
 
 import java.util.List;
 
 import javax.xml.namespace.QName;
 
 import org.jboss.esb.cinco.Service;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -45,7 +45,17 @@ public class DefaultServiceRegistryTest
     {
         DefaultServiceRegistry registry = new DefaultServiceRegistry();
         List<Service> services = registry.getServices(new QName("unRegisteredService"));
-        assertThat(services.size(), is(0));
+        Assert.assertThat(services.size(), is(0));
+    }
+    
+    @Test
+    public void testUnregister() {
+    	final QName serviceName = new QName("Foo");
+        DefaultServiceRegistry registry = new DefaultServiceRegistry();
+        Service service = registry.registerService(serviceName, null, null, null);
+        Assert.assertTrue(registry.getServices(serviceName).size() > 0);
+        service.unregister();
+        Assert.assertTrue(registry.getServices(serviceName).size() == 0);
     }
 
 }

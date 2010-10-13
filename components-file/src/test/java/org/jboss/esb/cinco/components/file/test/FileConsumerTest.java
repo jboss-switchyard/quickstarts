@@ -27,13 +27,9 @@ import java.io.File;
 import javax.xml.namespace.QName;
 
 import org.jboss.esb.cinco.Context;
-import org.jboss.esb.cinco.ExchangePattern;
-import org.jboss.esb.cinco.Message;
-import org.jboss.esb.cinco.MessageBuilder;
 import org.jboss.esb.cinco.components.file.FileComponent;
 import org.jboss.esb.cinco.internal.BaseContext;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 

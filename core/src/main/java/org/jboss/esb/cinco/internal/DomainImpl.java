@@ -22,8 +22,6 @@
 
 package org.jboss.esb.cinco.internal;
 
-import java.util.List;
-
 import javax.xml.namespace.QName;
 
 import org.jboss.esb.cinco.Exchange;
@@ -40,13 +38,18 @@ import org.jboss.esb.cinco.spi.ServiceRegistry;
 
 public class DomainImpl implements ServiceDomain {
 	
+	private String _name;
 	private HandlerChain _systemHandlers;
 	private ServiceRegistry _registry;
 	private EndpointProvider _endpointProvider;
 
-	public DomainImpl() {
-		_registry = new DefaultServiceRegistry();
-		_endpointProvider  = new DefaultEndpointProvider();
+	public DomainImpl(String name, 
+			ServiceRegistry registry, 
+			EndpointProvider endpointProvider) {
+		
+		_name = name;
+		_registry = registry;
+		_endpointProvider  = endpointProvider;
 		
 		// Build out the system handlers chain.  It would be cleaner if we 
 		// handled this via config.
@@ -86,5 +89,11 @@ public class DomainImpl implements ServiceDomain {
 		HandlerChain handlers = new DefaultHandlerChain();
 		handlers.addLast("provider", handler);
 		return _registry.registerService(serviceName, ep, handlers, this);
+	}
+
+
+	@Override
+	public String getName() {
+		return _name;
 	}
 }
