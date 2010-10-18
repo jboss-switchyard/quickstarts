@@ -12,22 +12,15 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jboss.esb.cinco</groupId>
 	<artifactId>core</artifactId>
-	<packaging>jar</packaging>
-	<name>JBoss ESB: Core (core)</name>
+	<packaging>pom</packaging>
+	<name>JBoss ESB: Core POM</name>
 	<version>${project.parent.version}</version>
-	<description>The core library.</description>
+	<description>The Core POM.</description>
 	<url>http://jboss.org/jbossesb/</url>
-	<build>
-		<plugins>
-		</plugins>
-	</build>
-	<dependencies>
-		<!-- internal dependencies -->
-		<!-- N/A -->
-		<!-- external dependencies -->
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-		</dependency>
-	</dependencies>
+	
+    <modules>
+        <module>api</module>
+        <module>runtime</module>
+    </modules>
+
 </project>
