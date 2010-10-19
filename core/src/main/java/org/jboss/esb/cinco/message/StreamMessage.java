@@ -34,7 +34,7 @@ import java.io.InputStream;
  * synchronized copy-on-read stream or serialization to a message repository
  * instead.
  */
-@Builder("org.jboss.esb.cinco.internal.message.DefaultMessageBuilder")
+@Builder("org.jboss.esb.cinco.internal.message.StreamMessageBuilder")
 public class StreamMessage extends DefaultMessage {
 	
 	private ByteArrayOutputStream _contentBuffer;
