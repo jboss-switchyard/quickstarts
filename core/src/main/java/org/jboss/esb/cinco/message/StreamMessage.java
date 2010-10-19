@@ -26,8 +26,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
-import org.jboss.esb.cinco.internal.message.StreamMessageBuilder;
-
 
 /**
  * This implementation is simply for demonstration.  For repeatable reads,
@@ -36,7 +34,7 @@ import org.jboss.esb.cinco.internal.message.StreamMessageBuilder;
  * synchronized copy-on-read stream or serialization to a message repository
  * instead.
  */
-@Builder(StreamMessageBuilder.class)
+@Builder("org.jboss.esb.cinco.internal.message.DefaultMessageBuilder")
 public class StreamMessage extends DefaultMessage {
 	
 	private ByteArrayOutputStream _contentBuffer;
