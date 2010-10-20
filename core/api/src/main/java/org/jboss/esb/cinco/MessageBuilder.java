@@ -25,13 +25,19 @@ package org.jboss.esb.cinco;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.jboss.esb.cinco.internal.message.DefaultMessageBuilder;
 import org.jboss.esb.cinco.message.Builder;
+import org.jboss.esb.cinco.message.DefaultMessage;
 
 public abstract class MessageBuilder {
 
 	public static final MessageBuilder newInstance() {
-		return new DefaultMessageBuilder();
+		try {
+			return newInstance(DefaultMessage.class);
+		}
+		catch (EsbException esbEx) {
+			// no way to recover from this, so throw a runtime exception
+			throw new RuntimeException(esbEx);
+		}
 	}
 	
 	public static final MessageBuilder newInstance(
@@ -40,7 +46,11 @@ public abstract class MessageBuilder {
 		
 		Builder builderInfo = messageType.getAnnotation(Builder.class);
 		try {
-			return builderInfo.value().newInstance();
+            @SuppressWarnings("unchecked")
+			Class<MessageBuilder> builderClass = 
+				(Class<MessageBuilder>)Class.forName(builderInfo.value());
+            
+			return builderClass.newInstance();
 		}
 		catch (Exception ex) {
 			throw new EsbException("Failed to load builder class for message", ex);
