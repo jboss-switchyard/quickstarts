@@ -20,13 +20,15 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.esb.cinco.message;
+package org.jboss.esb.cinco.tests;
 
 import junit.framework.Assert;
 
 import org.jboss.esb.cinco.MessageBuilder;
 import org.jboss.esb.cinco.internal.message.DefaultMessageBuilder;
 import org.jboss.esb.cinco.internal.message.StreamMessageBuilder;
+import org.jboss.esb.cinco.message.DefaultMessage;
+import org.jboss.esb.cinco.message.StreamMessage;
 import org.junit.Test;
 
 public class MessageBuilderTest {

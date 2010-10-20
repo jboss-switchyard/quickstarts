@@ -28,9 +28,8 @@ import java.util.Map;
 import javax.activation.DataSource;
 
 import org.jboss.esb.cinco.Message;
-import org.jboss.esb.cinco.internal.message.DefaultMessageBuilder;
 
-@Builder(DefaultMessageBuilder.class)
+@Builder("org.jboss.esb.cinco.internal.message.DefaultMessageBuilder")
 public class DefaultMessage implements Message {
 	
 	private Object _content;
