@@ -33,11 +33,11 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jboss.esb.cinco</groupId>
-	<artifactId>core-runtime</artifactId>
+	<artifactId>test-util</artifactId>
 	<packaging>jar</packaging>
-	<name>JBoss ESB: Core Runtime</name>
+	<name>JBoss ESB: Test Utilities</name>
 	<version>${project.parent.version}</version>
-	<description>The core runtime library.</description>
+	<description>Test Utility classes.</description>
 	<url>http://jboss.org/jbossesb/</url>
 	<dependencies>
 		<!-- internal dependencies -->
@@ -46,13 +46,13 @@
             <artifactId>core-api</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.jboss.esb.cinco</groupId>
-            <artifactId>test-util</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
 		<!-- N/A -->
 		<!-- external dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+        </dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>

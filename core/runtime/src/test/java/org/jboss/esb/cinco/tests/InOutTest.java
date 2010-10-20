@@ -22,25 +22,10 @@
 
 package org.jboss.esb.cinco.tests;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import javax.xml.namespace.QName;
 
-import junit.framework.Assert;
-
-import org.jboss.esb.cinco.BaseHandler;
-import org.jboss.esb.cinco.Exchange;
-import org.jboss.esb.cinco.ExchangeEvent;
-import org.jboss.esb.cinco.ExchangeHandler;
-import org.jboss.esb.cinco.ExchangePattern;
-import org.jboss.esb.cinco.MessageBuilder;
-import org.jboss.esb.cinco.ServiceDomain;
-import org.jboss.esb.cinco.event.ExchangeFaultEvent;
-import org.jboss.esb.cinco.event.ExchangeInEvent;
-import org.jboss.esb.cinco.event.ExchangeOutEvent;
+import org.jboss.esb.cinco.*;
 import org.jboss.esb.cinco.internal.ServiceDomains;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -48,59 +33,31 @@ public class InOutTest {
 	
 	// where the magic happens
 	private ServiceDomain _domain;
-	// event counters used by tests
-	private List<ExchangeEvent> inEvents = new LinkedList<ExchangeEvent>();
-	private List<ExchangeEvent> outEvents = new LinkedList<ExchangeEvent>();
-	private List<ExchangeEvent> faultEvents = new LinkedList<ExchangeEvent>();
 
 	@Before
 	public void setUp() throws Exception {
 		_domain = ServiceDomains.getDomain();
 	}
-	
-	@After
-	public void tearDown() throws Exception {
-		inEvents.clear();
-		outEvents.clear();
-		faultEvents.clear();
-	}
-	
+
 
 	/** NEW WAY **/
 	@Test
 	public void testInOutSuccess() throws Exception {
 		final QName serviceName = new QName("inOutSuccess");
+
 		// Provide the service
-		ExchangeHandler provider = 
-				new BaseHandler() {
-					public void exchangeIn(ExchangeInEvent event) {
-						inEvents.add(event);
-						Exchange inEx = event.getExchange();
-						try {
-							inEx.sendOut(MessageBuilder.newInstance().buildMessage());
-						}
-						catch (Exception ex) {
-							Assert.fail(ex.toString());
-						}
-					}
-		};
+        MockHandler provider = new MockHandler();
 		_domain.registerService(serviceName, provider);
 		
 		// Consume the service
-		ExchangeHandler consumer =
-				new BaseHandler() {
-					public void exchangeOut(ExchangeOutEvent event) {
-						outEvents.add(event);
-					}
-		};
+        MockHandler consumer = new MockHandler();
 		Exchange exchange = _domain.createExchange(
 				serviceName, ExchangePattern.IN_OUT, consumer);
 		exchange.sendIn(MessageBuilder.newInstance().buildMessage());
 		
-		// wait a sec, since this is async
-		Thread.sleep(200);
-		Assert.assertTrue(inEvents.size() == 1);
-		Assert.assertTrue(outEvents.size() == 1);
+		// wait, since this is async
+        provider.waitForIn();
+        consumer.waitForOut();
 	}
 	
 	/** OLD WAY
@@ -144,36 +101,18 @@ public class InOutTest {
 		
 		final QName serviceName = new QName("inOutFault");
 		// Provide the service
-		ExchangeHandler provider = 
-				new BaseHandler() {
-					public void exchangeIn(ExchangeInEvent event) {
-						inEvents.add(event);
-						Exchange inEx = event.getExchange();
-						try {
-							inEx.sendFault(MessageBuilder.newInstance().buildMessage());
-						}
-						catch (Exception ex) {
-							Assert.fail(ex.toString());
-						}
-					}
-		};
+        MockHandler provider = new MockHandler().forwardInToFault();
 		_domain.registerService(serviceName, provider);
 		
 		// Consume the service
-		ExchangeHandler consumer =
-				new BaseHandler() {
-					public void exchangeFault(ExchangeFaultEvent event) {
-						faultEvents.add(event);
-					}
-		};
+        MockHandler consumer = new MockHandler();
 		Exchange exchange = _domain.createExchange(
 				serviceName, ExchangePattern.IN_OUT, consumer);
 		exchange.sendIn(MessageBuilder.newInstance().buildMessage());
 		
-		// wait a sec, since this is async
-		Thread.sleep(200);
-		Assert.assertTrue(inEvents.size() == 1);
-		Assert.assertTrue(faultEvents.size() == 1);
+		// wait, since this is async
+        provider.waitForIn();
+        consumer.waitForFault();
 		
 	}
 }
