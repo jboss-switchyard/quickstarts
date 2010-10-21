@@ -9,7 +9,7 @@
 		</layout>
 	</appender>
 
-	<logger name="org.jboss.esb.cinco">
+	<logger name="org.switchyard">
 		<level value="INFO"/>
 	</logger>
 

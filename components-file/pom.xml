@@ -4,19 +4,19 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
-		<groupId>org.jboss.esb.cinco</groupId>
-		<artifactId>jboss-esb</artifactId>
+		<groupId>org.switchyard</groupId>
+		<artifactId>switchyard-esb</artifactId>
 		<version>5.0.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jboss.esb.cinco</groupId>
+	<groupId>org.switchyard</groupId>
 	<artifactId>components-file</artifactId>
 	<packaging>jar</packaging>
-	<name>JBoss ESB: File Components (components-file)</name>
+	<name>Switchyard: File Components (components-file)</name>
 	<version>${project.parent.version}</version>
 	<description>The file components library.</description>
-	<url>http://jboss.org/jbossesb/</url>
+	<url>http://switchyard.org/</url>
 	<build>
 		<plugins>
 		</plugins>
@@ -24,14 +24,14 @@
 	<dependencies>
 		<!-- internal dependencies -->
         <dependency>
-            <groupId>org.jboss.esb.cinco</groupId>
+            <groupId>org.switchyard</groupId>
             <artifactId>core-runtime</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 		<!-- external dependencies -->
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-		</dependency>
+	<dependency>
+		<groupId>log4j</groupId>
+		<artifactId>log4j</artifactId>
+	</dependency>
 	</dependencies>
 </project>

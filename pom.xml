@@ -5,15 +5,15 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	
-	<groupId>org.jboss.esb.cinco</groupId>
-	<artifactId>jboss-esb</artifactId>
-    <version>5.0.0-SNAPSHOT</version>
+	<groupId>org.switchyard</groupId>
+	<artifactId>switchyard-esb</artifactId>
+        <version>5.0.0-SNAPSHOT</version>
     
 	<packaging>pom</packaging>
 	
-	<name>JBoss ESB</name>
-	<description>JBoss ESB 5</description>
-	<url>http://jboss.org/jbossesb</url>
+	<name>Switchyard</name>
+	<description>Switchyard</description>
+	<url>http://switchyard.org</url>
 	
     <organization>
         <name>JBoss by Red Hat</name>
@@ -23,8 +23,8 @@
 		<!-- JIRA details to follow -->
 	</issueManagement>
 	<scm>
-		<connection>scm:git:ssh//github.com/kcbabo/jboss-esb.git</connection>
-		<url>http://github.com/kcbabo/jboss-esb</url>
+		<connection>scm:git:ssh//github.com/switchyard/core.git</connection>
+		<url>http://github.com/switchyard/core</url>
 	</scm>
 	
 	<properties>
@@ -213,17 +213,17 @@
 					<stylesheet>maven</stylesheet>
 					-->
 					<!--
-					<excludePackageNames>org.jboss.esb.cinco.foo*:org.jboss.esb.cinco.bar*</excludePackageNames>
+					<excludePackageNames>org.switchyard.foo*:org.switchyard.bar*</excludePackageNames>
 					-->
-					<doctitle>JBoss ESB ${project.version}</doctitle>
+					<doctitle>Switchyard ${project.version}</doctitle>
 					<groups>
 						<group>
-							<title>JBoss ESB: Core</title>
-							<packages>org.jboss.esb.cinco*</packages>
+							<title>Switchyard: Core</title>
+							<packages>org.switchyard*</packages>
 						</group>
 						<group>
-							<title>JBoss ESB: Components / File</title>
-							<packages>org.jboss.esb.cinco.components.file*</packages>
+							<title>Switchyard: Components / File</title>
+							<packages>org.switchyard.components.file*</packages>
 						</group>
 					</groups>
 					<links>
@@ -262,14 +262,14 @@
 		<dependencies>
 			<!-- internal dependencies -->
 			<dependency>
-				<groupId>org.jboss.esb.cinco</groupId>
+				<groupId>org.switchyard</groupId>
 				<artifactId>core</artifactId>
 				<version>${project.version}</version>
 				<scope>compile</scope>
 				<optional>false</optional>
 			</dependency>
 			<dependency>
-				<groupId>org.jboss.esb.cinco</groupId>
+				<groupId>org.switchyard</groupId>
 				<artifactId>components-file</artifactId>
 				<version>${project.version}</version>
 				<scope>compile</scope>
@@ -286,11 +286,5 @@
 		</dependencies>
 	</dependencyManagement>
 	<distributionManagement>
-		<!--
-		<repository>
-			<id>jbossesb-repository</id>
-			<url>ftp://</url>
-		</repository>
-		-->
 	</distributionManagement>
 </project>
