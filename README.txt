@@ -22,7 +22,7 @@ Eclipse:
 
 [Using M2Eclipse]
     - File -> Import... -> Maven -> Existing Maven Projects -> [Next >] ->
-        [Browse...] ->/path/to/jboss-esb -> [OK] -> [Finish]
+        [Browse...] ->/path/to/core -> [OK] -> [Finish]
 
 [Using mvn eclipse:eclipse]
 - 'mvn eclipse:clean; mvn eclipse:eclipse' (creates .project, .classpath, .settings/)
@@ -32,5 +32,5 @@ Eclipse:
 	Path: /home/<you>/.m2/repository (<you> == jdoe, for example)
 
 - File -> Import... -> General -> Existing Projects into Workspace -> [Next >] ->
-	[Browse...] ->/path/to/jboss-esb -> [OK] -> [Finish]
+	[Browse...] ->/path/to/core -> [OK] -> [Finish]
 
