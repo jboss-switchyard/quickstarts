@@ -36,6 +36,7 @@
 	</properties>
 	
     <modules>
+        <module>build</module>
         <module>core/api</module>
         <module>test/test-util</module>
         <module>core/runtime</module>
