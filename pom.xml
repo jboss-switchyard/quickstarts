@@ -6,21 +6,22 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<groupId>org.switchyard</groupId>
-	<artifactId>switchyard-esb</artifactId>
-        <version>5.0.0-SNAPSHOT</version>
+	<artifactId>core-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
     
 	<packaging>pom</packaging>
 	
-	<name>Switchyard</name>
-	<description>Switchyard</description>
+	<name>SwitchYard</name>
+	<description>SwitchYard</description>
 	<url>http://switchyard.org</url>
 	
     <organization>
         <name>JBoss by Red Hat</name>
         <url>http://jboss.org</url>
     </organization>
-	<issueManagement>
-		<!-- JIRA details to follow -->
+	<issueManagement>        
+	   <system>jira</system>
+	   <url>http://jira.jboss.org/browse/SWITCHYARD</url>
 	</issueManagement>
 	<scm>
 		<connection>scm:git:ssh//github.com/switchyard/core.git</connection>
