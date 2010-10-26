@@ -28,13 +28,13 @@
 
     <parent>
         <groupId>org.switchyard</groupId>
-        <artifactId>switchyard-esb</artifactId>
-        <version>5.0.0-SNAPSHOT</version>
+        <artifactId>core-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.switchyard</groupId>
-    <artifactId>switchyard-esb-build</artifactId>
+    <artifactId>core-build</artifactId>
     <name>Switchyard: Build</name>
-    <version>5.0.0-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
 
 </project>
