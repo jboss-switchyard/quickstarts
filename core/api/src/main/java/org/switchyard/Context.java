@@ -26,22 +26,22 @@ import java.util.Map;
 
 
 public interface Context {
-	/* This is a list of commonly used context keys.  Need to think long and
-	 * hard about whether this is the right place for a key mapping.  Might be
-	 * better to externalize this in a const class and/or provide
-	 * subclasses of context for each scope and have specific methods to get/set
-	 * these properties.
-	 */
-	public static final String CORRELATION_ID = 
-		"org.switchyard.context.correlation.id";
-	public static final String MESSAGE_ID = 
-		"org.switchyard.context.message.id";
-	public static final String MESSAGE_NAME = 
-		"org.switchyard.context.message.name";
-	
-	Object getProperty(String name);
-	Map<String, Object> getProperties();
-	boolean hasProperty(String name);
-	Object removeProperty(String name);
-	void setProperty(String name, Object val);
+    /* This is a list of commonly used context keys.  Need to think long and
+     * hard about whether this is the right place for a key mapping.  Might be
+     * better to externalize this in a const class and/or provide
+     * subclasses of context for each scope and have specific methods to get/set
+     * these properties.
+     */
+    public static final String CORRELATION_ID = 
+        "org.switchyard.context.correlation.id";
+    public static final String MESSAGE_ID = 
+        "org.switchyard.context.message.id";
+    public static final String MESSAGE_NAME = 
+        "org.switchyard.context.message.name";
+    
+    Object getProperty(String name);
+    Map<String, Object> getProperties();
+    boolean hasProperty(String name);
+    Object removeProperty(String name);
+    void setProperty(String name, Object val);
 }

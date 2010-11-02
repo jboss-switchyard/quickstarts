@@ -27,5 +27,5 @@ import org.switchyard.Message;
 
 public interface ExchangeOutEvent extends ExchangeEvent {
 
-	Message getOut();
+    Message getOut();
 }

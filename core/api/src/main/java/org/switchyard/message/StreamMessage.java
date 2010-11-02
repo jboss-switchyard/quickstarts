@@ -39,43 +39,43 @@ import org.switchyard.message.DefaultMessage;
  */
 @Builder("org.switchyard.internal.message.StreamMessageBuilder")
 public class StreamMessage extends DefaultMessage {
-	
-	private ByteArrayOutputStream _contentBuffer;
-	private boolean _readRepeatable;
-	
-	public StreamMessage() {
-		this(false);
-	}
-	
-	public StreamMessage(boolean readRepeatable) {
-		_readRepeatable = readRepeatable;
-	}
-	
-	public void setContent(InputStream stream) throws java.io.IOException {
-		if (_readRepeatable) {
-			// create a copy in the local buffer - not ideal!
-			_contentBuffer = new ByteArrayOutputStream(stream.available());
-			byte[] buf = new byte[8 * 1024];
-			int count;
-			while ((count = stream.read(buf)) != -1) {
-				_contentBuffer.write(buf, 0, count);
-			}
-		}
-		else {
-			super.setContent(stream);
-		}
-	}
-	
-	public InputStream getContent() {
-		if(_readRepeatable) {
-			return new ByteArrayInputStream(_contentBuffer.toByteArray());
-		}
-		else {
-			return super.getContent(InputStream.class);
-		}
-	}
-	
-	public boolean isReadRepeatable() {
-		return _readRepeatable;
-	}
+    
+    private ByteArrayOutputStream _contentBuffer;
+    private boolean _readRepeatable;
+    
+    public StreamMessage() {
+        this(false);
+    }
+    
+    public StreamMessage(boolean readRepeatable) {
+        _readRepeatable = readRepeatable;
+    }
+    
+    public void setContent(InputStream stream) throws java.io.IOException {
+        if (_readRepeatable) {
+            // create a copy in the local buffer - not ideal!
+            _contentBuffer = new ByteArrayOutputStream(stream.available());
+            byte[] buf = new byte[8 * 1024];
+            int count;
+            while ((count = stream.read(buf)) != -1) {
+                _contentBuffer.write(buf, 0, count);
+            }
+        }
+        else {
+            super.setContent(stream);
+        }
+    }
+    
+    public InputStream getContent() {
+        if(_readRepeatable) {
+            return new ByteArrayInputStream(_contentBuffer.toByteArray());
+        }
+        else {
+            return super.getContent(InputStream.class);
+        }
+    }
+    
+    public boolean isReadRepeatable() {
+        return _readRepeatable;
+    }
 }

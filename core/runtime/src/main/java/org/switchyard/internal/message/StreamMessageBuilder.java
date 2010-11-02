@@ -32,46 +32,46 @@ import org.switchyard.MessageBuilder;
 import org.switchyard.message.StreamMessage;
 
 public class StreamMessageBuilder extends MessageBuilder {
-	
-	public static final String TYPE = 
-		"org.switchyard.messageType.stream";
-	private static final int WRITE_BUFFER = 8 * 1024;
-	
-	@Override
-	public StreamMessage buildMessage() {
-		return new StreamMessage();
-	}
-	
-	@Override
-	public StreamMessage readMessage(InputStream in) 
-			throws IOException, EsbException {
-		// TODO : ignoring attachments at the moment
-		StreamMessage msg = new StreamMessage();
-		msg.setContent(in);
-		return msg;
-	}
+    
+    public static final String TYPE = 
+        "org.switchyard.messageType.stream";
+    private static final int WRITE_BUFFER = 8 * 1024;
+    
+    @Override
+    public StreamMessage buildMessage() {
+        return new StreamMessage();
+    }
+    
+    @Override
+    public StreamMessage readMessage(InputStream in) 
+            throws IOException, EsbException {
+        // TODO : ignoring attachments at the moment
+        StreamMessage msg = new StreamMessage();
+        msg.setContent(in);
+        return msg;
+    }
 
-	@Override
-	public void writeMessage(Message message, OutputStream out)
-			throws IOException, EsbException {
-		if (!(message instanceof StreamMessage)) {
-			throw new EsbException(
-					"Invalid message type for StreamBuilder writeMessage: " +
-					message.getClass().getName());
-		}
-		writeMessage((StreamMessage)message, out);
-	}
-	
-	public void writeMessage(StreamMessage message, OutputStream out) 
-			throws IOException, EsbException {
-		// TODO : ignoring attachments at the moment
-		byte[] buf = new byte[WRITE_BUFFER];
-		int count;
-		InputStream in = message.getContent();
-		while ((count = in.read(buf)) != -1) {
-			out.write(buf, 0, count);
-		}
-		out.flush();
-	}
+    @Override
+    public void writeMessage(Message message, OutputStream out)
+            throws IOException, EsbException {
+        if (!(message instanceof StreamMessage)) {
+            throw new EsbException(
+                    "Invalid message type for StreamBuilder writeMessage: " +
+                    message.getClass().getName());
+        }
+        writeMessage((StreamMessage)message, out);
+    }
+    
+    public void writeMessage(StreamMessage message, OutputStream out) 
+            throws IOException, EsbException {
+        // TODO : ignoring attachments at the moment
+        byte[] buf = new byte[WRITE_BUFFER];
+        int count;
+        InputStream in = message.getContent();
+        while ((count = in.read(buf)) != -1) {
+            out.write(buf, 0, count);
+        }
+        out.flush();
+    }
 
 }

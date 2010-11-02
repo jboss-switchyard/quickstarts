@@ -33,47 +33,47 @@ import org.switchyard.internal.BaseContext;
  *  Tests for context-related operations.
  */
 public class BaseContextTest {
-	
-	private static final String PROP_NAME = "foo";
-	private static final String PROP_VAL= "bar";
-	private BaseContext _context;
-	
-	@Before
-	public void setUp() throws Exception {
-		_context = new BaseContext();
-	}
-	
-	@Test
-	public void testGetSet() throws Exception {
-		_context.setProperty(PROP_NAME, PROP_VAL);
-		Assert.assertEquals(PROP_VAL, _context.getProperty(PROP_NAME));
-	}
+    
+    private static final String PROP_NAME = "foo";
+    private static final String PROP_VAL= "bar";
+    private BaseContext _context;
+    
+    @Before
+    public void setUp() throws Exception {
+        _context = new BaseContext();
+    }
+    
+    @Test
+    public void testGetSet() throws Exception {
+        _context.setProperty(PROP_NAME, PROP_VAL);
+        Assert.assertEquals(PROP_VAL, _context.getProperty(PROP_NAME));
+    }
 
-	@Test
-	public void testHasProperty() throws Exception {
-		Assert.assertFalse(_context.hasProperty(PROP_NAME));
-		_context.setProperty(PROP_NAME, PROP_VAL);
-		Assert.assertTrue(_context.hasProperty(PROP_NAME));
-	}
+    @Test
+    public void testHasProperty() throws Exception {
+        Assert.assertFalse(_context.hasProperty(PROP_NAME));
+        _context.setProperty(PROP_NAME, PROP_VAL);
+        Assert.assertTrue(_context.hasProperty(PROP_NAME));
+    }
 
-	@Test
-	public void testRemove() throws Exception {
-		_context.setProperty(PROP_NAME, PROP_VAL);
-		Assert.assertTrue(_context.hasProperty(PROP_NAME));
-		_context.removeProperty(PROP_NAME);
-		Assert.assertFalse(_context.hasProperty(PROP_NAME));
-	}
+    @Test
+    public void testRemove() throws Exception {
+        _context.setProperty(PROP_NAME, PROP_VAL);
+        Assert.assertTrue(_context.hasProperty(PROP_NAME));
+        _context.removeProperty(PROP_NAME);
+        Assert.assertFalse(_context.hasProperty(PROP_NAME));
+    }
 
-	@Test
-	public void testGetProperties() throws Exception {
-		_context.setProperty(PROP_NAME, PROP_VAL);
-		Map<String, Object> props = _context.getProperties();
-		Assert.assertEquals(PROP_VAL, props.get(PROP_NAME));
-		
-		// operations to the returned map should *not* be reflected in the context
-		props.remove(PROP_NAME);
-		Assert.assertFalse(props.containsKey(PROP_NAME));
-		Assert.assertTrue(_context.hasProperty(PROP_NAME));
-	}
-	
+    @Test
+    public void testGetProperties() throws Exception {
+        _context.setProperty(PROP_NAME, PROP_VAL);
+        Map<String, Object> props = _context.getProperties();
+        Assert.assertEquals(PROP_VAL, props.get(PROP_NAME));
+        
+        // operations to the returned map should *not* be reflected in the context
+        props.remove(PROP_NAME);
+        Assert.assertFalse(props.containsKey(PROP_NAME));
+        Assert.assertTrue(_context.hasProperty(PROP_NAME));
+    }
+    
 }

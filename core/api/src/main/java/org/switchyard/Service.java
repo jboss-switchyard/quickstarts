@@ -26,6 +26,6 @@ import javax.xml.namespace.QName;
 
 
 public interface Service {
-	QName getName();
-	void unregister();
+    QName getName();
+    void unregister();
 }

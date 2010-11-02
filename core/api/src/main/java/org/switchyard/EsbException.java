@@ -24,17 +24,17 @@ package org.switchyard;
 
 public class EsbException extends Exception{
 
-	private static final long serialVersionUID = -7629551190832648296L;
+    private static final long serialVersionUID = -7629551190832648296L;
 
-	public EsbException(String message) {
-		super(message);
-	}
-	
-	public EsbException(Throwable cause) {
-		super(cause);
-	}
-	
-	public EsbException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public EsbException(String message) {
+        super(message);
+    }
+    
+    public EsbException(Throwable cause) {
+        super(cause);
+    }
+    
+    public EsbException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

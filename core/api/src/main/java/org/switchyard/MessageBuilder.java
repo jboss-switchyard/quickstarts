@@ -33,37 +33,37 @@ import org.switchyard.message.DefaultMessage;
 
 public abstract class MessageBuilder {
 
-	public static final MessageBuilder newInstance() {
-		try {
-			return newInstance(DefaultMessage.class);
-		}
-		catch (EsbException esbEx) {
-			// no way to recover from this, so throw a runtime exception
-			throw new RuntimeException(esbEx);
-		}
-	}
-	
-	public static final MessageBuilder newInstance(
-			Class<? extends Message> messageType) 
-			throws EsbException {
-		
-		Builder builderInfo = messageType.getAnnotation(Builder.class);
-		try {
+    public static final MessageBuilder newInstance() {
+        try {
+            return newInstance(DefaultMessage.class);
+        }
+        catch (EsbException esbEx) {
+            // no way to recover from this, so throw a runtime exception
+            throw new RuntimeException(esbEx);
+        }
+    }
+    
+    public static final MessageBuilder newInstance(
+            Class<? extends Message> messageType) 
+            throws EsbException {
+        
+        Builder builderInfo = messageType.getAnnotation(Builder.class);
+        try {
             @SuppressWarnings("unchecked")
-			Class<MessageBuilder> builderClass = 
-				(Class<MessageBuilder>)Class.forName(builderInfo.value());
+            Class<MessageBuilder> builderClass = 
+                (Class<MessageBuilder>)Class.forName(builderInfo.value());
             
-			return builderClass.newInstance();
-		}
-		catch (Exception ex) {
-			throw new EsbException("Failed to load builder class for message", ex);
-		}
-	}
-	
-	public abstract Message buildMessage();
+            return builderClass.newInstance();
+        }
+        catch (Exception ex) {
+            throw new EsbException("Failed to load builder class for message", ex);
+        }
+    }
+    
+    public abstract Message buildMessage();
 
-	public abstract void writeMessage(Message message, OutputStream out) 
-		throws java.io.IOException, EsbException;
-	public abstract Message readMessage(InputStream in)
-		throws java.io.IOException, EsbException;
+    public abstract void writeMessage(Message message, OutputStream out) 
+        throws java.io.IOException, EsbException;
+    public abstract Message readMessage(InputStream in)
+        throws java.io.IOException, EsbException;
 }

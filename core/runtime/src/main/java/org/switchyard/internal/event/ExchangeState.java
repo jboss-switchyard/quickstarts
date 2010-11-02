@@ -26,26 +26,26 @@ import org.switchyard.internal.event.ExchangeState;
 
 
 public enum ExchangeState {
-	IN,
-	OUT,
-	FAULT,
-	UNKNOWN;
+    IN,
+    OUT,
+    FAULT,
+    UNKNOWN;
 
-	/*
-	 * Provide case-insensitive matching for string literals.
-	 */
-	public static ExchangeState fromString(String state) {
-		if (IN.toString().equalsIgnoreCase(state)) {
-			return ExchangeState.IN;
-		}
-		else if (OUT.toString().equalsIgnoreCase(state)) {
-			return ExchangeState.OUT;
-		}
-		else if (FAULT.toString().equalsIgnoreCase(state)) {
-			return ExchangeState.FAULT;
-		}
-		else {
-			return ExchangeState.UNKNOWN;
-		}
-	}
+    /*
+     * Provide case-insensitive matching for string literals.
+     */
+    public static ExchangeState fromString(String state) {
+        if (IN.toString().equalsIgnoreCase(state)) {
+            return ExchangeState.IN;
+        }
+        else if (OUT.toString().equalsIgnoreCase(state)) {
+            return ExchangeState.OUT;
+        }
+        else if (FAULT.toString().equalsIgnoreCase(state)) {
+            return ExchangeState.FAULT;
+        }
+        else {
+            return ExchangeState.UNKNOWN;
+        }
+    }
 }

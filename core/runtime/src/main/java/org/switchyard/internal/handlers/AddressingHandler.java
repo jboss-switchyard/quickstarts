@@ -34,39 +34,39 @@ import org.switchyard.internal.ServiceRegistration;
 import org.switchyard.spi.ServiceRegistry;
 
 public class AddressingHandler implements ExchangeHandler {
-	
-	private ServiceRegistry _registry;
-	
-	public AddressingHandler(ServiceRegistry registry) {
-		_registry = registry;
-	}
-	
-	@Override
-	public void handle(ExchangeEvent event) throws HandlerException {
-		
-		// Delivery is only required for sent exchanges
-		if (event.getDirection() != Direction.SEND) {
-			return;
-		}
-		
-		ExchangeImpl exchange = (ExchangeImpl)event.getExchange();
-		
-		if (exchange.getTarget() == null) {
-			// find the receiving channel
-			List<Service> serviceList = 
-				_registry.getServices(exchange.getService());
-			
-			if (serviceList.isEmpty()) {
-				// could not find a registered service - set the exchange
-				throw new HandlerException(
-						"No endpoints for service " + exchange.getService());
-			}
-			
-			// Endpoint selection is arbitrary at the moment
-			ServiceRegistration sr = (ServiceRegistration)serviceList.get(0);
-			exchange.setTarget(sr.getEndpoint());
-		}
-		
-	}
+    
+    private ServiceRegistry _registry;
+    
+    public AddressingHandler(ServiceRegistry registry) {
+        _registry = registry;
+    }
+    
+    @Override
+    public void handle(ExchangeEvent event) throws HandlerException {
+        
+        // Delivery is only required for sent exchanges
+        if (event.getDirection() != Direction.SEND) {
+            return;
+        }
+        
+        ExchangeImpl exchange = (ExchangeImpl)event.getExchange();
+        
+        if (exchange.getTarget() == null) {
+            // find the receiving channel
+            List<Service> serviceList = 
+                _registry.getServices(exchange.getService());
+            
+            if (serviceList.isEmpty()) {
+                // could not find a registered service - set the exchange
+                throw new HandlerException(
+                        "No endpoints for service " + exchange.getService());
+            }
+            
+            // Endpoint selection is arbitrary at the moment
+            ServiceRegistration sr = (ServiceRegistration)serviceList.get(0);
+            exchange.setTarget(sr.getEndpoint());
+        }
+        
+    }
 
 }

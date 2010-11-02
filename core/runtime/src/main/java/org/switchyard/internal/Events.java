@@ -34,22 +34,22 @@ import org.switchyard.internal.event.ExchangeOutEventImpl;
 import org.switchyard.internal.event.ExchangeState;
 
 public class Events {
-	
-	public static ExchangeEvent createEvent(
-			Exchange exchange, Direction direction) {
-		
-		String msgName = (String)exchange.getContext(Scope.MESSAGE).
-			getProperty(Context.MESSAGE_NAME);
-		
-		switch (ExchangeState.fromString(msgName)) {
-		case IN :
-			return new ExchangeInEventImpl(exchange, direction);
-		case OUT :
-			return new ExchangeOutEventImpl(exchange, direction);
-		case FAULT :
-			return new ExchangeFaultEventImpl(exchange, direction);
-		default :
-			return new ExchangeEventImpl(exchange, msgName, direction);
-		}
-	}
+    
+    public static ExchangeEvent createEvent(
+            Exchange exchange, Direction direction) {
+        
+        String msgName = (String)exchange.getContext(Scope.MESSAGE).
+            getProperty(Context.MESSAGE_NAME);
+        
+        switch (ExchangeState.fromString(msgName)) {
+        case IN :
+            return new ExchangeInEventImpl(exchange, direction);
+        case OUT :
+            return new ExchangeOutEventImpl(exchange, direction);
+        case FAULT :
+            return new ExchangeFaultEventImpl(exchange, direction);
+        default :
+            return new ExchangeEventImpl(exchange, msgName, direction);
+        }
+    }
 }

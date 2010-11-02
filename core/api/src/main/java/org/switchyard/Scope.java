@@ -23,8 +23,8 @@
 package org.switchyard;
 
 public enum Scope {
-	DOMAIN,
-	CORRELATION,
-	EXCHANGE,
-	MESSAGE;
+    DOMAIN,
+    CORRELATION,
+    EXCHANGE,
+    MESSAGE;
 }

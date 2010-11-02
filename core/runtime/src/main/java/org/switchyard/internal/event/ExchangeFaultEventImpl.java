@@ -29,17 +29,17 @@ import org.switchyard.Message;
 import org.switchyard.event.ExchangeFaultEvent;
 
 public class ExchangeFaultEventImpl extends ExchangeEventImpl 
-	implements ExchangeFaultEvent {
-	
-	private static String MSG_STATE = "fault";
+    implements ExchangeFaultEvent {
+    
+    private static String MSG_STATE = "fault";
 
-	public ExchangeFaultEventImpl(Exchange exchange, Direction direction) {
-		super(exchange, MSG_STATE, direction);
-	}
+    public ExchangeFaultEventImpl(Exchange exchange, Direction direction) {
+        super(exchange, MSG_STATE, direction);
+    }
 
-	@Override
-	public Message getFault() {
-		return getExchange().getMessage();
-	}
+    @Override
+    public Message getFault() {
+        return getExchange().getMessage();
+    }
 
 }

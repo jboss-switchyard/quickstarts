@@ -39,65 +39,65 @@ import org.switchyard.spi.EndpointProvider;
 import org.switchyard.spi.ServiceRegistry;
 
 public class DomainImpl implements ServiceDomain {
-	
-	private String _name;
-	private HandlerChain _systemHandlers;
-	private ServiceRegistry _registry;
-	private EndpointProvider _endpointProvider;
+    
+    private String _name;
+    private HandlerChain _systemHandlers;
+    private ServiceRegistry _registry;
+    private EndpointProvider _endpointProvider;
 
-	public DomainImpl(String name, 
-			ServiceRegistry registry, 
-			EndpointProvider endpointProvider) {
-		
-		_name = name;
-		_registry = registry;
-		_endpointProvider  = endpointProvider;
-		
-		// Build out the system handlers chain.  It would be cleaner if we 
-		// handled this via config.
-		_systemHandlers = new DefaultHandlerChain();
-		_systemHandlers.addLast("addressing", new AddressingHandler(_registry));
-		_systemHandlers.addLast("delivery", new DeliveryHandler());
-	}
-	
+    public DomainImpl(String name, 
+            ServiceRegistry registry, 
+            EndpointProvider endpointProvider) {
+        
+        _name = name;
+        _registry = registry;
+        _endpointProvider  = endpointProvider;
+        
+        // Build out the system handlers chain.  It would be cleaner if we 
+        // handled this via config.
+        _systemHandlers = new DefaultHandlerChain();
+        _systemHandlers.addLast("addressing", new AddressingHandler(_registry));
+        _systemHandlers.addLast("delivery", new DeliveryHandler());
+    }
+    
 
-	@Override
-	public Exchange createExchange(QName service, ExchangePattern pattern) {
-		return createExchange(service, pattern, null);
-	}
-
-
-
-	@Override
-	public Exchange createExchange(
-			QName service, ExchangePattern pattern, ExchangeHandler handler) {
-		// setup the system handlers
-		HandlerChain handlers = new DefaultHandlerChain();
-		handlers.addLast("system.handlers", _systemHandlers);
-		// create the exchange
-		ExchangeImpl exchange = new ExchangeImpl(service, pattern, handlers);
-		
-		if (handler != null) {
-			// A response handler was specified, so setup a reply endpoint
-			HandlerChain replyChain = new DefaultHandlerChain();
-			replyChain.addLast("reply handler", handler);
-			Endpoint ep = _endpointProvider.createEndpoint(replyChain);
-			exchange.setSource(ep);
-		}
-		return exchange;
-	}
-
-	@Override
-	public Service registerService(QName serviceName, ExchangeHandler handler) {
-		HandlerChain handlers = new DefaultHandlerChain();
-		handlers.addLast("provider", handler);
-		Endpoint ep = _endpointProvider.createEndpoint(handlers);
-		return _registry.registerService(serviceName, ep, handlers, this);
-	}
+    @Override
+    public Exchange createExchange(QName service, ExchangePattern pattern) {
+        return createExchange(service, pattern, null);
+    }
 
 
-	@Override
-	public String getName() {
-		return _name;
-	}
+
+    @Override
+    public Exchange createExchange(
+            QName service, ExchangePattern pattern, ExchangeHandler handler) {
+        // setup the system handlers
+        HandlerChain handlers = new DefaultHandlerChain();
+        handlers.addLast("system.handlers", _systemHandlers);
+        // create the exchange
+        ExchangeImpl exchange = new ExchangeImpl(service, pattern, handlers);
+        
+        if (handler != null) {
+            // A response handler was specified, so setup a reply endpoint
+            HandlerChain replyChain = new DefaultHandlerChain();
+            replyChain.addLast("reply handler", handler);
+            Endpoint ep = _endpointProvider.createEndpoint(replyChain);
+            exchange.setSource(ep);
+        }
+        return exchange;
+    }
+
+    @Override
+    public Service registerService(QName serviceName, ExchangeHandler handler) {
+        HandlerChain handlers = new DefaultHandlerChain();
+        handlers.addLast("provider", handler);
+        Endpoint ep = _endpointProvider.createEndpoint(handlers);
+        return _registry.registerService(serviceName, ep, handlers, this);
+    }
+
+
+    @Override
+    public String getName() {
+        return _name;
+    }
 }

@@ -51,7 +51,7 @@ public class DefaultServiceRegistryTest
     
     @Test
     public void testUnregister() {
-    	final QName serviceName = new QName("Foo");
+        final QName serviceName = new QName("Foo");
         DefaultServiceRegistry registry = new DefaultServiceRegistry();
         Service service = registry.registerService(serviceName, null, null, null);
         Assert.assertTrue(registry.getServices(serviceName).size() > 0);

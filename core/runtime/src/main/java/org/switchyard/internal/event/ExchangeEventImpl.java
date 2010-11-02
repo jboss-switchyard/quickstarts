@@ -28,43 +28,43 @@ import org.switchyard.ExchangeEvent;
 
 public class ExchangeEventImpl implements ExchangeEvent {
 
-	private Exchange 	_exchange;
-	private Direction	_direction;
-	private String		_state;
-	private boolean		_halted;
-	
-	public ExchangeEventImpl(Exchange exchange, String state, Direction direction) {
-		_exchange = exchange;
-		_state = state;
-		_direction = direction;
-	}
-	
+    private Exchange    _exchange;
+    private Direction   _direction;
+    private String      _state;
+    private boolean     _halted;
+    
+    public ExchangeEventImpl(Exchange exchange, String state, Direction direction) {
+        _exchange = exchange;
+        _state = state;
+        _direction = direction;
+    }
+    
 
-	@Override
-	public Exchange getExchange() {
-		return _exchange;
-	}
+    @Override
+    public Exchange getExchange() {
+        return _exchange;
+    }
 
-	@Override
-	public Direction getDirection() {
-		return _direction;
-	}
-
-
-	@Override
-	public String getState() {
-		return _state;
-	}
+    @Override
+    public Direction getDirection() {
+        return _direction;
+    }
 
 
-	@Override
-	public void halt() {
-		_halted = true;
-	}
+    @Override
+    public String getState() {
+        return _state;
+    }
 
 
-	@Override
-	public boolean isHalted() {
-		return _halted;
-	}
+    @Override
+    public void halt() {
+        _halted = true;
+    }
+
+
+    @Override
+    public boolean isHalted() {
+        return _halted;
+    }
 }

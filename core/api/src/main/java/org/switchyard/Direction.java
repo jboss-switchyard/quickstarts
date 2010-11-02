@@ -23,6 +23,6 @@
 package org.switchyard;
 
 public enum Direction {
-	SEND,       // exchanges sent through a channel
-	RECEIVE     // exchanges received through a channel
+    SEND,       // exchanges sent through a channel
+    RECEIVE     // exchanges received through a channel
 };

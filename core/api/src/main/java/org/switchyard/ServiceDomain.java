@@ -31,10 +31,10 @@ import org.switchyard.Service;
 
 public interface ServiceDomain {
 
-	String getName() ;
-	
-	Exchange createExchange(QName service, ExchangePattern pattern);
-	Exchange createExchange(QName service, ExchangePattern pattern, ExchangeHandler handler);
-	
-	Service registerService(QName serviceName, ExchangeHandler handler);
+    String getName() ;
+    
+    Exchange createExchange(QName service, ExchangePattern pattern);
+    Exchange createExchange(QName service, ExchangePattern pattern, ExchangeHandler handler);
+    
+    Service registerService(QName serviceName, ExchangeHandler handler);
 }

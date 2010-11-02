@@ -32,69 +32,69 @@ import org.switchyard.HandlerException;
 import org.switchyard.internal.event.ExchangeEventImpl;
 
 public class DefaultHandlerChain implements HandlerChain {
-	
-	private LinkedList<HandlerRef> _chain = new LinkedList<HandlerRef>();
-	
-	@Override
-	public synchronized void addFirst(String handlerName, ExchangeHandler handler) {
-		_chain.addFirst(new HandlerRef(handlerName, handler));
-	}
+    
+    private LinkedList<HandlerRef> _chain = new LinkedList<HandlerRef>();
+    
+    @Override
+    public synchronized void addFirst(String handlerName, ExchangeHandler handler) {
+        _chain.addFirst(new HandlerRef(handlerName, handler));
+    }
 
-	@Override
-	public synchronized void addLast(String handlerName, ExchangeHandler handler) {
-		_chain.addLast(new HandlerRef(handlerName, handler));
-	}
-	
-	@Override
-	public synchronized ExchangeHandler remove(String handlerName) {
-		ExchangeHandler handler = null;
-		
-		for (HandlerRef ref : _chain) {
-			if (ref.name.equals(handlerName)) {
-				handler = ref.handler;
-				_chain.remove(ref);
-				break;
-			}
-		}
-		
-		return handler;
-	}
+    @Override
+    public synchronized void addLast(String handlerName, ExchangeHandler handler) {
+        _chain.addLast(new HandlerRef(handlerName, handler));
+    }
+    
+    @Override
+    public synchronized ExchangeHandler remove(String handlerName) {
+        ExchangeHandler handler = null;
+        
+        for (HandlerRef ref : _chain) {
+            if (ref.name.equals(handlerName)) {
+                handler = ref.handler;
+                _chain.remove(ref);
+                break;
+            }
+        }
+        
+        return handler;
+    }
 
-	@Override
-	public void handle(ExchangeEvent event){
-		handle((ExchangeEventImpl)event);
-	}
-	
-	private void handle(ExchangeEventImpl event) {
-		for (HandlerRef ref : listHandlers()) {
-			try {
-				ref.handler.handle(event);
-			}
-			catch (HandlerException handlerEx) {
-				event.halt();
-				// TODO - map to fault here
-			}
-			
-			// check to see if the last handler asked for a halt
-			if (event.isHalted()) {
-				break;
-			}
-		}
-	}
-	
-	private synchronized List<HandlerRef> listHandlers() {
-		return new LinkedList<HandlerRef>(_chain);
-	}
-	
-	// sweet little struct
-	private class HandlerRef {
-		
-		HandlerRef(String name,ExchangeHandler handler) {
-			this.handler = handler;
-			this.name = name;
-		}
-		
-		ExchangeHandler handler;
-		String name;
-	}
+    @Override
+    public void handle(ExchangeEvent event){
+        handle((ExchangeEventImpl)event);
+    }
+    
+    private void handle(ExchangeEventImpl event) {
+        for (HandlerRef ref : listHandlers()) {
+            try {
+                ref.handler.handle(event);
+            }
+            catch (HandlerException handlerEx) {
+                event.halt();
+                // TODO - map to fault here
+            }
+            
+            // check to see if the last handler asked for a halt
+            if (event.isHalted()) {
+                break;
+            }
+        }
+    }
+    
+    private synchronized List<HandlerRef> listHandlers() {
+        return new LinkedList<HandlerRef>(_chain);
+    }
+    
+    // sweet little struct
+    private class HandlerRef {
+        
+        HandlerRef(String name,ExchangeHandler handler) {
+            this.handler = handler;
+            this.name = name;
+        }
+        
+        ExchangeHandler handler;
+        String name;
+    }
 }

@@ -28,13 +28,13 @@ import javax.activation.DataSource;
 
 public interface Message {
 
-	void setContent(Object content);
-	Object getContent();
-	<T> T getContent(Class<T> type);
-	
-	void addAttachment(String name, DataSource attachment);
-	DataSource getAttachment(String name);
-	DataSource removeAttachment(String name);
-	Map<String, DataSource> getAttachmentMap();
-	
+    void setContent(Object content);
+    Object getContent();
+    <T> T getContent(Class<T> type);
+    
+    void addAttachment(String name, DataSource attachment);
+    DataSource getAttachment(String name);
+    DataSource removeAttachment(String name);
+    Map<String, DataSource> getAttachmentMap();
+    
 }

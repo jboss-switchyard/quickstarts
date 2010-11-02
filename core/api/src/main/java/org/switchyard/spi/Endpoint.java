@@ -26,5 +26,5 @@ import org.switchyard.Exchange;
 
 public interface Endpoint {
 
-	void send(Exchange exchange);
+    void send(Exchange exchange);
 }

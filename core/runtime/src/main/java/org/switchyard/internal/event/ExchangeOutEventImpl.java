@@ -29,17 +29,17 @@ import org.switchyard.Message;
 import org.switchyard.event.ExchangeOutEvent;
 
 public class ExchangeOutEventImpl extends ExchangeEventImpl 
-	implements ExchangeOutEvent {
-	
-	private static String MSG_STATE = "out";
+    implements ExchangeOutEvent {
+    
+    private static String MSG_STATE = "out";
 
-	public ExchangeOutEventImpl(Exchange exchange, Direction direction) {
-		super(exchange, MSG_STATE, direction);
-	}
+    public ExchangeOutEventImpl(Exchange exchange, Direction direction) {
+        super(exchange, MSG_STATE, direction);
+    }
 
 
-	@Override
-	public Message getOut() {
-		return getExchange().getMessage();
-	}
+    @Override
+    public Message getOut() {
+        return getExchange().getMessage();
+    }
 }

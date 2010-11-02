@@ -42,105 +42,105 @@ import org.switchyard.event.ExchangeInEvent;
 import org.switchyard.internal.ServiceDomains;
 
 public class InOnlyTest {
-	
-	// where the magic happens
-	private ServiceDomain _domain;
-	// event counters used by tests
-	private List<ExchangeEvent> inEvents = new LinkedList<ExchangeEvent>();
-	//private List<ExchangeEvent> errEvents = new LinkedList<ExchangeEvent>();
+    
+    // where the magic happens
+    private ServiceDomain _domain;
+    // event counters used by tests
+    private List<ExchangeEvent> inEvents = new LinkedList<ExchangeEvent>();
+    //private List<ExchangeEvent> errEvents = new LinkedList<ExchangeEvent>();
 
-	@Before
-	public void setUp() throws Exception {
-		_domain = ServiceDomains.getDomain();
-	}
-	
-	@After
-	public void tearDown() throws Exception {
-		inEvents.clear();
-	}
-	
-	/** NEW WAY **/
-	@Test
-	public void testInOnlySuccess() throws Exception {
-		final QName serviceName = new QName("inOnlySuccess");
-		
-		// Provide the service
-		ExchangeHandler provider = new BaseHandler() {
-					public void exchangeIn(ExchangeInEvent event) {
-						inEvents.add(event);
-					}
-		};
-		_domain.registerService(serviceName, provider);
-		
-		// Consume the service
-		Exchange exchange = _domain.createExchange(serviceName, ExchangePattern.IN_ONLY);
-		exchange.sendIn(MessageBuilder.newInstance().buildMessage());
-		
-		// wait a sec, since this is async
-		Thread.sleep(200);
-		Assert.assertTrue(inEvents.size() == 1);
-	}
-	
-	
-	/**  OLD WAY
-	@Test
-	public void testInOnlySuccess() throws Exception {
-		final QName serviceName = new QName("inOnlySuccess");
-		// Provide the service
-		ExchangeChannel providerChannel = _domain.createChannel();
-		providerChannel.getHandlerChain().addFirst("provider", 
-				new BaseHandler() {
-					public void exchangeIn(ExchangeInEvent event) {
-						inEvents.add(event);
-					}
-		});
-		_domain.registerService(serviceName, providerChannel);
-		
-		// Consume the service
-		ExchangeChannel consumerChannel = _domain.createChannel();
-		Exchange exchange = consumerChannel.createExchange(ExchangePattern.IN_ONLY);
-		exchange.setService(serviceName);
-		consumerChannel.send(exchange);
-		
-		// wait a sec, since this is async
-		Thread.sleep(200);
-		Assert.assertTrue(inEvents.size() == 1);
-	}
-	*/
+    @Before
+    public void setUp() throws Exception {
+        _domain = ServiceDomains.getDomain();
+    }
+    
+    @After
+    public void tearDown() throws Exception {
+        inEvents.clear();
+    }
+    
+    /** NEW WAY **/
+    @Test
+    public void testInOnlySuccess() throws Exception {
+        final QName serviceName = new QName("inOnlySuccess");
+        
+        // Provide the service
+        ExchangeHandler provider = new BaseHandler() {
+                    public void exchangeIn(ExchangeInEvent event) {
+                        inEvents.add(event);
+                    }
+        };
+        _domain.registerService(serviceName, provider);
+        
+        // Consume the service
+        Exchange exchange = _domain.createExchange(serviceName, ExchangePattern.IN_ONLY);
+        exchange.sendIn(MessageBuilder.newInstance().buildMessage());
+        
+        // wait a sec, since this is async
+        Thread.sleep(200);
+        Assert.assertTrue(inEvents.size() == 1);
+    }
+    
+    
+    /**  OLD WAY
+    @Test
+    public void testInOnlySuccess() throws Exception {
+        final QName serviceName = new QName("inOnlySuccess");
+        // Provide the service
+        ExchangeChannel providerChannel = _domain.createChannel();
+        providerChannel.getHandlerChain().addFirst("provider", 
+                new BaseHandler() {
+                    public void exchangeIn(ExchangeInEvent event) {
+                        inEvents.add(event);
+                    }
+        });
+        _domain.registerService(serviceName, providerChannel);
+        
+        // Consume the service
+        ExchangeChannel consumerChannel = _domain.createChannel();
+        Exchange exchange = consumerChannel.createExchange(ExchangePattern.IN_ONLY);
+        exchange.setService(serviceName);
+        consumerChannel.send(exchange);
+        
+        // wait a sec, since this is async
+        Thread.sleep(200);
+        Assert.assertTrue(inEvents.size() == 1);
+    }
+    */
 
-	/** OLD WAY
-	@Test
-	public void testInOnlyError() throws Exception {
-		final QName serviceName = new QName("inOnlyError");
-		// Provide the service
-		ExchangeChannel providerChannel = _domain.createChannel();
-		providerChannel.getHandlerChain().addFirst("provider", 
-				new BaseHandler() {
-					public void exchangeIn(ExchangeInEvent event) {
-						inEvents.add(event);
-					}
-		});
-		_domain.registerService(serviceName, providerChannel);
-		
-		// Consume the service
-		ExchangeChannel consumerChannel = _domain.createChannel();
-		Exchange exchange = consumerChannel.createExchange(ExchangePattern.IN_ONLY);
-		consumerChannel.getHandlerChain().addFirst("error handler", 
-				new BaseHandler() {
-					public void exchangeError(ExchangeErrorEvent event) {
-						errEvents.add(event);
-					}
-		});
-		exchange.setService(new QName("blahBlahService"));
-		consumerChannel.send(exchange);
-		
-		// wait a sec, since this is async
-		Thread.sleep(200);
-		// provider should not have received message
-		Assert.assertTrue(inEvents.size() == 0);
-		// consumer should have received an error
-		Assert.assertTrue(errEvents.size() == 1);
-	}
-	**/
+    /** OLD WAY
+    @Test
+    public void testInOnlyError() throws Exception {
+        final QName serviceName = new QName("inOnlyError");
+        // Provide the service
+        ExchangeChannel providerChannel = _domain.createChannel();
+        providerChannel.getHandlerChain().addFirst("provider", 
+                new BaseHandler() {
+                    public void exchangeIn(ExchangeInEvent event) {
+                        inEvents.add(event);
+                    }
+        });
+        _domain.registerService(serviceName, providerChannel);
+        
+        // Consume the service
+        ExchangeChannel consumerChannel = _domain.createChannel();
+        Exchange exchange = consumerChannel.createExchange(ExchangePattern.IN_ONLY);
+        consumerChannel.getHandlerChain().addFirst("error handler", 
+                new BaseHandler() {
+                    public void exchangeError(ExchangeErrorEvent event) {
+                        errEvents.add(event);
+                    }
+        });
+        exchange.setService(new QName("blahBlahService"));
+        consumerChannel.send(exchange);
+        
+        // wait a sec, since this is async
+        Thread.sleep(200);
+        // provider should not have received message
+        Assert.assertTrue(inEvents.size() == 0);
+        // consumer should have received an error
+        Assert.assertTrue(errEvents.size() == 1);
+    }
+    **/
 
 }

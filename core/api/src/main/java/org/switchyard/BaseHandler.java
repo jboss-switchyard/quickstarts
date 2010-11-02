@@ -32,64 +32,64 @@ import org.switchyard.event.ExchangeOutEvent;
 
 
 public abstract class BaseHandler implements ExchangeHandler {
-	
-	private boolean _sendEnabled;
-	private boolean _recvEnabled;
-	
-	public BaseHandler() {
-		_sendEnabled = true;
-		_recvEnabled = true;
-	}
-	
-	public BaseHandler(Direction ... eventFilter) {
-		for (Direction d : eventFilter) {
-			if (d.equals(Direction.RECEIVE)) {
-				_recvEnabled = true;
-			}
-			else if (d.equals(Direction.SEND)) {
-				_sendEnabled = true;
-			}
-		}
-	}
+    
+    private boolean _sendEnabled;
+    private boolean _recvEnabled;
+    
+    public BaseHandler() {
+        _sendEnabled = true;
+        _recvEnabled = true;
+    }
+    
+    public BaseHandler(Direction ... eventFilter) {
+        for (Direction d : eventFilter) {
+            if (d.equals(Direction.RECEIVE)) {
+                _recvEnabled = true;
+            }
+            else if (d.equals(Direction.SEND)) {
+                _sendEnabled = true;
+            }
+        }
+    }
 
-	@Override
-	public void handle(ExchangeEvent event) throws HandlerException {
-		switch (event.getDirection()) {
-		case SEND :
-			if (_sendEnabled) {
-				dispatchEvent(event);
-			}
-			break;
-		case RECEIVE :
-			if (_recvEnabled) {
-				dispatchEvent(event);
-			}
-			break;
-		}
-	}
-	
-	
-	public void exchangeIn(ExchangeInEvent event) throws HandlerException {
-		// NOP - handled by subclasses
-	}
-	
-	public void exchangeOut(ExchangeOutEvent event) throws HandlerException {
-		// NOP - handled by subclasses
-	}
-	
-	public void exchangeFault(ExchangeFaultEvent event) throws HandlerException {
-		// NOP - handled by subclasses
-	}
+    @Override
+    public void handle(ExchangeEvent event) throws HandlerException {
+        switch (event.getDirection()) {
+        case SEND :
+            if (_sendEnabled) {
+                dispatchEvent(event);
+            }
+            break;
+        case RECEIVE :
+            if (_recvEnabled) {
+                dispatchEvent(event);
+            }
+            break;
+        }
+    }
+    
+    
+    public void exchangeIn(ExchangeInEvent event) throws HandlerException {
+        // NOP - handled by subclasses
+    }
+    
+    public void exchangeOut(ExchangeOutEvent event) throws HandlerException {
+        // NOP - handled by subclasses
+    }
+    
+    public void exchangeFault(ExchangeFaultEvent event) throws HandlerException {
+        // NOP - handled by subclasses
+    }
 
-	public void dispatchEvent(ExchangeEvent event) throws HandlerException {
-		if (event instanceof ExchangeInEvent) {
-			exchangeIn((ExchangeInEvent)event);
-		}
-		else if (event instanceof ExchangeOutEvent) {
-			exchangeOut((ExchangeOutEvent)event);
-		}
-		else if (event instanceof ExchangeFaultEvent) {
-			exchangeFault((ExchangeFaultEvent)event);
-		}
-	}
+    public void dispatchEvent(ExchangeEvent event) throws HandlerException {
+        if (event instanceof ExchangeInEvent) {
+            exchangeIn((ExchangeInEvent)event);
+        }
+        else if (event instanceof ExchangeOutEvent) {
+            exchangeOut((ExchangeOutEvent)event);
+        }
+        else if (event instanceof ExchangeFaultEvent) {
+            exchangeFault((ExchangeFaultEvent)event);
+        }
+    }
 }

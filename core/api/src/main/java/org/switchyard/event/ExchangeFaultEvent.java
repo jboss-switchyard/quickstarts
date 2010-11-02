@@ -26,6 +26,6 @@ import org.switchyard.ExchangeEvent;
 import org.switchyard.Message;
 
 public interface ExchangeFaultEvent extends ExchangeEvent {
-	
-	Message getFault();
+    
+    Message getFault();
 }

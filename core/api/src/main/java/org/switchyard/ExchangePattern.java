@@ -24,28 +24,28 @@ package org.switchyard;
 
 public enum ExchangePattern {
 
-	IN_ONLY ("http://www.w3.org/ns/wsdl/in-only"),
-	IN_OUT ("http://www.w3.org/ns/wsdl/in-out");
-	
-	private String _patternURI;
-	
-	ExchangePattern(String uri) {
-		_patternURI = uri;
-	}
-	
-	public String getURI() {
-		return _patternURI;
-	}
-	
-	public static ExchangePattern fromURI(String uri) {
-		if (IN_ONLY.getURI().equals(uri)) {
-			return IN_ONLY;
-		}
-		else if (IN_OUT.getURI().equals(uri)) {
-			return IN_OUT;
-		}
-		else {
-			throw new IllegalArgumentException("Unrecognized URI: " + uri);
-		}
-	}
+    IN_ONLY ("http://www.w3.org/ns/wsdl/in-only"),
+    IN_OUT ("http://www.w3.org/ns/wsdl/in-out");
+    
+    private String _patternURI;
+    
+    ExchangePattern(String uri) {
+        _patternURI = uri;
+    }
+    
+    public String getURI() {
+        return _patternURI;
+    }
+    
+    public static ExchangePattern fromURI(String uri) {
+        if (IN_ONLY.getURI().equals(uri)) {
+            return IN_ONLY;
+        }
+        else if (IN_OUT.getURI().equals(uri)) {
+            return IN_OUT;
+        }
+        else {
+            throw new IllegalArgumentException("Unrecognized URI: " + uri);
+        }
+    }
 }

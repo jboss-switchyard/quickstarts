@@ -29,34 +29,34 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.switchyard.Context;
 
 public class BaseContext implements Context {
-	
-	private ConcurrentHashMap<String, Object> _properties = 
-		new ConcurrentHashMap<String, Object>();
+    
+    private ConcurrentHashMap<String, Object> _properties = 
+        new ConcurrentHashMap<String, Object>();
 
-	@Override
-	public Object getProperty(String name) {
-		return _properties.get(name);
-	}
+    @Override
+    public Object getProperty(String name) {
+        return _properties.get(name);
+    }
 
-	@Override
-	public Map<String, Object> getProperties() {
-		// create a shallow copy to prevent against direct modification of
-		// underlying context map
-		return new HashMap<String, Object>(_properties);
-	}
+    @Override
+    public Map<String, Object> getProperties() {
+        // create a shallow copy to prevent against direct modification of
+        // underlying context map
+        return new HashMap<String, Object>(_properties);
+    }
 
-	@Override
-	public boolean hasProperty(String name) {
-		return _properties.containsKey(name);
-	}
+    @Override
+    public boolean hasProperty(String name) {
+        return _properties.containsKey(name);
+    }
 
-	@Override
-	public Object removeProperty(String name) {
-		return _properties.remove(name);
-	}
+    @Override
+    public Object removeProperty(String name) {
+        return _properties.remove(name);
+    }
 
-	@Override
-	public void setProperty(String name, Object val) {
-		_properties.put(name, val);
-	}
+    @Override
+    public void setProperty(String name, Object val) {
+        _properties.put(name, val);
+    }
 }

@@ -32,20 +32,20 @@ import org.switchyard.message.DefaultMessage;
 import org.switchyard.message.StreamMessage;
 
 public class MessageBuilderTest {
-	
-	@Test
-	public void testNewInstanceDefault() throws Exception {
-		MessageBuilder builder = MessageBuilder.newInstance();
-		Assert.assertTrue(builder instanceof DefaultMessageBuilder);
-	}
-	
-	@Test
-	public void testNewInstanceTyped() throws Exception {
-		MessageBuilder defaultBuilder = 
-			MessageBuilder.newInstance(DefaultMessage.class);
-		Assert.assertTrue(defaultBuilder instanceof DefaultMessageBuilder);
-		MessageBuilder streamBuilder = 
-			MessageBuilder.newInstance(StreamMessage.class);
-		Assert.assertTrue(streamBuilder instanceof StreamMessageBuilder);
-	}
+    
+    @Test
+    public void testNewInstanceDefault() throws Exception {
+        MessageBuilder builder = MessageBuilder.newInstance();
+        Assert.assertTrue(builder instanceof DefaultMessageBuilder);
+    }
+    
+    @Test
+    public void testNewInstanceTyped() throws Exception {
+        MessageBuilder defaultBuilder = 
+            MessageBuilder.newInstance(DefaultMessage.class);
+        Assert.assertTrue(defaultBuilder instanceof DefaultMessageBuilder);
+        MessageBuilder streamBuilder = 
+            MessageBuilder.newInstance(StreamMessage.class);
+        Assert.assertTrue(streamBuilder instanceof StreamMessageBuilder);
+    }
 }

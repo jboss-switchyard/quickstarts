@@ -34,40 +34,40 @@ import org.switchyard.MessageBuilder;
 import org.switchyard.message.DefaultMessage;
 
 public class DefaultMessageBuilder extends MessageBuilder {
-	
-	public static final String TYPE = 
-		"org.switchyard.messageType.default";
-	
-	@Override
-	public Message buildMessage() {
-		return new DefaultMessage();
-	}
-	
-	@Override
-	public Message readMessage(InputStream in) 
-			throws IOException, EsbException {
-		// TODO : ignoring attachments at the moment
-		Message msg = new DefaultMessage();
-		ObjectInputStream ois = new ObjectInputStream(in);
-		try {
-			msg.setContent(ois.readObject());
-		}
-		catch (ClassNotFoundException cnfEx) {
-			throw new EsbException(
-					"Failed to load content class for message", cnfEx);
-		}
-		
-		return msg;
-	}
+    
+    public static final String TYPE = 
+        "org.switchyard.messageType.default";
+    
+    @Override
+    public Message buildMessage() {
+        return new DefaultMessage();
+    }
+    
+    @Override
+    public Message readMessage(InputStream in) 
+            throws IOException, EsbException {
+        // TODO : ignoring attachments at the moment
+        Message msg = new DefaultMessage();
+        ObjectInputStream ois = new ObjectInputStream(in);
+        try {
+            msg.setContent(ois.readObject());
+        }
+        catch (ClassNotFoundException cnfEx) {
+            throw new EsbException(
+                    "Failed to load content class for message", cnfEx);
+        }
+        
+        return msg;
+    }
 
-	@Override
-	public void writeMessage(Message message, OutputStream out)
-			throws IOException, EsbException {
-		// TODO : ignoring attachments at the moment
-		ObjectOutputStream oos = new ObjectOutputStream(out);
-		oos.writeObject(message.getContent());
-		oos.flush();
-	}
-	
+    @Override
+    public void writeMessage(Message message, OutputStream out)
+            throws IOException, EsbException {
+        // TODO : ignoring attachments at the moment
+        ObjectOutputStream oos = new ObjectOutputStream(out);
+        oos.writeObject(message.getContent());
+        oos.flush();
+    }
+    
 
 }

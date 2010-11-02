@@ -28,10 +28,10 @@ import org.switchyard.ExchangeHandler;
 
 public interface HandlerChain extends ExchangeHandler {
 
-	void addFirst(String handlerName, ExchangeHandler handler);
-	void addLast(String handlerName, ExchangeHandler handler);
-	ExchangeHandler remove(String handlerName);
-	
-	@Override
-	void handle(ExchangeEvent event);
+    void addFirst(String handlerName, ExchangeHandler handler);
+    void addLast(String handlerName, ExchangeHandler handler);
+    ExchangeHandler remove(String handlerName);
+    
+    @Override
+    void handle(ExchangeEvent event);
 }

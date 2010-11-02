@@ -26,6 +26,6 @@ import org.switchyard.ExchangeEvent;
 import org.switchyard.HandlerException;
 
 public interface ExchangeHandler {
-	
-	void handle(ExchangeEvent event) throws HandlerException;
+    
+    void handle(ExchangeEvent event) throws HandlerException;
 }

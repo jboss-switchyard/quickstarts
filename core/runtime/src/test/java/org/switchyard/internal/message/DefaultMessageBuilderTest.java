@@ -33,30 +33,30 @@ import org.switchyard.Message;
 import org.switchyard.MessageBuilder;
 
 public class DefaultMessageBuilderTest {
-	
-	private MessageBuilder _builder;
-	
-	@Before
-	public void setUp() throws Exception {
-		_builder = MessageBuilder.newInstance();
-	}
-	
-	@Test
-	public void testReadWriteMessage() throws Exception {
-		//create a message and fill it with some stuff
-		Message origMsg =_builder.buildMessage();
-		origMsg.setContent("howdy folks!");
-		
-		// create a stream sink and write the message to it
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		_builder.writeMessage(origMsg, bos);
-		bos.flush();
-		
-		// now try and read the message back in and compare it to the orig
-		Message newMsg = _builder.readMessage(
-				new ByteArrayInputStream(bos.toByteArray()));
-		Assert.assertNotNull(newMsg);
-		Assert.assertEquals(origMsg.getContent(), newMsg.getContent());
-	}
-	
+    
+    private MessageBuilder _builder;
+    
+    @Before
+    public void setUp() throws Exception {
+        _builder = MessageBuilder.newInstance();
+    }
+    
+    @Test
+    public void testReadWriteMessage() throws Exception {
+        //create a message and fill it with some stuff
+        Message origMsg =_builder.buildMessage();
+        origMsg.setContent("howdy folks!");
+        
+        // create a stream sink and write the message to it
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        _builder.writeMessage(origMsg, bos);
+        bos.flush();
+        
+        // now try and read the message back in and compare it to the orig
+        Message newMsg = _builder.readMessage(
+                new ByteArrayInputStream(bos.toByteArray()));
+        Assert.assertNotNull(newMsg);
+        Assert.assertEquals(origMsg.getContent(), newMsg.getContent());
+    }
+    
 }

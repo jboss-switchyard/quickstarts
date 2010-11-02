@@ -30,24 +30,24 @@ import org.switchyard.Message;
 import org.switchyard.Scope;
 
 public interface Exchange {
-	
-	Context createContext();
-	Context getContext();
-	Context getContext(Scope scope);
+    
+    Context createContext();
+    Context getContext();
+    Context getContext(Scope scope);
 
-	String getId();
-	ExchangePattern getPattern();
-	QName getService();
-	
-	Message getMessage();
-	
-	void sendIn(Message in);
-	void sendOut(Message out);
-	void sendFault(Message fault);
-	
-	void sendIn(Message in, Context inContext);
-	void sendOut(Message in, Context outContext);
-	void sendFault(Message in, Context faultContext);
-	void send(Message message, Context messageContext, String name);
-	
+    String getId();
+    ExchangePattern getPattern();
+    QName getService();
+    
+    Message getMessage();
+    
+    void sendIn(Message in);
+    void sendOut(Message out);
+    void sendFault(Message fault);
+    
+    void sendIn(Message in, Context inContext);
+    void sendOut(Message in, Context outContext);
+    void sendFault(Message in, Context faultContext);
+    void send(Message message, Context messageContext, String name);
+    
 }

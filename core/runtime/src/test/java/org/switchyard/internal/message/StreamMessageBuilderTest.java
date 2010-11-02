@@ -36,34 +36,34 @@ import org.switchyard.internal.message.StreamMessageBuilder;
 import org.switchyard.message.StreamMessage;
 
 public class StreamMessageBuilderTest {
-	
-	private final byte[] MESSAGE = "howdy folks!".getBytes();
-	private StreamMessageBuilder _builder;
-	
-	@Before
-	public void setUp() throws Exception {
-		_builder = (StreamMessageBuilder)
-			MessageBuilder.newInstance(StreamMessage.class);
-	}
-	
-	@Test
-	public void testReadWriteMessage() throws Exception {
-		//create a message and fill it with some stuff
-		Message origMsg =_builder.buildMessage();
-		origMsg.setContent(new ByteArrayInputStream(MESSAGE));
-		
-		// create a stream sink and write the message to it
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		_builder.writeMessage(origMsg, bos);
-		bos.flush();
-		
-		// now try and read the message back in and compare it to the orig
-		StreamMessage newMsg = _builder.readMessage(
-				new ByteArrayInputStream(bos.toByteArray()));
-		Assert.assertNotNull(newMsg);
-		byte[] content = new byte[MESSAGE.length];
-		newMsg.getContent().read(content);
-		Assert.assertTrue(Arrays.equals(MESSAGE, content));
-	}
-	
+    
+    private final byte[] MESSAGE = "howdy folks!".getBytes();
+    private StreamMessageBuilder _builder;
+    
+    @Before
+    public void setUp() throws Exception {
+        _builder = (StreamMessageBuilder)
+            MessageBuilder.newInstance(StreamMessage.class);
+    }
+    
+    @Test
+    public void testReadWriteMessage() throws Exception {
+        //create a message and fill it with some stuff
+        Message origMsg =_builder.buildMessage();
+        origMsg.setContent(new ByteArrayInputStream(MESSAGE));
+        
+        // create a stream sink and write the message to it
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        _builder.writeMessage(origMsg, bos);
+        bos.flush();
+        
+        // now try and read the message back in and compare it to the orig
+        StreamMessage newMsg = _builder.readMessage(
+                new ByteArrayInputStream(bos.toByteArray()));
+        Assert.assertNotNull(newMsg);
+        byte[] content = new byte[MESSAGE.length];
+        newMsg.getContent().read(content);
+        Assert.assertTrue(Arrays.equals(MESSAGE, content));
+    }
+    
 }

@@ -26,9 +26,9 @@ import org.switchyard.Direction;
 import org.switchyard.Exchange;
 
 public interface ExchangeEvent {
-	Exchange getExchange();
-	Direction getDirection();
-	String getState();
-	void halt();
-	boolean isHalted();
+    Exchange getExchange();
+    Direction getDirection();
+    String getState();
+    void halt();
+    boolean isHalted();
 }

@@ -33,10 +33,10 @@ import org.switchyard.ServiceDomain;
 
 public interface ServiceRegistry {
 
-	Service registerService(QName serviceName, Endpoint endpoint, HandlerChain handlers, ServiceDomain domain);
-	void unregisterService(Service service);
-	
-	List<Service> getServices();
-	List<Service> getServices(QName serviceName);
-	List<Service> getServicesForDomain(String domainName);
+    Service registerService(QName serviceName, Endpoint endpoint, HandlerChain handlers, ServiceDomain domain);
+    void unregisterService(Service service);
+    
+    List<Service> getServices();
+    List<Service> getServices(QName serviceName);
+    List<Service> getServicesForDomain(String domainName);
 }

@@ -39,131 +39,131 @@ import org.switchyard.Scope;
 import org.switchyard.spi.Endpoint;
 
 public class ExchangeImpl implements Exchange {
-	
-	public static final String IN_MSG 		= "in";
-	public static final String OUT_MSG	 	= "out";
-	public static final String FAULT_MSG 	= "fault";
-	
-	private String 			_exchangeId;
-	private ExchangePattern	_pattern;
-	private QName 			_service;
-	private Message 		_message;
-	private HandlerChain	_handlers;
-	private Endpoint		_source;
-	private Endpoint		_target;
-	private HashMap<Scope, Context> _context =
-		new HashMap<Scope, Context>();
-	
-	ExchangeImpl(QName service, ExchangePattern pattern, HandlerChain handlers) {
-		_service = service;
-		_pattern = pattern;
-		_handlers = handlers;
-		_exchangeId = UUID.randomUUID().toString();
-		initContext();
-	}
+    
+    public static final String IN_MSG       = "in";
+    public static final String OUT_MSG      = "out";
+    public static final String FAULT_MSG    = "fault";
+    
+    private String          _exchangeId;
+    private ExchangePattern _pattern;
+    private QName           _service;
+    private Message         _message;
+    private HandlerChain    _handlers;
+    private Endpoint        _source;
+    private Endpoint        _target;
+    private HashMap<Scope, Context> _context =
+        new HashMap<Scope, Context>();
+    
+    ExchangeImpl(QName service, ExchangePattern pattern, HandlerChain handlers) {
+        _service = service;
+        _pattern = pattern;
+        _handlers = handlers;
+        _exchangeId = UUID.randomUUID().toString();
+        initContext();
+    }
 
-	@Override
-	public Context getContext() {
-		return _context.get(Scope.EXCHANGE);
-	}
+    @Override
+    public Context getContext() {
+        return _context.get(Scope.EXCHANGE);
+    }
 
-	@Override
-	public Context createContext() {
-		return new BaseContext();
-	}
+    @Override
+    public Context createContext() {
+        return new BaseContext();
+    }
 
-	@Override
-	public Context getContext(Scope scope) {
-		return _context.get(scope);
-	}
+    @Override
+    public Context getContext(Scope scope) {
+        return _context.get(scope);
+    }
 
-	@Override
-	public ExchangePattern getPattern() {
-		return _pattern;
-	}
+    @Override
+    public ExchangePattern getPattern() {
+        return _pattern;
+    }
 
-	@Override
-	public QName getService() {
-		return _service;
-	}
+    @Override
+    public QName getService() {
+        return _service;
+    }
 
-	@Override
-	public String getId() {
-		return _exchangeId;
-	}
-	
+    @Override
+    public String getId() {
+        return _exchangeId;
+    }
+    
 
-	@Override
-	public Message getMessage() {
-		return _message;
-	}
+    @Override
+    public Message getMessage() {
+        return _message;
+    }
 
-	@Override
-	public void send(Message message, Context messageContext, String name) 
-	{
-		messageContext.setProperty(Context.MESSAGE_NAME, name);
-		setContext(Scope.MESSAGE, messageContext);
-		
-		_message = message;
-		_handlers.handle(Events.createEvent(this, Direction.SEND));
-	}
+    @Override
+    public void send(Message message, Context messageContext, String name) 
+    {
+        messageContext.setProperty(Context.MESSAGE_NAME, name);
+        setContext(Scope.MESSAGE, messageContext);
+        
+        _message = message;
+        _handlers.handle(Events.createEvent(this, Direction.SEND));
+    }
 
-	@Override
-	public void sendFault(Message fault) {
-		send(fault, createContext(), FAULT_MSG);
-	}
+    @Override
+    public void sendFault(Message fault) {
+        send(fault, createContext(), FAULT_MSG);
+    }
 
-	@Override
-	public void sendIn(Message in) {
-		send(in, createContext(), IN_MSG);
-	}
+    @Override
+    public void sendIn(Message in) {
+        send(in, createContext(), IN_MSG);
+    }
 
-	@Override
-	public void sendOut(Message out) {
-		send(out, createContext(), OUT_MSG);
-	}
-	
+    @Override
+    public void sendOut(Message out) {
+        send(out, createContext(), OUT_MSG);
+    }
+    
 
-	@Override
-	public void sendFault(Message fault, Context faultContext) {
-		send(fault, faultContext, FAULT_MSG);
-	}
+    @Override
+    public void sendFault(Message fault, Context faultContext) {
+        send(fault, faultContext, FAULT_MSG);
+    }
 
-	@Override
-	public void sendIn(Message in, Context inContext) {
-		send(in, inContext, IN_MSG);
-	}
+    @Override
+    public void sendIn(Message in, Context inContext) {
+        send(in, inContext, IN_MSG);
+    }
 
-	@Override
-	public void sendOut(Message out, Context outContext) {
-		send(out, outContext, OUT_MSG);
-	}
-	
-	public Endpoint getSource() {
-		return _source;
-	}
-	
-	public Endpoint getTarget() {
-		return _target;
-	}
-	
-	public void setTarget(Endpoint target) {
-		_target = target;
-	}
-	
-	public void setSource(Endpoint source) {
-		_source = source;
-	}
+    @Override
+    public void sendOut(Message out, Context outContext) {
+        send(out, outContext, OUT_MSG);
+    }
+    
+    public Endpoint getSource() {
+        return _source;
+    }
+    
+    public Endpoint getTarget() {
+        return _target;
+    }
+    
+    public void setTarget(Endpoint target) {
+        _target = target;
+    }
+    
+    public void setSource(Endpoint source) {
+        _source = source;
+    }
 
 
-	private void setContext(Scope scope, Context context) {
-		_context.put(scope, context);
-	}
+    private void setContext(Scope scope, Context context) {
+        _context.put(scope, context);
+    }
 
-	// Builds the context layers for this exchange
-	private void initContext() {
-		for (Scope scope : Scope.values()) {
-			_context.put(scope, new BaseContext());
-		}
-	}
+    // Builds the context layers for this exchange
+    private void initContext() {
+        for (Scope scope : Scope.values()) {
+            _context.put(scope, new BaseContext());
+        }
+    }
 }

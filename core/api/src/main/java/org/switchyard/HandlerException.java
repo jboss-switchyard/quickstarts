@@ -23,18 +23,18 @@
 package org.switchyard;
 
 public class HandlerException extends Exception {
-	
-	private static final long serialVersionUID = -4026111208898030754L;
+    
+    private static final long serialVersionUID = -4026111208898030754L;
 
-	public HandlerException(String message) {
-		super(message);
-	}
-	
-	public HandlerException(Throwable cause) {
-		super(cause);
-	}
-	
-	public HandlerException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public HandlerException(String message) {
+        super(message);
+    }
+    
+    public HandlerException(Throwable cause) {
+        super(cause);
+    }
+    
+    public HandlerException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

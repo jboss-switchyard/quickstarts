@@ -32,44 +32,44 @@ import org.switchyard.Message;
 
 @Builder("org.switchyard.internal.message.DefaultMessageBuilder")
 public class DefaultMessage implements Message {
-	
-	private Object _content;
-	private Map<String, DataSource> _attachments = 
-		new HashMap<String, DataSource>();
+    
+    private Object _content;
+    private Map<String, DataSource> _attachments = 
+        new HashMap<String, DataSource>();
 
-	@Override
-	public void addAttachment(String name, DataSource attachment) {
-		_attachments.put(name, attachment);
-	}
+    @Override
+    public void addAttachment(String name, DataSource attachment) {
+        _attachments.put(name, attachment);
+    }
 
-	@Override
-	public DataSource getAttachment(String name) {
-		return _attachments.get(name);
-	}
+    @Override
+    public DataSource getAttachment(String name) {
+        return _attachments.get(name);
+    }
 
-	@Override
-	public DataSource removeAttachment(String name) {
-		return _attachments.remove(name);
-	}
+    @Override
+    public DataSource removeAttachment(String name) {
+        return _attachments.remove(name);
+    }
 
-	@Override
-	public Map<String, DataSource> getAttachmentMap() {
-		return new HashMap<String, DataSource>(_attachments);
-	}
+    @Override
+    public Map<String, DataSource> getAttachmentMap() {
+        return new HashMap<String, DataSource>(_attachments);
+    }
 
-	@Override
-	public Object getContent() {
-		return _content;
-	}
+    @Override
+    public Object getContent() {
+        return _content;
+    }
 
-	@Override
-	public <T> T getContent(Class<T> type) {
-		return type.cast(_content);
-	}
+    @Override
+    public <T> T getContent(Class<T> type) {
+        return type.cast(_content);
+    }
 
-	@Override
-	public void setContent(Object content) {
-		_content = content;
-	}
+    @Override
+    public void setContent(Object content) {
+        _content = content;
+    }
 
 }
