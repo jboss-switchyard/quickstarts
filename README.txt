@@ -13,6 +13,7 @@ Maven:
 - Tested version = 2.2.1
 - 'mvn clean install' to build
 - 'mvn install -DskipTests=true' to skip tests
+- 'mvn install -Dorg.switchyard.findbugs.enable=true' to enable findbugs
 - 'mvn javadoc:aggregate' to just run javadoc (see target/site/apidocs/index.html)
 - 'mvn site' to generate site docs (see target/site/index.html)
 

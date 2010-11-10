@@ -141,25 +141,6 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>2.3.1</version>
-				<configuration>
-					<effort>Max</effort>
-					<threshold>Default</threshold>
-					<xmlOutput>true</xmlOutput>
-				</configuration>
-				<executions>
-					<execution>
-						<id>find-bugs</id>
-						<goals>
-							<goal>findbugs</goal>
-						</goals>
-						<phase>verify</phase>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>2.6</version>
 				<dependencies>
@@ -209,6 +190,55 @@
             </snapshots>
         </pluginRepository>
 	</pluginRepositories>
+    <profiles>
+        <profile>
+            <id>findbugs</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>org.switchyard.findbugs.enable</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+            	    <plugin>
+	            	    <groupId>org.codehaus.mojo</groupId>
+			            <artifactId>findbugs-maven-plugin</artifactId>
+		            	<version>2.3.1</version>
+				        <configuration>
+					        <effort>Max</effort>
+					        <threshold>Default</threshold>
+					        <xmlOutput>true</xmlOutput>
+                        </configuration>
+			            <executions>
+	            		    <execution>
+				                <id>find-bugs</id>
+				            	<goals>
+			            		    <goal>findbugs</goal>
+						        </goals>
+					            <phase>verify</phase>
+		            		</execution>    
+            			</executions>
+			        </plugin>
+                </plugins>
+            </build>
+            <reporting>
+                <plugins>
+		            <plugin>
+				        <groupId>org.codehaus.mojo</groupId>
+				        <artifactId>findbugs-maven-plugin</artifactId>
+				        <version>2.3.1</version>
+		            	<configuration>
+				            <effort>Max</effort>
+					        <threshold>Default</threshold>
+				            <xmlOutput>true</xmlOutput>
+				        </configuration>
+			        </plugin>
+                </plugins>
+            </reporting>
+        </profile>                
+    </profiles>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -220,16 +250,6 @@
 	</dependencies>
 	<reporting>
 		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>2.3.1</version>
-				<configuration>
-					<effort>Max</effort>
-					<threshold>Default</threshold>
-					<xmlOutput>true</xmlOutput>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
