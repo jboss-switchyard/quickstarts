@@ -28,7 +28,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
-import org.switchyard.EsbException;
 import org.switchyard.Message;
 import org.switchyard.MessageBuilder;
 import org.switchyard.message.DefaultMessage;
@@ -45,7 +44,7 @@ public class DefaultMessageBuilder extends MessageBuilder {
     
     @Override
     public Message readMessage(InputStream in) 
-            throws IOException, EsbException {
+            throws IOException {
         // TODO : ignoring attachments at the moment
         Message msg = new DefaultMessage();
         ObjectInputStream ois = new ObjectInputStream(in);
@@ -53,7 +52,7 @@ public class DefaultMessageBuilder extends MessageBuilder {
             msg.setContent(ois.readObject());
         }
         catch (ClassNotFoundException cnfEx) {
-            throw new EsbException(
+            throw new RuntimeException(
                     "Failed to load content class for message", cnfEx);
         }
         
@@ -62,7 +61,7 @@ public class DefaultMessageBuilder extends MessageBuilder {
 
     @Override
     public void writeMessage(Message message, OutputStream out)
-            throws IOException, EsbException {
+            throws IOException {
         // TODO : ignoring attachments at the moment
         ObjectOutputStream oos = new ObjectOutputStream(out);
         oos.writeObject(message.getContent());

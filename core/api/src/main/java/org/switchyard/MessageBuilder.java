@@ -25,27 +25,17 @@ package org.switchyard;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.switchyard.EsbException;
-import org.switchyard.Message;
-import org.switchyard.MessageBuilder;
 import org.switchyard.message.Builder;
 import org.switchyard.message.DefaultMessage;
 
 public abstract class MessageBuilder {
 
     public static final MessageBuilder newInstance() {
-        try {
-            return newInstance(DefaultMessage.class);
-        }
-        catch (EsbException esbEx) {
-            // no way to recover from this, so throw a runtime exception
-            throw new RuntimeException(esbEx);
-        }
+        return newInstance(DefaultMessage.class);
     }
     
     public static final MessageBuilder newInstance(
-            Class<? extends Message> messageType) 
-            throws EsbException {
+            Class<? extends Message> messageType) {
         
         Builder builderInfo = messageType.getAnnotation(Builder.class);
         try {
@@ -56,14 +46,15 @@ public abstract class MessageBuilder {
             return builderClass.newInstance();
         }
         catch (Exception ex) {
-            throw new EsbException("Failed to load builder class for message", ex);
+            throw new RuntimeException(
+            		"Failed to load builder class for message", ex);
         }
     }
     
     public abstract Message buildMessage();
 
     public abstract void writeMessage(Message message, OutputStream out) 
-        throws java.io.IOException, EsbException;
+        throws java.io.IOException;
     public abstract Message readMessage(InputStream in)
-        throws java.io.IOException, EsbException;
+        throws java.io.IOException;
 }

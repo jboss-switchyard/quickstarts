@@ -25,10 +25,6 @@ package org.switchyard.internal;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.switchyard.internal.DefaultEndpointProvider;
-import org.switchyard.internal.DefaultServiceRegistry;
-import org.switchyard.internal.DomainImpl;
-import org.switchyard.EsbException;
 import org.switchyard.ServiceDomain;
 import org.switchyard.spi.EndpointProvider;
 import org.switchyard.spi.ServiceRegistry;
@@ -49,22 +45,15 @@ public class ServiceDomains {
     
     public synchronized static ServiceDomain getDomain() {
         if (!_domains.containsKey(ROOT_DOMAIN)) {
-            try {
-                createDomain(ROOT_DOMAIN);
-            }
-            catch (EsbException esbEx) {
-                // obligatory "this should never happen" text
-                throw new RuntimeException(esbEx);
-            }
+            createDomain(ROOT_DOMAIN);
         }
         
         return getDomain(ROOT_DOMAIN);
     }
     
-    public synchronized static ServiceDomain createDomain(String name) 
-    throws EsbException {
+    public synchronized static ServiceDomain createDomain(String name) {
         if (_domains.containsKey(name)) {
-            throw new EsbException("Domain already exists: " + name);
+            throw new RuntimeException("Domain already exists: " + name);
         }
         
         ServiceDomain domain = new DomainImpl(name, _registry, _endpointProvider);

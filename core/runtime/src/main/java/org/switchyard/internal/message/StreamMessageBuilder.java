@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.switchyard.EsbException;
 import org.switchyard.Message;
 import org.switchyard.MessageBuilder;
 import org.switchyard.message.StreamMessage;
@@ -44,7 +43,7 @@ public class StreamMessageBuilder extends MessageBuilder {
     
     @Override
     public StreamMessage readMessage(InputStream in) 
-            throws IOException, EsbException {
+            throws IOException {
         // TODO : ignoring attachments at the moment
         StreamMessage msg = new StreamMessage();
         msg.setContent(in);
@@ -53,9 +52,9 @@ public class StreamMessageBuilder extends MessageBuilder {
 
     @Override
     public void writeMessage(Message message, OutputStream out)
-            throws IOException, EsbException {
+            throws IOException {
         if (!(message instanceof StreamMessage)) {
-            throw new EsbException(
+            throw new RuntimeException(
                     "Invalid message type for StreamBuilder writeMessage: " +
                     message.getClass().getName());
         }
@@ -63,7 +62,7 @@ public class StreamMessageBuilder extends MessageBuilder {
     }
     
     public void writeMessage(StreamMessage message, OutputStream out) 
-            throws IOException, EsbException {
+            throws IOException {
         // TODO : ignoring attachments at the moment
         byte[] buf = new byte[WRITE_BUFFER];
         int count;
