@@ -22,11 +22,7 @@
 
 package org.switchyard.internal;
 
-import org.switchyard.internal.DefaultEndpoint;
-import org.switchyard.internal.Events;
-import org.switchyard.Direction;
 import org.switchyard.Exchange;
-import org.switchyard.ExchangeEvent;
 import org.switchyard.HandlerChain;
 import org.switchyard.spi.Endpoint;
 import org.switchyard.spi.EndpointProvider;
@@ -49,8 +45,7 @@ class DefaultEndpoint implements Endpoint {
 
     @Override
     public void send(Exchange exchange) {
-        ExchangeEvent event = Events.createEvent(exchange, Direction.RECEIVE);
-        _handlerChain.handle(event);
+        _handlerChain.handle(exchange);
     }
     
 }

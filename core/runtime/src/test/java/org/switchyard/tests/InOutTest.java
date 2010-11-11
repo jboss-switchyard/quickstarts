@@ -24,22 +24,13 @@ package org.switchyard.tests;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.Assert;
-
-import org.junit.After;
-import org.switchyard.*;
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
-import org.switchyard.ExchangeEvent;
-import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
 import org.switchyard.MessageBuilder;
+import org.switchyard.MockHandler;
 import org.switchyard.ServiceDomain;
-import org.switchyard.event.ExchangeFaultEvent;
-import org.switchyard.event.ExchangeInEvent;
-import org.switchyard.event.ExchangeOutEvent;
 import org.switchyard.internal.ServiceDomains;
 
 public class InOutTest {
@@ -72,42 +63,6 @@ public class InOutTest {
         provider.waitForIn();
         consumer.waitForOut();
     }
-    
-    /** OLD WAY
-    @Test
-    public void testInOutSuccess() throws Exception {
-        final QName serviceName = new QName("inOutSuccess");
-        // Provide the service
-        ExchangeChannel providerChannel = _domain.createChannel();
-        providerChannel.getHandlerChain().addFirst("provider", 
-                new BaseHandler() {
-                    public void exchangeIn(ExchangeInEvent event) {
-                        inEvents.add(event);
-                        Exchange inEx = event.getExchange();
-                        inEx.setOut(MessageBuilder.newInstance().buildMessage());
-                        event.getChannel().send(inEx);
-                    }
-        });
-        _domain.registerService(serviceName, providerChannel);
-        
-        // Consume the service
-        ExchangeChannel consumerChannel = _domain.createChannel();
-        consumerChannel.getHandlerChain().addFirst("consumer", 
-                new BaseHandler() {
-                    public void exchangeOut(ExchangeOutEvent event) {
-                        outEvents.add(event);
-                    }
-        });
-        Exchange exchange = consumerChannel.createExchange(ExchangePattern.IN_OUT);
-        exchange.setService(serviceName);
-        consumerChannel.send(exchange);
-        
-        // wait a sec, since this is async
-        Thread.sleep(200);
-        Assert.assertTrue(inEvents.size() == 1);
-        Assert.assertTrue(outEvents.size() == 1);
-    }
-    */
 
     @Test
     public void testInOutFault() throws Exception {

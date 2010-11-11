@@ -22,8 +22,7 @@
 
 package org.switchyard.internal.handlers;
 
-import org.switchyard.Direction;
-import org.switchyard.ExchangeEvent;
+import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.internal.ExchangeImpl;
 import org.switchyard.spi.Endpoint;
@@ -32,19 +31,14 @@ public class DeliveryHandler implements ExchangeHandler {
     
 
     @Override
-    public void handle(ExchangeEvent event) {
+    public void handle(Exchange exchange) {
         
-        // Delivery is only required for sent exchanges
-        if (event.getDirection() != Direction.SEND) {
-            return;
-        }
-        
-        ExchangeImpl exchange = (ExchangeImpl)event.getExchange();
-        Endpoint target = exchange.getTarget();
+        ExchangeImpl ei = (ExchangeImpl)exchange;
+        Endpoint target = ei.getTarget();
         
         // source and target switch seats with each send
-        if (exchange.getSource() != null) {
-            exchange.setTarget(exchange.getSource());
+        if (ei.getSource() != null) {
+            ei.setTarget(ei.getSource());
         }
         
         target.send(exchange);

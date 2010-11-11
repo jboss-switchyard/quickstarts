@@ -21,25 +21,22 @@
  */
 package org.switchyard;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-import org.switchyard.event.ExchangeFaultEvent;
-import org.switchyard.event.ExchangeInEvent;
-import org.switchyard.event.ExchangeOutEvent;
-
 import java.util.LinkedList;
 import java.util.List;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 /**
  * Mock Handler.
  * 
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class MockHandler extends BaseHandler {
+public class MockHandler implements ExchangeHandler {
 
-    public List<ExchangeEvent> inEvents = new LinkedList<ExchangeEvent>();
-    public List<ExchangeEvent> outEvents = new LinkedList<ExchangeEvent>();
-    public List<ExchangeEvent> faultEvents = new LinkedList<ExchangeEvent>();
+    public List<Exchange> inEvents = new LinkedList<Exchange>();
+    public List<Exchange> outEvents = new LinkedList<Exchange>();
+    public List<Exchange> faultEvents = new LinkedList<Exchange>();
 
     public long waitTimeout = 5000; // default of 5 seconds
 
@@ -48,11 +45,6 @@ public class MockHandler extends BaseHandler {
     private boolean forwardInToFault = false;
 
     public MockHandler() {
-        super(Direction.RECEIVE);
-    }
-
-    public MockHandler(Direction direction) {
-        super(direction);
     }
 
     public MockHandler forwardInToOut() {
@@ -68,11 +60,23 @@ public class MockHandler extends BaseHandler {
         forwardInToFault = true;
         return this;
     }
+    
+    public void handle(Exchange exchange) throws HandlerException {
+    	Context msgCtx = exchange.getContext(Scope.MESSAGE);
+    	String msgName = (String)msgCtx.getProperty(Context.MESSAGE_NAME);
+    	
+    	if (msgName.equalsIgnoreCase("in")) {
+    		exchangeIn(exchange);
+    	} else if (msgName.equalsIgnoreCase("out")) {
+    		exchangeOut(exchange);
+    	} else if (msgName.equalsIgnoreCase("fault")) {
+    		exchangeFault(exchange);
+    	}
+    }
 
-    public void exchangeIn(ExchangeInEvent event) throws HandlerException {
-        inEvents.add(event);
+    public void exchangeIn(Exchange exchange) throws HandlerException {
+        inEvents.add(exchange);
 
-        Exchange exchange = event.getExchange();
         if(forwardInToOut && exchange.getPattern() == ExchangePattern.IN_OUT) {
             sendOut(exchange, exchange.getMessage());
         } else if(forwardInToFault) {
@@ -80,12 +84,12 @@ public class MockHandler extends BaseHandler {
         }
     }
 
-    public void exchangeOut(ExchangeOutEvent event) throws HandlerException {
-        outEvents.add(event);
+    public void exchangeOut(Exchange exchange) throws HandlerException {
+        outEvents.add(exchange);
     }
 
-    public void exchangeFault(ExchangeFaultEvent event) throws HandlerException {
-        faultEvents.add(event);
+    public void exchangeFault(Exchange exchange) throws HandlerException {
+        faultEvents.add(exchange);
     }
 
     public MockHandler waitForIn(int... numMessages) {
@@ -121,7 +125,7 @@ public class MockHandler extends BaseHandler {
         }
     }
 
-    private void waitFor(List<ExchangeEvent> eventQueue, int... numMessages) {
+    private void waitFor(List<Exchange> eventQueue, int... numMessages) {
         long start = System.currentTimeMillis();
         int waitMessageCount = 1;
 

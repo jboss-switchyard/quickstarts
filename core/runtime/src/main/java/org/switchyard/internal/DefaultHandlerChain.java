@@ -25,11 +25,10 @@ package org.switchyard.internal;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.switchyard.ExchangeEvent;
+import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerChain;
 import org.switchyard.HandlerException;
-import org.switchyard.internal.event.ExchangeEventImpl;
 
 public class DefaultHandlerChain implements HandlerChain {
     
@@ -61,23 +60,15 @@ public class DefaultHandlerChain implements HandlerChain {
     }
 
     @Override
-    public void handle(ExchangeEvent event){
-        handle((ExchangeEventImpl)event);
-    }
-    
-    private void handle(ExchangeEventImpl event) {
+    public void handle(Exchange exchange) {
+    	
         for (HandlerRef ref : listHandlers()) {
             try {
-                ref.handler.handle(event);
+                ref.handler.handle(exchange);
             }
             catch (HandlerException handlerEx) {
-                event.halt();
                 // TODO - map to fault here
-            }
-            
-            // check to see if the last handler asked for a halt
-            if (event.isHalted()) {
-                break;
+            	break;
             }
         }
     }

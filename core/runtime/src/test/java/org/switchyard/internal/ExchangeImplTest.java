@@ -28,9 +28,7 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.BaseHandler;
 import org.switchyard.Context;
-import org.switchyard.Direction;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
@@ -39,10 +37,6 @@ import org.switchyard.MessageBuilder;
 import org.switchyard.Scope;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
-import org.switchyard.event.ExchangeInEvent;
-import org.switchyard.event.ExchangeOutEvent;
-import org.switchyard.internal.ExchangeImpl;
-import org.switchyard.internal.ServiceDomains;
 
 /**
  *  Unit tests for the ExchangeImpl class.
@@ -98,41 +92,43 @@ public class ExchangeImplTest {
         final String outPropVal = "out";
         
         // create a handler to test that the in and out context are separate
-        ExchangeHandler handler = new BaseHandler(Direction.RECEIVE) {
-            public void exchangeIn(ExchangeInEvent event) {
+        ExchangeHandler provider = new ExchangeHandler() {
+            public void handle(Exchange exchange) {
                 // We should find the shared property with the in value
                 Assert.assertEquals(
-                        event.getExchange().getContext(Scope.MESSAGE).getProperty(sharedPropName), 
+                		exchange.getContext(Scope.MESSAGE).getProperty(sharedPropName), 
                         inPropVal);
                 // We should find the in property with the in value
                 Assert.assertEquals(
-                        event.getExchange().getContext(Scope.MESSAGE).getProperty(inPropName), 
+                		exchange.getContext(Scope.MESSAGE).getProperty(inPropName), 
                         inPropVal);
                 
                 try {
-                    Context outCtx = event.getExchange().createContext();
+                    Context outCtx = exchange.createContext();
                     outCtx.setProperty(sharedPropName, outPropVal);
-                    event.getExchange().sendOut(MessageBuilder.newInstance().buildMessage(), outCtx);
+                    exchange.sendOut(MessageBuilder.newInstance().buildMessage(), outCtx);
                 }
                 catch (Exception ex) {
                     Assert.fail(ex.toString());
                 }
             }
-            
-            public void exchangeOut(ExchangeOutEvent event) {
+        };
+
+        ExchangeHandler consumer = new ExchangeHandler() {
+            public void handle(Exchange exchange) {
                 // We should find the shared property with the out value
                 Assert.assertEquals(
-                        event.getExchange().getContext(Scope.MESSAGE).getProperty(sharedPropName), 
+                        exchange.getContext(Scope.MESSAGE).getProperty(sharedPropName), 
                         outPropVal);
                 // The in property should not be there
                 Assert.assertNull(
-                        event.getExchange().getContext(Scope.MESSAGE).getProperty(inPropName));
+                		exchange.getContext(Scope.MESSAGE).getProperty(inPropName));
             }
         };
         
-        Service service = _domain.registerService(serviceName, handler);
+        Service service = _domain.registerService(serviceName, provider);
         Exchange exchange = _domain.createExchange(
-                serviceName, ExchangePattern.IN_OUT, handler);
+                serviceName, ExchangePattern.IN_OUT, consumer);
         Message inMsg = MessageBuilder.newInstance().buildMessage();
         Context inCtx = exchange.createContext();
         inCtx.setProperty(sharedPropName, inPropVal);
@@ -157,32 +153,34 @@ public class ExchangeImplTest {
         
         // create a handler to test that the in and out content match
         // expected result from getMessage()
-        ExchangeHandler handler = new BaseHandler(Direction.RECEIVE) {
-            public void exchangeIn(ExchangeInEvent event) {
+        ExchangeHandler provider = new ExchangeHandler() {
+            public void handle(Exchange exchange) {
                 Assert.assertEquals(
-                        event.getExchange().getMessage().getContent(), 
+                		exchange.getMessage().getContent(), 
                         inMsgContent);
                 
                 Message outMsg = MessageBuilder.newInstance().buildMessage();
                 outMsg.setContent(outMsgContent);
                 try {
-                    event.getExchange().sendOut(outMsg);
+                	exchange.sendOut(outMsg);
                 }
                 catch (Exception ex) {
                     Assert.fail(ex.toString());
                 }
             }
-            
-            public void exchangeOut(ExchangeOutEvent event) {
+        };
+
+        ExchangeHandler consumer = new ExchangeHandler() {
+            public void handle(Exchange exchange) {
                 Assert.assertEquals(
-                        event.getExchange().getMessage().getContent(), 
+                		exchange.getMessage().getContent(), 
                         outMsgContent);
             }
         };
         
-        Service service = _domain.registerService(serviceName, handler);
+        Service service = _domain.registerService(serviceName, provider);
         Exchange exchange = _domain.createExchange(
-                serviceName, ExchangePattern.IN_OUT, handler);
+                serviceName, ExchangePattern.IN_OUT, consumer);
         Message inMsg = MessageBuilder.newInstance().buildMessage();
         inMsg.setContent(inMsgContent);
         exchange.sendIn(inMsg);

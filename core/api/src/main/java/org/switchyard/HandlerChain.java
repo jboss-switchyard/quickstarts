@@ -22,8 +22,6 @@
 
 package org.switchyard;
 
-import org.switchyard.ExchangeEvent;
-import org.switchyard.ExchangeHandler;
 
 
 public interface HandlerChain extends ExchangeHandler {
@@ -33,5 +31,5 @@ public interface HandlerChain extends ExchangeHandler {
     ExchangeHandler remove(String handlerName);
     
     @Override
-    void handle(ExchangeEvent event);
+    void handle(Exchange exchange);
 }

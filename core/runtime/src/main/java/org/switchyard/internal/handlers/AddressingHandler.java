@@ -24,8 +24,7 @@ package org.switchyard.internal.handlers;
 
 import java.util.List;
 
-import org.switchyard.Direction;
-import org.switchyard.ExchangeEvent;
+import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
 import org.switchyard.Service;
@@ -42,16 +41,12 @@ public class AddressingHandler implements ExchangeHandler {
     }
     
     @Override
-    public void handle(ExchangeEvent event) throws HandlerException {
+    public void handle(Exchange exchange) throws HandlerException {
         
-        // Delivery is only required for sent exchanges
-        if (event.getDirection() != Direction.SEND) {
-            return;
-        }
-        
-        ExchangeImpl exchange = (ExchangeImpl)event.getExchange();
-        
-        if (exchange.getTarget() == null) {
+    	// we need to mess with some internal exchange details
+    	ExchangeImpl ei = (ExchangeImpl)exchange;
+    	
+        if (ei.getTarget() == null) {
             // find the receiving channel
             List<Service> serviceList = 
                 _registry.getServices(exchange.getService());
@@ -64,7 +59,7 @@ public class AddressingHandler implements ExchangeHandler {
             
             // Endpoint selection is arbitrary at the moment
             ServiceRegistration sr = (ServiceRegistration)serviceList.get(0);
-            exchange.setTarget(sr.getEndpoint());
+            ei.setTarget(sr.getEndpoint());
         }
         
     }

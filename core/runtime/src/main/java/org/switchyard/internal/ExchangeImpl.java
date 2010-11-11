@@ -27,10 +27,7 @@ import java.util.UUID;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.internal.BaseContext;
-import org.switchyard.internal.Events;
 import org.switchyard.Context;
-import org.switchyard.Direction;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerChain;
@@ -105,7 +102,7 @@ public class ExchangeImpl implements Exchange {
         setContext(Scope.MESSAGE, messageContext);
         
         _message = message;
-        _handlers.handle(Events.createEvent(this, Direction.SEND));
+        _handlers.handle(this);
     }
 
     @Override
