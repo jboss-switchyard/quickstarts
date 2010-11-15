@@ -96,9 +96,8 @@ public class ExchangeImpl implements Exchange {
     }
 
     @Override
-    public void send(Message message, Context messageContext, String name) 
+    public void send(Message message, Context messageContext) 
     {
-        messageContext.setProperty(Context.MESSAGE_NAME, name);
         setContext(Scope.MESSAGE, messageContext);
         
         _message = message;
@@ -106,34 +105,8 @@ public class ExchangeImpl implements Exchange {
     }
 
     @Override
-    public void sendFault(Message fault) {
-        send(fault, createContext(), FAULT_MSG);
-    }
-
-    @Override
-    public void sendIn(Message in) {
-        send(in, createContext(), IN_MSG);
-    }
-
-    @Override
-    public void sendOut(Message out) {
-        send(out, createContext(), OUT_MSG);
-    }
-    
-
-    @Override
-    public void sendFault(Message fault, Context faultContext) {
-        send(fault, faultContext, FAULT_MSG);
-    }
-
-    @Override
-    public void sendIn(Message in, Context inContext) {
-        send(in, inContext, IN_MSG);
-    }
-
-    @Override
-    public void sendOut(Message out, Context outContext) {
-        send(out, outContext, OUT_MSG);
+    public void send(Message message) {
+        send(message, new BaseContext());
     }
     
     public Endpoint getSource() {

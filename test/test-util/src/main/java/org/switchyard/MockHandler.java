@@ -21,8 +21,7 @@
  */
 package org.switchyard;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -34,14 +33,13 @@ import junit.framework.TestCase;
  */
 public class MockHandler implements ExchangeHandler {
 
-    public List<Exchange> inEvents = new LinkedList<Exchange>();
-    public List<Exchange> outEvents = new LinkedList<Exchange>();
-    public List<Exchange> faultEvents = new LinkedList<Exchange>();
-
+    public LinkedBlockingQueue<Exchange> _exchanges = 
+    	new LinkedBlockingQueue<Exchange>();
+    
     public long waitTimeout = 5000; // default of 5 seconds
 
     // An enum would be nicer here !!
-    private boolean forwardInToOut = true;
+    private boolean forwardInToOut = false;
     private boolean forwardInToFault = false;
 
     public MockHandler() {
@@ -62,54 +60,28 @@ public class MockHandler implements ExchangeHandler {
     }
     
     public void handle(Exchange exchange) throws HandlerException {
-    	Context msgCtx = exchange.getContext(Scope.MESSAGE);
-    	String msgName = (String)msgCtx.getProperty(Context.MESSAGE_NAME);
     	
-    	if (msgName.equalsIgnoreCase("in")) {
-    		exchangeIn(exchange);
-    	} else if (msgName.equalsIgnoreCase("out")) {
-    		exchangeOut(exchange);
-    	} else if (msgName.equalsIgnoreCase("fault")) {
-    		exchangeFault(exchange);
+    	_exchanges.offer(exchange);
+    	if (forwardInToOut) {
+    		sendOut(exchange, exchange.getMessage());
+    	} else if (forwardInToFault) {
+            sendFault(exchange, exchange.getMessage());
     	}
     }
 
-    public void exchangeIn(Exchange exchange) throws HandlerException {
-        inEvents.add(exchange);
-
-        if(forwardInToOut && exchange.getPattern() == ExchangePattern.IN_OUT) {
-            sendOut(exchange, exchange.getMessage());
-        } else if(forwardInToFault) {
-            sendFault(exchange, exchange.getMessage());
-        }
-    }
-
-    public void exchangeOut(Exchange exchange) throws HandlerException {
-        outEvents.add(exchange);
-    }
-
-    public void exchangeFault(Exchange exchange) throws HandlerException {
-        faultEvents.add(exchange);
-    }
-
-    public MockHandler waitForIn(int... numMessages) {
-        waitFor(inEvents, numMessages);
+    public MockHandler waitForMessage() {
+        waitFor(_exchanges, 1);
         return this;
     }
-
-    public MockHandler waitForOut(int... numMessages) {
-        waitFor(outEvents, numMessages);
-        return this;
-    }
-
-    public MockHandler waitForFault(int... numMessages) {
-        waitFor(faultEvents, numMessages);
+    
+    public MockHandler waitForMessage(int numMessages) {
+        waitFor(_exchanges, numMessages);
         return this;
     }
 
     private void sendOut(Exchange exchange, Message message) {
         try {
-            exchange.sendOut(message);
+            exchange.send(message);
         }
         catch (Exception ex) {
             Assert.fail(ex.toString());
@@ -118,29 +90,24 @@ public class MockHandler implements ExchangeHandler {
 
     private void sendFault(Exchange exchange, Message message) {
         try {
-            exchange.sendFault(message);
+            exchange.send(message);
         }
         catch (Exception ex) {
             Assert.fail(ex.toString());
         }
     }
 
-    private void waitFor(List<Exchange> eventQueue, int... numMessages) {
+    private void waitFor(LinkedBlockingQueue<Exchange> eventQueue, int numMessages) {
         long start = System.currentTimeMillis();
-        int waitMessageCount = 1;
-
-        if(numMessages != null && numMessages.length != 0) {
-            waitMessageCount = numMessages[0];
-        }
 
         while(System.currentTimeMillis() < start + waitTimeout) {
-            if(eventQueue.size() >= waitMessageCount) {
+            if(eventQueue.size() >= numMessages) {
                 return;
             }
             sleep();
         }
 
-        TestCase.fail("Timed out waiting on event queue length to be " + waitMessageCount + " or greater.");
+        TestCase.fail("Timed out waiting on event queue length to be " + numMessages + " or greater.");
     }
 
     private void sleep() {

@@ -50,18 +50,18 @@ public class InOutTest {
         final QName serviceName = new QName("inOutSuccess");
 
         // Provide the service
-        MockHandler provider = new MockHandler();
+        MockHandler provider = new MockHandler().forwardInToOut();
         _domain.registerService(serviceName, provider);
         
         // Consume the service
         MockHandler consumer = new MockHandler();
         Exchange exchange = _domain.createExchange(
                 serviceName, ExchangePattern.IN_OUT, consumer);
-        exchange.sendIn(MessageBuilder.newInstance().buildMessage());
+        exchange.send(MessageBuilder.newInstance().buildMessage());
         
         // wait, since this is async
-        provider.waitForIn();
-        consumer.waitForOut();
+        provider.waitForMessage();
+        consumer.waitForMessage();
     }
 
     @Test
@@ -76,11 +76,11 @@ public class InOutTest {
         MockHandler consumer = new MockHandler();
         Exchange exchange = _domain.createExchange(
                 serviceName, ExchangePattern.IN_OUT, consumer);
-        exchange.sendIn(MessageBuilder.newInstance().buildMessage());
+        exchange.send(MessageBuilder.newInstance().buildMessage());
         
         // wait, since this is async
-        provider.waitForIn();
-        consumer.waitForFault();
+        provider.waitForMessage();
+        consumer.waitForMessage();
         
     }
 }

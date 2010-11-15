@@ -20,28 +20,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard;
+package org.switchyard.message;
 
-import javax.xml.namespace.QName;
+@Builder("org.switchyard.internal.message.DefaultMessageBuilder")
+public class FaultMessage extends DefaultMessage {
+   
 
-import org.switchyard.Context;
-import org.switchyard.ExchangePattern;
-import org.switchyard.Message;
-import org.switchyard.Scope;
-
-public interface Exchange {
-    
-    Context createContext();
-    Context getContext();
-    Context getContext(Scope scope);
-
-    String getId();
-    ExchangePattern getPattern();
-    QName getService();
-    
-    Message getMessage();
-    
-    void send(Message message);
-    void send(Message message, Context messageContext);
-    
 }

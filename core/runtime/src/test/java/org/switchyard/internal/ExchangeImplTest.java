@@ -106,7 +106,7 @@ public class ExchangeImplTest {
                 try {
                     Context outCtx = exchange.createContext();
                     outCtx.setProperty(sharedPropName, outPropVal);
-                    exchange.sendOut(MessageBuilder.newInstance().buildMessage(), outCtx);
+                    exchange.send(MessageBuilder.newInstance().buildMessage(), outCtx);
                 }
                 catch (Exception ex) {
                     Assert.fail(ex.toString());
@@ -133,7 +133,7 @@ public class ExchangeImplTest {
         Context inCtx = exchange.createContext();
         inCtx.setProperty(sharedPropName, inPropVal);
         inCtx.setProperty(inPropName, inPropVal);
-        exchange.sendIn(inMsg, inCtx);
+        exchange.send(inMsg, inCtx);
         
         // clean up
         service.unregister();
@@ -162,7 +162,7 @@ public class ExchangeImplTest {
                 Message outMsg = MessageBuilder.newInstance().buildMessage();
                 outMsg.setContent(outMsgContent);
                 try {
-                	exchange.sendOut(outMsg);
+                	exchange.send(outMsg);
                 }
                 catch (Exception ex) {
                     Assert.fail(ex.toString());
@@ -183,7 +183,7 @@ public class ExchangeImplTest {
                 serviceName, ExchangePattern.IN_OUT, consumer);
         Message inMsg = MessageBuilder.newInstance().buildMessage();
         inMsg.setContent(inMsgContent);
-        exchange.sendIn(inMsg);
+        exchange.send(inMsg);
 
         // clean up
         service.unregister();

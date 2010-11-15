@@ -70,7 +70,7 @@ public class InOnlyTest {
         
         // Consume the service
         Exchange exchange = _domain.createExchange(serviceName, ExchangePattern.IN_ONLY);
-        exchange.sendIn(MessageBuilder.newInstance().buildMessage());
+        exchange.send(MessageBuilder.newInstance().buildMessage());
         
         // wait a sec, since this is async
         Thread.sleep(200);
