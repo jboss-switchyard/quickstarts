@@ -40,8 +40,14 @@ public class AddressingHandler implements ExchangeHandler {
         _registry = registry;
     }
     
+
     @Override
-    public void handle(Exchange exchange) throws HandlerException {
+    public void handleFault(Exchange exchange) {
+        // Nothing to do here
+    }
+    
+    @Override
+    public void handleMessage(Exchange exchange) throws HandlerException {
         
     	// we need to mess with some internal exchange details
     	ExchangeImpl ei = (ExchangeImpl)exchange;

@@ -22,8 +22,12 @@
 
 package org.switchyard.message;
 
+import org.switchyard.Message;
+
 @Builder("org.switchyard.internal.message.DefaultMessageBuilder")
 public class FaultMessage extends DefaultMessage {
-   
-
+	
+	public static boolean isFault(Message message) {
+		return FaultMessage.class.isAssignableFrom(message.getClass());
+	}
 }

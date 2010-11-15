@@ -31,6 +31,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
@@ -61,8 +62,8 @@ public class InOnlyTest {
         final QName serviceName = new QName("inOnlySuccess");
         
         // Provide the service
-        ExchangeHandler provider = new ExchangeHandler() {
-			public void handle(Exchange event) {
+        ExchangeHandler provider = new BaseHandler() {
+			public void handleMessage(Exchange event) {
 			    inEvents.add(event);
 			}
         };

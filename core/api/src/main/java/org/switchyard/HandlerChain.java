@@ -30,6 +30,5 @@ public interface HandlerChain extends ExchangeHandler {
     void addLast(String handlerName, ExchangeHandler handler);
     ExchangeHandler remove(String handlerName);
     
-    @Override
     void handle(Exchange exchange);
 }

@@ -28,6 +28,7 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.switchyard.BaseHandler;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
@@ -92,8 +93,8 @@ public class ExchangeImplTest {
         final String outPropVal = "out";
         
         // create a handler to test that the in and out context are separate
-        ExchangeHandler provider = new ExchangeHandler() {
-            public void handle(Exchange exchange) {
+        ExchangeHandler provider = new BaseHandler() {
+            public void handleMessage(Exchange exchange) {
                 // We should find the shared property with the in value
                 Assert.assertEquals(
                 		exchange.getContext(Scope.MESSAGE).getProperty(sharedPropName), 
@@ -114,8 +115,8 @@ public class ExchangeImplTest {
             }
         };
 
-        ExchangeHandler consumer = new ExchangeHandler() {
-            public void handle(Exchange exchange) {
+        ExchangeHandler consumer = new BaseHandler() {
+            public void handleMessage(Exchange exchange) {
                 // We should find the shared property with the out value
                 Assert.assertEquals(
                         exchange.getContext(Scope.MESSAGE).getProperty(sharedPropName), 
@@ -153,8 +154,8 @@ public class ExchangeImplTest {
         
         // create a handler to test that the in and out content match
         // expected result from getMessage()
-        ExchangeHandler provider = new ExchangeHandler() {
-            public void handle(Exchange exchange) {
+        ExchangeHandler provider = new BaseHandler() {
+            public void handleMessage(Exchange exchange) {
                 Assert.assertEquals(
                 		exchange.getMessage().getContent(), 
                         inMsgContent);
@@ -170,8 +171,8 @@ public class ExchangeImplTest {
             }
         };
 
-        ExchangeHandler consumer = new ExchangeHandler() {
-            public void handle(Exchange exchange) {
+        ExchangeHandler consumer = new BaseHandler() {
+            public void handleMessage(Exchange exchange) {
                 Assert.assertEquals(
                 		exchange.getMessage().getContent(), 
                         outMsgContent);

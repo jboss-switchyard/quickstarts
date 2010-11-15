@@ -29,6 +29,7 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerChain;
 import org.switchyard.HandlerException;
+import org.switchyard.message.FaultMessage;
 
 public class DefaultHandlerChain implements HandlerChain {
     
@@ -59,17 +60,40 @@ public class DefaultHandlerChain implements HandlerChain {
         return handler;
     }
 
+	@Override
+	public void handleFault(Exchange exchange) {
+		try {
+			processHandlers(exchange);
+		}
+		catch (HandlerException handlerEx) {
+			// TODO - no throwing exceptions from fault handlers 
+			//        need to log this and continue
+		}
+	}
+
+	@Override
+	public void handleMessage(Exchange exchange) throws HandlerException {
+		processHandlers(exchange);
+	}
+	
     @Override
     public void handle(Exchange exchange) {
-    	
+    	try {
+    		processHandlers(exchange);
+    	} 
+    	catch (HandlerException handlerEx) {
+            // TODO - map to fault here
+        }
+    }
+
+    private void processHandlers(Exchange exchange) throws HandlerException {
         for (HandlerRef ref : listHandlers()) {
-            try {
-                ref.handler.handle(exchange);
-            }
-            catch (HandlerException handlerEx) {
-                // TODO - map to fault here
-            	break;
-            }
+        	if (FaultMessage.isFault(exchange.getMessage())) {
+        		ref.handler.handleFault(exchange);
+        	} 
+        	else {
+        		ref.handler.handleMessage(exchange);
+        	}
         }
     }
     

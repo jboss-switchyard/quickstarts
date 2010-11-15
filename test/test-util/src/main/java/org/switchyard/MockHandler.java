@@ -23,17 +23,21 @@ package org.switchyard;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import org.switchyard.message.FaultMessage;
 
 /**
  * Mock Handler.
  * 
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class MockHandler implements ExchangeHandler {
+public class MockHandler extends BaseHandler {
 
-    public LinkedBlockingQueue<Exchange> _exchanges = 
+    public LinkedBlockingQueue<Exchange> _messages = 
+    	new LinkedBlockingQueue<Exchange>();
+    
+    public LinkedBlockingQueue<Exchange> _faults = 
     	new LinkedBlockingQueue<Exchange>();
     
     public long waitTimeout = 5000; // default of 5 seconds
@@ -59,42 +63,29 @@ public class MockHandler implements ExchangeHandler {
         return this;
     }
     
-    public void handle(Exchange exchange) throws HandlerException {
-    	
-    	_exchanges.offer(exchange);
+    @Override
+    public void handleMessage(Exchange exchange) throws HandlerException {
+    	_messages.offer(exchange);
     	if (forwardInToOut) {
-    		sendOut(exchange, exchange.getMessage());
+    		exchange.send(exchange.getMessage());
     	} else if (forwardInToFault) {
-            sendFault(exchange, exchange.getMessage());
+    		exchange.send(MessageBuilder.newInstance(FaultMessage.class).buildMessage());
     	}
     }
 
+    @Override
+    public void handleFault(Exchange exchange) {
+    	_faults.offer(exchange);
+    }
+
     public MockHandler waitForMessage() {
-        waitFor(_exchanges, 1);
+        waitFor(_messages, 1);
         return this;
     }
     
     public MockHandler waitForMessage(int numMessages) {
-        waitFor(_exchanges, numMessages);
+        waitFor(_faults, numMessages);
         return this;
-    }
-
-    private void sendOut(Exchange exchange, Message message) {
-        try {
-            exchange.send(message);
-        }
-        catch (Exception ex) {
-            Assert.fail(ex.toString());
-        }
-    }
-
-    private void sendFault(Exchange exchange, Message message) {
-        try {
-            exchange.send(message);
-        }
-        catch (Exception ex) {
-            Assert.fail(ex.toString());
-        }
     }
 
     private void waitFor(LinkedBlockingQueue<Exchange> eventQueue, int numMessages) {

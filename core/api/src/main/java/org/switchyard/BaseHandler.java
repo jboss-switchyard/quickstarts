@@ -20,33 +20,19 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard.internal.handlers;
+package org.switchyard;
 
-import org.switchyard.Exchange;
-import org.switchyard.ExchangeHandler;
-import org.switchyard.internal.ExchangeImpl;
-import org.switchyard.spi.Endpoint;
+public class BaseHandler implements ExchangeHandler {
 
-public class DeliveryHandler implements ExchangeHandler {
-    
-    public void handleMessage(Exchange exchange) {
-    	deliver(exchange);
-    }
+	@Override
+	public void handleFault(Exchange exchange) {
+		// Default implementation does nothing for now
+		
+	}
 
-    public void handleFault(Exchange exchange) {
-        deliver(exchange);
-    }
-    
-    private void deliver(Exchange exchange) {
-        ExchangeImpl ei = (ExchangeImpl)exchange;
-        Endpoint target = ei.getTarget();
-        
-        // source and target switch seats with each send
-        if (ei.getSource() != null) {
-            ei.setTarget(ei.getSource());
-        }
-        
-        target.send(exchange);
-    }
+	@Override
+	public void handleMessage(Exchange exchange) throws HandlerException {
+		// Default implementation does nothing for now
+	}
 
 }

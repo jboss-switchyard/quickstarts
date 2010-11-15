@@ -23,7 +23,7 @@
 package org.switchyard;
 
 
-public interface ExchangeHandler {
-    
-    void handle(Exchange exchange) throws HandlerException;
+public interface ExchangeHandler {  
+	void handleMessage(Exchange exchange) throws HandlerException;
+	void handleFault(Exchange exchange);
 }
