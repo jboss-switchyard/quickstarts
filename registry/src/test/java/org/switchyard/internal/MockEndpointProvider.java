@@ -19,23 +19,32 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.switchyard.internal;
 
-package org.switchyard.spi;
-
-import java.util.List;
-
-import javax.xml.namespace.QName;
-
+import org.switchyard.Exchange;
 import org.switchyard.HandlerChain;
-import org.switchyard.Service;
-import org.switchyard.ServiceDomain;
+import org.switchyard.internal.MockEndpoint;
+import org.switchyard.spi.Endpoint;
+import org.switchyard.spi.EndpointProvider;
 
-public interface ServiceRegistry {
+public class MockEndpointProvider implements EndpointProvider {
+    @Override
+    public Endpoint createEndpoint(HandlerChain handlerChain) {
+        return new MockEndpoint(handlerChain);
+    }
+}
 
-    Service registerService(QName serviceName, Endpoint endpoint, HandlerChain handlers, ServiceDomain domain);
-    void unregisterService(Service service);
+class MockEndpoint implements Endpoint {
     
-    List<Service> getServices();
-    List<Service> getServices(QName serviceName);
-    List<Service> getServicesForDomain(String domainName);
+    private HandlerChain _handlerChain;
+    
+    MockEndpoint(HandlerChain handlerChain) {
+        _handlerChain = handlerChain;
+    }
+
+    @Override
+    public void send(Exchange exchange) {
+        _handlerChain.handle(exchange);
+    }
+    
 }

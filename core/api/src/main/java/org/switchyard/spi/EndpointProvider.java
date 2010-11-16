@@ -22,11 +22,8 @@
 
 package org.switchyard.spi;
 
-import org.switchyard.spi.Endpoint;
 import org.switchyard.HandlerChain;
 
 public interface EndpointProvider {
-    
     Endpoint createEndpoint(HandlerChain handlerChain);
-    
 }
