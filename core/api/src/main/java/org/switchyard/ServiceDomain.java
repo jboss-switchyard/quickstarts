@@ -29,12 +29,48 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
 import org.switchyard.Service;
 
+/**
+ * A ServiceDomain represents a collection of services with a shared set of 
+ * resources, configuration, and policy definitions.  The ServiceDomain interface
+ * is used by software components to  provide and/or consume services.  These 
+ * software components include protocol gateways, service containers, 
+ * translation engines, adapters, orchestration and routing engines.
+ *
+ */
 public interface ServiceDomain {
 
-    String getName() ;
+    /**
+     * Name of the ServiceDomain. This is unique within a runtime.
+     * @return name name of the ServiceDomain.
+     */
+    String getName();
     
+    /**
+     * Creates a new Exchange to invoke service with the specified exchange 
+     * pattern.
+     * @param service the service to invoke
+     * @param pattern the message exchange pattern to use
+     * @return a new Exchange instance
+     */
     Exchange createExchange(QName service, ExchangePattern pattern);
+    /**
+     * Creates a new Exchange to invoke service with the specified exchange 
+     * pattern.  The supplied ExchangeHandler is used to handle any faults or
+     * reply messages that are generated as part of the message exchange.
+     * @param the service to invoke
+     * @param pattern the message exchange pattern to use
+     * @param handler used to process response and fault messages
+     * @return a new Exchange instance
+     */
     Exchange createExchange(QName service, ExchangePattern pattern, ExchangeHandler handler);
     
+    /**
+     * Register a service with the domain.
+     * @param serviceName the name of the service
+     * @param handler the handler to use to process exchanges directed at this
+     * service
+     * @return a reference to the registered service that can be used to 
+     * unregister when required
+     */
     Service registerService(QName serviceName, ExchangeHandler handler);
 }

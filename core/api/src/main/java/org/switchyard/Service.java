@@ -24,8 +24,21 @@ package org.switchyard;
 
 import javax.xml.namespace.QName;
 
-
+/**
+ * A service registered with the SwitchYard runtime.  Service instances are only
+ * used by code that registers a service and have no real relevance to code 
+ * which consumes the service.
+ */
 public interface Service {
+    /**
+     * Qualified name of the service.
+     * @return service name
+     */
     QName getName();
+    /**
+     * Used to notify the SwitchYard runtime that the service should be 
+     * removed from the runtime registry and no further exchanges should be
+     * routed to the registered ExchangeHandler.
+     */
     void unregister();
 }

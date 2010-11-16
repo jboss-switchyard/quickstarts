@@ -24,24 +24,51 @@ package org.switchyard;
 
 import java.util.Map;
 
-
+/**
+ * Holds contextual information around the exchange of messages between a
+ * service consumer and provider.  There is a distinct {@code Context} instance
+ * for each context {@link Scope}.
+ */
 public interface Context {
-    /* This is a list of commonly used context keys.  Need to think long and
-     * hard about whether this is the right place for a key mapping.  Might be
-     * better to externalize this in a const class and/or provide
-     * subclasses of context for each scope and have specific methods to get/set
-     * these properties.
-     */
-    public static final String CORRELATION_ID = 
-        "org.switchyard.context.correlation.id";
-    public static final String MESSAGE_ID = 
-        "org.switchyard.context.message.id";
-    public static final String MESSAGE_NAME = 
-        "org.switchyard.context.message.name";
     
+    /**
+     * Retrieves the value of the named property within this context.
+     * @param property name
+     * @return value of the property in this context or null if the property
+     * does not exist
+     */
     Object getProperty(String name);
+    
+    /**
+     * Returns a map containing all properties in this context. The returned 
+     * map is a shallow copy of the property set in this context, so modifications
+     * to the map are not reflected in the underlying context.
+     * @return map containing all properties in this context.  If there are no
+     * properties in this context, an empty map is returned.
+     */
     Map<String, Object> getProperties();
+    
+    /**
+     * Test for whether the named property is present in this context.
+     * @param name name of the context property
+     * @return true if the property exists, false otherwise
+     */
     boolean hasProperty(String name);
+    
+    /**
+     * Removes the named property from this context.
+     * @param name name of the property to remove
+     * @return the value of the removed property or null if the property did
+     * not exist
+     */
     Object removeProperty(String name);
+    
+    /**
+     * Sets the named context property with the specified value.  If the context
+     * property does not exist already, it is added.  If the property already
+     * exists, the value of the property is replaced.
+     * @param name name of the property to set
+     * @param val the value to set for the property
+     */
     void setProperty(String name, Object val);
 }

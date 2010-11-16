@@ -22,15 +22,23 @@
 
 package org.switchyard;
 
+/**
+ * Empty implementation of the ExchangeHandler interface that can be used to 
+ * selectively override fault or message handling logic.
+ */
 public class BaseHandler implements ExchangeHandler {
 
-	@Override
+    /**
+     * @see ExchangeHandler#handleFault(Exchange)
+     */
 	public void handleFault(Exchange exchange) {
 		// Default implementation does nothing for now
 		
 	}
 
-	@Override
+	/**
+	 * @see ExchangeHandler#handleMessage(Exchange)
+	 */
 	public void handleMessage(Exchange exchange) throws HandlerException {
 		// Default implementation does nothing for now
 	}

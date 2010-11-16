@@ -22,8 +22,26 @@
 
 package org.switchyard;
 
-
+/**
+ * The role of a Handler is to handle messages and fault events during the 
+ * course of a service invocation.  When consuming a service, a handler can be 
+ * registered during Exchange creation to handle consumer events (e.g. fault
+ * or reply message).  When providing a service, a handler is specified while 
+ * registering the service to process invocations of that service.
+ */
 public interface ExchangeHandler {  
+    /**
+     * Called when a message is sent through an exchange.
+     * @param exchange an {@code Exchange} instance containing a message to be
+     * processed
+     * @throws HandlerException when handling of the message event fails (e.g. 
+     * invalid request message).
+     */
 	void handleMessage(Exchange exchange) throws HandlerException;
+	/**
+	 * Called when a fault is generated while processing an exchange.
+	 * @param exchange an {@code Exchange} instance containing a message to be
+     * processed
+	 */
 	void handleFault(Exchange exchange);
 }
