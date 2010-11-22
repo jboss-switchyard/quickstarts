@@ -26,10 +26,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.activation.DataSource;
-
-import org.switchyard.message.Builder;
 import org.switchyard.Message;
 
+/**
+ * Default message.
+ */
 @Builder("org.switchyard.internal.message.DefaultMessageBuilder")
 public class DefaultMessage implements Message {
     
@@ -38,17 +39,17 @@ public class DefaultMessage implements Message {
         new HashMap<String, DataSource>();
 
     @Override
-    public void addAttachment(String name, DataSource attachment) {
+    public void addAttachment(final String name, final DataSource attachment) {
         _attachments.put(name, attachment);
     }
 
     @Override
-    public DataSource getAttachment(String name) {
+    public DataSource getAttachment(final String name) {
         return _attachments.get(name);
     }
 
     @Override
-    public DataSource removeAttachment(String name) {
+    public DataSource removeAttachment(final String name) {
         return _attachments.remove(name);
     }
 
@@ -63,12 +64,12 @@ public class DefaultMessage implements Message {
     }
 
     @Override
-    public <T> T getContent(Class<T> type) {
+    public <T> T getContent(final Class<T> type) {
         return type.cast(_content);
     }
 
     @Override
-    public void setContent(Object content) {
+    public void setContent(final Object content) {
         _content = content;
     }
 

@@ -24,11 +24,6 @@ package org.switchyard;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.Context;
-import org.switchyard.ExchangePattern;
-import org.switchyard.Message;
-import org.switchyard.Scope;
-
 /**
  * An Exchange represents an instance of a service invocation with a specific 
  * message exchange pattern (e.g. InOnly, InOut).  Exchange provides a conduit 

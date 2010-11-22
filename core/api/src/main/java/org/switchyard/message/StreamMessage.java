@@ -26,10 +26,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
-import org.switchyard.message.Builder;
-import org.switchyard.message.DefaultMessage;
-
-
 /**
  * This implementation is simply for demonstration.  For repeatable reads,
  * it creates a copy of the message as soon as the stream is set, which kind
@@ -40,41 +36,58 @@ import org.switchyard.message.DefaultMessage;
 @Builder("org.switchyard.internal.message.StreamMessageBuilder")
 public class StreamMessage extends DefaultMessage {
     
+    private final static int BUFFER_SIZE = 8 * 1024;
     private ByteArrayOutputStream _contentBuffer;
     private boolean _readRepeatable;
     
+    /**
+     * Default constructor. 
+     */
     public StreamMessage() {
         this(false);
     }
-    
-    public StreamMessage(boolean readRepeatable) {
+ 
+    /**
+     * Constructor.
+     * @param readRepeatable readRepeatable
+     */
+    public StreamMessage(final boolean readRepeatable) {
         _readRepeatable = readRepeatable;
     }
     
-    public void setContent(InputStream stream) throws java.io.IOException {
+    /**
+     * @param stream stream
+     * @throws java.io.IOException IOException
+     */
+    public void setContent(final InputStream stream) throws java.io.IOException {
         if (_readRepeatable) {
             // create a copy in the local buffer - not ideal!
             _contentBuffer = new ByteArrayOutputStream(stream.available());
-            byte[] buf = new byte[8 * 1024];
+            byte[] buf = new byte[BUFFER_SIZE];
             int count;
             while ((count = stream.read(buf)) != -1) {
                 _contentBuffer.write(buf, 0, count);
             }
-        }
-        else {
+        } else {
             super.setContent(stream);
         }
     }
     
+    /*
+     * @see org.switchyard.message.DefaultMessage#getContent()
+     */
     public InputStream getContent() {
-        if(_readRepeatable) {
+        if (_readRepeatable) {
             return new ByteArrayInputStream(_contentBuffer.toByteArray());
-        }
-        else {
+        } else {
             return super.getContent(InputStream.class);
         }
     }
     
+    /**
+     * Returns whether the read can be repeated.
+     * @return readRepeatable
+     */
     public boolean isReadRepeatable() {
         return _readRepeatable;
     }

@@ -37,11 +37,11 @@ public interface ExchangeHandler {
      * @throws HandlerException when handling of the message event fails (e.g. 
      * invalid request message).
      */
-	void handleMessage(Exchange exchange) throws HandlerException;
-	/**
-	 * Called when a fault is generated while processing an exchange.
-	 * @param exchange an {@code Exchange} instance containing a message to be
+    void handleMessage(Exchange exchange) throws HandlerException;
+    /**
+     * Called when a fault is generated while processing an exchange.
+     * @param exchange an {@code Exchange} instance containing a message to be
      * processed
-	 */
-	void handleFault(Exchange exchange);
+     */
+    void handleFault(Exchange exchange);
 }

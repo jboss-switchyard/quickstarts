@@ -30,12 +30,43 @@ import org.switchyard.HandlerChain;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 
+/**
+ * A runtime service registry can be queried
+ * for services by service name, domain name, or
+ * all the services can be returned.
+ */
 public interface ServiceRegistry {
 
+    /**
+     * Register a service.
+     * @param serviceName service name
+     * @param endpoint endpoint
+     * @param handlers handlers
+     * @param domain domain 
+     * @return Service
+     */
     Service registerService(QName serviceName, Endpoint endpoint, HandlerChain handlers, ServiceDomain domain);
+    /**
+     * Unregister the service.
+     * @param service service
+     */
     void unregisterService(Service service);
     
+    /**
+     * Return the list of services.
+     * @return services
+     */
     List<Service> getServices();
+    /**
+     * Get the list of services for the specified service name.
+     * @param serviceName service name
+     * @return services
+     */
     List<Service> getServices(QName serviceName);
+    /**
+     * Get the list of services for the specified domain name.
+     * @param domainName domain name
+     * @return services
+     */
     List<Service> getServicesForDomain(String domainName);
 }

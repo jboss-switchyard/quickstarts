@@ -46,7 +46,7 @@ public enum ExchangePattern {
      * Creates a new ExchangePattern instance with the specified URI string.
      * @param uri a URI uniquely identifying the exchange pattern
      */
-    ExchangePattern(String uri) {
+    ExchangePattern(final String uri) {
         _patternURI = uri;
     }
     
@@ -64,14 +64,12 @@ public enum ExchangePattern {
      * @return an instane of ExchangePattern corresponding to the specified 
      * pattern URI.
      */
-    public static ExchangePattern fromURI(String uri) {
+    public static ExchangePattern fromURI(final String uri) {
         if (IN_ONLY.getURI().equals(uri)) {
             return IN_ONLY;
-        }
-        else if (IN_OUT.getURI().equals(uri)) {
+        } else if (IN_OUT.getURI().equals(uri)) {
             return IN_OUT;
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Unrecognized URI: " + uri);
         }
     }
