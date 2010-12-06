@@ -36,7 +36,7 @@ public class HandlerException extends Exception {
      * Create a new HandlerException with the specified error message.
      * @param message error text
      */
-    public HandlerException(String message) {
+    public HandlerException(final String message) {
         super(message);
     }
     
@@ -44,7 +44,7 @@ public class HandlerException extends Exception {
      * Create a new HandlerException with the specified cause.
      * @param cause error causing the handler to fail processing
      */
-    public HandlerException(Throwable cause) {
+    public HandlerException(final Throwable cause) {
         super(cause);
     }
     
@@ -53,7 +53,7 @@ public class HandlerException extends Exception {
      * @param message error text
      * @param cause error causing the handler to fail processing
      */
-    public HandlerException(String message, Throwable cause) {
+    public HandlerException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

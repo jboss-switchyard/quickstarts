@@ -49,19 +49,18 @@ public abstract class MessageBuilder {
      * @return a new MessageBuilder instance
      */
     public static final MessageBuilder newInstance(
-            Class<? extends Message> messageType) {
+            final Class<? extends Message> messageType) {
         
         Builder builderInfo = messageType.getAnnotation(Builder.class);
         try {
             @SuppressWarnings("unchecked")
             Class<MessageBuilder> builderClass = 
-                (Class<MessageBuilder>)Class.forName(builderInfo.value());
+                (Class<MessageBuilder>) Class.forName(builderInfo.value());
             
             return builderClass.newInstance();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             throw new RuntimeException(
-            		"Failed to load builder class for message", ex);
+                    "Failed to load builder class for message", ex);
         }
     }
     

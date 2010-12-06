@@ -24,11 +24,6 @@ package org.switchyard;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.Exchange;
-import org.switchyard.ExchangeHandler;
-import org.switchyard.ExchangePattern;
-import org.switchyard.Service;
-
 /**
  * A ServiceDomain represents a collection of services with a shared set of 
  * resources, configuration, and policy definitions.  The ServiceDomain interface
@@ -57,7 +52,7 @@ public interface ServiceDomain {
      * Creates a new Exchange to invoke service with the specified exchange 
      * pattern.  The supplied ExchangeHandler is used to handle any faults or
      * reply messages that are generated as part of the message exchange.
-     * @param the service to invoke
+     * @param service the service to invoke
      * @param pattern the message exchange pattern to use
      * @param handler used to process response and fault messages
      * @return a new Exchange instance

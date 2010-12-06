@@ -27,8 +27,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Builder.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Builder {
+    /**
+     * Return the value.
+     * @return value value
+     */
     String value();
 }

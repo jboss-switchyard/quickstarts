@@ -33,7 +33,7 @@ public interface Context {
     
     /**
      * Retrieves the value of the named property within this context.
-     * @param property name
+     * @param name property name
      * @return value of the property in this context or null if the property
      * does not exist
      */

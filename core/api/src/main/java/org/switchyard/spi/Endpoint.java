@@ -24,7 +24,14 @@ package org.switchyard.spi;
 
 import org.switchyard.Exchange;
 
+/**
+ * Service endpoint.
+ */
 public interface Endpoint {
 
+    /**
+     * Send an exchange.
+     * @param exchange exchange
+     */
     void send(Exchange exchange);
 }

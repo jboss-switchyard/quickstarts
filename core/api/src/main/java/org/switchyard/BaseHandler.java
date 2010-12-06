@@ -29,18 +29,19 @@ package org.switchyard;
 public class BaseHandler implements ExchangeHandler {
 
     /**
+     * @param exchange the exchange
      * @see ExchangeHandler#handleFault(Exchange)
      */
-	public void handleFault(Exchange exchange) {
-		// Default implementation does nothing for now
-		
-	}
+    public void handleFault(final Exchange exchange) {
+        // Default implementation does nothing for now
+    }
 
-	/**
-	 * @see ExchangeHandler#handleMessage(Exchange)
-	 */
-	public void handleMessage(Exchange exchange) throws HandlerException {
-		// Default implementation does nothing for now
-	}
-
+    /**
+     * @param exchange the exchange
+     * @throws HandlerException handler exception
+     * @see ExchangeHandler#handleMessage(Exchange)
+     */
+    public void handleMessage(final Exchange exchange) throws HandlerException {
+        // Default implementation does nothing for now
+    }
 }
