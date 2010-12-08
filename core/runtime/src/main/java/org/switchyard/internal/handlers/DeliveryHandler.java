@@ -28,24 +28,24 @@ import org.switchyard.internal.ExchangeImpl;
 import org.switchyard.spi.Endpoint;
 
 public class DeliveryHandler implements ExchangeHandler {
-    
+
     public void handleMessage(Exchange exchange) {
-    	deliver(exchange);
+        deliver(exchange);
     }
 
     public void handleFault(Exchange exchange) {
         deliver(exchange);
     }
-    
+
     private void deliver(Exchange exchange) {
-        ExchangeImpl ei = (ExchangeImpl)exchange;
+        ExchangeImpl ei = (ExchangeImpl) exchange;
         Endpoint target = ei.getTarget();
-        
+
         // source and target switch seats with each send
         if (ei.getSource() != null) {
             ei.setTarget(ei.getSource());
         }
-        
+
         target.send(exchange);
     }
 

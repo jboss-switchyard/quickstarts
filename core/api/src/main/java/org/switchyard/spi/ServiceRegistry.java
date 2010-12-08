@@ -42,16 +42,17 @@ public interface ServiceRegistry {
      * @param serviceName service name
      * @param endpoint endpoint
      * @param handlers handlers
-     * @param domain domain 
+     * @param domain domain
      * @return Service
      */
-    Service registerService(QName serviceName, Endpoint endpoint, HandlerChain handlers, ServiceDomain domain);
+    Service registerService(QName serviceName, Endpoint endpoint,
+            HandlerChain handlers, ServiceDomain domain);
     /**
      * Unregister the service.
      * @param service service
      */
     void unregisterService(Service service);
-    
+
     /**
      * Return the list of services.
      * @return services

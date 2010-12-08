@@ -25,15 +25,15 @@ package org.switchyard;
 import javax.xml.namespace.QName;
 
 /**
- * An Exchange represents an instance of a service invocation with a specific 
- * message exchange pattern (e.g. InOnly, InOut).  Exchange provides a conduit 
- * for the messages that flow into and out of a service  as part of a service 
+ * An Exchange represents an instance of a service invocation with a specific
+ * message exchange pattern (e.g. InOnly, InOut).  Exchange provides a conduit
+ * for the messages that flow into and out of a service  as part of a service
  * invocation.  Unlike messages, an exchange cannot be copied and reused across
- * service invocations.  State associated with  an invocation (i.e. context) is 
+ * service invocations.  State associated with  an invocation (i.e. context) is
  * maintained at the exchange level.
  */
 public interface Exchange {
-    
+
     /**
      * Creates a {@code Context} instance that can be used to specify
      * message context properties when sending a message.
@@ -41,7 +41,7 @@ public interface Exchange {
      */
     Context createContext();
     /**
-     * Retrieves the exchange context.  Equivalent to 
+     * Retrieves the exchange context.  Equivalent to
      * {@code getContext(Scope.EXCHANGE)}.
      * @return the exchange context
      */
@@ -69,14 +69,14 @@ public interface Exchange {
      */
     ExchangePattern getPattern();
     /**
-     * The service being invoked by this exchange. Note that this is just a 
+     * The service being invoked by this exchange. Note that this is just a
      * name and is completely separate from the runtime state of service
      * registrations.  The runtime will resolve the service name to one or
      * more concrete endpoints when the exchange is sent.
      * @return the qualified name of the service to be invoked
      */
     QName getService();
-    
+
     /**
      * Returns the current message for the exchange.  On new exchanges, this
      * method will always return null.  The current message reference is updated
@@ -84,7 +84,7 @@ public interface Exchange {
      * @return the current message for the exchange
      */
     Message getMessage();
-    
+
     /**
      * Sends the specified message as part of this message exchange.
      * @param message message to send
@@ -92,11 +92,10 @@ public interface Exchange {
     void send(Message message);
     /**
      * Sends the specified message with additional context information.  The
-     * supplied {@code Context} is mapped to the exchange with 
+     * supplied {@code Context} is mapped to the exchange with
      * {@code Scope.MESSAGE}.
      * @param message the message to send
      * @param messageContext context for the sent message
      */
     void send(Message message, Context messageContext);
-    
 }

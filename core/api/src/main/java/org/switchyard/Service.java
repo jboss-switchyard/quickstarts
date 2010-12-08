@@ -26,7 +26,7 @@ import javax.xml.namespace.QName;
 
 /**
  * A service registered with the SwitchYard runtime.  Service instances are only
- * used by code that registers a service and have no real relevance to code 
+ * used by code that registers a service and have no real relevance to code
  * which consumes the service.
  */
 public interface Service {
@@ -36,7 +36,7 @@ public interface Service {
      */
     QName getName();
     /**
-     * Used to notify the SwitchYard runtime that the service should be 
+     * Used to notify the SwitchYard runtime that the service should be
      * removed from the runtime registry and no further exchanges should be
      * routed to the registered ExchangeHandler.
      */

@@ -30,7 +30,7 @@ import java.util.Map;
  * for each context {@link Scope}.
  */
 public interface Context {
-    
+
     /**
      * Retrieves the value of the named property within this context.
      * @param name property name
@@ -38,23 +38,23 @@ public interface Context {
      * does not exist
      */
     Object getProperty(String name);
-    
+
     /**
-     * Returns a map containing all properties in this context. The returned 
-     * map is a shallow copy of the property set in this context, so modifications
-     * to the map are not reflected in the underlying context.
+     * Returns a map containing all properties in this context. The returned
+     * map is a shallow copy of the property set in this context, so
+     * modifications to the map are not reflected in the underlying context.
      * @return map containing all properties in this context.  If there are no
      * properties in this context, an empty map is returned.
      */
     Map<String, Object> getProperties();
-    
+
     /**
      * Test for whether the named property is present in this context.
      * @param name name of the context property
      * @return true if the property exists, false otherwise
      */
     boolean hasProperty(String name);
-    
+
     /**
      * Removes the named property from this context.
      * @param name name of the property to remove
@@ -62,7 +62,7 @@ public interface Context {
      * not exist
      */
     Object removeProperty(String name);
-    
+
     /**
      * Sets the named context property with the specified value.  If the context
      * property does not exist already, it is added.  If the property already

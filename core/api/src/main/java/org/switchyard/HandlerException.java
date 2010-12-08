@@ -23,13 +23,16 @@
 package org.switchyard;
 
 /**
- * Represents a processing error when handling an exchange.  A 
- * {@code HandlerException} stops processing within a HandlerChain and 
- * is automagically converted into a fault by the chain when throw by an 
+ * Represents a processing error when handling an exchange.  A
+ * {@code HandlerException} stops processing within a HandlerChain and
+ * is automagically converted into a fault by the chain when throw by an
  * {@code ExchangeHandler}.
  */
 public class HandlerException extends Exception {
-    
+
+    /**
+     * Generated serial version UID.
+     */
     private static final long serialVersionUID = -4026111208898030754L;
 
     /**
@@ -39,7 +42,7 @@ public class HandlerException extends Exception {
     public HandlerException(final String message) {
         super(message);
     }
-    
+
     /**
      * Create a new HandlerException with the specified cause.
      * @param cause error causing the handler to fail processing
@@ -47,7 +50,7 @@ public class HandlerException extends Exception {
     public HandlerException(final Throwable cause) {
         super(cause);
     }
-    
+
     /**
      * Create a new HandlerException with the specified error message and cause.
      * @param message error text

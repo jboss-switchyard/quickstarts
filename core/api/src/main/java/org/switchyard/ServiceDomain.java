@@ -25,12 +25,12 @@ package org.switchyard;
 import javax.xml.namespace.QName;
 
 /**
- * A ServiceDomain represents a collection of services with a shared set of 
- * resources, configuration, and policy definitions.  The ServiceDomain interface
- * is used by software components to  provide and/or consume services.  These 
- * software components include protocol gateways, service containers, 
- * translation engines, adapters, orchestration and routing engines.
- *
+ * A ServiceDomain represents a collection of services with a shared set of
+ * resources, configuration, and policy definitions.  The ServiceDomain
+ * interface is used by software components to  provide and/or consume
+ * services.  These software components include protocol gateways, service
+ * containers, translation engines, adapters, orchestration and routing
+ * engines.
  */
 public interface ServiceDomain {
 
@@ -39,9 +39,9 @@ public interface ServiceDomain {
      * @return name name of the ServiceDomain.
      */
     String getName();
-    
+
     /**
-     * Creates a new Exchange to invoke service with the specified exchange 
+     * Creates a new Exchange to invoke service with the specified exchange
      * pattern.
      * @param service the service to invoke
      * @param pattern the message exchange pattern to use
@@ -49,7 +49,7 @@ public interface ServiceDomain {
      */
     Exchange createExchange(QName service, ExchangePattern pattern);
     /**
-     * Creates a new Exchange to invoke service with the specified exchange 
+     * Creates a new Exchange to invoke service with the specified exchange
      * pattern.  The supplied ExchangeHandler is used to handle any faults or
      * reply messages that are generated as part of the message exchange.
      * @param service the service to invoke
@@ -57,14 +57,15 @@ public interface ServiceDomain {
      * @param handler used to process response and fault messages
      * @return a new Exchange instance
      */
-    Exchange createExchange(QName service, ExchangePattern pattern, ExchangeHandler handler);
-    
+    Exchange createExchange(QName service, ExchangePattern pattern,
+            ExchangeHandler handler);
+
     /**
      * Register a service with the domain.
      * @param serviceName the name of the service
      * @param handler the handler to use to process exchanges directed at this
      * service
-     * @return a reference to the registered service that can be used to 
+     * @return a reference to the registered service that can be used to
      * unregister when required
      */
     Service registerService(QName serviceName, ExchangeHandler handler);

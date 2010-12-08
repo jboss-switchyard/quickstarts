@@ -30,19 +30,22 @@ import org.switchyard.Message;
 import org.switchyard.MessageBuilder;
 import org.switchyard.message.StreamMessage;
 
+/**
+ * Stream message builder.
+ */
 public class StreamMessageBuilder extends MessageBuilder {
-    
-    public static final String TYPE = 
+
+    public static final String TYPE =
         "org.switchyard.messageType.stream";
     private static final int WRITE_BUFFER = 8 * 1024;
-    
+
     @Override
     public StreamMessage buildMessage() {
         return new StreamMessage();
     }
-    
+
     @Override
-    public StreamMessage readMessage(InputStream in) 
+    public StreamMessage readMessage(InputStream in)
             throws IOException {
         // TODO : ignoring attachments at the moment
         StreamMessage msg = new StreamMessage();
@@ -55,13 +58,13 @@ public class StreamMessageBuilder extends MessageBuilder {
             throws IOException {
         if (!(message instanceof StreamMessage)) {
             throw new RuntimeException(
-                    "Invalid message type for StreamBuilder writeMessage: " +
-                    message.getClass().getName());
+                    "Invalid message type for StreamBuilder writeMessage: "
+                    + message.getClass().getName());
         }
-        writeMessage((StreamMessage)message, out);
+        writeMessage((StreamMessage) message, out);
     }
-    
-    public void writeMessage(StreamMessage message, OutputStream out) 
+
+    public void writeMessage(StreamMessage message, OutputStream out)
             throws IOException {
         // TODO : ignoring attachments at the moment
         byte[] buf = new byte[WRITE_BUFFER];

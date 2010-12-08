@@ -31,24 +31,28 @@ import org.switchyard.HandlerChain;
 import org.switchyard.HandlerException;
 import org.switchyard.message.FaultMessage;
 
+/**
+ * Default handler chain.
+ */
 public class DefaultHandlerChain implements HandlerChain {
-    
     private LinkedList<HandlerRef> _chain = new LinkedList<HandlerRef>();
-    
+
     @Override
-    public synchronized void addFirst(String handlerName, ExchangeHandler handler) {
+    public synchronized void addFirst(String handlerName,
+            ExchangeHandler handler) {
         _chain.addFirst(new HandlerRef(handlerName, handler));
     }
 
     @Override
-    public synchronized void addLast(String handlerName, ExchangeHandler handler) {
+    public synchronized void addLast(String handlerName,
+            ExchangeHandler handler) {
         _chain.addLast(new HandlerRef(handlerName, handler));
     }
-    
+
     @Override
     public synchronized ExchangeHandler remove(String handlerName) {
         ExchangeHandler handler = null;
-        
+
         for (HandlerRef ref : _chain) {
             if (ref.name.equals(handlerName)) {
                 handler = ref.handler;
@@ -56,59 +60,55 @@ public class DefaultHandlerChain implements HandlerChain {
                 break;
             }
         }
-        
+
         return handler;
     }
 
-	@Override
-	public void handleFault(Exchange exchange) {
-		try {
-			processHandlers(exchange);
-		}
-		catch (HandlerException handlerEx) {
-			// TODO - no throwing exceptions from fault handlers 
-			//        need to log this and continue
-		}
-	}
+    @Override
+    public void handleFault(Exchange exchange) {
+        try {
+            processHandlers(exchange);
+        } catch (HandlerException handlerEx) {
+            // TODO - no throwing exceptions from fault handlers
+            //        need to log this and continue
+        }
+    }
 
-	@Override
-	public void handleMessage(Exchange exchange) throws HandlerException {
-		processHandlers(exchange);
-	}
-	
+    @Override
+    public void handleMessage(Exchange exchange) throws HandlerException {
+        processHandlers(exchange);
+    }
+
     @Override
     public void handle(Exchange exchange) {
-    	try {
-    		processHandlers(exchange);
-    	} 
-    	catch (HandlerException handlerEx) {
+        try {
+            processHandlers(exchange);
+        } catch (HandlerException handlerEx) {
             // TODO - map to fault here
         }
     }
 
     private void processHandlers(Exchange exchange) throws HandlerException {
         for (HandlerRef ref : listHandlers()) {
-        	if (FaultMessage.isFault(exchange.getMessage())) {
-        		ref.handler.handleFault(exchange);
-        	} 
-        	else {
-        		ref.handler.handleMessage(exchange);
-        	}
+            if (FaultMessage.isFault(exchange.getMessage())) {
+                ref.handler.handleFault(exchange);
+            } else {
+                ref.handler.handleMessage(exchange);
+            }
         }
     }
-    
+
     private synchronized List<HandlerRef> listHandlers() {
         return new LinkedList<HandlerRef>(_chain);
     }
-    
+
     // sweet little struct
     private class HandlerRef {
-        
-        HandlerRef(String name,ExchangeHandler handler) {
+        HandlerRef(String name, ExchangeHandler handler) {
             this.handler = handler;
             this.name = name;
         }
-        
+
         ExchangeHandler handler;
         String name;
     }

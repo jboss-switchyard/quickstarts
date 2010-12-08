@@ -25,7 +25,7 @@ package org.switchyard.message;
 import org.switchyard.Message;
 
 /**
- * 
+ * Fault message.
  */
 @Builder("org.switchyard.internal.message.DefaultMessageBuilder")
 public class FaultMessage extends DefaultMessage {

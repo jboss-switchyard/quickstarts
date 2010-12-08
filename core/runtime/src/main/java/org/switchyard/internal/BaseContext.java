@@ -28,13 +28,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.switchyard.Context;
 
+/**
+ * Base context implementation.
+ */
 public class BaseContext implements Context {
-    
-    private ConcurrentHashMap<String, Object> _properties = 
+    private ConcurrentHashMap<String, Object> _properties =
         new ConcurrentHashMap<String, Object>();
 
     @Override
-    public Object getProperty(String name) {
+    public Object getProperty(final String name) {
         return _properties.get(name);
     }
 
@@ -46,17 +48,17 @@ public class BaseContext implements Context {
     }
 
     @Override
-    public boolean hasProperty(String name) {
+    public boolean hasProperty(final String name) {
         return _properties.containsKey(name);
     }
 
     @Override
-    public Object removeProperty(String name) {
+    public Object removeProperty(final String name) {
         return _properties.remove(name);
     }
 
     @Override
-    public void setProperty(String name, Object val) {
+    public void setProperty(final String name, final Object val) {
         _properties.put(name, val);
     }
 }

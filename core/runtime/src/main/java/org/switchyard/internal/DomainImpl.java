@@ -45,21 +45,20 @@ public class DomainImpl implements ServiceDomain {
     private ServiceRegistry _registry;
     private EndpointProvider _endpointProvider;
 
-    public DomainImpl(String name, 
-            ServiceRegistry registry, 
+    public DomainImpl(String name,
+            ServiceRegistry registry,
             EndpointProvider endpointProvider) {
-        
+
         _name = name;
         _registry = registry;
         _endpointProvider  = endpointProvider;
-        
-        // Build out the system handlers chain.  It would be cleaner if we 
+
+        // Build out the system handlers chain.  It would be cleaner if we
         // handled this via config.
         _systemHandlers = new DefaultHandlerChain();
         _systemHandlers.addLast("addressing", new AddressingHandler(_registry));
         _systemHandlers.addLast("delivery", new DeliveryHandler());
     }
-    
 
     @Override
     public Exchange createExchange(QName service, ExchangePattern pattern) {
@@ -76,7 +75,7 @@ public class DomainImpl implements ServiceDomain {
         handlers.addLast("system.handlers", _systemHandlers);
         // create the exchange
         ExchangeImpl exchange = new ExchangeImpl(service, pattern, handlers);
-        
+
         if (handler != null) {
             // A response handler was specified, so setup a reply endpoint
             HandlerChain replyChain = new DefaultHandlerChain();

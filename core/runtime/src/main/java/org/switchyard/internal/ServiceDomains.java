@@ -32,12 +32,14 @@ import org.switchyard.spi.EndpointProvider;
 
 public class ServiceDomains {
     public static final String ROOT_DOMAIN = "org.switchyard.domains.root";
-    public static final String ENDPOINT_PROVIDER_CLASS_NAME = "org.switchyard.endpoint.provider.class.name";
-    public static final String REGISTRY_CLASS_NAME = "org.switchyard.registry.class.name";
+    public static final String ENDPOINT_PROVIDER_CLASS_NAME     
+        = "org.switchyard.endpoint.provider.class.name";
+    public static final String REGISTRY_CLASS_NAME
+        = "org.switchyard.registry.class.name";
 
-    private static ConcurrentHashMap<String, ServiceDomain> _domains = 
+    private static ConcurrentHashMap<String, ServiceDomain> _domains =
         new ConcurrentHashMap<String, ServiceDomain>();
-    
+
     private static ServiceRegistry _registry = null;
     private static EndpointProvider _endpointProvider = null;
 
@@ -47,7 +49,8 @@ public class ServiceDomains {
      * @return ServiceRegistry
      */
     private static ServiceRegistry getRegistry(final String registryClass) {
-        ServiceLoader<ServiceRegistry> registryServices = ServiceLoader.load(ServiceRegistry.class); 
+        ServiceLoader<ServiceRegistry> registryServices
+            = ServiceLoader.load(ServiceRegistry.class);
         for (ServiceRegistry registry : registryServices) {
             if (registryClass.equals(registry.getClass().getName())) {
                 return registry;
@@ -61,8 +64,10 @@ public class ServiceDomains {
      * @param providerClass class name of the endpointprovider implementation
      * @return EndpointProvider
      */
-    private static EndpointProvider getEndpointProvider(final String providerClass) {
-        ServiceLoader<EndpointProvider> providerServices = ServiceLoader.load(EndpointProvider.class);
+    private static EndpointProvider 
+        getEndpointProvider(final String providerClass) {
+        ServiceLoader<EndpointProvider> providerServices
+            = ServiceLoader.load(EndpointProvider.class);
         for (EndpointProvider provider : providerServices) {
             if (providerClass.equals(provider.getClass().getName())) {
                 return provider;
@@ -70,7 +75,7 @@ public class ServiceDomains {
         }
         return null;
     }
-    
+
     /**
      * Initialize the endpointProvider and the registry.
      */
@@ -136,7 +141,7 @@ public class ServiceDomains {
     public static ServiceDomain getDomain(final String domainName) {
         return _domains.get(domainName);
     }
-    
+
     /**
      * Get the names of the domains that exist.
      * @return domain names

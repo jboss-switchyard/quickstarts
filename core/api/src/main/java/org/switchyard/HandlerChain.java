@@ -23,10 +23,10 @@
 package org.switchyard;
 
 /**
- * An ordered list of {@code Handler} instances that can be associated with a 
+ * An ordered list of {@code Handler} instances that can be associated with a
  * service or exchange instance.  Note that HandlerChain extends ExchangeHandler
- * which provides the ability to add a set of handlers instead of a single handler
- * to an exchange or service.
+ * which provides the ability to add a set of handlers instead of a single
+ * handler to an exchange or service.
  */
 public interface HandlerChain extends ExchangeHandler {
 
@@ -36,14 +36,14 @@ public interface HandlerChain extends ExchangeHandler {
      * @param handler handler instance
      */
     void addFirst(String handlerName, ExchangeHandler handler);
-    
+
     /**
      * Add a handler to the end of the chain.
      * @param handlerName name of the handler to add
      * @param handler handler instance
      */
     void addLast(String handlerName, ExchangeHandler handler);
-    
+
     /**
      * Remove the named handler from this chain.
      * @param handlerName name of the handler to remove
@@ -51,7 +51,7 @@ public interface HandlerChain extends ExchangeHandler {
      * was not present in the chain
      */
     ExchangeHandler remove(String handlerName);
-    
+
     /**
      * Triggers the handler chain with the specified exchange.
      * @param exchange exchange that needs to be handled

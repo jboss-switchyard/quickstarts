@@ -36,11 +36,11 @@ import org.switchyard.Scope;
 import org.switchyard.spi.Endpoint;
 
 public class ExchangeImpl implements Exchange {
-    
+
     public static final String IN_MSG       = "in";
     public static final String OUT_MSG      = "out";
     public static final String FAULT_MSG    = "fault";
-    
+
     private String          _exchangeId;
     private ExchangePattern _pattern;
     private QName           _service;
@@ -50,7 +50,7 @@ public class ExchangeImpl implements Exchange {
     private Endpoint        _target;
     private HashMap<Scope, Context> _context =
         new HashMap<Scope, Context>();
-    
+
     ExchangeImpl(QName service, ExchangePattern pattern, HandlerChain handlers) {
         _service = service;
         _pattern = pattern;
@@ -96,10 +96,9 @@ public class ExchangeImpl implements Exchange {
     }
 
     @Override
-    public void send(Message message, Context messageContext) 
-    {
+    public void send(Message message, Context messageContext) {
         setContext(Scope.MESSAGE, messageContext);
-        
+
         _message = message;
         _handlers.handle(this);
     }
@@ -108,23 +107,22 @@ public class ExchangeImpl implements Exchange {
     public void send(Message message) {
         send(message, new BaseContext());
     }
-    
+
     public Endpoint getSource() {
         return _source;
     }
-    
+
     public Endpoint getTarget() {
         return _target;
     }
-    
+
     public void setTarget(Endpoint target) {
         _target = target;
     }
-    
+
     public void setSource(Endpoint source) {
         _source = source;
     }
-
 
     private void setContext(Scope scope, Context context) {
         _context.put(scope, context);

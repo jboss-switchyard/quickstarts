@@ -31,19 +31,19 @@ import org.switchyard.spi.Endpoint;
 import org.switchyard.spi.ServiceRegistry;
 
 public class ServiceRegistration implements Service {
-    
+
     private ServiceRegistry _registry;
     private ServiceDomain _domain;
     private Endpoint _endpoint;
     private QName _serviceName;
     private HandlerChain _handlers;
-    
-    ServiceRegistration(QName serviceName, 
-            Endpoint endpoint, 
-            HandlerChain handlers, 
-            ServiceRegistry registry, 
+
+    ServiceRegistration(QName serviceName,
+            Endpoint endpoint,
+            HandlerChain handlers,
+            ServiceRegistry registry,
             ServiceDomain domain) {
-        
+
         _serviceName = serviceName;
         _endpoint = endpoint;
         _handlers = handlers;
@@ -55,11 +55,11 @@ public class ServiceRegistration implements Service {
     public void unregister() {
         _registry.unregisterService(this);
     }
-    
+
     public Endpoint getEndpoint() {
         return _endpoint;
     }
-    
+
     public ServiceDomain getDomain() {
         return _domain;
     }
@@ -68,9 +68,8 @@ public class ServiceRegistration implements Service {
     public QName getName() {
         return _serviceName;
     }
-    
+
     public HandlerChain getHandlers() {
         return _handlers;
     }
-
 }

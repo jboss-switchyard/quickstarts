@@ -27,24 +27,24 @@ import java.util.Map;
 import javax.activation.DataSource;
 
 /**
- * A {@code Message} represents an individual input or output of a service, the 
- * content of which is interpreted by service implementation logic.  A Message 
- * does not carry context specific to a service invocation, which means that it 
+ * A {@code Message} represents an individual input or output of a service, the
+ * content of which is interpreted by service implementation logic.  A Message
+ * does not carry context specific to a service invocation, which means that it
  * can be copied and reused across service invocations.
  * <p>
  * There are two distinct parts to a message:
  * <ul>
- * <li> <b>Content</b> : the main body, or payload, of the message. There is 
- * only one body per message instance.  The message body is mutable, so message 
+ * <li> <b>Content</b> : the main body, or payload, of the message. There is
+ * only one body per message instance.  The message body is mutable, so message
  * processing logic can access the content, change it (transform, enrich, etc.),
  * and then set it back on the message.
  * <p>
- * <li> <b>Attachments</b> : provide the ability to associate content with a 
+ * <li> <b>Attachments</b> : provide the ability to associate content with a
  * message separate from  the main body, allowing it to be parsed independently.
  * One example  would be a binary image that is referenced by the main body of
- * the message.  The attachment may be too large to be processed in certain 
- * services or the service implementation may not be able to  parse/interpret 
- * it. 
+ * the message.  The attachment may be too large to be processed in certain
+ * services or the service implementation may not be able to  parse/interpret
+ * it.
  * </ul>
  */
 public interface Message {
@@ -65,7 +65,7 @@ public interface Message {
      * @return body content or null if the body has not been set
      */
     <T> T getContent(Class<T> type);
-    
+
     /**
      * Adds an attachment to the message with the specified name.
      * @param name attachment name
@@ -87,11 +87,10 @@ public interface Message {
     DataSource removeAttachment(String name);
     /**
      * Returns a map containing all attachments to this message. The returned
-     * map is not a live reference to the underlying attachment map in the 
-     * Message so changes to the returned map will not be reflected in the 
+     * map is not a live reference to the underlying attachment map in the
+     * Message so changes to the returned map will not be reflected in the
      * Message instance.
      * @return a map containing all message attachments
      */
     Map<String, DataSource> getAttachmentMap();
-    
 }

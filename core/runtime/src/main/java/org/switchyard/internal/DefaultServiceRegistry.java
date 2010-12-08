@@ -38,23 +38,23 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.spi.ServiceRegistry;
 
 public class DefaultServiceRegistry implements ServiceRegistry {
-    
-    private Map<QName, List<ServiceRegistration>> _services = 
+
+    private Map<QName, List<ServiceRegistration>> _services =
         new HashMap<QName, List<ServiceRegistration>>();
 
     @Override
     public List<Service> getServicesForDomain(String domainName) {
         List<Service> domainServices = getServices();
         // Using an explicit iterator because we are removing elements
-        for (Iterator<Service> i = domainServices.iterator(); i.hasNext(); ) {
+        for (Iterator<Service> i = domainServices.iterator(); i.hasNext();) {
             ServiceRegistration sr = (ServiceRegistration)i.next();
             // prune services that do not match the specified domain
             if (!sr.getDomain().getName().equals(domainName)) {
                 i.remove();
             }
         }
-        
-        return domainServices;
+
+        return domainServices;  
     }
 
     @Override
@@ -63,7 +63,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
         for (List<ServiceRegistration> services : _services.values()) {
             serviceList.addAll(services);
         }
-        
+
         return serviceList;
     }
 
@@ -73,31 +73,32 @@ public class DefaultServiceRegistry implements ServiceRegistry {
         if (services == null) {
             return Collections.emptyList();
         }
-        
+
         return new LinkedList<Service>(services);
     }
-    
+
     @Override
     public synchronized Service registerService(QName serviceName,
             org.switchyard.spi.Endpoint endpoint, HandlerChain handlers,
             ServiceDomain domain) {
-        
+
         ServiceRegistration sr = new ServiceRegistration(
                 serviceName, endpoint, handlers, this, domain);
-        
+
         List<ServiceRegistration> serviceList = _services.get(serviceName);
         if (serviceList == null) {
             serviceList = new LinkedList<ServiceRegistration>();
              _services.put(serviceName, serviceList);
         }
-        
+
         serviceList.add(sr);
         return sr;
     }
 
     @Override
     public synchronized void unregisterService(Service service) {
-        List<ServiceRegistration> serviceList = _services.get(service.getName());
+        List<ServiceRegistration> serviceList =
+            _services.get(service.getName());
         if (serviceList != null) {
             serviceList.remove(service);
         }

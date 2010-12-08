@@ -33,41 +33,39 @@ import org.switchyard.internal.ServiceRegistration;
 import org.switchyard.spi.ServiceRegistry;
 
 public class AddressingHandler implements ExchangeHandler {
-    
+
     private ServiceRegistry _registry;
-    
+
     public AddressingHandler(ServiceRegistry registry) {
         _registry = registry;
     }
-    
 
     @Override
     public void handleFault(Exchange exchange) {
         // Nothing to do here
     }
-    
+
     @Override
     public void handleMessage(Exchange exchange) throws HandlerException {
-        
-    	// we need to mess with some internal exchange details
-    	ExchangeImpl ei = (ExchangeImpl)exchange;
-    	
+
+        // we need to mess with some internal exchange details
+        ExchangeImpl ei = (ExchangeImpl) exchange;
+
         if (ei.getTarget() == null) {
             // find the receiving channel
-            List<Service> serviceList = 
+            List<Service> serviceList =
                 _registry.getServices(exchange.getService());
-            
+
             if (serviceList.isEmpty()) {
                 // could not find a registered service - set the exchange
                 throw new HandlerException(
                         "No endpoints for service " + exchange.getService());
             }
-            
+
             // Endpoint selection is arbitrary at the moment
-            ServiceRegistration sr = (ServiceRegistration)serviceList.get(0);
+            ServiceRegistration sr = (ServiceRegistration) serviceList.get(0);
             ei.setTarget(sr.getEndpoint());
         }
-        
     }
 
 }

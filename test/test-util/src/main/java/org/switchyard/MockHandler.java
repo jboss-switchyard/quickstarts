@@ -29,26 +29,71 @@ import org.switchyard.message.FaultMessage;
 
 /**
  * Mock Handler.
- * 
+ *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public class MockHandler extends BaseHandler {
+    /**
+     * Messages.
+     */
+    private LinkedBlockingQueue<Exchange> _messages =
+        new LinkedBlockingQueue<Exchange>();
 
-    public LinkedBlockingQueue<Exchange> _messages = 
-    	new LinkedBlockingQueue<Exchange>();
-    
-    public LinkedBlockingQueue<Exchange> _faults = 
-    	new LinkedBlockingQueue<Exchange>();
-    
-    public long waitTimeout = 5000; // default of 5 seconds
+    /**
+     * Faults.
+     */
+    private LinkedBlockingQueue<Exchange> _faults =
+        new LinkedBlockingQueue<Exchange>();
 
-    // An enum would be nicer here !!
+    /**
+     * Default sleep.
+     */
+    private static final int DEFAULT_SLEEP_MS = 100;
+    /**
+     * Default wait timeout.
+     */
+    private static final int DEFAULT_WAIT_TIMEOUT = 5000;
+
+    /**
+     * Wait timeout value.
+     */
+    public long waitTimeout = DEFAULT_WAIT_TIMEOUT; // default of 5 seconds
+
+    /**
+     * Forward input to output flag.
+     */
     private boolean forwardInToOut = false;
+    /**
+     * Forward input to fault flag.
+     */
     private boolean forwardInToFault = false;
 
+    /**
+     * Constructor.
+     */
     public MockHandler() {
     }
 
+    /**
+     * Message getter.
+     * @return messages messages
+     */
+    public LinkedBlockingQueue<Exchange> getMessages() {
+        return _messages;
+    }
+
+    /**
+     * Fault getter.
+     * @return faults faults
+     */
+    public LinkedBlockingQueue<Exchange> getFaults() {
+        return _faults;
+    }
+
+    /**
+     * Forward input to output.
+     * @return MockHandler mockhandler
+     */
     public MockHandler forwardInToOut() {
         // An enum would be nicer here !!
         forwardInToOut = true;
@@ -56,54 +101,79 @@ public class MockHandler extends BaseHandler {
         return this;
     }
 
+    /**
+     * Forward input to fault.
+     * @return MockHandler mockhandler
+     */
     public MockHandler forwardInToFault() {
         // An enum would be nicer here !!
         forwardInToOut = false;
         forwardInToFault = true;
         return this;
     }
-    
+
     @Override
-    public void handleMessage(Exchange exchange) throws HandlerException {
-    	_messages.offer(exchange);
-    	if (forwardInToOut) {
-    		exchange.send(exchange.getMessage());
-    	} else if (forwardInToFault) {
-    		exchange.send(MessageBuilder.newInstance(FaultMessage.class).buildMessage());
-    	}
+    public void handleMessage(final Exchange exchange)
+        throws HandlerException {
+        _messages.offer(exchange);
+        if (forwardInToOut) {
+            exchange.send(exchange.getMessage());
+        } else if (forwardInToFault) {
+            exchange.send(
+                MessageBuilder.newInstance(FaultMessage.class).buildMessage());
+        }
     }
 
     @Override
-    public void handleFault(Exchange exchange) {
-    	_faults.offer(exchange);
+    public void handleFault(final Exchange exchange) {
+            _faults.offer(exchange);
     }
 
+    /**
+     * Wait for a message.
+     * @return MockHandler mockhandler
+     */
     public MockHandler waitForMessage() {
         waitFor(_messages, 1);
         return this;
     }
-    
-    public MockHandler waitForMessage(int numMessages) {
+
+    /**
+     * Wait for a number of messages.
+     * @param numMessages number of messages
+     * @return MockHandler mockhandler
+     */
+    public MockHandler waitForMessage(final int numMessages) {
         waitFor(_faults, numMessages);
         return this;
     }
 
-    private void waitFor(LinkedBlockingQueue<Exchange> eventQueue, int numMessages) {
+    /**
+     * Wait for a number of messages.
+     * @param eventQueue event queue
+     * @param numMessages number of messages
+     */
+    private void waitFor(final LinkedBlockingQueue<Exchange> eventQueue,
+            final int numMessages) {
         long start = System.currentTimeMillis();
 
-        while(System.currentTimeMillis() < start + waitTimeout) {
-            if(eventQueue.size() >= numMessages) {
+        while (System.currentTimeMillis() < start + waitTimeout) {
+            if (eventQueue.size() >= numMessages) {
                 return;
             }
             sleep();
         }
 
-        TestCase.fail("Timed out waiting on event queue length to be " + numMessages + " or greater.");
+        TestCase.fail("Timed out waiting on event queue length to be "
+                + numMessages + " or greater.");
     }
 
+    /**
+     * Sleep.
+     */
     private void sleep() {
         try {
-            Thread.sleep(100);
+            Thread.sleep(DEFAULT_SLEEP_MS);
         } catch (InterruptedException e) {
             TestCase.fail("Failed to sleep: " + e.getMessage());
         }

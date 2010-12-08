@@ -29,7 +29,7 @@ import org.switchyard.message.Builder;
 import org.switchyard.message.DefaultMessage;
 
 /**
- * Extensible factory for {@code Message} instances. SwitchYard provides an 
+ * Extensible factory for {@code Message} instances. SwitchYard provides an
  * Object-based MessageBuilder by default. Additional MessageBuilder can be
  * added as needed.
  */
@@ -42,30 +42,29 @@ public abstract class MessageBuilder {
     public static final MessageBuilder newInstance() {
         return newInstance(DefaultMessage.class);
     }
-    
+
     /**
-     * Creates an instance of MessageBuilder to build the specified message type.
+     * Creates an instance of MessageBuilder to build the
+     * specified message type.
      * @param messageType type of Message you want to build
      * @return a new MessageBuilder instance
      */
     public static final MessageBuilder newInstance(
             final Class<? extends Message> messageType) {
-        
         Builder builderInfo = messageType.getAnnotation(Builder.class);
         try {
             @SuppressWarnings("unchecked")
-            Class<MessageBuilder> builderClass = 
+            Class<MessageBuilder> builderClass =
                 (Class<MessageBuilder>) Class.forName(builderInfo.value());
-            
             return builderClass.newInstance();
         } catch (Exception ex) {
             throw new RuntimeException(
                     "Failed to load builder class for message", ex);
         }
     }
-    
+
     /**
-     * Creates a new Message instance.  Implementations of MessageBuilder 
+     * Creates a new Message instance.  Implementations of MessageBuilder
      * implement this method and provide implementations consistent with the
      * type of the MessageBuilder.
      * @return a new Message instance
@@ -78,7 +77,7 @@ public abstract class MessageBuilder {
      * @param out the stream to serialize to
      * @throws java.io.IOException serialization failed
      */
-    public abstract void writeMessage(Message message, OutputStream out) 
+    public abstract void writeMessage(Message message, OutputStream out)
         throws java.io.IOException;
     /**
      * Reads a message instance from the specified stream.

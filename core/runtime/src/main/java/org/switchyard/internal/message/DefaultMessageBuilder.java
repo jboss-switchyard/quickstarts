@@ -33,29 +33,28 @@ import org.switchyard.MessageBuilder;
 import org.switchyard.message.DefaultMessage;
 
 public class DefaultMessageBuilder extends MessageBuilder {
-    
-    public static final String TYPE = 
+
+    public static final String TYPE =
         "org.switchyard.messageType.default";
-    
+
     @Override
     public Message buildMessage() {
         return new DefaultMessage();
     }
-    
+
     @Override
-    public Message readMessage(InputStream in) 
+    public Message readMessage(InputStream in)
             throws IOException {
         // TODO : ignoring attachments at the moment
         Message msg = new DefaultMessage();
         ObjectInputStream ois = new ObjectInputStream(in);
         try {
             msg.setContent(ois.readObject());
-        }
-        catch (ClassNotFoundException cnfEx) {
+        } catch (ClassNotFoundException cnfEx) {
             throw new RuntimeException(
                     "Failed to load content class for message", cnfEx);
         }
-        
+
         return msg;
     }
 
@@ -67,6 +66,4 @@ public class DefaultMessageBuilder extends MessageBuilder {
         oos.writeObject(message.getContent());
         oos.flush();
     }
-    
-
 }

@@ -23,8 +23,8 @@
 package org.switchyard;
 
 /**
- * Set of scopes available for {@code Context} instances.  Scope is used to 
- * specify the lifecycle of a given property and assign it to the correct 
+ * Set of scopes available for {@code Context} instances.  Scope is used to
+ * specify the lifecycle of a given property and assign it to the correct
  * context.
  */
 public enum Scope {
@@ -33,17 +33,18 @@ public enum Scope {
      */
     DOMAIN,
     /**
-     * Properties which can be propagated across service invocations (i.e. exchanges).
+     * Properties which can be propagated across service invocations
+     * (i.e. exchanges).
      */
     CORRELATION,
     /**
-     * Properties specific to a given service invocation.  These should not be 
+     * Properties specific to a given service invocation.  These should not be
      * propagated automatically between exchanges.
      */
     EXCHANGE,
     /**
      * Properties specific to a message within an exchange.  Individual messages
-     * within an exchange may have the same context property with different 
+     * within an exchange may have the same context property with different
      * values.
      */
     MESSAGE;

@@ -27,25 +27,30 @@ import org.switchyard.HandlerChain;
 import org.switchyard.spi.Endpoint;
 import org.switchyard.spi.EndpointProvider;
 
+/**
+ * Default endpoint provider.
+ */
 public class DefaultEndpointProvider implements EndpointProvider {
 
     @Override
-    public Endpoint createEndpoint(HandlerChain handlerChain) {
+    public Endpoint createEndpoint(final HandlerChain handlerChain) {
         return new DefaultEndpoint(handlerChain);
     }
 }
 
 class DefaultEndpoint implements Endpoint {
-    
     private HandlerChain _handlerChain;
-    
-    DefaultEndpoint(HandlerChain handlerChain) {
+
+    /**
+     * Constructor.
+     * @param handlerChain handler chain
+     */
+    DefaultEndpoint(final HandlerChain handlerChain) {
         _handlerChain = handlerChain;
     }
 
     @Override
-    public void send(Exchange exchange) {
+    public void send(final Exchange exchange) {
         _handlerChain.handle(exchange);
     }
-    
 }

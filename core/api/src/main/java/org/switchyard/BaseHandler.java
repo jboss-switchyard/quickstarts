@@ -23,7 +23,7 @@
 package org.switchyard;
 
 /**
- * Empty implementation of the ExchangeHandler interface that can be used to 
+ * Empty implementation of the ExchangeHandler interface that can be used to
  * selectively override fault or message handling logic.
  */
 public class BaseHandler implements ExchangeHandler {
