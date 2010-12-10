@@ -37,7 +37,7 @@
 	</properties>
 	
     <modules>
-        <!-- module>bean</module -->
+        <module>bean</module>
     </modules>
 	
 	<build>
