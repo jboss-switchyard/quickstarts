@@ -76,6 +76,6 @@ public class BeanProviderTest extends AbstractCDITest {
         responseConsumer.waitForMessage();
 
         Assert.assertEquals(ECHO_MSG,
-                responseConsumer._messages.poll().getMessage().getContent());
+                responseConsumer.getMessages().poll().getMessage().getContent());
     }
 }
