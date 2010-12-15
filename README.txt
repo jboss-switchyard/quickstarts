@@ -11,11 +11,16 @@ Java:
 Maven:
 ------
 - Tested version = 2.2.1
+- There are issues running the precommit checks with maven-3.0.1 - please use
+the tested version specified above
 - 'mvn clean install' to build
 - 'mvn install -DskipTests=true' to skip tests
-- 'mvn install -Dorg.switchyard.findbugs.enable=true' to enable findbugs
+- 'mvn install -Pfindbugs' to enable findbugs
+- 'mvn install -Pcheckstyle' to enable checkstyle
+- 'mvn install -Dintegration.build=true' to enable all pre-commit checks
 - 'mvn javadoc:aggregate' to just run javadoc (see target/site/apidocs/index.html)
 - 'mvn site' to generate site docs (see target/site/index.html)
+
 
 Eclipse:
 --------

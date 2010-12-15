@@ -191,7 +191,7 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
                 <property>
-                    <name>org.switchyard.checkstyle.enable</name>
+                    <name>integration.build</name>
                     <value>true</value>
                 </property>
             </activation>
@@ -240,7 +240,7 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
                 <property>
-                    <name>org.switchyard.findbugs.enable</name>
+                    <name>integration.build</name>
                     <value>true</value>
                 </property>
             </activation>
