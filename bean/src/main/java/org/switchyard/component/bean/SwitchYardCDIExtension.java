@@ -61,12 +61,12 @@ public class SwitchYardCDIExtension implements Extension {
             // Create proxies for the relevant injection points...
             for(InjectionPoint injectionPoint : injectionPoints) {
                 for(Annotation qualifier : injectionPoint.getQualifiers()) {
-                    if(Service.class.isAssignableFrom(qualifier.annotationType())) {
+                    if(Reference.class.isAssignableFrom(qualifier.annotationType())) {
                         Member member = injectionPoint.getMember();
                         if(member instanceof Field) {
                             Class<?> memberType = ((Field) member).getType();
                             if(memberType.isInterface()) {
-                                addInjectableClientProxyBean((Field) member, (Service) qualifier, injectionPoint.getQualifiers(), beanManager, abd);
+                                addInjectableClientProxyBean((Field) member, (Reference) qualifier, injectionPoint.getQualifiers(), beanManager, abd);
                             }
                         }
                     }
@@ -88,7 +88,7 @@ public class SwitchYardCDIExtension implements Extension {
     }
 
     private void registerESBServiceProxyHandler(Bean<?> serviceBean, Class<?> serviceType, Service serviceAnnotation, BeanManager beanManager) {
-        QName serviceQName = toServiceQName(serviceAnnotation, serviceType.getSimpleName());
+        QName serviceQName = toServiceQName(serviceAnnotation.value(), serviceType.getSimpleName());
         CreationalContext creationalContext = beanManager.createCreationalContext(serviceBean);
 
         // Register the Service in the ESB domain...
@@ -104,13 +104,13 @@ public class SwitchYardCDIExtension implements Extension {
     }
 
     private void addInjectableClientProxyBean(Bean<?> serviceBean, Class<?> serviceType, Service serviceAnnotation, BeanManager beanManager, AfterBeanDiscovery abd) {
-        QName serviceQName = toServiceQName(serviceAnnotation, serviceBean.getBeanClass().getSimpleName());
+        QName serviceQName = toServiceQName(serviceAnnotation.value(), serviceBean.getBeanClass().getSimpleName());
 
         addClientProxyBean(serviceQName, serviceType, null, abd);
     }
 
-    private void addInjectableClientProxyBean(Field injectionPointField, Service serviceAnnotation, Set<Annotation> qualifiers, BeanManager beanManager, AfterBeanDiscovery abd) {
-        QName serviceQName = toServiceQName(serviceAnnotation, injectionPointField.getType().getSimpleName());
+    private void addInjectableClientProxyBean(Field injectionPointField, Reference serviceReference, Set<Annotation> qualifiers, BeanManager beanManager, AfterBeanDiscovery abd) {
+        QName serviceQName = toServiceQName(serviceReference.value(), injectionPointField.getType().getSimpleName());
 
         addClientProxyBean(serviceQName, injectionPointField.getType(), qualifiers, abd);
     }
@@ -133,9 +133,7 @@ public class SwitchYardCDIExtension implements Extension {
         return bean.getBeanClass().isAnnotationPresent(Service.class);
     }
 
-    private QName toServiceQName(Service serviceAnnotation, String defaultName) {
-        String serviceName = serviceAnnotation.value();
-
+    private QName toServiceQName(String serviceName, String defaultName) {
         // TODO: Could use the bean class package name as the namespace component of the Service QName
         if(!serviceName.equals("")) {
             return new QName(serviceName);

@@ -20,28 +20,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard.component.bean.tests;
+package org.switchyard.component.bean;
 
-import javax.inject.Inject;
+import javax.inject.Qualifier;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-import org.junit.Assert;
-import org.switchyard.component.bean.Reference;
-import org.switchyard.component.bean.Service;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Service
-public class ConsumerBean {
-    
-    @Inject @Reference
-    private OneWay oneWay;
-    
-    @Inject @Reference
-    private RequestResponse requestResponse;
-    
-    public void consumeInOnlyService(Object message) {
-        oneWay.oneWay(message);
-    }
-    
-    public void consumeInOutService(Object message) {
-        Assert.assertEquals(message, requestResponse.reply(message));
-    }
+/**
+ * Service reference.
+ * <p/>
+ * Use this annotation, in conjunction with the {@link javax.inject.Inject}
+ * annotation, to inject a reference to a Service bean component.
+ *
+ * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ */
+@Qualifier
+@Target({ TYPE, FIELD })
+@Retention(RUNTIME)
+@Documented
+public @interface Reference {
+    String value() default "";
 }
