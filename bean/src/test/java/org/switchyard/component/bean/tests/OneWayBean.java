@@ -24,7 +24,7 @@ package org.switchyard.component.bean.tests;
 
 import org.switchyard.component.bean.Service;
 
-@Service("OneWay")
+@Service(OneWay.class)
 public class OneWayBean implements OneWay {
 
     public void oneWay(Object message) {

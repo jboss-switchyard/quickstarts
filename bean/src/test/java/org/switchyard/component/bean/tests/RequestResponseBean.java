@@ -24,7 +24,7 @@ package org.switchyard.component.bean.tests;
 
 import org.switchyard.component.bean.Service;
 
-@Service("RequestResponse")
+@Service(RequestResponse.class)
 public class RequestResponseBean implements RequestResponse {
 
     public Object reply(Object message) {

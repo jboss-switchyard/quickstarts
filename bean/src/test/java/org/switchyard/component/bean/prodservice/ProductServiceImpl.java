@@ -27,7 +27,7 @@ import org.switchyard.component.bean.Service;
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-@Service("ProductService")
+@Service(ProductService.class)
 public class ProductServiceImpl implements ProductService {
 
     public Product getProduct(String productId) {
