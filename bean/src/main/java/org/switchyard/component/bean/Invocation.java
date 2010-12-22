@@ -22,35 +22,58 @@
 
 package org.switchyard.component.bean;
 
-import javax.inject.Qualifier;
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.reflect.Method;
 
 /**
- * Service reference.
- * <p/>
- * Use this annotation, in conjunction with the {@link javax.inject.Inject}
- * annotation, to inject a reference to a Service bean component.
+ * Bean component invocation details.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-@Qualifier
-@Target({TYPE, FIELD})
-@Retention(RUNTIME)
-@Documented
-public @interface Reference {
+public class Invocation {
 
     /**
-     * Get the name of the Service to which a reference
-     * is to be injected.
-     *
-     * @return The name of the service, or an empty String if
-     *         the reference type {@link Class#getSimpleName() simple name} is to be used (default).
+     * The method/operation being invoked.
      */
-    String value() default "";
+    private Method method;
+    /**
+     * The invocation arguments.
+     */
+    private Object[] args;
+
+    /**
+     * Constructor.
+     *
+     * @param method The method/operation being invoked.
+     * @param arg    The invocation arguments.
+     */
+    Invocation(Method method, Object arg) {
+        this.method = method;
+        this.args = castArg(arg);
+    }
+
+    /**
+     * Get the method/operation being invoked.
+     *
+     * @return The method/operation being invoked.
+     */
+    public Method getMethod() {
+        return method;
+    }
+
+    /**
+     * Get the invocation arguments.
+     *
+     * @return The invocation arguments.
+     */
+    public Object[] getArgs() {
+        return args;
+    }
+
+    private static Object[] castArg(Object arg) {
+        if (arg.getClass().isArray()) {
+            return (Object[].class).cast(arg);
+        } else {
+            return new Object[]{arg};
+        }
+    }
 }

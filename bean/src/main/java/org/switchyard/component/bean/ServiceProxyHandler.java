@@ -32,32 +32,67 @@ import org.switchyard.Message;
 import org.switchyard.MessageBuilder;
 
 /**
+ * Service/Provider proxy handler.
+ * <p/>
+ * Handler for converting extracting Service operation invocation details from
+ * an ESB {@link Exchange}, making the invocation and then mapping the invocation
+ * return/result onto the {@link Message Exchange Message} (if the Exchange pattern
+ * is {@link ExchangePattern#IN_OUT IN_OUT}).
+ *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public class ServiceProxyHandler implements ExchangeHandler {
 
+    /**
+     * The Service bean instance being proxied to.
+     */
     private Object serviceBean;
+    /**
+     * The Service bean metadata.
+     */
     private BeanServiceMetadata serviceMetadata;
 
+    /**
+     * Public constructor.
+     *
+     * @param serviceBean     The Service bean instance being proxied to.
+     * @param serviceMetadata The Service bean metadata.
+     */
     public ServiceProxyHandler(Object serviceBean, BeanServiceMetadata serviceMetadata) {
         this.serviceBean = serviceBean;
         this.serviceMetadata = serviceMetadata;
     }
 
+    /**
+     * Called when a message is sent through an exchange.
+     *
+     * @param exchange an {@code Exchange} instance containing a message to be processed.
+     * @throws HandlerException when handling of the message event fails (e.g. invalid request message).
+     */
     public void handleMessage(Exchange exchange) throws HandlerException {
         handle(exchange);
     }
 
+    /**
+     * Called when a fault is generated while processing an exchange.
+     *
+     * @param exchange an {@code Exchange} instance containing a message to be processed.
+     */
     public void handleFault(Exchange exchange) {
         handle(exchange);
     }
 
+    /**
+     * Handle the Service bean invocation.
+     *
+     * @param exchange The Exchange instance.
+     */
     private void handle(Exchange exchange) {
-        BeanServiceMetadata.Invocation invocation = serviceMetadata.getInvocation(exchange);
+        Invocation invocation = serviceMetadata.getInvocation(exchange);
 
-        if(invocation != null) {
+        if (invocation != null) {
             try {
-                if(exchange.getPattern() == ExchangePattern.IN_OUT) {
+                if (exchange.getPattern() == ExchangePattern.IN_OUT) {
                     Object responseObject = invocation.getMethod().invoke(serviceBean, invocation.getArgs());
                     Message message = MessageBuilder.newInstance().buildMessage();
 

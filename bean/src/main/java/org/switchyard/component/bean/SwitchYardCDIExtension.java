@@ -45,27 +45,50 @@ import org.switchyard.internal.DefaultHandlerChain;
 import org.switchyard.internal.ServiceDomains;
 
 /**
+ * Portable CDI extension for SwitchYard.
+ * <p/>
+ * See the {@link #afterBeanDiscovery(javax.enterprise.inject.spi.AfterBeanDiscovery, javax.enterprise.inject.spi.BeanManager) afterBeanDiscovery}
+ * method.
+ *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 @ApplicationScoped
 public class SwitchYardCDIExtension implements Extension {
 
+    /**
+     * List of created {@link ClientProxyBean} instances.
+     */
     private List<ClientProxyBean> createdProxyBeans = new ArrayList<ClientProxyBean>();
 
+    /**
+     * {@link AfterBeanDiscovery} CDI event observer.
+     * <p/>
+     * Responsible for the following:
+     * <ol>
+     * <li>Creates and registers (with the CDI {@link BeanManager Bean Manager}) all the {@link ClientProxyBean}
+     * instances for all {@link org.switchyard.component.bean.Reference} injection points.</li>
+     * <li>Creates and registers (with the ESB {@link org.switchyard.ServiceDomain Service Domain})
+     * all the {@link ServiceProxyHandler} instances for all {@link Service} annotated beans.</li>
+     * </ol>
+     *
+     * @param abd         CDI Event instance.
+     * @param beanManager CDI Bean Manager instance.
+     */
     public void afterBeanDiscovery(@Observes AfterBeanDiscovery abd, BeanManager beanManager) {
-        Set<Bean<?>> allBeans = beanManager.getBeans(Object.class, new AnnotationLiteral<Any>() {});
+        Set<Bean<?>> allBeans = beanManager.getBeans(Object.class, new AnnotationLiteral<Any>() {
+        });
 
-        for(Bean<?> bean : allBeans) {
+        for (Bean<?> bean : allBeans) {
             Set<InjectionPoint> injectionPoints = bean.getInjectionPoints();
 
             // Create proxies for the relevant injection points...
-            for(InjectionPoint injectionPoint : injectionPoints) {
-                for(Annotation qualifier : injectionPoint.getQualifiers()) {
-                    if(Reference.class.isAssignableFrom(qualifier.annotationType())) {
+            for (InjectionPoint injectionPoint : injectionPoints) {
+                for (Annotation qualifier : injectionPoint.getQualifiers()) {
+                    if (Reference.class.isAssignableFrom(qualifier.annotationType())) {
                         Member member = injectionPoint.getMember();
-                        if(member instanceof Field) {
+                        if (member instanceof Field) {
                             Class<?> memberType = ((Field) member).getType();
-                            if(memberType.isInterface()) {
+                            if (memberType.isInterface()) {
                                 addInjectableClientProxyBean((Field) member, (Reference) qualifier, injectionPoint.getQualifiers(), beanManager, abd);
                             }
                         }
@@ -74,12 +97,12 @@ public class SwitchYardCDIExtension implements Extension {
             }
 
             // Create Service Proxy ExchangeHandlers and register them as Services, for all @Service beans...
-            if(isServiceBean(bean)) {
+            if (isServiceBean(bean)) {
                 Class<?> serviceType = bean.getBeanClass();
                 Service serviceAnnotation = serviceType.getAnnotation(Service.class);
 
                 registerESBServiceProxyHandler(bean, serviceType, serviceAnnotation, beanManager);
-                if(serviceType.isInterface()) {
+                if (serviceType.isInterface()) {
                     addInjectableClientProxyBean(bean, serviceType, serviceAnnotation, beanManager, abd);
                 }
             }
@@ -94,10 +117,10 @@ public class SwitchYardCDIExtension implements Extension {
         ServiceProxyHandler proxyHandler = new ServiceProxyHandler(beanRef, serviceMetadata);
         Class<?>[] serviceInterfaces = serviceAnnotation.value();
 
-        if(serviceInterfaces == null || serviceInterfaces.length == 0) {
+        if (serviceInterfaces == null || serviceInterfaces.length == 0) {
             registerESBServiceProxyHandler(proxyHandler, beanRef.getClass());
         } else {
-            for(Class<?> serviceInterface : serviceInterfaces) {
+            for (Class<?> serviceInterface : serviceInterfaces) {
                 registerESBServiceProxyHandler(proxyHandler, serviceInterface);
             }
         }
@@ -125,8 +148,8 @@ public class SwitchYardCDIExtension implements Extension {
 
     private void addClientProxyBean(QName serviceQName, Class<?> beanClass, Set<Annotation> qualifiers, AfterBeanDiscovery abd) {
         // Check do we already have a proxy for this service interface...
-        for(ClientProxyBean clientProxyBean : createdProxyBeans) {
-            if(serviceQName.equals(clientProxyBean.getServiceQName()) && beanClass == clientProxyBean.getBeanClass()) {
+        for (ClientProxyBean clientProxyBean : createdProxyBeans) {
+            if (serviceQName.equals(clientProxyBean.getServiceQName()) && beanClass == clientProxyBean.getBeanClass()) {
                 // ignore... we already have a proxy ...
                 return;
             }

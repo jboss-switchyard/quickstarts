@@ -31,11 +31,25 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
+ * Bean Service Annotation.
+ *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ * @see org.switchyard.component.bean.Reference
  */
-@Target({ TYPE, FIELD })
+@Target({TYPE, FIELD})
 @Retention(RUNTIME)
 @Documented
 public @interface Service {
+
+    /**
+     * Get the list/array of Service Interfaces.
+     * <p/>
+     * This is the list/array of Interfaces through which the Service implementation
+     * ca be proxied to via a {@link org.switchyard.component.bean.Reference} injection
+     * point.
+     *
+     * @return The list/array of Service interfaces, or an empty array
+     *         if the Service cannot be proxied to (default).
+     */
     Class<?>[] value() default {};
 }

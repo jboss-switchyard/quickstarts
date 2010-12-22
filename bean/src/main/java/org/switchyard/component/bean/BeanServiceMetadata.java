@@ -30,43 +30,82 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Bean Service meta data.
+ * <p/>
+ * Provides access to Bean Service operation invocation information.
+ *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public class BeanServiceMetadata {
 
     // TODO: needs to live somewhere else
+    /**
+     * Operation name key.
+     */
     private static final String OPERATION_NAME = "OPERATION_NAME";
 
+    /**
+     * List of service methods/operations.
+     */
     private List<Method> serviceMethods = new ArrayList<Method>();
 
+    /**
+     * Public constructor.
+     *
+     * @param serviceClass The service bean class.
+     */
     public BeanServiceMetadata(Class<? extends Object> serviceClass) {
         Method[] serviceMethods = serviceClass.getMethods();
-        for(Method serviceMethod : serviceMethods) {
-            if(serviceMethod.getDeclaringClass() != Object.class) {
+        for (Method serviceMethod : serviceMethods) {
+            if (serviceMethod.getDeclaringClass() != Object.class) {
                 this.serviceMethods.add(serviceMethod);
             }
         }
     }
 
     // TODO: needs to live somewhere else
+
+    /**
+     * Set the target service operation name of the supplied {@link Exchange} {@link org.switchyard.Context}.
+     *
+     * @param exchange The exchange instance.
+     * @param name     The target service operation name.
+     */
     public static void setOperationName(Exchange exchange, String name) {
         exchange.getContext(Scope.EXCHANGE).setProperty(OPERATION_NAME, name);
     }
 
     // TODO: needs to live somewhere else
+
+    /**
+     * Get the target service operation name from the supplied {@link Exchange} {@link org.switchyard.Context}.
+     *
+     * @param exchange The exchange instance.
+     * @return The operation name as specified on the {@link Exchange} {@link org.switchyard.Context}.
+     */
     public static String getOperationName(Exchange exchange) {
         return (String) exchange.getContext(Scope.EXCHANGE).getProperty(OPERATION_NAME);
     }
 
+    /**
+     * Get the Bean Service operation {@link Invocation} for the specified
+     * {@link Exchange}.
+     * <p/>
+     * Uses the {@link #getOperationName(org.switchyard.Exchange)} method to extract
+     * the service operation information from the {@link Exchange}.
+     *
+     * @param exchange The Exchange instance.
+     * @return The operation {@link Invocation} instance.
+     */
     public Invocation getInvocation(Exchange exchange) {
 
         String operationName = getOperationName(exchange);
 
-        if(operationName != null) {
+        if (operationName != null) {
             List<Method> candidateMethods = getCandidateMethods(operationName);
 
             // Operation name must resolve to exactly one bean method...
-            if(candidateMethods.size() != 1) {
+            if (candidateMethods.size() != 1) {
                 // TODO: sendFault ??? ...
                 return null;
             }
@@ -81,42 +120,23 @@ public class BeanServiceMetadata {
         return null;
     }
 
-    public List<Method> getCandidateMethods(String name) {
+    /**
+     * Get the list of candidate service {@link Method methods/operations} for the specified
+     * operation name.
+     *
+     * @param operationName The operation name.
+     * @return The list of possible matching operation methods.
+     */
+    public List<Method> getCandidateMethods(String operationName) {
         List<Method> candidateMethods = new ArrayList<Method>();
 
-        for(Method serviceMethod : serviceMethods) {
-            if(serviceMethod.getName().equals(name)) {
+        for (Method serviceMethod : serviceMethods) {
+            if (serviceMethod.getName().equals(operationName)) {
                 candidateMethods.add(serviceMethod);
             }
         }
 
         return candidateMethods;
-    }
-
-    public static class Invocation {
-        private Method method;
-        private Object[] args;
-
-        private Invocation(Method method, Object arg) {
-            this.method = method;
-            this.args = castArg(arg);
-        }
-
-        private static Object[] castArg(Object arg) {
-            if(arg.getClass().isArray()) {
-                return (Object[].class).cast(arg);
-            } else {
-                return new Object[] {arg};
-            }
-        }
-
-        public Method getMethod() {
-            return method;
-        }
-
-        public Object[] getArgs() {
-            return args;
-        }
     }
 
 }
