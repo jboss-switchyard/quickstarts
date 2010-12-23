@@ -24,8 +24,6 @@ package org.switchyard.internal;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.internal.DefaultHandlerChain;
-import org.switchyard.internal.ExchangeImpl;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
@@ -34,9 +32,11 @@ import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.internal.handlers.AddressingHandler;
 import org.switchyard.internal.handlers.DeliveryHandler;
+import org.switchyard.internal.handlers.TransformHandler;
 import org.switchyard.spi.Endpoint;
 import org.switchyard.spi.EndpointProvider;
 import org.switchyard.spi.ServiceRegistry;
+import org.switchyard.transform.TransformerRegistry;
 
 public class DomainImpl implements ServiceDomain {
     
@@ -44,18 +44,22 @@ public class DomainImpl implements ServiceDomain {
     private HandlerChain _systemHandlers;
     private ServiceRegistry _registry;
     private EndpointProvider _endpointProvider;
+    private TransformerRegistry _transformerRegistry;
 
     public DomainImpl(String name,
             ServiceRegistry registry,
-            EndpointProvider endpointProvider) {
+            EndpointProvider endpointProvider,
+            TransformerRegistry transformerRegistry) {
 
         _name = name;
         _registry = registry;
         _endpointProvider  = endpointProvider;
+        _transformerRegistry = transformerRegistry;
 
         // Build out the system handlers chain.  It would be cleaner if we
         // handled this via config.
         _systemHandlers = new DefaultHandlerChain();
+        _systemHandlers.addLast("transformation", new TransformHandler(_transformerRegistry));
         _systemHandlers.addLast("addressing", new AddressingHandler(_registry));
         _systemHandlers.addLast("delivery", new DeliveryHandler());
     }
@@ -98,5 +102,10 @@ public class DomainImpl implements ServiceDomain {
     @Override
     public String getName() {
         return _name;
+    }
+
+    @Override
+    public TransformerRegistry getTransformerRegistry() {
+        return _transformerRegistry;
     }
 }

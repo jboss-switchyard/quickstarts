@@ -20,38 +20,12 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard.internal;
+package org.switchyard.transform;
 
-import javax.xml.namespace.QName;
 
-import junit.framework.Assert;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.switchyard.Exchange;
-import org.switchyard.ExchangePattern;
-import org.switchyard.internal.DomainImpl;
-
-/**
- *  Unit tests for the DomainImpl class.
- */
-public class DomainImplTest {
-     
-    private static final QName SERVICE = new QName("Service");
-    private DomainImpl _domain;
+public interface TransformerRegistry {
     
-    @Before
-    public void setUp() throws Exception {
-        _domain = new DomainImpl("test", null, null, null);
-    }
-    
-    @Test
-    public void testCreateExchange() {
-        Exchange inOnly = _domain.createExchange(SERVICE, ExchangePattern.IN_ONLY);
-        Assert.assertEquals(ExchangePattern.IN_ONLY, inOnly.getPattern());
-        Exchange inOut = _domain.createExchange(SERVICE, ExchangePattern.IN_OUT);
-        Assert.assertEquals(ExchangePattern.IN_OUT, inOut.getPattern());
-    }
-    
-    
+    void addTransformer(Transformer<?,?> transformer);
+    boolean removeTransformer(Transformer<?,?> transformer);
+    Transformer<?,?> getTransformer(String from, String to);
 }

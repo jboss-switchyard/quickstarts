@@ -27,8 +27,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.switchyard.ServiceDomain;
-import org.switchyard.spi.ServiceRegistry;
+import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.spi.EndpointProvider;
+import org.switchyard.spi.ServiceRegistry;
+import org.switchyard.transform.TransformerRegistry;
 
 public class ServiceDomains {
     public static final String ROOT_DOMAIN = "org.switchyard.domains.root";
@@ -40,8 +42,9 @@ public class ServiceDomains {
     private static ConcurrentHashMap<String, ServiceDomain> _domains =
         new ConcurrentHashMap<String, ServiceDomain>();
 
-    private static ServiceRegistry _registry = null;
-    private static EndpointProvider _endpointProvider = null;
+    private static ServiceRegistry _registry;
+    private static EndpointProvider _endpointProvider;
+    private static TransformerRegistry _transformers;
 
     /**
      * Returns an instance of the ServiceRegistry.
@@ -88,6 +91,7 @@ public class ServiceDomains {
         try {
             _registry = getRegistry(registryClassName);
             _endpointProvider = getEndpointProvider(endpointProviderClassName);
+            _transformers = new BaseTransformerRegistry();
         } catch (NullPointerException npe) {
             throw new RuntimeException(npe);
         }    	
@@ -128,7 +132,8 @@ public class ServiceDomains {
             throw new RuntimeException("Domain already exists: " + name);
         }
 
-        ServiceDomain domain = new DomainImpl(name, _registry, _endpointProvider);
+        ServiceDomain domain = new DomainImpl(
+                name, _registry, _endpointProvider, _transformers);
         _domains.put(name, domain);
         return domain;
     }

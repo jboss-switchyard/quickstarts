@@ -24,6 +24,8 @@ package org.switchyard;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.transform.TransformerRegistry;
+
 /**
  * A ServiceDomain represents a collection of services with a shared set of
  * resources, configuration, and policy definitions.  The ServiceDomain
@@ -69,4 +71,10 @@ public interface ServiceDomain {
      * unregister when required
      */
     Service registerService(QName serviceName, ExchangeHandler handler);
+    
+    /**
+     * Returns a references to the transformer registry for this domain.
+     * @return transformer registry instance
+     */
+    TransformerRegistry getTransformerRegistry();
 }

@@ -20,38 +20,40 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard.internal;
-
-import javax.xml.namespace.QName;
+package org.switchyard.internal.transform;
 
 import junit.framework.Assert;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.Exchange;
-import org.switchyard.ExchangePattern;
-import org.switchyard.internal.DomainImpl;
 
-/**
- *  Unit tests for the DomainImpl class.
- */
-public class DomainImplTest {
-     
-    private static final QName SERVICE = new QName("Service");
-    private DomainImpl _domain;
-    
-    @Before
-    public void setUp() throws Exception {
-        _domain = new DomainImpl("test", null, null, null);
+public class BaseTransformerTest {
+
+    @Test
+    public void testGetType() {
+        BaseTransformer<String, Integer> intToStr = 
+            new BaseTransformer<String, Integer>() {
+                public Integer transform(String from) {
+                    return null;
+                }
+        };
+
+        Assert.assertEquals(String.class, intToStr.getFromType());
+        Assert.assertEquals(Integer.class, intToStr.getToType());
     }
     
     @Test
-    public void testCreateExchange() {
-        Exchange inOnly = _domain.createExchange(SERVICE, ExchangePattern.IN_ONLY);
-        Assert.assertEquals(ExchangePattern.IN_ONLY, inOnly.getPattern());
-        Exchange inOut = _domain.createExchange(SERVICE, ExchangePattern.IN_OUT);
-        Assert.assertEquals(ExchangePattern.IN_OUT, inOut.getPattern());
+    public void testGetName() {
+        final String fromName = "string1";
+        final String toName = "string2";
+        
+        BaseTransformer<String, String> intToStr = 
+            new BaseTransformer<String, String>(fromName, toName) {
+                public String transform(String from) {
+                    return null;
+                }
+        };
+
+        Assert.assertEquals(fromName, intToStr.getFrom());
+        Assert.assertEquals(toName, intToStr.getTo());
     }
-    
-    
 }

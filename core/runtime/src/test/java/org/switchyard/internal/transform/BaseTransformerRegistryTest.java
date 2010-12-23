@@ -20,38 +20,36 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard.internal;
-
-import javax.xml.namespace.QName;
+package org.switchyard.internal.transform;
 
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.Exchange;
-import org.switchyard.ExchangePattern;
-import org.switchyard.internal.DomainImpl;
+import org.switchyard.transform.TransformerRegistry;
 
-/**
- *  Unit tests for the DomainImpl class.
- */
-public class DomainImplTest {
-     
-    private static final QName SERVICE = new QName("Service");
-    private DomainImpl _domain;
+public class BaseTransformerRegistryTest {
+    
+    private TransformerRegistry _registry;
     
     @Before
     public void setUp() throws Exception {
-        _domain = new DomainImpl("test", null, null, null);
+        _registry = new BaseTransformerRegistry();
     }
     
     @Test
-    public void testCreateExchange() {
-        Exchange inOnly = _domain.createExchange(SERVICE, ExchangePattern.IN_ONLY);
-        Assert.assertEquals(ExchangePattern.IN_ONLY, inOnly.getPattern());
-        Exchange inOut = _domain.createExchange(SERVICE, ExchangePattern.IN_OUT);
-        Assert.assertEquals(ExchangePattern.IN_OUT, inOut.getPattern());
-    }
-    
-    
+    public void testAddGetTransformer() {
+        final String fromName = "a";
+        final String toName = "b";
+        
+        BaseTransformer<String, Integer> t = 
+            new BaseTransformer<String, Integer>(fromName, toName) {
+                public Integer transform(String from) {
+                    return null;
+                }
+        };
+        
+        _registry.addTransformer(t);
+        Assert.assertEquals(t, _registry.getTransformer(fromName, toName));      
+    }   
 }
