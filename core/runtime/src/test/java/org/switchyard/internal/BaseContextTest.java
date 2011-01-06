@@ -63,6 +63,23 @@ public class BaseContextTest {
         _context.removeProperty(PROP_NAME);
         Assert.assertFalse(_context.hasProperty(PROP_NAME));
     }
+    
+    @Test
+    public void testRemoveNonexistent() throws Exception {
+        // Removing a nonexistent property should not throw an exception
+        final String propName = "blahFooYech";
+        Assert.assertFalse(_context.hasProperty(propName));
+        _context.removeProperty(propName);
+    }
+    
+    @Test
+    public void testNullContextValue() throws Exception {
+        _context.setProperty(PROP_NAME, PROP_VAL);
+        Assert.assertTrue(_context.hasProperty(PROP_NAME));
+        // setting the value to null should remove the property from context
+        _context.setProperty(PROP_NAME, null);
+        Assert.assertFalse(_context.hasProperty(PROP_NAME));
+    }
 
     @Test
     public void testGetProperties() throws Exception {

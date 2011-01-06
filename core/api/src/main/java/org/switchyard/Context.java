@@ -66,7 +66,8 @@ public interface Context {
     /**
      * Sets the named context property with the specified value.  If the context
      * property does not exist already, it is added.  If the property already
-     * exists, the value of the property is replaced.
+     * exists, the value of the property is replaced.  If the specified value
+     * is null, the property is removed from the context.
      * @param name name of the property to set
      * @param val the value to set for the property
      */

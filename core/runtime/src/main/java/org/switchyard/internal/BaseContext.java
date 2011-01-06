@@ -59,6 +59,13 @@ public class BaseContext implements Context {
 
     @Override
     public void setProperty(final String name, final Object val) {
-        _properties.put(name, val);
+        if (name != null) {
+            if (val != null) {
+                _properties.put(name, val);
+            }
+            else {
+                _properties.remove(name);
+            }
+        }
     }
 }
