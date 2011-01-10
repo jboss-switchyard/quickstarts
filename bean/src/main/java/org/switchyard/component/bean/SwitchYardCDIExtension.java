@@ -33,11 +33,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Any;
-import javax.enterprise.inject.spi.AfterBeanDiscovery;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.InjectionPoint;
+import javax.enterprise.inject.spi.*;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.xml.namespace.QName;
 
@@ -60,6 +56,8 @@ public class SwitchYardCDIExtension implements Extension {
      */
     private List<ClientProxyBean> createdProxyBeans = new ArrayList<ClientProxyBean>();
 
+    private List<Bean<?>> serviceBeans = new ArrayList<Bean<?>>();
+
     /**
      * {@link AfterBeanDiscovery} CDI event observer.
      * <p/>
@@ -67,8 +65,6 @@ public class SwitchYardCDIExtension implements Extension {
      * <ol>
      * <li>Creates and registers (with the CDI {@link BeanManager Bean Manager}) all the {@link ClientProxyBean}
      * instances for all {@link org.switchyard.component.bean.Reference} injection points.</li>
-     * <li>Creates and registers (with the ESB {@link org.switchyard.ServiceDomain Service Domain})
-     * all the {@link ServiceProxyHandler} instances for all {@link Service} annotated beans.</li>
      * </ol>
      *
      * @param abd         CDI Event instance.
@@ -101,12 +97,32 @@ public class SwitchYardCDIExtension implements Extension {
                 Class<?> serviceType = bean.getBeanClass();
                 Service serviceAnnotation = serviceType.getAnnotation(Service.class);
 
-                registerESBServiceProxyHandler(bean, serviceType, serviceAnnotation, beanManager);
+                serviceBeans.add(bean);
                 if (serviceType.isInterface()) {
                     addInjectableClientProxyBean(bean, serviceType, serviceAnnotation, beanManager, abd);
                 }
             }
+        }
+    }
 
+    /**
+     * {@link AfterDeploymentValidation} CDI event observer.
+     * <p/>
+     * Responsible for the following:
+     * <ol>
+     * <li>Creates and registers (with the ESB {@link org.switchyard.ServiceDomain Service Domain})
+     * all the {@link ServiceProxyHandler} instances for all {@link Service} annotated beans.</li>
+     * </ol>
+     *
+     * @param adv         CDI Event instance.
+     * @param beanManager CDI Bean Manager instance.
+     */
+    public void afterDeploymentValidation(@Observes AfterDeploymentValidation adv, BeanManager beanManager) {
+        for(Bean<?> bean : serviceBeans) {
+            Class<?> serviceType = bean.getBeanClass();
+            Service serviceAnnotation = serviceType.getAnnotation(Service.class);
+
+            registerESBServiceProxyHandler(bean, serviceType, serviceAnnotation, beanManager);
         }
     }
 
