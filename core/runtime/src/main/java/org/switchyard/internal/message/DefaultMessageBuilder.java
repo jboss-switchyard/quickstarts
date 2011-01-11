@@ -32,8 +32,14 @@ import org.switchyard.Message;
 import org.switchyard.MessageBuilder;
 import org.switchyard.message.DefaultMessage;
 
+/**
+ *
+ */
 public class DefaultMessageBuilder extends MessageBuilder {
 
+    /**
+     * Message type.
+     */
     public static final String TYPE =
         "org.switchyard.messageType.default";
 

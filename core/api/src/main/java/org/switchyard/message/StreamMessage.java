@@ -36,9 +36,12 @@ import java.io.InputStream;
 @Builder("org.switchyard.internal.message.StreamMessageBuilder")
 public class StreamMessage extends DefaultMessage {
 
-    private final static int BUFFER_SIZE = 8 * 1024;
+    /**
+     * Buffer size.
+     */
+    private static final int BUFFER_SIZE = 8 * 1024;
     private ByteArrayOutputStream _contentBuffer;
-    private boolean _readRepeatable;
+    private final boolean _readRepeatable;
 
     /**
      * Default constructor.
@@ -74,9 +77,10 @@ public class StreamMessage extends DefaultMessage {
         }
     }
 
-    /*
+    /* (non-Javadoc)
      * @see org.switchyard.message.DefaultMessage#getContent()
      */
+    @Override
     public InputStream getContent() {
         if (_readRepeatable) {
             return new ByteArrayInputStream(_contentBuffer.toByteArray());

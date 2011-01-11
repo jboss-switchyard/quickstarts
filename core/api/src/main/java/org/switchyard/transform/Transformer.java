@@ -24,45 +24,45 @@ package org.switchyard.transform;
 
 /**
  * Handles transformation between message content types (e.g. Object -> XML) to
- * reconcile the type systems used by a service consumer and provider.  A 
- * Transformer instance can be directly attached to an exchange or it can be 
- * registered in the TransformerRegistry and loaded dynamically based on the 
- * from and to message names. 
+ * reconcile the type systems used by a service consumer and provider.  A
+ * Transformer instance can be directly attached to an exchange or it can be
+ * registered in the TransformerRegistry and loaded dynamically based on the
+ * from and to message names.
  *
  * @param <F> Java type representing the from, or source, format
  * @param <T> Java type representing the to, or target, format
  */
-public interface Transformer<F,T> {
-    
+public interface Transformer<F, T> {
+
     /**
      * Transforms the source format <code>F</code> to the target format
      * <code>T</code>.
-     * @param from the object to be transformed 
+     * @param from the object to be transformed
      * @return object in target format
      */
     T transform(F from);
-    
+
     /**
      * The Java type of the source format.
      * @return class representing the Java type for the from format.
      */
     Class<F> getFromType();
-    
+
     /**
      * The Java type of the target format.
      * @return class representing the Java type for the from format.
      */
     Class<T> getToType();
-    
+
     /**
      * The name of the from, or source, message.
-     * @return
+     * @return from message
      */
     String getFrom();
-    
+
     /**
      * The name of the to, or target, message.
-     * @return
+     * @return to message
      */
     String getTo();
 }

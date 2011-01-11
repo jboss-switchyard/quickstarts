@@ -32,19 +32,37 @@ import org.switchyard.spi.EndpointProvider;
 import org.switchyard.spi.ServiceRegistry;
 import org.switchyard.transform.TransformerRegistry;
 
+/**
+ * Service Domains.
+ */
 public class ServiceDomains {
+    /**
+     * Root domain property.
+     */
     public static final String ROOT_DOMAIN = "org.switchyard.domains.root";
-    public static final String ENDPOINT_PROVIDER_CLASS_NAME     
+    /**
+     * Endpoint provider class name key.
+     */
+    public static final String ENDPOINT_PROVIDER_CLASS_NAME
         = "org.switchyard.endpoint.provider.class.name";
+    /**
+     * Registry class name property.
+     */
     public static final String REGISTRY_CLASS_NAME
         = "org.switchyard.registry.class.name";
 
-    private static ConcurrentHashMap<String, ServiceDomain> _domains =
+    private static ConcurrentHashMap<String, ServiceDomain> domains =
         new ConcurrentHashMap<String, ServiceDomain>();
 
-    private static ServiceRegistry _registry;
-    private static EndpointProvider _endpointProvider;
-    private static TransformerRegistry _transformers;
+    private static ServiceRegistry registry;
+    private static EndpointProvider endpointProvider;
+    private static TransformerRegistry transformers;
+
+    /**
+     * Utility class, private constructor.
+     */
+    private ServiceDomains() {
+    }
 
     /**
      * Returns an instance of the ServiceRegistry.
@@ -54,20 +72,20 @@ public class ServiceDomains {
     private static ServiceRegistry getRegistry(final String registryClass) {
         ServiceLoader<ServiceRegistry> registryServices
             = ServiceLoader.load(ServiceRegistry.class);
-        for (ServiceRegistry registry : registryServices) {
-            if (registryClass.equals(registry.getClass().getName())) {
-                return registry;
+        for (ServiceRegistry serviceRegistry : registryServices) {
+            if (registryClass.equals(serviceRegistry.getClass().getName())) {
+                return serviceRegistry;
             }
         }
         return null;
     }
-    
+
     /**
      * Returns an instance of the EndpointProvider.
      * @param providerClass class name of the endpointprovider implementation
      * @return EndpointProvider
      */
-    private static EndpointProvider 
+    private static EndpointProvider
         getEndpointProvider(final String providerClass) {
         ServiceLoader<EndpointProvider> providerServices
             = ServiceLoader.load(EndpointProvider.class);
@@ -82,69 +100,69 @@ public class ServiceDomains {
     /**
      * Initialize the endpointProvider and the registry.
      */
-    public synchronized static void init() {
+    public static synchronized void init() {
         String registryClassName = System.getProperty(REGISTRY_CLASS_NAME,
                 DefaultServiceRegistry.class.getName());
         String endpointProviderClassName = System.getProperty(ENDPOINT_PROVIDER_CLASS_NAME,
                 DefaultEndpointProvider.class.getName());
 
         try {
-            _registry = getRegistry(registryClassName);
-            _endpointProvider = getEndpointProvider(endpointProviderClassName);
-            _transformers = new BaseTransformerRegistry();
+            registry = getRegistry(registryClassName);
+            endpointProvider = getEndpointProvider(endpointProviderClassName);
+            transformers = new BaseTransformerRegistry();
         } catch (NullPointerException npe) {
             throw new RuntimeException(npe);
-        }    	
+        }
     }
-    
+
     /**
-     * Checks to see if the registry and endpointProvider have been 
+     * Checks to see if the registry and endpointProvider have been
      * initialized.
      * @return initialization status of the registry/endpointProvider
      */
     public static boolean isInitialized() {
-        return (_registry != null) && (_endpointProvider != null);
+        return (registry != null) && (endpointProvider != null);
     }
-    
+
     /**
      * Return the root domain.
      * @return root domain
      */
-    public synchronized static ServiceDomain getDomain() {    	
-        if (!_domains.containsKey(ROOT_DOMAIN)) {
+    public static synchronized ServiceDomain getDomain() {
+        if (!domains.containsKey(ROOT_DOMAIN)) {
             createDomain(ROOT_DOMAIN);
         }
-        
+
         return getDomain(ROOT_DOMAIN);
     }
-    
+
     /**
      * Create a domain with the name passed in.
      * @param name name of the domain
      * @return ServiceDomain
      */
-    public synchronized static ServiceDomain createDomain(final String name) {
+    public static synchronized ServiceDomain createDomain(final String name) {
         if (!isInitialized()) {
             init();
         }
 
-        if (_domains.containsKey(name)) {
+        if (domains.containsKey(name)) {
             throw new RuntimeException("Domain already exists: " + name);
         }
 
         ServiceDomain domain = new DomainImpl(
-                name, _registry, _endpointProvider, _transformers);
-        _domains.put(name, domain);
+                name, registry, endpointProvider, transformers);
+        domains.put(name, domain);
         return domain;
     }
-    
+
     /**
      * Get a particular domain.
      * @param domainName domain name
      * @return ServiceDomain
      */
     public static ServiceDomain getDomain(final String domainName) {
-        return _domains.get(domainName);
+        return domains.get(domainName);
     }
 
     /**
@@ -152,6 +170,6 @@ public class ServiceDomains {
      * @return domain names
      */
     public static Set<String> getDomainNames() {
-        return _domains.keySet();
+        return domains.keySet();
     }
 }

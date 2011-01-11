@@ -32,7 +32,7 @@ import org.switchyard.Context;
  * Base context implementation.
  */
 public class BaseContext implements Context {
-    private ConcurrentHashMap<String, Object> _properties =
+    private final ConcurrentHashMap<String, Object> _properties =
         new ConcurrentHashMap<String, Object>();
 
     @Override
@@ -62,8 +62,7 @@ public class BaseContext implements Context {
         if (name != null) {
             if (val != null) {
                 _properties.put(name, val);
-            }
-            else {
+            } else {
                 _properties.remove(name);
             }
         }

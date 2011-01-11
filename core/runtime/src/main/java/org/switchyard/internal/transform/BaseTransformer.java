@@ -19,27 +19,39 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.switchyard.internal.transform;
 
 import java.lang.reflect.ParameterizedType;
+
 import org.switchyard.transform.Transformer;
 
-public abstract class BaseTransformer<F,T> implements Transformer<F,T> {
+/**
+ * @param <F>
+ * @param <T>
+ */
+public abstract class BaseTransformer<F, T> implements Transformer<F, T> {
 
-    private enum Types {F, T};
+    private enum Types { F, T };
     private String _from;
     private String _to;
-    
+
+    /**
+     * Constructor.
+     */
     public BaseTransformer() {
-        
+
     }
-    
+
+    /**
+     * Constructor.
+     * @param from from
+     * @param to to
+     */
     public BaseTransformer(String from, String to) {
         _from = from;
         _to = to;
     }
-    
+
     @Override
     public String getFrom() {
         return _from;
@@ -48,7 +60,7 @@ public abstract class BaseTransformer<F,T> implements Transformer<F,T> {
     @SuppressWarnings("unchecked")
     @Override
     public Class<F> getFromType() {
-        return (Class<F>)getType(Types.F);
+        return (Class<F>) getType(Types.F);
     }
 
     @Override
@@ -59,16 +71,16 @@ public abstract class BaseTransformer<F,T> implements Transformer<F,T> {
     @SuppressWarnings("unchecked")
     @Override
     public Class<T> getToType() {
-        return (Class<T>)getType(Types.T);
+        return (Class<T>) getType(Types.T);
     }
 
     @Override
     public abstract T transform(F from);
-    
+
     private Class<?> getType(Types type) {
-        ParameterizedType pt = 
-            (ParameterizedType)getClass().getGenericSuperclass();
-        
-        return (Class<?>)pt.getActualTypeArguments()[type.ordinal()];
+        ParameterizedType pt =
+            (ParameterizedType) getClass().getGenericSuperclass();
+
+        return (Class<?>) pt.getActualTypeArguments()[type.ordinal()];
     }
 }

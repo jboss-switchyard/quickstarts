@@ -31,15 +31,17 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.internal.ServiceRegistration;
 import org.switchyard.HandlerChain;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.spi.ServiceRegistry;
 
+/**
+ * Standalone implementation of ServiceRegistry.
+ */
 public class DefaultServiceRegistry implements ServiceRegistry {
 
-    private Map<QName, List<ServiceRegistration>> _services =
+    private final Map<QName, List<ServiceRegistration>> _services =
         new HashMap<QName, List<ServiceRegistration>>();
 
     @Override
@@ -47,14 +49,14 @@ public class DefaultServiceRegistry implements ServiceRegistry {
         List<Service> domainServices = getServices();
         // Using an explicit iterator because we are removing elements
         for (Iterator<Service> i = domainServices.iterator(); i.hasNext();) {
-            ServiceRegistration sr = (ServiceRegistration)i.next();
+            ServiceRegistration sr = (ServiceRegistration) i.next();
             // prune services that do not match the specified domain
             if (!sr.getDomain().getName().equals(domainName)) {
                 i.remove();
             }
         }
 
-        return domainServices;  
+        return domainServices;
     }
 
     @Override

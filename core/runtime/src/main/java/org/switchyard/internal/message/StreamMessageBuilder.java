@@ -35,6 +35,9 @@ import org.switchyard.message.StreamMessage;
  */
 public class StreamMessageBuilder extends MessageBuilder {
 
+    /**
+     * Message stream type.
+     */
     public static final String TYPE =
         "org.switchyard.messageType.stream";
     private static final int WRITE_BUFFER = 8 * 1024;
@@ -64,6 +67,12 @@ public class StreamMessageBuilder extends MessageBuilder {
         writeMessage((StreamMessage) message, out);
     }
 
+    /**
+     * Write the message to the outputstream.
+     * @param message message
+     * @param out output stream
+     * @throws IOException ioexception
+     */
     public void writeMessage(StreamMessage message, OutputStream out)
             throws IOException {
         // TODO : ignoring attachments at the moment

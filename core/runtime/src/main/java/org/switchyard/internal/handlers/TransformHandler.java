@@ -36,23 +36,23 @@ import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 
 /**
- * ExchangeHandler implementation used to introduce transformations to the 
+ * ExchangeHandler implementation used to introduce transformations to the
  * exchange handler chain.  The core runtime automatically creates a
  * TransformHandler and attaches it to the consumer handler chain for every
- * exchange.  TransformHandler can also be used in the service provider's 
- * chain by using the <code>TransformHandler(Transformer<?,?>)</code> 
+ * exchange.  TransformHandler can also be used in the service provider's
+ * chain by using the <code>TransformHandler(Transformer<?,?>)</code>
  * constructor.
  *
  */
 public class TransformHandler extends BaseHandler {
-    
-    private static final String MESSAGE_NAME = 
+
+    private static final String MESSAGE_NAME =
         "org.switchyard.message.name";
-    private static final String SERVICE_MESSAGE_NAME = 
+    private static final String SERVICE_MESSAGE_NAME =
         "org.switchyard.service.message.name";
-    
+
     private TransformerRegistry _registry;
-    
+
     /**
      * Create a new TransformHandler.  The specified TransformerRegistry will
      * be used to locate transformers for each handled exchange.
@@ -62,66 +62,69 @@ public class TransformHandler extends BaseHandler {
     public TransformHandler(TransformerRegistry registry) {
         _registry = registry;
     }
-    
+
     /**
      * Create a new TransformHandler.  The specified list of transforms will
      * be used in place of a TransformerRegistry to locate transforms for each
      * handled exchange.
-     * @param tranforms transformations used by this handler
+     * @param transforms transform map
      */
-    public TransformHandler(Transformer<?,?> ... transforms) {
+    public TransformHandler(Transformer<?, ?> ... transforms) {
         if (transforms != null && transforms.length > 0) {
             _registry = new BaseTransformerRegistry(
                     new HashSet<Transformer>(Arrays.asList(transforms)));
         }
     }
-    
+
     /**
      * Transform the current message on the exchange.
+     * @param exchange exchange
+     * @throws HandlerException handler exception
      */
+    @Override
     public void handleMessage(Exchange exchange) throws HandlerException {
         Transformer t = locateTransform(exchange);
-        
+
         if (t == null) {
             // nothing to do
             return;
         }
-        
+
         Message msg = exchange.getMessage();
         Object fromContent = msg.getContent();
         Object toContent = t.transform(fromContent);
         msg.setContent(toContent);
     }
-    
+
     /**
      * Locate a transformer instance to perform transformation.  The following
      * sources are searched in order: <br>
      * 1) A transformer set in the message context <br>
      * 2) A transformer set in the exchange context <br>
      * 3) A transformer found through a registry search <br>
-     * @param exchange
+     * @param exchange exchange
      */
     private Transformer locateTransform(Exchange exchange) {
-        
+
         Transformer transform = null;
-        
+
         // look in message context
         if (exchange.getContext(Scope.MESSAGE).hasProperty(Transformer.class.getName())) {
             transform = (Transformer)
                 exchange.getContext(Scope.MESSAGE).getProperty(Transformer.class.getName());
-        } // look in exchange context
-        else if (exchange.getContext().hasProperty(Transformer.class.getName())) {
+        // look in exchange context
+        } else if (exchange.getContext().hasProperty(Transformer.class.getName())) {
             transform = (Transformer)
                 exchange.getContext().getProperty(Transformer.class.getName());
-        } // look to see if we can find it in the transformer registry
-        else {
+        // look to see if we can find it in the transformer registry
+        } else {
             Context msgCtx = exchange.getContext(Scope.MESSAGE);
-            String fromName = (String)msgCtx.getProperty(MESSAGE_NAME);
+            String fromName = (String) msgCtx.getProperty(MESSAGE_NAME);
             // temp hack - toName should actually come from the Service reference
-            String toName = (String)msgCtx.getProperty(SERVICE_MESSAGE_NAME);
+            String toName = (String) msgCtx.getProperty(SERVICE_MESSAGE_NAME);
             transform = _registry.getTransformer(fromName, toName);
         }
-        
+
         return transform;
     }
 }

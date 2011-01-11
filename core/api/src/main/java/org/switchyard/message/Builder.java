@@ -35,7 +35,6 @@ import java.lang.annotation.Target;
 public @interface Builder {
     /**
      * Return the value.
-     * @return value value
      */
     String value();
 }

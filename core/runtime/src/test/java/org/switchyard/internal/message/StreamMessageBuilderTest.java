@@ -32,31 +32,30 @@ import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.Message;
 import org.switchyard.MessageBuilder;
-import org.switchyard.internal.message.StreamMessageBuilder;
 import org.switchyard.message.StreamMessage;
 
 public class StreamMessageBuilderTest {
-    
+
     private final byte[] MESSAGE = "howdy folks!".getBytes();
     private StreamMessageBuilder _builder;
-    
+
     @Before
     public void setUp() throws Exception {
         _builder = (StreamMessageBuilder)
             MessageBuilder.newInstance(StreamMessage.class);
     }
-    
+
     @Test
     public void testReadWriteMessage() throws Exception {
         //create a message and fill it with some stuff
-        Message origMsg =_builder.buildMessage();
+        Message origMsg = _builder.buildMessage();
         origMsg.setContent(new ByteArrayInputStream(MESSAGE));
-        
+
         // create a stream sink and write the message to it
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         _builder.writeMessage(origMsg, bos);
         bos.flush();
-        
+
         // now try and read the message back in and compare it to the orig
         StreamMessage newMsg = _builder.readMessage(
                 new ByteArrayInputStream(bos.toByteArray()));
@@ -65,5 +64,5 @@ public class StreamMessageBuilderTest {
         newMsg.getContent().read(content);
         Assert.assertTrue(Arrays.equals(MESSAGE, content));
     }
-    
+
 }

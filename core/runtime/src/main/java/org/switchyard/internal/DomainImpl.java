@@ -38,14 +38,24 @@ import org.switchyard.spi.EndpointProvider;
 import org.switchyard.spi.ServiceRegistry;
 import org.switchyard.transform.TransformerRegistry;
 
+/**
+ * Implementation of ServiceDomain.
+ */
 public class DomainImpl implements ServiceDomain {
-    
-    private String _name;
-    private HandlerChain _systemHandlers;
-    private ServiceRegistry _registry;
-    private EndpointProvider _endpointProvider;
-    private TransformerRegistry _transformerRegistry;
 
+    private final String _name;
+    private final HandlerChain _systemHandlers;
+    private final ServiceRegistry _registry;
+    private final EndpointProvider _endpointProvider;
+    private final TransformerRegistry _transformerRegistry;
+
+    /**
+     * Constructor.
+     * @param name name
+     * @param registry registry
+     * @param endpointProvider endpointProvider
+     * @param transformerRegistry transformerRegistry
+     */
     public DomainImpl(String name,
             ServiceRegistry registry,
             EndpointProvider endpointProvider,

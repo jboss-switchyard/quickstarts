@@ -29,18 +29,25 @@ import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 
 /**
- * Maintains a local collection of transformation instances and provides 
+ * Maintains a local collection of transformation instances and provides
  * facilities to add, query, and remove transforms.
  */
 public class BaseTransformerRegistry implements TransformerRegistry {
-    
+
+    /**
+     * Default hash code.
+     */
+    private static final int DEFAULT_HASHCODE = 32;
+
     @SuppressWarnings("unchecked")
-    private ConcurrentHashMap<NameKey, Transformer> transformers = 
+    private final ConcurrentHashMap<NameKey, Transformer> _transformers =
         new ConcurrentHashMap<NameKey, Transformer>();
 
 
+    /**
+     * Constructor.
+     */
     public BaseTransformerRegistry() {
-        
     }
 
     /**
@@ -54,39 +61,47 @@ public class BaseTransformerRegistry implements TransformerRegistry {
             addTransformer(t);
         }
     }
-    
+
     @Override
     public void addTransformer(Transformer<?, ?> transformer) {
-        transformers.put(new NameKey(transformer.getFrom(), 
+        _transformers.put(new NameKey(transformer.getFrom(),
                 transformer.getTo()), transformer);
     }
 
     @Override
     public Transformer<?, ?> getTransformer(String from, String to) {
-        return transformers.get(new NameKey(from, to));
+        return _transformers.get(new NameKey(from, to));
     }
 
     @Override
     public boolean removeTransformer(Transformer<?, ?> transformer) {
-        return transformers.remove(
+        return _transformers.remove(
                 new NameKey(transformer.getFrom(), transformer.getTo())) != null;
     }
-    
+
     private class NameKey extends Key<String, String> {
         NameKey(String from, String to) {
             super(from, to);
         }
     }
-    
-    private class Key<F,T> {
-        F from;
-        T to;
-        
+
+    private class Key<F, T> {
+        private final F _from;
+        private final T _to;
+
         Key(F from, T to) {
-            this.from = from;
-            this.to = to;
+            _from = from;
+            _to = to;
         }
-        
+
+        public F getFrom() {
+            return _from;
+        }
+
+        public T getTo() {
+            return _to;
+        }
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -95,24 +110,24 @@ public class BaseTransformerRegistry implements TransformerRegistry {
             if (obj == null || !Key.class.isAssignableFrom(obj.getClass())) {
                 return false;
             }
-            return isEqual(from, ((Key)obj).from) && isEqual(to, ((Key)obj).to);
+            return isEqual(_from, ((Key) obj).getFrom())
+                && isEqual(_to, ((Key) obj).getTo());
         }
-        
+
         @Override
         public int hashCode() {
-            return (from != null ? from.hashCode() : 31) + 
-                (to != null ? to.hashCode() : 32);
+            return (_from != null ? _from.hashCode() : (DEFAULT_HASHCODE - 1))
+                + (_to != null ? _to.hashCode() : DEFAULT_HASHCODE);
         }
-        
+
         @Override
         public String toString() {
-            return from + "::" + to;
+            return _from + "::" + _to;
         }
-        
+
         // handy method for comparing field refs for equality
         private boolean isEqual(Object a, Object b) {
             return a == null ? b == null : a.equals(b);
         }
     }
-
 }

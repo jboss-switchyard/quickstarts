@@ -61,6 +61,7 @@ public interface Message {
     Object getContent();
     /**
      * Convenience method used to retrieve a typed instance of the message body.
+     * @param <T> type
      * @param type body content type
      * @return body content or null if the body has not been set
      */

@@ -23,9 +23,9 @@ package org.switchyard;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-import junit.framework.TestCase;
-
 import org.switchyard.message.FaultMessage;
+
+import junit.framework.TestCase;
 
 /**
  * Mock Handler.
@@ -36,13 +36,13 @@ public class MockHandler extends BaseHandler {
     /**
      * Messages.
      */
-    private LinkedBlockingQueue<Exchange> _messages =
+    private final LinkedBlockingQueue<Exchange> _messages =
         new LinkedBlockingQueue<Exchange>();
 
     /**
      * Faults.
      */
-    private LinkedBlockingQueue<Exchange> _faults =
+    private final LinkedBlockingQueue<Exchange> _faults =
         new LinkedBlockingQueue<Exchange>();
 
     /**
@@ -57,21 +57,35 @@ public class MockHandler extends BaseHandler {
     /**
      * Wait timeout value.
      */
-    public long waitTimeout = DEFAULT_WAIT_TIMEOUT; // default of 5 seconds
+    private long _waitTimeout = DEFAULT_WAIT_TIMEOUT; // default of 5 seconds
 
     /**
      * Forward input to output flag.
      */
-    private boolean forwardInToOut = false;
+    private boolean _forwardInToOut = false;
     /**
      * Forward input to fault flag.
      */
-    private boolean forwardInToFault = false;
+    private boolean _forwardInToFault = false;
 
     /**
      * Constructor.
      */
     public MockHandler() {
+    }
+
+    /**
+     * @return wait timeout
+     */
+    public long getWaitTimeout() {
+        return _waitTimeout;
+    }
+
+    /**
+     * @param waitTimeout wait timeout
+     */
+    public void setWaitTimeout(long waitTimeout) {
+        _waitTimeout = waitTimeout;
     }
 
     /**
@@ -96,8 +110,8 @@ public class MockHandler extends BaseHandler {
      */
     public MockHandler forwardInToOut() {
         // An enum would be nicer here !!
-        forwardInToOut = true;
-        forwardInToFault = false;
+        _forwardInToOut = true;
+        _forwardInToFault = false;
         return this;
     }
 
@@ -107,8 +121,8 @@ public class MockHandler extends BaseHandler {
      */
     public MockHandler forwardInToFault() {
         // An enum would be nicer here !!
-        forwardInToOut = false;
-        forwardInToFault = true;
+        _forwardInToOut = false;
+        _forwardInToFault = true;
         return this;
     }
 
@@ -116,9 +130,9 @@ public class MockHandler extends BaseHandler {
     public void handleMessage(final Exchange exchange)
         throws HandlerException {
         _messages.offer(exchange);
-        if (forwardInToOut) {
+        if (_forwardInToOut) {
             exchange.send(exchange.getMessage());
-        } else if (forwardInToFault) {
+        } else if (_forwardInToFault) {
             exchange.send(
                 MessageBuilder.newInstance(FaultMessage.class).buildMessage());
         }
@@ -157,7 +171,7 @@ public class MockHandler extends BaseHandler {
             final int numMessages) {
         long start = System.currentTimeMillis();
 
-        while (System.currentTimeMillis() < start + waitTimeout) {
+        while (System.currentTimeMillis() < start + _waitTimeout) {
             if (eventQueue.size() >= numMessages) {
                 return;
             }

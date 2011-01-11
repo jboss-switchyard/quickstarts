@@ -228,6 +228,7 @@
                 <configuration>
                     <configLocation>checkstyle/checkstyle.xml</configLocation>
                     <consoleOutput>false</consoleOutput>
+		    <suppressionsLocation>build/src/main/resources/checkstyle/suppressions.xml</suppressionsLocation>
                     <failsOnError>false</failsOnError>
                     <useFile/>
                 </configuration>

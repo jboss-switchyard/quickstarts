@@ -35,22 +35,40 @@ import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.spi.Endpoint;
 
+/**
+ * Implementation of Exchange.
+ */
 public class ExchangeImpl implements Exchange {
 
+    /**
+     * In message.
+     */
     public static final String IN_MSG       = "in";
+    /**
+     * Out message.
+     */
     public static final String OUT_MSG      = "out";
+    /**
+     * Fault message.
+     */
     public static final String FAULT_MSG    = "fault";
 
-    private String          _exchangeId;
-    private ExchangePattern _pattern;
-    private QName           _service;
+    private final String          _exchangeId;
+    private final ExchangePattern _pattern;
+    private final QName           _service;
     private Message         _message;
-    private HandlerChain    _handlers;
+    private final HandlerChain    _handlers;
     private Endpoint        _source;
     private Endpoint        _target;
-    private HashMap<Scope, Context> _context =
+    private final HashMap<Scope, Context> _context =
         new HashMap<Scope, Context>();
 
+    /**
+     * Constructor.
+     * @param service service
+     * @param pattern exchange pattern
+     * @param handlers handlers
+     */
     ExchangeImpl(QName service, ExchangePattern pattern, HandlerChain handlers) {
         _service = service;
         _pattern = pattern;
@@ -88,7 +106,6 @@ public class ExchangeImpl implements Exchange {
     public String getId() {
         return _exchangeId;
     }
-    
 
     @Override
     public Message getMessage() {
@@ -108,27 +125,50 @@ public class ExchangeImpl implements Exchange {
         send(message, new BaseContext());
     }
 
+    /**
+     * Get source endpoint.
+     * @return source
+     */
     public Endpoint getSource() {
         return _source;
     }
 
+    /**
+     * Get target endpoint.
+     * @return target
+     */
     public Endpoint getTarget() {
         return _target;
     }
 
+    /**
+     * Set the target endpoint.
+     * @param target target endpoint
+     */
     public void setTarget(Endpoint target) {
         _target = target;
     }
 
+    /**
+     * Set the source endpoint.
+     * @param source source endpoint
+     */
     public void setSource(Endpoint source) {
         _source = source;
     }
 
+    /**
+     * Set the context for a particular scope.
+     * @param scope scope
+     * @param context context
+     */
     private void setContext(Scope scope, Context context) {
         _context.put(scope, context);
     }
 
-    // Builds the context layers for this exchange
+    /**
+     * Builds the context layers for this exchange
+     */
     private void initContext() {
         for (Scope scope : Scope.values()) {
             _context.put(scope, new BaseContext());

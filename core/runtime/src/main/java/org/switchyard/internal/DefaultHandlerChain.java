@@ -25,6 +25,7 @@ package org.switchyard.internal;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerChain;
@@ -35,7 +36,8 @@ import org.switchyard.message.FaultMessage;
  * Default handler chain.
  */
 public class DefaultHandlerChain implements HandlerChain {
-    private LinkedList<HandlerRef> _chain = new LinkedList<HandlerRef>();
+    private final Logger _logger = Logger.getLogger(DefaultHandlerChain.class.toString());
+    private final LinkedList<HandlerRef> _chain = new LinkedList<HandlerRef>();
 
     @Override
     public synchronized void addFirst(String handlerName,
@@ -54,8 +56,8 @@ public class DefaultHandlerChain implements HandlerChain {
         ExchangeHandler handler = null;
 
         for (HandlerRef ref : _chain) {
-            if (ref.name.equals(handlerName)) {
-                handler = ref.handler;
+            if (ref.getName().equals(handlerName)) {
+                handler = ref.getHandler();
                 _chain.remove(ref);
                 break;
             }
@@ -69,6 +71,7 @@ public class DefaultHandlerChain implements HandlerChain {
         try {
             processHandlers(exchange);
         } catch (HandlerException handlerEx) {
+            _logger.error(handlerEx);
             // TODO - no throwing exceptions from fault handlers
             //        need to log this and continue
         }
@@ -84,6 +87,7 @@ public class DefaultHandlerChain implements HandlerChain {
         try {
             processHandlers(exchange);
         } catch (HandlerException handlerEx) {
+            _logger.error(handlerEx);
             // TODO - map to fault here
         }
     }
@@ -91,9 +95,9 @@ public class DefaultHandlerChain implements HandlerChain {
     private void processHandlers(Exchange exchange) throws HandlerException {
         for (HandlerRef ref : listHandlers()) {
             if (FaultMessage.isFault(exchange.getMessage())) {
-                ref.handler.handleFault(exchange);
+                ref.getHandler().handleFault(exchange);
             } else {
-                ref.handler.handleMessage(exchange);
+                ref.getHandler().handleMessage(exchange);
             }
         }
     }
@@ -105,11 +109,19 @@ public class DefaultHandlerChain implements HandlerChain {
     // sweet little struct
     private class HandlerRef {
         HandlerRef(String name, ExchangeHandler handler) {
-            this.handler = handler;
-            this.name = name;
+            _handler = handler;
+            _name = name;
         }
 
-        ExchangeHandler handler;
-        String name;
+        public String getName() {
+            return _name;
+        }
+
+        public ExchangeHandler getHandler() {
+            return _handler;
+        }
+
+        private final ExchangeHandler _handler;
+        private final String _name;
     }
 }

@@ -38,7 +38,6 @@
 
         <property name="basedir" value="${basedir}"/>
     -->
-
     <!-- Checks that each Java package has a Javadoc file used for commenting. -->
     <!-- See http://checkstyle.sf.net/config_javadoc.html#JavadocPackage       
     <module name="JavadocPackage">

@@ -27,16 +27,30 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.internal.ExchangeImpl;
 import org.switchyard.spi.Endpoint;
 
+/**
+ *
+ */
 public class DeliveryHandler implements ExchangeHandler {
 
+    /* (non-Javadoc)
+     * @see org.switchyard.ExchangeHandler#handleMessage(org.switchyard.Exchange)
+     */
+    @Override
     public void handleMessage(Exchange exchange) {
         deliver(exchange);
     }
 
+    /* (non-Javadoc)
+     * @see org.switchyard.ExchangeHandler#handleFault(org.switchyard.Exchange)
+     */
+    @Override
     public void handleFault(Exchange exchange) {
         deliver(exchange);
     }
 
+    /**
+     * @param exchange
+     */
     private void deliver(Exchange exchange) {
         ExchangeImpl ei = (ExchangeImpl) exchange;
         Endpoint target = ei.getTarget();
@@ -48,5 +62,4 @@ public class DeliveryHandler implements ExchangeHandler {
 
         target.send(exchange);
     }
-
 }

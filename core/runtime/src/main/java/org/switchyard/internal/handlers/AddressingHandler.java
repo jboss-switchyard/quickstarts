@@ -32,10 +32,18 @@ import org.switchyard.internal.ExchangeImpl;
 import org.switchyard.internal.ServiceRegistration;
 import org.switchyard.spi.ServiceRegistry;
 
+/**
+ * AddressingHandler is a handler which determines the
+ * ServiceRegistration and the target endpoint to be used.
+ */
 public class AddressingHandler implements ExchangeHandler {
 
-    private ServiceRegistry _registry;
+    private final ServiceRegistry _registry;
 
+    /**
+     * Constructor.
+     * @param registry registry
+     */
     public AddressingHandler(ServiceRegistry registry) {
         _registry = registry;
     }

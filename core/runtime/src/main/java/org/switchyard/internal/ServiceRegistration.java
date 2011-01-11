@@ -30,13 +30,17 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.spi.Endpoint;
 import org.switchyard.spi.ServiceRegistry;
 
+/**
+ * ServiceRegistration represents the registration of a service
+ * within the registry.
+ */
 public class ServiceRegistration implements Service {
 
-    private ServiceRegistry _registry;
-    private ServiceDomain _domain;
-    private Endpoint _endpoint;
-    private QName _serviceName;
-    private HandlerChain _handlers;
+    private final ServiceRegistry _registry;
+    private final ServiceDomain _domain;
+    private final Endpoint _endpoint;
+    private final QName _serviceName;
+    private final HandlerChain _handlers;
 
     ServiceRegistration(QName serviceName,
             Endpoint endpoint,
@@ -50,16 +54,24 @@ public class ServiceRegistration implements Service {
         _registry = registry;
         _domain = domain;
     }
-    
+
     @Override
     public void unregister() {
         _registry.unregisterService(this);
     }
 
+    /**
+     * Get the endpoint .
+     * @return endpoint
+     */
     public Endpoint getEndpoint() {
         return _endpoint;
     }
 
+    /**
+     * Get the service domain.
+     * @return domain
+     */
     public ServiceDomain getDomain() {
         return _domain;
     }
@@ -69,6 +81,10 @@ public class ServiceRegistration implements Service {
         return _serviceName;
     }
 
+    /**
+     * Get the handlers.
+     * @return handlers
+     */
     public HandlerChain getHandlers() {
         return _handlers;
     }

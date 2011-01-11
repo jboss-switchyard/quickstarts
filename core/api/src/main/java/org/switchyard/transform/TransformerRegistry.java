@@ -22,10 +22,29 @@
 
 package org.switchyard.transform;
 
-
+/**
+ * Registry for transformers.
+ */
 public interface TransformerRegistry {
-    
-    void addTransformer(Transformer<?,?> transformer);
-    boolean removeTransformer(Transformer<?,?> transformer);
-    Transformer<?,?> getTransformer(String from, String to);
+
+    /**
+     * Add a transformer.
+     * @param transformer transformer
+     */
+    void addTransformer(Transformer<?, ?> transformer);
+
+    /**
+     * Remove a transformer.
+     * @param transformer transformer
+     * @return status of removal
+     */
+    boolean removeTransformer(Transformer<?, ?> transformer);
+
+    /**
+     * Get a transformer.
+     * @param from from
+     * @param to to
+     * @return transformer
+     */
+    Transformer<?, ?> getTransformer(String from, String to);
 }
