@@ -22,6 +22,8 @@
 
 package org.switchyard;
 
+import org.switchyard.message.DefaultMessage;
+
 import java.util.Map;
 
 import javax.activation.DataSource;
@@ -51,9 +53,11 @@ public interface Message {
 
     /**
      * Assigns the specified content to the body of this message.
+     *
      * @param content message body content
+     * @return {@code this} message instance.
      */
-    void setContent(Object content);
+    Message setContent(Object content);
     /**
      * Returns the content from the body of the message.
      * @return body content or null if the body has not been set
@@ -71,8 +75,9 @@ public interface Message {
      * Adds an attachment to the message with the specified name.
      * @param name attachment name
      * @param attachment attachment content
+     * @return {@code this} message instance.
      */
-    void addAttachment(String name, DataSource attachment);
+    Message addAttachment(String name, DataSource attachment);
     /**
      * Retrieves the named attachment from the message.
      * @param name name of the attachment
