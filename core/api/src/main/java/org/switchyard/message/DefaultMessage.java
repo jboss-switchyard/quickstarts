@@ -39,8 +39,9 @@ public class DefaultMessage implements Message {
         new HashMap<String, DataSource>();
 
     @Override
-    public void addAttachment(final String name, final DataSource attachment) {
+    public DefaultMessage addAttachment(final String name, final DataSource attachment) {
         _attachments.put(name, attachment);
+        return this;
     }
 
     @Override
@@ -69,8 +70,9 @@ public class DefaultMessage implements Message {
     }
 
     @Override
-    public void setContent(final Object content) {
+    public DefaultMessage setContent(final Object content) {
         _content = content;
+        return this;
     }
 
 }
