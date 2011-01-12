@@ -48,12 +48,10 @@
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>core-api</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>test-util</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
 		<!-- N/A -->
 		<!-- external dependencies -->

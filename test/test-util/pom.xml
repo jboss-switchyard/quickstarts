@@ -48,18 +48,21 @@
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>core-api</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
 		<!-- N/A -->
 		<!-- external dependencies -->
         <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.1</version>
         </dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>1.1</version>
+        </dependency>
 	</dependencies>
 </project>
