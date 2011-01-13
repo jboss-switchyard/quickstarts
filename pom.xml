@@ -28,6 +28,18 @@
 
     <modules>
         <module>bean</module>
+        <module>soap</module>
     </modules>
+    
+	<dependencies>
+		<dependency>
+			<groupId>org.switchyard</groupId>
+			<artifactId>core-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.switchyard</groupId>
+			<artifactId>core-runtime</artifactId>
+		</dependency>
+	</dependencies>
 
 </project>
