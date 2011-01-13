@@ -30,6 +30,7 @@ import javax.xml.namespace.QName;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
+import org.switchyard.ExchangeState;
 import org.switchyard.HandlerChain;
 import org.switchyard.Message;
 import org.switchyard.Scope;
@@ -56,10 +57,11 @@ public class ExchangeImpl implements Exchange {
     private final String          _exchangeId;
     private final ExchangePattern _pattern;
     private final QName           _service;
-    private Message         _message;
-    private final HandlerChain    _handlers;
-    private Endpoint        _source;
-    private Endpoint        _target;
+    private Message _message;
+    private ExchangeState _state = ExchangeState.OK;
+    private final HandlerChain _handlers;
+    private Endpoint              _source;
+    private Endpoint              _target;
     private final HashMap<Scope, Context> _context =
         new HashMap<Scope, Context>();
 
@@ -114,6 +116,29 @@ public class ExchangeImpl implements Exchange {
 
     @Override
     public void send(Message message, Context messageContext) {
+        _state = ExchangeState.OK;
+        _send(message, messageContext);
+    }
+
+    @Override
+    public void send(Message message) {
+        _state = ExchangeState.OK;
+        _send(message, new BaseContext());
+    }
+
+    @Override
+    public void sendFault(Message message) {
+        _state = ExchangeState.FAULT;
+        _send(message, new BaseContext());
+    }
+
+    @Override
+    public void sendFault(Message message, Context messageContext) {
+        _state = ExchangeState.FAULT;
+        _send(message, messageContext);
+    }
+
+    private void _send(Message message, Context messageContext) {
         setContext(Scope.MESSAGE, messageContext);
 
         _message = message;
@@ -121,8 +146,8 @@ public class ExchangeImpl implements Exchange {
     }
 
     @Override
-    public void send(Message message) {
-        send(message, new BaseContext());
+    public ExchangeState getState() {
+        return _state;
     }
 
     /**

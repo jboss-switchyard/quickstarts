@@ -60,8 +60,8 @@ public class InOutTest {
         exchange.send(MessageBuilder.newInstance().buildMessage());
         
         // wait, since this is async
-        provider.waitForMessage();
-        consumer.waitForMessage();
+        provider.waitForOKMessage();
+        consumer.waitForOKMessage();
     }
 
     @Test
@@ -79,8 +79,8 @@ public class InOutTest {
         exchange.send(MessageBuilder.newInstance().buildMessage());
         
         // wait, since this is async
-        provider.waitForMessage();
-        consumer.waitForMessage();
+        provider.waitForOKMessage();
+        consumer.waitForFaultMessage();
         
     }
 }

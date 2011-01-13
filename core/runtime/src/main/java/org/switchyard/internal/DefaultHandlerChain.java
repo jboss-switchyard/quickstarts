@@ -28,9 +28,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
+import org.switchyard.ExchangeState;
 import org.switchyard.HandlerChain;
 import org.switchyard.HandlerException;
-import org.switchyard.message.FaultMessage;
 
 /**
  * Default handler chain.
@@ -94,7 +94,7 @@ public class DefaultHandlerChain implements HandlerChain {
 
     private void processHandlers(Exchange exchange) throws HandlerException {
         for (HandlerRef ref : listHandlers()) {
-            if (FaultMessage.isFault(exchange.getMessage())) {
+            if (exchange.getState() == ExchangeState.FAULT) {
                 ref.getHandler().handleFault(exchange);
             } else {
                 ref.getHandler().handleMessage(exchange);

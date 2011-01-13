@@ -99,7 +99,7 @@ public class TransformationTest {
         exchange.send(msg, msgCtx);
         
         // wait for message and verify transformation
-        provider.waitForMessage();
+        provider.waitForOKMessage();
         Assert.assertEquals(provider.getMessages().poll().getMessage().getContent(), output);
     }
     
@@ -140,7 +140,7 @@ public class TransformationTest {
         exchange.send(msg);
         
         // wait for message and verify transformation
-        provider.waitForMessage();
+        provider.waitForOKMessage();
         Assert.assertEquals(provider.getMessages().poll().getMessage().getContent(), output);
     }
     
@@ -186,7 +186,7 @@ public class TransformationTest {
         exchange.send(msg, msgCtx);
         
         // wait for message and verify transformation
-        provider.waitForMessage();
+        provider.waitForOKMessage();
         Assert.assertEquals(provider.getMessages().poll().getMessage().getContent(), output);
     }
 }

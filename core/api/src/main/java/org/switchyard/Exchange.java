@@ -98,4 +98,28 @@ public interface Exchange {
      * @param messageContext context for the sent message
      */
     void send(Message message, Context messageContext);
+
+    /**
+     * Sends the specified message as part of this message exchange.
+     * <p/>
+     * Also sets the exchange {@link ExchangeState state} to {@link ExchangeState#FAULT}.
+     * @param message message to send
+     */
+    void sendFault(Message message);
+    /**
+     * Sends the specified message with additional context information.  The
+     * supplied {@code Context} is mapped to the exchange with
+     * {@code Scope.MESSAGE}.
+     * <p/>
+     * Also sets the exchange {@link ExchangeState state} to {@link ExchangeState#FAULT}.
+     * @param message the message to send
+     * @param messageContext context for the sent message
+     */
+    void sendFault(Message message, Context messageContext);
+
+    /**
+     * Get the exchange state.
+     * @return The exchange State.
+     */
+    ExchangeState getState();
 }

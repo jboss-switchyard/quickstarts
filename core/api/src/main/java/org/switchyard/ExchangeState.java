@@ -19,22 +19,19 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
-package org.switchyard.message;
-
-import org.switchyard.Message;
+package org.switchyard;
 
 /**
- * Fault message.
+ * Exchange State.
+ * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-@Builder("org.switchyard.internal.message.DefaultMessageBuilder")
-public class FaultMessage extends DefaultMessage {
+public enum ExchangeState {
     /**
-     * Test whether the message is a fault message.
-     * @param message the message
-     * @return whether the message is a fault message)
+     * Exchange OK (default).
      */
-    public static boolean isFault(final Message message) {
-        return FaultMessage.class.isAssignableFrom(message.getClass());
-    }
+    OK,
+    /**
+     * Exchange in fault.
+     */
+    FAULT
 }

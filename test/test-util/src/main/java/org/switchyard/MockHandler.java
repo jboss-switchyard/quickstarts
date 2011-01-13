@@ -23,9 +23,8 @@ package org.switchyard;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.switchyard.message.FaultMessage;
-
 import junit.framework.TestCase;
+import org.switchyard.message.DefaultMessage;
 
 /**
  * Mock Handler.
@@ -127,38 +126,35 @@ public class MockHandler extends BaseHandler {
     }
 
     @Override
-    public void handleMessage(final Exchange exchange)
-        throws HandlerException {
+    public void handleMessage(final Exchange exchange) throws HandlerException {
         _messages.offer(exchange);
         if (_forwardInToOut) {
             exchange.send(exchange.getMessage());
         } else if (_forwardInToFault) {
-            exchange.send(
-                MessageBuilder.newInstance(FaultMessage.class).buildMessage());
+            exchange.sendFault(MessageBuilder.newInstance(DefaultMessage.class).buildMessage());
         }
     }
 
     @Override
     public void handleFault(final Exchange exchange) {
-            _faults.offer(exchange);
+        _faults.offer(exchange);
     }
 
     /**
      * Wait for a message.
      * @return MockHandler mockhandler
      */
-    public MockHandler waitForMessage() {
+    public MockHandler waitForOKMessage() {
         waitFor(_messages, 1);
         return this;
     }
 
     /**
      * Wait for a number of messages.
-     * @param numMessages number of messages
      * @return MockHandler mockhandler
      */
-    public MockHandler waitForMessage(final int numMessages) {
-        waitFor(_faults, numMessages);
+    public MockHandler waitForFaultMessage() {
+        waitFor(_faults, 1);
         return this;
     }
 
