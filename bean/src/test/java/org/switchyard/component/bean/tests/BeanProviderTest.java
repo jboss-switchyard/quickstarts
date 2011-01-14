@@ -73,7 +73,7 @@ public class BeanProviderTest extends AbstractCDITest {
         exchange.send(inMessage);
 
         // wait, since this is async
-        responseConsumer.waitForMessage();
+        responseConsumer.waitForOKMessage();
 
         Assert.assertEquals(ECHO_MSG,
                 responseConsumer.getMessages().poll().getMessage().getContent());

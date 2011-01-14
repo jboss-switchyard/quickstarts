@@ -54,7 +54,7 @@ public class BasicInOutTest extends AbstractCDITest {
         exchange.send(inMessage);
 
         // wait, since this is async
-        responseConsumer.waitForMessage();
+        responseConsumer.waitForOKMessage();
 
         OrderResponse response = (OrderResponse) responseConsumer.getMessages().poll().getMessage().getContent();
         Assert.assertEquals("D123", response.orderId);

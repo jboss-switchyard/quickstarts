@@ -180,7 +180,7 @@ public class SOAPGatewayTest {
         Message message = MessageBuilder.newInstance().buildMessage();
         message.setContent(input);
         exchange.send(message);
-        consumer.waitForMessage();
+        consumer.waitForOKMessage();
         Element response = consumer.getMessages().peek().getMessage().getContent(Element.class);
         Assert.assertTrue("Expected \r\n" + XMLHelper.toString(output) + "\r\nbut was \r\n" + XMLHelper.toString(response), XMLHelper.compareXMLContent(output, response));
     }
@@ -206,7 +206,7 @@ public class SOAPGatewayTest {
         Message message = MessageBuilder.newInstance().buildMessage();
         message.setContent(input);
         exchange.send(message);
-        consumer.waitForMessage();
+        consumer.waitForOKMessage();
         Element response = consumer.getMessages().peek().getMessage().getContent(Element.class);
         Assert.assertTrue("Expected \r\n" + XMLHelper.toString(output) + "\r\nbut was \r\n" + XMLHelper.toString(response), XMLHelper.compareXMLContent(output, response));
     }

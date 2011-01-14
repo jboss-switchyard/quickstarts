@@ -28,7 +28,7 @@ import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.MessageBuilder;
-import org.switchyard.message.FaultMessage;
+import org.switchyard.message.DefaultMessage;
 import org.switchyard.soap.util.SOAPUtil;
 import org.switchyard.soap.util.XMLHelper;
 
@@ -49,7 +49,7 @@ public class SOAPProvider extends BaseHandler {
             }
             String response = null;
             if (toWhom.length() == 0) {
-                message = MessageBuilder.newInstance(FaultMessage.class).buildMessage();
+                message = MessageBuilder.newInstance(DefaultMessage.class).buildMessage();
                 response = "<soap:fault xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
                             + "   <faultcode>soap:Server.AppError</faultcode>"
                             + "   <faultstring>Invalid name</faultstring>"
@@ -58,19 +58,25 @@ public class SOAPProvider extends BaseHandler {
                             + "      <errorcode>1000</errorcode>"
                             + "   </detail>"
                             + "</soap:fault>";
+                setContent(message, response);
+                exchange.sendFault(message);
             } else {
                 message = MessageBuilder.newInstance().buildMessage();
                 response = "<test:sayHelloResponse xmlns:test=\"http://test.ws/\">"
                              + "   <return>Hello " + toWhom + "</return>"
                              + "</test:sayHelloResponse>";
+                setContent(message, response);
+                exchange.send(message);
             }
-            try {
-                Document responseDom = SOAPUtil.parseAsDom(response);
-                message.setContent(responseDom.getDocumentElement());
-            } catch (Exception e) {
-                // Generate fault
-            }
-            exchange.send(message);
+        }
+    }
+
+    private void setContent(Message message, String response) {
+        try {
+            Document responseDom = SOAPUtil.parseAsDom(response);
+            message.setContent(responseDom.getDocumentElement());
+        } catch (Exception e) {
+            // Generate fault
         }
     }
 }
