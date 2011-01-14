@@ -87,13 +87,20 @@ public interface Exchange {
 
     /**
      * Sends the specified message as part of this message exchange.
+     * <p/>
+     * Implementations must throw an {@link IllegalStateException} if this method is
+     * called when the Exchange {@link #getState() state} is in {@link ExchangeState#FAULT}.
      * @param message message to send
      */
     void send(Message message);
+
     /**
      * Sends the specified message with additional context information.  The
      * supplied {@code Context} is mapped to the exchange with
      * {@code Scope.MESSAGE}.
+     * <p/>
+     * Implementations must throw an {@link IllegalStateException} if this method is
+     * called when the Exchange {@link #getState() state} is in {@link ExchangeState#FAULT}.
      * @param message the message to send
      * @param messageContext context for the sent message
      */
@@ -102,7 +109,7 @@ public interface Exchange {
     /**
      * Sends the specified message as part of this message exchange.
      * <p/>
-     * Also sets the exchange {@link ExchangeState state} to {@link ExchangeState#FAULT}.
+     * Also sets the Exchange {@link #getState() state} to {@link ExchangeState#FAULT}.
      * @param message message to send
      */
     void sendFault(Message message);
@@ -111,7 +118,7 @@ public interface Exchange {
      * supplied {@code Context} is mapped to the exchange with
      * {@code Scope.MESSAGE}.
      * <p/>
-     * Also sets the exchange {@link ExchangeState state} to {@link ExchangeState#FAULT}.
+     * Also sets the Exchange {@link #getState() state} to {@link ExchangeState#FAULT}.
      * @param message the message to send
      * @param messageContext context for the sent message
      */

@@ -116,13 +116,13 @@ public class ExchangeImpl implements Exchange {
 
     @Override
     public void send(Message message, Context messageContext) {
-        _state = ExchangeState.OK;
+        assertExchangeStateOK();
         _send(message, messageContext);
     }
 
     @Override
     public void send(Message message) {
-        _state = ExchangeState.OK;
+        assertExchangeStateOK();
         _send(message, new BaseContext());
     }
 
@@ -136,13 +136,6 @@ public class ExchangeImpl implements Exchange {
     public void sendFault(Message message, Context messageContext) {
         _state = ExchangeState.FAULT;
         _send(message, messageContext);
-    }
-
-    private void _send(Message message, Context messageContext) {
-        setContext(Scope.MESSAGE, messageContext);
-
-        _message = message;
-        _handlers.handle(this);
     }
 
     @Override
@@ -180,6 +173,19 @@ public class ExchangeImpl implements Exchange {
      */
     public void setSource(Endpoint source) {
         _source = source;
+    }
+
+    private void _send(Message message, Context messageContext) {
+        setContext(Scope.MESSAGE, messageContext);
+
+        _message = message;
+        _handlers.handle(this);
+    }
+
+    private void assertExchangeStateOK() {
+        if(_state == ExchangeState.FAULT) {
+            throw new IllegalStateException("Exchange instance is in a FAULT state.");
+        }
     }
 
     /**

@@ -35,6 +35,7 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
 import org.switchyard.Message;
 import org.switchyard.MessageBuilder;
+import org.switchyard.MockHandler;
 import org.switchyard.Scope;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
@@ -188,5 +189,32 @@ public class ExchangeImplTest {
 
         // clean up
         service.unregister();
+    }
+
+
+    @Test
+    public void testExceptionOnSendOnFaultExchange() throws Exception {
+
+        final QName serviceName = new QName("testExceptionOnSendOnFaultExchange");
+        // Provide the service
+        MockHandler provider = new MockHandler().forwardInToFault();
+        _domain.registerService(serviceName, provider);
+
+        // Consume the service
+        MockHandler consumer = new MockHandler();
+        Exchange exchange = _domain.createExchange(
+                serviceName, ExchangePattern.IN_OUT, consumer);
+        exchange.send(MessageBuilder.newInstance().buildMessage());
+
+        // wait, since this is async
+        provider.waitForOKMessage();
+        consumer.waitForFaultMessage();
+
+        // Now try send another message on the Exchange... should result in an IllegalStateException...
+        try {
+            exchange.send(MessageBuilder.newInstance().buildMessage());
+        } catch(IllegalStateException e) {
+            Assert.assertEquals("Exchange instance is in a FAULT state.", e.getMessage());
+        }
     }
 }
