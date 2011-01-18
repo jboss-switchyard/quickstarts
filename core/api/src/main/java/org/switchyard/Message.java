@@ -22,8 +22,6 @@
 
 package org.switchyard;
 
-import org.switchyard.message.DefaultMessage;
-
 import java.util.Map;
 
 import javax.activation.DataSource;
