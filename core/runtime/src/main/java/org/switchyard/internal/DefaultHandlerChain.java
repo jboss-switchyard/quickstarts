@@ -31,6 +31,7 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerChain;
 import org.switchyard.HandlerException;
+import org.switchyard.message.DefaultMessage;
 
 /**
  * Default handler chain.
@@ -67,38 +68,43 @@ public class DefaultHandlerChain implements HandlerChain {
     }
 
     @Override
+    public void handle(Exchange exchange) {
+        if (exchange.getState() == ExchangeState.FAULT) {
+            handleFault(exchange);
+        } else {
+            handleMessage(exchange);
+        }
+    }
+
+    @Override
     public void handleFault(Exchange exchange) {
         try {
-            processHandlers(exchange);
-        } catch (HandlerException handlerEx) {
-            _logger.error(handlerEx);
-            // TODO - no throwing exceptions from fault handlers
-            //        need to log this and continue
-        }
-    }
-
-    @Override
-    public void handleMessage(Exchange exchange) throws HandlerException {
-        processHandlers(exchange);
-    }
-
-    @Override
-    public void handle(Exchange exchange) {
-        try {
-            processHandlers(exchange);
-        } catch (HandlerException handlerEx) {
-            _logger.error(handlerEx);
-            // TODO - map to fault here
-        }
-    }
-
-    private void processHandlers(Exchange exchange) throws HandlerException {
-        for (HandlerRef ref : listHandlers()) {
-            if (exchange.getState() == ExchangeState.FAULT) {
+            for (HandlerRef ref : listHandlers()) {
                 ref.getHandler().handleFault(exchange);
-            } else {
-                ref.getHandler().handleMessage(exchange);
             }
+        } catch (Exception e) {
+            // This is terminal... a fault on a fault...
+            throw new RuntimeException("Unable to recover from fault on", e);
+        }
+    }
+
+    @Override
+    public void handleMessage(Exchange exchange) {
+        try {
+            for (HandlerRef ref : listHandlers()) {
+                ref.getHandler().handleMessage(exchange);
+
+                if(exchange.getState() == ExchangeState.FAULT) {
+                    // Exchange state has changed to FAULT.
+                    // Stop executing handlers....
+                    break;
+                }
+            }
+        } catch (HandlerException handlerEx) {
+            _logger.error(handlerEx);
+
+            // TODO: Convert the exception into something more portable ?
+            exchange.sendFault(new DefaultMessage().setContent(handlerEx));
         }
     }
 
