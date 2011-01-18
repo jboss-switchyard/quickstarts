@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard.soap;
+package org.switchyard.component.soap;
 
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
@@ -29,8 +29,8 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.MessageBuilder;
 import org.switchyard.message.DefaultMessage;
-import org.switchyard.soap.util.SOAPUtil;
-import org.switchyard.soap.util.XMLHelper;
+import org.switchyard.component.soap.util.SOAPUtil;
+import org.switchyard.component.soap.util.XMLHelper;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
