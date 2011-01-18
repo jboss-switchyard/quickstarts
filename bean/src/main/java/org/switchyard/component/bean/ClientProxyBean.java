@@ -24,6 +24,7 @@ package org.switchyard.component.bean;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
@@ -45,6 +46,7 @@ import javax.xml.namespace.QName;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
+import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.MessageBuilder;
@@ -263,7 +265,6 @@ public class ClientProxyBean implements Bean {
                     }
 
                     public void handleFault(Exchange exchange) {
-                        // TODO: properly handle fault
                         responseQueue.offer(exchange);
                     }
                 };
@@ -274,9 +275,26 @@ public class ClientProxyBean implements Bean {
                 exchangeIn.send(sendMessage, exchangeIn.getContext(Scope.MESSAGE));
 
                 Exchange exchangeOut = responseQueue.take();
-                Object responseObject = exchangeOut.getMessage().getContent();
+                if(exchangeOut.getState() == ExchangeState.OK) {
+                    return exchangeOut.getMessage().getContent();
+                } else {
+                    Object exceptionObj = exchangeOut.getMessage().getContent();
 
-                return responseObject;
+                    if(exceptionObj instanceof Throwable) {
+                        if(exceptionObj instanceof BeanComponentException) {
+                            BeanComponentException beanCompException = (BeanComponentException) exceptionObj;
+                            Throwable cause = beanCompException.getCause();
+                            if(cause instanceof InvocationTargetException) {
+                                throw cause.getCause();
+                            } else {
+                                throw cause;
+                            }
+                        }
+                        throw (Throwable) exceptionObj;
+                    } else {
+                        throw new BeanComponentException("Bean Component invocation failure.  Service '" + serviceQName + "', operation '" + method.getName() + "'.").setFaultExchange(exchangeOut);
+                    }
+                }
             } else {
                 Exchange exchange = domain.createExchange(serviceQName, ExchangePattern.IN_ONLY, null);
 

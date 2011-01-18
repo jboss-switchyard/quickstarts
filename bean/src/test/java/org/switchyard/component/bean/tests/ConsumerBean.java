@@ -41,7 +41,18 @@ public class ConsumerBean {
         oneWay.oneWay(message);
     }
     
-    public void consumeInOutService(Object message) {
-        Assert.assertEquals(message, requestResponse.reply(message));
+    public Object consumeInOutService(Object message) throws ConsumerException {
+        try {
+            Object reply = null;
+            reply = requestResponse.reply(message);
+            Assert.assertEquals(message, reply);
+            return reply;
+        } catch (ConsumerException e) {
+            Assert.assertEquals(message, e);
+            // OK... this validates that the remote exception was transported through the
+            // Exchange fault mechanism and then rethrown by the client proxy.  Create
+            // and throw a new exception...
+            throw new ConsumerException("remote-exception-received");
+        }
     }
 }

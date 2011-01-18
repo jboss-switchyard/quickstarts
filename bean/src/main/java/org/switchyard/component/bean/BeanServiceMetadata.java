@@ -45,6 +45,10 @@ public class BeanServiceMetadata {
     private static final String OPERATION_NAME = "OPERATION_NAME";
 
     /**
+     * Service bean component runtime class.
+     */
+    private Class<? extends Object> serviceClass;
+    /**
      * List of service methods/operations.
      */
     private List<Method> serviceMethods = new ArrayList<Method>();
@@ -61,6 +65,7 @@ public class BeanServiceMetadata {
                 this.serviceMethods.add(serviceMethod);
             }
         }
+        this.serviceClass = serviceClass;
     }
 
     // TODO: needs to live somewhere else
@@ -96,8 +101,9 @@ public class BeanServiceMetadata {
      *
      * @param exchange The Exchange instance.
      * @return The operation {@link Invocation} instance.
+     * @throws BeanComponentException Error invoking Bean component operation.
      */
-    public Invocation getInvocation(Exchange exchange) {
+    public Invocation getInvocation(Exchange exchange) throws BeanComponentException {
 
         String operationName = getOperationName(exchange);
 
@@ -106,18 +112,14 @@ public class BeanServiceMetadata {
 
             // Operation name must resolve to exactly one bean method...
             if (candidateMethods.size() != 1) {
-                // TODO: sendFault ??? ...
-                return null;
+                throw new BeanComponentException("Operation name '" + operationName + "' must resolve to exactly one bean method on bean type '" + serviceClass.getName() + "'.");
             }
 
             Method operationMethod = candidateMethods.get(0);
             return new Invocation(operationMethod, exchange.getMessage().getContent());
         } else {
-            System.out.println("Operation name not specified on exchange.");
-            // TODO: Operation name not specified... sendFault  ...
+            throw new BeanComponentException("Operation name not specified on exchange.");
         }
-
-        return null;
     }
 
     /**

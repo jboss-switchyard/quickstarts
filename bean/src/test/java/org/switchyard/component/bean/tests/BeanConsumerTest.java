@@ -24,13 +24,16 @@ package org.switchyard.component.bean.tests;
 
 import javax.xml.namespace.QName;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.Message;
 import org.switchyard.MessageBuilder;
+import org.switchyard.MockHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.bean.AbstractCDITest;
+import org.switchyard.component.bean.BeanComponentException;
 import org.switchyard.component.bean.BeanServiceMetadata;
 import org.switchyard.internal.ServiceDomains;
 
@@ -38,7 +41,7 @@ import org.switchyard.internal.ServiceDomains;
  * Assorted methods for testing a CDI bean consuming a service in SwitchYard.
  */
 public class BeanConsumerTest extends AbstractCDITest {
-    
+
     @Test
     public void consumeInOnlyServiceFromBean() {
         ServiceDomain domain = ServiceDomains.getDomain();
@@ -46,19 +49,20 @@ public class BeanConsumerTest extends AbstractCDITest {
         Exchange exchange = domain.createExchange(new QName("ConsumerBean"), ExchangePattern.IN_ONLY);
 
         BeanServiceMetadata.setOperationName(exchange, "consumeInOnlyService");
-        
+
         Message inMessage = MessageBuilder.newInstance().buildMessage();
         inMessage.setContent("hello");
 
         exchange.send(inMessage);
     }
-    
+
 
     @Test
     public void consumeInOutServiceFromBean() {
         ServiceDomain domain = ServiceDomains.getDomain();
 
-        Exchange exchange = domain.createExchange(new QName("ConsumerBean"), ExchangePattern.IN_ONLY);
+        MockHandler responseConsumer = new MockHandler();
+        Exchange exchange = domain.createExchange(new QName("ConsumerBean"), ExchangePattern.IN_OUT, responseConsumer);
 
         BeanServiceMetadata.setOperationName(exchange, "consumeInOutService");
         
@@ -66,6 +70,53 @@ public class BeanConsumerTest extends AbstractCDITest {
         inMessage.setContent("hello");
 
         exchange.send(inMessage);
+
+        responseConsumer.waitForOKMessage();
+        Assert.assertEquals("hello", responseConsumer.getMessages().peek().getMessage().getContent());
     }
 
+    @Test
+    public void consumeInOnlyServiceFromBean_Fault_invalid_opertion() {
+        ServiceDomain domain = ServiceDomains.getDomain();
+
+        MockHandler responseConsumer = new MockHandler();
+        Exchange exchange = domain.createExchange(new QName("ConsumerBean"), ExchangePattern.IN_OUT, responseConsumer);
+
+        BeanServiceMetadata.setOperationName(exchange, "unknownXOp");
+
+        Message inMessage = MessageBuilder.newInstance().buildMessage();
+        inMessage.setContent("hello");
+
+        exchange.send(inMessage);
+
+        responseConsumer.waitForFaultMessage();
+
+        Exchange faultExchange = responseConsumer.getFaults().peek();
+        BeanComponentException e = faultExchange.getMessage().getContent(BeanComponentException.class);
+        Assert.assertEquals("Operation name 'unknownXOp' must resolve to exactly one bean method on bean type '" + ConsumerBean.class.getName() + "'.", e.getMessage());
+    }
+
+    @Test
+    public void consumeInOnlyServiceFromBean_Fault_service_exception() {
+        ServiceDomain domain = ServiceDomains.getDomain();
+
+        MockHandler responseConsumer = new MockHandler();
+        Exchange exchange = domain.createExchange(new QName("ConsumerBean"), ExchangePattern.IN_OUT, responseConsumer);
+
+        BeanServiceMetadata.setOperationName(exchange, "consumeInOutService");
+
+        Message inMessage = MessageBuilder.newInstance().buildMessage();
+        inMessage.setContent(new ConsumerException("throw me a remote exception please!!"));
+
+        exchange.send(inMessage);
+
+        responseConsumer.waitForFaultMessage();
+
+        Exchange faultExchange = responseConsumer.getFaults().peek();
+        Object response = faultExchange.getMessage().getContent();
+        Assert.assertTrue(response instanceof BeanComponentException);
+        Assert.assertEquals("Invocation of operation 'consumeInOutService' on bean component '" + ConsumerBean.class.getName() + "' failed with exception.  See attached cause.", ((BeanComponentException) response).getMessage());
+        Assert.assertTrue(((BeanComponentException) response).getCause() instanceof ConsumerException);
+        Assert.assertEquals("remote-exception-received", ((BeanComponentException) response).getCause().getMessage());
+    }
 }

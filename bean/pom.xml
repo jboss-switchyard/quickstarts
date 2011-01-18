@@ -23,24 +23,9 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>core-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>core-runtime</artifactId>
-        </dependency>
-
-        <dependency>
            <groupId>org.jboss.weld.se</groupId>
            <artifactId>weld-se-core</artifactId>
             <version>${weld.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>test-util</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -49,6 +34,7 @@
         	<version>1.6.1</version>
         	<scope>runtime</scope>
         </dependency>
+
     </dependencies>
 
 </project>

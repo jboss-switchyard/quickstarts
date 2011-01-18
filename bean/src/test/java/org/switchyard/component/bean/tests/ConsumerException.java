@@ -22,17 +22,12 @@
 
 package org.switchyard.component.bean.tests;
 
-import org.switchyard.component.bean.Service;
+/**
+ * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ */
+public class ConsumerException extends Exception {
 
-@Service(RequestResponse.class)
-public class RequestResponseBean implements RequestResponse {
-
-    public Object reply(Object message) throws ConsumerException {
-        if(message instanceof ConsumerException) {
-            throw (ConsumerException) message;
-        }
-
-        return message;
+    public ConsumerException(String message) {
+        super(message);
     }
-
 }

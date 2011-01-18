@@ -23,6 +23,7 @@
 package org.switchyard.component.bean;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.UndeclaredThrowableException;
 
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
@@ -79,15 +80,15 @@ public class ServiceProxyHandler implements ExchangeHandler {
      * @param exchange an {@code Exchange} instance containing a message to be processed.
      */
     public void handleFault(Exchange exchange) {
-        handle(exchange);
     }
 
     /**
      * Handle the Service bean invocation.
      *
      * @param exchange The Exchange instance.
+     * @throws BeanComponentException Error invoking Bean component operation.
      */
-    private void handle(Exchange exchange) {
+    private void handle(Exchange exchange) throws BeanComponentException {
         Invocation invocation = serviceMetadata.getInvocation(exchange);
 
         if (invocation != null) {
@@ -102,15 +103,12 @@ public class ServiceProxyHandler implements ExchangeHandler {
                     invocation.getMethod().invoke(serviceBean, invocation.getArgs());
                 }
             } catch (IllegalAccessException e) {
-                e.printStackTrace();
-                // TODO: sendFault...
+                throw new BeanComponentException("Cannot invoke operation '" + invocation.getMethod().getName() + "' on bean component '" + serviceBean.getClass().getName() + "'.", e);
             } catch (InvocationTargetException e) {
-                e.printStackTrace();
-                // TODO: sendFault...
+                throw new BeanComponentException("Invocation of operation '" + invocation.getMethod().getName() + "' on bean component '" + serviceBean.getClass().getName() + "' failed with exception.  See attached cause.", e.getCause());
             }
         } else {
-            System.out.println("Unable to resolve invocation parameters.");
-            // TODO: sendFault...
+            throw new RuntimeException("Unexpected error.  BeanServiceMetadata should return an Invocation instance, or throw a BeanComponentException.");
         }
     }
 }
