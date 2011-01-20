@@ -78,7 +78,7 @@ public final class WSDLUtil {
      */
     public static StreamSource getStream(final String wsdlURI) throws WSDLException {
         try {
-            URL url = getURL(null, wsdlURI);
+            URL url = getURL(wsdlURI);
             InputStream inputStream = url.openStream();
             StreamSource inputSource = new StreamSource(inputStream);
             inputSource.setSystemId(url.toString());
@@ -93,20 +93,16 @@ public final class WSDLUtil {
     /**
      * Convert a path/uri to a URL.
      *
-     * @param url a url path.
-     * @param path a suffix path.
+     * @param path a path or URI.
      * @return the URL.
      * @throws MalformedURLException If the url path is not valid
      */
-    public static URL getURL(final URL url, final String path) throws MalformedURLException {
-        try {
-            return new URL(url, path);
-        } catch (MalformedURLException murle) {
+    private static URL getURL(final String path) throws MalformedURLException {
+        if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("file://")) {
+            return new URL(null, path);
+        } else {
             File localFile = new File(path);
-            if ((url == null) || ((url != null) && (localFile.isAbsolute()))) {
-                return localFile.toURL();
-            }
-            throw murle;
+            return localFile.toURL();
         }
     }
 }

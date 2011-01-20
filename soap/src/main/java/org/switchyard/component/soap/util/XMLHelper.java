@@ -76,7 +76,7 @@ import com.ctc.wstx.stax.WstxOutputFactory;
  * @author <a href='mailto:kevin.conner@jboss.com'>Kevin Conner</a>
  */
 public final class XMLHelper {
-    private static Logger log = Logger.getLogger(XMLHelper.class);
+    private static final Logger LOGGER = Logger.getLogger(XMLHelper.class);
     
     /**
      * The XML input factory.
@@ -333,9 +333,9 @@ public final class XMLHelper {
             validator.validate(new StreamSource(new StringReader(xml)));
             return true;
         } catch (final IOException ioe)  {
-            log.debug(ioe.getMessage(), ioe);
+            LOGGER.debug(ioe.getMessage(), ioe);
         } catch (final SAXException saxe)   {
-            log.debug(saxe.getMessage(), saxe);
+            LOGGER.debug(saxe.getMessage(), saxe);
         }
         
         return false;

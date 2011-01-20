@@ -22,11 +22,13 @@
  
 package org.switchyard.component.soap;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
+import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
@@ -146,8 +148,10 @@ public class OutboundHandler extends BaseHandler {
                 // BindingProvider bp = (BindingProvider) _dispatcher;
                 // bp.getRequestContext().put("jaxws.response.throwExceptionIfSOAPFault", Boolean.FALSE);
 
-            } catch (Exception e) {
+            } catch (MalformedURLException e) {
                 throw new SOAPException(e);
+            } catch (WSDLException wsdle) {
+                throw new SOAPException(wsdle);
             }
         }
 

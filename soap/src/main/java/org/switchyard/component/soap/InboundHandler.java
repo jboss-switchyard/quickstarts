@@ -25,6 +25,7 @@ package org.switchyard.component.soap;
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpServer;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import java.util.Map;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
+import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
@@ -166,8 +168,10 @@ public class InboundHandler extends BaseHandler {
             HttpContext context = _server.createContext(path);
             _endpoint.publish(context);
             LOGGER.info("WebService published at " + _scheme + "://" + _host + ":" + _serverPort + path);
-        } catch (Exception e) {
+        } catch (WSDLException e) {
             throw new WebServicePublishException(e);
+        } catch (IOException ioe) {
+            throw new WebServicePublishException(ioe);
         }
     }
 
@@ -257,6 +261,7 @@ public class InboundHandler extends BaseHandler {
                 Thread.sleep(DEFAULT_SLEEP);
             } catch (InterruptedException e) { 
                 //ignore
+                continue;
             }
         }
     }
