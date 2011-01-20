@@ -94,7 +94,7 @@ public class DefaultHandlerChain implements HandlerChain {
             for (HandlerRef ref : listHandlers()) {
                 ref.getHandler().handleMessage(exchange);
 
-                if(exchange.getState() == ExchangeState.FAULT) {
+                if (exchange.getState() == ExchangeState.FAULT) {
                     // Exchange state has changed to FAULT.
                     // Stop executing handlers....
                     break;

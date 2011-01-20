@@ -51,12 +51,12 @@ public class ServiceDomains {
     public static final String REGISTRY_CLASS_NAME
         = "org.switchyard.registry.class.name";
 
-    private static ConcurrentHashMap<String, ServiceDomain> domains =
+    private static ConcurrentHashMap<String, ServiceDomain> _domains =
         new ConcurrentHashMap<String, ServiceDomain>();
 
-    private static ServiceRegistry registry;
-    private static EndpointProvider endpointProvider;
-    private static TransformerRegistry transformers;
+    private static ServiceRegistry _registry;
+    private static EndpointProvider _endpointProvider;
+    private static TransformerRegistry _transformers;
 
     /**
      * Utility class, private constructor.
@@ -107,9 +107,9 @@ public class ServiceDomains {
                 DefaultEndpointProvider.class.getName());
 
         try {
-            registry = getRegistry(registryClassName);
-            endpointProvider = getEndpointProvider(endpointProviderClassName);
-            transformers = new BaseTransformerRegistry();
+            _registry = getRegistry(registryClassName);
+            _endpointProvider = getEndpointProvider(endpointProviderClassName);
+            _transformers = new BaseTransformerRegistry();
         } catch (NullPointerException npe) {
             throw new RuntimeException(npe);
         }
@@ -121,7 +121,7 @@ public class ServiceDomains {
      * @return initialization status of the registry/endpointProvider
      */
     public static boolean isInitialized() {
-        return (registry != null) && (endpointProvider != null);
+        return (_registry != null) && (_endpointProvider != null);
     }
 
     /**
@@ -129,7 +129,7 @@ public class ServiceDomains {
      * @return root domain
      */
     public static synchronized ServiceDomain getDomain() {
-        if (!domains.containsKey(ROOT_DOMAIN)) {
+        if (!_domains.containsKey(ROOT_DOMAIN)) {
             createDomain(ROOT_DOMAIN);
         }
 
@@ -146,13 +146,13 @@ public class ServiceDomains {
             init();
         }
 
-        if (domains.containsKey(name)) {
+        if (_domains.containsKey(name)) {
             throw new RuntimeException("Domain already exists: " + name);
         }
 
         ServiceDomain domain = new DomainImpl(
-                name, registry, endpointProvider, transformers);
-        domains.put(name, domain);
+                name, _registry, _endpointProvider, _transformers);
+        _domains.put(name, domain);
         return domain;
     }
 
@@ -162,14 +162,14 @@ public class ServiceDomains {
      * @return ServiceDomain
      */
     public static ServiceDomain getDomain(final String domainName) {
-        return domains.get(domainName);
+        return _domains.get(domainName);
     }
 
     /**
-     * Get the names of the domains that exist.
+     * Get the names of the _domains that exist.
      * @return domain names
      */
     public static Set<String> getDomainNames() {
-        return domains.keySet();
+        return _domains.keySet();
     }
 }

@@ -88,8 +88,7 @@ public final class JavaService extends BaseService {
                         m.getName(), params[0].getCanonicalName()});
                 if (m.getReturnType().equals(Void.TYPE)) {
                     ops.add(new InOnlyOperation(m.getName(), inputName));
-                }
-                else {
+                } else {
                     String outputName = formatName(new String[] {
                             serviceInterface.getCanonicalName(), 
                             m.getName(), m.getReturnType().getCanonicalName()});
