@@ -11,11 +11,11 @@
 
   <groupId>org.switchyard.archetypes</groupId>
   <artifactId>switchyard-application</artifactId>
-  <version>${parent.version}</version>
+  <version>${project.parent.version}</version>
   <packaging>maven-archetype</packaging>
   <name>Switchyard: Application Archetype</name>
   <properties>
-    <switchyard.version>${parent.version}</switchyard.version>
+    <switchyard.version>${project.parent.version}</switchyard.version>
   </properties>
   
   <build>
