@@ -28,11 +28,11 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
-import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerChain;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.internal.handlers.TransformHandler;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
@@ -76,28 +76,29 @@ public class DomainImpl implements ServiceDomain {
     }
 
     @Override
-    public Exchange createExchange(Service service, ExchangePattern pattern) {
-        return createExchange(service, pattern, null);
+    public Exchange createExchange(Service service, ExchangeContract contract) {
+        return createExchange(service, contract, null);
     }
 
 
 
     @Override
     public Exchange createExchange(
-            Service service, ExchangePattern pattern, ExchangeHandler handler) {
+            Service service, ExchangeContract contract, ExchangeHandler handler) {
         // Determine the endpoints used for exchange delivery
         Endpoint inputEndpoint = _endpointProvider.getEndpoint(
                 getEndpointName(service.getName(), ExchangePhase.IN));
         Endpoint outputEndpoint = null;
+
         if (handler != null) {
             HandlerChain replyChain = _defaultHandlers.clone();
             replyChain.addLast("replyHandler", handler);
             outputEndpoint = _endpointProvider.createEndpoint(
                     getEndpointName(service.getName(), ExchangePhase.OUT), replyChain);
         }
-        
+
         // create the exchange
-        ExchangeImpl exchange = new ExchangeImpl(service, pattern, inputEndpoint, outputEndpoint);
+        ExchangeImpl exchange = new ExchangeImpl(service, contract, inputEndpoint, outputEndpoint);
         return exchange;
     }
 
@@ -105,7 +106,7 @@ public class DomainImpl implements ServiceDomain {
     public Service registerService(QName serviceName, ExchangeHandler handler) {
         return registerService(serviceName, handler, null);
     }
-    
+
     @Override
     public Service registerService(QName serviceName, ExchangeHandler handler,
             ServiceInterface metadata) {

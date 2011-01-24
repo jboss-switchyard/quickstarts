@@ -38,12 +38,10 @@ public class MockServiceRegistry implements ServiceRegistry {
     }
     
     @Override
-    public Service registerService(QName serviceName, 
-            ServiceInterface serviceInterface, Endpoint endpoint,
+    public Service registerService(QName serviceName, ServiceInterface serviceInterface, Endpoint endpoint,
             HandlerChain handlers, ServiceDomain domain) {
         QName mockName = new QName("mockServiceName");
-        return new ServiceRegistration(
-                mockName, serviceInterface, endpoint, handlers, this, domain);
+        return new ServiceRegistration(mockName, serviceInterface, endpoint, handlers, this, domain);
     }
 
     @Override

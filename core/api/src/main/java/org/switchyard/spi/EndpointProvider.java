@@ -38,7 +38,7 @@ public interface EndpointProvider {
     
     /**
      * Retrieves an exchange endpoint by name.
-     * @param endpoint name
+     * @param name endpoint name
      * @return endpoint with the specified name, or null if no endpoint exists
      */
     Endpoint getEndpoint(String name);

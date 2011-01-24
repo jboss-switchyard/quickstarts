@@ -32,6 +32,7 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.MockHandler;
 import org.switchyard.Service;
+import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.JavaService;
 import org.switchyard.metadata.ServiceInterface;
 
@@ -55,10 +56,10 @@ public class DomainImplTest {
     
     @Test
     public void testCreateExchange() {
-        Exchange inOnly = _domain.createExchange(_service, ExchangePattern.IN_ONLY);
-        Assert.assertEquals(ExchangePattern.IN_ONLY, inOnly.getPattern());
-        Exchange inOut = _domain.createExchange(_service, ExchangePattern.IN_OUT);
-        Assert.assertEquals(ExchangePattern.IN_OUT, inOut.getPattern());
+        Exchange inOnly = _domain.createExchange(_service, ExchangeContract.IN_ONLY);
+        Assert.assertEquals(ExchangePattern.IN_ONLY, inOnly.getContract().getServiceOperation().getExchangePattern());
+        Exchange inOut = _domain.createExchange(_service, ExchangeContract.IN_OUT);
+        Assert.assertEquals(ExchangePattern.IN_OUT, inOut.getContract().getServiceOperation().getExchangePattern());
     }
     
     @Test

@@ -22,9 +22,9 @@
 
 package org.switchyard;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.metadata.ServiceInterface;
+
+import javax.xml.namespace.QName;
 
 /**
  * A service registered with the SwitchYard runtime.

@@ -28,24 +28,18 @@ import org.switchyard.ExchangePattern;
  * Default implementation of ServiceOperation for ExchangePattern.IN_ONLY 
  * operations.
  */
-public class InOnlyOperation implements ServiceOperation {
-    
-    /**
-     *  Default name of the input message.
-     */
-    public static final String INPUT_MESSAGE = "in";
+public class InOnlyOperation extends BaseInvocationContract implements ServiceOperation {
     
     // The operation name
     private String _operationName;
-    // The input message name
-    private String _inputName;
-    
+
     /**
      * Create a new instance of an InOnly operation with a default message name.
      * @param operationName the name of the operation
      */
     public InOnlyOperation(String operationName) {
-        this(operationName, INPUT_MESSAGE);
+        super(null, null, null);
+        _operationName = operationName;
     }
     
     /**
@@ -54,8 +48,8 @@ public class InOnlyOperation implements ServiceOperation {
      * @param inputName the name of the input message
      */
     public InOnlyOperation(String operationName, String inputName) {
+        super(inputName, null, null);
         _operationName = operationName;
-        _inputName = inputName;
     }
 
     /**
@@ -66,16 +60,7 @@ public class InOnlyOperation implements ServiceOperation {
     public ExchangePattern getExchangePattern() {
         return ExchangePattern.IN_ONLY;
     }
-    
-    /**
-     * @return input message name
-     * @see ServiceOperation
-     */
-    @Override
-    public String getInputMessage() {
-        return _inputName;
-    }
-    
+
     /**
      * @return operation name
      * @see ServiceOperation
@@ -85,13 +70,8 @@ public class InOnlyOperation implements ServiceOperation {
         return _operationName; 
     }
 
-    /**
-     * @return output message name
-     * @see ServiceOperation
-     */
     @Override
-    public String getOutputMessage() {
-        return null;
+    public String toString() {
+        return _operationName + "{IN_ONLY}";
     }
-
 }

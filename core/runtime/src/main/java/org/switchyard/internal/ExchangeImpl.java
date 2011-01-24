@@ -26,11 +26,12 @@ import java.util.UUID;
 
 import org.switchyard.Context;
 import org.switchyard.Exchange;
-import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
 import org.switchyard.ExchangeState;
 import org.switchyard.Message;
 import org.switchyard.Service;
+import org.switchyard.internal.transform.TransformSequence;
+import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.spi.Endpoint;
 
 /**
@@ -38,21 +39,8 @@ import org.switchyard.spi.Endpoint;
  */
 public class ExchangeImpl implements Exchange {
 
-    /**
-     * In message.
-     */
-    public static final String IN_MSG = "in";
-    /**
-     * Out message.
-     */
-    public static final String OUT_MSG = "out";
-    /**
-     * Fault message.
-     */
-    public static final String FAULT_MSG = "fault";
-
     private final String            _exchangeId;
-    private final ExchangePattern   _pattern;
+    private final ExchangeContract  _contract;
     private ExchangePhase           _phase;
     private final Service           _service;
     private Message                 _message;
@@ -65,25 +53,32 @@ public class ExchangeImpl implements Exchange {
      * Create a new exchange with no endpoints initialized.  At a minimum, the 
      * input endpoint must be set before sending an exchange.
      * @param service service
-     * @param pattern exchange pattern
-     * @param handlers handlers
+     * @param contract exchange contract
      */
-    ExchangeImpl(Service service, ExchangePattern pattern) {
-        _service = service;
-        _pattern = pattern;
-        _exchangeId = UUID.randomUUID().toString();
-        _context = new DefaultContext();
+    ExchangeImpl(Service service, ExchangeContract contract) {
+        this(service, contract, null, null);
     }
     
     /**
      * Constructor.
      * @param service service
-     * @param pattern exchange pattern
-     * @param handlers handlers
+     * @param contract exchange contract
+     * @param input input endpoint
+     * @param input output endpoint
      */
-    ExchangeImpl(Service service, ExchangePattern pattern, Endpoint input, Endpoint output) {
+    ExchangeImpl(Service service, ExchangeContract contract, Endpoint input, Endpoint output) {
+
+        // Check that the ExchangeContract exists and has invoker metadata and a ServiceOperation defined on it...
+        if (contract == null) {
+            throw new IllegalArgumentException("null 'contract' arg.");
+        } else if (contract.getInvokerInvocationMetaData() == null) {
+            throw new IllegalArgumentException("Invalid 'contract' arg.  No invoker invocation metadata defined on the contract instance.");
+        } else if (contract.getServiceOperation() == null) {
+            throw new IllegalArgumentException("Invalid 'contract' arg.  No ServiceOperation defined on the contract instance.");
+        }
+
         _service = service;
-        _pattern = pattern;
+        _contract = contract;
         _inputEndpoint = input;
         _outputEndpoint = output;
         _exchangeId = UUID.randomUUID().toString();
@@ -96,8 +91,8 @@ public class ExchangeImpl implements Exchange {
     }
 
     @Override
-    public ExchangePattern getPattern() {
-        return _pattern;
+    public ExchangeContract getContract() {
+        return _contract;
     }
 
     @Override
@@ -122,8 +117,10 @@ public class ExchangeImpl implements Exchange {
         // Set exchange phase
         if (_phase == null) {
             _phase = ExchangePhase.IN;
+            initInTransformSequence(message);
         } else if (_phase.equals(ExchangePhase.IN)) {
             _phase = ExchangePhase.OUT;
+            initOutTransformSequence(message);
         } else {
             throw new IllegalStateException(
                     "Send message not allowed for exchange in phase " + _phase);
@@ -218,5 +215,29 @@ public class ExchangeImpl implements Exchange {
     @Override
     public ExchangePhase getPhase() {
         return _phase;
+    }
+
+    private void initInTransformSequence(Message message) {
+        String exchangeInputType = _contract.getInvokerInvocationMetaData().getInputType();
+        String serviceOperationInputType = _contract.getServiceOperation().getInputType();
+
+        if (exchangeInputType != null && serviceOperationInputType != null) {
+            TransformSequence.
+                    from(exchangeInputType).
+                    to(serviceOperationInputType).
+                    associateWith(message.getContext());
+        }
+    }
+
+    private void initOutTransformSequence(Message message) {
+        String serviceOperationOutputType = _contract.getServiceOperation().getOutputType();
+        String exchangeOutputType = _contract.getInvokerInvocationMetaData().getOutputType();
+
+        if (serviceOperationOutputType != null && exchangeOutputType != null) {
+            TransformSequence.
+                    from(serviceOperationOutputType).
+                    to(exchangeOutputType).
+                    associateWith(message.getContext());
+        }
     }
 }

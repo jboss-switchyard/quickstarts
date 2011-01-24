@@ -23,6 +23,8 @@
 package org.switchyard;
 
 
+import org.switchyard.metadata.ExchangeContract;
+
 /**
  * An Exchange represents an instance of a service invocation with a specific
  * message exchange pattern (e.g. InOnly, InOut).  Exchange provides a conduit
@@ -48,12 +50,10 @@ public interface Exchange {
      */
     String getId();
     /**
-     * The exchange pattern used for this exchange instance.  The exchange
-     * pattern defines the number, order, and cardinality of messages exchanged
-     * as part of a service invocation.
-     * @return the exchange pattern for this exchange
+     * Get the contract associated with this exchange.
+     * @return The exchange contract.
      */
-    ExchangePattern getPattern();
+    ExchangeContract getContract();
     /**
      * The service being invoked by this exchange.
      * @return Service to be invoked

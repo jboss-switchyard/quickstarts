@@ -44,7 +44,7 @@ public interface ServiceInterface {
      * Default operation name for the default service interface.
      */
     String DEFAULT_OPERATION = "process";
-    
+
     /**
      * The type of the interface - e.g. java, wsdl, esb, etc.
      * @return the interface type

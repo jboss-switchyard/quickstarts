@@ -83,7 +83,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
 
     @Override
     public synchronized Service registerService(QName serviceName,
-            ServiceInterface serviceInterface, Endpoint endpoint, 
+            ServiceInterface serviceInterface, Endpoint endpoint,
             HandlerChain handlers, ServiceDomain domain) {
 
         ServiceRegistration sr = new ServiceRegistration(

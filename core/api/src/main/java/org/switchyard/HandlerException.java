@@ -22,13 +22,21 @@
 
 package org.switchyard;
 
+import org.switchyard.message.PayloadTypeName;
+
 /**
  * Represents a processing error when handling an exchange.  A
  * {@code HandlerException} stops processing within a HandlerChain and
  * is automagically converted into a fault by the chain when throw by an
  * {@code ExchangeHandler}.
  */
+@PayloadTypeName(HandlerException.MESSAGE_TYPE)
 public class HandlerException extends Exception {
+
+    /**
+     * Base fault Message type.
+     */
+    public static final String MESSAGE_TYPE = "java:/org.switchyard.HandlerException";
 
     /**
      * Generated serial version UID.

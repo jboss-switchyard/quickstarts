@@ -30,8 +30,9 @@ public interface TransformerRegistry {
     /**
      * Add a transformer.
      * @param transformer transformer
+     * @return {@code this} TransformRegistry instance.
      */
-    void addTransformer(Transformer<?, ?> transformer);
+    TransformerRegistry addTransformer(Transformer<?, ?> transformer);
 
     /**
      * Remove a transformer.

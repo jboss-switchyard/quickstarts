@@ -34,11 +34,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
-import org.switchyard.ExchangePattern;
 import org.switchyard.Message;
 import org.switchyard.MockHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.internal.transform.TransformSequence;
+import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.internal.ServiceDomains;
 import org.switchyard.internal.transform.BaseTransformer;
 import org.switchyard.transform.Transformer;
@@ -89,7 +90,7 @@ public class TransformationTest {
         
         // Create the exchange, add the transformer, and invoke the service
         Exchange exchange = _domain.createExchange(
-                service, ExchangePattern.IN_ONLY);
+                service, ExchangeContract.IN_ONLY);
         
         Message msg = exchange.createMessage();
         msg.getContext().setProperty(Transformer.class.getName(), dateToString);
@@ -130,7 +131,7 @@ public class TransformationTest {
         
         // Create the exchange, add the transformer, and invoke the service
         Exchange exchange = _domain.createExchange(
-                service, ExchangePattern.IN_ONLY);
+                service, ExchangeContract.IN_ONLY);
         exchange.getContext().setProperty(Transformer.class.getName(), dateToString);
         
         Message msg = exchange.createMessage();
@@ -149,14 +150,14 @@ public class TransformationTest {
     @Test
     public void testTransformationByName() throws Exception {
         final QName serviceName = new QName("nameTransform");
-        final String fromName = "fromA";
-        final String toName = "toB";
+        final String inType = "fromA";
+        final String expectedDestType = "toB";
         final String input = "Hello";
         final String output = "Hello SwitchYard";
         
         // Define the transformation and register it
         Transformer<String, String> helloTransform = 
-                new BaseTransformer<String, String>(fromName, toName) {
+                new BaseTransformer<String, String>(inType, expectedDestType) {
             public String transform(String from) {
                 // transform the input date to the desired output string
                 return from + " SwitchYard";
@@ -170,17 +171,21 @@ public class TransformationTest {
         
         // Create the exchange and invoke the service
         Exchange exchange = _domain.createExchange(
-                service, ExchangePattern.IN_ONLY);
+                service, ExchangeContract.IN_ONLY);
         
         // Set the from and to message names.  NOTE: setting to the to message
         // name will not be necessary once the service definition is available
         // at runtime
         Message msg = exchange.createMessage().setContent(input);
         Context msgCtx = msg.getContext();
-        msgCtx.setProperty("org.switchyard.message.name", fromName);
-        msgCtx.setProperty("org.switchyard.service.message.name", toName);
+        TransformSequence.
+                from(inType).
+                to(expectedDestType).
+                associateWith(msgCtx);
+
+        msg.setContent(input);
         exchange.send(msg);
-        
+
         // wait for message and verify transformation
         provider.waitForOKMessage();
         Assert.assertEquals(provider.getMessages().poll().getMessage().getContent(), output);

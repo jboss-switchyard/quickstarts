@@ -51,14 +51,14 @@ public class JavaServiceTest {
         // method1 is InOnly
         ServiceOperation method1 = js.getOperation("method1");
         Assert.assertNotNull(method1);
-        Assert.assertEquals(method1.getInputMessage(), METHOD1_INPUT);
+        Assert.assertEquals(method1.getInputType(), METHOD1_INPUT);
         Assert.assertEquals(method1.getExchangePattern(), ExchangePattern.IN_ONLY);
         
         //method2 is InOut
         ServiceOperation method2 = js.getOperation("method2");
         Assert.assertNotNull(method2);
-        Assert.assertEquals(method2.getInputMessage(), METHOD2_INPUT);
-        Assert.assertEquals(method2.getOutputMessage(), METHOD2_OUTPUT);
+        Assert.assertEquals(method2.getInputType(), METHOD2_INPUT);
+        Assert.assertEquals(method2.getOutputType(), METHOD2_OUTPUT);
         Assert.assertEquals(method2.getExchangePattern(), ExchangePattern.IN_OUT);
     }
     

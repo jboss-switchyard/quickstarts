@@ -26,8 +26,10 @@ import java.lang.reflect.ParameterizedType;
 import org.switchyard.transform.Transformer;
 
 /**
- * @param <F>
- * @param <T>
+ * Base transformer implementation.
+ *
+ * @param <F> From Type
+ * @param <T> To Type.
  */
 public abstract class BaseTransformer<F, T> implements Transformer<F, T> {
 

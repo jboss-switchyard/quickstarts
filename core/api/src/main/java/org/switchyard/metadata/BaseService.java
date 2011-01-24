@@ -73,7 +73,7 @@ public class BaseService implements ServiceInterface {
     public BaseService(Set<ServiceOperation> operations, String type) {
         _operations = operations;
     }
-    
+
     /**
      * @param name operation name
      * @return service operation

@@ -22,6 +22,8 @@
 
 package org.switchyard.metadata;
 
+import org.switchyard.message.PayloadTypeName;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
@@ -83,23 +85,21 @@ public final class JavaService extends BaseService {
                             "Service operations on a Java interface must have exactly one parameter!");
                 }
                 // Create the appropriate service operation and add it to the list
-                String inputName = formatName(new String[] {
-                        serviceInterface.getCanonicalName(), 
-                        m.getName(), params[0].getCanonicalName()});
+                String inputType = formatName(serviceInterface.getCanonicalName(), m.getName(), params[0].getCanonicalName());
                 if (m.getReturnType().equals(Void.TYPE)) {
-                    ops.add(new InOnlyOperation(m.getName(), inputName));
+                    ops.add(new InOnlyOperation(m.getName(), inputType));
                 } else {
-                    String outputName = formatName(new String[] {
-                            serviceInterface.getCanonicalName(), 
-                            m.getName(), m.getReturnType().getCanonicalName()});
-                    ops.add(new InOutOperation(m.getName(), inputName, outputName));
+                    String outputName = formatName(serviceInterface.getCanonicalName(), m.getName(), m.getReturnType().getCanonicalName());
+                    String faultType = null; //TODO: Can have multiple exception types     .. which do we pick?
+
+                    ops.add(new InOutOperation(m.getName(), inputType, outputName, faultType));
                 }
             }
         }
         
         return new JavaService(ops, serviceInterface);
     }
-    
+
     /**
      * Returns the Java class or interface used to create this ServiceInterface.
      * representation
@@ -108,17 +108,36 @@ public final class JavaService extends BaseService {
     public Class<?> getJavaInterface() {
         return _serviceInterface;
     }
-    
+
     /**
      * Creates a URN-style name based on a list of parts.
      * @param parts parts of the name
      * @return URN-style name used for the message name
      */
-    private static String formatName(String[] parts) {
+    private static String formatName(String... parts) {
         StringBuilder formattedName = new StringBuilder();
         for (String p : parts) {
             formattedName.append("/" + p);
         }
         return formattedName.insert(0, TYPE + ":").toString();
+    }
+
+    /**
+     * Convert the supplied java type to a payload type name.
+     * <p/>
+     * Checks for a {@link org.switchyard.message.PayloadTypeName} on the type.  If not found,
+     * the type name is derived from the Java Class name.
+     *
+     * @param javaType The Java type.
+     * @return The payload type.
+     */
+    public static String toMessageType(Class<?> javaType) {
+        PayloadTypeName payloadType = javaType.getAnnotation(PayloadTypeName.class);
+
+        if (payloadType != null) {
+            return payloadType.value();
+        } else {
+            return formatName(javaType.getCanonicalName());
+        }
     }
 }

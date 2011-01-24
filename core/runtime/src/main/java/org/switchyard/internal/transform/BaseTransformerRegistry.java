@@ -63,9 +63,10 @@ public class BaseTransformerRegistry implements TransformerRegistry {
     }
 
     @Override
-    public void addTransformer(Transformer<?, ?> transformer) {
+    public BaseTransformerRegistry addTransformer(Transformer<?, ?> transformer) {
         _transformers.put(new NameKey(transformer.getFrom(),
                 transformer.getTo()), transformer);
+        return this;
     }
 
     @Override

@@ -24,6 +24,7 @@ package org.switchyard;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.transform.TransformerRegistry;
 
@@ -54,20 +55,20 @@ public interface ServiceDomain {
      * Creates a new Exchange to invoke service with the specified exchange
      * pattern.
      * @param service the service to invoke
-     * @param pattern the message exchange pattern to use
+     * @param contract the exchange contract to use
      * @return a new Exchange instance
      */
-    Exchange createExchange(Service service, ExchangePattern pattern);
+    Exchange createExchange(Service service, ExchangeContract contract);
     /**
      * Creates a new Exchange to invoke service with the specified exchange
      * pattern.  The supplied ExchangeHandler is used to handle any faults or
      * reply messages that are generated as part of the message exchange.
      * @param service the service to invoke
-     * @param pattern the message exchange pattern to use
+     * @param contract the exchange contract to use
      * @param handler used to process response and fault messages
      * @return a new Exchange instance
      */
-    Exchange createExchange(Service service, ExchangePattern pattern,
+    Exchange createExchange(Service service, ExchangeContract contract,
             ExchangeHandler handler);
 
     /**
@@ -79,20 +80,20 @@ public interface ServiceDomain {
      * unregister when required
      */
     Service registerService(QName serviceName, ExchangeHandler handler);
-    
+
     /**
-    * Register a service with the domain.
-    * @param serviceName the name of the service
-    * @param handler the handler to use to process exchanges directed at this
-    * service
-    * @param metadata service interface details
-    * @return a reference to the registered service that can be used to
-    * unregister when required
-    */
+     * Register a service with the domain.
+     * @param serviceName the name of the service
+     * @param handler the handler to use to process exchanges directed at this
+     * service
+     * @param metadata service interface details
+     * @return a reference to the registered service that can be used to
+     * unregister when required
+     */
     Service registerService(QName serviceName,
             ExchangeHandler handler,
             ServiceInterface metadata);
-    
+
     /**
      * Returns a references to the transformer registry for this domain.
      * @return transformer registry instance

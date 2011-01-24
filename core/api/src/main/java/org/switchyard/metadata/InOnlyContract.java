@@ -22,34 +22,44 @@
 
 package org.switchyard.metadata;
 
-import org.switchyard.ExchangePattern;
-
 /**
- * Representation of an operation on a ServiceInterface.
- * <p/>
- * Each operation has:
- * <ul>
- * <li>an exchange pattern (IN_OUT, IN_ONLY)
- * <li>a name
- * <li>an input message referenced type
- * <li>an (optional) output message type
- * <li>an (optional) fault message type
- * </ul>
- * <br>
- * The mapping of operation and message names is defined by the concrete 
- * implementation of ServiceInterface.  For example, the expected mapping of 
- * a Java interface would be Java method name to ServiceInterface operation name.
+ * Default/opaque {@link org.switchyard.ExchangePattern#IN_ONLY} exchange
+ * contract.
+ *
+ * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public interface ServiceOperation extends InvocationContract {
+class InOnlyContract implements ExchangeContract {
 
     /**
-     * The exchange pattern for the operation.
-     * @return exchange pattern
+     * Default invoker invocation metadata.
      */
-    ExchangePattern getExchangePattern();
+    private static final InvocationContract INVOCATION_METADATA = new InvocationContract() {
+            @Override
+            public String getInputType() {
+                return null; // Undefined!!
+            }
+            @Override
+            public String getOutputType() {
+                return null; // Undefined!!
+            }
+            @Override
+            public String getFaultType() {
+                return null; // Undefined!!
+            }
+        };
     /**
-     * The name of the operation.
-     * @return operation name
+     * Default operation.
      */
-    String getName();
+    private static final InOnlyOperation SERVICE_OP = new InOnlyOperation(ServiceInterface.DEFAULT_OPERATION);
+
+    @Override
+    public InvocationContract getInvokerInvocationMetaData() {
+        return INVOCATION_METADATA;
+    }
+
+    @Override
+    public ServiceOperation getServiceOperation() {
+        return SERVICE_OP;
+    }
+
 }

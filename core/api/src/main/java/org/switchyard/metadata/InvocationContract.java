@@ -22,34 +22,26 @@
 
 package org.switchyard.metadata;
 
-import org.switchyard.ExchangePattern;
-
 /**
- * Representation of an operation on a ServiceInterface.
- * <p/>
- * Each operation has:
- * <ul>
- * <li>an exchange pattern (IN_OUT, IN_ONLY)
- * <li>a name
- * <li>an input message referenced type
- * <li>an (optional) output message type
- * <li>an (optional) fault message type
- * </ul>
- * <br>
- * The mapping of operation and message names is defined by the concrete 
- * implementation of ServiceInterface.  For example, the expected mapping of 
- * a Java interface would be Java method name to ServiceInterface operation name.
+ * Generic Invocation Contract.
+ * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public interface ServiceOperation extends InvocationContract {
-
+public interface InvocationContract {
     /**
-     * The exchange pattern for the operation.
-     * @return exchange pattern
+     * The name of the input message type.
+     * @return input message type.
      */
-    ExchangePattern getExchangePattern();
+    String getInputType();
     /**
-     * The name of the operation.
-     * @return operation name
+     * The name of the output message type.
+     * @return output message name or null if the operation does not have
+     * an output message (IN_ONLY).
      */
-    String getName();
+    String getOutputType();
+    /**
+     * The name of the output message type.
+     * @return output message name or null if the operation does not have
+     * an output message (IN_ONLY).
+     */
+    String getFaultType();
 }

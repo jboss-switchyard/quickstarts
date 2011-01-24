@@ -31,12 +31,15 @@ import org.junit.Test;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
-import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
 import org.switchyard.Message;
 import org.switchyard.MockHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.metadata.BaseInvocationContract;
+import org.switchyard.metadata.ExchangeContract;
+import org.switchyard.metadata.InvocationContract;
+import org.switchyard.metadata.ServiceOperation;
 
 /**
  *  Unit tests for the ExchangeImpl class.
@@ -52,7 +55,7 @@ public class ExchangeImplTest {
     
     @Test
     public void testSendFaultOnNewExchange() {
-        Exchange exchange = new ExchangeImpl(null, ExchangePattern.IN_OUT);
+        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_OUT);
         try {
             exchange.sendFault(exchange.createMessage());
             Assert.fail("Sending a fault on a new exchange is not allowed");
@@ -63,7 +66,7 @@ public class ExchangeImplTest {
     
     @Test
     public void testPhaseIsNullOnNewExchange() {
-        Exchange exchange = new ExchangeImpl(null, ExchangePattern.IN_OUT);
+        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_OUT);
         Assert.assertNull(exchange.getPhase());
     }
     
@@ -71,7 +74,7 @@ public class ExchangeImplTest {
     public void testPhaseIsInAfterInputMessage() {
         Service service = _domain.registerService(
                 new QName("InPhase"), new MockHandler());
-        Exchange exchange = _domain.createExchange(service, ExchangePattern.IN_ONLY);
+        Exchange exchange = _domain.createExchange(service, ExchangeContract.IN_ONLY);
         exchange.send(exchange.createMessage());
         Assert.assertEquals(ExchangePhase.IN, exchange.getPhase());
     }
@@ -82,7 +85,7 @@ public class ExchangeImplTest {
                 new QName("OutPhase"), new MockHandler().forwardInToOut());
         MockHandler replyHandler = new MockHandler();
         Exchange exchange = _domain.createExchange(
-                service, ExchangePattern.IN_OUT, replyHandler);
+                service, ExchangeContract.IN_OUT, replyHandler);
         exchange.send(exchange.createMessage());
         replyHandler.waitForOKMessage();
         Assert.assertEquals(ExchangePhase.OUT, exchange.getPhase());
@@ -94,7 +97,7 @@ public class ExchangeImplTest {
                 new QName("FaultPhase"), new MockHandler().forwardInToFault());
         MockHandler replyHandler = new MockHandler();
         Exchange exchange = _domain.createExchange(
-                service, ExchangePattern.IN_OUT, replyHandler);
+                service, ExchangeContract.IN_OUT, replyHandler);
         exchange.send(exchange.createMessage());
         replyHandler.waitForFaultMessage();
         Assert.assertEquals(ExchangePhase.OUT, exchange.getPhase());
@@ -140,7 +143,7 @@ public class ExchangeImplTest {
         
         Service service = _domain.registerService(serviceName, provider);
         Exchange exchange = _domain.createExchange(
-                service, ExchangePattern.IN_OUT, consumer);
+                service, ExchangeContract.IN_OUT, consumer);
         Message inMsg = exchange.createMessage();
         inMsg.setContent(inMsgContent);
         exchange.send(inMsg);
@@ -148,7 +151,6 @@ public class ExchangeImplTest {
         // clean up
         service.unregister();
     }
-
 
     @Test
     public void testExceptionOnSendOnFaultExchange() throws Exception {
@@ -161,7 +163,7 @@ public class ExchangeImplTest {
         // Consume the service
         MockHandler consumer = new MockHandler();
         Exchange exchange = _domain.createExchange(
-                service, ExchangePattern.IN_OUT, consumer);
+                service, ExchangeContract.IN_OUT, consumer);
         exchange.send(exchange.createMessage());
 
         // wait, since this is async
@@ -173,6 +175,50 @@ public class ExchangeImplTest {
             exchange.send(exchange.createMessage());
         } catch(IllegalStateException e) {
             Assert.assertEquals("Exchange instance is in a FAULT state.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testExchangeContractServiceOperationProvided() throws Exception {
+        MockHandler provider = new MockHandler();
+        Service service = _domain.registerService(new QName("serviceX"), provider);
+
+        try {
+            _domain.createExchange(service, null);
+        } catch(IllegalArgumentException e) {
+            Assert.assertEquals("null 'contract' arg.", e.getMessage());
+        }
+
+        try {
+            _domain.createExchange(service, new ExchangeContract() {
+                @Override
+                public InvocationContract getInvokerInvocationMetaData() {
+                    return null;
+                }
+
+                @Override
+                public ServiceOperation getServiceOperation() {
+                    return null;
+                }
+            });
+        } catch(IllegalArgumentException e) {
+            Assert.assertEquals("Invalid 'contract' arg.  No invoker invocation metadata defined on the contract instance.", e.getMessage());
+        }
+
+        try {
+            _domain.createExchange(service, new ExchangeContract() {
+                @Override
+                public InvocationContract getInvokerInvocationMetaData() {
+                    return new BaseInvocationContract();
+                }
+
+                @Override
+                public ServiceOperation getServiceOperation() {
+                    return null;
+                }
+            });
+        } catch(IllegalArgumentException e) {
+            Assert.assertEquals("Invalid 'contract' arg.  No ServiceOperation defined on the contract instance.", e.getMessage());
         }
     }
 }

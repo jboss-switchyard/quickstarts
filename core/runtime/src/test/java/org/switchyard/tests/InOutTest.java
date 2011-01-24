@@ -27,10 +27,10 @@ import javax.xml.namespace.QName;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.Exchange;
-import org.switchyard.ExchangePattern;
 import org.switchyard.MockHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.internal.ServiceDomains;
 
 public class InOutTest {
@@ -56,7 +56,7 @@ public class InOutTest {
         // Consume the service
         MockHandler consumer = new MockHandler();
         Exchange exchange = _domain.createExchange(
-                service, ExchangePattern.IN_OUT, consumer);
+                service, ExchangeContract.IN_OUT, consumer);
         exchange.send(exchange.createMessage());
         
         // wait, since this is async
@@ -75,7 +75,7 @@ public class InOutTest {
         // Consume the service
         MockHandler consumer = new MockHandler();
         Exchange exchange = _domain.createExchange(
-                service, ExchangePattern.IN_OUT, consumer);
+                service, ExchangeContract.IN_OUT, consumer);
         exchange.send(exchange.createMessage());
         
         // wait, since this is async

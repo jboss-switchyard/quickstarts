@@ -31,6 +31,10 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerChain;
 import org.switchyard.HandlerException;
+import org.switchyard.Message;
+import org.switchyard.internal.transform.TransformSequence;
+import org.switchyard.metadata.ExchangeContract;
+import org.switchyard.metadata.JavaService;
 
 /**
  * Default handler chain.
@@ -118,8 +122,28 @@ public class DefaultHandlerChain implements HandlerChain, Cloneable {
         } catch (HandlerException handlerEx) {
             _logger.error(handlerEx);
 
-            // TODO : Convert the exception into something more portable ?
-            exchange.sendFault(new DefaultMessage().setContent(handlerEx));
+            Message faultMessage = exchange.createMessage().setContent(handlerEx);
+            initFaultTransformsequence(exchange, handlerEx, faultMessage);
+            exchange.sendFault(faultMessage);
+        }
+    }
+
+    private void initFaultTransformsequence(Exchange exchange, HandlerException handlerEx, Message faultMessage) {
+        ExchangeContract contract = exchange.getContract();
+        String exceptionTypeName = contract.getServiceOperation().getFaultType();
+        String invokerFaultTypeName = contract.getInvokerInvocationMetaData().getFaultType();
+
+        if (exceptionTypeName == null) {
+            exceptionTypeName = JavaService.toMessageType(handlerEx.getClass());
+        }
+
+        if (exceptionTypeName != null && invokerFaultTypeName != null) {
+            // Set up the type info on the message context so as the exception gets transformed
+            // appropriately for the invoker...
+            TransformSequence.
+                from(exceptionTypeName).
+                to(invokerFaultTypeName).
+                associateWith(faultMessage.getContext());
         }
     }
     
