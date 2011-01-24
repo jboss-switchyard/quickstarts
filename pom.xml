@@ -47,20 +47,6 @@
 	
 	<build>
 		<plugins>
-		    <plugin>
-		        <groupId>org.codehaus.mojo</groupId>
-                <artifactId>dashboard-maven-plugin</artifactId>
-                <version>1.0.0-beta-1</version>
-                <executions>
-                    <execution>
-                        <id>aggregate-dashboard</id>
-                        <phase>site</phase>
-                        <goals>
-                            <goal>dashboard</goal>
-                        </goals>
-                    </execution>
-                </executions>
-		    </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -142,6 +128,40 @@
 					<downloadJavadocs>false</downloadJavadocs>
 				</configuration>
 			</plugin>
+            <plugin>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.6</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.switchyard</groupId>
+                        <artifactId>core-build</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>check-style</id>
+                        <phase>site</phase>
+                        <goals> 
+                        <goal>checkstyle</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin> 
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.3.2-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <id>find-bugs</id>
+                        <goals>
+                            <goal>findbugs</goal>
+                        </goals>
+                        <phase>site</phase>
+                    </execution>    
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 	<repositories>
@@ -172,103 +192,7 @@
             </snapshots>
         </pluginRepository>
 	</pluginRepositories>
-    <profiles>
-        <profile>
-            <id>checkstyle</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-                <property>
-                    <name>integration.build</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-checkstyle-plugin</artifactId>
-                        <version>2.6</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.switchyard</groupId>
-                                <artifactId>core-build</artifactId>
-                                <version>${project.version}</version>
-                            </dependency>
-                        </dependencies>
-                        <executions>
-                            <execution>
-                                <id>check-style</id>
-                                <phase>site</phase>
-                                <goals> 
-                                <goal>checkstyle</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>            
-            </build>
-            <reporting>
-            <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <configLocation>checkstyle/checkstyle.xml</configLocation>
-                    <consoleOutput>false</consoleOutput>
-		    <suppressionsLocation>build/src/main/resources/checkstyle/suppressions.xml</suppressionsLocation>
-                    <failsOnError>false</failsOnError>
-                    <useFile/>
-                </configuration>
-            </plugin>
-            </plugins>
-            </reporting>
-        </profile>
-        <profile>
-            <id>findbugs</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-                <property>
-                    <name>integration.build</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>findbugs-maven-plugin</artifactId>
-                        <version>2.3.2-SNAPSHOT</version>
-                        <executions>
-                            <execution>
-                                <id>find-bugs</id>
-                                <goals>
-                                    <goal>findbugs</goal>
-                                </goals>
-                                <phase>verify</phase>
-                            </execution>    
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>            
-            <reporting>
-                <plugins>
-		            <plugin>
-				        <groupId>org.codehaus.mojo</groupId>
-				        <artifactId>findbugs-maven-plugin</artifactId>
-				        <version>2.3.2-SNAPSHOT</version>
-                        
-		            	<configuration>
-                            <outputDirectory>build</outputDirectory>
-                            <findbugsXmlOutput>true</findbugsXmlOutput>
-                            <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
-                            <threshold>Low</threshold>
-                            <effort>Max</effort>
-                            <xmlOutput>true</xmlOutput>
-				        </configuration>				        
-			        </plugin>
-                </plugins>            
-            </reporting>
-        </profile>                
+    <profiles>               
 		<profile>
 			<id>javadoc-uml</id>
 			<activation>
@@ -438,14 +362,39 @@
 			<scope>test</scope>
 			<optional>true</optional>
 		</dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>core-build</artifactId>
+        </dependency>
 	</dependencies>
 	<reporting>
 		<plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>dashboard-maven-plugin</artifactId>
-                <version>1.0.0-beta-1</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <configLocation>checkstyle/checkstyle.xml</configLocation>
+                    <consoleOutput>false</consoleOutput>
+            <suppressionsLocation>checkstyle/suppressions.xml</suppressionsLocation>          
+                    <failsOnError>false</failsOnError>
+                    <useFile/>
+                </configuration>
             </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>findbugs-maven-plugin</artifactId>
+                        <version>2.3.2-SNAPSHOT</version>
+                        
+                        <configuration>
+                            <outputDirectory>build</outputDirectory>
+                            <findbugsXmlOutput>true</findbugsXmlOutput>
+                            <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
+                            <threshold>Low</threshold>
+                            <effort>Max</effort>
+                            <xmlOutput>true</xmlOutput>
+                        </configuration>                        
+                    </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
@@ -472,6 +421,11 @@
             <dependency>
                 <groupId>org.switchyard</groupId>
                 <artifactId>test-util</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard</groupId>
+                <artifactId>core-build</artifactId>
                 <version>${project.version}</version>
             </dependency>
 			<!-- external dependencies -->

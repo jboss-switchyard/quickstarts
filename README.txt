@@ -15,11 +15,9 @@ Maven:
 the tested version specified above
 - 'mvn clean install' to build
 - 'mvn install -DskipTests=true' to skip tests
-- 'mvn install -Pfindbugs' to enable findbugs
-- 'mvn install -Pcheckstyle' to enable checkstyle
-- 'mvn install -Dintegration.build=true' to enable all pre-commit checks
+- 'mvn install findbugs:findbugs' to enable findbugs
+- 'mvn install checkstyle:checkstyle' to enable checkstyle
 - 'mvn javadoc:aggregate' to just run javadoc (see target/site/apidocs/index.html)
-- 'mvn site' to generate site docs (see target/site/index.html)
 
 
 Eclipse:
