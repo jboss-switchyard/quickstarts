@@ -9,11 +9,11 @@
     </parent>
 
     <groupId>org.switchyard.components</groupId>
-    <artifactId>bean</artifactId>
+    <artifactId>component-bean</artifactId>
     <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
-    <name>bean-component</name>
+    <name>SwitchYard: Bean Component</name>
     <url>http://www.switchyard.org</url>
 
     <properties>
