@@ -45,12 +45,12 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
-import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
-import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
+import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.internal.ServiceDomains;
+import org.switchyard.metadata.ServiceOperation;
 
 /**
  * Client Proxy CDI Bean.
@@ -65,24 +65,24 @@ public class ClientProxyBean implements Bean {
     /**
      * The target Service {@link QName}.
      */
-    private QName serviceQName;
+    private QName _serviceQName;
 
     /**
      * The bean proxy Interface {@link Class} of the bean being proxied.  This class
      * must be one of the {@link org.switchyard.component.bean.Service @Service}
      * interfaces implemented by the actual Service bean component.
      */
-    private Class<?> proxyInterface;
+    private Class<?> _proxyInterface;
 
     /**
      * CDI bean qualifiers.  See CDI Specification.
      */
-    private Set<Annotation> qualifiers;
+    private Set<Annotation> _qualifiers;
 
     /**
-     * The dynamic proxy bean instance created from the supplied {@link #proxyInterface}.
+     * The dynamic proxy bean instance created from the supplied {@link #_proxyInterface}.
      */
-    private Object proxyBean;
+    private Object _proxyBean;
 
     /**
      * Public constructor.
@@ -92,20 +92,20 @@ public class ClientProxyBean implements Bean {
      * @param qualifiers     The CDI bean qualifiers.  Copied from the injection point.
      */
     public ClientProxyBean(QName serviceQName, Class<?> proxyInterface, Set<Annotation> qualifiers) {
-        this.serviceQName = serviceQName;
-        this.proxyInterface = proxyInterface;
+        this._serviceQName = serviceQName;
+        this._proxyInterface = proxyInterface;
 
         if (qualifiers != null) {
-            this.qualifiers = qualifiers;
+            this._qualifiers = qualifiers;
         } else {
-            this.qualifiers = new HashSet<Annotation>();
-            this.qualifiers.add(new AnnotationLiteral<Default>() {
+            this._qualifiers = new HashSet<Annotation>();
+            this._qualifiers.add(new AnnotationLiteral<Default>() {
             });
-            this.qualifiers.add(new AnnotationLiteral<Any>() {
+            this._qualifiers.add(new AnnotationLiteral<Any>() {
             });
         }
 
-        proxyBean = Proxy.newProxyInstance(ClientProxyBean.class.getClassLoader(),
+        _proxyBean = Proxy.newProxyInstance(ClientProxyBean.class.getClassLoader(),
                 new Class[]{proxyInterface},
                 new ClientProxyInvocationHandler());
     }
@@ -116,7 +116,7 @@ public class ClientProxyBean implements Bean {
      * @return The Service name.
      */
     public QName getServiceQName() {
-        return serviceQName;
+        return _serviceQName;
     }
 
     /**
@@ -126,7 +126,7 @@ public class ClientProxyBean implements Bean {
      */
     public Set<Type> getTypes() {
         Set<Type> types = new HashSet<Type>();
-        types.add(proxyInterface);
+        types.add(_proxyInterface);
         types.add(Object.class);
         return types;
     }
@@ -137,7 +137,7 @@ public class ClientProxyBean implements Bean {
      * @return the {@linkplain javax.inject.Qualifier qualifiers}
      */
     public Set<Annotation> getQualifiers() {
-        return qualifiers;
+        return _qualifiers;
     }
 
     /**
@@ -167,7 +167,7 @@ public class ClientProxyBean implements Bean {
      * @return the bean {@linkplain Class class}
      */
     public Class<?> getBeanClass() {
-        return proxyInterface;
+        return _proxyInterface;
     }
 
     /**
@@ -226,11 +226,9 @@ public class ClientProxyBean implements Bean {
      *
      * @param creationalContext the context in which this instance is being created
      * @return the contextual instance
-     * @throws javax.enterprise.inject.CreationException
-     *          if a checked exception occurs while creating the instance
      */
     public Object create(CreationalContext creationalContext) {
-        return proxyBean;
+        return _proxyBean;
     }
 
     /**
@@ -253,12 +251,13 @@ public class ClientProxyBean implements Bean {
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             ServiceDomain domain = ServiceDomains.getDomain();
-            org.switchyard.Service service = domain.getService(serviceQName);
+            org.switchyard.Service service = domain.getService(_serviceQName);
+
             if (service == null) {
-                throw new BeanComponentException("Service not registered: " + serviceQName);
+                throw new BeanComponentException("Service not registered: " + _serviceQName);
             }
 
-            if (method.getReturnType() != null && method.getReturnType() != Void.class) {
+            if (method.getReturnType() != null && !Void.TYPE.isAssignableFrom(method.getReturnType())) {
                 final BlockingQueue<Exchange> responseQueue = new ArrayBlockingQueue<Exchange>(1);
 
                 ExchangeHandler responseExchangeHandler = new ExchangeHandler() {
@@ -271,22 +270,21 @@ public class ClientProxyBean implements Bean {
                     }
                 };
 
-                Exchange exchangeIn = domain.createExchange(service, ExchangePattern.IN_OUT, responseExchangeHandler);
 
-                Message sendMessage = prepareSend(exchangeIn, args, method);
-                exchangeIn.send(sendMessage);
+                Exchange exchangeIn = createExchange(domain, service, method, responseExchangeHandler);
+                exchangeIn.send(exchangeIn.createMessage().setContent(args));
 
                 Exchange exchangeOut = responseQueue.take();
-                if(exchangeOut.getState() == ExchangeState.OK) {
+                if (exchangeOut.getState() == ExchangeState.OK) {
                     return exchangeOut.getMessage().getContent();
                 } else {
                     Object exceptionObj = exchangeOut.getMessage().getContent();
 
-                    if(exceptionObj instanceof Throwable) {
-                        if(exceptionObj instanceof BeanComponentException) {
+                    if (exceptionObj instanceof Throwable) {
+                        if (exceptionObj instanceof BeanComponentException) {
                             BeanComponentException beanCompException = (BeanComponentException) exceptionObj;
                             Throwable cause = beanCompException.getCause();
-                            if(cause instanceof InvocationTargetException) {
+                            if (cause instanceof InvocationTargetException) {
                                 throw cause.getCause();
                             } else {
                                 throw cause;
@@ -294,24 +292,26 @@ public class ClientProxyBean implements Bean {
                         }
                         throw (Throwable) exceptionObj;
                     } else {
-                        throw new BeanComponentException("Bean Component invocation failure.  Service '" + serviceQName + "', operation '" + method.getName() + "'.").setFaultExchange(exchangeOut);
+                        throw new BeanComponentException("Bean Component invocation failure.  Service '" + _serviceQName + "', operation '" + method.getName() + "'.").setFaultExchange(exchangeOut);
                     }
                 }
             } else {
-                Exchange exchange = domain.createExchange(service, ExchangePattern.IN_ONLY, null);
-
-                Message sendMessage = prepareSend(exchange, args, method);
-                exchange.send(sendMessage);
+                Exchange exchange = createExchange(domain, service, method, null);
+                exchange.send(exchange.createMessage().setContent(args));
 
                 return null;
             }
         }
 
-        private Message prepareSend(Exchange exchange, Object[] args, Method method) {
-            BeanServiceMetadata.setOperationName(exchange, method.getName());
-            Message inMessage = exchange.createMessage();
-            inMessage.setContent(args);
-            return inMessage;
+        private Exchange createExchange(ServiceDomain domain, org.switchyard.Service service, Method method, ExchangeHandler responseExchangeHandler) throws BeanComponentException {
+            String operationName = method.getName();
+            ServiceOperation operation = service.getInterface().getOperation(operationName);
+
+            if (operation == null) {
+                throw new BeanComponentException("Bean Component invocation failure.  Operation '" + operationName + "' is not defined on Service '" + _serviceQName + "'.");
+            }
+
+            return domain.createExchange(service, new BaseExchangeContract(operation), responseExchangeHandler);
         }
 
     }

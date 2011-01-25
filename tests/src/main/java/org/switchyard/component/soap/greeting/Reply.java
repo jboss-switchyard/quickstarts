@@ -20,29 +20,45 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard.component.soap;
-
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-
-import org.switchyard.Exchange;
-import org.switchyard.Message;
+package org.switchyard.component.soap.greeting;
 
 /**
- * Message composer holds the logic for converting SOAP/XML messages to SwitchYard messages.
- *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
+ * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public interface MessageComposer {
+public class Reply {
+
+    private int _greetingId;
+    private Person _person;
 
     /**
-     * Converts the SOAPMessage to Message.
-     *
-     *
-     * @param soapMessage the SOAPMessage to be converted
-     * @param exchange the exchange that the message will be a part of
-     * @return the composed Message
-     * @throws SOAPException If the SOAP message is not correct.
+     * @return _greetingId
      */
-    Message compose(SOAPMessage soapMessage, Exchange exchange) throws SOAPException;
+    public int getGreetingId() {
+        return _greetingId;
+    }
+
+    /**
+     * @param greetingId greetingId
+     * @return _greetingId
+     */
+    public Reply setGreetingId(int greetingId) {
+        this._greetingId = greetingId;
+        return this;
+    }
+
+    /**
+     * @return _person
+     */
+    public Person getPerson() {
+        return _person;
+    }
+
+    /**
+     * @param person person
+     * @return _person
+     */
+    public Reply setPerson(Person person) {
+        this._person = person;
+        return this;
+    }
 }

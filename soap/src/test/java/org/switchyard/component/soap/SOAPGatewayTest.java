@@ -43,14 +43,16 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.switchyard.Exchange;
-import org.switchyard.ExchangePattern;
 import org.switchyard.Message;
 import org.switchyard.MockHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.XMLHelper;
+import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.internal.ServiceDomains;
+import org.switchyard.metadata.BaseService;
+import org.switchyard.metadata.InOutOperation;
 import org.w3c.dom.Element;
 
 public class SOAPGatewayTest {
@@ -113,7 +115,9 @@ public class SOAPGatewayTest {
         // Provide a switchyard service
         _domain = ServiceDomains.getDomain();
         SOAPProvider provider = new SOAPProvider();
-        _domain.registerService(PUBLISH_AS_WS_SERVICE, provider);
+        _domain.registerService(PUBLISH_AS_WS_SERVICE, provider, new HelloWebServiceInterface());
+
+        _domain.getTransformerRegistry().addTransformer(new HandlerExceptionTransformer());
 
         String host = System.getProperty("org.switchyard.test.soap.host", "localhost");
         String port = System.getProperty("org.switchyard.test.soap.port", "48080");
@@ -157,7 +161,7 @@ public class SOAPGatewayTest {
         // Invoke the WS via our WS Consumer service
         MockHandler consumer = new MockHandler();
         Service service = _domain.getService(WS_CONSUMER_SERVICE);
-        Exchange exchange = _domain.createExchange(service, ExchangePattern.IN_ONLY, consumer);
+        Exchange exchange = _domain.createExchange(service, ExchangeContract.IN_ONLY, consumer);
         Message message = exchange.createMessage().setContent(input);
         exchange.send(message);
     }
@@ -175,7 +179,7 @@ public class SOAPGatewayTest {
         // Invoke the WS via our WS Consumer service
         MockHandler consumer = new MockHandler();
         Service service = _domain.getService(WS_CONSUMER_SERVICE);
-        Exchange exchange = _domain.createExchange(service, ExchangePattern.IN_OUT, consumer);
+        Exchange exchange = _domain.createExchange(service, ExchangeContract.IN_OUT, consumer);
         Message message = exchange.createMessage().setContent(input);
         exchange.send(message);
         consumer.waitForOKMessage();
@@ -201,7 +205,7 @@ public class SOAPGatewayTest {
         // Invoke the WS via our WS Consumer service
         MockHandler consumer = new MockHandler();
         Service service = _domain.getService(WS_CONSUMER_SERVICE);
-        Exchange exchange = _domain.createExchange(service, ExchangePattern.IN_OUT, consumer);
+        Exchange exchange = _domain.createExchange(service, ExchangeContract.IN_OUT, consumer);
         Message message = exchange.createMessage().setContent(input);
         exchange.send(message);
         consumer.waitForOKMessage();
@@ -232,6 +236,12 @@ public class SOAPGatewayTest {
                      + "</soap:Body></soap:Envelope>";
             Assert.assertTrue("Expected \r\n" + output + "\r\nbut was \r\n" + response, XMLHelper.compareXMLContent(output, response));
             i++;
+        }
+    }
+
+    private static class HelloWebServiceInterface extends BaseService {
+        public HelloWebServiceInterface() {
+            super(new InOutOperation("sayHello"));
         }
     }
 }

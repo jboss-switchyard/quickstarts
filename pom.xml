@@ -29,6 +29,7 @@
     <modules>
         <module>bean</module>
         <module>soap</module>
+        <module>tests</module>
     </modules>
     
     <dependencies>
@@ -42,4 +43,20 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.switchyard.components</groupId>
+                <artifactId>component-bean</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.components</groupId>
+                <artifactId>component-soap</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 </project>

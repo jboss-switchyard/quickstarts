@@ -36,7 +36,7 @@ public class SOAPProvider extends BaseHandler {
 
     @Override
     public void handleMessage(Exchange exchange) throws HandlerException {
-        if (exchange.getPattern().equals(ExchangePattern.IN_OUT)) {
+        if (exchange.getContract().getServiceOperation().getExchangePattern().equals(ExchangePattern.IN_OUT)) {
             Message message;
             Element request = exchange.getMessage().getContent(Element.class);
             Element name = XMLHelper.getFirstChildElementByName(request, "arg0");

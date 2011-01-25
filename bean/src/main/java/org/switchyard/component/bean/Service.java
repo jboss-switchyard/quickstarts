@@ -22,7 +22,6 @@
 
 package org.switchyard.component.bean;
 
-import javax.inject.Qualifier;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -36,7 +35,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  * @see org.switchyard.component.bean.Reference
  */
-@Target({TYPE, FIELD})
+@Target({TYPE, FIELD })
 @Retention(RUNTIME)
 @Documented
 public @interface Service {
@@ -47,9 +46,6 @@ public @interface Service {
      * This is the list/array of Interfaces through which the Service implementation
      * ca be proxied to via a {@link org.switchyard.component.bean.Reference} injection
      * point.
-     *
-     * @return The list/array of Service interfaces, or an empty array
-     *         if the Service cannot be proxied to (default).
      */
-    Class<?>[] value() default {};
+    Class<?>[] value() default { };
 }

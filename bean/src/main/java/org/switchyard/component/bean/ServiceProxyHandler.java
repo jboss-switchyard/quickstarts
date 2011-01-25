@@ -45,11 +45,11 @@ public class ServiceProxyHandler implements ExchangeHandler {
     /**
      * The Service bean instance being proxied to.
      */
-    private Object serviceBean;
+    private Object _serviceBean;
     /**
      * The Service bean metadata.
      */
-    private BeanServiceMetadata serviceMetadata;
+    private BeanServiceMetadata _serviceMetadata;
 
     /**
      * Public constructor.
@@ -58,8 +58,8 @@ public class ServiceProxyHandler implements ExchangeHandler {
      * @param serviceMetadata The Service bean metadata.
      */
     public ServiceProxyHandler(Object serviceBean, BeanServiceMetadata serviceMetadata) {
-        this.serviceBean = serviceBean;
-        this.serviceMetadata = serviceMetadata;
+        this._serviceBean = serviceBean;
+        this._serviceMetadata = serviceMetadata;
     }
 
     /**
@@ -87,23 +87,23 @@ public class ServiceProxyHandler implements ExchangeHandler {
      * @throws BeanComponentException Error invoking Bean component operation.
      */
     private void handle(Exchange exchange) throws BeanComponentException {
-        Invocation invocation = serviceMetadata.getInvocation(exchange);
+        Invocation invocation = _serviceMetadata.getInvocation(exchange);
 
         if (invocation != null) {
             try {
-                if (exchange.getPattern() == ExchangePattern.IN_OUT) {
-                    Object responseObject = invocation.getMethod().invoke(serviceBean, invocation.getArgs());
+                if (exchange.getContract().getServiceOperation().getExchangePattern() == ExchangePattern.IN_OUT) {
+                    Object responseObject = invocation.getMethod().invoke(_serviceBean, invocation.getArgs());
                     Message message = exchange.createMessage();
 
                     message.setContent(responseObject);
                     exchange.send(message);
                 } else {
-                    invocation.getMethod().invoke(serviceBean, invocation.getArgs());
+                    invocation.getMethod().invoke(_serviceBean, invocation.getArgs());
                 }
             } catch (IllegalAccessException e) {
-                throw new BeanComponentException("Cannot invoke operation '" + invocation.getMethod().getName() + "' on bean component '" + serviceBean.getClass().getName() + "'.", e);
+                throw new BeanComponentException("Cannot invoke operation '" + invocation.getMethod().getName() + "' on bean component '" + _serviceBean.getClass().getName() + "'.", e);
             } catch (InvocationTargetException e) {
-                throw new BeanComponentException("Invocation of operation '" + invocation.getMethod().getName() + "' on bean component '" + serviceBean.getClass().getName() + "' failed with exception.  See attached cause.", e.getCause());
+                throw new BeanComponentException("Invocation of operation '" + invocation.getMethod().getName() + "' on bean component '" + _serviceBean.getClass().getName() + "' failed with exception.  See attached cause.", e);
             }
         } else {
             throw new RuntimeException("Unexpected error.  BeanServiceMetadata should return an Invocation instance, or throw a BeanComponentException.");

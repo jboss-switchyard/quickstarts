@@ -27,14 +27,15 @@ import javax.xml.namespace.QName;
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.Exchange;
-import org.switchyard.ExchangePattern;
 import org.switchyard.Message;
 import org.switchyard.MockHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.bean.AbstractCDITest;
 import org.switchyard.component.bean.BeanComponentException;
-import org.switchyard.component.bean.BeanServiceMetadata;
+import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.internal.ServiceDomains;
+import org.switchyard.metadata.InOnlyOperation;
+import org.switchyard.metadata.InOutOperation;
 
 /*
  * Assorted methods for testing a CDI bean consuming a service in SwitchYard.
@@ -46,9 +47,7 @@ public class BeanConsumerTest extends AbstractCDITest {
         ServiceDomain domain = ServiceDomains.getDomain();
 
         org.switchyard.Service service = domain.getService(new QName("ConsumerBean"));
-        Exchange exchange = domain.createExchange(service, ExchangePattern.IN_ONLY);
-
-        BeanServiceMetadata.setOperationName(exchange, "consumeInOnlyService");
+        Exchange exchange = domain.createExchange(service, new BaseExchangeContract(new InOnlyOperation("consumeInOnlyService")));
 
         Message inMessage = exchange.createMessage().setContent("hello");
 
@@ -62,10 +61,8 @@ public class BeanConsumerTest extends AbstractCDITest {
 
         MockHandler responseConsumer = new MockHandler();
         org.switchyard.Service service = domain.getService(new QName("ConsumerBean"));
-        Exchange exchange = domain.createExchange(service, ExchangePattern.IN_OUT, responseConsumer);
+        Exchange exchange = domain.createExchange(service, new BaseExchangeContract(new InOutOperation("consumeInOutService")), responseConsumer);
 
-        BeanServiceMetadata.setOperationName(exchange, "consumeInOutService");
-        
         Message inMessage = exchange.createMessage().setContent("hello");
 
         exchange.send(inMessage);
@@ -80,9 +77,7 @@ public class BeanConsumerTest extends AbstractCDITest {
 
         MockHandler responseConsumer = new MockHandler();
         org.switchyard.Service service = domain.getService(new QName("ConsumerBean"));
-        Exchange exchange = domain.createExchange(service, ExchangePattern.IN_OUT, responseConsumer);
-
-        BeanServiceMetadata.setOperationName(exchange, "unknownXOp");
+        Exchange exchange = domain.createExchange(service, new BaseExchangeContract(new InOutOperation("unknownXOp")), responseConsumer);
 
         Message inMessage = exchange.createMessage().setContent("hello");
 
@@ -101,9 +96,7 @@ public class BeanConsumerTest extends AbstractCDITest {
 
         MockHandler responseConsumer = new MockHandler();
         org.switchyard.Service service = domain.getService(new QName("ConsumerBean"));
-        Exchange exchange = domain.createExchange(service, ExchangePattern.IN_OUT, responseConsumer);
-
-        BeanServiceMetadata.setOperationName(exchange, "consumeInOutService");
+        Exchange exchange = domain.createExchange(service, new BaseExchangeContract(new InOutOperation("consumeInOutService")), responseConsumer);
 
         Message inMessage = exchange.createMessage().setContent(
                 new ConsumerException("throw me a remote exception please!!"));
@@ -116,7 +109,7 @@ public class BeanConsumerTest extends AbstractCDITest {
         Object response = faultExchange.getMessage().getContent();
         Assert.assertTrue(response instanceof BeanComponentException);
         Assert.assertEquals("Invocation of operation 'consumeInOutService' on bean component '" + ConsumerBean.class.getName() + "' failed with exception.  See attached cause.", ((BeanComponentException) response).getMessage());
-        Assert.assertTrue(((BeanComponentException) response).getCause() instanceof ConsumerException);
-        Assert.assertEquals("remote-exception-received", ((BeanComponentException) response).getCause().getMessage());
+        Assert.assertTrue((((BeanComponentException) response).getCause()).getCause() instanceof ConsumerException);
+        Assert.assertEquals("remote-exception-received", ((BeanComponentException) response).getCause().getCause().getMessage());
     }
 }

@@ -20,29 +20,46 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard.component.soap;
-
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-
-import org.switchyard.Exchange;
-import org.switchyard.Message;
+package org.switchyard.component.soap.greeting;
 
 /**
- * Message composer holds the logic for converting SOAP/XML messages to SwitchYard messages.
- *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
+ * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public interface MessageComposer {
+public class Person {
+
+    private String _firstName;
+    private String _lastName;
 
     /**
-     * Converts the SOAPMessage to Message.
-     *
-     *
-     * @param soapMessage the SOAPMessage to be converted
-     * @param exchange the exchange that the message will be a part of
-     * @return the composed Message
-     * @throws SOAPException If the SOAP message is not correct.
+     * @return firstname.
      */
-    Message compose(SOAPMessage soapMessage, Exchange exchange) throws SOAPException;
+    public String getFirstName() {
+        return _firstName;
+    }
+
+    /**
+     * @param firstName firstname.
+     */
+    public void setFirstName(String firstName) {
+        this._firstName = firstName;
+    }
+
+    /**
+     * @return lastname.
+     */
+    public String getLastName() {
+        return _lastName;
+    }
+
+    /**
+     * @param lastName lastName.
+     */
+    public void setLastName(String lastName) {
+        this._lastName = lastName;
+    }
+
+    @Override
+    public String toString() {
+        return _lastName + ", " + _firstName;
+    }
 }

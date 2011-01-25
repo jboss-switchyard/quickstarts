@@ -20,29 +20,26 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard.component.soap;
+package org.switchyard.component.soap.greeting;
 
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-
-import org.switchyard.Exchange;
-import org.switchyard.Message;
+import org.switchyard.component.bean.Service;
 
 /**
- * Message composer holds the logic for converting SOAP/XML messages to SwitchYard messages.
- *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
+ * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public interface MessageComposer {
+@Service(GreetingService.class)
+public class GreetingServiceImpl implements GreetingService {
 
-    /**
-     * Converts the SOAPMessage to Message.
-     *
-     *
-     * @param soapMessage the SOAPMessage to be converted
-     * @param exchange the exchange that the message will be a part of
-     * @return the composed Message
-     * @throws SOAPException If the SOAP message is not correct.
-     */
-    Message compose(SOAPMessage soapMessage, Exchange exchange) throws SOAPException;
+    private static final int GREETID = 987789;
+
+    @Override
+    public Reply greet(Greeting greeting) throws GreetingServiceException {
+        System.out.println("\t****Greetings from " + greeting.getPerson() + " at " + greeting.getTime());
+
+        if ("throwme".equals(greeting.getPerson().getFirstName())) {
+            throw new GreetingServiceException("Application Exception from GreetingService !!");
+        }
+
+        return new Reply().setGreetingId(GREETID).setPerson(greeting.getPerson());
+    }
 }

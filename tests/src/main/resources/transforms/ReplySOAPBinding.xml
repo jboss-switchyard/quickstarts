@@ -1,0 +1,46 @@
+<!--
+  ~ JBoss, Home of Professional Open Source.
+  ~ Copyright 2010, Red Hat, Inc., and individual contributors
+  ~ as indicated by the @author tags. See the copyright.txt file in the
+  ~ distribution for a full listing of individual contributors.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
+
+<smooks-resource-list xmlns="http://www.milyn.org/xsd/smooks-1.1.xsd"
+                      xmlns:core="http://www.milyn.org/xsd/smooks/smooks-core-1.4.xsd"
+                      xmlns:jb="http://www.milyn.org/xsd/smooks/javabean-1.4.xsd">
+
+    <!--
+    Binding config for reading/writing between the "{http://greeting.soap.component.switchyard.org/}greetResponse"
+    XML type and the org.switchyard.component.soap.greeting.Reply Java type.
+    -->
+
+    <core:namespaces>
+        <core:namespace prefix="gre" uri="http://greeting.soap.component.switchyard.org/"/>
+    </core:namespaces>
+
+    <jb:bean beanId="greeting" class="org.switchyard.component.soap.greeting.Reply" createOnElement="/gre:greetResponse">
+        <jb:value property="greetingId" data="/gre:greetResponse/return/greetingid" />
+        <jb:wiring property="person" beanIdRef="person" />
+    </jb:bean>
+
+    <jb:bean beanId="person" class="org.switchyard.component.soap.greeting.Person" createOnElement="/gre:greetResponse/return/person">
+        <jb:value property="firstName" data="/gre:greetResponse/return/person/firstname" />
+        <jb:value property="lastName" data="/gre:greetResponse/return/person/lastname" />
+    </jb:bean>
+
+</smooks-resource-list>

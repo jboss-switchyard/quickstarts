@@ -22,11 +22,11 @@
 
 package org.switchyard.component.bean;
 
+import org.switchyard.Exchange;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.switchyard.Exchange;
 
 /**
  * Bean Service meta data.
@@ -37,20 +37,14 @@ import org.switchyard.Exchange;
  */
 public class BeanServiceMetadata {
 
-    // TODO: needs to live somewhere else
-    /**
-     * Operation name key.
-     */
-    private static final String OPERATION_NAME = "OPERATION_NAME";
-
     /**
      * Service bean component runtime class.
      */
-    private Class<? extends Object> serviceClass;
+    private Class<? extends Object> _serviceClass;
     /**
      * List of service methods/operations.
      */
-    private List<Method> serviceMethods = new ArrayList<Method>();
+    private List<Method> _serviceMethods = new ArrayList<Method>();
 
     /**
      * Public constructor.
@@ -61,41 +55,17 @@ public class BeanServiceMetadata {
         Method[] serviceMethods = serviceClass.getMethods();
         for (Method serviceMethod : serviceMethods) {
             if (serviceMethod.getDeclaringClass() != Object.class) {
-                this.serviceMethods.add(serviceMethod);
+                this._serviceMethods.add(serviceMethod);
             }
         }
-        this.serviceClass = serviceClass;
-    }
-
-    // TODO: needs to live somewhere else
-
-    /**
-     * Set the target service operation name of the supplied {@link Exchange} {@link org.switchyard.Context}.
-     *
-     * @param exchange The exchange instance.
-     * @param name     The target service operation name.
-     */
-    public static void setOperationName(Exchange exchange, String name) {
-        exchange.getContext().setProperty(OPERATION_NAME, name);
-    }
-
-    // TODO: needs to live somewhere else
-
-    /**
-     * Get the target service operation name from the supplied {@link Exchange} {@link org.switchyard.Context}.
-     *
-     * @param exchange The exchange instance.
-     * @return The operation name as specified on the {@link Exchange} {@link org.switchyard.Context}.
-     */
-    public static String getOperationName(Exchange exchange) {
-        return (String) exchange.getContext().getProperty(OPERATION_NAME);
+        this._serviceClass = serviceClass;
     }
 
     /**
      * Get the Bean Service operation {@link Invocation} for the specified
      * {@link Exchange}.
      * <p/>
-     * Uses the {@link #getOperationName(org.switchyard.Exchange)} method to extract
+     * Uses the {@link org.switchyard.metadata.ServiceOperation.Name#get(org.switchyard.Exchange)} method to extract
      * the service operation information from the {@link Exchange}.
      *
      * @param exchange The Exchange instance.
@@ -104,18 +74,18 @@ public class BeanServiceMetadata {
      */
     public Invocation getInvocation(Exchange exchange) throws BeanComponentException {
 
-        String operationName = getOperationName(exchange);
+        String operationName = exchange.getContract().getServiceOperation().getName();
 
         if (operationName != null) {
             List<Method> candidateMethods = getCandidateMethods(operationName);
 
             // Operation name must resolve to exactly one bean method...
             if (candidateMethods.size() != 1) {
-                throw new BeanComponentException("Operation name '" + operationName + "' must resolve to exactly one bean method on bean type '" + serviceClass.getName() + "'.");
+                throw new BeanComponentException("Operation name '" + operationName + "' must resolve to exactly one bean method on bean type '" + _serviceClass.getName() + "'.");
             }
 
             Method operationMethod = candidateMethods.get(0);
-            return new Invocation(operationMethod, exchange.getMessage().getContent());
+            return new Invocation(operationMethod, exchange);
         } else {
             throw new BeanComponentException("Operation name not specified on exchange.");
         }
@@ -131,7 +101,7 @@ public class BeanServiceMetadata {
     public List<Method> getCandidateMethods(String operationName) {
         List<Method> candidateMethods = new ArrayList<Method>();
 
-        for (Method serviceMethod : serviceMethods) {
+        for (Method serviceMethod : _serviceMethods) {
             if (serviceMethod.getName().equals(operationName)) {
                 candidateMethods.add(serviceMethod);
             }

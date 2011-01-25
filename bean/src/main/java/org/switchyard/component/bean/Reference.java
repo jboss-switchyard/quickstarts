@@ -40,7 +40,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 @Qualifier
-@Target({TYPE, FIELD})
+@Target({TYPE, FIELD })
 @Retention(RUNTIME)
 @Documented
 public @interface Reference {
@@ -48,9 +48,6 @@ public @interface Reference {
     /**
      * Get the name of the Service to which a reference
      * is to be injected.
-     *
-     * @return The name of the service, or an empty String if
-     *         the reference type {@link Class#getSimpleName() simple name} is to be used (default).
      */
     String value() default "";
 }

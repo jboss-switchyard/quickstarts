@@ -43,11 +43,14 @@ public class DefaultMessageComposer implements MessageComposer {
 
     /**
      * Create a Message from the given SOAP message.
+     *
+     *
      * @param soapMessage the SOAP message to be converted
+     * @param exchange The message Exchange.
      * @return a Message
      * @throws SOAPException If the SOAP message is not correct.
      */
-    public Message compose(final SOAPMessage soapMessage, final Exchange exchange) 
+    public Message compose(final SOAPMessage soapMessage, final Exchange exchange)
     throws SOAPException {
         Message message = exchange.createMessage();
 
@@ -71,6 +74,9 @@ public class DefaultMessageComposer implements MessageComposer {
                 }
             }
         } catch (Exception ex) {
+            if (ex instanceof SOAPException) {
+                throw (SOAPException) ex;
+            }
             throw new SOAPException(ex);
         }
 

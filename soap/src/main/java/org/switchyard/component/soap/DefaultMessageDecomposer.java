@@ -49,9 +49,16 @@ public class DefaultMessageDecomposer implements MessageDecomposer {
             throw new SOAPException("Failed to instantiate SOAP Message Factory");
         }
 
+        Object messagePayload = message.getContent();
+
+        if (messagePayload instanceof SOAPMessage) {
+            return (SOAPMessage) messagePayload;
+        }
+
         final SOAPMessage response = SOAPUtil.SOAP_MESSAGE_FACTORY.createMessage();
         if (message != null) {
-            final Element input = message.getContent(Element.class);
+            final Element input = toElement(messagePayload);
+
             if (input == null) {
                 throw new SOAPException("Null response from service");
             }
@@ -63,5 +70,25 @@ public class DefaultMessageDecomposer implements MessageDecomposer {
             }
         }
         return response;
+    }
+
+    private Element toElement(Object messagePayload) throws SOAPException {
+        if (messagePayload == null) {
+            // Let the caller deal with null...
+            return null;
+        }
+
+        if (messagePayload instanceof Element) {
+            return (Element) messagePayload;
+        } else if (messagePayload instanceof String) {
+            try {
+                return SOAPUtil.parseAsDom((String) messagePayload).getDocumentElement();
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new SOAPException("Error parsing SOAP message to DOM Element.", e);
+            }
+        }
+
+        throw new SOAPException("Unsupported SOAP message payload type '" + messagePayload.getClass().getName() + "'.  Must be a DOM Element, or a String.");
     }
 }

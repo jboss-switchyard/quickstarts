@@ -33,12 +33,20 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Any;
-import javax.enterprise.inject.spi.*;
+import javax.enterprise.inject.spi.AfterBeanDiscovery;
+import javax.enterprise.inject.spi.AfterDeploymentValidation;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.Extension;
+import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.xml.namespace.QName;
 
+import org.switchyard.ServiceDomain;
 import org.switchyard.internal.DefaultHandlerChain;
 import org.switchyard.internal.ServiceDomains;
+import org.switchyard.metadata.JavaService;
+import org.switchyard.transform.Transformer;
 
 /**
  * Portable CDI extension for SwitchYard.
@@ -54,12 +62,14 @@ public class SwitchYardCDIExtension implements Extension {
     /**
      * List of created {@link ClientProxyBean} instances.
      */
-    private List<ClientProxyBean> createdProxyBeans = new ArrayList<ClientProxyBean>();
-
-    private List<Bean<?>> serviceBeans = new ArrayList<Bean<?>>();
+    private List<ClientProxyBean> _createdProxyBeans = new ArrayList<ClientProxyBean>();
+    /**
+     * List of service beans.
+     */
+    private List<Bean<?>> _serviceBeans = new ArrayList<Bean<?>>();
 
     /**
-     * {@link AfterBeanDiscovery} CDI event observer.
+     * {@link javax.enterprise.inject.spi.AfterBeanDiscovery} CDI event observer.
      * <p/>
      * Responsible for the following:
      * <ol>
@@ -71,6 +81,7 @@ public class SwitchYardCDIExtension implements Extension {
      * @param beanManager CDI Bean Manager instance.
      */
     public void afterBeanDiscovery(@Observes AfterBeanDiscovery abd, BeanManager beanManager) {
+        ServiceDomain domain = ServiceDomains.getDomain();
         Set<Bean<?>> allBeans = beanManager.getBeans(Object.class, new AnnotationLiteral<Any>() {
         });
 
@@ -97,9 +108,23 @@ public class SwitchYardCDIExtension implements Extension {
                 Class<?> serviceType = bean.getBeanClass();
                 Service serviceAnnotation = serviceType.getAnnotation(Service.class);
 
-                serviceBeans.add(bean);
+                _serviceBeans.add(bean);
                 if (serviceType.isInterface()) {
                     addInjectableClientProxyBean(bean, serviceType, serviceAnnotation, beanManager, abd);
+                }
+            }
+
+            // Register all transformers we can find...
+            if (Transformer.class.isAssignableFrom(bean.getBeanClass())) {
+                Class<?> transformerRT = bean.getBeanClass();
+
+                // TODO: Should probably only auto register a transformer based on an annotation or interface ??
+                try {
+                    domain.getTransformerRegistry().addTransformer((Transformer) transformerRT.newInstance());
+                } catch (InstantiationException e) {
+                    throw new IllegalStateException("Invalid Transformer implementation '" + transformerRT.getName() + "'.", e);
+                } catch (IllegalAccessException e) {
+                    throw new IllegalStateException("Invalid Transformer implementation '" + transformerRT.getName() + "'.", e);
                 }
             }
         }
@@ -118,7 +143,7 @@ public class SwitchYardCDIExtension implements Extension {
      * @param beanManager CDI Bean Manager instance.
      */
     public void afterDeploymentValidation(@Observes AfterDeploymentValidation adv, BeanManager beanManager) {
-        for(Bean<?> bean : serviceBeans) {
+        for (Bean<?> bean : _serviceBeans) {
             Class<?> serviceType = bean.getBeanClass();
             Service serviceAnnotation = serviceType.getAnnotation(Service.class);
 
@@ -148,7 +173,7 @@ public class SwitchYardCDIExtension implements Extension {
         // Register the Service in the ESB domain...
         DefaultHandlerChain handlerChain = new DefaultHandlerChain();
         handlerChain.addLast("serviceProxy", proxyHandler);
-        ServiceDomains.getDomain().registerService(serviceQName, handlerChain);
+        ServiceDomains.getDomain().registerService(serviceQName, handlerChain, JavaService.fromClass(serviceType));
     }
 
     private void addInjectableClientProxyBean(Bean<?> serviceBean, Class<?> serviceType, Service serviceAnnotation, BeanManager beanManager, AfterBeanDiscovery abd) {
@@ -164,7 +189,7 @@ public class SwitchYardCDIExtension implements Extension {
 
     private void addClientProxyBean(QName serviceQName, Class<?> beanClass, Set<Annotation> qualifiers, AfterBeanDiscovery abd) {
         // Check do we already have a proxy for this service interface...
-        for (ClientProxyBean clientProxyBean : createdProxyBeans) {
+        for (ClientProxyBean clientProxyBean : _createdProxyBeans) {
             if (serviceQName.equals(clientProxyBean.getServiceQName()) && beanClass == clientProxyBean.getBeanClass()) {
                 // ignore... we already have a proxy ...
                 return;
@@ -172,7 +197,7 @@ public class SwitchYardCDIExtension implements Extension {
         }
 
         ClientProxyBean clientProxyBean = new ClientProxyBean(serviceQName, beanClass, qualifiers);
-        createdProxyBeans.add(clientProxyBean);
+        _createdProxyBeans.add(clientProxyBean);
         abd.addBean(clientProxyBean);
     }
 

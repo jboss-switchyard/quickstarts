@@ -20,29 +20,47 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard.component.soap;
+package org.switchyard.component.soap.greeting;
 
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-
-import org.switchyard.Exchange;
-import org.switchyard.Message;
+import java.util.Date;
 
 /**
- * Message composer holds the logic for converting SOAP/XML messages to SwitchYard messages.
- *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
+ * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public interface MessageComposer {
+public class Greeting {
+
+    private Person _person;
+    private Date _time;
 
     /**
-     * Converts the SOAPMessage to Message.
-     *
-     *
-     * @param soapMessage the SOAPMessage to be converted
-     * @param exchange the exchange that the message will be a part of
-     * @return the composed Message
-     * @throws SOAPException If the SOAP message is not correct.
+     * Get person.
+     * @return person.
      */
-    Message compose(SOAPMessage soapMessage, Exchange exchange) throws SOAPException;
+    public Person getPerson() {
+        return _person;
+    }
+
+    /**
+     * Set person.
+     * @param person Person.
+     */
+    public void setPerson(Person person) {
+        this._person = person;
+    }
+
+    /**
+     * Get time.
+     * @return time.
+     */
+    public Date getTime() {
+        return _time;
+    }
+
+    /**
+     * Set time.
+     * @param time Time.
+     */
+    public void setTime(Date time) {
+        this._time = time;
+    }
 }
