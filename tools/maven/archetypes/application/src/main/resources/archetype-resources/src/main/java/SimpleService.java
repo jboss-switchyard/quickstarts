@@ -1,4 +1,4 @@
-package ${groupId};
+package ${package};
 
 public interface SimpleService {
 }
