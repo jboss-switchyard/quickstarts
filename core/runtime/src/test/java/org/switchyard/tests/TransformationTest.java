@@ -39,6 +39,7 @@ import org.switchyard.Message;
 import org.switchyard.MessageBuilder;
 import org.switchyard.MockHandler;
 import org.switchyard.Scope;
+import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.internal.ServiceDomains;
 import org.switchyard.internal.transform.BaseTransformer;
@@ -86,11 +87,11 @@ public class TransformationTest {
 
         // Provide the service
         MockHandler provider = new MockHandler();
-        _domain.registerService(serviceName, provider);
+        Service service = _domain.registerService(serviceName, provider);
         
         // Create the exchange, add the transformer, and invoke the service
         Exchange exchange = _domain.createExchange(
-                serviceName, ExchangePattern.IN_ONLY);
+                service, ExchangePattern.IN_ONLY);
         Context msgCtx = exchange.createContext();
         msgCtx.setProperty(Transformer.class.getName(), dateToString);
         
@@ -128,11 +129,11 @@ public class TransformationTest {
 
         // Provide the service
         MockHandler provider = new MockHandler();
-        _domain.registerService(serviceName, provider);
+        Service service = _domain.registerService(serviceName, provider);
         
         // Create the exchange, add the transformer, and invoke the service
         Exchange exchange = _domain.createExchange(
-                serviceName, ExchangePattern.IN_ONLY);
+                service, ExchangePattern.IN_ONLY);
         exchange.getContext().setProperty(Transformer.class.getName(), dateToString);
         
         Message msg = MessageBuilder.newInstance().buildMessage();
@@ -168,11 +169,11 @@ public class TransformationTest {
         
         // Provide the service
         MockHandler provider = new MockHandler();
-        _domain.registerService(serviceName, provider);
+        Service service = _domain.registerService(serviceName, provider);
         
         // Create the exchange and invoke the service
         Exchange exchange = _domain.createExchange(
-                serviceName, ExchangePattern.IN_ONLY);
+                service, ExchangePattern.IN_ONLY);
         
         // Set the from and to message names.  NOTE: setting to the to message
         // name will not be necessary once the service definition is available

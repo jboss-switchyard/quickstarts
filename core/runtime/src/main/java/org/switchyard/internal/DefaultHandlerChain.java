@@ -103,7 +103,7 @@ public class DefaultHandlerChain implements HandlerChain {
         } catch (HandlerException handlerEx) {
             _logger.error(handlerEx);
 
-            // TODO: Convert the exception into something more portable ?
+            // TODO : Convert the exception into something more portable ?
             exchange.sendFault(new DefaultMessage().setContent(handlerEx));
         }
     }

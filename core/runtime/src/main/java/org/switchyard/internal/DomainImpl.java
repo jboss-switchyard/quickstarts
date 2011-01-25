@@ -22,6 +22,8 @@
 
 package org.switchyard.internal;
 
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
 import org.switchyard.Exchange;
@@ -33,6 +35,8 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.internal.handlers.AddressingHandler;
 import org.switchyard.internal.handlers.DeliveryHandler;
 import org.switchyard.internal.handlers.TransformHandler;
+import org.switchyard.metadata.InOutService;
+import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.spi.Endpoint;
 import org.switchyard.spi.EndpointProvider;
 import org.switchyard.spi.ServiceRegistry;
@@ -70,12 +74,12 @@ public class DomainImpl implements ServiceDomain {
         // handled this via config.
         _systemHandlers = new DefaultHandlerChain();
         _systemHandlers.addLast("transformation", new TransformHandler(_transformerRegistry));
-        _systemHandlers.addLast("addressing", new AddressingHandler(_registry));
+        _systemHandlers.addLast("addressing", new AddressingHandler());
         _systemHandlers.addLast("delivery", new DeliveryHandler());
     }
 
     @Override
-    public Exchange createExchange(QName service, ExchangePattern pattern) {
+    public Exchange createExchange(Service service, ExchangePattern pattern) {
         return createExchange(service, pattern, null);
     }
 
@@ -83,7 +87,7 @@ public class DomainImpl implements ServiceDomain {
 
     @Override
     public Exchange createExchange(
-            QName service, ExchangePattern pattern, ExchangeHandler handler) {
+            Service service, ExchangePattern pattern, ExchangeHandler handler) {
         // setup the system handlers
         HandlerChain handlers = new DefaultHandlerChain();
         handlers.addLast("system.handlers", _systemHandlers);
@@ -102,12 +106,22 @@ public class DomainImpl implements ServiceDomain {
 
     @Override
     public Service registerService(QName serviceName, ExchangeHandler handler) {
+        return registerService(serviceName, handler, null);
+    }
+    
+    @Override
+    public Service registerService(QName serviceName, ExchangeHandler handler,
+            ServiceInterface metadata) {
         HandlerChain handlers = new DefaultHandlerChain();
         handlers.addLast("provider", handler);
         Endpoint ep = _endpointProvider.createEndpoint(handlers);
-        return _registry.registerService(serviceName, ep, handlers, this);
+        // If no service interface is provided, we default to InOutService
+        if (metadata != null) {
+            return _registry.registerService(serviceName, metadata, ep, handlers, this);
+        } else {
+            return _registry.registerService(serviceName, new InOutService(), ep, handlers, this);
+        }
     }
-
 
     @Override
     public String getName() {
@@ -117,5 +131,11 @@ public class DomainImpl implements ServiceDomain {
     @Override
     public TransformerRegistry getTransformerRegistry() {
         return _transformerRegistry;
+    }
+    
+    @Override
+    public Service getService(QName serviceName) {
+        List<Service> services = _registry.getServices(serviceName);
+        return services.isEmpty() ? null : services.get(0);
     }
 }

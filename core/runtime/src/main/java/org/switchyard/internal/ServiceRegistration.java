@@ -27,6 +27,7 @@ import javax.xml.namespace.QName;
 import org.switchyard.HandlerChain;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.spi.Endpoint;
 import org.switchyard.spi.ServiceRegistry;
 
@@ -41,14 +42,17 @@ public class ServiceRegistration implements Service {
     private final Endpoint _endpoint;
     private final QName _serviceName;
     private final HandlerChain _handlers;
+    private final ServiceInterface _serviceInterface;
 
     ServiceRegistration(QName serviceName,
+            ServiceInterface serviceInterface,
             Endpoint endpoint,
             HandlerChain handlers,
             ServiceRegistry registry,
             ServiceDomain domain) {
 
         _serviceName = serviceName;
+        _serviceInterface = serviceInterface;
         _endpoint = endpoint;
         _handlers = handlers;
         _registry = registry;
@@ -87,5 +91,10 @@ public class ServiceRegistration implements Service {
      */
     public HandlerChain getHandlers() {
         return _handlers;
+    }
+
+    @Override
+    public ServiceInterface getInterface() {
+        return _serviceInterface;
     }
 }

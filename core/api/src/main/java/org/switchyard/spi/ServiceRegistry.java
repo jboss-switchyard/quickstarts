@@ -29,6 +29,7 @@ import javax.xml.namespace.QName;
 import org.switchyard.HandlerChain;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.metadata.ServiceInterface;
 
 /**
  * A runtime service registry can be queried
@@ -45,8 +46,8 @@ public interface ServiceRegistry {
      * @param domain domain
      * @return Service
      */
-    Service registerService(QName serviceName, Endpoint endpoint,
-            HandlerChain handlers, ServiceDomain domain);
+    Service registerService(QName serviceName, ServiceInterface serviceInterface,
+            Endpoint endpoint, HandlerChain handlers, ServiceDomain domain);
     /**
      * Unregister the service.
      * @param service service

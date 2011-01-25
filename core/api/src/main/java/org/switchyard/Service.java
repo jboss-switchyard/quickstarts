@@ -24,10 +24,10 @@ package org.switchyard;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.metadata.ServiceInterface;
+
 /**
- * A service registered with the SwitchYard runtime.  Service instances are only
- * used by code that registers a service and have no real relevance to code
- * which consumes the service.
+ * A service registered with the SwitchYard runtime.
  */
 public interface Service {
     /**
@@ -35,6 +35,11 @@ public interface Service {
      * @return service name
      */
     QName getName();
+    /**
+    * Interface metadata for the registered service.
+    * @return the service interface
+    */
+    ServiceInterface getInterface();
     /**
      * Used to notify the SwitchYard runtime that the service should be
      * removed from the runtime registry and no further exchanges should be

@@ -25,8 +25,6 @@ package org.switchyard.internal;
 import java.util.HashMap;
 import java.util.UUID;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
@@ -34,6 +32,7 @@ import org.switchyard.ExchangeState;
 import org.switchyard.HandlerChain;
 import org.switchyard.Message;
 import org.switchyard.Scope;
+import org.switchyard.Service;
 import org.switchyard.spi.Endpoint;
 
 /**
@@ -44,24 +43,24 @@ public class ExchangeImpl implements Exchange {
     /**
      * In message.
      */
-    public static final String IN_MSG       = "in";
+    public static final String IN_MSG = "in";
     /**
      * Out message.
      */
-    public static final String OUT_MSG      = "out";
+    public static final String OUT_MSG = "out";
     /**
      * Fault message.
      */
-    public static final String FAULT_MSG    = "fault";
+    public static final String FAULT_MSG = "fault";
 
-    private final String          _exchangeId;
-    private final ExchangePattern _pattern;
-    private final QName           _service;
-    private Message _message;
-    private ExchangeState _state = ExchangeState.OK;
-    private final HandlerChain _handlers;
-    private Endpoint              _source;
-    private Endpoint              _target;
+    private final String            _exchangeId;
+    private final ExchangePattern   _pattern;
+    private final Service           _service;
+    private Message                 _message;
+    private ExchangeState           _state = ExchangeState.OK;
+    private final HandlerChain      _handlers;
+    private Endpoint                _source;
+    private Endpoint                _target;
     private final HashMap<Scope, Context> _context =
         new HashMap<Scope, Context>();
 
@@ -71,7 +70,7 @@ public class ExchangeImpl implements Exchange {
      * @param pattern exchange pattern
      * @param handlers handlers
      */
-    ExchangeImpl(QName service, ExchangePattern pattern, HandlerChain handlers) {
+    ExchangeImpl(Service service, ExchangePattern pattern, HandlerChain handlers) {
         _service = service;
         _pattern = pattern;
         _handlers = handlers;
@@ -100,7 +99,7 @@ public class ExchangeImpl implements Exchange {
     }
 
     @Override
-    public QName getService() {
+    public Service getService() {
         return _service;
     }
 
