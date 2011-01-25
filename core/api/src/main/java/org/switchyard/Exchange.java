@@ -69,13 +69,10 @@ public interface Exchange {
      */
     ExchangePattern getPattern();
     /**
-     * The service being invoked by this exchange. Note that this is just a
-     * name and is completely separate from the runtime state of service
-     * registrations.  The runtime will resolve the service name to one or
-     * more concrete endpoints when the exchange is sent.
-     * @return the qualified name of the service to be invoked
+     * The service being invoked by this exchange.
+     * @return Service to be invoked
      */
-    QName getService();
+    Service getService();
 
     /**
      * Returns the current message for the exchange.  On new exchanges, this

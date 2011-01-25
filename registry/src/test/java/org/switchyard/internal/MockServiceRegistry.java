@@ -29,6 +29,7 @@ import javax.xml.namespace.QName;
 import org.switchyard.HandlerChain;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.spi.Endpoint;
 import org.switchyard.spi.ServiceRegistry;
 
@@ -37,10 +38,12 @@ public class MockServiceRegistry implements ServiceRegistry {
     }
     
     @Override
-    public Service registerService(QName serviceName, Endpoint endpoint,
+    public Service registerService(QName serviceName, 
+            ServiceInterface serviceInterface, Endpoint endpoint,
             HandlerChain handlers, ServiceDomain domain) {
         QName mockName = new QName("mockServiceName");
-        return new ServiceRegistration(mockName, endpoint, handlers, this, domain);
+        return new ServiceRegistration(
+                mockName, serviceInterface, endpoint, handlers, this, domain);
     }
 
     @Override

@@ -22,15 +22,11 @@
 
 package org.switchyard.internal.handlers;
 
-import java.util.List;
-
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
-import org.switchyard.Service;
 import org.switchyard.internal.ExchangeImpl;
 import org.switchyard.internal.ServiceRegistration;
-import org.switchyard.spi.ServiceRegistry;
 
 /**
  * AddressingHandler is a handler which determines the
@@ -38,14 +34,10 @@ import org.switchyard.spi.ServiceRegistry;
  */
 public class AddressingHandler implements ExchangeHandler {
 
-    private final ServiceRegistry _registry;
-
     /**
-     * Constructor.
-     * @param registry registry
+     * Create a new AddressingHandler.
      */
-    public AddressingHandler(ServiceRegistry registry) {
-        _registry = registry;
+    public AddressingHandler() {
     }
 
     @Override
@@ -60,19 +52,7 @@ public class AddressingHandler implements ExchangeHandler {
         ExchangeImpl ei = (ExchangeImpl) exchange;
 
         if (ei.getTarget() == null) {
-            // find the receiving channel
-            List<Service> serviceList =
-                _registry.getServices(exchange.getService());
-
-            if (serviceList.isEmpty()) {
-                // could not find a registered service - set the exchange
-                throw new HandlerException(
-                        "No endpoints for service " + exchange.getService());
-            }
-
-            // Endpoint selection is arbitrary at the moment
-            ServiceRegistration sr = (ServiceRegistration) serviceList.get(0);
-            ei.setTarget(sr.getEndpoint());
+            ei.setTarget(((ServiceRegistration) exchange.getService()).getEndpoint());
         }
     }
 

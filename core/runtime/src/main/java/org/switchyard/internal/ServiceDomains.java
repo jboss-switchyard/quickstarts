@@ -35,7 +35,7 @@ import org.switchyard.transform.TransformerRegistry;
 /**
  * Service Domains.
  */
-public class ServiceDomains {
+public final class ServiceDomains {
     /**
      * Root domain property.
      */

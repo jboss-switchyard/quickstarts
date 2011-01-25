@@ -50,7 +50,7 @@ public class ExchangeImplTest {
     
     @Before
     public void setUp() throws Exception {
-        _exchange = new ExchangeImpl(new QName("bleh"), ExchangePattern.IN_ONLY, null);
+        _exchange = new ExchangeImpl(null, null, null);
         _domain = ServiceDomains.getDomain();
     }
     
@@ -130,7 +130,7 @@ public class ExchangeImplTest {
         
         Service service = _domain.registerService(serviceName, provider);
         Exchange exchange = _domain.createExchange(
-                serviceName, ExchangePattern.IN_OUT, consumer);
+                service, ExchangePattern.IN_OUT, consumer);
         Message inMsg = MessageBuilder.newInstance().buildMessage();
         Context inCtx = exchange.createContext();
         inCtx.setProperty(sharedPropName, inPropVal);
@@ -182,7 +182,7 @@ public class ExchangeImplTest {
         
         Service service = _domain.registerService(serviceName, provider);
         Exchange exchange = _domain.createExchange(
-                serviceName, ExchangePattern.IN_OUT, consumer);
+                service, ExchangePattern.IN_OUT, consumer);
         Message inMsg = MessageBuilder.newInstance().buildMessage();
         inMsg.setContent(inMsgContent);
         exchange.send(inMsg);
@@ -198,12 +198,12 @@ public class ExchangeImplTest {
         final QName serviceName = new QName("testExceptionOnSendOnFaultExchange");
         // Provide the service
         MockHandler provider = new MockHandler().forwardInToFault();
-        _domain.registerService(serviceName, provider);
+        Service service = _domain.registerService(serviceName, provider);
 
         // Consume the service
         MockHandler consumer = new MockHandler();
         Exchange exchange = _domain.createExchange(
-                serviceName, ExchangePattern.IN_OUT, consumer);
+                service, ExchangePattern.IN_OUT, consumer);
         exchange.send(MessageBuilder.newInstance().buildMessage());
 
         // wait, since this is async

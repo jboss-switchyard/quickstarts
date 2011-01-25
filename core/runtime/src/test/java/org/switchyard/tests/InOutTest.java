@@ -30,6 +30,7 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.MessageBuilder;
 import org.switchyard.MockHandler;
+import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.internal.ServiceDomains;
 
@@ -51,12 +52,12 @@ public class InOutTest {
 
         // Provide the service
         MockHandler provider = new MockHandler().forwardInToOut();
-        _domain.registerService(serviceName, provider);
+        Service service = _domain.registerService(serviceName, provider);
         
         // Consume the service
         MockHandler consumer = new MockHandler();
         Exchange exchange = _domain.createExchange(
-                serviceName, ExchangePattern.IN_OUT, consumer);
+                service, ExchangePattern.IN_OUT, consumer);
         exchange.send(MessageBuilder.newInstance().buildMessage());
         
         // wait, since this is async
@@ -70,12 +71,12 @@ public class InOutTest {
         final QName serviceName = new QName("inOutFault");
         // Provide the service
         MockHandler provider = new MockHandler().forwardInToFault();
-        _domain.registerService(serviceName, provider);
+        Service service = _domain.registerService(serviceName, provider);
         
         // Consume the service
         MockHandler consumer = new MockHandler();
         Exchange exchange = _domain.createExchange(
-                serviceName, ExchangePattern.IN_OUT, consumer);
+                service, ExchangePattern.IN_OUT, consumer);
         exchange.send(MessageBuilder.newInstance().buildMessage());
         
         // wait, since this is async

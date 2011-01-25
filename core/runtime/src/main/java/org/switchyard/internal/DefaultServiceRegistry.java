@@ -34,6 +34,8 @@ import javax.xml.namespace.QName;
 import org.switchyard.HandlerChain;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.metadata.ServiceInterface;
+import org.switchyard.spi.Endpoint;
 import org.switchyard.spi.ServiceRegistry;
 
 /**
@@ -81,11 +83,11 @@ public class DefaultServiceRegistry implements ServiceRegistry {
 
     @Override
     public synchronized Service registerService(QName serviceName,
-            org.switchyard.spi.Endpoint endpoint, HandlerChain handlers,
-            ServiceDomain domain) {
+            ServiceInterface serviceInterface, Endpoint endpoint, 
+            HandlerChain handlers, ServiceDomain domain) {
 
         ServiceRegistration sr = new ServiceRegistration(
-                serviceName, endpoint, handlers, this, domain);
+                serviceName, serviceInterface, endpoint, handlers, this, domain);
 
         List<ServiceRegistration> serviceList = _services.get(serviceName);
         if (serviceList == null) {

@@ -36,6 +36,7 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
 import org.switchyard.MessageBuilder;
+import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.internal.ServiceDomains;
 
@@ -67,10 +68,10 @@ public class InOnlyTest {
 			    inEvents.add(event);
 			}
         };
-        _domain.registerService(serviceName, provider);
+        Service service = _domain.registerService(serviceName, provider);
         
         // Consume the service
-        Exchange exchange = _domain.createExchange(serviceName, ExchangePattern.IN_ONLY);
+        Exchange exchange = _domain.createExchange(service, ExchangePattern.IN_ONLY);
         exchange.send(MessageBuilder.newInstance().buildMessage());
         
         // wait a sec, since this is async
