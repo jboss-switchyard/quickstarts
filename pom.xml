@@ -390,7 +390,7 @@
                             <outputDirectory>build</outputDirectory>
                             <findbugsXmlOutput>true</findbugsXmlOutput>
                             <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
-                            <threshold>Low</threshold>
+                            <threshold>Normal</threshold>
                             <effort>Max</effort>
                             <xmlOutput>true</xmlOutput>
                         </configuration>                        

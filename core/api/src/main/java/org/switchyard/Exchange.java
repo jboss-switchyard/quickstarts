@@ -22,7 +22,6 @@
 
 package org.switchyard;
 
-import javax.xml.namespace.QName;
 
 /**
  * An Exchange represents an instance of a service invocation with a specific

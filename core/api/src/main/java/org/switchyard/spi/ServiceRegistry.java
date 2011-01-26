@@ -41,6 +41,7 @@ public interface ServiceRegistry {
     /**
      * Register a service.
      * @param serviceName service name
+     * @param serviceInterface service interface
      * @param endpoint endpoint
      * @param handlers handlers
      * @param domain domain
