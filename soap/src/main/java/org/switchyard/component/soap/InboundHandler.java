@@ -22,9 +22,6 @@
  
 package org.switchyard.component.soap;
 
-import com.sun.net.httpserver.HttpContext;
-import com.sun.net.httpserver.HttpServer;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -50,10 +47,14 @@ import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Scope;
+import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
-import org.switchyard.internal.ServiceDomains;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
+import org.switchyard.internal.ServiceDomains;
+
+import com.sun.net.httpserver.HttpContext;
+import com.sun.net.httpserver.HttpServer;
 
 /**
  * Hanldes SOAP requests to invoke a SwitchYard service.
@@ -73,6 +74,7 @@ public class InboundHandler extends BaseHandler {
     private ServiceDomain _domain;
     private String _wsdlLocation;
     private QName _serviceName;
+    private Service _service;
     private long _waitTimeout = DEFAULT_TIMEOUT; // default of 15 seconds
     private Endpoint _endpoint;
     private String _wsName;
@@ -148,6 +150,13 @@ public class InboundHandler extends BaseHandler {
             BaseWebService wsProvider = new BaseWebService();
             // Hook the handler
             wsProvider.setConsumer(this);
+            
+            // lookup the SwitchYard service
+            _service = _domain.getService(_serviceName);
+            if (_service == null) {
+                throw new WebServicePublishException(
+                        "Target service not registered: " + _serviceName);
+            }
 
             _endpoint = Endpoint.create(wsProvider);
             List<Source> metadata = new ArrayList<Source>();
@@ -224,14 +233,14 @@ public class InboundHandler extends BaseHandler {
             String messageName = SOAPUtil.getMessageName(_wsdlPort, operationName);
             isOneWay = SOAPUtil.isMessageOneWay(_wsdlPort, operationName);
             if (isOneWay) {
-                Exchange exchange = _domain.createExchange(_serviceName, ExchangePattern.IN_ONLY, this);
+                Exchange exchange = _domain.createExchange(_service, ExchangePattern.IN_ONLY, this);
                 exchange.getContext(Scope.EXCHANGE).setProperty(OPERATION_NAME, operationName);
                 Message message = _composer.compose(soapMessage);
                 Context msgCtx = exchange.createContext();
                 msgCtx.setProperty(MESSAGE_NAME, messageName);
                 exchange.send(message, msgCtx);
             } else {
-                Exchange exchange = _domain.createExchange(_serviceName, ExchangePattern.IN_OUT, this);
+                Exchange exchange = _domain.createExchange(_service, ExchangePattern.IN_OUT, this);
                 exchange.getContext(Scope.EXCHANGE).setProperty(OPERATION_NAME, operationName);
                 Message message = _composer.compose(soapMessage);
                 Context msgCtx = exchange.createContext();

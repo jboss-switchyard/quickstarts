@@ -46,7 +46,8 @@ public class BeanConsumerTest extends AbstractCDITest {
     public void consumeInOnlyServiceFromBean() {
         ServiceDomain domain = ServiceDomains.getDomain();
 
-        Exchange exchange = domain.createExchange(new QName("ConsumerBean"), ExchangePattern.IN_ONLY);
+        org.switchyard.Service service = domain.getService(new QName("ConsumerBean"));
+        Exchange exchange = domain.createExchange(service, ExchangePattern.IN_ONLY);
 
         BeanServiceMetadata.setOperationName(exchange, "consumeInOnlyService");
 
@@ -62,7 +63,8 @@ public class BeanConsumerTest extends AbstractCDITest {
         ServiceDomain domain = ServiceDomains.getDomain();
 
         MockHandler responseConsumer = new MockHandler();
-        Exchange exchange = domain.createExchange(new QName("ConsumerBean"), ExchangePattern.IN_OUT, responseConsumer);
+        org.switchyard.Service service = domain.getService(new QName("ConsumerBean"));
+        Exchange exchange = domain.createExchange(service, ExchangePattern.IN_OUT, responseConsumer);
 
         BeanServiceMetadata.setOperationName(exchange, "consumeInOutService");
         
@@ -80,7 +82,8 @@ public class BeanConsumerTest extends AbstractCDITest {
         ServiceDomain domain = ServiceDomains.getDomain();
 
         MockHandler responseConsumer = new MockHandler();
-        Exchange exchange = domain.createExchange(new QName("ConsumerBean"), ExchangePattern.IN_OUT, responseConsumer);
+        org.switchyard.Service service = domain.getService(new QName("ConsumerBean"));
+        Exchange exchange = domain.createExchange(service, ExchangePattern.IN_OUT, responseConsumer);
 
         BeanServiceMetadata.setOperationName(exchange, "unknownXOp");
 
@@ -101,7 +104,8 @@ public class BeanConsumerTest extends AbstractCDITest {
         ServiceDomain domain = ServiceDomains.getDomain();
 
         MockHandler responseConsumer = new MockHandler();
-        Exchange exchange = domain.createExchange(new QName("ConsumerBean"), ExchangePattern.IN_OUT, responseConsumer);
+        org.switchyard.Service service = domain.getService(new QName("ConsumerBean"));
+        Exchange exchange = domain.createExchange(service, ExchangePattern.IN_OUT, responseConsumer);
 
         BeanServiceMetadata.setOperationName(exchange, "consumeInOutService");
 

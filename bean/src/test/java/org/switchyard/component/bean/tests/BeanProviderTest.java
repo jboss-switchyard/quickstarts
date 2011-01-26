@@ -45,8 +45,8 @@ public class BeanProviderTest extends AbstractCDITest {
     public void invokeOneWayProviderWithInOnly() {
         
         ServiceDomain domain = ServiceDomains.getDomain();
-
-        Exchange exchange = domain.createExchange(new QName("OneWay"), ExchangePattern.IN_ONLY);
+        org.switchyard.Service service = domain.getService(new QName("OneWay"));
+        Exchange exchange = domain.createExchange(service, ExchangePattern.IN_ONLY);
 
         BeanServiceMetadata.setOperationName(exchange, "oneWay");
         
@@ -63,7 +63,8 @@ public class BeanProviderTest extends AbstractCDITest {
         ServiceDomain domain = ServiceDomains.getDomain();
 
         MockHandler responseConsumer = new MockHandler();
-        Exchange exchange = domain.createExchange(new QName("RequestResponse"), ExchangePattern.IN_OUT, responseConsumer);
+        org.switchyard.Service service = domain.getService(new QName("RequestResponse"));
+        Exchange exchange = domain.createExchange(service, ExchangePattern.IN_OUT, responseConsumer);
 
         BeanServiceMetadata.setOperationName(exchange, "reply");
         

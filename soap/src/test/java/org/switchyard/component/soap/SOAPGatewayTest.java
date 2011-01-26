@@ -22,10 +22,9 @@
 
 package org.switchyard.component.soap;
 
-import java.io.File;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -33,26 +32,26 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
 import javax.xml.namespace.QName;
 
-import org.junit.Assert;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.Message;
 import org.switchyard.MessageBuilder;
 import org.switchyard.MockHandler;
+import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
-import org.switchyard.internal.ServiceDomains;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.XMLHelper;
-
+import org.switchyard.internal.ServiceDomains;
 import org.w3c.dom.Element;
 
 public class SOAPGatewayTest {
@@ -158,7 +157,8 @@ public class SOAPGatewayTest {
 
         // Invoke the WS via our WS Consumer service
         MockHandler consumer = new MockHandler();
-        Exchange exchange = _domain.createExchange(WS_CONSUMER_SERVICE, ExchangePattern.IN_ONLY, consumer);
+        Service service = _domain.getService(WS_CONSUMER_SERVICE);
+        Exchange exchange = _domain.createExchange(service, ExchangePattern.IN_ONLY, consumer);
         Message message = MessageBuilder.newInstance().buildMessage();
         message.setContent(input);
         exchange.send(message);
@@ -176,7 +176,8 @@ public class SOAPGatewayTest {
 
         // Invoke the WS via our WS Consumer service
         MockHandler consumer = new MockHandler();
-        Exchange exchange = _domain.createExchange(WS_CONSUMER_SERVICE, ExchangePattern.IN_OUT, consumer);
+        Service service = _domain.getService(WS_CONSUMER_SERVICE);
+        Exchange exchange = _domain.createExchange(service, ExchangePattern.IN_OUT, consumer);
         Message message = MessageBuilder.newInstance().buildMessage();
         message.setContent(input);
         exchange.send(message);
@@ -202,7 +203,8 @@ public class SOAPGatewayTest {
 
         // Invoke the WS via our WS Consumer service
         MockHandler consumer = new MockHandler();
-        Exchange exchange = _domain.createExchange(WS_CONSUMER_SERVICE, ExchangePattern.IN_OUT, consumer);
+        Service service = _domain.getService(WS_CONSUMER_SERVICE);
+        Exchange exchange = _domain.createExchange(service, ExchangePattern.IN_OUT, consumer);
         Message message = MessageBuilder.newInstance().buildMessage();
         message.setContent(input);
         exchange.send(message);

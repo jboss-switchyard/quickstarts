@@ -255,6 +255,10 @@ public class ClientProxyBean implements Bean {
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             ServiceDomain domain = ServiceDomains.getDomain();
+            org.switchyard.Service service = domain.getService(serviceQName);
+            if (service == null) {
+                throw new BeanComponentException("Service not registered: " + serviceQName);
+            }
 
             if (method.getReturnType() != null && method.getReturnType() != Void.class) {
                 final BlockingQueue<Exchange> responseQueue = new ArrayBlockingQueue<Exchange>(1);
@@ -269,7 +273,7 @@ public class ClientProxyBean implements Bean {
                     }
                 };
 
-                Exchange exchangeIn = domain.createExchange(serviceQName, ExchangePattern.IN_OUT, responseExchangeHandler);
+                Exchange exchangeIn = domain.createExchange(service, ExchangePattern.IN_OUT, responseExchangeHandler);
 
                 Message sendMessage = prepareSend(exchangeIn, args, method);
                 exchangeIn.send(sendMessage, exchangeIn.getContext(Scope.MESSAGE));
@@ -296,7 +300,7 @@ public class ClientProxyBean implements Bean {
                     }
                 }
             } else {
-                Exchange exchange = domain.createExchange(serviceQName, ExchangePattern.IN_ONLY, null);
+                Exchange exchange = domain.createExchange(service, ExchangePattern.IN_ONLY, null);
 
                 Message sendMessage = prepareSend(exchange, args, method);
                 exchange.send(sendMessage);

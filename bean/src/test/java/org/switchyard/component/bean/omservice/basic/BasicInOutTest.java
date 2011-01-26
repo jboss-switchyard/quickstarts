@@ -44,7 +44,8 @@ public class BasicInOutTest extends AbstractCDITest {
 
         // Consume the OM model...
         MockHandler responseConsumer = new MockHandler();
-        Exchange exchange = domain.createExchange(new QName("BasicOrderManagementService"), ExchangePattern.IN_OUT, responseConsumer);
+        org.switchyard.Service service = domain.getService(new QName("BasicOrderManagementService"));
+        Exchange exchange = domain.createExchange(service, ExchangePattern.IN_OUT, responseConsumer);
 
         BeanServiceMetadata.setOperationName(exchange, "createOrder");
         
