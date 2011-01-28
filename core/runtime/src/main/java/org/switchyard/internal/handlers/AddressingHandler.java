@@ -24,6 +24,7 @@ package org.switchyard.internal.handlers;
 
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
+import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
 import org.switchyard.internal.ExchangeImpl;
 import org.switchyard.internal.ServiceRegistration;
@@ -47,11 +48,9 @@ public class AddressingHandler implements ExchangeHandler {
 
     @Override
     public void handleMessage(Exchange exchange) throws HandlerException {
-
-        // we need to mess with some internal exchange details
-        ExchangeImpl ei = (ExchangeImpl) exchange;
-
-        if (ei.getTarget() == null) {
+        // Assign endpoints during the IN phase - this code sucks and needs to go away
+        if (exchange.getPhase().equals(ExchangePhase.IN)) {
+            ExchangeImpl ei = (ExchangeImpl) exchange;
             ei.setTarget(((ServiceRegistration) exchange.getService()).getEndpoint());
         }
     }

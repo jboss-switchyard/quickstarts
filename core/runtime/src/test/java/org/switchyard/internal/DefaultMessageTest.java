@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard.internal.message;
+package org.switchyard.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,7 +34,6 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.Message;
-import org.switchyard.MessageBuilder;
 
 public class DefaultMessageTest {
     
@@ -42,7 +41,7 @@ public class DefaultMessageTest {
     
     @Before
     public void setUp() {
-        _message = MessageBuilder.newInstance().buildMessage();
+        _message = new DefaultMessage();
     }
     
     

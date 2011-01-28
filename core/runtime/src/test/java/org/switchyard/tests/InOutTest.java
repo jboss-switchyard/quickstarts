@@ -28,7 +28,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
-import org.switchyard.MessageBuilder;
 import org.switchyard.MockHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
@@ -58,7 +57,7 @@ public class InOutTest {
         MockHandler consumer = new MockHandler();
         Exchange exchange = _domain.createExchange(
                 service, ExchangePattern.IN_OUT, consumer);
-        exchange.send(MessageBuilder.newInstance().buildMessage());
+        exchange.send(exchange.createMessage());
         
         // wait, since this is async
         provider.waitForOKMessage();
@@ -77,7 +76,7 @@ public class InOutTest {
         MockHandler consumer = new MockHandler();
         Exchange exchange = _domain.createExchange(
                 service, ExchangePattern.IN_OUT, consumer);
-        exchange.send(MessageBuilder.newInstance().buildMessage());
+        exchange.send(exchange.createMessage());
         
         // wait, since this is async
         provider.waitForOKMessage();

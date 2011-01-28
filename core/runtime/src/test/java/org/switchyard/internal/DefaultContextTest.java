@@ -27,20 +27,19 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.internal.BaseContext;
 
 /**
  *  Tests for context-related operations.
  */
-public class BaseContextTest {
+public class DefaultContextTest {
     
     private static final String PROP_NAME = "foo";
     private static final String PROP_VAL= "bar";
-    private BaseContext _context;
+    private DefaultContext _context;
     
     @Before
     public void setUp() throws Exception {
-        _context = new BaseContext();
+        _context = new DefaultContext();
     }
     
     @Test

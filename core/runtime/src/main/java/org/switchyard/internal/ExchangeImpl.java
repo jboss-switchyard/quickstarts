@@ -22,16 +22,15 @@
 
 package org.switchyard.internal;
 
-import java.util.HashMap;
 import java.util.UUID;
 
 import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
+import org.switchyard.ExchangePhase;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerChain;
 import org.switchyard.Message;
-import org.switchyard.Scope;
 import org.switchyard.Service;
 import org.switchyard.spi.Endpoint;
 
@@ -55,14 +54,14 @@ public class ExchangeImpl implements Exchange {
 
     private final String            _exchangeId;
     private final ExchangePattern   _pattern;
+    private ExchangePhase           _phase;
     private final Service           _service;
     private Message                 _message;
     private ExchangeState           _state = ExchangeState.OK;
     private final HandlerChain      _handlers;
     private Endpoint                _source;
     private Endpoint                _target;
-    private final HashMap<Scope, Context> _context =
-        new HashMap<Scope, Context>();
+    private final Context           _context;
 
     /**
      * Constructor.
@@ -75,22 +74,12 @@ public class ExchangeImpl implements Exchange {
         _pattern = pattern;
         _handlers = handlers;
         _exchangeId = UUID.randomUUID().toString();
-        initContext();
+        _context = new DefaultContext();
     }
 
     @Override
     public Context getContext() {
-        return _context.get(Scope.EXCHANGE);
-    }
-
-    @Override
-    public Context createContext() {
-        return new BaseContext();
-    }
-
-    @Override
-    public Context getContext(Scope scope) {
-        return _context.get(scope);
+        return _context;
     }
 
     @Override
@@ -114,27 +103,34 @@ public class ExchangeImpl implements Exchange {
     }
 
     @Override
-    public void send(Message message, Context messageContext) {
-        assertExchangeStateOK();
-        sendInternal(message, messageContext);
-    }
-
-    @Override
     public void send(Message message) {
         assertExchangeStateOK();
-        sendInternal(message, new BaseContext());
+        
+        // Set exchange phase
+        if (_phase == null) {
+            _phase = ExchangePhase.IN;
+        } else if (_phase.equals(ExchangePhase.IN)) {
+            _phase = ExchangePhase.OUT;
+        } else {
+            throw new IllegalStateException(
+                    "Send message not allowed for exchange in phase " + _phase);
+        }
+        
+        sendInternal(message);
     }
 
     @Override
     public void sendFault(Message message) {
+        assertExchangeStateOK();
+        
+        // You can't send a fault before you send a message
+        if (_phase == null) {
+            throw new IllegalStateException("Send fault no allowed on new exchanges");        
+        }
+        
+        _phase = ExchangePhase.OUT;
         _state = ExchangeState.FAULT;
-        sendInternal(message, new BaseContext());
-    }
-
-    @Override
-    public void sendFault(Message message, Context messageContext) {
-        _state = ExchangeState.FAULT;
-        sendInternal(message, messageContext);
+        sendInternal(message);
     }
 
     @Override
@@ -174,9 +170,7 @@ public class ExchangeImpl implements Exchange {
         _source = source;
     }
 
-    private void sendInternal(Message message, Context messageContext) {
-        setContext(Scope.MESSAGE, messageContext);
-
+    private void sendInternal(Message message) {
         _message = message;
         _handlers.handle(this);
     }
@@ -187,21 +181,13 @@ public class ExchangeImpl implements Exchange {
         }
     }
 
-    /**
-     * Set the context for a particular scope.
-     * @param scope scope
-     * @param context context
-     */
-    private void setContext(Scope scope, Context context) {
-        _context.put(scope, context);
+    @Override
+    public Message createMessage() {
+        return new DefaultMessage();
     }
 
-    /**
-     * Builds the context layers for this exchange
-     */
-    private void initContext() {
-        for (Scope scope : Scope.values()) {
-            _context.put(scope, new BaseContext());
-        }
+    @Override
+    public ExchangePhase getPhase() {
+        return _phase;
     }
 }

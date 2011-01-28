@@ -31,7 +31,7 @@ import org.switchyard.Context;
 /**
  * Base context implementation.
  */
-public class BaseContext implements Context {
+public class DefaultContext implements Context {
     private final ConcurrentHashMap<String, Object> _properties =
         new ConcurrentHashMap<String, Object>();
 

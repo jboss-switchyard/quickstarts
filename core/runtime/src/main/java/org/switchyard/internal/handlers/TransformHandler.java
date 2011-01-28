@@ -30,7 +30,6 @@ import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
-import org.switchyard.Scope;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
@@ -109,16 +108,16 @@ public class TransformHandler extends BaseHandler {
         Transformer transform = null;
 
         // look in message context
-        if (exchange.getContext(Scope.MESSAGE).hasProperty(Transformer.class.getName())) {
+        if (exchange.getMessage().getContext().hasProperty(Transformer.class.getName())) {
             transform = (Transformer)
-                exchange.getContext(Scope.MESSAGE).getProperty(Transformer.class.getName());
+                exchange.getMessage().getContext().getProperty(Transformer.class.getName());
         // look in exchange context
         } else if (exchange.getContext().hasProperty(Transformer.class.getName())) {
             transform = (Transformer)
                 exchange.getContext().getProperty(Transformer.class.getName());
         // look to see if we can find it in the transformer registry
         } else {
-            Context msgCtx = exchange.getContext(Scope.MESSAGE);
+            Context msgCtx = exchange.getMessage().getContext();
             String fromName = (String) msgCtx.getProperty(MESSAGE_NAME);
             // temp hack - toName should actually come from the Service reference
             String toName = (String) msgCtx.getProperty(SERVICE_MESSAGE_NAME);

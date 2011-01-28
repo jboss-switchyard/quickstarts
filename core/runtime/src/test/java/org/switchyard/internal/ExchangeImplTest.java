@@ -29,14 +29,12 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.BaseHandler;
-import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
+import org.switchyard.ExchangePhase;
 import org.switchyard.Message;
-import org.switchyard.MessageBuilder;
 import org.switchyard.MockHandler;
-import org.switchyard.Scope;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 
@@ -45,101 +43,61 @@ import org.switchyard.ServiceDomain;
  */
 public class ExchangeImplTest {
     
-    private ExchangeImpl _exchange;
     private ServiceDomain _domain;
     
     @Before
     public void setUp() throws Exception {
-        _exchange = new ExchangeImpl(null, null, null);
         _domain = ServiceDomains.getDomain();
     }
     
     @Test
-    public void testGetContextDefault() {
-        Context defaultContext = _exchange.getContext();
-        Context exchangeContext = _exchange.getContext(Scope.EXCHANGE);
-        Assert.assertEquals(exchangeContext, defaultContext);
+    public void testSendFaultOnNewExchange() {
+        Exchange exchange = new ExchangeImpl(null, ExchangePattern.IN_OUT, null);
+        try {
+            exchange.sendFault(exchange.createMessage());
+            Assert.fail("Sending a fault on a new exchange is not allowed");
+        } catch (IllegalStateException illEx) {
+            return;
+        }
     }
     
-    /** Setting a property in one scope should not bleed over into other scopes.
-     *
-     */
     @Test
-    public void testContextIsolation() {
-        Context exchangeContext = _exchange.getContext(Scope.EXCHANGE);
-        Context inMsgContext = _exchange.getContext(Scope.MESSAGE);
-        
-        exchangeContext.setProperty("exchangeProp", "exchangeVal");
-        inMsgContext.setProperty("inMsgProp", "inMsgVal");
-        
-        Assert.assertTrue(exchangeContext.hasProperty("exchangeProp"));
-        Assert.assertFalse(exchangeContext.hasProperty("inMsgProp"));
-        
-        Assert.assertTrue(inMsgContext.hasProperty("inMsgProp"));
-        Assert.assertFalse(inMsgContext.hasProperty("exchangeProp"));
+    public void testPhaseIsNullOnNewExchange() {
+        Exchange exchange = new ExchangeImpl(null, ExchangePattern.IN_OUT, null);
+        Assert.assertNull(exchange.getPhase());
     }
     
-    /*
-     * The message scope changes each time an exchange is sent.  Test to
-     * make sure that actually happens (e.g. you don't get the "in" scope
-     * all the time.
-     */
     @Test
-    public void testMessageContext() throws Exception {
-        
-        final QName serviceName = new QName("bleh");
-        final String sharedPropName = "both";   // should be in both msgs
-        final String inPropName= "in";          // should only be in one
-        final String inPropVal = "in";
-        final String outPropVal = "out";
-        
-        // create a handler to test that the in and out context are separate
-        ExchangeHandler provider = new BaseHandler() {
-            public void handleMessage(Exchange exchange) {
-                // We should find the shared property with the in value
-                Assert.assertEquals(
-                		exchange.getContext(Scope.MESSAGE).getProperty(sharedPropName), 
-                        inPropVal);
-                // We should find the in property with the in value
-                Assert.assertEquals(
-                		exchange.getContext(Scope.MESSAGE).getProperty(inPropName), 
-                        inPropVal);
-                
-                try {
-                    Context outCtx = exchange.createContext();
-                    outCtx.setProperty(sharedPropName, outPropVal);
-                    exchange.send(MessageBuilder.newInstance().buildMessage(), outCtx);
-                }
-                catch (Exception ex) {
-                    Assert.fail(ex.toString());
-                }
-            }
-        };
-
-        ExchangeHandler consumer = new BaseHandler() {
-            public void handleMessage(Exchange exchange) {
-                // We should find the shared property with the out value
-                Assert.assertEquals(
-                        exchange.getContext(Scope.MESSAGE).getProperty(sharedPropName), 
-                        outPropVal);
-                // The in property should not be there
-                Assert.assertNull(
-                		exchange.getContext(Scope.MESSAGE).getProperty(inPropName));
-            }
-        };
-        
-        Service service = _domain.registerService(serviceName, provider);
+    public void testPhaseIsInAfterInputMessage() {
+        Service service = _domain.registerService(
+                new QName("InPhase"), new MockHandler());
+        Exchange exchange = _domain.createExchange(service, ExchangePattern.IN_ONLY);
+        exchange.send(exchange.createMessage());
+        Assert.assertEquals(ExchangePhase.IN, exchange.getPhase());
+    }
+    
+    @Test
+    public void testPhaseIsOutAfterOutputMessage() {
+        Service service = _domain.registerService(
+                new QName("OutPhase"), new MockHandler().forwardInToOut());
+        MockHandler replyHandler = new MockHandler();
         Exchange exchange = _domain.createExchange(
-                service, ExchangePattern.IN_OUT, consumer);
-        Message inMsg = MessageBuilder.newInstance().buildMessage();
-        Context inCtx = exchange.createContext();
-        inCtx.setProperty(sharedPropName, inPropVal);
-        inCtx.setProperty(inPropName, inPropVal);
-        exchange.send(inMsg, inCtx);
-        
-        // clean up
-        service.unregister();
-        
+                service, ExchangePattern.IN_OUT, replyHandler);
+        exchange.send(exchange.createMessage());
+        replyHandler.waitForOKMessage();
+        Assert.assertEquals(ExchangePhase.OUT, exchange.getPhase());
+    }
+    
+    @Test
+    public void testPhaseIsOutAfterFaultMessage() {
+        Service service = _domain.registerService(
+                new QName("FaultPhase"), new MockHandler().forwardInToFault());
+        MockHandler replyHandler = new MockHandler();
+        Exchange exchange = _domain.createExchange(
+                service, ExchangePattern.IN_OUT, replyHandler);
+        exchange.send(exchange.createMessage());
+        replyHandler.waitForFaultMessage();
+        Assert.assertEquals(ExchangePhase.OUT, exchange.getPhase());
     }
     
     /**
@@ -161,7 +119,7 @@ public class ExchangeImplTest {
                 		exchange.getMessage().getContent(), 
                         inMsgContent);
                 
-                Message outMsg = MessageBuilder.newInstance().buildMessage();
+                Message outMsg = exchange.createMessage();
                 outMsg.setContent(outMsgContent);
                 try {
                 	exchange.send(outMsg);
@@ -183,7 +141,7 @@ public class ExchangeImplTest {
         Service service = _domain.registerService(serviceName, provider);
         Exchange exchange = _domain.createExchange(
                 service, ExchangePattern.IN_OUT, consumer);
-        Message inMsg = MessageBuilder.newInstance().buildMessage();
+        Message inMsg = exchange.createMessage();
         inMsg.setContent(inMsgContent);
         exchange.send(inMsg);
 
@@ -204,7 +162,7 @@ public class ExchangeImplTest {
         MockHandler consumer = new MockHandler();
         Exchange exchange = _domain.createExchange(
                 service, ExchangePattern.IN_OUT, consumer);
-        exchange.send(MessageBuilder.newInstance().buildMessage());
+        exchange.send(exchange.createMessage());
 
         // wait, since this is async
         provider.waitForOKMessage();
@@ -212,7 +170,7 @@ public class ExchangeImplTest {
 
         // Now try send another message on the Exchange... should result in an IllegalStateException...
         try {
-            exchange.send(MessageBuilder.newInstance().buildMessage());
+            exchange.send(exchange.createMessage());
         } catch(IllegalStateException e) {
             Assert.assertEquals("Exchange instance is in a FAULT state.", e.getMessage());
         }

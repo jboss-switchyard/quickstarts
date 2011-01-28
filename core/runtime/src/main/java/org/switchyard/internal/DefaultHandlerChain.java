@@ -31,7 +31,6 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerChain;
 import org.switchyard.HandlerException;
-import org.switchyard.message.DefaultMessage;
 
 /**
  * Default handler chain.

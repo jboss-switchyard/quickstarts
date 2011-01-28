@@ -24,7 +24,6 @@ package org.switchyard;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import junit.framework.TestCase;
-import org.switchyard.message.DefaultMessage;
 
 /**
  * Mock Handler.
@@ -131,7 +130,7 @@ public class MockHandler extends BaseHandler {
         if (_forwardInToOut) {
             exchange.send(exchange.getMessage());
         } else if (_forwardInToFault) {
-            exchange.sendFault(MessageBuilder.newInstance(DefaultMessage.class).buildMessage());
+            exchange.sendFault(exchange.createMessage());
         }
     }
 

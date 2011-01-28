@@ -34,23 +34,10 @@ package org.switchyard;
 public interface Exchange {
 
     /**
-     * Creates a {@code Context} instance that can be used to specify
-     * message context properties when sending a message.
-     * @return a new, empty Context instance
-     */
-    Context createContext();
-    /**
-     * Retrieves the exchange context.  Equivalent to
-     * {@code getContext(Scope.EXCHANGE)}.
+     * Retrieves the exchange context.
      * @return the exchange context
      */
     Context getContext();
-    /**
-     * Retrieves context for the specified scope.
-     * @param scope the context scope
-     * @return {@code Context} instance for the specified scope.
-     */
-    Context getContext(Scope scope);
 
     /**
      * The unique identifier for this Exchange instance.  The exchange
@@ -80,6 +67,12 @@ public interface Exchange {
      * @return the current message for the exchange
      */
     Message getMessage();
+    
+    /**
+     * Create a message to be used with this exchange.
+     * @return new message
+     */
+    Message createMessage();
 
     /**
      * Sends the specified message as part of this message exchange.
@@ -91,38 +84,22 @@ public interface Exchange {
     void send(Message message);
 
     /**
-     * Sends the specified message with additional context information.  The
-     * supplied {@code Context} is mapped to the exchange with
-     * {@code Scope.MESSAGE}.
-     * <p/>
-     * Implementations must throw an {@link IllegalStateException} if this method is
-     * called when the Exchange {@link #getState() state} is in {@link ExchangeState#FAULT}.
-     * @param message the message to send
-     * @param messageContext context for the sent message
-     */
-    void send(Message message, Context messageContext);
-
-    /**
      * Sends the specified message as part of this message exchange.
      * <p/>
      * Also sets the Exchange {@link #getState() state} to {@link ExchangeState#FAULT}.
      * @param message message to send
      */
     void sendFault(Message message);
-    /**
-     * Sends the specified message with additional context information.  The
-     * supplied {@code Context} is mapped to the exchange with
-     * {@code Scope.MESSAGE}.
-     * <p/>
-     * Also sets the Exchange {@link #getState() state} to {@link ExchangeState#FAULT}.
-     * @param message the message to send
-     * @param messageContext context for the sent message
-     */
-    void sendFault(Message message, Context messageContext);
 
     /**
      * Get the exchange state.
      * @return The exchange State.
      */
     ExchangeState getState();
+    
+    /**
+     * Get the exchange phase.
+     * @return the exchange phase
+     */
+    ExchangePhase getPhase();
 }

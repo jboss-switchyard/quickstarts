@@ -50,6 +50,12 @@ import javax.activation.DataSource;
 public interface Message {
 
     /**
+     * Retrieves the message context.
+     * @return the exchange context
+     */
+    Context getContext();
+    
+    /**
      * Assigns the specified content to the body of this message.
      *
      * @param content message body content

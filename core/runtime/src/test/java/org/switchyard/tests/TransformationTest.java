@@ -36,9 +36,7 @@ import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.Message;
-import org.switchyard.MessageBuilder;
 import org.switchyard.MockHandler;
-import org.switchyard.Scope;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.internal.ServiceDomains;
@@ -92,12 +90,11 @@ public class TransformationTest {
         // Create the exchange, add the transformer, and invoke the service
         Exchange exchange = _domain.createExchange(
                 service, ExchangePattern.IN_ONLY);
-        Context msgCtx = exchange.createContext();
-        msgCtx.setProperty(Transformer.class.getName(), dateToString);
         
-        Message msg = MessageBuilder.newInstance().buildMessage();
+        Message msg = exchange.createMessage();
+        msg.getContext().setProperty(Transformer.class.getName(), dateToString);
         msg.setContent(input);
-        exchange.send(msg, msgCtx);
+        exchange.send(msg);
         
         // wait for message and verify transformation
         provider.waitForOKMessage();
@@ -136,7 +133,7 @@ public class TransformationTest {
                 service, ExchangePattern.IN_ONLY);
         exchange.getContext().setProperty(Transformer.class.getName(), dateToString);
         
-        Message msg = MessageBuilder.newInstance().buildMessage();
+        Message msg = exchange.createMessage();
         msg.setContent(input);
         exchange.send(msg);
         
@@ -178,13 +175,11 @@ public class TransformationTest {
         // Set the from and to message names.  NOTE: setting to the to message
         // name will not be necessary once the service definition is available
         // at runtime
-        Context msgCtx = exchange.getContext(Scope.MESSAGE);
+        Message msg = exchange.createMessage().setContent(input);
+        Context msgCtx = msg.getContext();
         msgCtx.setProperty("org.switchyard.message.name", fromName);
         msgCtx.setProperty("org.switchyard.service.message.name", toName);
-        
-        Message msg = MessageBuilder.newInstance().buildMessage();
-        msg.setContent(input);
-        exchange.send(msg, msgCtx);
+        exchange.send(msg);
         
         // wait for message and verify transformation
         provider.waitForOKMessage();

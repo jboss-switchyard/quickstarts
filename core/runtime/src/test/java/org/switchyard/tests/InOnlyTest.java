@@ -35,7 +35,6 @@ import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
-import org.switchyard.MessageBuilder;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.internal.ServiceDomains;
@@ -72,7 +71,7 @@ public class InOnlyTest {
         
         // Consume the service
         Exchange exchange = _domain.createExchange(service, ExchangePattern.IN_ONLY);
-        exchange.send(MessageBuilder.newInstance().buildMessage());
+        exchange.send(exchange.createMessage());
         
         // wait a sec, since this is async
         Thread.sleep(200);

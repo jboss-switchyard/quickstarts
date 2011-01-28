@@ -19,22 +19,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
-package org.switchyard.message;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package org.switchyard;
 
 /**
- * Builder.
+ * Represents the phase of an exchange.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Builder {
+public enum ExchangePhase {
     /**
-     * Return the value.
+     * The input phase of an exchange.
      */
-    String value();
+    IN,
+    /**
+     * The output phase of an exchange.
+     */
+    OUT
 }
