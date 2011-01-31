@@ -38,6 +38,8 @@ import javax.wsdl.xml.WSDLReader;
 
 /**
  * Contains utility methods to examine/manipulate WSDLs.
+ *
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
 public final class WSDLUtil {
 

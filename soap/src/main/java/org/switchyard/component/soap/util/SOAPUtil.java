@@ -50,6 +50,8 @@ import org.w3c.dom.Node;
 
 /**
  * Contains utility methods to examine/manipulate SOAP Messages.
+ *
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
 public final class SOAPUtil {
     private static final Logger LOGGER = Logger.getLogger(SOAPUtil.class);

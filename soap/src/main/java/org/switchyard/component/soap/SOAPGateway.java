@@ -32,6 +32,8 @@ import org.switchyard.internal.ServiceDomains;
 /**
  * SOAP Gateway acts as an adapter to expose SwitchYard services as a Webservice
  * and also to invoke other Webservices.
+ *
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
 public class SOAPGateway {
     private static final Logger LOGGER = Logger.getLogger(SOAPGateway.class);

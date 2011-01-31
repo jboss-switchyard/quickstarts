@@ -58,6 +58,8 @@ import com.sun.net.httpserver.HttpServer;
 
 /**
  * Hanldes SOAP requests to invoke a SwitchYard service.
+ *
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
 public class InboundHandler extends BaseHandler {
     private static final Logger LOGGER = Logger.getLogger(InboundHandler.class);
@@ -268,7 +270,7 @@ public class InboundHandler extends BaseHandler {
             }
             try {
                 Thread.sleep(DEFAULT_SLEEP);
-            } catch (InterruptedException e) { 
+            } catch (InterruptedException e) {
                 //ignore
                 continue;
             }
