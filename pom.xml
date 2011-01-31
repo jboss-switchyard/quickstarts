@@ -55,6 +55,7 @@
         <module>bean</module>
         <module>soap</module>
         <module>tests</module>
+        <module>camel</module>
     </modules>
 
     <repositories>
