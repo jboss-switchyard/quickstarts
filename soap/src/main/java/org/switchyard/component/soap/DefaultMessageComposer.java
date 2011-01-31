@@ -36,6 +36,8 @@ import org.switchyard.MessageBuilder;
 /**
  * The default implementation of MessageComposer simply copies the SOAP body into
  * the Message and SOAP headers into the Message's context.
+ *
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
 public class DefaultMessageComposer implements MessageComposer {
 

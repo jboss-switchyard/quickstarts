@@ -29,6 +29,8 @@ import org.switchyard.Message;
 
 /**
  * Message decomposer holds the logic for converting SwitchYard messages to SOAP/XML messages.
+ *
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
 public interface MessageDecomposer {
 

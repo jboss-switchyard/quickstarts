@@ -33,6 +33,8 @@ import org.w3c.dom.Node;
 /**
  * The default implementation of MessageDecomposer simply copies the Message body onto SOAP
  * and adds SOAP headers from the Message's context.
+ *
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
 public class DefaultMessageDecomposer implements MessageDecomposer {
 

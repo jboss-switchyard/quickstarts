@@ -31,7 +31,8 @@ import javax.xml.ws.WebServiceProvider;
 
 /**
  * This is the abstract base class for a SOAP messages.
- * @author <a href="mailto:mageshbk@jboss.com">Magesh Kumar B</a>
+ *
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
 @WebServiceProvider
 @ServiceMode(Mode.MESSAGE)

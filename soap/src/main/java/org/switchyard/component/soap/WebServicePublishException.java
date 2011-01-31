@@ -24,6 +24,8 @@ package org.switchyard.component.soap;
 
 /**
  * Wrapper for WebService creation exceptions.
+ *
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
 public class WebServicePublishException extends Exception {
     private static final long serialVersionUID = 1L;

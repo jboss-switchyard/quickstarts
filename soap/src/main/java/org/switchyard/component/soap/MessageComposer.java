@@ -29,6 +29,8 @@ import org.switchyard.Message;
 
 /**
  * Message composer holds the logic for converting SOAP/XML messages to SwitchYard messages.
+ *
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
 public interface MessageComposer {
 
