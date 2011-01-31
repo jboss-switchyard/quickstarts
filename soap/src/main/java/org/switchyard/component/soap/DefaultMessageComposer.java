@@ -30,8 +30,8 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
+import org.switchyard.Exchange;
 import org.switchyard.Message;
-import org.switchyard.MessageBuilder;
 
 /**
  * The default implementation of MessageComposer simply copies the SOAP body into
@@ -47,8 +47,9 @@ public class DefaultMessageComposer implements MessageComposer {
      * @return a Message
      * @throws SOAPException If the SOAP message is not correct.
      */
-    public Message compose(final SOAPMessage soapMessage) throws SOAPException {
-        Message message = MessageBuilder.newInstance().buildMessage();
+    public Message compose(final SOAPMessage soapMessage, final Exchange exchange) 
+    throws SOAPException {
+        Message message = exchange.createMessage();
 
         final SOAPBody soapBody = soapMessage.getSOAPBody();
         if (soapBody == null) {

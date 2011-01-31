@@ -29,7 +29,6 @@ import org.junit.Test;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.Message;
-import org.switchyard.MessageBuilder;
 import org.switchyard.MockHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.bean.AbstractCDITest;
@@ -51,8 +50,7 @@ public class BeanConsumerTest extends AbstractCDITest {
 
         BeanServiceMetadata.setOperationName(exchange, "consumeInOnlyService");
 
-        Message inMessage = MessageBuilder.newInstance().buildMessage();
-        inMessage.setContent("hello");
+        Message inMessage = exchange.createMessage().setContent("hello");
 
         exchange.send(inMessage);
     }
@@ -68,8 +66,7 @@ public class BeanConsumerTest extends AbstractCDITest {
 
         BeanServiceMetadata.setOperationName(exchange, "consumeInOutService");
         
-        Message inMessage = MessageBuilder.newInstance().buildMessage();
-        inMessage.setContent("hello");
+        Message inMessage = exchange.createMessage().setContent("hello");
 
         exchange.send(inMessage);
 
@@ -87,8 +84,7 @@ public class BeanConsumerTest extends AbstractCDITest {
 
         BeanServiceMetadata.setOperationName(exchange, "unknownXOp");
 
-        Message inMessage = MessageBuilder.newInstance().buildMessage();
-        inMessage.setContent("hello");
+        Message inMessage = exchange.createMessage().setContent("hello");
 
         exchange.send(inMessage);
 
@@ -109,8 +105,8 @@ public class BeanConsumerTest extends AbstractCDITest {
 
         BeanServiceMetadata.setOperationName(exchange, "consumeInOutService");
 
-        Message inMessage = MessageBuilder.newInstance().buildMessage();
-        inMessage.setContent(new ConsumerException("throw me a remote exception please!!"));
+        Message inMessage = exchange.createMessage().setContent(
+                new ConsumerException("throw me a remote exception please!!"));
 
         exchange.send(inMessage);
 

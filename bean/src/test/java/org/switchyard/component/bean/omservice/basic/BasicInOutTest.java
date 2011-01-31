@@ -49,7 +49,7 @@ public class BasicInOutTest extends AbstractCDITest {
 
         BeanServiceMetadata.setOperationName(exchange, "createOrder");
         
-        Message inMessage = MessageBuilder.newInstance().buildMessage();
+        Message inMessage = exchange.createMessage();
         inMessage.setContent(new OrderRequest("D123", "ABCD"));
 
         exchange.send(inMessage);

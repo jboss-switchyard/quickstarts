@@ -22,12 +22,11 @@
 
 package org.switchyard.component.bean;
 
-import org.switchyard.Exchange;
-import org.switchyard.Scope;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.switchyard.Exchange;
 
 /**
  * Bean Service meta data.
@@ -77,7 +76,7 @@ public class BeanServiceMetadata {
      * @param name     The target service operation name.
      */
     public static void setOperationName(Exchange exchange, String name) {
-        exchange.getContext(Scope.EXCHANGE).setProperty(OPERATION_NAME, name);
+        exchange.getContext().setProperty(OPERATION_NAME, name);
     }
 
     // TODO: needs to live somewhere else
@@ -89,7 +88,7 @@ public class BeanServiceMetadata {
      * @return The operation name as specified on the {@link Exchange} {@link org.switchyard.Context}.
      */
     public static String getOperationName(Exchange exchange) {
-        return (String) exchange.getContext(Scope.EXCHANGE).getProperty(OPERATION_NAME);
+        return (String) exchange.getContext().getProperty(OPERATION_NAME);
     }
 
     /**

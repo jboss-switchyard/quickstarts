@@ -23,14 +23,12 @@
 package org.switchyard.component.bean;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.UndeclaredThrowableException;
 
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
-import org.switchyard.MessageBuilder;
 
 /**
  * Service/Provider proxy handler.
@@ -95,7 +93,7 @@ public class ServiceProxyHandler implements ExchangeHandler {
             try {
                 if (exchange.getPattern() == ExchangePattern.IN_OUT) {
                     Object responseObject = invocation.getMethod().invoke(serviceBean, invocation.getArgs());
-                    Message message = MessageBuilder.newInstance().buildMessage();
+                    Message message = exchange.createMessage();
 
                     message.setContent(responseObject);
                     exchange.send(message);

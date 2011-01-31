@@ -41,12 +41,10 @@ import javax.xml.ws.Endpoint;
 
 import org.apache.log4j.Logger;
 import org.switchyard.BaseHandler;
-import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
-import org.switchyard.Scope;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.soap.util.SOAPUtil;
@@ -240,18 +238,16 @@ public class InboundHandler extends BaseHandler {
             isOneWay = SOAPUtil.isMessageOneWay(_wsdlPort, operationName);
             if (isOneWay) {
                 Exchange exchange = _domain.createExchange(_service, ExchangePattern.IN_ONLY, this);
-                exchange.getContext(Scope.EXCHANGE).setProperty(OPERATION_NAME, operationName);
-                Message message = _composer.compose(soapMessage);
-                Context msgCtx = exchange.createContext();
-                msgCtx.setProperty(MESSAGE_NAME, messageName);
-                exchange.send(message, msgCtx);
+                exchange.getContext().setProperty(OPERATION_NAME, operationName);
+                Message message = _composer.compose(soapMessage, exchange);
+                message.getContext().setProperty(MESSAGE_NAME, messageName);
+                exchange.send(message);
             } else {
                 Exchange exchange = _domain.createExchange(_service, ExchangePattern.IN_OUT, this);
-                exchange.getContext(Scope.EXCHANGE).setProperty(OPERATION_NAME, operationName);
-                Message message = _composer.compose(soapMessage);
-                Context msgCtx = exchange.createContext();
-                msgCtx.setProperty(MESSAGE_NAME, messageName);
-                exchange.send(message, msgCtx);
+                exchange.getContext().setProperty(OPERATION_NAME, operationName);
+                Message message = _composer.compose(soapMessage, exchange);
+                message.getContext().setProperty(MESSAGE_NAME, messageName);
+                exchange.send(message);
                 waitForResponse();
             }
         } catch (SOAPException se) {

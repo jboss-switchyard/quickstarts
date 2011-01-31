@@ -45,7 +45,6 @@ import org.junit.Test;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.Message;
-import org.switchyard.MessageBuilder;
 import org.switchyard.MockHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
@@ -159,8 +158,7 @@ public class SOAPGatewayTest {
         MockHandler consumer = new MockHandler();
         Service service = _domain.getService(WS_CONSUMER_SERVICE);
         Exchange exchange = _domain.createExchange(service, ExchangePattern.IN_ONLY, consumer);
-        Message message = MessageBuilder.newInstance().buildMessage();
-        message.setContent(input);
+        Message message = exchange.createMessage().setContent(input);
         exchange.send(message);
     }
 
@@ -178,8 +176,7 @@ public class SOAPGatewayTest {
         MockHandler consumer = new MockHandler();
         Service service = _domain.getService(WS_CONSUMER_SERVICE);
         Exchange exchange = _domain.createExchange(service, ExchangePattern.IN_OUT, consumer);
-        Message message = MessageBuilder.newInstance().buildMessage();
-        message.setContent(input);
+        Message message = exchange.createMessage().setContent(input);
         exchange.send(message);
         consumer.waitForOKMessage();
         Element response = consumer.getMessages().peek().getMessage().getContent(Element.class);
@@ -205,8 +202,7 @@ public class SOAPGatewayTest {
         MockHandler consumer = new MockHandler();
         Service service = _domain.getService(WS_CONSUMER_SERVICE);
         Exchange exchange = _domain.createExchange(service, ExchangePattern.IN_OUT, consumer);
-        Message message = MessageBuilder.newInstance().buildMessage();
-        message.setContent(input);
+        Message message = exchange.createMessage().setContent(input);
         exchange.send(message);
         consumer.waitForOKMessage();
         Element response = consumer.getMessages().peek().getMessage().getContent(Element.class);

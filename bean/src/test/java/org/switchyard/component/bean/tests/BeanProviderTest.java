@@ -29,7 +29,6 @@ import org.junit.Test;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.Message;
-import org.switchyard.MessageBuilder;
 import org.switchyard.MockHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.bean.AbstractCDITest;
@@ -50,8 +49,7 @@ public class BeanProviderTest extends AbstractCDITest {
 
         BeanServiceMetadata.setOperationName(exchange, "oneWay");
         
-        Message inMessage = MessageBuilder.newInstance().buildMessage();
-        inMessage.setContent("hello");
+        Message inMessage = exchange.createMessage().setContent("hello");
 
         exchange.send(inMessage);
     }
@@ -68,8 +66,7 @@ public class BeanProviderTest extends AbstractCDITest {
 
         BeanServiceMetadata.setOperationName(exchange, "reply");
         
-        Message inMessage = MessageBuilder.newInstance().buildMessage();
-        inMessage.setContent(ECHO_MSG);
+        Message inMessage = exchange.createMessage().setContent(ECHO_MSG);
 
         exchange.send(inMessage);
 

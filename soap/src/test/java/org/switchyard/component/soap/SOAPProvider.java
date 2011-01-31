@@ -27,11 +27,8 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
-import org.switchyard.MessageBuilder;
-import org.switchyard.message.DefaultMessage;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.XMLHelper;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -49,7 +46,7 @@ public class SOAPProvider extends BaseHandler {
             }
             String response = null;
             if (toWhom.length() == 0) {
-                message = MessageBuilder.newInstance(DefaultMessage.class).buildMessage();
+                message = exchange.createMessage();
                 response = "<soap:fault xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
                             + "   <faultcode>soap:Server.AppError</faultcode>"
                             + "   <faultstring>Invalid name</faultstring>"
@@ -61,7 +58,7 @@ public class SOAPProvider extends BaseHandler {
                 setContent(message, response);
                 exchange.sendFault(message);
             } else {
-                message = MessageBuilder.newInstance().buildMessage();
+                message = exchange.createMessage();
                 response = "<test:sayHelloResponse xmlns:test=\"http://test.ws/\">"
                              + "   <return>Hello " + toWhom + "</return>"
                              + "</test:sayHelloResponse>";

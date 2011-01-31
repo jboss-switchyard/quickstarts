@@ -25,6 +25,7 @@ package org.switchyard.component.soap;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
+import org.switchyard.Exchange;
 import org.switchyard.Message;
 
 /**
@@ -37,8 +38,9 @@ public interface MessageComposer {
     /**
      * Converts the SOAPMessage to Message.
      * @param soapMessage the SOAPMessage to be converted
+     * @param exchange the exchange that the message will be a part of
      * @return the composed Message
      * @throws SOAPException If the SOAP message is not correct.
      */
-    Message compose(SOAPMessage soapMessage) throws SOAPException;
+    Message compose(SOAPMessage soapMessage, Exchange exchange) throws SOAPException;
 }

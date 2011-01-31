@@ -49,8 +49,6 @@ import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
-import org.switchyard.MessageBuilder;
-import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.internal.ServiceDomains;
 
@@ -276,7 +274,7 @@ public class ClientProxyBean implements Bean {
                 Exchange exchangeIn = domain.createExchange(service, ExchangePattern.IN_OUT, responseExchangeHandler);
 
                 Message sendMessage = prepareSend(exchangeIn, args, method);
-                exchangeIn.send(sendMessage, exchangeIn.getContext(Scope.MESSAGE));
+                exchangeIn.send(sendMessage);
 
                 Exchange exchangeOut = responseQueue.take();
                 if(exchangeOut.getState() == ExchangeState.OK) {
@@ -311,7 +309,7 @@ public class ClientProxyBean implements Bean {
 
         private Message prepareSend(Exchange exchange, Object[] args, Method method) {
             BeanServiceMetadata.setOperationName(exchange, method.getName());
-            Message inMessage = MessageBuilder.newInstance().buildMessage();
+            Message inMessage = exchange.createMessage();
             inMessage.setContent(args);
             return inMessage;
         }

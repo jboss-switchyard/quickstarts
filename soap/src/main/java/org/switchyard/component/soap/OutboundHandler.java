@@ -119,7 +119,7 @@ public class OutboundHandler extends BaseHandler {
             SOAPMessage request = _decomposer.decompose(exchange.getMessage());
             SOAPMessage response = invokeService(request);
             if (response != null) {
-                Message message = _composer.compose(response);
+                Message message = _composer.compose(response, exchange);
                 exchange.send(message);
             }
         } catch (SOAPException se) {
