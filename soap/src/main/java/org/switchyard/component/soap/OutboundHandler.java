@@ -121,8 +121,7 @@ public class OutboundHandler extends BaseHandler {
                 exchange.send(message);
             }
         } catch (SOAPException se) {
-            // generate fault
-            LOGGER.error(se);
+            throw new HandlerException("Unexpected exception handling SOAP Message", se);
         }
     }
 

@@ -216,7 +216,11 @@ public class InboundHandler extends BaseHandler {
         try {
             _response.set(_decomposer.decompose(exchange.getMessage()));
         } catch (SOAPException se) {
-            LOGGER.error(se);
+            try {
+                _response.set(SOAPUtil.generateFault(se));
+            } catch (SOAPException e) {
+                LOGGER.error(e);
+            }
         }
     }
 
@@ -249,7 +253,15 @@ public class InboundHandler extends BaseHandler {
                 waitForResponse();
             }
         } catch (SOAPException se) {
-            LOGGER.error(se);
+            if (isOneWay) {
+                LOGGER.error(se);
+            } else {
+                try {
+                    _response.set(SOAPUtil.generateFault(se));
+                } catch (SOAPException e) {
+                    LOGGER.error(e);
+                }
+            }
         }
         SOAPMessage response = _response.get();
         _response.remove();
