@@ -115,8 +115,8 @@ public class SOAPGatewayTest {
         SOAPProvider provider = new SOAPProvider();
         _domain.registerService(PUBLISH_AS_WS_SERVICE, provider);
 
-        String host = System.getProperty("org.switchyard.test.soap.host");
-        String port = System.getProperty("org.switchyard.test.soap.port");
+        String host = System.getProperty("org.switchyard.test.soap.host", "localhost");
+        String port = System.getProperty("org.switchyard.test.soap.port", "48080");
 
         // Service exposed as WS
         _soapInbound = new SOAPGateway();
