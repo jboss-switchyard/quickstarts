@@ -35,9 +35,25 @@ import org.switchyard.HandlerException;
 /**
  * Default handler chain.
  */
-public class DefaultHandlerChain implements HandlerChain {
+public class DefaultHandlerChain implements HandlerChain, Cloneable {
     private final Logger _logger = Logger.getLogger(DefaultHandlerChain.class.toString());
     private final LinkedList<HandlerRef> _chain = new LinkedList<HandlerRef>();
+    
+    /**
+     * Create a new handler chain with no handlers in it.
+     */
+    public DefaultHandlerChain() {
+        
+    }
+    
+    /**
+     * Create a new handler chain with the specified handlers.  This ctor
+     * is not intended for external use - it's used by the clone() method.
+     * @param handlers
+     */
+    private DefaultHandlerChain(List<HandlerRef> handlers) {
+        _chain.addAll(handlers);
+    }
 
     @Override
     public synchronized void addFirst(String handlerName,
@@ -105,6 +121,11 @@ public class DefaultHandlerChain implements HandlerChain {
             // TODO : Convert the exception into something more portable ?
             exchange.sendFault(new DefaultMessage().setContent(handlerEx));
         }
+    }
+    
+    @Override
+    public DefaultHandlerChain clone() {
+        return new DefaultHandlerChain(listHandlers());
     }
 
     private synchronized List<HandlerRef> listHandlers() {

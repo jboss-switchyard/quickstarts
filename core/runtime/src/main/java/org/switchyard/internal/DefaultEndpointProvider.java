@@ -22,6 +22,8 @@
 
 package org.switchyard.internal;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.switchyard.Exchange;
 import org.switchyard.HandlerChain;
 import org.switchyard.spi.Endpoint;
@@ -32,25 +34,42 @@ import org.switchyard.spi.EndpointProvider;
  */
 public class DefaultEndpointProvider implements EndpointProvider {
 
+    private ConcurrentHashMap<String, Endpoint> _endpoints = 
+        new ConcurrentHashMap<String, Endpoint>();
+    
     @Override
-    public Endpoint createEndpoint(final HandlerChain handlerChain) {
-        return new DefaultEndpoint(handlerChain);
+    public synchronized Endpoint createEndpoint(String name, HandlerChain handlerChain) {
+        Endpoint endpoint = new DefaultEndpoint(name, handlerChain);
+        _endpoints.put(name, endpoint);
+        return endpoint;
+    }
+
+    @Override
+    public Endpoint getEndpoint(String name) {
+        return _endpoints.get(name);
     }
 }
 
 class DefaultEndpoint implements Endpoint {
     private HandlerChain _handlerChain;
+    private String _name;
 
     /**
      * Constructor.
      * @param handlerChain handler chain
      */
-    DefaultEndpoint(final HandlerChain handlerChain) {
+    DefaultEndpoint(final String name, final HandlerChain handlerChain) {
+        _name = name;
         _handlerChain = handlerChain;
     }
 
     @Override
     public void send(final Exchange exchange) {
         _handlerChain.handle(exchange);
+    }
+
+    @Override
+    public String getName() {
+        return _name;
     }
 }

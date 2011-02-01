@@ -52,7 +52,7 @@ public class ExchangeImplTest {
     
     @Test
     public void testSendFaultOnNewExchange() {
-        Exchange exchange = new ExchangeImpl(null, ExchangePattern.IN_OUT, null);
+        Exchange exchange = new ExchangeImpl(null, ExchangePattern.IN_OUT);
         try {
             exchange.sendFault(exchange.createMessage());
             Assert.fail("Sending a fault on a new exchange is not allowed");
@@ -63,7 +63,7 @@ public class ExchangeImplTest {
     
     @Test
     public void testPhaseIsNullOnNewExchange() {
-        Exchange exchange = new ExchangeImpl(null, ExchangePattern.IN_OUT, null);
+        Exchange exchange = new ExchangeImpl(null, ExchangePattern.IN_OUT);
         Assert.assertNull(exchange.getPhase());
     }
     

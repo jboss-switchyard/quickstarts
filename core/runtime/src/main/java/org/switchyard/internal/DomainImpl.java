@@ -29,11 +29,10 @@ import javax.xml.namespace.QName;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
+import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerChain;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
-import org.switchyard.internal.handlers.AddressingHandler;
-import org.switchyard.internal.handlers.DeliveryHandler;
 import org.switchyard.internal.handlers.TransformHandler;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
@@ -48,7 +47,7 @@ import org.switchyard.transform.TransformerRegistry;
 public class DomainImpl implements ServiceDomain {
 
     private final String _name;
-    private final HandlerChain _systemHandlers;
+    private final DefaultHandlerChain _defaultHandlers;
     private final ServiceRegistry _registry;
     private final EndpointProvider _endpointProvider;
     private final TransformerRegistry _transformerRegistry;
@@ -72,10 +71,8 @@ public class DomainImpl implements ServiceDomain {
 
         // Build out the system handlers chain.  It would be cleaner if we
         // handled this via config.
-        _systemHandlers = new DefaultHandlerChain();
-        _systemHandlers.addLast("transformation", new TransformHandler(_transformerRegistry));
-        _systemHandlers.addLast("addressing", new AddressingHandler());
-        _systemHandlers.addLast("delivery", new DeliveryHandler());
+        _defaultHandlers = new DefaultHandlerChain();
+        _defaultHandlers.addFirst("transformation", new TransformHandler(_transformerRegistry));
     }
 
     @Override
@@ -88,19 +85,19 @@ public class DomainImpl implements ServiceDomain {
     @Override
     public Exchange createExchange(
             Service service, ExchangePattern pattern, ExchangeHandler handler) {
-        // setup the system handlers
-        HandlerChain handlers = new DefaultHandlerChain();
-        handlers.addLast("system.handlers", _systemHandlers);
-        // create the exchange
-        ExchangeImpl exchange = new ExchangeImpl(service, pattern, handlers);
-
+        // Determine the endpoints used for exchange delivery
+        Endpoint inputEndpoint = _endpointProvider.getEndpoint(
+                getEndpointName(service.getName(), ExchangePhase.IN));
+        Endpoint outputEndpoint = null;
         if (handler != null) {
-            // A response handler was specified, so setup a reply endpoint
-            HandlerChain replyChain = new DefaultHandlerChain();
-            replyChain.addLast("reply handler", handler);
-            Endpoint ep = _endpointProvider.createEndpoint(replyChain);
-            exchange.setSource(ep);
+            HandlerChain replyChain = _defaultHandlers.clone();
+            replyChain.addLast("replyHandler", handler);
+            outputEndpoint = _endpointProvider.createEndpoint(
+                    getEndpointName(service.getName(), ExchangePhase.OUT), replyChain);
         }
+        
+        // create the exchange
+        ExchangeImpl exchange = new ExchangeImpl(service, pattern, inputEndpoint, outputEndpoint);
         return exchange;
     }
 
@@ -112,9 +109,10 @@ public class DomainImpl implements ServiceDomain {
     @Override
     public Service registerService(QName serviceName, ExchangeHandler handler,
             ServiceInterface metadata) {
-        HandlerChain handlers = new DefaultHandlerChain();
+        HandlerChain handlers = _defaultHandlers.clone();
         handlers.addLast("provider", handler);
-        Endpoint ep = _endpointProvider.createEndpoint(handlers);
+        Endpoint ep = _endpointProvider.createEndpoint(
+                getEndpointName(serviceName, ExchangePhase.IN), handlers);
         // If no service interface is provided, we default to InOutService
         if (metadata != null) {
             return _registry.registerService(serviceName, metadata, ep, handlers, this);
@@ -137,5 +135,13 @@ public class DomainImpl implements ServiceDomain {
     public Service getService(QName serviceName) {
         List<Service> services = _registry.getServices(serviceName);
         return services.isEmpty() ? null : services.get(0);
+    }
+    
+    /**
+     * Returns an endpoint name based on the domain name, service name, and 
+     * exchange phase.
+     */
+    private String getEndpointName(QName serviceName, ExchangePhase phase) {
+        return _name + ":" + serviceName + ":" + phase.toString();
     }
 }

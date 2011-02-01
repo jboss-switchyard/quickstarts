@@ -21,6 +21,8 @@
  */
 package org.switchyard.internal;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.switchyard.Exchange;
 import org.switchyard.HandlerChain;
 import org.switchyard.internal.MockEndpoint;
@@ -28,23 +30,47 @@ import org.switchyard.spi.Endpoint;
 import org.switchyard.spi.EndpointProvider;
 
 public class MockEndpointProvider implements EndpointProvider {
+    private ConcurrentHashMap<String, Endpoint> _endpoints = 
+        new ConcurrentHashMap<String, Endpoint>();
+    
     @Override
-    public Endpoint createEndpoint(HandlerChain handlerChain) {
-        return new MockEndpoint(handlerChain);
+    public synchronized Endpoint createEndpoint(String name, HandlerChain handlerChain) {
+        Endpoint endpoint = _endpoints.get(name);
+        if (endpoint == null) {
+            endpoint = new MockEndpoint(name, handlerChain);
+            _endpoints.put(name, endpoint);
+        }
+        return endpoint;
+    }
+
+    @Override
+    public Endpoint getEndpoint(String name) {
+        return _endpoints.get(name);
     }
 }
 
 class MockEndpoint implements Endpoint {
     
     private HandlerChain _handlerChain;
-    
-    MockEndpoint(HandlerChain handlerChain) {
+    private String _name;
+
+    /**
+     * Constructor.
+     * @param handlerChain handler chain
+     */
+    MockEndpoint(final String name, final HandlerChain handlerChain) {
+        _name = name;
         _handlerChain = handlerChain;
     }
 
     @Override
-    public void send(Exchange exchange) {
+    public void send(final Exchange exchange) {
         _handlerChain.handle(exchange);
+    }
+
+    @Override
+    public String getName() {
+        return _name;
     }
     
 }

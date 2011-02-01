@@ -29,7 +29,6 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
 import org.switchyard.ExchangeState;
-import org.switchyard.HandlerChain;
 import org.switchyard.Message;
 import org.switchyard.Service;
 import org.switchyard.spi.Endpoint;
@@ -58,21 +57,35 @@ public class ExchangeImpl implements Exchange {
     private final Service           _service;
     private Message                 _message;
     private ExchangeState           _state = ExchangeState.OK;
-    private final HandlerChain      _handlers;
-    private Endpoint                _source;
-    private Endpoint                _target;
+    private Endpoint                _inputEndpoint;
+    private Endpoint                _outputEndpoint;
     private final Context           _context;
 
+    /**
+     * Create a new exchange with no endpoints initialized.  At a minimum, the 
+     * input endpoint must be set before sending an exchange.
+     * @param service service
+     * @param pattern exchange pattern
+     * @param handlers handlers
+     */
+    ExchangeImpl(Service service, ExchangePattern pattern) {
+        _service = service;
+        _pattern = pattern;
+        _exchangeId = UUID.randomUUID().toString();
+        _context = new DefaultContext();
+    }
+    
     /**
      * Constructor.
      * @param service service
      * @param pattern exchange pattern
      * @param handlers handlers
      */
-    ExchangeImpl(Service service, ExchangePattern pattern, HandlerChain handlers) {
+    ExchangeImpl(Service service, ExchangePattern pattern, Endpoint input, Endpoint output) {
         _service = service;
         _pattern = pattern;
-        _handlers = handlers;
+        _inputEndpoint = input;
+        _outputEndpoint = output;
         _exchangeId = UUID.randomUUID().toString();
         _context = new DefaultContext();
     }
@@ -139,40 +152,56 @@ public class ExchangeImpl implements Exchange {
     }
 
     /**
-     * Get source endpoint.
-     * @return source
+     * Get input endpoint.
+     * @return input endpoint
      */
-    public Endpoint getSource() {
-        return _source;
+    public Endpoint getInputEndpoint() {
+        return _inputEndpoint;
     }
 
     /**
-     * Get target endpoint.
-     * @return target
+     * Get output endpoint.
+     * @return output endpoint
      */
-    public Endpoint getTarget() {
-        return _target;
+    public Endpoint getOutputEndpoint() {
+        return _outputEndpoint;
     }
 
     /**
-     * Set the target endpoint.
-     * @param target target endpoint
+     * Set the input endpoint.
+     * @param input input endpoint
      */
-    public void setTarget(Endpoint target) {
-        _target = target;
+    public void setInputEndpoint(Endpoint input) {
+        _inputEndpoint = input;
     }
 
     /**
      * Set the source endpoint.
-     * @param source source endpoint
+     * @param output output endpoint
      */
-    public void setSource(Endpoint source) {
-        _source = source;
+    public void setOutputEndpoint(Endpoint output) {
+        _outputEndpoint = output;
     }
 
+    /**
+     * Internal send method common to sendFault and sendMessage.  This method
+     * assumes that the exchange phase has been assigned for the send and that
+     * the exchange state has been verified (i.e. it's OK to deliver in the
+     * exchange's current state).
+     */
     private void sendInternal(Message message) {
         _message = message;
-        _handlers.handle(this);
+        
+        switch (_phase) {
+        case IN:
+            _inputEndpoint.send(this);
+            break;
+        case OUT:
+            _outputEndpoint.send(this);
+            break;
+        default:
+            throw new RuntimeException("No endpoint assigned for exchange phase " + _phase);
+        }
     }
 
     private void assertExchangeStateOK() {

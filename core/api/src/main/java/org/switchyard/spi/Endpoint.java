@@ -30,6 +30,11 @@ import org.switchyard.Exchange;
 public interface Endpoint {
 
     /**
+     * The name of the service endpoint.
+     * @return endpoint name
+     */
+    String getName();
+    /**
      * Send an exchange.
      * @param exchange exchange
      */
