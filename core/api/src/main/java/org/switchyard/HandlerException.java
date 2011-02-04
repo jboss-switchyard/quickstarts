@@ -22,7 +22,7 @@
 
 package org.switchyard;
 
-import org.switchyard.message.PayloadTypeName;
+import org.switchyard.metadata.java.PayloadTypeName;
 
 /**
  * Represents a processing error when handling an exchange.  A

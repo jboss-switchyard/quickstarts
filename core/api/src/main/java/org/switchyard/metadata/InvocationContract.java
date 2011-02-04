@@ -29,19 +29,17 @@ package org.switchyard.metadata;
 public interface InvocationContract {
     /**
      * The name of the input message type.
-     * @return input message type.
+     * @return input message type or null if no type information is available.
      */
     String getInputType();
     /**
      * The name of the output message type.
-     * @return output message name or null if the operation does not have
-     * an output message (IN_ONLY).
+     * @return output message name or null if no type information is available.
      */
     String getOutputType();
     /**
      * The name of the output message type.
-     * @return output message name or null if the operation does not have
-     * an output message (IN_ONLY).
+     * @return output message name or null if no type information is available.
      */
     String getFaultType();
 }

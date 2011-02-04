@@ -33,8 +33,8 @@ import org.switchyard.ExchangePattern;
 import org.switchyard.MockHandler;
 import org.switchyard.Service;
 import org.switchyard.metadata.ExchangeContract;
-import org.switchyard.metadata.JavaService;
 import org.switchyard.metadata.ServiceInterface;
+import org.switchyard.metadata.java.JavaService;
 
 /**
  *  Unit tests for the DomainImpl class.

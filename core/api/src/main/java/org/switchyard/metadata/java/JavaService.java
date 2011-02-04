@@ -20,9 +20,12 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard.metadata;
+package org.switchyard.metadata.java;
 
-import org.switchyard.message.PayloadTypeName;
+import org.switchyard.metadata.BaseService;
+import org.switchyard.metadata.InOnlyOperation;
+import org.switchyard.metadata.InOutOperation;
+import org.switchyard.metadata.ServiceOperation;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -125,7 +128,7 @@ public final class JavaService extends BaseService {
     /**
      * Convert the supplied java type to a payload type name.
      * <p/>
-     * Checks for a {@link org.switchyard.message.PayloadTypeName} on the type.  If not found,
+     * Checks for a {@link org.switchyard.metadata.java.PayloadTypeName} on the type.  If not found,
      * the type name is derived from the Java Class name.
      *
      * @param javaType The Java type.

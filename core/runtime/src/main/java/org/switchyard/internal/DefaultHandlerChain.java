@@ -34,7 +34,7 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.internal.transform.TransformSequence;
 import org.switchyard.metadata.ExchangeContract;
-import org.switchyard.metadata.JavaService;
+import org.switchyard.metadata.java.JavaService;
 
 /**
  * Default handler chain.

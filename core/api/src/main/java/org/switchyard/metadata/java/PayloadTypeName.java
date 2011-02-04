@@ -1,4 +1,4 @@
-package org.switchyard.message;
+package org.switchyard.metadata.java;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;

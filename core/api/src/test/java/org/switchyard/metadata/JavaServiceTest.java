@@ -26,6 +26,7 @@ package org.switchyard.metadata;
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.ExchangePattern;
+import org.switchyard.metadata.java.JavaService;
 
 public class JavaServiceTest {
     
