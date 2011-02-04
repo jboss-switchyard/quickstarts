@@ -26,10 +26,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 
-import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.WSDLException;
-import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 //import javax.xml.ws.BindingProvider;
@@ -59,6 +57,7 @@ public class OutboundHandler extends BaseHandler {
     private Dispatch<SOAPMessage> _dispatcher;
     private Port _port;
     private String _wsdlLocation;
+    private PortName _portName;
 
     /**
      * Constructor.
@@ -67,6 +66,7 @@ public class OutboundHandler extends BaseHandler {
     public OutboundHandler(final HashMap<String, String> config) {
         String composer = config.get("composer");
         String decomposer = config.get("decomposer");
+        _portName = new PortName(config.get("wsPort"));
 
         if (composer != null && composer.length() > 0) {
             try {
@@ -136,15 +136,15 @@ public class OutboundHandler extends BaseHandler {
     private SOAPMessage invokeService(final SOAPMessage soapMessage) throws SOAPException {
         if (_dispatcher == null) {
             try {
-                Definition definition = WSDLUtil.readWSDL(_wsdlLocation);
-                javax.wsdl.Service wsdlService = (javax.wsdl.Service) definition.getServices().values().iterator().next();
-                QName serviceName = wsdlService.getQName();
-                _port = (Port) wsdlService.getPorts().values().iterator().next();
-                QName portName = new QName(definition.getTargetNamespace(), _port.getName());
+                javax.wsdl.Service wsdlService = WSDLUtil.getService(_wsdlLocation, _portName);
+                _port = WSDLUtil.getPort(wsdlService, _portName);
+                // Update the portName
+                _portName.setServiceQName(wsdlService.getQName());
+                _portName.setName(_port.getName());
 
                 URL wsdlUrl = new URL(_wsdlLocation);
-                Service service = Service.create(wsdlUrl, serviceName);
-                _dispatcher = service.createDispatch(portName, SOAPMessage.class, Service.Mode.MESSAGE, new AddressingFeature(false, false));
+                Service service = Service.create(wsdlUrl, _portName.getServiceQName());
+                _dispatcher = service.createDispatch(_portName.getPortQName(), SOAPMessage.class, Service.Mode.MESSAGE, new AddressingFeature(false, false));
                 // this does not return a proper qualified Fault element and has no Detail so defering for now
                 // BindingProvider bp = (BindingProvider) _dispatcher;
                 // bp.getRequestContext().put("jaxws.response.throwExceptionIfSOAPFault", Boolean.FALSE);

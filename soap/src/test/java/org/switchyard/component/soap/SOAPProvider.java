@@ -32,6 +32,11 @@ import org.switchyard.component.soap.util.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+/**
+ * A mock up WebService provider.
+ *
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
+ */
 public class SOAPProvider extends BaseHandler {
 
     @Override

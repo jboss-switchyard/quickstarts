@@ -55,6 +55,11 @@ import org.switchyard.metadata.BaseService;
 import org.switchyard.metadata.InOutOperation;
 import org.w3c.dom.Element;
 
+/**
+ * Contains tests for SOAPGateway.
+ *
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
+ */
 public class SOAPGatewayTest {
     private static final QName PUBLISH_AS_WS_SERVICE = new QName("publish-as-ws");
     private static final QName WS_CONSUMER_SERVICE = new QName("webservice-consumer");
@@ -130,6 +135,7 @@ public class SOAPGatewayTest {
         config.put("localService", PUBLISH_AS_WS_SERVICE.getLocalPart());
         config.put("host", host);
         config.put("port", port);
+        config.put("wsPort", "{http://test.ws/}HelloWebService:HelloWebServicePort");
         _soapInbound.init(config);
         _soapInbound.start();
 

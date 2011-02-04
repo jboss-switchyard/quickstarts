@@ -22,6 +22,27 @@
  
 package org.switchyard.component.soap;
 
+import com.sun.net.httpserver.HttpContext;
+import com.sun.net.httpserver.HttpServer;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.wsdl.Operation;
+import javax.wsdl.Port;
+import javax.wsdl.WSDLException;
+import javax.xml.namespace.QName;
+import javax.xml.soap.Node;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.ws.Endpoint;
+
 import org.apache.log4j.Logger;
 import org.switchyard.BaseHandler;
 import org.switchyard.Context;
@@ -36,30 +57,10 @@ import org.switchyard.component.soap.util.WSDLUtil;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.internal.ServiceDomains;
 
-import com.sun.net.httpserver.HttpContext;
-import com.sun.net.httpserver.HttpServer;
 import org.switchyard.internal.transform.TransformSequence;
 import org.switchyard.metadata.BaseInvocationContract;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.ServiceOperation;
-
-import javax.wsdl.Definition;
-import javax.wsdl.Operation;
-import javax.wsdl.Port;
-import javax.wsdl.WSDLException;
-import javax.xml.namespace.QName;
-import javax.xml.soap.Node;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.ws.Endpoint;
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Hanldes SOAP requests to invoke a SwitchYard service.
@@ -89,13 +90,13 @@ public class InboundHandler extends BaseHandler {
     private Service _service;
     private long _waitTimeout = DEFAULT_TIMEOUT; // default of 15 seconds
     private Endpoint _endpoint;
-    private String _wsName;
     private Port _wsdlPort;
     private String _scheme = "http";
     private String _host;
     private int _serverPort;
     private String _contextPath;
     private HttpServer _server;
+    private PortName _portName;
 
     /**
      * Constructor.
@@ -108,6 +109,7 @@ public class InboundHandler extends BaseHandler {
         String decomposer = config.get("decomposer");
         _host = config.get("host");
         _contextPath = config.get("context");
+        _portName = new PortName(config.get("wsPort"));
 
         if (composer != null && composer.length() > 0) {
             try {
@@ -151,14 +153,12 @@ public class InboundHandler extends BaseHandler {
      */
     public void start() throws WebServicePublishException {
         try {
-            Definition definition = WSDLUtil.readWSDL(_wsdlLocation);
-            // Only first definition for now
-            javax.wsdl.Service wsdlService = (javax.wsdl.Service) definition.getServices().values().iterator().next();
-            String targetNamespace = definition.getTargetNamespace();
-            _wsName = wsdlService.getQName().getLocalPart();
-            // Only first port for now
-            _wsdlPort = (Port) wsdlService.getPorts().values().iterator().next();
-            String portName = _wsdlPort.getName();
+            javax.wsdl.Service wsdlService = WSDLUtil.getService(_wsdlLocation, _portName);
+            _wsdlPort = WSDLUtil.getPort(wsdlService, _portName);
+            // Update the portName
+            _portName.setServiceQName(wsdlService.getQName());
+            _portName.setName(_wsdlPort.getName());
+            
             BaseWebService wsProvider = new BaseWebService();
             // Hook the handler
             wsProvider.setConsumer(this);
@@ -176,15 +176,15 @@ public class InboundHandler extends BaseHandler {
             metadata.add(source);
             _endpoint.setMetadata(metadata);
             Map<String, Object> properties = new HashMap<String, Object>();
-            properties.put(Endpoint.WSDL_SERVICE, new QName(targetNamespace, _wsName));
-            properties.put(Endpoint.WSDL_PORT, new QName(targetNamespace, portName));
+            properties.put(Endpoint.WSDL_SERVICE, _portName.getServiceQName());
+            properties.put(Endpoint.WSDL_PORT, _portName.getPortQName());
             _endpoint.setProperties(properties);
 
             _server = HttpServer.create(new InetSocketAddress(_host, _serverPort), 0);
             _server.start();
-            String path = "/" + _wsName;
+            String path = "/" + _portName.getServiceName();
             if (_contextPath != null) {
-                path = "/" + _contextPath + "/" + _wsName;
+                path = "/" + _contextPath + "/" + _portName.getServiceName();
             }
             HttpContext context = _server.createContext(path);
             _endpoint.publish(context);
@@ -202,7 +202,7 @@ public class InboundHandler extends BaseHandler {
     public void stop() {
         _endpoint.stop();
         _server.stop(0);
-        LOGGER.info("WebService " + _wsName + " stopped.");
+        LOGGER.info("WebService " + _portName + " stopped.");
     }
 
     /**
