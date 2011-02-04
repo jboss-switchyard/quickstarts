@@ -45,7 +45,7 @@ import javax.xml.namespace.QName;
 import org.switchyard.ServiceDomain;
 import org.switchyard.internal.DefaultHandlerChain;
 import org.switchyard.internal.ServiceDomains;
-import org.switchyard.metadata.JavaService;
+import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.Transformer;
 
 /**
