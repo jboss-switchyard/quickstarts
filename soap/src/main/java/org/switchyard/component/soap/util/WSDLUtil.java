@@ -28,13 +28,20 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.wsdl.Definition;
-import javax.xml.transform.stream.StreamSource;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
+import javax.xml.transform.stream.StreamSource;
+
+import org.switchyard.component.soap.PortName;
 
 /**
  * Contains utility methods to examine/manipulate WSDLs.
@@ -106,5 +113,70 @@ public final class WSDLUtil {
             File localFile = new File(path);
             return localFile.toURL();
         }
+    }
+
+    /**
+     * Get the Service from the WSDL given a PortName.
+     * If the PortName.getServiceQName() is empty (QName("")) then this method returns the first found Service.
+     *
+     * @param wsdlLocation location pointing to a WSDL XML definition.
+     * @param portName the PortName.
+     * @return the Service.
+     * @throws WSDLException If the Service could not be retrieved.
+     */
+    public static Service getService(final String wsdlLocation, final PortName portName) throws WSDLException {
+        Definition definition = readWSDL(wsdlLocation);
+        Service service = null;
+        if (portName.getServiceQName().equals(new QName(""))) {
+            service = (Service) definition.getServices().values().iterator().next();
+            portName.setServiceQName(service.getQName());
+        } else {
+            String namespace = portName.getNamespaceURI();        
+            if (namespace.equals(XMLConstants.NULL_NS_URI)) {
+                namespace = definition.getTargetNamespace();
+            }
+            QName serviceQName = new QName(namespace, portName.getServiceName());
+            Iterator<Service> services = definition.getServices().values().iterator();
+            while (services.hasNext()) {
+                Service wsdlService = services.next();
+                if (wsdlService.getQName().equals(serviceQName)) {
+                    service =  wsdlService;
+                    break;
+                }
+            }
+        }
+        if (service == null) {
+            throw new WSDLException("Could not find service " + portName + " in the WSDL " + wsdlLocation, null);
+        }
+        return service;
+    }
+
+    /**
+     * Get the Port from the Service given a port name string. If the PortName.getName() is null then this method returns the first found Port.
+     *
+     * @param wsdlService the Service to be queried for.
+     * @param portName the PortName.
+     * @return the Webservice Port.
+     * @throws WSDLException If the Port could not be found.
+     */
+    public static Port getPort(final Service wsdlService, final PortName portName) throws WSDLException {
+        String name = portName.getName();
+        Port port = null;
+        if ((name == null) || (name.length() == 0)) {
+            port = (Port) wsdlService.getPorts().values().iterator().next();
+        } else {
+            Iterator<Port> ports = wsdlService.getPorts().values().iterator();
+            while (ports.hasNext()) {
+                Port wsdlPort = ports.next();
+                if (wsdlPort.getName().equals(name)) {
+                    port = wsdlPort;
+                    break;
+                }
+            }
+        }
+        if (port == null) {
+            throw new WSDLException("Could not find port " + portName + " in the Service " + wsdlService.getQName(), null);
+        }
+        return port;
     }
 }

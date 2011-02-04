@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" targetNamespace="http://test.ws.other/" xmlns:othr="http://test.ws.other/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="sayGoodbye" type="othr:sayGoodbye"/>
+
+  <xs:element name="sayGoodbyeResponse" type="othr:sayGoodbyeResponse"/>
+
+  <xs:complexType name="sayGoodbye">
+    <xs:sequence>
+      <xs:element name="arg0" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="sayGoodbyeResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+
