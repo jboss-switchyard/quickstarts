@@ -1,0 +1,91 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * as indicated by the @authors tag. All rights reserved.
+ * See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA  02110-1301, USA.
+ */
+package org.switchyard.config.model.composite.v1;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
+import org.switchyard.config.Configuration;
+import org.switchyard.config.Descriptor;
+import org.switchyard.config.model.BaseModel;
+import org.switchyard.config.model.Models;
+import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.CompositeModel;
+import org.switchyard.config.model.composite.ExternalServiceModel;
+
+/**
+ * V1CompositeModel.
+ *
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ */
+public class V1CompositeModel extends BaseModel implements CompositeModel {
+
+    private List<ExternalServiceModel> _services = new ArrayList<ExternalServiceModel>();
+    private List<ComponentModel> _components = new ArrayList<ComponentModel>();
+
+    public V1CompositeModel() {
+        super(new QName(Models.DEFAULT_NAMESPACE, "composite"));
+        setChildrenGroups("service", "component");
+    }
+
+    public V1CompositeModel(Configuration config, Descriptor desc) {
+        super(config, desc);
+        for (Configuration service_config : config.getChildren("service")) {
+            ExternalServiceModel service = (ExternalServiceModel)readModel(service_config);
+            if (service != null) {
+                _services.add(service);
+            }
+        }
+        for (Configuration component_config : config.getChildren("component")) {
+            ComponentModel component = (ComponentModel)readModel(component_config);
+            if (component != null) {
+                _components.add(component);
+            }
+        }
+        setChildrenGroups("service", "component");
+    }
+
+    @Override
+    public synchronized List<ExternalServiceModel> getServices() {
+        return Collections.unmodifiableList(_services);
+    }
+
+    @Override
+    public synchronized CompositeModel addService(ExternalServiceModel service) {
+        addChildModel(service);
+        _services.add(service);
+        return this;
+    }
+
+    @Override
+    public synchronized List<ComponentModel> getComponents() {
+        return Collections.unmodifiableList(_components);
+    }
+
+    @Override
+    public synchronized CompositeModel addComponent(ComponentModel component) {
+        addChildModel(component);
+        _components.add(component);
+        return this;
+    }
+
+}

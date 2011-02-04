@@ -20,6 +20,7 @@
 	
     <modules>
         <module>api</module>
+        <module>config</module>
         <module>runtime</module>
     </modules>
 

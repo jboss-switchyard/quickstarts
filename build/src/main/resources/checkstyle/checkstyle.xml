@@ -92,16 +92,24 @@
         <!-- Checks for Naming Conventions.                  -->
         <!-- See http://checkstyle.sf.net/config_naming.html -->
         <module name="ConstantName"/>
-        <module name="LocalFinalVariableName"/>
-        <module name="LocalVariableName"/>
-        <module name="MemberName">
-            <property name="format" value="^_[a-z][a-zA-Z0-9]*$"/>
+        <module name="LocalFinalVariableName">
+            <property name="format" value="^[a-z_][a-zA-Z0-9_]*$"/>
         </module>
-        <module name="MethodName"/>
+        <module name="LocalVariableName">
+            <property name="format" value="^[a-z_][a-zA-Z0-9_]*$"/>
+        </module>
+        <module name="MemberName">
+            <property name="format" value="^_[a-z_][a-zA-Z0-9_]*$"/>
+        </module>
+        <module name="MethodName">
+            <property name="format" value="^[a-z_][a-zA-Z0-9_]*$"/>
+        </module>
         <module name="PackageName"/>
-        <module name="ParameterName"/>
+        <module name="ParameterName">
+            <property name="format" value="^[a-z_][a-zA-Z0-9_]*$"/>
+        </module>
         <module name="StaticVariableName">
-            <property name="format" value="^_[a-z][a-zA-Z0-9]*$"/>
+            <property name="format" value="^_[a-z_][a-zA-Z0-9_]*$"/>
         </module>
         <module name="TypeName"/>
 
@@ -145,14 +153,21 @@
         <module name="OperatorWrap"/>
         <module name="ParenPad"/>
         <module name="TypecastParenPad"/>
-        <module name="WhitespaceAfter"/>
-        <module name="WhitespaceAround"/>
+        <module name="WhitespaceAfter">
+            <property name="tokens" value="SEMI"/>
+        </module>
+        <module name="WhitespaceAround">
+            <property name="allowEmptyConstructors" value="true"/>
+            <property name="tokens" value="BAND,BAND_ASSIGN,BOR,BOR_ASSIGN,BSR,BSR_ASSIGN,BXOR,BXOR_ASSIGN,COLON,DIV_ASSIGN,EQUAL,GE,LAND,LE,LITERAL_ASSERT,LITERAL_CATCH,LITERAL_DO,LITERAL_ELSE,LITERAL_FINALLY,LITERAL_FOR,LITERAL_IF,LITERAL_RETURN,LITERAL_SYNCHRONIZED,LITERAL_TRY,LITERAL_WHILE,LOR,MINUS_ASSIGN,MOD,MOD_ASSIGN,NOT_EQUAL,PLUS_ASSIGN,QUESTION,SL,SLIST,SL_ASSIGN,SR,SR_ASSIGN,STAR,STAR_ASSIGN,TYPE_EXTENSION_AND"/>
+        </module>
 
 
         <!-- Modifier Checks                                    -->
         <!-- See http://checkstyle.sf.net/config_modifiers.html -->
         <module name="ModifierOrder"/>
-        <module name="RedundantModifier"/>
+        <module name="RedundantModifier">
+            <property name="tokens" value="VARIABLE_DEF,ANNOTATION_FIELD_DEF"/>
+        </module>
 
 
         <!-- Checks for blocks. You know, those {}'s         -->
@@ -173,7 +188,7 @@
         <module name="HiddenField"/>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
-        <module name="MagicNumber"/>
+        <!--<module name="MagicNumber"/>-->
         <!--<module name="MissingSwitchDefault"/>-->
         <module name="RedundantThrows"/>
         <module name="SimplifyBooleanExpression"/>
