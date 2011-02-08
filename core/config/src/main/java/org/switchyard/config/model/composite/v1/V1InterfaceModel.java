@@ -22,8 +22,6 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.Descriptor;
 import org.switchyard.config.model.composite.BaseTypedModel;
 import org.switchyard.config.model.composite.InterfaceModel;
-import org.switchyard.metadata.ServiceInterface;
-import org.switchyard.metadata.java.JavaService;
 
 /**
  * V1InterfaceModel.
@@ -31,8 +29,6 @@ import org.switchyard.metadata.java.JavaService;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class V1InterfaceModel extends BaseTypedModel implements InterfaceModel {
-
-    private ServiceInterface _metadata;
 
     public V1InterfaceModel(String type) {
         super(InterfaceModel.INTERFACE + '.' + type);
@@ -43,34 +39,14 @@ public class V1InterfaceModel extends BaseTypedModel implements InterfaceModel {
     }
 
     @Override
-    public synchronized String getInterface() {
+    public String getInterface() {
         return getModelAttribute(InterfaceModel.INTERFACE);
     }
 
     @Override
-    public synchronized InterfaceModel setInterface(String interfaze) {
+    public InterfaceModel setInterface(String interfaze) {
         setModelAttribute(InterfaceModel.INTERFACE, interfaze);
-        _metadata = null;
         return this;
-    }
-
-    @Override
-    public synchronized ServiceInterface getMetadata() {
-        if (_metadata == null) {
-            String interfaze = getInterface();
-            if (interfaze != null) {
-                if ("java".equals(getType())) {
-                    Class<?> clazz;
-                    try {
-                        clazz = Class.forName(interfaze);
-                    } catch (ClassNotFoundException cnfe) {
-                        throw new RuntimeException(cnfe);
-                    }
-                    _metadata = JavaService.fromClass(clazz);
-                }
-            }
-        }
-        return _metadata;
     }
 
 }

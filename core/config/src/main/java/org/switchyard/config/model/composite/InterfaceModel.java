@@ -18,8 +18,6 @@
  */
 package org.switchyard.config.model.composite;
 
-import org.switchyard.metadata.ServiceInterface;
-
 /**
  * InterfaceModel.
  *
@@ -32,7 +30,5 @@ public interface InterfaceModel extends TypedModel {
     public String getInterface();
 
     public InterfaceModel setInterface(String interfaze);
-
-    public ServiceInterface getMetadata();
 
 }
