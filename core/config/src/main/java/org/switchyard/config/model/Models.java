@@ -34,8 +34,6 @@ import org.w3c.dom.Element;
  */
 public final class Models {
 
-    public static final String DEFAULT_NAMESPACE = "http://docs.oasis-open.org/ns/opencsa/sca/200912";
-
     private Models() {}
 
     public static Model create(Document document) {
@@ -63,11 +61,19 @@ public final class Models {
     }
 
     public static Model create(String name) {
-        return create(DEFAULT_NAMESPACE, name, null);
+        return create(null, name, (String)null);
     }
 
     public static Model create(String name, Descriptor desc) {
-        return create(DEFAULT_NAMESPACE, name, null, desc);
+        return create(null, name, null, desc);
+    }
+
+    public static Model create(String namespace, String name) {
+        return create(namespace, name,(String)null);
+    }
+
+    public static Model create(String namespace, String name, Descriptor desc) {
+        return create(namespace, name, null, desc);
     }
 
     public static Model create(String namespace, String localName, String prefix) {
@@ -91,7 +97,7 @@ public final class Models {
         Configuration from_model_config = fromModel.getModelConfiguration();
         Configuration to_model_config = toModel.getModelConfiguration();
         Configuration merged_model_config = Configurations.merge(from_model_config, to_model_config, fromOverridesTo);
-        Model merged_model = toModel.getModelMarshaller().read(merged_model_config);
+        Model merged_model = ModelResource.getModelMarshaller(toModel).read(merged_model_config);
         return merged_model;
     }
 

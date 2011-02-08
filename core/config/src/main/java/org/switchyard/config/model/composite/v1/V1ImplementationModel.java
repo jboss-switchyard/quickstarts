@@ -20,7 +20,7 @@ package org.switchyard.config.model.composite.v1;
 
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Descriptor;
-import org.switchyard.config.model.composite.BaseTypeModel;
+import org.switchyard.config.model.composite.BaseTypedModel;
 import org.switchyard.config.model.composite.ImplementationModel;
 
 /**
@@ -28,10 +28,10 @@ import org.switchyard.config.model.composite.ImplementationModel;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1ImplementationModel extends BaseTypeModel implements ImplementationModel {
+public class V1ImplementationModel extends BaseTypedModel implements ImplementationModel {
 
     public V1ImplementationModel(String type) {
-        super("implementation." + type);
+        super(ImplementationModel.IMPLEMENTATION + '.' + type);
     }
 
     public V1ImplementationModel(Configuration config, Descriptor desc) {
@@ -40,12 +40,12 @@ public class V1ImplementationModel extends BaseTypeModel implements Implementati
 
     @Override
     public String getClazz() {
-        return getModelAttribute("class");
+        return getModelAttribute(ImplementationModel.CLASS);
     }
 
     @Override
     public ImplementationModel setClazz(String clazz) {
-        setModelAttribute("class", clazz);
+        setModelAttribute(ImplementationModel.CLASS, clazz);
         return this;
     }
 

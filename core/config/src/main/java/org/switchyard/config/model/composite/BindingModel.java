@@ -18,10 +18,13 @@
  */
 package org.switchyard.config.model.composite;
 
-
 /**
  * BindingModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface BindingModel extends TypeModel {}
+public interface BindingModel extends TypedModel {
+
+    public static final String BINDING = "binding";
+
+}

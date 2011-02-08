@@ -47,8 +47,12 @@ public final class QNames {
         return null;
     }
 
+    public static QName create(String namespace, String localName) {
+        return create(namespace, localName, null);
+    }
+
     public static QName create(String namespace, String localName, String prefix) {
-        if (namespace != null) {
+        if (namespace != null && namespace.length() > 0) {
             if (prefix != null && prefix.length() > 0) {
                 return new QName(namespace, localName, prefix);
             }

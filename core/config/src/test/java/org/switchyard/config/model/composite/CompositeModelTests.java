@@ -67,11 +67,12 @@ public class CompositeModelTests {
 
     @Test
     public void testCreateEmptyModel() throws Exception {
-        String name = "composite";
-        Model model = Models.create(name);
+        String namespace = CompositeModel.DEFAULT_NAMESPACE;
+        String name = CompositeModel.COMPOSITE;
+        Model model = Models.create(namespace, name);
         Assert.assertTrue(model instanceof CompositeModel);
         Assert.assertEquals(name, model.getModelConfiguration().getName());
-        Assert.assertEquals(new QName(Models.DEFAULT_NAMESPACE, name), model.getModelConfiguration().getQName());
+        Assert.assertEquals(new QName(namespace, name), model.getModelConfiguration().getQName());
     }
 
     @Test
@@ -92,12 +93,12 @@ public class CompositeModelTests {
         ExternalServiceModel externalService = composite.getServices().get(0);
         BindingModel binding = externalService.getBindings().get(0);
         Assert.assertEquals("soap", binding.getType());
-        Configuration port_config = binding.getModelConfiguration().getFirstChild("port");
+        Configuration port_config = binding.getModelConfiguration().getFirstChild(PortModel.PORT);
         Assert.assertEquals("MyWebService/SOAPPort", port_config.getValue());
-        Assert.assertEquals("true", port_config.getAttribute("secure"));
-        Configuration wsdl_config = binding.getModelConfiguration().getFirstChild("wsdl");
+        Assert.assertEquals("true", port_config.getAttribute(PortModel.SECURE));
+        Configuration wsdl_config = binding.getModelConfiguration().getFirstChild(WSDLModel.WSDL);
         Assert.assertEquals("service.wsdl", wsdl_config.getValue());
-        Assert.assertEquals("foobar", wsdl_config.getAttribute("description"));
+        Assert.assertEquals("foobar", wsdl_config.getAttribute(WSDLModel.DESCRIPTION));
         //composite.write(System.out);
     }
 
@@ -121,7 +122,7 @@ public class CompositeModelTests {
     @Test
     public void testReadComplete() throws Exception {
         CompositeModel composite = (CompositeModel)_res.pull(COMPLETE_XML);
-        Assert.assertEquals("http://docs.oasis-open.org/ns/opencsa/sca/200912", composite.getModelNamespace());
+        Assert.assertEquals(CompositeModel.DEFAULT_NAMESPACE, composite.getModelConfiguration().getQName().getNamespaceURI());
         Assert.assertEquals("m1app", composite.getName());
         ExternalServiceModel externalService = composite.getServices().get(0);
         Assert.assertEquals("M1AppService", externalService.getName());
@@ -135,6 +136,7 @@ public class CompositeModelTests {
         Assert.assertEquals("service.wsdl", wsdl.getLocation());
         Assert.assertEquals("foobar", wsdl.getDescription());
         ComponentModel component1 = composite.getComponents().get(0);
+        Assert.assertSame(component1, externalService.getComponent());
         Assert.assertEquals("SimpleService", component1.getName());
         ImplementationModel implementation1 = component1.getImplementation();
         Assert.assertEquals("bean", implementation1.getType());

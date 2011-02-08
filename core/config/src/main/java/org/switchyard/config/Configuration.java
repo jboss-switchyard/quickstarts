@@ -83,11 +83,11 @@ public interface Configuration {
 
     public Configuration removeChildren(QName qname);
 
-    public String[] getChildrenGroups();
+    public String[] getChildrenOrder();
 
-    public Configuration setChildrenGroups(String... childrenGroups);
+    public Configuration setChildrenOrder(String... childrenOrder);
 
-    public Configuration groupChildren();
+    public Configuration orderChildren();
 
     public Map<String,String> getNamespacePrefixMap();
 

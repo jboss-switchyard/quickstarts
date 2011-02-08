@@ -22,6 +22,13 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.Descriptor;
 import org.switchyard.config.model.BaseModelMarshaller;
 import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composite.BindingModel;
+import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.CompositeModel;
+import org.switchyard.config.model.composite.ExternalServiceModel;
+import org.switchyard.config.model.composite.ImplementationModel;
+import org.switchyard.config.model.composite.InterfaceModel;
+import org.switchyard.config.model.composite.ReferenceModel;
 
 /**
  * V1CompositeModelMarshaller.
@@ -38,23 +45,23 @@ public class V1CompositeModelMarshaller extends BaseModelMarshaller {
     public Model read(Configuration config) {
         String name = config.getName();
         Descriptor desc = getDescriptor();
-        if (name.equals("composite")) {
+        if (name.equals(CompositeModel.COMPOSITE)) {
             return new V1CompositeModel(config, desc);
-        } else if (name.equals("service")) {
-            if (config.getFirstChildStartsWith("binding") != null) {
+        } else if (name.equals(ExternalServiceModel.SERVICE)) {
+            if (config.getFirstChildStartsWith(BindingModel.BINDING) != null) {
                 return new V1ExternalServiceModel(config, desc);
             } else {
                 return new V1InternalServiceModel(config, desc);
             }
-        } else if (name.startsWith("binding")) {
+        } else if (name.startsWith(BindingModel.BINDING)) {
             return new V1BindingModel(config, desc);
-        } else if (name.equals("component")) {
+        } else if (name.equals(ComponentModel.COMPONENT)) {
             return new V1ComponentModel(config, desc);
-        } else if (name.startsWith("implementation")) {
+        } else if (name.startsWith(ImplementationModel.IMPLEMENTATION)) {
             return new V1ImplementationModel(config, desc);
-        } else if (name.startsWith("interface")) {
+        } else if (name.startsWith(InterfaceModel.INTERFACE)) {
             return new V1InterfaceModel(config, desc);
-        } else if (name.equals("reference")) {
+        } else if (name.equals(ReferenceModel.REFERENCE)) {
             return new V1ReferenceModel(config, desc);
         }
         return null;

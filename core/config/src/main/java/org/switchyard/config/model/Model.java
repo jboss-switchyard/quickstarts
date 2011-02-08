@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Descriptor;
 
@@ -37,18 +35,6 @@ public interface Model {
     public Configuration getModelConfiguration();
 
     public Descriptor getModelDescriptor();
-
-    public String getModelNamespace();
-
-    public ModelMarshaller getModelMarshaller();
-
-    public String getName();
-
-    public Model setName(String name);
-
-    public QName getQName();
-
-    public Model setQName(QName qname);
 
     public void write(OutputStream out) throws IOException;
 

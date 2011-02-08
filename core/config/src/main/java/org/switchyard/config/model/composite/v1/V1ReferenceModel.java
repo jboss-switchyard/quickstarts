@@ -20,7 +20,7 @@ package org.switchyard.config.model.composite.v1;
 
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Descriptor;
-import org.switchyard.config.model.BaseModel;
+import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.InterfaceModel;
 import org.switchyard.config.model.composite.ReferenceModel;
@@ -30,13 +30,13 @@ import org.switchyard.config.model.composite.ReferenceModel;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1ReferenceModel extends BaseModel implements ReferenceModel {
+public class V1ReferenceModel extends BaseNamedModel implements ReferenceModel {
 
     private InterfaceModel _interface;
     private BindingModel _binding;
 
     public V1ReferenceModel() {
-        super("reference");
+        super(ReferenceModel.REFERENCE);
     }
 
     public V1ReferenceModel(Configuration config, Descriptor desc) {
@@ -46,7 +46,7 @@ public class V1ReferenceModel extends BaseModel implements ReferenceModel {
     @Override
     public InterfaceModel getInterface() {
         if (_interface == null) {
-            _interface = (InterfaceModel)getFirstChildModelStartsWith("interface");
+            _interface = (InterfaceModel)getFirstChildModelStartsWith(InterfaceModel.INTERFACE);
         }
         return _interface;
     }
@@ -61,7 +61,7 @@ public class V1ReferenceModel extends BaseModel implements ReferenceModel {
     @Override
     public BindingModel getBinding() {
         if (_binding == null) {
-            _binding = (BindingModel)getFirstChildModel("binding");
+            _binding = (BindingModel)getFirstChildModel(BindingModel.BINDING);
         }
         return _binding;
     }

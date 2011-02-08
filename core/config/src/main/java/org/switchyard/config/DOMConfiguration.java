@@ -213,7 +213,7 @@ public class DOMConfiguration extends BaseConfiguration {
             } else {
                 attr.setValue(value);
             }
-        } else if (value != null && !XMLNS_URI.equals(qname.getNamespaceURI())) {
+        } else if (value != null && !DEFAULT_XMLNS_URI.equals(qname.getNamespaceURI())) {
             attr = _element.getOwnerDocument().createAttributeNS(qname.getNamespaceURI(), qname.getLocalPart());
             String prefix = qname.getPrefix();
             if (prefix != null  && prefix.length() > 0) {
@@ -405,7 +405,7 @@ public class DOMConfiguration extends BaseConfiguration {
 
     @Override
     public void write(Writer writer) throws IOException {
-        groupChildren();
+        orderChildren();
         try {
             TransformerFactory tf = TransformerFactory.newInstance();
             String xsl = new StringResource().pull("/org/switchyard/config/pretty-print.xsl");

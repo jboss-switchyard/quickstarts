@@ -18,45 +18,15 @@
  */
 package org.switchyard.config.model.composite;
 
-import javax.xml.namespace.QName;
-
-import org.switchyard.config.Configuration;
-import org.switchyard.config.Descriptor;
-import org.switchyard.config.model.BaseModel;
+import org.switchyard.config.model.Model;
 
 /**
- * BaseTypeModel.
+ * TypedModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public abstract class BaseTypeModel extends BaseModel implements TypeModel {
+public interface TypedModel extends Model {
 
-    public BaseTypeModel(String name) {
-        super(name);
-    }
-
-    public BaseTypeModel(QName qname) {
-        super(qname);
-    }
-
-    public BaseTypeModel(Configuration config) {
-        super(config);
-    }
-
-    public BaseTypeModel(Configuration config, Descriptor desc) {
-        super(config, desc);
-    }
-
-    @Override
-    public final String getType() {
-        String name = getModelConfiguration().getName();
-        if (name != null) {
-            int pos = name.indexOf('.');
-            if (pos > -1) {
-                return name.substring(pos+1, name.length());
-            }
-        }
-        return null;
-    }
+    public String getType();
 
 }

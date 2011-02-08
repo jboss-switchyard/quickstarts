@@ -39,12 +39,12 @@ public class SOAPBindingModel extends V1BindingModel {
 
     public SOAPBindingModel() {
         super(SOAP);
-        setChildrenGroups(PORT, WSDL);
+        setChildrenOrder(PORT, WSDL);
     }
 
     public SOAPBindingModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setChildrenGroups(PORT, WSDL);
+        setChildrenOrder(PORT, WSDL);
     }
 
     public PortModel getPort() {

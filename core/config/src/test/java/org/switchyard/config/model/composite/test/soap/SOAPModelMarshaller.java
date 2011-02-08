@@ -22,6 +22,7 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.Descriptor;
 import org.switchyard.config.model.BaseModelMarshaller;
 import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composite.BindingModel;
 
 /**
  * SOAPModelMarshaller.
@@ -39,14 +40,14 @@ public class SOAPModelMarshaller extends BaseModelMarshaller {
     @Override
     public Model read(Configuration config) {
         Descriptor desc = getDescriptor();
-        if (config.getName().startsWith("binding")) {
+        if (config.getName().startsWith(BindingModel.BINDING)) {
             return new SOAPBindingModel(config, desc);
-        } else if (config.getName().equals("port")) {
+        } else if (config.getName().equals(PortModel.PORT)) {
             return new PortModel(config, desc);
-        } else if (config.getName().equals("wsdl")) {
+        } else if (config.getName().equals(WSDLModel.WSDL)) {
             return new WSDLModel(config, desc);
         }
-        return null;
+        return super.read(config);
     }
 
 }

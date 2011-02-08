@@ -16,20 +16,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config.model.composite;
+package org.switchyard.config.model;
+
+import javax.xml.namespace.QName;
 
 /**
- * ImplementationModel.
+ * TypedModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface ImplementationModel extends TypedModel {
+public interface NamedModel extends Model {
 
-    public static final String IMPLEMENTATION = "implementation";
-    public static final String CLASS = "class";
+    public String getName();
+    
+    public NamedModel setName(String name);
 
-    public String getClazz();
+    public QName getQName();
 
-    public ImplementationModel setClazz(String clazz);
+    public NamedModel setQName(QName qname);
 
 }

@@ -27,7 +27,6 @@ import javax.xml.namespace.QName;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Configurations;
 import org.switchyard.config.Descriptor;
-import org.switchyard.config.QNames;
 
 /**
  * BaseModel.
@@ -38,7 +37,6 @@ public abstract class BaseModel implements Model {
 
     private Configuration _config;
     private Descriptor _desc;
-    private ModelResource _res;
 
     public BaseModel(String name) {
         this(Configurations.create(name));
@@ -49,13 +47,12 @@ public abstract class BaseModel implements Model {
     }
 
     public BaseModel(Configuration config) {
-        this(config, new Descriptor());
+        this(config, null);
     }
 
     public BaseModel(Configuration config, Descriptor desc) {
         _config = config;
-        _desc = desc;
-        _res = new ModelResource(_desc);
+        _desc = desc != null ? desc : new Descriptor();
     }
 
     @Override
@@ -68,26 +65,6 @@ public abstract class BaseModel implements Model {
         return _desc;
     }
 
-    @Override
-    public final String getModelNamespace() {
-        return getModelNamespace(_config);
-    }
-
-    private String getModelNamespace(Configuration config) {
-        if (config != null) {
-            QName qname = config.getQName();
-            if (qname != null) {
-                return qname.getNamespaceURI();
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public final ModelMarshaller getModelMarshaller() {
-        return getModelMarshaller(_config);
-    }
-
     protected final String getModelValue() {
         return getModelConfiguration().getValue();
     }
@@ -95,14 +72,6 @@ public abstract class BaseModel implements Model {
     protected final Model setModelValue(String value) {
         getModelConfiguration().setValue(value);
         return this;
-    }
-
-    protected final ModelMarshaller getModelMarshaller(Configuration config) {
-        String namespace = getModelNamespace(config);
-        if (namespace != null) {
-            return (ModelMarshaller)_res.getModelMarshaller(namespace);
-        }
-        return null;
     }
 
     protected final String getModelAttribute(String name) {
@@ -124,11 +93,7 @@ public abstract class BaseModel implements Model {
     }
 
     protected final Model getFirstChildModel(String name) {
-        return getFirstChildModel(name, _config);
-    }
-
-    protected final Model getFirstChildModel(String name, Configuration config) {
-        Configuration child_config = config.getFirstChild(name);
+        Configuration child_config = _config.getFirstChild(name);
         if (child_config != null) {
             return readModel(child_config);
         }
@@ -136,81 +101,44 @@ public abstract class BaseModel implements Model {
     }
 
     protected final Model getFirstChildModelStartsWith(String name) {
-        return getFirstChildModelStartsWith(name, _config);
-    }
-
-    protected final Model getFirstChildModelStartsWith(String name, Configuration config) {
-        Configuration child_config = config.getFirstChildStartsWith(name);
+        Configuration child_config = _config.getFirstChildStartsWith(name);
         if (child_config != null) {
             return readModel(child_config);
         }
         return null;
     }
 
-    protected final Model readModel() {
-        return readModel(_config);
-    }
-
     protected final Model readModel(Configuration config) {
-        ModelMarshaller marsh = getModelMarshaller(config);
+        ModelMarshaller marsh = ModelResource.getModelMarshaller(config, _desc);
         if (marsh != null) {
             return marsh.read(config);
         }
         return null;
     }
 
-    protected Model addChildModel(Model child) {
-        return addChildModel(child, _config);
-    }
-
-    protected Model addChildModel(Model child, Configuration config) {
+    protected final Model addChildModel(Model child) {
         if (child != null) {
-            config.addChild(child.getModelConfiguration());
+            _config.addChild(child.getModelConfiguration());
         }
         return this;
     }
 
-    protected Model setChildModel(Model child) {
-        return setChildModel(child, _config);
-    }
-
-    protected Model setChildModel(Model child, Configuration config) {
+    protected final Model setChildModel(Model child) {
         if (child != null) {
             Configuration child_config = child.getModelConfiguration();
-            config.removeChildren(child_config.getName());
-            config.addChild(child_config);
+            _config.removeChildren(child_config.getName());
+            _config.addChild(child_config);
         }
         return this;
     }
 
-    protected String[] getChildrenGroups() {
-        return _config.getChildrenGroups();
+    protected final String[] getChildrenOrder() {
+        return _config.getChildrenOrder();
     }
 
-    protected Model setChildrenGroups(String... childrenGroups) {
-        _config.setChildrenGroups(childrenGroups);
+    protected final Model setChildrenOrder(String... childrenOrder) {
+        _config.setChildrenOrder(childrenOrder);
         return this;
-    }
-
-    @Override
-    public final String getName() {
-        return getModelAttribute("name");
-    }
-
-    @Override
-    public final Model setName(String name) {
-        setModelAttribute("name", name);
-        return this;
-    }
-
-    @Override
-    public final QName getQName() {
-        return QNames.create(getName());
-    }
-
-    @Override
-    public final Model setQName(QName qname) {
-        return setName(qname != null ? qname.toString() : null);
     }
 
     @Override

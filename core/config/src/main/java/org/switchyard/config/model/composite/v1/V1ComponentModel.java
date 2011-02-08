@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Descriptor;
-import org.switchyard.config.model.BaseModel;
+import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ImplementationModel;
 import org.switchyard.config.model.composite.InternalServiceModel;
@@ -35,27 +35,27 @@ import org.switchyard.config.model.composite.ReferenceModel;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1ComponentModel extends BaseModel implements ComponentModel {
+public class V1ComponentModel extends BaseNamedModel implements ComponentModel {
 
     private ImplementationModel _implementation;
     private List<InternalServiceModel> _services = new ArrayList<InternalServiceModel>();
     private List<ReferenceModel> _references = new ArrayList<ReferenceModel>();
 
     public V1ComponentModel() {
-        super("component");
-        setChildrenGroups("implementation", "service", "reference");
+        super(ComponentModel.COMPONENT);
+        setChildrenOrder(ImplementationModel.IMPLEMENTATION, InternalServiceModel.SERVICE, ReferenceModel.REFERENCE);
     }
 
     public V1ComponentModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setChildrenGroups("implementation", "service", "reference");
-        for (Configuration service_config : config.getChildren("service")) {
+        setChildrenOrder(ImplementationModel.IMPLEMENTATION, InternalServiceModel.SERVICE, ReferenceModel.REFERENCE);
+        for (Configuration service_config : config.getChildren(InternalServiceModel.SERVICE)) {
             InternalServiceModel service = (InternalServiceModel)readModel(service_config);
             if (service != null) {
                 _services.add(service);
             }
         }
-        for (Configuration reference_config : config.getChildren("reference")) {
+        for (Configuration reference_config : config.getChildren(ReferenceModel.REFERENCE)) {
             ReferenceModel reference = (ReferenceModel)readModel(reference_config);
             if (reference != null) {
                 _references.add(reference);
@@ -66,7 +66,7 @@ public class V1ComponentModel extends BaseModel implements ComponentModel {
     @Override
     public ImplementationModel getImplementation() {
         if (_implementation == null) {
-            _implementation = (ImplementationModel)getFirstChildModelStartsWith("implementation");
+            _implementation = (ImplementationModel)getFirstChildModelStartsWith(ImplementationModel.IMPLEMENTATION);
         }
         return _implementation;
     }

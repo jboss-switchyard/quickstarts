@@ -22,18 +22,23 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.config.model.Model;
+import org.switchyard.config.model.NamedModel;
 
 /**
  * ExternalServiceModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface ExternalServiceModel extends Model {
+public interface ExternalServiceModel extends NamedModel {
+
+    public static final String SERVICE = "service";
+    public static final String PROMOTE = "promote";
 
     public QName getPromote();
 
     public ExternalServiceModel setPromote(QName promote);
+
+    public ComponentModel getComponent();
 
     public List<BindingModel> getBindings();
 

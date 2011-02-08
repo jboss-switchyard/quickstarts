@@ -38,28 +38,28 @@ import javax.xml.namespace.QName;
  */
 public abstract class BaseConfiguration implements Configuration {
 
-    protected static final String XMLNS_URI = "http://www.w3.org/2000/xmlns/";
-    protected static final String XMLNS_PFX = "ns0";
+    protected static final String DEFAULT_XMLNS_URI = "http://www.w3.org/2000/xmlns/";
+    protected static final String DEFAULT_XMLNS_PFX = "ns0";
 
-    private String[] _childrenGroups;
+    private String[] _childrenOrder;
 
     @Override
-    public String[] getChildrenGroups() {
-        int length = _childrenGroups.length;
+    public String[] getChildrenOrder() {
+        int length = _childrenOrder.length;
         String[] copy = new String[length];
-        System.arraycopy(_childrenGroups, 0, copy, 0, length);
+        System.arraycopy(_childrenOrder, 0, copy, 0, length);
         return copy;
     }
 
     @Override
-    public Configuration setChildrenGroups(String... childrenGroups) {
-        _childrenGroups = childrenGroups;
+    public Configuration setChildrenOrder(String... childrenOrder) {
+        _childrenOrder = childrenOrder;
         return this;
     }
 
     @Override
-    public Configuration groupChildren() {
-        String[] childrenGroups = getChildrenGroups();
+    public Configuration orderChildren() {
+        String[] childrenGroups = getChildrenOrder();
         if (childrenGroups != null && childrenGroups.length > 0) {
             List<Configuration> grouped_configs = new ArrayList<Configuration>();
             for (String childrenGroup : childrenGroups) {
@@ -95,7 +95,7 @@ public abstract class BaseConfiguration implements Configuration {
     @Override
     public Map<String,String> getNamespacePrefixMap() {
         Map<String,String> map = new TreeMap<String,String>();
-        map.put(XMLNS_URI, XMLNS_PFX);
+        map.put(DEFAULT_XMLNS_URI, DEFAULT_XMLNS_PFX);
         int count = 1;
         String ns = getQName().getNamespaceURI();
         if (ns != null && ns.length() > 0 && !map.containsKey(ns)) {

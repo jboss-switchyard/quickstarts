@@ -26,8 +26,7 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Descriptor;
-import org.switchyard.config.model.BaseModel;
-import org.switchyard.config.model.Models;
+import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.ExternalServiceModel;
@@ -37,31 +36,34 @@ import org.switchyard.config.model.composite.ExternalServiceModel;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1CompositeModel extends BaseModel implements CompositeModel {
+public class V1CompositeModel extends BaseNamedModel implements CompositeModel {
 
     private List<ExternalServiceModel> _services = new ArrayList<ExternalServiceModel>();
     private List<ComponentModel> _components = new ArrayList<ComponentModel>();
 
     public V1CompositeModel() {
-        super(new QName(Models.DEFAULT_NAMESPACE, "composite"));
-        setChildrenGroups("service", "component");
+        super(new QName(CompositeModel.DEFAULT_NAMESPACE, CompositeModel.COMPOSITE));
+        setChildrenOrder(ExternalServiceModel.SERVICE, ComponentModel.COMPONENT);
     }
 
     public V1CompositeModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        for (Configuration service_config : config.getChildren("service")) {
+        for (Configuration service_config : config.getChildren(ExternalServiceModel.SERVICE)) {
             ExternalServiceModel service = (ExternalServiceModel)readModel(service_config);
             if (service != null) {
+                if (service instanceof V1ExternalServiceModel) {
+                    ((V1ExternalServiceModel)service).setComposite(this);
+                }
                 _services.add(service);
             }
         }
-        for (Configuration component_config : config.getChildren("component")) {
+        for (Configuration component_config : config.getChildren(ComponentModel.COMPONENT)) {
             ComponentModel component = (ComponentModel)readModel(component_config);
             if (component != null) {
                 _components.add(component);
             }
         }
-        setChildrenGroups("service", "component");
+        setChildrenOrder(ExternalServiceModel.SERVICE, ComponentModel.COMPONENT);
     }
 
     @Override

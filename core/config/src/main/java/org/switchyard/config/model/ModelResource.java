@@ -27,6 +27,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.config.Configuration;
 import org.switchyard.config.Configurations;
 import org.switchyard.config.Descriptor;
 import org.switchyard.config.ElementResource;
@@ -48,15 +49,15 @@ public class ModelResource extends Resource<Model> {
     private Map<String,ModelMarshaller> _namespace_marshaller_map;
 
     public ModelResource() {
-        this(new Descriptor());
+        this(null);
     }
 
     public ModelResource(Descriptor desc) {
-        _desc = desc;
+        _desc = desc != null ? desc : new Descriptor();
         _namespace_marshaller_map = new HashMap<String,ModelMarshaller>();
     }
 
-    public Descriptor getDescriptor() {
+    public final Descriptor getDescriptor() {
         return _desc;
     }
 
@@ -108,6 +109,26 @@ public class ModelResource extends Resource<Model> {
             }
         }
         return marshaller;
+    }
+
+    public static ModelMarshaller getModelMarshaller(Model model) {
+        if (model != null) {
+            return getModelMarshaller(model.getModelConfiguration(), model.getModelDescriptor());
+        }
+        return null;
+    }
+
+    public static ModelMarshaller getModelMarshaller(Configuration config, Descriptor desc) {
+        if (config != null) {
+            QName qname = config.getQName();
+            if (qname != null) {
+                String namespace = qname.getNamespaceURI();
+                if (namespace != null) {
+                    return new ModelResource(desc).getModelMarshaller(namespace);
+                }
+            }
+        }
+        return null;
     }
 
 }

@@ -25,7 +25,9 @@ import org.switchyard.metadata.ServiceInterface;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface InterfaceModel extends TypeModel {
+public interface InterfaceModel extends TypedModel {
+
+    public static final String INTERFACE = "interface";
 
     public String getInterface();
 

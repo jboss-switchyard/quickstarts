@@ -20,7 +20,7 @@ package org.switchyard.config.model.composite.v1;
 
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Descriptor;
-import org.switchyard.config.model.composite.BaseTypeModel;
+import org.switchyard.config.model.composite.BaseTypedModel;
 import org.switchyard.config.model.composite.BindingModel;
 
 /**
@@ -28,10 +28,10 @@ import org.switchyard.config.model.composite.BindingModel;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1BindingModel extends BaseTypeModel implements BindingModel {
+public class V1BindingModel extends BaseTypedModel implements BindingModel {
 
     public V1BindingModel(String type) {
-        super("binding." + type);
+        super(BindingModel.BINDING + '.' + type);
     }
 
     public V1BindingModel(Configuration config, Descriptor desc) {

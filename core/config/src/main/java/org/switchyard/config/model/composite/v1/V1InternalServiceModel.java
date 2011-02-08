@@ -20,7 +20,7 @@ package org.switchyard.config.model.composite.v1;
 
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Descriptor;
-import org.switchyard.config.model.BaseModel;
+import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.composite.InterfaceModel;
 import org.switchyard.config.model.composite.InternalServiceModel;
 
@@ -29,12 +29,12 @@ import org.switchyard.config.model.composite.InternalServiceModel;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1InternalServiceModel extends BaseModel implements InternalServiceModel {
+public class V1InternalServiceModel extends BaseNamedModel implements InternalServiceModel {
 
     private InterfaceModel _interface;
 
     public V1InternalServiceModel() {
-        super("service");
+        super(InternalServiceModel.SERVICE);
     }
 
     public V1InternalServiceModel(Configuration config, Descriptor desc) {
@@ -44,7 +44,7 @@ public class V1InternalServiceModel extends BaseModel implements InternalService
     @Override
     public InterfaceModel getInterface() {
         if (_interface == null) {
-            _interface = (InterfaceModel)getFirstChildModelStartsWith("interface");
+            _interface = (InterfaceModel)getFirstChildModelStartsWith(InterfaceModel.INTERFACE);
         }
         return _interface;
     }

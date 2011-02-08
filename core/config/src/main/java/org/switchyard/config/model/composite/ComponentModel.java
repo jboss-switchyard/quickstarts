@@ -20,14 +20,16 @@ package org.switchyard.config.model.composite;
 
 import java.util.List;
 
-import org.switchyard.config.model.Model;
+import org.switchyard.config.model.NamedModel;
 
 /**
  * ComponentModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface ComponentModel extends Model {
+public interface ComponentModel extends NamedModel {
+
+    public static final String COMPONENT = "component";
 
     public ImplementationModel getImplementation();
 
