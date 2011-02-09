@@ -31,6 +31,8 @@ public interface ComponentModel extends NamedModel {
 
     public static final String COMPONENT = "component";
 
+    public CompositeModel getComposite();
+
     public ImplementationModel getImplementation();
 
     public ComponentModel setImplementation(ImplementationModel implementation);

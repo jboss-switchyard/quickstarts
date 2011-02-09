@@ -48,13 +48,19 @@ import org.w3c.dom.NodeList;
 public class DOMConfiguration extends BaseConfiguration {
 
     private Element _element;
+    private Element _parent_element;
+    private DOMConfiguration _parent_config;
 
     DOMConfiguration(Document document) {
         _element = new ElementResource().pull(document);
     }
 
     DOMConfiguration(Element element) {
-        _element = new ElementResource().pull(element);
+        this(element, true);
+    }
+
+    private DOMConfiguration(Element element, boolean normalize) {
+        _element = new ElementResource().pull(element, normalize);
     }
 
     DOMConfiguration(QName qname) {
@@ -223,6 +229,28 @@ public class DOMConfiguration extends BaseConfiguration {
             _element.setAttributeNode(attr);
         }
         return this;
+    }
+
+    @Override
+    public boolean hasParent() {
+        return _element.getParentNode() instanceof Element;
+    }
+
+    @Override
+    public Configuration getParent() {
+        Node node =_element.getParentNode();
+        if (node instanceof Element) {
+            Element e = (Element)node;
+            if (_parent_element != null && _parent_element != e) {
+                // somebody changed the document structure underneath us!
+                _parent_config = null;
+            }
+            if (_parent_config == null) {
+                _parent_config = new DOMConfiguration(e, false);
+                _parent_element = e;
+            }
+        }
+        return _parent_config;
     }
 
     @Override
@@ -415,6 +443,36 @@ public class DOMConfiguration extends BaseConfiguration {
         } catch (TransformerException te) {
             throw new IOException(te);
         }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((_element == null) ? 0 : _element.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        DOMConfiguration other = (DOMConfiguration)obj;
+        if (_element == null) {
+            if (other._element != null) {
+                return false;
+            }
+        } else if (!_element.equals(other._element)) {
+            return false;
+        }
+        return true;
     }
 
 }

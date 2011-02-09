@@ -38,7 +38,7 @@ public class BogusModelMarshaller extends V1CompositeModelMarshaller {
     @Override
     public Model read(Configuration config) {
         if (config.getName().startsWith(ImplementationModel.IMPLEMENTATION)) {
-            return new BogusImplementationModel(config, getDescriptor());
+            return new BogusImplementationModel(config, getModelDescriptor());
         }
         return super.read(config);
     }

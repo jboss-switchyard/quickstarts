@@ -32,7 +32,7 @@ import org.switchyard.config.Descriptor;
  */
 public interface ModelMarshaller {
 
-    public Descriptor getDescriptor();
+    public Descriptor getModelDescriptor();
 
     public Model read(Configuration config);
 

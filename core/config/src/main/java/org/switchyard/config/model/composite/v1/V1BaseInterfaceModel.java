@@ -28,13 +28,13 @@ import org.switchyard.config.model.composite.InterfaceModel;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1InterfaceModel extends BaseTypedModel implements InterfaceModel {
+public abstract class V1BaseInterfaceModel extends BaseTypedModel implements InterfaceModel {
 
-    public V1InterfaceModel(String type) {
+    public V1BaseInterfaceModel(String type) {
         super(InterfaceModel.INTERFACE + '.' + type);
     }
 
-    public V1InterfaceModel(Configuration config, Descriptor desc) {
+    public V1BaseInterfaceModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 

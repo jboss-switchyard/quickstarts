@@ -16,22 +16,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config.model.composite;
+package org.switchyard.config.model.composite.v1;
+
+import org.switchyard.config.Configuration;
+import org.switchyard.config.Descriptor;
+import org.switchyard.config.model.composite.ReferenceInterfaceModel;
+import org.switchyard.config.model.composite.ReferenceModel;
 
 /**
- * ImplementationModel.
+ * V1ReferenceInterfaceModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface ImplementationModel extends TypedModel {
+public class V1ReferenceInterfaceModel extends V1BaseInterfaceModel implements ReferenceInterfaceModel {
 
-    public static final String IMPLEMENTATION = "implementation";
-    public static final String CLASS = "class";
+    public V1ReferenceInterfaceModel(String type) {
+        super(type);
+    }
 
-    public ComponentModel getComponent();
+    public V1ReferenceInterfaceModel(Configuration config, Descriptor desc) {
+        super(config, desc);
+    }
 
-    public String getClazz();
-
-    public ImplementationModel setClazz(String clazz);
+    @Override
+    public ReferenceModel getReference() {
+        return (ReferenceModel)getModelParent();
+    }
 
 }

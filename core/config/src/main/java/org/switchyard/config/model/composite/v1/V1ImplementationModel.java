@@ -21,6 +21,7 @@ package org.switchyard.config.model.composite.v1;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Descriptor;
 import org.switchyard.config.model.composite.BaseTypedModel;
+import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ImplementationModel;
 
 /**
@@ -36,6 +37,11 @@ public class V1ImplementationModel extends BaseTypedModel implements Implementat
 
     public V1ImplementationModel(Configuration config, Descriptor desc) {
         super(config, desc);
+    }
+
+    @Override
+    public ComponentModel getComponent() {
+        return (ComponentModel)getModelParent();
     }
 
     @Override

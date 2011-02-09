@@ -136,19 +136,19 @@ public class CompositeModelTests {
         Assert.assertEquals("service.wsdl", wsdl.getLocation());
         Assert.assertEquals("foobar", wsdl.getDescription());
         ComponentModel component1 = composite.getComponents().get(0);
-        Assert.assertSame(component1, externalService.getComponent());
+        Assert.assertEquals(component1, externalService.getComponent());
         Assert.assertEquals("SimpleService", component1.getName());
         ImplementationModel implementation1 = component1.getImplementation();
         Assert.assertEquals("bean", implementation1.getType());
         Assert.assertEquals("org.switchyard.example.m1app.SimpleBean", implementation1.getClazz());
         InternalServiceModel internalService1 = component1.getServices().get(0);
         Assert.assertEquals("SimpleService", internalService1.getName());
-        InterfaceModel interface1 = internalService1.getInterface();
+        InternalServiceInterfaceModel interface1 = internalService1.getInterface();
         Assert.assertEquals("java", interface1.getType());
         Assert.assertEquals("org.switchyard.example.m1app.SimpleService", interface1.getInterface());
         ReferenceModel reference = component1.getReferences().get(0);
         Assert.assertEquals("anotherService", reference.getName());
-        InterfaceModel interface2 = reference.getInterface();
+        ReferenceInterfaceModel interface2 = reference.getInterface();
         Assert.assertEquals("java", interface2.getType());
         Assert.assertEquals("org.switchyard.example.m1app.AnotherService", interface2.getInterface());
         ComponentModel component2 = composite.getComponents().get(1);
@@ -158,7 +158,7 @@ public class CompositeModelTests {
         Assert.assertEquals("org.switchyard.example.m1app.AnotherBean", implementation2.getClazz());
         InternalServiceModel internalService2 = component2.getServices().get(0);
         Assert.assertEquals("AnotherService", internalService2.getName());
-        InterfaceModel interface3 = internalService2.getInterface();
+        InternalServiceInterfaceModel interface3 = internalService2.getInterface();
         Assert.assertEquals("java", interface3.getType());
         Assert.assertEquals("org.switchyard.example.m1app.AnotherService", interface3.getInterface());
     }
@@ -182,6 +182,17 @@ public class CompositeModelTests {
         CompositeModel cm = (CompositeModel)res.pull(EXTENDED_XML);
         BogusImplementationModel bim = (BogusImplementationModel)cm.getComponents().get(0).getImplementation();
         Assert.assertEquals("bar", bim.getFoo());
+    }
+
+    @Test
+    public void testParenthood() throws Exception {
+        CompositeModel composite_1 = (CompositeModel)_res.pull(COMPLETE_XML);
+        ExternalServiceModel service_1 = composite_1.getServices().get(0);
+        SOAPBindingModel binding = (SOAPBindingModel)service_1.getBindings().get(0);
+        ExternalServiceModel service_2 = binding.getService();
+        CompositeModel composite_2 = service_2.getComposite();
+        Assert.assertEquals(service_1, service_2);
+        Assert.assertEquals(composite_1, composite_2);
     }
 
 }

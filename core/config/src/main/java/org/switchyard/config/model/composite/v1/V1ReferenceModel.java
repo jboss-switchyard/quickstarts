@@ -22,7 +22,9 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.Descriptor;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.composite.BindingModel;
+import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.InterfaceModel;
+import org.switchyard.config.model.composite.ReferenceInterfaceModel;
 import org.switchyard.config.model.composite.ReferenceModel;
 
 /**
@@ -32,7 +34,7 @@ import org.switchyard.config.model.composite.ReferenceModel;
  */
 public class V1ReferenceModel extends BaseNamedModel implements ReferenceModel {
 
-    private InterfaceModel _interface;
+    private ReferenceInterfaceModel _interface;
     private BindingModel _binding;
 
     public V1ReferenceModel() {
@@ -44,15 +46,20 @@ public class V1ReferenceModel extends BaseNamedModel implements ReferenceModel {
     }
 
     @Override
-    public InterfaceModel getInterface() {
+    public ComponentModel getComponent() {
+        return (ComponentModel)getModelParent();
+    }
+
+    @Override
+    public ReferenceInterfaceModel getInterface() {
         if (_interface == null) {
-            _interface = (InterfaceModel)getFirstChildModelStartsWith(InterfaceModel.INTERFACE);
+            _interface = (ReferenceInterfaceModel)getFirstChildModelStartsWith(InterfaceModel.INTERFACE);
         }
         return _interface;
     }
 
     @Override
-    public ReferenceModel setInterface(InterfaceModel interfaze) {
+    public ReferenceModel setInterface(ReferenceInterfaceModel interfaze) {
         setChildModel(interfaze);
         _interface = interfaze;
         return this;

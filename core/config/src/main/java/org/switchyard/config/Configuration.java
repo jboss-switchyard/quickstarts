@@ -57,6 +57,18 @@ public interface Configuration {
 
     public Configuration setAttribute(QName qname, String value);
 
+    public boolean hasParent();
+
+    /**
+     * Gets the parent Configuration, if it exists.<p/>
+     * 
+     * Guaranteed: getParent() == getParent()<br/>
+     * NOT guaranteed: parent; child = parent.getFirstChild("foo"); parent == child.getParent()
+     * 
+     * @return the parent Configuration, or null if there is no parent
+     */
+    public Configuration getParent();
+
     public boolean hasChildren();
 
     public boolean hasChildren(String name);

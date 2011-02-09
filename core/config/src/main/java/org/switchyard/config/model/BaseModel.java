@@ -21,6 +21,8 @@ package org.switchyard.config.model;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 import javax.xml.namespace.QName;
 
@@ -37,6 +39,8 @@ public abstract class BaseModel implements Model {
 
     private Configuration _config;
     private Descriptor _desc;
+    private Map<Configuration,Model> _config_model_map;
+    private Model _parent;
 
     public BaseModel(String name) {
         this(Configurations.create(name));
@@ -53,6 +57,7 @@ public abstract class BaseModel implements Model {
     public BaseModel(Configuration config, Descriptor desc) {
         _config = config;
         _desc = desc != null ? desc : new Descriptor();
+        _config_model_map = new WeakHashMap<Configuration,Model>();
     }
 
     @Override
@@ -83,6 +88,29 @@ public abstract class BaseModel implements Model {
         return this;
     }
 
+    
+    protected final boolean hasModelParent() {
+        return getModelParent() != null;
+    }
+
+    /**
+     * Gets the parent Model, if it exists.<p/>
+     * 
+     * Guaranteed: getModelParent() == getModelParent()
+     * NOT guaranteed: parent; child = parent.getFirstChildModel("foo"); parent == child.getModelParent()
+     * 
+     * @return the parent Model, or null if there is no parent
+     */
+    protected final Model getModelParent() {
+        if (_parent == null) {
+            Configuration parent_config = _config.getParent();
+            if (parent_config != null) {
+                _parent = readModel(parent_config);
+            }
+        }
+        return _parent;
+    }
+
     protected final String getModelAttribute(QName qname) {
         return getModelConfiguration().getAttribute(qname);
     }
@@ -108,10 +136,19 @@ public abstract class BaseModel implements Model {
         return null;
     }
 
-    protected final Model readModel(Configuration config) {
-        ModelMarshaller marsh = ModelResource.getModelMarshaller(config, _desc);
-        if (marsh != null) {
-            return marsh.read(config);
+    protected synchronized final Model readModel(Configuration config) {
+        if (config != null) {
+            Model model = _config_model_map.get(config);
+            if (model == null) {
+                ModelMarshaller marsh = ModelResource.getModelMarshaller(config, _desc);
+                if (marsh != null) {
+                    model = marsh.read(config);
+                    if (model != null) {
+                        _config_model_map.put(config, model);
+                    }
+                    return model;
+                }
+            }
         }
         return null;
     }
@@ -154,6 +191,44 @@ public abstract class BaseModel implements Model {
     @Override
     public String toString() {
         return _config.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((_config == null) ? 0 : _config.hashCode());
+        result = prime * result + ((_desc == null) ? 0 : _desc.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        BaseModel other = (BaseModel)obj;
+        if (_config == null) {
+            if (other._config != null) {
+                return false;
+            }
+        } else if (!_config.equals(other._config)) {
+            return false;
+        }
+        if (_desc == null) {
+            if (other._desc != null) {
+                return false;
+            }
+        } else if (!_desc.equals(other._desc)) {
+            return false;
+        }
+        return true;
     }
 
 }

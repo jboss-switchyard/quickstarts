@@ -66,7 +66,13 @@ public class ElementResource extends Resource<Element> {
     }
 
     public Element pull(Element element) {
-        element.normalize();
+        return pull(element, true);
+    }
+
+    public Element pull(Element element, boolean normalize) {
+        if (normalize) {
+            element.normalize();
+        }
         return element;
     }
 

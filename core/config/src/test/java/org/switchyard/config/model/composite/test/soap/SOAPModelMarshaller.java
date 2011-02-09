@@ -39,7 +39,7 @@ public class SOAPModelMarshaller extends BaseModelMarshaller {
 
     @Override
     public Model read(Configuration config) {
-        Descriptor desc = getDescriptor();
+        Descriptor desc = getModelDescriptor();
         if (config.getName().startsWith(BindingModel.BINDING)) {
             return new SOAPBindingModel(config, desc);
         } else if (config.getName().equals(PortModel.PORT)) {

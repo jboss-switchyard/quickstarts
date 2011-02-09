@@ -41,17 +41,12 @@ import org.switchyard.config.model.composite.ExternalServiceModel;
 public class V1ExternalServiceModel extends BaseNamedModel implements ExternalServiceModel {
 
     private List<BindingModel> _bindings = new ArrayList<BindingModel>();
-    private CompositeModel _composite;
 
     public V1ExternalServiceModel() {
         super(ExternalServiceModel.SERVICE);
     }
 
     public V1ExternalServiceModel(Configuration config, Descriptor desc) {
-        this(config, desc, null);
-    }
-
-    public V1ExternalServiceModel(Configuration config, Descriptor desc, CompositeModel composite) {
         super(config, desc);
         for (Configuration binding_config : config.getChildrenStartsWith(BindingModel.BINDING)) {
             BindingModel binding = (BindingModel)readModel(binding_config);
@@ -59,27 +54,20 @@ public class V1ExternalServiceModel extends BaseNamedModel implements ExternalSe
                 _bindings.add(binding);
             }
         }
-        setComposite(composite);
     }
 
     @Override
-    public synchronized QName getPromote() {
-        return QNames.create(getModelAttribute(ExternalServiceModel.PROMOTE));
+    public CompositeModel getComposite() {
+        return (CompositeModel)getModelParent();
     }
 
     @Override
-    public synchronized ExternalServiceModel setPromote(QName promote) {
-        setModelAttribute(ExternalServiceModel.PROMOTE, promote != null ? promote.toString() : null);
-        _composite = null;
-        return this;
-    }
-
-    @Override
-    public synchronized ComponentModel getComponent() {
-        if (_composite != null) {
+    public ComponentModel getComponent() {
+        CompositeModel composite = getComposite();
+        if (composite != null) {
             QName promote = getPromote();
             if (promote != null) {
-                for (ComponentModel component : _composite.getComponents()) {
+                for (ComponentModel component : composite.getComponents()) {
                     if (promote.equals(component.getQName())) {
                         return component;
                     }
@@ -89,8 +77,14 @@ public class V1ExternalServiceModel extends BaseNamedModel implements ExternalSe
         return null;
     }
 
-    protected synchronized ExternalServiceModel setComposite(CompositeModel composite) {
-        _composite = composite;
+    @Override
+    public QName getPromote() {
+        return QNames.create(getModelAttribute(ExternalServiceModel.PROMOTE));
+    }
+
+    @Override
+    public ExternalServiceModel setPromote(QName promote) {
+        setModelAttribute(ExternalServiceModel.PROMOTE, promote != null ? promote.toString() : null);
         return this;
     }
 

@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 
 /**
  * Descriptor.
@@ -36,6 +37,7 @@ public final class Descriptor {
     public static final String NAMESPACE = "namespace";
     public static final String SCHEMA_LOCATION = "schemaLocation";
 
+    private Map<String,String> _all_properties_map = new TreeMap<String,String>();
     private Map<String,Map<String,String>> _prefix_config_map = new HashMap<String,Map<String,String>>();
     private Map<String,String> _namespace_prefix_map = new HashMap<String,String>();
 
@@ -58,6 +60,7 @@ public final class Descriptor {
             String prop_name = (String)e.nextElement();
             String prop_value = props.getProperty(prop_name);
             if (prop_value != null) {
+                _all_properties_map.put(prop_name, prop_value);
                 StringTokenizer tokenizer = new StringTokenizer(prop_name, ".");
                 String prop_prefix = tokenizer.nextToken().trim();
                 String prop_suffix = tokenizer.nextToken().trim();
@@ -87,6 +90,40 @@ public final class Descriptor {
 
     public String getSchemaLocation(String namespace) {
         return getProperty(SCHEMA_LOCATION, namespace);
+    }
+
+    public String toString() {
+        return _all_properties_map.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime  * result + ((_all_properties_map == null) ? 0 : _all_properties_map.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Descriptor other = (Descriptor)obj;
+        if (_all_properties_map == null) {
+            if (other._all_properties_map != null) {
+                return false;
+            }
+        } else if (!_all_properties_map.equals(other._all_properties_map)) {
+            return false;
+        }
+        return true;
     }
 
 }

@@ -26,6 +26,7 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.Descriptor;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.ImplementationModel;
 import org.switchyard.config.model.composite.InternalServiceModel;
 import org.switchyard.config.model.composite.ReferenceModel;
@@ -61,6 +62,11 @@ public class V1ComponentModel extends BaseNamedModel implements ComponentModel {
                 _references.add(reference);
             }
         }
+    }
+
+    @Override
+    public CompositeModel getComposite() {
+        return (CompositeModel)getModelParent();
     }
 
     @Override

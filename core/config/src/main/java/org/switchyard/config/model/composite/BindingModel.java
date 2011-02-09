@@ -27,4 +27,6 @@ public interface BindingModel extends TypedModel {
 
     public static final String BINDING = "binding";
 
+    public ExternalServiceModel getService();
+
 }

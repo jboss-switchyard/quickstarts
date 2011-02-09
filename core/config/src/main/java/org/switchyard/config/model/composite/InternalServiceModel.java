@@ -29,8 +29,10 @@ public interface InternalServiceModel extends NamedModel {
 
     public static final String SERVICE = ExternalServiceModel.SERVICE;
 
-    public InterfaceModel getInterface();
+    public ComponentModel getComponent();
 
-    public InternalServiceModel setInterface(InterfaceModel interfaze);
+    public InternalServiceInterfaceModel getInterface();
+
+    public InternalServiceModel setInterface(InternalServiceInterfaceModel interfaze);
 
 }

@@ -34,11 +34,13 @@ public interface ExternalServiceModel extends NamedModel {
     public static final String SERVICE = "service";
     public static final String PROMOTE = "promote";
 
+    public CompositeModel getComposite();
+
+    public ComponentModel getComponent();
+
     public QName getPromote();
 
     public ExternalServiceModel setPromote(QName promote);
-
-    public ComponentModel getComponent();
 
     public List<BindingModel> getBindings();
 

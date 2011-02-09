@@ -41,7 +41,7 @@ public abstract class BaseConfiguration implements Configuration {
     protected static final String DEFAULT_XMLNS_URI = "http://www.w3.org/2000/xmlns/";
     protected static final String DEFAULT_XMLNS_PFX = "ns0";
 
-    private String[] _childrenOrder;
+    private String[] _childrenOrder = new String[0];
 
     @Override
     public String[] getChildrenOrder() {

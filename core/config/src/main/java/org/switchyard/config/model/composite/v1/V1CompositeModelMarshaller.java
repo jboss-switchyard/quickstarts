@@ -28,6 +28,7 @@ import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.ExternalServiceModel;
 import org.switchyard.config.model.composite.ImplementationModel;
 import org.switchyard.config.model.composite.InterfaceModel;
+import org.switchyard.config.model.composite.InternalServiceModel;
 import org.switchyard.config.model.composite.ReferenceModel;
 
 /**
@@ -44,13 +45,13 @@ public class V1CompositeModelMarshaller extends BaseModelMarshaller {
     @Override
     public Model read(Configuration config) {
         String name = config.getName();
-        Descriptor desc = getDescriptor();
+        Descriptor desc = getModelDescriptor();
         if (name.equals(CompositeModel.COMPOSITE)) {
             return new V1CompositeModel(config, desc);
         } else if (name.equals(ExternalServiceModel.SERVICE)) {
             if (config.getFirstChildStartsWith(BindingModel.BINDING) != null) {
                 return new V1ExternalServiceModel(config, desc);
-            } else {
+            } else if (config.getFirstChildStartsWith(InterfaceModel.INTERFACE) != null) {
                 return new V1InternalServiceModel(config, desc);
             }
         } else if (name.startsWith(BindingModel.BINDING)) {
@@ -60,7 +61,14 @@ public class V1CompositeModelMarshaller extends BaseModelMarshaller {
         } else if (name.startsWith(ImplementationModel.IMPLEMENTATION)) {
             return new V1ImplementationModel(config, desc);
         } else if (name.startsWith(InterfaceModel.INTERFACE)) {
-            return new V1InterfaceModel(config, desc);
+            Configuration config_parent = config.getParent();
+            if (config_parent != null) {
+                if (config_parent.getName().equals(InternalServiceModel.SERVICE)) {
+                    return new V1InternalServiceInterfaceModel(config, desc);
+                } else if (config_parent.getName().equals(ReferenceModel.REFERENCE)) {
+                    return new V1ReferenceInterfaceModel(config, desc);
+                }
+            }
         } else if (name.equals(ReferenceModel.REFERENCE)) {
             return new V1ReferenceModel(config, desc);
         }

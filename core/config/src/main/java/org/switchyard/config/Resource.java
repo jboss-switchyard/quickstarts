@@ -27,6 +27,8 @@ import java.net.URL;
 
 /**
  * Resource.
+ * 
+ * @param <T> the type of the object being pulled
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */

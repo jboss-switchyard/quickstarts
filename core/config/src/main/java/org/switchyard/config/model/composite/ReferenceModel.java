@@ -29,9 +29,11 @@ public interface ReferenceModel extends NamedModel {
 
     public static final String REFERENCE = "reference";
 
-    public InterfaceModel getInterface();
+    public ComponentModel getComponent();
 
-    public ReferenceModel setInterface(InterfaceModel interfaze);
+    public ReferenceInterfaceModel getInterface();
+
+    public ReferenceModel setInterface(ReferenceInterfaceModel interfaze);
 
     public BindingModel getBinding();
 

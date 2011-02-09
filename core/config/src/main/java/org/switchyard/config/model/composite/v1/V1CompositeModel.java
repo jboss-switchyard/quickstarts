@@ -51,9 +51,6 @@ public class V1CompositeModel extends BaseNamedModel implements CompositeModel {
         for (Configuration service_config : config.getChildren(ExternalServiceModel.SERVICE)) {
             ExternalServiceModel service = (ExternalServiceModel)readModel(service_config);
             if (service != null) {
-                if (service instanceof V1ExternalServiceModel) {
-                    ((V1ExternalServiceModel)service).setComposite(this);
-                }
                 _services.add(service);
             }
         }

@@ -71,6 +71,18 @@ public class ConfigurationTests {
     }
 
     @Test
+    public void testParenthood() throws Exception {
+        Configuration parent = Configurations.create(new ElementResource().pull(NAMESPACES_XML));
+        Assert.assertFalse(parent.hasParent());
+        Assert.assertNull(parent.getParent());
+        Configuration child = parent.getFirstChild("two");
+        Assert.assertTrue(child.hasParent());
+        Assert.assertNotNull(child.getParent());
+        Assert.assertEquals("one", child.getParent().getName());
+        Assert.assertSame(child.getParent(), child.getParent());
+    }
+
+    @Test
     public void testQNames() throws Exception {
         QName expected = new QName("http://foo.org", "bar", "foo");
         QName actual = Configurations.create(expected).getQName();

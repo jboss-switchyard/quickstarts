@@ -19,19 +19,12 @@
 package org.switchyard.config.model.composite;
 
 /**
- * ImplementationModel.
+ * InternalServiceInterfaceModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface ImplementationModel extends TypedModel {
+public interface InternalServiceInterfaceModel extends InterfaceModel {
 
-    public static final String IMPLEMENTATION = "implementation";
-    public static final String CLASS = "class";
-
-    public ComponentModel getComponent();
-
-    public String getClazz();
-
-    public ImplementationModel setClazz(String clazz);
+    public InternalServiceModel getService();
 
 }

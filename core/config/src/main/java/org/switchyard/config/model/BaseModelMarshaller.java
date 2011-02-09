@@ -39,7 +39,7 @@ public abstract class BaseModelMarshaller implements ModelMarshaller {
     }
 
     @Override
-    public final Descriptor getDescriptor() {
+    public final Descriptor getModelDescriptor() {
         return _desc;
     }
 

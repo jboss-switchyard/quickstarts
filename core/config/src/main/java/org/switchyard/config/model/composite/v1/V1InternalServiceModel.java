@@ -21,7 +21,9 @@ package org.switchyard.config.model.composite.v1;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Descriptor;
 import org.switchyard.config.model.BaseNamedModel;
+import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.InterfaceModel;
+import org.switchyard.config.model.composite.InternalServiceInterfaceModel;
 import org.switchyard.config.model.composite.InternalServiceModel;
 
 /**
@@ -31,7 +33,7 @@ import org.switchyard.config.model.composite.InternalServiceModel;
  */
 public class V1InternalServiceModel extends BaseNamedModel implements InternalServiceModel {
 
-    private InterfaceModel _interface;
+    private InternalServiceInterfaceModel _interface;
 
     public V1InternalServiceModel() {
         super(InternalServiceModel.SERVICE);
@@ -42,15 +44,20 @@ public class V1InternalServiceModel extends BaseNamedModel implements InternalSe
     }
 
     @Override
-    public InterfaceModel getInterface() {
+    public ComponentModel getComponent() {
+        return (ComponentModel)getModelParent();
+    }
+
+    @Override
+    public InternalServiceInterfaceModel getInterface() {
         if (_interface == null) {
-            _interface = (InterfaceModel)getFirstChildModelStartsWith(InterfaceModel.INTERFACE);
+            _interface = (InternalServiceInterfaceModel)getFirstChildModelStartsWith(InterfaceModel.INTERFACE);
         }
         return _interface;
     }
 
     @Override
-    public InternalServiceModel setInterface(InterfaceModel interfaze) {
+    public InternalServiceModel setInterface(InternalServiceInterfaceModel interfaze) {
         setChildModel(interfaze);
         _interface = interfaze;
         return this;
