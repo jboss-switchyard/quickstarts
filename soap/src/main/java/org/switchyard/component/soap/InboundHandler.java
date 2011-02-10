@@ -22,11 +22,6 @@
  
 package org.switchyard.component.soap;
 
-import com.sun.net.httpserver.HttpContext;
-import com.sun.net.httpserver.HttpServer;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,7 +63,6 @@ import org.switchyard.metadata.ServiceOperation;
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
-@SuppressWarnings("restriction")
 public class InboundHandler extends BaseHandler {
 
     /**
@@ -91,7 +85,6 @@ public class InboundHandler extends BaseHandler {
     private Endpoint _endpoint;
     private Port _wsdlPort;
     private String _scheme = "http";
-    private HttpServer _server;
     private SOAPBindingModel _config;
 
     /**
@@ -163,19 +156,16 @@ public class InboundHandler extends BaseHandler {
             properties.put(Endpoint.WSDL_PORT, portName.getPortQName());
             _endpoint.setProperties(properties);
 
-            _server = HttpServer.create(new InetSocketAddress(_config.getServerHost(), _config.getServerPort()), 0);
-            _server.start();
             String path = "/" + portName.getServiceName();
             if (_config.getContextPath() != null) {
                 path = "/" + _config.getContextPath() + "/" + portName.getServiceName();
             }
-            HttpContext context = _server.createContext(path);
-            _endpoint.publish(context);
-            LOGGER.info("WebService published at " + _scheme + "://" + _config.getServerHost() + ":" + _config.getServerPort() + path);
+            String publishUrl = _scheme + "://" + _config.getServerHost() + ":" + _config.getServerPort() + path;
+
+            _endpoint.publish(publishUrl);
+            LOGGER.info("WebService published at " + publishUrl);
         } catch (WSDLException e) {
             throw new WebServicePublishException(e);
-        } catch (IOException ioe) {
-            throw new WebServicePublishException(ioe);
         }
     }
 
@@ -184,7 +174,6 @@ public class InboundHandler extends BaseHandler {
      */
     public void stop() {
         _endpoint.stop();
-        _server.stop(0);
         LOGGER.info("WebService " + _config.getPort() + " stopped.");
     }
 
