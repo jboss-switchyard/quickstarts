@@ -24,8 +24,6 @@ package org.switchyard.component.soap;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-
 import javax.wsdl.Port;
 import javax.wsdl.WSDLException;
 import javax.xml.soap.SOAPException;
@@ -41,6 +39,7 @@ import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
 
@@ -56,17 +55,16 @@ public class OutboundHandler extends BaseHandler {
     private MessageDecomposer _decomposer;
     private Dispatch<SOAPMessage> _dispatcher;
     private Port _port;
-    private String _wsdlLocation;
-    private PortName _portName;
+    private SOAPBindingModel _config;
 
     /**
      * Constructor.
      * @param config the configuration settings
      */
-    public OutboundHandler(final HashMap<String, String> config) {
-        String composer = config.get("composer");
-        String decomposer = config.get("decomposer");
-        _portName = new PortName(config.get("wsPort"));
+    public OutboundHandler(final SOAPBindingModel config) {
+        _config = config;
+        String composer = config.getComposer();
+        String decomposer = config.getDecomposer();
 
         if (composer != null && composer.length() > 0) {
             try {
@@ -92,7 +90,6 @@ public class OutboundHandler extends BaseHandler {
         }
 
         _decomposer = new DefaultMessageDecomposer();
-        _wsdlLocation = config.get("remoteWSDL");
     }
 
     /**
@@ -136,15 +133,16 @@ public class OutboundHandler extends BaseHandler {
     private SOAPMessage invokeService(final SOAPMessage soapMessage) throws SOAPException {
         if (_dispatcher == null) {
             try {
-                javax.wsdl.Service wsdlService = WSDLUtil.getService(_wsdlLocation, _portName);
-                _port = WSDLUtil.getPort(wsdlService, _portName);
+                PortName portName = _config.getPort();
+                javax.wsdl.Service wsdlService = WSDLUtil.getService(_config.getWsdl(), portName);
+                _port = WSDLUtil.getPort(wsdlService, portName);
                 // Update the portName
-                _portName.setServiceQName(wsdlService.getQName());
-                _portName.setName(_port.getName());
+                portName.setServiceQName(wsdlService.getQName());
+                portName.setName(_port.getName());
 
-                URL wsdlUrl = new URL(_wsdlLocation);
-                Service service = Service.create(wsdlUrl, _portName.getServiceQName());
-                _dispatcher = service.createDispatch(_portName.getPortQName(), SOAPMessage.class, Service.Mode.MESSAGE, new AddressingFeature(false, false));
+                URL wsdlUrl = new URL(_config.getWsdl());
+                Service service = Service.create(wsdlUrl, portName.getServiceQName());
+                _dispatcher = service.createDispatch(portName.getPortQName(), SOAPMessage.class, Service.Mode.MESSAGE, new AddressingFeature(false, false));
                 // this does not return a proper qualified Fault element and has no Detail so defering for now
                 // BindingProvider bp = (BindingProvider) _dispatcher;
                 // bp.getRequestContext().put("jaxws.response.throwExceptionIfSOAPFault", Boolean.FALSE);

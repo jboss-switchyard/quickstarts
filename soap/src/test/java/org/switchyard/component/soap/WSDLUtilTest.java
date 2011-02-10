@@ -91,7 +91,7 @@ public class WSDLUtilTest {
     
     @Test(expected=WSDLException.class)
     public void nonExistentService() throws Exception {
-        Service service = WSDLUtil.getService("target/test-classes/MultiplePortService.wsdl", new PortName("NonexistentWebService:"));
+        WSDLUtil.getService("target/test-classes/MultiplePortService.wsdl", new PortName("NonexistentWebService:"));
     }
     
     @Test(expected=WSDLException.class)
@@ -99,6 +99,6 @@ public class WSDLUtilTest {
         Service service = WSDLUtil.getService("target/test-classes/MultiplePortService.wsdl", new PortName("HelloWebService:"));
         Assert.assertNotNull(service);
         Assert.assertEquals(service.getQName(), new QName("http://test.ws/", "HelloWebService"));
-        Port port = WSDLUtil.getPort(service, new PortName("HelloWebServiceSpanishPort"));
+        WSDLUtil.getPort(service, new PortName("HelloWebServiceSpanishPort"));
     }
 }

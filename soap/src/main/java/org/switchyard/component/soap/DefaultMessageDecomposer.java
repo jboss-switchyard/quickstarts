@@ -48,15 +48,14 @@ public class DefaultMessageDecomposer implements MessageDecomposer {
         if (SOAPUtil.SOAP_MESSAGE_FACTORY == null) {
             throw new SOAPException("Failed to instantiate SOAP Message Factory");
         }
-
-        Object messagePayload = message.getContent();
-
-        if (messagePayload instanceof SOAPMessage) {
-            return (SOAPMessage) messagePayload;
-        }
-
         final SOAPMessage response = SOAPUtil.SOAP_MESSAGE_FACTORY.createMessage();
         if (message != null) {
+            Object messagePayload = message.getContent();
+
+            if (messagePayload instanceof SOAPMessage) {
+                return (SOAPMessage) messagePayload;
+            }
+            
             final Element input = toElement(messagePayload);
 
             if (input == null) {

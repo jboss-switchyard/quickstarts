@@ -29,6 +29,7 @@ import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.environment.se.events.ContainerInitialized;
 import org.junit.Before;
 import org.junit.Test;
+import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.StreamUtil;
 
 import javax.xml.namespace.QName;
@@ -43,15 +44,18 @@ public class GreetingServiceTest {
     private static final QName GREETING_SERVICE_NAME = new QName("GreetingService");
 
     private WeldContainer _weld;
-    private Map config;
+    private SOAPBindingModel config;
 
     public GreetingServiceTest() throws MalformedURLException {
-        config = new HashMap();
-        config.put("publishAsWS", "true");
-        config.put("wsdlLocation", "src/main/resources/GreetingServiceImplService.wsdl");
-        config.put("localService", GREETING_SERVICE_NAME.getLocalPart());
-        config.put("host", "localhost");
-        config.put("port", "48080");
+        String host = System.getProperty("org.switchyard.test.soap.host", "localhost");
+        String port = System.getProperty("org.switchyard.test.soap.port", "48080");
+        
+        config = new SOAPBindingModel();
+        config.setPublishAsWS(true);
+        config.setWsdl("src/main/resources/GreetingServiceImplService.wsdl");
+        config.setServiceName(GREETING_SERVICE_NAME);
+        config.setServerHost(host);
+        config.setServerPort(Integer.parseInt(port));
     }
 
     @Before

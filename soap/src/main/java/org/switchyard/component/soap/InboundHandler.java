@@ -52,6 +52,7 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
 import org.switchyard.metadata.BaseExchangeContract;
@@ -67,6 +68,7 @@ import org.switchyard.metadata.ServiceOperation;
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
+@SuppressWarnings("restriction")
 public class InboundHandler extends BaseHandler {
 
     /**
@@ -75,7 +77,6 @@ public class InboundHandler extends BaseHandler {
     public static final String SOAP_FAULT_MESSAGE_TYPE = "{http://schemas.xmlsoap.org/soap/envelope/}Fault";
 
     private static final Logger LOGGER = Logger.getLogger(InboundHandler.class);
-    private static final int DEFAULT_PORT = 8080;
     private static final long DEFAULT_TIMEOUT = 15000;
     private static final int DEFAULT_SLEEP = 100;
     private static final String MESSAGE_NAME = "MESSAGE_NAME";
@@ -85,31 +86,22 @@ public class InboundHandler extends BaseHandler {
     private MessageComposer _composer;
     private MessageDecomposer _decomposer;
     private ServiceDomain _domain;
-    private String _wsdlLocation;
-    private QName _serviceName;
     private Service _service;
     private long _waitTimeout = DEFAULT_TIMEOUT; // default of 15 seconds
     private Endpoint _endpoint;
     private Port _wsdlPort;
     private String _scheme = "http";
-    private String _host;
-    private int _serverPort;
-    private String _contextPath;
     private HttpServer _server;
-    private PortName _portName;
+    private SOAPBindingModel _config;
 
     /**
      * Constructor.
      * @param config the configuration settings
      */
-    public InboundHandler(final Map<String, String> config) {
-        String localService = config.get("localService");
-        String port = config.get("port");
-        String composer = config.get("composer");
-        String decomposer = config.get("decomposer");
-        _host = config.get("host");
-        _contextPath = config.get("context");
-        _portName = new PortName(config.get("wsPort"));
+    public InboundHandler(SOAPBindingModel config) {
+        _config = config;
+        String composer = config.getComposer();
+        String decomposer = config.getDecomposer();
 
         if (composer != null && composer.length() > 0) {
             try {
@@ -135,16 +127,6 @@ public class InboundHandler extends BaseHandler {
         }
 
         _domain = ServiceDomains.getDomain();
-        _wsdlLocation = config.get("wsdlLocation");
-        _serviceName = new QName(localService);
-        if (port == null) {
-            _serverPort = DEFAULT_PORT;
-        } else {
-            _serverPort = Integer.parseInt(port);
-        }
-        if (_host == null) {
-            _host = "localhost";
-        }
     }
 
     /**
@@ -153,42 +135,43 @@ public class InboundHandler extends BaseHandler {
      */
     public void start() throws WebServicePublishException {
         try {
-            javax.wsdl.Service wsdlService = WSDLUtil.getService(_wsdlLocation, _portName);
-            _wsdlPort = WSDLUtil.getPort(wsdlService, _portName);
+            PortName portName = _config.getPort();
+            javax.wsdl.Service wsdlService = WSDLUtil.getService(_config.getWsdl(), portName);
+            _wsdlPort = WSDLUtil.getPort(wsdlService, portName);
             // Update the portName
-            _portName.setServiceQName(wsdlService.getQName());
-            _portName.setName(_wsdlPort.getName());
+            portName.setServiceQName(wsdlService.getQName());
+            portName.setName(_wsdlPort.getName());
             
             BaseWebService wsProvider = new BaseWebService();
             // Hook the handler
             wsProvider.setConsumer(this);
             
             // lookup the SwitchYard service
-            _service = _domain.getService(_serviceName);
+            _service = _domain.getService(_config.getServiceName());
             if (_service == null) {
                 throw new WebServicePublishException(
-                        "Target service not registered: " + _serviceName);
+                        "Target service not registered: " + _config.getServiceName());
             }
 
             _endpoint = Endpoint.create(wsProvider);
             List<Source> metadata = new ArrayList<Source>();
-            StreamSource source = WSDLUtil.getStream(_wsdlLocation);
+            StreamSource source = WSDLUtil.getStream(_config.getWsdl());
             metadata.add(source);
             _endpoint.setMetadata(metadata);
             Map<String, Object> properties = new HashMap<String, Object>();
-            properties.put(Endpoint.WSDL_SERVICE, _portName.getServiceQName());
-            properties.put(Endpoint.WSDL_PORT, _portName.getPortQName());
+            properties.put(Endpoint.WSDL_SERVICE, portName.getServiceQName());
+            properties.put(Endpoint.WSDL_PORT, portName.getPortQName());
             _endpoint.setProperties(properties);
 
-            _server = HttpServer.create(new InetSocketAddress(_host, _serverPort), 0);
+            _server = HttpServer.create(new InetSocketAddress(_config.getServerHost(), _config.getServerPort()), 0);
             _server.start();
-            String path = "/" + _portName.getServiceName();
-            if (_contextPath != null) {
-                path = "/" + _contextPath + "/" + _portName.getServiceName();
+            String path = "/" + portName.getServiceName();
+            if (_config.getContextPath() != null) {
+                path = "/" + _config.getContextPath() + "/" + portName.getServiceName();
             }
             HttpContext context = _server.createContext(path);
             _endpoint.publish(context);
-            LOGGER.info("WebService published at " + _scheme + "://" + _host + ":" + _serverPort + path);
+            LOGGER.info("WebService published at " + _scheme + "://" + _config.getServerHost() + ":" + _config.getServerPort() + path);
         } catch (WSDLException e) {
             throw new WebServicePublishException(e);
         } catch (IOException ioe) {
@@ -202,7 +185,7 @@ public class InboundHandler extends BaseHandler {
     public void stop() {
         _endpoint.stop();
         _server.stop(0);
-        LOGGER.info("WebService " + _portName + " stopped.");
+        LOGGER.info("WebService " + _config.getPort() + " stopped.");
     }
 
     /**

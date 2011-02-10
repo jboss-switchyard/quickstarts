@@ -35,6 +35,12 @@ public class PortName implements Serializable {
     
     private QName _serviceQName = new QName("");
     private String _name;
+
+    /**
+     * Default Constructor.
+     */
+    public PortName() {
+    }
     
     /**
      * Construct the PortName from a string.

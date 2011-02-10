@@ -30,7 +30,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -47,8 +47,14 @@ import org.switchyard.Message;
 import org.switchyard.MockHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.XMLHelper;
+import org.switchyard.config.Descriptor;
+import org.switchyard.config.PropertiesResource;
+import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.composite.CompositeModel;
+import org.switchyard.config.model.composite.ExternalServiceModel;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.internal.ServiceDomains;
 import org.switchyard.metadata.BaseService;
@@ -71,6 +77,8 @@ public class SOAPGatewayTest {
     private static SOAPGateway _soapInbound;
     private static SOAPGateway _soapOutbound;
     private long _noOfThreads = DEFAULT_NO_OF_THREADS;
+    
+    private static ModelResource _res;
 
     private class WebServiceInvoker implements Callable<String> {
 
@@ -117,10 +125,21 @@ public class SOAPGatewayTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
+        // _res = new ModelResource();
+        Properties props = new PropertiesResource().pull(Descriptor.DEFAULT_PROPERTIES);
+        props.setProperty("soap.namespace", "http://www.jboss.org/switchyard/component/soap/binding-soap.xsd");
+        props.setProperty("soap.modelMarshaller", "org.switchyard.component.soap.config.SOAPModelMarshaller");
+        _res = new ModelResource(new Descriptor(props));
+        
         // Provide a switchyard service
         _domain = ServiceDomains.getDomain();
         SOAPProvider provider = new SOAPProvider();
-        _domain.registerService(PUBLISH_AS_WS_SERVICE, provider, new HelloWebServiceInterface());
+
+        CompositeModel composite = (CompositeModel)_res.pull("/HelloSwitchYard.xml");
+        ExternalServiceModel externalService = composite.getServices().get(0);
+        SOAPBindingModel config = (SOAPBindingModel)externalService.getBindings().get(0);
+
+        _domain.registerService(config.getServiceName(), provider, new HelloWebServiceInterface());
 
         _domain.getTransformerRegistry().addTransformer(new HandlerExceptionTransformer());
 
@@ -129,23 +148,21 @@ public class SOAPGatewayTest {
 
         // Service exposed as WS
         _soapInbound = new SOAPGateway();
-        HashMap config = new HashMap();
-        config.put("publishAsWS", "true");
-        config.put("wsdlLocation", "target/test-classes/HelloWebService.wsdl");
-        config.put("localService", PUBLISH_AS_WS_SERVICE.getLocalPart());
-        config.put("host", host);
-        config.put("port", port);
-        config.put("wsPort", "{http://test.ws/}HelloWebService:HelloWebServicePort");
+
+        config.setPublishAsWS(true);
+        config.setServerHost(host);
+        config.setServerPort(Integer.parseInt(port));
         _soapInbound.init(config);
+
         _soapInbound.start();
 
         _serviceURL = new URL("http://" + host + ":" + port + "/HelloWebService");
 
         // A WS Consumer as Service
         _soapOutbound = new SOAPGateway();
-        config = new HashMap();
-        config.put("remoteWSDL", _serviceURL.toExternalForm() + "?wsdl");
-        config.put("serviceName", WS_CONSUMER_SERVICE.getLocalPart());
+        config = new SOAPBindingModel();
+        config.setWsdl(_serviceURL.toExternalForm() + "?wsdl");
+        config.setServiceName(WS_CONSUMER_SERVICE);
         _soapOutbound.init(config);
         _soapOutbound.start();
     }

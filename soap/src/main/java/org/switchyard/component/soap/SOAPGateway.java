@@ -22,11 +22,9 @@
 
 package org.switchyard.component.soap;
 
-import java.util.HashMap;
-import javax.xml.namespace.QName;
-
 import org.apache.log4j.Logger;
 import org.switchyard.ServiceDomain;
+import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.internal.ServiceDomains;
 
 /**
@@ -52,19 +50,15 @@ public class SOAPGateway {
      * Initialization code.
      * @param config the configuration settings
      */
-    public void init(final HashMap<String, String> config) {
+    public void init(final SOAPBindingModel config) {
         _domain = ServiceDomains.getDomain();
-        String publishAsWS = config.get("publishAsWS");
-        if (publishAsWS != null && publishAsWS.equals("true")) {
+        if (config.getPublishAsWS()) {
             // Consume the SwitchYard service
             _wsProvider = new InboundHandler(config);
         } else {
-            // Provide the SwitchYard service
-            String localService = config.get("serviceName");
-            QName serviceName = new QName(localService);
             // Create a WS Client for our service
             _wsConsumer = new OutboundHandler(config);
-            _domain.registerService(serviceName, _wsConsumer);
+            _domain.registerService(config.getServiceName(), _wsConsumer);
         }
     }
 
@@ -77,6 +71,7 @@ public class SOAPGateway {
                 _wsProvider.start();
             } catch (Exception e) {
                 LOGGER.error(e);
+                e.printStackTrace();
                 throw new RuntimeException("WebService could not be published!");
             }
         }
