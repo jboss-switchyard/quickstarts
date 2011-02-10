@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config;
+package org.switchyard.config.util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,6 +50,7 @@ public class ElementResource extends Resource<Element> {
 
     public Element pull(InputSource is) throws IOException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setIgnoringComments(true);
         factory.setNamespaceAware(true);
         factory.setValidating(false);
         try {

@@ -22,7 +22,7 @@ import static org.switchyard.config.model.composite.test.soap.PortModel.PORT;
 import static org.switchyard.config.model.composite.test.soap.WSDLModel.WSDL;
 
 import org.switchyard.config.Configuration;
-import org.switchyard.config.Descriptor;
+import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.v1.V1BindingModel;
 
 /**
@@ -39,12 +39,12 @@ public class SOAPBindingModel extends V1BindingModel {
 
     public SOAPBindingModel() {
         super(SOAP);
-        setChildrenOrder(PORT, WSDL);
+        setModelChildrenOrder(PORT, WSDL);
     }
 
     public SOAPBindingModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setChildrenOrder(PORT, WSDL);
+        setModelChildrenOrder(PORT, WSDL);
     }
 
     public PortModel getPort() {

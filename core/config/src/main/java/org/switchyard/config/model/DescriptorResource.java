@@ -16,49 +16,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config;
+package org.switchyard.config.model;
 
-import javax.xml.namespace.QName;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.Properties;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.switchyard.config.util.PropertiesResource;
+import org.switchyard.config.util.Resource;
 
 /**
- * QNames.
+ * DescriptorResource.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public final class QNames {
+public class DescriptorResource extends Resource<Descriptor> {
 
-    private QNames() {}
-
-    public static QName create(Document document) {
-        return create(document.getDocumentElement());
+    @Override
+    public Descriptor pull(InputStream is) throws IOException {
+        return pull(new PropertiesResource().pull(is));
     }
 
-    public static QName create(Element element) {
-        return create(element.getNamespaceURI(), Nodes.nameOf(element), element.getPrefix());
+    public Descriptor pull(Reader reader) throws IOException {
+        return pull(new PropertiesResource().pull(reader));
     }
 
-    public static QName create(String name) {
-        if (name != null) {
-            return QName.valueOf(name);
-        }
-        return null;
+    public Descriptor pull(Properties props) throws IOException {
+        return new Descriptor(props);
     }
 
-    public static QName create(String namespace, String localName) {
-        return create(namespace, localName, null);
-    }
-
-    public static QName create(String namespace, String localName, String prefix) {
-        if (namespace != null && namespace.length() > 0) {
-            if (prefix != null && prefix.length() > 0) {
-                return new QName(namespace, localName, prefix);
-            }
-            return new QName(namespace, localName);
-        }
-        return create(localName);
+    public Descriptor pull() throws IOException {
+        return new Descriptor();
     }
 
 }

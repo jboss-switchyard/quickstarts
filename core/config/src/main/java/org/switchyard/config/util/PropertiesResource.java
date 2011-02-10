@@ -16,28 +16,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config;
+package org.switchyard.config.util;
 
-import org.w3c.dom.Node;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.Properties;
+
 
 /**
- * Nodes.
+ * PropertiesResource.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public final class Nodes {
+public class PropertiesResource extends Resource<Properties> {
 
-    private Nodes() {}
-
-    public static String nameOf(Node node) {
-        if (node != null) {
-            String name = node.getLocalName();
-            if (name == null || name.length() == 0) {
-                name = node.getNodeName();
-            }
-            return name;
+    @Override
+    public Properties pull(InputStream is) throws IOException {
+        Properties props = new Properties();
+        if (is != null) {
+            props.load(is);
         }
-        return null;
+        return props;
+    }
+
+    public Properties pull(Reader reader) throws IOException {
+        Properties props = new Properties();
+        if (reader != null) {
+            props.load(reader);
+        }
+        return props;
     }
 
 }

@@ -16,28 +16,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config.model;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
+package org.switchyard.config.model.composite.test.bogus;
 
 import org.switchyard.config.Configuration;
-import org.switchyard.config.Descriptor;
+import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composite.ImplementationModel;
+import org.switchyard.config.model.composite.v1.V1CompositeMarshaller;
 
 /**
- * ModelMarshaller.
+ * BogusMarshaller.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface ModelMarshaller {
+public class BogusMarshaller extends V1CompositeMarshaller {
 
-    public Descriptor getModelDescriptor();
+    public BogusMarshaller(Descriptor desc) {
+        super(desc);
+    }
 
-    public Model read(Configuration config);
-
-    public void write(Model model, OutputStream out) throws IOException;
-
-    public void write(Model model, Writer writer) throws IOException;
+    @Override
+    public Model read(Configuration config) {
+        if (config.getName().startsWith(ImplementationModel.IMPLEMENTATION)) {
+            return new BogusImplementationModel(config, getDescriptor());
+        }
+        return super.read(config);
+    }
 
 }

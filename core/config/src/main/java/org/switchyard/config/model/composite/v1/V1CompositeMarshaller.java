@@ -19,8 +19,8 @@
 package org.switchyard.config.model.composite.v1;
 
 import org.switchyard.config.Configuration;
-import org.switchyard.config.Descriptor;
-import org.switchyard.config.model.BaseModelMarshaller;
+import org.switchyard.config.model.BaseMarshaller;
+import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;
@@ -32,20 +32,20 @@ import org.switchyard.config.model.composite.InternalServiceModel;
 import org.switchyard.config.model.composite.ReferenceModel;
 
 /**
- * V1CompositeModelMarshaller.
+ * V1CompositeMarshaller.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1CompositeModelMarshaller extends BaseModelMarshaller {
+public class V1CompositeMarshaller extends BaseMarshaller {
 
-    public V1CompositeModelMarshaller(Descriptor desc) {
+    public V1CompositeMarshaller(Descriptor desc) {
         super(desc);
     }
 
     @Override
     public Model read(Configuration config) {
         String name = config.getName();
-        Descriptor desc = getModelDescriptor();
+        Descriptor desc = getDescriptor();
         if (name.equals(CompositeModel.COMPOSITE)) {
             return new V1CompositeModel(config, desc);
         } else if (name.equals(ExternalServiceModel.SERVICE)) {

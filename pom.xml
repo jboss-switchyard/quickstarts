@@ -22,9 +22,9 @@
   </scm>
   <properties>
     <!--
-		http://maven.apache.org/general.html#encoding-warning
-		http://docs.codehaus.org/display/MAVENUSER/POM+Element+for+Source+File+Encoding
-		-->
+        http://maven.apache.org/general.html#encoding-warning
+        http://docs.codehaus.org/display/MAVENUSER/POM+Element+for+Source+File+Encoding
+        -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <modules>
@@ -33,6 +33,7 @@
     <module>test/test-util</module>
     <module>core/config</module>
     <module>core/runtime</module>
+    <module>tools/maven/plugins/configurator</module>
     <module>tools/maven/archetypes/application</module>
     <module>registry</module>
   </modules>
@@ -121,9 +122,9 @@
         <configuration>
           <downloadSources>true</downloadSources>
           <!--
-					A true value would hardcode the user's home dir rather than
-					using the cross-user-compatible M2_REPO classpath var!
-					-->
+                    A true value would hardcode the user's home dir rather than
+                    using the cross-user-compatible M2_REPO classpath var!
+                    -->
           <downloadJavadocs>false</downloadJavadocs>
         </configuration>
       </plugin>
@@ -423,6 +424,11 @@
       </dependency>
       <dependency>
         <groupId>org.switchyard</groupId>
+        <artifactId>configurator-plugin</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.switchyard</groupId>
         <artifactId>core-runtime</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -437,6 +443,24 @@
         <version>${project.version}</version>
       </dependency>
       <!-- external dependencies -->
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-plugin-api</artifactId>
+        <version>3.0.2</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>2.5.1</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>ant</groupId>
+        <artifactId>ant</artifactId>
+        <version>1.6.5</version>
+        <scope>compile</scope>
+      </dependency>
       <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>

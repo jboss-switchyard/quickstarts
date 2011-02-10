@@ -16,38 +16,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config.model.composite.test.soap;
+package org.switchyard.config.model;
 
-import org.switchyard.config.Configuration;
-import org.switchyard.config.Descriptor;
-import org.switchyard.config.model.BaseModelMarshaller;
-import org.switchyard.config.model.Model;
-import org.switchyard.config.model.composite.BindingModel;
+import java.io.IOException;
+import java.util.Set;
 
 /**
- * SOAPModelMarshaller.
+ * Scanner.
+ * 
+ * @param <M> the target Model after the paths are scanned
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class SOAPModelMarshaller extends BaseModelMarshaller {
+public interface Scanner<M extends Model> {
 
-    public static final String NAMESPACE = "http://www.jboss.org/switchyard/component/soap/binding-soap.xsd";
-
-    public SOAPModelMarshaller(Descriptor desc) {
-        super(desc);
-    }
-
-    @Override
-    public Model read(Configuration config) {
-        Descriptor desc = getModelDescriptor();
-        if (config.getName().startsWith(BindingModel.BINDING)) {
-            return new SOAPBindingModel(config, desc);
-        } else if (config.getName().equals(PortModel.PORT)) {
-            return new PortModel(config, desc);
-        } else if (config.getName().equals(WSDLModel.WSDL)) {
-            return new WSDLModel(config, desc);
-        }
-        return super.read(config);
-    }
+    public M scan(Set<String> paths) throws IOException;
 
 }

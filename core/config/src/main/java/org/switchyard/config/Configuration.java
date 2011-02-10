@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 
@@ -36,6 +37,12 @@ public interface Configuration {
     public String getName();
 
     public QName getQName();
+
+    public Set<String> getNamespaces();
+
+    public Map<String,String> getNamespacePrefixMap();
+
+    public Map<String,String> getPrefixNamespaceMap();
 
     public String getValue();
 
@@ -62,8 +69,10 @@ public interface Configuration {
     /**
      * Gets the parent Configuration, if it exists.<p/>
      * 
-     * Guaranteed: getParent() == getParent()<br/>
-     * NOT guaranteed: parent; child = parent.getFirstChild("foo"); parent == child.getParent()
+     * <i>Guaranteed:</i> child.getParent().equals(child.getParent())<br/>
+     * <i>Guaranteed:</i> child.getParent() == child.getParent()<br/>
+     * <i>Guaranteed:</i> parent; child = parent.getFirstChild("foo"); parent.equals(child.getParent())<br/>
+     * <i><b>NOT</b> guaranteed:</i> parent; child = parent.getFirstChild("foo"); parent == child.getParent()
      * 
      * @return the parent Configuration, or null if there is no parent
      */
@@ -100,10 +109,6 @@ public interface Configuration {
     public Configuration setChildrenOrder(String... childrenOrder);
 
     public Configuration orderChildren();
-
-    public Map<String,String> getNamespacePrefixMap();
-
-    public Map<String,String> getPrefixNamespaceMap();
 
     public Configuration copy();
 

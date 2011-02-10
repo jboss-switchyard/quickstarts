@@ -16,35 +16,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config;
+package org.switchyard.config.model.switchyard;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.util.Set;
+
+import org.switchyard.config.model.ModelResource;
 
 /**
- * StringResource.
+ * DefaultSwitchYardScanner.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class StringResource extends Resource<String> {
+public class DefaultSwitchYardScanner implements SwitchYardScanner {
 
     @Override
-    public String pull(InputStream is) throws IOException {
-        return pull(new InputStreamReader(is));
-    }
-
-    public String pull(Reader reader) throws IOException {
-        StringBuffer buffer = new StringBuffer(1024);
-        reader = new BufferedReader(reader);
-        char[] c = new char[1024];
-        int i = 0;
-        while ((i = reader.read(c)) != -1) {
-            buffer.append(c, 0, i);
-        }
-        return buffer.toString();
+    public SwitchYardModel scan(Set<String> paths) throws IOException {
+        return (SwitchYardModel)new ModelResource().pull("/META-INF/switchyard.xml");
     }
 
 }

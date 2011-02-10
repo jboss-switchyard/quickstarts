@@ -19,7 +19,7 @@
 package org.switchyard.config.model.composite.v1;
 
 import org.switchyard.config.Configuration;
-import org.switchyard.config.Descriptor;
+import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.InternalServiceInterfaceModel;
 import org.switchyard.config.model.composite.InternalServiceModel;
 
@@ -40,7 +40,7 @@ public class V1InternalServiceInterfaceModel extends V1BaseInterfaceModel implem
 
     @Override
     public InternalServiceModel getService() {
-        return (InternalServiceModel)getModelParent();
+        return (InternalServiceModel)getParentModel();
     }
 
 }

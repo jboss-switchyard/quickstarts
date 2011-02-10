@@ -19,7 +19,7 @@
 package org.switchyard.config.model.composite.v1;
 
 import org.switchyard.config.Configuration;
-import org.switchyard.config.Descriptor;
+import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.ReferenceInterfaceModel;
 import org.switchyard.config.model.composite.ReferenceModel;
 
@@ -40,7 +40,7 @@ public class V1ReferenceInterfaceModel extends V1BaseInterfaceModel implements R
 
     @Override
     public ReferenceModel getReference() {
-        return (ReferenceModel)getModelParent();
+        return (ReferenceModel)getParentModel();
     }
 
 }

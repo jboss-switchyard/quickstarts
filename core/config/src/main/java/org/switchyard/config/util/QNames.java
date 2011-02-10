@@ -16,35 +16,49 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config;
+package org.switchyard.config.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.Properties;
+import javax.xml.namespace.QName;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
- * PropertiesResource.
+ * QNames.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class PropertiesResource extends Resource<Properties> {
+public final class QNames {
 
-    @Override
-    public Properties pull(InputStream is) throws IOException {
-        Properties props = new Properties();
-        if (is != null) {
-            props.load(is);
-        }
-        return props;
+    private QNames() {}
+
+    public static QName create(Document document) {
+        return create(document.getDocumentElement());
     }
 
-    public Properties pull(Reader reader) throws IOException {
-        Properties props = new Properties();
-        if (reader != null) {
-            props.load(reader);
+    public static QName create(Element element) {
+        return create(element.getNamespaceURI(), Nodes.nameOf(element), element.getPrefix());
+    }
+
+    public static QName create(String name) {
+        if (name != null) {
+            return QName.valueOf(name);
         }
-        return props;
+        return null;
+    }
+
+    public static QName create(String namespace, String localName) {
+        return create(namespace, localName, null);
+    }
+
+    public static QName create(String namespace, String localName, String prefix) {
+        if (namespace != null && namespace.length() > 0) {
+            if (prefix != null && prefix.length() > 0) {
+                return new QName(namespace, localName, prefix);
+            }
+            return new QName(namespace, localName);
+        }
+        return create(localName);
     }
 
 }

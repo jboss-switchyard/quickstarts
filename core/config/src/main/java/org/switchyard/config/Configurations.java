@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.config.util.QNames;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

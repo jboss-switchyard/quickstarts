@@ -19,8 +19,8 @@
 package org.switchyard.config.model.composite.test.soap;
 
 import org.switchyard.config.Configuration;
-import org.switchyard.config.Descriptor;
 import org.switchyard.config.model.BaseModel;
+import org.switchyard.config.model.Descriptor;
 
 /**
  * PortModel.
@@ -34,6 +34,10 @@ public class PortModel extends BaseModel {
 
     public PortModel(Configuration config, Descriptor desc) {
         super(config, desc);
+    }
+
+    public SOAPBindingModel getBinding() {
+        return (SOAPBindingModel)getParentModel();
     }
 
     public boolean isSecure() {

@@ -25,13 +25,13 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.switchyard.config.Configuration;
-import org.switchyard.config.Descriptor;
-import org.switchyard.config.QNames;
 import org.switchyard.config.model.BaseNamedModel;
+import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.ExternalServiceModel;
+import org.switchyard.config.util.QNames;
 
 /**
  * V1ExternalServiceModel.
@@ -58,7 +58,7 @@ public class V1ExternalServiceModel extends BaseNamedModel implements ExternalSe
 
     @Override
     public CompositeModel getComposite() {
-        return (CompositeModel)getModelParent();
+        return (CompositeModel)getParentModel();
     }
 
     @Override

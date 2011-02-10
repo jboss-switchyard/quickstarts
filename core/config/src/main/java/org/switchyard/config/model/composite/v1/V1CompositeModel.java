@@ -25,8 +25,8 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.switchyard.config.Configuration;
-import org.switchyard.config.Descriptor;
 import org.switchyard.config.model.BaseNamedModel;
+import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.ExternalServiceModel;
@@ -43,7 +43,7 @@ public class V1CompositeModel extends BaseNamedModel implements CompositeModel {
 
     public V1CompositeModel() {
         super(new QName(CompositeModel.DEFAULT_NAMESPACE, CompositeModel.COMPOSITE));
-        setChildrenOrder(ExternalServiceModel.SERVICE, ComponentModel.COMPONENT);
+        setModelChildrenOrder(ExternalServiceModel.SERVICE, ComponentModel.COMPONENT);
     }
 
     public V1CompositeModel(Configuration config, Descriptor desc) {
@@ -60,7 +60,7 @@ public class V1CompositeModel extends BaseNamedModel implements CompositeModel {
                 _components.add(component);
             }
         }
-        setChildrenOrder(ExternalServiceModel.SERVICE, ComponentModel.COMPONENT);
+        setModelChildrenOrder(ExternalServiceModel.SERVICE, ComponentModel.COMPONENT);
     }
 
     @Override

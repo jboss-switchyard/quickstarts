@@ -38,7 +38,7 @@
 	<artifactId>core-config</artifactId>
 	
 	<packaging>jar</packaging>
-	<name>Switchyard: Core Config</name>
+	<name>SwitchYard: Core Config</name>
 	<version>${project.parent.version}</version>
 	<description>The core config library.</description>
 	<url>http://switchyard/</url>

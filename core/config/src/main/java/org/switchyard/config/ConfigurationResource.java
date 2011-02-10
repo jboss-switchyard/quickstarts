@@ -26,6 +26,7 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.switchyard.config.util.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -49,6 +50,7 @@ public class ConfigurationResource extends Resource<Configuration> {
 
     public Configuration pull(InputSource is) throws IOException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setIgnoringComments(true);
         factory.setNamespaceAware(true);
         factory.setValidating(false);
         try {

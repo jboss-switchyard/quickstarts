@@ -19,7 +19,6 @@
 package org.switchyard.config.model.composite;
 
 import java.io.StringReader;
-import java.util.Properties;
 
 import javax.xml.namespace.QName;
 
@@ -30,18 +29,14 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.config.Configuration;
-import org.switchyard.config.Descriptor;
-import org.switchyard.config.PropertiesResource;
-import org.switchyard.config.StringResource;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.Models;
 import org.switchyard.config.model.composite.test.bogus.BogusImplementationModel;
-import org.switchyard.config.model.composite.test.bogus.BogusModelMarshaller;
 import org.switchyard.config.model.composite.test.soap.PortModel;
 import org.switchyard.config.model.composite.test.soap.SOAPBindingModel;
-import org.switchyard.config.model.composite.test.soap.SOAPModelMarshaller;
 import org.switchyard.config.model.composite.test.soap.WSDLModel;
+import org.switchyard.config.util.StringResource;
 
 /**
  * CompositeModelTests.
@@ -59,10 +54,7 @@ public class CompositeModelTests {
 
     @Before
     public void before() throws Exception {
-        Properties props = new PropertiesResource().pull(Descriptor.DEFAULT_PROPERTIES);
-        props.setProperty("soap.namespace", SOAPModelMarshaller.NAMESPACE);
-        props.setProperty("soap.modelMarshaller", SOAPModelMarshaller.class.getName());
-        _res = new ModelResource(new Descriptor(props));
+        _res = new ModelResource();
     }
 
     @Test
@@ -175,11 +167,7 @@ public class CompositeModelTests {
 
     @Test
     public void testReadExtended() throws Exception {
-        Properties props = new PropertiesResource().pull(Descriptor.DEFAULT_PROPERTIES);
-        props.setProperty("bogus.namespace", "http://bogus.org/bogus/xsd/bogus.xsd");
-        props.setProperty("bogus.modelMarshaller", BogusModelMarshaller.class.getName());
-        ModelResource res = new ModelResource(new Descriptor(props));
-        CompositeModel cm = (CompositeModel)res.pull(EXTENDED_XML);
+        CompositeModel cm = (CompositeModel)_res.pull(EXTENDED_XML);
         BogusImplementationModel bim = (BogusImplementationModel)cm.getComponents().get(0).getImplementation();
         Assert.assertEquals("bar", bim.getFoo());
     }

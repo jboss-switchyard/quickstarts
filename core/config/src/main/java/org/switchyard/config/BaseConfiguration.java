@@ -28,7 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
+import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 /**
@@ -38,10 +40,63 @@ import javax.xml.namespace.QName;
  */
 public abstract class BaseConfiguration implements Configuration {
 
-    protected static final String DEFAULT_XMLNS_URI = "http://www.w3.org/2000/xmlns/";
+    protected static final String DEFAULT_XMLNS_URI = XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
     protected static final String DEFAULT_XMLNS_PFX = "ns0";
 
     private String[] _childrenOrder = new String[0];
+
+    @Override
+    public Set<String> getNamespaces() {
+        Set<String> set = new TreeSet<String>();
+        set.add(DEFAULT_XMLNS_URI);
+        String ns = getQName().getNamespaceURI();
+        if (ns != null && ns.length() > 0 && !set.contains(ns)) {
+            set.add(ns);
+        }
+        for (QName attr_qname : getAttributeQNames()) {
+            String attr_ns = attr_qname.getNamespaceURI();
+            if (attr_ns != null && attr_ns.length() > 0 && !set.contains(attr_ns)) {
+                set.add(attr_ns);
+            }
+        }
+        for (Configuration child : getChildren()) {
+            Set<String> child_set = child.getNamespaces();
+            for (String child_ns : child_set) {
+                if (!set.contains(child_ns)) {
+                    set.add(child_ns);
+                }
+            }
+        }
+        return set;
+    }
+
+    @Override
+    public Map<String,String> getNamespacePrefixMap() {
+        Map<String,String> map = new TreeMap<String,String>();
+        map.put(DEFAULT_XMLNS_URI, DEFAULT_XMLNS_PFX);
+        int i = 1;
+        for (String ns : getNamespaces()) {
+            if (!map.containsKey(ns)) {
+                map.put(ns, "ns" + i);
+            }
+            i++;
+        }
+        return map;
+    }
+
+    @Override
+    public Map<String,String> getPrefixNamespaceMap() {
+        Map<String,String> map = new TreeMap<String,String>();
+        Map<String,String> nsp_map = getNamespacePrefixMap();
+        for (Map.Entry<String,String> nsp_entry : nsp_map.entrySet()) {
+            String pfx = nsp_entry.getValue();
+            String ns = nsp_entry.getKey();
+            if (!map.containsKey(pfx)) {
+                map.put(pfx, ns);
+            }
+        }
+        return map;
+    }
 
     @Override
     public String[] getChildrenOrder() {
@@ -90,49 +145,6 @@ public abstract class BaseConfiguration implements Configuration {
             }
         }
         return this;
-    }
-
-    @Override
-    public Map<String,String> getNamespacePrefixMap() {
-        Map<String,String> map = new TreeMap<String,String>();
-        map.put(DEFAULT_XMLNS_URI, DEFAULT_XMLNS_PFX);
-        int count = 1;
-        String ns = getQName().getNamespaceURI();
-        if (ns != null && ns.length() > 0 && !map.containsKey(ns)) {
-            map.put(ns, "ns" + count);
-            count++;
-        }
-        for (QName attr_qname : getAttributeQNames()) {
-            String attr_ns = attr_qname.getNamespaceURI();
-            if (attr_ns != null && attr_ns.length() > 0 && !map.containsKey(attr_ns)) {
-                map.put(attr_ns, "ns" + count);
-                count++;
-            }
-        }
-        for (Configuration child : getChildren()) {
-            Map<String,String> child_map = child.getNamespacePrefixMap();
-            for (String child_ns : child_map.keySet()) {
-                if (!map.containsKey(child_ns)) {
-                    map.put(child_ns, "ns" + count);
-                    count++;
-                }
-            }
-        }
-        return map;
-    }
-
-    @Override
-    public Map<String,String> getPrefixNamespaceMap() {
-        Map<String,String> map = new TreeMap<String,String>();
-        Map<String,String> nsp_map = getNamespacePrefixMap();
-        for (Map.Entry<String,String> nsp_entry : nsp_map.entrySet()) {
-            String pfx = nsp_entry.getValue();
-            String ns = nsp_entry.getKey();
-            if (!map.containsKey(pfx)) {
-                map.put(pfx, ns);
-            }
-        }
-        return map;
     }
 
     @Override

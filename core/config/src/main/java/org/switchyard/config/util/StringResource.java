@@ -16,31 +16,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config.model.composite.test.bogus;
+package org.switchyard.config.util;
 
-import org.switchyard.config.Configuration;
-import org.switchyard.config.Descriptor;
-import org.switchyard.config.model.Model;
-import org.switchyard.config.model.composite.ImplementationModel;
-import org.switchyard.config.model.composite.v1.V1CompositeModelMarshaller;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+
 
 /**
- * BogusModelMarshaller.
+ * StringResource.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class BogusModelMarshaller extends V1CompositeModelMarshaller {
-
-    public BogusModelMarshaller(Descriptor desc) {
-        super(desc);
-    }
+public class StringResource extends Resource<String> {
 
     @Override
-    public Model read(Configuration config) {
-        if (config.getName().startsWith(ImplementationModel.IMPLEMENTATION)) {
-            return new BogusImplementationModel(config, getModelDescriptor());
+    public String pull(InputStream is) throws IOException {
+        return pull(new InputStreamReader(is));
+    }
+
+    public String pull(Reader reader) throws IOException {
+        StringBuffer buffer = new StringBuffer(1024);
+        reader = new BufferedReader(reader);
+        char[] c = new char[1024];
+        int i = 0;
+        while ((i = reader.read(c)) != -1) {
+            buffer.append(c, 0, i);
         }
-        return super.read(config);
+        return buffer.toString();
     }
 
 }

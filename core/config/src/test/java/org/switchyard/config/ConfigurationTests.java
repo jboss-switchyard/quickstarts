@@ -19,6 +19,7 @@
 package org.switchyard.config;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 
@@ -27,6 +28,8 @@ import junit.framework.Assert;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
+import org.switchyard.config.util.ElementResource;
+import org.switchyard.config.util.StringResource;
 
 /**
  * ConfigurationTests.
@@ -93,7 +96,18 @@ public class ConfigurationTests {
     }
 
     @Test
-    public void testNamespaces() throws Exception {
+    public void testNamespaceCollections() throws Exception {
+        Configuration config = Configurations.create(new ElementResource().pull(NAMESPACES_XML));
+        Set<String> n_set = config.getNamespaces();
+        Assert.assertEquals(4, n_set.size());
+        Map<String,String> np_map = config.getNamespacePrefixMap();
+        Assert.assertEquals(4, np_map.size());
+        Map<String,String> pn_map = config.getPrefixNamespaceMap();
+        Assert.assertEquals(4, pn_map.size());
+    }
+
+    @Test
+    public void testNamespacesValues() throws Exception {
         Configuration config = Configurations.create(new ElementResource().pull(NAMESPACES_XML));
         Assert.assertEquals("http://a.org/a.xsd", config.getQName().getNamespaceURI());
         Assert.assertEquals("bar", config.getAttribute("foo"));
@@ -104,15 +118,6 @@ public class ConfigurationTests {
         Assert.assertEquals("junk", config.getChildren().get(1).getValue());
         Assert.assertEquals("woman", config.getChildren().get(1).getAttribute(new QName("http://b.org/b.xsd", "man")));
         Assert.assertEquals("robot", config.getChildren().get(1).getAttribute("toy"));
-    }
-
-    @Test
-    public void testNamespaceMaps() throws Exception {
-        Configuration config = Configurations.create(new ElementResource().pull(NAMESPACES_XML));
-        Map<String,String> np_map = config.getNamespacePrefixMap();
-        Assert.assertEquals(4, np_map.size());
-        Map<String,String> pn_map = config.getPrefixNamespaceMap();
-        Assert.assertEquals(4, pn_map.size());
     }
 
 }

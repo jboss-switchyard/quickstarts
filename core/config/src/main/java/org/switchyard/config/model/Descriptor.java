@@ -16,15 +16,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config;
+package org.switchyard.config.model;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+
+import org.switchyard.config.util.PropertiesResource;
 
 /**
  * Descriptor.
@@ -33,21 +36,34 @@ import java.util.TreeMap;
  */
 public final class Descriptor {
 
-    public static final String DEFAULT_PROPERTIES = "/org/switchyard/config/descriptor.properties";
+    public static final String DEFAULT_PROPERTIES = "/org/switchyard/config/model/descriptor.properties";
     public static final String NAMESPACE = "namespace";
-    public static final String SCHEMA_LOCATION = "schemaLocation";
+    public static final String SCHEMA = "schema";
 
     private Map<String,String> _all_properties_map = new TreeMap<String,String>();
     private Map<String,Map<String,String>> _prefix_config_map = new HashMap<String,Map<String,String>>();
     private Map<String,String> _namespace_prefix_map = new HashMap<String,String>();
 
     public Descriptor() {
+        String dp = DEFAULT_PROPERTIES.substring(1);
+        Properties props = new Properties();
+        PropertiesResource props_res = new PropertiesResource();
         try {
-            setProperties(new PropertiesResource().pull(DEFAULT_PROPERTIES));
+            Enumeration<URL> url_enum = Descriptor.class.getClassLoader().getResources(dp);
+            while (url_enum.hasMoreElements()) {
+                URL url = url_enum.nextElement();
+                Properties url_props = props_res.pull(url);
+                Enumeration<?> pn_enum = url_props.propertyNames();
+                while (pn_enum.hasMoreElements()) {
+                    String pn = (String)pn_enum.nextElement();
+                    props.setProperty(pn, url_props.getProperty(pn));
+                }
+            }
         } catch (IOException ioe) {
             // should never happen
             throw new RuntimeException(ioe);
         }
+        setProperties(props);
     }
 
     public Descriptor(Properties props) {
@@ -88,8 +104,8 @@ public final class Descriptor {
         return null;
     }
 
-    public String getSchemaLocation(String namespace) {
-        return getProperty(SCHEMA_LOCATION, namespace);
+    public String getSchema(String namespace) {
+        return getProperty(SCHEMA, namespace);
     }
 
     public String toString() {

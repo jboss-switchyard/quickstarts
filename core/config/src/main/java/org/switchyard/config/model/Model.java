@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import java.io.Writer;
 
 import org.switchyard.config.Configuration;
-import org.switchyard.config.Descriptor;
 
 /**
  * Model.

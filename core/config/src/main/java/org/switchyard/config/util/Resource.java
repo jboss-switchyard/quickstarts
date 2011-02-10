@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config;
+package org.switchyard.config.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,13 +28,13 @@ import java.net.URL;
 /**
  * Resource.
  * 
- * @param <T> the type of the object being pulled
+ * @param <R> the type of the resource being pulled
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public abstract class Resource<T> {
+public abstract class Resource<R> {
 
-    public T pull(String resource) throws IOException {
+    public R pull(String resource) throws IOException {
         InputStream is = Resource.class.getResourceAsStream(resource);
         if (is != null) {
             try {
@@ -46,11 +46,11 @@ public abstract class Resource<T> {
         return null;
     }
 
-    public T pull(URI uri) throws IOException {
+    public R pull(URI uri) throws IOException {
         return pull(uri.toURL());
     }
 
-    public T pull(URL url) throws IOException {
+    public R pull(URL url) throws IOException {
         InputStream is = url.openStream();
         try {
             return pull(is);
@@ -61,7 +61,7 @@ public abstract class Resource<T> {
         }
     }
 
-    public T pull(File file) throws IOException {
+    public R pull(File file) throws IOException {
         InputStream is = new FileInputStream(file);
         try {
             return pull(is);
@@ -72,6 +72,6 @@ public abstract class Resource<T> {
         }
     }
 
-    public abstract T pull(InputStream is) throws IOException;
+    public abstract R pull(InputStream is) throws IOException;
 
 }

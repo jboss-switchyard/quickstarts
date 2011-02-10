@@ -33,6 +33,10 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.switchyard.config.util.ElementResource;
+import org.switchyard.config.util.Nodes;
+import org.switchyard.config.util.QNames;
+import org.switchyard.config.util.StringResource;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

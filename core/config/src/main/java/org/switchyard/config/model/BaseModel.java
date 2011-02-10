@@ -28,7 +28,6 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Configurations;
-import org.switchyard.config.Descriptor;
 
 /**
  * BaseModel.
@@ -89,19 +88,21 @@ public abstract class BaseModel implements Model {
     }
 
     
-    protected final boolean hasModelParent() {
-        return getModelParent() != null;
+    protected final boolean hasParentModel() {
+        return getParentModel() != null;
     }
 
     /**
      * Gets the parent Model, if it exists.<p/>
      * 
-     * Guaranteed: getModelParent() == getModelParent()
-     * NOT guaranteed: parent; child = parent.getFirstChildModel("foo"); parent == child.getModelParent()
+     * <i>Guaranteed:</i> child.getParentModel().equals(child.getParentModel())<br/>
+     * <i>Guaranteed:</i> child.getParentModel() == child.getParentModel()<br/>
+     * <i>Guaranteed:</i> parent; child = parent.getFirstChildModel("foo"); parent.equals(child.getParentModel())<br/>
+     * <i><b>NOT</b> guaranteed:</i> parent; child = parent.getFirstChildModel("foo"); parent == child.getParentModel()
      * 
      * @return the parent Model, or null if there is no parent
      */
-    protected final Model getModelParent() {
+    protected final Model getParentModel() {
         if (_parent == null) {
             Configuration parent_config = _config.getParent();
             if (parent_config != null) {
@@ -136,11 +137,11 @@ public abstract class BaseModel implements Model {
         return null;
     }
 
-    protected synchronized final Model readModel(Configuration config) {
+    protected final synchronized Model readModel(Configuration config) {
         if (config != null) {
             Model model = _config_model_map.get(config);
             if (model == null) {
-                ModelMarshaller marsh = ModelResource.getModelMarshaller(config, _desc);
+                Marshaller marsh = ModelResource.getMarshaller(config, _desc);
                 if (marsh != null) {
                     model = marsh.read(config);
                     if (model != null) {
@@ -169,11 +170,11 @@ public abstract class BaseModel implements Model {
         return this;
     }
 
-    protected final String[] getChildrenOrder() {
+    protected final String[] getModelChildrenOrder() {
         return _config.getChildrenOrder();
     }
 
-    protected final Model setChildrenOrder(String... childrenOrder) {
+    protected final Model setModelChildrenOrder(String... childrenOrder) {
         _config.setChildrenOrder(childrenOrder);
         return this;
     }

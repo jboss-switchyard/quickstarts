@@ -19,7 +19,7 @@
 package org.switchyard.config.model.composite.test.bogus;
 
 import org.switchyard.config.Configuration;
-import org.switchyard.config.Descriptor;
+import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.v1.V1ImplementationModel;
 
 /**

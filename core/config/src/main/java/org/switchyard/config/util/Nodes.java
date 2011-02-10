@@ -16,46 +16,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config.model;
+package org.switchyard.config.util;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
-
-import org.switchyard.config.Configuration;
-import org.switchyard.config.Descriptor;
+import org.w3c.dom.Node;
 
 /**
- * BaseModelMarshaller.
+ * Nodes.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public abstract class BaseModelMarshaller implements ModelMarshaller {
+public final class Nodes {
 
-    private Descriptor _desc;
+    private Nodes() {}
 
-    public BaseModelMarshaller(Descriptor desc) {
-        _desc = desc;
-    }
-
-    @Override
-    public final Descriptor getModelDescriptor() {
-        return _desc;
-    }
-
-    @Override
-    public Model read(Configuration config) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void write(Model model, OutputStream out) throws IOException {
-        model.write(out);
-    }
-
-    @Override
-    public void write(Model model, Writer writer) throws IOException {
-        model.write(writer);
+    public static String nameOf(Node node) {
+        if (node != null) {
+            String name = node.getLocalName();
+            if (name == null || name.length() == 0) {
+                name = node.getNodeName();
+            }
+            return name;
+        }
+        return null;
     }
 
 }

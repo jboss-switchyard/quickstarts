@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
+<!--
 JBoss, Home of Professional Open Source
 Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
 as indicated by the @authors tag. All rights reserved.
@@ -18,7 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA  02110-1301, USA.
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-           targetNamespace="http://www.jboss.org/switchyard/example/m1app"
+           targetNamespace="http://www.switchyard.org/example/m1app"
            name="m1app">
     <component name="SimpleService">
        <implementation.bean class="org.switchyard.example.m1app.SimpleBean"/>

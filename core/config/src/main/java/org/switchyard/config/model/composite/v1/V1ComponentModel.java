@@ -23,8 +23,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.switchyard.config.Configuration;
-import org.switchyard.config.Descriptor;
 import org.switchyard.config.model.BaseNamedModel;
+import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.ImplementationModel;
@@ -44,12 +44,12 @@ public class V1ComponentModel extends BaseNamedModel implements ComponentModel {
 
     public V1ComponentModel() {
         super(ComponentModel.COMPONENT);
-        setChildrenOrder(ImplementationModel.IMPLEMENTATION, InternalServiceModel.SERVICE, ReferenceModel.REFERENCE);
+        setModelChildrenOrder(ImplementationModel.IMPLEMENTATION, InternalServiceModel.SERVICE, ReferenceModel.REFERENCE);
     }
 
     public V1ComponentModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setChildrenOrder(ImplementationModel.IMPLEMENTATION, InternalServiceModel.SERVICE, ReferenceModel.REFERENCE);
+        setModelChildrenOrder(ImplementationModel.IMPLEMENTATION, InternalServiceModel.SERVICE, ReferenceModel.REFERENCE);
         for (Configuration service_config : config.getChildren(InternalServiceModel.SERVICE)) {
             InternalServiceModel service = (InternalServiceModel)readModel(service_config);
             if (service != null) {
@@ -66,7 +66,7 @@ public class V1ComponentModel extends BaseNamedModel implements ComponentModel {
 
     @Override
     public CompositeModel getComposite() {
-        return (CompositeModel)getModelParent();
+        return (CompositeModel)getParentModel();
     }
 
     @Override

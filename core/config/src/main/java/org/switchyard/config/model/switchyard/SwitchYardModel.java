@@ -16,35 +16,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config;
+package org.switchyard.config.model.switchyard;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.Properties;
+import org.switchyard.config.model.NamedModel;
+import org.switchyard.config.model.composite.CompositeModel;
 
 /**
- * DescriptorResource.
+ * SwitchYardModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class DescriptorResource extends Resource<Descriptor> {
+public interface SwitchYardModel extends NamedModel {
 
-    @Override
-    public Descriptor pull(InputStream is) throws IOException {
-        return pull(new PropertiesResource().pull(is));
-    }
+    public static final String DEFAULT_NAMESPACE = "http://www.switchyard.org/config/model/switchyard/v1";
+    public static final String SWITCHYARD = "switchyard";
 
-    public Descriptor pull(Reader reader) throws IOException {
-        return pull(new PropertiesResource().pull(reader));
-    }
+    public CompositeModel getComposite();
 
-    public Descriptor pull(Properties props) throws IOException {
-        return new Descriptor(props);
-    }
-
-    public Descriptor pull() throws IOException {
-        return pull(Descriptor.DEFAULT_PROPERTIES);
-    }
+    public SwitchYardModel setComposite(CompositeModel composite);
 
 }

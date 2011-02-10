@@ -19,8 +19,8 @@
 package org.switchyard.config.model.composite.v1;
 
 import org.switchyard.config.Configuration;
-import org.switchyard.config.Descriptor;
 import org.switchyard.config.model.BaseNamedModel;
+import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.InterfaceModel;
 import org.switchyard.config.model.composite.InternalServiceInterfaceModel;
@@ -45,7 +45,7 @@ public class V1InternalServiceModel extends BaseNamedModel implements InternalSe
 
     @Override
     public ComponentModel getComponent() {
-        return (ComponentModel)getModelParent();
+        return (ComponentModel)getParentModel();
     }
 
     @Override
