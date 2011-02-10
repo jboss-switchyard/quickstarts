@@ -65,10 +65,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.ctc.wstx.dom.WstxDOMWrappingReader;
-import com.ctc.wstx.dom.WstxDOMWrappingWriter;
-import com.ctc.wstx.stax.WstxInputFactory;
-import com.ctc.wstx.stax.WstxOutputFactory;
 
 /**
  * Helper class for manipulating XML documents.
@@ -540,20 +536,13 @@ public final class XMLHelper {
         final XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
         XML_INPUT_FACTORY = xmlInputFactory;
-
-        if ("com.ctc.wstx.stax.WstxInputFactory".equals(XML_INPUT_FACTORY.getClass().getName())) {
-            EVENT_READER_CREATOR = new WstxEventReaderCreator(XML_INPUT_FACTORY);
-        } else {
-            EVENT_READER_CREATOR = new DefaultEventReaderCreator();
-        }
+        
+        EVENT_READER_CREATOR = new DefaultEventReaderCreator();
 
         XML_OUTPUT_FACTORY = XMLOutputFactory.newInstance();
         
-        if ("com.ctc.wstx.stax.WstxOutputFactory".equals(XML_OUTPUT_FACTORY.getClass().getName())) {
-            EVENT_WRITER_CREATOR = new WstxEventWriterCreator(XML_OUTPUT_FACTORY);
-        } else {
-            EVENT_WRITER_CREATOR = new DefaultEventWriterCreator();
-        }
+        EVENT_WRITER_CREATOR = new DefaultEventWriterCreator();
+        
 
         final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
         docBuilderFactory.setNamespaceAware(true);
@@ -607,33 +596,6 @@ public final class XMLHelper {
             return getXMLEventWriter(new DOMResult(doc));
         }
     }
-    /**
-     * The wstx event writer creator
-     * @author kevin
-     */
-    private static final class WstxEventWriterCreator implements EventWriterCreator {
-        private final WstxOutputFactory _outputFactory;
-        
-        /**
-         * Construct the 
-         * @param xmlOutputFactory
-         */
-        private WstxEventWriterCreator(final XMLOutputFactory xmlOutputFactory) {
-            _outputFactory = (WstxOutputFactory) xmlOutputFactory;
-        }
-        
-        /**
-         * Create the event writer.
-         * @param doc The associated document.
-         * @return The XML event writer.
-         * @throws XMLStreamException for errors constructing the writer.
-         */
-        public XMLEventWriter createXMLEventWriter(final Document doc)
-            throws XMLStreamException {
-            final XMLStreamWriter wstxWriter = WstxDOMWrappingWriter.createFrom(_outputFactory.getConfig(), new DOMResult(doc));
-            return _outputFactory.createXMLEventWriter(wstxWriter);
-        }
-    }
     
     /**
      * The default event reader creator
@@ -651,31 +613,5 @@ public final class XMLHelper {
             return getXMLEventReader(new DOMSource(node));
         }
     }
-    /**
-     * The wstx event reader creator
-     * @author kevin
-     */
-    private static final class WstxEventReaderCreator implements EventReaderCreator {
-        private final WstxInputFactory _inputFactory;
-        
-        /**
-         * Construct the 
-         * @param xmlOutputFactory
-         */
-        private WstxEventReaderCreator(final XMLInputFactory xmlInputFactory) {
-            _inputFactory = (WstxInputFactory) xmlInputFactory;
-        }
-        
-        /**
-         * Create the event reader.
-         * @param node The associated node.
-         * @return The XML event reader.
-         * @throws XMLStreamException for errors constructing the reader.
-         */
-        public XMLEventReader createXMLEventReader(final Node node)
-            throws XMLStreamException {
-            final XMLStreamReader wstxReader = WstxDOMWrappingReader.createFrom(new DOMSource(node), _inputFactory.getConfig());
-            return _inputFactory.createXMLEventReader(wstxReader);
-        }
-    }
+    
 }

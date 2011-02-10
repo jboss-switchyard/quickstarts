@@ -177,7 +177,7 @@ public class SOAPGatewayTest {
 
     @Test
     public void invokeOneWay() throws Exception {
-        Element input = SOAPUtil.parseAsDom("<test:helloWS xmlns:test=\"http://test.ws/\">"
+        Element input = SOAPUtil.parseAsDom("<!--Comment --><test:helloWS xmlns:test=\"http://test.ws/\">"
                      + "   <arg0>Hello</arg0>"
                      + "</test:helloWS>").getDocumentElement();
 

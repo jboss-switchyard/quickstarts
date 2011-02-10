@@ -39,7 +39,6 @@
 
     <!-- Properties -->
     <properties>
-        <version.woodstox>4.0.9</version.woodstox>
         <version.wsdl4j>1.6.2</version.wsdl4j>
     </properties>
 
@@ -73,11 +72,6 @@
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>core-config</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.woodstox</groupId>
-            <artifactId>woodstox-core-lgpl</artifactId>
-            <version>${version.woodstox}</version>
         </dependency>
         <dependency>
             <groupId>wsdl4j</groupId>
