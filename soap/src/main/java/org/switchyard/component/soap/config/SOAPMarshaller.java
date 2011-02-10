@@ -20,8 +20,8 @@ package org.switchyard.component.soap.config;
 
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.config.Configuration;
-import org.switchyard.config.Descriptor;
-import org.switchyard.config.model.BaseModelMarshaller;
+import org.switchyard.config.model.BaseMarshaller;
+import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.BindingModel;
 
@@ -30,7 +30,7 @@ import org.switchyard.config.model.composite.BindingModel;
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
-public class SOAPModelMarshaller extends BaseModelMarshaller {
+public class SOAPMarshaller extends BaseMarshaller {
 
     /**
      *  The namespace for SOAP Gateway configurations.
@@ -42,7 +42,7 @@ public class SOAPModelMarshaller extends BaseModelMarshaller {
      * 
      * @param desc the Descriptor 
      */
-    public SOAPModelMarshaller(Descriptor desc) {
+    public SOAPMarshaller(Descriptor desc) {
         super(desc);
     }
 
@@ -54,7 +54,7 @@ public class SOAPModelMarshaller extends BaseModelMarshaller {
      */
     @Override
     public Model read(Configuration config) {
-        Descriptor desc = getModelDescriptor();
+        Descriptor desc = getDescriptor();
         if (config.getName().startsWith(BindingModel.BINDING)) {
             return new SOAPBindingModel(config, desc);
         }

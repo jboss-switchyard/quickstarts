@@ -22,7 +22,7 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.component.soap.PortName;
 import org.switchyard.config.Configuration;
-import org.switchyard.config.Descriptor;
+import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.v1.V1BindingModel;
 
 /**

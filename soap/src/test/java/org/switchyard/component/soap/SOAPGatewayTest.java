@@ -30,7 +30,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -50,14 +49,12 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.XMLHelper;
-import org.switchyard.config.Descriptor;
-import org.switchyard.config.PropertiesResource;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.ExternalServiceModel;
-import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.internal.ServiceDomains;
 import org.switchyard.metadata.BaseService;
+import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InOutOperation;
 import org.w3c.dom.Element;
 
@@ -125,11 +122,7 @@ public class SOAPGatewayTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        // _res = new ModelResource();
-        Properties props = new PropertiesResource().pull(Descriptor.DEFAULT_PROPERTIES);
-        props.setProperty("soap.namespace", "http://www.jboss.org/switchyard/component/soap/binding-soap.xsd");
-        props.setProperty("soap.modelMarshaller", "org.switchyard.component.soap.config.SOAPModelMarshaller");
-        _res = new ModelResource(new Descriptor(props));
+        _res = new ModelResource();
         
         // Provide a switchyard service
         _domain = ServiceDomains.getDomain();
