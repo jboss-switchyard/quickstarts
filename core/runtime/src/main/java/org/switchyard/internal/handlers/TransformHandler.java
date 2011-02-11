@@ -28,7 +28,6 @@ import java.util.HashSet;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
-import org.switchyard.Message;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.internal.transform.TransformSequence;
 import org.switchyard.transform.Transformer;
@@ -77,49 +76,14 @@ public class TransformHandler extends BaseHandler {
      */
     @Override
     public void handleMessage(Exchange exchange) throws HandlerException {
-        Transformer t = locateExplicitTransform(exchange);
-
-        if (t != null) {
-            Message msg = exchange.getMessage();
-            Object fromContent = msg.getContent();
-            Object toContent = t.transform(fromContent);
-            msg.setContent(toContent);
-        } else {
-            // Transformer instance not set explicitly on the Message.
-            // A TransformSequence may also be set.  Apply that if it's there...
-            TransformSequence.applySequence(exchange, _registry);
-        }
+        // Apply transforms to the message...
+        TransformSequence.applySequence(exchange, _registry);
     }
 
     @Override
     public void handleFault(Exchange exchange) {
         // Apply transforms to the fault...
         TransformSequence.applySequence(exchange, _registry);
-    }
-
-    // TODO: (TF) Do we like this??  Not sure I do.
-    /**
-     * Locate a transformer instance to perform transformation.  The following
-     * sources are searched in order: <br>
-     * 1) A transformer set in the message context <br>
-     * 2) A transformer set in the exchange context <br>
-     * @param exchange exchange
-     */
-    private Transformer locateExplicitTransform(Exchange exchange) {
-
-        Transformer transform = null;
-
-        // look in message context
-        if (exchange.getMessage().getContext().hasProperty(Transformer.class.getName())) {
-            transform = (Transformer)
-                exchange.getMessage().getContext().getProperty(Transformer.class.getName());
-        // look in exchange context
-        } else if (exchange.getContext().hasProperty(Transformer.class.getName())) {
-            transform = (Transformer)
-                exchange.getContext().getProperty(Transformer.class.getName());
-        }
-
-        return transform;
     }
 }
 
