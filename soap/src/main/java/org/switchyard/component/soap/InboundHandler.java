@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.wsdl.Operation;
 import javax.wsdl.Port;
@@ -42,7 +43,6 @@ import org.apache.log4j.Logger;
 import org.switchyard.BaseHandler;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
-import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Service;
@@ -50,12 +50,9 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
-import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.internal.ServiceDomains;
-
 import org.switchyard.internal.transform.TransformSequence;
-import org.switchyard.metadata.BaseInvocationContract;
-import org.switchyard.metadata.ServiceInterface;
+import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.ServiceOperation;
 
 /**
@@ -65,16 +62,12 @@ import org.switchyard.metadata.ServiceOperation;
  */
 public class InboundHandler extends BaseHandler {
 
-    /**
-     * SOAP Fault type QName.
-     */
-    public static final String SOAP_FAULT_MESSAGE_TYPE = "{http://schemas.xmlsoap.org/soap/envelope/}Fault";
-
     private static final Logger LOGGER = Logger.getLogger(InboundHandler.class);
     private static final long DEFAULT_TIMEOUT = 15000;
     private static final int DEFAULT_SLEEP = 100;
     private static final String MESSAGE_NAME = "MESSAGE_NAME";
 
+    private final ConcurrentHashMap<String, BaseExchangeContract> _contracts = new ConcurrentHashMap<String, BaseExchangeContract>();
     private static ThreadLocal<SOAPMessage> _response = new ThreadLocal<SOAPMessage>();
 
     private MessageComposer _composer;
@@ -145,6 +138,7 @@ public class InboundHandler extends BaseHandler {
                 throw new WebServicePublishException(
                         "Target service not registered: " + _config.getServiceName());
             }
+            _contracts.putAll(WSDLUtil.getContracts(_wsdlPort,_service));
 
             _endpoint = Endpoint.create(wsProvider);
             List<Source> metadata = new ArrayList<Source>();
@@ -216,76 +210,53 @@ public class InboundHandler extends BaseHandler {
      */
     public SOAPMessage invoke(final SOAPMessage soapMessage) {
         String operationName;
-        ExchangePattern soapInvocationExchangePattern;
-        ServiceOperation targetServiceOperation;
+        BaseExchangeContract exchangeContract;
+        Operation operation;
+        Boolean oneWay = false;
 
         // Clear the response...
         _response.remove();
 
         try {
             operationName = SOAPUtil.getOperationName(soapMessage);
-            soapInvocationExchangePattern = SOAPUtil.getExchangePattern(_wsdlPort, operationName);
+            operation = WSDLUtil.getOperation(_wsdlPort, operationName);
+            oneWay = WSDLUtil.isOneWay(operation);
+            exchangeContract = _contracts.get(operationName);
         } catch (SOAPException e) {
             LOGGER.error(e);
             return null;
         }
 
-        try {
-            targetServiceOperation = getServiceOperation(operationName);
-        } catch (SOAPException e) {
-            handleException(soapInvocationExchangePattern, e);
-            return _response.get();
-        }
-
-        if (targetServiceOperation == null) {
-            handleException(soapInvocationExchangePattern, new SOAPException("Operation '" + operationName + "' not available on target Service '" + _service.getName() + "'."));
+        if (exchangeContract == null) {
+            handleException(oneWay, new SOAPException("Operation '" + operationName + "' not available on target Service '" + _service.getName() + "'."));
             return _response.get();
         }
 
         try {
-            BaseExchangeContract exchangeContract = new BaseExchangeContract(targetServiceOperation);
-            BaseInvocationContract soapMetaData = exchangeContract.getInvokerInvocationMetaData();
-            Operation operation = SOAPUtil.getOperation(_wsdlPort, operationName);
-            QName inputMessageQName = operation.getInput().getMessage().getQName();
             Exchange exchange;
 
             exchange = _domain.createExchange(_service, exchangeContract, this);
             Message message = _composer.compose(soapMessage, exchange);
 
-            if (!assertComposedMessageOK(message, operation, soapInvocationExchangePattern)) {
+            if (!assertComposedMessageOK(message, operation, oneWay)) {
                 return _response.get();
             }
 
             Context msgCtx = message.getContext();
-            msgCtx.setProperty(MESSAGE_NAME, inputMessageQName.getLocalPart());
+            msgCtx.setProperty(MESSAGE_NAME, operation.getInput().getMessage().getQName().getLocalPart());
 
-            // Init the input and expected fault types for the exchange...
-            soapMetaData.setInputType(inputMessageQName.toString()).setFaultType(SOAP_FAULT_MESSAGE_TYPE);
 
-            if (soapInvocationExchangePattern == ExchangePattern.IN_ONLY) {
+            if (oneWay) {
                 exchange.send(message);
             } else {
-                QName outputMessageQName = operation.getOutput().getMessage().getQName();
-
-                soapMetaData.setOutputType(outputMessageQName.toString());
                 exchange.send(message);
-
-                if (exchangeContract.getServiceOperation().getExchangePattern() == ExchangePattern.IN_OUT) {
-                    waitForResponse();
-                } else {
-                    // TODO: We need to resolve this situation.  The soapInvocationExchangePattern is IN_OUT, but the target ServiceOperation is IN_ONLY.
-                    // We could use transformation logic here... transforming from "null" to soap port "out" type.
-                    // Perhaps this could be accommodated automatically in Keith's rework of the handlers?  After executing the
-                    // last handler on the IN, and seeing that the contract defines a response type, yet the pattern is IN_ONLY... could we
-                    // auto execute a fake OUT send on the exchange, passing a null payload perhaps ???
-                    LOGGER.debug("Unexpected condition.  The soapInvocationExchangePattern is IN_OUT, but the target ServiceOperation is IN_ONLY.");
-                }
+                waitForResponse();
             }
 
             return _response.get();
 
         } catch (SOAPException se) {
-            handleException(soapInvocationExchangePattern, se);
+            handleException(oneWay, se);
         } finally {
             _response.remove();
         }
@@ -293,14 +264,14 @@ public class InboundHandler extends BaseHandler {
         return null;
     }
 
-    private boolean assertComposedMessageOK(Message soapMessage, Operation operation, ExchangePattern soapInvocationExchangePattern) {
+    private boolean assertComposedMessageOK(Message soapMessage, Operation operation, Boolean oneWay) {
         Object content = soapMessage.getContent();
 
         if (content == null) {
-            handleException(soapInvocationExchangePattern, new SOAPException("Composer created a null ESB Message payload for service '" + _service.getName() + "'.  Must be of type '" + SOAPMessage.class.getName() + "'."));
+            handleException(oneWay, new SOAPException("Composer created a null ESB Message payload for service '" + _service.getName() + "'.  Must be of type '" + SOAPMessage.class.getName() + "'."));
             return false;
         } else if (!(content instanceof Node)) {
-            handleException(soapInvocationExchangePattern, new SOAPException("Composer created invalid ESB Message payload type '" + content.getClass().getName() + "' for service '" + _service.getName() + "'.  Must be of type '" + Node.class.getName() + "'."));
+            handleException(oneWay, new SOAPException("Composer created invalid ESB Message payload type '" + content.getClass().getName() + "' for service '" + _service.getName() + "'.  Must be of type '" + Node.class.getName() + "'."));
             return false;
         }
 
@@ -312,11 +283,11 @@ public class InboundHandler extends BaseHandler {
         String actualLN = inputMessage.getLocalName();
 
         if (expectedNS != null && !expectedNS.equals(actualNS)) {
-            handleException(soapInvocationExchangePattern, new SOAPException("Invalid input SOAP payload namespace for service operation '" + operation.getName() + "' (service '" + _service.getName()
+            handleException(oneWay, new SOAPException("Invalid input SOAP payload namespace for service operation '" + operation.getName() + "' (service '" + _service.getName()
                                                                               + "').  Port defines operation namespace as '" + expectedNS + "'.  Actual namespace on input SOAP message '" + actualNS + "'."));
             return false;
         } else if (expectedLN != null && !expectedLN.equals(actualLN)) {
-            handleException(soapInvocationExchangePattern, new SOAPException("Invalid input SOAP payload localNamePart for service operation '" + operation.getName() + "' (service '" + _service.getName()
+            handleException(oneWay, new SOAPException("Invalid input SOAP payload localNamePart for service operation '" + operation.getName() + "' (service '" + _service.getName()
                                                                               + "').  Port defines operation localNamePart as '" + expectedLN + "'.  Actual localNamePart on input SOAP message '" + actualLN + "'."));
             return false;
         }
@@ -324,8 +295,8 @@ public class InboundHandler extends BaseHandler {
         return true;
     }
 
-    private void handleException(ExchangePattern soapInvocationExchangePattern, SOAPException se) {
-        if (soapInvocationExchangePattern == ExchangePattern.IN_ONLY) {
+    private void handleException(Boolean oneWay, SOAPException se) {
+        if (oneWay) {
             LOGGER.error(se);
         } else {
             try {
@@ -353,11 +324,6 @@ public class InboundHandler extends BaseHandler {
                 continue;
             }
         }
-    }
-
-    private ServiceOperation getServiceOperation(String operationName) throws SOAPException {
-        ServiceInterface serviceInterface = _service.getInterface();
-        return serviceInterface.getOperation(operationName);
     }
 
     private void assertTransformsApplied(Exchange exchange) throws HandlerException {

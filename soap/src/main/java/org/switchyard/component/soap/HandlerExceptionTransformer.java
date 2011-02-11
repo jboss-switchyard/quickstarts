@@ -2,6 +2,7 @@ package org.switchyard.component.soap;
 
 import org.switchyard.HandlerException;
 import org.switchyard.component.soap.util.SOAPUtil;
+import org.switchyard.component.soap.util.WSDLUtil;
 import org.switchyard.internal.transform.BaseTransformer;
 
 import javax.xml.soap.SOAPException;
@@ -25,7 +26,7 @@ public class HandlerExceptionTransformer<F extends HandlerException, T extends S
 
     @Override
     public String getTo() {
-        return InboundHandler.SOAP_FAULT_MESSAGE_TYPE;
+        return WSDLUtil.SOAP_FAULT_MESSAGE_TYPE;
     }
 
     @Override

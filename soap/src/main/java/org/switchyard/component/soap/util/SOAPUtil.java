@@ -27,9 +27,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Iterator;
 
-import javax.wsdl.Operation;
-import javax.wsdl.OperationType;
-import javax.wsdl.Port;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.Detail;
@@ -44,7 +41,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.log4j.Logger;
-import org.switchyard.ExchangePattern;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -63,82 +59,6 @@ public final class SOAPUtil {
     public static final MessageFactory SOAP_MESSAGE_FACTORY;
 
     private SOAPUtil() {
-    }
-
-    /**
-     * Check if we are invoking a @Oneway annotated method.
-     *
-     * @param port The WSDL service port.
-     * @param operationName The name of the operation obtained from SOAP message.
-     * @return True if there is no response to be expected.
-     */
-    public static boolean isMessageOneWay(final Port port, final String operationName) {
-        boolean isOneWay = false;
-        // Overloaded methods not supported
-        // Encrypted messages will be treated as request-response as it cannot be decrypted
-        Operation operation = getOperation(port, operationName);
-        if (operation != null) {
-            isOneWay = operation.getStyle().equals(OperationType.ONE_WAY);
-        }
-        return isOneWay;
-    }
-
-    /**
-     * Get the exchange pattern for the specified WS Operation.
-     *
-     * @param port The WSDL service port.
-     * @param operationName The name of the operation obtained from SOAP message.
-     * @return The Exchange Pattern.
-     */
-    public static ExchangePattern getExchangePattern(final Port port, final String operationName) {
-        if (isMessageOneWay(port, operationName)) {
-            return ExchangePattern.IN_ONLY;
-        } else {
-            return ExchangePattern.IN_OUT;
-        }
-    }
-
-    /**
-     * Get the methods Input message's name.
-     *
-     * @param port The WSDL service port.
-     * @param operationName The name of the operation obtained from SOAP message.
-     * @return The local name of the input message.
-     */
-    public static String getMessageLocalName(final Port port, final String operationName) {
-        QName messageName = getMessageQName(port, operationName);
-        if (messageName != null) {
-            return messageName.getLocalPart();
-        }
-        return null;
-    }
-
-    /**
-     * Get the methods Input message's name.
-     *
-     * @param port The WSDL service port.
-     * @param operationName The name of the operation obtained from SOAP message.
-     * @return The QName name of the input message.
-     */
-    public static QName getMessageQName(final Port port, final String operationName) {
-        QName messageName = null;
-        // Overloaded methods not supported
-        // Encrypted messages will be treated as request-response as it cannot be decrypted
-        Operation operation = getOperation(port, operationName);
-        if (operation != null) {
-            messageName = operation.getInput().getMessage().getQName();
-        }
-        return messageName;
-    }
-
-    /**
-     * Get the SOAP {@link Operation} instance for the specified SOAP operation name.
-     * @param port The WSDL port.
-     * @param operationName The operation name.
-     * @return The Operation instance, or null if the operation was not found on the port.
-     */
-    public static Operation getOperation(Port port, String operationName) {
-        return port.getBinding().getPortType().getOperation(operationName, null, null);
     }
 
     /**

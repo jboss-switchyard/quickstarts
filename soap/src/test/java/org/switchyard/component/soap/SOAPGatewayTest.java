@@ -30,6 +30,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -55,7 +57,9 @@ import org.switchyard.config.model.composite.ExternalServiceModel;
 import org.switchyard.internal.ServiceDomains;
 import org.switchyard.metadata.BaseService;
 import org.switchyard.metadata.ExchangeContract;
+import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
+import org.switchyard.metadata.ServiceOperation;
 import org.w3c.dom.Element;
 
 /**
@@ -256,8 +260,13 @@ public class SOAPGatewayTest {
     }
 
     private static class HelloWebServiceInterface extends BaseService {
+        private static Set<ServiceOperation> _operations = new HashSet<ServiceOperation>(2);
+        static {
+            _operations.add(new InOutOperation("sayHello"));
+            _operations.add(new InOnlyOperation("helloWS"));
+        }
         public HelloWebServiceInterface() {
-            super(new InOutOperation("sayHello"));
+            super(_operations);
         }
     }
 }

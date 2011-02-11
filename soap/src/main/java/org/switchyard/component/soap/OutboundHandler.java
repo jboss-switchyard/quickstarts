@@ -157,7 +157,7 @@ public class OutboundHandler extends BaseHandler {
         SOAPMessage response = null;
         try {
             String operationName = SOAPUtil.getOperationName(soapMessage);
-            if (SOAPUtil.isMessageOneWay(_port, operationName)) {
+            if (WSDLUtil.isOneWay(_port, operationName)) {
                 _dispatcher.invokeOneWay(soapMessage);
                 //return empty response
             } else {

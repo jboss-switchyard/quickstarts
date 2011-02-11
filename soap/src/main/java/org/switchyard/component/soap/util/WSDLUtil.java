@@ -29,9 +29,12 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.wsdl.Definition;
+import javax.wsdl.Operation;
+import javax.wsdl.OperationType;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
@@ -41,7 +44,12 @@ import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.transform.stream.StreamSource;
 
+import org.switchyard.ExchangePattern;
 import org.switchyard.component.soap.PortName;
+import org.switchyard.component.soap.WebServicePublishException;
+import org.switchyard.metadata.BaseExchangeContract;
+import org.switchyard.metadata.BaseInvocationContract;
+import org.switchyard.metadata.ServiceOperation;
 
 /**
  * Contains utility methods to examine/manipulate WSDLs.
@@ -49,6 +57,10 @@ import org.switchyard.component.soap.PortName;
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
 public final class WSDLUtil {
+    /**
+     * SOAP Fault type QName.
+     */
+    public static final String SOAP_FAULT_MESSAGE_TYPE = "{http://schemas.xmlsoap.org/soap/envelope/}Fault";
 
     private static final Map<Object, Definition> DEFINITIONS_MAP = Collections.synchronizedMap(new HashMap<Object, Definition>());
 
@@ -178,5 +190,129 @@ public final class WSDLUtil {
             throw new WSDLException("Could not find port " + portName + " in the Service " + wsdlService.getQName(), null);
         }
         return port;
+    }
+
+    /**
+     * Get the SOAP {@link Operation} instance for the specified SOAP operation name.
+     * @param port The WSDL port.
+     * @param operationName The operation name.
+     * @return The Operation instance, or null if the operation was not found on the port.
+     */
+    public static Operation getOperation(Port port, String operationName) {
+        return port.getBinding().getPortType().getOperation(operationName, null, null);
+    }
+
+    /**
+     * Check if we are invoking a @Oneway annotated method.
+     *
+     * @param port The WSDL service port.
+     * @param operationName The name of the operation obtained from SOAP message.
+     * @return True if there is no response to be expected.
+     */
+    public static boolean isOneWay(final Port port, final String operationName) {
+        // Overloaded methods not supported
+        // Encrypted messages will be treated as request-response as it cannot be decrypted
+        Operation operation = getOperation(port, operationName);
+        return isOneWay(operation);
+    }
+    
+    /**
+     * Check if we are invoking a @Oneway annotated method.
+    *
+    * @param operation The WSDL Operation.
+    * @return True if there is no response to be expected.
+    */
+   public static boolean isOneWay(final Operation operation) {
+       boolean isOneWay = false;
+       if (operation != null) {
+           isOneWay = operation.getStyle().equals(OperationType.ONE_WAY);
+       }
+       return isOneWay;
+   }
+
+    /**
+     * Get the methods Input message's name.
+     *
+     * @param port The WSDL service port.
+     * @param operationName The name of the operation obtained from SOAP message.
+     * @return The local name of the input message.
+     */
+    public static String getMessageLocalName(final Port port, final String operationName) {
+        QName messageName = getMessageQName(port, operationName);
+        if (messageName != null) {
+            return messageName.getLocalPart();
+        }
+        return null;
+    }
+
+    /**
+     * Get the methods Input message's name.
+     *
+     * @param port The WSDL service port.
+     * @param operationName The name of the operation obtained from SOAP message.
+     * @return The QName name of the input message.
+     */
+    public static QName getMessageQName(final Port port, final String operationName) {
+        QName messageName = null;
+        // Overloaded methods not supported
+        // Encrypted messages will be treated as request-response as it cannot be decrypted
+        Operation operation = getOperation(port, operationName);
+        if (operation != null) {
+            messageName = operation.getInput().getMessage().getQName();
+        }
+        return messageName;
+    }
+
+    /**
+     * Given a Port construct the Exchange Contracts for all Operations.
+     *
+     * @param port The WSDL service port.
+     * @param service The SwitchYard service.
+     * @return A Map of exchange contracts.
+     * @throws WebServicePublishException If the WSDL does not match the Service operations. 
+     */
+    public static Map<String, BaseExchangeContract> getContracts(final Port port, final org.switchyard.Service service) throws WebServicePublishException {
+        Map<String, BaseExchangeContract> contracts = new HashMap<String, BaseExchangeContract>();
+        List<Operation> operations = port.getBinding().getPortType().getOperations();
+        if ((operations == null) || operations.isEmpty()) {
+            throw new WebServicePublishException("Invalid WSDL. No operations found.");
+        }
+        for (Operation operation : operations) {
+            String name = operation.getName();
+            ServiceOperation targetServiceOperation = service.getInterface().getOperation(name);
+            if (targetServiceOperation == null) {
+                throw new WebServicePublishException("WSDL Operation " + name + " not found in Service " + service.getName());
+            }
+            ExchangePattern wsdlExchangePattern = getExchangePattern(operation);
+            if (targetServiceOperation.getExchangePattern() != wsdlExchangePattern) {
+                throw new WebServicePublishException("WSDL Operation " + name + " does not match Service Operation " + targetServiceOperation.getName());
+            }
+            BaseExchangeContract exchangeContract = new BaseExchangeContract(targetServiceOperation);
+            BaseInvocationContract soapMetaData = exchangeContract.getInvokerInvocationMetaData();
+            QName inputMessageQName = operation.getInput().getMessage().getQName();
+            soapMetaData.setInputType(inputMessageQName.toString());
+            soapMetaData.setFaultType(SOAP_FAULT_MESSAGE_TYPE);
+
+            if (!isOneWay(operation)) {
+                QName outputMessageQName = operation.getOutput().getMessage().getQName();
+                soapMetaData.setOutputType(outputMessageQName.toString());
+            }
+            contracts.put(name, exchangeContract);
+        }
+        return contracts;
+    }
+
+    /**
+     * Get the exchange pattern for the specified WS Operation.
+     *
+     * @param operation The operation to check for.
+     * @return The Exchange Pattern.
+     */
+    public static ExchangePattern getExchangePattern(final Operation operation) {
+        if (operation.getStyle().equals(OperationType.ONE_WAY)) {
+            return ExchangePattern.IN_ONLY;
+        } else {
+            return ExchangePattern.IN_OUT;
+        }
     }
 }
