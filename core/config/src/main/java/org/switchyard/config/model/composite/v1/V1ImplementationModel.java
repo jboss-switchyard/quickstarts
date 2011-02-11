@@ -18,10 +18,13 @@
  */
 package org.switchyard.config.model.composite.v1;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.BaseTypedModel;
 import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.ImplementationModel;
 
 /**
@@ -32,7 +35,7 @@ import org.switchyard.config.model.composite.ImplementationModel;
 public class V1ImplementationModel extends BaseTypedModel implements ImplementationModel {
 
     public V1ImplementationModel(String type) {
-        super(ImplementationModel.IMPLEMENTATION + '.' + type);
+        super(new QName(CompositeModel.DEFAULT_NAMESPACE, ImplementationModel.IMPLEMENTATION + '.' + type));
     }
 
     public V1ImplementationModel(Configuration config, Descriptor desc) {

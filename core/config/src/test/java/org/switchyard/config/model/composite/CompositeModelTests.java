@@ -72,7 +72,6 @@ public class CompositeModelTests {
         CompositeModel incomplete_composite = (CompositeModel)_res.pull(INCOMPLETE_XML);
         CompositeModel fragment_composite = (CompositeModel)_res.pull(FRAGMENT_XML);
         CompositeModel merged_composite = (CompositeModel)Models.merge(fragment_composite, incomplete_composite);
-        //merged_composite.write(System.out);
         XMLUnit.setIgnoreWhitespace(true);
         CompositeModel complete_composite = (CompositeModel)_res.pull(COMPLETE_XML);
         Diff diff = XMLUnit.compareXML(complete_composite.toString(), merged_composite.toString());
@@ -91,7 +90,6 @@ public class CompositeModelTests {
         Configuration wsdl_config = binding.getModelConfiguration().getFirstChild(WSDLModel.WSDL);
         Assert.assertEquals("service.wsdl", wsdl_config.getValue());
         Assert.assertEquals("foobar", wsdl_config.getAttribute(WSDLModel.DESCRIPTION));
-        //composite.write(System.out);
     }
 
     @Test
@@ -108,7 +106,6 @@ public class CompositeModelTests {
         WSDLModel wsdl = soap_binding.getWSDL();
         Assert.assertEquals("service.wsdl", wsdl.getLocation());
         Assert.assertEquals("foobar", wsdl.getDescription());
-        //composite.write(System.out);
     }
 
     @Test

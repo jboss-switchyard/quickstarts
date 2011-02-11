@@ -18,10 +18,13 @@
  */
 package org.switchyard.config.model.composite.v1;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.BaseTypedModel;
 import org.switchyard.config.model.composite.BindingModel;
+import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.ExternalServiceModel;
 
 /**
@@ -32,7 +35,7 @@ import org.switchyard.config.model.composite.ExternalServiceModel;
 public class V1BindingModel extends BaseTypedModel implements BindingModel {
 
     public V1BindingModel(String type) {
-        super(BindingModel.BINDING + '.' + type);
+        super(new QName(CompositeModel.DEFAULT_NAMESPACE, BindingModel.BINDING + '.' + type));
     }
 
     public V1BindingModel(Configuration config, Descriptor desc) {

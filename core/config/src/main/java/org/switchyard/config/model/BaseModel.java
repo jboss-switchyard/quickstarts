@@ -41,10 +41,6 @@ public abstract class BaseModel implements Model {
     private Map<Configuration,Model> _config_model_map;
     private Model _parent;
 
-    public BaseModel(String name) {
-        this(Configurations.create(name));
-    }
-
     public BaseModel(QName qname) {
         this(Configurations.create(qname));
     }
@@ -164,7 +160,7 @@ public abstract class BaseModel implements Model {
     protected final Model setChildModel(Model child) {
         if (child != null) {
             Configuration child_config = child.getModelConfiguration();
-            _config.removeChildren(child_config.getName());
+            _config.removeChildren(child_config.getQName());
             _config.addChild(child_config);
         }
         return this;

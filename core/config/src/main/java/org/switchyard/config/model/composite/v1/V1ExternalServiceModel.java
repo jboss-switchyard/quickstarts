@@ -43,7 +43,7 @@ public class V1ExternalServiceModel extends BaseNamedModel implements ExternalSe
     private List<BindingModel> _bindings = new ArrayList<BindingModel>();
 
     public V1ExternalServiceModel() {
-        super(ExternalServiceModel.SERVICE);
+        super(new QName(CompositeModel.DEFAULT_NAMESPACE, ExternalServiceModel.SERVICE));
     }
 
     public V1ExternalServiceModel(Configuration config, Descriptor desc) {

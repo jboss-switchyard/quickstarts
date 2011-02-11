@@ -68,9 +68,7 @@ public class ConfigurationTests {
         Configuration from_config = Configurations.create(new ElementResource().pull(FROM_XML));
         Configuration to_config = Configurations.create(new ElementResource().pull(TO_XML));
         Configuration merged_config = Configurations.merge(from_config, to_config, fromOverridesTo).setChildrenOrder("my", "his", "mythology").orderChildren();
-        String merged_config_xml = merged_config.toString();
-        //System.out.println(merged_config_xml);
-        return merged_config_xml;
+        return merged_config.toString();
     }
 
     @Test

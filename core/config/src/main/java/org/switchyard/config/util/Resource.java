@@ -35,7 +35,7 @@ import java.net.URL;
 public abstract class Resource<R> {
 
     public R pull(String resource) throws IOException {
-        InputStream is = Resource.class.getResourceAsStream(resource);
+        InputStream is = Classes.getResourceAsStream(resource, getClass());
         if (is != null) {
             try {
                 return pull(is);

@@ -22,8 +22,6 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
-import org.switchyard.config.model.composite.CompositeModel;
-import org.switchyard.config.model.composite.v1.V1CompositeModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
@@ -43,8 +41,6 @@ public class V1SwitchYardMarshaller extends BaseMarshaller {
         Descriptor desc = getDescriptor();
         if (name.equals(SwitchYardModel.SWITCHYARD)) {
             return new V1SwitchYardModel(config, desc);
-        } else if (name.equals(CompositeModel.COMPOSITE)) {
-            return new V1CompositeModel(config, desc);
         }
         return null;
     }

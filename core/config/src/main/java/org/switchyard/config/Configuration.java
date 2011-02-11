@@ -100,6 +100,8 @@ public interface Configuration {
 
     public Configuration addChild(Configuration child);
 
+    public Configuration removeChildren();
+
     public Configuration removeChildren(String name);
 
     public Configuration removeChildren(QName qname);

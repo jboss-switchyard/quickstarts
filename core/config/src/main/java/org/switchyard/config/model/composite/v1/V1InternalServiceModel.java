@@ -18,10 +18,13 @@
  */
 package org.switchyard.config.model.composite.v1;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.InterfaceModel;
 import org.switchyard.config.model.composite.InternalServiceInterfaceModel;
 import org.switchyard.config.model.composite.InternalServiceModel;
@@ -36,7 +39,7 @@ public class V1InternalServiceModel extends BaseNamedModel implements InternalSe
     private InternalServiceInterfaceModel _interface;
 
     public V1InternalServiceModel() {
-        super(InternalServiceModel.SERVICE);
+        super(new QName(CompositeModel.DEFAULT_NAMESPACE, InternalServiceModel.SERVICE));
     }
 
     public V1InternalServiceModel(Configuration config, Descriptor desc) {

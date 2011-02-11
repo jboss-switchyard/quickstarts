@@ -17,12 +17,11 @@ v.2.1 along with this distribution; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA  02110-1301, USA.
 -->
-<sy1:switchyard elementFormDefault="qualified"
-                targetNamespace="http://www.switchyard.org/example/m1app"
-                xmlns:sy1="http://www.switchyard.org/config/model/switchyard/v1"
-                xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-                xmlns:soap="http://www.switchyard.org/config/model/composite/test/soap"
-                name="m1app">
+<switchyard xmlns="http://www.switchyard.org/config/model/switchyard/v1"
+            targetNamespace="http://www.switchyard.org/example/m1app"
+            xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+            xmlns:soap="http://www.switchyard.org/config/model/composite/test/soap"
+            name="m1app">
     <sca:composite name="m1app">
         <sca:service name="M1AppService" promote="SimpleService">
             <soap:binding.soap>
@@ -31,4 +30,4 @@ MA  02110-1301, USA.
             </soap:binding.soap>
         </sca:service>
     </sca:composite>
-</sy1:switchyard>
+</switchyard>

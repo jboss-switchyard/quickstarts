@@ -30,10 +30,6 @@ import org.switchyard.config.util.QNames;
  */
 public abstract class BaseNamedModel extends BaseModel implements NamedModel {
 
-    public BaseNamedModel(String name) {
-        super(name);
-    }
-
     public BaseNamedModel(QName qname) {
         super(qname);
     }

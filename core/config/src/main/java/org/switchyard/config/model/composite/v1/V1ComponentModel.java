@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
@@ -43,7 +45,7 @@ public class V1ComponentModel extends BaseNamedModel implements ComponentModel {
     private List<ReferenceModel> _references = new ArrayList<ReferenceModel>();
 
     public V1ComponentModel() {
-        super(ComponentModel.COMPONENT);
+        super(new QName(CompositeModel.DEFAULT_NAMESPACE, ComponentModel.COMPONENT));
         setModelChildrenOrder(ImplementationModel.IMPLEMENTATION, InternalServiceModel.SERVICE, ReferenceModel.REFERENCE);
     }
 

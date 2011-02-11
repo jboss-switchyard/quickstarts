@@ -23,7 +23,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -116,41 +116,34 @@ public abstract class BaseConfiguration implements Configuration {
     public Configuration orderChildren() {
         String[] childrenGroups = getChildrenOrder();
         if (childrenGroups != null && childrenGroups.length > 0) {
-            List<Configuration> grouped_configs = new ArrayList<Configuration>();
+            Map<String,List<Configuration>> config_map = new LinkedHashMap<String,List<Configuration>>();
             for (String childrenGroup : childrenGroups) {
-                if (childrenGroup != null) {
-                    childrenGroup = childrenGroup.trim();
-                    if (childrenGroup.length() > 0) {
-                        boolean removeChildren = false;
-                        for (Configuration selected_config : getChildren(childrenGroup)) {
-                            grouped_configs.add(selected_config);
-                            removeChildren = true;
-                        }
-                        if (removeChildren) {
-                            removeChildren(childrenGroup);
-                        }
+                List<Configuration> config_list;
+                for (Configuration selected_config : getChildren(childrenGroup)) {
+                    config_list = config_map.get(childrenGroup);
+                    if (config_list == null) {
+                        config_list = new ArrayList<Configuration>();
+                        config_map.put(childrenGroup, config_list);
                     }
+                    config_list.add(selected_config);
+                    removeChildren(childrenGroup);
                 }
             }
-            Set<String> remainder_names = new HashSet<String>();
-            for (Configuration remainder_config : getChildren()) {
-                remainder_names.add(remainder_config.getName());
-                grouped_configs.add(remainder_config);
+            List<Configuration> config_remainder_list = new ArrayList<Configuration>();
+            for (Configuration config_remainder : getChildren()) {
+                config_remainder_list.add(config_remainder);
             }
-            for (String remainder_name : remainder_names) {
-                removeChildren(remainder_name);
+            removeChildren();
+            for (List<Configuration> config_list : config_map.values()) {
+                for (Configuration selected_config : config_list) {
+                    addChild(selected_config);
+                }
             }
-            for (Configuration grouped_config : grouped_configs) {
-                addChild(grouped_config);
+            for (Configuration config_remainder : config_remainder_list) {
+                addChild(config_remainder);
             }
         }
         return this;
-    }
-
-    @Override
-    public Configuration copy() {
-        // Cheating, or reuse? You decide... ;)
-        return Configurations.merge(this, this, false);
     }
 
     @Override

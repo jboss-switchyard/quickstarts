@@ -18,11 +18,14 @@
  */
 package org.switchyard.config.model.composite.v1;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.InterfaceModel;
 import org.switchyard.config.model.composite.ReferenceInterfaceModel;
 import org.switchyard.config.model.composite.ReferenceModel;
@@ -38,7 +41,7 @@ public class V1ReferenceModel extends BaseNamedModel implements ReferenceModel {
     private BindingModel _binding;
 
     public V1ReferenceModel() {
-        super(ReferenceModel.REFERENCE);
+        super(new QName(CompositeModel.DEFAULT_NAMESPACE, ReferenceModel.REFERENCE));
     }
 
     public V1ReferenceModel(Configuration config, Descriptor desc) {

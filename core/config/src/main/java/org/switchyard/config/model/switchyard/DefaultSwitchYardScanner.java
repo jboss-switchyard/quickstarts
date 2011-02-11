@@ -19,6 +19,8 @@
 package org.switchyard.config.model.switchyard;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import org.switchyard.config.model.ModelResource;
@@ -31,8 +33,13 @@ import org.switchyard.config.model.ModelResource;
 public class DefaultSwitchYardScanner implements SwitchYardScanner {
 
     @Override
-    public SwitchYardModel scan(Set<String> paths) throws IOException {
-        return (SwitchYardModel)new ModelResource().pull("/META-INF/switchyard.xml");
+    public Collection<SwitchYardModel> scan(Set<String> paths) throws IOException {
+        SwitchYardModel switchyard = (SwitchYardModel)new ModelResource().pull("/META-INF/switchyard.xml");
+        if (switchyard != null) {
+            return Collections.singletonList(switchyard);
+        } else {
+            return Collections.emptyList();
+        }
     }
 
 }

@@ -30,6 +30,7 @@ import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.ExternalServiceModel;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * V1CompositeModel.
@@ -61,6 +62,10 @@ public class V1CompositeModel extends BaseNamedModel implements CompositeModel {
             }
         }
         setModelChildrenOrder(ExternalServiceModel.SERVICE, ComponentModel.COMPONENT);
+    }
+
+    public SwitchYardModel getSwitchYard() {
+        return (SwitchYardModel)getParentModel();
     }
 
     @Override

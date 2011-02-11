@@ -18,9 +18,12 @@
  */
 package org.switchyard.config.model.composite.v1;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.BaseTypedModel;
+import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.InterfaceModel;
 
 /**
@@ -31,7 +34,7 @@ import org.switchyard.config.model.composite.InterfaceModel;
 public abstract class V1BaseInterfaceModel extends BaseTypedModel implements InterfaceModel {
 
     public V1BaseInterfaceModel(String type) {
-        super(InterfaceModel.INTERFACE + '.' + type);
+        super(new QName(CompositeModel.DEFAULT_NAMESPACE, InterfaceModel.INTERFACE + '.' + type));
     }
 
     public V1BaseInterfaceModel(Configuration config, Descriptor desc) {

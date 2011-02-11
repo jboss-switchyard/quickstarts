@@ -27,7 +27,6 @@ import junit.framework.Assert;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.ModelResource;
@@ -66,17 +65,11 @@ public class SwitchYardModelTests {
         Assert.assertEquals(new QName(namespace, name), model.getModelConfiguration().getQName());
     }
 
-    @Test @Ignore
+    @Test
     public void testMerge() throws Exception {
         SwitchYardModel incomplete_switchyard = (SwitchYardModel)_res.pull(INCOMPLETE_XML);
-        System.out.println("---------- incomplete ----------");
-        incomplete_switchyard.write(System.out);
         SwitchYardModel fragment_switchyard = (SwitchYardModel)_res.pull(FRAGMENT_XML);
-        System.out.println("---------- fragment ----------");
-        fragment_switchyard.write(System.out);
         SwitchYardModel merged_switchyard = (SwitchYardModel)Models.merge(fragment_switchyard, incomplete_switchyard);
-        System.out.println("---------- merged ----------");
-        merged_switchyard.write(System.out);
         XMLUnit.setIgnoreWhitespace(true);
         SwitchYardModel complete_switchyard = (SwitchYardModel)_res.pull(COMPLETE_XML);
         Diff diff = XMLUnit.compareXML(complete_switchyard.toString(), merged_switchyard.toString());

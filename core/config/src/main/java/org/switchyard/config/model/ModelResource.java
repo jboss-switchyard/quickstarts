@@ -29,6 +29,7 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Configurations;
+import org.switchyard.config.util.Classes;
 import org.switchyard.config.util.ElementResource;
 import org.switchyard.config.util.Resource;
 import org.w3c.dom.Document;
@@ -98,7 +99,7 @@ public class ModelResource extends Resource<Model> {
             String prop_marshaller = _desc.getProperty(MARSHALLER, namespace);
             if (prop_marshaller != null) {
                 try {
-                    Class<?> clazz = Class.forName(prop_marshaller);
+                    Class<?> clazz = Classes.forName(prop_marshaller, ModelResource.class);
                     Constructor<?> cnstr = clazz.getConstructor(Descriptor.class);
                     marshaller = (Marshaller)cnstr.newInstance(_desc);
                 } catch (Exception e) {

@@ -31,10 +31,6 @@ import org.switchyard.config.model.Descriptor;
  */
 public abstract class BaseTypedModel extends BaseModel implements TypedModel {
 
-    public BaseTypedModel(String name) {
-        super(name);
-    }
-
     public BaseTypedModel(QName qname) {
         super(qname);
     }

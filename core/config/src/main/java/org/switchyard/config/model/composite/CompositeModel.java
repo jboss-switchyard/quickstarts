@@ -21,6 +21,7 @@ package org.switchyard.config.model.composite;
 import java.util.List;
 
 import org.switchyard.config.model.NamedModel;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * CompositeModel.
@@ -31,6 +32,8 @@ public interface CompositeModel extends NamedModel {
 
     public static final String DEFAULT_NAMESPACE = "http://docs.oasis-open.org/ns/opencsa/sca/200912";
     public static final String COMPOSITE = "composite";
+
+    public SwitchYardModel getSwitchYard();
 
     public List<ExternalServiceModel> getServices();
 

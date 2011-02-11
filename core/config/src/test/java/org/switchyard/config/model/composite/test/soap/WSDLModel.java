@@ -18,9 +18,12 @@
  */
 package org.switchyard.config.model.composite.test.soap;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.composite.CompositeModel;
 
 /**
  * WSDLModel.
@@ -31,6 +34,10 @@ public class WSDLModel extends BaseModel {
 
     public static final String WSDL = "wsdl";
     public static final String DESCRIPTION = "description";
+
+    public WSDLModel() {
+        super(new QName(CompositeModel.DEFAULT_NAMESPACE, WSDL));
+    }
 
     public WSDLModel(Configuration config, Descriptor desc) {
         super(config, desc);

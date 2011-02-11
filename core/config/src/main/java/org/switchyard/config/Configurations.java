@@ -19,7 +19,9 @@
 package org.switchyard.config;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -61,58 +63,79 @@ public final class Configurations {
     }
 
     public static Configuration merge(Configuration fromConfig, Configuration toConfig, boolean fromOverridesTo) {
-        QName from_config_qname = fromConfig.getQName();
-        QName to_config_qname = toConfig.getQName();
-        if (!from_config_qname.equals(to_config_qname)) {
-            throw new IllegalArgumentException(from_config_qname + " != " + to_config_qname);
+        QName fromConfigQName = fromConfig.getQName();
+        QName toConfigQName = toConfig.getQName();
+        if (!fromConfigQName.equals(toConfigQName)) {
+            throw new IllegalArgumentException(fromConfigQName + " != " + toConfigQName);
         }
-        Configuration merged_config = create(to_config_qname);
+        Configuration mergedConfig = toConfig.copy();
+        recursiveMerge(fromConfig.copy(), mergedConfig, fromOverridesTo);
+        mergedConfig.normalize();
+        return mergedConfig;
+    }
+
+    private static void recursiveMerge(Configuration from_config, Configuration merged_config, boolean from_overrides_merged) {
         List<QName> merged_attr_qnames = new ArrayList<QName>();
-        for (QName to_config_attr_qname : toConfig.getAttributeQNames()) {
-            boolean from_config_has_attr = fromConfig.hasAttribute(to_config_attr_qname);
-            if (!fromOverridesTo || !from_config_has_attr) {
-                String to_config_attr_value = toConfig.getAttribute(to_config_attr_qname);
-                merged_config.setAttribute(to_config_attr_qname, to_config_attr_value);
-                merged_attr_qnames.add(to_config_attr_qname);
-            } else if (from_config_has_attr) {
-                String from_config_attr_value = fromConfig.getAttribute(to_config_attr_qname);
-                merged_config.setAttribute(to_config_attr_qname, from_config_attr_value);
-                merged_attr_qnames.add(to_config_attr_qname);
+        for (QName merged_config_attr_qname : merged_config.getAttributeQNames()) {
+            if (from_overrides_merged) {
+                String from_config_attr_value = from_config.getAttribute(merged_config_attr_qname);
+                if (from_config_attr_value != null) {
+                    merged_config.setAttribute(merged_config_attr_qname, from_config_attr_value);
+                    merged_attr_qnames.add(merged_config_attr_qname);
+                }
+            } else {
+                merged_attr_qnames.add(merged_config_attr_qname);
             }
         }
-        for (QName from_config_attr_qname : fromConfig.getAttributeQNames()) {
+        for (QName from_config_attr_qname : from_config.getAttributeQNames()) {
             if (!merged_attr_qnames.contains(from_config_attr_qname)) {
-                String from_config_attr_value = fromConfig.getAttribute(from_config_attr_qname);
+                String from_config_attr_value = from_config.getAttribute(from_config_attr_qname);
                 merged_config.setAttribute(from_config_attr_qname, from_config_attr_value);
                 merged_attr_qnames.add(from_config_attr_qname);
             }
         }
-        String from_config_value = fromConfig.getValue();
-        String value = (!fromOverridesTo || from_config_value == null) ? toConfig.getValue() : from_config_value;
-        if (value != null) {
-            merged_config.setValue(value);
-        }
-        List<Configuration> merged_config_children = new ArrayList<Configuration>();
-        List<QName> merged_config_children_qnames = new ArrayList<QName>();
-        for (Configuration to_config_child : toConfig.getChildren()) {
-            QName to_config_child_qname = to_config_child.getQName();
-            if (!fromOverridesTo || !fromConfig.hasChildren(to_config_child_qname)) {
-                merged_config_children.add(to_config_child.copy());
-                merged_config_children_qnames.add(to_config_child_qname);
+        if (from_overrides_merged) {
+            String from_config_value = from_config.getValue();
+            if (from_config_value != null && from_config_value.length() > 0) {
+                merged_config.setValue(from_config_value);
             }
         }
-        for (Configuration from_config_child : fromConfig.getChildren()) {
+        Map<QName,Map<Integer,Configuration>> orphan_config_children = new LinkedHashMap<QName,Map<Integer,Configuration>>();
+        int i = 0;
+        for (Configuration merged_config_child : merged_config.getChildren()) {
+            QName merged_config_child_qname = merged_config_child.getQName();
+            Map<Integer,Configuration> int_config_map = orphan_config_children.get(merged_config_child_qname);
+            if (int_config_map == null) {
+                int_config_map = new LinkedHashMap<Integer,Configuration>();
+                orphan_config_children.put(merged_config_child_qname, int_config_map);
+            }
+            int_config_map.put(Integer.valueOf(i), merged_config_child);
+            i++;
+        }
+        merged_config.removeChildren();
+        i = 0;
+        for (Configuration from_config_child : from_config.getChildren()) {
             QName from_config_child_qname = from_config_child.getQName();
-            if (!merged_config_children_qnames.contains(from_config_child_qname)) {
-                merged_config_children.add(from_config_child.copy());
-                merged_config_children_qnames.add(from_config_child_qname);
+            if (orphan_config_children.containsKey(from_config_child_qname)) {
+                Map<Integer,Configuration> int_config_map = orphan_config_children.get(from_config_child_qname);
+                Configuration orphan_config_child = int_config_map.remove(Integer.valueOf(i));
+                if (orphan_config_child != null) {
+                    recursiveMerge(from_config_child, orphan_config_child, from_overrides_merged);
+                    merged_config.addChild(orphan_config_child);
+                } else {
+                    merged_config.addChild(from_config_child);
+                }
+            } else {
+                merged_config.addChild(from_config_child);
+            }
+            i++;
+        }
+        for (Map<Integer,Configuration> orphan_config_child_map : orphan_config_children.values()) {
+            for (Configuration orphan_config_child : orphan_config_child_map.values()) {
+                merged_config.addChild(orphan_config_child);
             }
         }
-        for (Configuration merged_config_child : merged_config_children) {
-            merged_config.addChild(merged_config_child);
-        }
-        merged_config.normalize();
-        return merged_config;
+        merged_config.orderChildren();
     }
 
 }

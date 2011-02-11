@@ -19,6 +19,8 @@
 package org.switchyard.config.model.switchyard;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -32,30 +34,37 @@ import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
  */
 public class MergeSwitchYardScanner implements SwitchYardScanner {
 
+    private boolean _fromOverridesTo;
     private SwitchYardScanner[] _scanners;
 
-    public MergeSwitchYardScanner() {
-        _scanners = new SwitchYardScanner[0];
-    }
-
-    public MergeSwitchYardScanner(SwitchYardScanner... scanners) {
+    public MergeSwitchYardScanner(boolean fromOverridesTo, SwitchYardScanner... scanners) {
+        _fromOverridesTo = fromOverridesTo;
         int length = scanners.length;
         SwitchYardScanner[] copy = new SwitchYardScanner[length];
         System.arraycopy(scanners, 0, copy, 0, length);
         _scanners = copy;
     }
 
-    public MergeSwitchYardScanner(List<SwitchYardScanner> scanners) {
+    public MergeSwitchYardScanner(boolean fromOverridesTo, List<SwitchYardScanner> scanners) {
+        _fromOverridesTo = fromOverridesTo;
         SwitchYardScanner[] copy = new SwitchYardScanner[scanners.size()];
         _scanners = scanners.toArray(copy);
     }
 
-    public SwitchYardModel scan(Set<String> paths) throws IOException {
+    public Collection<SwitchYardModel> scan(Set<String> paths) throws IOException {
+        return Collections.singletonList(merge(paths));
+    }
+
+    public SwitchYardModel merge(Set<String> paths) throws IOException {
         SwitchYardModel merged = new V1SwitchYardModel();
         for (SwitchYardScanner scanner : _scanners) {
-            SwitchYardModel scanned = scanner.scan(paths);
-            if (scanned != null) {
-                merged = (SwitchYardModel)Models.merge(scanned, merged);
+            Collection<SwitchYardModel> scanned_coll = scanner.scan(paths);
+            if (scanned_coll != null) {
+                for (SwitchYardModel scanned : scanned_coll) {
+                    if (scanned != null) {
+                        merged = (SwitchYardModel)Models.merge(scanned, merged, _fromOverridesTo);
+                    }
+                }
             }
         }
         return merged;

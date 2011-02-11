@@ -31,8 +31,6 @@ import org.switchyard.config.model.composite.BindingModel;
  */
 public class SOAPMarshaller extends BaseMarshaller {
 
-    public static final String NAMESPACE = "http://www.jboss.org/switchyard/component/soap/binding-soap.xsd";
-
     public SOAPMarshaller(Descriptor desc) {
         super(desc);
     }

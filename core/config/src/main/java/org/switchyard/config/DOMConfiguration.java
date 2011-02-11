@@ -406,6 +406,18 @@ public class DOMConfiguration extends BaseConfiguration {
     }
 
     @Override
+    public Configuration removeChildren() {
+        NodeList nodes = _element.getChildNodes();
+        for (int i=0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                _element.removeChild(node);
+            }
+        }
+        return this;
+    }
+
+    @Override
     public Configuration removeChildren(String name) {
         NodeList nodes = _element.getChildNodes();
         for (int i=0; i < nodes.getLength(); i++) {
@@ -427,6 +439,11 @@ public class DOMConfiguration extends BaseConfiguration {
             _element.removeChild(nodes.item(i));
         }
         return this;
+    }
+
+    @Override
+    public Configuration copy() {
+        return new DOMConfiguration((Element)_element.cloneNode(true), false);
     }
 
     @Override

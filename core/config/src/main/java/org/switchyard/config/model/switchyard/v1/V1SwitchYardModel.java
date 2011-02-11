@@ -18,6 +18,8 @@
  */
 package org.switchyard.config.model.switchyard.v1;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
@@ -34,7 +36,7 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
     private CompositeModel _composite;
 
     public V1SwitchYardModel() {
-        super(SwitchYardModel.SWITCHYARD);
+        super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, SwitchYardModel.SWITCHYARD));
         setModelChildrenOrder(CompositeModel.COMPOSITE);
     }
 

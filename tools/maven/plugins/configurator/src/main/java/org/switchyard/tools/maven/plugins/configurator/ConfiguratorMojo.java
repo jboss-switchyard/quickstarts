@@ -31,6 +31,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -39,6 +40,7 @@ import org.switchyard.config.model.switchyard.DefaultSwitchYardScanner;
 import org.switchyard.config.model.switchyard.MergeSwitchYardScanner;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.SwitchYardScanner;
+import org.switchyard.config.util.Classes;
 
 /**
  * ConfiguratorMojo.
@@ -59,7 +61,17 @@ public class ConfiguratorMojo extends AbstractMojo {
     /**
      * @parameter expression="${project.compileClasspathElements}"
      */
-    private List<?> compileClasspathElements;
+    private List<String> compileClasspathElements;
+
+    /**
+     * @parameter expression="${project.build.resources}"
+     */
+    private List<Resource> buildResources;
+
+    /**
+     * @parameter expression="${project.basedir}"
+     */
+    private File basedir;
 
     /**
      * @parameter
@@ -81,22 +93,30 @@ public class ConfiguratorMojo extends AbstractMojo {
      */
     private File outputFile;
 
-    @SuppressWarnings("deprecation")
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        List<URL> urls = new ArrayList<URL>(compileClasspathElements.size());
-        for (Object o : compileClasspathElements) {
-            String path = o.toString();
-            try {
-                urls.add(new File(path).toURL());
-            } catch (MalformedURLException mue) {
-                throw new MojoExecutionException(mue.getMessage(), mue);
+        List<URL> urls = new ArrayList<URL>();
+        try {
+            for (String path : compileClasspathElements) {
+                urls.add(new File(path).toURI().toURL());
             }
+            File defaultResourceDir = new File(basedir, "src/main/resources");
+            if (defaultResourceDir.exists()) {
+                Resource defaultResource = new Resource();
+                defaultResource.setTargetPath(defaultResourceDir.getAbsolutePath());
+                buildResources.add(defaultResource);
+            }
+            for (Resource resource : buildResources) {
+                String path = resource.getTargetPath();
+                if (path != null) {
+                    urls.add(new File(path).toURI().toURL());
+                }
+            }
+        } catch (MalformedURLException mue) {
+            throw new MojoExecutionException(mue.getMessage(), mue);
         }
         ClassLoader loader = new URLClassLoader(urls.toArray(new URL[urls.size()]), getClass().getClassLoader());
-        Thread thread = Thread.currentThread();
-        ClassLoader previous = thread.getContextClassLoader();
-        thread.setContextClassLoader(loader);
+        ClassLoader previous = Classes.setTCCL(loader);
         Writer writer = null;
         DirectoryScanner ds = new DirectoryScanner();
         ds.setIncludes(includes);
@@ -109,14 +129,14 @@ public class ConfiguratorMojo extends AbstractMojo {
                 paths.add(path);
             }
             List<SwitchYardScanner> scanners = new ArrayList<SwitchYardScanner>();
-            scanners.add(new DefaultSwitchYardScanner());
             for (String scannerClassName : scannerClassNames) {
-                Class<?> scannerClass = Class.forName(scannerClassName, true, loader);
+                Class<?> scannerClass = Classes.forName(scannerClassName, loader);
                 SwitchYardScanner scanner = (SwitchYardScanner)scannerClass.newInstance();
                 scanners.add(scanner);
             }
-            MergeSwitchYardScanner merge_scanner = new MergeSwitchYardScanner(scanners);
-            SwitchYardModel switchyard = merge_scanner.scan(paths);
+            scanners.add(new DefaultSwitchYardScanner());
+            MergeSwitchYardScanner merge_scanner = new MergeSwitchYardScanner(true, scanners);
+            SwitchYardModel switchyard = merge_scanner.merge(paths);
             if (outputFile == null) {
                 outputFile = new File(new File(outputDirectory, "META-INF"), "switchyard.xml");
             }
@@ -125,7 +145,7 @@ public class ConfiguratorMojo extends AbstractMojo {
         } catch (Throwable t) {
             throw new MojoExecutionException(t.getMessage(), t);
         } finally {
-            thread.setContextClassLoader(previous);
+            Classes.setTCCL(previous);
             if (writer != null) {
                 try {
                     writer.close();

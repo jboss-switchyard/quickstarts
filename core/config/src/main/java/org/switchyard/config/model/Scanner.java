@@ -19,6 +19,7 @@
 package org.switchyard.config.model;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -30,6 +31,6 @@ import java.util.Set;
  */
 public interface Scanner<M extends Model> {
 
-    public M scan(Set<String> paths) throws IOException;
+    public Collection<M> scan(Set<String> paths) throws IOException;
 
 }

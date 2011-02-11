@@ -22,11 +22,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
+import org.switchyard.config.util.Classes;
 import org.switchyard.config.util.PropertiesResource;
 
 /**
@@ -49,9 +51,8 @@ public final class Descriptor {
         Properties props = new Properties();
         PropertiesResource props_res = new PropertiesResource();
         try {
-            Enumeration<URL> url_enum = Descriptor.class.getClassLoader().getResources(dp);
-            while (url_enum.hasMoreElements()) {
-                URL url = url_enum.nextElement();
+            List<URL> urls = Classes.getResources(dp, Descriptor.class);
+            for (URL url : urls) {
                 Properties url_props = props_res.pull(url);
                 Enumeration<?> pn_enum = url_props.propertyNames();
                 while (pn_enum.hasMoreElements()) {
