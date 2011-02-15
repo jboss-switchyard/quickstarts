@@ -26,6 +26,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -38,7 +39,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import javax.xml.namespace.QName;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
+import org.custommonkey.xmlunit.XMLAssert;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -50,7 +57,6 @@ import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
-import org.switchyard.component.soap.util.XMLHelper;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
@@ -162,6 +168,8 @@ public class SOAPGatewayTest {
         config.setServiceName(WS_CONSUMER_SERVICE);
         _soapOutbound.init(config);
         _soapOutbound.start();
+        
+        XMLUnit.setIgnoreWhitespace(true);
     }
     
     @AfterClass
@@ -188,13 +196,13 @@ public class SOAPGatewayTest {
 
     @Test
     public void invokeRequestResponse() throws Exception {
-        Element input = SOAPUtil.parseAsDom("<test:sayHello xmlns:test=\"http://test.ws/\">"
+        String input = "<test:sayHello xmlns:test=\"http://test.ws/\">"
                      + "   <arg0>Jimbo</arg0>"
-                     + "</test:sayHello>").getDocumentElement();
+                     + "</test:sayHello>";
 
-        Element output = SOAPUtil.parseAsDom("<test:sayHelloResponse xmlns:test=\"http://test.ws/\">"
+        String output = "<test:sayHelloResponse xmlns:test=\"http://test.ws/\">"
                      + "   <return>Hello Jimbo</return>"
-                     + "</test:sayHelloResponse>").getDocumentElement();
+                     + "</test:sayHelloResponse>";
 
         // Invoke the WS via our WS Consumer service
         MockHandler consumer = new MockHandler();
@@ -203,24 +211,35 @@ public class SOAPGatewayTest {
         Message message = exchange.createMessage().setContent(input);
         exchange.send(message);
         consumer.waitForOKMessage();
-        Element response = consumer.getMessages().peek().getMessage().getContent(Element.class);
-        Assert.assertTrue("Expected \r\n" + XMLHelper.toString(output) + "\r\nbut was \r\n" + XMLHelper.toString(response), XMLHelper.compareXMLContent(output, response));
+        String response = toString(consumer.getMessages().peek().getMessage().getContent(Element.class));
+        XMLAssert.assertXMLEqual(output, response);
+    }
+    
+    private String toString(Element element) throws Exception
+    {
+        TransformerFactory transFactory = TransformerFactory.newInstance();
+        Transformer transformer = transFactory.newTransformer();
+        StringWriter sw = new StringWriter();
+        DOMSource source = new DOMSource(element);
+        StreamResult result = new StreamResult(sw);
+        transformer.transform(source, result);
+        return sw.toString();
     }
 
     @Test
     public void invokeRequestResponseFault() throws Exception {
-        Element input = SOAPUtil.parseAsDom("<test:sayHello xmlns:test=\"http://test.ws/\">"
+        String input = "<test:sayHello xmlns:test=\"http://test.ws/\">"
                      + "   <arg0></arg0>"
-                     + "</test:sayHello>").getDocumentElement();
+                     + "</test:sayHello>";
 
-        Element output = SOAPUtil.parseAsDom("<soap:Fault xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+        String output = "<soap:Fault xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
                         + "   <faultcode>soap:Server.AppError</faultcode>"
                         + "   <faultstring>Invalid name</faultstring>"
                         + "   <detail>"
                         + "      <message>Looks like you did not specify a name!</message>"
                         + "      <errorcode>1000</errorcode>"
                         + "   </detail>"
-                        + "</soap:Fault>").getDocumentElement();
+                        + "</soap:Fault>";
 
         // Invoke the WS via our WS Consumer service
         MockHandler consumer = new MockHandler();
@@ -229,8 +248,8 @@ public class SOAPGatewayTest {
         Message message = exchange.createMessage().setContent(input);
         exchange.send(message);
         consumer.waitForOKMessage();
-        Element response = consumer.getMessages().peek().getMessage().getContent(Element.class);
-        Assert.assertTrue("Expected \r\n" + XMLHelper.toString(output) + "\r\nbut was \r\n" + XMLHelper.toString(response), XMLHelper.compareXMLContent(output, response));
+        String response = toString(consumer.getMessages().peek().getMessage().getContent(Element.class));
+        XMLAssert.assertXMLEqual(output, response);
     }
 
     @Test
@@ -254,7 +273,7 @@ public class SOAPGatewayTest {
                      + "      <return>Hello Thread " + i + "</return>"
                      + "   </test:sayHelloResponse>"
                      + "</soap:Body></soap:Envelope>";
-            Assert.assertTrue("Expected \r\n" + output + "\r\nbut was \r\n" + response, XMLHelper.compareXMLContent(output, response));
+            XMLAssert.assertXMLEqual(output, response);
             i++;
         }
     }

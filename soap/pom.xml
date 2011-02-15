@@ -78,6 +78,10 @@
             <artifactId>wsdl4j</artifactId>
             <version>${version.wsdl4j}</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
