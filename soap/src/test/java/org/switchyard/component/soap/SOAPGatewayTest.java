@@ -53,7 +53,7 @@ import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.XMLHelper;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.composite.CompositeModel;
-import org.switchyard.config.model.composite.ExternalServiceModel;
+import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.internal.ServiceDomains;
 import org.switchyard.metadata.BaseService;
 import org.switchyard.metadata.ExchangeContract;
@@ -133,8 +133,8 @@ public class SOAPGatewayTest {
         SOAPProvider provider = new SOAPProvider();
 
         CompositeModel composite = (CompositeModel)_res.pull("/HelloSwitchYard.xml");
-        ExternalServiceModel externalService = composite.getServices().get(0);
-        SOAPBindingModel config = (SOAPBindingModel)externalService.getBindings().get(0);
+        CompositeServiceModel compositeService = composite.getServices().get(0);
+        SOAPBindingModel config = (SOAPBindingModel)compositeService.getBindings().get(0);
 
         _domain.registerService(config.getServiceName(), provider, new HelloWebServiceInterface());
 
