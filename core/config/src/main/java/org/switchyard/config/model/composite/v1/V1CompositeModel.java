@@ -29,7 +29,8 @@ import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeModel;
-import org.switchyard.config.model.composite.ExternalServiceModel;
+import org.switchyard.config.model.composite.CompositeReferenceModel;
+import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
@@ -39,20 +40,27 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
  */
 public class V1CompositeModel extends BaseNamedModel implements CompositeModel {
 
-    private List<ExternalServiceModel> _services = new ArrayList<ExternalServiceModel>();
+    private List<CompositeServiceModel> _services = new ArrayList<CompositeServiceModel>();
+    private List<CompositeReferenceModel> _references = new ArrayList<CompositeReferenceModel>();
     private List<ComponentModel> _components = new ArrayList<ComponentModel>();
 
     public V1CompositeModel() {
         super(new QName(CompositeModel.DEFAULT_NAMESPACE, CompositeModel.COMPOSITE));
-        setModelChildrenOrder(ExternalServiceModel.SERVICE, ComponentModel.COMPONENT);
+        setModelChildrenOrder(CompositeServiceModel.SERVICE, CompositeReferenceModel.REFERENCE, ComponentModel.COMPONENT);
     }
 
     public V1CompositeModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        for (Configuration service_config : config.getChildren(ExternalServiceModel.SERVICE)) {
-            ExternalServiceModel service = (ExternalServiceModel)readModel(service_config);
+        for (Configuration service_config : config.getChildren(CompositeServiceModel.SERVICE)) {
+            CompositeServiceModel service = (CompositeServiceModel)readModel(service_config);
             if (service != null) {
                 _services.add(service);
+            }
+        }
+        for (Configuration reference_config : config.getChildren(CompositeReferenceModel.REFERENCE)) {
+            CompositeReferenceModel reference = (CompositeReferenceModel)readModel(reference_config);
+            if (reference != null) {
+                _references.add(reference);
             }
         }
         for (Configuration component_config : config.getChildren(ComponentModel.COMPONENT)) {
@@ -61,7 +69,7 @@ public class V1CompositeModel extends BaseNamedModel implements CompositeModel {
                 _components.add(component);
             }
         }
-        setModelChildrenOrder(ExternalServiceModel.SERVICE, ComponentModel.COMPONENT);
+        setModelChildrenOrder(CompositeServiceModel.SERVICE, CompositeReferenceModel.REFERENCE, ComponentModel.COMPONENT);
     }
 
     public SwitchYardModel getSwitchYard() {
@@ -69,12 +77,24 @@ public class V1CompositeModel extends BaseNamedModel implements CompositeModel {
     }
 
     @Override
-    public synchronized List<ExternalServiceModel> getServices() {
+    public synchronized List<CompositeReferenceModel> getReferences() {
+        return Collections.unmodifiableList(_references);
+    }
+
+    @Override
+    public synchronized CompositeModel addService(CompositeReferenceModel reference) {
+        addChildModel(reference);
+        _references.add(reference);
+        return this;
+    }
+
+    @Override
+    public synchronized List<CompositeServiceModel> getServices() {
         return Collections.unmodifiableList(_services);
     }
 
     @Override
-    public synchronized CompositeModel addService(ExternalServiceModel service) {
+    public synchronized CompositeModel addService(CompositeServiceModel service) {
         addChildModel(service);
         _services.add(service);
         return this;

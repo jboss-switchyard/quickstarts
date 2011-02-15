@@ -25,17 +25,17 @@ import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.BaseTypedModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeModel;
-import org.switchyard.config.model.composite.ImplementationModel;
+import org.switchyard.config.model.composite.ComponentImplementationModel;
 
 /**
  * V1ImplementationModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1ImplementationModel extends BaseTypedModel implements ImplementationModel {
+public class V1ImplementationModel extends BaseTypedModel implements ComponentImplementationModel {
 
     public V1ImplementationModel(String type) {
-        super(new QName(CompositeModel.DEFAULT_NAMESPACE, ImplementationModel.IMPLEMENTATION + '.' + type));
+        super(new QName(CompositeModel.DEFAULT_NAMESPACE, ComponentImplementationModel.IMPLEMENTATION + '.' + type));
     }
 
     public V1ImplementationModel(Configuration config, Descriptor desc) {
@@ -49,12 +49,12 @@ public class V1ImplementationModel extends BaseTypedModel implements Implementat
 
     @Override
     public String getClazz() {
-        return getModelAttribute(ImplementationModel.CLASS);
+        return getModelAttribute(ComponentImplementationModel.CLASS);
     }
 
     @Override
-    public ImplementationModel setClazz(String clazz) {
-        setModelAttribute(ImplementationModel.CLASS, clazz);
+    public ComponentImplementationModel setClazz(String clazz) {
+        setModelAttribute(ComponentImplementationModel.CLASS, clazz);
         return this;
     }
 

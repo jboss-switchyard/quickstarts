@@ -16,31 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config.model.composite.v1;
+package org.switchyard.config.model.composite;
 
-import org.switchyard.config.Configuration;
-import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.composite.ReferenceInterfaceModel;
-import org.switchyard.config.model.composite.ReferenceModel;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
+import org.switchyard.config.model.NamedModel;
 
 /**
- * V1ReferenceInterfaceModel.
+ * CompositeReferenceModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1ReferenceInterfaceModel extends V1BaseInterfaceModel implements ReferenceInterfaceModel {
+public interface CompositeReferenceModel extends NamedModel {
 
-    public V1ReferenceInterfaceModel(String type) {
-        super(type);
-    }
+    public static final String REFERENCE = "reference";
+    public static final String PROMOTE = "promote";
 
-    public V1ReferenceInterfaceModel(Configuration config, Descriptor desc) {
-        super(config, desc);
-    }
+    public CompositeModel getComposite();
 
-    @Override
-    public ReferenceModel getReference() {
-        return (ReferenceModel)getParentModel();
-    }
+    public ComponentReferenceModel getComponentReference();
+
+    public QName getPromote();
+
+    public CompositeReferenceModel setPromote(QName promote);
+
+    public List<BindingModel> getBindings();
+
+    public CompositeReferenceModel addBinding(BindingModel binding);
 
 }

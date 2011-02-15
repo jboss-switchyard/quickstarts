@@ -24,12 +24,12 @@ import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.ComponentReferenceModel;
+import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeModel;
-import org.switchyard.config.model.composite.ExternalServiceModel;
-import org.switchyard.config.model.composite.ImplementationModel;
+import org.switchyard.config.model.composite.CompositeServiceModel;
+import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.InterfaceModel;
-import org.switchyard.config.model.composite.InternalServiceModel;
-import org.switchyard.config.model.composite.ReferenceModel;
 
 /**
  * V1CompositeMarshaller.
@@ -48,29 +48,36 @@ public class V1CompositeMarshaller extends BaseMarshaller {
         Descriptor desc = getDescriptor();
         if (name.equals(CompositeModel.COMPOSITE)) {
             return new V1CompositeModel(config, desc);
-        } else if (name.equals(ExternalServiceModel.SERVICE)) {
+        } else if (name.equals(CompositeServiceModel.SERVICE)) {
             if (config.getFirstChildStartsWith(BindingModel.BINDING) != null) {
-                return new V1ExternalServiceModel(config, desc);
+                return new V1CompositeServiceModel(config, desc);
             } else if (config.getFirstChildStartsWith(InterfaceModel.INTERFACE) != null) {
-                return new V1InternalServiceModel(config, desc);
+                return new V1ComponentServiceModel(config, desc);
             }
         } else if (name.startsWith(BindingModel.BINDING)) {
             return new V1BindingModel(config, desc);
         } else if (name.equals(ComponentModel.COMPONENT)) {
             return new V1ComponentModel(config, desc);
-        } else if (name.startsWith(ImplementationModel.IMPLEMENTATION)) {
+        } else if (name.startsWith(ComponentImplementationModel.IMPLEMENTATION)) {
             return new V1ImplementationModel(config, desc);
         } else if (name.startsWith(InterfaceModel.INTERFACE)) {
             Configuration config_parent = config.getParent();
             if (config_parent != null) {
-                if (config_parent.getName().equals(InternalServiceModel.SERVICE)) {
-                    return new V1InternalServiceInterfaceModel(config, desc);
-                } else if (config_parent.getName().equals(ReferenceModel.REFERENCE)) {
-                    return new V1ReferenceInterfaceModel(config, desc);
+                if (config_parent.getName().equals(ComponentServiceModel.SERVICE)) {
+                    return new V1ComponentServiceInterfaceModel(config, desc);
+                } else if (config_parent.getName().equals(ComponentReferenceModel.REFERENCE)) {
+                    return new V1ComponentReferenceInterfaceModel(config, desc);
                 }
             }
-        } else if (name.equals(ReferenceModel.REFERENCE)) {
-            return new V1ReferenceModel(config, desc);
+        } else if (name.equals(ComponentReferenceModel.REFERENCE)) {
+            Configuration config_parent = config.getParent();
+            if (config_parent != null) {
+                if (config_parent.getName().equals(CompositeModel.COMPOSITE)) {
+                    return new V1CompositeReferenceModel(config, desc);
+                } else if (config_parent.getName().equals(ComponentModel.COMPONENT)) {
+                    return new V1ComponentReferenceModel(config, desc);
+                }
+            }
         }
         return null;
     }

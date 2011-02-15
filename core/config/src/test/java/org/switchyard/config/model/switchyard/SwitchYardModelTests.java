@@ -32,7 +32,7 @@ import org.switchyard.config.model.Model;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.Models;
 import org.switchyard.config.model.composite.CompositeModel;
-import org.switchyard.config.model.composite.ExternalServiceModel;
+import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.test.soap.PortModel;
 import org.switchyard.config.model.composite.test.soap.SOAPBindingModel;
 import org.switchyard.config.util.StringResource;
@@ -80,7 +80,7 @@ public class SwitchYardModelTests {
     public void testReadComplete() throws Exception {
         SwitchYardModel switchyard = (SwitchYardModel)_res.pull(COMPLETE_XML);
         CompositeModel composite = switchyard.getComposite();
-        ExternalServiceModel service = composite.getServices().get(0);
+        CompositeServiceModel service = composite.getServices().get(0);
         SOAPBindingModel binding = (SOAPBindingModel)service.getBindings().get(0);
         PortModel port = binding.getPort();
         Assert.assertEquals("MyWebService/SOAPPort", port.getPort());

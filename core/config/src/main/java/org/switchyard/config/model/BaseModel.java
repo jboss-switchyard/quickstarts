@@ -21,6 +21,8 @@ package org.switchyard.config.model;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -98,7 +100,8 @@ public abstract class BaseModel implements Model {
      * 
      * @return the parent Model, or null if there is no parent
      */
-    protected final Model getParentModel() {
+    @Override
+    public final Model getParentModel() {
         if (_parent == null) {
             Configuration parent_config = _config.getParent();
             if (parent_config != null) {
@@ -106,6 +109,23 @@ public abstract class BaseModel implements Model {
             }
         }
         return _parent;
+    }
+
+    @Override
+    public final List<Model> getChildModels() {
+        List<Model> child_models = new ArrayList<Model>();
+        List<Configuration> child_configs =_config.getChildren();
+        if (child_configs != null) {
+            for (Configuration child_config : child_configs) {
+                if (child_config != null) {
+                    Model child_model = readModel(child_config);
+                    if (child_model != null) {
+                        child_models.add(child_model);
+                    }
+                }
+            }
+        }
+        return child_models;
     }
 
     protected final String getModelAttribute(QName qname) {

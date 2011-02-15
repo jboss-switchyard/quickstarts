@@ -16,34 +16,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config.model.composite;
+package org.switchyard.config.model.composite.v1;
 
-import java.util.List;
-
-import javax.xml.namespace.QName;
-
-import org.switchyard.config.model.NamedModel;
+import org.switchyard.config.Configuration;
+import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.composite.ComponentReferenceInterfaceModel;
+import org.switchyard.config.model.composite.ComponentReferenceModel;
 
 /**
- * ExternalServiceModel.
+ * V1ComponentReferenceInterfaceModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface ExternalServiceModel extends NamedModel {
+public class V1ComponentReferenceInterfaceModel extends V1BaseInterfaceModel implements ComponentReferenceInterfaceModel {
 
-    public static final String SERVICE = "service";
-    public static final String PROMOTE = "promote";
+    public V1ComponentReferenceInterfaceModel(String type) {
+        super(type);
+    }
 
-    public CompositeModel getComposite();
+    public V1ComponentReferenceInterfaceModel(Configuration config, Descriptor desc) {
+        super(config, desc);
+    }
 
-    public ComponentModel getComponent();
-
-    public QName getPromote();
-
-    public ExternalServiceModel setPromote(QName promote);
-
-    public List<BindingModel> getBindings();
-
-    public ExternalServiceModel addBinding(BindingModel binding);
+    @Override
+    public ComponentReferenceModel getReference() {
+        return (ComponentReferenceModel)getParentModel();
+    }
 
 }

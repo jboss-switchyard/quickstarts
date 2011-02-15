@@ -21,7 +21,7 @@ package org.switchyard.config.model.composite.test.bogus;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
-import org.switchyard.config.model.composite.ImplementationModel;
+import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.v1.V1CompositeMarshaller;
 
 /**
@@ -37,7 +37,7 @@ public class BogusMarshaller extends V1CompositeMarshaller {
 
     @Override
     public Model read(Configuration config) {
-        if (config.getName().startsWith(ImplementationModel.IMPLEMENTATION)) {
+        if (config.getName().startsWith(ComponentImplementationModel.IMPLEMENTATION)) {
             return new BogusImplementationModel(config, getDescriptor());
         }
         return super.read(config);

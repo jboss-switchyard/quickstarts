@@ -30,23 +30,23 @@ import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeModel;
-import org.switchyard.config.model.composite.ExternalServiceModel;
+import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.util.QNames;
 
 /**
- * V1ExternalServiceModel.
+ * V1CompositeServiceModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1ExternalServiceModel extends BaseNamedModel implements ExternalServiceModel {
+public class V1CompositeServiceModel extends BaseNamedModel implements CompositeServiceModel {
 
     private List<BindingModel> _bindings = new ArrayList<BindingModel>();
 
-    public V1ExternalServiceModel() {
-        super(new QName(CompositeModel.DEFAULT_NAMESPACE, ExternalServiceModel.SERVICE));
+    public V1CompositeServiceModel() {
+        super(new QName(CompositeModel.DEFAULT_NAMESPACE, CompositeServiceModel.SERVICE));
     }
 
-    public V1ExternalServiceModel(Configuration config, Descriptor desc) {
+    public V1CompositeServiceModel(Configuration config, Descriptor desc) {
         super(config, desc);
         for (Configuration binding_config : config.getChildrenStartsWith(BindingModel.BINDING)) {
             BindingModel binding = (BindingModel)readModel(binding_config);
@@ -79,12 +79,12 @@ public class V1ExternalServiceModel extends BaseNamedModel implements ExternalSe
 
     @Override
     public QName getPromote() {
-        return QNames.create(getModelAttribute(ExternalServiceModel.PROMOTE));
+        return QNames.create(getModelAttribute(CompositeServiceModel.PROMOTE));
     }
 
     @Override
-    public ExternalServiceModel setPromote(QName promote) {
-        setModelAttribute(ExternalServiceModel.PROMOTE, promote != null ? promote.toString() : null);
+    public CompositeServiceModel setPromote(QName promote) {
+        setModelAttribute(CompositeServiceModel.PROMOTE, promote != null ? promote.toString() : null);
         return this;
     }
 
@@ -94,7 +94,7 @@ public class V1ExternalServiceModel extends BaseNamedModel implements ExternalSe
     }
 
     @Override
-    public synchronized ExternalServiceModel addBinding(BindingModel binding) {
+    public synchronized CompositeServiceModel addBinding(BindingModel binding) {
         addChildModel(binding);
         _bindings.add(binding);
         return this;

@@ -29,9 +29,9 @@ import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeModel;
-import org.switchyard.config.model.composite.ImplementationModel;
-import org.switchyard.config.model.composite.InternalServiceModel;
-import org.switchyard.config.model.composite.ReferenceModel;
+import org.switchyard.config.model.composite.ComponentImplementationModel;
+import org.switchyard.config.model.composite.ComponentServiceModel;
+import org.switchyard.config.model.composite.ComponentReferenceModel;
 
 /**
  * V1ComponentModel.
@@ -40,26 +40,26 @@ import org.switchyard.config.model.composite.ReferenceModel;
  */
 public class V1ComponentModel extends BaseNamedModel implements ComponentModel {
 
-    private ImplementationModel _implementation;
-    private List<InternalServiceModel> _services = new ArrayList<InternalServiceModel>();
-    private List<ReferenceModel> _references = new ArrayList<ReferenceModel>();
+    private ComponentImplementationModel _implementation;
+    private List<ComponentServiceModel> _services = new ArrayList<ComponentServiceModel>();
+    private List<ComponentReferenceModel> _references = new ArrayList<ComponentReferenceModel>();
 
     public V1ComponentModel() {
         super(new QName(CompositeModel.DEFAULT_NAMESPACE, ComponentModel.COMPONENT));
-        setModelChildrenOrder(ImplementationModel.IMPLEMENTATION, InternalServiceModel.SERVICE, ReferenceModel.REFERENCE);
+        setModelChildrenOrder(ComponentImplementationModel.IMPLEMENTATION, ComponentServiceModel.SERVICE, ComponentReferenceModel.REFERENCE);
     }
 
     public V1ComponentModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setModelChildrenOrder(ImplementationModel.IMPLEMENTATION, InternalServiceModel.SERVICE, ReferenceModel.REFERENCE);
-        for (Configuration service_config : config.getChildren(InternalServiceModel.SERVICE)) {
-            InternalServiceModel service = (InternalServiceModel)readModel(service_config);
+        setModelChildrenOrder(ComponentImplementationModel.IMPLEMENTATION, ComponentServiceModel.SERVICE, ComponentReferenceModel.REFERENCE);
+        for (Configuration service_config : config.getChildren(ComponentServiceModel.SERVICE)) {
+            ComponentServiceModel service = (ComponentServiceModel)readModel(service_config);
             if (service != null) {
                 _services.add(service);
             }
         }
-        for (Configuration reference_config : config.getChildren(ReferenceModel.REFERENCE)) {
-            ReferenceModel reference = (ReferenceModel)readModel(reference_config);
+        for (Configuration reference_config : config.getChildren(ComponentReferenceModel.REFERENCE)) {
+            ComponentReferenceModel reference = (ComponentReferenceModel)readModel(reference_config);
             if (reference != null) {
                 _references.add(reference);
             }
@@ -72,39 +72,39 @@ public class V1ComponentModel extends BaseNamedModel implements ComponentModel {
     }
 
     @Override
-    public ImplementationModel getImplementation() {
+    public ComponentImplementationModel getImplementation() {
         if (_implementation == null) {
-            _implementation = (ImplementationModel)getFirstChildModelStartsWith(ImplementationModel.IMPLEMENTATION);
+            _implementation = (ComponentImplementationModel)getFirstChildModelStartsWith(ComponentImplementationModel.IMPLEMENTATION);
         }
         return _implementation;
     }
 
     @Override
-    public ComponentModel setImplementation(ImplementationModel implementation) {
+    public ComponentModel setImplementation(ComponentImplementationModel implementation) {
         setChildModel(implementation);
         _implementation = implementation;
         return this;
     }
 
     @Override
-    public synchronized List<InternalServiceModel> getServices() {
+    public synchronized List<ComponentServiceModel> getServices() {
         return Collections.unmodifiableList(_services);
     }
 
     @Override
-    public synchronized ComponentModel addService(InternalServiceModel service) {
+    public synchronized ComponentModel addService(ComponentServiceModel service) {
         addChildModel(service);
         _services.add(service);
         return this;
     }
 
     @Override
-    public synchronized List<ReferenceModel> getReferences() {
+    public synchronized List<ComponentReferenceModel> getReferences() {
         return Collections.unmodifiableList(_references);
     }
 
     @Override
-    public synchronized ComponentModel addReference(ReferenceModel reference) {
+    public synchronized ComponentModel addReference(ComponentReferenceModel reference) {
         addChildModel(reference);
         _references.add(reference);
         return this;

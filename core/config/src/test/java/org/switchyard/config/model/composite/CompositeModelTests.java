@@ -81,8 +81,8 @@ public class CompositeModelTests {
     @Test
     public void testReadCustomViaConfig() throws Exception {
         CompositeModel composite = (CompositeModel)_res.pull(COMPLETE_XML);
-        ExternalServiceModel externalService = composite.getServices().get(0);
-        BindingModel binding = externalService.getBindings().get(0);
+        CompositeServiceModel compositeService = composite.getServices().get(0);
+        BindingModel binding = compositeService.getBindings().get(0);
         Assert.assertEquals("soap", binding.getType());
         Configuration port_config = binding.getModelConfiguration().getFirstChild(PortModel.PORT);
         Assert.assertEquals("MyWebService/SOAPPort", port_config.getValue());
@@ -95,10 +95,10 @@ public class CompositeModelTests {
     @Test
     public void testReadCustomViaModel() throws Exception {
         CompositeModel composite = (CompositeModel)_res.pull(COMPLETE_XML);
-        ExternalServiceModel externalService = composite.getServices().get(0);
-        BindingModel binding = (BindingModel)externalService.getBindings().get(0);
+        CompositeServiceModel compositeService = composite.getServices().get(0);
+        BindingModel binding = (BindingModel)compositeService.getBindings().get(0);
         Assert.assertTrue(binding instanceof SOAPBindingModel);
-        SOAPBindingModel soap_binding = (SOAPBindingModel)externalService.getBindings().get(0);
+        SOAPBindingModel soap_binding = (SOAPBindingModel)compositeService.getBindings().get(0);
         Assert.assertEquals("soap", binding.getType());
         PortModel port = soap_binding.getPort();
         Assert.assertEquals("MyWebService/SOAPPort", port.getPort());
@@ -113,41 +113,48 @@ public class CompositeModelTests {
         CompositeModel composite = (CompositeModel)_res.pull(COMPLETE_XML);
         Assert.assertEquals(CompositeModel.DEFAULT_NAMESPACE, composite.getModelConfiguration().getQName().getNamespaceURI());
         Assert.assertEquals("m1app", composite.getName());
-        ExternalServiceModel externalService = composite.getServices().get(0);
-        Assert.assertEquals("M1AppService", externalService.getName());
-        Assert.assertEquals(new QName("SimpleService"), externalService.getPromote());
-        SOAPBindingModel binding = (SOAPBindingModel)externalService.getBindings().get(0);
-        Assert.assertEquals("soap", binding.getType());
-        PortModel port = binding.getPort();
+        CompositeServiceModel compositeService = composite.getServices().get(0);
+        Assert.assertEquals("M1AppService", compositeService.getName());
+        Assert.assertEquals(new QName("SimpleService"), compositeService.getPromote());
+        SOAPBindingModel binding1 = (SOAPBindingModel)compositeService.getBindings().get(0);
+        Assert.assertEquals("soap", binding1.getType());
+        PortModel port = binding1.getPort();
         Assert.assertEquals("MyWebService/SOAPPort", port.getPort());
         Assert.assertEquals(true, port.isSecure());
-        WSDLModel wsdl = binding.getWSDL();
-        Assert.assertEquals("service.wsdl", wsdl.getLocation());
-        Assert.assertEquals("foobar", wsdl.getDescription());
+        WSDLModel wsdl1 = binding1.getWSDL();
+        Assert.assertEquals("service.wsdl", wsdl1.getLocation());
+        Assert.assertEquals("foobar", wsdl1.getDescription());
+        CompositeReferenceModel compositeReference = composite.getReferences().get(0);
+        Assert.assertEquals("SomeOtherService", compositeReference.getName());
+        Assert.assertEquals(new QName("SimpleService/AnotherService"), compositeReference.getPromote());
+        SOAPBindingModel binding2 = (SOAPBindingModel)compositeReference.getBindings().get(0);
+        Assert.assertEquals("soap", binding2.getType());
+        WSDLModel wsdl = binding2.getWSDL();
+        Assert.assertEquals("http://exmample.org:8080/services/SomeOtherService?wsdl", wsdl.getLocation());
         ComponentModel component1 = composite.getComponents().get(0);
-        Assert.assertEquals(component1, externalService.getComponent());
+        Assert.assertEquals(component1, compositeService.getComponent());
         Assert.assertEquals("SimpleService", component1.getName());
-        ImplementationModel implementation1 = component1.getImplementation();
+        ComponentImplementationModel implementation1 = component1.getImplementation();
         Assert.assertEquals("bean", implementation1.getType());
         Assert.assertEquals("org.switchyard.example.m1app.SimpleBean", implementation1.getClazz());
-        InternalServiceModel internalService1 = component1.getServices().get(0);
-        Assert.assertEquals("SimpleService", internalService1.getName());
-        InternalServiceInterfaceModel interface1 = internalService1.getInterface();
+        ComponentServiceModel componentService1 = component1.getServices().get(0);
+        Assert.assertEquals("SimpleService", componentService1.getName());
+        ComponentServiceInterfaceModel interface1 = componentService1.getInterface();
         Assert.assertEquals("java", interface1.getType());
         Assert.assertEquals("org.switchyard.example.m1app.SimpleService", interface1.getInterface());
-        ReferenceModel reference = component1.getReferences().get(0);
+        ComponentReferenceModel reference = component1.getReferences().get(0);
         Assert.assertEquals("anotherService", reference.getName());
-        ReferenceInterfaceModel interface2 = reference.getInterface();
+        ComponentReferenceInterfaceModel interface2 = reference.getInterface();
         Assert.assertEquals("java", interface2.getType());
         Assert.assertEquals("org.switchyard.example.m1app.AnotherService", interface2.getInterface());
         ComponentModel component2 = composite.getComponents().get(1);
         Assert.assertEquals("AnotherService", component2.getName());
-        ImplementationModel implementation2 = component2.getImplementation();
+        ComponentImplementationModel implementation2 = component2.getImplementation();
         Assert.assertEquals("bean", implementation2.getType());
         Assert.assertEquals("org.switchyard.example.m1app.AnotherBean", implementation2.getClazz());
-        InternalServiceModel internalService2 = component2.getServices().get(0);
-        Assert.assertEquals("AnotherService", internalService2.getName());
-        InternalServiceInterfaceModel interface3 = internalService2.getInterface();
+        ComponentServiceModel componentService2 = component2.getServices().get(0);
+        Assert.assertEquals("AnotherService", componentService2.getName());
+        ComponentServiceInterfaceModel interface3 = componentService2.getInterface();
         Assert.assertEquals("java", interface3.getType());
         Assert.assertEquals("org.switchyard.example.m1app.AnotherService", interface3.getInterface());
     }
@@ -172,9 +179,9 @@ public class CompositeModelTests {
     @Test
     public void testParenthood() throws Exception {
         CompositeModel composite_1 = (CompositeModel)_res.pull(COMPLETE_XML);
-        ExternalServiceModel service_1 = composite_1.getServices().get(0);
+        CompositeServiceModel service_1 = composite_1.getServices().get(0);
         SOAPBindingModel binding = (SOAPBindingModel)service_1.getBindings().get(0);
-        ExternalServiceModel service_2 = binding.getService();
+        CompositeServiceModel service_2 = binding.getService();
         CompositeModel composite_2 = service_2.getComposite();
         Assert.assertEquals(service_1, service_2);
         Assert.assertEquals(composite_1, composite_2);

@@ -20,27 +20,27 @@ package org.switchyard.config.model.composite.v1;
 
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.composite.InternalServiceInterfaceModel;
-import org.switchyard.config.model.composite.InternalServiceModel;
+import org.switchyard.config.model.composite.ComponentServiceInterfaceModel;
+import org.switchyard.config.model.composite.ComponentServiceModel;
 
 /**
- * V1InternalServiceInterfaceModel.
+ * V1ComponentServiceInterfaceModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1InternalServiceInterfaceModel extends V1BaseInterfaceModel implements InternalServiceInterfaceModel {
+public class V1ComponentServiceInterfaceModel extends V1BaseInterfaceModel implements ComponentServiceInterfaceModel {
 
-    public V1InternalServiceInterfaceModel(String type) {
+    public V1ComponentServiceInterfaceModel(String type) {
         super(type);
     }
 
-    public V1InternalServiceInterfaceModel(Configuration config, Descriptor desc) {
+    public V1ComponentServiceInterfaceModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
     @Override
-    public InternalServiceModel getService() {
-        return (InternalServiceModel)getParentModel();
+    public ComponentServiceModel getService() {
+        return (ComponentServiceModel)getParentModel();
     }
 
 }

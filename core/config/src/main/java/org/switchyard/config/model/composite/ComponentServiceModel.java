@@ -21,18 +21,18 @@ package org.switchyard.config.model.composite;
 import org.switchyard.config.model.NamedModel;
 
 /**
- * InternalServiceModel.
+ * ComponentServiceModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface InternalServiceModel extends NamedModel {
+public interface ComponentServiceModel extends NamedModel {
 
-    public static final String SERVICE = ExternalServiceModel.SERVICE;
+    public static final String SERVICE = CompositeServiceModel.SERVICE;
 
     public ComponentModel getComponent();
 
-    public InternalServiceInterfaceModel getInterface();
+    public ComponentServiceInterfaceModel getInterface();
 
-    public InternalServiceModel setInterface(InternalServiceInterfaceModel interfaze);
+    public ComponentServiceModel setInterface(ComponentServiceInterfaceModel interfaze);
 
 }

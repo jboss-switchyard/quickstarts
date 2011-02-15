@@ -24,25 +24,25 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.InterfaceModel;
-import org.switchyard.config.model.composite.InternalServiceInterfaceModel;
-import org.switchyard.config.model.composite.InternalServiceModel;
+import org.switchyard.config.model.composite.ComponentReferenceInterfaceModel;
 
 /**
- * V1InternalServiceModel.
+ * V1ComponentReferenceModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1InternalServiceModel extends BaseNamedModel implements InternalServiceModel {
+public class V1ComponentReferenceModel extends BaseNamedModel implements ComponentReferenceModel {
 
-    private InternalServiceInterfaceModel _interface;
+    private ComponentReferenceInterfaceModel _interface;
 
-    public V1InternalServiceModel() {
-        super(new QName(CompositeModel.DEFAULT_NAMESPACE, InternalServiceModel.SERVICE));
+    public V1ComponentReferenceModel() {
+        super(new QName(CompositeModel.DEFAULT_NAMESPACE, ComponentReferenceModel.REFERENCE));
     }
 
-    public V1InternalServiceModel(Configuration config, Descriptor desc) {
+    public V1ComponentReferenceModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
@@ -52,15 +52,15 @@ public class V1InternalServiceModel extends BaseNamedModel implements InternalSe
     }
 
     @Override
-    public InternalServiceInterfaceModel getInterface() {
+    public ComponentReferenceInterfaceModel getInterface() {
         if (_interface == null) {
-            _interface = (InternalServiceInterfaceModel)getFirstChildModelStartsWith(InterfaceModel.INTERFACE);
+            _interface = (ComponentReferenceInterfaceModel)getFirstChildModelStartsWith(InterfaceModel.INTERFACE);
         }
         return _interface;
     }
 
     @Override
-    public InternalServiceModel setInterface(InternalServiceInterfaceModel interfaze) {
+    public ComponentReferenceModel setInterface(ComponentReferenceInterfaceModel interfaze) {
         setChildModel(interfaze);
         _interface = interfaze;
         return this;

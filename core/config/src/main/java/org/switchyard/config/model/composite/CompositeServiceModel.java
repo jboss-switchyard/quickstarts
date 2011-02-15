@@ -18,13 +18,32 @@
  */
 package org.switchyard.config.model.composite;
 
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
+import org.switchyard.config.model.NamedModel;
+
 /**
- * ReferenceInterfaceModel.
+ * CompositeServiceModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface ReferenceInterfaceModel extends InterfaceModel {
+public interface CompositeServiceModel extends NamedModel {
 
-    public ReferenceModel getReference();
+    public static final String SERVICE = "service";
+    public static final String PROMOTE = "promote";
+
+    public CompositeModel getComposite();
+
+    public ComponentModel getComponent();
+
+    public QName getPromote();
+
+    public CompositeServiceModel setPromote(QName promote);
+
+    public List<BindingModel> getBindings();
+
+    public CompositeServiceModel addBinding(BindingModel binding);
 
 }

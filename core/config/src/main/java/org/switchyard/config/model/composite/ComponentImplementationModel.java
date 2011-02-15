@@ -18,25 +18,20 @@
  */
 package org.switchyard.config.model.composite;
 
-import org.switchyard.config.model.NamedModel;
-
 /**
- * ReferenceModel.
+ * ComponentImplementationModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface ReferenceModel extends NamedModel {
+public interface ComponentImplementationModel extends TypedModel {
 
-    public static final String REFERENCE = "reference";
+    public static final String IMPLEMENTATION = "implementation";
+    public static final String CLASS = "class";
 
     public ComponentModel getComponent();
 
-    public ReferenceInterfaceModel getInterface();
+    public String getClazz();
 
-    public ReferenceModel setInterface(ReferenceInterfaceModel interfaze);
-
-    public BindingModel getBinding();
-
-    public ReferenceModel setBinding(BindingModel binding);
+    public ComponentImplementationModel setClazz(String clazz);
 
 }

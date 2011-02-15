@@ -16,32 +16,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config.model;
+package org.switchyard.config.model.composite;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.util.List;
-
-import org.switchyard.config.Configuration;
+import org.switchyard.config.model.NamedModel;
 
 /**
- * Model.
+ * ComponentReferenceModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface Model {
+public interface ComponentReferenceModel extends NamedModel {
 
-    public Configuration getModelConfiguration();
+    public static final String REFERENCE = "reference";
 
-    public Descriptor getModelDescriptor();
+    public ComponentModel getComponent();
 
-    public Model getParentModel();
+    public ComponentReferenceInterfaceModel getInterface();
 
-    public List<Model> getChildModels();
-
-    public void write(OutputStream out) throws IOException;
-
-    public void write(Writer writer) throws IOException;
+    public ComponentReferenceModel setInterface(ComponentReferenceInterfaceModel interfaze);
 
 }

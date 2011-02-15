@@ -25,7 +25,7 @@ import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.BaseTypedModel;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.CompositeModel;
-import org.switchyard.config.model.composite.ExternalServiceModel;
+import org.switchyard.config.model.composite.CompositeServiceModel;
 
 /**
  * V1BindingModel.
@@ -43,8 +43,8 @@ public class V1BindingModel extends BaseTypedModel implements BindingModel {
     }
 
     @Override
-    public ExternalServiceModel getService() {
-        return (ExternalServiceModel)getParentModel();
+    public CompositeServiceModel getService() {
+        return (CompositeServiceModel)getParentModel();
     }
 
 }

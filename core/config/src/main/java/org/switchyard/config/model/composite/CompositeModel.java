@@ -35,9 +35,13 @@ public interface CompositeModel extends NamedModel {
 
     public SwitchYardModel getSwitchYard();
 
-    public List<ExternalServiceModel> getServices();
+    public List<CompositeServiceModel> getServices();
 
-    public CompositeModel addService(ExternalServiceModel service);
+    public CompositeModel addService(CompositeServiceModel service);
+
+    public List<CompositeReferenceModel> getReferences();
+
+    public CompositeModel addService(CompositeReferenceModel reference);
 
     public List<ComponentModel> getComponents();
 

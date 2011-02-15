@@ -33,16 +33,16 @@ public interface ComponentModel extends NamedModel {
 
     public CompositeModel getComposite();
 
-    public ImplementationModel getImplementation();
+    public ComponentImplementationModel getImplementation();
 
-    public ComponentModel setImplementation(ImplementationModel implementation);
+    public ComponentModel setImplementation(ComponentImplementationModel implementation);
 
-    public List<InternalServiceModel> getServices();
+    public List<ComponentServiceModel> getServices();
 
-    public ComponentModel addService(InternalServiceModel service);
+    public ComponentModel addService(ComponentServiceModel service);
 
-    public List<ReferenceModel> getReferences();
+    public List<ComponentReferenceModel> getReferences();
 
-    public ComponentModel addReference(ReferenceModel reference);
+    public ComponentModel addReference(ComponentReferenceModel reference);
 
 }

@@ -27,4 +27,9 @@ MA  02110-1301, USA.
            <soap:wsdl description="foobar">service.wsdl</soap:wsdl>
        </soap:binding.soap>
     </service>
+    <reference name="SomeOtherService" promote="SimpleService/AnotherService">
+       <soap:binding.soap>
+           <soap:wsdl>http://exmample.org:8080/services/SomeOtherService?wsdl</soap:wsdl>
+       </soap:binding.soap>
+    </reference>
 </composite>

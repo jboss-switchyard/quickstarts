@@ -23,28 +23,26 @@ import javax.xml.namespace.QName;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.InterfaceModel;
-import org.switchyard.config.model.composite.ReferenceInterfaceModel;
-import org.switchyard.config.model.composite.ReferenceModel;
+import org.switchyard.config.model.composite.ComponentServiceInterfaceModel;
+import org.switchyard.config.model.composite.ComponentServiceModel;
 
 /**
- * V1ReferenceModel.
+ * V1ComponentServiceModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1ReferenceModel extends BaseNamedModel implements ReferenceModel {
+public class V1ComponentServiceModel extends BaseNamedModel implements ComponentServiceModel {
 
-    private ReferenceInterfaceModel _interface;
-    private BindingModel _binding;
+    private ComponentServiceInterfaceModel _interface;
 
-    public V1ReferenceModel() {
-        super(new QName(CompositeModel.DEFAULT_NAMESPACE, ReferenceModel.REFERENCE));
+    public V1ComponentServiceModel() {
+        super(new QName(CompositeModel.DEFAULT_NAMESPACE, ComponentServiceModel.SERVICE));
     }
 
-    public V1ReferenceModel(Configuration config, Descriptor desc) {
+    public V1ComponentServiceModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
@@ -54,32 +52,17 @@ public class V1ReferenceModel extends BaseNamedModel implements ReferenceModel {
     }
 
     @Override
-    public ReferenceInterfaceModel getInterface() {
+    public ComponentServiceInterfaceModel getInterface() {
         if (_interface == null) {
-            _interface = (ReferenceInterfaceModel)getFirstChildModelStartsWith(InterfaceModel.INTERFACE);
+            _interface = (ComponentServiceInterfaceModel)getFirstChildModelStartsWith(InterfaceModel.INTERFACE);
         }
         return _interface;
     }
 
     @Override
-    public ReferenceModel setInterface(ReferenceInterfaceModel interfaze) {
+    public ComponentServiceModel setInterface(ComponentServiceInterfaceModel interfaze) {
         setChildModel(interfaze);
         _interface = interfaze;
-        return this;
-    }
-
-    @Override
-    public BindingModel getBinding() {
-        if (_binding == null) {
-            _binding = (BindingModel)getFirstChildModel(BindingModel.BINDING);
-        }
-        return _binding;
-    }
-
-    @Override
-    public ReferenceModel setBinding(BindingModel binding) {
-        setChildModel(binding);
-        _binding = binding;
         return this;
     }
 
