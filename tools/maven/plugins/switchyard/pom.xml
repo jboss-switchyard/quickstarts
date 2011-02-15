@@ -56,9 +56,17 @@
 	</build>
 
 	<dependencies>
-		<!-- internal dependencies -->
 		<!-- N/A -->
 		<!-- external dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>1.1</version>
+        </dependency>
 		<dependency>
 			<groupId>org.switchyard</groupId>
 			<artifactId>switchyard-config</artifactId>

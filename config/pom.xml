@@ -45,16 +45,20 @@
 	
 	<dependencies>
 		<!-- internal dependencies -->
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>test-util</artifactId>
-            <scope>test</scope>
-        </dependency>
 		<!-- N/A -->
 		<!-- external dependencies -->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>1.1</version>
+        </dependency>
 	</dependencies>
 </project>

@@ -31,8 +31,8 @@
     <module>build</module>
     <module>config</module>
     <module>core/api</module>
-    <module>test/test-util</module>
     <module>core/runtime</module>
+    <module>test/test-util</module>
     <module>tools/maven/plugins/switchyard</module>
     <module>deploy/base</module>
     <module>deploy/cdi</module>

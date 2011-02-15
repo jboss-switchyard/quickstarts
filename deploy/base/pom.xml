@@ -57,11 +57,6 @@
             <groupId>org.switchyard</groupId>
             <artifactId>core-runtime</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>test-util</artifactId>
-            <scope>test</scope>
-        </dependency>
         <!-- N/A -->
         <!-- external dependencies -->
         <dependency>
