@@ -25,7 +25,6 @@ package org.switchyard.component.bean.omservice.basic;
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.*;
-import org.switchyard.component.bean.AbstractCDITest;
 import org.switchyard.component.bean.omservice.model.OrderRequest;
 import org.switchyard.component.bean.omservice.model.OrderResponse;
 import org.switchyard.metadata.BaseExchangeContract;
@@ -36,26 +35,15 @@ import javax.xml.namespace.QName;
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class BasicInOutTest extends AbstractCDITest {
+public class BasicInOutTest extends SwitchYardCDITestCase {
 
     @Test
-    public void test() {
-        ServiceDomain domain = getServiceDomain();
+    public void test_New_Way() {
+        Message responseMsg = newInvoker("BasicOrderManagementService.createOrder").
+                                    sendInOut(new OrderRequest("D123", "ABCD"));
 
-        // Consume the OM model...
-        MockHandler responseConsumer = new MockHandler();
-        org.switchyard.Service service = domain.getService(new QName("BasicOrderManagementService"));
-        Exchange exchange = domain.createExchange(service, new BaseExchangeContract(new InOutOperation("createOrder")), responseConsumer);
+        OrderResponse response = (OrderResponse) responseMsg.getContent();
 
-        Message inMessage = exchange.createMessage();
-        inMessage.setContent(new OrderRequest("D123", "ABCD"));
-
-        exchange.send(inMessage);
-
-        // wait, since this is async
-        responseConsumer.waitForOKMessage();
-
-        OrderResponse response = (OrderResponse) responseConsumer.getMessages().poll().getMessage().getContent();
         Assert.assertEquals("D123", response.orderId);
     }
 }

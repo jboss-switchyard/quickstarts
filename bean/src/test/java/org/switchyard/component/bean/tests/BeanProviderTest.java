@@ -22,54 +22,26 @@
 
 package org.switchyard.component.bean.tests;
 
-import javax.xml.namespace.QName;
-
 import org.junit.Assert;
 import org.junit.Test;
-import org.switchyard.Exchange;
 import org.switchyard.Message;
-import org.switchyard.MockHandler;
-import org.switchyard.ServiceDomain;
-import org.switchyard.component.bean.AbstractCDITest;
-import org.switchyard.metadata.BaseExchangeContract;
-import org.switchyard.metadata.InOnlyOperation;
-import org.switchyard.metadata.InOutOperation;
+import org.switchyard.SwitchYardCDITestCase;
 
 /*
  * Assorted methods for testing a CDI bean providing a service in SwitchYard.
  */
-public class BeanProviderTest extends AbstractCDITest {
+public class BeanProviderTest extends SwitchYardCDITestCase {
 
     @Test
     public void invokeOneWayProviderWithInOnly() {
-        
-        ServiceDomain domain = getServiceDomain();
-        org.switchyard.Service service = domain.getService(new QName("OneWay"));
-        Exchange exchange = domain.createExchange(service, new BaseExchangeContract(new InOnlyOperation("oneWay")));
-
-        Message inMessage = exchange.createMessage().setContent("hello");
-
-        exchange.send(inMessage);
+        newInvoker("OneWay.oneWay").sendInOnly("hello");
     }
     
     @Test
     public void invokeRequestResponseProviderWithInOut() {
-        final String ECHO_MSG = "hello";
-        
-        ServiceDomain domain = getServiceDomain();
+        String ECHO_MSG = "hello";
+        Message response = newInvoker("RequestResponse.reply").sendInOut(ECHO_MSG);
 
-        MockHandler responseConsumer = new MockHandler();
-        org.switchyard.Service service = domain.getService(new QName("RequestResponse"));
-        Exchange exchange = domain.createExchange(service, new BaseExchangeContract(new InOutOperation("reply")), responseConsumer);
-
-        Message inMessage = exchange.createMessage().setContent(ECHO_MSG);
-
-        exchange.send(inMessage);
-
-        // wait, since this is async
-        responseConsumer.waitForOKMessage();
-
-        Assert.assertEquals(ECHO_MSG,
-                responseConsumer.getMessages().poll().getMessage().getContent());
+        Assert.assertEquals(ECHO_MSG, response.getContent());
     }
 }

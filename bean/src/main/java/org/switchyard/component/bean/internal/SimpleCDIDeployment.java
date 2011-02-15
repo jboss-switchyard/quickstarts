@@ -20,13 +20,9 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard.component.bean;
+package org.switchyard.component.bean.internal;
 
-import org.jboss.weld.environment.se.Weld;
-import org.jboss.weld.environment.se.WeldContainer;
-import org.jboss.weld.environment.se.events.ContainerInitialized;
-import org.junit.Assert;
-import org.switchyard.*;
+import org.switchyard.ExchangeHandler;
 import org.switchyard.Service;
 import org.switchyard.component.bean.deploy.BeanComponentActivator;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
@@ -39,14 +35,18 @@ import org.switchyard.transform.TransformerRegistry;
 import javax.xml.namespace.QName;
 
 /**
- * JUnit Application deployment.
+ * Simple CDI deployment.
+ * <p/>
+ * For internal use only with tests etc.  Does not initialize/deploy the CDI container.
+ *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-class JUnitCDIDeployment extends AbstractDeployment {
+public class SimpleCDIDeployment extends AbstractDeployment {
 
+    /**
+     * Initialize the deployment.
+     */
     public void init() {
-        deployWeldContainer();
-
         super.init();
 
         BeanDeploymentMetaData beanDeploymentMetaData = BeanDeploymentMetaData.lookup();
@@ -54,14 +54,12 @@ class JUnitCDIDeployment extends AbstractDeployment {
         deployServicesAndProxies(beanDeploymentMetaData);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void destroy() {
 
-    }
-
-    private void deployWeldContainer() {
-        WeldContainer weld = new Weld().initialize();
-        weld.event().select(ContainerInitialized.class).fire(new ContainerInitialized());
     }
 
     private void deployTransformers(BeanDeploymentMetaData beanDeploymentMetaData) {
@@ -73,8 +71,8 @@ class JUnitCDIDeployment extends AbstractDeployment {
     }
 
     private void deployServicesAndProxies(BeanDeploymentMetaData beanDeploymentMetaData) {
-        if(beanDeploymentMetaData == null) {
-            Assert.fail("Failed to lookup BeanDeploymentMetaData from Naming Context.");
+        if (beanDeploymentMetaData == null) {
+            throw new RuntimeException("Failed to lookup BeanDeploymentMetaData from Naming Context.");
         }
 
         BeanComponentActivator activator = new BeanComponentActivator();

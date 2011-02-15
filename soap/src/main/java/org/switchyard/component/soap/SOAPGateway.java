@@ -50,9 +50,10 @@ public class SOAPGateway {
     /**
      * Initialization code.
      * @param config the configuration settings
+     * @param domain
      */
-    public void init(final SOAPBindingModel config) {
-        _domain = ServiceDomains.getDomain();
+    public void init(final SOAPBindingModel config, ServiceDomain domain) {
+        _domain = domain;
         _config = config;
         if (config.getPublishAsWS()) {
             // Consume the SwitchYard service

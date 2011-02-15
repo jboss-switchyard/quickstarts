@@ -46,23 +46,19 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.Exchange;
 import org.switchyard.Message;
-import org.switchyard.MockHandler;
-import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.SwitchYardTestCase;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
-import org.switchyard.internal.ServiceDomains;
 import org.switchyard.metadata.BaseService;
-import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.ServiceOperation;
@@ -73,16 +69,15 @@ import org.w3c.dom.Element;
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
-public class SOAPGatewayTest {
-    private static final QName PUBLISH_AS_WS_SERVICE = new QName("publish-as-ws");
+public class SOAPGatewayTest extends SwitchYardTestCase {
     private static final QName WS_CONSUMER_SERVICE = new QName("webservice-consumer");
     private static final int DEFAULT_THREAD_COUNT = 10;
     private static final long DEFAULT_NO_OF_THREADS = 100;
 
     private static URL _serviceURL;
-    private static ServiceDomain _domain;
-    private static SOAPGateway _soapInbound;
-    private static SOAPGateway _soapOutbound;
+    private ServiceDomain _domain;
+    private SOAPGateway _soapInbound;
+    private SOAPGateway _soapOutbound;
     private long _noOfThreads = DEFAULT_NO_OF_THREADS;
     
     private static ModelResource _res;
@@ -130,12 +125,12 @@ public class SOAPGatewayTest {
         }
     }
 
-    @BeforeClass
-    public static void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         _res = new ModelResource();
         
         // Provide a switchyard service
-        _domain = ServiceDomains.getDomain();
+        _domain = getServiceDomain();
         SOAPProvider provider = new SOAPProvider();
 
         CompositeModel composite = (CompositeModel)_res.pull("/HelloSwitchYard.xml");
@@ -163,7 +158,7 @@ public class SOAPGatewayTest {
         config.setPublishAsWS(true);
         config.setServerHost(host);
         config.setServerPort(Integer.parseInt(port));
-        _soapInbound.init(config);
+        _soapInbound.init(config, _domain);
 
         _soapInbound.start();
 
@@ -174,14 +169,14 @@ public class SOAPGatewayTest {
         config = new SOAPBindingModel();
         config.setWsdl(_serviceURL.toExternalForm() + "?wsdl");
         config.setServiceName(WS_CONSUMER_SERVICE);
-        _soapOutbound.init(config);
+        _soapOutbound.init(config, _domain);
         _soapOutbound.start();
         
         XMLUnit.setIgnoreWhitespace(true);
     }
     
-    @AfterClass
-    public static void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         _soapOutbound.stop();
         _soapInbound.stop();
         _soapInbound.destroy();
@@ -194,12 +189,7 @@ public class SOAPGatewayTest {
                      + "   <arg0>Hello</arg0>"
                      + "</test:helloWS>").getDocumentElement();
 
-        // Invoke the WS via our WS Consumer service
-        MockHandler consumer = new MockHandler();
-        Service service = _domain.getService(WS_CONSUMER_SERVICE);
-        Exchange exchange = _domain.createExchange(service, ExchangeContract.IN_ONLY, consumer);
-        Message message = exchange.createMessage().setContent(input);
-        exchange.send(message);
+        newInvoker(WS_CONSUMER_SERVICE).sendInOnly(input);
     }
 
     @Test
@@ -212,17 +202,13 @@ public class SOAPGatewayTest {
                      + "   <return>Hello Jimbo</return>"
                      + "</test:sayHelloResponse>";
 
-        // Invoke the WS via our WS Consumer service
-        MockHandler consumer = new MockHandler();
-        Service service = _domain.getService(WS_CONSUMER_SERVICE);
-        Exchange exchange = _domain.createExchange(service, ExchangeContract.IN_OUT, consumer);
-        Message message = exchange.createMessage().setContent(input);
-        exchange.send(message);
-        consumer.waitForOKMessage();
-        String response = toString(consumer.getMessages().peek().getMessage().getContent(Element.class));
+
+        Message responseMsg = newInvoker(WS_CONSUMER_SERVICE).sendInOut(input);
+
+        String response = toString(responseMsg.getContent(Element.class));
         XMLAssert.assertXMLEqual(output, response);
     }
-    
+
     private String toString(Element element) throws Exception
     {
         TransformerFactory transFactory = TransformerFactory.newInstance();
@@ -249,14 +235,8 @@ public class SOAPGatewayTest {
                         + "   </detail>"
                         + "</soap:Fault>";
 
-        // Invoke the WS via our WS Consumer service
-        MockHandler consumer = new MockHandler();
-        Service service = _domain.getService(WS_CONSUMER_SERVICE);
-        Exchange exchange = _domain.createExchange(service, ExchangeContract.IN_OUT, consumer);
-        Message message = exchange.createMessage().setContent(input);
-        exchange.send(message);
-        consumer.waitForOKMessage();
-        String response = toString(consumer.getMessages().peek().getMessage().getContent(Element.class));
+        Message responseMsg = newInvoker(WS_CONSUMER_SERVICE).sendInOut(input);
+        String response = toString(responseMsg.getContent(Element.class));
         XMLAssert.assertXMLEqual(output, response);
     }
 
@@ -297,3 +277,4 @@ public class SOAPGatewayTest {
         }
     }
 }
+

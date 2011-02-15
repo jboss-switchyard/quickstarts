@@ -172,7 +172,6 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
     }
 
     private QName toServiceQName(Class<?> serviceType) {
-        // TODO: Could use the bean class package name as the namespace component of the Service QName
         return new QName(serviceType.getSimpleName());
     }
 }

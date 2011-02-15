@@ -73,6 +73,11 @@ public class BeanComponentActivator implements Activator {
         throw new RuntimeException("Unknown Service name '" + name + "'.");
     }
 
+    /**
+     * Create a ServiceInterface instance for the named Service.
+     * @param name The Service Name.
+     * @return The ServiceInterface instance.
+     */
     public ServiceInterface buildServiceInterface(QName name) {
         for (ServiceDescriptor descriptor : _beanDeploymentMetaData.getServiceDescriptors()) {
             if (descriptor.getServiceName().equals(name)) {
@@ -83,6 +88,9 @@ public class BeanComponentActivator implements Activator {
         throw new RuntimeException("Unknown Service name '" + name + "'.");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void start(Service service) {
         // Initialise any client proxies to the started service...
@@ -93,12 +101,17 @@ public class BeanComponentActivator implements Activator {
         }
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void stop(Service service) {
         // not sure this is significant for bean component
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void destroy(Service service) {
         _references.remove(service.getName());

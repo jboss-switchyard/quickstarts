@@ -24,32 +24,26 @@ package org.switchyard.component.soap;
 
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.jboss.weld.environment.se.Weld;
-import org.jboss.weld.environment.se.WeldContainer;
-import org.jboss.weld.environment.se.events.ContainerInitialized;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.Service;
+import org.switchyard.SwitchYardCDITestCase;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
-import org.switchyard.component.soap.util.AbstractCDITest;
 import org.switchyard.component.soap.util.StreamUtil;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
 import java.io.ByteArrayOutputStream;
 import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.Map;
 
-public class GreetingServiceTest extends AbstractCDITest {
+public class GreetingServiceTest extends SwitchYardCDITestCase {
 
     private static final QName GREETING_SERVICE_NAME = new QName("GreetingService");
 
-    private WeldContainer _weld;
     private SOAPBindingModel config;
 
-    public GreetingServiceTest() throws MalformedURLException {
+    @Before
+    public void setUp() throws MalformedURLException {
         String host = System.getProperty("org.switchyard.test.soap.host", "localhost");
         String port = System.getProperty("org.switchyard.test.soap.port", "48080");
         
@@ -59,13 +53,9 @@ public class GreetingServiceTest extends AbstractCDITest {
         config.setServiceName(GREETING_SERVICE_NAME);
         config.setServerHost(host);
         config.setServerPort(Integer.parseInt(port));
-    }
 
-    @Before
-    public void setUp() throws Exception {
-        // Init the CDI container...
-        _weld = new Weld().initialize();
-        _weld.event().select(ContainerInitialized.class).fire(new ContainerInitialized());
+        // Need to explicitly add the transformer for exceptions...
+        addTransformer(new HandlerExceptionTransformer());
     }
 
     @Test
