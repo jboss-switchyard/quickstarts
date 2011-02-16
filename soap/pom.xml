@@ -71,7 +71,7 @@
     <dependencies>
         <dependency>
             <groupId>org.switchyard</groupId>
-            <artifactId>core-config</artifactId>
+            <artifactId>switchyard-config</artifactId>
         </dependency>
         <dependency>
             <groupId>wsdl4j</groupId>
