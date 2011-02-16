@@ -31,16 +31,16 @@
 		<groupId>org.switchyard</groupId>
 		<artifactId>core-parent</artifactId>
 		<version>1.0-SNAPSHOT</version>
-		<relativePath>../../pom.xml</relativePath>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
 	<groupId>org.switchyard</groupId>
-	<artifactId>core-config</artifactId>
+	<artifactId>switchyard-config</artifactId>
 	
 	<packaging>jar</packaging>
-	<name>SwitchYard: Core Config</name>
+	<name>SwitchYard: SwitchYard Configuration</name>
 	<version>${project.parent.version}</version>
-	<description>The core config library.</description>
+	<description>The SwitchYard Configuration library.</description>
 	<url>http://switchyard/</url>
 	
 	<dependencies>

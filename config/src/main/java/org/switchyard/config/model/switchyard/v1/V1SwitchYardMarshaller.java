@@ -16,32 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config.model;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.util.List;
+package org.switchyard.config.model.switchyard.v1;
 
 import org.switchyard.config.Configuration;
+import org.switchyard.config.model.BaseMarshaller;
+import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.Model;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
- * Model.
+ * V1SwitchYardMarshaller.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface Model {
+public class V1SwitchYardMarshaller extends BaseMarshaller {
 
-    public Configuration getModelConfiguration();
+    public V1SwitchYardMarshaller(Descriptor desc) {
+        super(desc);
+    }
 
-    public Descriptor getModelDescriptor();
-
-    public Model getParentModel();
-
-    public List<Model> getChildModels();
-
-    public void write(OutputStream out) throws IOException;
-
-    public void write(Writer writer) throws IOException;
+    @Override
+    public Model read(Configuration config) {
+        String name = config.getName();
+        Descriptor desc = getDescriptor();
+        if (name.equals(SwitchYardModel.SWITCHYARD)) {
+            return new V1SwitchYardModel(config, desc);
+        }
+        return null;
+    }
 
 }

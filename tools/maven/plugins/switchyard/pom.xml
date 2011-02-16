@@ -35,12 +35,12 @@
 	</parent>
 	
 	<groupId>org.switchyard</groupId>
-	<artifactId>configurator-plugin</artifactId>
+	<artifactId>switchyard-plugin</artifactId>
 	
 	<packaging>maven-plugin</packaging>
-	<name>SwitchYard: Configurator Plugin</name>
+	<name>SwitchYard: SwitchYard Plugin</name>
 	<version>${project.parent.version}</version>
-	<description>The SwitchYard Configurator Plugin.</description>
+	<description>The SwitchYard Plugin.</description>
 	<url>http://switchyard/</url>
 
 	<build>
@@ -57,16 +57,11 @@
 
 	<dependencies>
 		<!-- internal dependencies -->
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>test-util</artifactId>
-            <scope>test</scope>
-        </dependency>
 		<!-- N/A -->
 		<!-- external dependencies -->
 		<dependency>
 			<groupId>org.switchyard</groupId>
-			<artifactId>core-config</artifactId>
+			<artifactId>switchyard-config</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>

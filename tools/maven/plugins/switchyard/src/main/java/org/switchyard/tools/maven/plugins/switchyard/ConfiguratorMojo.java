@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.tools.maven.plugins.configurator;
+package org.switchyard.tools.maven.plugins.switchyard;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -26,6 +26,8 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -95,7 +97,7 @@ public class ConfiguratorMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        List<URL> urls = new ArrayList<URL>();
+        final List<URL> urls = new ArrayList<URL>();
         try {
             for (String path : compileClasspathElements) {
                 urls.add(new File(path).toURI().toURL());
@@ -115,7 +117,11 @@ public class ConfiguratorMojo extends AbstractMojo {
         } catch (MalformedURLException mue) {
             throw new MojoExecutionException(mue.getMessage(), mue);
         }
-        ClassLoader loader = new URLClassLoader(urls.toArray(new URL[urls.size()]), getClass().getClassLoader());
+        ClassLoader loader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
+            public URLClassLoader run() {
+                return new URLClassLoader(urls.toArray(new URL[urls.size()]), ConfiguratorMojo.class.getClassLoader());
+            }
+        });
         ClassLoader previous = Classes.setTCCL(loader);
         Writer writer = null;
         DirectoryScanner ds = new DirectoryScanner();

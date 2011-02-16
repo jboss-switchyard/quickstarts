@@ -29,11 +29,11 @@
   </properties>
   <modules>
     <module>build</module>
+    <module>config</module>
     <module>core/api</module>
     <module>test/test-util</module>
-    <module>core/config</module>
     <module>core/runtime</module>
-    <module>tools/maven/plugins/configurator</module>
+    <module>tools/maven/plugins/switchyard</module>
     <module>tools/maven/archetypes/application</module>
     <module>registry</module>
   </modules>
@@ -266,6 +266,10 @@
                   <title>Components</title>
                   <packages>org.switchyard.component*</packages>
                 </group>
+                <group>
+                  <title>Configuration</title>
+                  <packages>org.switchyard.config*</packages>
+                </group>
               </groups>
               <links>
                 <link>http://download.oracle.com/javase/6/docs/api/</link>
@@ -343,6 +347,10 @@
                   <title>Components</title>
                   <packages>org.switchyard.component*</packages>
                 </group>
+                <group>
+                  <title>Configuration</title>
+                  <packages>org.switchyard.config*</packages>
+                </group>
               </groups>
               <links>
                 <link>http://download.oracle.com/javase/6/docs/api/</link>
@@ -414,22 +422,17 @@
       <!-- internal dependencies -->
       <dependency>
         <groupId>org.switchyard</groupId>
+        <artifactId>core-build</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.switchyard</groupId>
+        <artifactId>switchyard-config</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.switchyard</groupId>
         <artifactId>core-api</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.switchyard</groupId>
-        <artifactId>core-config</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.switchyard</groupId>
-        <artifactId>configurator-plugin</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.switchyard</groupId>
-        <artifactId>core-runtime</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -439,7 +442,12 @@
       </dependency>
       <dependency>
         <groupId>org.switchyard</groupId>
-        <artifactId>core-build</artifactId>
+        <artifactId>core-runtime</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.switchyard</groupId>
+        <artifactId>switchyard-plugin</artifactId>
         <version>${project.version}</version>
       </dependency>
       <!-- external dependencies -->

@@ -112,7 +112,7 @@ public abstract class BaseModel implements Model {
     }
 
     @Override
-    public final List<Model> getChildModels() {
+    public final List<Model> getModelChildren() {
         List<Model> child_models = new ArrayList<Model>();
         List<Configuration> child_configs =_config.getChildren();
         if (child_configs != null) {
