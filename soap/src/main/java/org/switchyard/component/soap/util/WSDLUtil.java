@@ -62,8 +62,6 @@ public final class WSDLUtil {
      */
     public static final String SOAP_FAULT_MESSAGE_TYPE = "{http://schemas.xmlsoap.org/soap/envelope/}Fault";
 
-    private static final Map<Object, Definition> DEFINITIONS_MAP = Collections.synchronizedMap(new HashMap<Object, Definition>());
-
     private WSDLUtil() {
     }
 
@@ -75,17 +73,10 @@ public final class WSDLUtil {
      * @throws WSDLException If unable to read the WSDL
      */
     public static Definition readWSDL(final String wsdlLocation) throws WSDLException {
-        Definition definition = null;
-        if (DEFINITIONS_MAP.containsKey(wsdlLocation)) {
-            definition = (Definition) DEFINITIONS_MAP.get(wsdlLocation);
-        } else {
-            WSDLFactory wsdlFactory = WSDLFactory.newInstance();
-            WSDLReader reader = wsdlFactory.newWSDLReader();
-            reader.setFeature("javax.wsdl.verbose", false);
-            definition = reader.readWSDL(wsdlLocation);
-            DEFINITIONS_MAP.put(wsdlLocation, definition);
-        }
-        return definition;
+        WSDLFactory wsdlFactory = WSDLFactory.newInstance();
+        WSDLReader reader = wsdlFactory.newWSDLReader();
+        reader.setFeature("javax.wsdl.verbose", false);
+        return reader.readWSDL(wsdlLocation);
     }
 
     /**

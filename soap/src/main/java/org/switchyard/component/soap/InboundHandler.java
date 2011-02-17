@@ -53,7 +53,6 @@ import org.switchyard.component.soap.util.WSDLUtil;
 import org.switchyard.internal.ServiceDomains;
 import org.switchyard.internal.transform.TransformSequence;
 import org.switchyard.metadata.BaseExchangeContract;
-import org.switchyard.metadata.ServiceOperation;
 
 /**
  * Hanldes SOAP requests to invoke a SwitchYard service.
