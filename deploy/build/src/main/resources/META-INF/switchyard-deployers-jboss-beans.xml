@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    JBoss Switchyard + JBossAS integration
+-->
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+  <!-- Switchyard deployer -->
+  <bean name="SwitchYardDeployer" class="org.switchyard.deployment.SwitchYardDeployer">
+  </bean>
+
+  <bean name="SwitchYardConfigParser" class="org.switchyard.deployment.SwitchYardConfigParser">
+  </bean>
+
+</deployment>

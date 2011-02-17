@@ -36,6 +36,8 @@
     <module>tools/maven/plugins/switchyard</module>
     <module>deploy/base</module>
     <module>deploy/cdi</module>
+    <module>deploy/standard</module>
+    <module>deploy/build</module>
     <module>tools/maven/archetypes/application</module>
     <module>registry</module>
   </modules>
@@ -450,6 +452,16 @@
       <dependency>
         <groupId>org.switchyard</groupId>
         <artifactId>deploy</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.switchyard</groupId>
+        <artifactId>deploy-cdi</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.switchyard</groupId>
+        <artifactId>deploy-standard</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

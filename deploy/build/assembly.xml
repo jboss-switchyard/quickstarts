@@ -1,0 +1,26 @@
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+  <id>bin</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <fileSets>
+    <fileSet>
+	  <directory>src/main/resources/META-INF</directory>
+	  <outputDirectory>META-INF</outputDirectory>
+    </fileSet>
+  </fileSets>
+  <dependencySets>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
+          <include>org.switchyard:switchyard-config</include>
+          <include>org.switchyard:deploy</include>
+          <include>org.switchyard:deploy-standard</include>
+          <include>org.switchyard:deploy-cdi</include>
+       </includes>
+       <outputDirectory></outputDirectory>
+    </dependencySet>
+  </dependencySets>
+</assembly>
