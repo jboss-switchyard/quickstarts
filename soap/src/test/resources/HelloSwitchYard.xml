@@ -23,7 +23,7 @@ MA  02110-1301, USA.
            name="SampleSOAPService">
     <service name="SampleSOAPService" promote="publish-as-ws">
        <soap:binding.soap>
-           <soap:wsdl>target/test-classes/HelloWebService.wsdl</soap:wsdl>
+           <soap:wsdl>HelloWebService.wsdl</soap:wsdl>
            <soap:port>{http://test.ws/}HelloWebService:HelloWebServicePort</soap:port>
        </soap:binding.soap>
     </service>

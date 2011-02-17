@@ -23,10 +23,10 @@
 package org.switchyard.component.soap.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -44,12 +44,15 @@ import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.log4j.Logger;
 import org.switchyard.ExchangePattern;
 import org.switchyard.component.soap.PortName;
 import org.switchyard.component.soap.WebServicePublishException;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.BaseInvocationContract;
 import org.switchyard.metadata.ServiceOperation;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 /**
  * Contains utility methods to examine/manipulate WSDLs.
@@ -57,6 +60,9 @@ import org.switchyard.metadata.ServiceOperation;
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
 public final class WSDLUtil {
+
+    private static final Logger LOGGER = Logger.getLogger(WSDLUtil.class);
+
     /**
      * SOAP Fault type QName.
      */
@@ -73,10 +79,30 @@ public final class WSDLUtil {
      * @throws WSDLException If unable to read the WSDL
      */
     public static Definition readWSDL(final String wsdlLocation) throws WSDLException {
-        WSDLFactory wsdlFactory = WSDLFactory.newInstance();
-        WSDLReader reader = wsdlFactory.newWSDLReader();
-        reader.setFeature("javax.wsdl.verbose", false);
-        return reader.readWSDL(wsdlLocation);
+        InputStream inputStream = null;
+        try {
+            URL url = getURL(wsdlLocation);
+            inputStream = url.openStream();
+            InputSource source = new InputSource(inputStream);
+            source.setSystemId(url.toString());
+            Document wsdlDoc = XMLHelper.getDocument(source);
+            WSDLFactory wsdlFactory = WSDLFactory.newInstance();
+            WSDLReader reader = wsdlFactory.newWSDLReader();
+            reader.setFeature("javax.wsdl.verbose", false);
+            return reader.readWSDL(url.toString(), wsdlDoc);
+        } catch (Exception e) {
+            throw new WSDLException(WSDLException.OTHER_ERROR,
+                    "Unable to read WSDL at '"
+                    + wsdlLocation, e);
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException ioe) {
+                    LOGGER.error(ioe);
+                }
+            }
+        }
     }
 
     /**
@@ -97,7 +123,7 @@ public final class WSDLUtil {
             return inputSource;
         } catch (Exception e) {
             throw new WSDLException(WSDLException.OTHER_ERROR,
-                    "Unable to resolve imported document at '"
+                    "Unable to resolve WSDL document at '"
                     + wsdlURI, e);
         }
     }
@@ -113,8 +139,12 @@ public final class WSDLUtil {
         if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("file://")) {
             return new URL(null, path);
         } else {
-            File localFile = new File(path);
-            return localFile.toURL();
+            URL url = Thread.currentThread().getContextClassLoader().getResource(path);
+            if (url == null) {
+                File localFile = new File(path);
+                url = localFile.toURL();
+            }
+            return url;
         }
     }
 

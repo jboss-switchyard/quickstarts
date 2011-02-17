@@ -470,6 +470,23 @@ public final class XMLHelper {
             return builder.newDocument();
         }
     }
+    /**
+     * Create a document from InputSource.
+     * 
+     * @return the created document
+     * @param source the input source
+     * @throws ParserConfigurationException for errors during creation
+     * @throws IOException if the source could not be read 
+     * @throws SAXException if any parser error occurs
+     */
+    public static Document getDocument(final InputSource source)
+        throws ParserConfigurationException, IOException, SAXException {
+        final DocumentBuilder builder = getCreationDocumentBuilder();
+        synchronized (builder) {
+            // synchronized as it is not guaranteed to be thread safe
+            return builder.parse(source);
+        }
+    }
 
     /**
      * Transform a DOM Node to String.
