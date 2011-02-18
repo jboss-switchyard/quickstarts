@@ -33,11 +33,6 @@ import org.switchyard.config.model.composite.BindingModel;
 public class SOAPMarshaller extends BaseMarshaller {
 
     /**
-     *  The namespace for SOAP Gateway configurations.
-     */
-    public static final String NAMESPACE = "http://www.jboss.org/switchyard/component/soap/binding-soap.xsd";
-
-    /**
      * Construct a SOAP Model Marshaller with help of a Descriptor.
      * 
      * @param desc the Descriptor 

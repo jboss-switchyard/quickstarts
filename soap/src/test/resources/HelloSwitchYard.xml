@@ -17,16 +17,17 @@ v.2.1 along with this distribution; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA  02110-1301, USA.
 -->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+<sca:composite xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
            targetNamespace="http://www.jboss.org/switchyard/example/m1app"
-           xmlns:soap="http://www.switchyard.org/component/soap/config"
-           name="SampleSOAPService">
-    <service name="SampleSOAPService" promote="publish-as-ws">
+           xmlns:soap="urn:switchyard:soap-binding:1.0">
+
+    <sca:service name="SampleSOAPService" promote="publish-as-ws">
        <soap:binding.soap>
            <soap:wsdl>HelloWebService.wsdl</soap:wsdl>
            <soap:port>{http://test.ws/}HelloWebService:HelloWebServicePort</soap:port>
        </soap:binding.soap>
-    </service>
+    </sca:service>
+
     <!--
     <reference name="webservice-consumer">
        <soap:binding.soap>
@@ -35,4 +36,4 @@ MA  02110-1301, USA.
        </soap:binding.soap>
     </reference>
     -->
-</composite>
+</sca:composite>
