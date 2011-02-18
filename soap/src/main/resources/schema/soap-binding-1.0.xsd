@@ -46,7 +46,14 @@ limitations under the License.
                         </xs:documentation>
                     </xs:annotation>
                 </xs:element>
-                <xs:element name="serverHost" type="inet-addressType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="serverHost" type="xs:string" minOccurs="0" maxOccurs="1">                    
+                    <xs:annotation>
+                        <xs:documentation>
+                            Either a IP address in IPv6 or IPv4 dotted decimal notation,
+                            or a hostname that can be resolved to an IP address.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
                 <xs:element name="serverPort" type="xs:unsignedShort" minOccurs="0" maxOccurs="1">
                     <xs:annotation>
                         <xs:documentation>
@@ -71,21 +78,10 @@ limitations under the License.
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-
+    
     <xs:simpleType name="wsdlPortType">          
-            <xs:restriction base="xs:string">
-                <xs:pattern value="\{.+\}.+:[^:]+|.+:[^:]+|[^:]+"></xs:pattern>
-            </xs:restriction>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\{.+\}.+:[^:]+|.+:[^:]+|[^:]+"></xs:pattern>
+        </xs:restriction>
     </xs:simpleType>
-
-    <xs:complexType name="inet-addressType">
-        <xs:attribute name="value" type="xs:string" use="required">
-            <xs:annotation>
-                <xs:documentation>
-                    Either a IP address in IPv6 or IPv4 dotted decimal notation,
-                    or a hostname that can be resolved to an IP address.
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-    </xs:complexType>
 </xs:schema>
