@@ -53,8 +53,8 @@ public class SwitchYardCDIBootstrapper implements Extension {
         InputStream swConfigStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(DESCRIPTOR);
 
         if (swConfigStream != null) {
-            _deployment = new Deployment();
-            _deployment.init(swConfigStream);
+            _deployment = new Deployment(swConfigStream);
+            _deployment.init();
         }
     }
 

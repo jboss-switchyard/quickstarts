@@ -33,18 +33,22 @@
 	</parent>
         <modelVersion>4.0.0</modelVersion>	
 	<groupId>org.switchyard</groupId>
-	<artifactId>deploy-standard</artifactId>
+	<artifactId>deploy-jboss-as6</artifactId>
 	
 	<packaging>jar</packaging>
-	<name>Switchyard: Standard Deployer</name>
+	<name>Switchyard: JBoss AS6 Deployer</name>
 	<version>${project.parent.version}</version>
-	<description>The standard deployers library.</description>
+	<description>The JBoss AS6 Deployer Implementation</description>
 	<url>http://switchyard.org/</url>
 	
 	<dependencies>
             <dependency>
                 <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-config</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard</groupId>
+                <artifactId>deploy</artifactId>
             </dependency>
             <dependency>
                 <groupId>org.jboss.deployers</groupId>

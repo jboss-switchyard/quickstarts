@@ -104,32 +104,40 @@ public class Deployment {
     private List<Activation> _referenceBindings = new LinkedList<Activation>();
 
     /**
-     * Create a new instance of Deployer.
+     * Create a new instance of Deployer from a configuration stream.
+     * @param configStream stream containing switchyard config
      */
-    public Deployment() {
-    }
-
-    /**
-     * Initialize the deployment.  This actually starts everything as well at 
-     * the moment.
-     * @param switchyardConfig switchyard app descriptor
-     */
-    public void init(InputStream switchyardConfig) {
+    public Deployment(InputStream configStream) {
+        // parse the config
         try {
-            // parse the config
-            _switchyardConfig = (SwitchYardModel)new ModelResource().pull(switchyardConfig);
-            _log.info("Initializing deployment for application " + _switchyardConfig.getName());
-            // create a new domain and load activator instances for lifecycle
-            createDomain();
-            createActivators();
-            // ordered startup lifecycle
-            deployReferenceBindings();
-            deployServices();
-            deployReferences();
-            deployServiceBindings();
+            _switchyardConfig = (SwitchYardModel)new ModelResource().pull(configStream);
         } catch (java.io.IOException ioEx) {
             throw new RuntimeException("Failed to read switchyard config.", ioEx);
         }
+    }
+    
+    /**
+     * Create a new instance of Deployer from a configuration model.
+     * @param configModel switchyard config model
+     */
+    public Deployment(SwitchYardModel configModel) {
+        _switchyardConfig = configModel;
+    }
+    
+    /**
+     * Initialize the deployment.  This actually starts everything as well at 
+     * the moment.
+     */
+    public void init() {
+        _log.info("Initializing deployment for application " + _switchyardConfig.getName());
+        // create a new domain and load activator instances for lifecycle
+        createDomain();
+        createActivators();
+        // ordered startup lifecycle
+        deployReferenceBindings();
+        deployServices();
+        deployReferences();
+        deployServiceBindings();
     }
 
     /**

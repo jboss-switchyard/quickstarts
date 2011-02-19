@@ -36,7 +36,7 @@
     <module>tools/maven/plugins/switchyard</module>
     <module>deploy/base</module>
     <module>deploy/cdi</module>
-    <module>deploy/standard</module>
+    <module>deploy/jboss-as6</module>
     <module>deploy/build</module>
     <module>tools/maven/archetypes/application</module>
     <module>registry</module>
@@ -461,7 +461,7 @@
       </dependency>
       <dependency>
         <groupId>org.switchyard</groupId>
-        <artifactId>deploy-standard</artifactId>
+        <artifactId>deploy-jboss-as6</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

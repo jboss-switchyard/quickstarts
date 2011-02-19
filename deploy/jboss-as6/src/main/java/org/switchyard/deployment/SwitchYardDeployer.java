@@ -20,49 +20,37 @@
  */
 package org.switchyard.deployment;
 
-import org.apache.log4j.Logger;
-
-import org.jboss.deployers.spi.DeploymentException;
-
 import org.jboss.beans.metadata.spi.BeanMetaData;
-import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.switchyard.deploy.internal.Deployment;
 
-public class SwitchYardDeployer extends AbstractSimpleVFSRealDeployer<SwitchYardMetaData> {	
-	
-    /**
-     * Logger.
-     */
-    private Logger log = Logger.getLogger(SwitchYardDeployer.class);
-	
+/**
+ * AS6 Deployer for SwitchYard.
+ */
+public class SwitchYardDeployer extends AbstractSimpleVFSRealDeployer<SwitchYardMetaData> {
     /**
      * No args constructor.
      */
-    public SwitchYardDeployer()
-    {
-        super(SwitchYardMetaData.class);	
+    public SwitchYardDeployer() {
+        super(SwitchYardMetaData.class);
         setOutput(BeanMetaData.class);
         setStage(DeploymentStages.POST_CLASSLOADER);
     }
 
     @Override
     public void deploy(VFSDeploymentUnit unit, SwitchYardMetaData metaData)
-            throws DeploymentException {
-    	try {
-    	    String fileName = unit.getSimpleName();
-	    if (metaData != null) { 
-		// TODO : Do the same things as the CDI deployer to deploy
-		// domains and services
-	    }
+        throws DeploymentException {
+        try {
+            if (metaData != null) { 
+                Deployment deployment = new Deployment(metaData.getSwitchYardModel());
+                deployment.init();
+            }
         } catch (Exception e) {
-           throw DeploymentException.rethrowAsDeploymentException("Error creating switchyard deployment " + unit.getName(), e);
+            throw DeploymentException.rethrowAsDeploymentException("Error creating switchyard deployment " + unit.getName(), e);
         }
     }
-    
-    public void undeploy(DeploymentUnit unit, SwitchYardMetaData metadata) {
-	// TODO : clean up
-    }
+
 }

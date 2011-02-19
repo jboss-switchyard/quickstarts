@@ -21,17 +21,8 @@
 package org.switchyard.deployment;
 
 import java.io.Serializable;
-import java.util.Set;
 
-import org.switchyard.config.model.ModelResource;
-import org.switchyard.config.model.composite.BindingModel;
-import org.switchyard.config.model.composite.ComponentModel;
-import org.switchyard.config.model.composite.CompositeModel;
-import org.switchyard.config.model.composite.ComponentReferenceModel;
-import org.switchyard.config.model.composite.ComponentServiceModel;
-import org.switchyard.config.model.composite.CompositeServiceModel;
-
-import javax.management.ObjectName;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * SwitchYardMetaData represents the config data that the SwitchYard deployer
@@ -49,27 +40,37 @@ public class SwitchYardMetaData implements Serializable {
     /** The deployment name. The SwitchYard archive name without the .esb suffix */
     private String _deploymentName = null;
 
-    private CompositeModel _compositeModel = null;
-    
+    private transient SwitchYardModel _switchyardModel = null;
+
+    /**
+     * Create a new SwitchYard metadata.
+     * @param archiveName name of the deployment archive
+     * @param deploymentName name of the deployment
+     */
     public SwitchYardMetaData(String archiveName, String deploymentName) {
-    	_archiveName = archiveName;
-    	_deploymentName = deploymentName;
+        _archiveName = archiveName;
+        _deploymentName = deploymentName;
+    }
+    
+    /**
+     * Create a new SwitchYard metadata.
+     * @param archiveName name of the deployment archive
+     * @param deploymentName name of the deployment
+     * @param switchyardModel switchyard configuration
+     */
+    public SwitchYardMetaData(String archiveName, String deploymentName, 
+            SwitchYardModel switchyardModel) {
+        _archiveName = archiveName;
+        _deploymentName = deploymentName;
+        _switchyardModel = switchyardModel;
     }
 
-    public SwitchYardMetaData(String archiveName, String deploymentName, 
-    		CompositeModel compositeModel) {
-    	_archiveName = archiveName;
-    	_deploymentName = deploymentName;
-    	_compositeModel = compositeModel;
-    }
-    
     /**
      * Gets the name of the archive that this metadata came from.
      *
      * @return String   The name of the archive that this metadata came from.
      */
-    public final String getArchiveName()
-    {
+    public final String getArchiveName() {
         return _archiveName;
     }
 
@@ -78,24 +79,23 @@ public class SwitchYardMetaData implements Serializable {
      *
      * @return String The name of the deployment. This is the archive name without the .esb suffix.
      */
-    public String getDeploymentName()
-    {
+    public String getDeploymentName() {
         return _deploymentName;
     }
-    
+
     /**
-     * Get the composite model.
-     * @return compositeModel
+     * Get the switchyardModel configuration model.
+     * @return switchyardModel
      */
-    public CompositeModel getCompositeModel() {
-    	return _compositeModel;
+    public SwitchYardModel getSwitchYardModel() {
+        return _switchyardModel;
     }
-    
+
     /**
-     * Set the composite model.
-     * @param compositeModel compositeModel
+     * Set the switchyard configuration model.
+     * @param switchyardModel switchyardModel
      */
-    public void setCompositeModel(CompositeModel compositeModel) {
-    	_compositeModel = compositeModel;
+    public void setSwitchYardModel(SwitchYardModel switchyardModel) {
+        _switchyardModel = switchyardModel;
     }
 }
