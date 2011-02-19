@@ -20,38 +20,36 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard.component.bean;
+package org.switchyard.component.bean.deploy;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.switchyard.ServiceDomain;
+import org.switchyard.ExchangeHandler;
+import org.switchyard.metadata.ServiceInterface;
+
+import javax.xml.namespace.QName;
+import java.io.Serializable;
 
 /**
+ * Service Descriptor.
+ *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public abstract class AbstractCDITest {
+public interface ServiceDescriptor extends Serializable {
 
-    private JUnitCDIDeployment deployment;
+    /**
+     * Get the Service name.
+     * @return The Service Name.
+     */
+    QName getServiceName();
 
-    @BeforeClass
-    public static void installContext() {
-        MockInitialContextFactory.install();
-    }
+    /**
+     * Get the ExchangeHandler.
+     * @return The ExchangeHandler.
+     */
+    ExchangeHandler getHandler();
 
-    @Before
-    public void deploy() throws Exception {
-        deployment = new JUnitCDIDeployment();
-        deployment.init();
-    }
-
-    @After
-    public void undeploy() {
-        deployment.destroy();
-        MockInitialContextFactory.clear();
-    }
-
-    public ServiceDomain getServiceDomain() {
-        return deployment.getDomain();
-    }
+    /**
+     * Get the ServiceInterface.
+     * @return The ServiceInterface.
+     */
+    ServiceInterface getInterface();
 }

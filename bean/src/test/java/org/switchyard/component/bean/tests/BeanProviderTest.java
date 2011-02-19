@@ -32,7 +32,6 @@ import org.switchyard.MockHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.bean.AbstractCDITest;
 import org.switchyard.metadata.BaseExchangeContract;
-import org.switchyard.internal.ServiceDomains;
 import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
 
@@ -44,7 +43,7 @@ public class BeanProviderTest extends AbstractCDITest {
     @Test
     public void invokeOneWayProviderWithInOnly() {
         
-        ServiceDomain domain = ServiceDomains.getDomain();
+        ServiceDomain domain = getServiceDomain();
         org.switchyard.Service service = domain.getService(new QName("OneWay"));
         Exchange exchange = domain.createExchange(service, new BaseExchangeContract(new InOnlyOperation("oneWay")));
 
@@ -57,7 +56,7 @@ public class BeanProviderTest extends AbstractCDITest {
     public void invokeRequestResponseProviderWithInOut() {
         final String ECHO_MSG = "hello";
         
-        ServiceDomain domain = ServiceDomains.getDomain();
+        ServiceDomain domain = getServiceDomain();
 
         MockHandler responseConsumer = new MockHandler();
         org.switchyard.Service service = domain.getService(new QName("RequestResponse"));

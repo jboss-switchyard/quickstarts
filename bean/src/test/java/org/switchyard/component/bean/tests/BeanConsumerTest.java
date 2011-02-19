@@ -33,7 +33,6 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.component.bean.AbstractCDITest;
 import org.switchyard.component.bean.BeanComponentException;
 import org.switchyard.metadata.BaseExchangeContract;
-import org.switchyard.internal.ServiceDomains;
 import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
 
@@ -44,7 +43,7 @@ public class BeanConsumerTest extends AbstractCDITest {
 
     @Test
     public void consumeInOnlyServiceFromBean() {
-        ServiceDomain domain = ServiceDomains.getDomain();
+        ServiceDomain domain = getServiceDomain();
 
         org.switchyard.Service service = domain.getService(new QName("ConsumerBean"));
         Exchange exchange = domain.createExchange(service, new BaseExchangeContract(new InOnlyOperation("consumeInOnlyService")));
@@ -57,7 +56,7 @@ public class BeanConsumerTest extends AbstractCDITest {
 
     @Test
     public void consumeInOutServiceFromBean() {
-        ServiceDomain domain = ServiceDomains.getDomain();
+        ServiceDomain domain = getServiceDomain();
 
         MockHandler responseConsumer = new MockHandler();
         org.switchyard.Service service = domain.getService(new QName("ConsumerBean"));
@@ -73,7 +72,7 @@ public class BeanConsumerTest extends AbstractCDITest {
 
     @Test
     public void consumeInOnlyServiceFromBean_Fault_invalid_opertion() {
-        ServiceDomain domain = ServiceDomains.getDomain();
+        ServiceDomain domain = getServiceDomain();
 
         MockHandler responseConsumer = new MockHandler();
         org.switchyard.Service service = domain.getService(new QName("ConsumerBean"));
@@ -92,7 +91,7 @@ public class BeanConsumerTest extends AbstractCDITest {
 
     @Test
     public void consumeInOnlyServiceFromBean_Fault_service_exception() {
-        ServiceDomain domain = ServiceDomains.getDomain();
+        ServiceDomain domain = getServiceDomain();
 
         MockHandler responseConsumer = new MockHandler();
         org.switchyard.Service service = domain.getService(new QName("ConsumerBean"));

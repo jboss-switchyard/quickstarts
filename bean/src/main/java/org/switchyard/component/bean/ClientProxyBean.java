@@ -47,9 +47,7 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
-import org.switchyard.ServiceDomain;
 import org.switchyard.metadata.BaseExchangeContract;
-import org.switchyard.internal.ServiceDomains;
 import org.switchyard.metadata.ServiceOperation;
 
 /**
@@ -66,6 +64,11 @@ public class ClientProxyBean implements Bean {
      * The target Service {@link QName}.
      */
     private QName _serviceQName;
+
+    /**
+     * Target service reference.
+     */
+    private org.switchyard.Service _service;
 
     /**
      * The bean proxy Interface {@link Class} of the bean being proxied.  This class
@@ -120,6 +123,14 @@ public class ClientProxyBean implements Bean {
     }
 
     /**
+     * Set the service reference for the target Service.
+     * @param service The target service.
+     */
+    public void setService(org.switchyard.Service service) {
+        this._service = service;
+    }
+
+    /**
      * Obtains the {@linkplain javax.enterprise.inject bean types} of the bean.
      *
      * @return the {@linkplain javax.enterprise.inject bean types}
@@ -146,7 +157,6 @@ public class ClientProxyBean implements Bean {
      * @return the {@linkplain javax.enterprise.inject EL name}
      */
     public String getName() {
-        // TODO: Can we take this from the Bean instance associated with the actual service... think that may cause a duplicate bean name bean resolution issue
         return null;
     }
 
@@ -250,11 +260,9 @@ public class ClientProxyBean implements Bean {
     private class ClientProxyInvocationHandler implements InvocationHandler {
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            ServiceDomain domain = ServiceDomains.getDomain();
-            org.switchyard.Service service = domain.getService(_serviceQName);
-
-            if (service == null) {
-                throw new BeanComponentException("Service not registered: " + _serviceQName);
+            if (_service == null) {
+                throw new BeanComponentException("A service reference to service '" + _serviceQName + "' is not bound into "
+                        + "this client proxy instance.  A reference configuration to the service may be required in the application configuration.");
             }
 
             if (method.getReturnType() != null && !Void.TYPE.isAssignableFrom(method.getReturnType())) {
@@ -271,7 +279,7 @@ public class ClientProxyBean implements Bean {
                 };
 
 
-                Exchange exchangeIn = createExchange(domain, service, method, responseExchangeHandler);
+                Exchange exchangeIn = createExchange(_service, method, responseExchangeHandler);
                 exchangeIn.send(exchangeIn.createMessage().setContent(args));
 
                 Exchange exchangeOut = responseQueue.take();
@@ -296,14 +304,14 @@ public class ClientProxyBean implements Bean {
                     }
                 }
             } else {
-                Exchange exchange = createExchange(domain, service, method, null);
+                Exchange exchange = createExchange(_service, method, null);
                 exchange.send(exchange.createMessage().setContent(args));
 
                 return null;
             }
         }
 
-        private Exchange createExchange(ServiceDomain domain, org.switchyard.Service service, Method method, ExchangeHandler responseExchangeHandler) throws BeanComponentException {
+        private Exchange createExchange(org.switchyard.Service service, Method method, ExchangeHandler responseExchangeHandler) throws BeanComponentException {
             String operationName = method.getName();
             ServiceOperation operation = service.getInterface().getOperation(operationName);
 
@@ -311,7 +319,7 @@ public class ClientProxyBean implements Bean {
                 throw new BeanComponentException("Bean Component invocation failure.  Operation '" + operationName + "' is not defined on Service '" + _serviceQName + "'.");
             }
 
-            return domain.createExchange(service, new BaseExchangeContract(operation), responseExchangeHandler);
+            return service.createExchange(new BaseExchangeContract(operation), responseExchangeHandler);
         }
 
     }

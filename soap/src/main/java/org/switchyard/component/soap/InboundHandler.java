@@ -46,11 +46,9 @@ import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Service;
-import org.switchyard.ServiceDomain;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
-import org.switchyard.internal.ServiceDomains;
 import org.switchyard.internal.transform.TransformSequence;
 import org.switchyard.metadata.BaseExchangeContract;
 
@@ -71,7 +69,6 @@ public class InboundHandler extends BaseHandler {
 
     private MessageComposer _composer;
     private MessageDecomposer _decomposer;
-    private ServiceDomain _domain;
     private Service _service;
     private long _waitTimeout = DEFAULT_TIMEOUT; // default of 15 seconds
     private Endpoint _endpoint;
@@ -110,16 +107,16 @@ public class InboundHandler extends BaseHandler {
         if (_decomposer == null) {
             _decomposer = new DefaultMessageDecomposer();
         }
-
-        _domain = ServiceDomains.getDomain();
     }
 
     /**
      * Start lifecycle.
+     * @param service The Service instance.
      * @throws WebServicePublishException If unable to publish the endpoint
      */
-    public void start() throws WebServicePublishException {
+    public void start(Service service) throws WebServicePublishException {
         try {
+            _service = service;
             PortName portName = _config.getPort();
             javax.wsdl.Service wsdlService = WSDLUtil.getService(_config.getWsdl(), portName);
             _wsdlPort = WSDLUtil.getPort(wsdlService, portName);
@@ -131,13 +128,7 @@ public class InboundHandler extends BaseHandler {
             // Hook the handler
             wsProvider.setConsumer(this);
             
-            // lookup the SwitchYard service
-            _service = _domain.getService(_config.getServiceName());
-            if (_service == null) {
-                throw new WebServicePublishException(
-                        "Target service not registered: " + _config.getServiceName());
-            }
-            _contracts.putAll(WSDLUtil.getContracts(_wsdlPort,_service));
+            _contracts.putAll(WSDLUtil.getContracts(_wsdlPort, service));
 
             _endpoint = Endpoint.create(wsProvider);
             List<Source> metadata = new ArrayList<Source>();
@@ -234,7 +225,7 @@ public class InboundHandler extends BaseHandler {
         try {
             Exchange exchange;
 
-            exchange = _domain.createExchange(_service, exchangeContract, this);
+            exchange = _service.createExchange(exchangeContract, this);
             Message message = _composer.compose(soapMessage, exchange);
 
             if (!assertComposedMessageOK(message, operation, oneWay)) {

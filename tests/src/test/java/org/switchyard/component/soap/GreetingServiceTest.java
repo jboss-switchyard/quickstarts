@@ -27,9 +27,12 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.environment.se.events.ContainerInitialized;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.switchyard.Service;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
+import org.switchyard.component.soap.util.AbstractCDITest;
 import org.switchyard.component.soap.util.StreamUtil;
 
 import javax.xml.namespace.QName;
@@ -39,7 +42,7 @@ import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GreetingServiceTest {
+public class GreetingServiceTest extends AbstractCDITest {
 
     private static final QName GREETING_SERVICE_NAME = new QName("GreetingService");
 
@@ -122,8 +125,9 @@ public class GreetingServiceTest {
     public void test(String request, String expectedResponse, boolean dumpResponse) throws Exception {
 
         // Launch the SOAP Handler...
+        Service service = getServiceDomain().getService(new QName("GreetingService"));
         InboundHandler inboundHandler = new InboundHandler(config);
-        inboundHandler.start();
+        inboundHandler.start(service);
 
         try {
             SOAPMessage soapRequest = StreamUtil.readSOAP(request);
@@ -136,6 +140,8 @@ public class GreetingServiceTest {
             if(dumpResponse) {
                 System.out.println(actualResponse);
             }
+
+//            Assert.assertEquals(expectedResponse, actualResponse);
 
             XMLUnit.setIgnoreWhitespace(true);
             XMLAssert.assertXMLEqual(expectedResponse, actualResponse);
