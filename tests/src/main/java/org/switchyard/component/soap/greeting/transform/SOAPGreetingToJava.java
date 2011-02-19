@@ -53,7 +53,6 @@ public class SOAPGreetingToJava<F extends Node, T extends Greeting>  extends Bas
         try {
             return _binder.fromXML(new DOMSource(from), Greeting.class);
         } catch (IOException e) {
-            // TODO: Need an exception type here !!
             throw new IllegalStateException("Transformation from '" + getFrom() + "' to '" + getTo() + "' failed.", e);
         }
     }
@@ -65,8 +64,6 @@ public class SOAPGreetingToJava<F extends Node, T extends Greeting>  extends Bas
 
     @Override
     public String getTo() {
-        // TODO: How about just "java:/org.switchyard.component.soap.greeting.Greeting" ?
-        // What we currently have coming from the JavaService class looks more like a sig for the operation itself Vs just the operation payload, no?
         return "java:/org.switchyard.component.soap.greeting.GreetingService/greet/org.switchyard.component.soap.greeting.Greeting";
     }
 }

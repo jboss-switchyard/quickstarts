@@ -54,8 +54,6 @@ public class JavaReplyToSOAP<F extends Reply, T extends String>  extends BaseTra
 
     @Override
     public String getFrom() {
-        // TODO: How about just "java:/org.switchyard.component.soap.greeting.Reply" ?
-        // What we currently have coming from the JavaService class looks more like a sig for the operation itself Vs just the operation payload, no?
         return "java:/org.switchyard.component.soap.greeting.GreetingService/greet/org.switchyard.component.soap.greeting.Reply";
     }
 

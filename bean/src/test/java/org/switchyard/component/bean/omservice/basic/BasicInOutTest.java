@@ -29,7 +29,6 @@ import org.switchyard.component.bean.AbstractCDITest;
 import org.switchyard.component.bean.omservice.model.OrderRequest;
 import org.switchyard.component.bean.omservice.model.OrderResponse;
 import org.switchyard.metadata.BaseExchangeContract;
-import org.switchyard.internal.ServiceDomains;
 import org.switchyard.metadata.InOutOperation;
 
 import javax.xml.namespace.QName;
@@ -41,7 +40,7 @@ public class BasicInOutTest extends AbstractCDITest {
 
     @Test
     public void test() {
-        ServiceDomain domain = ServiceDomains.getDomain();
+        ServiceDomain domain = getServiceDomain();
 
         // Consume the OM model...
         MockHandler responseConsumer = new MockHandler();

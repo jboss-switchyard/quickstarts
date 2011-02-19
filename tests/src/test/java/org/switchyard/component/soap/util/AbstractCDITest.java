@@ -20,12 +20,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard.component.bean;
+package org.switchyard.component.soap.util;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.switchyard.ServiceDomain;
+
+// TODO: Only temp... will be generalizing all of this test code in the "test" module.
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>

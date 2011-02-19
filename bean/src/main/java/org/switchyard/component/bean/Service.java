@@ -41,11 +41,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface Service {
 
     /**
-     * Get the list/array of Service Interfaces.
-     * <p/>
-     * This is the list/array of Interfaces through which the Service implementation
-     * ca be proxied to via a {@link org.switchyard.component.bean.Reference} injection
-     * point.
+     * Get the Service Interface for the Service.
      */
     Class<?>[] value() default { };
 }

@@ -62,11 +62,16 @@ public class BeanServiceMetadata {
     }
 
     /**
+     * Get the Service Interface runtime class.
+     * @return The Service Interface runtime class.
+     */
+    public Class<? extends Object> getServiceClass() {
+        return _serviceClass;
+    }
+
+    /**
      * Get the Bean Service operation {@link Invocation} for the specified
      * {@link Exchange}.
-     * <p/>
-     * Uses the {@link org.switchyard.metadata.ServiceOperation.Name#get(org.switchyard.Exchange)} method to extract
-     * the service operation information from the {@link Exchange}.
      *
      * @param exchange The Exchange instance.
      * @return The operation {@link Invocation} instance.

@@ -38,6 +38,7 @@ public class SOAPGateway {
 
     private InboundHandler _wsProvider;
     private OutboundHandler _wsConsumer;
+    private SOAPBindingModel _config;
     private ServiceDomain _domain;
 
     /**
@@ -52,6 +53,7 @@ public class SOAPGateway {
      */
     public void init(final SOAPBindingModel config) {
         _domain = ServiceDomains.getDomain();
+        _config = config;
         if (config.getPublishAsWS()) {
             // Consume the SwitchYard service
             _wsProvider = new InboundHandler(config);
@@ -68,7 +70,7 @@ public class SOAPGateway {
     public void start() {
         if (_wsProvider != null) {
             try {
-                _wsProvider.start();
+                _wsProvider.start(_domain.getService(_config.getServiceName()));
             } catch (Exception e) {
                 LOGGER.error(e);
                 e.printStackTrace();
