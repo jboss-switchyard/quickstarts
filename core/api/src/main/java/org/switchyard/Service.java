@@ -22,6 +22,7 @@
 
 package org.switchyard;
 
+import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceInterface;
 
 import javax.xml.namespace.QName;
@@ -46,4 +47,20 @@ public interface Service {
      * routed to the registered ExchangeHandler.
      */
     void unregister();
+    /**
+     * Creates a new Exchange to invoke this service with the specified exchange
+     * pattern.
+     * @param contract the exchange contract to use
+     * @return a new Exchange instance
+     */
+    Exchange createExchange(ExchangeContract contract);
+    /**
+     * Creates a new Exchange to invoke this service with the specified exchange
+     * pattern.  The supplied ExchangeHandler is used to handle any faults or
+     * reply messages that are generated as part of the message exchange.
+     * @param contract the exchange contract to use
+     * @param handler used to process response and fault messages
+     * @return a new Exchange instance
+     */
+    Exchange createExchange(ExchangeContract contract, ExchangeHandler handler);
 }

@@ -24,9 +24,12 @@ package org.switchyard.internal;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.Exchange;
+import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerChain;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.spi.Endpoint;
 import org.switchyard.spi.ServiceRegistry;
@@ -63,6 +66,16 @@ public class ServiceRegistration implements Service {
     public void unregister() {
         _registry.unregisterService(this);
     }
+
+    @Override
+     public Exchange createExchange(ExchangeContract contract) {
+         return _domain.createExchange(this, contract);
+     }
+
+     @Override
+     public Exchange createExchange(ExchangeContract contract, ExchangeHandler handler) {
+         return _domain.createExchange(this, contract, handler);
+     }
 
     /**
      * Get the endpoint .

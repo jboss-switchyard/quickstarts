@@ -39,7 +39,7 @@ import org.switchyard.deploy.internal.Deployment;
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 @ApplicationScoped
-public class SwitchYardCDIBootstrapper implements Extension {
+public class SwitchYardCDIDeployer implements Extension {
 
     private static final String DESCRIPTOR = "META-INF/switchyard.xml";
     private Deployment _deployment;
