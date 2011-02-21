@@ -19,7 +19,8 @@ MA  02110-1301, USA.
 -->
 <sca:composite xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
            targetNamespace="http://www.jboss.org/switchyard/example/m1app"
-           xmlns:soap="urn:switchyard:soap-binding:1.0">
+           xmlns:soap="http://www.switchyard.org/component/soap/config/model/v1"
+           name="m1app">
 
     <sca:service name="SampleSOAPService" promote="publish-as-ws">
        <soap:binding.soap>

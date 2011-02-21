@@ -139,6 +139,14 @@ public class SOAPGatewayTest {
         SOAPProvider provider = new SOAPProvider();
 
         CompositeModel composite = (CompositeModel)_res.pull("/HelloSwitchYard.xml");
+        /*
+        Validation v = composite.validateModel();
+        if (!v.isValid()) {
+            System.err.println("CompositeModel not valid: " + v.getMessage());
+            v.getCause().printStackTrace();
+        }
+        */
+
         CompositeServiceModel compositeService = composite.getServices().get(0);
         SOAPBindingModel config = (SOAPBindingModel)compositeService.getBindings().get(0);
 

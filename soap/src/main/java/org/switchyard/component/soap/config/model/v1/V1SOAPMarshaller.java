@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.soap.config;
+package org.switchyard.component.soap.config.model.v1;
 
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.config.Configuration;
@@ -30,14 +30,14 @@ import org.switchyard.config.model.composite.BindingModel;
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
-public class SOAPMarshaller extends BaseMarshaller {
+public class V1SOAPMarshaller extends BaseMarshaller {
 
     /**
      * Construct a SOAP Model Marshaller with help of a Descriptor.
      * 
      * @param desc the Descriptor 
      */
-    public SOAPMarshaller(Descriptor desc) {
+    public V1SOAPMarshaller(Descriptor desc) {
         super(desc);
     }
 
@@ -53,6 +53,6 @@ public class SOAPMarshaller extends BaseMarshaller {
         if (config.getName().startsWith(BindingModel.BINDING)) {
             return new SOAPBindingModel(config, desc);
         }
-        return super.read(config);
+        return null;
     }
 }
