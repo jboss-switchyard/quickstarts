@@ -34,6 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
+import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.MockHandler;
 import org.switchyard.Service;
@@ -55,8 +56,7 @@ public class TransformationTest {
     public void setUp() throws Exception {
         _domain = ServiceDomains.getDomain();
     }
-    
-    
+
     /* Tests to Add :
      * - test failed transformation
      * - test transform reply 
@@ -83,15 +83,58 @@ public class TransformationTest {
             }
         };
         _domain.getTransformerRegistry().addTransformer(helloTransform);
-        
+
+        try {
+            // Provide the service
+            MockHandler provider = new MockHandler();
+            Service service = _domain.registerService(serviceName, provider);
+
+            // Create the exchange and invoke the service
+            Exchange exchange = _domain.createExchange(
+                    service, ExchangeContract.IN_ONLY);
+
+            // Set the from and to message names.  NOTE: setting to the to message
+            // name will not be necessary once the service definition is available
+            // at runtime
+            Message msg = exchange.createMessage().setContent(input);
+            Context msgCtx = msg.getContext();
+            TransformSequence.
+                    from(inType).
+                    to(expectedDestType).
+                    associateWith(msgCtx);
+
+            msg.setContent(input);
+            exchange.send(msg);
+
+            // wait for message and verify transformation
+            provider.waitForOKMessage();
+            Assert.assertEquals(provider.getMessages().poll().getMessage().getContent(), output);
+        } finally {
+            // Must remove this transformer, otherwise it's there for the following test... will be
+            // fixed once we get rid of the static service domain.
+            _domain.getTransformerRegistry().removeTransformer(helloTransform);
+        }
+    }
+
+    /**
+     * Test that the TransformHandler throws an exception if transformations are not applied.
+     */
+    @Test
+    public void testTransformationsNotApplied() throws Exception {
+        final QName serviceName = new QName("nameTransform");
+        final String inType = "fromA";
+        final String expectedDestType = "toB";
+        final String input = "Hello";
+
         // Provide the service
         MockHandler provider = new MockHandler();
         Service service = _domain.registerService(serviceName, provider);
-        
+
         // Create the exchange and invoke the service
+        MockHandler invokerHandler = new MockHandler();
         Exchange exchange = _domain.createExchange(
-                service, ExchangeContract.IN_ONLY);
-        
+                service, ExchangeContract.IN_ONLY, invokerHandler);
+
         // Set the from and to message names.  NOTE: setting to the to message
         // name will not be necessary once the service definition is available
         // at runtime
@@ -103,10 +146,12 @@ public class TransformationTest {
                 associateWith(msgCtx);
 
         msg.setContent(input);
+
         exchange.send(msg);
 
-        // wait for message and verify transformation
-        provider.waitForOKMessage();
-        Assert.assertEquals(provider.getMessages().poll().getMessage().getContent(), output);
+        invokerHandler.waitForFaultMessage();
+        Object content = invokerHandler.getFaults().poll().getMessage().getContent();
+        Assert.assertTrue(content instanceof HandlerException);
+        Assert.assertEquals("Transformations not applied.  Required payload type of 'toB'.  Actual payload type is 'fromA'.  You must define and register a Transformer to transform between these types.", ((HandlerException)content).getMessage());
     }
 }

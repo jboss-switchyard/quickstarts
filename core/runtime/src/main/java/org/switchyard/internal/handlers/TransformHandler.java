@@ -25,6 +25,7 @@ package org.switchyard.internal.handlers;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import org.apache.log4j.Logger;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
@@ -43,6 +44,8 @@ import org.switchyard.transform.TransformerRegistry;
  *
  */
 public class TransformHandler extends BaseHandler {
+
+    private static final Logger _logger = Logger.getLogger(TransformHandler.class);
 
     private TransformerRegistry _registry;
 
@@ -78,12 +81,26 @@ public class TransformHandler extends BaseHandler {
     public void handleMessage(Exchange exchange) throws HandlerException {
         // Apply transforms to the message...
         TransformSequence.applySequence(exchange, _registry);
+        if (!TransformSequence.assertTransformsApplied(exchange)) {
+            String actualPayloadType = TransformSequence.getCurrentMessageType(exchange);
+            String expectedPayloadType = TransformSequence.getTargetMessageType(exchange);
+
+            throw new HandlerException("Transformations not applied.  Required payload type of '" + expectedPayloadType + "'.  Actual payload type is '" + actualPayloadType + "'.  You must define and register a Transformer to transform between these types.");
+        }
     }
 
     @Override
     public void handleFault(Exchange exchange) {
         // Apply transforms to the fault...
         TransformSequence.applySequence(exchange, _registry);
+        if (!TransformSequence.assertTransformsApplied(exchange)) {
+            String actualPayloadType = TransformSequence.getCurrentMessageType(exchange);
+            String expectedPayloadType = TransformSequence.getTargetMessageType(exchange);
+
+            if(_logger.isDebugEnabled()) {
+                _logger.debug("Transformations not applied.  Required payload type of '" + expectedPayloadType + "'.  Actual payload type is '" + actualPayloadType + "'.  You must define and register a Transformer to transform between these types.");
+            }
+        }
     }
 }
 
