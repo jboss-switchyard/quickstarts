@@ -44,7 +44,7 @@ public class V1ImplementationModel extends BaseTypedModel implements ComponentIm
 
     @Override
     public ComponentModel getComponent() {
-        return (ComponentModel)getParentModel();
+        return (ComponentModel)getModelParent();
     }
 
     @Override

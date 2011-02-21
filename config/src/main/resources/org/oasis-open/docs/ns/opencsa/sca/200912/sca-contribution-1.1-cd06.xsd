@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright(C) OASIS(R) 2005,2010. All Rights Reserved. 
+     OASIS trademark, IPR and other policies apply.  -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+   xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
+   targetNamespace="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
+   elementFormDefault="qualified">
+
+   <include schemaLocation="sca-core-1.1-cd06.xsd"/>
+
+   <!-- Contribution -->
+   <element name="contribution" type="sca:ContributionType"/>
+   <complexType name="ContributionType">
+      <complexContent>
+         <extension base="sca:CommonExtensionBase">
+            <sequence>
+               <element name="deployable" type="sca:DeployableType" 
+                        minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="sca:importBase" minOccurs="0" 
+                        maxOccurs="unbounded"/>
+               <element ref="sca:exportBase" minOccurs="0" 
+                        maxOccurs="unbounded"/>
+               <element ref="sca:extensions" minOccurs="0" maxOccurs="1" />
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+
+   <!-- Deployable -->
+   <complexType name="DeployableType">
+      <complexContent>
+         <extension base="sca:CommonExtensionBase">
+            <sequence>
+               <any namespace="##other" processContents="lax" minOccurs="0" 
+                    maxOccurs="unbounded"/>
+            </sequence>
+            <attribute name="composite" type="QName" use="required"/>
+         </extension>
+      </complexContent>
+   </complexType>
+
+   <!-- Import -->
+   <element name="importBase" type="sca:Import" abstract="true" />
+   <complexType name="Import" abstract="true">
+      <complexContent>
+         <extension base="sca:CommonExtensionBase">
+            <sequence>
+               <any namespace="##other" processContents="lax" minOccurs="0" 
+                    maxOccurs="unbounded"/>
+            </sequence>
+         </extension>
+      </complexContent>   
+   </complexType>
+   
+   <element name="import" type="sca:ImportType" 
+            substitutionGroup="sca:importBase"/>
+   <complexType name="ImportType">
+      <complexContent>
+         <extension base="sca:Import">
+            <attribute name="namespace" type="string" use="required"/>
+            <attribute name="location" type="anyURI" use="optional"/>
+         </extension>
+      </complexContent>
+   </complexType>
+
+   <!-- Export -->
+   <element name="exportBase" type="sca:Export" abstract="true" />
+   <complexType name="Export" abstract="true">
+      <complexContent>
+         <extension base="sca:CommonExtensionBase">
+            <sequence>
+               <any namespace="##other" processContents="lax" minOccurs="0" 
+                    maxOccurs="unbounded"/>
+            </sequence>
+         </extension>
+      </complexContent>      
+   </complexType>
+   
+   <element name="export" type="sca:ExportType" 
+            substitutionGroup="sca:exportBase"/>
+   <complexType name="ExportType">
+      <complexContent>
+         <extension base="sca:Export">
+            <attribute name="namespace" type="string" use="required"/>
+         </extension>
+      </complexContent>
+   </complexType>
+
+</schema>

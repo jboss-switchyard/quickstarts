@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
 
 /**
  * Configuration.
@@ -115,6 +116,8 @@ public interface Configuration {
     public Configuration copy();
 
     public Configuration normalize();
+
+    public Source getSource();
 
     public void write(OutputStream out) throws IOException;
 

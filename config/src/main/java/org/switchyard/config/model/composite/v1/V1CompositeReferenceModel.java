@@ -60,7 +60,7 @@ public class V1CompositeReferenceModel extends BaseNamedModel implements Composi
 
     @Override
     public CompositeModel getComposite() {
-        return (CompositeModel)getParentModel();
+        return (CompositeModel)getModelParent();
     }
 
     @Override

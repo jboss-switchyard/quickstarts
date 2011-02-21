@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -450,6 +451,11 @@ public class DOMConfiguration extends BaseConfiguration {
     public Configuration normalize() {
         _element.normalize();
         return this;
+    }
+
+    @Override
+    public Source getSource() {
+        return new DOMSource(_element);
     }
 
     @Override

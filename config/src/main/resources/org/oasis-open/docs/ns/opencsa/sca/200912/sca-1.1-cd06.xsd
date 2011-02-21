@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright(C) OASIS(R) 2005,2010. All Rights Reserved. 
+     OASIS trademark, IPR and other policies apply.  -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+   targetNamespace="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
+   xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912">
+   
+   <include schemaLocation="sca-core-1.1-cd06.xsd"/>
+
+   <include schemaLocation="sca-interface-java-1.1-csd05.xsd"/>
+   <include schemaLocation="sca-interface-wsdl-1.1-cd06.xsd"/>
+   <include schemaLocation="sca-interface-cpp-1.1-cd06.xsd"/>
+   <include schemaLocation="sca-interface-c-1.1-cd06.xsd"/>
+
+   <include schemaLocation="sca-implementation-java-1.1-csd03.xsd"/>
+   <include schemaLocation="sca-implementation-composite-1.1-cd06.xsd"/>
+   <include schemaLocation="sca-implementation-cpp-1.1-cd06.xsd"/>
+   <include schemaLocation="sca-implementation-c-1.1-cd06.xsd"/>
+   <include schemaLocation="sca-implementation-bpel-1.1-cd03.xsd"/>
+   <include schemaLocation="sca-implementation-spring-1.1-csd01.xsd"/>
+
+   <include schemaLocation="sca-binding-ws-1.1-cd04-rev2.xsd"/>
+   <include schemaLocation="sca-binding-ws-callback-1.1-cd04-rev1.xsd"/>
+   <include schemaLocation="sca-binding-jms-1.1-csd05.xsd"/>
+   <include schemaLocation="sca-binding-jca-1.1-cd04-rev2.xsd"/>   
+   <include schemaLocation="sca-binding-sca-1.1-cd06.xsd"/>
+   <include schemaLocation="sca-binding-ejb-1.1-cd02-rev2.xsd"/>
+
+   <include schemaLocation="sca-definitions-1.1-cd06.xsd"/>
+   <include schemaLocation="sca-policy-1.1-cd04.xsd"/>
+
+   <include schemaLocation="sca-contribution-1.1-cd06.xsd"/>
+   <include schemaLocation="sca-contribution-cpp-1.1-cd06.xsd"/>
+   <include schemaLocation="sca-contribution-c-1.1-cd06.xsd"/>
+   <include schemaLocation="sca-contribution-java-1.1-csd03.xsd"/>
+   
+</schema>

@@ -75,7 +75,7 @@ public class CompositeModelTests {
         XMLUnit.setIgnoreWhitespace(true);
         CompositeModel complete_composite = (CompositeModel)_res.pull(COMPLETE_XML);
         Diff diff = XMLUnit.compareXML(complete_composite.toString(), merged_composite.toString());
-        Assert.assertTrue(diff.identical());
+        Assert.assertTrue(diff.toString(), diff.identical());
     }
 
     @Test
@@ -166,7 +166,7 @@ public class CompositeModelTests {
         String new_xml = composite.toString();
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(old_xml, new_xml);
-        Assert.assertTrue(diff.identical());
+        Assert.assertTrue(diff.toString(), diff.identical());
     }
 
     @Test
@@ -185,6 +185,12 @@ public class CompositeModelTests {
         CompositeModel composite_2 = service_2.getComposite();
         Assert.assertEquals(service_1, service_2);
         Assert.assertEquals(composite_1, composite_2);
+    }
+
+    @Test
+    public void testValidation() throws Exception {
+        Model model = _res.pull(COMPLETE_XML);
+        Assert.assertTrue(model.isModelValid());
     }
 
 }

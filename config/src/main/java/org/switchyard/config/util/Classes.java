@@ -48,6 +48,7 @@ public final class Classes {
         for (ClassLoader cl : loaders) {
             try {
                 c = Class.forName(name, true, cl);
+                break;
             } catch (Throwable t) {
                 // ignoring, but to keep checkstyle happy ("Must have at least one statement."):
                 t.getMessage();
@@ -86,7 +87,10 @@ public final class Classes {
             for (ClassLoader cl : getClassLoaders(loader)) {
                 Enumeration<URL> e = cl.getResources(path);
                 while (e.hasMoreElements()) {
-                    urls.add(e.nextElement());
+                    URL url = e.nextElement();
+                    if (!urls.contains(url)) {
+                        urls.add(url);
+                    }
                 }
             }
         }

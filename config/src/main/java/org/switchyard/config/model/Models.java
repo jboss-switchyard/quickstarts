@@ -96,7 +96,7 @@ public final class Models {
         Configuration from_model_config = fromModel.getModelConfiguration();
         Configuration to_model_config = toModel.getModelConfiguration();
         Configuration merged_model_config = Configurations.merge(from_model_config, to_model_config, fromOverridesTo);
-        Model merged_model = ModelResource.getMarshaller(toModel).read(merged_model_config);
+        Model merged_model = Descriptor.getMarshaller(toModel).read(merged_model_config);
         return merged_model;
     }
 

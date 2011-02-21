@@ -44,7 +44,7 @@ public class V1BindingModel extends BaseTypedModel implements BindingModel {
 
     @Override
     public CompositeServiceModel getService() {
-        return (CompositeServiceModel)getParentModel();
+        return (CompositeServiceModel)getModelParent();
     }
 
 }

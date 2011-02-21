@@ -40,7 +40,7 @@ public class V1ComponentReferenceInterfaceModel extends V1BaseInterfaceModel imp
 
     @Override
     public ComponentReferenceModel getReference() {
-        return (ComponentReferenceModel)getParentModel();
+        return (ComponentReferenceModel)getModelParent();
     }
 
 }

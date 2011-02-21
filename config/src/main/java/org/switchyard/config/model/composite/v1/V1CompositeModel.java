@@ -73,7 +73,7 @@ public class V1CompositeModel extends BaseNamedModel implements CompositeModel {
     }
 
     public SwitchYardModel getSwitchYard() {
-        return (SwitchYardModel)getParentModel();
+        return (SwitchYardModel)getModelParent();
     }
 
     @Override

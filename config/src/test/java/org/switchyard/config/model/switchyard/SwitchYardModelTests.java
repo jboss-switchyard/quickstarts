@@ -73,7 +73,7 @@ public class SwitchYardModelTests {
         XMLUnit.setIgnoreWhitespace(true);
         SwitchYardModel complete_switchyard = (SwitchYardModel)_res.pull(COMPLETE_XML);
         Diff diff = XMLUnit.compareXML(complete_switchyard.toString(), merged_switchyard.toString());
-        Assert.assertTrue(diff.identical());
+        Assert.assertTrue(diff.toString(), diff.identical());
     }
 
     @Test
@@ -95,7 +95,13 @@ public class SwitchYardModelTests {
         String new_xml = switchyard.toString();
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(old_xml, new_xml);
-        Assert.assertTrue(diff.identical());
+        Assert.assertTrue(diff.toString(), diff.identical());
+    }
+
+    @Test
+    public void testValidation() throws Exception {
+        Model model = _res.pull(COMPLETE_XML);
+        Assert.assertTrue(model.isModelValid());
     }
 
 }

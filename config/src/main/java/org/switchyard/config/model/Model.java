@@ -36,9 +36,13 @@ public interface Model {
 
     public Descriptor getModelDescriptor();
 
-    public Model getParentModel();
+    public Model getModelParent();
 
     public List<Model> getModelChildren();
+
+    public Validation validateModel();
+
+    public boolean isModelValid();
 
     public void write(OutputStream out) throws IOException;
 

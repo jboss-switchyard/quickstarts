@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright(C) OASIS(R) 2005,2010. All Rights Reserved. 
+     OASIS trademark, IPR and other policies apply.  -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+        targetNamespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+        elementFormDefault="qualified">
+        
+    <include schemaLocation="sca-core-1.1-cd06.xsd"/>
+
+    <element name="binding.ejb" type="sca:EJBSessionBeanBinding" 
+             substitutionGroup="sca:binding" />
+
+    <simpleType name="VersionValue">
+        <restriction base="string">
+            <enumeration value="EJB2"/>
+            <enumeration value="EJB3"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="EJBSessionBeanBinding">
+        <complexContent>
+            <extension base="sca:Binding">
+                <sequence>
+                    <element ref="sca:extensions" minOccurs="0" maxOccurs="1" /> 
+                </sequence>
+                <attribute name="homeInterface" type="NCName" use="optional"/>
+                <attribute name="ejb-link-name" type="string" use="optional"/>
+                <attribute name="ejb-version" type="sca:VersionValue" use="optional" default="EJB3"/>
+            </extension>
+        </complexContent>
+    </complexType>
+</schema>

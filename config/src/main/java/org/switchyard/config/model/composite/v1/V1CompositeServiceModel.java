@@ -58,7 +58,7 @@ public class V1CompositeServiceModel extends BaseNamedModel implements Composite
 
     @Override
     public CompositeModel getComposite() {
-        return (CompositeModel)getParentModel();
+        return (CompositeModel)getModelParent();
     }
 
     @Override

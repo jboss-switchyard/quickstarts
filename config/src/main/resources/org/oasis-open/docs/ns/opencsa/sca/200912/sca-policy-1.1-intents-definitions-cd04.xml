@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright(C) OASIS(R) 2005,2010. All Rights Reserved. 
+     OASIS trademark, IPR and other policies apply.  -->
+<sca:definitions xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    targetNamespace="http://docs.oasis-open.org/ns/opencsa/sca/200912">
+                 
+	<!-- Security related intents -->                 
+        <sca:intent name="serverAuthentication" constrains="sca:binding"
+	    intentType="interaction">
+                <sca:description>
+			Communication through the binding requires that the 
+			server is authenticated by the client
+                </sca:description>
+                <sca:qualifier name="transport" default="true"/>
+                <sca:qualifier name="message"/>
+        </sca:intent>
+
+        <sca:intent name="clientAuthentication" constrains="sca:binding"
+	    intentType="interaction">
+                <sca:description>
+			Communication through the binding requires that the 
+			client is authenticated by the server
+                </sca:description>
+                <sca:qualifier name="transport" default="true"/>
+                <sca:qualifier name="message"/>
+        </sca:intent>
+
+        <sca:intent name="authentication" requires="sca:clientAuthentication">
+                <sca:description>
+			A convenience intent to help migration
+                </sca:description>
+        </sca:intent>
+
+        <sca:intent name="mutualAuthentication"
+                requires="sca:clientAuthentication sca:serverAuthentication">
+                <sca:description>
+			Communication through the binding requires that the
+			client and server to authenticate each other
+                </sca:description>
+        </sca:intent>
+
+        <sca:intent name="confidentiality" constrains="sca:binding"
+	    intentType="interaction">
+                <sca:description>
+			Communication through the binding prevents unauthorized 
+			users from reading the messages
+                </sca:description>
+                <sca:qualifier name="transport" default="true"/>
+                <sca:qualifier name="message"/>
+        </sca:intent>
+
+        <sca:intent name="integrity" constrains="sca:binding"
+	    intentType="interaction">
+                <sca:description>
+			Communication through the binding prevents tampering 
+			with the messages sent between the client and the service.
+                </sca:description>
+                <sca:qualifier name="transport" default="true"/>
+                <sca:qualifier name="message"/>
+        </sca:intent>
+
+        <sca:intent name="authorization" constrains="sca:implementation"
+	    intentType="implementation">
+                <sca:description>
+			Ensures clients are authorized to use services. 
+                </sca:description>
+        </sca:intent>
+
+	
+	<!-- Reliable messaging related intents -->    
+        <sca:intent name="atLeastOnce" constrains="sca:binding"
+	    intentType="interaction">
+                <sca:description>
+			This intent is used to indicate that a message sent
+			by a client is always delivered to the component.
+                </sca:description>
+        </sca:intent>
+
+        <sca:intent name="atMostOnce" constrains="sca:binding"
+	    intentType="interaction">
+                <sca:description>
+			This intent is used to indicate that a message that was 
+			successfully sent by a client is not delivered more than 
+			once to the component.
+                </sca:description>
+        </sca:intent>
+
+        <sca:intent name="exactlyOnce" requires="sca:atLeastOnce sca:atMostOnce"
+	    constrains="sca:binding" intentType="interaction">
+                <sca:description>
+			This profile intent is used to indicate that a message sent 
+			by a client is always delivered to the component. It also 
+			indicates that duplicate messages are not delivered to the 
+			component.
+            </sca:description>
+        </sca:intent>
+
+        <sca:intent name="ordered" constrains="sca:binding"
+	    intentType="interaction">
+                <sca:description>
+			This intent is used to indicate that all the messages are 
+			delivered to the component in the order they were sent by 
+			the client.
+                </sca:description>
+        </sca:intent>
+	
+	<!-- Transaction related intents -->
+        <sca:intent name="managedTransaction" excludes="sca:noManagedTransaction"
+	    mutuallyExclusive="true" constrains="sca:implementation" 
+	    intentType="implementation">
+                <sca:description>
+		A managed transaction environment is necessary in order to 
+		run the component. The specific type of managed transaction 
+		needed is not constrained.
+                </sca:description>
+                <sca:qualifier name="global" default="true">
+                        <sca:description>
+			For a component marked with managedTransaction.global 
+			a global transaction needs to be present before dispatching 
+			any method on the component - using any transaction 
+			propagated from the client or else beginning and completing 
+			a new transaction. 
+                        </sca:description>
+                </sca:qualifier>
+                <sca:qualifier name="local">
+                        <sca:description>
+			A component marked with managedTransaction.local needs to 
+			run within a local transaction containment (LTC) that 
+			is started and ended by the SCA runtime.
+                        </sca:description>
+                </sca:qualifier>
+        </sca:intent>
+
+        <sca:intent name="noManagedTransaction" excludes="sca:managedTransaction"
+	    constrains="sca:implementation" intentType="implementation">
+                <sca:description>
+		A component marked with noManagedTransaction needs to run without 
+		a managed transaction, under neither a global transaction nor 
+		an LTC. A transaction propagated to the hosting SCA runtime 
+		is not joined by the hosting runtime on behalf of a 
+		component marked with noManagedtransaction.
+                </sca:description>
+        </sca:intent>
+
+        <sca:intent name="transactedOneWay" excludes="sca:immediateOneWay"
+	    constrains="sca:binding" intentType="implementation">
+                <sca:description>
+		For a reference marked as transactedOneWay any OneWay invocation 
+		messages are transacted as part of a client global 
+		transaction.
+		For a service marked as transactedOneWay any OneWay invocation 
+		message are received from the transport binding in a 
+		transacted fashion, under the service’s global transaction.
+                </sca:description>
+        </sca:intent>
+
+        <sca:intent name="immediateOneWay" excludes="sca:transactedOneWay"
+	    constrains="sca:binding" intentType="implementation">
+                <sca:description>
+		For a reference indicates that any OneWay invocation messages 
+		are sent immediately regardless of any client transaction.
+		For a service indicates that any OneWay invocation is 
+		received immediately regardless of any target service 
+		transaction.
+                </sca:description>
+        </sca:intent>
+
+        <sca:intent name="propagatesTransaction" excludes="sca:suspendsTransaction"
+	    constrains="sca:binding" intentType="interaction">
+                <sca:description>
+		A service marked with propagatesTransaction is dispatched 
+		under any propagated (client) transaction and the service binding 
+		needs to be capable	of receiving a transaction context.
+		A reference marked with propagatesTransaction propagates any 
+		transaction context under which the client runs when the 
+		reference is used for a request-response interaction and the 
+		binding of a reference marked with propagatesTransaction needs to
+		be capable of propagating a transaction context. 
+                </sca:description>
+        </sca:intent>
+
+        <sca:intent name="suspendsTransaction" excludes="sca:propagatesTransaction"
+	    constrains="sca:binding" intentType="interaction">
+                <sca:description>
+		A service marked with suspendsTransaction is not dispatched 
+		under any propagated (client) transaction.
+		A reference marked with suspendsTransaction does not propagate 
+		any transaction context under which the client runs when the 
+		reference is used.
+                </sca:description>
+        </sca:intent>
+	
+        <sca:intent name="managedSharedTransaction"
+                requires="sca:managedTransaction.global sca:propagatesTransaction">
+                <sca:description>
+			Used to indicate that the component requires both the 
+			managedTransaction.global and the propagatesTransactions 
+			intents
+                </sca:description>
+        </sca:intent>
+	
+	<!-- Miscellaneous intents -->	
+	<sca:intent name="asyncInvocation" excludes="sca:propagatesTransaction"
+                constrains="sca:binding"	intentType="interaction">
+                <sca:description>
+			Indicates that request/response operations for the 
+			interface of this wire are "long running" and must be
+			treated as two separate message transmissions
+                </sca:description>
+    </sca:intent>
+	
+	<sca:intent name="EJB" constrains="sca:binding" 
+		intentType="interaction">
+                <sca:description>
+			Specifies that the EJB API is needed to communicate with
+			the service or reference.
+                </sca:description>
+    </sca:intent>
+    
+	<sca:intent name="SOAP" constrains="sca:binding" intentType="interaction" mutuallyExclusive="true">
+		<sca:description>
+		Specifies that the SOAP messaging model is used for delivering 
+		messages.
+                </sca:description>
+                <sca:qualifier name="v1_1" default="true"/>
+                <sca:qualifier name="v1_2"/>
+    </sca:intent>
+
+    <sca:intent name="JMS" constrains="sca:binding" intentType="interaction">
+                <sca:description>
+		Requires that the messages are delivered and received via the 
+		JMS API.
+                </sca:description>
+    </sca:intent>
+
+    <sca:intent name="noListener" constrains="sca:binding"
+	    intentType="interaction">
+                <sca:description>
+		This intent can only be used on a reference. Indicates that the 
+		client is not able to handle new inbound connections. The binding 
+		and callback binding are configured so that any 
+		response or callback comes either through a back channel of the 
+		connection from the client to the server or by having the client 
+		poll the server for messages. 
+                </sca:description>
+    </sca:intent>
+	
+</sca:definitions>

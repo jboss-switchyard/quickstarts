@@ -38,14 +38,15 @@ public class SOAPMarshaller extends BaseMarshaller {
     @Override
     public Model read(Configuration config) {
         Descriptor desc = getDescriptor();
-        if (config.getName().startsWith(BindingModel.BINDING)) {
+        String name = config.getName();
+        if (name.startsWith(BindingModel.BINDING)) {
             return new SOAPBindingModel(config, desc);
-        } else if (config.getName().equals(PortModel.PORT)) {
+        } else if (name.equals(PortModel.PORT)) {
             return new PortModel(config, desc);
-        } else if (config.getName().equals(WSDLModel.WSDL)) {
+        } else if (name.equals(WSDLModel.WSDL)) {
             return new WSDLModel(config, desc);
         }
-        return super.read(config);
+        return null;
     }
 
 }

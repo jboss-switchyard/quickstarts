@@ -27,11 +27,11 @@ import javax.xml.namespace.QName;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.composite.ComponentModel;
-import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
-import org.switchyard.config.model.composite.ComponentServiceModel;
+import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
+import org.switchyard.config.model.composite.ComponentServiceModel;
+import org.switchyard.config.model.composite.CompositeModel;
 
 /**
  * V1ComponentModel.
@@ -51,7 +51,6 @@ public class V1ComponentModel extends BaseNamedModel implements ComponentModel {
 
     public V1ComponentModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setModelChildrenOrder(ComponentImplementationModel.IMPLEMENTATION, ComponentServiceModel.SERVICE, ComponentReferenceModel.REFERENCE);
         for (Configuration service_config : config.getChildren(ComponentServiceModel.SERVICE)) {
             ComponentServiceModel service = (ComponentServiceModel)readModel(service_config);
             if (service != null) {
@@ -64,11 +63,12 @@ public class V1ComponentModel extends BaseNamedModel implements ComponentModel {
                 _references.add(reference);
             }
         }
+        setModelChildrenOrder(ComponentImplementationModel.IMPLEMENTATION, ComponentServiceModel.SERVICE, ComponentReferenceModel.REFERENCE);
     }
 
     @Override
     public CompositeModel getComposite() {
-        return (CompositeModel)getParentModel();
+        return (CompositeModel)getModelParent();
     }
 
     @Override

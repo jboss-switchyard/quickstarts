@@ -48,7 +48,7 @@ public class V1ComponentServiceModel extends BaseNamedModel implements Component
 
     @Override
     public ComponentModel getComponent() {
-        return (ComponentModel)getParentModel();
+        return (ComponentModel)getModelParent();
     }
 
     @Override

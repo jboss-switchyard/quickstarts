@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--
+		Copyright(C) OASIS(R) 2007,2010. All Rights Reserved. OASIS trademark,
+		IPR and other policies apply.
+	-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+	xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+	elementFormDefault="qualified">
+
+	<include schemaLocation="sca-core-1.1-cd06.xsd" />
+
+	<element name="implementation.c" type="sca:CImplementation"
+		substitutionGroup="sca:implementation" />
+
+	<complexType name="CImplementation">
+		<complexContent>
+			<extension base="sca:Implementation">
+				<sequence>
+					<element name="operation" type="sca:CImplementationFunction"
+						minOccurs="0" maxOccurs="unbounded" />
+					<any namespace="##other" processContents="lax" minOccurs="0"
+						maxOccurs="unbounded" />
+				</sequence>
+				<attribute name="module" type="NCName" use="required" />
+				<attribute name="path" type="string" use="optional" />
+				<attribute name="library" type="boolean" use="optional" />
+				<attribute name="componentType" type="string" use="required" />
+				<attribute name="eagerInit" type="boolean" use="optional" />
+				<attribute name="init" type="boolean" use="optional" />
+				<attribute name="destoy" type="boolean" use="optional" />
+				<attribute name="allowsPassByReference" type="boolean"
+					use="optional" />
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="CImplementationFunction">
+		<sequence>
+			<choice minOccurs="0" maxOccurs="unbounded">
+				<element ref="sca:requires"/>
+				<element ref="sca:policySetAttachment"/>
+			</choice>
+			<any namespace="##other" processContents="lax" minOccurs="0"
+				maxOccurs="unbounded" />
+		</sequence>
+		<attribute name="name" type="NCName" use="required" />
+		<attribute name="requires" type="sca:listOfQNames" use="optional" />
+		<attribute name="policySets" type="sca:listOfQNames" use="optional" />
+		<attribute name="allowsPassByReference" type="boolean" use="optional" />
+		<attribute name="init" type="boolean" use="optional" />
+		<attribute name="destoy" type="boolean" use="optional" />
+		<anyAttribute namespace="##other" processContents="lax" />
+	</complexType>
+
+</schema>

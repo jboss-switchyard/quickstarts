@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright(C) OASIS(R) 2005,2010. All Rights Reserved. 
+     OASIS trademark, IPR and other policies apply.  -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+    targetNamespace="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
+    xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+    xmlns:wsdli="http://www.w3.org/ns/wsdl-instance"
+    xmlns:wsa="http://www.w3.org/2005/08/addressing"
+    elementFormDefault="qualified">
+
+    <import namespace="http://www.w3.org/ns/wsdl-instance"
+            schemaLocation="http://www.w3.org/2007/05/wsdl/wsdl20-instance.xsd"/>
+    <import namespace="http://www.w3.org/2005/08/addressing"
+            schemaLocation="http://www.w3.org/2006/03/addressing/ws-addr.xsd"/>
+
+    <include schemaLocation="sca-core-1.1-cd06.xsd"/>
+
+    <element name="binding.ws" type="sca:WebServiceBinding"
+             substitutionGroup="sca:binding"/>
+
+    <complexType name="WebServiceBinding">
+        <complexContent>
+            <extension base="sca:Binding">
+                <sequence>
+                    <element ref="wsa:EndpointReference" 
+                             minOccurs="0" maxOccurs="unbounded"/>
+                    <element ref="sca:extensions" minOccurs="0" maxOccurs="1" />
+                </sequence>
+                <attribute name="wsdlElement" type="anyURI" use="optional"/>
+                <attribute ref="wsdli:wsdlLocation" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+</schema>

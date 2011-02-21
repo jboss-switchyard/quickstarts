@@ -21,15 +21,10 @@ package org.switchyard.config.model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.config.Configuration;
 import org.switchyard.config.Configurations;
-import org.switchyard.config.util.Classes;
 import org.switchyard.config.util.ElementResource;
 import org.switchyard.config.util.Resource;
 import org.w3c.dom.Document;
@@ -43,10 +38,7 @@ import org.xml.sax.InputSource;
  */
 public class ModelResource extends Resource<Model> {
 
-    public static final String MARSHALLER = "marshaller";
-
     private Descriptor _desc;
-    private Map<String,Marshaller> _namespace_marshaller_map;
 
     public ModelResource() {
         this(null);
@@ -54,7 +46,6 @@ public class ModelResource extends Resource<Model> {
 
     public ModelResource(Descriptor desc) {
         _desc = desc != null ? desc : new Descriptor();
-        _namespace_marshaller_map = new HashMap<String,Marshaller>();
     }
 
     public final Descriptor getDescriptor() {
@@ -81,7 +72,7 @@ public class ModelResource extends Resource<Model> {
     public Model pull(Element element) {
         String namespace = element.getNamespaceURI();
         if (namespace != null) {
-            Marshaller marshaller = getMarshaller(namespace);
+            Marshaller marshaller = _desc.getMarshaller(namespace);
             if (marshaller != null) {
                 return marshaller.read(Configurations.create(element));
             }
@@ -91,44 +82,6 @@ public class ModelResource extends Resource<Model> {
 
     public Model pull(QName name) {
         return pull(new ElementResource().pull(name));
-    }
-
-    public synchronized Marshaller getMarshaller(String namespace) {
-        Marshaller marshaller = _namespace_marshaller_map.get(namespace);
-        if (marshaller == null) {
-            String prop_marshaller = _desc.getProperty(MARSHALLER, namespace);
-            if (prop_marshaller != null) {
-                try {
-                    Class<?> clazz = Classes.forName(prop_marshaller, ModelResource.class);
-                    Constructor<?> cnstr = clazz.getConstructor(Descriptor.class);
-                    marshaller = (Marshaller)cnstr.newInstance(_desc);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                _namespace_marshaller_map.put(namespace, marshaller);
-            }
-        }
-        return marshaller;
-    }
-
-    public static Marshaller getMarshaller(Model model) {
-        if (model != null) {
-            return getMarshaller(model.getModelConfiguration(), model.getModelDescriptor());
-        }
-        return null;
-    }
-
-    public static Marshaller getMarshaller(Configuration config, Descriptor desc) {
-        if (config != null) {
-            QName qname = config.getQName();
-            if (qname != null) {
-                String namespace = qname.getNamespaceURI();
-                if (namespace != null) {
-                    return new ModelResource(desc).getMarshaller(namespace);
-                }
-            }
-        }
-        return null;
     }
 
 }

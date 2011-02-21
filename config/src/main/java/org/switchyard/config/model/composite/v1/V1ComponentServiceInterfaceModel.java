@@ -40,7 +40,7 @@ public class V1ComponentServiceInterfaceModel extends V1BaseInterfaceModel imple
 
     @Override
     public ComponentServiceModel getService() {
-        return (ComponentServiceModel)getParentModel();
+        return (ComponentServiceModel)getModelParent();
     }
 
 }

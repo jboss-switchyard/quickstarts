@@ -18,11 +18,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA  02110-1301, USA.
 -->
 <switchyard xmlns="http://www.switchyard.org/config/model/switchyard/v1"
-            targetNamespace="http://www.switchyard.org/example/m1app"
             xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-            xmlns:soap="http://www.switchyard.org/config/model/composite/test/soap"
-            name="m1app">
-    <sca:composite name="m1app">
+            xmlns:bean="http://www.switchyard.org/config/model/composite/test/bean"
+            xmlns:soap="http://www.switchyard.org/config/model/composite/test/soap">
+    <sca:composite name="m1app" targetNamespace="http://www.switchyard.org/example/m1app">
         <sca:service name="M1AppService" promote="SimpleService">
             <soap:binding.soap>
                 <soap:port secure="true">MyWebService/SOAPPort</soap:port>
@@ -30,7 +29,7 @@ MA  02110-1301, USA.
             </soap:binding.soap>
         </sca:service>
         <sca:component name="SimpleService">
-            <sca:implementation.bean class="org.switchyard.example.m1app.SimpleBean"/>
+            <bean:implementation.bean class="org.switchyard.example.m1app.SimpleBean"/>
             <sca:service name="SimpleService">
                 <sca:interface.java interface="org.switchyard.example.m1app.SimpleService"/>
             </sca:service>
@@ -39,7 +38,7 @@ MA  02110-1301, USA.
             </sca:reference>
         </sca:component>
         <sca:component name="AnotherService">
-            <sca:implementation.bean class="org.switchyard.example.m1app.AnotherBean"/>
+            <bean:implementation.bean class="org.switchyard.example.m1app.AnotherBean"/>
             <sca:service name="AnotherService">
                 <sca:interface.java interface="org.switchyard.example.m1app.AnotherService"/>
             </sca:service>

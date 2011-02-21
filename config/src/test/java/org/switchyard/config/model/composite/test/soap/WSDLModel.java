@@ -44,7 +44,7 @@ public class WSDLModel extends BaseModel {
     }
 
     public SOAPBindingModel getBinding() {
-        return (SOAPBindingModel)getParentModel();
+        return (SOAPBindingModel)getModelParent();
     }
 
     public String getDescription() {

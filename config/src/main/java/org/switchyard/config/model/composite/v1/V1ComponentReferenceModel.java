@@ -48,7 +48,7 @@ public class V1ComponentReferenceModel extends BaseNamedModel implements Compone
 
     @Override
     public ComponentModel getComponent() {
-        return (ComponentModel)getParentModel();
+        return (ComponentModel)getModelParent();
     }
 
     @Override

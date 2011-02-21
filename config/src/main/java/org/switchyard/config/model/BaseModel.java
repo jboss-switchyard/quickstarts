@@ -27,6 +27,9 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
+import javax.xml.validation.Schema;
+import javax.xml.validation.Validator;
 
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Configurations;
@@ -87,7 +90,7 @@ public abstract class BaseModel implements Model {
 
     
     protected final boolean hasParentModel() {
-        return getParentModel() != null;
+        return getModelParent() != null;
     }
 
     /**
@@ -101,7 +104,7 @@ public abstract class BaseModel implements Model {
      * @return the parent Model, or null if there is no parent
      */
     @Override
-    public final Model getParentModel() {
+    public final Model getModelParent() {
         if (_parent == null) {
             Configuration parent_config = _config.getParent();
             if (parent_config != null) {
@@ -126,6 +129,28 @@ public abstract class BaseModel implements Model {
             }
         }
         return child_models;
+    }
+
+    @Override
+    public Validation validateModel() {
+        Schema schema = _desc.getSchema(_config);
+        if (schema != null) {
+            Validator validator = schema.newValidator();
+            Source source = _config.getSource();
+            try {
+                validator.validate(source);
+            } catch (Throwable t) {
+                return new Validation(t);
+            }
+        } else {
+            return new Validation(false, "schema == null");
+        }
+        return new Validation(true);
+    }
+
+    @Override
+    public boolean isModelValid() {
+        return validateModel().isValid();
     }
 
     protected final String getModelAttribute(QName qname) {
@@ -157,7 +182,7 @@ public abstract class BaseModel implements Model {
         if (config != null) {
             Model model = _config_model_map.get(config);
             if (model == null) {
-                Marshaller marsh = ModelResource.getMarshaller(config, _desc);
+                Marshaller marsh = _desc.getMarshaller(config);
                 if (marsh != null) {
                     model = marsh.read(config);
                     if (model != null) {

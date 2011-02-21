@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright(C) OASIS(R) 2007,2010. All Rights Reserved.
+     OASIS trademark, IPR and other policies apply.  -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+	xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+	elementFormDefault="qualified">
+
+	<include schemaLocation="sca-contribution-1.1-cd06.xsd" />
+
+	<element name="export.c" type="sca:CExport"
+		substitutionGroup="sca:exportBase" />
+
+	<complexType name="CExport">
+		<complexContent>
+			<extension base="sca:Export">
+				<attribute name="name" type="QName" use="required" />
+				<attribute name="path" type="string" use="optional" />
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<element name="import.c" type="sca:CImport"
+		substitutionGroup="sca:importBase" />
+
+	<complexType name="CImport">
+		<complexContent>
+			<extension base="sca:Import">
+				<attribute name="name" type="QName" use="required" />
+				<attribute name="location" type="string" use="required" />
+			</extension>
+		</complexContent>
+	</complexType>
+
+</schema>

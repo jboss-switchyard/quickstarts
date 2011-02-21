@@ -44,7 +44,7 @@ public class PortModel extends BaseModel {
     }
 
     public SOAPBindingModel getBinding() {
-        return (SOAPBindingModel)getParentModel();
+        return (SOAPBindingModel)getModelParent();
     }
 
     public boolean isSecure() {

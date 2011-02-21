@@ -19,18 +19,19 @@ MA  02110-1301, USA.
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
            targetNamespace="http://www.switchyard.org/example/m1app"
+           xmlns:bean="http://www.switchyard.org/config/model/composite/test/bean"
            name="m1app">
     <component name="SimpleService">
-       <implementation.bean class="org.switchyard.example.m1app.SimpleBean"/>
+       <bean:implementation.bean class="org.switchyard.example.m1app.SimpleBean"/>
        <service name="SimpleService">
            <interface.java interface="org.switchyard.example.m1app.SimpleService"/>
        </service>
-       <reference name="anotherService">
+       <reference name="anotherService" multiplicity="1..1">
            <interface.java interface="org.switchyard.example.m1app.AnotherService"/>
        </reference>
     </component>
     <component name="AnotherService">
-       <implementation.bean class="org.switchyard.example.m1app.AnotherBean"/>
+       <bean:implementation.bean class="org.switchyard.example.m1app.AnotherBean"/>
        <service name="AnotherService">
            <interface.java interface="org.switchyard.example.m1app.AnotherService"/>
        </service>

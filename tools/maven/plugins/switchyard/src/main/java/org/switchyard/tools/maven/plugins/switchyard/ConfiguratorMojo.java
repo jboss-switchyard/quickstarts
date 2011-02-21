@@ -144,7 +144,11 @@ public class ConfiguratorMojo extends AbstractMojo {
             MergeSwitchYardScanner merge_scanner = new MergeSwitchYardScanner(true, scanners);
             SwitchYardModel switchyard = merge_scanner.merge(paths);
             if (outputFile == null) {
-                outputFile = new File(new File(outputDirectory, "META-INF"), "switchyard.xml");
+                File od = new File(outputDirectory, "META-INF");
+                if (!od.exists()) {
+                    od.mkdirs();
+                }
+                outputFile = new File(od, "switchyard.xml");
             }
             writer = new BufferedWriter(new FileWriter(outputFile));
             switchyard.write(writer);

@@ -58,10 +58,10 @@ public class ConfigurationTests {
         Diff diff;
         String from_overrides_to_xml = new StringResource().pull(FROM_OVERRIDES_TO_XML);
         diff = XMLUnit.compareXML(from_overrides_to_xml, merge(true));
-        Assert.assertTrue(diff.identical());
+        Assert.assertTrue(diff.toString(), diff.identical());
         String from_doesnt_override_to_xml = new StringResource().pull(FROM_DOESNT_OVERRIDE_TO_XML);
         diff = XMLUnit.compareXML(from_doesnt_override_to_xml, merge(false));
-        Assert.assertTrue(diff.identical());
+        Assert.assertTrue(diff.toString(), diff.identical());
     }
 
     private String merge(boolean fromOverridesTo) throws Exception {

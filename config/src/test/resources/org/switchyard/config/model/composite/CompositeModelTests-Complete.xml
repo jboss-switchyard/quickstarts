@@ -19,6 +19,7 @@ MA  02110-1301, USA.
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
            targetNamespace="http://www.switchyard.org/example/m1app"
+           xmlns:bean="http://www.switchyard.org/config/model/composite/test/bean"
            xmlns:soap="http://www.switchyard.org/config/model/composite/test/soap"
            name="m1app">
     <service name="M1AppService" promote="SimpleService">
@@ -27,22 +28,22 @@ MA  02110-1301, USA.
            <soap:wsdl description="foobar">service.wsdl</soap:wsdl>
        </soap:binding.soap>
     </service>
-    <reference name="SomeOtherService" promote="SimpleService/AnotherService">
+    <reference name="SomeOtherService" promote="SimpleService/AnotherService" multiplicity="1..1">
        <soap:binding.soap>
            <soap:wsdl>http://exmample.org:8080/services/SomeOtherService?wsdl</soap:wsdl>
        </soap:binding.soap>
     </reference>
     <component name="SimpleService">
-       <implementation.bean class="org.switchyard.example.m1app.SimpleBean"/>
+       <bean:implementation.bean class="org.switchyard.example.m1app.SimpleBean"/>
        <service name="SimpleService">
            <interface.java interface="org.switchyard.example.m1app.SimpleService"/>
        </service>
-       <reference name="anotherService">
+       <reference name="anotherService" multiplicity="1..1">
            <interface.java interface="org.switchyard.example.m1app.AnotherService"/>
        </reference>
     </component>
     <component name="AnotherService">
-       <implementation.bean class="org.switchyard.example.m1app.AnotherBean"/>
+       <bean:implementation.bean class="org.switchyard.example.m1app.AnotherBean"/>
        <service name="AnotherService">
            <interface.java interface="org.switchyard.example.m1app.AnotherService"/>
        </service>
