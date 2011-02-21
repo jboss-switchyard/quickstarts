@@ -73,14 +73,8 @@ public class SOAPActivator implements Activator {
     @Override
     public void stop(Service service) {
         if (_inboundGateways.containsKey(service.getName())) {
-            try {
-                _inboundGateways.get(service.getName()).start(service);
-            } catch (org.switchyard.component.soap.WebServicePublishException ex) {
-                throw new RuntimeException(
-                        "Failed to stop inbound gateway for service " + service.getName(), ex);
-            }
+                _inboundGateways.get(service.getName()).stop();
         }
-        
     }
 
     @Override
