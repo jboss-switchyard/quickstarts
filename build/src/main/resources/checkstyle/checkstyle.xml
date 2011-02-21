@@ -38,6 +38,13 @@
 
         <property name="basedir" value="${basedir}"/>
     -->
+
+<!--
+    <module name="SuppressionFilter">
+         <property name="file" value="suppressions.xml"/>
+    </module>
+-->
+
     <!-- Checks that each Java package has a Javadoc file used for commenting. -->
     <!-- See http://checkstyle.sf.net/config_javadoc.html#JavadocPackage       
     <module name="JavadocPackage">
@@ -152,7 +159,7 @@
         <module name="NoWhitespaceBefore"/>
         <module name="OperatorWrap"/>
         <module name="ParenPad"/>
-        <module name="TypecastParenPad"/>
+        <!--<module name="TypecastParenPad"/>-->
         <module name="WhitespaceAfter">
             <property name="tokens" value="SEMI"/>
         </module>
@@ -164,7 +171,7 @@
 
         <!-- Modifier Checks                                    -->
         <!-- See http://checkstyle.sf.net/config_modifiers.html -->
-        <module name="ModifierOrder"/>
+        <!--<module name="ModifierOrder"/>-->
         <!--<module name="RedundantModifier"/>-->
 
 
@@ -205,7 +212,7 @@
         <!-- See http://checkstyle.sf.net/config_misc.html -->
         <module name="ArrayTypeStyle"/>
         <!--<module name="FinalParameters"/>-->
-        <module name="TodoComment"/>
+        <!--<module name="TodoComment"/>-->
         <module name="UpperEll"/>
 
     </module>
