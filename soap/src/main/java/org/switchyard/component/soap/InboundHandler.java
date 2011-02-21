@@ -49,7 +49,6 @@ import org.switchyard.Service;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
-import org.switchyard.internal.transform.TransformSequence;
 import org.switchyard.metadata.BaseExchangeContract;
 
 /**
@@ -168,7 +167,6 @@ public class InboundHandler extends BaseHandler {
      */
     @Override
     public void handleMessage(final Exchange exchange) throws HandlerException {
-        assertTransformsApplied(exchange);
         try {
             _response.set(_decomposer.decompose(exchange.getMessage()));
         } catch (SOAPException se) {
@@ -313,16 +311,6 @@ public class InboundHandler extends BaseHandler {
                 //ignore
                 continue;
             }
-        }
-    }
-
-    private void assertTransformsApplied(Exchange exchange) throws HandlerException {
-        if (!TransformSequence.assertTransformsApplied(exchange)) {
-            String actualPayloadType = TransformSequence.getCurrentMessageType(exchange);
-            String expectedPayloadType = TransformSequence.getTargetMessageType(exchange);
-            String operationName = exchange.getContract().getServiceOperation().getName();
-
-            throw new HandlerException("Error invoking '" + operationName + "'.  Response requires a payload type of '" + expectedPayloadType + "'.  Actual payload type is '" + actualPayloadType + "'.  You must define and register a Transformer to transform between these types.");
         }
     }
 }

@@ -23,7 +23,6 @@
 package org.switchyard.component.bean;
 
 import org.switchyard.Exchange;
-import org.switchyard.internal.transform.TransformSequence;
 
 import java.lang.reflect.Method;
 
@@ -67,12 +66,6 @@ public class Invocation {
      * argument type(s) match.
      */
     private void assertOK() throws BeanComponentException {
-        if (!TransformSequence.assertTransformsApplied(_exchange)) {
-            String actualPayloadType = TransformSequence.getCurrentMessageType(_exchange);
-            String expectedPayloadType = TransformSequence.getTargetMessageType(_exchange);
-
-            throw new BeanComponentException("Bean service operation '" + operationName() + "' requires a payload type of '" + expectedPayloadType + "'.  Actual payload type is '" + actualPayloadType + "'.  You must define and register a Transformer to transform between these types.");
-        }
         assertMethodStructureSupported();
         assertTypesMatch();
     }
