@@ -5,4 +5,11 @@
     "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 
 <suppressions>
+
+    <!-- ConfiguratorMojo.java has maven-style annotations in it which 
+	aren't real annotations, but javadoc, which checkstyle chokes on.  
+        Excusing ConfiguratorMojo.java from the checks to avoid checkstyle
+        choking and throwing an Exception -->	
+    <suppress checks="[a-zA-Z0-9]*"
+	files="org/switchyard/tools/maven/plugins/switchyard/ConfiguratorMojo.java"/>
 </suppressions>
