@@ -101,30 +101,47 @@ public class Deployment extends AbstractDeployment {
     }
     
     /**
-     * Initialize the deployment.  This actually starts everything as well at 
-     * the moment.
+     * Initialize the deployment.
      */
     public void init() {
         super.init();
-        _log.info("Initializing deployment for application " + _switchyardConfig.getName());
+        _log.debug("Initializing deployment for application " + _switchyardConfig.getName());
         // create a new domain and load activator instances for lifecycle
         createActivators();
+        
+    }
+    
+    /**
+     * Starts the deployment.  All services are registered and the appropriate 
+     * activators are triggered.
+     */
+    public void start() {
+        _log.debug("Starting deployment for application " + _switchyardConfig.getName());
         // ordered startup lifecycle
         deployReferenceBindings();
         deployServices();
         deployReferences();
         deployServiceBindings();
     }
+    
+    /**
+     * Stops the deployment.  All services are unregistered and the appropriate 
+     * activators are triggered.
+     */
+    public void stop() {
+        _log.debug("Stopping deployment for application " + _switchyardConfig.getName());
+        undeployServiceBindings();
+        undeployServices();
+        undeployReferences();
+        undeployReferenceBindings();
+    }
 
     /**
      * Tear everything down.
      */
     public void destroy() {
-        _log.info("Destroying deployment for application " + _switchyardConfig.getName());
-        undeployServiceBindings();
-        undeployServices();
-        undeployReferences();
-        undeployReferenceBindings();
+        _log.debug("Destroying deployment for application " + _switchyardConfig.getName());
+        
         destroyDomain();
         
         // Clean up our list of activations, just in case something's left

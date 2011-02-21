@@ -55,6 +55,7 @@ public class SwitchYardCDIDeployer implements Extension {
         if (swConfigStream != null) {
             _deployment = new Deployment(swConfigStream);
             _deployment.init();
+            _deployment.start();
         }
     }
 
@@ -65,6 +66,7 @@ public class SwitchYardCDIDeployer implements Extension {
      */
     public void beforeShutdown(@Observes BeforeShutdown event) {
         if (_deployment != null) {
+            _deployment.stop();
             _deployment.destroy();
         }
     }
