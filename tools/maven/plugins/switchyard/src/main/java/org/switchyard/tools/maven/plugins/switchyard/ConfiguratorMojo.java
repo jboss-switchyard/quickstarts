@@ -29,9 +29,7 @@ import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
@@ -97,10 +95,10 @@ public class ConfiguratorMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        final List<URL> urls = new ArrayList<URL>();
+        final List<URL> mojoURLs = new ArrayList<URL>();
         try {
-            for (String path : compileClasspathElements) {
-                urls.add(new File(path).toURI().toURL());
+            for (String compileClasspaths : compileClasspathElements) {
+                mojoURLs.add(new File(compileClasspaths).toURI().toURL());
             }
             File defaultResourceDir = new File(basedir, "src/main/resources");
             if (defaultResourceDir.exists()) {
@@ -111,7 +109,7 @@ public class ConfiguratorMojo extends AbstractMojo {
             for (Resource resource : buildResources) {
                 String path = resource.getTargetPath();
                 if (path != null) {
-                    urls.add(new File(path).toURI().toURL());
+                    mojoURLs.add(new File(path).toURI().toURL());
                 }
             }
         } catch (MalformedURLException mue) {
@@ -119,7 +117,7 @@ public class ConfiguratorMojo extends AbstractMojo {
         }
         ClassLoader loader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
             public URLClassLoader run() {
-                return new URLClassLoader(urls.toArray(new URL[urls.size()]), ConfiguratorMojo.class.getClassLoader());
+                return new URLClassLoader(mojoURLs.toArray(new URL[mojoURLs.size()]), ConfiguratorMojo.class.getClassLoader());
             }
         });
         ClassLoader previous = Classes.setTCCL(loader);
@@ -130,9 +128,9 @@ public class ConfiguratorMojo extends AbstractMojo {
         ds.setBasedir(outputDirectory);
         try {
             ds.scan();
-            Set<String> paths = new LinkedHashSet<String>();
-            for (String path : ds.getIncludedFiles()) {
-                paths.add(path);
+            List<URL> scannerURLs = new ArrayList<URL>();
+            for (String includedPath : ds.getIncludedFiles()) {
+                scannerURLs.add(new File(includedPath).toURI().toURL());
             }
             List<SwitchYardScanner> scanners = new ArrayList<SwitchYardScanner>();
             for (String scannerClassName : scannerClassNames) {
@@ -142,11 +140,13 @@ public class ConfiguratorMojo extends AbstractMojo {
             }
             scanners.add(new DefaultSwitchYardScanner());
             MergeSwitchYardScanner merge_scanner = new MergeSwitchYardScanner(true, scanners);
-            SwitchYardModel switchyard = merge_scanner.merge(paths);
+            SwitchYardModel switchyard = merge_scanner.merge(scannerURLs);
             if (outputFile == null) {
                 File od = new File(outputDirectory, "META-INF");
                 if (!od.exists()) {
-                    od.mkdirs();
+                    if (!od.mkdirs()) {
+                        throw new Exception("mkdirs() on " + od + " failed.");
+                    }
                 }
                 outputFile = new File(od, "switchyard.xml");
             }

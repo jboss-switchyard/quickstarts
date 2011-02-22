@@ -147,7 +147,11 @@ public final class Descriptor {
                     Source[] sources = sourceList.toArray(new Source[sourceList.size()]);
                     SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
                     factory.setResourceResolver(new DescriptorLSResourceResolver(this));
-                    schema = factory.newSchema(sources);
+                    //long start = System.currentTimeMillis();
+                    schema = factory.newSchema(sources); // TODO: Fix poor performance.
+                    //long stop = System.currentTimeMillis();
+                    //long total = stop - start;
+                    //System.err.println("SchemaFactory.newSchema(Source[]):Schema is taking " + total + " milliseconds!");
                     _namespaces_schema_map.put(namespaces, schema);
                 }
             } catch (Exception e) {

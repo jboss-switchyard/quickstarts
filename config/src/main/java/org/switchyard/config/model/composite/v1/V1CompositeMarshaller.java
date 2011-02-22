@@ -59,7 +59,7 @@ public class V1CompositeMarshaller extends BaseMarshaller {
         } else if (name.equals(ComponentModel.COMPONENT)) {
             return new V1ComponentModel(config, desc);
         } else if (name.startsWith(ComponentImplementationModel.IMPLEMENTATION)) {
-            return new V1ImplementationModel(config, desc);
+            return new V1ComponentImplementationModel(config, desc);
         } else if (name.startsWith(InterfaceModel.INTERFACE)) {
             Configuration config_parent = config.getParent();
             if (config_parent != null) {

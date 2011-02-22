@@ -23,22 +23,22 @@ import javax.xml.namespace.QName;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.BaseTypedModel;
+import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeModel;
-import org.switchyard.config.model.composite.ComponentImplementationModel;
 
 /**
  * V1ImplementationModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1ImplementationModel extends BaseTypedModel implements ComponentImplementationModel {
+public class V1ComponentImplementationModel extends BaseTypedModel implements ComponentImplementationModel {
 
-    public V1ImplementationModel(String type) {
+    public V1ComponentImplementationModel(String type) {
         super(new QName(CompositeModel.DEFAULT_NAMESPACE, ComponentImplementationModel.IMPLEMENTATION + '.' + type));
     }
 
-    public V1ImplementationModel(Configuration config, Descriptor desc) {
+    public V1ComponentImplementationModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 

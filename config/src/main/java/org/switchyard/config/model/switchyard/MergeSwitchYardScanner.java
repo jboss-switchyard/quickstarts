@@ -19,10 +19,9 @@
 package org.switchyard.config.model.switchyard;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.switchyard.config.model.Models;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
@@ -51,16 +50,16 @@ public class MergeSwitchYardScanner implements SwitchYardScanner {
         _scanners = scanners.toArray(copy);
     }
 
-    public Collection<SwitchYardModel> scan(Set<String> paths) throws IOException {
-        return Collections.singletonList(merge(paths));
+    public List<SwitchYardModel> scan(List<URL> urls) throws IOException {
+        return Collections.singletonList(merge(urls));
     }
 
-    public SwitchYardModel merge(Set<String> paths) throws IOException {
+    public SwitchYardModel merge(List<URL> urls) throws IOException {
         SwitchYardModel merged = new V1SwitchYardModel();
         for (SwitchYardScanner scanner : _scanners) {
-            Collection<SwitchYardModel> scanned_coll = scanner.scan(paths);
-            if (scanned_coll != null) {
-                for (SwitchYardModel scanned : scanned_coll) {
+            List<SwitchYardModel> scanned_list = scanner.scan(urls);
+            if (scanned_list != null) {
+                for (SwitchYardModel scanned : scanned_list) {
                     if (scanned != null) {
                         merged = (SwitchYardModel)Models.merge(scanned, merged, _fromOverridesTo);
                     }

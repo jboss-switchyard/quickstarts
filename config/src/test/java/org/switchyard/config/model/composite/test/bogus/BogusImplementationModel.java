@@ -20,14 +20,14 @@ package org.switchyard.config.model.composite.test.bogus;
 
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.composite.v1.V1ImplementationModel;
+import org.switchyard.config.model.composite.v1.V1ComponentImplementationModel;
 
 /**
  * BogusImplementationModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class BogusImplementationModel extends V1ImplementationModel {
+public class BogusImplementationModel extends V1ComponentImplementationModel {
 
     public static final String FOO = "foo";
 

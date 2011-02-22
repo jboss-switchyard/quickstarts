@@ -19,8 +19,8 @@
 package org.switchyard.config.model;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Set;
+import java.net.URL;
+import java.util.List;
 
 /**
  * Scanner.
@@ -31,6 +31,6 @@ import java.util.Set;
  */
 public interface Scanner<M extends Model> {
 
-    public Collection<M> scan(Set<String> paths) throws IOException;
+    public List<M> scan(List<URL> urls) throws IOException;
 
 }
