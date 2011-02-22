@@ -30,7 +30,7 @@
     </properties>
 
     <groupId>org.switchyard</groupId>
-    <artifactId>core-build</artifactId>
+    <artifactId>switchyard-build</artifactId>
     <name>Switchyard: Build</name>
     <version>1.0-SNAPSHOT</version>
 

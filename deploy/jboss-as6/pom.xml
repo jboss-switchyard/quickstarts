@@ -27,13 +27,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>org.switchyard</groupId>
-		<artifactId>core-parent</artifactId>
+		<artifactId>switchyard-core-parent</artifactId>
 		<version>1.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
         <modelVersion>4.0.0</modelVersion>	
 	<groupId>org.switchyard</groupId>
-	<artifactId>deploy-jboss-as6</artifactId>
+	<artifactId>switchyard-deploy-jboss-as6</artifactId>
 	
 	<packaging>jar</packaging>
 	<name>Switchyard: JBoss AS6 Deployer</name>
@@ -48,7 +48,7 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard</groupId>
-                <artifactId>deploy</artifactId>
+                <artifactId>switchyard-deploy</artifactId>
             </dependency>
             <dependency>
                 <groupId>org.jboss.deployers</groupId>

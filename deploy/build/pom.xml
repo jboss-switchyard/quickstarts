@@ -29,13 +29,13 @@
     
 	<parent>
 		<groupId>org.switchyard</groupId>
-		<artifactId>core-parent</artifactId>
+		<artifactId>switchyard-core-parent</artifactId>
 		<version>1.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	
 	<groupId>org.switchyard</groupId>
-	<artifactId>deployers-build</artifactId>
+	<artifactId>switchyard-deployers-build</artifactId>
 	
 	<packaging>pom</packaging>
 	<name>Switchyard: Deployer Build</name>
@@ -69,23 +69,23 @@
 	<dependencies>
             <dependency>
                 <groupId>org.switchyard</groupId>
-                <artifactId>core-api</artifactId>
+                <artifactId>switchyard-api</artifactId>
             </dependency>
             <dependency>
                 <groupId>org.switchyard</groupId>
-                <artifactId>core-runtime</artifactId>
+                <artifactId>switchyard-runtime</artifactId>
             </dependency>
             <dependency>
                 <groupId>org.switchyard</groupId>
-                <artifactId>deploy</artifactId>
+                <artifactId>switchyard-deploy</artifactId>
             </dependency>
             <dependency> 
                 <groupId>org.switchyard</groupId>
-                <artifactId>deploy-cdi</artifactId>
+                <artifactId>switchyard-deploy-cdi</artifactId>
             </dependency>
             <dependency>
                 <groupId>org.switchyard</groupId>
-                <artifactId>deploy-jboss-as6</artifactId>
+                <artifactId>switchyard-deploy-jboss-as6</artifactId>
             </dependency>
             <dependency>
                 <groupId>org.switchyard</groupId>

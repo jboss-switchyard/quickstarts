@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.switchyard</groupId>
-  <artifactId>core-parent</artifactId>
+  <artifactId>switchyard-core-parent</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>SwitchYard</name>
-  <description>SwitchYard</description>
+  <name>SwitchYard: Core</name>
+  <description>SwitchYard Core</description>
   <url>http://switchyard.org</url>
   <organization>
     <name>JBoss by Red Hat</name>
@@ -30,8 +30,8 @@
   <modules>
     <module>build</module>
     <module>config</module>
-    <module>core/api</module>
-    <module>core/runtime</module>
+    <module>api</module>
+    <module>runtime</module>
     <module>test/test-util</module>
     <module>tools/maven/plugins/switchyard</module>
     <module>deploy/base</module>
@@ -137,7 +137,7 @@
         <dependencies>
           <dependency>
             <groupId>org.switchyard</groupId>
-            <artifactId>core-build</artifactId>
+            <artifactId>switchyard-build</artifactId>
             <version>${project.version}</version>
           </dependency>
         </dependencies>
@@ -164,7 +164,7 @@
         <dependencies>
           <dependency>
             <groupId>org.switchyard</groupId>
-            <artifactId>core-build</artifactId>
+            <artifactId>switchyard-build</artifactId>
             <version>${project.version}</version>
           </dependency>
         </dependencies>
@@ -388,7 +388,7 @@
     </dependency>
     <dependency>
       <groupId>org.switchyard</groupId>
-      <artifactId>core-build</artifactId>
+      <artifactId>switchyard-build</artifactId>
     </dependency>
   </dependencies>
   <reporting>
@@ -425,7 +425,7 @@
       <!-- internal dependencies -->
       <dependency>
         <groupId>org.switchyard</groupId>
-        <artifactId>core-build</artifactId>
+        <artifactId>switchyard-build</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -435,37 +435,32 @@
       </dependency>
       <dependency>
         <groupId>org.switchyard</groupId>
-        <artifactId>core-api</artifactId>
+        <artifactId>switchyard-api</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.switchyard</groupId>
-        <artifactId>test-util</artifactId>
+        <artifactId>switchyard-test-util</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.switchyard</groupId>
-        <artifactId>core-runtime</artifactId>
+        <artifactId>switchyard-runtime</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.switchyard</groupId>
-        <artifactId>deploy</artifactId>
+        <artifactId>switchyard-deploy</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.switchyard</groupId>
-        <artifactId>deploy-cdi</artifactId>
+        <artifactId>switchyard-deploy-cdi</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.switchyard</groupId>
-        <artifactId>deploy-jboss-as6</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.switchyard</groupId>
-        <artifactId>test-util</artifactId>
+        <artifactId>switchyard-deploy-jboss-as6</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

@@ -29,7 +29,7 @@
     
 	<parent>
 		<groupId>org.switchyard</groupId>
-		<artifactId>core-parent</artifactId>
+		<artifactId>switchyard-core-parent</artifactId>
 		<version>1.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -38,7 +38,7 @@
 	<artifactId>switchyard-config</artifactId>
 	
 	<packaging>jar</packaging>
-	<name>SwitchYard: SwitchYard Configuration</name>
+	<name>SwitchYard: Configuration</name>
 	<version>${project.parent.version}</version>
 	<description>The SwitchYard Configuration library.</description>
 	<url>http://switchyard/</url>

@@ -29,13 +29,13 @@
     
 	<parent>
 		<groupId>org.switchyard</groupId>
-		<artifactId>core-parent</artifactId>
+		<artifactId>switchyard-core-parent</artifactId>
 		<version>1.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	
 	<groupId>org.switchyard</groupId>
-	<artifactId>deploy</artifactId>
+	<artifactId>switchyard-deploy</artifactId>
 	
 	<packaging>jar</packaging>
 	<name>Switchyard: Deploy </name>
@@ -47,7 +47,7 @@
         <!-- internal dependencies -->
         <dependency>
             <groupId>org.switchyard</groupId>
-            <artifactId>core-api</artifactId>
+            <artifactId>switchyard-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
@@ -55,7 +55,7 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
-            <artifactId>core-runtime</artifactId>
+            <artifactId>switchyard-runtime</artifactId>
         </dependency>
         <!-- N/A -->
         <!-- external dependencies -->
