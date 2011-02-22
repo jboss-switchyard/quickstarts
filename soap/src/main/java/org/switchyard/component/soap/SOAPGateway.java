@@ -25,7 +25,6 @@ package org.switchyard.component.soap;
 import org.apache.log4j.Logger;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
-import org.switchyard.internal.ServiceDomains;
 
 /**
  * SOAP Gateway acts as an adapter to expose SwitchYard services as a Webservice

@@ -21,14 +21,16 @@
  */
 package org.switchyard.component.soap.greeting.transform;
 
+import java.io.IOException;
+
+import javax.xml.namespace.QName;
+import javax.xml.transform.dom.DOMSource;
+
 import org.milyn.javabean.binding.xml.XMLBinding;
 import org.switchyard.component.soap.greeting.Greeting;
-import org.switchyard.internal.transform.BaseTransformer;
+import org.switchyard.transform.BaseTransformer;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
-
-import javax.xml.transform.dom.DOMSource;
-import java.io.IOException;
 
 /**
  * @param <F> From type.
@@ -58,12 +60,12 @@ public class SOAPGreetingToJava<F extends Node, T extends Greeting>  extends Bas
     }
 
     @Override
-    public String getFrom() {
-        return "{http://greeting.soap.component.switchyard.org/}greet"; // SOAP body element QName
+    public QName getFrom() {
+        return new QName("{http://greeting.soap.component.switchyard.org/}greet"); // SOAP body element QName
     }
 
     @Override
-    public String getTo() {
-        return "java:/org.switchyard.component.soap.greeting.GreetingService/greet/org.switchyard.component.soap.greeting.Greeting";
+    public QName getTo() {
+        return new QName("java:/org.switchyard.component.soap.greeting.GreetingService/greet/org.switchyard.component.soap.greeting.Greeting");
     }
 }

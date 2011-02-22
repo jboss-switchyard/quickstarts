@@ -22,12 +22,14 @@
 
 package org.switchyard.component.soap.greeting.transform;
 
+import java.io.IOException;
+
+import javax.xml.namespace.QName;
+
 import org.milyn.javabean.binding.xml.XMLBinding;
 import org.switchyard.component.soap.greeting.Reply;
-import org.switchyard.internal.transform.BaseTransformer;
+import org.switchyard.transform.BaseTransformer;
 import org.xml.sax.SAXException;
-
-import java.io.IOException;
 
 /**
  * @param <F> From type.
@@ -53,12 +55,12 @@ public class JavaReplyToSOAP<F extends Reply, T extends String>  extends BaseTra
     }
 
     @Override
-    public String getFrom() {
-        return "java:/org.switchyard.component.soap.greeting.GreetingService/greet/org.switchyard.component.soap.greeting.Reply";
+    public QName getFrom() {
+        return new QName("java:/org.switchyard.component.soap.greeting.GreetingService/greet/org.switchyard.component.soap.greeting.Reply");
     }
 
     @Override
-    public String getTo() {
-        return "{http://greeting.soap.component.switchyard.org/}greetResponse";
+    public QName getTo() {
+        return new QName("{http://greeting.soap.component.switchyard.org/}greetResponse");
     }
 }

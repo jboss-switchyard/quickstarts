@@ -66,7 +66,8 @@ public final class WSDLUtil {
     /**
      * SOAP Fault type QName.
      */
-    public static final String SOAP_FAULT_MESSAGE_TYPE = "{http://schemas.xmlsoap.org/soap/envelope/}Fault";
+    public static final QName SOAP_FAULT_MESSAGE_TYPE = 
+        new QName("{http://schemas.xmlsoap.org/soap/envelope/}Fault");
 
     private WSDLUtil() {
     }
@@ -311,12 +312,12 @@ public final class WSDLUtil {
             BaseExchangeContract exchangeContract = new BaseExchangeContract(targetServiceOperation);
             BaseInvocationContract soapMetaData = exchangeContract.getInvokerInvocationMetaData();
             QName inputMessageQName = operation.getInput().getMessage().getQName();
-            soapMetaData.setInputType(inputMessageQName.toString());
+            soapMetaData.setInputType(inputMessageQName);
             soapMetaData.setFaultType(SOAP_FAULT_MESSAGE_TYPE);
 
             if (!isOneWay(operation)) {
                 QName outputMessageQName = operation.getOutput().getMessage().getQName();
-                soapMetaData.setOutputType(outputMessageQName.toString());
+                soapMetaData.setOutputType(outputMessageQName);
             }
             contracts.put(name, exchangeContract);
         }
