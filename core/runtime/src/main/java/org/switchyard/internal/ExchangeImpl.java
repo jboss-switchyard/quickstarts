@@ -24,15 +24,17 @@ package org.switchyard.internal;
 
 import java.util.UUID;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePhase;
 import org.switchyard.ExchangeState;
 import org.switchyard.Message;
 import org.switchyard.Service;
-import org.switchyard.internal.transform.TransformSequence;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.spi.Endpoint;
+import org.switchyard.transform.TransformSequence;
 
 /**
  * Implementation of Exchange.
@@ -218,8 +220,8 @@ public class ExchangeImpl implements Exchange {
     }
 
     private void initInTransformSequence(Message message) {
-        String exchangeInputType = _contract.getInvokerInvocationMetaData().getInputType();
-        String serviceOperationInputType = _contract.getServiceOperation().getInputType();
+        QName exchangeInputType = _contract.getInvokerInvocationMetaData().getInputType();
+        QName serviceOperationInputType = _contract.getServiceOperation().getInputType();
 
         if (exchangeInputType != null && serviceOperationInputType != null) {
             TransformSequence.
@@ -230,8 +232,8 @@ public class ExchangeImpl implements Exchange {
     }
 
     private void initOutTransformSequence(Message message) {
-        String serviceOperationOutputType = _contract.getServiceOperation().getOutputType();
-        String exchangeOutputType = _contract.getInvokerInvocationMetaData().getOutputType();
+        QName serviceOperationOutputType = _contract.getServiceOperation().getOutputType();
+        QName exchangeOutputType = _contract.getInvokerInvocationMetaData().getOutputType();
 
         if (serviceOperationOutputType != null && exchangeOutputType != null) {
             TransformSequence.

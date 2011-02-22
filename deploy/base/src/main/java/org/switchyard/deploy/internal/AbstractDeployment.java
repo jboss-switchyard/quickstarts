@@ -22,6 +22,10 @@
 
 package org.switchyard.deploy.internal;
 
+import java.util.ServiceLoader;
+
+import javax.xml.namespace.QName;
+
 import org.switchyard.ServiceDomain;
 import org.switchyard.internal.DefaultEndpointProvider;
 import org.switchyard.internal.DefaultServiceRegistry;
@@ -29,8 +33,6 @@ import org.switchyard.internal.DomainImpl;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.spi.EndpointProvider;
 import org.switchyard.spi.ServiceRegistry;
-
-import java.util.ServiceLoader;
 
 /**
  * Abstract SwitchYard application deployment.
@@ -41,7 +43,7 @@ public abstract class AbstractDeployment {
     /**
      * Root domain property.
      */
-    public static final String ROOT_DOMAIN = "org.switchyard.domains.root";
+    public static final QName ROOT_DOMAIN = new QName("org.switchyard.domains.root");
     /**
      * Endpoint provider class name key.
      */

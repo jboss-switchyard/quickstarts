@@ -22,6 +22,8 @@
 
 package org.switchyard.metadata;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.ExchangePattern;
 
 /**
@@ -47,7 +49,7 @@ public class InOutOperation extends BaseInvocationContract implements ServiceOpe
      * @param inputType input message name
      * @param outputType output message name
      */
-    public InOutOperation(String operationType, String inputType, String outputType) {
+    public InOutOperation(String operationType, QName inputType, QName outputType) {
         super(inputType, outputType, null);
         _operationName = operationType;
     }
@@ -59,7 +61,7 @@ public class InOutOperation extends BaseInvocationContract implements ServiceOpe
      * @param outputType output message name
      * @param faultType fault message name
      */
-    public InOutOperation(String operationType, String inputType, String outputType, String faultType) {
+    public InOutOperation(String operationType, QName inputType, QName outputType, QName faultType) {
         super(inputType, outputType, faultType);
         _operationName = operationType;
     }

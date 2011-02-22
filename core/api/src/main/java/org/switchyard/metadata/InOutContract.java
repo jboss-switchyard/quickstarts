@@ -22,6 +22,8 @@
 
 package org.switchyard.metadata;
 
+import javax.xml.namespace.QName;
+
 /**
  * Default/opaque {@link org.switchyard.ExchangePattern#IN_OUT} exchange
  * contract.
@@ -35,15 +37,15 @@ class InOutContract implements ExchangeContract {
      */
     private static final InvocationContract INVOCATION_METADATA = new InvocationContract() {
             @Override
-            public String getInputType() {
+            public QName getInputType() {
                 return null; // Undefined!!
             }
             @Override
-            public String getOutputType() {
+            public QName getOutputType() {
                 return null; // Undefined!!
             }
             @Override
-            public String getFaultType() {
+            public QName getFaultType() {
                 return null; // Undefined!!
             }
         };

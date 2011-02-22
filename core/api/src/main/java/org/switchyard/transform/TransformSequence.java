@@ -20,23 +20,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard.internal.transform;
-
-import org.apache.log4j.Logger;
-import org.switchyard.Context;
-import org.switchyard.Exchange;
-import org.switchyard.Message;
-import org.switchyard.transform.Transformer;
-import org.switchyard.transform.TransformerRegistry;
+package org.switchyard.transform;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
+import org.apache.log4j.Logger;
+import org.switchyard.Context;
+import org.switchyard.Exchange;
+import org.switchyard.Message;
+
 /**
  * Transformation sequence/pipeline.
  * <p/>
- * Allows the stringing together ot a sequence of transformers and then associating that
+ * Allows the stringing together of a sequence of transformers and then associating that
  * with a Message context e.g.
  * <pre>
  * TransformSequence.from("a").to("b").to("c').associateWith(messageContext);
@@ -58,7 +58,7 @@ public final class TransformSequence implements Serializable {
     /**
      * Transform Sequence.
      */
-    private List<String> _sequence = new ArrayList<String>();
+    private List<QName> _sequence = new ArrayList<QName>();
 
     /**
      * Create an {@link #associateWith(org.switchyard.Context) unassociated} sequence.
@@ -81,7 +81,7 @@ public final class TransformSequence implements Serializable {
      * @param typeName The from type.
      * @return The sequence.
      */
-    public static TransformSequence from(final String typeName) {
+    public static TransformSequence from(final QName typeName) {
         TransformSequence newSequence = new TransformSequence();
         newSequence.add(typeName);
         return newSequence;
@@ -93,7 +93,7 @@ public final class TransformSequence implements Serializable {
      * @param typeName The from type.
      * @return The sequence.
      */
-    public TransformSequence to(final String typeName) {
+    public TransformSequence to(final QName typeName) {
         add(typeName);
         return this;
     }
@@ -106,8 +106,8 @@ public final class TransformSequence implements Serializable {
     public void apply(Message message, TransformerRegistry registry) {
 
         while (_sequence.size() > 1) {
-            String from = _sequence.get(0);
-            String to = _sequence.get(1);
+            QName from = _sequence.get(0);
+            QName to = _sequence.get(1);
             Transformer transformer = registry.getTransformer(from, to);
 
             if (transformer == null) {
@@ -135,7 +135,7 @@ public final class TransformSequence implements Serializable {
      * @return The current exchange message type, or null if
      *         no TransformSequence is set on the exchange.
      */
-    public static String getCurrentMessageType(final Exchange exchange) {
+    public static QName getCurrentMessageType(final Exchange exchange) {
         TransformSequence transformSequence = get(exchange.getMessage());
 
         if (transformSequence != null && !transformSequence._sequence.isEmpty()) {
@@ -152,7 +152,7 @@ public final class TransformSequence implements Serializable {
      * @return The target exchange message type, or null if
      *         no TransformSequence is set on the exchange.
      */
-    public static String getTargetMessageType(final Exchange exchange) {
+    public static QName getTargetMessageType(final Exchange exchange) {
         TransformSequence transformSequence = get(exchange.getMessage());
 
         if (transformSequence != null && !transformSequence._sequence.isEmpty()) {
@@ -171,8 +171,8 @@ public final class TransformSequence implements Serializable {
      * @return True if the transformations have been applied (or are not specified), otherwise false.
      */
     public static boolean assertTransformsApplied(final Exchange exchange) {
-        String fromName = getCurrentMessageType(exchange);
-        String toName = getTargetMessageType(exchange);
+        QName fromName = getCurrentMessageType(exchange);
+        QName toName = getTargetMessageType(exchange);
 
         if (fromName != null && toName != null && !fromName.equals(toName)) {
             return false;
@@ -199,7 +199,7 @@ public final class TransformSequence implements Serializable {
         transformSequence.apply(message, registry);
     }
 
-    private void add(final String typeName) {
+    private void add(final QName typeName) {
         if (typeName == null) {
             throw new IllegalArgumentException("null 'typeName' arg passed.");
         }

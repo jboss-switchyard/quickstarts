@@ -39,7 +39,6 @@
     <module>deploy/jboss-as6</module>
     <module>deploy/build</module>
     <module>tools/maven/archetypes/application</module>
-    <module>registry</module>
   </modules>
   <build>
     <plugins>

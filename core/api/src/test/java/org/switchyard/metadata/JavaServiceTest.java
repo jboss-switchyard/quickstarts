@@ -23,6 +23,8 @@
 
 package org.switchyard.metadata;
 
+import javax.xml.namespace.QName;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.ExchangePattern;
@@ -30,18 +32,18 @@ import org.switchyard.metadata.java.JavaService;
 
 public class JavaServiceTest {
     
-    static final String METHOD1_INPUT = 
-        "java:/org.switchyard.metadata.JavaInterface" + // class name
-        "/method1" +                                    // operation name
-        "/org.switchyard.metadata.MyStuff";             // param type name
-    static final String METHOD2_INPUT = 
-        "java:/org.switchyard.metadata.JavaInterface" + // class name
-        "/method2" +                                    // operation name
-        "/java.lang.Object";                            // param type name
-    static final String METHOD2_OUTPUT = 
-        "java:/org.switchyard.metadata.JavaInterface" + // class name
-        "/method2" +                                    // operation name
-        "/org.switchyard.metadata.MyStuff";             // param type name
+    static final QName METHOD1_INPUT = new QName(
+        "java:/org.switchyard.metadata.JavaInterface" +
+        "/method1" +                                    
+        "/org.switchyard.metadata.MyStuff");           
+    static final QName METHOD2_INPUT = new QName(
+        "java:/org.switchyard.metadata.JavaInterface" + 
+        "/method2" +                                    
+        "/java.lang.Object");                            
+    static final QName METHOD2_OUTPUT = new QName(
+        "java:/org.switchyard.metadata.JavaInterface" + 
+        "/method2" +                                    
+        "/org.switchyard.metadata.MyStuff");             
     
     @Test
     public void testJavaInterfaceAsService() throws Exception {
@@ -98,7 +100,7 @@ public class JavaServiceTest {
         Exception error = null;
         
         try {
-            JavaService js = JavaService.fromClass(JavaInterfaceBadSig.class);
+            JavaService.fromClass(JavaInterfaceBadSig.class);
         }
         catch (Exception ex) { error = ex; }
         
@@ -123,6 +125,7 @@ interface JavaInterfaceBadSig {
 class JavaClassOnly {
     public void meh(Object obj) {};
     void packageMeh() {};
+    @SuppressWarnings("unused")
     private void privateMeh() {};
 }
 

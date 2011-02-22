@@ -22,15 +22,17 @@
 
 package org.switchyard.metadata.java;
 
-import org.switchyard.metadata.BaseService;
-import org.switchyard.metadata.InOnlyOperation;
-import org.switchyard.metadata.InOutOperation;
-import org.switchyard.metadata.ServiceOperation;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.xml.namespace.QName;
+
+import org.switchyard.metadata.BaseService;
+import org.switchyard.metadata.InOnlyOperation;
+import org.switchyard.metadata.InOutOperation;
+import org.switchyard.metadata.ServiceOperation;
 
 /**
  * An implementation of ServiceInterface for Java classes.  The 
@@ -85,16 +87,23 @@ public final class JavaService extends BaseService {
                 Class<?>[] params = m.getParameterTypes();
                 if (params.length != 1) {
                     throw new RuntimeException(
-                            "Service operations on a Java interface must have exactly one parameter!");
+                            "Service operations on a Java interface must have exactly one parameter.");
                 }
                 // Create the appropriate service operation and add it to the list
-                String inputType = formatName(serviceInterface.getCanonicalName(), m.getName(), params[0].getCanonicalName());
+                QName inputType = formatName(serviceInterface.getCanonicalName(), m.getName(), params[0].getCanonicalName());
                 if (m.getReturnType().equals(Void.TYPE)) {
                     ops.add(new InOnlyOperation(m.getName(), inputType));
                 } else {
-                    String outputName = formatName(serviceInterface.getCanonicalName(), m.getName(), m.getReturnType().getCanonicalName());
-                    String faultType = null; //TODO: Can have multiple exception types     .. which do we pick?
-
+                    QName outputName = formatName(serviceInterface.getCanonicalName(), m.getName(), m.getReturnType().getCanonicalName());
+                    Class<?>[] exceptions = m.getExceptionTypes();
+                    QName faultType = null;
+                    if (exceptions.length > 0) {
+                        if (exceptions.length > 1) {
+                            throw new RuntimeException(
+                            "Service operations on a Java interface can only throw one type of exception.");
+                        }
+                        faultType = formatName(serviceInterface.getCanonicalName(), m.getName(), exceptions[0].getCanonicalName());
+                    }
                     ops.add(new InOutOperation(m.getName(), inputType, outputName, faultType));
                 }
             }
@@ -117,12 +126,12 @@ public final class JavaService extends BaseService {
      * @param parts parts of the name
      * @return URN-style name used for the message name
      */
-    private static String formatName(String... parts) {
+    private static QName formatName(String... parts) {
         StringBuilder formattedName = new StringBuilder();
         for (String p : parts) {
             formattedName.append("/" + p);
         }
-        return formattedName.insert(0, TYPE + ":").toString();
+        return new QName(formattedName.insert(0, TYPE + ":").toString());
     }
 
     /**
@@ -134,11 +143,11 @@ public final class JavaService extends BaseService {
      * @param javaType The Java type.
      * @return The payload type.
      */
-    public static String toMessageType(Class<?> javaType) {
+    public static QName toMessageType(Class<?> javaType) {
         PayloadTypeName payloadType = javaType.getAnnotation(PayloadTypeName.class);
 
         if (payloadType != null) {
-            return payloadType.value();
+            return new QName(payloadType.value());
         } else {
             return formatName(javaType.getCanonicalName());
         }

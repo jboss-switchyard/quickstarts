@@ -22,6 +22,8 @@
 
 package org.switchyard.transform;
 
+import javax.xml.namespace.QName;
+
 /**
  * Handles transformation between message content types (e.g. Object -> XML) to
  * reconcile the type systems used by a service consumer and provider.  A
@@ -58,11 +60,11 @@ public interface Transformer<F, T> {
      * The name of the from, or source, message.
      * @return from message
      */
-    String getFrom();
+    QName getFrom();
 
     /**
      * The name of the to, or target, message.
      * @return to message
      */
-    String getTo();
+    QName getTo();
 }

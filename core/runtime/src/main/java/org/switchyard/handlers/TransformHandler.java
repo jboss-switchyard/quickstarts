@@ -20,17 +20,19 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard.internal.handlers;
+package org.switchyard.handlers;
 
 import java.util.Arrays;
 import java.util.HashSet;
+
+import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
-import org.switchyard.internal.transform.TransformSequence;
+import org.switchyard.transform.TransformSequence;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 
@@ -82,8 +84,8 @@ public class TransformHandler extends BaseHandler {
         // Apply transforms to the message...
         TransformSequence.applySequence(exchange, _registry);
         if (!TransformSequence.assertTransformsApplied(exchange)) {
-            String actualPayloadType = TransformSequence.getCurrentMessageType(exchange);
-            String expectedPayloadType = TransformSequence.getTargetMessageType(exchange);
+            QName actualPayloadType = TransformSequence.getCurrentMessageType(exchange);
+            QName expectedPayloadType = TransformSequence.getTargetMessageType(exchange);
 
             throw new HandlerException("Transformations not applied.  Required payload type of '" + expectedPayloadType + "'.  Actual payload type is '" + actualPayloadType + "'.  You must define and register a Transformer to transform between these types.");
         }
@@ -94,8 +96,8 @@ public class TransformHandler extends BaseHandler {
         // Apply transforms to the fault...
         TransformSequence.applySequence(exchange, _registry);
         if (!TransformSequence.assertTransformsApplied(exchange)) {
-            String actualPayloadType = TransformSequence.getCurrentMessageType(exchange);
-            String expectedPayloadType = TransformSequence.getTargetMessageType(exchange);
+            QName actualPayloadType = TransformSequence.getCurrentMessageType(exchange);
+            QName expectedPayloadType = TransformSequence.getTargetMessageType(exchange);
 
             if(_logger.isDebugEnabled()) {
                 _logger.debug("Transformations not applied.  Required payload type of '" + expectedPayloadType + "'.  Actual payload type is '" + actualPayloadType + "'.  You must define and register a Transformer to transform between these types.");

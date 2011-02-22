@@ -26,9 +26,9 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.HandlerChain;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.handlers.HandlerChain;
 import org.switchyard.metadata.ServiceInterface;
 
 /**

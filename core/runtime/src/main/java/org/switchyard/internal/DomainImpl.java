@@ -29,11 +29,11 @@ import javax.xml.namespace.QName;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePhase;
-import org.switchyard.HandlerChain;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.handlers.HandlerChain;
+import org.switchyard.handlers.TransformHandler;
 import org.switchyard.metadata.ExchangeContract;
-import org.switchyard.internal.handlers.TransformHandler;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.spi.Endpoint;
@@ -46,7 +46,7 @@ import org.switchyard.transform.TransformerRegistry;
  */
 public class DomainImpl implements ServiceDomain {
 
-    private final String _name;
+    private final QName _name;
     private final DefaultHandlerChain _defaultHandlers;
     private final ServiceRegistry _registry;
     private final EndpointProvider _endpointProvider;
@@ -59,7 +59,7 @@ public class DomainImpl implements ServiceDomain {
      * @param endpointProvider endpointProvider
      * @param transformerRegistry transformerRegistry
      */
-    public DomainImpl(String name,
+    public DomainImpl(QName name,
             ServiceRegistry registry,
             EndpointProvider endpointProvider,
             TransformerRegistry transformerRegistry) {
@@ -123,7 +123,7 @@ public class DomainImpl implements ServiceDomain {
     }
 
     @Override
-    public String getName() {
+    public QName getName() {
         return _name;
     }
 

@@ -22,10 +22,13 @@
 
 package org.switchyard.internal.transform;
 
+import javax.xml.namespace.QName;
+
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.TransformerRegistry;
 
 public class BaseTransformerRegistryTest {
@@ -39,8 +42,8 @@ public class BaseTransformerRegistryTest {
     
     @Test
     public void testAddGetTransformer() {
-        final String fromName = "a";
-        final String toName = "b";
+        final QName fromName = new QName("a");
+        final QName toName = new QName("b");
         
         BaseTransformer<String, Integer> t = 
             new BaseTransformer<String, Integer>(fromName, toName) {

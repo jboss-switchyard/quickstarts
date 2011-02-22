@@ -22,10 +22,6 @@
 
 package org.switchyard.tests;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
@@ -39,10 +35,10 @@ import org.switchyard.Message;
 import org.switchyard.MockHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
-import org.switchyard.internal.transform.TransformSequence;
+import org.switchyard.MockDomain;
 import org.switchyard.metadata.ExchangeContract;
-import org.switchyard.internal.ServiceDomains;
-import org.switchyard.internal.transform.BaseTransformer;
+import org.switchyard.transform.BaseTransformer;
+import org.switchyard.transform.TransformSequence;
 import org.switchyard.transform.Transformer;
 
 /**
@@ -54,7 +50,7 @@ public class TransformationTest {
 
     @Before
     public void setUp() throws Exception {
-        _domain = ServiceDomains.getDomain();
+        _domain = new MockDomain();
     }
 
     /* Tests to Add :
@@ -69,8 +65,8 @@ public class TransformationTest {
     @Test
     public void testTransformationByName() throws Exception {
         final QName serviceName = new QName("nameTransform");
-        final String inType = "fromA";
-        final String expectedDestType = "toB";
+        final QName inType = new QName("fromA");
+        final QName expectedDestType = new QName("toB");
         final String input = "Hello";
         final String output = "Hello SwitchYard";
         
@@ -122,8 +118,8 @@ public class TransformationTest {
     @Test
     public void testTransformationsNotApplied() throws Exception {
         final QName serviceName = new QName("nameTransform");
-        final String inType = "fromA";
-        final String expectedDestType = "toB";
+        final QName inType = new QName("fromA");
+        final QName expectedDestType = new QName("toB");
         final String input = "Hello";
 
         // Provide the service

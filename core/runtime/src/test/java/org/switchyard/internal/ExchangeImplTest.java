@@ -33,6 +33,7 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePhase;
 import org.switchyard.Message;
+import org.switchyard.MockDomain;
 import org.switchyard.MockHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
@@ -50,7 +51,7 @@ public class ExchangeImplTest {
     
     @Before
     public void setUp() throws Exception {
-        _domain = ServiceDomains.getDomain();
+        _domain = new MockDomain();
     }
     
     @Test

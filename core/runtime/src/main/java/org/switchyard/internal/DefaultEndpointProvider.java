@@ -25,7 +25,7 @@ package org.switchyard.internal;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.switchyard.Exchange;
-import org.switchyard.HandlerChain;
+import org.switchyard.handlers.HandlerChain;
 import org.switchyard.spi.Endpoint;
 import org.switchyard.spi.EndpointProvider;
 

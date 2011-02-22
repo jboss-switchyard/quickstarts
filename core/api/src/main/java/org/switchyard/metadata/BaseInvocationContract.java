@@ -22,6 +22,8 @@
 
 package org.switchyard.metadata;
 
+import javax.xml.namespace.QName;
+
 /**
  * Base invocation contract.
  *
@@ -29,9 +31,9 @@ package org.switchyard.metadata;
  */
 public class BaseInvocationContract implements InvocationContract {
 
-    private String _inputType; // Undefined by default
-    private String _outputType; // Undefined by default
-    private String _faultType; // Undefined by default
+    private QName _inputType; // Undefined by default
+    private QName _outputType; // Undefined by default
+    private QName _faultType; // Undefined by default
 
     /**
      * Constructor.
@@ -45,10 +47,10 @@ public class BaseInvocationContract implements InvocationContract {
      * @param outputType Output type associated with the invocation instance.
      * @param faultType Fault type associated with the invocation instance.
      */
-    public BaseInvocationContract(String inputType, String outputType, String faultType) {
-        this._inputType = inputType;
-        this._outputType = outputType;
-        this._faultType = faultType;
+    public BaseInvocationContract(QName inputType, QName outputType, QName faultType) {
+        _inputType = inputType;
+        _outputType = outputType;
+        _faultType = faultType;
     }
 
     /**
@@ -56,13 +58,13 @@ public class BaseInvocationContract implements InvocationContract {
      * @param inputType Input type associated with the invocation instance.
      * @return {@link this} instance.
      */
-    public BaseInvocationContract setInputType(String inputType) {
-        this._inputType = inputType;
+    public BaseInvocationContract setInputType(QName inputType) {
+        _inputType = inputType;
         return this;
     }
 
     @Override
-    public String getInputType() {
+    public QName getInputType() {
         return _inputType;
     }
 
@@ -71,13 +73,13 @@ public class BaseInvocationContract implements InvocationContract {
      * @param outputType Output type associated with the invocation instance.
      * @return {@link this} instance.
      */
-    public BaseInvocationContract setOutputType(String outputType) {
-        this._outputType = outputType;
+    public BaseInvocationContract setOutputType(QName outputType) {
+        _outputType = outputType;
         return this;
     }
 
     @Override
-    public String getOutputType() {
+    public QName getOutputType() {
         return _outputType;
     }
 
@@ -86,13 +88,13 @@ public class BaseInvocationContract implements InvocationContract {
      * @param faultType Fault type associated with the invocation instance.
      * @return {@link this} instance.
      */
-    public BaseInvocationContract setFaultType(String faultType) {
-        this._faultType = faultType;
+    public BaseInvocationContract setFaultType(QName faultType) {
+        _faultType = faultType;
         return this;
     }
 
     @Override
-    public String getFaultType() {
+    public QName getFaultType() {
         return _faultType;
     }
 }

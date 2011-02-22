@@ -30,8 +30,8 @@ import org.switchyard.Exchange;
 import org.switchyard.MockHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.MockDomain;
 import org.switchyard.metadata.ExchangeContract;
-import org.switchyard.internal.ServiceDomains;
 
 public class InOutTest {
     
@@ -40,7 +40,7 @@ public class InOutTest {
 
     @Before
     public void setUp() throws Exception {
-        _domain = ServiceDomains.getDomain();
+        _domain = new MockDomain();
     }
 
 

@@ -19,47 +19,71 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.switchyard.internal;
+package org.switchyard.transform;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.ParameterizedType;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.HandlerChain;
-import org.switchyard.Service;
-import org.switchyard.ServiceDomain;
-import org.switchyard.metadata.ServiceInterface;
-import org.switchyard.spi.Endpoint;
-import org.switchyard.spi.ServiceRegistry;
 
-public class MockServiceRegistry implements ServiceRegistry {        
-    public MockServiceRegistry() {
-    }
-    
-    @Override
-    public Service registerService(QName serviceName, ServiceInterface serviceInterface, Endpoint endpoint,
-            HandlerChain handlers, ServiceDomain domain) {
-        QName mockName = new QName("mockServiceName");
-        return new ServiceRegistration(mockName, serviceInterface, endpoint, handlers, this, domain);
-    }
+/**
+ * Base transformer implementation.
+ *
+ * @param <F> From Type
+ * @param <T> To Type.
+ */
+public abstract class BaseTransformer<F, T> implements Transformer<F, T> {
 
-    @Override
-    public void unregisterService(Service service) { 
+    private enum Types { F, T };
+    private QName _from;
+    private QName _to;
+
+    /**
+     * Constructor.
+     */
+    public BaseTransformer() {
+
     }
 
-    @Override
-    public List<Service> getServices() {
-        return new ArrayList<Service>();
-    }
-
-    @Override
-    public List<Service> getServices(QName serviceName) {
-        return new ArrayList<Service>();
+    /**
+     * Constructor.
+     * @param from from
+     * @param to to
+     */
+    public BaseTransformer(QName from, QName to) {
+        _from = from;
+        _to = to;
     }
 
     @Override
-    public List<Service> getServicesForDomain(String domainName) {
-        return new ArrayList<Service>();
+    public QName getFrom() {
+        return _from;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Class<F> getFromType() {
+        return (Class<F>) getType(Types.F);
+    }
+
+    @Override
+    public QName getTo() {
+        return _to;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Class<T> getToType() {
+        return (Class<T>) getType(Types.T);
+    }
+
+    @Override
+    public abstract T transform(F from);
+
+    private Class<?> getType(Types type) {
+        ParameterizedType pt =
+            (ParameterizedType) getClass().getGenericSuperclass();
+
+        return (Class<?>) pt.getActualTypeArguments()[type.ordinal()];
     }
 }

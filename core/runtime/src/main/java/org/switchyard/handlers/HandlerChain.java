@@ -20,7 +20,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard;
+package org.switchyard.handlers;
+
+import org.switchyard.Exchange;
+import org.switchyard.ExchangeHandler;
 
 /**
  * An ordered list of {@code Handler} instances that can be associated with a

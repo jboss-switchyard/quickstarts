@@ -25,16 +25,18 @@ package org.switchyard.internal;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangeState;
-import org.switchyard.HandlerChain;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
-import org.switchyard.internal.transform.TransformSequence;
+import org.switchyard.handlers.HandlerChain;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.java.JavaService;
+import org.switchyard.transform.TransformSequence;
 
 /**
  * Default handler chain.
@@ -130,8 +132,8 @@ public class DefaultHandlerChain implements HandlerChain, Cloneable {
 
     private void initFaultTransformsequence(Exchange exchange, HandlerException handlerEx, Message faultMessage) {
         ExchangeContract contract = exchange.getContract();
-        String exceptionTypeName = contract.getServiceOperation().getFaultType();
-        String invokerFaultTypeName = contract.getInvokerInvocationMetaData().getFaultType();
+        QName exceptionTypeName = contract.getServiceOperation().getFaultType();
+        QName invokerFaultTypeName = contract.getInvokerInvocationMetaData().getFaultType();
 
         if (exceptionTypeName == null) {
             exceptionTypeName = JavaService.toMessageType(handlerEx.getClass());

@@ -22,9 +22,13 @@
 
 package org.switchyard.internal.transform;
 
+import javax.xml.namespace.QName;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.internal.DefaultMessage;
+import org.switchyard.transform.BaseTransformer;
+import org.switchyard.transform.TransformSequence;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
@@ -33,33 +37,38 @@ public class TransformSequenceTest {
 
     @Test
     public void test() {
+        final QName A = new QName("a");
+        final QName B = new QName("b");
+        final QName C = new QName("c");
+        final QName D = new QName("d");
+        
         BaseTransformerRegistry xformReg = new BaseTransformerRegistry();
-        TransformSequence transSequence = TransformSequence.from("a").to("b").to("c").to("d");
+        TransformSequence transSequence = TransformSequence.from(A).to(B).to(C).to(D);
 
-        DefaultMessage message = new DefaultMessage().setContent("a");
+        DefaultMessage message = new DefaultMessage().setContent(A);
 
         // Apply transform sequence ... no relevant transformers in the reg... nothing should
         // happen i.e. content should still be "a"...
         transSequence.apply(message, xformReg);
-        Assert.assertEquals("a", message.getContent());
+        Assert.assertEquals(A, message.getContent());
 
         // Add just th "a" to "b" transformer... run again... should transform to "b", but no further...
-        xformReg.addTransformer(new MockTransformer("a", "b"));
+        xformReg.addTransformer(new MockTransformer(A, B));
         transSequence.apply(message, xformReg);
-        Assert.assertEquals("b", message.getContent());
+        Assert.assertEquals(B, message.getContent());
 
         // Add the rest of the transforms now... should transform the last steps in one go...
-        xformReg.addTransformer(new MockTransformer("b", "c")).addTransformer(new MockTransformer("c", "d"));
+        xformReg.addTransformer(new MockTransformer(B, C)).addTransformer(new MockTransformer(C, D));
         transSequence.apply(message, xformReg);
-        Assert.assertEquals("d", message.getContent());
+        Assert.assertEquals(D, message.getContent());
     }
 
     private class MockTransformer extends BaseTransformer {
 
-        private String from;
-        private String to;
+        private QName from;
+        private QName to;
 
-        private MockTransformer(String from, String to) {
+        private MockTransformer(QName from, QName to) {
             super(from, to);
             this.from = from;
             this.to = to;

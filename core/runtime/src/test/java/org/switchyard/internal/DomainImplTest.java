@@ -47,7 +47,7 @@ public class DomainImplTest {
     
     @Before
     public void setUp() throws Exception {
-        _domain = new DomainImpl("test",
+        _domain = new DomainImpl(new QName("test"),
                 new DefaultServiceRegistry(),
                 new DefaultEndpointProvider(),
                 null);

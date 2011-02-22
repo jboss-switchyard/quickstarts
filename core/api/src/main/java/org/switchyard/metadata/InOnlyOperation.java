@@ -22,6 +22,8 @@
 
 package org.switchyard.metadata;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.ExchangePattern;
 
 /**
@@ -47,7 +49,7 @@ public class InOnlyOperation extends BaseInvocationContract implements ServiceOp
      * @param operationName the name of the operation
      * @param inputName the name of the input message
      */
-    public InOnlyOperation(String operationName, String inputName) {
+    public InOnlyOperation(String operationName, QName inputName) {
         super(inputName, null, null);
         _operationName = operationName;
     }

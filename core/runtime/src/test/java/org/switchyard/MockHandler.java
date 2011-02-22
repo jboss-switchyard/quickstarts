@@ -22,9 +22,9 @@
 
 package org.switchyard;
 
-import junit.framework.TestCase;
-
 import java.util.concurrent.LinkedBlockingQueue;
+
+import junit.framework.TestCase;
 
 /**
  * Mock Handler.

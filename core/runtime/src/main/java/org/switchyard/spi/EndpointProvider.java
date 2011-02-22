@@ -22,7 +22,7 @@
 
 package org.switchyard.spi;
 
-import org.switchyard.HandlerChain;
+import org.switchyard.handlers.HandlerChain;
 
 /**
  * EndpointProvider.

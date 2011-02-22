@@ -49,9 +49,9 @@ public class Invoker {
     private ExchangeContract _exchangeContract;
     private ExchangeHandlerProxy _exchangeHandlerProxy;
     private long _timeoutMillis = 10000;
-    private String _inputType;
-    private String _expectedOutputType;
-    private String _expectedFaultType;
+    private QName _inputType;
+    private QName _expectedOutputType;
+    private QName _expectedFaultType;
 
     /**
      * Protected invoker.
@@ -59,15 +59,15 @@ public class Invoker {
      * @param serviceName The Service name.
      */
     protected Invoker(ServiceDomain domain, String serviceName) {
-        this._domain = domain;
+        _domain = domain;
 
         String[] serviceNameTokens = serviceName.split("\\.");
 
         if (serviceNameTokens.length == 1) {
-            this._serviceName = QName.valueOf(serviceName);
+            _serviceName = QName.valueOf(serviceName);
         } else if (serviceNameTokens.length == 2) {
-            this._serviceName = QName.valueOf(serviceNameTokens[0]);
-            this._operationName = serviceNameTokens[1];
+            _serviceName = QName.valueOf(serviceNameTokens[0]);
+            _operationName = serviceNameTokens[1];
         }
     }
 
@@ -77,8 +77,8 @@ public class Invoker {
      * @param serviceName The Service name.
      */
     public Invoker(ServiceDomain domain, QName serviceName) {
-        this._domain = domain;
-        this._serviceName = serviceName;
+        _domain = domain;
+        _serviceName = serviceName;
     }
 
     /**
@@ -87,7 +87,7 @@ public class Invoker {
      * @return This invoker instance.
      */
     public Invoker operation(String operationName) {
-        this._operationName = operationName;
+        _operationName = operationName;
         return this;
     }
 
@@ -97,7 +97,7 @@ public class Invoker {
      * @return This invoker instance.
      */
     public Invoker operation(ServiceOperation serviceOperation) {
-        this._serviceOperation = serviceOperation;
+        _serviceOperation = serviceOperation;
         return this;
     }
 
@@ -107,7 +107,7 @@ public class Invoker {
      * @return This invoker instance.
      */
     public Invoker contract(ExchangeContract exchangeContract) {
-        this._exchangeContract = exchangeContract;
+        _exchangeContract = exchangeContract;
         return this;
     }
 
@@ -132,7 +132,7 @@ public class Invoker {
      * @return This invoker instance.
      */
     public Invoker timeout(long timeoutMillis) {
-        this._timeoutMillis = timeoutMillis;
+        _timeoutMillis = timeoutMillis;
         return this;
     }
 
@@ -144,8 +144,8 @@ public class Invoker {
      * @param inputType The input type for the exchange contract.
      * @return This invoker instance.
      */
-    public Invoker inputType(String inputType) {
-        this._inputType = inputType;
+    public Invoker inputType(QName inputType) {
+        _inputType = inputType;
         return this;
     }
 
@@ -157,8 +157,8 @@ public class Invoker {
      * @param expectedOutputType The output type for the exchange contract.
      * @return This invoker instance.
      */
-    public Invoker expectedOutputType(String expectedOutputType) {
-        this._expectedOutputType = expectedOutputType;
+    public Invoker expectedOutputType(QName expectedOutputType) {
+        _expectedOutputType = expectedOutputType;
         return this;
     }
 
@@ -170,8 +170,8 @@ public class Invoker {
      * @param expectedFaultType The expected fault type for the exchange contract.
      * @return This invoker instance.
      */
-    public Invoker expectedFaultType(String expectedFaultType) {
-        this._expectedFaultType = expectedFaultType;
+    public Invoker expectedFaultType(QName expectedFaultType) {
+        _expectedFaultType = expectedFaultType;
         return this;
     }
 
@@ -275,8 +275,8 @@ public class Invoker {
         private ExchangeHandler _exchangeHandlerProxy;
 
         private ExchangeHandlerProxy(ProxyInvocationHandler proxyInvocationHandler, ExchangeHandler exchangeHandlerProxy) {
-            this._proxyInvocationHandler = proxyInvocationHandler;
-            this._exchangeHandlerProxy = exchangeHandlerProxy;
+            _proxyInvocationHandler = proxyInvocationHandler;
+            _exchangeHandlerProxy = exchangeHandlerProxy;
         }
     }
 
@@ -286,7 +286,7 @@ public class Invoker {
         private boolean _responseReceived;
 
         public ProxyInvocationHandler(ExchangeHandler handler) {
-            this._handler = handler;
+            _handler = handler;
         }
 
         @Override
@@ -295,7 +295,7 @@ public class Invoker {
                 return method.invoke(_handler, args);
             } finally {
                 if (method.getName().equals("handleMessage") || method.getName().equals("handleFault")) {
-                    this._responseReceived = true;
+                    _responseReceived = true;
                 }
             }
         }

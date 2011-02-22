@@ -25,6 +25,8 @@ package org.switchyard.internal.transform;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 
@@ -70,7 +72,7 @@ public class BaseTransformerRegistry implements TransformerRegistry {
     }
 
     @Override
-    public Transformer<?, ?> getTransformer(String from, String to) {
+    public Transformer<?, ?> getTransformer(QName from, QName to) {
         return _transformers.get(new NameKey(from, to));
     }
 
@@ -80,8 +82,8 @@ public class BaseTransformerRegistry implements TransformerRegistry {
                 new NameKey(transformer.getFrom(), transformer.getTo())) != null;
     }
 
-    private class NameKey extends Key<String, String> {
-        NameKey(String from, String to) {
+    private class NameKey extends Key<QName, QName> {
+        NameKey(QName from, QName to) {
             super(from, to);
         }
     }

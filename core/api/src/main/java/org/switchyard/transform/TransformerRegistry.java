@@ -22,6 +22,8 @@
 
 package org.switchyard.transform;
 
+import javax.xml.namespace.QName;
+
 /**
  * Registry for transformers.
  */
@@ -47,5 +49,5 @@ public interface TransformerRegistry {
      * @param to to
      * @return transformer
      */
-    Transformer<?, ?> getTransformer(String from, String to);
+    Transformer<?, ?> getTransformer(QName from, QName to);
 }

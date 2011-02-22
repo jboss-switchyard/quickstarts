@@ -42,7 +42,7 @@ public interface ServiceDomain {
      * Name of the ServiceDomain. This is unique within a runtime.
      * @return name name of the ServiceDomain.
      */
-    String getName();
+    QName getName();
     
     /**
     * Return a service instance bound to the specified name.
