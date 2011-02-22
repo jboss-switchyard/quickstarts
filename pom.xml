@@ -441,11 +441,6 @@
       </dependency>
       <dependency>
         <groupId>org.switchyard</groupId>
-        <artifactId>switchyard-transform</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.switchyard</groupId>
         <artifactId>switchyard-test-util</artifactId>
         <version>${project.version}</version>
       </dependency>

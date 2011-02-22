@@ -16,27 +16,40 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.transform.config.model;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Collections;
-import java.util.List;
+package org.switchyard.transform.config.model.transformers;
 
-import org.switchyard.config.model.switchyard.SwitchYardModel;
-import org.switchyard.config.model.switchyard.SwitchYardScanner;
+import org.switchyard.transform.Transformer;
+
+import javax.xml.namespace.QName;
 
 /**
- * TransformSwitchYardScanner.
- *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class TransformSwitchYardScanner implements SwitchYardScanner {
+public class BTransformer implements Transformer {
 
     @Override
-    public List<SwitchYardModel> scan(List<URL> urls) throws IOException {
-        // TODO: implement properly
-        return Collections.emptyList();
+    public Object transform(Object from) {
+        return from;
     }
 
+    @Override
+    public Class getFromType() {
+        return null;
+    }
+
+    @Override
+    public Class getToType() {
+        return null;
+    }
+
+    @Override
+    public QName getFrom() {
+        return new QName("http://www.switchyard.org", "b");
+    }
+
+    @Override
+    public QName getTo() {
+        return new QName("http://www.switchyard.org", "c");
+    }
 }
