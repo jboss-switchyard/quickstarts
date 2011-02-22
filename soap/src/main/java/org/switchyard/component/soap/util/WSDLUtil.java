@@ -67,7 +67,7 @@ public final class WSDLUtil {
      * SOAP Fault type QName.
      */
     public static final QName SOAP_FAULT_MESSAGE_TYPE = 
-        new QName("{http://schemas.xmlsoap.org/soap/envelope/}Fault");
+        QName.valueOf("{http://schemas.xmlsoap.org/soap/envelope/}Fault");
 
     private WSDLUtil() {
     }
