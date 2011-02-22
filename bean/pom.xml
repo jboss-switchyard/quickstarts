@@ -4,12 +4,12 @@
 
     <parent>
         <groupId>org.switchyard.components</groupId>
-        <artifactId>components-parent</artifactId>
+        <artifactId>switchyard-components-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.switchyard.components</groupId>
-    <artifactId>component-bean</artifactId>
+    <artifactId>switchyard-component-bean</artifactId>
     <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 

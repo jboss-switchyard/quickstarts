@@ -25,6 +25,7 @@ package org.switchyard.component.soap;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.switchyard.Service;
 import org.switchyard.SwitchYardCDITestCase;
@@ -58,6 +59,7 @@ public class GreetingServiceTest extends SwitchYardCDITestCase {
         addTransformer(new HandlerExceptionTransformer());
     }
 
+    @Ignore
     @Test
     public void invokeRequestResponse() throws Exception {
         String soapRequest = "<gre:greet xmlns:gre=\"http://greeting.soap.component.switchyard.org/\">\n" +
@@ -82,6 +84,7 @@ public class GreetingServiceTest extends SwitchYardCDITestCase {
         test(soapRequest, expectedResponse, false);
     }
 
+    @Ignore
     @Test
     public void invokeRequestResponse_App_Exception() throws Exception {
         String soapRequest = "<gre:greet xmlns:gre=\"http://greeting.soap.component.switchyard.org/\">\n" +
