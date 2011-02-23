@@ -32,11 +32,14 @@ import org.switchyard.config.model.composite.v1.V1CompositeMarshaller;
  */
 public class V1BeanMarshaller extends V1CompositeMarshaller {
 
-    private static final String NAME = ComponentImplementationModel.IMPLEMENTATION + "." + BeanComponentImplementationModel.BEAN;
+    /**
+     * The complete local name ("implementation.bean").
+     */
+    private static final String IMPLEMENTATION_BEAN = ComponentImplementationModel.IMPLEMENTATION + "." + BeanComponentImplementationModel.BEAN;
 
     /**
      * Required constructor called via reflection.
-     * 
+     *
      * @param desc the Descriptor
      */
     public V1BeanMarshaller(Descriptor desc) {
@@ -46,13 +49,13 @@ public class V1BeanMarshaller extends V1CompositeMarshaller {
     /**
      * Reads in the Configuration, looking for "implementation.bean".
      * If not found, it falls back to the super class (V1CompositeMarshaller).
-     * 
+     *
      * @param config the Configuration
      * @return the Model
      */
     @Override
     public Model read(Configuration config) {
-        if (config.getName().equals(NAME)) {
+        if (config.getName().equals(IMPLEMENTATION_BEAN)) {
             return new V1BeanComponentImplementationModel(config, getDescriptor());
         }
         return super.read(config);

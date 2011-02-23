@@ -32,4 +32,24 @@ public interface BeanComponentImplementationModel extends ComponentImplementatio
      */
     public static final String BEAN = "bean";
 
+    /**
+     * The "class" attribute.
+     */
+    public static final String CLASS = "class";
+
+    /**
+     * Gets the "class" attribute.
+     *
+     * @return the "class" attribute
+     */
+    public String getClazz();
+
+    /**
+     * Sets the "class" attribute.
+     *
+     * @param clazz the "class" attribute
+     * @return this instance (useful for chaining)
+     */
+    public BeanComponentImplementationModel setClazz(String clazz);
+
 }

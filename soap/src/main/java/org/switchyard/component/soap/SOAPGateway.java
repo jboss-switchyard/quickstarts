@@ -49,7 +49,7 @@ public class SOAPGateway {
     /**
      * Initialization code.
      * @param config the configuration settings
-     * @param domain
+     * @param domain the service domain
      */
     public void init(final SOAPBindingModel config, ServiceDomain domain) {
         _domain = domain;

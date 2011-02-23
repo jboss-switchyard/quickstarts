@@ -39,12 +39,23 @@ public class V1BeanComponentImplementationModel extends V1ComponentImplementatio
 
     /**
      * Constructor for Marshaller use (ie: V1BeanMarshaller).
-     * 
+     *
      * @param config the Configuration
      * @param desc the Descriptor
      */
     public V1BeanComponentImplementationModel(Configuration config, Descriptor desc) {
         super(config, desc);
+    }
+
+    @Override
+    public String getClazz() {
+        return getModelAttribute(CLASS);
+    }
+
+    @Override
+    public BeanComponentImplementationModel setClazz(String clazz) {
+        setModelAttribute(CLASS, clazz);
+        return this;
     }
 
 }
