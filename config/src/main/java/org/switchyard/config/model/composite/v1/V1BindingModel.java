@@ -21,8 +21,8 @@ package org.switchyard.config.model.composite.v1;
 import javax.xml.namespace.QName;
 
 import org.switchyard.config.Configuration;
+import org.switchyard.config.model.BaseTypedModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.composite.BaseTypedModel;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;

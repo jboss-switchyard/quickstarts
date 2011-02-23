@@ -189,8 +189,11 @@ public final class Descriptor {
     private String getSchemaLocation(String namespace, String schema) {
         if (namespace != null && schema != null) {
             String location = getLocation(namespace);
-            String schemaLocation = location + "/" + schema;
-            return schemaLocation.replaceAll("//", "/");
+            if (location != null) {
+                String schemaLocation = location + "/" + schema;
+                schemaLocation = schemaLocation.replaceAll("\\\\", "/").replaceAll("//", "/");
+                return schemaLocation;
+            }
         }
         return null;
     }

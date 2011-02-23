@@ -21,8 +21,8 @@ package org.switchyard.config.model.composite.v1;
 import javax.xml.namespace.QName;
 
 import org.switchyard.config.Configuration;
+import org.switchyard.config.model.BaseTypedModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.composite.BaseTypedModel;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeModel;
@@ -45,17 +45,6 @@ public class V1ComponentImplementationModel extends BaseTypedModel implements Co
     @Override
     public ComponentModel getComponent() {
         return (ComponentModel)getModelParent();
-    }
-
-    @Override
-    public String getClazz() {
-        return getModelAttribute(ComponentImplementationModel.CLASS);
-    }
-
-    @Override
-    public ComponentImplementationModel setClazz(String clazz) {
-        setModelAttribute(ComponentImplementationModel.CLASS, clazz);
-        return this;
     }
 
 }

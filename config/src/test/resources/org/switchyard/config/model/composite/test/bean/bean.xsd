@@ -24,7 +24,7 @@ MA  02110-1301, USA.
         elementFormDefault="qualified">
 
     <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-            schemaLocation="http://docs.oasis-open.org/opencsa/sca-assembly/sca-core-1.1-cd06.xsd"/>
+            schemaLocation="sca-1.1-cd06.xsd"/>
 
     <element name="implementation.bean" type="bean:BeanImplementationType" substitutionGroup="sca:implementation"/>
     <complexType name="BeanImplementationType">

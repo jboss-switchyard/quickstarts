@@ -16,43 +16,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config.model.composite;
+package org.switchyard.config.model.switchyard.test.java;
 
 import javax.xml.namespace.QName;
 
 import org.switchyard.config.Configuration;
-import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.transform.TransformModel;
+import org.switchyard.config.model.transform.v1.V1BaseTransformModel;
 
 /**
- * BaseTypedModel.
+ * JavaTransformModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public abstract class BaseTypedModel extends BaseModel implements TypedModel {
+public class JavaTransformModel extends V1BaseTransformModel {
 
-    public BaseTypedModel(QName qname) {
-        super(qname);
+    public static final String DEFAULT_NAMESPACE = "http://www.switchyard.org/config/model/switchyard/test/java";
+    public static final String JAVA = "java";
+    public static final String CLASS = "class";
+
+    public JavaTransformModel() {
+        super(new QName(DEFAULT_NAMESPACE, TransformModel.TRANSFORM + '.' + JAVA));
     }
 
-    public BaseTypedModel(Configuration config) {
-        super(config);
-    }
-
-    public BaseTypedModel(Configuration config, Descriptor desc) {
+    public JavaTransformModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
-    @Override
-    public final String getType() {
-        String name = getModelConfiguration().getName();
-        if (name != null) {
-            int pos = name.indexOf('.');
-            if (pos > -1) {
-                return name.substring(pos+1, name.length());
-            }
-        }
-        return null;
+    public String getClazz() {
+        return getModelAttribute(CLASS);
+    }
+
+    public JavaTransformModel setClazz(String clazz) {
+        setModelAttribute(CLASS, clazz);
+        return this;
     }
 
 }

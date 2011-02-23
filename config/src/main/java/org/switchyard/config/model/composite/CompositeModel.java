@@ -41,7 +41,7 @@ public interface CompositeModel extends NamedModel {
 
     public List<CompositeReferenceModel> getReferences();
 
-    public CompositeModel addService(CompositeReferenceModel reference);
+    public CompositeModel addReference(CompositeReferenceModel reference);
 
     public List<ComponentModel> getComponents();
 

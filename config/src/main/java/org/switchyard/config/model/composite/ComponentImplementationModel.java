@@ -18,6 +18,8 @@
  */
 package org.switchyard.config.model.composite;
 
+import org.switchyard.config.model.TypedModel;
+
 /**
  * ComponentImplementationModel.
  *
@@ -26,12 +28,7 @@ package org.switchyard.config.model.composite;
 public interface ComponentImplementationModel extends TypedModel {
 
     public static final String IMPLEMENTATION = "implementation";
-    public static final String CLASS = "class";
 
     public ComponentModel getComponent();
-
-    public String getClazz();
-
-    public ComponentImplementationModel setClazz(String clazz);
 
 }

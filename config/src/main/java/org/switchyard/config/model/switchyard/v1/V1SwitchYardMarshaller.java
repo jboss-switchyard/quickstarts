@@ -23,6 +23,8 @@ import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.transform.TransformsModel;
+import org.switchyard.config.model.transform.v1.V1TransformsModel;
 
 /**
  * V1SwitchYardMarshaller.
@@ -41,6 +43,8 @@ public class V1SwitchYardMarshaller extends BaseMarshaller {
         Descriptor desc = getDescriptor();
         if (name.equals(SwitchYardModel.SWITCHYARD)) {
             return new V1SwitchYardModel(config, desc);
+        } else if (name.equals(TransformsModel.TRANSFORMS)) {
+            return new V1TransformsModel(config, desc);
         }
         return null;
     }

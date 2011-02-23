@@ -24,10 +24,10 @@ MA  02110-1301, USA.
         elementFormDefault="qualified">
 
     <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-            schemaLocation="http://docs.oasis-open.org/opencsa/sca-assembly/sca-core-1.1-cd06.xsd"/>
+            schemaLocation="sca-1.1-cd06.xsd"/>
 
-    <element name="binding.soap" type="soap:SoapBindingType" substitutionGroup="sca:binding"/>
-    <complexType name="SoapBindingType">
+    <element name="binding.soap" type="soap:SOAPBindingType" substitutionGroup="sca:binding"/>
+    <complexType name="SOAPBindingType">
         <complexContent>
             <extension base="sca:Binding">
                 <sequence>

@@ -16,17 +16,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config.model.composite;
+package org.switchyard.config.model.transform;
+
+import java.util.List;
 
 import org.switchyard.config.model.Model;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
- * TypedModel.
+ * TransformsModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface TypedModel extends Model {
+public interface TransformsModel extends Model {
 
-    public String getType();
+    public static final String TRANSFORMS = "transforms";
+
+    public SwitchYardModel getSwitchYard();
+
+    public List<TransformModel> getTransforms();
+
+    public TransformsModel addTransform(TransformModel transform);
 
 }

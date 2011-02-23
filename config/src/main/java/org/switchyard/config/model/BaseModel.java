@@ -140,6 +140,7 @@ public abstract class BaseModel implements Model {
             try {
                 validator.validate(source);
             } catch (Throwable t) {
+                //System.err.println(t);
                 return new Validation(t);
             }
         } else {

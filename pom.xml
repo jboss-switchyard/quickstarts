@@ -31,6 +31,7 @@
     <module>build</module>
     <module>config</module>
     <module>api</module>
+    <module>transform</module>
     <module>runtime</module>
     <module>test/test-util</module>
     <module>tools/maven/plugins/switchyard</module>
@@ -436,6 +437,11 @@
       <dependency>
         <groupId>org.switchyard</groupId>
         <artifactId>switchyard-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.switchyard</groupId>
+        <artifactId>switchyard-transform</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

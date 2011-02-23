@@ -19,32 +19,34 @@ MA  02110-1301, USA.
 -->
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
         targetNamespace="http://www.switchyard.org/config/model/switchyard/v1"
-        xmlns:sy1="http://www.switchyard.org/config/model/switchyard/v1"
+        xmlns:swyd="http://www.switchyard.org/config/model/switchyard/v1"
         xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
         elementFormDefault="qualified">
 
-    <!--
     <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-            schemaLocation="http://docs.oasis-open.org/opencsa/sca-assembly/sca-core-1.1-cd06.xsd"/>
-    -->
+            schemaLocation="sca-1.1-cd06.xsd"/>
 
-    <complexType name="NamedType">
+    <element name="switchyard" type="swyd:SwitchYardType"/>
+    <complexType name="SwitchYardType">
+        <sequence>
+           <element ref="sca:composite" minOccurs="0" maxOccurs="1"/>
+           <element name="transforms" minOccurs="0" maxOccurs="1"/>
+        </sequence>
         <attribute name="name" type="string" use="optional"/>
+        <attribute name="targetNamespace" type="string" use="optional"/>
     </complexType>
 
-    <element name="switchyard" type="sy1:SwitchYardType"/>
-    <complexType name="SwitchYardType">
-        <complexContent>
-            <extension base="sy1:NamedType">
-                <sequence>
-                    <!--
-                    <element name="composite" type="sca:Composite" minOccurs="0" maxOccurs="1"/>
-                    -->
-                    <any namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912" processContents="strict" minOccurs="0" maxOccurs="unbounded"/>
-                </sequence>
-                <attribute name="targetNamespace" type="string" use="optional"/>
-            </extension>
-        </complexContent>
+    <element name="transforms" type="swyd:TransformsType"/>
+    <complexType name="TransformsType">
+        <sequence>
+            <element name="transform" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+    <element name="transform" type="swyd:TransformType" abstract="true"/>
+    <complexType name="TransformType" abstract="true">
+        <attribute name="from" type="string" use="required"/>
+        <attribute name="to" type="string" use="required"/>
     </complexType>
 
 </schema>

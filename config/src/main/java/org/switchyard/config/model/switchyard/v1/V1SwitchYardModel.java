@@ -25,6 +25,7 @@ import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.transform.TransformsModel;
 
 /**
  * V1SwitchYardModel.
@@ -34,15 +35,16 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
 public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel {
 
     private CompositeModel _composite;
+    private TransformsModel _transforms;
 
     public V1SwitchYardModel() {
         super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, SwitchYardModel.SWITCHYARD));
-        setModelChildrenOrder(CompositeModel.COMPOSITE);
+        setModelChildrenOrder(CompositeModel.COMPOSITE, TransformsModel.TRANSFORMS);
     }
 
     public V1SwitchYardModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setModelChildrenOrder(CompositeModel.COMPOSITE);
+        setModelChildrenOrder(CompositeModel.COMPOSITE, TransformsModel.TRANSFORMS);
     }
 
     @Override
@@ -57,6 +59,21 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
     public SwitchYardModel setComposite(CompositeModel composite) {
         setChildModel(composite);
         _composite = composite;
+        return this;
+    }
+
+    @Override
+    public TransformsModel getTransforms() {
+        if (_transforms == null) {
+            _transforms = (TransformsModel)getFirstChildModelStartsWith(TransformsModel.TRANSFORMS);
+        }
+        return _transforms;
+    }
+
+    @Override
+    public SwitchYardModel setTransforms(TransformsModel transforms) {
+        setChildModel(transforms);
+        _transforms = transforms;
         return this;
     }
 

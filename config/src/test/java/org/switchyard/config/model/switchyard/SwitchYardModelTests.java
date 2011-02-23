@@ -35,6 +35,10 @@ import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.test.soap.PortModel;
 import org.switchyard.config.model.composite.test.soap.SOAPBindingModel;
+import org.switchyard.config.model.switchyard.test.java.JavaTransformModel;
+import org.switchyard.config.model.switchyard.test.smooks.SmooksConfigModel;
+import org.switchyard.config.model.switchyard.test.smooks.SmooksTransformModel;
+import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.config.util.StringResource;
 
 /**
@@ -86,6 +90,16 @@ public class SwitchYardModelTests {
         Assert.assertEquals("MyWebService/SOAPPort", port.getPort());
         String name = port.getBinding().getService().getComposite().getComponents().get(0).getName();
         Assert.assertEquals("SimpleService", name);
+        TransformsModel transforms = switchyard.getTransforms();
+        JavaTransformModel java_transform = (JavaTransformModel)transforms.getTransforms().get(0);
+        Assert.assertEquals("msgA", java_transform.getFrom().getLocalPart());
+        Assert.assertEquals("msgB", java_transform.getTo().getLocalPart());
+        Assert.assertEquals("org.examples.transform.AtoBTransform", java_transform.getClazz());
+        SmooksTransformModel smooks_transform = (SmooksTransformModel)transforms.getTransforms().get(1);
+        Assert.assertEquals("msgC", smooks_transform.getFrom().getLocalPart());
+        Assert.assertEquals("msgD", smooks_transform.getTo().getLocalPart());
+        SmooksConfigModel smooks_config = smooks_transform.getConfig();
+        Assert.assertEquals("stuff", smooks_config.getData());
     }
 
     @Test

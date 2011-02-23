@@ -82,7 +82,7 @@ public class V1CompositeModel extends BaseNamedModel implements CompositeModel {
     }
 
     @Override
-    public synchronized CompositeModel addService(CompositeReferenceModel reference) {
+    public synchronized CompositeModel addReference(CompositeReferenceModel reference) {
         addChildModel(reference);
         _references.add(reference);
         return this;

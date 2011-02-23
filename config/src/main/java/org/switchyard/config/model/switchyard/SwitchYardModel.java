@@ -20,6 +20,7 @@ package org.switchyard.config.model.switchyard;
 
 import org.switchyard.config.model.NamedModel;
 import org.switchyard.config.model.composite.CompositeModel;
+import org.switchyard.config.model.transform.TransformsModel;
 
 /**
  * SwitchYardModel.
@@ -34,5 +35,9 @@ public interface SwitchYardModel extends NamedModel {
     public CompositeModel getComposite();
 
     public SwitchYardModel setComposite(CompositeModel composite);
+
+    public TransformsModel getTransforms();
+
+    public SwitchYardModel setTransforms(TransformsModel transforms);
 
 }

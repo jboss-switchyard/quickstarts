@@ -72,8 +72,8 @@ public class CompositeModelTests {
         CompositeModel incomplete_composite = (CompositeModel)_res.pull(INCOMPLETE_XML);
         CompositeModel fragment_composite = (CompositeModel)_res.pull(FRAGMENT_XML);
         CompositeModel merged_composite = (CompositeModel)Models.merge(fragment_composite, incomplete_composite);
-        XMLUnit.setIgnoreWhitespace(true);
         CompositeModel complete_composite = (CompositeModel)_res.pull(COMPLETE_XML);
+        XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(complete_composite.toString(), merged_composite.toString());
         Assert.assertTrue(diff.toString(), diff.identical());
     }
@@ -136,7 +136,6 @@ public class CompositeModelTests {
         Assert.assertEquals("SimpleService", component1.getName());
         ComponentImplementationModel implementation1 = component1.getImplementation();
         Assert.assertEquals("bean", implementation1.getType());
-        Assert.assertEquals("org.switchyard.example.m1app.SimpleBean", implementation1.getClazz());
         ComponentServiceModel componentService1 = component1.getServices().get(0);
         Assert.assertEquals("SimpleService", componentService1.getName());
         ComponentServiceInterfaceModel interface1 = componentService1.getInterface();
@@ -151,7 +150,6 @@ public class CompositeModelTests {
         Assert.assertEquals("AnotherService", component2.getName());
         ComponentImplementationModel implementation2 = component2.getImplementation();
         Assert.assertEquals("bean", implementation2.getType());
-        Assert.assertEquals("org.switchyard.example.m1app.AnotherBean", implementation2.getClazz());
         ComponentServiceModel componentService2 = component2.getServices().get(0);
         Assert.assertEquals("AnotherService", componentService2.getName());
         ComponentServiceInterfaceModel interface3 = componentService2.getInterface();
