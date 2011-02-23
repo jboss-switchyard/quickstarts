@@ -234,7 +234,7 @@ public class Invoker {
     }
 
     private Exchange createExchange(ExchangeHandlerProxy exchangeHandlerProxy, ExchangePattern pattern) {
-        Service service;
+        ServiceReference service;
         ServiceOperation serviceOperation = _serviceOperation;
         ExchangeContract exchangeContract;
 

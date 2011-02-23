@@ -33,7 +33,7 @@ import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
 import org.switchyard.ExchangeState;
 import org.switchyard.Message;
-import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.spi.Endpoint;
 import org.switchyard.transform.TransformSequence;
@@ -48,7 +48,7 @@ public class ExchangeImpl implements Exchange {
     private final String            _exchangeId;
     private final ExchangeContract  _contract;
     private ExchangePhase           _phase;
-    private final Service           _service;
+    private final ServiceReference           _service;
     private Message                 _message;
     private ExchangeState           _state = ExchangeState.OK;
     private Endpoint                _inputEndpoint;
@@ -61,7 +61,7 @@ public class ExchangeImpl implements Exchange {
      * @param service service
      * @param contract exchange contract
      */
-    ExchangeImpl(Service service, ExchangeContract contract) {
+    ExchangeImpl(ServiceReference service, ExchangeContract contract) {
         this(service, contract, null, null);
     }
     
@@ -72,7 +72,7 @@ public class ExchangeImpl implements Exchange {
      * @param input input endpoint
      * @param input output endpoint
      */
-    ExchangeImpl(Service service, ExchangeContract contract, Endpoint input, Endpoint output) {
+    ExchangeImpl(ServiceReference service, ExchangeContract contract, Endpoint input, Endpoint output) {
 
         // Check that the ExchangeContract exists and has invoker metadata and a ServiceOperation defined on it...
         if (contract == null) {
@@ -108,7 +108,7 @@ public class ExchangeImpl implements Exchange {
     }
 
     @Override
-    public Service getService() {
+    public ServiceReference getService() {
         return _service;
     }
 

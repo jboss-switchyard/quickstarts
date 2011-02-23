@@ -30,7 +30,7 @@ import javax.xml.namespace.QName;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.internal.DefaultServiceRegistry;
 
 /**
@@ -45,7 +45,7 @@ public class DefaultServiceRegistryTest
     public void shouldBePossibleToSearchForNonRegisteredService()
     {
         DefaultServiceRegistry registry = new DefaultServiceRegistry();
-        List<Service> services = registry.getServices(new QName("unRegisteredService"));
+        List<ServiceReference> services = registry.getServices(new QName("unRegisteredService"));
         Assert.assertThat(services.size(), is(0));
     }
     
@@ -53,7 +53,7 @@ public class DefaultServiceRegistryTest
     public void testUnregister() {
         final QName serviceName = new QName("Foo");
         DefaultServiceRegistry registry = new DefaultServiceRegistry();
-        Service service = registry.registerService(serviceName, null, null, null, null);
+        ServiceReference service = registry.registerService(serviceName, null, null, null, null);
         Assert.assertTrue(registry.getServices(serviceName).size() > 0);
         service.unregister();
         Assert.assertTrue(registry.getServices(serviceName).size() == 0);

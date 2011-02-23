@@ -34,7 +34,7 @@ import org.junit.Test;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
-import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.ServiceDomain;
 import org.switchyard.MockDomain;
 import org.switchyard.metadata.ExchangeContract;
@@ -67,7 +67,7 @@ public class InOnlyTest {
 			    inEvents.add(event);
 			}
         };
-        Service service = _domain.registerService(serviceName, provider);
+        ServiceReference service = _domain.registerService(serviceName, provider);
         
         // Consume the service
         Exchange exchange = _domain.createExchange(service, ExchangeContract.IN_ONLY);

@@ -29,7 +29,7 @@ import javax.xml.namespace.QName;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePhase;
-import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.ServiceDomain;
 import org.switchyard.handlers.HandlerChain;
 import org.switchyard.handlers.TransformHandler;
@@ -76,7 +76,7 @@ public class DomainImpl implements ServiceDomain {
     }
 
     @Override
-    public Exchange createExchange(Service service, ExchangeContract contract) {
+    public Exchange createExchange(ServiceReference service, ExchangeContract contract) {
         return createExchange(service, contract, null);
     }
 
@@ -84,7 +84,7 @@ public class DomainImpl implements ServiceDomain {
 
     @Override
     public Exchange createExchange(
-            Service service, ExchangeContract contract, ExchangeHandler handler) {
+            ServiceReference service, ExchangeContract contract, ExchangeHandler handler) {
         // Determine the endpoints used for exchange delivery
         Endpoint inputEndpoint = _endpointProvider.getEndpoint(
                 getEndpointName(service.getName(), ExchangePhase.IN));
@@ -103,12 +103,12 @@ public class DomainImpl implements ServiceDomain {
     }
 
     @Override
-    public Service registerService(QName serviceName, ExchangeHandler handler) {
+    public ServiceReference registerService(QName serviceName, ExchangeHandler handler) {
         return registerService(serviceName, handler, null);
     }
 
     @Override
-    public Service registerService(QName serviceName, ExchangeHandler handler,
+    public ServiceReference registerService(QName serviceName, ExchangeHandler handler,
             ServiceInterface metadata) {
         HandlerChain handlers = _defaultHandlers.clone();
         handlers.addLast("provider", handler);
@@ -133,8 +133,8 @@ public class DomainImpl implements ServiceDomain {
     }
     
     @Override
-    public Service getService(QName serviceName) {
-        List<Service> services = _registry.getServices(serviceName);
+    public ServiceReference getService(QName serviceName) {
+        List<ServiceReference> services = _registry.getServices(serviceName);
         return services.isEmpty() ? null : services.get(0);
     }
     

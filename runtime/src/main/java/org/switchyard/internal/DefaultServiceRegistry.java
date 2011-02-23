@@ -31,7 +31,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.ServiceDomain;
 import org.switchyard.handlers.HandlerChain;
 import org.switchyard.metadata.ServiceInterface;
@@ -47,10 +47,10 @@ public class DefaultServiceRegistry implements ServiceRegistry {
         new HashMap<QName, List<ServiceRegistration>>();
 
     @Override
-    public List<Service> getServicesForDomain(String domainName) {
-        List<Service> domainServices = getServices();
+    public List<ServiceReference> getServicesForDomain(String domainName) {
+        List<ServiceReference> domainServices = getServices();
         // Using an explicit iterator because we are removing elements
-        for (Iterator<Service> i = domainServices.iterator(); i.hasNext();) {
+        for (Iterator<ServiceReference> i = domainServices.iterator(); i.hasNext();) {
             ServiceRegistration sr = (ServiceRegistration) i.next();
             // prune services that do not match the specified domain
             if (!sr.getDomain().getName().equals(domainName)) {
@@ -62,8 +62,8 @@ public class DefaultServiceRegistry implements ServiceRegistry {
     }
 
     @Override
-    public synchronized List<Service> getServices() {
-        LinkedList<Service> serviceList = new LinkedList<Service>();
+    public synchronized List<ServiceReference> getServices() {
+        LinkedList<ServiceReference> serviceList = new LinkedList<ServiceReference>();
         for (List<ServiceRegistration> services : _services.values()) {
             serviceList.addAll(services);
         }
@@ -72,17 +72,17 @@ public class DefaultServiceRegistry implements ServiceRegistry {
     }
 
     @Override
-    public synchronized List<Service> getServices(QName serviceName) {
+    public synchronized List<ServiceReference> getServices(QName serviceName) {
         List<ServiceRegistration> services = _services.get(serviceName);
         if (services == null) {
             return Collections.emptyList();
         }
 
-        return new LinkedList<Service>(services);
+        return new LinkedList<ServiceReference>(services);
     }
 
     @Override
-    public synchronized Service registerService(QName serviceName,
+    public synchronized ServiceReference registerService(QName serviceName,
             ServiceInterface serviceInterface, Endpoint endpoint,
             HandlerChain handlers, ServiceDomain domain) {
 
@@ -100,7 +100,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
     }
 
     @Override
-    public synchronized void unregisterService(Service service) {
+    public synchronized void unregisterService(ServiceReference service) {
         List<ServiceRegistration> serviceList =
             _services.get(service.getName());
         if (serviceList != null) {

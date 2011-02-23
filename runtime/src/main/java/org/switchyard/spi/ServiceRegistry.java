@@ -26,7 +26,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.ServiceDomain;
 import org.switchyard.handlers.HandlerChain;
 import org.switchyard.metadata.ServiceInterface;
@@ -47,29 +47,29 @@ public interface ServiceRegistry {
      * @param domain domain
      * @return Service
      */
-    Service registerService(QName serviceName, ServiceInterface serviceInterface,
+    ServiceReference registerService(QName serviceName, ServiceInterface serviceInterface,
             Endpoint endpoint, HandlerChain handlers, ServiceDomain domain);
     /**
      * Unregister the service.
      * @param service service
      */
-    void unregisterService(Service service);
+    void unregisterService(ServiceReference service);
 
     /**
      * Return the list of services.
      * @return services
      */
-    List<Service> getServices();
+    List<ServiceReference> getServices();
     /**
      * Get the list of services for the specified service name.
      * @param serviceName service name
      * @return services
      */
-    List<Service> getServices(QName serviceName);
+    List<ServiceReference> getServices(QName serviceName);
     /**
      * Get the list of services for the specified domain name.
      * @param domainName domain name
      * @return services
      */
-    List<Service> getServicesForDomain(String domainName);
+    List<ServiceReference> getServicesForDomain(String domainName);
 }

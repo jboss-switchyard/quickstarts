@@ -58,7 +58,7 @@ public interface Exchange {
      * The service being invoked by this exchange.
      * @return Service to be invoked
      */
-    Service getService();
+    ServiceReference getService();
 
     /**
      * Returns the current message for the exchange.  On new exchanges, this

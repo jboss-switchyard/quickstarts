@@ -28,7 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.Exchange;
 import org.switchyard.MockHandler;
-import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.ServiceDomain;
 import org.switchyard.MockDomain;
 import org.switchyard.metadata.ExchangeContract;
@@ -51,7 +51,7 @@ public class InOutTest {
 
         // Provide the service
         MockHandler provider = new MockHandler().forwardInToOut();
-        Service service = _domain.registerService(serviceName, provider);
+        ServiceReference service = _domain.registerService(serviceName, provider);
         
         // Consume the service
         MockHandler consumer = new MockHandler();
@@ -70,7 +70,7 @@ public class InOutTest {
         final QName serviceName = new QName("inOutFault");
         // Provide the service
         MockHandler provider = new MockHandler().forwardInToFault();
-        Service service = _domain.registerService(serviceName, provider);
+        ServiceReference service = _domain.registerService(serviceName, provider);
         
         // Consume the service
         MockHandler consumer = new MockHandler();

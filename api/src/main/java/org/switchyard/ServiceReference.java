@@ -30,7 +30,7 @@ import javax.xml.namespace.QName;
 /**
  * A service registered with the SwitchYard runtime.
  */
-public interface Service {
+public interface ServiceReference {
     /**
      * Qualified name of the service.
      * @return service name
@@ -41,12 +41,6 @@ public interface Service {
     * @return the service interface
     */
     ServiceInterface getInterface();
-    /**
-     * Used to notify the SwitchYard runtime that the service should be
-     * removed from the runtime registry and no further exchanges should be
-     * routed to the registered ExchangeHandler.
-     */
-    void unregister();
     /**
      * Creates a new Exchange to invoke this service with the specified exchange
      * pattern.

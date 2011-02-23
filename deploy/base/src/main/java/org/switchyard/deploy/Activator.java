@@ -22,7 +22,7 @@ package org.switchyard.deploy;
 import javax.xml.namespace.QName;
 
 import org.switchyard.ExchangeHandler;
-import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.config.model.Model;
 
 /**
@@ -51,17 +51,17 @@ public interface Activator {
      * Start the specified service or reference.
      * @param service service to start
      */
-    void start(Service service);
+    void start(ServiceReference service);
     /**
      * Stop the specified service or reference.
      * @param service service to stop
      */
-    void stop(Service service);
+    void stop(ServiceReference service);
     /**
      * Destroy the specified service or reference.  Once destroyed, the activator
      * should be capable of launching a clean instance of this service or 
      * reference through an init() call (e.g. application redeployment).
      * @param service service to destroy
      */
-    void destroy(Service service);
+    void destroy(ServiceReference service);
 }
