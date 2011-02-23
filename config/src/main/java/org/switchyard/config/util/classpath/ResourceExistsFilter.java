@@ -16,30 +16,46 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
+
 package org.switchyard.config.util.classpath;
 
 /**
- * Filter classpath classes based on their type.
- * 
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class InstanceOfFilter extends AbstractTypeFilter {
+public class ResourceExistsFilter implements Filter {
 
-    private Class<?> _searchType;
+    private String _resourceName;
+    private boolean _resourceFound = false;
 
     /**
      * Public constructor.
-     * @param searchType The Java type to search for.
+     * @param resourceName The name of the resource to be checked for.
      */
-    public InstanceOfFilter(Class<?> searchType) {
-        this._searchType = searchType;
+    public ResourceExistsFilter(String resourceName) {
+        this._resourceName = resourceName;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected boolean matches(Class<?> clazz) {
-        return _searchType.isAssignableFrom(clazz);
+    public void filter(String resourceName) {
+        _resourceFound = resourceName.equals(_resourceName);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean continueScanning() {
+        return !_resourceFound;
+    }
+
+    /**
+     * Was the resource was found on the scan.
+     * @return True if the resource was found, otherwise false.
+     */
+    public boolean resourceExists() {
+        return _resourceFound;
     }
 }

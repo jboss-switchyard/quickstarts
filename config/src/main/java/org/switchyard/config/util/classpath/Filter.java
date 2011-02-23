@@ -30,5 +30,11 @@ public interface Filter {
      * @param resourceName The classpath resource file name.  Needs to be converted to
      * a proper class name
      */
-    public void filter(String resourceName);
+    void filter(String resourceName);
+
+    /**
+     * Should the scanner continue scanning.
+     * @return True of the scanner should continue, otherwise false.
+     */
+    boolean continueScanning();
 }

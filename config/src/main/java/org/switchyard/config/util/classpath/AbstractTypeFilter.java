@@ -41,11 +41,19 @@ abstract class AbstractTypeFilter implements Filter {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean continueScanning() {
+        return true;
+    }
+
+    /**
      * Is the Java type a filter match.
      * @param clazz The Java type to be checked.
      * @return True if the Java type is a match, otherwise false.
      */
-    protected abstract boolean matches(Class clazz);
+    protected abstract boolean matches(Class<?> clazz);
 
     /**
      * Get the set of filtered (i.e. matching) types.
@@ -71,6 +79,7 @@ abstract class AbstractTypeFilter implements Filter {
             String className = toClassName(resourceName);
 
             try {
+                // Assumption here is that these classes are on the scanner's classpath...
                 Class clazz = Class.forName(className);
                 if (matches(clazz)) {
                     _classes.add(clazz);

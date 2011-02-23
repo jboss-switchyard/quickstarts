@@ -16,22 +16,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
+
 package org.switchyard.config.util.classpath;
 
+import java.lang.annotation.Annotation;
+
 /**
- * Filter classpath classes based on their type.
+ * Filter classpath classes based on presence of an annotation.
  * 
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class InstanceOfFilter extends AbstractTypeFilter {
+public class IsAnnotationPresentFilter extends AbstractTypeFilter {
 
-    private Class<?> _searchType;
+    private Class<? extends Annotation> _searchType;
 
     /**
      * Public constructor.
      * @param searchType The Java type to search for.
      */
-    public InstanceOfFilter(Class<?> searchType) {
+    public IsAnnotationPresentFilter(Class<? extends Annotation> searchType) {
         this._searchType = searchType;
     }
 
@@ -40,6 +43,6 @@ public class InstanceOfFilter extends AbstractTypeFilter {
      */
     @Override
     protected boolean matches(Class<?> clazz) {
-        return _searchType.isAssignableFrom(clazz);
+        return clazz.isAnnotationPresent(_searchType);
     }
 }

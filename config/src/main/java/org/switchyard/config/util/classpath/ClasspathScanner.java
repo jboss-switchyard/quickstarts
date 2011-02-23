@@ -86,6 +86,10 @@ public class ClasspathScanner {
         Enumeration<? extends ZipEntry> entries = zip.entries();
 
         while (entries.hasMoreElements()) {
+            if(!_filter.continueScanning()) {
+                break;
+            }
+
             ZipEntry entry = entries.nextElement();
             String name = entry.getName();
             _filter.filter(name);
@@ -98,6 +102,10 @@ public class ClasspathScanner {
         }
 
         for (File child : file.listFiles()) {
+            if(!_filter.continueScanning()) {
+                break;
+            }
+
             String newPath = path == null ? child.getName() : path + '/' + child.getName();
 
             if (child.isDirectory()) {
