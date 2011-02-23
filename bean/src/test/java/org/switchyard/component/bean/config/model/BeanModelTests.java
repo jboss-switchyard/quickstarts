@@ -66,7 +66,7 @@ public class BeanModelTests {
         Configuration config = bci.getModelConfiguration();
         Assert.assertEquals("implementation.bean", config.getName());
         QName qname = config.getQName();
-        Assert.assertEquals("http://www.switchyard.org/component/bean/config/model/v1", qname.getNamespaceURI());
+        Assert.assertEquals("urn:switchyard-component-bean:config:1.0", qname.getNamespaceURI());
         Assert.assertEquals("implementation.bean", qname.getLocalPart());
     }
 

@@ -64,7 +64,7 @@ public class SOAPProvider extends BaseHandler {
                 exchange.sendFault(message);
             } else {
                 message = exchange.createMessage();
-                response = "<test:sayHelloResponse xmlns:test=\"http://test.ws/\">"
+                response = "<test:sayHelloResponse xmlns:test=\"urn:switchyard-component-soap:test-ws:1.0\">"
                              + "   <return>Hello " + toWhom + "</return>"
                              + "</test:sayHelloResponse>";
                 setContent(message, response);

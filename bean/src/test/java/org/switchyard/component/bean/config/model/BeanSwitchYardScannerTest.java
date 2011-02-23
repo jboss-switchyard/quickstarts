@@ -19,16 +19,17 @@
 
 package org.switchyard.component.bean.config.model;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.switchyard.component.bean.Service;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.switchyard.component.bean.Service;
+import org.switchyard.config.util.Classes;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
@@ -52,7 +53,7 @@ public class BeanSwitchYardScannerTest {
     }
 
     private void checkBeanModel(BeanComponentImplementationModel model) throws ClassNotFoundException {
-        Class<?> serviceClass = Class.forName(model.getClazz());
+        Class<?> serviceClass = Classes.forName(model.getClazz(), getClass());
 
         Assert.assertFalse(serviceClass.isInterface());
         Assert.assertFalse(Modifier.isAbstract(serviceClass.getModifiers()));

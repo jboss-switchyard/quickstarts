@@ -22,20 +22,20 @@
 
 package org.switchyard.component.soap;
 
+import java.io.ByteArrayOutputStream;
+import java.net.MalformedURLException;
+
+import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPMessage;
+
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.switchyard.Service;
 import org.switchyard.SwitchYardCDITestCase;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.StreamUtil;
-
-import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPMessage;
-import java.io.ByteArrayOutputStream;
-import java.net.MalformedURLException;
 
 public class GreetingServiceTest extends SwitchYardCDITestCase {
 
@@ -61,7 +61,7 @@ public class GreetingServiceTest extends SwitchYardCDITestCase {
 
     @Test
     public void invokeRequestResponse() throws Exception {
-        String soapRequest = "<gre:greet xmlns:gre=\"http://greeting.soap.component.switchyard.org/\">\n" +
+        String soapRequest = "<gre:greet xmlns:gre=\"urn:switchyard-component-soap:test-greeting:1.0\">\n" +
                 " <arg0>\n" +
                 "    <person>\n" +
                 "       <firstname>Mal</firstname>\n" +
@@ -70,7 +70,7 @@ public class GreetingServiceTest extends SwitchYardCDITestCase {
                 "    <time>2011-01-22T21:32:52</time>\n" +
                 " </arg0>\n" +
                 "</gre:greet>";
-        String expectedResponse = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><gre:greetResponse xmlns:gre=\"http://greeting.soap.component.switchyard.org/\">\n" +
+        String expectedResponse = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><gre:greetResponse xmlns:gre=\"urn:switchyard-component-soap:test-greeting:1.0\">\n" +
                 "    <return>\n" +
                 "        <greetingid>987789</greetingid>\n" +
                 "        <person>\n" +
@@ -85,7 +85,7 @@ public class GreetingServiceTest extends SwitchYardCDITestCase {
 
     @Test
     public void invokeRequestResponse_App_Exception() throws Exception {
-        String soapRequest = "<gre:greet xmlns:gre=\"http://greeting.soap.component.switchyard.org/\">\n" +
+        String soapRequest = "<gre:greet xmlns:gre=\"urn:switchyard-component-soap:test-greeting:1.0\">\n" +
                 " <arg0>\n" +
                 "    <person>\n" +
                 "       <firstname>throwme</firstname>\n" + // This tells the service to throw an exception
@@ -100,14 +100,14 @@ public class GreetingServiceTest extends SwitchYardCDITestCase {
     @Test
     public void invokeRequestResponse_bad_soap_01() throws Exception {
         String soapRequest = "<gre:greet xmlns:gre=\"http://broken/unknown/namespace\" />";
-        String expectedResponse = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault><faultcode>SOAP-ENV:Server</faultcode><faultstring>Invalid input SOAP payload namespace for service operation 'greet' (service 'GreetingService').  Port defines operation namespace as 'http://greeting.soap.component.switchyard.org/'.  Actual namespace on input SOAP message 'http://broken/unknown/namespace'.</faultstring></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+        String expectedResponse = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault><faultcode>SOAP-ENV:Server</faultcode><faultstring>Invalid input SOAP payload namespace for service operation 'greet' (service 'GreetingService').  Port defines operation namespace as 'urn:switchyard-component-soap:test-greeting:1.0'.  Actual namespace on input SOAP message 'http://broken/unknown/namespace'.</faultstring></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
         test(soapRequest, expectedResponse, false);
     }
 
     @Test
     public void invokeRequestResponse_bad_soap_02() throws Exception {
-        String soapRequest = "<gre:xxxxx xmlns:gre=\"http://greeting.soap.component.switchyard.org/\" />";
+        String soapRequest = "<gre:xxxxx xmlns:gre=\"urn:switchyard-component-soap:test-greeting:1.0\" />";
         String expectedResponse = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault><faultcode>SOAP-ENV:Server</faultcode><faultstring>Operation 'xxxxx' not available on target Service 'GreetingService'.</faultstring></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
         test(soapRequest, expectedResponse, false);

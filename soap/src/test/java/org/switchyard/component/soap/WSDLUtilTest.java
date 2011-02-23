@@ -41,10 +41,10 @@ public class WSDLUtilTest {
 
     @Test
     public void fullyQualifiedPortName() throws Exception {
-        PortName portName = new PortName("{http://test.ws/}GoodbyeWebService:GoodbyeWebServicePort");
+        PortName portName = new PortName("{urn:switchyard-component-soap:test-ws:1.0}GoodbyeWebService:GoodbyeWebServicePort");
         Service service = WSDLUtil.getService("MultiplePortService.wsdl", portName);
         Assert.assertNotNull(service);
-        Assert.assertEquals(service.getQName(), new QName("http://test.ws/", "GoodbyeWebService"));
+        Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "GoodbyeWebService"));
         Port port = WSDLUtil.getPort(service, portName);
         Assert.assertNotNull(port);
         Assert.assertEquals(port.getName(), "GoodbyeWebServicePort");
@@ -55,7 +55,7 @@ public class WSDLUtilTest {
         PortName portName = new PortName("HelloWebService:HelloWebServicePort");
         Service service = WSDLUtil.getService("MultiplePortService.wsdl", portName);
         Assert.assertNotNull(service);
-        Assert.assertEquals(service.getQName(), new QName("http://test.ws/", "HelloWebService"));
+        Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "HelloWebService"));
         Port port = WSDLUtil.getPort(service, portName);
         Assert.assertNotNull(port);
         Assert.assertEquals(port.getName(), "HelloWebServicePort");
@@ -66,10 +66,10 @@ public class WSDLUtilTest {
         PortName portName = new PortName("HelloWebServicePortFrench");
         Service service = WSDLUtil.getService("MultiplePortService.wsdl", portName);
         Assert.assertNotNull(service);
-        Assert.assertEquals(service.getQName(), new QName("http://test.ws/", "GoodbyeWebService"));
+        Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "GoodbyeWebService"));
         service = WSDLUtil.getService("MultiplePortService.wsdl", new PortName("HelloWebService:"));
         Assert.assertNotNull(service);
-        Assert.assertEquals(service.getQName(), new QName("http://test.ws/", "HelloWebService"));
+        Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "HelloWebService"));
         Port port = WSDLUtil.getPort(service, portName);
         Assert.assertEquals(port.getName(), "HelloWebServicePortFrench");
     }
@@ -78,13 +78,13 @@ public class WSDLUtilTest {
     public void nullPortName() throws Exception {
         Service service = WSDLUtil.getService("MultiplePortService.wsdl", new PortName(null));
         Assert.assertNotNull(service);
-        Assert.assertEquals(service.getQName(), new QName("http://test.ws/", "GoodbyeWebService"));
+        Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "GoodbyeWebService"));
         Port port = WSDLUtil.getPort(service, new PortName(null));
         Assert.assertNotNull(port);
         Assert.assertEquals(port.getName(), "GoodbyeWebServicePort");
         service = WSDLUtil.getService("MultiplePortService.wsdl", new PortName("HelloWebService:"));
         Assert.assertNotNull(service);
-        Assert.assertEquals(service.getQName(), new QName("http://test.ws/", "HelloWebService"));
+        Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "HelloWebService"));
         port = WSDLUtil.getPort(service, new PortName(null));
         Assert.assertEquals(port.getName(), "HelloWebServicePortFrench");
     }
@@ -98,7 +98,7 @@ public class WSDLUtilTest {
     public void nonExistentPortName() throws Exception {
         Service service = WSDLUtil.getService("MultiplePortService.wsdl", new PortName("HelloWebService:"));
         Assert.assertNotNull(service);
-        Assert.assertEquals(service.getQName(), new QName("http://test.ws/", "HelloWebService"));
+        Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "HelloWebService"));
         WSDLUtil.getPort(service, new PortName("HelloWebServiceSpanishPort"));
     }
 }

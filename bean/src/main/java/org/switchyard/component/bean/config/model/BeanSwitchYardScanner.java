@@ -1,17 +1,17 @@
 package org.switchyard.component.bean.config.model;
 
+import java.io.IOException;
+import java.lang.reflect.Modifier;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.switchyard.component.bean.Service;
 import org.switchyard.component.bean.config.model.v1.V1BeanComponentImplementationModel;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.util.classpath.ClasspathScanner;
 import org.switchyard.config.util.classpath.IsAnnotationPresentFilter;
 import org.switchyard.config.util.classpath.ResourceExistsFilter;
-
-import java.io.IOException;
-import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Bean Scanner.
@@ -28,7 +28,7 @@ public class BeanSwitchYardScanner implements Scanner<BeanComponentImplementatio
         List<Class<?>> serviceClasses = scanForServiceBeans(urls);
         List<BeanComponentImplementationModel> beanModels = new ArrayList<BeanComponentImplementationModel>();
 
-        for (Class serviceClass : serviceClasses) {
+        for (Class<?> serviceClass : serviceClasses) {
             if (serviceClass.isInterface()) {
                 continue;
             }

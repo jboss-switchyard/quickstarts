@@ -25,12 +25,12 @@
                       xmlns:jb="http://www.milyn.org/xsd/smooks/javabean-1.4.xsd">
 
     <!--
-    Binding config for reading/writing between the "{http://greeting.soap.component.switchyard.org/}greet"
+    Binding config for reading/writing between the "{urn:switchyard-component-soap:test-greeting:1.0}greet"
     XML type and the org.switchyard.component.soap.greeting.Greeting Java type.
     -->
 
     <core:namespaces>
-        <core:namespace prefix="gre" uri="http://greeting.soap.component.switchyard.org/"/>
+        <core:namespace prefix="gre" uri="urn:switchyard-component-soap:test-greeting:1.0"/>
     </core:namespaces>
 
     <jb:bean beanId="greeting" class="org.switchyard.component.soap.greeting.Greeting" createOnElement="/gre:greet">

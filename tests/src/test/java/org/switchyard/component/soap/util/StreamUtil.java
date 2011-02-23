@@ -22,14 +22,13 @@
 
 package org.switchyard.component.soap.util;
 
-import org.junit.Assert;
-import org.w3c.dom.*;
-
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import javax.xml.soap.SOAPMessage;
+
+import org.junit.Assert;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>

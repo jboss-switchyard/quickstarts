@@ -61,6 +61,6 @@ public class JavaReplyToSOAP<F extends Reply, T extends String>  extends BaseTra
 
     @Override
     public QName getTo() {
-        return QName.valueOf("{http://greeting.soap.component.switchyard.org/}greetResponse");
+        return QName.valueOf("{urn:switchyard-component-soap:test-greeting:1.0}greetResponse");
     }
 }

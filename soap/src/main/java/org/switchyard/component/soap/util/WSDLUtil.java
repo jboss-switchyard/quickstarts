@@ -143,7 +143,7 @@ public final class WSDLUtil {
             URL url = Thread.currentThread().getContextClassLoader().getResource(path);
             if (url == null) {
                 File localFile = new File(path);
-                url = localFile.toURL();
+                url = localFile.toURI().toURL();
             }
             return url;
         }

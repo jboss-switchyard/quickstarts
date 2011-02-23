@@ -92,7 +92,7 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
 
         public String call() {
             String input = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body>"
-                     + "   <test:sayHello xmlns:test=\"http://test.ws/\">"
+                     + "   <test:sayHello xmlns:test=\"urn:switchyard-component-soap:test-ws:1.0\">"
                      + "      <arg0>Thread " + _threadNo + "</arg0>"
                      + "   </test:sayHello>"
                      + "</soap:Body></soap:Envelope>";
@@ -185,7 +185,7 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
 
     @Test
     public void invokeOneWay() throws Exception {
-        Element input = SOAPUtil.parseAsDom("<!--Comment --><test:helloWS xmlns:test=\"http://test.ws/\">"
+        Element input = SOAPUtil.parseAsDom("<!--Comment --><test:helloWS xmlns:test=\"urn:switchyard-component-soap:test-ws:1.0\">"
                      + "   <arg0>Hello</arg0>"
                      + "</test:helloWS>").getDocumentElement();
 
@@ -194,11 +194,11 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
 
     @Test
     public void invokeRequestResponse() throws Exception {
-        String input = "<test:sayHello xmlns:test=\"http://test.ws/\">"
+        String input = "<test:sayHello xmlns:test=\"urn:switchyard-component-soap:test-ws:1.0\">"
                      + "   <arg0>Jimbo</arg0>"
                      + "</test:sayHello>";
 
-        String output = "<test:sayHelloResponse xmlns:test=\"http://test.ws/\">"
+        String output = "<test:sayHelloResponse xmlns:test=\"urn:switchyard-component-soap:test-ws:1.0\">"
                      + "   <return>Hello Jimbo</return>"
                      + "</test:sayHelloResponse>";
 
@@ -222,7 +222,7 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
 
     @Test
     public void invokeRequestResponseFault() throws Exception {
-        String input = "<test:sayHello xmlns:test=\"http://test.ws/\">"
+        String input = "<test:sayHello xmlns:test=\"urn:switchyard-component-soap:test-ws:1.0\">"
                      + "   <arg0></arg0>"
                      + "</test:sayHello>";
 
@@ -257,7 +257,7 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
         for (Future<String> future : futures) {
             response = future.get();
             output =  "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body>"
-                     + "   <test:sayHelloResponse xmlns:test=\"http://test.ws/\">"
+                     + "   <test:sayHelloResponse xmlns:test=\"urn:switchyard-component-soap:test-ws:1.0\">"
                      + "      <return>Hello Thread " + i + "</return>"
                      + "   </test:sayHelloResponse>"
                      + "</soap:Body></soap:Envelope>";
