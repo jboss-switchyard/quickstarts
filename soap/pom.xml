@@ -50,10 +50,6 @@
                 <configuration>
                     <systemProperties>
                         <property>
-                            <name>log4j.configuration</name>
-                            <value>file:${basedir}/src/main/config/log4jconfig.xml</value>
-                        </property>
-                        <property>
                             <name>org.switchyard.test.soap.host</name>
                             <value>localhost</value>
                         </property>
