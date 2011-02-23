@@ -38,9 +38,14 @@ import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.transform.TransformModel;
+import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.deploy.Activator;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.java.JavaService;
+import org.switchyard.transform.Transformer;
+import org.switchyard.transform.TransformerRegistry;
+import org.switchyard.transform.config.model.TransformerFactory;
 
 /**
  * Deployment is a framework-independent representation of a deployed SwitchYard 
@@ -74,6 +79,7 @@ public class Deployment extends AbstractDeployment {
         new HashMap<String, Activator>();
     private Map<String, Activator> _gatewayActivators = 
         new HashMap<String, Activator>();
+    private List<Transformer> _transformers = new LinkedList<Transformer>();
     private List<Activation> _services = new LinkedList<Activation>();
     private List<Activation> _serviceBindings = new LinkedList<Activation>();
     private List<Activation> _references = new LinkedList<Activation>();
@@ -106,9 +112,9 @@ public class Deployment extends AbstractDeployment {
     public void init() {
         super.init();
         _log.debug("Initializing deployment for application " + _switchyardConfig.getName());
-        // create a new domain and load activator instances for lifecycle
+        // create a new domain and load transformer and activator instances for lifecycle
+        registerTransformers();
         createActivators();
-        
     }
     
     /**
@@ -123,9 +129,9 @@ public class Deployment extends AbstractDeployment {
         deployReferences();
         deployServiceBindings();
     }
-    
+
     /**
-     * Stops the deployment.  All services are unregistered and the appropriate 
+     * Stops the deployment.  All services are unregistered and the appropriate
      * activators are triggered.
      */
     public void stop() {
@@ -149,19 +155,57 @@ public class Deployment extends AbstractDeployment {
         _serviceBindings.clear();
         _references.clear();
         _referenceBindings.clear();
+
+        unregisterTransformers();
     }
 
     private void createActivators() {
+        createActivator("bean", BEAN_ACTIVATOR_CLASS);
+        createActivator("soap", SOAP_ACTIVATOR_CLASS);
+    }
+
+    private void createActivator(String type, String runtimeClass) {
         try {
             _componentActivators.put(
-                    "bean", 
-                    (Activator)loadClass(BEAN_ACTIVATOR_CLASS).newInstance());
-            
-            _gatewayActivators.put(
-                    "soap", 
-                    (Activator)loadClass(SOAP_ACTIVATOR_CLASS).newInstance());
+                    type,
+                    (Activator)loadClass(runtimeClass).newInstance());
         } catch (Exception ex) {
-            throw new RuntimeException("Failed to load activator class for component", ex);
+            _log.debug("Failed to load Activator class '" + runtimeClass + "' for component type '" + type + "'.");
+        }
+    }
+
+    private void registerTransformers() {
+        _log.debug("Registering configured Transformers ...");
+
+        TransformerRegistry transformerRegistry = getDomain().getTransformerRegistry();
+        TransformsModel transforms = _switchyardConfig.getTransforms();
+
+        try {
+            for (TransformModel transformModel : transforms.getTransforms()) {
+                Transformer<?, ?> transformer = TransformerFactory.newTransformer(transformModel);
+                Transformer<?, ?> registeredTransformer = transformerRegistry.getTransformer(transformer.getFrom(), transformer.getTo());
+
+                // TODO: Need to review this... need a formalised way of sharing Transformer instance between apps in a Domain.
+                if(registeredTransformer != null) {
+                    throw new RuntimeException("Failed to register Transformer '" + toDescription(transformer)
+                            + "'.  A Transformer for these types is already registered: '"
+                            + toDescription(registeredTransformer) + "'.");
+                }
+
+                transformerRegistry.addTransformer(transformer);
+                _transformers.add(transformer);
+            }
+        } catch (RuntimeException e) {
+            // If there was an exception for any reason... remove all Transformer instance that have
+            // already been registered with the domain...
+            unregisterTransformers();
+            throw e;
+        }
+    }
+
+    private void unregisterTransformers() {
+        for (Transformer transformer : _transformers) {
+            getDomain().getTransformerRegistry().removeTransformer(transformer);
         }
     }
 
@@ -174,8 +218,7 @@ public class Deployment extends AbstractDeployment {
         _log.debug("Deploying services ...");
         // deploy services to each implementation found in the application
         for (ComponentModel component : _switchyardConfig.getComposite().getComponents()) {
-            Activator activator = _componentActivators.get(
-                    component.getImplementation().getType());
+            Activator activator = getActivator(component);
             // register a service for each one declared in the component
             for (ComponentServiceModel service : component.getServices()) {
                 _log.debug("Registering service " + service.getName()  
@@ -200,8 +243,7 @@ public class Deployment extends AbstractDeployment {
     private void deployReferences() {
         _log.debug("Deploying references ...");
         for (ComponentModel component : _switchyardConfig.getComposite().getComponents()) {
-            Activator activator = _componentActivators.get(
-                    component.getImplementation().getType());
+            Activator activator = getActivator(component);
             // register a service for each one declared in the component
             for (ComponentReferenceModel reference : component.getReferences()) {
                 _log.debug("Registering reference " + reference.getName()  
@@ -273,6 +315,21 @@ public class Deployment extends AbstractDeployment {
         } catch (ClassNotFoundException cnfEx) {
             throw new RuntimeException(cnfEx);
         }
+    }
+
+    private String toDescription(Transformer<?, ?> transformer) {
+        return transformer.getClass().getName() + "(" + transformer.getFrom() + ", " + transformer.getTo() + ")";
+    }
+
+    private Activator getActivator(ComponentModel component) {
+        String type = component.getImplementation().getType();
+        Activator activator = _componentActivators.get(type);
+
+        if(activator == null) {
+            throw new RuntimeException("Unknown configuration component type '" + type + "'.  No Activator implementation registered for this type.");
+        }
+
+        return activator;
     }
 }
 

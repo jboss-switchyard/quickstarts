@@ -450,6 +450,11 @@
       </dependency>
       <dependency>
         <groupId>org.switchyard</groupId>
+        <artifactId>switchyard-transform</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.switchyard</groupId>
         <artifactId>switchyard-deploy-cdi</artifactId>
         <version>${project.version}</version>
       </dependency>
