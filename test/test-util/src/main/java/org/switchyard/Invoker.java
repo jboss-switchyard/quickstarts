@@ -198,8 +198,9 @@ public class Invoker {
      * Send an IN_OUT message to the target Service.
      * @param messagePayload The message payload.
      * @return The response message.
+     * @throws InvocationFaultException if the message exchange produces a fault
      */
-    public Message sendInOut(Object messagePayload) {
+    public Message sendInOut(Object messagePayload) throws InvocationFaultException {
         ExchangeHandlerProxy exchangeHandlerProxy = _exchangeHandlerProxy;
         ResponseCatcher responseCatcher = null;
 
@@ -215,7 +216,11 @@ public class Invoker {
         exchangeHandlerProxy._proxyInvocationHandler.waitForResponse(_timeoutMillis);
 
         if (responseCatcher != null) {
-            return responseCatcher._response;
+            if (responseCatcher._isFault) {
+                throw new InvocationFaultException(responseCatcher._response);
+            } else {
+                return responseCatcher._response;
+            }
         }
 
         return null;
@@ -321,6 +326,7 @@ public class Invoker {
     private class ResponseCatcher implements ExchangeHandler {
 
         private Message _response;
+        private boolean _isFault;
 
         @Override
         public void handleMessage(Exchange exchange) throws HandlerException {
@@ -329,6 +335,7 @@ public class Invoker {
 
         @Override
         public void handleFault(Exchange exchange) {
+            _isFault = true;
             _response = exchange.getMessage();
         }
     }
