@@ -104,12 +104,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.6</version>
         <configuration>
-          <systemProperties>
-            <property>
-              <name>log4j.configuration</name>
-              <value>file:${basedir}/src/main/config/log4jconfig.xml</value>
-            </property>
-          </systemProperties>
           <includes>
             <include>**/*Test*.java</include>
           </includes>
