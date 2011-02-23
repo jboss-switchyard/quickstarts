@@ -24,6 +24,7 @@ import org.switchyard.transform.Transformer;
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
+@SuppressWarnings("rawtypes")
 public interface XTransformerInterface extends Transformer {
     // Should be skipped by the scanner because it's an interface
 }

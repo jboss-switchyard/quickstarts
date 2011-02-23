@@ -18,8 +18,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA  02110-1301, USA.
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-           targetNamespace="http://www.switchyard.org/example/m1app"
-           xmlns:bean="http://www.switchyard.org/config/model/composite/test/bean"
+           targetNamespace="urn:m1app:example:1.0"
+           xmlns:bean="urn:switchyard-config:test-bean:1.0"
            name="m1app">
     <component name="SimpleService">
        <bean:implementation.bean class="org.switchyard.example.m1app.SimpleBean"/>

@@ -18,8 +18,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA  02110-1301, USA.
 -->
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
-        targetNamespace="http://www.switchyard.org/config/model/composite/test/bogus"
-        xmlns:bogus="http://www.switchyard.org/config/model/composite/test/bogus"
+        targetNamespace="urn:switchyard-config:test-bogus:1.0"
+        xmlns:bogus="urn:switchyard-config:test-bogus:1.0"
         xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
         elementFormDefault="qualified">
 

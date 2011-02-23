@@ -70,7 +70,7 @@ public class TransformHandler extends BaseHandler {
     public TransformHandler(Transformer<?, ?> ... transforms) {
         if (transforms != null && transforms.length > 0) {
             _registry = new BaseTransformerRegistry(
-                    new HashSet<Transformer>(Arrays.asList(transforms)));
+                    new HashSet<Transformer<?,?>>(Arrays.asList(transforms)));
         }
     }
 

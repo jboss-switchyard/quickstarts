@@ -31,7 +31,7 @@ import org.switchyard.config.model.transform.v1.V1BaseTransformModel;
  */
 public class SmooksTransformModel extends V1BaseTransformModel {
 
-    public static final String DEFAULT_NAMESPACE = "http://www.switchyard.org/config/model/switchyard/test/smooks";
+    public static final String DEFAULT_NAMESPACE = "urn:switchyard-config:test-smooks:1.0";
     public static final String SMOOKS = "smooks";
 
     private SmooksConfigModel _config;

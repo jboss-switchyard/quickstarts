@@ -18,8 +18,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA  02110-1301, USA.
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-           targetNamespace="http://www.switchyard.org/example/m1app"
-           xmlns:soap="http://www.switchyard.org/config/model/composite/test/soap"
+           targetNamespace="urn:m1app:example:1.0"
+           xmlns:soap="urn:switchyard-config:test-soap:1.0"
            name="m1app">
     <service name="M1AppService" promote="SimpleService">
        <soap:binding.soap>

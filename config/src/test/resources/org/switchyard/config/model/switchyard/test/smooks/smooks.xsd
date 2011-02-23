@@ -18,12 +18,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA  02110-1301, USA.
 -->
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
-        targetNamespace="http://www.switchyard.org/config/model/switchyard/test/smooks"
-        xmlns:smooks="http://www.switchyard.org/config/model/switchyard/test/smooks"
-        xmlns:swyd="http://www.switchyard.org/config/model/switchyard/v1"
+        targetNamespace="urn:switchyard-config:test-smooks:1.0"
+        xmlns:smooks="urn:switchyard-config:test-smooks:1.0"
+        xmlns:swyd="urn:switchyard-config:switchyard:1.0"
         elementFormDefault="qualified">
 
-    <import namespace="http://www.switchyard.org/config/model/switchyard/v1"
+    <import namespace="urn:switchyard-config:switchyard:1.0"
             schemaLocation="switchyard-v1.xsd"/>
 
     <element name="transform.smooks" type="smooks:SmooksTransformType" substitutionGroup="swyd:transform"/>

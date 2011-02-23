@@ -18,10 +18,11 @@
  */
 package org.switchyard.config.util.classpath;
 
-import org.apache.log4j.Logger;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.switchyard.config.util.Classes;
 
 /**
  * Abstract Java type filter.
@@ -80,7 +81,7 @@ abstract class AbstractTypeFilter implements Filter {
 
             try {
                 // Assumption here is that these classes are on the scanner's classpath...
-                Class clazz = Class.forName(className);
+                Class<?> clazz = Classes.forName(className, getClass());
                 if (matches(clazz)) {
                     _classes.add(clazz);
                 }

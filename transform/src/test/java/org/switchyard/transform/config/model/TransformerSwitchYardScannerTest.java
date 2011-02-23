@@ -54,12 +54,12 @@ public class TransformerSwitchYardScannerTest {
     }
 
     private void assertModelInstanceOK(V1JavaTransformModel model) {
-        if (model.getFrom().toString().equals("{http://www.switchyard.org}a")) {
+        if (model.getFrom().toString().equals("{urn:switchyard-transform:test-transformers:1.0}a")) {
             Assert.assertEquals(ATransformer.class.getName(), model.getClazz());
-            Assert.assertEquals("{http://www.switchyard.org}b", model.getTo().toString());
-        } else if (model.getFrom().toString().equals("{http://www.switchyard.org}b")) {
+            Assert.assertEquals("{urn:switchyard-transform:test-transformers:1.0}b", model.getTo().toString());
+        } else if (model.getFrom().toString().equals("{urn:switchyard-transform:test-transformers:1.0}b")) {
             Assert.assertEquals(BTransformer.class.getName(), model.getClazz());
-            Assert.assertEquals("{http://www.switchyard.org}c", model.getTo().toString());
+            Assert.assertEquals("{urn:switchyard-transform:test-transformers:1.0}c", model.getTo().toString());
         }
     }
 }

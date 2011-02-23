@@ -19,13 +19,14 @@
 
 package org.switchyard.transform.config.model.transformers;
 
-import org.switchyard.transform.Transformer;
-
 import javax.xml.namespace.QName;
+
+import org.switchyard.transform.Transformer;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
+@SuppressWarnings("rawtypes")
 public class BTransformer implements Transformer {
 
     @Override
@@ -34,22 +35,22 @@ public class BTransformer implements Transformer {
     }
 
     @Override
-    public Class getFromType() {
+    public Class<?> getFromType() {
         return null;
     }
 
     @Override
-    public Class getToType() {
+    public Class<?> getToType() {
         return null;
     }
 
     @Override
     public QName getFrom() {
-        return new QName("http://www.switchyard.org", "b");
+        return new QName("urn:switchyard-transform:test-transformers:1.0", "b");
     }
 
     @Override
     public QName getTo() {
-        return new QName("http://www.switchyard.org", "c");
+        return new QName("urn:switchyard-transform:test-transformers:1.0", "c");
     }
 }

@@ -29,7 +29,7 @@ import org.switchyard.config.model.transform.TransformsModel;
  */
 public interface SwitchYardModel extends NamedModel {
 
-    public static final String DEFAULT_NAMESPACE = "http://www.switchyard.org/config/model/switchyard/v1";
+    public static final String DEFAULT_NAMESPACE = "urn:switchyard-config:switchyard:1.0";
     public static final String SWITCHYARD = "switchyard";
 
     public CompositeModel getComposite();

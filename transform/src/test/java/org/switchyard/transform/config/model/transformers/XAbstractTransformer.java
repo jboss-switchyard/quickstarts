@@ -21,11 +21,10 @@ package org.switchyard.transform.config.model.transformers;
 
 import org.switchyard.transform.Transformer;
 
-import javax.xml.namespace.QName;
-
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
+@SuppressWarnings("rawtypes")
 public abstract class XAbstractTransformer implements Transformer {
     // Should be skipped by the scanner because it is abstract
 }

@@ -29,7 +29,7 @@ import org.switchyard.config.model.Model;
  */
 public interface TransformModel extends Model {
 
-    public static final String DEFAULT_NAMESPACE = "http://www.switchyard.org/config/model/transform/v1";
+    public static final String DEFAULT_NAMESPACE = "urn:switchyard-config:transform:1.0";
 
     public static final String TRANSFORM = "transform";
     public static final String FROM = "from";

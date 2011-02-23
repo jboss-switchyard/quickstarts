@@ -18,8 +18,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA  02110-1301, USA.
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-           targetNamespace="http://www.switchyard.org/example/bogus"
-           xmlns:bogus="http://www.switchyard.org/config/model/composite/test/bogus">
+           targetNamespace="urn:bogus:example:1.0"
+           xmlns:bogus="urn:switchyard-config:test-bogus:1.0">
     <component>
        <bogus:implementation.test foo="bar"/>
     </component>

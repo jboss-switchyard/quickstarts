@@ -28,7 +28,6 @@ import org.switchyard.deploy.internal.Deployment;
  */
 public class SwitchYardDeployment extends Deployment {
     
-    private final String _name;
     private final VFSDeploymentUnit _deployUnit;
 
     /**
@@ -42,7 +41,6 @@ public class SwitchYardDeployment extends Deployment {
             final SwitchYardModel config) {
         
         super(config);
-        _name = deploymentName;
         _deployUnit = deploymentUnit;
     }
     

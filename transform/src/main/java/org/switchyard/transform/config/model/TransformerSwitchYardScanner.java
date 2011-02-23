@@ -18,18 +18,18 @@
  */
 package org.switchyard.transform.config.model;
 
+import java.io.IOException;
+import java.lang.reflect.Modifier;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.util.classpath.ClasspathScanner;
 import org.switchyard.config.util.classpath.InstanceOfFilter;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.v1.V1JavaTransformModel;
-
-import java.io.IOException;
-import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Scanner for {@link Transformer} implementations.
@@ -46,7 +46,7 @@ public class TransformerSwitchYardScanner implements Scanner<TransformModel> {
         List<Class<?>> transformerClasses = scanForTransformers(urls);
         List<TransformModel> transformerModels = new ArrayList<TransformModel>();
 
-        for (Class transformer : transformerClasses) {
+        for (Class<?> transformer : transformerClasses) {
             if (transformer.isInterface()) {
                 continue;
             }
@@ -58,7 +58,7 @@ public class TransformerSwitchYardScanner implements Scanner<TransformModel> {
 
             // Need to create an instance to get the transform type info...
             try {
-                Transformer transformerInst = (Transformer) transformer.newInstance();
+                Transformer<?,?> transformerInst = (Transformer<?,?>) transformer.newInstance();
 
                 transformModel.setFrom(transformerInst.getFrom());
                 transformModel.setTo(transformerInst.getTo());

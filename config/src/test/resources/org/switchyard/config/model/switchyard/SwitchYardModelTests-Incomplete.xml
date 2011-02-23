@@ -17,12 +17,12 @@ v.2.1 along with this distribution; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA  02110-1301, USA.
 -->
-<switchyard xmlns="http://www.switchyard.org/config/model/switchyard/v1"
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
             xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-            xmlns:bean="http://www.switchyard.org/config/model/composite/test/bean"
-            xmlns:java="http://www.switchyard.org/config/model/switchyard/test/java"
-            xmlns:smooks="http://www.switchyard.org/config/model/switchyard/test/smooks">
-    <sca:composite name="m1app" targetNamespace="http://www.switchyard.org/example/m1app">
+            xmlns:bean="urn:switchyard-config:test-bean:1.0"
+            xmlns:java="urn:switchyard-config:test-java:1.0"
+            xmlns:smooks="urn:switchyard-config:test-smooks:1.0">
+    <sca:composite name="m1app" targetNamespace="urn:m1app:example:1.0">
         <sca:component name="SimpleService">
             <bean:implementation.bean class="org.switchyard.example.m1app.SimpleBean"/>
             <sca:service name="SimpleService">

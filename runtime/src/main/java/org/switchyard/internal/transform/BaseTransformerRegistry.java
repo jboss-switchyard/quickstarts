@@ -41,9 +41,8 @@ public class BaseTransformerRegistry implements TransformerRegistry {
      */
     private static final int DEFAULT_HASHCODE = 32;
 
-    @SuppressWarnings("unchecked")
-    private final ConcurrentHashMap<NameKey, Transformer> _transformers =
-        new ConcurrentHashMap<NameKey, Transformer>();
+    private final ConcurrentHashMap<NameKey, Transformer<?,?>> _transformers =
+        new ConcurrentHashMap<NameKey, Transformer<?,?>>();
 
 
     /**
@@ -57,9 +56,8 @@ public class BaseTransformerRegistry implements TransformerRegistry {
      * to the registry.
      * @param transformers set of transformers to add to registry
      */
-    @SuppressWarnings("unchecked")
-    public BaseTransformerRegistry(Set<Transformer> transformers) {
-        for (Transformer t : transformers) {
+    public BaseTransformerRegistry(Set<Transformer<?,?>> transformers) {
+        for (Transformer<?,?> t : transformers) {
             addTransformer(t);
         }
     }
@@ -113,8 +111,8 @@ public class BaseTransformerRegistry implements TransformerRegistry {
             if (obj == null || !Key.class.isAssignableFrom(obj.getClass())) {
                 return false;
             }
-            return isEqual(_from, ((Key) obj).getFrom())
-                && isEqual(_to, ((Key) obj).getTo());
+            return isEqual(_from, ((Key<?,?>) obj).getFrom())
+                && isEqual(_to, ((Key<?,?>) obj).getTo());
         }
 
         @Override
