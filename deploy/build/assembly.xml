@@ -15,11 +15,11 @@
     <dependencySet>
        <useTransitiveDependencies>false</useTransitiveDependencies>
        <includes>
-          <include>org.switchyard:core-api</include>
-          <include>org.switchyard:core-runtime</include>
+          <include>org.switchyard:switchyard-api</include>
+          <include>org.switchyard:switchyard-runtime</include>
           <include>org.switchyard:switchyard-config</include>
-          <include>org.switchyard:deploy</include>
-          <include>org.switchyard:deploy-jboss-as6</include>
+          <include>org.switchyard:switchyard-deploy</include>
+          <include>org.switchyard:switchyard-deploy-jboss-as6</include>
        </includes>
        <outputDirectory></outputDirectory>
     </dependencySet>
