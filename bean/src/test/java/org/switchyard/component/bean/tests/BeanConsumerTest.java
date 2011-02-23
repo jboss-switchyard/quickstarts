@@ -24,6 +24,7 @@ package org.switchyard.component.bean.tests;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.switchyard.InvocationFaultException;
 import org.switchyard.Message;
 import org.switchyard.SwitchYardCDITestCase;
 import org.switchyard.component.bean.BeanComponentException;
@@ -47,20 +48,34 @@ public class BeanConsumerTest extends SwitchYardCDITestCase {
 
     @Test
     public void consumeInOnlyServiceFromBean_Fault_invalid_opertion() {
-        Message faultMsg = newInvoker("ConsumerBean.unknownXOp").sendInOut("hello");
-
-        BeanComponentException e = faultMsg.getContent(BeanComponentException.class);
-        Assert.assertEquals("Operation name 'unknownXOp' must resolve to exactly one bean method on bean type '" + ConsumerBean.class.getName() + "'.", e.getMessage());
+        try {
+            // this should result in a fault
+            newInvoker("ConsumerBean.unknownXOp").sendInOut("hello");
+            // if we got here, then our negative test failed
+            Assert.fail("Invalid operation allowed!");
+        } catch (InvocationFaultException infEx) {
+            Message faultMsg = infEx.getFaultMessage();
+            BeanComponentException e = faultMsg.getContent(BeanComponentException.class);
+            Assert.assertEquals("Operation name 'unknownXOp' must resolve to exactly one bean method on bean type '" + 
+                    ConsumerBean.class.getName() + "'.", e.getMessage());
+        }
     }
 
     @Test
     public void consumeInOnlyServiceFromBean_Fault_service_exception() {
-        Message faultMsg = newInvoker("ConsumerBean.consumeInOutService").sendInOut(new ConsumerException("throw me a remote exception please!!"));
-
-        Object response = faultMsg.getContent();
-        Assert.assertTrue(response instanceof BeanComponentException);
-        Assert.assertEquals("Invocation of operation 'consumeInOutService' on bean component '" + ConsumerBean.class.getName() + "' failed with exception.  See attached cause.", ((BeanComponentException) response).getMessage());
-        Assert.assertTrue((((BeanComponentException) response).getCause()).getCause() instanceof ConsumerException);
-        Assert.assertEquals("remote-exception-received", ((BeanComponentException) response).getCause().getCause().getMessage());
+        try {
+            // this should result in a fault
+            newInvoker("ConsumerBean.consumeInOutService").sendInOut(new ConsumerException("throw me a remote exception please!!"));
+            // if we got here, then our negative test failed
+            Assert.fail("Exception thrown by bean but not turned into fault!");
+        } catch (InvocationFaultException infEx) {
+            Message faultMsg = infEx.getFaultMessage();
+            Assert.assertTrue(faultMsg.getContent() instanceof BeanComponentException);
+            BeanComponentException beanEx = faultMsg.getContent(BeanComponentException.class);
+            Assert.assertEquals("Invocation of operation 'consumeInOutService' on bean component '" + 
+                    ConsumerBean.class.getName() + "' failed with exception.  See attached cause.", beanEx.getMessage());
+            Assert.assertTrue(infEx.isType(ConsumerException.class));
+            Assert.assertEquals("remote-exception-received", beanEx.getCause().getCause().getMessage());
+        }
     }
 }
