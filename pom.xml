@@ -41,6 +41,13 @@
         <updatePolicy>always</updatePolicy>
       </snapshots>
     </repository>
+      <repository>
+          <id>codehaus.m2.snapshots</id>
+          <url>http://snapshots.repository.codehaus.org</url>
+          <releases>
+              <enabled>false</enabled>
+          </releases>
+      </repository>
   </repositories>
   <dependencies>
     <dependency>
@@ -109,6 +116,12 @@
         <artifactId>switchyard-plugin</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <!-- external dependencies -->
+        <dependency>
+          <groupId>org.milyn</groupId>
+          <artifactId>milyn-smooks-all</artifactId>
+          <version>1.5-SNAPSHOT</version>
+        </dependency>
     </dependencies>
   </dependencyManagement>
 </project>

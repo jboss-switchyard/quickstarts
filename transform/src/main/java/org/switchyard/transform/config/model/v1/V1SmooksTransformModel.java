@@ -25,7 +25,6 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.v1.V1BaseTransformModel;
-import org.switchyard.transform.config.model.SmooksConfigModel;
 import org.switchyard.transform.config.model.SmooksTransformModel;
 
 /**
@@ -35,31 +34,45 @@ import org.switchyard.transform.config.model.SmooksTransformModel;
  */
 public class V1SmooksTransformModel extends V1BaseTransformModel implements SmooksTransformModel {
 
-    private SmooksConfigModel _config;
-
     public V1SmooksTransformModel() {
         super(new QName(TransformModel.DEFAULT_NAMESPACE, TransformModel.TRANSFORM + '.' + SMOOKS));
-        setModelChildrenOrder(SmooksConfigModel.CONFIG);
     }
 
     public V1SmooksTransformModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setModelChildrenOrder(SmooksConfigModel.CONFIG);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public SmooksConfigModel getConfig() {
-        if (_config == null) {
-            _config = (SmooksConfigModel)getFirstChildModelStartsWith(SmooksConfigModel.CONFIG);
-        }
-        return _config;
+    public String getConfig() {
+        return getModelAttribute(CONFIG);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public SmooksTransformModel setConfig(SmooksConfigModel config) {
-        setChildModel(config);
-        _config = config;
+    public SmooksTransformModel setConfig(String config) {
+        setModelAttribute(CONFIG, config);
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getReportPath() {
+        return getModelAttribute(REPORT_PATH);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SmooksTransformModel setReportPath(String reportPath) {
+        setModelAttribute(REPORT_PATH, reportPath);
+        return this;
+    }
 }

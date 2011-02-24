@@ -20,8 +20,8 @@ MA  02110-1301, USA.
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0">
     <transforms>
         <transform.java xmlns="urn:switchyard-config:transform:1.0" from="msgA" to="msgB" class="org.examples.transform.AtoBTransform"/>
-        <transform.smooks xmlns="urn:switchyard-config:transform:1.0" from="msgC" to="msgD">
-            <config>stuff</config>
-        </transform.smooks>
+        <transform.smooks xmlns="urn:switchyard-config:transform:1.0" from="msgC" to="msgD" config="/trasnforms/xxx.xml" reportPath="/tmp/smooksreport.html" />
+        <transform.xml2java xmlns="urn:switchyard-config:transform:1.0" from="msgE" to="msgF" config="/trasnforms/xml2java.xml" />
+        <transform.java2xml xmlns="urn:switchyard-config:transform:1.0" from="msgG" to="msgH" config="/trasnforms/java2xml.xml" />
     </transforms>
 </switchyard>

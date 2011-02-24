@@ -23,25 +23,97 @@ MA  02110-1301, USA.
         xmlns:trfm="urn:switchyard-config:transform:1.0"
         elementFormDefault="qualified">
 
-    <import namespace="urn:switchyard-config:switchyard:1.0"
-            schemaLocation="switchyard-v1.xsd"/>
+    <import namespace="urn:switchyard-config:switchyard:1.0" schemaLocation="http://www.smooks.org/switchyard-v1.xsd"/>
 
-    <element name="transform.java" type="trfm:JavaTransformType" substitutionGroup="swyd:transform"/>
+    <element name="transform.java" type="trfm:JavaTransformType" substitutionGroup="swyd:transform" />
     <complexType name="JavaTransformType">
+        <annotation>
+            <documentation xml:lang="en">
+                Generic/Custom Java Transformer Configuration.
+            </documentation>
+        </annotation>
         <complexContent>
             <extension base="swyd:TransformType">
-                <attribute name="class" type="string" use="required"/>
+                <attribute name="class" type="string" use="required">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            The name of the Java Transformer implementation class.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
 
     <element name="transform.smooks" type="trfm:SmooksTransformType" substitutionGroup="swyd:transform"/>
     <complexType name="SmooksTransformType">
+        <annotation>
+            <documentation xml:lang="en">
+                Smooks Transformer Configuration.
+            </documentation>
+        </annotation>
         <complexContent>
             <extension base="swyd:TransformType">
-                <sequence>
-                    <element name="config" type="string" minOccurs="1" maxOccurs="1"/>
-                </sequence>
+                <attribute name="config" type="string" use="required">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            Smooks Configuration file path.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="reportPath" type="string" use="optional">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            Smooks Execution Report filesystem path.
+                            <p/>
+                            An Execution Report is a HTML file showing how all the input message
+                            fragments were processed by Smooks, including the contents of the Smooks
+                            ExecutionContext at each stage in the processing.
+                            <p/>
+                            Use for debug purposes only.  Adds significant processing overhead.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="transform.xml2java" type="trfm:Xml2JavaTransformType" substitutionGroup="swyd:transform"/>
+    <complexType name="Xml2JavaTransformType">
+        <annotation>
+            <documentation xml:lang="en">
+                Xml to Java Transformer Configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="swyd:TransformType">
+                <attribute name="config" type="string" use="required">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            Smooks Binding Configuration file path.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="transform.java2xml" type="trfm:Java2XmlTransformType" substitutionGroup="swyd:transform"/>
+    <complexType name="Java2XmlTransformType">
+        <annotation>
+            <documentation xml:lang="en">
+                Java to XML Transformer Configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="swyd:TransformType">
+                <attribute name="config" type="string" use="required">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            Smooks Binding Configuration file path.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

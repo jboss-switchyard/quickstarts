@@ -24,5 +24,18 @@
        </includes>
        <outputDirectory></outputDirectory>
     </dependencySet>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
+           <include>org.milyn:milyn-smooks-all</include>
+           <include>com.thoughtworks.xstream:xstream</include>
+           <include>org.mvel:mvel2</include>
+           <include>org.freemarker:freemarker</include>
+           <include>jaxen:jaxen</include>
+           <include>commons-lang:commons-lang</include>
+           <include>commons-logging:commons-logging</include>
+       </includes>
+       <outputDirectory></outputDirectory>
+    </dependencySet>
   </dependencySets>
 </assembly>

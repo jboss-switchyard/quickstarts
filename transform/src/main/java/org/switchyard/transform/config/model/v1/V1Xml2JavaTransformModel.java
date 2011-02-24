@@ -19,41 +19,43 @@
 
 package org.switchyard.transform.config.model.v1;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.config.Configuration;
-import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.transform.TransformModel;
-import org.switchyard.transform.config.model.SmooksConfigModel;
-import org.switchyard.transform.config.model.SmooksTransformModel;
+import org.switchyard.config.model.transform.v1.V1BaseTransformModel;
+import org.switchyard.transform.config.model.Xml2JavaTransformModel;
+
+import javax.xml.namespace.QName;
 
 /**
- * V1SmooksConfigModel.
+ * V1 XML to Java TransformModel.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class V1SmooksConfigModel extends BaseModel implements SmooksConfigModel {
+public class V1Xml2JavaTransformModel extends V1BaseTransformModel implements Xml2JavaTransformModel {
 
-    public V1SmooksConfigModel() {
-        super(new QName(TransformModel.DEFAULT_NAMESPACE, CONFIG));
+    public V1Xml2JavaTransformModel() {
+        super(new QName(TransformModel.DEFAULT_NAMESPACE, TransformModel.TRANSFORM + '.' + XML2JAVA));
     }
 
-    public V1SmooksConfigModel(Configuration config, Descriptor desc) {
+    public V1Xml2JavaTransformModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
-    public SmooksTransformModel getTransform() {
-        return (SmooksTransformModel)getModelParent();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getConfig() {
+        return getModelAttribute(CONFIG);
     }
 
-    public String getData() {
-        return getModelValue();
-    }
-
-    public SmooksConfigModel setData(String data) {
-        setModelValue(data);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public V1Xml2JavaTransformModel setConfig(String config) {
+        setModelAttribute(CONFIG, config);
         return this;
     }
-
 }

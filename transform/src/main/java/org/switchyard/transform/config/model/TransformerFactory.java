@@ -22,6 +22,7 @@ package org.switchyard.transform.config.model;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.util.Classes;
 import org.switchyard.transform.Transformer;
+import org.switchyard.transform.internal.smooks.SmooksTransformFactory;
 
 /**
  * Transformer Factory.
@@ -47,6 +48,12 @@ public final class TransformerFactory {
             } catch (Exception e) {
                 throw new RuntimeException("Error constructing Transformer instance for class '" + className + "'.", e);
             }
+        } else if(transformModel instanceof SmooksTransformModel) {
+            return SmooksTransformFactory.newTransformer((SmooksTransformModel) transformModel);
+        } else if(transformModel instanceof Xml2JavaTransformModel) {
+            return SmooksTransformFactory.newTransformer((Xml2JavaTransformModel) transformModel);
+        } else if(transformModel instanceof Java2XmlTransformModel) {
+            return SmooksTransformFactory.newTransformer((Java2XmlTransformModel) transformModel);
         }
 
         throw new RuntimeException("Unknown TransformModel type '" + transformModel.getClass().getName() + "'.");

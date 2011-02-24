@@ -17,23 +17,31 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.transform.config.model;
-
-import org.switchyard.config.model.Model;
+package org.switchyard.transform.internal.smooks;
 
 /**
- * SmooksConfigModel.
- *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public interface SmooksConfigModel extends Model {
+public class Person {
 
-    public static final String CONFIG = "config";
+    private String name;
+    private int age;
 
-    public SmooksTransformModel getTransform();
+    public String getName() {
+        return name;
+    }
 
-    public String getData();
+    public Person setName(String name) {
+        this.name = name;
+        return this;
+    }
 
-    public SmooksConfigModel setData(String data);
+    public int getAge() {
+        return age;
+    }
 
+    public Person setAge(int age) {
+        this.age = age;
+        return this;
+    }
 }

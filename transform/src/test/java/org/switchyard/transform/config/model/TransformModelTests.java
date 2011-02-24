@@ -38,9 +38,10 @@ import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.config.model.transform.v1.V1TransformsModel;
 import org.switchyard.config.util.QNames;
 import org.switchyard.config.util.StringResource;
+import org.switchyard.transform.config.model.v1.V1Java2XmlTransformModel;
 import org.switchyard.transform.config.model.v1.V1JavaTransformModel;
-import org.switchyard.transform.config.model.v1.V1SmooksConfigModel;
 import org.switchyard.transform.config.model.v1.V1SmooksTransformModel;
+import org.switchyard.transform.config.model.v1.V1Xml2JavaTransformModel;
 
 /**
  * TransformModelTests.
@@ -80,10 +81,19 @@ public class TransformModelTests {
         SmooksTransformModel smooksTransform = new V1SmooksTransformModel();
         smooksTransform.setFrom(new QName("msgC"));
         smooksTransform.setTo(new QName("msgD"));
-        SmooksConfigModel smooksConfig = new V1SmooksConfigModel();
-        smooksConfig.setData("stuff");
-        smooksTransform.setConfig(smooksConfig);
+        smooksTransform.setConfig("/trasnforms/xxx.xml");
+        smooksTransform.setReportPath("/tmp/smooksreport.html");
         transforms.addTransform(smooksTransform);
+        Xml2JavaTransformModel xml2JavaTransform = new V1Xml2JavaTransformModel();
+        xml2JavaTransform.setFrom(new QName("msgE"));
+        xml2JavaTransform.setTo(new QName("msgF"));
+        xml2JavaTransform.setConfig("/trasnforms/xml2java.xml");
+        transforms.addTransform(xml2JavaTransform);
+        Java2XmlTransformModel java2xmlTransform = new V1Java2XmlTransformModel();
+        java2xmlTransform.setFrom(new QName("msgG"));
+        java2xmlTransform.setTo(new QName("msgH"));
+        java2xmlTransform.setConfig("/trasnforms/java2xml.xml");
+        transforms.addTransform(java2xmlTransform);
         switchyard.setTransforms(transforms);
         String new_xml = switchyard.toString();
         String old_xml = new ModelResource<SwitchYardModel>().pull(XML).toString();
@@ -103,8 +113,9 @@ public class TransformModelTests {
         SmooksTransformModel smooks_transform = (SmooksTransformModel)transforms.getTransforms().get(1);
         Assert.assertEquals("msgC", smooks_transform.getFrom().getLocalPart());
         Assert.assertEquals("msgD", smooks_transform.getTo().getLocalPart());
-        SmooksConfigModel smooks_config = smooks_transform.getConfig();
-        Assert.assertEquals("stuff", smooks_config.getData());
+        Assert.assertEquals("/trasnforms/xxx.xml", smooks_transform.getConfig());
+        Assert.assertEquals("/tmp/smooksreport.html", smooks_transform.getReportPath());
+
     }
 
     @Test
@@ -133,5 +144,6 @@ public class TransformModelTests {
         SwitchYardModel switchyard = _res.pull(XML);
         Assert.assertTrue(switchyard.isModelValid());
     }
+
 
 }

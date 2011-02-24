@@ -53,19 +53,26 @@
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.milyn</groupId>
+            <artifactId>milyn-smooks-all</artifactId> <!-- TODO: Maybe scope this as "provided" ? -->
+        </dependency>
 		<!-- external dependencies -->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
+            <scope>provided</scope>
 		</dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
             <version>1.1</version>
+            <scope>test</scope>
         </dependency>
 	</dependencies>
 </project>

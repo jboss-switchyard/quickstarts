@@ -121,10 +121,23 @@ public class Deployment extends AbstractDeployment {
     public void start() {
         _log.debug("Starting deployment for application " + _switchyardConfig.getName());
         // ordered startup lifecycle
-        deployReferenceBindings();
-        deployServices();
-        deployReferences();
-        deployServiceBindings();
+        try {
+            deployReferenceBindings();
+            deployServices();
+            deployReferences();
+            deployServiceBindings();
+        } catch (RuntimeException e1) {
+            // Undo partial deployment...
+            _log.debug("Undeploying partially deployed artifacts of failed deployment for application " + _switchyardConfig.getName());
+            try {
+                stop();
+            } catch (RuntimeException e2) {
+                // Nothing we can do...
+                _log.debug("Failed to properly undeploy a partial/failed deployment for application " +  _switchyardConfig.getName(), e2);
+            }
+            // Rethrow the exception...
+            throw e1;
+        }
     }
 
     /**
