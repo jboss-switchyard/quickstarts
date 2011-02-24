@@ -26,12 +26,14 @@ import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
 
+import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePhase;
+import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.MockDomain;
 import org.switchyard.MockHandler;
@@ -56,7 +58,7 @@ public class ExchangeImplTest {
     
     @Test
     public void testSendFaultOnNewExchange() {
-        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_OUT);
+        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY);
         try {
             exchange.sendFault(exchange.createMessage());
             Assert.fail("Sending a fault on a new exchange is not allowed");
@@ -67,7 +69,7 @@ public class ExchangeImplTest {
     
     @Test
     public void testPhaseIsNullOnNewExchange() {
-        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_OUT);
+        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY);
         Assert.assertNull(exchange.getPhase());
     }
     
@@ -222,4 +224,43 @@ public class ExchangeImplTest {
             Assert.assertEquals("Invalid 'contract' arg.  No ServiceOperation defined on the contract instance.", e.getMessage());
         }
     }
+
+    @Test
+    public void testExceptionOnNoConsumerOnInOut() throws Exception {
+
+        QName serviceName = new QName("testNoNPEOnNoConsumer");
+        MockHandler provider = new MockHandler() {
+            @Override
+            public void handleMessage(Exchange exchange) throws HandlerException {
+                throw new HandlerException("explode");
+            }
+        };
+        Service service = _domain.registerService(serviceName, provider);
+
+        try {
+            // Don't provide a consumer...
+            Exchange exchange = _domain.createExchange(service, ExchangeContract.IN_OUT);
+        } catch (RuntimeException e) {
+            Assert.assertEquals("Invalid Exchange construct.  Must supply an output endpoint for an IN_OUT Exchange.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testNoNPEOnInOnlyFault() throws Exception {
+
+        QName serviceName = new QName("testNoNPEOnNoConsumer");
+        MockHandler provider = new MockHandler() {
+            @Override
+            public void handleMessage(Exchange exchange) throws HandlerException {
+                throw new HandlerException("explode");
+            }
+        };
+        Service service = _domain.registerService(serviceName, provider);
+
+        // Don't provide a consumer...
+        Exchange exchange = _domain.createExchange(service, ExchangeContract.IN_ONLY);
+
+        exchange.send(exchange.createMessage());
+    }
+
 }

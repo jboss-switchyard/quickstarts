@@ -26,8 +26,10 @@ import java.util.UUID;
 
 import javax.xml.namespace.QName;
 
+import org.apache.log4j.Logger;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
+import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
 import org.switchyard.ExchangeState;
 import org.switchyard.Message;
@@ -40,6 +42,8 @@ import org.switchyard.transform.TransformSequence;
  * Implementation of Exchange.
  */
 public class ExchangeImpl implements Exchange {
+
+    private static Logger _log = Logger.getLogger(Exchange.class);
 
     private final String            _exchangeId;
     private final ExchangeContract  _contract;
@@ -77,6 +81,12 @@ public class ExchangeImpl implements Exchange {
             throw new IllegalArgumentException("Invalid 'contract' arg.  No invoker invocation metadata defined on the contract instance.");
         } else if (contract.getServiceOperation() == null) {
             throw new IllegalArgumentException("Invalid 'contract' arg.  No ServiceOperation defined on the contract instance.");
+        }
+
+        // Make sure we have an output endpoint when the pattern is IN_OUT...
+        ExchangePattern exchangePattern = contract.getServiceOperation().getExchangePattern();
+        if (output == null && exchangePattern == ExchangePattern.IN_OUT) {
+            throw new RuntimeException("Invalid Exchange construct.  Must supply an output endpoint for an IN_OUT Exchange.");
         }
 
         _service = service;
@@ -196,7 +206,12 @@ public class ExchangeImpl implements Exchange {
             _inputEndpoint.send(this);
             break;
         case OUT:
-            _outputEndpoint.send(this);
+            if(_outputEndpoint != null) {
+                _outputEndpoint.send(this);
+            } else {
+                _log.debug("Unable to send OUT message.  No output endpoint.");
+                // TODO: Also needs to get routed to something like a DLQ.
+            }
             break;
         default:
             throw new RuntimeException("No endpoint assigned for exchange phase " + _phase);

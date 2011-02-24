@@ -58,7 +58,7 @@ public class DomainImplTest {
     public void testCreateExchange() {
         Exchange inOnly = _domain.createExchange(_service, ExchangeContract.IN_ONLY);
         Assert.assertEquals(ExchangePattern.IN_ONLY, inOnly.getContract().getServiceOperation().getExchangePattern());
-        Exchange inOut = _domain.createExchange(_service, ExchangeContract.IN_OUT);
+        Exchange inOut = _domain.createExchange(_service, ExchangeContract.IN_OUT, new MockHandler());
         Assert.assertEquals(ExchangePattern.IN_OUT, inOut.getContract().getServiceOperation().getExchangePattern());
     }
     
