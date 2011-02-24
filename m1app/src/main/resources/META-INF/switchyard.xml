@@ -8,6 +8,28 @@
             targetNamespace="urn:switchyard-quickstarts:m1app:1.0-SNAPSHOT"
             name="m1app">
             
-   <sca:composite name="m1app"/>
+   <sca:composite name="m1app">
+        <sca:service name="OrderService" promote="OrderService">
+            <soap:binding.soap>
+                <soap:serverPort>18001</soap:serverPort>
+                <soap:wsdl>wsdl/OrderService.wsdl</soap:wsdl>
+            </soap:binding.soap>
+        </sca:service>
+        <sca:component name="OrderService">
+            <bean:implementation.bean class="org.switchyard.quickstarts.m1app.OrderServiceBean" />
+            <sca:service name="OrderService">
+                <sca:interface.java interface="org.switchyard.quickstarts.m1app.OrderService" />
+            </sca:service>
+            <sca:reference name="InventoryService">
+                <sca:interface.java interface="org.switchyard.quickstarts.m1app.InventoryService" />
+            </sca:reference>
+        </sca:component>
+        <sca:component name="InventoryService">
+            <bean:implementation.bean class="org.switchyard.quickstarts.m1app.InventoryServiceBean" />
+            <sca:service name="InventoryService">
+                <sca:interface.java interface="org.switchyard.quickstarts.m1app.InventoryService" />
+            </sca:service>
+        </sca:component>
+    </sca:composite>
    
 </switchyard>

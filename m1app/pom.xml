@@ -58,6 +58,7 @@
           <configuration>
             <scannerClassNames>
                 <param>org.switchyard.component.bean.config.model.BeanSwitchYardScanner</param>
+                <param>org.switchyard.transform.config.model.TransformerSwitchYardScanner</param>
             </scannerClassNames>
           </configuration>
           -->
