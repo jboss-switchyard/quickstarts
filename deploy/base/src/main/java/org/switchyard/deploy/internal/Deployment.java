@@ -160,17 +160,27 @@ public class Deployment extends AbstractDeployment {
     }
 
     private void createActivators() {
-        createActivator("bean", BEAN_ACTIVATOR_CLASS);
-        createActivator("soap", SOAP_ACTIVATOR_CLASS);
+        createComponentActivator("bean", BEAN_ACTIVATOR_CLASS);
+        createGatewayActivator("soap", SOAP_ACTIVATOR_CLASS);
     }
 
-    private void createActivator(String type, String runtimeClass) {
+    private void createGatewayActivator(String type, String runtimeClass) {
+        try {
+            _gatewayActivators.put(
+                    type,
+                    (Activator)loadClass(runtimeClass).newInstance());
+        } catch (Exception ex) {
+            _log.debug("Failed to load Gateway Activator class '" + runtimeClass + "' for component type '" + type + "'.");
+        }
+    }
+    
+    private void createComponentActivator(String type, String runtimeClass) {
         try {
             _componentActivators.put(
                     type,
                     (Activator)loadClass(runtimeClass).newInstance());
         } catch (Exception ex) {
-            _log.debug("Failed to load Activator class '" + runtimeClass + "' for component type '" + type + "'.");
+            _log.debug("Failed to load Component Activator class '" + runtimeClass + "' for component type '" + type + "'.");
         }
     }
 
