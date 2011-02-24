@@ -52,7 +52,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
-import org.switchyard.SwitchYardTestCase;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.config.model.ModelResource;
@@ -62,6 +61,7 @@ import org.switchyard.metadata.BaseService;
 import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.ServiceOperation;
+import org.switchyard.test.SwitchYardTestCase;
 import org.w3c.dom.Element;
 
 /**

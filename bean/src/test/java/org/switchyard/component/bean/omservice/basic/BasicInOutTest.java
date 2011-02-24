@@ -25,9 +25,9 @@ package org.switchyard.component.bean.omservice.basic;
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.Message;
-import org.switchyard.SwitchYardCDITestCase;
 import org.switchyard.component.bean.omservice.model.OrderRequest;
 import org.switchyard.component.bean.omservice.model.OrderResponse;
+import org.switchyard.test.SwitchYardCDITestCase;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>

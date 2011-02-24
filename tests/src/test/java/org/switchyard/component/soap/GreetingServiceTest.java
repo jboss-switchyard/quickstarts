@@ -33,9 +33,9 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.Service;
-import org.switchyard.SwitchYardCDITestCase;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.StreamUtil;
+import org.switchyard.test.SwitchYardCDITestCase;
 
 public class GreetingServiceTest extends SwitchYardCDITestCase {
 

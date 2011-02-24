@@ -51,7 +51,7 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-test-util</artifactId>
+            <artifactId>switchyard-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -95,7 +95,7 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard</groupId>
-                <artifactId>switchyard-test-util</artifactId>
+                <artifactId>switchyard-test</artifactId>
                 <version>${project.version}</version>
                 <scope>test</scope>
             </dependency>

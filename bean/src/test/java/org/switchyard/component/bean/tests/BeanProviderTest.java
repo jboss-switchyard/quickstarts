@@ -25,7 +25,7 @@ package org.switchyard.component.bean.tests;
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.Message;
-import org.switchyard.SwitchYardCDITestCase;
+import org.switchyard.test.SwitchYardCDITestCase;
 
 /*
  * Assorted methods for testing a CDI bean providing a service in SwitchYard.

@@ -24,10 +24,10 @@ package org.switchyard.component.bean.tests;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.switchyard.InvocationFaultException;
 import org.switchyard.Message;
-import org.switchyard.SwitchYardCDITestCase;
 import org.switchyard.component.bean.BeanComponentException;
+import org.switchyard.test.InvocationFaultException;
+import org.switchyard.test.SwitchYardCDITestCase;
 
 /*
  * Assorted methods for testing a CDI bean consuming a service in SwitchYard.
