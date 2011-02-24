@@ -29,13 +29,21 @@
     <modules>
         <module>m1app</module>
     </modules>
-
-    <dependencies>
-      <dependency>
-        <groupId>org.switchyard.components</groupId>
-        <artifactId>switchyard-component-bean</artifactId>
-      </dependency>
-    </dependencies>
+    
+    <repositories>
+      <repository>
+        <id>jboss-public-repository-group</id>
+        <name>JBoss Public Maven Repository Group</name>
+        <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+        <layout>default</layout>
+        <releases>
+          <updatePolicy>always</updatePolicy>
+        </releases>
+        <snapshots>
+          <updatePolicy>always</updatePolicy>
+        </snapshots>
+      </repository>
+    </repositories>
 
     <dependencyManagement>
       <dependencies>
