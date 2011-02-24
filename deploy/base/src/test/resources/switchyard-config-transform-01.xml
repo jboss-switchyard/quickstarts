@@ -17,8 +17,8 @@ v.2.1 along with this distribution; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA  02110-1301, USA.
 -->
-<switchyard xmlns="http://www.switchyard.org/config/model/switchyard/v1">
-    <transforms xmlns:trans="http://www.switchyard.org/config/model/transform/v1">
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0">
+    <transforms xmlns:trans="urn:switchyard-config:transform:1.0">
         <trans:transform.java from="A" to="B" class="org.switchyard.deploy.internal.transformers.ABTransformer"/>
         <trans:transform.java from="C" to="D" class="org.switchyard.deploy.internal.transformers.CDTransformer"/>
     </transforms>
