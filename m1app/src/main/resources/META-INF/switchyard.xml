@@ -7,8 +7,8 @@
             xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
             targetNamespace="urn:switchyard-quickstarts:m1app:1.0-SNAPSHOT"
             name="m1app">
-            
-   <sca:composite name="m1app">
+
+    <sca:composite name="m1app">
         <sca:service name="OrderService" promote="OrderService">
             <soap:binding.soap>
                 <soap:serverPort>18001</soap:serverPort>
@@ -31,5 +31,5 @@
             </sca:service>
         </sca:component>
     </sca:composite>
-   
+
 </switchyard>

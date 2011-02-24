@@ -66,14 +66,14 @@
           <groupId>org.switchyard</groupId>
           <artifactId>switchyard-plugin</artifactId>
           <version>1.0-SNAPSHOT</version>
-          <!-- This fails right now 
           <configuration>
             <scannerClassNames>
+                <!--
                 <param>org.switchyard.component.bean.config.model.BeanSwitchYardScanner</param>
-                <param>org.switchyard.transform.config.model.TransformerSwitchYardScanner</param>
+                -->
+                <param>org.switchyard.transform.config.model.TransformSwitchYardScanner</param>
             </scannerClassNames>
           </configuration>
-          -->
           <executions>
             <execution>
                 <goals>
