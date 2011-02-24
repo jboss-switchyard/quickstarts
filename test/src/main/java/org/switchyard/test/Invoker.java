@@ -20,9 +20,16 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard;
+package org.switchyard.test;
 
 import org.junit.Assert;
+import org.switchyard.Exchange;
+import org.switchyard.ExchangeHandler;
+import org.switchyard.ExchangePattern;
+import org.switchyard.HandlerException;
+import org.switchyard.Message;
+import org.switchyard.Service;
+import org.switchyard.ServiceDomain;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InOnlyOperation;

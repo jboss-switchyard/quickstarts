@@ -20,7 +20,7 @@
     <module>api</module>
     <module>transform</module>
     <module>runtime</module>
-    <module>test/test-util</module>
+    <module>test</module>
     <module>tools/maven/plugins/switchyard</module>
     <module>deploy/base</module>
     <module>deploy/cdi</module>
@@ -62,7 +62,7 @@
       </dependency>
       <dependency>
         <groupId>org.switchyard</groupId>
-        <artifactId>switchyard-test-util</artifactId>
+        <artifactId>switchyard-test</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

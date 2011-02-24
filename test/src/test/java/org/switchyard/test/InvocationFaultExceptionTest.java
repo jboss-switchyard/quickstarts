@@ -21,9 +21,7 @@ package org.switchyard.test;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.switchyard.InvocationFaultException;
 import org.switchyard.internal.DefaultMessage;
-import org.switchyard.SwitchYardCDITestCase;
 
 public class InvocationFaultExceptionTest {
 

@@ -25,19 +25,65 @@
 	xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
 	<parent>
-	    <groupId>org.switchyard</groupId>
-	    <artifactId>switchyard-core-parent</artifactId>
- 	    <version>1.0-SNAPSHOT</version>
-	    <relativePath>../pom.xml</relativePath>
+		<groupId>org.switchyard</groupId>
+		<artifactId>switchyard-core-parent</artifactId>
+		<version>1.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<modelVersion>4.0.0</modelVersion>
+	
 	<groupId>org.switchyard</groupId>
 	<artifactId>switchyard-test</artifactId>
-	<packaging>pom</packaging>
-	<name>Switchyard: Test POM</name>
-	<version>${project.parent.version}</version>
-	<description>The Test POM.</description>
-	<url>http://switchyard.org/</url>
 	
+	<packaging>jar</packaging>
+	<name>Switchyard: Test Utilities</name>
+	<version>${project.parent.version}</version>
+	<description>Test Utility classes.</description>
+	<url>http://switchyard.org/</url>
+
+    <properties>
+        <weld.version>1.1.0-SNAPSHOT</weld.version>
+    </properties>
+
+	<dependencies>
+		<!-- internal dependencies -->
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-runtime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-deploy</artifactId>
+        </dependency>
+		<!-- N/A -->
+		<!-- external dependencies -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+        </dependency>
+
+        <dependency>
+           <groupId>org.jboss.weld.se</groupId>
+           <artifactId>weld-se-core</artifactId>
+            <version>${weld.version}</version>
+        </dependency>
+
+        <dependency>
+        	<groupId>org.slf4j</groupId>
+        	<artifactId>slf4j-simple</artifactId>
+        	<version>1.6.1</version>
+        	<scope>runtime</scope>
+        </dependency>
+
+    </dependencies>
 </project>

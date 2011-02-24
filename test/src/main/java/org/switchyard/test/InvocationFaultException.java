@@ -17,7 +17,9 @@
  * 02110-1301, USA.
  */
 
-package org.switchyard;
+package org.switchyard.test;
+
+import org.switchyard.Message;
 
 /**
  * Represents an exchange fault in the form of an exception.  Invoker will

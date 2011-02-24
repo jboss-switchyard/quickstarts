@@ -20,11 +20,13 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard;
+package org.switchyard.test;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.switchyard.ExchangeHandler;
+import org.switchyard.ServiceDomain;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
