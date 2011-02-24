@@ -20,13 +20,16 @@
 package org.switchyard.transform.config.model;
 
 import org.switchyard.config.model.transform.TransformModel;
+import org.switchyard.config.util.Classes;
 import org.switchyard.transform.Transformer;
 
 /**
  * Transformer Factory.
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class TransformerFactory {
+public final class TransformerFactory {
+
+    private TransformerFactory() {}
 
     /**
      * Create a new {@link Transformer} instance from the supplied {@link TransformModel} instance.
@@ -37,10 +40,10 @@ public class TransformerFactory {
 
         // TODO: Need a proper mechanism for building component instances (not just Transformers) from their config Model types Vs hard-wiring at this point in the code !  This makes it impossible for 3rd party impls.
 
-        if(transformModel instanceof JavaTransformModel) {
+        if (transformModel instanceof JavaTransformModel) {
             String className = ((JavaTransformModel) transformModel).getClazz();
             try {
-                return (Transformer) Class.forName(className).newInstance();
+                return (Transformer<?,?>) Classes.forName(className, TransformerFactory.class).newInstance();
             } catch (Exception e) {
                 throw new RuntimeException("Error constructing Transformer instance for class '" + className + "'.", e);
             }

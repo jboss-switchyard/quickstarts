@@ -86,7 +86,7 @@ public class ClasspathScanner {
         Enumeration<? extends ZipEntry> entries = zip.entries();
 
         while (entries.hasMoreElements()) {
-            if(!_filter.continueScanning()) {
+            if (!_filter.continueScanning()) {
                 break;
             }
 
@@ -102,7 +102,7 @@ public class ClasspathScanner {
         }
 
         for (File child : file.listFiles()) {
-            if(!_filter.continueScanning()) {
+            if (!_filter.continueScanning()) {
                 break;
             }
 

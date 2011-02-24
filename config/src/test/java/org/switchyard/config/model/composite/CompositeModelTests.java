@@ -36,6 +36,7 @@ import org.switchyard.config.model.composite.test.bogus.BogusImplementationModel
 import org.switchyard.config.model.composite.test.soap.PortModel;
 import org.switchyard.config.model.composite.test.soap.SOAPBindingModel;
 import org.switchyard.config.model.composite.test.soap.WSDLModel;
+import org.switchyard.config.util.QNames;
 import org.switchyard.config.util.StringResource;
 
 /**
@@ -50,18 +51,18 @@ public class CompositeModelTests {
     private static final String COMPLETE_XML = "/org/switchyard/config/model/composite/CompositeModelTests-Complete.xml";
     private static final String EXTENDED_XML = "/org/switchyard/config/model/composite/CompositeModelTests-Extended.xml";
 
-    private static ModelResource _res;
+    private static ModelResource<CompositeModel> _res;
 
     @Before
     public void before() throws Exception {
-        _res = new ModelResource();
+        _res = new ModelResource<CompositeModel>();
     }
 
     @Test
     public void testCreateEmptyModel() throws Exception {
         String namespace = CompositeModel.DEFAULT_NAMESPACE;
         String name = CompositeModel.COMPOSITE;
-        Model model = Models.create(namespace, name);
+        Model model = new ModelResource<Model>().pull(QNames.create(namespace, name));
         Assert.assertTrue(model instanceof CompositeModel);
         Assert.assertEquals(name, model.getModelConfiguration().getName());
         Assert.assertEquals(new QName(namespace, name), model.getModelConfiguration().getQName());
@@ -69,10 +70,10 @@ public class CompositeModelTests {
 
     @Test
     public void testMerge() throws Exception {
-        CompositeModel incomplete_composite = (CompositeModel)_res.pull(INCOMPLETE_XML);
-        CompositeModel fragment_composite = (CompositeModel)_res.pull(FRAGMENT_XML);
-        CompositeModel merged_composite = (CompositeModel)Models.merge(fragment_composite, incomplete_composite);
-        CompositeModel complete_composite = (CompositeModel)_res.pull(COMPLETE_XML);
+        CompositeModel incomplete_composite = _res.pull(INCOMPLETE_XML);
+        CompositeModel fragment_composite = _res.pull(FRAGMENT_XML);
+        CompositeModel merged_composite = Models.merge(fragment_composite, incomplete_composite);
+        CompositeModel complete_composite = _res.pull(COMPLETE_XML);
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(complete_composite.toString(), merged_composite.toString());
         Assert.assertTrue(diff.toString(), diff.identical());
@@ -80,7 +81,7 @@ public class CompositeModelTests {
 
     @Test
     public void testReadCustomViaConfig() throws Exception {
-        CompositeModel composite = (CompositeModel)_res.pull(COMPLETE_XML);
+        CompositeModel composite = _res.pull(COMPLETE_XML);
         CompositeServiceModel compositeService = composite.getServices().get(0);
         BindingModel binding = compositeService.getBindings().get(0);
         Assert.assertEquals("soap", binding.getType());
@@ -94,7 +95,7 @@ public class CompositeModelTests {
 
     @Test
     public void testReadCustomViaModel() throws Exception {
-        CompositeModel composite = (CompositeModel)_res.pull(COMPLETE_XML);
+        CompositeModel composite = _res.pull(COMPLETE_XML);
         CompositeServiceModel compositeService = composite.getServices().get(0);
         BindingModel binding = (BindingModel)compositeService.getBindings().get(0);
         Assert.assertTrue(binding instanceof SOAPBindingModel);
@@ -110,7 +111,7 @@ public class CompositeModelTests {
 
     @Test
     public void testReadComplete() throws Exception {
-        CompositeModel composite = (CompositeModel)_res.pull(COMPLETE_XML);
+        CompositeModel composite = _res.pull(COMPLETE_XML);
         Assert.assertEquals(CompositeModel.DEFAULT_NAMESPACE, composite.getModelConfiguration().getQName().getNamespaceURI());
         Assert.assertEquals("m1app", composite.getName());
         CompositeServiceModel compositeService = composite.getServices().get(0);
@@ -160,7 +161,7 @@ public class CompositeModelTests {
     @Test
     public void testWriteComplete() throws Exception {
         String old_xml = new StringResource().pull(COMPLETE_XML);
-        CompositeModel composite = (CompositeModel)_res.pull(new StringReader(old_xml));
+        CompositeModel composite = _res.pull(new StringReader(old_xml));
         String new_xml = composite.toString();
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(old_xml, new_xml);
@@ -169,14 +170,14 @@ public class CompositeModelTests {
 
     @Test
     public void testReadExtended() throws Exception {
-        CompositeModel cm = (CompositeModel)_res.pull(EXTENDED_XML);
+        CompositeModel cm = _res.pull(EXTENDED_XML);
         BogusImplementationModel bim = (BogusImplementationModel)cm.getComponents().get(0).getImplementation();
         Assert.assertEquals("bar", bim.getFoo());
     }
 
     @Test
     public void testParenthood() throws Exception {
-        CompositeModel composite_1 = (CompositeModel)_res.pull(COMPLETE_XML);
+        CompositeModel composite_1 = _res.pull(COMPLETE_XML);
         CompositeServiceModel service_1 = composite_1.getServices().get(0);
         SOAPBindingModel binding = (SOAPBindingModel)service_1.getBindings().get(0);
         CompositeServiceModel service_2 = binding.getService();
@@ -187,8 +188,8 @@ public class CompositeModelTests {
 
     @Test
     public void testValidation() throws Exception {
-        Model model = _res.pull(COMPLETE_XML);
-        Assert.assertTrue(model.isModelValid());
+        CompositeModel composite = _res.pull(COMPLETE_XML);
+        Assert.assertTrue(composite.isModelValid());
     }
 
 }

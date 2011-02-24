@@ -25,10 +25,6 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.config.util.QNames;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 /**
  * Configurations.
  *
@@ -37,26 +33,6 @@ import org.w3c.dom.Element;
 public final class Configurations {
 
     private Configurations() {}
-
-    public static Configuration create(Document document) {
-        return new ConfigurationResource().pull(document);
-    }
-
-    public static Configuration create(Element element) {
-        return new ConfigurationResource().pull(element);
-    }
-
-    public static Configuration create(QName qname) {
-        return new ConfigurationResource().pull(qname);
-    }
-
-    public static Configuration create(String name) {
-        return create(QNames.create(name));
-    }
-
-    public static Configuration create(String namespace, String localName, String prefix) {
-        return create(QNames.create(namespace, localName, prefix));
-    }
 
     public static Configuration merge(Configuration fromConfig, Configuration toConfig) {
         return merge(fromConfig, toConfig, true);

@@ -35,11 +35,15 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
-import org.switchyard.config.model.switchyard.DefaultSwitchYardScanner;
-import org.switchyard.config.model.switchyard.MergeSwitchYardScanner;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
-import org.switchyard.config.model.switchyard.SwitchYardScanner;
+import org.apache.tools.ant.types.selectors.FileSelector;
+import org.switchyard.config.model.MergeScanner;
+import org.switchyard.config.model.Model;
+import org.switchyard.config.model.ModelResourceScanner;
+import org.switchyard.config.model.Scanner;
+import org.switchyard.config.model.ScannerInput;
+import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.config.util.Classes;
 
 /**
@@ -51,7 +55,12 @@ import org.switchyard.config.util.Classes;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class ConfiguratorMojo extends AbstractMojo {
+public class ConfiguratorMojo<M extends Model> extends AbstractMojo {
+
+    /**
+     * @parameter
+     */
+    private String modelClassName;
 
     /**
      * @parameter
@@ -64,9 +73,9 @@ public class ConfiguratorMojo extends AbstractMojo {
     private List<String> compileClasspathElements;
 
     /**
-     * @parameter expression="${project.build.resources}"
+     * @parameter expression="${project.resources}"
      */
-    private List<Resource> buildResources;
+    private List<Resource> resources;
 
     /**
      * @parameter expression="${project.basedir}"
@@ -74,9 +83,14 @@ public class ConfiguratorMojo extends AbstractMojo {
     private File basedir;
 
     /**
+     * @parameter expression="${project.artifactId}"
+     */
+    private String artifactId;
+
+    /**
      * @parameter
      */
-    private String[] includes = new String[]{};
+    private String[] includes = new String[]{"target/classes"};
 
     /**
      * @parameter
@@ -100,13 +114,13 @@ public class ConfiguratorMojo extends AbstractMojo {
             for (String compileClasspaths : compileClasspathElements) {
                 mojoURLs.add(new File(compileClasspaths).toURI().toURL());
             }
-            File defaultResourceDir = new File(basedir, "src/main/resources");
-            if (defaultResourceDir.exists()) {
+            File defaultDir = new File("target/classes");
+            if (defaultDir.exists()) {
                 Resource defaultResource = new Resource();
-                defaultResource.setTargetPath(defaultResourceDir.getAbsolutePath());
-                buildResources.add(defaultResource);
+                defaultResource.setTargetPath(defaultDir.getAbsolutePath());
+                resources.add(defaultResource);
             }
-            for (Resource resource : buildResources) {
+            for (Resource resource : resources) {
                 String path = resource.getTargetPath();
                 if (path != null) {
                     mojoURLs.add(new File(path).toURI().toURL());
@@ -123,24 +137,39 @@ public class ConfiguratorMojo extends AbstractMojo {
         ClassLoader previous = Classes.setTCCL(loader);
         Writer writer = null;
         DirectoryScanner ds = new DirectoryScanner();
+        ds.setSelectors(new FileSelector[]{new FileSelector() {
+            @Override
+            public boolean isSelected(File basedir, String filename, File file) throws BuildException {
+                return file.exists() && (file.isDirectory() || filename.endsWith(".jar"));
+            }
+        }});
         ds.setIncludes(includes);
         ds.setExcludes(excludes);
-        ds.setBasedir(outputDirectory);
+        ds.setBasedir(basedir);
         try {
             ds.scan();
             List<URL> scannerURLs = new ArrayList<URL>();
-            for (String includedPath : ds.getIncludedFiles()) {
+            for (String includedPath : ds.getIncludedDirectories()) {
                 scannerURLs.add(new File(includedPath).toURI().toURL());
             }
-            List<SwitchYardScanner> scanners = new ArrayList<SwitchYardScanner>();
+            List<Scanner<M>> scanners = new ArrayList<Scanner<M>>();
             for (String scannerClassName : scannerClassNames) {
-                Class<?> scannerClass = Classes.forName(scannerClassName, loader);
-                SwitchYardScanner scanner = (SwitchYardScanner)scannerClass.newInstance();
-                scanners.add(scanner);
+                @SuppressWarnings("unchecked")
+                Class<Scanner<M>> scannerClass = (Class<Scanner<M>>)Classes.forName(scannerClassName, loader);
+                if (scannerClass != null) {
+                    Scanner<M> scanner = scannerClass.newInstance();
+                    scanners.add(scanner);
+                }
             }
-            scanners.add(new DefaultSwitchYardScanner());
-            MergeSwitchYardScanner merge_scanner = new MergeSwitchYardScanner(true, scanners);
-            SwitchYardModel switchyard = merge_scanner.merge(scannerURLs);
+            scanners.add(new ModelResourceScanner<M>());
+            if (modelClassName == null) {
+                modelClassName = V1SwitchYardModel.class.getName();
+            }
+            @SuppressWarnings("unchecked")
+            Class<M> modelClass = (Class<M>)Classes.forName(modelClassName, loader);
+            MergeScanner<M> merge_scanner = new MergeScanner<M>(modelClass, true, scanners);
+            ScannerInput<M> scanner_input = new ScannerInput<M>().setName(artifactId).setURLs(scannerURLs);
+            M model = merge_scanner.scan(scanner_input).getModel();
             if (outputFile == null) {
                 File od = new File(outputDirectory, "META-INF");
                 if (!od.exists()) {
@@ -151,7 +180,7 @@ public class ConfiguratorMojo extends AbstractMojo {
                 outputFile = new File(od, "switchyard.xml");
             }
             writer = new BufferedWriter(new FileWriter(outputFile));
-            switchyard.write(writer);
+            model.write(writer);
         } catch (Throwable t) {
             throw new MojoExecutionException(t.getMessage(), t);
         } finally {

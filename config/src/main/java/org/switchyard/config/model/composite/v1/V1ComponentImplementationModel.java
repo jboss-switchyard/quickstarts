@@ -35,7 +35,11 @@ import org.switchyard.config.model.composite.CompositeModel;
 public class V1ComponentImplementationModel extends BaseTypedModel implements ComponentImplementationModel {
 
     public V1ComponentImplementationModel(String type) {
-        super(new QName(CompositeModel.DEFAULT_NAMESPACE, ComponentImplementationModel.IMPLEMENTATION + '.' + type));
+        this(CompositeModel.DEFAULT_NAMESPACE, type);
+    }
+
+    public V1ComponentImplementationModel(String type, String namespace) {
+        super(new QName(namespace, ComponentImplementationModel.IMPLEMENTATION + '.' + type));
     }
 
     public V1ComponentImplementationModel(Configuration config, Descriptor desc) {

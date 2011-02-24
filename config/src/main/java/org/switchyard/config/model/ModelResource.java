@@ -24,7 +24,7 @@ import java.io.Reader;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.config.Configurations;
+import org.switchyard.config.ConfigurationResource;
 import org.switchyard.config.util.ElementResource;
 import org.switchyard.config.util.Resource;
 import org.w3c.dom.Document;
@@ -34,9 +34,11 @@ import org.xml.sax.InputSource;
 /**
  * ModelResource.
  *
+ * @param <M> the Model type
+ *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class ModelResource extends Resource<Model> {
+public class ModelResource<M extends Model> extends Resource<M> {
 
     private Descriptor _desc;
 
@@ -53,34 +55,35 @@ public class ModelResource extends Resource<Model> {
     }
 
     @Override
-    public Model pull(InputStream is) throws IOException {
+    public M pull(InputStream is) throws IOException {
         return pull(new ElementResource().pull(is));
     }
 
-    public Model pull(Reader reader) throws IOException {
+    public M pull(Reader reader) throws IOException {
         return pull(new ElementResource().pull(reader));
     }
 
-    public Model pull(InputSource is) throws IOException {
+    public M pull(InputSource is) throws IOException {
         return pull(new ElementResource().pull(is));
     }
 
-    public Model pull(Document document) {
+    public M pull(Document document) {
         return pull(new ElementResource().pull(document));
     }
 
-    public Model pull(Element element) {
+    @SuppressWarnings("unchecked")
+    public M pull(Element element) {
         String namespace = element.getNamespaceURI();
         if (namespace != null) {
             Marshaller marshaller = _desc.getMarshaller(namespace);
             if (marshaller != null) {
-                return marshaller.read(Configurations.create(element));
+                return (M)marshaller.read(new ConfigurationResource().pull(element));
             }
         }
         return null;
     }
 
-    public Model pull(QName name) {
+    public M pull(QName name) {
         return pull(new ElementResource().pull(name));
     }
 

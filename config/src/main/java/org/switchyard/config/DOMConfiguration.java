@@ -125,13 +125,13 @@ public class DOMConfiguration extends BaseConfiguration {
             if (first_child_node.getNodeType() == Node.TEXT_NODE) {
                 return first_child_node;
             }
-            Node next_child_node;
-            do {
-                next_child_node = first_child_node.getNextSibling();
-                if (next_child_node != null && next_child_node.getNodeType() == Node.TEXT_NODE) {
+            Node next_child_node = first_child_node.getNextSibling();
+            while (next_child_node != null) {
+                if (next_child_node.getNodeType() == Node.TEXT_NODE) {
                     return next_child_node;
                 }
-            } while (next_child_node != null);
+                next_child_node = next_child_node.getNextSibling();
+            }
             if (create) {
                 Node text_node = _element.getOwnerDocument().createTextNode("");
                 _element.insertBefore(text_node, first_child_node);

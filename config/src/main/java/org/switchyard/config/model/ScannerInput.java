@@ -16,13 +16,52 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config.model.switchyard;
+package org.switchyard.config.model;
 
-import org.switchyard.config.model.Scanner;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * SwitchYardScanner.
+ * ScannerInput.
+ *
+ * @param <M> the Model type being scanned for
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface SwitchYardScanner extends Scanner<SwitchYardModel> {}
+public class ScannerInput<M extends Model> {
+
+    private List<URL> _urls;
+    private String _name;
+
+    public ScannerInput() {
+        _urls = new ArrayList<URL>();
+    }
+
+    public synchronized List<URL> getURLs() {
+        return Collections.unmodifiableList(_urls);
+    }
+
+    public synchronized ScannerInput<M> setURLs(List<URL> urls) {
+        _urls.clear();
+        if (urls != null) {
+            for (URL url : urls) {
+                if (url != null) {
+                    _urls.add(url);
+                }
+            }
+        }
+        return this;
+    }
+
+    public String getName() {
+        return _name;
+    }
+
+    public ScannerInput<M> setName(String name) {
+        _name = name;
+        return this;
+    }
+
+}

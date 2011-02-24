@@ -30,12 +30,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.ModelResource;
-import org.switchyard.config.model.Models;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.config.model.transform.v1.V1TransformsModel;
+import org.switchyard.config.util.QNames;
 import org.switchyard.config.util.StringResource;
 import org.switchyard.transform.config.model.v1.V1JavaTransformModel;
 import org.switchyard.transform.config.model.v1.V1SmooksConfigModel;
@@ -50,18 +50,18 @@ public class TransformModelTests {
 
     private static final String XML = "/org/switchyard/transform/config/model/TransformModelTests.xml";
 
-    private ModelResource _res;
+    private ModelResource<SwitchYardModel> _res;
 
     @Before
     public void before() throws Exception {
-        _res = new ModelResource();
+        _res = new ModelResource<SwitchYardModel>();
     }
 
     @Test
     public void testCreateEmptyModel() throws Exception {
         String namespace = TransformModel.DEFAULT_NAMESPACE;
         String name = TransformModel.TRANSFORM + '.' + JavaTransformModel.JAVA;
-        Model model = Models.create(namespace, name);
+        Model model = new ModelResource<Model>().pull(QNames.create(namespace, name));
         Assert.assertTrue(model instanceof JavaTransformModel);
         Assert.assertEquals(name, model.getModelConfiguration().getName());
         Assert.assertEquals(new QName(namespace, name), model.getModelConfiguration().getQName());
@@ -85,7 +85,7 @@ public class TransformModelTests {
         transforms.addTransform(smooksTransform);
         switchyard.setTransforms(transforms);
         String new_xml = switchyard.toString();
-        String old_xml = new ModelResource().pull(XML).toString();
+        String old_xml = new ModelResource<SwitchYardModel>().pull(XML).toString();
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(old_xml, new_xml);
         Assert.assertTrue(diff.toString(), diff.identical());
@@ -93,7 +93,7 @@ public class TransformModelTests {
 
     @Test
     public void testRead() throws Exception {
-        SwitchYardModel switchyard = (SwitchYardModel)_res.pull(XML);
+        SwitchYardModel switchyard = _res.pull(XML);
         TransformsModel transforms = switchyard.getTransforms();
         JavaTransformModel java_transform = (JavaTransformModel)transforms.getTransforms().get(0);
         Assert.assertEquals("msgA", java_transform.getFrom().getLocalPart());
@@ -109,7 +109,7 @@ public class TransformModelTests {
     @Test
     public void testWrite() throws Exception {
         String old_xml = new StringResource().pull(XML);
-        SwitchYardModel switchyard = (SwitchYardModel)_res.pull(new StringReader(old_xml));
+        SwitchYardModel switchyard = _res.pull(new StringReader(old_xml));
         String new_xml = switchyard.toString();
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(old_xml, new_xml);
@@ -118,7 +118,7 @@ public class TransformModelTests {
 
     @Test
     public void testParenthood() throws Exception {
-        SwitchYardModel switchyard_1 = (SwitchYardModel)_res.pull(XML);
+        SwitchYardModel switchyard_1 = _res.pull(XML);
         TransformsModel transforms_1 = switchyard_1.getTransforms();
         TransformModel transform = transforms_1.getTransforms().get(0);
         TransformsModel transforms_2 = transform.getTransforms();
@@ -129,8 +129,8 @@ public class TransformModelTests {
 
     @Test
     public void testValidation() throws Exception {
-        Model model = _res.pull(XML);
-        Assert.assertTrue(model.isModelValid());
+        SwitchYardModel switchyard = _res.pull(XML);
+        Assert.assertTrue(switchyard.isModelValid());
     }
 
 }

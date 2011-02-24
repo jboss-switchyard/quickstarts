@@ -32,7 +32,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 
 import org.switchyard.config.Configuration;
-import org.switchyard.config.Configurations;
+import org.switchyard.config.ConfigurationResource;
 
 /**
  * BaseModel.
@@ -47,7 +47,7 @@ public abstract class BaseModel implements Model {
     private Model _parent;
 
     public BaseModel(QName qname) {
-        this(Configurations.create(qname));
+        this(new ConfigurationResource().pull(qname));
     }
 
     public BaseModel(Configuration config) {
@@ -140,7 +140,6 @@ public abstract class BaseModel implements Model {
             try {
                 validator.validate(source);
             } catch (Throwable t) {
-                //System.err.println(t);
                 return new Validation(t);
             }
         } else {

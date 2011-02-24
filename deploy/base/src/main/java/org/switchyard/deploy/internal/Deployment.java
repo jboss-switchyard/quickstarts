@@ -92,7 +92,7 @@ public class Deployment extends AbstractDeployment {
     public Deployment(InputStream configStream) {
         // parse the config
         try {
-            _switchyardConfig = (SwitchYardModel)new ModelResource().pull(configStream);
+            _switchyardConfig = new ModelResource<SwitchYardModel>().pull(configStream);
         } catch (java.io.IOException ioEx) {
             throw new RuntimeException("Failed to read switchyard config.", ioEx);
         }

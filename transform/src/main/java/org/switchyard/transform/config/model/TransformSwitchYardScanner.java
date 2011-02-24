@@ -21,11 +21,15 @@ package org.switchyard.transform.config.model;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.switchyard.config.model.Scanner;
-import org.switchyard.config.model.transform.TransformModel;
+import org.switchyard.config.model.ScannerInput;
+import org.switchyard.config.model.ScannerOutput;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
+import org.switchyard.config.model.transform.TransformsModel;
+import org.switchyard.config.model.transform.v1.V1TransformsModel;
 import org.switchyard.config.util.classpath.ClasspathScanner;
 import org.switchyard.config.util.classpath.InstanceOfFilter;
 import org.switchyard.transform.Transformer;
@@ -36,16 +40,17 @@ import org.switchyard.transform.config.model.v1.V1JavaTransformModel;
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class TransformerSwitchYardScanner implements Scanner<TransformModel> {
+public class TransformSwitchYardScanner implements Scanner<SwitchYardModel> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<TransformModel> scan(List<URL> urls) throws IOException {
-        List<Class<?>> transformerClasses = scanForTransformers(urls);
-        List<TransformModel> transformerModels = new ArrayList<TransformModel>();
+    public ScannerOutput<SwitchYardModel> scan(ScannerInput<SwitchYardModel> input) throws IOException {
+        SwitchYardModel switchyardModel = new V1SwitchYardModel();
+        TransformsModel transformsModel = null;
 
+        List<Class<?>> transformerClasses = scanForTransformers(input.getURLs());
         for (Class<?> transformer : transformerClasses) {
             if (transformer.isInterface()) {
                 continue;
@@ -54,23 +59,25 @@ public class TransformerSwitchYardScanner implements Scanner<TransformModel> {
                 continue;
             }
 
-            V1JavaTransformModel transformModel = new V1JavaTransformModel();
-
+            JavaTransformModel transformModel = new V1JavaTransformModel();
             // Need to create an instance to get the transform type info...
             try {
                 Transformer<?,?> transformerInst = (Transformer<?,?>) transformer.newInstance();
-
                 transformModel.setFrom(transformerInst.getFrom());
                 transformModel.setTo(transformerInst.getTo());
             } catch (Exception e) {
                 throw new IOException("Error creating instance of Transformer '" + transformer.getName() + "'.  May not contain a public default constructor.", e);
             }
-
             transformModel.setClazz(transformer.getName());
-            transformerModels.add(transformModel);
+
+            if (transformsModel == null) {
+                transformsModel = new V1TransformsModel();
+                switchyardModel.setTransforms(transformsModel);
+            }
+            transformsModel.addTransform(transformModel);
         }
 
-        return transformerModels;
+        return new ScannerOutput<SwitchYardModel>().setModel(switchyardModel);
     }
 
     private List<Class<?>> scanForTransformers(List<URL> urls) throws IOException {

@@ -47,7 +47,7 @@ public class ConfigurationTests {
     @Test
     public void testCreateEmptyConfig() throws Exception {
         String name = "root";
-        Configuration config = Configurations.create(name);
+        Configuration config = new ConfigurationResource().pull(new QName(name));
         Assert.assertEquals(name, config.getName());
         Assert.assertEquals(new QName(name), config.getQName());
     }
@@ -65,15 +65,15 @@ public class ConfigurationTests {
     }
 
     private String merge(boolean fromOverridesTo) throws Exception {
-        Configuration from_config = Configurations.create(new ElementResource().pull(FROM_XML));
-        Configuration to_config = Configurations.create(new ElementResource().pull(TO_XML));
+        Configuration from_config = new ConfigurationResource().pull(new ElementResource().pull(FROM_XML));
+        Configuration to_config = new ConfigurationResource().pull(new ElementResource().pull(TO_XML));
         Configuration merged_config = Configurations.merge(from_config, to_config, fromOverridesTo).setChildrenOrder("my", "his", "mythology").orderChildren();
         return merged_config.toString();
     }
 
     @Test
     public void testParenthood() throws Exception {
-        Configuration parent = Configurations.create(new ElementResource().pull(NAMESPACES_XML));
+        Configuration parent = new ConfigurationResource().pull(new ElementResource().pull(NAMESPACES_XML));
         Assert.assertFalse(parent.hasParent());
         Assert.assertNull(parent.getParent());
         Configuration child = parent.getFirstChild("two");
@@ -86,7 +86,7 @@ public class ConfigurationTests {
     @Test
     public void testQNames() throws Exception {
         QName expected = new QName("http://foo.org", "bar", "foo");
-        QName actual = Configurations.create(expected).getQName();
+        QName actual = new ConfigurationResource().pull(expected).getQName();
         Assert.assertEquals(expected, actual);
         Assert.assertEquals(expected.getNamespaceURI(), actual.getNamespaceURI());
         Assert.assertEquals(expected.getLocalPart(), actual.getLocalPart());
@@ -95,7 +95,7 @@ public class ConfigurationTests {
 
     @Test
     public void testNamespaceCollections() throws Exception {
-        Configuration config = Configurations.create(new ElementResource().pull(NAMESPACES_XML));
+        Configuration config = new ConfigurationResource().pull(new ElementResource().pull(NAMESPACES_XML));
         Set<String> n_set = config.getNamespaces();
         Assert.assertEquals(4, n_set.size());
         Map<String,String> np_map = config.getNamespacePrefixMap();
@@ -106,7 +106,7 @@ public class ConfigurationTests {
 
     @Test
     public void testNamespacesValues() throws Exception {
-        Configuration config = Configurations.create(new ElementResource().pull(NAMESPACES_XML));
+        Configuration config = new ConfigurationResource().pull(new ElementResource().pull(NAMESPACES_XML));
         Assert.assertEquals("http://a.org/a.xsd", config.getQName().getNamespaceURI());
         Assert.assertEquals("bar", config.getAttribute("foo"));
         Assert.assertEquals("stuff", config.getFirstChild("two").getValue());

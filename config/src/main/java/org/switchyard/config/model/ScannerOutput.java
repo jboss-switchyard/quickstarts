@@ -16,30 +16,49 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config.model.switchyard;
+package org.switchyard.config.model;
 
-import java.io.IOException;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.switchyard.config.model.ModelResource;
-
 /**
- * DefaultSwitchYardScanner.
+ * ScannerOutput.
+ *
+ * @param <M> the Model type being scanned for
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class DefaultSwitchYardScanner implements SwitchYardScanner {
+public class ScannerOutput<M extends Model> {
 
-    @Override
-    public List<SwitchYardModel> scan(List<URL> urls) throws IOException {
-        SwitchYardModel switchyard = (SwitchYardModel)new ModelResource().pull("/META-INF/switchyard.xml");
-        if (switchyard != null) {
-            return Collections.singletonList(switchyard);
-        } else {
-            return Collections.emptyList();
+    private List<M> _models;
+
+    public ScannerOutput() {
+        _models = new ArrayList<M>();
+    }
+
+    public synchronized M getModel() {
+        return _models.size() > 0 ? _models.get(0) : null;
+    }
+
+    public synchronized ScannerOutput<M> setModel(M model) {
+        return setModels(Collections.singletonList(model));
+    }
+
+    public synchronized List<M> getModels() {
+        return Collections.unmodifiableList(_models);
+    }
+
+    public synchronized ScannerOutput<M> setModels(List<M> models) {
+        _models.clear();
+        if (models != null) {
+            for (M m : models) {
+                if (m != null) {
+                    _models.add(m);
+                }
+            }
         }
+        return this;
     }
 
 }
