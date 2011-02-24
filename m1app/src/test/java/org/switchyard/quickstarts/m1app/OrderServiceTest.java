@@ -21,7 +21,7 @@ package org.switchyard.quickstarts.m1app;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.switchyard.SwitchYardCDITestCase;
+import org.switchyard.test.SwitchYardCDITestCase;
 
 public class OrderServiceTest extends SwitchYardCDITestCase {
 
