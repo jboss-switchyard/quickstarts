@@ -29,6 +29,10 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.component.bean.Service;
+import org.switchyard.config.model.ScannerInput;
+import org.switchyard.config.model.composite.ComponentImplementationModel;
+import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.util.Classes;
 
 /**
@@ -45,10 +49,13 @@ public class BeanSwitchYardScannerTest {
         // root of the bean module !!
         urls.add(new File("./target/test-classes").toURI().toURL());
 
-        List<BeanComponentImplementationModel> models = scanner.scan(urls);
-
-        for(BeanComponentImplementationModel model : models) {
-            checkBeanModel(model);
+        ScannerInput<SwitchYardModel> input = new ScannerInput<SwitchYardModel>().setURLs(urls);
+        SwitchYardModel switchyard = scanner.scan(input).getModel();
+        List<ComponentModel> components = switchyard.getComposite().getComponents();
+        for(ComponentModel component : components) {
+            ComponentImplementationModel implementation = component.getImplementation();
+            Assert.assertTrue(implementation instanceof BeanComponentImplementationModel);
+            checkBeanModel((BeanComponentImplementationModel)implementation);
         }
     }
 

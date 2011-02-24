@@ -28,6 +28,11 @@ import org.switchyard.config.model.composite.ComponentImplementationModel;
 public interface BeanComponentImplementationModel extends ComponentImplementationModel {
 
     /**
+     * The "bean" namespace.
+     */
+    public static final String DEFAULT_NAMESPACE = "urn:switchyard-component-bean:config:1.0";
+
+    /**
      * The "bean" implementation type.
      */
     public static final String BEAN = "bean";

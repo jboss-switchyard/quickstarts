@@ -34,7 +34,7 @@ public class V1BeanComponentImplementationModel extends V1ComponentImplementatio
      * Default constructor for application use.
      */
     public V1BeanComponentImplementationModel() {
-        super(BEAN);
+        super(BEAN, DEFAULT_NAMESPACE);
     }
 
     /**

@@ -29,7 +29,6 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.config.Configuration;
-import org.switchyard.config.model.Model;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
@@ -46,16 +45,16 @@ public class BeanModelTests {
 
     private static final String COMPLETE_XML = "/org/switchyard/component/bean/config/model/BeanModelTests-Complete.xml";
 
-    private ModelResource _res;
+    private ModelResource<SwitchYardModel> _res;
 
     @Before
     public void before() throws Exception {
-        _res = new ModelResource();
+        _res = new ModelResource<SwitchYardModel>();
     }
 
     @Test
     public void testReadComplete() throws Exception {
-        SwitchYardModel switchyard = (SwitchYardModel)_res.pull(COMPLETE_XML);
+        SwitchYardModel switchyard = _res.pull(COMPLETE_XML);
         CompositeModel composite = switchyard.getComposite();
         ComponentModel component = composite.getComponents().get(0);
         ComponentImplementationModel implementation = component.getImplementation();
@@ -73,7 +72,7 @@ public class BeanModelTests {
     @Test
     public void testWriteComplete() throws Exception {
         String old_xml = new StringResource().pull(COMPLETE_XML);
-        SwitchYardModel switchyard = (SwitchYardModel)_res.pull(new StringReader(old_xml));
+        SwitchYardModel switchyard = _res.pull(new StringReader(old_xml));
         String new_xml = switchyard.toString();
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(old_xml, new_xml);
@@ -82,8 +81,8 @@ public class BeanModelTests {
 
     @Test
     public void testValidation() throws Exception {
-        Model model = _res.pull(COMPLETE_XML);
-        Assert.assertTrue(model.isModelValid());
+        SwitchYardModel switchyard = _res.pull(COMPLETE_XML);
+        Assert.assertTrue(switchyard.isModelValid());
     }
 
 }

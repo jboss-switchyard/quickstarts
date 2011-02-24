@@ -80,7 +80,7 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
     private SOAPGateway _soapOutbound;
     private long _noOfThreads = DEFAULT_NO_OF_THREADS;
     
-    private static ModelResource _res;
+    private static ModelResource<CompositeModel> _res;
 
     private class WebServiceInvoker implements Callable<String> {
 
@@ -127,13 +127,13 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
 
     @Before
     public void setUp() throws Exception {
-        _res = new ModelResource();
+        _res = new ModelResource<CompositeModel>();
         
         // Provide a switchyard service
         _domain = getServiceDomain();
         SOAPProvider provider = new SOAPProvider();
 
-        CompositeModel composite = (CompositeModel)_res.pull("/HelloSwitchYard.xml");
+        CompositeModel composite = _res.pull("/HelloSwitchYard.xml");
         /*
         Validation v = composite.validateModel();
         if (!v.isValid()) {
