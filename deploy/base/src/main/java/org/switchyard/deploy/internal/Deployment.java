@@ -179,6 +179,11 @@ public class Deployment extends AbstractDeployment {
 
         TransformerRegistry transformerRegistry = getDomain().getTransformerRegistry();
         TransformsModel transforms = _switchyardConfig.getTransforms();
+        
+        if (transforms == null) {
+            // No transformations are defined in switchyard config
+            return;
+        }
 
         try {
             for (TransformModel transformModel : transforms.getTransforms()) {

@@ -34,6 +34,17 @@ import java.io.InputStream;
  */
 public class DeploymentTest {
 
+
+    @Test
+    public void testEmptySwitchYardConfiguration() {
+        InputStream swConfigStream = getClass().getResourceAsStream("/switchyard-config-empty-01.xml");
+        Deployment deployment = new Deployment(swConfigStream);
+
+        deployment.init();
+        deployment.destroy();
+
+    }
+    
     @Test
     public void test_transform_registration() {
         InputStream swConfigStream = getClass().getResourceAsStream("/switchyard-config-transform-01.xml");
