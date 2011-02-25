@@ -66,6 +66,6 @@ public class SOAPGreetingToJava<F extends Node, T extends Greeting>  extends Bas
 
     @Override
     public QName getTo() {
-        return new QName("java:/org.switchyard.component.soap.greeting.GreetingService/greet/org.switchyard.component.soap.greeting.Greeting");
+        return new QName("java:org.switchyard.component.soap.greeting.Greeting");
     }
 }

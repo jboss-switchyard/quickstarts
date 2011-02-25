@@ -56,7 +56,7 @@ public class JavaReplyToSOAP<F extends Reply, T extends String>  extends BaseTra
 
     @Override
     public QName getFrom() {
-        return new QName("java:/org.switchyard.component.soap.greeting.GreetingService/greet/org.switchyard.component.soap.greeting.Reply");
+        return new QName("java:org.switchyard.component.soap.greeting.Reply");
     }
 
     @Override

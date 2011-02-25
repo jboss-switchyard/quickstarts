@@ -31,6 +31,6 @@ public class GreetingExceptionToSOAP extends HandlerExceptionTransformer {
 
     @Override
     public QName getFrom() {
-        return new QName("java:/org.switchyard.component.soap.greeting.GreetingService/greet/org.switchyard.component.soap.greeting.GreetingServiceException");
+        return new QName("java:org.switchyard.component.soap.greeting.GreetingServiceException");
     }
 }
