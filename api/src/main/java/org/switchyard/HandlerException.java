@@ -36,7 +36,7 @@ public class HandlerException extends Exception {
     /**
      * Base fault Message type.
      */
-    public static final String MESSAGE_TYPE = "java:/org.switchyard.HandlerException";
+    public static final String MESSAGE_TYPE = "java:org.switchyard.HandlerException";
 
     /**
      * Generated serial version UID.

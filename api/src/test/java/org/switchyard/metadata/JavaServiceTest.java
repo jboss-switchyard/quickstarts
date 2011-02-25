@@ -33,17 +33,11 @@ import org.switchyard.metadata.java.JavaService;
 public class JavaServiceTest {
     
     static final QName METHOD1_INPUT = new QName(
-        "java:/org.switchyard.metadata.JavaInterface" +
-        "/method1" +                                    
-        "/org.switchyard.metadata.MyStuff");           
+        "java:org.switchyard.metadata.MyStuff");           
     static final QName METHOD2_INPUT = new QName(
-        "java:/org.switchyard.metadata.JavaInterface" + 
-        "/method2" +                                    
-        "/java.lang.Object");                            
+        "java:java.lang.Object");                            
     static final QName METHOD2_OUTPUT = new QName(
-        "java:/org.switchyard.metadata.JavaInterface" + 
-        "/method2" +                                    
-        "/org.switchyard.metadata.MyStuff");             
+        "java:org.switchyard.metadata.MyStuff");             
     
     @Test
     public void testJavaInterfaceAsService() throws Exception {

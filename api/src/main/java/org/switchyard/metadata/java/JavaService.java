@@ -45,10 +45,9 @@ import org.switchyard.metadata.ServiceOperation;
  * <br><br>
  * Operation names are mapped directly from the method names on the Java class.
  * <br><br>
- * Message names are created using the FQ class name, method name, and 
- * parameter/return type.  A prefix of JavaService.TYPE is used to produce a 
- * name of the format 
- * <code>java:[class.getName]/[methodName]/[type.class.getName]</code>.
+ * Message names are created using the FQ class name. A prefix of 
+ * <code>JavaService.TYPE</code> is used to produce a name of the format 
+ * <code>java:[class.getName()]</code>, e.g. <code>java:org.example.MyType</code>.
  */
 public final class JavaService extends BaseService {
     
@@ -73,11 +72,24 @@ public final class JavaService extends BaseService {
     
     /**
      * Creates a ServiceInterface from the specified Java class or interface.
+     * This is the equivalent of <code>fromClass(serviceInterface, null)</code>.
      * @param serviceInterface class or interface representing the service 
      * interface
      * @return ServiceInterface representing the Java class
      */
     public static JavaService fromClass(Class<?> serviceInterface) {
+        return fromClass(serviceInterface, null);
+    }
+    
+    /**
+     * Creates a ServiceInterface from the specified Java class or interface.
+     * All QNames in the interface will use the specified namespace URI.
+     * @param serviceInterface class or interface representing the service 
+     * interface
+     * @param namespaceURI namespace to be used for type QNames
+     * @return ServiceInterface representing the Java class
+     */
+    public static JavaService fromClass(Class<?> serviceInterface, String namespaceURI) {
         HashSet<ServiceOperation> ops = new HashSet<ServiceOperation>();
         for (Method m : serviceInterface.getDeclaredMethods()) {
             // We only consider public methods
@@ -90,11 +102,11 @@ public final class JavaService extends BaseService {
                             "Service operations on a Java interface must have exactly one parameter.");
                 }
                 // Create the appropriate service operation and add it to the list
-                QName inputType = formatName(serviceInterface.getCanonicalName(), m.getName(), params[0].getCanonicalName());
+                QName inputType = toMessageType(params[0], namespaceURI);
                 if (m.getReturnType().equals(Void.TYPE)) {
                     ops.add(new InOnlyOperation(m.getName(), inputType));
                 } else {
-                    QName outputName = formatName(serviceInterface.getCanonicalName(), m.getName(), m.getReturnType().getCanonicalName());
+                    QName outputName = toMessageType(m.getReturnType(), namespaceURI);
                     Class<?>[] exceptions = m.getExceptionTypes();
                     QName faultType = null;
                     if (exceptions.length > 0) {
@@ -102,7 +114,7 @@ public final class JavaService extends BaseService {
                             throw new RuntimeException(
                             "Service operations on a Java interface can only throw one type of exception.");
                         }
-                        faultType = formatName(serviceInterface.getCanonicalName(), m.getName(), exceptions[0].getCanonicalName());
+                        faultType = toMessageType(exceptions[0], namespaceURI);
                     }
                     ops.add(new InOutOperation(m.getName(), inputType, outputName, faultType));
                 }
@@ -122,18 +134,19 @@ public final class JavaService extends BaseService {
     }
 
     /**
-     * Creates a URN-style name based on a list of parts.
-     * @param parts parts of the name
-     * @return URN-style name used for the message name
+     * Equivalent to <code>toMessageType(javaType, null)</code>.
+     * <br>
+     * @see JavaService#toMessageType(Class)
+     * Checks for a {@link org.switchyard.metadata.java.PayloadTypeName} on the type.  If not found,
+     * the type name is derived from the Java Class name.
+     *
+     * @param javaType The Java type.
+     * @return The payload type.
      */
-    private static QName formatName(String... parts) {
-        StringBuilder formattedName = new StringBuilder();
-        for (String p : parts) {
-            formattedName.append("/" + p);
-        }
-        return new QName(formattedName.insert(0, TYPE + ":").toString());
+    public static QName toMessageType(Class<?> javaType) {
+        return toMessageType(javaType, null);
     }
-
+    
     /**
      * Convert the supplied java type to a payload type name.
      * <p/>
@@ -143,13 +156,13 @@ public final class JavaService extends BaseService {
      * @param javaType The Java type.
      * @return The payload type.
      */
-    public static QName toMessageType(Class<?> javaType) {
+    public static QName toMessageType(Class<?> javaType, String namespaceURI) {
         PayloadTypeName payloadType = javaType.getAnnotation(PayloadTypeName.class);
 
         if (payloadType != null) {
-            return new QName(payloadType.value());
+            return QName.valueOf(payloadType.value());
         } else {
-            return formatName(javaType.getCanonicalName());
+            return new QName(namespaceURI, TYPE + ":" + javaType.getCanonicalName());
         }
     }
 }
