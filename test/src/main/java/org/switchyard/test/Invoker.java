@@ -246,12 +246,16 @@ public class Invoker {
         if (_exchangeContract ==  null) {
             BaseExchangeContract baseExchangeContract;
 
-            if (_serviceOperation == null) {
+            if (serviceOperation == null) {
+                // service operation has not been specified, check the registered service
                 serviceOperation = service.getInterface().getOperation(_operationName != null ? _operationName : ServiceInterface.DEFAULT_OPERATION);
-                if (pattern == ExchangePattern.IN_ONLY) {
-                    serviceOperation = new InOnlyOperation(_operationName);
-                } else if (pattern == ExchangePattern.IN_OUT) {
-                    serviceOperation = new InOutOperation(_operationName);
+                if (serviceOperation == null) {
+                    // nothing on the registered service, need to create our own
+                    if (pattern == ExchangePattern.IN_ONLY) {
+                        serviceOperation = new InOnlyOperation(_operationName);
+                    } else if (pattern == ExchangePattern.IN_OUT) {
+                        serviceOperation = new InOutOperation(_operationName);
+                    }
                 }
             }
 
