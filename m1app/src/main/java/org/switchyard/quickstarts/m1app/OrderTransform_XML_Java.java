@@ -31,7 +31,7 @@ public class OrderTransform_XML_Java extends BaseTransformer<Element, Order> {
     public static final QName FROM_TYPE = 
         new QName("urn:switchyard-quickstarts:m1app:1.0", "submitOrder");
     public static final QName TO_TYPE = 
-        new QName("java:/org.switchyard.quickstarts.m1app.OrderService/submitOrder/org.switchyard.quickstarts.m1app.Order");
+        new QName("java:org.switchyard.quickstarts.m1app.Order");
     // Element names in XML document
     private static final String ORDER_ID = "orderId";
     private static final String ITEM_ID = "itemId";
