@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<orderAck>
+<orderAck xmlns="urn:switchyard-quickstarts:m1app-types:1.0">
     <orderId>PO-19838-XYZ</orderId>
     <accepted>true</accepted>
     <status>Order Accepted</status>
