@@ -62,6 +62,7 @@ public class InboundHandler extends BaseHandler {
     private static final long DEFAULT_TIMEOUT = 15000;
     private static final int DEFAULT_SLEEP = 100;
     private static final String MESSAGE_NAME = "MESSAGE_NAME";
+    private static final String WSDL_LOCATION = "javax.xml.ws.wsdl.description";
 
     private final ConcurrentHashMap<String, BaseExchangeContract> _contracts = new ConcurrentHashMap<String, BaseExchangeContract>();
     private static ThreadLocal<SOAPMessage> _response = new ThreadLocal<SOAPMessage>();
@@ -137,6 +138,7 @@ public class InboundHandler extends BaseHandler {
             Map<String, Object> properties = new HashMap<String, Object>();
             properties.put(Endpoint.WSDL_SERVICE, portName.getServiceQName());
             properties.put(Endpoint.WSDL_PORT, portName.getPortQName());
+            properties.put(WSDL_LOCATION, _config.getWsdl());
             _endpoint.setProperties(properties);
 
             String path = "/" + portName.getServiceName();
