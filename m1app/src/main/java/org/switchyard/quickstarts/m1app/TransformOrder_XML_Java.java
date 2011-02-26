@@ -25,7 +25,7 @@ import org.switchyard.transform.BaseTransformer;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-public class OrderTransform_XML_Java extends BaseTransformer<Element, Order> {
+public class TransformOrder_XML_Java extends BaseTransformer<Element, Order> {
 
     // Message types being transformed
     public static final QName FROM_TYPE = 
@@ -37,7 +37,7 @@ public class OrderTransform_XML_Java extends BaseTransformer<Element, Order> {
     private static final String ITEM_ID = "itemId";
     private static final String QUANTITY = "quantity";
 
-    public OrderTransform_XML_Java() {
+    public TransformOrder_XML_Java() {
         super(FROM_TYPE, TO_TYPE);
     }
     

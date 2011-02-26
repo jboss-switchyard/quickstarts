@@ -20,37 +20,54 @@
 package org.switchyard.quickstarts.m1app;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.custommonkey.xmlunit.XMLAssert;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class WebServiceTest {
     
+    private InputStream _requestStream;
+    private Reader _expectedResponseReader;
+    
+    @Before
+    public void setUp() throws Exception {
+        _requestStream = getClass().getClassLoader().getResourceAsStream("xml/soap-request.xml");
+        InputStream responseStream = 
+            getClass().getClassLoader().getResourceAsStream("xml/soap-response.xml");
+        _expectedResponseReader = new InputStreamReader(responseStream);
+    }
+    
+    @After
+    public void tearDown() throws Exception {
+        if (_expectedResponseReader != null) {
+            _expectedResponseReader.close();
+        }
+        if (_requestStream != null) {
+            _requestStream.close();
+        }
+    }
+    
     @Test
-    public void invokeOrderWebService() {
+    public void invokeOrderWebService() throws Exception {
 
         HttpClient client = new HttpClient();
         PostMethod postMethod = new PostMethod("http://localhost:18001/OrderService");
-        InputStream requestStream = null;
         String output;
         
-        try{
-            requestStream = getClass().getClassLoader().getResourceAsStream("xml/soap-request.xml");
-            postMethod.setRequestEntity(new InputStreamRequestEntity(requestStream, "text/xml; charset=utf-8"));
-            client.executeMethod(postMethod);
-            output = postMethod.getResponseBodyAsString();
-        } catch (Exception ex) {
-           output = "Exception: " + ex.toString();
-        } finally {
-            try { 
-                if (requestStream != null) {
-                    requestStream.close();
-                }
-            } catch (Exception ex) { ex.printStackTrace(); }
-        }
+        postMethod.setRequestEntity(new InputStreamRequestEntity(_requestStream, "text/xml; charset=utf-8"));
+        client.executeMethod(postMethod);
+        output = postMethod.getResponseBodyAsString();
         
-        System.out.println("Response from OrderService: " + output);
+        XMLUnit.setIgnoreWhitespace(true);
+        XMLAssert.assertXMLEqual(_expectedResponseReader, new StringReader(output));
     }
 }

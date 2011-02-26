@@ -24,6 +24,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import junit.framework.Assert;
 
+import org.custommonkey.xmlunit.XMLAssert;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 import org.switchyard.test.SwitchYardCDITestCase;
 import org.w3c.dom.Document;
@@ -33,25 +35,41 @@ public class TypeTransformationTest extends SwitchYardCDITestCase {
 
     final String ITEM_ID = "BUTTER";
     final String ORDER_XML = "xml/order.xml";
+    final String ORDER_ACK_XML = "xml/orderAck.xml";
     
     @Test
     public void testTransformXMLtoJava() throws Exception {
         
         OrderAck orderAck = newInvoker("OrderService")
             .operation("submitOrder")
-            .inputType(OrderTransform_XML_Java.FROM_TYPE)
-            .sendInOut(loadXML(ORDER_XML))
+            .inputType(TransformOrder_XML_Java.FROM_TYPE)
+            .sendInOut(loadXML(ORDER_XML).getDocumentElement())
             .getContent(OrderAck.class);
         
         Assert.assertTrue(orderAck.isAccepted());
 
     }
     
-    private Element loadXML(String path) throws Exception {
+    @Test
+    public void testTransformJavaToXML() throws Exception {
+        Order testOrder = new Order()
+            .setOrderId("PO-19838-XYZ")
+            .setItemId("BUTTER")
+            .setQuantity(100);
+        
+        Element result = newInvoker("OrderService")
+            .operation("submitOrder")
+            .expectedOutputType(TransformOrderAck_Java_XML.TO_TYPE)
+            .sendInOut(testOrder)
+            .getContent(Element.class);
+        XMLUnit.setIgnoreWhitespace(true);
+        XMLAssert.assertXMLEqual(loadXML(ORDER_ACK_XML), result.getOwnerDocument());
+    }
+    
+    private Document loadXML(String path) throws Exception {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         DocumentBuilder db = dbf.newDocumentBuilder();
-        Document doc = db.parse(getClass().getClassLoader().getResourceAsStream(path));
-        return doc.getDocumentElement();
+        return db.parse(getClass().getClassLoader().getResourceAsStream(path));
     }
 }
