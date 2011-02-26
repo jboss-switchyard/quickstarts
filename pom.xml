@@ -25,7 +25,6 @@
      <arquillian.version>1.0.0-SNAPSHOT</arquillian.version>
      <xmlunit.version>1.1</xmlunit.version>
      <log4j.version>1.2.14</log4j.version>
-     <ant.version>1.6.5</ant.version>
      <maven.plugin.api.version>3.0.2</maven.plugin.api.version>
      <maven.plugin.plugin.version>2.5.1</maven.plugin.plugin.version>
   </properties>
@@ -397,12 +396,6 @@
         <artifactId>maven-plugin-plugin</artifactId>
         <version>${maven.plugin.plugin.version}</version>
         <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>ant</groupId>
-        <artifactId>ant</artifactId>
-        <version>${ant.version}</version>
-        <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>log4j</groupId>
