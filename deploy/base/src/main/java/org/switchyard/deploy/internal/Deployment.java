@@ -207,6 +207,9 @@ public class Deployment extends AbstractDeployment {
                             + toDescription(registeredTransformer) + "'.");
                 }
 
+                _log.debug("Adding transformer => \n" +
+                        "From: " + transformer.getFrom() + 
+                        "To:" + transformer.getTo());
                 transformerRegistry.addTransformer(transformer);
                 _transformers.add(transformer);
             }
