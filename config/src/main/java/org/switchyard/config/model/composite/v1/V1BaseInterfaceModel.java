@@ -34,7 +34,11 @@ import org.switchyard.config.model.composite.InterfaceModel;
 public abstract class V1BaseInterfaceModel extends BaseTypedModel implements InterfaceModel {
 
     public V1BaseInterfaceModel(String type) {
-        super(new QName(CompositeModel.DEFAULT_NAMESPACE, InterfaceModel.INTERFACE + '.' + type));
+        this(type, CompositeModel.DEFAULT_NAMESPACE);
+    }
+
+    public V1BaseInterfaceModel(String type, String namespace) {
+        super(new QName(namespace, InterfaceModel.INTERFACE + '.' + type));
     }
 
     public V1BaseInterfaceModel(Configuration config, Descriptor desc) {

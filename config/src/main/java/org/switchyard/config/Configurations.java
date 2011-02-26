@@ -25,6 +25,8 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.config.util.QNames;
+
 /**
  * Configurations.
  *
@@ -76,42 +78,101 @@ public final class Configurations {
                 merged_config.setValue(from_config_value);
             }
         }
-        Map<QName,Map<Integer,Configuration>> orphan_config_children = new LinkedHashMap<QName,Map<Integer,Configuration>>();
-        int i = 0;
+        Map<Key,Configuration> merged_config_orphans = new LinkedHashMap<Key,Configuration>();
         for (Configuration merged_config_child : merged_config.getChildren()) {
-            QName merged_config_child_qname = merged_config_child.getQName();
-            Map<Integer,Configuration> int_config_map = orphan_config_children.get(merged_config_child_qname);
-            if (int_config_map == null) {
-                int_config_map = new LinkedHashMap<Integer,Configuration>();
-                orphan_config_children.put(merged_config_child_qname, int_config_map);
-            }
-            int_config_map.put(Integer.valueOf(i), merged_config_child);
-            i++;
+            Key merged_config_child_key = new Key(merged_config_child);
+            merged_config_orphans.put(merged_config_child_key, merged_config_child);
         }
         merged_config.removeChildren();
-        i = 0;
         for (Configuration from_config_child : from_config.getChildren()) {
-            QName from_config_child_qname = from_config_child.getQName();
-            if (orphan_config_children.containsKey(from_config_child_qname)) {
-                Map<Integer,Configuration> int_config_map = orphan_config_children.get(from_config_child_qname);
-                Configuration orphan_config_child = int_config_map.remove(Integer.valueOf(i));
-                if (orphan_config_child != null) {
-                    recursiveMerge(from_config_child, orphan_config_child, from_overrides_merged);
-                    merged_config.addChild(orphan_config_child);
-                } else {
-                    merged_config.addChild(from_config_child);
-                }
+            Key from_config_child_key = new Key(from_config_child);
+            Configuration merged_config_orphan = merged_config_orphans.remove(from_config_child_key);
+            if (merged_config_orphan != null) {
+                recursiveMerge(from_config_child, merged_config_orphan, from_overrides_merged);
+                merged_config.addChild(merged_config_orphan);
             } else {
                 merged_config.addChild(from_config_child);
             }
-            i++;
         }
-        for (Map<Integer,Configuration> orphan_config_child_map : orphan_config_children.values()) {
-            for (Configuration orphan_config_child : orphan_config_child_map.values()) {
-                merged_config.addChild(orphan_config_child);
-            }
+        for (Configuration merged_config_orphan : merged_config_orphans.values()) {
+            merged_config.addChild(merged_config_orphan);
         }
         merged_config.orderChildren();
+    }
+
+    private static final class Key {
+
+        private static final String[] ID_CANDIDATES = {"id", "name", "class", "interface"};
+
+        private QName _qname;
+        private Object _id;
+
+        private Key(Configuration config) {
+            _qname = config.getQName();
+            for (String idc : ID_CANDIDATES) {
+                _id = id(config.getAttribute(QNames.create(_qname.getNamespaceURI(), idc)));
+                if (_id == null) {
+                    _id = id(config.getAttribute(idc));
+                }
+                if (_id != null) {
+                    break;
+                }
+            }
+        }
+
+        private String id(String str) {
+            if (str != null) {
+                str = str.trim();
+                if (str.length() == 0) {
+                    str = null;
+                }
+            }
+            return str;
+        }
+
+        @Override
+        public String toString() {
+            return "Key [_qname=" + _qname + ", _id=" + _id + "]";
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((_id == null) ? 0 : _id.hashCode());
+            result = prime * result + ((_qname == null) ? 0 : _qname.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            Key other = (Key)obj;
+            if (_id == null) {
+                if (other._id != null) {
+                    return false;
+                }
+            } else if (!_id.equals(other._id)) {
+                return false;
+            }
+            if (_qname == null) {
+                if (other._qname != null) {
+                    return false;
+                }
+            } else if (!_qname.equals(other._qname)) {
+                return false;
+            }
+            return true;
+        }
+
     }
 
 }

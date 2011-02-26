@@ -35,9 +35,6 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.types.selectors.FileSelector;
 import org.switchyard.config.model.MergeScanner;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.ModelResourceScanner;
@@ -78,24 +75,9 @@ public class ConfiguratorMojo<M extends Model> extends AbstractMojo {
     private List<Resource> resources;
 
     /**
-     * @parameter expression="${project.basedir}"
-     */
-    private File basedir;
-
-    /**
      * @parameter expression="${project.artifactId}"
      */
     private String artifactId;
-
-    /**
-     * @parameter
-     */
-    private String[] includes = new String[]{"target/classes"};
-
-    /**
-     * @parameter
-     */
-    private String[] excludes = new String[]{};
 
     /**
      * @parameter expression="${project.build.outputDirectory}"
@@ -114,16 +96,16 @@ public class ConfiguratorMojo<M extends Model> extends AbstractMojo {
             for (String compileClasspaths : compileClasspathElements) {
                 mojoURLs.add(new File(compileClasspaths).toURI().toURL());
             }
-            File defaultDir = new File("target/classes");
-            if (defaultDir.exists()) {
-                Resource defaultResource = new Resource();
-                defaultResource.setTargetPath(defaultDir.getAbsolutePath());
-                resources.add(defaultResource);
-            }
+            Resource defaultResource = new Resource();
+            defaultResource.setTargetPath(outputDirectory.getAbsolutePath());
+            resources.add(defaultResource);
             for (Resource resource : resources) {
                 String path = resource.getTargetPath();
                 if (path != null) {
-                    mojoURLs.add(new File(path).toURI().toURL());
+                    File file = new File(path);
+                    if (file.exists()) {
+                        mojoURLs.add(file.toURI().toURL());
+                    }
                 }
             }
         } catch (MalformedURLException mue) {
@@ -136,22 +118,7 @@ public class ConfiguratorMojo<M extends Model> extends AbstractMojo {
         });
         ClassLoader previous = Classes.setTCCL(loader);
         Writer writer = null;
-        DirectoryScanner ds = new DirectoryScanner();
-        ds.setSelectors(new FileSelector[]{new FileSelector() {
-            @Override
-            public boolean isSelected(File basedir, String filename, File file) throws BuildException {
-                return file.exists() && (file.isDirectory() || filename.endsWith(".jar"));
-            }
-        }});
-        ds.setIncludes(includes);
-        ds.setExcludes(excludes);
-        ds.setBasedir(basedir);
         try {
-            ds.scan();
-            List<URL> scannerURLs = new ArrayList<URL>();
-            for (String includedPath : ds.getIncludedDirectories()) {
-                scannerURLs.add(new File(includedPath).toURI().toURL());
-            }
             List<Scanner<M>> scanners = new ArrayList<Scanner<M>>();
             for (String scannerClassName : scannerClassNames) {
                 @SuppressWarnings("unchecked")
@@ -168,6 +135,8 @@ public class ConfiguratorMojo<M extends Model> extends AbstractMojo {
             @SuppressWarnings("unchecked")
             Class<M> modelClass = (Class<M>)Classes.forName(modelClassName, loader);
             MergeScanner<M> merge_scanner = new MergeScanner<M>(modelClass, true, scanners);
+            List<URL> scannerURLs = new ArrayList<URL>();
+            scannerURLs.add(outputDirectory.toURI().toURL());
             ScannerInput<M> scanner_input = new ScannerInput<M>().setName(artifactId).setURLs(scannerURLs);
             M model = merge_scanner.scan(scanner_input).getModel();
             if (outputFile == null) {

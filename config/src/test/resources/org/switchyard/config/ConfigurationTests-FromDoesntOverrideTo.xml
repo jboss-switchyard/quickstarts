@@ -20,5 +20,5 @@ MA  02110-1301, USA.
 <root baz="whiz" foo="bar" one="one">
     <my>stuff</my>
     <his>junk</his>
-    <mythology two="two">roman</mythology>
+    <mythology id="M" two="two">roman</mythology>
 </root>

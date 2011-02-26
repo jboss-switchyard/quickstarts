@@ -34,6 +34,10 @@ public class V1ComponentServiceInterfaceModel extends V1BaseInterfaceModel imple
         super(type);
     }
 
+    public V1ComponentServiceInterfaceModel(String type, String namespace) {
+        super(type, namespace);
+    }
+
     public V1ComponentServiceInterfaceModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }

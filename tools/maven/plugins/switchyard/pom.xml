@@ -76,10 +76,6 @@
 			<artifactId>maven-plugin-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>ant</groupId>
-			<artifactId>ant</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 		</dependency>

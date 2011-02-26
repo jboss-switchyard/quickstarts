@@ -466,7 +466,7 @@ public class DOMConfiguration extends BaseConfiguration {
             String xsl = new StringResource().pull("/org/switchyard/config/pretty-print.xsl");
             Transformer t = tf.newTransformer(new StreamSource(new StringReader(xsl)));
             t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            t.transform(new DOMSource(_element), new StreamResult(writer));
+            t.transform(getSource(), new StreamResult(writer));
         } catch (TransformerException te) {
             throw new IOException(te);
         }
