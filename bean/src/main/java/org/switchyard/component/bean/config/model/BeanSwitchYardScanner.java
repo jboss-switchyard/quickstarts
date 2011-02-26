@@ -7,12 +7,15 @@ import java.util.List;
 
 import org.switchyard.component.bean.Service;
 import org.switchyard.component.bean.config.model.v1.V1BeanComponentImplementationModel;
+import org.switchyard.component.bean.config.model.v1.V1JavaComponentServiceInterfaceModel;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.ScannerOutput;
 import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.v1.V1ComponentModel;
+import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
@@ -48,14 +51,22 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             }
 
             ComponentModel componentModel = new V1ComponentModel();
-            String componentName;
+            String name;
             Class<?>[] componentIfaces = serviceClass.getInterfaces();
             if (componentIfaces.length > 0) {
-                componentName = componentIfaces[0].getSimpleName();
+                Class<?> iface = componentIfaces[0];
+                name = iface.getSimpleName();
+                ComponentServiceModel serviceModel = new V1ComponentServiceModel();
+                serviceModel.setName(name);
+                JavaComponentServiceInterfaceModel csiModel = new V1JavaComponentServiceInterfaceModel();
+                csiModel.setInterface(iface.getName());
+                serviceModel.setInterface(csiModel);
+                componentModel.addService(serviceModel);
+                compositeModel.addComponent(componentModel);
             } else {
-                componentName = serviceClass.getSimpleName();
+                name = serviceClass.getSimpleName();
             }
-            componentModel.setName(componentName);
+            componentModel.setName(name);
             compositeModel.addComponent(componentModel);
 
             BeanComponentImplementationModel beanModel = new V1BeanComponentImplementationModel();
