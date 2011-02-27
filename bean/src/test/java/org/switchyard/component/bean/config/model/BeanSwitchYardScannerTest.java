@@ -27,11 +27,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.component.bean.Service;
+import org.switchyard.component.bean.tests.OneWay;
+import org.switchyard.component.bean.tests.ServiceWithReferenceBean;
 import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.util.Classes;
 
@@ -39,9 +43,11 @@ import org.switchyard.config.util.Classes;
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public class BeanSwitchYardScannerTest {
-
-    @Test
-    public void test() throws IOException, ClassNotFoundException {
+    
+    private SwitchYardModel _scannedModel;
+    
+    @Before
+    public void setUp() throws Exception {
         BeanSwitchYardScanner scanner = new BeanSwitchYardScanner();
         List<URL> urls = new ArrayList<URL>();
 
@@ -50,15 +56,44 @@ public class BeanSwitchYardScannerTest {
         urls.add(new File("./target/test-classes").toURI().toURL());
 
         ScannerInput<SwitchYardModel> input = new ScannerInput<SwitchYardModel>().setURLs(urls);
-        SwitchYardModel switchyard = scanner.scan(input).getModel();
-        List<ComponentModel> components = switchyard.getComposite().getComponents();
+        _scannedModel = scanner.scan(input).getModel();
+    }
+
+    @Test
+    public void test() throws IOException, ClassNotFoundException {
+        List<ComponentModel> components = _scannedModel.getComposite().getComponents();
         for(ComponentModel component : components) {
             ComponentImplementationModel implementation = component.getImplementation();
             Assert.assertTrue(implementation instanceof BeanComponentImplementationModel);
             checkBeanModel((BeanComponentImplementationModel)implementation);
         }
     }
-
+    
+    // Verify that the ConsumerBean reference is picked up by the scanner
+    @Test
+    public void checkReference() throws Exception {
+        ComponentModel consumerBeanModel = null;
+        ComponentReferenceModel oneWayReference = null;
+        
+        for (ComponentModel component : _scannedModel.getComposite().getComponents()) {
+            BeanComponentImplementationModel beanImp = 
+                (BeanComponentImplementationModel)component.getImplementation();
+            if (ServiceWithReferenceBean.class.getName().equals(beanImp.getClazz())) {
+                consumerBeanModel = component;
+                break;
+            }
+        }
+        // If the bean wasn't found, then something is screwed up
+        Assert.assertNotNull(consumerBeanModel);
+        for (ComponentReferenceModel reference : consumerBeanModel.getReferences()) {
+            if (reference.getName().equals(OneWay.class.getSimpleName())) {
+                oneWayReference = reference;
+            }
+        }
+        // OneWay reference should have been picked up by scanner
+        Assert.assertNotNull(oneWayReference);
+    }
+    
     private void checkBeanModel(BeanComponentImplementationModel model) throws ClassNotFoundException {
         Class<?> serviceClass = Classes.forName(model.getClazz(), getClass());
 

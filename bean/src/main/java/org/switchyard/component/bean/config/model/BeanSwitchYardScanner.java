@@ -1,10 +1,14 @@
 package org.switchyard.component.bean.config.model;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
 import org.switchyard.component.bean.config.model.v1.V1BeanComponentImplementationModel;
 import org.switchyard.component.bean.config.model.v1.V1JavaComponentServiceInterfaceModel;
@@ -12,9 +16,13 @@ import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.ScannerOutput;
 import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.ComponentReferenceInterfaceModel;
+import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.v1.V1ComponentModel;
+import org.switchyard.config.model.composite.v1.V1ComponentReferenceInterfaceModel;
+import org.switchyard.config.model.composite.v1.V1ComponentReferenceModel;
 import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
@@ -56,12 +64,23 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             if (componentIfaces.length > 0) {
                 Class<?> iface = componentIfaces[0];
                 name = iface.getSimpleName();
+                // Add the service
                 ComponentServiceModel serviceModel = new V1ComponentServiceModel();
                 serviceModel.setName(name);
                 JavaComponentServiceInterfaceModel csiModel = new V1JavaComponentServiceInterfaceModel();
                 csiModel.setInterface(iface.getName());
                 serviceModel.setInterface(csiModel);
                 componentModel.addService(serviceModel);
+                // Add any references
+                for (Class<?> reference : getReferences(serviceClass)) {
+                    ComponentReferenceModel referenceModel = new V1ComponentReferenceModel();
+                    referenceModel.setName(reference.getSimpleName());
+                    ComponentReferenceInterfaceModel interfaceModel = 
+                        new V1ComponentReferenceInterfaceModel(JavaComponentServiceInterfaceModel.JAVA);
+                    interfaceModel.setInterface(reference.getCanonicalName());
+                    referenceModel.setInterface(interfaceModel);
+                    componentModel.addReference(referenceModel);
+                }
                 compositeModel.addComponent(componentModel);
             } else {
                 name = serviceClass.getSimpleName();
@@ -89,6 +108,19 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
         }
 
         return filter.getMatchedTypes();
+    }
+    
+    /**
+     * Pick up @Reference fields in the specified class
+     */
+    private Set<Class<?>> getReferences(Class<?> serviceClass) {
+        HashSet<Class<?>> references = new HashSet<Class<?>>();
+        for (Field field : serviceClass.getDeclaredFields()) {
+            if (field.isAnnotationPresent(Reference.class)) {
+                references.add(field.getType());
+            }
+        }
+        return references;
     }
 
     private boolean ifBeansXMLOnPath(URL url) throws IOException {
