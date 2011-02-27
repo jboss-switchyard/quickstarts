@@ -15,11 +15,5 @@
                 <soap:wsdl>wsdl/OrderService.wsdl</soap:wsdl>
             </soap:binding.soap>
         </sca:service>
-        <sca:component name="OrderService">
-            <sca:reference name="InventoryService">
-                <sca:interface.java interface="org.switchyard.quickstarts.m1app.InventoryService"/>
-            </sca:reference>
-        </sca:component>
     </sca:composite>
-
 </switchyard>
