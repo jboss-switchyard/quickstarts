@@ -25,7 +25,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.switchyard.ExchangeHandler;
-import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.component.bean.ClientProxyBean;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
@@ -89,7 +89,7 @@ public class BeanComponentActivator implements Activator {
      * {@inheritDoc}
      */
     @Override
-    public void start(Service service) {
+    public void start(ServiceReference service) {
         // Initialise any client proxies to the started service...
         for (ClientProxyBean proxyBean : _beanDeploymentMetaData.getClientProxies()) {
             if (proxyBean.getServiceQName().equals(service.getName())) {
@@ -102,7 +102,7 @@ public class BeanComponentActivator implements Activator {
      * {@inheritDoc}
      */
     @Override
-    public void stop(Service service) {
+    public void stop(ServiceReference service) {
         // not sure this is significant for bean component
     }
 
@@ -110,7 +110,7 @@ public class BeanComponentActivator implements Activator {
      * {@inheritDoc}
      */
     @Override
-    public void destroy(Service service) {
+    public void destroy(ServiceReference service) {
         _references.remove(service.getName());
     }
 

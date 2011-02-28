@@ -293,7 +293,7 @@ public final class WSDLUtil {
      * @return A Map of exchange contracts.
      * @throws WebServicePublishException If the WSDL does not match the Service operations. 
      */
-    public static Map<String, BaseExchangeContract> getContracts(final Port port, final org.switchyard.Service service) throws WebServicePublishException {
+    public static Map<String, BaseExchangeContract> getContracts(final Port port, final org.switchyard.ServiceReference service) throws WebServicePublishException {
         Map<String, BaseExchangeContract> contracts = new HashMap<String, BaseExchangeContract>();
         List<Operation> operations = port.getBinding().getPortType().getOperations();
         if ((operations == null) || operations.isEmpty()) {

@@ -19,8 +19,10 @@
 
 package org.switchyard.component.bean.internal;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.ExchangeHandler;
-import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.component.bean.deploy.BeanComponentActivator;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
 import org.switchyard.component.bean.deploy.ServiceDescriptor;
@@ -28,8 +30,6 @@ import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
-
-import javax.xml.namespace.QName;
 
 /**
  * Simple CDI deployment.
@@ -78,7 +78,7 @@ public class SimpleCDIDeployment extends AbstractDeployment {
             QName serviceName = serviceDescriptor.getServiceName();
             ExchangeHandler handler = serviceDescriptor.getHandler();
             ServiceInterface serviceInterface;
-            Service service;
+            ServiceReference service;
 
             serviceInterface = activator.buildServiceInterface(serviceName);
             service = getDomain().registerService(serviceName, handler, serviceInterface);

@@ -44,6 +44,7 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
+import org.switchyard.ServiceReference;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.ServiceOperation;
 
@@ -65,7 +66,7 @@ public class ClientProxyBean implements Bean {
     /**
      * Target service reference.
      */
-    private org.switchyard.Service _service;
+    private ServiceReference _service;
 
     /**
      * The bean proxy Interface {@link Class} of the bean being proxied.  This class
@@ -123,7 +124,7 @@ public class ClientProxyBean implements Bean {
      * Set the service reference for the target Service.
      * @param service The target service.
      */
-    public void setService(org.switchyard.Service service) {
+    public void setService(ServiceReference service) {
         this._service = service;
     }
 
@@ -308,7 +309,7 @@ public class ClientProxyBean implements Bean {
             }
         }
 
-        private Exchange createExchange(org.switchyard.Service service, Method method, ExchangeHandler responseExchangeHandler) throws BeanComponentException {
+        private Exchange createExchange(ServiceReference service, Method method, ExchangeHandler responseExchangeHandler) throws BeanComponentException {
             String operationName = method.getName();
             ServiceOperation operation = service.getInterface().getOperation(operationName);
 

@@ -29,7 +29,7 @@ import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.StreamUtil;
 import org.switchyard.test.SwitchYardCDITestCase;
@@ -113,7 +113,7 @@ public class GreetingServiceTest extends SwitchYardCDITestCase {
     public void test(String request, String expectedResponse, boolean dumpResponse) throws Exception {
 
         // Launch the SOAP Handler...
-        Service service = getServiceDomain().getService(new QName("GreetingService"));
+        ServiceReference service = getServiceDomain().getService(new QName("GreetingService"));
         InboundHandler inboundHandler = new InboundHandler(config);
         inboundHandler.start(service);
 

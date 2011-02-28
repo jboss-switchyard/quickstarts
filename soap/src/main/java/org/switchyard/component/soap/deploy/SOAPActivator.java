@@ -25,7 +25,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.switchyard.ExchangeHandler;
-import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.component.soap.InboundHandler;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.config.model.Model;
@@ -59,7 +59,7 @@ public class SOAPActivator implements Activator {
     }
 
     @Override
-    public void start(Service service) {
+    public void start(ServiceReference service) {
         if (_inboundGateways.containsKey(service.getName())) {
             try {
                 _inboundGateways.get(service.getName()).start(service);
@@ -71,14 +71,14 @@ public class SOAPActivator implements Activator {
     }
 
     @Override
-    public void stop(Service service) {
+    public void stop(ServiceReference service) {
         if (_inboundGateways.containsKey(service.getName())) {
                 _inboundGateways.get(service.getName()).stop();
         }
     }
 
     @Override
-    public void destroy(Service service) {
+    public void destroy(ServiceReference service) {
         _inboundGateways.remove(service.getName());
     }
 }

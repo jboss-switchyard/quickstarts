@@ -42,7 +42,7 @@ import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
-import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
@@ -66,7 +66,7 @@ public class InboundHandler extends BaseHandler {
 
     private MessageComposer _composer;
     private MessageDecomposer _decomposer;
-    private Service _service;
+    private ServiceReference _service;
     private long _waitTimeout = DEFAULT_TIMEOUT; // default of 15 seconds
     private Endpoint _endpoint;
     private Port _wsdlPort;
@@ -111,7 +111,7 @@ public class InboundHandler extends BaseHandler {
      * @param service The Service instance.
      * @throws WebServicePublishException If unable to publish the endpoint
      */
-    public void start(Service service) throws WebServicePublishException {
+    public void start(ServiceReference service) throws WebServicePublishException {
         try {
             _service = service;
             PortName portName = _config.getPort();
