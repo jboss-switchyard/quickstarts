@@ -28,12 +28,23 @@ import org.switchyard.ServiceReference;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceInterface;
 
+/**
+ * A reference to a service registered in a SwitchYard domain.  The reference
+ * is a logical representation of a service endpoint, which can be mapped to
+ * multiple service instances compatible with the service reference metadata.
+ */
 public class ServiceReferenceImpl implements ServiceReference {
 
     private QName _name;
     private ServiceInterface _interface;
     private ServiceDomain _domain;
     
+    /**
+     * Creates a new reference to a service.
+     * @param name name of the service reference
+     * @param serviceInterface the service interface
+     * @param domain domain in which the service is used 
+     */
     public ServiceReferenceImpl(QName name, 
             ServiceInterface serviceInterface, 
             ServiceDomain domain) {
@@ -61,6 +72,14 @@ public class ServiceReferenceImpl implements ServiceReference {
     @Override
     public QName getName() {
         return _name;
+    }
+    
+    /**
+     * The domain in which this service reference is registered.
+     * @return service domain which created this service reference
+     */
+    public ServiceDomain getDomain() {
+        return _domain;
     }
 
 }

@@ -99,7 +99,7 @@ public class TransformHandler extends BaseHandler {
             QName actualPayloadType = TransformSequence.getCurrentMessageType(exchange);
             QName expectedPayloadType = TransformSequence.getTargetMessageType(exchange);
 
-            if(_logger.isDebugEnabled()) {
+            if (_logger.isDebugEnabled()) {
                 _logger.debug("Transformations not applied.  Required payload type of '" + expectedPayloadType + "'.  Actual payload type is '" + actualPayloadType + "'.  You must define and register a Transformer to transform between these types.");
             }
         }

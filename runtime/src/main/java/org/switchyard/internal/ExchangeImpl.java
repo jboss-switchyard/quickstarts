@@ -35,7 +35,7 @@ import org.switchyard.ExchangeState;
 import org.switchyard.Message;
 import org.switchyard.ServiceReference;
 import org.switchyard.metadata.ExchangeContract;
-import org.switchyard.spi.Endpoint;
+import org.switchyard.spi.Dispatcher;
 import org.switchyard.transform.TransformSequence;
 
 /**
@@ -48,11 +48,11 @@ public class ExchangeImpl implements Exchange {
     private final String            _exchangeId;
     private final ExchangeContract  _contract;
     private ExchangePhase           _phase;
-    private final ServiceReference           _service;
+    private final ServiceReference  _service;
     private Message                 _message;
     private ExchangeState           _state = ExchangeState.OK;
-    private Endpoint                _inputEndpoint;
-    private Endpoint                _outputEndpoint;
+    private Dispatcher              _inputDispatch;
+    private Dispatcher              _outputDispatch;
     private final Context           _context;
 
     /**
@@ -72,7 +72,7 @@ public class ExchangeImpl implements Exchange {
      * @param input input endpoint
      * @param input output endpoint
      */
-    ExchangeImpl(ServiceReference service, ExchangeContract contract, Endpoint input, Endpoint output) {
+    ExchangeImpl(ServiceReference service, ExchangeContract contract, Dispatcher input, Dispatcher output) {
 
         // Check that the ExchangeContract exists and has invoker metadata and a ServiceOperation defined on it...
         if (contract == null) {
@@ -91,8 +91,8 @@ public class ExchangeImpl implements Exchange {
 
         _service = service;
         _contract = contract;
-        _inputEndpoint = input;
-        _outputEndpoint = output;
+        _inputDispatch = input;
+        _outputDispatch = output;
         _exchangeId = UUID.randomUUID().toString();
         _context = new DefaultContext();
     }
@@ -161,35 +161,35 @@ public class ExchangeImpl implements Exchange {
     }
 
     /**
-     * Get input endpoint.
-     * @return input endpoint
+     * Get input dispatcher.
+     * @return input dispatcher
      */
-    public Endpoint getInputEndpoint() {
-        return _inputEndpoint;
+    public Dispatcher getInputDispatcher() {
+        return _inputDispatch;
     }
 
     /**
-     * Get output endpoint.
-     * @return output endpoint
+     * Get output dispatcher.
+     * @return output dispatcher
      */
-    public Endpoint getOutputEndpoint() {
-        return _outputEndpoint;
+    public Dispatcher getOutputDispatcher() {
+        return _outputDispatch;
     }
 
     /**
-     * Set the input endpoint.
-     * @param input input endpoint
+     * Set the output dispatcher.
+     * @param output output dispatcher
      */
-    public void setInputEndpoint(Endpoint input) {
-        _inputEndpoint = input;
+    public void setOutputDispatcher(Dispatcher output) {
+        _outputDispatch = output;
     }
 
     /**
-     * Set the source endpoint.
-     * @param output output endpoint
+     * Set the input dispatcher.
+     * @param input input dispatcher
      */
-    public void setOutputEndpoint(Endpoint output) {
-        _outputEndpoint = output;
+    public void setInputDispatcher(Dispatcher input) {
+        _inputDispatch = input;
     }
 
     /**
@@ -203,11 +203,11 @@ public class ExchangeImpl implements Exchange {
         
         switch (_phase) {
         case IN:
-            _inputEndpoint.send(this);
+            _inputDispatch.dispatch(this);
             break;
         case OUT:
-            if(_outputEndpoint != null) {
-                _outputEndpoint.send(this);
+            if (_outputDispatch != null) {
+                _outputDispatch.dispatch(this);
             } else {
                 _log.debug("Unable to send OUT message.  No output endpoint.");
                 // TODO: Also needs to get routed to something like a DLQ.

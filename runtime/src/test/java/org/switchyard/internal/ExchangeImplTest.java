@@ -150,9 +150,6 @@ public class ExchangeImplTest {
         Message inMsg = exchange.createMessage();
         inMsg.setContent(inMsgContent);
         exchange.send(inMsg);
-
-        // clean up
-        service.unregister();
     }
 
     @Test
@@ -235,7 +232,8 @@ public class ExchangeImplTest {
                 throw new HandlerException("explode");
             }
         };
-        Service service = _domain.registerService(serviceName, provider);
+        
+        ServiceReference service = _domain.registerService(serviceName, provider);
 
         try {
             // Don't provide a consumer...
@@ -255,7 +253,7 @@ public class ExchangeImplTest {
                 throw new HandlerException("explode");
             }
         };
-        Service service = _domain.registerService(serviceName, provider);
+        ServiceReference service = _domain.registerService(serviceName, provider);
 
         // Don't provide a consumer...
         Exchange exchange = _domain.createExchange(service, ExchangeContract.IN_ONLY);

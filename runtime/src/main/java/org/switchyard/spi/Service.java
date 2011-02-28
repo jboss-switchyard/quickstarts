@@ -19,8 +19,12 @@
 
 package org.switchyard.spi;
 
+import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 
+/**
+ * An instance of a service registered in a SwitchYard domain.
+ */
 public interface Service {
 
     /**
@@ -35,4 +39,16 @@ public interface Service {
      * routed to the registered ExchangeHandler.
      */
     void unregister();
+    
+    /**
+     * The domain in which this service instance is registered.
+     * @return service domain where the service is registered
+     */
+    ServiceDomain getDomain();
+    
+    /**
+     * The endpoint which handles delivery of exchanges for this service instance.
+     * @return service endpoint
+     */
+    Dispatcher getEndpoint();
 }

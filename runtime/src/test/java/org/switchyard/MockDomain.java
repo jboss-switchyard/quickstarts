@@ -21,7 +21,7 @@ package org.switchyard;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.internal.DefaultEndpointProvider;
+import org.switchyard.internal.LocalExchangeBus;
 import org.switchyard.internal.DefaultServiceRegistry;
 import org.switchyard.internal.DomainImpl;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
@@ -34,7 +34,7 @@ public class MockDomain extends DomainImpl {
     public MockDomain() {
         super(DEFAULT_DOMAIN, 
                 new DefaultServiceRegistry(), 
-                new DefaultEndpointProvider(), 
+                new LocalExchangeBus(), 
                 new BaseTransformerRegistry());
     }
 }

@@ -22,16 +22,10 @@
 
 package org.switchyard.internal;
 
-import javax.xml.namespace.QName;
-
-import org.switchyard.Exchange;
-import org.switchyard.ExchangeHandler;
-import org.switchyard.ServiceReference;
 import org.switchyard.ServiceDomain;
-import org.switchyard.handlers.HandlerChain;
-import org.switchyard.metadata.ExchangeContract;
-import org.switchyard.metadata.ServiceInterface;
-import org.switchyard.spi.Endpoint;
+import org.switchyard.ServiceReference;
+import org.switchyard.spi.Dispatcher;
+import org.switchyard.spi.Service;
 import org.switchyard.spi.ServiceRegistry;
 
 /**
@@ -40,26 +34,25 @@ import org.switchyard.spi.ServiceRegistry;
  */
 public class ServiceRegistration implements Service {
 
+    private final Dispatcher _endpoint;
     private final ServiceRegistry _registry;
     private final ServiceDomain _domain;
-    private final Endpoint _endpoint;
-    private final QName _serviceName;
-    private final HandlerChain _handlers;
-    private final ServiceInterface _serviceInterface;
+    private final ServiceReference _reference;
 
-    ServiceRegistration(QName serviceName,
-            ServiceInterface serviceInterface,
-            Endpoint endpoint,
-            HandlerChain handlers,
+    ServiceRegistration(ServiceReference reference,
+            Dispatcher endpoint,
             ServiceRegistry registry,
             ServiceDomain domain) {
 
-        _serviceName = serviceName;
-        _serviceInterface = serviceInterface;
         _endpoint = endpoint;
-        _handlers = handlers;
+        _reference = reference;
         _registry = registry;
         _domain = domain;
+    }
+    
+    @Override
+    public ServiceReference getReference() {
+        return _reference;
     }
 
     @Override
@@ -67,21 +60,12 @@ public class ServiceRegistration implements Service {
         _registry.unregisterService(this);
     }
 
-    @Override
-     public Exchange createExchange(ExchangeContract contract) {
-         return _domain.createExchange(this, contract);
-     }
-
-     @Override
-     public Exchange createExchange(ExchangeContract contract, ExchangeHandler handler) {
-         return _domain.createExchange(this, contract, handler);
-     }
-
     /**
      * Get the endpoint .
      * @return endpoint
      */
-    public Endpoint getEndpoint() {
+    @Override
+    public Dispatcher getEndpoint() {
         return _endpoint;
     }
 
@@ -89,25 +73,9 @@ public class ServiceRegistration implements Service {
      * Get the service domain.
      * @return domain
      */
+    @Override
     public ServiceDomain getDomain() {
         return _domain;
     }
 
-    @Override
-    public QName getName() {
-        return _serviceName;
-    }
-
-    /**
-     * Get the handlers.
-     * @return handlers
-     */
-    public HandlerChain getHandlers() {
-        return _handlers;
-    }
-
-    @Override
-    public ServiceInterface getInterface() {
-        return _serviceInterface;
-    }
 }

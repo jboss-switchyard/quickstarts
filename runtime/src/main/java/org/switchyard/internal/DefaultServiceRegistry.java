@@ -31,11 +31,10 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.ServiceReference;
 import org.switchyard.ServiceDomain;
-import org.switchyard.handlers.HandlerChain;
-import org.switchyard.metadata.ServiceInterface;
-import org.switchyard.spi.Endpoint;
+import org.switchyard.ServiceReference;
+import org.switchyard.spi.Dispatcher;
+import org.switchyard.spi.Service;
 import org.switchyard.spi.ServiceRegistry;
 
 /**
@@ -43,14 +42,14 @@ import org.switchyard.spi.ServiceRegistry;
  */
 public class DefaultServiceRegistry implements ServiceRegistry {
 
-    private final Map<QName, List<ServiceRegistration>> _services =
-        new HashMap<QName, List<ServiceRegistration>>();
+    private final Map<QName, List<Service>> _services =
+        new HashMap<QName, List<Service>>();
 
     @Override
-    public List<ServiceReference> getServicesForDomain(String domainName) {
-        List<ServiceReference> domainServices = getServices();
+    public List<Service> getServicesForDomain(String domainName) {
+        List<Service> domainServices = getServices();
         // Using an explicit iterator because we are removing elements
-        for (Iterator<ServiceReference> i = domainServices.iterator(); i.hasNext();) {
+        for (Iterator<Service> i = domainServices.iterator(); i.hasNext();) {
             ServiceRegistration sr = (ServiceRegistration) i.next();
             // prune services that do not match the specified domain
             if (!sr.getDomain().getName().equals(domainName)) {
@@ -62,9 +61,9 @@ public class DefaultServiceRegistry implements ServiceRegistry {
     }
 
     @Override
-    public synchronized List<ServiceReference> getServices() {
-        LinkedList<ServiceReference> serviceList = new LinkedList<ServiceReference>();
-        for (List<ServiceRegistration> services : _services.values()) {
+    public synchronized List<Service> getServices() {
+        LinkedList<Service> serviceList = new LinkedList<Service>();
+        for (List<Service> services : _services.values()) {
             serviceList.addAll(services);
         }
 
@@ -72,27 +71,26 @@ public class DefaultServiceRegistry implements ServiceRegistry {
     }
 
     @Override
-    public synchronized List<ServiceReference> getServices(QName serviceName) {
-        List<ServiceRegistration> services = _services.get(serviceName);
+    public synchronized List<Service> getServices(QName serviceName) {
+        List<Service> services = _services.get(serviceName);
         if (services == null) {
             return Collections.emptyList();
         }
 
-        return new LinkedList<ServiceReference>(services);
+        return new LinkedList<Service>(services);
     }
 
     @Override
-    public synchronized ServiceReference registerService(QName serviceName,
-            ServiceInterface serviceInterface, Endpoint endpoint,
-            HandlerChain handlers, ServiceDomain domain) {
+    public synchronized Service registerService(
+            ServiceReference reference, Dispatcher endpoint, ServiceDomain domain) {
 
         ServiceRegistration sr = new ServiceRegistration(
-                serviceName, serviceInterface, endpoint, handlers, this, domain);
+                reference, endpoint, this, domain);
 
-        List<ServiceRegistration> serviceList = _services.get(serviceName);
+        List<Service> serviceList = _services.get(reference.getName());
         if (serviceList == null) {
-            serviceList = new LinkedList<ServiceRegistration>();
-             _services.put(serviceName, serviceList);
+            serviceList = new LinkedList<Service>();
+             _services.put(reference.getName(), serviceList);
         }
 
         serviceList.add(sr);
@@ -100,9 +98,8 @@ public class DefaultServiceRegistry implements ServiceRegistry {
     }
 
     @Override
-    public synchronized void unregisterService(ServiceReference service) {
-        List<ServiceRegistration> serviceList =
-            _services.get(service.getName());
+    public synchronized void unregisterService(Service service) {
+        List<Service> serviceList =_services.get(service.getReference().getName());
         if (serviceList != null) {
             serviceList.remove(service);
         }

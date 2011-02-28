@@ -24,52 +24,59 @@ package org.switchyard.internal;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.Exchange;
+import org.switchyard.ServiceReference;
 import org.switchyard.handlers.HandlerChain;
-import org.switchyard.spi.Endpoint;
-import org.switchyard.spi.EndpointProvider;
+import org.switchyard.spi.Dispatcher;
+import org.switchyard.spi.ExchangeBus;
 
 /**
  * Default endpoint provider.
  */
-public class DefaultEndpointProvider implements EndpointProvider {
+public class LocalExchangeBus implements ExchangeBus {
 
-    private ConcurrentHashMap<String, Endpoint> _endpoints = 
-        new ConcurrentHashMap<String, Endpoint>();
+    private ConcurrentHashMap<QName, Dispatcher> _dispatchers = 
+        new ConcurrentHashMap<QName, Dispatcher>();
     
     @Override
-    public synchronized Endpoint createEndpoint(String name, HandlerChain handlerChain) {
-        Endpoint endpoint = new DefaultEndpoint(name, handlerChain);
-        _endpoints.put(name, endpoint);
-        return endpoint;
+    public synchronized Dispatcher createDispatcher(
+            ServiceReference service, HandlerChain handlerChain) {
+        Dispatcher dispatcher = new LocalDispatcher(service, handlerChain);
+        // service can be null for temp/reply dispatcher
+        if (service != null) {
+            _dispatchers.put(service.getName(), dispatcher);
+        }
+        return dispatcher;
     }
 
     @Override
-    public Endpoint getEndpoint(String name) {
-        return _endpoints.get(name);
+    public Dispatcher getDispatcher(ServiceReference service) {
+        return _dispatchers.get(service.getName());
     }
 }
 
-class DefaultEndpoint implements Endpoint {
+class LocalDispatcher implements Dispatcher {
     private HandlerChain _handlerChain;
-    private String _name;
+    private ServiceReference _service;
 
     /**
      * Constructor.
      * @param handlerChain handler chain
      */
-    DefaultEndpoint(final String name, final HandlerChain handlerChain) {
-        _name = name;
+    LocalDispatcher(final ServiceReference service, final HandlerChain handlerChain) {
+        _service = service;
         _handlerChain = handlerChain;
     }
 
     @Override
-    public void send(final Exchange exchange) {
+    public void dispatch(final Exchange exchange) {
         _handlerChain.handle(exchange);
     }
 
     @Override
-    public String getName() {
-        return _name;
+    public ServiceReference getService() {
+        return _service;
     }
 }

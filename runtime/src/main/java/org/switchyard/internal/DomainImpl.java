@@ -29,15 +29,16 @@ import javax.xml.namespace.QName;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePhase;
-import org.switchyard.ServiceReference;
 import org.switchyard.ServiceDomain;
+import org.switchyard.ServiceReference;
 import org.switchyard.handlers.HandlerChain;
 import org.switchyard.handlers.TransformHandler;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
-import org.switchyard.spi.Endpoint;
-import org.switchyard.spi.EndpointProvider;
+import org.switchyard.spi.Dispatcher;
+import org.switchyard.spi.ExchangeBus;
+import org.switchyard.spi.Service;
 import org.switchyard.spi.ServiceRegistry;
 import org.switchyard.transform.TransformerRegistry;
 
@@ -49,7 +50,7 @@ public class DomainImpl implements ServiceDomain {
     private final QName _name;
     private final DefaultHandlerChain _defaultHandlers;
     private final ServiceRegistry _registry;
-    private final EndpointProvider _endpointProvider;
+    private final ExchangeBus _exchangeBus;
     private final TransformerRegistry _transformerRegistry;
 
     /**
@@ -61,12 +62,12 @@ public class DomainImpl implements ServiceDomain {
      */
     public DomainImpl(QName name,
             ServiceRegistry registry,
-            EndpointProvider endpointProvider,
+            ExchangeBus exchangeBus,
             TransformerRegistry transformerRegistry) {
 
         _name = name;
         _registry = registry;
-        _endpointProvider  = endpointProvider;
+        _exchangeBus  = exchangeBus;
         _transformerRegistry = transformerRegistry;
 
         // Build out the system handlers chain.  It would be cleaner if we
@@ -86,19 +87,17 @@ public class DomainImpl implements ServiceDomain {
     public Exchange createExchange(
             ServiceReference service, ExchangeContract contract, ExchangeHandler handler) {
         // Determine the endpoints used for exchange delivery
-        Endpoint inputEndpoint = _endpointProvider.getEndpoint(
-                getEndpointName(service.getName(), ExchangePhase.IN));
-        Endpoint outputEndpoint = null;
+        Dispatcher inputDispatcher = _exchangeBus.getDispatcher(service);
+        Dispatcher outputDispatcher = null;
 
         if (handler != null) {
             HandlerChain replyChain = _defaultHandlers.clone();
             replyChain.addLast("replyHandler", handler);
-            outputEndpoint = _endpointProvider.createEndpoint(
-                    getEndpointName(service.getName(), ExchangePhase.OUT), replyChain);
+            outputDispatcher = _exchangeBus.createDispatcher(null, replyChain);
         }
 
         // create the exchange
-        ExchangeImpl exchange = new ExchangeImpl(service, contract, inputEndpoint, outputEndpoint);
+        ExchangeImpl exchange = new ExchangeImpl(service, contract, inputDispatcher, outputDispatcher);
         return exchange;
     }
 
@@ -110,16 +109,19 @@ public class DomainImpl implements ServiceDomain {
     @Override
     public ServiceReference registerService(QName serviceName, ExchangeHandler handler,
             ServiceInterface metadata) {
+        // If no service interface is provided, we default to InOutService
+        if (metadata == null) {
+            metadata = new InOutService();
+        }
+        // Create the service reference
+        ServiceReference reference = new ServiceReferenceImpl(serviceName, metadata, this);
+        // Add a handler chain with the provider at the end
         HandlerChain handlers = _defaultHandlers.clone();
         handlers.addLast("provider", handler);
-        Endpoint ep = _endpointProvider.createEndpoint(
-                getEndpointName(serviceName, ExchangePhase.IN), handlers);
-        // If no service interface is provided, we default to InOutService
-        if (metadata != null) {
-            return _registry.registerService(serviceName, metadata, ep, handlers, this);
-        } else {
-            return _registry.registerService(serviceName, new InOutService(), ep, handlers, this);
-        }
+        Dispatcher ep = _exchangeBus.createDispatcher(reference, handlers);
+        
+        // register the service
+        return _registry.registerService(reference, ep, this).getReference();
     }
 
     @Override
@@ -134,8 +136,8 @@ public class DomainImpl implements ServiceDomain {
     
     @Override
     public ServiceReference getService(QName serviceName) {
-        List<ServiceReference> services = _registry.getServices(serviceName);
-        return services.isEmpty() ? null : services.get(0);
+        List<Service> services = _registry.getServices(serviceName);
+        return services.isEmpty() ? null : services.get(0).getReference();
     }
     
     /**

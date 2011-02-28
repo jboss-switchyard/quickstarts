@@ -115,9 +115,6 @@
         <module name="ParameterName">
             <property name="format" value="^[a-z_][a-zA-Z0-9_]*$"/>
         </module>
-        <module name="StaticVariableName">
-            <property name="format" value="^_[a-z_][a-zA-Z0-9_]*$"/>
-        </module>
         <module name="TypeName"/>
 
 

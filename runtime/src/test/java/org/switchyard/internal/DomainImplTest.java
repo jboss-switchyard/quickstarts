@@ -49,7 +49,7 @@ public class DomainImplTest {
     public void setUp() throws Exception {
         _domain = new DomainImpl(new QName("test"),
                 new DefaultServiceRegistry(),
-                new DefaultEndpointProvider(),
+                new LocalExchangeBus(),
                 null);
         _service = _domain.registerService(SERVICE, new MockHandler());
     }

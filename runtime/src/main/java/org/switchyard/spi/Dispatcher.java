@@ -22,24 +22,22 @@
 
 package org.switchyard.spi;
 
-import org.switchyard.handlers.HandlerChain;
+import org.switchyard.Exchange;
+import org.switchyard.ServiceReference;
 
 /**
- * EndpointProvider.
+ * Dispatches messages to a given service.
  */
-public interface EndpointProvider {
+public interface Dispatcher {
+
     /**
-     * Create an exchange endpoint with the specified name and handler chain.
-     * @param name endpiont name
-     * @param handlerChain handler chain
-     * @return Endpoint endpoint
+     * The name of the service
+     * @return service reference
      */
-    Endpoint createEndpoint(String name, HandlerChain handlerChain);
-    
+    ServiceReference getService();
     /**
-     * Retrieves an exchange endpoint by name.
-     * @param name endpoint name
-     * @return endpoint with the specified name, or null if no endpoint exists
+     * Dispatch an exchange.
+     * @param exchange exchange
      */
-    Endpoint getEndpoint(String name);
+    void dispatch(Exchange exchange);
 }
