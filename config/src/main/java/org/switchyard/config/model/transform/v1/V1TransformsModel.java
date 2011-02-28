@@ -32,7 +32,7 @@ import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
 
 /**
- * V1TransformsModel.
+ * A version 1 TransformsModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
@@ -40,11 +40,19 @@ public class V1TransformsModel extends BaseModel implements TransformsModel {
 
     private List<TransformModel> _transforms = new ArrayList<TransformModel>();
 
+    /**
+     * Constructs a new V1TransformsModel.
+     */
     public V1TransformsModel() {
         super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, TransformsModel.TRANSFORMS));
         setModelChildrenOrder(TransformModel.TRANSFORM);
     }
 
+    /**
+     * Constructs a new V1TransformsModel with the specified Configuration and Descriptor.
+     * @param config the Configuration
+     * @param desc the Descriptor
+     */
     public V1TransformsModel(Configuration config, Descriptor desc) {
         super(config, desc);
         for (Configuration transform_config : config.getChildrenStartsWith(TransformModel.TRANSFORM)) {
@@ -56,15 +64,25 @@ public class V1TransformsModel extends BaseModel implements TransformsModel {
         setModelChildrenOrder(TransformModel.TRANSFORM);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public SwitchYardModel getSwitchYard() {
         return (SwitchYardModel)getModelParent();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized List<TransformModel> getTransforms() {
         return Collections.unmodifiableList(_transforms);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized TransformsModel addTransform(TransformModel transform) {
         addChildModel(transform);

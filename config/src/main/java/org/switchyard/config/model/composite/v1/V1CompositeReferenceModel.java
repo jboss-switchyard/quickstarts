@@ -37,7 +37,7 @@ import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.util.QNames;
 
 /**
- * V1CompositeReferenceModel.
+ * A version 1 CompositeReferenceModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
@@ -45,10 +45,18 @@ public class V1CompositeReferenceModel extends BaseNamedModel implements Composi
 
     private List<BindingModel> _bindings = new ArrayList<BindingModel>();
 
+    /**
+     * Constructs a new V1CompositeReferenceModel.
+     */
     public V1CompositeReferenceModel() {
         super(new QName(CompositeModel.DEFAULT_NAMESPACE, CompositeReferenceModel.REFERENCE));
     }
 
+    /**
+     * Constructs a new V1CompositeReferenceModel with the specified Configuration and Descriptor.
+     * @param config the Configuration
+     * @param desc the Descriptor
+     */
     public V1CompositeReferenceModel(Configuration config, Descriptor desc) {
         super(config, desc);
         for (Configuration binding_config : config.getChildrenStartsWith(BindingModel.BINDING)) {
@@ -59,11 +67,17 @@ public class V1CompositeReferenceModel extends BaseNamedModel implements Composi
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CompositeModel getComposite() {
         return (CompositeModel)getModelParent();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ComponentReferenceModel getComponentReference() {
         CompositeModel composite = getComposite();
@@ -101,22 +115,34 @@ public class V1CompositeReferenceModel extends BaseNamedModel implements Composi
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public QName getPromote() {
         return QNames.create(getModelAttribute(CompositeReferenceModel.PROMOTE));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CompositeReferenceModel setPromote(QName promote) {
         setModelAttribute(CompositeReferenceModel.PROMOTE, promote != null ? promote.toString() : null);
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized List<BindingModel> getBindings() {
         return Collections.unmodifiableList(_bindings);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized CompositeReferenceModel addBinding(BindingModel binding) {
         addChildModel(binding);

@@ -25,20 +25,32 @@ import org.switchyard.config.model.composite.ComponentReferenceInterfaceModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 
 /**
- * V1ComponentReferenceInterfaceModel.
+ * A version 1 ComponentReferenceInterfaceModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class V1ComponentReferenceInterfaceModel extends V1BaseInterfaceModel implements ComponentReferenceInterfaceModel {
 
+    /**
+     * Constructs a new V1ComponentReferenceInterfaceModel of the specified "type".
+     * @param type the "type" of ComponentReferenceInterfaceModel
+     */
     public V1ComponentReferenceInterfaceModel(String type) {
         super(type);
     }
 
+    /**
+     * Constructs a new V1ComponentReferenceInterfaceModel with the specified Configuration and Descriptor.
+     * @param config the Configuration
+     * @param desc the Descriptor
+     */
     public V1ComponentReferenceInterfaceModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ComponentReferenceModel getReference() {
         return (ComponentReferenceModel)getModelParent();

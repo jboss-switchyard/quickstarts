@@ -35,7 +35,7 @@ import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.util.QNames;
 
 /**
- * V1CompositeServiceModel.
+ * A version 1 CompositeServiceModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
@@ -43,10 +43,18 @@ public class V1CompositeServiceModel extends BaseNamedModel implements Composite
 
     private List<BindingModel> _bindings = new ArrayList<BindingModel>();
 
+    /**
+     * Constructs a new V1CompositeServiceModel.
+     */
     public V1CompositeServiceModel() {
         super(new QName(CompositeModel.DEFAULT_NAMESPACE, CompositeServiceModel.SERVICE));
     }
 
+    /**
+     * Constructs a new V1CompositeServiceModel with the specified Configuration and Descriptor.
+     * @param config the Configuration
+     * @param desc the Descriptor
+     */
     public V1CompositeServiceModel(Configuration config, Descriptor desc) {
         super(config, desc);
         for (Configuration binding_config : config.getChildrenStartsWith(BindingModel.BINDING)) {
@@ -57,11 +65,17 @@ public class V1CompositeServiceModel extends BaseNamedModel implements Composite
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CompositeModel getComposite() {
         return (CompositeModel)getModelParent();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ComponentModel getComponent() {
         CompositeModel composite = getComposite();
@@ -78,22 +92,34 @@ public class V1CompositeServiceModel extends BaseNamedModel implements Composite
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public QName getPromote() {
         return QNames.create(getModelAttribute(CompositeServiceModel.PROMOTE));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CompositeServiceModel setPromote(QName promote) {
         setModelAttribute(CompositeServiceModel.PROMOTE, promote != null ? promote.toString() : null);
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized List<BindingModel> getBindings() {
         return Collections.unmodifiableList(_bindings);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized CompositeServiceModel addBinding(BindingModel binding) {
         addChildModel(binding);

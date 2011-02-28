@@ -33,16 +33,23 @@ import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.InterfaceModel;
 
 /**
- * V1CompositeMarshaller.
+ * Marshalls SCA composite Models.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class V1CompositeMarshaller extends BaseMarshaller {
 
+    /**
+     * Constructs a new V1CompositeMarshaller with the specified Descriptor.
+     * @param desc the Descriptor
+     */
     public V1CompositeMarshaller(Descriptor desc) {
         super(desc);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Model read(Configuration config) {
         String name = config.getName();

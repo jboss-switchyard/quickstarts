@@ -25,25 +25,54 @@ import javax.xml.namespace.QName;
 import org.switchyard.config.model.NamedModel;
 
 /**
- * CompositeServiceModel.
+ * The "composite/service" model.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public interface CompositeServiceModel extends NamedModel {
 
+    /** The "service" name. */
     public static final String SERVICE = "service";
+
+    /** The "promote" name. */
     public static final String PROMOTE = "promote";
 
+    /**
+     * Gets the grandparent composite model.
+     * @return the grandparent composite model
+     */
     public CompositeModel getComposite();
 
+    /**
+     * Gets the parent component model.
+     * @return the parent component model
+     */
     public ComponentModel getComponent();
 
+    /**
+     * Gets the promote attribute.
+     * @return the promote attribute
+     */
     public QName getPromote();
 
+    /**
+     * Sets the promote attribute.
+     * @param promote the promote attribute
+     * @return this CompositeServiceModel (useful for chaining)
+     */
     public CompositeServiceModel setPromote(QName promote);
 
+    /**
+     * Gets the child binding models.
+     * @return the child binding models
+     */
     public List<BindingModel> getBindings();
 
+    /**
+     * Adds a child binding model.
+     * @param binding the child binding model
+     * @return this CompositeServiceModel (useful for chaining)
+     */
     public CompositeServiceModel addBinding(BindingModel binding);
 
 }

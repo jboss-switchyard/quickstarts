@@ -50,16 +50,25 @@ import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
 
 /**
- * Descriptor.
+ * Holds meta-information used to create, marshall and validate Models.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public final class Descriptor {
 
+    /** The default location to looks for a Descriptor's Properties.  ALL properties found with this name via {@link org.switchyard.config.util.Classes#getResources(String, Class)} will be combined. */
     public static final String DEFAULT_PROPERTIES = "/org/switchyard/config/model/descriptor.properties";
+
+    /** The "namespace" property. */
     public static final String NAMESPACE = "namespace";
+
+    /** The "schema" property. */
     public static final String SCHEMA = "schema";
+
+    /** The "location" property. */
     public static final String LOCATION = "location";
+
+    /** The "marshaller" property. */
     public static final String MARSHALLER = "marshaller";
 
     private Map<String,String> _all_properties_map = new TreeMap<String,String>();
@@ -69,6 +78,9 @@ public final class Descriptor {
     private Map<Set<String>,Schema> _namespaces_schema_map = new HashMap<Set<String>,Schema>();;
     private Map<String,Marshaller> _namespace_marshaller_map = new HashMap<String,Marshaller>();
 
+    /**
+     * Constructs a new Descriptor based on discovered default properties.
+     */
     public Descriptor() {
         String dp = DEFAULT_PROPERTIES.substring(1);
         Properties props = new Properties();
@@ -90,6 +102,10 @@ public final class Descriptor {
         setProperties(props);
     }
 
+    /**
+     * Constructs a new Descriptor based on the specified properties.
+     * @param props the Properties
+     */
     public Descriptor(Properties props) {
         setProperties(props);
     }
@@ -117,6 +133,12 @@ public final class Descriptor {
         }
     }
 
+    /**
+     * Gets a property value based on property name and namespace of the property.
+     * @param property the property name
+     * @param namespace the namespace of the property
+     * @return the property value, or null if it doesn't exist
+     */
     public String getProperty(String property, String namespace) {
         String prop_prefix = _namespace_prefix_map.get(namespace);
         if (prop_prefix != null) {
@@ -128,6 +150,11 @@ public final class Descriptor {
         return null;
     }
 
+    /**
+     * Creates a Schema based on the combined schema documents/definitions found that are associated with the specified namespace.
+     * @param namespaces the namespaces of the schemas
+     * @return the new Schema
+     */
     public synchronized Schema getSchema(Set<String> namespaces) {
         Schema schema = _namespaces_schema_map.get(namespaces);
         if (schema == null) {
@@ -161,6 +188,12 @@ public final class Descriptor {
         return schema;
     }
 
+    /**
+     * Creates a new Schema based on the namespaces of the specified Configuration.
+     * @param config the Configuration
+     * @return the new Schema
+     * @see #getSchema(Set)
+     */
     public Schema getSchema(Configuration config) {
         if (config != null) {
             return getSchema(config.getNamespaces());
@@ -168,6 +201,13 @@ public final class Descriptor {
         return null;
     }
 
+    /**
+     * Creates a new Schema based on the namespaces of the Configuration wrapped by the specified Model.
+     * @param model the Model
+     * @return the new Schema
+     * @see #getSchema(Configuration)
+     * @see #getSchema(Set)
+     */
     public static Schema getSchema(Model model) {
         if (model != null) {
             Descriptor desc = model.getModelDescriptor();
@@ -178,10 +218,20 @@ public final class Descriptor {
         return null;
     }
 
+    /**
+     * Gets the location property, based on the specified namespace.
+     * @param namespace the namespace
+     * @return the {@link #LOCATION} property value
+     */
     public String getLocation(String namespace) {
         return getProperty(LOCATION, namespace);
     }
 
+    /**
+     * Gets the schema location, based on the specified namespace.
+     * @param namespace the namespace
+     * @return the location property value, which is a combination of {@link Descriptor#getLocation(String)} and the {@link #SCHEMA} property value.
+     */
     public String getSchemaLocation(String namespace) {
         return getSchemaLocation(namespace, getProperty(SCHEMA, namespace));
     }
@@ -198,6 +248,11 @@ public final class Descriptor {
         return null;
     }
 
+    /**
+     * Lazily gets (and possibly creating and caching) a Marshaller based on the specified namespace.
+     * @param namespace the namespace
+     * @return the appropriate Marshaller to use
+     */
     public synchronized Marshaller getMarshaller(String namespace) {
         Marshaller marshaller = _namespace_marshaller_map.get(namespace);
         if (marshaller == null) {
@@ -215,6 +270,12 @@ public final class Descriptor {
         return marshaller;
     }
 
+    /**
+     * Lazily gets (and possibly creating and caching) a Marshaller based on the namespace of the specified Configuration.
+     * @param config the Configuration
+     * @return the appropriate Marshaller to use
+     * @see #getMarshaller(String)
+     */
     public Marshaller getMarshaller(Configuration config) {
         if (config != null) {
             QName qname = config.getQName();
@@ -228,6 +289,13 @@ public final class Descriptor {
         return null;
     }
 
+    /**
+     * Lazily gets (and possibly creating and caching) a Marshaller based on the namespace of the wrapped Configuration of the specified Model.
+     * @param model the Model
+     * @return the appropriate Marshaller to use
+     * @see #getMarshaller(Configuration)
+     * @see #getMarshaller(String)
+     */
     public static Marshaller getMarshaller(Model model) {
         if (model != null) {
             Descriptor desc = model.getModelDescriptor();
@@ -238,10 +306,17 @@ public final class Descriptor {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
         return _all_properties_map.toString();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -250,6 +325,9 @@ public final class Descriptor {
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -318,81 +396,129 @@ public final class Descriptor {
             setCertifiedText(false);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Reader getCharacterStream() {
             return _characterStream;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void setCharacterStream(Reader characterStream) {
             _characterStream = characterStream;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public InputStream getByteStream() {
             return _byteStream;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void setByteStream(InputStream byteStream) {
             _byteStream = byteStream;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String getStringData() {
             return _stringData;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void setStringData(String stringData) {
             _stringData = stringData;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String getSystemId() {
             return _systemId;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String getPublicId() {
             return _publicId;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void setPublicId(String publicId) {
             _publicId = publicId;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void setSystemId(String systemId) {
             _systemId = systemId;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String getBaseURI() {
             return _baseURI;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void setBaseURI(String baseURI) {
             _baseURI = baseURI;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String getEncoding() {
             return _encoding;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void setEncoding(String encoding) {
             _encoding = encoding;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean getCertifiedText() {
             return _certifiedText;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void setCertifiedText(boolean certifiedText) {
             _certifiedText = certifiedText;

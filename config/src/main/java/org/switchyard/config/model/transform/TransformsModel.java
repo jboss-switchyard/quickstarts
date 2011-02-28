@@ -24,18 +24,32 @@ import org.switchyard.config.model.Model;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
- * TransformsModel.
+ * The "transforms" configuration model.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public interface TransformsModel extends Model {
 
+    /** The "transforms" name. */
     public static final String TRANSFORMS = "transforms";
 
+    /**
+     * Gets the parent switchyard model.
+     * @return the parent switchyard model
+     */
     public SwitchYardModel getSwitchYard();
 
+    /**
+     * Gets the child transform models.
+     * @return the child transform models
+     */
     public List<TransformModel> getTransforms();
 
+    /**
+     * Adds a child transform model.
+     * @param transform the child transform model to add
+     * @return this TransformsModel (useful for chaining)
+     */
     public TransformsModel addTransform(TransformModel transform);
 
 }

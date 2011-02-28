@@ -28,7 +28,7 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
 
 /**
- * V1SwitchYardModel.
+ * A version 1 SwitchYardModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
@@ -37,16 +37,27 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
     private CompositeModel _composite;
     private TransformsModel _transforms;
 
+    /**
+     * Constructs a new V1SwitchYardModel.
+     */
     public V1SwitchYardModel() {
         super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, SwitchYardModel.SWITCHYARD));
         setModelChildrenOrder(CompositeModel.COMPOSITE, TransformsModel.TRANSFORMS);
     }
 
+    /**
+     * Constructs a new V1SwitchYardModel with the specified Configuration and Descriptor.
+     * @param config the Configuration
+     * @param desc the Descriptor
+     */
     public V1SwitchYardModel(Configuration config, Descriptor desc) {
         super(config, desc);
         setModelChildrenOrder(CompositeModel.COMPOSITE, TransformsModel.TRANSFORMS);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CompositeModel getComposite() {
         if (_composite == null) {
@@ -55,6 +66,9 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
         return _composite;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SwitchYardModel setComposite(CompositeModel composite) {
         setChildModel(composite);
@@ -62,6 +76,9 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TransformsModel getTransforms() {
         if (_transforms == null) {
@@ -70,6 +87,9 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
         return _transforms;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SwitchYardModel setTransforms(TransformsModel transforms) {
         setChildModel(transforms);

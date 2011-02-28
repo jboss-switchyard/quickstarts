@@ -27,7 +27,7 @@ import java.net.URI;
 import java.net.URL;
 
 /**
- * Resource.
+ * Utility class to safely access ("pull") resources from various sources.
  * 
  * @param <R> the type of the resource being pulled
  *
@@ -35,6 +35,12 @@ import java.net.URL;
  */
 public abstract class Resource<R> {
 
+    /**
+     * Safely pulls a resource from a path using {@link org.switchyard.config.util.Classes#getResourceAsStream(String, Class)}.
+     * @param resource the path to the resource
+     * @return the resource, or null if not found
+     * @throws IOException if a problem occurred
+     */
     public R pull(String resource) throws IOException {
         InputStream is = Classes.getResourceAsStream(resource, getClass());
         if (is != null) {
@@ -47,10 +53,22 @@ public abstract class Resource<R> {
         return null;
     }
 
+    /**
+     * Safely pulls a resource from a URI.
+     * @param uri the URI to the resource
+     * @return the resource, or null if not found
+     * @throws IOException if a problem occurred
+     */
     public R pull(URI uri) throws IOException {
         return pull(uri.toURL());
     }
 
+    /**
+     * Safely pulls a resource from a URL.
+     * @param url the URL to the resource
+     * @return the resource, or null if not found
+     * @throws IOException if a problem occurred
+     */
     public R pull(URL url) throws IOException {
         InputStream is = url.openStream();
         try {
@@ -62,6 +80,12 @@ public abstract class Resource<R> {
         }
     }
 
+    /**
+     * Safely pulls a resource from a File.
+     * @param file the resource File
+     * @return the resource, or null if not found
+     * @throws IOException if a problem occurred
+     */
     public R pull(File file) throws IOException {
         InputStream is = new FileInputStream(file);
         try {
@@ -73,6 +97,12 @@ public abstract class Resource<R> {
         }
     }
 
+    /**
+     * Safely pulls a resource from an InputStream.
+     * @param is an InputStream of the resource
+     * @return the resource, or null if not found
+     * @throws IOException if a problem occurred
+     */
     public abstract R pull(InputStream is) throws IOException;
 
 }

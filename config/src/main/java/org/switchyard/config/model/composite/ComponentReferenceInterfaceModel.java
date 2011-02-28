@@ -20,12 +20,16 @@
 package org.switchyard.config.model.composite;
 
 /**
- * ComponentReferenceInterfaceModel.
+ * The "component/reference/interface" configuration model.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public interface ComponentReferenceInterfaceModel extends InterfaceModel {
 
+    /**
+     * Gets the parent component reference model.
+     * @return the parent component reference model
+     */
     public ComponentReferenceModel getReference();
 
 }

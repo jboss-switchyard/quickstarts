@@ -23,21 +23,42 @@ import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.transform.TransformsModel;
 
 /**
- * SwitchYardModel.
+ * The root "switchyard" configuration model.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public interface SwitchYardModel extends NamedModel {
 
+    /** The default switchyard namespace. */
     public static final String DEFAULT_NAMESPACE = "urn:switchyard-config:switchyard:1.0";
+
+    /** The "switchyard" name. */
     public static final String SWITCHYARD = "switchyard";
 
+    /**
+     * Gets the child composite model.
+     * @return the child composite model
+     */
     public CompositeModel getComposite();
 
+    /**
+     * Sets the child composite model.
+     * @param composite the child composite model
+     * @return this SwitchyardModel (useful for chaining)
+     */
     public SwitchYardModel setComposite(CompositeModel composite);
 
+    /**
+     * Gets the child transforms model.
+     * @return the child transforms model
+     */
     public TransformsModel getTransforms();
 
+    /**
+     * Sets the child transforms model.
+     * @param transforms the child transforms model.
+     * @return this SwitchyardModel (useful for chaining)
+     */
     public SwitchYardModel setTransforms(TransformsModel transforms);
 
 }

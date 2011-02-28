@@ -28,16 +28,24 @@ import org.switchyard.transform.config.model.Xml2JavaTransformModel;
 import javax.xml.namespace.QName;
 
 /**
- * V1 XML to Java TransformModel.
+ * A version 1 Xml2JavaTransformModel.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public class V1Xml2JavaTransformModel extends V1BaseTransformModel implements Xml2JavaTransformModel {
 
+    /**
+     * Constructs a new V1Xml2JavaTransformModel.
+     */
     public V1Xml2JavaTransformModel() {
         super(new QName(TransformModel.DEFAULT_NAMESPACE, TransformModel.TRANSFORM + '.' + XML2JAVA));
     }
 
+    /**
+     * Constructs a new V1Xml2JavaTransformModel with the specified Configuration and Descriptor.
+     * @param config the Configuration
+     * @param desc the Descriptor
+     */
     public V1Xml2JavaTransformModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
@@ -58,4 +66,5 @@ public class V1Xml2JavaTransformModel extends V1BaseTransformModel implements Xm
         setModelAttribute(CONFIG, config);
         return this;
     }
+
 }

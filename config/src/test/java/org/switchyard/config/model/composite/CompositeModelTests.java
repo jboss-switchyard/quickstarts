@@ -36,6 +36,7 @@ import org.switchyard.config.model.composite.test.bogus.BogusImplementationModel
 import org.switchyard.config.model.composite.test.soap.PortModel;
 import org.switchyard.config.model.composite.test.soap.SOAPBindingModel;
 import org.switchyard.config.model.composite.test.soap.WSDLModel;
+import org.switchyard.config.model.composite.v1.V1ComponentImplementationModel;
 import org.switchyard.config.util.QNames;
 import org.switchyard.config.util.StringResource;
 
@@ -190,6 +191,13 @@ public class CompositeModelTests {
     public void testValidation() throws Exception {
         CompositeModel composite = _res.pull(COMPLETE_XML);
         Assert.assertTrue(composite.isModelValid());
+    }
+
+    @Test
+    public void testVerifyQNameUponCreation() throws Exception {
+        final String type = "customtype";
+        final V1ComponentImplementationModel model = new V1ComponentImplementationModel(type);
+        Assert.assertEquals(type, model.getType());
     }
 
 }

@@ -26,12 +26,15 @@ import java.util.Properties;
 
 
 /**
- * PropertiesResource.
+ * Utility class to safely access ("pull") Properties from various sources.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class PropertiesResource extends Resource<Properties> {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Properties pull(InputStream is) throws IOException {
         Properties props = new Properties();
@@ -41,6 +44,12 @@ public class PropertiesResource extends Resource<Properties> {
         return props;
     }
 
+    /**
+     * Safely pulls Properties from a Reader.
+     * @param reader a Reader of the resource
+     * @return the resource, or null if not found
+     * @throws IOException if a problem occurred
+     */
     public Properties pull(Reader reader) throws IOException {
         Properties props = new Properties();
         if (reader != null) {

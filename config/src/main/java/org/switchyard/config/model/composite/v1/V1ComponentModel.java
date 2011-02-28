@@ -35,7 +35,7 @@ import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeModel;
 
 /**
- * V1ComponentModel.
+ * A version 1 ComponentModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
@@ -45,11 +45,19 @@ public class V1ComponentModel extends BaseNamedModel implements ComponentModel {
     private List<ComponentServiceModel> _services = new ArrayList<ComponentServiceModel>();
     private List<ComponentReferenceModel> _references = new ArrayList<ComponentReferenceModel>();
 
+    /**
+     * Constructs a new V1ComponentModel.
+     */
     public V1ComponentModel() {
         super(new QName(CompositeModel.DEFAULT_NAMESPACE, ComponentModel.COMPONENT));
         setModelChildrenOrder(ComponentImplementationModel.IMPLEMENTATION, ComponentServiceModel.SERVICE, ComponentReferenceModel.REFERENCE);
     }
 
+    /**
+     * Constructs a new V1ComponentModel with the specified Configuration and Descriptor.
+     * @param config the Configuration
+     * @param desc the Descriptor
+     */
     public V1ComponentModel(Configuration config, Descriptor desc) {
         super(config, desc);
         for (Configuration service_config : config.getChildren(ComponentServiceModel.SERVICE)) {
@@ -67,11 +75,17 @@ public class V1ComponentModel extends BaseNamedModel implements ComponentModel {
         setModelChildrenOrder(ComponentImplementationModel.IMPLEMENTATION, ComponentServiceModel.SERVICE, ComponentReferenceModel.REFERENCE);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CompositeModel getComposite() {
         return (CompositeModel)getModelParent();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ComponentImplementationModel getImplementation() {
         if (_implementation == null) {
@@ -80,6 +94,9 @@ public class V1ComponentModel extends BaseNamedModel implements ComponentModel {
         return _implementation;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ComponentModel setImplementation(ComponentImplementationModel implementation) {
         setChildModel(implementation);
@@ -87,11 +104,17 @@ public class V1ComponentModel extends BaseNamedModel implements ComponentModel {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized List<ComponentServiceModel> getServices() {
         return Collections.unmodifiableList(_services);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized ComponentModel addService(ComponentServiceModel service) {
         addChildModel(service);
@@ -99,11 +122,17 @@ public class V1ComponentModel extends BaseNamedModel implements ComponentModel {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized List<ComponentReferenceModel> getReferences() {
         return Collections.unmodifiableList(_references);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized ComponentModel addReference(ComponentReferenceModel reference) {
         addChildModel(reference);

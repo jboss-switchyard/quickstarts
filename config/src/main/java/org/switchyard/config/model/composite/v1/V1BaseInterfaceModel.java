@@ -28,29 +28,35 @@ import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.InterfaceModel;
 
 /**
- * V1BaseInterfaceModel.
+ * An abstract representation of an InterfaceModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public abstract class V1BaseInterfaceModel extends BaseTypedModel implements InterfaceModel {
 
-    public V1BaseInterfaceModel(String type) {
+    protected V1BaseInterfaceModel(String type) {
         this(type, CompositeModel.DEFAULT_NAMESPACE);
     }
 
-    public V1BaseInterfaceModel(String type, String namespace) {
+    protected V1BaseInterfaceModel(String type, String namespace) {
         super(new QName(namespace, InterfaceModel.INTERFACE + '.' + type));
     }
 
-    public V1BaseInterfaceModel(Configuration config, Descriptor desc) {
+    protected V1BaseInterfaceModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getInterface() {
         return getModelAttribute(InterfaceModel.INTERFACE);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public InterfaceModel setInterface(String interfaze) {
         setModelAttribute(InterfaceModel.INTERFACE, interfaze);

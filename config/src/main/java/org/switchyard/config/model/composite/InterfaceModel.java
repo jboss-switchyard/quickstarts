@@ -21,16 +21,26 @@ package org.switchyard.config.model.composite;
 import org.switchyard.config.model.TypedModel;
 
 /**
- * InterfaceModel.
+ * An "interface" configuration model.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public interface InterfaceModel extends TypedModel {
 
+    /** The "interface" name. */
     public static final String INTERFACE = "interface";
 
+    /**
+     * Gets the name of the interface.
+     * @return the name of the interface
+     */
     public String getInterface();
 
+    /**
+     * Sets the name of the interface.
+     * @param interfaze the name of the interface
+     * @return this InterfaceModel (useful for chaining)
+     */
     public InterfaceModel setInterface(String interfaze);
 
 }

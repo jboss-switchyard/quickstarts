@@ -34,21 +34,36 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * ConfigurationResource.
+ * Utility class to safely access ("pull") configs from various sources.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class ConfigurationResource extends Resource<Configuration> {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Configuration pull(InputStream is) throws IOException {
         return pull(new InputSource(is));
     }
 
+    /**
+     * Safely pulls a config from a Reader.
+     * @param reader a Reader of the config
+     * @return the config, or null if not found
+     * @throws IOException if a problem occurred
+     */
     public Configuration pull(Reader reader) throws IOException {
         return pull(new InputSource(reader));
     }
 
+    /**
+     * Safely pulls a config from an InputSource.
+     * @param is an InputSource of the config
+     * @return the config, or null if not found
+     * @throws IOException if a problem occurred
+     */
     public Configuration pull(InputSource is) throws IOException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setIgnoringComments(true);
@@ -63,14 +78,29 @@ public class ConfigurationResource extends Resource<Configuration> {
         }
     }
 
+    /**
+     * Safely pulls a config from a DOM document.
+     * @param document the config document
+     * @return the config, or null if the document is null
+     */
     public Configuration pull(Document document) {
         return new DOMConfiguration(document);
     }
 
+    /**
+     * Safely pulls a config from a DOM element.
+     * @param element the config element
+     * @return the config, or null if the element is null
+     */
     public Configuration pull(Element element) {
         return new DOMConfiguration(element);
     }
 
+    /**
+     * Safely pulls (constructs) an (empty) config from a qualified name.
+     * @param qname the qualified name
+     * @return the config, or null if the qualified name is null
+     */
     public Configuration pull(QName qname) {
         return new DOMConfiguration(qname);
     }

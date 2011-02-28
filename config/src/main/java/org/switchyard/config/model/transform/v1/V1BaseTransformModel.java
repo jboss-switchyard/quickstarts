@@ -29,45 +29,60 @@ import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.config.util.QNames;
 
 /**
- * V1BaseTransformModel.
+ * An abstract representation of a TransformModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public abstract class V1BaseTransformModel extends BaseTypedModel implements TransformModel {
 
-    public V1BaseTransformModel(String type) {
+    protected V1BaseTransformModel(String type) {
         this(new QName(SwitchYardModel.DEFAULT_NAMESPACE, TransformModel.TRANSFORM + '.' + type));
     }
 
-    public V1BaseTransformModel(QName qname) {
+    protected V1BaseTransformModel(QName qname) {
         super(qname);
     }
 
-    public V1BaseTransformModel(Configuration config, Descriptor desc) {
+    protected V1BaseTransformModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TransformsModel getTransforms() {
         return (TransformsModel)getModelParent();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public QName getFrom() {
         return QNames.create(getModelAttribute(TransformModel.FROM));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TransformModel setFrom(QName from) {
         setModelAttribute(TransformModel.FROM, from != null ? from.toString() : null);
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public QName getTo() {
         return QNames.create(getModelAttribute(TransformModel.TO));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TransformModel setTo(QName to) {
         setModelAttribute(TransformModel.TO, to != null ? to.toString() : null);

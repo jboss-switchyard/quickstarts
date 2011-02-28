@@ -34,21 +34,36 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * ElementResource.
+ * Utility class to safely access ("pull") DOM elements from various sources.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class ElementResource extends Resource<Element> {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Element pull(InputStream is) throws IOException {
         return pull(new InputSource(is));
     }
 
+    /**
+     * Safely pulls an Element from a Reader.
+     * @param reader a Reader of the resource
+     * @return the resource, or null if not found
+     * @throws IOException if a problem occurred
+     */
     public Element pull(Reader reader) throws IOException {
         return pull(new InputSource(reader));
     }
 
+    /**
+     * Safely pulls an Element from an InputSource.
+     * @param is an InputSource of the resource
+     * @return the resource, or null if not found
+     * @throws IOException if a problem occurred
+     */
     public Element pull(InputSource is) throws IOException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setIgnoringComments(true);
@@ -63,14 +78,30 @@ public class ElementResource extends Resource<Element> {
         }
     }
 
+    /**
+     * Safely returns the root element of a DOM document.
+     * @param document the document
+     * @return the element, or null if the document is null
+     */
     public Element pull(Document document) {
         return pull(document.getDocumentElement());
     }
 
+    /**
+     * Safely returns the element itself, additionally normalizing it.
+     * @param element the element
+     * @return the element, or null if the passed in element is null
+     */
     public Element pull(Element element) {
         return pull(element, true);
     }
 
+    /**
+     * Safely returns the element, optionally normalizing it.
+     * @param element the element
+     * @param normalize whether or not to normalize the element
+     * @return the element, or null if the passed in element is null
+     */
     public Element pull(Element element, boolean normalize) {
         if (normalize) {
             element.normalize();
@@ -78,6 +109,11 @@ public class ElementResource extends Resource<Element> {
         return element;
     }
 
+    /**
+     * Safely pulls (constructs) a basic Element from a qualified name.
+     * @param qname the qualified name
+     * @return the model, or null if the qualified name is null
+     */
     public Element pull(QName qname) {
         StringBuilder sb = new StringBuilder();
         sb.append('<');

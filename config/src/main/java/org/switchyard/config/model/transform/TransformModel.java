@@ -23,26 +23,54 @@ import javax.xml.namespace.QName;
 import org.switchyard.config.model.Model;
 
 /**
- * TransformModel.
+ * The "transform" configuration model.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public interface TransformModel extends Model {
 
+    /** The default "transform" namespace. */
     public static final String DEFAULT_NAMESPACE = "urn:switchyard-config:transform:1.0";
 
+    /** The "transform" name. */
     public static final String TRANSFORM = "transform";
+
+    /** The "from" name. */
     public static final String FROM = "from";
+
+    /** The "to" name. */
     public static final String TO = "to";
 
+    /**
+     * Gets the parent transforms model.
+     * @return the parent transforms model.
+     */
     public TransformsModel getTransforms();
 
+    /**
+     * Gets the from attribute.
+     * @return the from attribute
+     */
     public QName getFrom();
 
+    /**
+     * Sets the from attribute.
+     * @param from the from attribute
+     * @return this TransformModel (useful for chaining)
+     */
     public TransformModel setFrom(QName from);
 
+    /**
+     * Gets the to attribute.
+     * @return the to attribute
+     */
     public QName getTo();
 
+    /**
+     * Sets the to attribute.
+     * @param to the to attribute
+     * @return this TransformModel (useful for chaining)
+     */
     public TransformModel setTo(QName to);
 
 }

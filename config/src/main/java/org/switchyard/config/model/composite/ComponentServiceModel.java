@@ -22,18 +22,32 @@ package org.switchyard.config.model.composite;
 import org.switchyard.config.model.NamedModel;
 
 /**
- * ComponentServiceModel.
+ * The "component/service" model.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public interface ComponentServiceModel extends NamedModel {
 
+    /** The "service"  name. */
     public static final String SERVICE = CompositeServiceModel.SERVICE;
 
+    /**
+     * Gets the parent component model.
+     * @return the parent component model
+     */
     public ComponentModel getComponent();
 
+    /**
+     * Gets the child component service interface model.
+     * @return the child component service interface model
+     */
     public ComponentServiceInterfaceModel getInterface();
 
+    /**
+     * Sets the child component service interface model.
+     * @param interfaze child component service interface model
+     * @return this ComponentServiceModel (useful for chaining)
+     */
     public ComponentServiceModel setInterface(ComponentServiceInterfaceModel interfaze);
 
 }

@@ -21,14 +21,20 @@ package org.switchyard.config.model;
 import java.io.IOException;
 
 /**
- * ModelScanner.
+ * Scans for Models.
  * 
- * @param <M> the target Model after the paths are scanned
+ * @param <M> the target Model after the scan
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public interface Scanner<M extends Model> {
 
+    /**
+     * Scans for Models.
+     * @param input the input for the scan
+     * @return the output of the scan
+     * @throws IOException if a problem occurrs
+     */
     public ScannerOutput<M> scan(ScannerInput<M> input) throws IOException;
 
 }

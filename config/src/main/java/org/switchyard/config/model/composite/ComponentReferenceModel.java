@@ -22,18 +22,32 @@ package org.switchyard.config.model.composite;
 import org.switchyard.config.model.NamedModel;
 
 /**
- * ComponentReferenceModel.
+ * The "component/reference" configuration model.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public interface ComponentReferenceModel extends NamedModel {
 
+    /** The "reference" name. */
     public static final String REFERENCE = "reference";
 
+    /**
+     * Gets the parent component model.
+     * @return the parent component model
+     */
     public ComponentModel getComponent();
 
+    /**
+     * Gets the child component reference interface model.
+     * @return the child component reference interface model
+     */
     public ComponentReferenceInterfaceModel getInterface();
 
+    /**
+     * Sets the child component reference interface model.
+     * @param interfaze the child component reference interface model
+     * @return this ComponentReferenceModel (useful for chaining)
+     */
     public ComponentReferenceModel setInterface(ComponentReferenceInterfaceModel interfaze);
 
 }

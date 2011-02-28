@@ -27,25 +27,45 @@ import org.switchyard.config.util.PropertiesResource;
 import org.switchyard.config.util.Resource;
 
 /**
- * DescriptorResource.
+ * Utility class to safely access ("pull") Descriptors from various sources.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class DescriptorResource extends Resource<Descriptor> {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Descriptor pull(InputStream is) throws IOException {
         return pull(new PropertiesResource().pull(is));
     }
 
+    /**
+     * Safely pulls a Descriptor from a Reader.
+     * @param reader a Reader of the resource
+     * @return the resource, or null if not found
+     * @throws IOException if a problem occurred
+     */
     public Descriptor pull(Reader reader) throws IOException {
         return pull(new PropertiesResource().pull(reader));
     }
 
+    /**
+     * Safely pulls a Descriptor from Properties.
+     * @param props Properties of the resource
+     * @return the resource, or null if not found
+     * @throws IOException if a problem occurred
+     */
     public Descriptor pull(Properties props) throws IOException {
         return new Descriptor(props);
     }
 
+    /**
+     * Creates a default Descriptor.
+     * @return the resource, never null
+     * @throws IOException shouldn't happen, but might ;)
+     */
     public Descriptor pull() throws IOException {
         return new Descriptor();
     }

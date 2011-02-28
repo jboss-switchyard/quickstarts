@@ -35,7 +35,7 @@ import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 /**
- * BaseConfiguration.
+ * An abstract representation of a Configuration, containing default implementations for many of the defined methods.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
@@ -46,6 +46,9 @@ public abstract class BaseConfiguration implements Configuration {
 
     private String[] _childrenOrder = new String[0];
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<String> getNamespaces() {
         Set<String> set = new TreeSet<String>();
@@ -71,6 +74,9 @@ public abstract class BaseConfiguration implements Configuration {
         return set;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<String,String> getNamespacePrefixMap() {
         Map<String,String> map = new TreeMap<String,String>();
@@ -85,6 +91,9 @@ public abstract class BaseConfiguration implements Configuration {
         return map;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<String,String> getPrefixNamespaceMap() {
         Map<String,String> map = new TreeMap<String,String>();
@@ -99,6 +108,9 @@ public abstract class BaseConfiguration implements Configuration {
         return map;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String[] getChildrenOrder() {
         int length = _childrenOrder.length;
@@ -107,12 +119,18 @@ public abstract class BaseConfiguration implements Configuration {
         return copy;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Configuration setChildrenOrder(String... childrenOrder) {
         _childrenOrder = childrenOrder;
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Configuration orderChildren() {
         String[] childrenGroups = getChildrenOrder();
@@ -147,11 +165,17 @@ public abstract class BaseConfiguration implements Configuration {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void write(OutputStream out) throws IOException {
         write(new OutputStreamWriter(out));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         try {

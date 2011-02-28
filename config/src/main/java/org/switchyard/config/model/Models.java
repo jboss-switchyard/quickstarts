@@ -22,7 +22,7 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.Configurations;
 
 /**
- * Models.
+ * Utility class with helper methods dealing with Models.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
@@ -30,10 +30,25 @@ public final class Models {
 
     private Models() {}
 
+    /**
+     * Merges two models into a new model.
+     * @param <M> the type of Model being merged
+     * @param fromModel merge from this model, overriding anything in toModel
+     * @param toModel merge into a copy of this model
+     * @return the newly merged model
+     */
     public static <M extends Model> M merge(M fromModel, M toModel) {
         return merge(fromModel, toModel, true);
     }
 
+    /**
+     * Merges two models into a new model.
+     * @param <M> the type of Model being merged
+     * @param fromModel merge from this model, optionally overriding anything in toModel
+     * @param toModel merge into a copy of this model
+     * @param fromOverridesTo whether fromModel attributes/values should override those in toModel
+     * @return the newly merged model
+     */
     public static <M extends Model> M merge(M fromModel, M toModel, boolean fromOverridesTo) {
         String from_model_cn = fromModel.getClass().getName();
         String to_model_cn = toModel.getClass().getName();
