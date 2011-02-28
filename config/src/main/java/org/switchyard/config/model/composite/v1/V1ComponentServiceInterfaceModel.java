@@ -25,24 +25,41 @@ import org.switchyard.config.model.composite.ComponentServiceInterfaceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 
 /**
- * V1ComponentServiceInterfaceModel.
+ * A version 1 ComponentServiceInterfaceModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class V1ComponentServiceInterfaceModel extends V1BaseInterfaceModel implements ComponentServiceInterfaceModel {
 
+    /**
+     * Constructs a new V1ComponentServiceInterfaceModel of the specified "type".
+     * @param type the "type" of ComponentServiceInterfaceModel
+     */
     public V1ComponentServiceInterfaceModel(String type) {
         super(type);
     }
 
+    /**
+     * Constructs a new V1ComponentServiceInterfaceModel of the specified "type", and in the specified namespace.
+     * @param type the "type" of ComponentServiceInterfaceModel
+     * @param namespace the namespace
+     */
     public V1ComponentServiceInterfaceModel(String type, String namespace) {
         super(type, namespace);
     }
 
+    /**
+     * Constructs a new V1ComponentServiceInterfaceModel with the specified Configuration and Descriptor.
+     * @param config the Configuration
+     * @param desc the Descriptor
+     */
     public V1ComponentServiceInterfaceModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ComponentServiceModel getService() {
         return (ComponentServiceModel)getModelParent();

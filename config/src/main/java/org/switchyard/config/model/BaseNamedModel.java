@@ -24,40 +24,52 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.util.QNames;
 
 /**
- * BaseTypeModel.
+ * An abstract representation of a NamedModel, useful for subclassing.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public abstract class BaseNamedModel extends BaseModel implements NamedModel {
 
-    public BaseNamedModel(QName qname) {
+    protected BaseNamedModel(QName qname) {
         super(qname);
     }
 
-    public BaseNamedModel(Configuration config) {
+    protected BaseNamedModel(Configuration config) {
         super(config);
     }
 
-    public BaseNamedModel(Configuration config, Descriptor desc) {
+    protected BaseNamedModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return getModelAttribute("name");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NamedModel setName(String name) {
         setModelAttribute("name", name);
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public QName getQName() {
         return QNames.create(getName());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NamedModel setQName(QName qname) {
         setName(qname != null ? qname.toString() : null);

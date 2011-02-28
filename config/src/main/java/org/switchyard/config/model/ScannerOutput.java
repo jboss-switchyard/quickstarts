@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * ScannerOutput.
+ * The output of a {@link Scanner}.
  *
  * @param <M> the Model type being scanned for
  *
@@ -33,22 +33,43 @@ public class ScannerOutput<M extends Model> {
 
     private List<M> _models;
 
+    /**
+     * Constructs a new ScannerOutput.
+     */
     public ScannerOutput() {
         _models = new ArrayList<M>();
     }
 
+    /**
+     * Gets the first (and possibly only) Model found/created by the scan.
+     * @return the Model
+     */
     public synchronized M getModel() {
         return _models.size() > 0 ? _models.get(0) : null;
     }
 
+    /**
+     * Sets the first (and possibly only) Model found/created by the scan.
+     * @param model the Model
+     * @return this ScannerOutput (useful for chaining)
+     */
     public synchronized ScannerOutput<M> setModel(M model) {
         return setModels(Collections.singletonList(model));
     }
 
+    /**
+     * Gets the Models found/created by the scan.
+     * @return the Models
+     */
     public synchronized List<M> getModels() {
         return Collections.unmodifiableList(_models);
     }
 
+    /**
+     * Sets the Models found/created by the scan.
+     * @param models the Models
+     * @return this ScannerOutput (useful for chaining)
+     */
     public synchronized ScannerOutput<M> setModels(List<M> models) {
         _models.clear();
         if (models != null) {

@@ -47,7 +47,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * DOMConfiguration.
+ * A DOM (Document Object Model) representation of a Configuration.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
@@ -90,22 +90,34 @@ public class DOMConfiguration extends BaseConfiguration {
         _element = config._element;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return Nodes.nameOf(_element);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public QName getQName() {
         return QNames.create(_element);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getValue() {
         Node text_node = getTextNode(false);
         return text_node != null ? text_node.getNodeValue() : null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Configuration setValue(String value) {
         if (value != null) {
@@ -147,6 +159,9 @@ public class DOMConfiguration extends BaseConfiguration {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<String> getAttributeNames() {
         List<String> names = new ArrayList<String>();
@@ -159,6 +174,9 @@ public class DOMConfiguration extends BaseConfiguration {
         return names;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<QName> getAttributeQNames() {
         List<QName> qnames = new ArrayList<QName>();
@@ -173,6 +191,10 @@ public class DOMConfiguration extends BaseConfiguration {
         return qnames;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean hasAttribute(String name) {
         if (name != null) {
             return _element.hasAttribute(name);
@@ -180,6 +202,10 @@ public class DOMConfiguration extends BaseConfiguration {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean hasAttribute(QName qname) {
         if (qname != null) {
             return _element.hasAttributeNS(qname.getNamespaceURI(), qname.getLocalPart());
@@ -187,6 +213,9 @@ public class DOMConfiguration extends BaseConfiguration {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getAttribute(String name) {
         if (name != null) {
@@ -195,6 +224,9 @@ public class DOMConfiguration extends BaseConfiguration {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getAttribute(QName qname) {
         if (qname != null) {
@@ -206,6 +238,9 @@ public class DOMConfiguration extends BaseConfiguration {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Configuration setAttribute(String name, String value) {
         if (value == null) {
@@ -216,6 +251,9 @@ public class DOMConfiguration extends BaseConfiguration {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Configuration setAttribute(QName qname, String value) {
         Attr attr = _element.getAttributeNodeNS(qname.getNamespaceURI(), qname.getLocalPart());
@@ -237,11 +275,17 @@ public class DOMConfiguration extends BaseConfiguration {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasParent() {
         return _element.getParentNode() instanceof Element;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Configuration getParent() {
         Node node =_element.getParentNode();
@@ -259,6 +303,9 @@ public class DOMConfiguration extends BaseConfiguration {
         return _parent_config;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasChildren() {
         NodeList nodes = _element.getChildNodes();
@@ -271,6 +318,9 @@ public class DOMConfiguration extends BaseConfiguration {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasChildren(String name) {
         if (name != null) {
@@ -288,6 +338,9 @@ public class DOMConfiguration extends BaseConfiguration {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasChildren(QName qname) {
         if (qname != null) {
@@ -305,6 +358,9 @@ public class DOMConfiguration extends BaseConfiguration {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Configuration> getChildren() {
         List<Configuration> configs = new ArrayList<Configuration>();
@@ -318,6 +374,9 @@ public class DOMConfiguration extends BaseConfiguration {
         return configs;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Configuration> getChildren(String name) {
         List<Configuration> configs = new ArrayList<Configuration>();
@@ -334,6 +393,9 @@ public class DOMConfiguration extends BaseConfiguration {
         return configs;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Configuration> getChildrenStartsWith(String name) {
         List<Configuration> configs = new ArrayList<Configuration>();
@@ -350,6 +412,9 @@ public class DOMConfiguration extends BaseConfiguration {
         return configs;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Configuration> getChildren(QName qname) {
         List<Configuration> configs = new ArrayList<Configuration>();
@@ -360,6 +425,9 @@ public class DOMConfiguration extends BaseConfiguration {
         return configs;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Configuration getFirstChild(String name) {
         NodeList nodes = _element.getChildNodes();
@@ -375,6 +443,9 @@ public class DOMConfiguration extends BaseConfiguration {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Configuration getFirstChildStartsWith(String name) {
         NodeList nodes = _element.getChildNodes();
@@ -390,6 +461,9 @@ public class DOMConfiguration extends BaseConfiguration {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Configuration getFirstChild(QName qname) {
         NodeList nodes = _element.getElementsByTagNameNS(qname.getNamespaceURI(), qname.getLocalPart());
@@ -399,6 +473,9 @@ public class DOMConfiguration extends BaseConfiguration {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Configuration addChild(Configuration child) {
         DOMConfiguration config = new DOMConfiguration(child);
@@ -407,6 +484,9 @@ public class DOMConfiguration extends BaseConfiguration {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Configuration removeChildren() {
         NodeList nodes = _element.getChildNodes();
@@ -419,6 +499,9 @@ public class DOMConfiguration extends BaseConfiguration {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Configuration removeChildren(String name) {
         NodeList nodes = _element.getChildNodes();
@@ -434,6 +517,9 @@ public class DOMConfiguration extends BaseConfiguration {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Configuration removeChildren(QName qname) {
         NodeList nodes = _element.getElementsByTagNameNS(qname.getNamespaceURI(), qname.getLocalPart());
@@ -443,22 +529,34 @@ public class DOMConfiguration extends BaseConfiguration {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Configuration copy() {
         return new DOMConfiguration((Element)_element.cloneNode(true), false);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Configuration normalize() {
         _element.normalize();
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Source getSource() {
         return new DOMSource(_element);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void write(Writer writer) throws IOException {
         orderChildren();
@@ -473,6 +571,9 @@ public class DOMConfiguration extends BaseConfiguration {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -481,6 +582,9 @@ public class DOMConfiguration extends BaseConfiguration {
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

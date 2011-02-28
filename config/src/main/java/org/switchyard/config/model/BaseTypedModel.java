@@ -23,24 +23,27 @@ import javax.xml.namespace.QName;
 import org.switchyard.config.Configuration;
 
 /**
- * BaseTypedModel.
+ * An abstract representation of a TypedModel, useful for subclassing.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public abstract class BaseTypedModel extends BaseModel implements TypedModel {
 
-    public BaseTypedModel(QName qname) {
+    protected BaseTypedModel(QName qname) {
         super(qname);
     }
 
-    public BaseTypedModel(Configuration config) {
+    protected BaseTypedModel(Configuration config) {
         super(config);
     }
 
-    public BaseTypedModel(Configuration config, Descriptor desc) {
+    protected BaseTypedModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final String getType() {
         String name = getModelConfiguration().getName();

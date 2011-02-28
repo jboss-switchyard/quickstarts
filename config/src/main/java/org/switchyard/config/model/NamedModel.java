@@ -21,18 +21,36 @@ package org.switchyard.config.model;
 import javax.xml.namespace.QName;
 
 /**
- * TypedModel.
+ * A Model with a name.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public interface NamedModel extends Model {
 
+    /**
+     * Gets the name <b>attribute</b> of this Model (<i>not</i> the name of the wrapped Configuration).
+     * @return the name
+     */
     public String getName();
-    
+
+    /**
+     * Sets the name <b>attribute</b> of this Model (<i>not</i> the name of the wrapped Configuration).
+     * @param name the name
+     * @return this NamedModel (useful for chaining)
+     */
     public NamedModel setName(String name);
 
+    /**
+     * Gets the qualified name <b>attribute</b> of this Model (<i>not</i> the qualified name of the wrapped Configuration).
+     * @return the qualified name
+     */
     public QName getQName();
 
+    /**
+     * Sets the qualified name <b>attribute</b> of this Model (<i>not</i> the qualified name of the wrapped Configuration).
+     * @param qname the qualified name
+     * @return this NamedModel (useful for chaining)
+     */
     public NamedModel setQName(QName qname);
 
 }

@@ -22,14 +22,19 @@ package org.switchyard.config.model.composite;
 import org.switchyard.config.model.TypedModel;
 
 /**
- * BindingModel.
+ * The "binding" configuration model.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public interface BindingModel extends TypedModel {
 
+    /** The "binding" name. */
     public static final String BINDING = "binding";
 
+    /**
+     * Gets the parent composite model.
+     * @return the parent composite model
+     */
     public CompositeServiceModel getService();
 
 }

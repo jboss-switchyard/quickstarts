@@ -35,7 +35,7 @@ import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
- * V1CompositeModel.
+ * A version 1 CompositeModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
@@ -45,11 +45,19 @@ public class V1CompositeModel extends BaseNamedModel implements CompositeModel {
     private List<CompositeReferenceModel> _references = new ArrayList<CompositeReferenceModel>();
     private List<ComponentModel> _components = new ArrayList<ComponentModel>();
 
+    /**
+     * Constructs a new V1CompositeModel.
+     */
     public V1CompositeModel() {
         super(new QName(CompositeModel.DEFAULT_NAMESPACE, CompositeModel.COMPOSITE));
         setModelChildrenOrder(CompositeServiceModel.SERVICE, CompositeReferenceModel.REFERENCE, ComponentModel.COMPONENT);
     }
 
+    /**
+     * Constructs a new V1CompositeModel with the specified Configuration and Descriptor.
+     * @param config the Configuration
+     * @param desc the Descriptor
+     */
     public V1CompositeModel(Configuration config, Descriptor desc) {
         super(config, desc);
         for (Configuration service_config : config.getChildren(CompositeServiceModel.SERVICE)) {
@@ -73,15 +81,25 @@ public class V1CompositeModel extends BaseNamedModel implements CompositeModel {
         setModelChildrenOrder(CompositeServiceModel.SERVICE, CompositeReferenceModel.REFERENCE, ComponentModel.COMPONENT);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public SwitchYardModel getSwitchYard() {
         return (SwitchYardModel)getModelParent();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized List<CompositeReferenceModel> getReferences() {
         return Collections.unmodifiableList(_references);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized CompositeModel addReference(CompositeReferenceModel reference) {
         addChildModel(reference);
@@ -89,11 +107,17 @@ public class V1CompositeModel extends BaseNamedModel implements CompositeModel {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized List<CompositeServiceModel> getServices() {
         return Collections.unmodifiableList(_services);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized CompositeModel addService(CompositeServiceModel service) {
         addChildModel(service);
@@ -101,11 +125,17 @@ public class V1CompositeModel extends BaseNamedModel implements CompositeModel {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized List<ComponentModel> getComponents() {
         return Collections.unmodifiableList(_components);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized CompositeModel addComponent(ComponentModel component) {
         addChildModel(component);

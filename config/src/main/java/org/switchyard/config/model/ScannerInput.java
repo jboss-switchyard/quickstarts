@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * ScannerInput.
+ * The input to a {@link Scanner}.
  *
  * @param <M> the Model type being scanned for
  *
@@ -35,14 +35,26 @@ public class ScannerInput<M extends Model> {
     private List<URL> _urls;
     private String _name;
 
+    /**
+     * Constructs a new ScannerInput.
+     */
     public ScannerInput() {
         _urls = new ArrayList<URL>();
     }
 
+    /**
+     * Gets the URLs to scan.
+     * @return the URLs
+     */
     public synchronized List<URL> getURLs() {
         return Collections.unmodifiableList(_urls);
     }
 
+    /**
+     * Sets the URLs to scan.
+     * @param urls the URLs
+     * @return this ScannerInput (useful for chaining)
+     */
     public synchronized ScannerInput<M> setURLs(List<URL> urls) {
         _urls.clear();
         if (urls != null) {
@@ -55,10 +67,19 @@ public class ScannerInput<M extends Model> {
         return this;
     }
 
+    /**
+     * Gets a contextual name for the scan.
+     * @return the contextual name
+     */
     public String getName() {
         return _name;
     }
 
+    /**
+     * Sets a contextual name for the scan.
+     * @param name the contextual name
+     * @return this ScannerInput (useful for chaining)
+     */
     public ScannerInput<M> setName(String name) {
         _name = name;
         return this;

@@ -25,7 +25,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * QNames.
+ * Utility class for handling qualified names.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
@@ -33,14 +33,29 @@ public final class QNames {
 
     private QNames() {}
 
+    /**
+     * Safely creates a QName based on a DOM Document's root element.
+     * @param document the document
+     * @return the QName
+     */
     public static QName create(Document document) {
         return create(document.getDocumentElement());
     }
 
+    /**
+     * Safely creates a QName based on a DOM Element.
+     * @param element the element
+     * @return the QName
+     */
     public static QName create(Element element) {
         return create(element.getNamespaceURI(), Nodes.nameOf(element), element.getPrefix());
     }
 
+    /**
+     * Safely creates a QName based on a name.
+     * @param name will turn into the local name
+     * @return the QName
+     */
     public static QName create(String name) {
         if (name != null) {
             return QName.valueOf(name);
@@ -48,10 +63,22 @@ public final class QNames {
         return null;
     }
 
+    /**
+     * Safely creates a QName based on a namespace and a name.
+     * @param namespace the namespace
+     * @param localName the local name
+     * @return the QName
+     */
     public static QName create(String namespace, String localName) {
         return create(namespace, localName, null);
     }
-
+    /**
+     * Safely creates a QName based on a namespace, a name and a prefix.
+     * @param namespace the namespace
+     * @param localName the local name
+     * @param prefix the prefix
+     * @return the QName
+     */
     public static QName create(String namespace, String localName, String prefix) {
         if (namespace != null && namespace.length() > 0) {
             if (prefix != null && prefix.length() > 0) {

@@ -29,7 +29,7 @@ import javax.xml.namespace.QName;
 import org.switchyard.config.util.QNames;
 
 /**
- * Configurations.
+ * Utility class with helper methods dealing with Configurations.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
@@ -37,10 +37,23 @@ public final class Configurations {
 
     private Configurations() {}
 
+    /**
+     * Merges two configs into a new config.
+     * @param fromConfig merge from this config, overriding anything in toConfig
+     * @param toConfig merge into a copy of this config
+     * @return the newly merged config
+     */
     public static Configuration merge(Configuration fromConfig, Configuration toConfig) {
         return merge(fromConfig, toConfig, true);
     }
 
+    /**
+     * Merges two configs into a new config.
+     * @param fromConfig merge from this config, optionally overriding anything in toConfig
+     * @param toConfig merge into a copy of this config
+     * @param fromOverridesTo whether fromConfig attributes/values should override those in toConfig
+     * @return the newly merged config
+     */
     public static Configuration merge(Configuration fromConfig, Configuration toConfig, boolean fromOverridesTo) {
         QName fromConfigQName = fromConfig.getQName();
         QName toConfigQName = toConfig.getQName();
@@ -131,11 +144,17 @@ public final class Configurations {
             return str;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String toString() {
             return "Key [_qname=" + _qname + ", _id=" + _id + "]";
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public int hashCode() {
             final int prime = 31;
@@ -145,6 +164,9 @@ public final class Configurations {
             return result;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {

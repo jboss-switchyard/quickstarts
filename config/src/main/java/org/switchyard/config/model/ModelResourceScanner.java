@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 /**
- * ModelResourceScanner.
+ * A {@link Scanner} that uses {@link org.switchyard.config.model.ModelResource ModelResource} to pull {@link org.switchyard.config.model.Model Model}s.
  *
  * @param <M> the Model type to scan for
  *
@@ -52,60 +52,106 @@ public class ModelResourceScanner<M extends Model> implements Scanner<M> {
     private Element _element;
     private QName _qname;
 
+    /**
+     * Constructs a default ModelResourceScanner that scans for "/META-INF/switchyard.xml" resource(s).
+     */
     public ModelResourceScanner() {
         this("/META-INF/switchyard.xml");
     }
 
+    /**
+     * Constructs a ModelResourceScanner that scans for the specified resource.
+     * @param resource the resource
+     */
     public ModelResourceScanner(String resource) {
         _type = Type.RESOURCE;
         _resource = resource;
     }
 
+    /**
+     * Constructs a ModelResourceScanner that scans for the specified URI.
+     * @param uri the URI
+     */
     public ModelResourceScanner(URI uri) {
         _type = Type.URI;
         _uri = uri;
     }
 
+    /**
+     * Constructs a ModelResourceScanner that scans for the specified URL.
+     * @param url the URL
+     */
     public ModelResourceScanner(URL url) {
         _type = Type.URL;
         _url = url;
     }
 
+    /**
+     * Constructs a ModelResourceScanner that scans for the specified File.
+     * @param file the File
+     */
     public ModelResourceScanner(File file) {
         _type = Type.FILE;
         _file = file;
     }
 
+    /**
+     * Constructs a ModelResourceScanner that scans for the specified InputStream.
+     * @param inputStream the InputStream
+     */
     public ModelResourceScanner(InputStream inputStream) {
         _type = Type.INPUT_STREAM;
         _inputStream = inputStream;
     }
 
+    /**
+     * Constructs a ModelResourceScanner that scans for the specified Reader.
+     * @param reader the Reader
+     */
     public ModelResourceScanner(Reader reader) {
         _type = Type.READER;
         _reader = reader;
     }
 
+    /**
+     * Constructs a ModelResourceScanner that scans for the specified InputSource.
+     * @param inputSource the InputSource
+     */
     public ModelResourceScanner(InputSource inputSource) {
         _type = Type.INPUT_SOURCE;
         _inputSource = inputSource;
     }
 
+    /**
+     * Constructs a ModelResourceScanner that scans for the specified Document.
+     * @param document the Document
+     */
     public ModelResourceScanner(Document document) {
         _type = Type.DOCUMENT;
         _document = document;
     }
 
+    /**
+     * Constructs a ModelResourceScanner that scans for the specified Element.
+     * @param element the Element
+     */
     public ModelResourceScanner(Element element) {
         _type = Type.ELEMENT;
         _element = element;
     }
 
+    /**
+     * Constructs a ModelResourceScanner that scans for the specified QName.
+     * @param qname the QName
+     */
     public ModelResourceScanner(QName qname) {
         _type = Type.QNAME;
         _qname = qname;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ScannerOutput<M> scan(ScannerInput<M> input) throws IOException {
         M model;

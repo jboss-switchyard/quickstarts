@@ -27,16 +27,23 @@ import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.config.model.transform.v1.V1TransformsModel;
 
 /**
- * V1SwitchYardMarshaller.
+ * Marshalls switchyard Models.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class V1SwitchYardMarshaller extends BaseMarshaller {
 
+    /**
+     * Constructs a new V1SwitchYardMarshaller with the specified Descriptor.
+     * @param desc the Descriptor
+     */
     public V1SwitchYardMarshaller(Descriptor desc) {
         super(desc);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Model read(Configuration config) {
         String name = config.getName();

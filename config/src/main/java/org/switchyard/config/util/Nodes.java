@@ -22,7 +22,7 @@ package org.switchyard.config.util;
 import org.w3c.dom.Node;
 
 /**
- * Nodes.
+ * Utility class for handling DOM nodes.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
@@ -30,6 +30,11 @@ public final class Nodes {
 
     private Nodes() {}
 
+    /**
+     * Gets the name of the node.
+     * @param node the node
+     * @return the name, first trying the local name (getLocalName()), but if null or zero-length, the node name (getNodeName())
+     */
     public static String nameOf(Node node) {
         if (node != null) {
             String name = node.getLocalName();

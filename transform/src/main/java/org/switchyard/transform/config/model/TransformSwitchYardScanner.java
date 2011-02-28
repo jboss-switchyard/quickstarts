@@ -91,4 +91,5 @@ public class TransformSwitchYardScanner implements Scanner<SwitchYardModel> {
 
         return filter.getMatchedTypes();
     }
+
 }

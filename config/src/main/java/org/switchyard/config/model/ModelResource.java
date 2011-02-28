@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 /**
- * ModelResource.
+ * Utility class to safely access ("pull") Models from various sources.
  *
  * @param <M> the Model type
  *
@@ -42,35 +42,71 @@ public class ModelResource<M extends Model> extends Resource<M> {
 
     private Descriptor _desc;
 
+    /**
+     * Constructs a default ModelResource with a default Descriptor.
+     */
     public ModelResource() {
         this(null);
     }
 
+    /**
+     * Constructs a ModelResource with the specified Descriptor.
+     * @param desc the Descriptor
+     */
     public ModelResource(Descriptor desc) {
         _desc = desc != null ? desc : new Descriptor();
     }
 
+    /**
+     * Gets the Descriptor used by this ModelResource.
+     * @return the Descriptor
+     */
     public final Descriptor getDescriptor() {
         return _desc;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public M pull(InputStream is) throws IOException {
         return pull(new ElementResource().pull(is));
     }
 
+    /**
+     * Safely pulls a Model from a Reader.
+     * @param reader a Reader of the Model
+     * @return the Model, or null if not found
+     * @throws IOException if a problem occurred
+     */
     public M pull(Reader reader) throws IOException {
         return pull(new ElementResource().pull(reader));
     }
 
+    /**
+     * Safely pulls a Model from an InputSource.
+     * @param is an InputSource of the Model
+     * @return the Model, or null if not found
+     * @throws IOException if a problem occurred
+     */
     public M pull(InputSource is) throws IOException {
         return pull(new ElementResource().pull(is));
     }
 
+    /**
+     * Safely constructs a Model from a Document.
+     * @param document the Model Document
+     * @return the Model, or null if document is null
+     */
     public M pull(Document document) {
         return pull(new ElementResource().pull(document));
     }
 
+    /**
+     * Safely constructs a Model from an Element.
+     * @param element the Model element
+     * @return the Model, or null if element is null
+     */
     @SuppressWarnings("unchecked")
     public M pull(Element element) {
         String namespace = element.getNamespaceURI();
@@ -83,8 +119,13 @@ public class ModelResource<M extends Model> extends Resource<M> {
         return null;
     }
 
-    public M pull(QName name) {
-        return pull(new ElementResource().pull(name));
+    /**
+     * Safely pulls (constructs) a basic Model from a qualified name.
+     * @param qname the qualified name
+     * @return the model, or null if the qualified name is null
+     */
+    public M pull(QName qname) {
+        return pull(new ElementResource().pull(qname));
     }
 
 }

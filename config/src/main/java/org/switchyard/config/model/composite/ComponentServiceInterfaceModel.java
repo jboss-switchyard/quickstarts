@@ -20,12 +20,16 @@
 package org.switchyard.config.model.composite;
 
 /**
- * ComponentServiceInterfaceModel.
+ * The "component/service/interface" configuration model.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public interface ComponentServiceInterfaceModel extends InterfaceModel {
 
+    /**
+     * Gets the parent component service model.
+     * @return the parent component service model
+     */
     public ComponentServiceModel getService();
 
 }

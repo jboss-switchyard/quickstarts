@@ -24,7 +24,6 @@ import org.milyn.container.plugin.SourceFactory;
 import org.milyn.payload.Export;
 import org.milyn.payload.Exports;
 import org.milyn.payload.JavaResult;
-import org.milyn.payload.JavaSource;
 import org.milyn.payload.StringResult;
 import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.config.model.SmooksTransformModel;
@@ -69,7 +68,7 @@ public class SmooksTransformer extends BaseTransformer {
         }
 
         Source source = SourceFactory.getInstance().createSource(from);
-        if(_export != null) {
+        if (_export != null) {
             Result result = newResultInstance();
             _smooks.filterSource(source, result);
             return extractResultData(result);
@@ -94,10 +93,11 @@ public class SmooksTransformer extends BaseTransformer {
         Exports exports = Exports.getExports(_smooks.getApplicationContext());
 
         // Must define 1 exported result type
-        if(exports == null) {
+        if (exports == null) {
             _log.debug("Smooks configuration '" + model.getConfig() + "'will not make updates to the Exchange Message payload because it does not define any <core:exports>.  See Smooks User Guide.");
             return;
-        } if(exports.getExports().size() != 1) {
+        }
+        if (exports.getExports().size() != 1) {
             throw new RuntimeException("Invalid Smooks configuration file.  Must define an <core:exports> section with a single <core:export>.  See Smooks User Guide.");
         }
 
@@ -105,9 +105,9 @@ public class SmooksTransformer extends BaseTransformer {
 
         // Only support String (character based) or Java Results for now...
         Class<?> exportType = _export.getType();
-        if(StringResult.class.isAssignableFrom(exportType)) {
+        if (StringResult.class.isAssignableFrom(exportType)) {
             return;
-        } else if(JavaResult.class.isAssignableFrom(exportType)) {
+        } else if (JavaResult.class.isAssignableFrom(exportType)) {
             return;
         }
 
@@ -124,9 +124,9 @@ public class SmooksTransformer extends BaseTransformer {
     }
 
     private Object extractResultData(Result result) {
-        if(result instanceof StringResult) {
+        if (result instanceof StringResult) {
             return ((StringResult) result).getResult();
-        } else if(result instanceof JavaResult) {
+        } else if (result instanceof JavaResult) {
             return ((JavaResult) result).extractFromResult((JavaResult) result, _export);
         }
         return null;

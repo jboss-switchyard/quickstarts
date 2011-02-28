@@ -31,7 +31,7 @@ import org.switchyard.config.model.composite.InterfaceModel;
 import org.switchyard.config.model.composite.ComponentReferenceInterfaceModel;
 
 /**
- * V1ComponentReferenceModel.
+ * A version 1 ComponentReferenceModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
@@ -39,19 +39,33 @@ public class V1ComponentReferenceModel extends BaseNamedModel implements Compone
 
     private ComponentReferenceInterfaceModel _interface;
 
+    /**
+     * Constructs a new V1ComponentReferenceModel.
+     */
     public V1ComponentReferenceModel() {
         super(new QName(CompositeModel.DEFAULT_NAMESPACE, ComponentReferenceModel.REFERENCE));
     }
 
+    /**
+     * Constructs a new V1ComponentReferenceModel with the specified Configuration and Descriptor.
+     * @param config the Configuration
+     * @param desc the Descriptor
+     */
     public V1ComponentReferenceModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ComponentModel getComponent() {
         return (ComponentModel)getModelParent();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ComponentReferenceInterfaceModel getInterface() {
         if (_interface == null) {
@@ -60,6 +74,9 @@ public class V1ComponentReferenceModel extends BaseNamedModel implements Compone
         return _interface;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ComponentReferenceModel setInterface(ComponentReferenceInterfaceModel interfaze) {
         setChildModel(interfaze);

@@ -19,7 +19,7 @@
 package org.switchyard.config.model;
 
 /**
- * Validation.
+ * Represents the result of a Model validation.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
@@ -29,28 +29,53 @@ public class Validation {
     private String _message;
     private Throwable _cause;
 
+    /**
+     * Constructs a new Validation.
+     * @param valid whether or not the validation was a success
+     */
     public Validation(boolean valid) {
         this(valid, null);
     }
 
+    /**
+     * Constructs a new Validation.
+     * @param valid whether or not the validation was a success
+     * @param message the message to report
+     */
     public Validation(boolean valid, String message) {
         _valid = valid;
         _message = message;
     }
 
+    /**
+     * Constructs a new, unsuccessful Validation.
+     * @param cause the cause of the failed validation
+     */
     public Validation(Throwable cause) {
         this(false, cause.getMessage());
         _cause = cause;
     }
 
+    /**
+     * Whether this validation was successful.
+     * @return true if valid
+     */
     public boolean isValid() {
         return _valid;
     }
 
+    /**
+     * Gets the message to report.
+     * @return the message
+     */
     public String getMessage() {
         return _message;
     }
 
+    /**
+     * Gets the cause of a failed validation.
+     * @return the cause
+     */
     public Throwable getCause() {
         return _cause;
     }

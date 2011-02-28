@@ -25,7 +25,7 @@ import java.io.Writer;
 import org.switchyard.config.Configuration;
 
 /**
- * BaseMarshaller.
+ * Abstract representation of a Marshaller, implementing all the methods with default implementations.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
@@ -33,25 +33,45 @@ public abstract class BaseMarshaller implements Marshaller {
 
     private Descriptor _desc;
 
-    public BaseMarshaller(Descriptor desc) {
+    protected BaseMarshaller(Descriptor desc) {
         _desc = desc;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final Descriptor getDescriptor() {
         return _desc;
     }
 
+    /**
+     * By default, will throw an {@link java.lang.UnsupportedOperationException}.
+     * @param config the config
+     * @return the new Model
+     */
     @Override
     public Model read(Configuration config) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * By default, will delegate the writing to the specified Model.
+     * @param model the Model to write
+     * @param out the OutputStream to write to
+     * @throws IOException if a problem occurred
+     */
     @Override
     public void write(Model model, OutputStream out) throws IOException {
         model.write(out);
     }
 
+    /**
+     * By default, will delegate the writing to the specified Model.
+     * @param model the Model to write
+     * @param writer the Writer to write to
+     * @throws IOException if a problem occurred
+     */
     @Override
     public void write(Model model, Writer writer) throws IOException {
         model.write(writer);

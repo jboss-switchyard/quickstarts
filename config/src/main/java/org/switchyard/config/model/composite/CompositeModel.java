@@ -24,27 +24,61 @@ import org.switchyard.config.model.NamedModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
- * CompositeModel.
+ * The "composite" configuration model.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public interface CompositeModel extends NamedModel {
 
+    /** The default SCA namespace. */
     public static final String DEFAULT_NAMESPACE = "http://docs.oasis-open.org/ns/opencsa/sca/200912";
+
+    /** The "composite" name. */
     public static final String COMPOSITE = "composite";
 
+    /**
+     * Gets the parent switchyard model.
+     * @return the parent switchyard model
+     */
     public SwitchYardModel getSwitchYard();
 
+    /**
+     * Gets the child composite service models.
+     * @return the child composite service models
+     */
     public List<CompositeServiceModel> getServices();
 
+    /**
+     * Adds a child composite service model.
+     * @param service the child composite service model
+     * @return this CompositeModel (useful for chaining)
+     */
     public CompositeModel addService(CompositeServiceModel service);
 
+    /**
+     * Gets the child composite reference models.
+     * @return the child composite reference models
+     */
     public List<CompositeReferenceModel> getReferences();
 
+    /**
+     * Adds a composite reference model.
+     * @param reference the composite reference model
+     * @return this CompositeModel (useful for chaining)
+     */
     public CompositeModel addReference(CompositeReferenceModel reference);
 
+    /**
+     * Gets the child component models.
+     * @return the child component models
+     */
     public List<ComponentModel> getComponents();
 
+    /**
+     * Adds a child component model.
+     * @param component the child component model
+     * @return this CompositeModel (useful for chaining)
+     */
     public CompositeModel addComponent(ComponentModel component);
 
 }

@@ -36,7 +36,9 @@ import static org.switchyard.transform.internal.smooks.XMLBindingTransformer.*;
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class SmooksTransformFactory {
+public final class SmooksTransformFactory {
+
+    private SmooksTransformFactory() {}
 
     /**
      * Create a {@link Transformer} instance from the supplied {@link SmooksTransformModel}.

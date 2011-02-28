@@ -28,25 +28,39 @@ import org.switchyard.config.model.transform.v1.V1BaseTransformModel;
 import org.switchyard.transform.config.model.JavaTransformModel;
 
 /**
- * JavaTransformModel.
+ * A version 1 JavaTransformModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class V1JavaTransformModel extends V1BaseTransformModel implements JavaTransformModel {
 
+    /**
+     * Constructs a new V1JavaTransformModel.
+     */
     public V1JavaTransformModel() {
         super(new QName(TransformModel.DEFAULT_NAMESPACE, TransformModel.TRANSFORM + '.' + JAVA));
     }
 
+    /**
+     * Constructs a new V1JavaTransformModel with the specified Configuration and Descriptor.
+     * @param config the Configuration
+     * @param desc the Descriptor
+     */
     public V1JavaTransformModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getClazz() {
         return getModelAttribute(CLASS);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public JavaTransformModel setClazz(String clazz) {
         setModelAttribute(CLASS, clazz);

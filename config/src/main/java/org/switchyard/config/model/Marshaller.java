@@ -25,18 +25,39 @@ import java.io.Writer;
 import org.switchyard.config.Configuration;
 
 /**
- * Marshaller.
+ * Used to read or write Models.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public interface Marshaller {
 
+    /**
+     * Gets the Descriptor used by this Marshaller.
+     * @return the Descriptor
+     */
     public Descriptor getDescriptor();
 
+    /**
+     * Reads in (constructs) a Model based on the specified Configuration.
+     * @param config the config
+     * @return the new Model
+     */
     public Model read(Configuration config);
 
+    /**
+     * Writes the specified Model to the specified OutputStream.
+     * @param model the model
+     * @param out the OutputStream
+     * @throws IOException if a problem occurred
+     */
     public void write(Model model, OutputStream out) throws IOException;
 
+    /**
+     * Writes the specified Model to the specified Writer.
+     * @param model the model
+     * @param writer the Writer
+     * @throws IOException if a problem occurred
+     */
     public void write(Model model, Writer writer) throws IOException;
 
 }

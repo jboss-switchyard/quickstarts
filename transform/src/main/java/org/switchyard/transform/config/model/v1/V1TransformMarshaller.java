@@ -30,7 +30,7 @@ import org.switchyard.transform.config.model.SmooksTransformModel;
 import org.switchyard.transform.config.model.Xml2JavaTransformModel;
 
 /**
- * JavaMarshaller.
+ * Marshalls transform Models.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
@@ -41,10 +41,17 @@ public class V1TransformMarshaller extends BaseMarshaller {
     private static final String TRANSFORM_XML2JAVA = TransformModel.TRANSFORM + "." + Xml2JavaTransformModel.XML2JAVA;
     private static final String TRANSFORM_SMOOKS = TransformModel.TRANSFORM + "." + SmooksTransformModel.SMOOKS;
 
+    /**
+     * Constructs a new V1TransformMarshaller with the specified Descriptor.
+     * @param desc the Descriptor
+     */
     public V1TransformMarshaller(Descriptor desc) {
         super(desc);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Model read(Configuration config) {
         String name = config.getName();

@@ -48,7 +48,9 @@ public class XMLBindingTransformer extends BaseTransformer {
      * Binding direction.
      */
     public static enum BindingDirection {
+        /** The xml to java binding direction. */
         XML2JAVA,
+        /** The java to xml binding directionx. */
         JAVA2XML
     }
 
@@ -79,7 +81,7 @@ public class XMLBindingTransformer extends BaseTransformer {
             return null;
         }
 
-        if(_direction == BindingDirection.XML2JAVA) {
+        if (_direction == BindingDirection.XML2JAVA) {
             Source source = SourceFactory.getInstance().createSource(from);
             try {
                 return _xmlBinding.fromXML(source, _bean.getBeanClass());
@@ -87,7 +89,7 @@ public class XMLBindingTransformer extends BaseTransformer {
                 throw new RuntimeException("Exception while transforming from XML to '" + _bean.getBeanClass().getName() + "'.", e);
             }
         } else {
-            if(!_bean.getBeanClass().isInstance(from)) {
+            if (!_bean.getBeanClass().isInstance(from)) {
                 throw new RuntimeException("Cannot transform to XML.  Input type is '" + from.getClass().getName() + "' but should be '" + _bean.getBeanClass().getName() + "'.");
             }
 

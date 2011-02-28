@@ -22,21 +22,45 @@ package org.switchyard.transform.config.model;
 import org.switchyard.config.model.transform.TransformModel;
 
 /**
- * SmooksTransformModel.
+ * A "transform.smooks" configuration model.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public interface SmooksTransformModel extends TransformModel {
 
+    /** The "smooks" name. */
     public static final String SMOOKS = "smooks";
+
+    /** The "config" name. */
     public static final String CONFIG = "config";
+
+    /** The "reportPath" name. */
     public static final String REPORT_PATH = "reportPath";
 
+    /**
+     * Gets the config attribute.
+     * @return the config attribute
+     */
     public String getConfig();
 
+    /**
+     * Sets the config attribute.
+     * @param config the config attribute
+     * @return this SmooksTransformModel (useful for chaining)
+     */
     public SmooksTransformModel setConfig(String config);
 
+    /**
+     * Gets the reportPath attribute.
+     * @return the reportPath attribute
+     */
     public String getReportPath();
 
-    public SmooksTransformModel setReportPath(String config);
+    /**
+     * Sets the reportPath attribute.
+     * @param reportPath the reportPath attribute
+     * @return this SmooksTransformModel (useful for chaining)
+     */
+    public SmooksTransformModel setReportPath(String reportPath);
+
 }

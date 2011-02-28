@@ -28,16 +28,24 @@ import org.switchyard.config.model.transform.v1.V1BaseTransformModel;
 import org.switchyard.transform.config.model.SmooksTransformModel;
 
 /**
- * V1SmooksTransformModel.
+ * A version 1 SmooksTransformModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class V1SmooksTransformModel extends V1BaseTransformModel implements SmooksTransformModel {
 
+    /**
+     * Constructs a new V1SmooksTransformModel.
+     */
     public V1SmooksTransformModel() {
         super(new QName(TransformModel.DEFAULT_NAMESPACE, TransformModel.TRANSFORM + '.' + SMOOKS));
     }
 
+    /**
+     * Constructs a new V1SmooksTransformModel with the specified Configuration and Descriptor.
+     * @param config the Configuration
+     * @param desc the Descriptor
+     */
     public V1SmooksTransformModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
@@ -75,4 +83,5 @@ public class V1SmooksTransformModel extends V1BaseTransformModel implements Smoo
         setModelAttribute(REPORT_PATH, reportPath);
         return this;
     }
+
 }

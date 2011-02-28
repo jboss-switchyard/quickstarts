@@ -27,17 +27,26 @@ import java.io.Reader;
 
 
 /**
- * StringResource.
+ * Utility class to safely access ("pull") Strings from various sources.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class StringResource extends Resource<String> {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String pull(InputStream is) throws IOException {
         return pull(new InputStreamReader(is));
     }
 
+    /**
+     * Safely pulls a String from a Reader.
+     * @param reader a Reader of the resource
+     * @return the resource, or null if not found
+     * @throws IOException if a problem occurred
+     */
     public String pull(Reader reader) throws IOException {
         StringBuffer buffer = new StringBuffer(1024);
         reader = new BufferedReader(reader);

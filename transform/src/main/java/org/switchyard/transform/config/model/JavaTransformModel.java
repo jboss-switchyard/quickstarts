@@ -22,17 +22,29 @@ package org.switchyard.transform.config.model;
 import org.switchyard.config.model.transform.TransformModel;
 
 /**
- * JavaTransformModel.
+ * A "transform.java" configuration model.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public interface JavaTransformModel extends TransformModel {
 
+    /** The "java" name. */
     public static final String JAVA = "java";
+
+    /** The "class" name. */
     public static final String CLASS = "class";
 
+    /**
+     * Gets the class attribute.
+     * @return the class attribute
+     */
     public String getClazz();
 
+    /**
+     * Sets the class attribute.
+     * @param clazz the class attribute
+     * @return this JavaTransformModel (useful for chaining)
+     */
     public JavaTransformModel setClazz(String clazz);
 
 }

@@ -19,12 +19,16 @@
 package org.switchyard.config.model;
 
 /**
- * TypedModel.
+ * A Model with a "type".
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public interface TypedModel extends Model {
 
+    /**
+     * Gets the "type" of Model this is.
+     * @return the type name
+     */
     public String getType();
 
 }

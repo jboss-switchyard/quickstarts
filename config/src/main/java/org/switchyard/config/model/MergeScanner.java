@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * MergeScanner.
+ * A {@link Scanner} that merges all {@link Model}s from other Scanners into one.
  *
- * @param <M> the Model type to scan for
+ * @param <M> the Model type to scan for (and merge)
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
@@ -35,6 +35,12 @@ public class MergeScanner<M extends Model> implements Scanner<M> {
     private boolean _fromOverridesTo;
     private List<Scanner<M>> _scanners;
 
+    /**
+     * Constructs a new MergeScanner using the specified parameters.
+     * @param clazz the type of Model that will be scanned for and merged
+     * @param fromOverridesTo whether or not each successfully merged Model's values will override the next Model to merge values
+     * @param scanners the Scanners to merge output from
+     */
     public MergeScanner(Class<M> clazz, boolean fromOverridesTo, Scanner<M>... scanners) {
         _clazz = clazz;
         _fromOverridesTo = fromOverridesTo;
@@ -49,6 +55,12 @@ public class MergeScanner<M extends Model> implements Scanner<M> {
         _scanners = list;
     }
 
+    /**
+     * Constructs a new MergeScanner using the specified parameters.
+     * @param clazz the type of Model that will be scanned for and merged
+     * @param fromOverridesTo whether or not each successfully merged Model's values will override the next Model to merge values
+     * @param scanners the Scanners to merge output from
+     */
     public MergeScanner(Class<M> clazz, boolean fromOverridesTo, List<Scanner<M>> scanners) {
         _clazz = clazz;
         _fromOverridesTo = fromOverridesTo;
@@ -62,6 +74,9 @@ public class MergeScanner<M extends Model> implements Scanner<M> {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ScannerOutput<M> scan(ScannerInput<M> input) throws IOException {
         M merged;
