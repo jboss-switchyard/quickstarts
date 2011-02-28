@@ -38,10 +38,8 @@ import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.config.model.transform.v1.V1TransformsModel;
 import org.switchyard.config.util.QNames;
 import org.switchyard.config.util.StringResource;
-import org.switchyard.transform.config.model.v1.V1Java2XmlTransformModel;
 import org.switchyard.transform.config.model.v1.V1JavaTransformModel;
 import org.switchyard.transform.config.model.v1.V1SmooksTransformModel;
-import org.switchyard.transform.config.model.v1.V1Xml2JavaTransformModel;
 
 /**
  * TransformModelTests.
@@ -81,19 +79,10 @@ public class TransformModelTests {
         SmooksTransformModel smooksTransform = new V1SmooksTransformModel();
         smooksTransform.setFrom(new QName("msgC"));
         smooksTransform.setTo(new QName("msgD"));
+        smooksTransform.setTransformType("XML2JAVA");
         smooksTransform.setConfig("/trasnforms/xxx.xml");
         smooksTransform.setReportPath("/tmp/smooksreport.html");
         transforms.addTransform(smooksTransform);
-        Xml2JavaTransformModel xml2JavaTransform = new V1Xml2JavaTransformModel();
-        xml2JavaTransform.setFrom(new QName("msgE"));
-        xml2JavaTransform.setTo(new QName("msgF"));
-        xml2JavaTransform.setConfig("/trasnforms/xml2java.xml");
-        transforms.addTransform(xml2JavaTransform);
-        Java2XmlTransformModel java2xmlTransform = new V1Java2XmlTransformModel();
-        java2xmlTransform.setFrom(new QName("msgG"));
-        java2xmlTransform.setTo(new QName("msgH"));
-        java2xmlTransform.setConfig("/trasnforms/java2xml.xml");
-        transforms.addTransform(java2xmlTransform);
         switchyard.setTransforms(transforms);
         String new_xml = switchyard.toString();
         String old_xml = new ModelResource<SwitchYardModel>().pull(XML).toString();

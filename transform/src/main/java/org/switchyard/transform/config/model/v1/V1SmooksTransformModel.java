@@ -54,6 +54,23 @@ public class V1SmooksTransformModel extends V1BaseTransformModel implements Smoo
      * {@inheritDoc}
      */
     @Override
+    public String getTransformType() {
+        return getModelAttribute(TYPE);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SmooksTransformModel setTransformType(String type) {
+        setModelAttribute(TYPE, type);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getConfig() {
         return getModelAttribute(CONFIG);
     }

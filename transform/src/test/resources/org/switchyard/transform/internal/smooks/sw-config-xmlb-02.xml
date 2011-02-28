@@ -21,6 +21,6 @@
 
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0">
     <transforms>
-        <transform.java2xml xmlns="urn:switchyard-config:transform:1.0" from="A" to="B" config="/org/switchyard/transform/internal/smooks/smooks-config-xmlb-01.xml" />
+        <transform.smooks xmlns="urn:switchyard-config:transform:1.0" type="JAVA2XML" from="A" to="B" config="/org/switchyard/transform/internal/smooks/smooks-config-xmlb-01.xml" />
     </transforms>
 </switchyard>

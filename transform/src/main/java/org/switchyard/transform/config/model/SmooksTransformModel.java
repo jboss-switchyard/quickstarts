@@ -30,17 +30,28 @@ public interface SmooksTransformModel extends TransformModel {
 
     /** The "smooks" name. */
     public static final String SMOOKS = "smooks";
+<<<<<<< HEAD
 
     /** The "config" name. */
+=======
+    public static final String TYPE = "type";
+>>>>>>> changing smooks transformer config
     public static final String CONFIG = "config";
 
     /** The "reportPath" name. */
     public static final String REPORT_PATH = "reportPath";
 
+<<<<<<< HEAD
     /**
      * Gets the config attribute.
      * @return the config attribute
      */
+=======
+    public String getTransformType();
+
+    public SmooksTransformModel setTransformType(String type);
+
+>>>>>>> changing smooks transformer config
     public String getConfig();
 
     /**

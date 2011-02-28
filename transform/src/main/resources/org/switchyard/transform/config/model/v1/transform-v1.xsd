@@ -54,6 +54,13 @@ MA  02110-1301, USA.
         </annotation>
         <complexContent>
             <extension base="swyd:TransformType">
+                <attribute name="type" type="trfm:smooksTransformType" use="required">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            Smooks Configuration file path.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="config" type="string" use="required">
                     <annotation>
                         <documentation xml:lang="en">
@@ -78,44 +85,39 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
 
-    <element name="transform.xml2java" type="trfm:Xml2JavaTransformType" substitutionGroup="swyd:transform"/>
-    <complexType name="Xml2JavaTransformType">
-        <annotation>
-            <documentation xml:lang="en">
-                Xml to Java Transformer Configuration.
-            </documentation>
-        </annotation>
-        <complexContent>
-            <extension base="swyd:TransformType">
-                <attribute name="config" type="string" use="required">
-                    <annotation>
-                        <documentation xml:lang="en">
-                            Smooks Binding Configuration file path.
-                        </documentation>
-                    </annotation>
-                </attribute>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <element name="transform.java2xml" type="trfm:Java2XmlTransformType" substitutionGroup="swyd:transform"/>
-    <complexType name="Java2XmlTransformType">
-        <annotation>
-            <documentation xml:lang="en">
-                Java to XML Transformer Configuration.
-            </documentation>
-        </annotation>
-        <complexContent>
-            <extension base="swyd:TransformType">
-                <attribute name="config" type="string" use="required">
-                    <annotation>
-                        <documentation xml:lang="en">
-                            Smooks Binding Configuration file path.
-                        </documentation>
-                    </annotation>
-                </attribute>
-            </extension>
-        </complexContent>
-    </complexType>
+    <simpleType name="smooksTransformType">
+        <restriction base="string">
+            <enumeration value="SMOOKS">
+                <annotation>
+                    <documentation xml:lang="en">
+                        Basic Smooks Transformation.
+                        <p/>
+                        The result type is defined through the &lt;core:exports&gt;
+                        section of the configuration.
+                        <p/>
+                        See the <a href="www.smooks.org">Smooks User Guide</a>.
+                    </documentation>
+                </annotation>
+            </enumeration>
+            <enumeration value="XML2JAVA">
+                <annotation>
+                    <documentation xml:lang="en">
+                        XML to Java Transformation via Smooks Java Binding configurations.
+                        <p/>
+                        See the <a href="www.smooks.org">Smooks User Guide</a>.
+                    </documentation>
+                </annotation>
+            </enumeration>
+            <enumeration value="JAVA2XML">
+                <annotation>
+                    <documentation xml:lang="en">
+                        Java to XML Transformation via Smooks Java Binding configurations.
+                        <p/>
+                        See the <a href="www.smooks.org">Smooks User Guide</a>.
+                    </documentation>
+                </annotation>
+            </enumeration>
+        </restriction>
+    </simpleType>
 
 </schema>

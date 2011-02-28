@@ -24,10 +24,8 @@ import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.transform.TransformModel;
-import org.switchyard.transform.config.model.Java2XmlTransformModel;
 import org.switchyard.transform.config.model.JavaTransformModel;
 import org.switchyard.transform.config.model.SmooksTransformModel;
-import org.switchyard.transform.config.model.Xml2JavaTransformModel;
 
 /**
  * Marshalls transform Models.
@@ -37,8 +35,6 @@ import org.switchyard.transform.config.model.Xml2JavaTransformModel;
 public class V1TransformMarshaller extends BaseMarshaller {
 
     private static final String TRANSFORM_JAVA = TransformModel.TRANSFORM + "." + JavaTransformModel.JAVA;
-    private static final String TRANSFORM_JAVA2XML = TransformModel.TRANSFORM + "." + Java2XmlTransformModel.JAVA2XML;
-    private static final String TRANSFORM_XML2JAVA = TransformModel.TRANSFORM + "." + Xml2JavaTransformModel.XML2JAVA;
     private static final String TRANSFORM_SMOOKS = TransformModel.TRANSFORM + "." + SmooksTransformModel.SMOOKS;
 
     /**
@@ -58,10 +54,6 @@ public class V1TransformMarshaller extends BaseMarshaller {
         Descriptor desc = getDescriptor();
         if (name.equals(TRANSFORM_JAVA)) {
             return new V1JavaTransformModel(config, desc);
-        } else if (name.equals(TRANSFORM_JAVA2XML)) {
-            return new V1Java2XmlTransformModel(config, desc);
-        } else if (name.equals(TRANSFORM_XML2JAVA)) {
-            return new V1Xml2JavaTransformModel(config, desc);
         } else if (name.equals(TRANSFORM_SMOOKS)) {
             return new V1SmooksTransformModel(config, desc);
         }

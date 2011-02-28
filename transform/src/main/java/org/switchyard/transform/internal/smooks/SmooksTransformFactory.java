@@ -21,11 +21,8 @@ package org.switchyard.transform.internal.smooks;
 
 import org.milyn.Smooks;
 import org.milyn.javabean.binding.model.ModelSet;
-import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.transform.Transformer;
-import org.switchyard.transform.config.model.Java2XmlTransformModel;
 import org.switchyard.transform.config.model.SmooksTransformModel;
-import org.switchyard.transform.config.model.Xml2JavaTransformModel;
 
 import javax.xml.namespace.QName;
 
@@ -38,7 +35,24 @@ import static org.switchyard.transform.internal.smooks.XMLBindingTransformer.*;
  */
 public final class SmooksTransformFactory {
 
+<<<<<<< HEAD
     private SmooksTransformFactory() {}
+=======
+    /**
+     * Smooks transformation type.
+     */
+    private static enum SmooksTransformationType {
+        SMOOKS,
+        XML2JAVA,
+        JAVA2XML
+    }
+
+    /**
+     * Private constructor.
+     */
+    private SmooksTransformFactory() {
+    }
+>>>>>>> changing smooks transformer config
 
     /**
      * Create a {@link Transformer} instance from the supplied {@link SmooksTransformModel}.
@@ -46,10 +60,14 @@ public final class SmooksTransformFactory {
      * @return The Transformer instance.
      */
     public static Transformer newTransformer(SmooksTransformModel model) {
+        String transformType = model.getTransformType();
         String config = model.getConfig();
         QName from = model.getFrom();
         QName to = model.getTo();
 
+        if (transformType == null || transformType.trim().length() == 0) {
+            throw new RuntimeException("Invalid Smooks configuration model.  null or empty 'type' specification.");
+        }
         if (config == null || config.trim().length() == 0) {
             throw new RuntimeException("Invalid Smooks configuration model.  null or empty 'config' specification.");
         }
@@ -60,6 +78,8 @@ public final class SmooksTransformFactory {
             throw new RuntimeException("Invalid Smooks configuration model.  null or 'to' specification.");
         }
 
+        SmooksTransformationType transformationType = SmooksTransformationType.valueOf(transformType);
+
         Smooks smooks;
         try {
             smooks = new Smooks(config);
@@ -68,49 +88,18 @@ public final class SmooksTransformFactory {
             throw new RuntimeException("Failed to create Smooks instance for config '" + config + "'.", e);
         }
 
-        return new SmooksTransformer(from, to, smooks, model);
+        if (transformationType == SmooksTransformationType.JAVA2XML) {
+            return newXMLBindingTransformer(from, to, smooks, BindingDirection.JAVA2XML);
+        } else if (transformationType == SmooksTransformationType.XML2JAVA) {
+            return newXMLBindingTransformer(from, to, smooks, BindingDirection.XML2JAVA);
+        } else if (transformationType == SmooksTransformationType.SMOOKS) {
+            return new SmooksTransformer(from, to, smooks, model);
+        } else {
+            throw new RuntimeException("Unhandled Smooks transformation type '" + transformationType + "'.");
+        }
     }
 
-    /**
-     * Create a {@link Transformer} instance from the supplied {@link Java2XmlTransformModel}.
-     * @param model The model.
-     * @return The Transformer instance.
-     */
-    public static Transformer newTransformer(Java2XmlTransformModel model) {
-        return newXMLBindingTransformer(model, model.getConfig(), BindingDirection.JAVA2XML);
-    }
-
-    /**
-     * Create a {@link Transformer} instance from the supplied {@link Xml2JavaTransformModel}.
-     * @param model The model.
-     * @return The Transformer instance.
-     */
-    public static Transformer newTransformer(Xml2JavaTransformModel model) {
-        return newXMLBindingTransformer(model, model.getConfig(), BindingDirection.XML2JAVA);
-    }
-
-    private static Transformer newXMLBindingTransformer(TransformModel model, String config, BindingDirection direction) {
-        QName from = model.getFrom();
-        QName to = model.getTo();
-
-        if (config == null || config.trim().length() == 0) {
-            throw new RuntimeException("Invalid " + direction + " configuration model.  null or empty 'config' specification.");
-        }
-        if (from == null) {
-            throw new RuntimeException("Invalid " + direction + " configuration model.  null or 'from' specification.");
-        }
-        if (to == null) {
-            throw new RuntimeException("Invalid " + direction + " configuration model.  null or 'to' specification.");
-        }
-
-        Smooks smooks;
-        try {
-            smooks = new Smooks(config);
-            smooks.createExecutionContext();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create Smooks instance for java2xml config '" + config + "'.", e);
-        }
-
+    private static Transformer newXMLBindingTransformer(final QName from, final QName to, Smooks smooks, BindingDirection direction) {
         ModelSet beanModel = ModelSet.get(smooks.getApplicationContext());
         if (beanModel != null && !beanModel.getModels().isEmpty()) {
             return new XMLBindingTransformer(from, to, smooks, beanModel, direction);

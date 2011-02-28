@@ -25,13 +25,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
-import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.transform.Transformer;
-import org.switchyard.transform.config.model.Java2XmlTransformModel;
-import org.switchyard.transform.config.model.Xml2JavaTransformModel;
-import org.switchyard.transform.config.model.v1.V1Java2XmlTransformModel;
-import org.switchyard.transform.config.model.v1.V1Xml2JavaTransformModel;
+import org.switchyard.transform.config.model.v1.V1SmooksTransformModel;
 import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
@@ -66,10 +62,10 @@ public class XMLBindingTransformerTest {
 
     @Test
     public void test_invalid_xml2java_config() throws IOException, SAXException {
-        Xml2JavaTransformModel model = (Xml2JavaTransformModel) new V1Xml2JavaTransformModel().setFrom(new QName("a")).setTo(new QName("b"));
+        V1SmooksTransformModel model = (V1SmooksTransformModel) new V1SmooksTransformModel().setTransformType("XML2JAVA").setFrom(new QName("a")).setTo(new QName("b"));
         model.setConfig("/org/switchyard/transform/internal/smooks/smooks-config-01.xml");
         try {
-            getTransformer(model);
+            SmooksTransformFactory.newTransformer(model);
         } catch (RuntimeException e) {
             Assert.assertEquals("Invalid XML2JAVA binding configuration.  No <jb:bean> configurations found.", e.getMessage());
         }
@@ -77,10 +73,10 @@ public class XMLBindingTransformerTest {
 
     @Test
     public void test_invalid_java2xml_config() throws IOException, SAXException {
-        Java2XmlTransformModel model = (Java2XmlTransformModel) new V1Java2XmlTransformModel().setFrom(new QName("a")).setTo(new QName("b"));
+        V1SmooksTransformModel model = (V1SmooksTransformModel) new V1SmooksTransformModel().setTransformType("JAVA2XML").setFrom(new QName("a")).setTo(new QName("b"));
         model.setConfig("/org/switchyard/transform/internal/smooks/smooks-config-01.xml");
         try {
-            getTransformer(model);
+            SmooksTransformFactory.newTransformer(model);
         } catch (RuntimeException e) {
             Assert.assertEquals("Invalid JAVA2XML binding configuration.  No <jb:bean> configurations found.", e.getMessage());
         }
@@ -107,28 +103,12 @@ public class XMLBindingTransformerTest {
         SwitchYardModel switchyardConfig = (SwitchYardModel) new ModelResource().pull(swConfigStream);
         TransformsModel transforms = switchyardConfig.getTransforms();
 
-        TransformModel transformModel = transforms.getTransforms().get(0);
+        V1SmooksTransformModel transformModel = (V1SmooksTransformModel) transforms.getTransforms().get(0);
 
         if (transformModel == null) {
             Assert.fail("No smooks config.");
         }
 
-        return getTransformer(transformModel);
-    }
-
-    private Transformer getTransformer(TransformModel transformModel) {
-        Transformer transformer;
-
-        if (transformModel instanceof Xml2JavaTransformModel) {
-            transformer = SmooksTransformFactory.newTransformer((Xml2JavaTransformModel) transformModel);
-        } else {
-            transformer = SmooksTransformFactory.newTransformer((Java2XmlTransformModel)transformModel);
-        }
-
-        if (!(transformer instanceof XMLBindingTransformer)) {
-            Assert.fail("Not an instance of XMLBindingTransformer.");
-        }
-
-        return transformer;
+        return SmooksTransformFactory.newTransformer(transformModel);
     }
 }

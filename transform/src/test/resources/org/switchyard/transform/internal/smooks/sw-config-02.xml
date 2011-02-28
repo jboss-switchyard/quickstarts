@@ -20,6 +20,6 @@
   -->
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0">
     <transforms>
-        <transform.smooks xmlns="urn:switchyard-config:transform:1.0" from="A" to="B" config="/org/switchyard/transform/internal/smooks/smooks-config-02.xml" />
+        <transform.smooks xmlns="urn:switchyard-config:transform:1.0" type="SMOOKS" from="A" to="B" config="/org/switchyard/transform/internal/smooks/smooks-config-02.xml" />
     </transforms>
 </switchyard>
