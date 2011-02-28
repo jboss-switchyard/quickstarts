@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.MockHandler;
-import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.java.JavaService;
@@ -39,14 +39,14 @@ import org.switchyard.metadata.java.JavaService;
 public class DomainImplTest {
      
     private static final QName SERVICE = new QName("Service");
-    private Service _service;
+    private ServiceReference _service;
     private DomainImpl _domain;
     
     @Before
     public void setUp() throws Exception {
         _domain = new DomainImpl(new QName("test"),
                 new DefaultServiceRegistry(),
-                new DefaultEndpointProvider(),
+                new LocalExchangeBus(),
                 null);
         _service = _domain.registerService(SERVICE, new MockHandler());
     }
@@ -61,7 +61,7 @@ public class DomainImplTest {
     
     @Test
     public void testRegisterServiceWithoutInterface() {
-        Service service = _domain.registerService(
+        ServiceReference service = _domain.registerService(
                 new QName("no-interface"), new MockHandler());
         // default interface should be used, which has one operation - process()
         Assert.assertNotNull(service.getInterface());
@@ -72,7 +72,7 @@ public class DomainImplTest {
     
     @Test
     public void testRegisterServiceWithInterface() {
-        Service service = _domain.registerService(new QName("my-interface"), 
+        ServiceReference service = _domain.registerService(new QName("my-interface"), 
                 new MockHandler(), JavaService.fromClass(MyInterface.class));
         // default interface should be used, which has one operation - process()
         Assert.assertNotNull(service.getInterface());
@@ -82,7 +82,7 @@ public class DomainImplTest {
     
     @Test
     public void testGetService() {
-        Service service = _domain.getService(SERVICE);
+        ServiceReference service = _domain.getService(SERVICE);
         Assert.assertNotNull(service);
     }
     

@@ -46,7 +46,7 @@ public interface ServiceDomain {
     * @param serviceName name of the service
     * @return service instance or null if no such service was found
     */
-    Service getService(QName serviceName);
+    ServiceReference getService(QName serviceName);
 
     /**
      * Creates a new Exchange to invoke service with the specified exchange
@@ -55,7 +55,7 @@ public interface ServiceDomain {
      * @param contract the exchange contract to use
      * @return a new Exchange instance
      */
-    Exchange createExchange(Service service, ExchangeContract contract);
+    Exchange createExchange(ServiceReference service, ExchangeContract contract);
     /**
      * Creates a new Exchange to invoke service with the specified exchange
      * pattern.  The supplied ExchangeHandler is used to handle any faults or
@@ -65,7 +65,7 @@ public interface ServiceDomain {
      * @param handler used to process response and fault messages
      * @return a new Exchange instance
      */
-    Exchange createExchange(Service service, ExchangeContract contract,
+    Exchange createExchange(ServiceReference service, ExchangeContract contract,
             ExchangeHandler handler);
 
     /**
@@ -76,7 +76,7 @@ public interface ServiceDomain {
      * @return a reference to the registered service that can be used to
      * unregister when required
      */
-    Service registerService(QName serviceName, ExchangeHandler handler);
+    ServiceReference registerService(QName serviceName, ExchangeHandler handler);
 
     /**
      * Register a service with the domain.
@@ -87,7 +87,7 @@ public interface ServiceDomain {
      * @return a reference to the registered service that can be used to
      * unregister when required
      */
-    Service registerService(QName serviceName,
+    ServiceReference registerService(QName serviceName,
             ExchangeHandler handler,
             ServiceInterface metadata);
 

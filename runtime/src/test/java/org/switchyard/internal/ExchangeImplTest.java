@@ -34,7 +34,7 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.MockDomain;
 import org.switchyard.MockHandler;
-import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.ServiceDomain;
 import org.switchyard.metadata.BaseInvocationContract;
 import org.switchyard.metadata.ExchangeContract;
@@ -72,7 +72,7 @@ public class ExchangeImplTest {
     
     @Test
     public void testPhaseIsInAfterInputMessage() {
-        Service service = _domain.registerService(
+        ServiceReference service = _domain.registerService(
                 new QName("InPhase"), new MockHandler());
         Exchange exchange = _domain.createExchange(service, ExchangeContract.IN_ONLY);
         exchange.send(exchange.createMessage());
@@ -81,7 +81,7 @@ public class ExchangeImplTest {
     
     @Test
     public void testPhaseIsOutAfterOutputMessage() {
-        Service service = _domain.registerService(
+        ServiceReference service = _domain.registerService(
                 new QName("OutPhase"), new MockHandler().forwardInToOut());
         MockHandler replyHandler = new MockHandler();
         Exchange exchange = _domain.createExchange(
@@ -93,7 +93,7 @@ public class ExchangeImplTest {
     
     @Test
     public void testPhaseIsOutAfterFaultMessage() {
-        Service service = _domain.registerService(
+        ServiceReference service = _domain.registerService(
                 new QName("FaultPhase"), new MockHandler().forwardInToFault());
         MockHandler replyHandler = new MockHandler();
         Exchange exchange = _domain.createExchange(
@@ -141,15 +141,12 @@ public class ExchangeImplTest {
             }
         };
         
-        Service service = _domain.registerService(serviceName, provider);
+        ServiceReference service = _domain.registerService(serviceName, provider);
         Exchange exchange = _domain.createExchange(
                 service, ExchangeContract.IN_OUT, consumer);
         Message inMsg = exchange.createMessage();
         inMsg.setContent(inMsgContent);
         exchange.send(inMsg);
-
-        // clean up
-        service.unregister();
     }
 
     @Test
@@ -158,7 +155,7 @@ public class ExchangeImplTest {
         final QName serviceName = new QName("testExceptionOnSendOnFaultExchange");
         // Provide the service
         MockHandler provider = new MockHandler().forwardInToFault();
-        Service service = _domain.registerService(serviceName, provider);
+        ServiceReference service = _domain.registerService(serviceName, provider);
 
         // Consume the service
         MockHandler consumer = new MockHandler();
@@ -181,7 +178,7 @@ public class ExchangeImplTest {
     @Test
     public void testExchangeContractServiceOperationProvided() throws Exception {
         MockHandler provider = new MockHandler();
-        Service service = _domain.registerService(new QName("serviceX"), provider);
+        ServiceReference service = _domain.registerService(new QName("serviceX"), provider);
 
         try {
             _domain.createExchange(service, null);
@@ -232,7 +229,8 @@ public class ExchangeImplTest {
                 throw new HandlerException("explode");
             }
         };
-        Service service = _domain.registerService(serviceName, provider);
+        
+        ServiceReference service = _domain.registerService(serviceName, provider);
 
         try {
             // Don't provide a consumer...
@@ -252,7 +250,7 @@ public class ExchangeImplTest {
                 throw new HandlerException("explode");
             }
         };
-        Service service = _domain.registerService(serviceName, provider);
+        ServiceReference service = _domain.registerService(serviceName, provider);
 
         // Don't provide a consumer...
         Exchange exchange = _domain.createExchange(service, ExchangeContract.IN_ONLY);

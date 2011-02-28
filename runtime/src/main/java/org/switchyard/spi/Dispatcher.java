@@ -20,20 +20,21 @@
 package org.switchyard.spi;
 
 import org.switchyard.Exchange;
+import org.switchyard.ServiceReference;
 
 /**
- * Service endpoint.
+ * Dispatches messages to a given service.
  */
-public interface Endpoint {
+public interface Dispatcher {
 
     /**
-     * The name of the service endpoint.
-     * @return endpoint name
+     * The name of the service
+     * @return service reference
      */
-    String getName();
+    ServiceReference getService();
     /**
-     * Send an exchange.
+     * Dispatch an exchange.
      * @param exchange exchange
      */
-    void send(Exchange exchange);
+    void dispatch(Exchange exchange);
 }

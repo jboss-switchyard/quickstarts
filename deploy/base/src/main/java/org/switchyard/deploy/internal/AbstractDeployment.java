@@ -24,11 +24,11 @@ import java.util.ServiceLoader;
 import javax.xml.namespace.QName;
 
 import org.switchyard.ServiceDomain;
-import org.switchyard.internal.DefaultEndpointProvider;
+import org.switchyard.internal.LocalExchangeBus;
 import org.switchyard.internal.DefaultServiceRegistry;
 import org.switchyard.internal.DomainImpl;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
-import org.switchyard.spi.EndpointProvider;
+import org.switchyard.spi.ExchangeBus;
 import org.switchyard.spi.ServiceRegistry;
 
 /**
@@ -76,11 +76,11 @@ public abstract class AbstractDeployment {
 
     private void createDomain() {
         String registryClassName = System.getProperty(REGISTRY_CLASS_NAME, DefaultServiceRegistry.class.getName());
-        String endpointProviderClassName = System.getProperty(ENDPOINT_PROVIDER_CLASS_NAME, DefaultEndpointProvider.class.getName());
+        String endpointProviderClassName = System.getProperty(ENDPOINT_PROVIDER_CLASS_NAME, LocalExchangeBus.class.getName());
 
         try {
             ServiceRegistry registry = getRegistry(registryClassName);
-            EndpointProvider endpointProvider = getEndpointProvider(endpointProviderClassName);
+            ExchangeBus endpointProvider = getEndpointProvider(endpointProviderClassName);
             BaseTransformerRegistry transformerRegistry = new BaseTransformerRegistry();
 
             _serviceDomain = new DomainImpl(ROOT_DOMAIN, registry, endpointProvider, transformerRegistry);
@@ -111,11 +111,10 @@ public abstract class AbstractDeployment {
      * @param providerClass class name of the endpointprovider implementation
      * @return EndpointProvider
      */
-    private static EndpointProvider
-    getEndpointProvider(final String providerClass) {
-        ServiceLoader<EndpointProvider> providerServices
-                = ServiceLoader.load(EndpointProvider.class);
-        for (EndpointProvider provider : providerServices) {
+    private static ExchangeBus getEndpointProvider(final String providerClass) {
+        ServiceLoader<ExchangeBus> providerServices
+                = ServiceLoader.load(ExchangeBus.class);
+        for (ExchangeBus provider : providerServices) {
             if (providerClass.equals(provider.getClass().getName())) {
                 return provider;
             }

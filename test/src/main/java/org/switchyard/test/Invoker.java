@@ -19,25 +19,26 @@
 
 package org.switchyard.test;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
+import javax.xml.namespace.QName;
+
 import org.junit.Assert;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
-import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.ServiceReference;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.ServiceOperation;
-
-import javax.xml.namespace.QName;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 
 /**
  * Unit Test Invoker.
@@ -231,7 +232,7 @@ public class Invoker {
     }
 
     private Exchange createExchange(ExchangeHandlerProxy exchangeHandlerProxy, ExchangePattern pattern) {
-        Service service;
+        ServiceReference service;
         ServiceOperation serviceOperation = _serviceOperation;
         ExchangeContract exchangeContract;
 

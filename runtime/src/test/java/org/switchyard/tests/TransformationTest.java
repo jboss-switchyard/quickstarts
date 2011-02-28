@@ -30,7 +30,7 @@ import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.MockHandler;
-import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.ServiceDomain;
 import org.switchyard.MockDomain;
 import org.switchyard.metadata.ExchangeContract;
@@ -80,7 +80,7 @@ public class TransformationTest {
         try {
             // Provide the service
             MockHandler provider = new MockHandler();
-            Service service = _domain.registerService(serviceName, provider);
+            ServiceReference service = _domain.registerService(serviceName, provider);
 
             // Create the exchange and invoke the service
             Exchange exchange = _domain.createExchange(
@@ -121,7 +121,7 @@ public class TransformationTest {
 
         // Provide the service
         MockHandler provider = new MockHandler();
-        Service service = _domain.registerService(serviceName, provider);
+        ServiceReference service = _domain.registerService(serviceName, provider);
 
         // Create the exchange and invoke the service
         MockHandler invokerHandler = new MockHandler();

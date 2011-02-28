@@ -19,24 +19,28 @@
 
 package org.switchyard.spi;
 
+import org.switchyard.ServiceReference;
 import org.switchyard.handlers.HandlerChain;
 
 /**
- * EndpointProvider.
+ * An implementation-neutral representation of a message bus.  The bus handles
+ * dispatch for message exchange between service consumer and provider.
  */
-public interface EndpointProvider {
+public interface ExchangeBus {
     /**
-     * Create an exchange endpoint with the specified name and handler chain.
-     * @param name endpiont name
-     * @param handlerChain handler chain
-     * @return Endpoint endpoint
+     * Create an exchange dispatcher for the specified service and handler chain.
+     * @param service service metadata
+     * @param handlerChain handlers invoked by dispatcher on delivery
+     * @return Dispatcher service dispatch reference
      */
-    Endpoint createEndpoint(String name, HandlerChain handlerChain);
+    Dispatcher createDispatcher(ServiceReference service, HandlerChain handlerChain);
     
     /**
-     * Retrieves an exchange endpoint by name.
-     * @param name endpoint name
-     * @return endpoint with the specified name, or null if no endpoint exists
+     * Retrieves a dispatcher for the specified service.
+     * @param service target service
+     * @return dispatcher for the specified service, or null if no dispatcher
+     * has been created
      */
-    Endpoint getEndpoint(String name);
+    Dispatcher getDispatcher(ServiceReference service);
+    
 }

@@ -28,11 +28,10 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
-import org.switchyard.handlers.HandlerChain;
-import org.switchyard.metadata.ServiceInterface;
-import org.switchyard.spi.Endpoint;
+import org.switchyard.ServiceReference;
+import org.switchyard.spi.Dispatcher;
+import org.switchyard.spi.Service;
 import org.switchyard.spi.ServiceRegistry;
 
 /**
@@ -40,8 +39,8 @@ import org.switchyard.spi.ServiceRegistry;
  */
 public class DefaultServiceRegistry implements ServiceRegistry {
 
-    private final Map<QName, List<ServiceRegistration>> _services =
-        new HashMap<QName, List<ServiceRegistration>>();
+    private final Map<QName, List<Service>> _services =
+        new HashMap<QName, List<Service>>();
 
     @Override
     public List<Service> getServicesForDomain(String domainName) {
@@ -61,7 +60,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
     @Override
     public synchronized List<Service> getServices() {
         LinkedList<Service> serviceList = new LinkedList<Service>();
-        for (List<ServiceRegistration> services : _services.values()) {
+        for (List<Service> services : _services.values()) {
             serviceList.addAll(services);
         }
 
@@ -70,7 +69,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
 
     @Override
     public synchronized List<Service> getServices(QName serviceName) {
-        List<ServiceRegistration> services = _services.get(serviceName);
+        List<Service> services = _services.get(serviceName);
         if (services == null) {
             return Collections.emptyList();
         }
@@ -79,17 +78,16 @@ public class DefaultServiceRegistry implements ServiceRegistry {
     }
 
     @Override
-    public synchronized Service registerService(QName serviceName,
-            ServiceInterface serviceInterface, Endpoint endpoint,
-            HandlerChain handlers, ServiceDomain domain) {
+    public synchronized Service registerService(
+            ServiceReference reference, Dispatcher endpoint, ServiceDomain domain) {
 
         ServiceRegistration sr = new ServiceRegistration(
-                serviceName, serviceInterface, endpoint, handlers, this, domain);
+                reference, endpoint, this, domain);
 
-        List<ServiceRegistration> serviceList = _services.get(serviceName);
+        List<Service> serviceList = _services.get(reference.getName());
         if (serviceList == null) {
-            serviceList = new LinkedList<ServiceRegistration>();
-             _services.put(serviceName, serviceList);
+            serviceList = new LinkedList<Service>();
+             _services.put(reference.getName(), serviceList);
         }
 
         serviceList.add(sr);
@@ -98,8 +96,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
 
     @Override
     public synchronized void unregisterService(Service service) {
-        List<ServiceRegistration> serviceList =
-            _services.get(service.getName());
+        List<Service> serviceList =_services.get(service.getReference().getName());
         if (serviceList != null) {
             serviceList.remove(service);
         }

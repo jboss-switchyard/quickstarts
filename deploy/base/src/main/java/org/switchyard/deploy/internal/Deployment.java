@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.switchyard.ExchangeHandler;
-import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;
@@ -252,7 +252,7 @@ public class Deployment extends AbstractDeployment {
                 _log.debug("Registering service " + service.getName()  
                        + " for component " + component.getImplementation().getType());
                 ExchangeHandler handler = activator.init(service.getQName(), service);
-                Service serviceRef = null;
+                ServiceReference serviceRef = null;
                 if (service.getInterface().getType().equals(JAVA_INTERFACE)) {
                     ServiceInterface si = JavaService.fromClass(
                             loadClass(service.getInterface().getInterface()));
@@ -276,7 +276,7 @@ public class Deployment extends AbstractDeployment {
             for (ComponentReferenceModel reference : component.getReferences()) {
                 _log.debug("Registering reference " + reference.getName()  
                        + " for component " + component.getImplementation().getType());
-                Service service = getDomain().getService(reference.getQName());
+                ServiceReference service = getDomain().getService(reference.getQName());
                 activator.init(reference.getQName(), reference);
                 Activation activation = new Activation(service, activator);
                 activation.start();
@@ -292,7 +292,7 @@ public class Deployment extends AbstractDeployment {
             for (BindingModel binding : service.getBindings()) {
                 _log.debug("Deploying binding " + binding.getType() + " for service " + service.getName());
                 Activator activator = _gatewayActivators.get(binding.getType());
-                Service serviceRef = getDomain().getService(service.getQName());
+                ServiceReference serviceRef = getDomain().getService(service.getQName());
                 activator.init(serviceRef.getName(), service);
                 Activation activation = new Activation(serviceRef, activator);
                 activation.start();
@@ -362,10 +362,10 @@ public class Deployment extends AbstractDeployment {
 }
 
 class Activation {
-    private Service _service;
+    private ServiceReference _service;
     private Activator _activator;
     
-    Activation(Service service, Activator activator) {
+    Activation(ServiceReference service, Activator activator) {
         _service = service;
         _activator = activator;
     }
@@ -382,7 +382,7 @@ class Activation {
         _activator.destroy(_service);
     }
     
-    Service getService() {
+    ServiceReference getService() {
         return _service;
     }
     
