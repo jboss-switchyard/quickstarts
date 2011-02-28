@@ -16,6 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
+
 package org.switchyard.component.soap.config.model.v1;
 
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
