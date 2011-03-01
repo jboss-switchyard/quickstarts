@@ -35,10 +35,10 @@
       <url>https://repository.jboss.org/nexus/content/groups/public/</url>
       <layout>default</layout>
       <releases>
-        <updatePolicy>always</updatePolicy>
+        <updatePolicy>never</updatePolicy>
       </releases>
       <snapshots>
-        <updatePolicy>always</updatePolicy>
+        <updatePolicy>never</updatePolicy>
       </snapshots>
     </repository>
       <repository>
