@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
 	<soap:Body>
-		<submitOrder xmlns="urn:switchyard-quickstarts:m1app:1.0">
+		<m1:submitOrder xmlns:m1="urn:switchyard-quickstarts:m1app:1.0">
 			<order>
 				<orderId>PO-19838-XYZ</orderId>
 				<itemId>BUTTER</itemId>
 				<quantity>200</quantity>
 			</order>
-		</submitOrder>
+		</m1:submitOrder>
 	</soap:Body>
 </soap:Envelope>

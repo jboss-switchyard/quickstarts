@@ -45,11 +45,13 @@ public class TransformOrderAck_Java_XML extends BaseTransformer<OrderAck, Elemen
     @Override
     public Element transform(OrderAck orderAck) {
         StringBuffer ackXml = new StringBuffer()
-            .append("<orderAck xmlns=\"urn:switchyard-quickstarts:m1app:1.0\">")
+            .append("<m1:submitOrderResponse xmlns:m1=\"urn:switchyard-quickstarts:m1app:1.0\">")
+            .append("<orderAck>")
             .append("<orderId>" + orderAck.getOrderId() + "</orderId>")
             .append("<accepted>" + orderAck.isAccepted() + "</accepted>")
             .append("<status>" + orderAck.getStatus() + "</status>")
-            .append("</orderAck>");
+            .append("</orderAck>")
+            .append("</m1:submitOrderResponse>");
         
         return toElement(ackXml.toString());
     }
