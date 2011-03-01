@@ -24,12 +24,12 @@
   <parent>
     <groupId>org.switchyard.quickstarts</groupId>
     <artifactId>switchyard-quickstarts-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1.0-M1</version>
   </parent>
 
   <groupId>org.switchyard.quickstarts</groupId>
   <artifactId>m1app</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.1.0-M1</version>
   <packaging>jar</packaging>
 
   <name>SwitchYard project</name>
@@ -37,27 +37,27 @@
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-api</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>0.1.0-M1</version>
     </dependency>
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-plugin</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>0.1.0-M1</version>
     </dependency>
     <dependency>
       <groupId>org.switchyard.components</groupId>
       <artifactId>switchyard-component-bean</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>0.1.0-M1</version>
     </dependency>
     <dependency>
       <groupId>org.switchyard.components</groupId>
       <artifactId>switchyard-component-soap</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>0.1.0-M1</version>
     </dependency>
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-test</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>0.1.0-M1</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -89,7 +89,7 @@
       <plugin>
           <groupId>org.switchyard</groupId>
           <artifactId>switchyard-plugin</artifactId>
-          <version>1.0-SNAPSHOT</version>
+          <version>0.1.0-M1</version>
           <configuration>
             <scannerClassNames>
                 <param>org.switchyard.component.bean.config.model.BeanSwitchYardScanner</param>
