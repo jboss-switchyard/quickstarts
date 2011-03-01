@@ -68,7 +68,7 @@
       <dependency> 
          <groupId>org.switchyard.components</groupId>
          <artifactId>switchyard-component-bean</artifactId>
-         <version>${project.version</version>
+         <version>${project.version}</version>
       </dependency>
       </dependencies>
     </dependencyManagement>
