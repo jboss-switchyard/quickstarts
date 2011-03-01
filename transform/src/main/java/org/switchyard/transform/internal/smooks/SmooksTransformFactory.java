@@ -35,9 +35,6 @@ import static org.switchyard.transform.internal.smooks.XMLBindingTransformer.*;
  */
 public final class SmooksTransformFactory {
 
-<<<<<<< HEAD
-    private SmooksTransformFactory() {}
-=======
     /**
      * Smooks transformation type.
      */
@@ -52,7 +49,6 @@ public final class SmooksTransformFactory {
      */
     private SmooksTransformFactory() {
     }
->>>>>>> changing smooks transformer config
 
     /**
      * Create a {@link Transformer} instance from the supplied {@link SmooksTransformModel}.

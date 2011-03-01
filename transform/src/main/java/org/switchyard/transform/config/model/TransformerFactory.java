@@ -50,13 +50,6 @@ public final class TransformerFactory {
             }
         } else if (transformModel instanceof SmooksTransformModel) {
             return SmooksTransformFactory.newTransformer((SmooksTransformModel) transformModel);
-<<<<<<< HEAD
-        } else if (transformModel instanceof Xml2JavaTransformModel) {
-            return SmooksTransformFactory.newTransformer((Xml2JavaTransformModel) transformModel);
-        } else if (transformModel instanceof Java2XmlTransformModel) {
-            return SmooksTransformFactory.newTransformer((Java2XmlTransformModel) transformModel);
-=======
->>>>>>> changing smooks transformer config
         }
 
         throw new RuntimeException("Unknown TransformModel type '" + transformModel.getClass().getName() + "'.");
