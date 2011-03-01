@@ -64,5 +64,5 @@ public interface ServiceRegistry {
      * @param domainName domain name
      * @return services
      */
-    List<Service> getServicesForDomain(String domainName);
+    List<Service> getServicesForDomain(QName domainName);
 }

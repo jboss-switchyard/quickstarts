@@ -43,7 +43,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
         new HashMap<QName, List<Service>>();
 
     @Override
-    public List<Service> getServicesForDomain(String domainName) {
+    public List<Service> getServicesForDomain(QName domainName) {
         List<Service> domainServices = getServices();
         // Using an explicit iterator because we are removing elements
         for (Iterator<Service> i = domainServices.iterator(); i.hasNext();) {

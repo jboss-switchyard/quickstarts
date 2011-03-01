@@ -28,7 +28,7 @@ import org.switchyard.ServiceReference;
 public interface Dispatcher {
 
     /**
-     * The name of the service
+     * The name of the service.
      * @return service reference
      */
     ServiceReference getService();

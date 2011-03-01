@@ -38,7 +38,7 @@ import org.switchyard.transform.TransformSequence;
 /**
  * Default handler chain.
  */
-public class DefaultHandlerChain implements HandlerChain, Cloneable {
+public class DefaultHandlerChain implements HandlerChain {
     private final Logger _logger = Logger.getLogger(DefaultHandlerChain.class.toString());
     private final LinkedList<HandlerRef> _chain = new LinkedList<HandlerRef>();
     
@@ -146,8 +146,11 @@ public class DefaultHandlerChain implements HandlerChain, Cloneable {
         }
     }
     
-    @Override
-    public DefaultHandlerChain clone() {
+    /**
+     * Create a copy of the default handler chain.
+     * @return copy of the default chain.
+     */
+    public DefaultHandlerChain copy() {
         return new DefaultHandlerChain(listHandlers());
     }
 

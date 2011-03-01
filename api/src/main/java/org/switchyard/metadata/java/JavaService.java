@@ -151,6 +151,7 @@ public final class JavaService extends BaseService {
      * the type name is derived from the Java Class name.
      *
      * @param javaType The Java type.
+     * @param namespaceURI namespace for the type QName
      * @return The payload type.
      */
     public static QName toMessageType(Class<?> javaType, String namespaceURI) {

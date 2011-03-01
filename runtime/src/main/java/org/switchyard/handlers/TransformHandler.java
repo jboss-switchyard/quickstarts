@@ -44,7 +44,7 @@ import org.switchyard.transform.TransformerRegistry;
  */
 public class TransformHandler extends BaseHandler {
 
-    private static final Logger _logger = Logger.getLogger(TransformHandler.class);
+    private static Logger _logger = Logger.getLogger(TransformHandler.class);
 
     private TransformerRegistry _registry;
 

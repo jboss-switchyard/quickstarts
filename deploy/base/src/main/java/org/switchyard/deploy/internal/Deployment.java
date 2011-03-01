@@ -211,15 +211,15 @@ public class Deployment extends AbstractDeployment {
                 Transformer<?, ?> registeredTransformer = transformerRegistry.getTransformer(transformer.getFrom(), transformer.getTo());
 
                 // TODO: Need to review this... need a formalised way of sharing Transformer instance between apps in a Domain.
-                if(registeredTransformer != null) {
+                if (registeredTransformer != null) {
                     throw new RuntimeException("Failed to register Transformer '" + toDescription(transformer)
                             + "'.  A Transformer for these types is already registered: '"
                             + toDescription(registeredTransformer) + "'.");
                 }
 
-                _log.debug("Adding transformer => \n" +
-                        "From: " + transformer.getFrom() + 
-                        "To:" + transformer.getTo());
+                _log.debug("Adding transformer => \n"
+                       + "From: " + transformer.getFrom()
+                       + "To:" + transformer.getTo());
                 transformerRegistry.addTransformer(transformer);
                 _transformers.add(transformer);
             }
@@ -353,7 +353,7 @@ public class Deployment extends AbstractDeployment {
         String type = component.getImplementation().getType();
         Activator activator = _componentActivators.get(type);
 
-        if(activator == null) {
+        if (activator == null) {
             throw new RuntimeException("Unknown configuration component type '" + type + "'.  No Activator implementation registered for this type.");
         }
 

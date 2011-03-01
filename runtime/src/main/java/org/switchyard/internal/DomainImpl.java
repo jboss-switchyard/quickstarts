@@ -54,7 +54,7 @@ public class DomainImpl implements ServiceDomain {
      * Constructor.
      * @param name name
      * @param registry registry
-     * @param endpointProvider endpointProvider
+     * @param exchangeBus message exchange bus
      * @param transformerRegistry transformerRegistry
      */
     public DomainImpl(QName name,
@@ -88,7 +88,7 @@ public class DomainImpl implements ServiceDomain {
         Dispatcher outputDispatcher = null;
 
         if (handler != null) {
-            HandlerChain replyChain = _defaultHandlers.clone();
+            HandlerChain replyChain = _defaultHandlers.copy();
             replyChain.addLast("replyHandler", handler);
             outputDispatcher = _exchangeBus.createDispatcher(null, replyChain);
         }
@@ -113,7 +113,7 @@ public class DomainImpl implements ServiceDomain {
         // Create the service reference
         ServiceReference reference = new ServiceReferenceImpl(serviceName, metadata, this);
         // Add a handler chain with the provider at the end
-        HandlerChain handlers = _defaultHandlers.clone();
+        HandlerChain handlers = _defaultHandlers.copy();
         handlers.addLast("provider", handler);
         Dispatcher ep = _exchangeBus.createDispatcher(reference, handlers);
         
