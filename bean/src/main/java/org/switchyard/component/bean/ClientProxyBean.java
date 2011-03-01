@@ -45,6 +45,7 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
 import org.switchyard.ServiceReference;
+import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.ServiceOperation;
 
@@ -91,8 +92,9 @@ public class ClientProxyBean implements Bean {
      * @param serviceQName   The name of the ESB Service being proxied to.
      * @param proxyInterface The proxy Interface.
      * @param qualifiers     The CDI bean qualifiers.  Copied from the injection point.
+     * @param beanDeploymentMetaData Deployment metadata.
      */
-    public ClientProxyBean(QName serviceQName, Class<?> proxyInterface, Set<Annotation> qualifiers) {
+    public ClientProxyBean(QName serviceQName, Class<?> proxyInterface, Set<Annotation> qualifiers, BeanDeploymentMetaData beanDeploymentMetaData) {
         this._serviceQName = serviceQName;
         this._proxyInterface = proxyInterface;
 
@@ -106,7 +108,7 @@ public class ClientProxyBean implements Bean {
             });
         }
 
-        _proxyBean = Proxy.newProxyInstance(ClientProxyBean.class.getClassLoader(),
+        _proxyBean = Proxy.newProxyInstance(beanDeploymentMetaData.getDeploymentClassLoader(),
                 new Class[]{proxyInterface},
                 new ClientProxyInvocationHandler());
     }

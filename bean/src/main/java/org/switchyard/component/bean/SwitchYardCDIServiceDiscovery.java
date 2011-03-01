@@ -98,7 +98,7 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
             Class<?> serviceType = bean.getBeanClass();
             Service serviceAnnotation = serviceType.getAnnotation(Service.class);
 
-            _beanDeploymentMetaData.addServiceDescriptor(new CDIBeanServiceDescriptor(bean, beanManager));
+            _beanDeploymentMetaData.addServiceDescriptor(new CDIBeanServiceDescriptor(bean, beanManager, _beanDeploymentMetaData));
             if (serviceType.isInterface()) {
                 addInjectableClientProxyBean(bean, serviceType, serviceAnnotation, beanManager);
             }
@@ -160,7 +160,7 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
             }
         }
 
-        ClientProxyBean clientProxyBean = new ClientProxyBean(serviceQName, beanClass, qualifiers);
+        ClientProxyBean clientProxyBean = new ClientProxyBean(serviceQName, beanClass, qualifiers, _beanDeploymentMetaData);
         _createdProxyBeans.add(clientProxyBean);
     }
 

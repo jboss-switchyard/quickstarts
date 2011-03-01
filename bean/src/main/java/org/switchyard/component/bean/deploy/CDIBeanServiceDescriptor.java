@@ -40,17 +40,20 @@ public class CDIBeanServiceDescriptor implements ServiceDescriptor {
     private Bean _bean;
     private BeanServiceMetadata _serviceMetadata;
     private BeanManager _beanManager;
+    private BeanDeploymentMetaData _beanDeploymentMetaData;
 
     /**
      * Public constructor.
      * @param bean The CDI bean instance.
      * @param beanManager The CDI BeanManager.
+     * @param beanDeploymentMetaData
      */
-    public CDIBeanServiceDescriptor(Bean bean, BeanManager beanManager) {
+    public CDIBeanServiceDescriptor(Bean bean, BeanManager beanManager, BeanDeploymentMetaData beanDeploymentMetaData) {
         this._bean = bean;
         this._beanManager = beanManager;
         this._serviceName = new QName(getServiceInterface(bean).getSimpleName());
         this._serviceMetadata = new BeanServiceMetadata(getServiceInterface(_bean));
+        this._beanDeploymentMetaData = beanDeploymentMetaData;
     }
 
     @Override
@@ -60,10 +63,17 @@ public class CDIBeanServiceDescriptor implements ServiceDescriptor {
 
     @Override
     public ExchangeHandler getHandler() {
-        CreationalContext creationalContext = _beanManager.createCreationalContext(_bean);
-        Object beanRef = _beanManager.getReference(_bean, Object.class, creationalContext);
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(_beanDeploymentMetaData.getDeploymentClassLoader());
 
-        return new ServiceProxyHandler(beanRef, _serviceMetadata);
+            CreationalContext creationalContext = _beanManager.createCreationalContext(_bean);
+            Object beanRef = _beanManager.getReference(_bean, Object.class, creationalContext);
+
+            return new ServiceProxyHandler(beanRef, _serviceMetadata, _beanDeploymentMetaData);
+        } finally {
+            Thread.currentThread().setContextClassLoader(tccl);
+        }
     }
 
     @Override

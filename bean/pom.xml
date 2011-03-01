@@ -38,7 +38,7 @@
     <url>http://www.switchyard.org</url>
 
     <properties>
-        <weld.version>1.1.0-SNAPSHOT</weld.version>
+        <weld.version>1.1.0.Final</weld.version>
     </properties>
 
     <dependencies>

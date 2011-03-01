@@ -43,9 +43,25 @@ public class BeanDeploymentMetaData implements Serializable {
 
     private static final String JAVA_COMP_SWITCHYARD_SERVICE_DESCRIPTOR_SET = "cn=SwitchyardApplicationServiceDescriptorSet";
 
+    private ClassLoader _deploymentClassLoader;
     private List<ServiceDescriptor> _serviceDescriptors = new ArrayList<ServiceDescriptor>();
     private List<ClientProxyBean> _clientProxies = new ArrayList<ClientProxyBean>();
     private List<Transformer> _transformers = new ArrayList<Transformer>();
+
+    /**
+     * Private ClassLoader.
+     */
+    private BeanDeploymentMetaData(ClassLoader deploymentClassLoader) {
+        this._deploymentClassLoader = deploymentClassLoader;
+    }
+
+    /**
+     * Get the deployment ClassLoader.
+     * @return The deployment ClassLoader.
+     */
+    public ClassLoader getDeploymentClassLoader() {
+        return _deploymentClassLoader;
+    }
 
     /**
      * Add a {@link ServiceDescriptor}.
@@ -104,9 +120,10 @@ public class BeanDeploymentMetaData implements Serializable {
      */
     public static BeanDeploymentMetaData bind() {
         Map<ClassLoader, BeanDeploymentMetaData> metaDataMap = getBeanDeploymentMetaDataMap();
-        BeanDeploymentMetaData deploymentMetaData = new BeanDeploymentMetaData();
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        BeanDeploymentMetaData deploymentMetaData = new BeanDeploymentMetaData(contextClassLoader);
 
-        metaDataMap.put(Thread.currentThread().getContextClassLoader(), deploymentMetaData);
+        metaDataMap.put(contextClassLoader, deploymentMetaData);
 
         return deploymentMetaData;
     }
