@@ -46,7 +46,7 @@ public class CDIBeanServiceDescriptor implements ServiceDescriptor {
      * Public constructor.
      * @param bean The CDI bean instance.
      * @param beanManager The CDI BeanManager.
-     * @param beanDeploymentMetaData
+     * @param beanDeploymentMetaData bean deployment info
      */
     public CDIBeanServiceDescriptor(Bean bean, BeanManager beanManager, BeanDeploymentMetaData beanDeploymentMetaData) {
         this._bean = bean;

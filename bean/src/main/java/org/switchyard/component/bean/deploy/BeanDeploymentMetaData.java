@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class BeanDeploymentMetaData implements Serializable {
+public final class BeanDeploymentMetaData implements Serializable {
 
     private static final String JAVA_COMP_SWITCHYARD_SERVICE_DESCRIPTOR_SET = "cn=SwitchyardApplicationServiceDescriptorSet";
 
