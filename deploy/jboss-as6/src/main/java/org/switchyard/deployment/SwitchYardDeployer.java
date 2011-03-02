@@ -19,6 +19,9 @@
 
 package org.switchyard.deployment;
 
+import java.io.InputStream;
+import java.io.IOException;
+
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
@@ -26,6 +29,7 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
@@ -46,11 +50,28 @@ public class SwitchYardDeployer extends AbstractSimpleVFSRealDeployer<SwitchYard
 
     @Override
     public void deploy(VFSDeploymentUnit unit, SwitchYardMetaData metaData)
-    throws DeploymentException {
-        BeanMetaData beanMetaData = createBeanMetaData(unit, metaData);
+    	throws DeploymentException {
+	try {
+	    parseSwitchYardConfig(metaData);
+	} catch (IOException ioe) {
+	    throw new DeploymentException(ioe);
+	}
+	BeanMetaData beanMetaData = createBeanMetaData(unit, metaData);
         unit.addAttachment(BeanMetaData.class, beanMetaData);
     }
+    
+    /**
+     * Parse the SwitchYard configuration
+     * @param metaData SwitchYard MetaData
+     * @throws IOException IOException
+     */
+    private void parseSwitchYardConfig(SwitchYardMetaData metaData) throws IOException {
+	InputStream is = metaData.getSwitchYardFile().openStream();
 
+	SwitchYardModel switchyardModel = new ModelResource<SwitchYardModel>().pull(is);
+	metaData.setSwitchYardModel(switchyardModel);
+    }
+    
     /**
      * Creates a {@link BeanMetaData} that describes the {@link SwitchYardDeployment} class.
      *

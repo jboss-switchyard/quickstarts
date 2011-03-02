@@ -20,6 +20,7 @@
 package org.switchyard.deployment;
 
 import java.io.Serializable;
+import org.jboss.vfs.VirtualFile;
 
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
@@ -39,6 +40,8 @@ public class SwitchYardMetaData implements Serializable {
     /** The deployment name. The SwitchYard archive name without the .esb suffix */
     private String _deploymentName = null;
 
+    private VirtualFile _switchYardFile = null;
+    
     private transient SwitchYardModel _switchyardModel = null;
 
     /**
@@ -96,5 +99,21 @@ public class SwitchYardMetaData implements Serializable {
      */
     public void setSwitchYardModel(SwitchYardModel switchyardModel) {
         _switchyardModel = switchyardModel;
+    }
+    
+    /**
+     * Getter for the file containing the SwitchYard configuration.
+     * @return switchyardFile SwitchYard configuration file
+     */
+    public VirtualFile getSwitchYardFile() {
+        return _switchYardFile;
+    }
+
+    /**
+     * Setter for the file containing the SwitchYard configuration.
+     * @param switchYardFile SwitchYard configuration file 
+     */
+    public void setSwitchYardFile(VirtualFile switchYardFile) {
+        _switchYardFile = switchYardFile;
     }
 }
