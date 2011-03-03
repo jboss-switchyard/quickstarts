@@ -32,8 +32,9 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.switchyard.test.SwitchYardCDITestCase;
 
-public class WebServiceTest {
+public class WebServiceTest extends SwitchYardCDITestCase {
     
     private InputStream _requestStream;
     private Reader _expectedResponseReader;
