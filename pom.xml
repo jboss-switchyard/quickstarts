@@ -38,7 +38,21 @@
     <system>jira</system>
     <url>http://jira.jboss.org/browse/SWITCHYARD</url>
   </issueManagement>
- 
+
+   <developers>
+      <developer>
+         <name>SwitchYard committers</name>
+      </developer>
+   </developers>
+
+   <licenses>
+      <license>
+         <name>GNU Lesser General Public License</name>
+         <url>http://www.gnu.org/copyleft/lesser.html</url>
+         <distribution>repo</distribution>
+      </license>
+   </licenses>
+
   <properties>
      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
      <junit.version>4.8.1</junit.version>
@@ -51,6 +65,7 @@
 
   <scm>
     <connection>scm:git:ssh//github.com/switchyard/core.git</connection>
+    <developerConnection>scm:git:ssh://github.com/switchyard/core.git</developerConnection>
     <url>http://github.com/switchyard/core</url>
   </scm>
 
