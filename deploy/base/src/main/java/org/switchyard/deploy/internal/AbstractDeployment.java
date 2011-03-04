@@ -38,6 +38,10 @@ import org.switchyard.spi.ServiceRegistry;
  */
 public abstract class AbstractDeployment {
     /**
+     * Default classpath location for the switchyard configuration.
+     */
+    public static final String SWITCHYARD_XML = "/META-INF/switchyard.xml";
+    /**
      * Root domain property.
      */
     public static final QName ROOT_DOMAIN = new QName("org.switchyard.domains.root");
@@ -60,6 +64,16 @@ public abstract class AbstractDeployment {
     public void init() {
         createDomain();
     }
+
+    /**
+     * Start/un-pause the deployment.
+     */
+    public abstract void start();
+
+    /**
+     * Stop/pause the deployment.
+     */
+    public abstract void stop();
 
     /**
      * Destroy the deployment.

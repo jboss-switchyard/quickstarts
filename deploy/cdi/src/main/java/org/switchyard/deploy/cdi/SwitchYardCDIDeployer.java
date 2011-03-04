@@ -27,6 +27,7 @@ import javax.enterprise.inject.spi.AfterDeploymentValidation;
 import javax.enterprise.inject.spi.BeforeShutdown;
 import javax.enterprise.inject.spi.Extension;
 
+import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.deploy.internal.Deployment;
 
 /**
@@ -38,7 +39,6 @@ import org.switchyard.deploy.internal.Deployment;
 @ApplicationScoped
 public class SwitchYardCDIDeployer implements Extension {
 
-    private static final String DESCRIPTOR = "META-INF/switchyard.xml";
     private Deployment _deployment;
 
     /**
@@ -47,7 +47,7 @@ public class SwitchYardCDIDeployer implements Extension {
      * @param event         CDI Event instance.
      */
     public void afterDeploymentValidation(@Observes AfterDeploymentValidation event) {
-        InputStream swConfigStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(DESCRIPTOR);
+        InputStream swConfigStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(AbstractDeployment.SWITCHYARD_XML);
 
         if (swConfigStream != null) {
             _deployment = new Deployment(swConfigStream);

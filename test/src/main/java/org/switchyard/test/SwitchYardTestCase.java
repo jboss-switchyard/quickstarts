@@ -24,12 +24,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
+import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.deploy.internal.AbstractDeployment;
+import org.switchyard.deploy.internal.Deployment;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.transform.Transformer;
 
 import javax.xml.namespace.QName;
+import java.io.InputStream;
 
 /**
  * Base class for writing SwitchYard tests.
@@ -39,9 +43,63 @@ import javax.xml.namespace.QName;
 public abstract class SwitchYardTestCase {
 
     /**
+     * Test configuration model.
+     */
+    private SwitchYardModel _configModel;
+    /**
      * The deployment.
      */
     private AbstractDeployment _deployment;
+
+    /**
+     * Public default constructor.
+     */
+    public SwitchYardTestCase() {
+        SwitchYardDeploymentConfig deploymentConfig = getClass().getAnnotation(SwitchYardDeploymentConfig.class);
+        if(deploymentConfig != null && deploymentConfig.value() != null) {
+            _configModel = createSwitchYardModel(getClass().getResourceAsStream(deploymentConfig.value()));
+        }
+    }
+
+    /**
+     * Public constructor.
+     * @param configModel Configuration model stream.
+     */
+    public SwitchYardTestCase(InputStream configModel) {
+        _configModel = createSwitchYardModel(configModel);
+    }
+
+    /**
+     * Public constructor.
+     * <p/>
+     * Loads the config model from the classpath.
+     *
+     * @param configModelPath Configuration model classpath path.
+     */
+    public SwitchYardTestCase(String configModelPath) {
+        Assert.assertNotNull("Test 'configModel' is null.", configModelPath);
+        _configModel = createSwitchYardModel(getClass().getResourceAsStream(configModelPath));
+    }
+
+    /**
+     * Public constructor.
+     * @param configModel Configuration model.
+     */
+    public SwitchYardTestCase(SwitchYardModel configModel) {
+        Assert.assertNotNull("Test 'configModel' is null.", configModel);
+        _configModel = configModel;
+    }
+
+    /**
+     * Get the configuration model driving this test instance, if one exists.
+     * <p/>
+     * An abstract deployment is created if no configuration model is supplied on construction.
+     *
+     * @return The config model, or null if no config model was used to construct the TestCase instance.
+     */
+    public SwitchYardModel getConfigModel() {
+        return _configModel;
+    }
 
     /**
      * Create and initialise the deployment.
@@ -52,6 +110,7 @@ public abstract class SwitchYardTestCase {
         if (_deployment == null) {
             _deployment = createDeployment();
             _deployment.init();
+            _deployment.start();
         }
     }
 
@@ -61,6 +120,7 @@ public abstract class SwitchYardTestCase {
     @After
     public void undeploy() {
         assertDeployed();
+        _deployment.stop();
         _deployment.destroy();
     }
 
@@ -70,11 +130,21 @@ public abstract class SwitchYardTestCase {
      * @throws Exception creating the deployment.
      */
     protected AbstractDeployment createDeployment() throws Exception {
-        return new AbstractDeployment() {
-            @Override
-            public void destroy() {
-            }
-        };
+        if(_configModel != null) {
+            return new Deployment(_configModel);
+        } else {
+            return new AbstractDeployment() {
+                @Override
+                public void start() {
+                }
+                @Override
+                public void stop() {
+                }
+                @Override
+                public void destroy() {
+                }
+            };
+        }
     }
 
     /**
@@ -164,6 +234,15 @@ public abstract class SwitchYardTestCase {
     private void assertDeployed() {
         if (_deployment == null) {
             Assert.fail("TestCase deployment not yet deployed.  You may need to make an explicit call to the deploy() method.");
+        }
+    }
+
+    private static SwitchYardModel createSwitchYardModel(InputStream configModel) {
+        Assert.assertNotNull("Test 'configModel' is null.", configModel);
+        try {
+            return new ModelResource<SwitchYardModel>().pull(configModel);
+        } catch (java.io.IOException ioEx) {
+            throw new RuntimeException("Failed to read switchyard config.", ioEx);
         }
     }
 }

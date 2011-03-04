@@ -24,7 +24,11 @@ import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.environment.se.events.ContainerInitialized;
 import org.junit.After;
 import org.junit.BeforeClass;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.deploy.internal.AbstractDeployment;
+import org.switchyard.deploy.internal.Deployment;
+
+import java.io.InputStream;
 
 /**
  * Base class for writing SwitchYard Bean @Service tests.
@@ -37,6 +41,40 @@ public abstract class SwitchYardCDITestCase extends SwitchYardTestCase {
      * Deployment runtime type.
      */
     private static Class<? extends AbstractDeployment> _cdiDeploymentTyoe;
+
+    /**
+     * Public default constructor.
+     */
+    protected SwitchYardCDITestCase() {
+        super();
+    }
+
+    /**
+     * Public constructor.
+     * @param configModel Configuration model stream.
+     */
+    protected SwitchYardCDITestCase(InputStream configModel) {
+        super(configModel);
+    }
+
+    /**
+     * Public constructor.
+     * <p/>
+     * Loads the config model from the classpath.
+     *
+     * @param configModelPath Configuration model classpath path.
+     */
+    protected SwitchYardCDITestCase(String configModelPath) {
+        super(configModelPath);
+    }
+
+    /**
+     * Public constructor.
+     * @param configModel Configuration model.
+     */
+    protected SwitchYardCDITestCase(SwitchYardModel configModel) {
+        super(configModel);
+    }
 
     /**
      * Initialise the context and create teh deployment runtime type..
@@ -55,7 +93,11 @@ public abstract class SwitchYardCDITestCase extends SwitchYardTestCase {
     @Override
     protected AbstractDeployment createDeployment() throws InstantiationException, IllegalAccessException {
         deployWeldContainer();
-        return _cdiDeploymentTyoe.newInstance();
+        if(getConfigModel() != null) {
+            return new Deployment(getConfigModel());
+        } else {
+            return _cdiDeploymentTyoe.newInstance();
+        }
     }
 
     /**
