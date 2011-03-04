@@ -33,12 +33,23 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.test.SwitchYardCDITestCase;
+import org.switchyard.test.SwitchYardDeploymentConfig;
 
+@SwitchYardDeploymentConfig(SwitchYardDeploymentConfig.SWITCHYARD_XML)
 public class WebServiceTest extends SwitchYardCDITestCase {
-    
+
+    // ------------------------------------------------------------------------------------
+    //
+    //  NOTE: This test cannot be run from inside your IDE because the switchyard.xml that
+    //        it relies upon is only generated at built time.
+    //
+    //        See https://issues.jboss.org/browse/SWITCHYARD-163
+    //
+    // ------------------------------------------------------------------------------------
+
     private InputStream _requestStream;
     private Reader _expectedResponseReader;
-    
+
     @Before
     public void setUp() throws Exception {
         _requestStream = getClass().getClassLoader().getResourceAsStream("xml/soap-request.xml");
