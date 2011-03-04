@@ -55,6 +55,20 @@ public class SimpleCDIDeployment extends AbstractDeployment {
      * {@inheritDoc}
      */
     @Override
+    public void start() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void stop() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void destroy() {
 
     }
