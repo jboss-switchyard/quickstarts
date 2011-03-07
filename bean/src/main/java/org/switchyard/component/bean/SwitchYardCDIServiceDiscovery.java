@@ -22,6 +22,7 @@ package org.switchyard.component.bean;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -99,9 +100,6 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
             Service serviceAnnotation = serviceType.getAnnotation(Service.class);
 
             _beanDeploymentMetaData.addServiceDescriptor(new CDIBeanServiceDescriptor(bean, beanManager, _beanDeploymentMetaData));
-            if (serviceType.isInterface()) {
-                addInjectableClientProxyBean(bean, serviceType, serviceAnnotation, beanManager);
-            }
         }
 
         // Register all transformers we can find...
@@ -140,11 +138,6 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
         BeanDeploymentMetaData.unbind();
     }
 
-    private void addInjectableClientProxyBean(Bean<?> serviceBean, Class<?> serviceType, Service serviceAnnotation, BeanManager beanManager) {
-        QName serviceQName = toServiceQName(serviceType);
-        addClientProxyBean(serviceQName, serviceType, null);
-    }
-
     private void addInjectableClientProxyBean(Field injectionPointField, Reference serviceReference, Set<Annotation> qualifiers, BeanManager beanManager) {
         QName serviceQName = toServiceQName(injectionPointField.getType());
 
@@ -165,7 +158,8 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
     }
 
     private boolean isServiceBean(Bean<?> bean) {
-        return bean.getBeanClass().isAnnotationPresent(Service.class);
+        Class<?> beanClass = bean.getBeanClass();
+        return (Modifier.isPublic(beanClass.getModifiers()) && beanClass.isAnnotationPresent(Service.class));
     }
 
     private QName toServiceQName(Class<?> serviceType) {
