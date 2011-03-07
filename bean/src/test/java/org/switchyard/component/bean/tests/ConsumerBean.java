@@ -25,8 +25,8 @@ import org.junit.Assert;
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
 
-@Service
-public class ConsumerBean {
+@Service(ConsumerService.class)
+public class ConsumerBean implements ConsumerService {
     
     @Inject @Reference
     private OneWay oneWay;
@@ -34,10 +34,12 @@ public class ConsumerBean {
     @Inject @Reference
     private RequestResponse requestResponse;
     
+    @Override
     public void consumeInOnlyService(Object message) {
         oneWay.oneWay(message);
     }
     
+    @Override
     public Object consumeInOutService(Object message) throws ConsumerException {
         try {
             Object reply = null;

@@ -84,13 +84,12 @@ public class CDIBeanServiceDescriptor implements ServiceDescriptor {
     private Class<?> getServiceInterface(Bean bean) {
         Class<?> beanClass = bean.getBeanClass();
         Service serviceAnnotation = beanClass.getAnnotation(Service.class);
-        Class<?>[] interfaces = serviceAnnotation.value();
+        Class<?> serviceInterface = serviceAnnotation.value();
 
-        if (interfaces == null || interfaces.length != 1) {
-            // TODO: This might change... perhaps a service interface should be mandatory??
-            return beanClass;
+        if (serviceInterface == null) {
+            throw new RuntimeException("Unexpected exception.  The @Service annotation requires a Service interface Class value to be defined, yet the annotation has no value.");
         }
 
-        return interfaces[0];
+        return serviceInterface;
     }
 }

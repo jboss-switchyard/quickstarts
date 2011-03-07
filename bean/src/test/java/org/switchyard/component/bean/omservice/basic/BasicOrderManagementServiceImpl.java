@@ -17,28 +17,21 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.component.bean;
+package org.switchyard.component.bean.omservice.basic;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.switchyard.component.bean.Service;
+import org.switchyard.component.bean.omservice.model.OrderRequest;
+import org.switchyard.component.bean.omservice.model.OrderResponse;
 
 /**
- * Bean Service Annotation.
- *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
- * @see org.switchyard.component.bean.Reference
  */
-@Target({TYPE, FIELD })
-@Retention(RUNTIME)
-@Documented
-public @interface Service {
+@Service(BasicOrderManagementService.class)
+public class BasicOrderManagementServiceImpl implements BasicOrderManagementService {
 
-    /**
-     * Get the Service Interface for the Service.
-     */
-    Class<?> value();
+    @Override
+    public OrderResponse createOrder(OrderRequest request) {
+
+        return new OrderResponse(request.orderId);
+    }
 }
