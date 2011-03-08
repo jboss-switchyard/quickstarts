@@ -93,7 +93,7 @@ public abstract class SwitchYardCDITestCase extends SwitchYardTestCase {
     @Override
     protected AbstractDeployment createDeployment() throws InstantiationException, IllegalAccessException {
         deployWeldContainer();
-        if(getConfigModel() != null) {
+        if (getConfigModel() != null) {
             return new Deployment(getConfigModel());
         } else {
             return _cdiDeploymentTyoe.newInstance();

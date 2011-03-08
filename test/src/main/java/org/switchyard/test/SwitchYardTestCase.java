@@ -56,7 +56,7 @@ public abstract class SwitchYardTestCase {
      */
     public SwitchYardTestCase() {
         SwitchYardDeploymentConfig deploymentConfig = getClass().getAnnotation(SwitchYardDeploymentConfig.class);
-        if(deploymentConfig != null && deploymentConfig.value() != null) {
+        if (deploymentConfig != null && deploymentConfig.value() != null) {
             _configModel = createSwitchYardModel(getClass().getResourceAsStream(deploymentConfig.value()));
         }
     }
@@ -130,7 +130,7 @@ public abstract class SwitchYardTestCase {
      * @throws Exception creating the deployment.
      */
     protected AbstractDeployment createDeployment() throws Exception {
-        if(_configModel != null) {
+        if (_configModel != null) {
             return new Deployment(_configModel);
         } else {
             return new AbstractDeployment() {

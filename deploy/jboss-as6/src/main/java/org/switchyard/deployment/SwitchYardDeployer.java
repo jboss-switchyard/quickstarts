@@ -50,13 +50,13 @@ public class SwitchYardDeployer extends AbstractSimpleVFSRealDeployer<SwitchYard
 
     @Override
     public void deploy(VFSDeploymentUnit unit, SwitchYardMetaData metaData)
-    	throws DeploymentException {
-	try {
-	    parseSwitchYardConfig(metaData);
-	} catch (IOException ioe) {
-	    throw new DeploymentException(ioe);
-	}
-	BeanMetaData beanMetaData = createBeanMetaData(unit, metaData);
+        throws DeploymentException {
+        try {
+            parseSwitchYardConfig(metaData);
+        } catch (IOException ioe) {
+            throw new DeploymentException(ioe);
+        }
+        BeanMetaData beanMetaData = createBeanMetaData(unit, metaData);
         unit.addAttachment(BeanMetaData.class, beanMetaData);
     }
     
@@ -66,10 +66,10 @@ public class SwitchYardDeployer extends AbstractSimpleVFSRealDeployer<SwitchYard
      * @throws IOException IOException
      */
     private void parseSwitchYardConfig(SwitchYardMetaData metaData) throws IOException {
-	InputStream is = metaData.getSwitchYardFile().openStream();
+        InputStream is = metaData.getSwitchYardFile().openStream();
 
-	SwitchYardModel switchyardModel = new ModelResource<SwitchYardModel>().pull(is);
-	metaData.setSwitchYardModel(switchyardModel);
+        SwitchYardModel switchyardModel = new ModelResource<SwitchYardModel>().pull(is);
+        metaData.setSwitchYardModel(switchyardModel);
     }
     
     /**
