@@ -33,6 +33,7 @@ import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
+import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
@@ -239,7 +240,18 @@ public class Deployment extends AbstractDeployment {
 
     private void deployReferenceBindings() {
         _log.debug("Deploying reference bindings ...");
-       
+        // activate bindings for each service
+        for (CompositeReferenceModel reference : _switchyardConfig.getComposite().getReferences()) {
+            for (BindingModel binding : reference.getBindings()) {
+                _log.debug("Deploying binding " + binding.getType() + " for reference " + reference.getName());
+                Activator activator = _gatewayActivators.get(binding.getType());
+                ExchangeHandler handler = activator.init(reference.getQName(), reference);
+                ServiceReference serviceRef = getDomain().registerService(reference.getQName(), handler);
+                Activation activation = new Activation(serviceRef, activator);
+                activation.start();
+                _referenceBindings.add(activation);
+            }
+        }
     }
 
     private void deployServices() {
