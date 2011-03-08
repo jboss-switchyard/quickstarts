@@ -27,19 +27,25 @@ import javax.xml.namespace.QName;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.soap.InboundHandler;
+import org.switchyard.component.soap.OutboundHandler;
+import org.switchyard.component.soap.WebServiceConsumeException;
+import org.switchyard.component.soap.WebServicePublishException;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
+import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.deploy.Activator;
 
 /**
  * SOAP Activator.
  */
 public class SOAPActivator implements Activator {
-    
+
     private Map<QName, InboundHandler> _inboundGateways = 
         new HashMap<QName, InboundHandler>();
+    private Map<QName, OutboundHandler> _outboundGateways = 
+        new HashMap<QName, OutboundHandler>();
 
 
     @Override
@@ -54,6 +60,16 @@ public class SOAPActivator implements Activator {
             }
         }
 
+        if (config instanceof CompositeReferenceModel) {
+            for (BindingModel binding : ((CompositeReferenceModel)config).getBindings()) {
+                if (binding instanceof SOAPBindingModel) {
+                    OutboundHandler handler = new OutboundHandler((SOAPBindingModel)binding);
+                    _outboundGateways.put(name, handler);
+                    return handler;
+                }
+            }
+        }
+
         // no bindings were found, raise a deployment error
         throw new RuntimeException("No SOAP bindings found for service " + name);
     }
@@ -63,9 +79,17 @@ public class SOAPActivator implements Activator {
         if (_inboundGateways.containsKey(service.getName())) {
             try {
                 _inboundGateways.get(service.getName()).start(service);
-            } catch (org.switchyard.component.soap.WebServicePublishException ex) {
+            } catch (WebServicePublishException ex) {
                 throw new RuntimeException(
                         "Failed to start inbound gateway for service " + service.getName(), ex);
+            }
+        }
+        if (_outboundGateways.containsKey(service.getName())) {
+            try {
+                _outboundGateways.get(service.getName()).start();
+            } catch (WebServiceConsumeException ex) {
+                throw new RuntimeException(
+                        "Failed to start outbound gateway for service " + service.getName(), ex);
             }
         }
     }
@@ -75,10 +99,14 @@ public class SOAPActivator implements Activator {
         if (_inboundGateways.containsKey(service.getName())) {
                 _inboundGateways.get(service.getName()).stop();
         }
+        if (_outboundGateways.containsKey(service.getName())) {
+                _outboundGateways.get(service.getName()).stop();
+        }
     }
 
     @Override
     public void destroy(ServiceReference service) {
         _inboundGateways.remove(service.getName());
+        _outboundGateways.remove(service.getName());
     }
 }
