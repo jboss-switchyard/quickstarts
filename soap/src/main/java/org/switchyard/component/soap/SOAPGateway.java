@@ -70,12 +70,16 @@ public class SOAPGateway {
                 _wsProvider.start(_domain.getService(_config.getServiceName()));
             } catch (Exception e) {
                 LOGGER.error(e);
-                e.printStackTrace();
                 throw new RuntimeException("WebService could not be published!");
             }
         }
         if (_wsConsumer != null) {
-            _wsConsumer.start();
+            try {
+                _wsConsumer.start();
+            } catch (Exception e) {
+                LOGGER.error(e);
+                throw new RuntimeException("WebService could not be consumed!");
+            }
         }
     }
 

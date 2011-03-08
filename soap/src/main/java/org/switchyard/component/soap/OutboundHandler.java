@@ -91,8 +91,32 @@ public class OutboundHandler extends BaseHandler {
 
     /**
      * Start lifecycle.
+     * @throws WebServiceConsumeException If unable to load the WSDL
      */
-    public void start() {
+    public void start() throws WebServiceConsumeException {
+        if (_dispatcher == null) {
+            try {
+                PortName portName = _config.getPort();
+                javax.wsdl.Service wsdlService = WSDLUtil.getService(_config.getWsdl(), portName);
+                _port = WSDLUtil.getPort(wsdlService, portName);
+                // Update the portName
+                portName.setServiceQName(wsdlService.getQName());
+                portName.setName(_port.getName());
+
+                URL wsdlUrl = WSDLUtil.getURL(_config.getWsdl());
+                LOGGER.info("Creating dispatch with WSDL " + wsdlUrl);
+                Service service = Service.create(wsdlUrl, portName.getServiceQName());
+                _dispatcher = service.createDispatch(portName.getPortQName(), SOAPMessage.class, Service.Mode.MESSAGE, new AddressingFeature(false, false));
+                // this does not return a proper qualified Fault element and has no Detail so defering for now
+                // BindingProvider bp = (BindingProvider) _dispatcher;
+                // bp.getRequestContext().put("jaxws.response.throwExceptionIfSOAPFault", Boolean.FALSE);
+
+            } catch (MalformedURLException e) {
+                throw new WebServiceConsumeException(e);
+            } catch (WSDLException wsdle) {
+                throw new WebServiceConsumeException(wsdle);
+            }
+        }
     }
 
     /**
@@ -128,28 +152,6 @@ public class OutboundHandler extends BaseHandler {
      * @throws SOAPException If a Dispatch could not be created based on the SOAP message.
      */
     private SOAPMessage invokeService(final SOAPMessage soapMessage) throws SOAPException {
-        if (_dispatcher == null) {
-            try {
-                PortName portName = _config.getPort();
-                javax.wsdl.Service wsdlService = WSDLUtil.getService(_config.getWsdl(), portName);
-                _port = WSDLUtil.getPort(wsdlService, portName);
-                // Update the portName
-                portName.setServiceQName(wsdlService.getQName());
-                portName.setName(_port.getName());
-
-                URL wsdlUrl = new URL(_config.getWsdl());
-                Service service = Service.create(wsdlUrl, portName.getServiceQName());
-                _dispatcher = service.createDispatch(portName.getPortQName(), SOAPMessage.class, Service.Mode.MESSAGE, new AddressingFeature(false, false));
-                // this does not return a proper qualified Fault element and has no Detail so defering for now
-                // BindingProvider bp = (BindingProvider) _dispatcher;
-                // bp.getRequestContext().put("jaxws.response.throwExceptionIfSOAPFault", Boolean.FALSE);
-
-            } catch (MalformedURLException e) {
-                throw new SOAPException(e);
-            } catch (WSDLException wsdle) {
-                throw new SOAPException(wsdle);
-            }
-        }
 
         SOAPMessage response = null;
         try {

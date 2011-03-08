@@ -136,7 +136,7 @@ public final class WSDLUtil {
      * @return the URL.
      * @throws MalformedURLException If the url path is not valid
      */
-    private static URL getURL(final String path) throws MalformedURLException {
+    public static URL getURL(final String path) throws MalformedURLException {
         if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("file://")) {
             return new URL(null, path);
         } else {

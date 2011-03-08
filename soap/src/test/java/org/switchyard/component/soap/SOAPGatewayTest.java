@@ -58,6 +58,7 @@ import org.switchyard.metadata.BaseService;
 import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.ServiceOperation;
+import org.switchyard.test.InvocationFaultException;
 import org.switchyard.test.SwitchYardTestCase;
 import org.w3c.dom.Element;
 
@@ -68,6 +69,7 @@ import org.w3c.dom.Element;
  */
 public class SOAPGatewayTest extends SwitchYardTestCase {
     private static final QName WS_CONSUMER_SERVICE = new QName("webservice-consumer");
+    private static final QName WS_CONSUMER_CLASSPATH_WSDL = new QName("webservice-consumer-classpath-wsdl");
     private static final int DEFAULT_THREAD_COUNT = 10;
     private static final long DEFAULT_NO_OF_THREADS = 100;
 
@@ -75,6 +77,7 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
     private ServiceDomain _domain;
     private SOAPGateway _soapInbound;
     private SOAPGateway _soapOutbound;
+    private SOAPGateway _soapOutbound2;
     private long _noOfThreads = DEFAULT_NO_OF_THREADS;
     
     private static ModelResource<CompositeModel> _res;
@@ -163,21 +166,47 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
 
         // A WS Consumer as Service
         _soapOutbound = new SOAPGateway();
-        config = new SOAPBindingModel();
-        config.setWsdl(_serviceURL.toExternalForm() + "?wsdl");
-        config.setServiceName(WS_CONSUMER_SERVICE);
-        _soapOutbound.init(config, _domain);
+        SOAPBindingModel config2 = new SOAPBindingModel();
+        config2.setWsdl(_serviceURL.toExternalForm() + "?wsdl");
+        config2.setServiceName(WS_CONSUMER_SERVICE);
+        _soapOutbound.init(config2, _domain);
         _soapOutbound.start();
-        
+
+        _soapOutbound2 = new SOAPGateway();
+        SOAPBindingModel config3 = new SOAPBindingModel();
+        config3.setWsdl(config.getWsdl());
+        config3.setServiceName(WS_CONSUMER_CLASSPATH_WSDL);
+        _soapOutbound2.init(config3, _domain);
+        _soapOutbound2.start();
+
         XMLUnit.setIgnoreWhitespace(true);
     }
     
     @After
     public void tearDown() throws Exception {
         _soapOutbound.stop();
+        _soapOutbound2.stop();
         _soapInbound.stop();
         _soapInbound.destroy();
         _soapOutbound.destroy();
+        _soapOutbound2.destroy();
+    }
+
+    @Test
+    public void invokeWithClassPathResource() throws Exception {
+        Element input = SOAPUtil.parseAsDom("<test:sayHello xmlns:test=\"urn:switchyard-component-soap:test-ws:1.0\">"
+                     + "   <arg0>Hello</arg0>"
+                     + "</test:sayHello>").getDocumentElement();
+        String rootCause = null;
+        try {
+            newInvoker(WS_CONSUMER_CLASSPATH_WSDL).sendInOut(input);
+        } catch (InvocationFaultException ife) {
+            rootCause = getRootCause(ife);
+        }
+
+        // A real URL here would depend on the test environment's host and port hence,
+        // it is sufficient to test that we actually loaded the WSDL from classpath
+        Assert.assertEquals("javax.xml.ws.WebServiceException: Unsupported endpoint address: REPLACE_WITH_ACTUAL_URL", rootCause);
     }
 
     @Test
@@ -260,6 +289,14 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
                      + "</soap:Body></soap:Envelope>";
             XMLAssert.assertXMLEqual(output, response);
             i++;
+        }
+    }
+
+    private String getRootCause(Throwable t) {
+        if(t.getCause() != null){
+            return getRootCause(t.getCause());
+        } else {
+            return t.toString();
         }
     }
 
