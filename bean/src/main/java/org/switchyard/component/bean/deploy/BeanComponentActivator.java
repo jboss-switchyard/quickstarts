@@ -47,7 +47,7 @@ public class BeanComponentActivator implements Activator {
      * Public constructor.
      */
     public BeanComponentActivator() {
-        _beanDeploymentMetaData = BeanDeploymentMetaData.lookup();
+        _beanDeploymentMetaData = BeanDeploymentMetaData.lookup(Thread.currentThread().getContextClassLoader());
     }
 
 

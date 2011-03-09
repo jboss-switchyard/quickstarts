@@ -39,6 +39,7 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.ProcessBean;
 import javax.xml.namespace.QName;
 
+import org.apache.log4j.Logger;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
 import org.switchyard.component.bean.deploy.CDIBeanServiceDescriptor;
 import org.switchyard.transform.Transformer;
@@ -52,6 +53,10 @@ import org.switchyard.transform.Transformer;
 public class SwitchYardCDIServiceDiscovery implements Extension {
 
     /**
+     * Logger
+     */
+    private static Logger _logger = Logger.getLogger(SwitchYardCDIServiceDiscovery.class);
+    /**
      * Bean deployment metadata.
      */
     private BeanDeploymentMetaData _beanDeploymentMetaData;
@@ -64,9 +69,10 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
      * {@link javax.enterprise.inject.spi.BeforeBeanDiscovery} CDI event observer.
      *
      * @param beforeEvent CDI Event instance.
+     * @param beanManager BeanManager instance.
      */
-    public void beforeBeanDiscovery(@Observes BeforeBeanDiscovery beforeEvent) {
-        _beanDeploymentMetaData = BeanDeploymentMetaData.bind();
+    public void beforeBeanDiscovery(@Observes BeforeBeanDiscovery beforeEvent, BeanManager beanManager) {
+        _beanDeploymentMetaData = BeanDeploymentMetaData.bind(beanManager);
     }
 
     /**
@@ -99,6 +105,7 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
             Class<?> serviceType = bean.getBeanClass();
             Service serviceAnnotation = serviceType.getAnnotation(Service.class);
 
+            _logger.debug("Adding ServiceDescriptor for bean " + bean.getBeanClass().getName());
             _beanDeploymentMetaData.addServiceDescriptor(new CDIBeanServiceDescriptor(bean, beanManager, _beanDeploymentMetaData));
         }
 
@@ -107,6 +114,7 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
             Class<?> transformerRT = bean.getBeanClass();
 
             try {
+                _logger.debug("Adding Transformer " + transformerRT.getName());
                 _beanDeploymentMetaData.addTransformer((Transformer) transformerRT.newInstance());
             } catch (InstantiationException e) {
                 throw new IllegalStateException("Invalid Transformer implementation '" + transformerRT.getName() + "'.", e);
@@ -123,6 +131,7 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
      */
     public void afterBeanDiscovery(@Observes AfterBeanDiscovery afterEvent) {
         for (ClientProxyBean proxyBean : _createdProxyBeans) {
+            _logger.debug("Adding ClientProxyBean for bean Service " + proxyBean.getServiceQName() + ".  Service Interface type is " + proxyBean.getServiceInterface().getName());
             afterEvent.addBean(proxyBean);
             _beanDeploymentMetaData.addClientProxy(proxyBean);
         }
@@ -135,7 +144,7 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
      * @param beanManager CDI Bean Manager instance.
      */
     public void beforeShutdown(@Observes BeforeShutdown event, BeanManager beanManager) {
-        BeanDeploymentMetaData.unbind();
+        BeanDeploymentMetaData.unbind(beanManager);
     }
 
     private void addInjectableClientProxyBean(Field injectionPointField, Reference serviceReference, Set<Annotation> qualifiers, BeanManager beanManager) {

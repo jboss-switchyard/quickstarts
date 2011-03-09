@@ -19,9 +19,11 @@
 
 package org.switchyard.component.bean.deploy;
 
+import org.apache.log4j.Logger;
 import org.switchyard.component.bean.ClientProxyBean;
 import org.switchyard.transform.Transformer;
 
+import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -29,8 +31,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Bean Deployment Meta Data.
@@ -41,9 +41,15 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class BeanDeploymentMetaData implements Serializable {
 
+    /**
+     * Logger
+     */
+    private static Logger _logger = Logger.getLogger(BeanDeploymentMetaData.class);
+
     private static final String JAVA_COMP_SWITCHYARD_SERVICE_DESCRIPTOR_SET = "cn=SwitchyardApplicationServiceDescriptorSet";
 
     private ClassLoader _deploymentClassLoader;
+    private BeanManager _beanManager;
     private List<ServiceDescriptor> _serviceDescriptors = new ArrayList<ServiceDescriptor>();
     private List<ClientProxyBean> _clientProxies = new ArrayList<ClientProxyBean>();
     private List<Transformer> _transformers = new ArrayList<Transformer>();
@@ -51,8 +57,9 @@ public final class BeanDeploymentMetaData implements Serializable {
     /**
      * Private ClassLoader.
      */
-    private BeanDeploymentMetaData(ClassLoader deploymentClassLoader) {
+    private BeanDeploymentMetaData(ClassLoader deploymentClassLoader, BeanManager beanManager) {
         this._deploymentClassLoader = deploymentClassLoader;
+        this._beanManager = beanManager;
     }
 
     /**
@@ -61,6 +68,14 @@ public final class BeanDeploymentMetaData implements Serializable {
      */
     public ClassLoader getDeploymentClassLoader() {
         return _deploymentClassLoader;
+    }
+
+    /**
+     * Get the deployment {@link BeanManager} instance.
+     * @return The deployment {@link BeanManager}.
+     */
+    public BeanManager getBeanManager() {
+        return _beanManager;
     }
 
     /**
@@ -117,38 +132,77 @@ public final class BeanDeploymentMetaData implements Serializable {
      * The instance is associated with the Context ClassLoader.
      *
      * @return The new {@link BeanDeploymentMetaData}.
+     * @param beanManager BeanManager instance.
      */
-    public static BeanDeploymentMetaData bind() {
-        Map<ClassLoader, BeanDeploymentMetaData> metaDataMap = getBeanDeploymentMetaDataMap();
+    public static synchronized BeanDeploymentMetaData bind(BeanManager beanManager) {
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        BeanDeploymentMetaData deploymentMetaData = new BeanDeploymentMetaData(contextClassLoader);
 
-        metaDataMap.put(contextClassLoader, deploymentMetaData);
+        // Make sure the TCCL is not already associated with another BeanDeploymentMetaData...
+        assertTCCLNotInUse(contextClassLoader);
+        // Make sure the BeanManger is not already associated with another BeanDeploymentMetaData...
+        assertBeanManagerNotInUse(beanManager);
+
+        BeanDeploymentMetaData deploymentMetaData = new BeanDeploymentMetaData(contextClassLoader, beanManager);
+        getBeanDeploymentMetaDataMap().add(deploymentMetaData);
 
         return deploymentMetaData;
     }
 
     /**
-     * Lookup the {@link BeanDeploymentMetaData} associated with the callers Context ClassLoader.
+     * Lookup the {@link BeanDeploymentMetaData} associated with the supplied ClassLoader.
+     * @param classLoader The ClassLoader.
      * @return The {@link BeanDeploymentMetaData}.
      */
-    public static BeanDeploymentMetaData lookup() {
-        return getBeanDeploymentMetaDataMap().get(Thread.currentThread().getContextClassLoader());
+    public static BeanDeploymentMetaData lookup(ClassLoader classLoader) {
+        List<BeanDeploymentMetaData> deploymentMetaDataMap = getBeanDeploymentMetaDataMap();
+
+        for (BeanDeploymentMetaData deploymentMetaData : deploymentMetaDataMap) {
+            if (deploymentMetaData._deploymentClassLoader == classLoader) {
+                return deploymentMetaData;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Lookup the {@link BeanDeploymentMetaData} associated with the supplied {@link BeanManager}.
+     * @param beanManager The {@link BeanManager}.
+     * @return The {@link BeanDeploymentMetaData}.
+     */
+    public static BeanDeploymentMetaData lookup(BeanManager beanManager) {
+        List<BeanDeploymentMetaData> deploymentMetaDataMap = getBeanDeploymentMetaDataMap();
+
+        for (BeanDeploymentMetaData deploymentMetaData : deploymentMetaDataMap) {
+            if (deploymentMetaData._beanManager == beanManager) {
+                return deploymentMetaData;
+            }
+        }
+
+        return null;
     }
 
     /**
      * Unbind the {@link BeanDeploymentMetaData} associated with the callers Context ClassLoader.
+     * @param beanManager BeanManager instance.
      */
-    public static void unbind() {
-        getBeanDeploymentMetaDataMap().remove(Thread.currentThread().getContextClassLoader());
+    public static void unbind(BeanManager beanManager) {
+        BeanDeploymentMetaData deploymentMetaData = lookup(beanManager);
+
+        if (deploymentMetaData == null) {
+            _logger.debug("Unable to unbind BeanDeploymentMetaData associated with BeanManager instance " + beanManager + ". Ignoring.");
+            return;
+        }
+
+        getBeanDeploymentMetaDataMap().remove(deploymentMetaData);
     }
 
-    private synchronized static Map<ClassLoader, BeanDeploymentMetaData> getBeanDeploymentMetaDataMap() {
+    private synchronized static List<BeanDeploymentMetaData> getBeanDeploymentMetaDataMap() {
         try {
             Context jndiContext = new InitialContext();
 
             try {
-                Map<ClassLoader, BeanDeploymentMetaData> descriptorMap = (Map<ClassLoader, BeanDeploymentMetaData>)
+                List<BeanDeploymentMetaData> descriptorMap = (List<BeanDeploymentMetaData>)
                             jndiContext.lookup(JAVA_COMP_SWITCHYARD_SERVICE_DESCRIPTOR_SET);
 
                 return descriptorMap;
@@ -160,8 +214,8 @@ public final class BeanDeploymentMetaData implements Serializable {
                 Context jndiContext = new InitialContext();
 
                 try {
-                    Map<ClassLoader, BeanDeploymentMetaData> descriptorMap =
-                            new ConcurrentHashMap<ClassLoader, BeanDeploymentMetaData>();
+                    List<BeanDeploymentMetaData> descriptorMap =
+                            Collections.synchronizedList(new ArrayList<BeanDeploymentMetaData>());
                     jndiContext.bind(JAVA_COMP_SWITCHYARD_SERVICE_DESCRIPTOR_SET, descriptorMap);
 
                     return descriptorMap;
@@ -171,6 +225,18 @@ public final class BeanDeploymentMetaData implements Serializable {
             } catch (NamingException e2) {
                 throw new IllegalStateException("Unexpected NamingException getting JNDI Context.", e2);
             }
+        }
+    }
+
+    private static void assertTCCLNotInUse(ClassLoader classLoader) {
+        if (lookup(classLoader) != null) {
+            throw new RuntimeException("Deployment already associated with ClassLoader " + classLoader);
+        }
+    }
+
+    private static void assertBeanManagerNotInUse(BeanManager beanManager) {
+        if (lookup(beanManager) != null) {
+            throw new RuntimeException("Deployment already associated with BeanManager " + beanManager);
         }
     }
 }

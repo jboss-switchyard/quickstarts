@@ -74,7 +74,7 @@ public class ClientProxyBean implements Bean {
      * must be one of the {@link org.switchyard.component.bean.Service @Service}
      * interfaces implemented by the actual Service bean component.
      */
-    private Class<?> _proxyInterface;
+    private Class<?> _serviceInterface;
 
     /**
      * CDI bean qualifiers.  See CDI Specification.
@@ -82,7 +82,7 @@ public class ClientProxyBean implements Bean {
     private Set<Annotation> _qualifiers;
 
     /**
-     * The dynamic proxy bean instance created from the supplied {@link #_proxyInterface}.
+     * The dynamic proxy bean instance created from the supplied {@link #_serviceInterface}.
      */
     private Object _proxyBean;
 
@@ -96,7 +96,7 @@ public class ClientProxyBean implements Bean {
      */
     public ClientProxyBean(QName serviceQName, Class<?> proxyInterface, Set<Annotation> qualifiers, BeanDeploymentMetaData beanDeploymentMetaData) {
         this._serviceQName = serviceQName;
-        this._proxyInterface = proxyInterface;
+        this._serviceInterface = proxyInterface;
 
         if (qualifiers != null) {
             this._qualifiers = qualifiers;
@@ -123,6 +123,14 @@ public class ClientProxyBean implements Bean {
     }
 
     /**
+     * Get the Service interface.
+     * @return The service interface.
+     */
+    public Class<?> getServiceInterface() {
+        return _serviceInterface;
+    }
+
+    /**
      * Set the service reference for the target Service.
      * @param service The target service.
      */
@@ -137,7 +145,7 @@ public class ClientProxyBean implements Bean {
      */
     public Set<Type> getTypes() {
         Set<Type> types = new HashSet<Type>();
-        types.add(_proxyInterface);
+        types.add(_serviceInterface);
         types.add(Object.class);
         return types;
     }
@@ -177,7 +185,7 @@ public class ClientProxyBean implements Bean {
      * @return the bean {@linkplain Class class}
      */
     public Class<?> getBeanClass() {
-        return _proxyInterface;
+        return _serviceInterface;
     }
 
     /**
