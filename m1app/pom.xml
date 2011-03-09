@@ -99,7 +99,7 @@
           <executions>
             <execution>
                 <goals>
-                    <goal>configurator</goal>
+                    <goal>configure</goal>
                 </goals>
             </execution>
           </executions>
