@@ -66,7 +66,7 @@
 	</binding>
 	<service name="DummySOAPServiceService">
 		<port name="DummySOAPServicePort" binding="tns:DummySOAPServicePortBinding">
-			<soap:address location="http://localhost:48080/ReferenceBindingTest"></soap:address>
+			<soap:address location="http://${org.switchyard.test.soap.host}:${org.switchyard.test.soap.port}/ReferenceBindingTest"></soap:address>
 		</port>
 
 	</service>

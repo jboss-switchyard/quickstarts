@@ -41,28 +41,6 @@
         <version.wsdl4j>1.6.2</version.wsdl4j>
     </properties>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <systemProperties>
-                        <property>
-                            <name>org.switchyard.test.soap.host</name>
-                            <value>localhost</value>
-                        </property>
-                        <property>
-                            <name>org.switchyard.test.soap.port</name>
-                            <value>48080</value>
-                        </property>
-                    </systemProperties>
-                </configuration>
-                <inherited>false</inherited>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
         <dependency>
             <groupId>org.switchyard</groupId>
