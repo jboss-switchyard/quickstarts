@@ -19,22 +19,22 @@
 
 package org.switchyard.component.bean.config.model.v1;
 
-import org.switchyard.component.bean.config.model.JavaComponentServiceInterfaceModel;
+import org.switchyard.component.bean.config.model.JavaComponentReferenceInterfaceModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.composite.v1.V1ComponentServiceInterfaceModel;
+import org.switchyard.config.model.composite.v1.V1ComponentReferenceInterfaceModel;
 
 /**
- * A "java" implementation of the ComponentServiceInterfaceModel.
+ * A "java" implementation of the ComponentReferenceInterfaceModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1JavaComponentServiceInterfaceModel extends V1ComponentServiceInterfaceModel implements JavaComponentServiceInterfaceModel {
+public class V1JavaComponentReferenceInterfaceModel extends V1ComponentReferenceInterfaceModel implements JavaComponentReferenceInterfaceModel {
 
     /**
      * Default constructor for application use.
      */
-    public V1JavaComponentServiceInterfaceModel() {
+    public V1JavaComponentReferenceInterfaceModel() {
         super(JAVA, DEFAULT_NAMESPACE);
     }
 
@@ -44,7 +44,7 @@ public class V1JavaComponentServiceInterfaceModel extends V1ComponentServiceInte
      * @param config the Configuration
      * @param desc the Descriptor
      */
-    public V1JavaComponentServiceInterfaceModel(Configuration config, Descriptor desc) {
+    public V1JavaComponentReferenceInterfaceModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 

@@ -24,7 +24,7 @@ import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.v1.V1ComponentImplementationModel;
 
 /**
- * An implementation of the BeanComponentImplementationModel.
+ * A "bean" implementation of the BeanComponentImplementationModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */

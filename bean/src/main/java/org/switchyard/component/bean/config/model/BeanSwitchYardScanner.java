@@ -30,6 +30,7 @@ import java.util.Set;
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
 import org.switchyard.component.bean.config.model.v1.V1BeanComponentImplementationModel;
+import org.switchyard.component.bean.config.model.v1.V1JavaComponentReferenceInterfaceModel;
 import org.switchyard.component.bean.config.model.v1.V1JavaComponentServiceInterfaceModel;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
@@ -40,7 +41,6 @@ import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.v1.V1ComponentModel;
-import org.switchyard.config.model.composite.v1.V1ComponentReferenceInterfaceModel;
 import org.switchyard.config.model.composite.v1.V1ComponentReferenceModel;
 import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeModel;
@@ -94,8 +94,7 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
                 for (Class<?> reference : getReferences(serviceClass)) {
                     ComponentReferenceModel referenceModel = new V1ComponentReferenceModel();
                     referenceModel.setName(reference.getSimpleName());
-                    ComponentReferenceInterfaceModel interfaceModel = 
-                        new V1ComponentReferenceInterfaceModel(JavaComponentServiceInterfaceModel.JAVA);
+                    ComponentReferenceInterfaceModel interfaceModel = new V1JavaComponentReferenceInterfaceModel();
                     interfaceModel.setInterface(reference.getCanonicalName());
                     referenceModel.setInterface(interfaceModel);
                     componentModel.addReference(referenceModel);

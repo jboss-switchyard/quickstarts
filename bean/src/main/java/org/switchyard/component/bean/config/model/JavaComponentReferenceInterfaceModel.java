@@ -17,35 +17,25 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.component.bean.config.model.v1;
+package org.switchyard.component.bean.config.model;
 
-import org.switchyard.component.bean.config.model.JavaComponentServiceInterfaceModel;
-import org.switchyard.config.Configuration;
-import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.composite.v1.V1ComponentServiceInterfaceModel;
+import org.switchyard.config.model.composite.ComponentReferenceInterfaceModel;
 
 /**
- * A "java" implementation of the ComponentServiceInterfaceModel.
+ * A "java" ComponentReferenceInterfaceModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1JavaComponentServiceInterfaceModel extends V1ComponentServiceInterfaceModel implements JavaComponentServiceInterfaceModel {
+public interface JavaComponentReferenceInterfaceModel extends ComponentReferenceInterfaceModel {
 
     /**
-     * Default constructor for application use.
+     * The "bean" namespace.
      */
-    public V1JavaComponentServiceInterfaceModel() {
-        super(JAVA, DEFAULT_NAMESPACE);
-    }
+    public static final String DEFAULT_NAMESPACE = "urn:switchyard-component-bean:config:1.0";
 
     /**
-     * Constructor for Marshaller use (ie: V1BeanMarshaller).
-     *
-     * @param config the Configuration
-     * @param desc the Descriptor
+     * The "java" implementation type.
      */
-    public V1JavaComponentServiceInterfaceModel(Configuration config, Descriptor desc) {
-        super(config, desc);
-    }
+    public static final String JAVA = "java";
 
 }
