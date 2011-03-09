@@ -40,6 +40,15 @@ public class V1ComponentReferenceInterfaceModel extends V1BaseInterfaceModel imp
     }
 
     /**
+     * Constructs a new V1ComponentReferenceInterfaceModel of the specified "type", and in the specified namespace.
+     * @param type the "type" of V1ComponentReferenceInterfaceModel
+     * @param namespace the namespace
+     */
+    public V1ComponentReferenceInterfaceModel(String type, String namespace) {
+        super(type, namespace);
+    }
+
+    /**
      * Constructs a new V1ComponentReferenceInterfaceModel with the specified Configuration and Descriptor.
      * @param config the Configuration
      * @param desc the Descriptor

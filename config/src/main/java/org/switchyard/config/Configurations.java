@@ -23,9 +23,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.util.QNames;
 
 /**
@@ -34,6 +36,9 @@ import org.switchyard.config.util.QNames;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public final class Configurations {
+
+    // HACK: SWITCHYARD-145
+    private static final QName COMPOSITE_QNAME = QNames.create(CompositeModel.DEFAULT_NAMESPACE, CompositeModel.COMPOSITE);
 
     private Configurations() {}
 
@@ -104,6 +109,26 @@ public final class Configurations {
             if (merged_config_orphan != null) {
                 recursiveMerge(from_config_child, merged_config_orphan, from_overrides_merged);
                 merged_config.addChild(merged_config_orphan);
+            } else if (COMPOSITE_QNAME.equals(from_config_child.getQName())) {
+                // HACK: SWITCHYARD-145
+                boolean candidate_found = false;
+                for (Entry<Key,Configuration> merged_config_orphan_entry : merged_config_orphans.entrySet()) {
+                    Configuration merged_config_orphan_candidate = merged_config_orphan_entry.getValue();
+                    if (COMPOSITE_QNAME.equals(merged_config_orphan_candidate.getQName())) {
+                        candidate_found = true;
+                        merged_config_orphans.remove(merged_config_orphan_entry.getKey());
+                        String from_config_child_name_attr = from_config_child.getAttribute("name");
+                        if (from_config_child_name_attr != null && from_config_child_name_attr.length() > 0) {
+                            merged_config_orphan_candidate.setAttribute("name", from_config_child_name_attr);
+                        }
+                        recursiveMerge(from_config_child, merged_config_orphan_candidate, from_overrides_merged);
+                        merged_config.addChild(merged_config_orphan_candidate);
+                        break;
+                    }
+                }
+                if (!candidate_found) {
+                    merged_config.addChild(from_config_child);
+                }
             } else {
                 merged_config.addChild(from_config_child);
             }

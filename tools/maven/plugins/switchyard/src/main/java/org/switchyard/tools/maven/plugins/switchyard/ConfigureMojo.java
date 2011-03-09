@@ -45,15 +45,17 @@ import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.config.util.Classes;
 
 /**
- * ConfiguratorMojo.
+ * Maven mojo for configuring SwitchYard.
  *
- * @goal configurator
+ * @param <M> the Model type being configured
+ *
+ * @goal configure
  * @phase process-classes
  * @requiresDependencyResolution compile
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class ConfiguratorMojo<M extends Model> extends AbstractMojo {
+public class ConfigureMojo<M extends Model> extends AbstractMojo {
 
     /**
      * @parameter
@@ -114,7 +116,7 @@ public class ConfiguratorMojo<M extends Model> extends AbstractMojo {
         }
         ClassLoader loader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
             public URLClassLoader run() {
-                return new URLClassLoader(mojoURLs.toArray(new URL[mojoURLs.size()]), ConfiguratorMojo.class.getClassLoader());
+                return new URLClassLoader(mojoURLs.toArray(new URL[mojoURLs.size()]), ConfigureMojo.class.getClassLoader());
             }
         });
         ClassLoader previous = Classes.setTCCL(loader);
