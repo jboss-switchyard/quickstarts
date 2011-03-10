@@ -27,11 +27,14 @@ import junit.framework.Assert;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
-import org.switchyard.test.SwitchYardCDITestCase;
+import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.TestMixIns;
+import org.switchyard.test.mixins.CDIMixIn;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class TypeTransformationTest extends SwitchYardCDITestCase {
+@TestMixIns(CDIMixIn.class)
+public class TypeTransformationTest extends SwitchYardTestCase {
 
     final String ITEM_ID = "BUTTER";
     final String ORDER_XML = "xml/order.xml";

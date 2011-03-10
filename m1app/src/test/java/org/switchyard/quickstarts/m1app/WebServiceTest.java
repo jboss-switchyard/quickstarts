@@ -32,11 +32,14 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.test.SwitchYardCDITestCase;
+import org.switchyard.test.SwitchYardTestCase;
 import org.switchyard.test.SwitchYardDeploymentConfig;
+import org.switchyard.test.TestMixIns;
+import org.switchyard.test.mixins.CDIMixIn;
 
 @SwitchYardDeploymentConfig(SwitchYardDeploymentConfig.SWITCHYARD_XML)
-public class WebServiceTest extends SwitchYardCDITestCase {
+@TestMixIns(CDIMixIn.class)
+public class WebServiceTest extends SwitchYardTestCase {
 
     // ------------------------------------------------------------------------------------
     //
@@ -53,11 +56,11 @@ public class WebServiceTest extends SwitchYardCDITestCase {
     @Before
     public void setUp() throws Exception {
         _requestStream = getClass().getClassLoader().getResourceAsStream("xml/soap-request.xml");
-        InputStream responseStream = 
+        InputStream responseStream =
             getClass().getClassLoader().getResourceAsStream("xml/soap-response.xml");
         _expectedResponseReader = new InputStreamReader(responseStream);
     }
-    
+
     @After
     public void tearDown() throws Exception {
         if (_expectedResponseReader != null) {
@@ -67,18 +70,18 @@ public class WebServiceTest extends SwitchYardCDITestCase {
             _requestStream.close();
         }
     }
-    
+
     @Test
     public void invokeOrderWebService() throws Exception {
 
         HttpClient client = new HttpClient();
         PostMethod postMethod = new PostMethod("http://localhost:18001/OrderService");
         String output;
-        
+
         postMethod.setRequestEntity(new InputStreamRequestEntity(_requestStream, "text/xml; charset=utf-8"));
         client.executeMethod(postMethod);
         output = postMethod.getResponseBodyAsString();
-        
+
         XMLUnit.setIgnoreWhitespace(true);
         XMLAssert.assertXMLEqual(_expectedResponseReader, new StringReader(output));
     }
