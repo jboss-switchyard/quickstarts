@@ -22,6 +22,7 @@ package org.switchyard.test;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.config.model.ModelResource;
@@ -34,6 +35,8 @@ import org.switchyard.transform.Transformer;
 
 import javax.xml.namespace.QName;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Base class for writing SwitchYard tests.
@@ -50,6 +53,11 @@ public abstract class SwitchYardTestCase {
      * The deployment.
      */
     private AbstractDeployment _deployment;
+    /**
+     * Test Mix-Ins.
+     */
+    private TestMixIns _testMixIns;
+    private List<TestMixIn> _testMixInInstances = new ArrayList<TestMixIn>();
 
     /**
      * Public default constructor.
@@ -59,6 +67,7 @@ public abstract class SwitchYardTestCase {
         if (deploymentConfig != null && deploymentConfig.value() != null) {
             _configModel = createSwitchYardModel(getClass().getResourceAsStream(deploymentConfig.value()));
         }
+        _testMixIns = getClass().getAnnotation(TestMixIns.class);
     }
 
     /**
@@ -91,6 +100,22 @@ public abstract class SwitchYardTestCase {
     }
 
     /**
+     * Initialise the mock context.
+     */
+    @BeforeClass
+    public static void installContextAndRuntimeDeploymentType() {
+        MockInitialContextFactory.install();
+    }
+
+    /**
+     * Clear the mock context.
+     */
+    @After
+    public void clearMockContext() {
+        MockInitialContextFactory.clear();
+    }
+
+    /**
      * Get the configuration model driving this test instance, if one exists.
      * <p/>
      * An abstract deployment is created if no configuration model is supplied on construction.
@@ -106,22 +131,25 @@ public abstract class SwitchYardTestCase {
      * @throws Exception creating the deployment.
      */
     @Before
-    public void deploy() throws Exception {
-        if (_deployment == null) {
-            _deployment = createDeployment();
-            _deployment.init();
-            _deployment.start();
-        }
+    public final void deploy() throws Exception {
+        createMixInInstances();
+        mixInSetup();
+        _deployment = createDeployment();
+        _deployment.init();
+        mixInBefore();
+        _deployment.start();
     }
 
     /**
      * Undeploy the deployment.
      */
     @After
-    public void undeploy() {
+    public final void undeploy() {
         assertDeployed();
         _deployment.stop();
+        mixInAfter();
         _deployment.destroy();
+        mixInTearDown();
     }
 
     /**
@@ -133,17 +161,7 @@ public abstract class SwitchYardTestCase {
         if (_configModel != null) {
             return new Deployment(_configModel);
         } else {
-            return new AbstractDeployment() {
-                @Override
-                public void start() {
-                }
-                @Override
-                public void stop() {
-                }
-                @Override
-                public void destroy() {
-                }
-            };
+            return new SimpleTestDeployment();
         }
     }
 
@@ -229,6 +247,50 @@ public abstract class SwitchYardTestCase {
      */
     protected Invoker newInvoker(String serviceName) {
         return new Invoker(getServiceDomain(), serviceName);
+    }
+
+    private void mixInSetup() {
+        for (TestMixIn mixIn : _testMixInInstances) {
+            mixIn.setUp();
+        }
+    }
+
+    private void mixInBefore() {
+        for (TestMixIn mixIn : _testMixInInstances) {
+            mixIn.before(_deployment);
+        }
+    }
+
+    private void mixInAfter() {
+        // Apply after MixIns in reverse order...
+        for (int i = _testMixInInstances.size() - 1; i >= 0; i--) {
+            _testMixInInstances.get(i).after(_deployment);
+        }
+    }
+
+    private void mixInTearDown() {
+        // TearDown MixIns in reverse order...
+        for (int i = _testMixInInstances.size() - 1; i >= 0; i--) {
+            _testMixInInstances.get(i).tearDown();
+        }
+    }
+
+    private void createMixInInstances() {
+        _testMixInInstances.clear();
+
+        if (_testMixIns == null) {
+            // No Mix-Ins...
+            return;
+        }
+
+        for (Class<? extends TestMixIn> mixInType : _testMixIns.value()) {
+            try {
+                _testMixInInstances.add(mixInType.newInstance());
+            } catch (Exception e) {
+                e.printStackTrace();
+                Assert.fail("Failed to create instance of TestMixIn type " + mixInType.getName() + ".  Make sure it defines a public default constructor.");
+            }
+        }
     }
 
     private void assertDeployed() {

@@ -56,13 +56,32 @@ public abstract class AbstractDeployment {
     public static final String REGISTRY_CLASS_NAME
         = "org.switchyard.registry.class.name";
 
+    /**
+     * Parent deployment.
+     */
+    private AbstractDeployment _parentDeployment;
+    /**
+     * The Service Domain.
+     */
     private ServiceDomain _serviceDomain;
+
+    /**
+     * Set the parent deployment.
+     * <p/>
+     * This must be called before calling {@link #init()}.
+     * @param parentDeployment The parent deployment.
+     */
+    public void setParentDeployment(AbstractDeployment parentDeployment) {
+        this._parentDeployment = parentDeployment;
+    }
 
     /**
      * Initialise the deployment.
      */
     public void init() {
-        createDomain();
+        if (_parentDeployment == null) {
+            createDomain();
+        }
     }
 
     /**
@@ -85,7 +104,11 @@ public abstract class AbstractDeployment {
      * @return The domain instance.
      */
     public ServiceDomain getDomain() {
-        return _serviceDomain;
+        if (_parentDeployment == null) {
+            return _serviceDomain;
+        } else {
+            return _parentDeployment.getDomain();
+        }
     }
 
     private void createDomain() {

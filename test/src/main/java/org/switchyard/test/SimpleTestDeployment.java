@@ -21,31 +21,23 @@ package org.switchyard.test;
 
 import org.switchyard.deploy.internal.AbstractDeployment;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 /**
- * SwitchYard test deployment configuration annotation.
+ * Simple Test Deployment.
+ * <p/>
+ * Does nothing extra.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-@Target({TYPE})
-@Retention(RUNTIME)
-@Documented
-public @interface SwitchYardDeploymentConfig {
-    /**
-     * Default classpath location for the switchyard configuration.
-     */
-    public static final String SWITCHYARD_XML = AbstractDeployment.SWITCHYARD_XML;
+public class SimpleTestDeployment extends AbstractDeployment {
+    @Override
+    public void start() {
+    }
 
-    /**
-     * Classpath path to the configuration.
-     */
-    String value();
+    @Override
+    public void stop() {
+    }
 
-    // TODO: Add support for defining Scanners? https://issues.jboss.org/browse/SWITCHYARD-163
+    @Override
+    public void destroy() {
+    }
 }

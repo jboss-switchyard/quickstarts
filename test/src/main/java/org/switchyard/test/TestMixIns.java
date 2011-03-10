@@ -19,8 +19,6 @@
 
 package org.switchyard.test;
 
-import org.switchyard.deploy.internal.AbstractDeployment;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -29,23 +27,15 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * SwitchYard test deployment configuration annotation.
- *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 @Target({TYPE})
 @Retention(RUNTIME)
 @Documented
-public @interface SwitchYardDeploymentConfig {
-    /**
-     * Default classpath location for the switchyard configuration.
-     */
-    public static final String SWITCHYARD_XML = AbstractDeployment.SWITCHYARD_XML;
+public @interface TestMixIns {
 
     /**
-     * Classpath path to the configuration.
+     * The Mix in types.
      */
-    String value();
-
-    // TODO: Add support for defining Scanners? https://issues.jboss.org/browse/SWITCHYARD-163
+    Class<? extends TestMixIn>[] value();
 }
