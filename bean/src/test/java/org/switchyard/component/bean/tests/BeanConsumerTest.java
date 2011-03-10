@@ -24,12 +24,15 @@ import org.junit.Test;
 import org.switchyard.Message;
 import org.switchyard.component.bean.BeanComponentException;
 import org.switchyard.test.InvocationFaultException;
-import org.switchyard.test.SwitchYardCDITestCase;
+import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.TestMixIns;
+import org.switchyard.test.mixins.CDIMixIn;
 
 /*
  * Assorted methods for testing a CDI bean consuming a service in SwitchYard.
  */
-public class BeanConsumerTest extends SwitchYardCDITestCase {
+@TestMixIns(CDIMixIn.class)
+public class BeanConsumerTest extends SwitchYardTestCase {
 
     @Test
     public void consumeInOnlyServiceFromBean_new_way() {

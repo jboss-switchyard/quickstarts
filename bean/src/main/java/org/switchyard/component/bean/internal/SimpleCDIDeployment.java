@@ -22,6 +22,7 @@ package org.switchyard.component.bean.internal;
 import javax.xml.namespace.QName;
 
 import org.switchyard.ExchangeHandler;
+import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.bean.deploy.BeanComponentActivator;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
@@ -40,48 +41,30 @@ import org.switchyard.transform.TransformerRegistry;
  */
 public class SimpleCDIDeployment extends AbstractDeployment {
 
-    /**
-     * Initialize the deployment.
-     */
-    public void init() {
-        super.init();
-
-        BeanDeploymentMetaData beanDeploymentMetaData = BeanDeploymentMetaData.lookup(Thread.currentThread().getContextClassLoader());
-        deployTransformers(beanDeploymentMetaData);
-        deployServicesAndProxies(beanDeploymentMetaData);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void start() {
+        BeanDeploymentMetaData beanDeploymentMetaData = BeanDeploymentMetaData.lookup(Thread.currentThread().getContextClassLoader());
+        deployTransformers(beanDeploymentMetaData, getDomain());
+        deployServicesAndProxies(beanDeploymentMetaData, getDomain());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void stop() {
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void destroy() {
-
     }
 
-    private void deployTransformers(BeanDeploymentMetaData beanDeploymentMetaData) {
-        TransformerRegistry transformerRegistry = getDomain().getTransformerRegistry();
+    private void deployTransformers(BeanDeploymentMetaData beanDeploymentMetaData, ServiceDomain domain) {
+        TransformerRegistry transformerRegistry = domain.getTransformerRegistry();
 
         for (Transformer transformer : beanDeploymentMetaData.getTransformers()) {
             transformerRegistry.addTransformer(transformer);
         }
     }
 
-    private void deployServicesAndProxies(BeanDeploymentMetaData beanDeploymentMetaData) {
+    private void deployServicesAndProxies(BeanDeploymentMetaData beanDeploymentMetaData, ServiceDomain domain) {
         if (beanDeploymentMetaData == null) {
             throw new RuntimeException("Failed to lookup BeanDeploymentMetaData from Naming Context.");
         }
@@ -95,7 +78,7 @@ public class SimpleCDIDeployment extends AbstractDeployment {
             ServiceReference service;
 
             serviceInterface = activator.buildServiceInterface(serviceName);
-            service = getDomain().registerService(serviceName, handler, serviceInterface);
+            service = domain.registerService(serviceName, handler, serviceInterface);
             activator.start(service);
         }
     }

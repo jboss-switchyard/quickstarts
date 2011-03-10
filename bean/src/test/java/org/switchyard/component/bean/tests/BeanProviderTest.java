@@ -22,12 +22,15 @@ package org.switchyard.component.bean.tests;
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.Message;
-import org.switchyard.test.SwitchYardCDITestCase;
+import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.TestMixIns;
+import org.switchyard.test.mixins.CDIMixIn;
 
 /*
  * Assorted methods for testing a CDI bean providing a service in SwitchYard.
  */
-public class BeanProviderTest extends SwitchYardCDITestCase {
+@TestMixIns(CDIMixIn.class)
+public class BeanProviderTest extends SwitchYardTestCase {
 
     @Test
     public void invokeOneWayProviderWithInOnly() {
