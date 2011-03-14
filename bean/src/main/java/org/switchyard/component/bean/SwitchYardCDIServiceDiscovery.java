@@ -33,7 +33,6 @@ import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
-import javax.enterprise.inject.spi.BeforeShutdown;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.ProcessBean;
@@ -41,6 +40,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
+import org.switchyard.component.bean.deploy.BeanDeploymentMetaDataCDIBean;
 import org.switchyard.component.bean.deploy.CDIBeanServiceDescriptor;
 import org.switchyard.transform.Transformer;
 
@@ -69,10 +69,10 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
      * {@link javax.enterprise.inject.spi.BeforeBeanDiscovery} CDI event observer.
      *
      * @param beforeEvent CDI Event instance.
-     * @param beanManager BeanManager instance.
      */
-    public void beforeBeanDiscovery(@Observes BeforeBeanDiscovery beforeEvent, BeanManager beanManager) {
-        _beanDeploymentMetaData = BeanDeploymentMetaData.bind(beanManager);
+    public void beforeBeanDiscovery(@Observes BeforeBeanDiscovery beforeEvent) {
+        _beanDeploymentMetaData = new BeanDeploymentMetaData();
+        _beanDeploymentMetaData.setDeploymentClassLoader(Thread.currentThread().getContextClassLoader());
     }
 
     /**
@@ -135,16 +135,8 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
             afterEvent.addBean(proxyBean);
             _beanDeploymentMetaData.addClientProxy(proxyBean);
         }
-    }
 
-    /**
-     * {@link javax.enterprise.inject.spi.BeforeShutdown} CDI event observer.
-     *
-     * @param event       CDI Event instance.
-     * @param beanManager CDI Bean Manager instance.
-     */
-    public void beforeShutdown(@Observes BeforeShutdown event, BeanManager beanManager) {
-        BeanDeploymentMetaData.unbind(beanManager);
+        afterEvent.addBean(new BeanDeploymentMetaDataCDIBean(_beanDeploymentMetaData));
     }
 
     private void addInjectableClientProxyBean(Field injectionPointField, Reference serviceReference, Set<Annotation> qualifiers, BeanManager beanManager) {

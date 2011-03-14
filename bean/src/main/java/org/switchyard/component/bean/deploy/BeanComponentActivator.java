@@ -47,14 +47,13 @@ public class BeanComponentActivator implements Activator {
      * Public constructor.
      */
     public BeanComponentActivator() {
-        _beanDeploymentMetaData = BeanDeploymentMetaData.lookup(Thread.currentThread().getContextClassLoader());
+        _beanDeploymentMetaData = BeanDeploymentMetaData.lookupBeanDeploymentMetaData();
     }
-
 
     @Override
     public ExchangeHandler init(QName name, Model config) {
         if (config instanceof ComponentReferenceModel) {
-            // policy and configuration validation can be performed here - 
+            // policy and configuration validation can be performed here -
             // nothing to do for now
             _references.put(name, (ComponentReferenceModel)config);
             return null;
@@ -113,6 +112,4 @@ public class BeanComponentActivator implements Activator {
     public void destroy(ServiceReference service) {
         _references.remove(service.getName());
     }
-
-
 }

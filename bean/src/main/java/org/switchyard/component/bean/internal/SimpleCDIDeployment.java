@@ -43,7 +43,7 @@ public class SimpleCDIDeployment extends AbstractDeployment {
 
     @Override
     public void start() {
-        BeanDeploymentMetaData beanDeploymentMetaData = BeanDeploymentMetaData.lookup(Thread.currentThread().getContextClassLoader());
+        BeanDeploymentMetaData beanDeploymentMetaData = BeanDeploymentMetaData.lookupBeanDeploymentMetaData();
         deployTransformers(beanDeploymentMetaData, getDomain());
         deployServicesAndProxies(beanDeploymentMetaData, getDomain());
     }
