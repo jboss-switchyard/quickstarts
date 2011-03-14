@@ -5,11 +5,18 @@
 -->
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
-  <!-- Switchyard deployer -->
-  <bean name="SwitchYardDeployer" class="org.switchyard.deployment.SwitchYardDeployer">
-  </bean>
+    <!--
+        Switchyard CDI BeanManager JNDI Deployer.
 
-  <bean name="SwitchYardConfigParser" class="org.switchyard.deployment.SwitchYardConfigParser">
-  </bean>
+        This deployer must be disabled in environments where https://issues.jboss.org/browse/JBAS-8939
+        has been resolved.
+    -->
+    <bean name="CDIBeanManagerJNDIDeployer" class="org.switchyard.deployment.CDIBeanManagerJNDIDeployer" />
+
+    <!--
+        Switchyard Application Deployer.
+    -->
+    <bean name="SwitchYardConfigParser" class="org.switchyard.deployment.SwitchYardConfigParser" />
+    <bean name="SwitchYardDeployer" class="org.switchyard.deployment.SwitchYardDeployer" />
 
 </deployment>

@@ -76,6 +76,11 @@
                 <version>2.2.0.GA</version>
             </dependency>
             <dependency>
+                <groupId>org.jboss.jbossas</groupId>
+                <artifactId>weld-int-deployer</artifactId>
+                <version>6.0.0.Final</version>
+            </dependency>
+            <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
                 <version>1.2.14</version>

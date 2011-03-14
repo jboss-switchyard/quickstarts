@@ -22,7 +22,6 @@ package org.switchyard.test;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.config.model.ModelResource;
@@ -100,22 +99,6 @@ public abstract class SwitchYardTestCase {
     }
 
     /**
-     * Initialise the mock context.
-     */
-    @BeforeClass
-    public static void installContextAndRuntimeDeploymentType() {
-        MockInitialContextFactory.install();
-    }
-
-    /**
-     * Clear the mock context.
-     */
-    @After
-    public void clearMockContext() {
-        MockInitialContextFactory.clear();
-    }
-
-    /**
      * Get the configuration model driving this test instance, if one exists.
      * <p/>
      * An abstract deployment is created if no configuration model is supplied on construction.
@@ -132,6 +115,7 @@ public abstract class SwitchYardTestCase {
      */
     @Before
     public final void deploy() throws Exception {
+        MockInitialContextFactory.install();
         createMixInInstances();
         mixInSetup();
         _deployment = createDeployment();
@@ -150,6 +134,7 @@ public abstract class SwitchYardTestCase {
         mixInAfter();
         _deployment.destroy();
         mixInTearDown();
+        MockInitialContextFactory.clear();
     }
 
     /**

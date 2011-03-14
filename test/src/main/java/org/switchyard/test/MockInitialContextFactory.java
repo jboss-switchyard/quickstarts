@@ -19,6 +19,8 @@
 
 package org.switchyard.test;
 
+import org.junit.Assert;
+
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
@@ -37,13 +39,9 @@ import java.util.Map;
 public class MockInitialContextFactory implements InitialContextFactory {
 
     /**
-     * Context.
-     */
-    private static Context _context;
-    /**
      * Bound objects.
      */
-    private static Map<Object, Object> _boundObjects = new HashMap<Object, Object>();
+    private static Map<ClassLoader, Context> _contexts = new HashMap<ClassLoader, Context>();
 
     /**
      * Install a context instance.
@@ -52,13 +50,20 @@ public class MockInitialContextFactory implements InitialContextFactory {
         if (System.getProperty(Context.INITIAL_CONTEXT_FACTORY) == null) {
             System.setProperty(Context.INITIAL_CONTEXT_FACTORY, MockInitialContextFactory.class.getName());
         }
+
+        try {
+            createContextForTCCL();
+        } catch (NamingException e) {
+            e.printStackTrace();
+            Assert.fail("Failed to create context for TCCL: " + e.getMessage());
+        }
     }
 
     /**
-     * Clear all objects bound into the instance.
+     * Clear contexts.
      */
     public static void clear() {
-        _boundObjects.clear();
+        _contexts.clear();
     }
 
     /**
@@ -66,16 +71,53 @@ public class MockInitialContextFactory implements InitialContextFactory {
      */
     @Override
     public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
-        if (_context == null) {
-            _context = (Context) Proxy.newProxyInstance(Context.class.getClassLoader(),
-                                                    new Class[]{Context.class},
-                                                    new ContextInvocationHandler());
-        }
-
-        return _context;
+        return createContextForTCCL();
     }
 
-    class ContextInvocationHandler implements InvocationHandler {
+    /**
+     * Get the component context (java:comp).
+     * @return The component context.
+     * @throws NamingException Exception while looking up the context.
+     */
+    public static Context getJavaComp() throws NamingException {
+        return getSubContext("java:comp");
+    }
+
+    /**
+     * Get the named sub context.
+     * @param name Sub context name.
+     * @return The context.
+     * @throws NamingException Exception while looking up the context.
+     */
+    public static Context getSubContext(String name) throws NamingException {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        Context context = _contexts.get(tccl);
+
+        if (context == null) {
+            Assert.fail("No global namespace context bound for current test Thread.");
+        }
+
+        return (Context) context.lookup(name);
+    }
+
+    private static Context createContextForTCCL() throws NamingException {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        Context context = _contexts.get(tccl);
+
+        if (context == null) {
+            context = (Context) Proxy.newProxyInstance(Context.class.getClassLoader(),
+                    new Class[]{Context.class},
+                    new ContextInvocationHandler());
+            _contexts.put(tccl, context);
+
+            context.createSubcontext("java:comp");
+        }
+        return context;
+    }
+
+    static class ContextInvocationHandler implements InvocationHandler {
+
+        private Map<Object, Object> _boundObjects = new HashMap<Object, Object>();
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -90,6 +132,23 @@ public class MockInitialContextFactory implements InitialContextFactory {
                     return object;
                 }
                 throw new NamingException("Unknown object name '" + args[0] + "'.");
+            } else if (methodName.equals("createSubcontext")) {
+                Object name = args[0];
+                if (_boundObjects.containsKey(name)) {
+                    throw new NamingException("Subcontext '" + name + "' already exists.");
+                }
+                Context subContext = (Context) Proxy.newProxyInstance(Context.class.getClassLoader(),
+                                                        new Class[]{Context.class},
+                                                        new ContextInvocationHandler());
+                _boundObjects.put(name, subContext);
+                return subContext;
+            } else if (methodName.equals("destroySubcontext")) {
+                Object name = args[0];
+                if (!_boundObjects.containsKey(name)) {
+                    throw new NamingException("Subcontext '" + name + "' doesn't exists.");
+                }
+                _boundObjects.remove(name);
+                return null;
             } else if (methodName.equals("close")) {
                 return true;
             }

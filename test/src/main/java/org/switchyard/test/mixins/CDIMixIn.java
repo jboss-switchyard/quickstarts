@@ -24,8 +24,11 @@ import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.environment.se.events.ContainerInitialized;
 import org.junit.Assert;
 import org.switchyard.deploy.internal.AbstractDeployment;
+import org.switchyard.test.MockInitialContextFactory;
 import org.switchyard.test.SimpleTestDeployment;
 import org.switchyard.test.TestMixIn;
+
+import javax.naming.NamingException;
 
 /**
  * CDI Test Mix-In for deploying the Weld CDI Standalone Edition container.
@@ -43,6 +46,13 @@ public class CDIMixIn implements TestMixIn {
         _weld = new Weld();
         WeldContainer weldContainer = _weld.initialize();
         weldContainer.event().select(ContainerInitialized.class).fire(new ContainerInitialized());
+
+        // And bind the BeanManager instance into java:comp...
+        try {
+            MockInitialContextFactory.getJavaComp().bind("BeanManager", weldContainer.getBeanManager());
+        } catch (NamingException e) {
+            Assert.fail("Failed to bind BeanManager into 'java:comp'.");
+        }
     }
 
     @Override
