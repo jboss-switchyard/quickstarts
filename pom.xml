@@ -46,6 +46,7 @@
 
     <modules>
         <module>m1app</module>
+        <module>transform-smooks</module>
     </modules>
     
     <repositories>
