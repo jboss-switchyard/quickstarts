@@ -65,6 +65,9 @@ public class Deployment extends AbstractDeployment {
     private static final String SOAP_ACTIVATOR_CLASS = 
         "org.switchyard.component.soap.deploy.SOAPActivator";
     
+    private static final String CAMEL_ACTIVATOR_CLASS = 
+        "org.switchyard.component.camel.deploy.CamelActivator";
+    
     /**
      * Interface type used by a Java interface, e.g. "interface.java"
      */
@@ -173,6 +176,9 @@ public class Deployment extends AbstractDeployment {
     private void createActivators() {
         createComponentActivator("bean", BEAN_ACTIVATOR_CLASS);
         createGatewayActivator("soap", SOAP_ACTIVATOR_CLASS);
+        createGatewayActivator("camel", CAMEL_ACTIVATOR_CLASS);
+        createGatewayActivator("direct", CAMEL_ACTIVATOR_CLASS);
+        createGatewayActivator("file", CAMEL_ACTIVATOR_CLASS);
     }
 
     private void createGatewayActivator(String type, String runtimeClass) {
