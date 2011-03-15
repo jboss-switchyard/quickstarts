@@ -62,10 +62,14 @@ public class BaseWebService implements Provider<SOAPMessage> {
      * @return the SOAP response
      */
     public SOAPMessage invoke(final SOAPMessage request) {
+        SOAPMessage response = null;
         ClassLoader original = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(_invocationClassLoader);
-        SOAPMessage response = _serviceConsumer.invoke(request);
-        Thread.currentThread().setContextClassLoader(original);
+        try {
+            Thread.currentThread().setContextClassLoader(_invocationClassLoader);
+            response = _serviceConsumer.invoke(request);
+        } finally {
+            Thread.currentThread().setContextClassLoader(original);
+        }
         return response;
     }
 }
