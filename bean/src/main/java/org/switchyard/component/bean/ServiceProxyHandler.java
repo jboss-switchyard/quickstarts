@@ -96,18 +96,7 @@ public class ServiceProxyHandler implements ExchangeHandler {
         if (invocation != null) {
             try {
                 if (exchange.getContract().getServiceOperation().getExchangePattern() == ExchangePattern.IN_OUT) {
-                    Object responseObject;
-
-                    ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-                    try {
-                        // TODO: Come back an fix this... if the TCCL is not that of the deployment, the weld bean proxies barf.
-                        // If the invocation starts from the SOAP Gateway, we get the same TCCL all the way, even after a redeploy.
-                        // See https://issues.jboss.org/browse/SWITCHYARD-148
-                        Thread.currentThread().setContextClassLoader(_beanDeploymentMetaData.getDeploymentClassLoader());
-                        responseObject = invocation.getMethod().invoke(_serviceBean, invocation.getArgs());
-                    } finally {
-                        Thread.currentThread().setContextClassLoader(tccl);
-                    }
+                    Object responseObject = invocation.getMethod().invoke(_serviceBean, invocation.getArgs());
 
                     Message message = exchange.createMessage();
 

@@ -122,6 +122,7 @@ public class InboundHandler extends BaseHandler {
             portName.setName(_wsdlPort.getName());
             
             BaseWebService wsProvider = new BaseWebService();
+            wsProvider.setInvocationClassLoader(Thread.currentThread().getContextClassLoader());
             // Hook the handler
             wsProvider.setConsumer(this);
             

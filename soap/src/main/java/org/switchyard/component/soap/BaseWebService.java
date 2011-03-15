@@ -35,6 +35,7 @@ import javax.xml.ws.WebServiceProvider;
 @ServiceMode(Mode.MESSAGE)
 public class BaseWebService implements Provider<SOAPMessage> {
     private InboundHandler _serviceConsumer;
+    private ClassLoader _invocationClassLoader;
 
     protected BaseWebService() {
     }
@@ -48,11 +49,24 @@ public class BaseWebService implements Provider<SOAPMessage> {
     }
 
     /**
+     * Sets the Invocation TCCL.
+     * @param classLoader the classloader to be set.
+     */
+    public void setInvocationClassLoader(final ClassLoader classLoader) {
+        _invocationClassLoader = classLoader;
+    }
+
+    /**
      * The Webservice implementation method, invokes the service handler.
      * @param request the SOAP request
      * @return the SOAP response
      */
     public SOAPMessage invoke(final SOAPMessage request) {
-        return _serviceConsumer.invoke(request);
+        ClassLoader original = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(_invocationClassLoader);
+        SOAPMessage response = _serviceConsumer.invoke(request);
+        Thread.currentThread().setContextClassLoader(original);
+        return response;
     }
 }
+
