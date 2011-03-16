@@ -17,31 +17,47 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.test;
+package org.switchyard.test.mixins;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.switchyard.deploy.internal.AbstractDeployment;
+import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.TestMixIn;
 
 /**
- * Test MixIns annotation.
- * <p/>
- * Use this annotation to your {@link SwitchYardTestCase} implementation to specify additional
- * test behavior.  See the {@link org.switchyard.test.mixins} package for a list of the
- * {@link TestMixIn TestMixIns} available out of the box.
+ * Abstract {@link TestMixIn}.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-@Target({TYPE})
-@Retention(RUNTIME)
-@Documented
-public @interface TestMixIns {
+public abstract class AbstractTestMixIn implements TestMixIn {
+
+    private SwitchYardTestCase _testCase;
+
+    @Override
+    public void setTestCase(SwitchYardTestCase testCase) {
+        this._testCase = testCase;
+    }
 
     /**
-     * The Mix in types.
+     * Get the test case instance.
+     * @return The test case instance.
      */
-    Class<? extends TestMixIn>[] value();
+    protected SwitchYardTestCase getTestCase() {
+        return _testCase;
+    }
+
+    @Override
+    public void setUp() {
+    }
+
+    @Override
+    public void before(AbstractDeployment deployment) {
+    }
+
+    @Override
+    public void after(AbstractDeployment deployment) {
+    }
+
+    @Override
+    public void tearDown() {
+    }
 }

@@ -17,31 +17,33 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.test;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+package org.switchyard.transform.smooks;
 
 /**
- * Test MixIns annotation.
- * <p/>
- * Use this annotation to your {@link SwitchYardTestCase} implementation to specify additional
- * test behavior.  See the {@link org.switchyard.test.mixins} package for a list of the
- * {@link TestMixIn TestMixIns} available out of the box.
+ * Smooks transformation type.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-@Target({TYPE})
-@Retention(RUNTIME)
-@Documented
-public @interface TestMixIns {
-
+public enum SmooksTransformType {
     /**
-     * The Mix in types.
+     * Basic Smooks Transformation.
+     * <p/>
+     * The result type is defined through the &lt;core:exports&gt;
+     * section of the configuration.
+     * <p/>
+     * See the <a href="www.smooks.org">Smooks User Guide</a>.
      */
-    Class<? extends TestMixIn>[] value();
+    SMOOKS,
+    /**
+     * XML to Java Transformation via Smooks Java Binding configurations.
+     * <p/>
+     * See the <a href="www.smooks.org">Smooks User Guide</a>.
+     */
+    XML2JAVA,
+    /**
+     * Java to XML Transformation via Smooks Java Binding configurations.
+     * <p/>
+     * See the <a href="www.smooks.org">Smooks User Guide</a>.
+     */
+    JAVA2XML
 }

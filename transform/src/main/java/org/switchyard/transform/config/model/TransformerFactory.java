@@ -22,7 +22,7 @@ package org.switchyard.transform.config.model;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.util.Classes;
 import org.switchyard.transform.Transformer;
-import org.switchyard.transform.internal.smooks.SmooksTransformFactory;
+import org.switchyard.transform.smooks.internal.SmooksTransformFactory;
 
 /**
  * Transformer Factory.

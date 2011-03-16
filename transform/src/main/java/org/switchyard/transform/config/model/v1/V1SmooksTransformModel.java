@@ -26,6 +26,7 @@ import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.v1.V1BaseTransformModel;
 import org.switchyard.transform.config.model.SmooksTransformModel;
+import org.switchyard.transform.smooks.SmooksTransformType;
 
 /**
  * A version 1 SmooksTransformModel.
@@ -62,8 +63,18 @@ public class V1SmooksTransformModel extends V1BaseTransformModel implements Smoo
      * {@inheritDoc}
      */
     @Override
-    public SmooksTransformModel setTransformType(String type) {
+    public V1SmooksTransformModel setTransformType(String type) {
         setModelAttribute(TYPE, type);
+        return this;
+    }
+
+    /**
+     * Set the Smooks Transformation type.
+     * @param type The transformation type.
+     * @return <code>this</code> TransformModel instance.
+     */
+    public V1SmooksTransformModel setTransformType(SmooksTransformType type) {
+        setModelAttribute(TYPE, type.toString());
         return this;
     }
 
@@ -79,7 +90,7 @@ public class V1SmooksTransformModel extends V1BaseTransformModel implements Smoo
      * {@inheritDoc}
      */
     @Override
-    public SmooksTransformModel setConfig(String config) {
+    public V1SmooksTransformModel setConfig(String config) {
         setModelAttribute(CONFIG, config);
         return this;
     }
@@ -96,7 +107,7 @@ public class V1SmooksTransformModel extends V1BaseTransformModel implements Smoo
      * {@inheritDoc}
      */
     @Override
-    public SmooksTransformModel setReportPath(String reportPath) {
+    public V1SmooksTransformModel setReportPath(String reportPath) {
         setModelAttribute(REPORT_PATH, reportPath);
         return this;
     }

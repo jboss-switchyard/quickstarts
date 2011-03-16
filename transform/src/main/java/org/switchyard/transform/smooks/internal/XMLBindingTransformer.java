@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.transform.internal.smooks;
+package org.switchyard.transform.smooks.internal;
 
 import org.apache.log4j.Logger;
 import org.milyn.Smooks;

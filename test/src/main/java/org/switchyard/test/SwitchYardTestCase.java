@@ -19,6 +19,8 @@
 
 package org.switchyard.test;
 
+import org.custommonkey.xmlunit.XMLAssert;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,19 +28,36 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.deploy.internal.Deployment;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.transform.Transformer;
+import org.switchyard.transform.config.model.TransformerFactory;
 
 import javax.xml.namespace.QName;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * Base class for writing SwitchYard tests.
+ * <p/>
+ * This class creates a {@link ServiceDomain} instance (via an {@link AbstractDeployment}) for your TestCase.  It
+ * can be configured via the following annotations:
+ * <ul>
+ * <li>{@link TestMixIns}: This annotation allows you to "mix-in" the test behavior that your test requires
+ * by listing {@link TestMixIn} types.  See the {@link org.switchyard.test.mixins} package for a list of the
+ * {@link TestMixIn TestMixIns} available out of the box.  You can also implement your own {@link TestMixIn TestMixIn}.
+ * (See {@link #getMixIn(Class)})</li>
+ * <li>{@link SwitchYardDeploymentConfig}: Allows you to specify a SwitchYard application configuration file (switchyard.xml) to
+ * be used to initialize your TestCase instance {@link ServiceDomain}.</li>
+ * </ul>
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
@@ -55,7 +74,7 @@ public abstract class SwitchYardTestCase {
     /**
      * Test Mix-Ins.
      */
-    private TestMixIns _testMixIns;
+    private List<Class<? extends TestMixIn>> _testMixIns;
     private List<TestMixIn> _testMixInInstances = new ArrayList<TestMixIn>();
 
     /**
@@ -66,7 +85,11 @@ public abstract class SwitchYardTestCase {
         if (deploymentConfig != null && deploymentConfig.value() != null) {
             _configModel = createSwitchYardModel(getClass().getResourceAsStream(deploymentConfig.value()));
         }
-        _testMixIns = getClass().getAnnotation(TestMixIns.class);
+
+        TestMixIns testMixInsAnnotation = getClass().getAnnotation(TestMixIns.class);
+        if (testMixInsAnnotation != null) {
+            _testMixIns = Arrays.asList(testMixInsAnnotation.value());
+        }
     }
 
     /**
@@ -234,6 +257,128 @@ public abstract class SwitchYardTestCase {
         return new Invoker(getServiceDomain(), serviceName);
     }
 
+    /**
+     * Create a new {@link Transformer} instance from the specified {@link TransformModel}.
+     * @param transformModel The TransformModel.
+     * @return The Transformer instance.
+     */
+    public Transformer newTransformer(TransformModel transformModel) {
+        return TransformerFactory.newTransformer(transformModel);
+    }
+
+    /**
+     * Create a new {@link Transformer} instance from the specified {@link TransformModel} and
+     * register it with the test ServiceDomain.
+     * @param transformModel The TransformModel.
+     * @return The Transformer instance.
+     */
+    public Transformer registerTransformer(TransformModel transformModel) {
+        if (transformModel.getFrom() == null || transformModel.getTo() == null) {
+            Assert.fail("Invalid TransformModel instance.  Must specify 'from' and 'to' data types.");
+        }
+
+        Transformer<?,?> transformer = TransformerFactory.newTransformer(transformModel);
+        if (transformer.getFrom() == null) {
+            transformer = new TransformerWrapper(transformer, transformModel);
+        }
+        _deployment.getDomain().getTransformerRegistry().removeTransformer(transformer);
+
+        return transformer;
+    }
+
+    /**
+     * Get the "active" {@link TestMixIn} instance of the specified type.
+     * <p/>
+     * This method can only be called from inside a test method.
+     *
+     * @param type The {@link TestMixIn} type, as specified in the {@link TestMixIns} annotation.
+     * @param <T> type {@link TestMixIn} type.
+     * @return The {@link TestMixIn} instance.
+     */
+    public <T extends TestMixIn> T getMixIn(Class<T> type) {
+        if (_testMixIns == null || _testMixIns.isEmpty()) {
+            Assert.fail("No TestMixIns specified on Test class instance.  Use the @TestMixIns annotation.");
+        }
+        if (_testMixIns.size() != _testMixInInstances.size()) {
+            Assert.fail("TestMixIn instances only available during test method execution.");
+        }
+
+        int indexOf = _testMixIns.indexOf(type);
+        if (indexOf == -1) {
+            Assert.fail("No TestMixIn of type '' specified on the ");
+        }
+
+        return type.cast(_testMixInInstances.get(indexOf));
+    }
+
+    /**
+     * Read a classpath resource and return as a byte array.
+     * @param path The path to the classpath resource.  The specified path can be
+     * relative to the test class' location on the classpath.
+     * @return The resource as an array of bytes.
+     */
+    public byte[] readResourceBytes(String path) {
+        if (path == null) {
+            Assert.fail("Resource 'path' not specified.");
+        }
+
+        InputStream resourceStream = getClass().getResourceAsStream(path);
+        if (resourceStream == null) {
+            Assert.fail("Resource '" + path + "' not found on classpath relative to test class '" + getClass().getName() + "'.  May need to fix the relative path, or make the path absolute.");
+        }
+
+        ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+        try {
+            byte[] readBuffer = new byte[128];
+            int readCount = 0;
+
+            while ((readCount = resourceStream.read(readBuffer)) != -1) {
+                byteOutStream.write(readBuffer, 0, readCount);
+            }
+        } catch (IOException e) {
+            Assert.fail("Unexpected read error reading classpath resource '" + path + "'" + e.getMessage());
+        } finally {
+            try {
+                resourceStream.close();
+            } catch (IOException e) {
+                Assert.fail("Unexpected exception closing classpath resource '" + path + "'" + e.getMessage());
+            }
+        }
+
+        return byteOutStream.toByteArray();
+    }
+
+    /**
+     * Read a classpath resource and return as a String.
+     * @param path The path to the classpath resource.  The specified path can be
+     * relative to the test class' location on the classpath.
+     * @return The resource as a String.
+     */
+    public String readResourceString(String path) {
+        try {
+            return new String(readResourceBytes(path), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            Assert.fail("Unexpected exception reading classpath resource '" + path + "' as a String.  Perhaps this resource is a binary resource that cannot be encoded as a String." + e.getMessage());
+            return null; // Keep the compiler happy.
+        }
+    }
+
+    /**
+     * Compare an XML string (e.g. a result) against a classpath resource.
+     * @param xml The XML (as a String) to be compared against the XML in the specified
+     * classpath resource.
+     * @param resourcePath The path to the classpath resource against which the XML is to be
+     * compared.  The specified path can be relative to the test class' location on the classpath.
+     */
+    public void compareXMLToResource(String xml, String resourcePath) {
+        XMLUnit.setIgnoreWhitespace(true);
+        try {
+            XMLAssert.assertXMLEqual(readResourceString(resourcePath), xml);
+        } catch (Exception e) {
+            Assert.fail("Unexpected error performing XML comparison.");
+        }
+    }
+
     private void mixInSetup() {
         for (TestMixIn mixIn : _testMixInInstances) {
             mixIn.setUp();
@@ -263,14 +408,16 @@ public abstract class SwitchYardTestCase {
     private void createMixInInstances() {
         _testMixInInstances.clear();
 
-        if (_testMixIns == null) {
+        if (_testMixIns == null || _testMixIns.isEmpty()) {
             // No Mix-Ins...
             return;
         }
 
-        for (Class<? extends TestMixIn> mixInType : _testMixIns.value()) {
+        for (Class<? extends TestMixIn> mixInType : _testMixIns) {
             try {
-                _testMixInInstances.add(mixInType.newInstance());
+                TestMixIn testMixIn = mixInType.newInstance();
+                testMixIn.setTestCase(this);
+                _testMixInInstances.add(testMixIn);
             } catch (Exception e) {
                 e.printStackTrace();
                 Assert.fail("Failed to create instance of TestMixIn type " + mixInType.getName() + ".  Make sure it defines a public default constructor.");
@@ -290,6 +437,42 @@ public abstract class SwitchYardTestCase {
             return new ModelResource<SwitchYardModel>().pull(configModel);
         } catch (java.io.IOException ioEx) {
             throw new RuntimeException("Failed to read switchyard config.", ioEx);
+        }
+    }
+
+    private final class TransformerWrapper implements Transformer {
+
+        private Transformer _transformer;
+        private TransformModel _transformModel;
+
+        private TransformerWrapper(Transformer transformer, TransformModel transformModel) {
+            this._transformer = transformer;
+            this._transformModel = transformModel;
+        }
+
+        @Override
+        public Object transform(Object from) {
+            return _transformer.transform(from);
+        }
+
+        @Override
+        public Class getFromType() {
+            return _transformer.getFromType();
+        }
+
+        @Override
+        public Class getToType() {
+            return _transformer.getToType();
+        }
+
+        @Override
+        public QName getFrom() {
+            return _transformModel.getFrom();
+        }
+
+        @Override
+        public QName getTo() {
+            return _transformModel.getTo();
         }
     }
 }

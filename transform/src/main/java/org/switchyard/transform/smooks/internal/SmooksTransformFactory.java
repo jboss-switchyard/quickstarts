@@ -17,16 +17,15 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.transform.internal.smooks;
+package org.switchyard.transform.smooks.internal;
 
 import org.milyn.Smooks;
 import org.milyn.javabean.binding.model.ModelSet;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.SmooksTransformModel;
+import org.switchyard.transform.smooks.SmooksTransformType;
 
 import javax.xml.namespace.QName;
-
-import static org.switchyard.transform.internal.smooks.XMLBindingTransformer.*;
 
 /**
  * Smooks Transformer factory.
@@ -34,15 +33,6 @@ import static org.switchyard.transform.internal.smooks.XMLBindingTransformer.*;
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public final class SmooksTransformFactory {
-
-    /**
-     * Smooks transformation type.
-     */
-    private static enum SmooksTransformationType {
-        SMOOKS,
-        XML2JAVA,
-        JAVA2XML
-    }
 
     /**
      * Private constructor.
@@ -74,7 +64,7 @@ public final class SmooksTransformFactory {
             throw new RuntimeException("Invalid Smooks configuration model.  null or 'to' specification.");
         }
 
-        SmooksTransformationType transformationType = SmooksTransformationType.valueOf(transformType);
+        SmooksTransformType transformationType = SmooksTransformType.valueOf(transformType);
 
         Smooks smooks;
         try {
@@ -84,18 +74,18 @@ public final class SmooksTransformFactory {
             throw new RuntimeException("Failed to create Smooks instance for config '" + config + "'.", e);
         }
 
-        if (transformationType == SmooksTransformationType.JAVA2XML) {
-            return newXMLBindingTransformer(from, to, smooks, BindingDirection.JAVA2XML);
-        } else if (transformationType == SmooksTransformationType.XML2JAVA) {
-            return newXMLBindingTransformer(from, to, smooks, BindingDirection.XML2JAVA);
-        } else if (transformationType == SmooksTransformationType.SMOOKS) {
+        if (transformationType == SmooksTransformType.JAVA2XML) {
+            return newXMLBindingTransformer(from, to, smooks, XMLBindingTransformer.BindingDirection.JAVA2XML);
+        } else if (transformationType == SmooksTransformType.XML2JAVA) {
+            return newXMLBindingTransformer(from, to, smooks, XMLBindingTransformer.BindingDirection.XML2JAVA);
+        } else if (transformationType == SmooksTransformType.SMOOKS) {
             return new SmooksTransformer(from, to, smooks, model);
         } else {
             throw new RuntimeException("Unhandled Smooks transformation type '" + transformationType + "'.");
         }
     }
 
-    private static Transformer newXMLBindingTransformer(final QName from, final QName to, Smooks smooks, BindingDirection direction) {
+    private static Transformer newXMLBindingTransformer(final QName from, final QName to, Smooks smooks, XMLBindingTransformer.BindingDirection direction) {
         ModelSet beanModel = ModelSet.get(smooks.getApplicationContext());
         if (beanModel != null && !beanModel.getModels().isEmpty()) {
             return new XMLBindingTransformer(from, to, smooks, beanModel, direction);

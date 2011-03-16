@@ -23,10 +23,24 @@ import org.switchyard.deploy.internal.AbstractDeployment;
 
 /**
  * Test Mix-In.
+ * <p/>
+ * Test Mix-Ins are used to extend the behavior of a {@link SwitchYardTestCase} implementation.
+ * See the {@link org.switchyard.test.mixins} package for a list of the {@link TestMixIn TestMixIns}
+ * available out of the box.
+ * <p/>
+ * Test Mix-Ins have a lifecycle associated with your TestCase test methods.  The are created
+ * and destroyed for each test method (<i>@Before</i> and <i>@After</i>).  See the javadoc on each of the
+ * methods of this class.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public interface TestMixIn {
+
+    /**
+     * Set the test case instance on the {@link TestMixIn}.
+     * @param testCase The test case.
+     */
+    void setTestCase(SwitchYardTestCase testCase);
 
     /**
      * MixIn setUp.

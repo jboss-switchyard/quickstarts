@@ -26,7 +26,6 @@ import org.junit.Assert;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.test.MockInitialContextFactory;
 import org.switchyard.test.SimpleTestDeployment;
-import org.switchyard.test.TestMixIn;
 
 import javax.naming.NamingException;
 
@@ -35,7 +34,7 @@ import javax.naming.NamingException;
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class CDIMixIn implements TestMixIn {
+public class CDIMixIn extends AbstractTestMixIn {
 
     private Weld _weld;
     private AbstractDeployment _simpleCdiDeployment;
