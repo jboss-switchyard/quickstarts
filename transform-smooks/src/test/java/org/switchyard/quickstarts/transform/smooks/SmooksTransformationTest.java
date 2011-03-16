@@ -19,81 +19,32 @@
 
 package org.switchyard.quickstarts.transform.smooks;
 
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-
-import junit.framework.Assert;
-
-import org.custommonkey.xmlunit.XMLAssert;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
-import org.milyn.payload.StringResult;
-import org.switchyard.quickstarts.transform.smooks.Order;
-import org.switchyard.quickstarts.transform.smooks.OrderAck;
-import org.switchyard.test.SwitchYardDeploymentConfig;
 import org.switchyard.test.SwitchYardTestCase;
 import org.switchyard.test.TestMixIns;
-import org.switchyard.test.mixins.CDIMixIn;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import org.switchyard.test.mixins.SmooksMixIn;
 
-@TestMixIns(CDIMixIn.class)
-@SwitchYardDeploymentConfig(SwitchYardDeploymentConfig.SWITCHYARD_XML)
+/**
+ * Transformation only tests.
+ *
+ * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ */
+@TestMixIns(SmooksMixIn.class)
 public class SmooksTransformationTest extends SwitchYardTestCase {
-    
-    // Message types being transformed
-    public static final QName FROM_TYPE = 
-        new QName("urn:switchyard-quickstarts:transform-smooks:1.0", "submitOrder");
-    public static final QName TO_TYPE = 
-        new QName("urn:switchyard-quickstarts:transform-smooks:1.0", "submitOrderResponse");
-    
-    // Paths to XML test files
-    final String ORDER_XML = "xml/order.xml";
-    final String ORDER_ACK_XML = "xml/orderAck.xml";
-    
+
     @Test
-    public void testTransformXMLtoJava() throws Exception {
-        OrderAck orderAck = newInvoker("OrderService")
-            .operation("submitOrder")
-            .inputType(FROM_TYPE)
-            .sendInOut(loadXML(ORDER_XML).getDocumentElement())
-            .getContent(OrderAck.class);
-        
-        Assert.assertTrue(orderAck.isAccepted());
+    public void test_Order_read_write() throws Exception {
+        // Use the Smooks TestMixIn to verify that the Order_XML.xml
+        // Smooks java binding transform works against the supplied order.xml...
+        SmooksMixIn smooksMixIn = getMixIn(SmooksMixIn.class);
+        smooksMixIn.testJavaXMLReadWrite(Order.class, "/smooks/Order_XML.xml", "/xml/order.xml");
     }
-    
+
     @Test
-    public void testTransformJavaToXML() throws Exception {
-        Order testOrder = new Order()
-            .setOrderId("PO-19838-XYZ")
-            .setItemId("BUTTER")
-            .setQuantity(100);
-        
-        String result = newInvoker("OrderService")
-            .operation("submitOrder")
-            .expectedOutputType(TO_TYPE)
-            .sendInOut(testOrder)
-            .getContent(String.class);
-        
-        XMLUnit.setIgnoreWhitespace(true);
-        XMLAssert.assertXMLEqual(xmlToString(loadXML(ORDER_ACK_XML)), result);
-    }
-    
-    private Document loadXML(String path) throws Exception {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
-        DocumentBuilder db = dbf.newDocumentBuilder();
-        return db.parse(getClass().getClassLoader().getResourceAsStream(path));
-    }
-    
-    private String xmlToString(Node xml) throws Exception {
-        StringResult sr = new StringResult();
-        Transformer t = TransformerFactory.newInstance().newTransformer();
-        t.transform(new DOMSource(xml), sr);
-        return sr.getResult();
+    public void test_OrderAck_read_write() throws Exception {
+        // Use the Smooks TestMixIn to verify that the OrderAck_XML.xml
+        // Smooks java binding transform works against the supplied orderAck.xml...
+        SmooksMixIn smooksMixIn = getMixIn(SmooksMixIn.class);
+        smooksMixIn.testJavaXMLReadWrite(OrderAck.class, "/smooks/OrderAck_XML.xml", "/xml/orderAck.xml");
     }
 }
