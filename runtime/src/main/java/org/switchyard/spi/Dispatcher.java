@@ -32,9 +32,20 @@ public interface Dispatcher {
      * @return service reference
      */
     ServiceReference getService();
+    
     /**
      * Dispatch an exchange.
      * @param exchange exchange
      */
     void dispatch(Exchange exchange);
+    
+    /**
+     * Starts delivery of exchanges via this dispatcher.
+     */
+    void start();
+    
+    /**
+     * Stops deliver of exchanges vis this dispatcher.
+     */
+    void stop();
 }

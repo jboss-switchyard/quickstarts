@@ -44,13 +44,10 @@
 	<url>http://switchyard/</url>
 	
 	<dependencies>
-		<!-- internal dependencies -->
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-api</artifactId>
         </dependency>
-		<!-- N/A -->
-		<!-- external dependencies -->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>

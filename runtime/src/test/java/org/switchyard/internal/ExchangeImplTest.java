@@ -23,7 +23,6 @@ import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
 
-import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.BaseHandler;
@@ -34,8 +33,8 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.MockDomain;
 import org.switchyard.MockHandler;
-import org.switchyard.ServiceReference;
 import org.switchyard.ServiceDomain;
+import org.switchyard.ServiceReference;
 import org.switchyard.metadata.BaseInvocationContract;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InvocationContract;
@@ -55,7 +54,7 @@ public class ExchangeImplTest {
     
     @Test
     public void testSendFaultOnNewExchange() {
-        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY);
+        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null);
         try {
             exchange.sendFault(exchange.createMessage());
             Assert.fail("Sending a fault on a new exchange is not allowed");
@@ -66,7 +65,7 @@ public class ExchangeImplTest {
     
     @Test
     public void testPhaseIsNullOnNewExchange() {
-        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY);
+        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null);
         Assert.assertNull(exchange.getPhase());
     }
     
@@ -235,8 +234,9 @@ public class ExchangeImplTest {
         try {
             // Don't provide a consumer...
             Exchange exchange = _domain.createExchange(service, ExchangeContract.IN_OUT);
+            Assert.fail("Should not be able to create an InOut without specifying a reply handler");
         } catch (RuntimeException e) {
-            Assert.assertEquals("Invalid Exchange construct.  Must supply an output endpoint for an IN_OUT Exchange.", e.getMessage());
+            // exception expected
         }
     }
 

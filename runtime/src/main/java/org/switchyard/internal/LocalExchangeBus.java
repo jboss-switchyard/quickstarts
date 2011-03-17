@@ -41,10 +41,7 @@ public class LocalExchangeBus implements ExchangeBus {
     public synchronized Dispatcher createDispatcher(
             ServiceReference service, HandlerChain handlerChain) {
         Dispatcher dispatcher = new LocalDispatcher(service, handlerChain);
-        // service can be null for temp/reply dispatcher
-        if (service != null) {
-            _dispatchers.put(service.getName(), dispatcher);
-        }
+        _dispatchers.put(service.getName(), dispatcher);
         return dispatcher;
     }
 
@@ -69,11 +66,30 @@ class LocalDispatcher implements Dispatcher {
 
     @Override
     public void dispatch(final Exchange exchange) {
-        _handlerChain.handle(exchange);
+        switch (exchange.getPhase()) {
+        case IN:
+            _handlerChain.handle(exchange);
+            break;
+        case OUT:
+            ((ExchangeImpl)exchange).getReplyChain().handle(exchange);
+            break;
+        default:
+            throw new IllegalStateException("Invalid phase for dispatch: " + exchange.getPhase());
+        }
     }
 
     @Override
     public ServiceReference getService() {
         return _service;
+    }
+
+    @Override
+    public void start() {
+        // NOP
+    }
+
+    @Override
+    public void stop() {
+        // NOP
     }
 }

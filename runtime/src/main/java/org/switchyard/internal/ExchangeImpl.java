@@ -31,6 +31,7 @@ import org.switchyard.ExchangePhase;
 import org.switchyard.ExchangeState;
 import org.switchyard.Message;
 import org.switchyard.ServiceReference;
+import org.switchyard.handlers.HandlerChain;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.transform.TransformSequence;
@@ -40,7 +41,7 @@ import org.switchyard.transform.TransformSequence;
  */
 public class ExchangeImpl implements Exchange {
 
-    private static Logger _log = Logger.getLogger(Exchange.class);
+    private static Logger _log = Logger.getLogger(ExchangeImpl.class);
 
     private final String            _exchangeId;
     private final ExchangeContract  _contract;
@@ -48,8 +49,8 @@ public class ExchangeImpl implements Exchange {
     private final ServiceReference  _service;
     private Message                 _message;
     private ExchangeState           _state = ExchangeState.OK;
-    private Dispatcher              _inputDispatch;
-    private Dispatcher              _outputDispatch;
+    private Dispatcher              _dispatch;
+    private HandlerChain            _replyChain;
     private final Context           _context;
 
     /**
@@ -57,19 +58,20 @@ public class ExchangeImpl implements Exchange {
      * input endpoint must be set before sending an exchange.
      * @param service service
      * @param contract exchange contract
+     * @param dispatch dispatcher to use for the exchange
      */
-    ExchangeImpl(ServiceReference service, ExchangeContract contract) {
-        this(service, contract, null, null);
+    public ExchangeImpl(ServiceReference service, ExchangeContract contract, Dispatcher dispatch) {
+        this(service, contract, dispatch, null);
     }
     
     /**
      * Constructor.
      * @param service service
      * @param contract exchange contract
-     * @param input input endpoint
-     * @param input output endpoint
+     * @param dispatch exchange dispatcher
+     * @param replyChain handler chain for replies
      */
-    ExchangeImpl(ServiceReference service, ExchangeContract contract, Dispatcher input, Dispatcher output) {
+    public ExchangeImpl(ServiceReference service, ExchangeContract contract, Dispatcher dispatch, HandlerChain replyChain) {
 
         // Check that the ExchangeContract exists and has invoker metadata and a ServiceOperation defined on it...
         if (contract == null) {
@@ -82,16 +84,35 @@ public class ExchangeImpl implements Exchange {
 
         // Make sure we have an output endpoint when the pattern is IN_OUT...
         ExchangePattern exchangePattern = contract.getServiceOperation().getExchangePattern();
-        if (output == null && exchangePattern == ExchangePattern.IN_OUT) {
-            throw new RuntimeException("Invalid Exchange construct.  Must supply an output endpoint for an IN_OUT Exchange.");
+        if (replyChain == null && exchangePattern == ExchangePattern.IN_OUT) {
+            throw new RuntimeException("Invalid Exchange construct.  Must supply an reply handler for an IN_OUT Exchange.");
         }
 
         _service = service;
         _contract = contract;
-        _inputDispatch = input;
-        _outputDispatch = output;
+        _dispatch = dispatch;
+        _replyChain = replyChain;
         _exchangeId = UUID.randomUUID().toString();
         _context = new DefaultContext();
+    }
+    
+    /**
+     * Creates an exchange implementation in a specific state.  This constructor is
+     * used when deserializing an exchange.
+     * @param exchangeId exchange unique ID
+     * @param dispatch dispatcher used to send exchange
+     * @param phase exchange phase
+     * @param contract exchange contract
+     */
+    public ExchangeImpl(String exchangeId, Dispatcher dispatch, ExchangePhase phase, ExchangeContract contract) {
+        _exchangeId = exchangeId;
+        _dispatch = dispatch;
+        _phase = phase;
+        _contract = contract;
+        
+        // TODO : update once serialization impl is ready
+        _service = null;
+        _context = null;
     }
 
     @Override
@@ -158,35 +179,45 @@ public class ExchangeImpl implements Exchange {
     }
 
     /**
-     * Get input dispatcher.
-     * @return input dispatcher
+     * Get exchange dispatcher.
+     * @return exchange dispatcher
      */
-    public Dispatcher getInputDispatcher() {
-        return _inputDispatch;
+    public Dispatcher getDispatcher() {
+        return _dispatch;
+    }
+    
+    /**
+     * Get the reply handler chain for this exchange.
+     * @return reply chain
+     */
+    public HandlerChain getReplyChain() {
+        return _replyChain;
     }
 
     /**
-     * Get output dispatcher.
-     * @return output dispatcher
+     * Set the exchange dispatcher.
+     * @param dispatch exchange dispatcher
      */
-    public Dispatcher getOutputDispatcher() {
-        return _outputDispatch;
+    public void setOutputDispatcher(Dispatcher dispatch) {
+        _dispatch = dispatch;
     }
 
-    /**
-     * Set the output dispatcher.
-     * @param output output dispatcher
-     */
-    public void setOutputDispatcher(Dispatcher output) {
-        _outputDispatch = output;
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof ExchangeImpl)) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        
+        // two exchanges with the same id are equal
+        return ((ExchangeImpl)obj).getId().equals(_exchangeId);
     }
-
-    /**
-     * Set the input dispatcher.
-     * @param input input dispatcher
-     */
-    public void setInputDispatcher(Dispatcher input) {
-        _inputDispatch = input;
+    
+    @Override
+    public int hashCode() {
+        return _exchangeId.hashCode();
     }
 
     /**
@@ -197,22 +228,14 @@ public class ExchangeImpl implements Exchange {
      */
     private void sendInternal(Message message) {
         _message = message;
-        
-        switch (_phase) {
-        case IN:
-            _inputDispatch.dispatch(this);
-            break;
-        case OUT:
-            if (_outputDispatch != null) {
-                _outputDispatch.dispatch(this);
-            } else {
-                _log.debug("Unable to send OUT message.  No output endpoint.");
-                // TODO: Also needs to get routed to something like a DLQ.
-            }
-            break;
-        default:
-            throw new RuntimeException("No endpoint assigned for exchange phase " + _phase);
+        // if a fault was thrown by the handler chain and there's no reply chain
+        // we need to log.
+        // TODO : stick this in a central fault/error queue
+        if (ExchangeState.FAULT.equals(_state) && _replyChain == null) {
+            _log.warn("Fault generated during exchange without a handler: " + _message);
+            return;
         }
+        _dispatch.dispatch(this);
     }
 
     private void assertExchangeStateOK() {

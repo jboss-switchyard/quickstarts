@@ -83,18 +83,16 @@ public class DomainImpl implements ServiceDomain {
     @Override
     public Exchange createExchange(
             ServiceReference service, ExchangeContract contract, ExchangeHandler handler) {
-        // Determine the endpoints used for exchange delivery
-        Dispatcher inputDispatcher = _exchangeBus.getDispatcher(service);
-        Dispatcher outputDispatcher = null;
-
+        Dispatcher dispatcher = _exchangeBus.getDispatcher(service);
+        HandlerChain replyChain = null;
+        
         if (handler != null) {
-            HandlerChain replyChain = _defaultHandlers.copy();
+            replyChain = _defaultHandlers.copy();
             replyChain.addLast("replyHandler", handler);
-            outputDispatcher = _exchangeBus.createDispatcher(null, replyChain);
         }
 
         // create the exchange
-        ExchangeImpl exchange = new ExchangeImpl(service, contract, inputDispatcher, outputDispatcher);
+        ExchangeImpl exchange = new ExchangeImpl(service, contract, dispatcher, replyChain);
         return exchange;
     }
 

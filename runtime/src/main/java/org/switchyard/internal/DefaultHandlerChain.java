@@ -39,7 +39,7 @@ import org.switchyard.transform.TransformSequence;
  * Default handler chain.
  */
 public class DefaultHandlerChain implements HandlerChain {
-    private final Logger _logger = Logger.getLogger(DefaultHandlerChain.class.toString());
+    private static Logger _logger = Logger.getLogger(DefaultHandlerChain.class);
     private final LinkedList<HandlerRef> _chain = new LinkedList<HandlerRef>();
     
     /**
