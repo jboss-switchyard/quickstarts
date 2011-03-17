@@ -30,13 +30,11 @@ import org.switchyard.test.TestMixIns;
 import org.switchyard.test.mixins.CDIMixIn;
 
 /**
- * Higher level service "invocation" transformation tests.
+ * Test Smooks transformations around a service.
  */
 @TestMixIns(CDIMixIn.class)
 @SwitchYardDeploymentConfig(SwitchYardDeploymentConfig.SWITCHYARD_XML)
-public class ServiceInvocationTest extends SwitchYardTestCase {
-
-    // TODO: Create a SOAP TestMixIn and replace these tests with proper SOAP invocation tests.
+public class ServiceTransformationTest extends SwitchYardTestCase {
 
     // Message types being transformed
     public static final QName FROM_TYPE =
