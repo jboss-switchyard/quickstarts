@@ -41,15 +41,6 @@ import org.switchyard.test.mixins.CDIMixIn;
 @TestMixIns(CDIMixIn.class)
 public class WebServiceTest extends SwitchYardTestCase {
 
-    // ------------------------------------------------------------------------------------
-    //
-    //  NOTE: This test cannot be run from inside your IDE because the switchyard.xml that
-    //        it relies upon is only generated at built time.
-    //
-    //        See https://issues.jboss.org/browse/SWITCHYARD-163
-    //
-    // ------------------------------------------------------------------------------------
-
     private InputStream _requestStream;
     private Reader _expectedResponseReader;
 
