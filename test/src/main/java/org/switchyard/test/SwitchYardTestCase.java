@@ -26,9 +26,15 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
+import org.switchyard.config.model.MergeScanner;
 import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.Models;
+import org.switchyard.config.model.Scanner;
+import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
+import org.switchyard.config.util.classpath.ClasspathScanner;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.deploy.internal.Deployment;
 import org.switchyard.metadata.InOnlyService;
@@ -38,9 +44,12 @@ import org.switchyard.transform.config.model.TransformerFactory;
 
 import javax.xml.namespace.QName;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -83,7 +92,7 @@ public abstract class SwitchYardTestCase {
     public SwitchYardTestCase() {
         SwitchYardDeploymentConfig deploymentConfig = getClass().getAnnotation(SwitchYardDeploymentConfig.class);
         if (deploymentConfig != null && deploymentConfig.value() != null) {
-            _configModel = createSwitchYardModel(getClass().getResourceAsStream(deploymentConfig.value()));
+            _configModel = createSwitchYardModel(getClass().getResourceAsStream(deploymentConfig.value()), createScanners(deploymentConfig));
         }
 
         TestMixIns testMixInsAnnotation = getClass().getAnnotation(TestMixIns.class);
@@ -97,7 +106,8 @@ public abstract class SwitchYardTestCase {
      * @param configModel Configuration model stream.
      */
     public SwitchYardTestCase(InputStream configModel) {
-        _configModel = createSwitchYardModel(configModel);
+        SwitchYardDeploymentConfig deploymentConfig = getClass().getAnnotation(SwitchYardDeploymentConfig.class);
+        _configModel = createSwitchYardModel(configModel, createScanners(deploymentConfig));
     }
 
     /**
@@ -109,7 +119,8 @@ public abstract class SwitchYardTestCase {
      */
     public SwitchYardTestCase(String configModelPath) {
         Assert.assertNotNull("Test 'configModel' is null.", configModelPath);
-        _configModel = createSwitchYardModel(getClass().getResourceAsStream(configModelPath));
+        SwitchYardDeploymentConfig deploymentConfig = getClass().getAnnotation(SwitchYardDeploymentConfig.class);
+        _configModel = createSwitchYardModel(getClass().getResourceAsStream(configModelPath), createScanners(deploymentConfig));
     }
 
     /**
@@ -312,6 +323,20 @@ public abstract class SwitchYardTestCase {
     }
 
     /**
+     * Finds a resource with a given name.
+     * <p/>
+     * Searches relative to the implementing class definition.
+     *
+     * @param name Name of the desired resource
+     * @return A {@link java.io.InputStream} object or <tt>null</tt> if no resource with this name is found.
+     *
+     * @see Class#getResourceAsStream(String)
+     */
+    public InputStream getResourceAsStream(String name) {
+        return getClass().getResourceAsStream(name);
+    }
+
+    /**
      * Read a classpath resource and return as a byte array.
      * @param path The path to the classpath resource.  The specified path can be
      * relative to the test class' location on the classpath.
@@ -322,7 +347,7 @@ public abstract class SwitchYardTestCase {
             Assert.fail("Resource 'path' not specified.");
         }
 
-        InputStream resourceStream = getClass().getResourceAsStream(path);
+        InputStream resourceStream = getResourceAsStream(path);
         if (resourceStream == null) {
             Assert.fail("Resource '" + path + "' not found on classpath relative to test class '" + getClass().getName() + "'.  May need to fix the relative path, or make the path absolute.");
         }
@@ -361,6 +386,19 @@ public abstract class SwitchYardTestCase {
             Assert.fail("Unexpected exception reading classpath resource '" + path + "' as a String.  Perhaps this resource is a binary resource that cannot be encoded as a String." + e.getMessage());
             return null; // Keep the compiler happy.
         }
+    }
+
+    /**
+     * Load the SwitchYard configuration model specified by the configModel stream.
+     * @param configModel The config model stream.
+     * @return The SwitchYard config model.
+     * @throws IOException Error reading config model stream.
+     */
+    public SwitchYardModel loadSwitchYardModel(InputStream configModel) throws IOException {
+        if (configModel == null) {
+            throw new IllegalArgumentException("null 'configModel' arg.");
+        }
+        return new ModelResource<SwitchYardModel>().pull(configModel);
     }
 
     /**
@@ -425,18 +463,90 @@ public abstract class SwitchYardTestCase {
         }
     }
 
+    private SwitchYardModel createSwitchYardModel(InputStream configModel, List<Scanner<V1SwitchYardModel>> scanners) {
+        Assert.assertNotNull("Test 'configModel' is null.", configModel);
+
+        try {
+            SwitchYardModel model = loadSwitchYardModel(configModel);
+            ClassLoader classLoader = getClass().getClassLoader();
+
+            if (scanners != null && !scanners.isEmpty() && classLoader instanceof URLClassLoader) {
+                MergeScanner<V1SwitchYardModel> merge_scanner = new MergeScanner<V1SwitchYardModel>(V1SwitchYardModel.class, true, scanners);
+                List<URL> scanURLs = getScanURLs((URLClassLoader)classLoader);
+
+                ScannerInput<V1SwitchYardModel> scanner_input = new ScannerInput<V1SwitchYardModel>().setName("").setURLs(scanURLs);
+                V1SwitchYardModel scannedModel = merge_scanner.scan(scanner_input).getModel();
+
+                return Models.merge(scannedModel, model, false);
+            } else {
+                return model;
+            }
+        } catch (java.io.IOException ioEx) {
+            throw new RuntimeException("Failed to read switchyard config.", ioEx);
+        }
+    }
+
     private void assertDeployed() {
         if (_deployment == null) {
             Assert.fail("TestCase deployment not yet deployed.  You may need to make an explicit call to the deploy() method.");
         }
     }
 
-    private static SwitchYardModel createSwitchYardModel(InputStream configModel) {
-        Assert.assertNotNull("Test 'configModel' is null.", configModel);
+    private List<Scanner<V1SwitchYardModel>> createScanners(SwitchYardDeploymentConfig deploymentConfig) {
+        List<Scanner<V1SwitchYardModel>> scanners = new ArrayList<Scanner<V1SwitchYardModel>>();
+
+        if (deploymentConfig != null) {
+            SwitchYardDeploymentScanners scannersAnno = getClass().getAnnotation(SwitchYardDeploymentScanners.class);
+            Class<? extends Scanner>[] scannerClasses = null;
+
+            if (scannersAnno != null) {
+                scannerClasses = scannersAnno.value();
+            }
+
+            if (scannerClasses != null) {
+                for (Class<? extends Scanner> scannerClass : scannerClasses) {
+                    try {
+                        scanners.add(scannerClass.newInstance());
+                    } catch (Exception e) {
+                        Assert.fail("Exception creating instance of Scanner class '" + scannerClass.getName() + "': " + e.getMessage());
+                    }
+                }
+            } else {
+                // Add the default scanners...
+                addScanner("org.switchyard.component.bean.config.model.BeanSwitchYardScanner", scanners);
+                addScanner("org.switchyard.transform.config.model.TransformSwitchYardScanner", scanners);
+            }
+        }
+
+        return scanners;
+    }
+
+    private List<URL> getScanURLs(URLClassLoader classLoader) {
+        URL[] classPathURLs = classLoader.getURLs();
+        List<URL> scanURLs = new ArrayList<URL>();
+
+        // Only scan directories.  Above all, we want to make sure we don't
+        // start scanning JDK jars etc...
+        for (URL classpathURL : classPathURLs) {
+            try {
+                File file = ClasspathScanner.toClassPathFile(classpathURL);
+                if (file.isDirectory()) {
+                    scanURLs.add(classpathURL);
+                }
+            } catch (IOException e) {
+                Assert.fail("Failed to convert classpath URL '" + classpathURL + "' to a File instance.");
+            }
+        }
+
+        return scanURLs;
+    }
+
+    private void addScanner(String className, List<Scanner<V1SwitchYardModel>> scanners) {
         try {
-            return new ModelResource<SwitchYardModel>().pull(configModel);
-        } catch (java.io.IOException ioEx) {
-            throw new RuntimeException("Failed to read switchyard config.", ioEx);
+            scanners.add((Scanner) Class.forName(className).newInstance());
+        } catch (Exception e) {
+            // Ignore...
+            return;
         }
     }
 

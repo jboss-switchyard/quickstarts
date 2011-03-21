@@ -55,7 +55,27 @@ public class ClasspathScanner {
      * @throws IOException Error reading from URL target.
      */
     public void scan(URL url) throws IOException {
-        String urlPath = url.getFile();
+        File file = toClassPathFile(url);
+
+        if (file.exists()) {
+            if (file.isDirectory()) {
+                handleDirectory(file, null);
+            } else {
+                handleArchive(file);
+            }
+        } else {
+            _logger.warn("Unknown Classpath URL File '" +  file.getAbsolutePath() + "'.");
+        }
+    }
+
+    /**
+     * Convert the supplied classpath URL to a File.
+     * @param classPathURL The classpath URL.
+     * @return The File.
+     * @throws IOException Unable to convert.
+     */
+    public static File toClassPathFile(URL classPathURL) throws IOException {
+        String urlPath = classPathURL.getFile();
 
         urlPath = URLDecoder.decode(urlPath, "UTF-8");
         if (urlPath.startsWith("file:")) {
@@ -66,16 +86,7 @@ public class ClasspathScanner {
             urlPath = urlPath.substring(0, urlPath.indexOf('!'));
         }
 
-        File file = new File(urlPath);
-        if (file.exists()) {
-            if (file.isDirectory()) {
-                handleDirectory(file, null);
-            } else {
-                handleArchive(file);
-            }
-        } else {
-            _logger.warn("Unknown Classpath URL File '" +  file.getAbsolutePath() + "'.");
-        }
+        return new File(urlPath);
     }
 
     private void handleArchive(File file) throws IOException {

@@ -19,7 +19,7 @@
 
 package org.switchyard.test;
 
-import org.switchyard.deploy.internal.AbstractDeployment;
+import org.switchyard.config.model.Scanner;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -29,21 +29,17 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * SwitchYard test deployment configuration annotation.
+ * SwitchYard test deployment {@link Scanner Scanners} annotation.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 @Target({TYPE})
 @Retention(RUNTIME)
 @Documented
-public @interface SwitchYardDeploymentConfig {
-    /**
-     * Default classpath location for the switchyard configuration.
-     */
-    public static final String SWITCHYARD_XML = AbstractDeployment.SWITCHYARD_XML;
+public @interface SwitchYardDeploymentScanners {
 
     /**
-     * Classpath path to the configuration.
+     * {@link Scanner Scanners} to be used for augmenting the Application deployment model.
      */
-    String value();
+    Class<? extends Scanner>[] value();
 }
