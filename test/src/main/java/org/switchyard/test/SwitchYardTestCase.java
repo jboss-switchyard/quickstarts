@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.config.model.MergeScanner;
+import org.switchyard.config.model.Model;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.Models;
 import org.switchyard.config.model.Scanner;
@@ -39,10 +40,14 @@ import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.deploy.internal.Deployment;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
+import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.TransformerFactory;
+import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -203,7 +208,7 @@ public abstract class SwitchYardTestCase {
      */
     protected MockHandler registerInOutService(String serviceName) {
         MockHandler handler = new MockHandler();
-        getServiceDomain().registerService(new QName(serviceName), handler, new InOutService());
+        getServiceDomain().registerService(QName.valueOf(serviceName), handler, new InOutService());
         return handler;
     }
 
@@ -214,7 +219,18 @@ public abstract class SwitchYardTestCase {
      * @param serviceHandler The service handler.
      */
     protected void registerInOutService(String serviceName, ExchangeHandler serviceHandler) {
-        getServiceDomain().registerService(new QName(serviceName), serviceHandler, new InOutService());
+        getServiceDomain().registerService(QName.valueOf(serviceName), serviceHandler, new InOutService());
+    }
+
+    /**
+     * Register an IN_OUT Service.
+     *
+     * @param serviceName The Service name.
+     * @param serviceHandler The service handler.
+     * @param metadata Service interface.
+     */
+    protected void registerInOutService(String serviceName, ExchangeHandler serviceHandler, ServiceInterface metadata) {
+        getServiceDomain().registerService(QName.valueOf(serviceName), serviceHandler, metadata);
     }
 
     /**
@@ -227,7 +243,7 @@ public abstract class SwitchYardTestCase {
      */
     protected MockHandler registerInOnlyService(String serviceName) {
         MockHandler handler = new MockHandler();
-        getServiceDomain().registerService(new QName(serviceName), handler, new InOnlyService());
+        getServiceDomain().registerService(QName.valueOf(serviceName), handler, new InOnlyService());
         return handler;
     }
 
@@ -238,7 +254,7 @@ public abstract class SwitchYardTestCase {
      * @param serviceHandler The service handler.
      */
     protected void registerInOnlyService(String serviceName, ExchangeHandler serviceHandler) {
-        getServiceDomain().registerService(new QName(serviceName), serviceHandler, new InOnlyService());
+        getServiceDomain().registerService(QName.valueOf(serviceName), serviceHandler, new InOnlyService());
     }
 
     /**
@@ -316,7 +332,7 @@ public abstract class SwitchYardTestCase {
 
         int indexOf = _testMixIns.indexOf(type);
         if (indexOf == -1) {
-            Assert.fail("No TestMixIn of type '' specified on the ");
+            Assert.fail("Required TestMixIn '" + type.getName() + "' is not specified on TestCase '" + getClass().getName() + "'.");
         }
 
         return type.cast(_testMixInInstances.get(indexOf));
@@ -389,16 +405,56 @@ public abstract class SwitchYardTestCase {
     }
 
     /**
+     * Read a classpath resource and return as an XML DOM Document.
+     *
+     * @param path The path to the classpath resource.  The specified path can be
+     * relative to the test class' location on the classpath.
+     * @return The resource as a Document.
+     */
+    public Document readResourceDocument(String path) {
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            return db.parse(getResourceAsStream(path));
+        } catch (Exception e) {
+            Assert.fail("Unexpected exception reading classpath resource '" + path + "' as a DOM Document." + e.getMessage());
+            return null; // Keep the compiler happy.
+        }
+    }
+
+    /**
      * Load the SwitchYard configuration model specified by the configModel stream.
      * @param configModel The config model stream.
      * @return The SwitchYard config model.
-     * @throws IOException Error reading config model stream.
      */
-    public SwitchYardModel loadSwitchYardModel(InputStream configModel) throws IOException {
+    public SwitchYardModel loadSwitchYardModel(InputStream configModel) {
+        return loadConfigModel(configModel, SwitchYardModel.class);
+    }
+
+    /**
+     * Load the SwitchYard configuration model specified by the configModel stream.
+     * @param <M> Model type.
+     * @param configModel The config model stream.
+     * @param modelType Model type.
+     * @return The SwitchYard config model.
+     */
+    public <M extends Model> M loadConfigModel(InputStream configModel, Class<M> modelType) {
         if (configModel == null) {
             throw new IllegalArgumentException("null 'configModel' arg.");
         }
-        return new ModelResource<SwitchYardModel>().pull(configModel);
+        try {
+            return modelType.cast(new ModelResource().pull(configModel));
+        } catch (IOException e) {
+            Assert.fail("Unexpected error building " + modelType.getSimpleName() + ": " + e.getMessage());
+        } finally {
+            try {
+                configModel.close();
+            } catch (IOException e) {
+                Assert.fail("Unexpected error closing " + modelType.getSimpleName() + " stream: " + e.getMessage());
+            }
+        }
+        return null;
     }
 
     /**
@@ -412,6 +468,22 @@ public abstract class SwitchYardTestCase {
         XMLUnit.setIgnoreWhitespace(true);
         try {
             XMLAssert.assertXMLEqual(readResourceString(resourcePath), xml);
+        } catch (Exception e) {
+            Assert.fail("Unexpected error performing XML comparison: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Compare an XML String (e.g. a result) against another String.
+     * @param xml The XML (as a String) to be compared against the XML in the specified
+     * classpath resource.
+     * @param string The String against which the XML is to be
+     * compared.
+     */
+    public void compareXMLToString(String xml, String string) {
+        XMLUnit.setIgnoreWhitespace(true);
+        try {
+            XMLAssert.assertXMLEqual(string, xml);
         } catch (Exception e) {
             Assert.fail("Unexpected error performing XML comparison.");
         }
