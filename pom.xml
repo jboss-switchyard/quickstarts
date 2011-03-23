@@ -19,6 +19,7 @@
     <module>common/xml</module>
     <module>config</module>
     <module>api</module>
+    <module>extensions/wsdl</module>
     <module>transform</module>
     <module>runtime</module>
     <module>bus/hornetq</module>
