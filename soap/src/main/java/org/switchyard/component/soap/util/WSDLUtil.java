@@ -46,6 +46,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
 import org.switchyard.ExchangePattern;
+import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.soap.PortName;
 import org.switchyard.component.soap.WebServicePublishException;
 import org.switchyard.metadata.BaseExchangeContract;
