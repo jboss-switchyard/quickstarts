@@ -16,6 +16,7 @@
   <description>SwitchYard Core</description>
   <modules>
     <module>build</module>
+    <module>common/xml</module>
     <module>config</module>
     <module>api</module>
     <module>transform</module>
