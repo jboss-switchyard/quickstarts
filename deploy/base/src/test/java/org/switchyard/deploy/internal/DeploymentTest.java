@@ -19,15 +19,19 @@
 
 package org.switchyard.deploy.internal;
 
+import java.io.InputStream;
+
+import javax.xml.namespace.QName;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.ServiceDomain;
+import org.switchyard.deploy.components.MockActivator;
+import org.switchyard.deploy.components.config.MockBindingModel;
+import org.switchyard.deploy.components.config.MockImplementationModel;
 import org.switchyard.deploy.internal.transformers.ABTransformer;
 import org.switchyard.deploy.internal.transformers.CDTransformer;
 import org.switchyard.transform.Transformer;
-
-import javax.xml.namespace.QName;
-import java.io.InputStream;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
@@ -42,7 +46,34 @@ public class DeploymentTest {
 
         deployment.init();
         deployment.destroy();
+    }
+    
+    @Test
+    public void testActivators() {
+        InputStream swConfigStream = getClass().getResourceAsStream("/switchyard-config-mock-01.xml");
+        Deployment deployment = new Deployment(swConfigStream);
+        deployment.createGatewayActivator("mock", "org.switchyard.deploy.components.MockActivator");
+        deployment.createComponentActivator("mock", "org.switchyard.deploy.components.MockActivator");
+        deployment.init();
+        
+        // Grab a reference to our activators
+        MockActivator gwActivator = (MockActivator)
+            deployment.getGatewayActivator(MockBindingModel.TYPE);
+        MockActivator implActivator = (MockActivator)
+        deployment.getGatewayActivator(MockImplementationModel.TYPE);
+        deployment.start();
+        deployment.stop();
+        deployment.destroy();
 
+        // Verify the activators were poked
+        Assert.assertTrue(gwActivator.initCalled());
+        Assert.assertTrue(gwActivator.startCalled());
+        Assert.assertTrue(gwActivator.stopCalled());
+        Assert.assertTrue(gwActivator.destroyCalled());
+        Assert.assertTrue(implActivator.initCalled());
+        Assert.assertTrue(implActivator.startCalled());
+        Assert.assertTrue(implActivator.stopCalled());
+        Assert.assertTrue(implActivator.destroyCalled());
     }
     
     @Test

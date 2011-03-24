@@ -172,16 +172,8 @@ public class Deployment extends AbstractDeployment {
 
         unregisterTransformers();
     }
-
-    private void createActivators() {
-        createComponentActivator("bean", BEAN_ACTIVATOR_CLASS);
-        createGatewayActivator("soap", SOAP_ACTIVATOR_CLASS);
-        createGatewayActivator("camel", CAMEL_ACTIVATOR_CLASS);
-        createGatewayActivator("direct", CAMEL_ACTIVATOR_CLASS);
-        createGatewayActivator("file", CAMEL_ACTIVATOR_CLASS);
-    }
-
-    private void createGatewayActivator(String type, String runtimeClass) {
+    
+    void createGatewayActivator(String type, String runtimeClass) {
         try {
             _gatewayActivators.put(
                     type,
@@ -191,7 +183,7 @@ public class Deployment extends AbstractDeployment {
         }
     }
     
-    private void createComponentActivator(String type, String runtimeClass) {
+    void createComponentActivator(String type, String runtimeClass) {
         try {
             _componentActivators.put(
                     type,
@@ -199,6 +191,22 @@ public class Deployment extends AbstractDeployment {
         } catch (Exception ex) {
             _log.debug("Failed to load Component Activator class '" + runtimeClass + "' for component type '" + type + "'.");
         }
+    }
+    
+    Activator getComponentActivator(String type) {
+        return _componentActivators.get(type);
+    }
+
+    Activator getGatewayActivator(String type) {
+        return _gatewayActivators.get(type);
+    }
+    
+    private void createActivators() {
+        createComponentActivator("bean", BEAN_ACTIVATOR_CLASS);
+        createGatewayActivator("soap", SOAP_ACTIVATOR_CLASS);
+        createGatewayActivator("camel", CAMEL_ACTIVATOR_CLASS);
+        createGatewayActivator("direct", CAMEL_ACTIVATOR_CLASS);
+        createGatewayActivator("file", CAMEL_ACTIVATOR_CLASS);
     }
 
     private void registerTransformers() {
