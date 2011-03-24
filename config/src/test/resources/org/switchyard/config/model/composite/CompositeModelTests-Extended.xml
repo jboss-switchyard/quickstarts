@@ -22,5 +22,8 @@ MA  02110-1301, USA.
            xmlns:bogus="urn:switchyard-config:test-bogus:1.0">
     <component>
        <bogus:implementation.test foo="bar"/>
+       <service name="SimpleService">
+              <!-- no interface -->
+       </service>
     </component>
 </composite>

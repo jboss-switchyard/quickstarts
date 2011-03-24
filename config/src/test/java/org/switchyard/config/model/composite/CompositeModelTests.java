@@ -175,6 +175,13 @@ public class CompositeModelTests {
         BogusImplementationModel bim = (BogusImplementationModel)cm.getComponents().get(0).getImplementation();
         Assert.assertEquals("bar", bim.getFoo());
     }
+    
+    @Test
+    public void testReadExtendedWithService() throws Exception {
+        CompositeModel cm = _res.pull(EXTENDED_XML);
+        ComponentModel component = cm.getComponents().get(0);
+        Assert.assertEquals(1, component.getServices().size());
+    }
 
     @Test
     public void testParenthood() throws Exception {

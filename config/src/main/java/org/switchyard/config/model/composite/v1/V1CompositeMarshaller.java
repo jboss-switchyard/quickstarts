@@ -57,10 +57,13 @@ public class V1CompositeMarshaller extends BaseMarshaller {
         if (name.equals(CompositeModel.COMPOSITE)) {
             return new V1CompositeModel(config, desc);
         } else if (name.equals(CompositeServiceModel.SERVICE)) {
-            if (config.getFirstChildStartsWith(BindingModel.BINDING) != null) {
-                return new V1CompositeServiceModel(config, desc);
-            } else if (config.getFirstChildStartsWith(InterfaceModel.INTERFACE) != null) {
-                return new V1ComponentServiceModel(config, desc);
+            Configuration config_parent = config.getParent();
+            if (config_parent != null) {
+                if (config_parent.getName().equals(CompositeModel.COMPOSITE)) {
+                    return new V1CompositeServiceModel(config, desc);
+                } else if (config_parent.getName().equals(ComponentModel.COMPONENT)) {
+                    return new V1ComponentServiceModel(config, desc);
+                }
             }
         } else if (name.startsWith(BindingModel.BINDING)) {
             return new V1BindingModel(config, desc);
