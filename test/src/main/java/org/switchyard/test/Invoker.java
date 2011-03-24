@@ -284,7 +284,7 @@ public class Invoker {
         return new ExchangeHandlerProxy(proxyInvocationHandler, exchangeHandlerProxy);
     }
 
-    private final class ExchangeHandlerProxy {
+    private static final class ExchangeHandlerProxy {
         private ProxyInvocationHandler _proxyInvocationHandler;
         private ExchangeHandler _exchangeHandlerProxy;
 
@@ -294,7 +294,7 @@ public class Invoker {
         }
     }
 
-    private class ProxyInvocationHandler implements InvocationHandler {
+    private static final class ProxyInvocationHandler implements InvocationHandler {
 
         private ExchangeHandler _handler;
         private boolean _responseReceived;
@@ -332,7 +332,7 @@ public class Invoker {
         }
     }
 
-    private class ResponseCatcher implements ExchangeHandler {
+    private static final class ResponseCatcher implements ExchangeHandler {
 
         private Message _response;
         private boolean _isFault;

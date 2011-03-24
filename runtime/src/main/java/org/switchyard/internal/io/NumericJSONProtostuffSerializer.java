@@ -16,41 +16,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
-package org.switchyard.metadata;
-
-import org.switchyard.io.Serialization.AccessType;
-import org.switchyard.io.Serialization.Strategy;
+package org.switchyard.internal.io;
 
 /**
- * Base exchange contract.
+ * Uses the Protostuff library to do numeric JSON de/serialization.
  *
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-@Strategy(access=AccessType.FIELD)
-public class BaseExchangeContract implements ExchangeContract {
-
-    private ServiceOperation _operation;
-    private BaseInvocationContract _invokerInvocationMetadata = new BaseInvocationContract();
+public final class NumericJSONProtostuffSerializer extends JSONProtostuffSerializer {
 
     /**
-     * Public constructor.
-     * @param operation The target service operation.
+     * Calls JSONProtostuffSerializer(true).
      */
-    public BaseExchangeContract(ServiceOperation operation) {
-        if (operation == null) {
-            throw new IllegalArgumentException("null 'operation' arg.");
-        }
-        this._operation = operation;
+    public NumericJSONProtostuffSerializer() {
+        super(true);
     }
 
-    @Override
-    public BaseInvocationContract getInvokerInvocationMetaData() {
-        return _invokerInvocationMetadata;
-    }
-
-    @Override
-    public ServiceOperation getServiceOperation() {
-        return _operation;
-    }
 }

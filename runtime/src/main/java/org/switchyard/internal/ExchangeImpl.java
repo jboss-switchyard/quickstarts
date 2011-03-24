@@ -19,6 +19,7 @@
 
 package org.switchyard.internal;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import javax.xml.namespace.QName;
@@ -32,6 +33,12 @@ import org.switchyard.ExchangeState;
 import org.switchyard.Message;
 import org.switchyard.ServiceReference;
 import org.switchyard.handlers.HandlerChain;
+import org.switchyard.internal.ExchangeImpl.ExchangeImplFactory;
+import org.switchyard.io.Serialization.AccessType;
+import org.switchyard.io.Serialization.CoverageType;
+import org.switchyard.io.Serialization.Factory;
+import org.switchyard.io.Serialization.Include;
+import org.switchyard.io.Serialization.Strategy;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.transform.TransformSequence;
@@ -40,20 +47,36 @@ import org.switchyard.transform.TransformerRegistry;
 /**
  * Implementation of Exchange.
  */
+@Strategy(access=AccessType.FIELD, coverage=CoverageType.EXCLUSIVE, factory=ExchangeImplFactory.class)
 public class ExchangeImpl implements Exchange {
 
     private static Logger _log = Logger.getLogger(ExchangeImpl.class);
 
-    private final String            _exchangeId;
-    private final ExchangeContract  _contract;
-    private ExchangePhase           _phase;
-    private final ServiceReference  _service;
-    private Message                 _message;
-    private ExchangeState           _state = ExchangeState.OK;
-    private Dispatcher              _dispatch;
-    private TransformerRegistry     _transformerRegistry;
-    private HandlerChain            _replyChain;
-    private final Context           _context;
+    @Include private String           _exchangeId;
+    @Include private ExchangeContract _contract;
+    @Include private ExchangePhase    _phase;
+    private ServiceReference          _service;
+    @Include private Message          _message;
+    @Include private ExchangeState    _state = ExchangeState.OK;
+    private Dispatcher                _dispatch;
+    private TransformerRegistry       _transformerRegistry;
+    private HandlerChain              _replyChain;
+    @Include private Context          _context;
+
+    /**
+     * The serialization factory for ExchangeImpl.
+     */
+    public static final class ExchangeImplFactory implements Factory<ExchangeImpl> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public ExchangeImpl create(Class<ExchangeImpl> type) throws IOException {
+            return new ExchangeImpl();
+        }
+    }
+
+    private ExchangeImpl() {}
 
     /**
      * Create a new exchange with no endpoints initialized.  At a minimum, the 
@@ -99,27 +122,6 @@ public class ExchangeImpl implements Exchange {
         _replyChain = replyChain;
         _exchangeId = UUID.randomUUID().toString();
         _context = new DefaultContext();
-    }
-    
-    /**
-     * Creates an exchange implementation in a specific state.  This constructor is
-     * used when deserializing an exchange.
-     * @param exchangeId exchange unique ID
-     * @param dispatch dispatcher used to send exchange
-     * @param transformerRegistry The {@link TransformerRegistry}.
-     * @param phase exchange phase
-     * @param contract exchange contract
-     */
-    public ExchangeImpl(String exchangeId, Dispatcher dispatch, TransformerRegistry transformerRegistry, ExchangePhase phase, ExchangeContract contract) {
-        _exchangeId = exchangeId;
-        _dispatch = dispatch;
-        _transformerRegistry = transformerRegistry;
-        _phase = phase;
-        _contract = contract;
-        
-        // TODO : update once serialization impl is ready
-        _service = null;
-        _context = null;
     }
 
     @Override

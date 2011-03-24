@@ -16,41 +16,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
+package org.switchyard.internal.io.graph;
 
-package org.switchyard.metadata;
-
-import org.switchyard.io.Serialization.AccessType;
-import org.switchyard.io.Serialization.Strategy;
+import java.io.IOException;
+import java.io.Serializable;
 
 /**
- * Base exchange contract.
+ * Represents a node in an object graph.
  *
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ * @param <T> the type of object at the root of this Graph node
+ *
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-@Strategy(access=AccessType.FIELD)
-public class BaseExchangeContract implements ExchangeContract {
-
-    private ServiceOperation _operation;
-    private BaseInvocationContract _invokerInvocationMetadata = new BaseInvocationContract();
+public interface Graph<T> extends Serializable {
 
     /**
-     * Public constructor.
-     * @param operation The target service operation.
+     * Populates this Graph with the given object.
+     * @param object the object to graph
+     * @throws IOException if a problem occurs during graphing
      */
-    public BaseExchangeContract(ServiceOperation operation) {
-        if (operation == null) {
-            throw new IllegalArgumentException("null 'operation' arg.");
-        }
-        this._operation = operation;
-    }
+    public void compose(T object) throws IOException;
 
-    @Override
-    public BaseInvocationContract getInvokerInvocationMetaData() {
-        return _invokerInvocationMetadata;
-    }
+    /**
+     * Extracts the object from this Graph.
+     * @return the extracted object
+     * @throws IOException if a problem occurs during "de-graphing"
+     */
+    public T decompose() throws IOException;
 
-    @Override
-    public ServiceOperation getServiceOperation() {
-        return _operation;
-    }
 }

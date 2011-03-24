@@ -19,6 +19,7 @@
 
 package org.switchyard.internal.transform;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -248,7 +249,8 @@ public class BaseTransformerRegistry implements TransformerRegistry {
      * Fallback Transformer Sorter.
      * @param <T> JavaSourceFallbackTransformer.
      */
-    public static class JavaSourceFallbackTransformerComparator<T extends JavaSourceFallbackTransformer> implements Comparator<T> {
+    @SuppressWarnings("serial")
+    public static class JavaSourceFallbackTransformerComparator<T extends JavaSourceFallbackTransformer> implements Comparator<T>, Serializable {
         @Override
         public int compare(T t1, T t2) {
             if (t1._javaType == t2._javaType) {

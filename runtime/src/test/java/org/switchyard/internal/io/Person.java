@@ -16,41 +16,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
+package org.switchyard.internal.io;
 
-package org.switchyard.metadata;
-
-import org.switchyard.io.Serialization.AccessType;
-import org.switchyard.io.Serialization.Strategy;
+import java.io.Serializable;
 
 /**
- * Base exchange contract.
+ * A test object representing a person.
  *
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-@Strategy(access=AccessType.FIELD)
-public class BaseExchangeContract implements ExchangeContract {
+@SuppressWarnings("serial")
+public class Person implements Serializable {
 
-    private ServiceOperation _operation;
-    private BaseInvocationContract _invokerInvocationMetadata = new BaseInvocationContract();
+    private String _name;
 
-    /**
-     * Public constructor.
-     * @param operation The target service operation.
-     */
-    public BaseExchangeContract(ServiceOperation operation) {
-        if (operation == null) {
-            throw new IllegalArgumentException("null 'operation' arg.");
-        }
-        this._operation = operation;
+    public Person() {}
+
+    public String getName() {
+        return _name;
     }
 
-    @Override
-    public BaseInvocationContract getInvokerInvocationMetaData() {
-        return _invokerInvocationMetadata;
+    public void setName(String name) {
+        _name = name;
     }
 
-    @Override
-    public ServiceOperation getServiceOperation() {
-        return _operation;
-    }
 }

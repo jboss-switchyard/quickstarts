@@ -27,6 +27,10 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.Context;
 import org.switchyard.Message;
+import org.switchyard.io.Serialization.AccessType;
+import org.switchyard.io.Serialization.CoverageType;
+import org.switchyard.io.Serialization.Exclude;
+import org.switchyard.io.Serialization.Strategy;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
@@ -34,9 +38,10 @@ import org.switchyard.transform.TransformerRegistry;
 /**
  * Default message.
  */
+@Strategy(access=AccessType.FIELD, coverage=CoverageType.INCLUSIVE)
 public class DefaultMessage implements Message {
-    
-    private TransformerRegistry _transformerRegistry;
+
+    @Exclude private TransformerRegistry _transformerRegistry;
     private Context _context;
     private Object _content;
     private Map<String, DataSource> _attachments = 

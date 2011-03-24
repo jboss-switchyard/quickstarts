@@ -70,7 +70,7 @@ public class HornetQDispatcherTest {
         Dispatcher dispatch = _provider.createDispatcher(service, inHandlers, null);
         
         Exchange exchange = new ExchangeImpl(service, ExchangeContract.IN_ONLY, dispatch, null, null);
-        exchange.send(null);
+        exchange.send(exchange.createMessage());
         Thread.sleep(200);
         
         Assert.assertEquals(exchange, sink.getLastExchange());
@@ -92,7 +92,7 @@ public class HornetQDispatcherTest {
         outHandlers.addLast("out", outHandler);
         
         Exchange exchange = new ExchangeImpl(service, ExchangeContract.IN_OUT, dispatch, null, outHandlers);
-        exchange.send(null);
+        exchange.send(exchange.createMessage());
         Thread.sleep(400);
         
         Assert.assertNotNull(outHandler.getLastExchange());
@@ -121,7 +121,7 @@ class ExchangeSink extends BaseHandler {
     public void handleMessage(Exchange exchange) throws HandlerException {
         _lastExchange = exchange;
         if (_reply) {
-            exchange.send(null);
+            exchange.send(exchange.createMessage());
         }
     }
     

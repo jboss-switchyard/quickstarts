@@ -16,41 +16,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
+package org.switchyard.internal.io;
 
-package org.switchyard.metadata;
-
-import org.switchyard.io.Serialization.AccessType;
-import org.switchyard.io.Serialization.Strategy;
+import java.io.Serializable;
 
 /**
- * Base exchange contract.
+ * A test object representing a car.
  *
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-@Strategy(access=AccessType.FIELD)
-public class BaseExchangeContract implements ExchangeContract {
+@SuppressWarnings("serial")
+public class Car implements Serializable {
 
-    private ServiceOperation _operation;
-    private BaseInvocationContract _invokerInvocationMetadata = new BaseInvocationContract();
+    private Person _driver;
 
-    /**
-     * Public constructor.
-     * @param operation The target service operation.
-     */
-    public BaseExchangeContract(ServiceOperation operation) {
-        if (operation == null) {
-            throw new IllegalArgumentException("null 'operation' arg.");
-        }
-        this._operation = operation;
+    public Car() {}
+
+    public Person getDriver() {
+        return _driver;
     }
 
-    @Override
-    public BaseInvocationContract getInvokerInvocationMetaData() {
-        return _invokerInvocationMetadata;
+    public void setDriver(Person driver) {
+        _driver = driver;
     }
 
-    @Override
-    public ServiceOperation getServiceOperation() {
-        return _operation;
-    }
 }

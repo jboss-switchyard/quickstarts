@@ -38,7 +38,7 @@ public class ServiceReferenceImpl implements ServiceReference {
     private QName _name;
     private ServiceInterface _interface;
     private ServiceDomain _domain;
-    
+
     /**
      * Creates a new reference to a service.
      * @param name name of the service reference

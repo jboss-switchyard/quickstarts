@@ -22,9 +22,11 @@
 
 package org.switchyard.bus.hornetq;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.hornetq.api.core.HornetQBuffer;
 import org.hornetq.api.core.HornetQException;
 import org.hornetq.api.core.Message;
 import org.hornetq.api.core.client.ClientConsumer;
@@ -38,8 +40,12 @@ import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
 import org.switchyard.ServiceReference;
 import org.switchyard.handlers.HandlerChain;
+import org.switchyard.internal.DefaultMessage;
 import org.switchyard.internal.ExchangeImpl;
-import org.switchyard.metadata.ExchangeContract;
+import org.switchyard.internal.io.GraphSerializer;
+import org.switchyard.internal.io.NumericJSONProtostuffSerializer;
+import org.switchyard.internal.io.graph.Reflection.FieldAccess;
+import org.switchyard.io.Serializer;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.transform.TransformerRegistry;
@@ -51,6 +57,8 @@ import org.switchyard.transform.TransformerRegistry;
  * only have a single queue and client session.
  */
 public class HornetQDispatcher implements Dispatcher, MessageHandler {
+
+    private static final Serializer SERIALIZER = new GraphSerializer(new NumericJSONProtostuffSerializer());
 
     private ServiceReference _service;
     private DispatchQueue _inQueue;
@@ -157,32 +165,33 @@ public class HornetQDispatcher implements Dispatcher, MessageHandler {
     }
     
     private Exchange messageToExchange(Message message) {
-        // Read serialized exchange info from message body:
-        //     1: exchange ID
-        //     2: message exchange pattern
-        //     3: exchange phase
-        String exchangeId = message.getBodyBuffer().readString();
-        String mep = message.getBodyBuffer().readString();
-        String phase = message.getBodyBuffer().readString();
-        
-        // This is a hack until we have serialization stuff sorted
-        ExchangeContract contract = ExchangePattern.IN_ONLY.equals(ExchangePattern.valueOf(mep))
-                ? ExchangeContract.IN_ONLY : ExchangeContract.IN_OUT;
-        ExchangePhase exchangePhase = ExchangePhase.valueOf(phase);
-        
-        return new ExchangeImpl(exchangeId, this, _transformerRegistry, exchangePhase, contract);
+        HornetQBuffer buffer = message.getBodyBuffer();
+        byte[] bytes = new byte[buffer.readableBytes()];
+        buffer.readBytes(bytes);
+        ExchangeImpl exchange;
+        try {
+            exchange = SERIALIZER.deserialize(bytes, ExchangeImpl.class);
+            new FieldAccess(ExchangeImpl.class.getDeclaredField("_service")).write(exchange, _service);
+            new FieldAccess(ExchangeImpl.class.getDeclaredField("_dispatch")).write(exchange, this);
+            new FieldAccess(ExchangeImpl.class.getDeclaredField("_transformerRegistry")).write(exchange, _transformerRegistry);
+            new FieldAccess(DefaultMessage.class.getDeclaredField("_transformerRegistry")).write(exchange.getMessage(), _transformerRegistry);
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        } catch (NoSuchFieldException nsfe) {
+            throw new RuntimeException(nsfe);
+        }
+        return exchange;
     }
     
     private static Message exchangeToMessage(Exchange exchange, ClientSession session) {
-        Message msg = session.createMessage(false);  // NOT PERSISTENT
-        // Write serialized exchange info to message body:
-        //     1: exchange ID
-        //     2: message exchange pattern
-        //     3: exchange phase
-        msg.getBodyBuffer().writeString(exchange.getId());
-        msg.getBodyBuffer().writeString(exchange.getContract().getServiceOperation().getExchangePattern().toString());
-        msg.getBodyBuffer().writeString(exchange.getPhase().toString());
-        
+        byte[] bytes;
+        try {
+            bytes = SERIALIZER.serialize((ExchangeImpl)exchange, ExchangeImpl.class);
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
+        Message msg = session.createMessage(false); // NOT PERSISTENT
+        msg.getBodyBuffer().writeBytes(bytes);
         return msg;
     }
     

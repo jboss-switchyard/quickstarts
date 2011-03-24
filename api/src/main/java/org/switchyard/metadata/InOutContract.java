@@ -19,7 +19,14 @@
 
 package org.switchyard.metadata;
 
+import java.io.IOException;
+
 import javax.xml.namespace.QName;
+
+import org.switchyard.io.Serialization.CoverageType;
+import org.switchyard.io.Serialization.Factory;
+import org.switchyard.io.Serialization.Strategy;
+import org.switchyard.metadata.InOutContract.InOutContractFactory;
 
 /**
  * Default/opaque {@link org.switchyard.ExchangePattern#IN_OUT} exchange
@@ -27,7 +34,21 @@ import javax.xml.namespace.QName;
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
+@Strategy(coverage=CoverageType.EXCLUSIVE, factory=InOutContractFactory.class)
 class InOutContract implements ExchangeContract {
+
+    /**
+     * The serialization factory for InOutContract.
+     */
+    public static final class InOutContractFactory implements Factory<InOutContract> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public InOutContract create(Class<InOutContract> type) throws IOException {
+            return (InOutContract)ExchangeContract.IN_OUT;
+        }
+    }
 
     /**
      * Default invoker invocation metadata.

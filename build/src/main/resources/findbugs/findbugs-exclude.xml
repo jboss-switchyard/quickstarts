@@ -1,6 +1,7 @@
 <FindBugsFilter>
-     <!-- DefaultHandlerChain uses this without side effects -->
+     <!-- InputStreamGraph uses this without side effects -->
      <Match>
-       <Bug pattern="SIC_INNER_SHOULD_BE_STATIC" />
+       <Class name="org.switchyard.internal.io.graph.InputStreamGraph" />
+       <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2" />
      </Match>
 </FindBugsFilter>

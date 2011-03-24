@@ -19,6 +19,21 @@
 
 package org.switchyard.test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.apache.log4j.Logger;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -53,20 +68,6 @@ import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.TransformerFactory;
 import org.w3c.dom.Document;
-
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Base class for writing SwitchYard tests.
@@ -122,7 +123,20 @@ public abstract class SwitchYardTestCase {
         if (testCaseConfig != null) {
             String config = testCaseConfig.config();
             if (config != null && !config.equals(NULL_CONFIG)) {
-                _configModel = createSwitchYardModel(getClass().getResourceAsStream(config), createScanners(testCaseConfig));
+                InputStream is = null;
+                try {
+                    is = getClass().getResourceAsStream(config);
+                    _configModel = createSwitchYardModel(is, createScanners(testCaseConfig));
+                } finally {
+                    try {
+                        if (is != null) {
+                            is.close();
+                        }
+                    } catch (Throwable t) {
+                        // just to keep checkstyle happy
+                        t.getMessage();
+                    }
+                }
             }
             Class<? extends TestMixIn>[] testMixIns = testCaseConfig.mixins();
             if (testMixIns == null) {
@@ -169,7 +183,20 @@ public abstract class SwitchYardTestCase {
     public SwitchYardTestCase(String configModelPath) {
         Assert.assertNotNull("Test 'configModel' is null.", configModelPath);
         SwitchYardTestCaseConfig testCaseConfig = getClass().getAnnotation(SwitchYardTestCaseConfig.class);
-        _configModel = createSwitchYardModel(getClass().getResourceAsStream(configModelPath), createScanners(testCaseConfig));
+        InputStream is = null;
+        try {
+            is = getClass().getResourceAsStream(configModelPath);
+            _configModel = createSwitchYardModel(is, createScanners(testCaseConfig));
+        } finally {
+            try {
+                if (is != null) {
+                    is.close();
+                }
+            } catch (Throwable t) {
+                // just to keep checkstyle happy
+                t.getMessage();
+            }
+        }
     }
 
     /**
@@ -659,7 +686,7 @@ public abstract class SwitchYardTestCase {
     }
 
     @Scannable(false)
-    private final class TransformerWrapper extends BaseTransformer {
+    private static final class TransformerWrapper extends BaseTransformer {
 
         private Transformer _transformer;
         private TransformModel _transformModel;

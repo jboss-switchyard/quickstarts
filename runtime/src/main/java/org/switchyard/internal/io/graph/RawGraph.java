@@ -16,41 +16,53 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
+package org.switchyard.internal.io.graph;
 
-package org.switchyard.metadata;
-
-import org.switchyard.io.Serialization.AccessType;
-import org.switchyard.io.Serialization.Strategy;
+import java.io.IOException;
 
 /**
- * Base exchange contract.
+ * A Graph representing a raw object, internalized as itself.
+ * This would include primitives, enums, wrappers and basic types.
  *
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ * @param <T> the type of raw object 
+ *
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-@Strategy(access=AccessType.FIELD)
-public class BaseExchangeContract implements ExchangeContract {
+@SuppressWarnings("serial")
+public class RawGraph<T> implements Graph<T> {
 
-    private ServiceOperation _operation;
-    private BaseInvocationContract _invokerInvocationMetadata = new BaseInvocationContract();
+    private T _raw;
 
     /**
-     * Public constructor.
-     * @param operation The target service operation.
+     * Gets the raw object.
+     * @return the raw object
      */
-    public BaseExchangeContract(ServiceOperation operation) {
-        if (operation == null) {
-            throw new IllegalArgumentException("null 'operation' arg.");
-        }
-        this._operation = operation;
+    public T getRaw() {
+        return _raw;
     }
 
-    @Override
-    public BaseInvocationContract getInvokerInvocationMetaData() {
-        return _invokerInvocationMetadata;
+    /**
+     * Sets the raw object.
+     * @param raw the raw object
+     */
+    public void setRaw(T raw) {
+        _raw = raw;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public ServiceOperation getServiceOperation() {
-        return _operation;
+    public void compose(T object) throws IOException {
+        setRaw(object);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public T decompose() throws IOException {
+        return getRaw();
+    }
+
 }

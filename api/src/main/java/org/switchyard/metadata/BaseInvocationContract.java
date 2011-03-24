@@ -21,11 +21,15 @@ package org.switchyard.metadata;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.io.Serialization.AccessType;
+import org.switchyard.io.Serialization.Strategy;
+
 /**
  * Base invocation contract.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
+@Strategy(access=AccessType.FIELD)
 public class BaseInvocationContract implements InvocationContract {
 
     private QName _inputType; // Undefined by default

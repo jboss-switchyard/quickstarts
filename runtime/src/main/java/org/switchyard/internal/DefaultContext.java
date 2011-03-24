@@ -24,11 +24,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.switchyard.Context;
+import org.switchyard.io.Serialization.AccessType;
+import org.switchyard.io.Serialization.CoverageType;
+import org.switchyard.io.Serialization.Strategy;
 
 /**
  * Base context implementation.
  */
+@Strategy(access=AccessType.FIELD, coverage=CoverageType.INCLUSIVE)
 public class DefaultContext implements Context {
+
     private final ConcurrentHashMap<String, Object> _properties =
         new ConcurrentHashMap<String, Object>();
 

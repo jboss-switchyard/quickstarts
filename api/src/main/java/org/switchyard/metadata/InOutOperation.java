@@ -22,11 +22,14 @@ package org.switchyard.metadata;
 import javax.xml.namespace.QName;
 
 import org.switchyard.ExchangePattern;
+import org.switchyard.io.Serialization.AccessType;
+import org.switchyard.io.Serialization.Strategy;
 
 /**
  * Default implementation of ServiceOperation for ExchangePattern.IN_OUT
  * operations.
  */
+@Strategy(access=AccessType.FIELD)
 public class InOutOperation extends BaseInvocationContract implements ServiceOperation {
     
     // operation name

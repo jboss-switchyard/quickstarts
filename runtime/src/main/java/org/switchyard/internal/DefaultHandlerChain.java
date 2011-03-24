@@ -159,7 +159,7 @@ public class DefaultHandlerChain implements HandlerChain {
     }
 
     // sweet little struct
-    private class HandlerRef {
+    private static final class HandlerRef {
         HandlerRef(String name, ExchangeHandler handler) {
             _handler = handler;
             _name = name;
