@@ -147,8 +147,6 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
 
         _domain.registerService(config.getServiceName(), provider, new HelloWebServiceInterface());
 
-        _domain.getTransformerRegistry().addTransformer(new HandlerExceptionTransformer());
-
         String host = System.getProperty("org.switchyard.test.soap.host", "localhost");
         String port = System.getProperty("org.switchyard.test.soap.port", "48080");
 

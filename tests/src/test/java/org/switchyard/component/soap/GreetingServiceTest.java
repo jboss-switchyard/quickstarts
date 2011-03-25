@@ -54,9 +54,6 @@ public class GreetingServiceTest extends SwitchYardTestCase {
         config.setServiceName(GREETING_SERVICE_NAME);
         config.setServerHost(host);
         config.setServerPort(Integer.parseInt(port));
-
-        // Need to explicitly add the transformer for exceptions...
-        addTransformer(new HandlerExceptionTransformer());
     }
 
     @Test
@@ -94,7 +91,7 @@ public class GreetingServiceTest extends SwitchYardTestCase {
                 "</gre:greet>";
         String expectedResponse = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault><faultcode>SOAP-ENV:Server</faultcode><faultstring>Application Exception from GreetingService !!</faultstring></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
-        test(soapRequest, expectedResponse, false);
+        test(soapRequest, expectedResponse, true);
     }
 
     @Test

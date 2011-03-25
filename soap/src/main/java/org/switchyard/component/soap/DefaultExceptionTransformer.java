@@ -31,18 +31,18 @@ import org.switchyard.component.soap.util.WSDLUtil;
 import org.switchyard.transform.BaseTransformer;
 
 /**
- * Base {@link HandlerException} to SOAP fault transformer.
+ * Default {@link Exception} to SOAP fault transformer.
  *
  * @param <F> From type.
  * @param <T> To type.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class HandlerExceptionTransformer<F extends HandlerException, T extends SOAPMessage> extends BaseTransformer<F, T> {
+public class DefaultExceptionTransformer<F extends Exception, T extends SOAPMessage> extends BaseTransformer<F, T> {
 
     @Override
     public QName getFrom() {
-        return new QName(HandlerException.MESSAGE_TYPE);
+        return toMessageType(Exception.class);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class HandlerExceptionTransformer<F extends HandlerException, T extends S
     }
 
     @Override
-    public SOAPMessage transform(HandlerException from) {
+    public SOAPMessage transform(Exception from) {
         try {
             Throwable cause = from.getCause();
             if (cause instanceof InvocationTargetException) {
