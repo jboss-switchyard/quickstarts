@@ -60,6 +60,7 @@ public class BaseService implements ServiceInterface {
     public BaseService(ServiceOperation operation, String type) {
         _operations = new HashSet<ServiceOperation>(1);
         _operations.add(operation);
+        _type = type;
     }
     
     /**
@@ -69,6 +70,7 @@ public class BaseService implements ServiceInterface {
      */
     public BaseService(Set<ServiceOperation> operations, String type) {
         _operations = operations;
+        _type = type;
     }
 
     /**

@@ -39,6 +39,8 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.deploy.Activator;
+import org.switchyard.extensions.wsdl.WSDLReaderException;
+import org.switchyard.extensions.wsdl.WSDLService;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.Transformer;
@@ -72,6 +74,11 @@ public class Deployment extends AbstractDeployment {
      * Interface type used by a Java interface, e.g. "interface.java"
      */
     private static final String JAVA_INTERFACE = "java";
+
+    /**
+     * Interface type used by a WSDL interface, e.g. "interface.wsdl"
+     */
+    private static final String WSDL_INTERFACE = "wsdl";
 
     private static Logger _log = Logger.getLogger(Deployment.class);
 
@@ -283,6 +290,13 @@ public class Deployment extends AbstractDeployment {
                     ServiceInterface si = JavaService.fromClass(
                             loadClass(service.getInterface().getInterface()));
                     serviceRef = getDomain().registerService(service.getQName(), handler, si);
+                } else if (service.getInterface().getType().equals(WSDL_INTERFACE)) {
+                    try {
+                        ServiceInterface si = WSDLService.fromWSDL(service.getInterface().getInterface());
+                        serviceRef = getDomain().registerService(service.getQName(), handler, si);
+                    } catch (WSDLReaderException wsdlre) {
+                        throw new RuntimeException(wsdlre);
+                    }
                 } else {
                     serviceRef = getDomain().registerService(service.getQName(), handler);
                 }

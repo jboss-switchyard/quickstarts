@@ -26,11 +26,15 @@ import javax.xml.namespace.QName;
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.ServiceDomain;
+import org.switchyard.ServiceReference;
 import org.switchyard.deploy.components.MockActivator;
 import org.switchyard.deploy.components.config.MockBindingModel;
 import org.switchyard.deploy.components.config.MockImplementationModel;
 import org.switchyard.deploy.internal.transformers.ABTransformer;
 import org.switchyard.deploy.internal.transformers.CDTransformer;
+import org.switchyard.extensions.wsdl.WSDLService;
+import org.switchyard.metadata.ServiceInterface;
+import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.transform.Transformer;
 
 /**
@@ -94,5 +98,28 @@ public class DeploymentTest {
         deployment.destroy();
 
         // Check that the transformers are undeployed...
+    }
+
+    @Test
+    public void interfaceWSDL() {
+        InputStream swConfigStream = getClass().getResourceAsStream("/switchyard-config-interface-wsdl-01.xml");
+        Deployment deployment = new Deployment(swConfigStream);
+        deployment.createComponentActivator("mock", "org.switchyard.deploy.components.MockActivator");
+        deployment.init();
+        deployment.start();
+
+        // FIXME: new QName("urn:switchyard-interface-wsdl", "HelloService") does not work
+        ServiceReference service = deployment.getDomain().getService(new QName("HelloService"));
+        Assert.assertNotNull(service);
+        ServiceInterface iface = service.getInterface();
+        Assert.assertEquals(WSDLService.TYPE, iface.getType());
+        ServiceOperation op = iface.getOperation("sayHello");
+        Assert.assertNotNull(op);
+        Assert.assertEquals(new QName("urn:switchyard-interface-wsdl", "sayHello"), op.getInputType());
+        Assert.assertEquals(new QName("urn:switchyard-interface-wsdl", "sayHelloResponse"), op.getOutputType());
+
+        deployment.stop();
+        deployment.destroy();
+
     }
 }
