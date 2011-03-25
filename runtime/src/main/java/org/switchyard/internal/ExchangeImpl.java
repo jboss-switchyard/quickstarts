@@ -35,6 +35,7 @@ import org.switchyard.handlers.HandlerChain;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.transform.TransformSequence;
+import org.switchyard.transform.TransformerRegistry;
 
 /**
  * Implementation of Exchange.
@@ -50,6 +51,7 @@ public class ExchangeImpl implements Exchange {
     private Message                 _message;
     private ExchangeState           _state = ExchangeState.OK;
     private Dispatcher              _dispatch;
+    private TransformerRegistry     _transformerRegistry;
     private HandlerChain            _replyChain;
     private final Context           _context;
 
@@ -59,9 +61,10 @@ public class ExchangeImpl implements Exchange {
      * @param service service
      * @param contract exchange contract
      * @param dispatch dispatcher to use for the exchange
+     * @param transformerRegistry The {@link TransformerRegistry}.
      */
-    public ExchangeImpl(ServiceReference service, ExchangeContract contract, Dispatcher dispatch) {
-        this(service, contract, dispatch, null);
+    public ExchangeImpl(ServiceReference service, ExchangeContract contract, Dispatcher dispatch, TransformerRegistry transformerRegistry) {
+        this(service, contract, dispatch, transformerRegistry, null);
     }
     
     /**
@@ -69,9 +72,10 @@ public class ExchangeImpl implements Exchange {
      * @param service service
      * @param contract exchange contract
      * @param dispatch exchange dispatcher
+     * @param transformerRegistry The {@link TransformerRegistry}.
      * @param replyChain handler chain for replies
      */
-    public ExchangeImpl(ServiceReference service, ExchangeContract contract, Dispatcher dispatch, HandlerChain replyChain) {
+    public ExchangeImpl(ServiceReference service, ExchangeContract contract, Dispatcher dispatch, TransformerRegistry transformerRegistry, HandlerChain replyChain) {
 
         // Check that the ExchangeContract exists and has invoker metadata and a ServiceOperation defined on it...
         if (contract == null) {
@@ -91,6 +95,7 @@ public class ExchangeImpl implements Exchange {
         _service = service;
         _contract = contract;
         _dispatch = dispatch;
+        _transformerRegistry = transformerRegistry;
         _replyChain = replyChain;
         _exchangeId = UUID.randomUUID().toString();
         _context = new DefaultContext();
@@ -101,12 +106,14 @@ public class ExchangeImpl implements Exchange {
      * used when deserializing an exchange.
      * @param exchangeId exchange unique ID
      * @param dispatch dispatcher used to send exchange
+     * @param transformerRegistry The {@link TransformerRegistry}.
      * @param phase exchange phase
      * @param contract exchange contract
      */
-    public ExchangeImpl(String exchangeId, Dispatcher dispatch, ExchangePhase phase, ExchangeContract contract) {
+    public ExchangeImpl(String exchangeId, Dispatcher dispatch, TransformerRegistry transformerRegistry, ExchangePhase phase, ExchangeContract contract) {
         _exchangeId = exchangeId;
         _dispatch = dispatch;
+        _transformerRegistry = transformerRegistry;
         _phase = phase;
         _contract = contract;
         
@@ -246,7 +253,7 @@ public class ExchangeImpl implements Exchange {
 
     @Override
     public Message createMessage() {
-        return new DefaultMessage();
+        return new DefaultMessage().setTransformerRegistry(_transformerRegistry);
     }
 
     @Override

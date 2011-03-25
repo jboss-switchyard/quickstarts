@@ -29,26 +29,56 @@ import org.switchyard.transform.BaseTransformer;
 public class BaseTransformerTest {
 
     @Test
-    public void testGetType() {
-        BaseTransformer<String, Integer> intToStr = 
-            new BaseTransformer<String, Integer>() {
-                public Integer transform(String from) {
+    public void testGetName_default_with_generics() {
+        BaseTransformer<Double, String> intToStr =
+            new BaseTransformer<Double, String>() {
+                public String transform(Double from) {
                     return null;
                 }
         };
 
-        Assert.assertEquals(String.class, intToStr.getFromType());
-        Assert.assertEquals(Integer.class, intToStr.getToType());
+        Assert.assertEquals("java:java.lang.Double", intToStr.getFrom().toString());
+        Assert.assertEquals("java:java.lang.String", intToStr.getTo().toString());
     }
-    
+
     @Test
-    public void testGetName() {
+    public void testGetName_default_without_generics() {
+        // No generics...
+        BaseTransformer intToStr =
+            new BaseTransformer() {
+                public Object transform(Object from) {
+                    return null;
+                }
+        };
+
+        Assert.assertEquals("java:java.lang.Object", intToStr.getFrom().toString());
+        Assert.assertEquals("java:java.lang.Object", intToStr.getTo().toString());
+    }
+
+    @Test
+    public void testGetName_specified_with_generics() {
         final QName fromName = new QName("string1");
         final QName toName = new QName("string2");
-        
-        BaseTransformer<String, String> intToStr = 
+
+        BaseTransformer<String, String> intToStr =
             new BaseTransformer<String, String>(fromName, toName) {
                 public String transform(String from) {
+                    return null;
+                }
+        };
+
+        Assert.assertEquals(fromName, intToStr.getFrom());
+        Assert.assertEquals(toName, intToStr.getTo());
+    }
+
+    @Test
+    public void testGetName_specified_without_generics() {
+        final QName fromName = new QName("string1");
+        final QName toName = new QName("string2");
+
+        BaseTransformer intToStr =
+            new BaseTransformer(fromName, toName) {
+                public Object transform(Object from) {
                     return null;
                 }
         };

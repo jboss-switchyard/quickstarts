@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ JBoss, Home of Professional Open Source
+  ~ Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+  ~ as indicated by the @authors tag. All rights reserved.
+  ~ See the copyright.txt in the distribution for a
+  ~ full listing of individual contributors.
+  ~
+  ~ This copyrighted material is made available to anyone wishing to use,
+  ~ modify, copy, or redistribute it subject to the terms and conditions
+  ~ of the GNU Lesser General Public License, v. 2.1.
+  ~ This program is distributed in the hope that it will be useful, but WITHOUT A
+  ~ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  ~ PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  ~ You should have received a copy of the GNU Lesser General Public License,
+  ~ v.2.1 along with this distribution; if not, write to the Free Software
+  ~ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  ~ MA  02110-1301, USA.
+  -->
+
+<transforms xmlns="urn:switchyard-config:switchyard:1.0"
+            xmlns:trfm="urn:switchyard-config:transform:1.0">
+
+
+    <!-- From DOM Transformations... -->
+
+    <trfm:transform.java from="java:org.w3c.dom.Document" to="java:org.w3c.dom.Element" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+    <trfm:transform.java from="java:org.w3c.dom.Element" to="java:org.w3c.dom.Document"  class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+
+    <trfm:transform.java from="java:org.w3c.dom.Document" to="java:java.lang.String" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+    <trfm:transform.java from="java:org.w3c.dom.Element" to="java:java.lang.String"  class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+
+    <trfm:transform.java from="java:org.w3c.dom.Document" to="java:char[]" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+    <trfm:transform.java from="java:org.w3c.dom.Element" to="java:char[]"  class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+
+    <!-- To DOM Transformations... -->
+
+    <trfm:transform.java from="java:java.lang.String" to="java:org.w3c.dom.Document" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+    <trfm:transform.java from="java:java.lang.String" to="java:org.w3c.dom.Element"  class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+
+    <trfm:transform.java from="java:java.io.Reader" to="java:org.w3c.dom.Document" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+    <trfm:transform.java from="java:java.io.Reader" to="java:org.w3c.dom.Element"  class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+
+    <trfm:transform.java from="java:java.io.InputStream" to="java:org.w3c.dom.Document" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+    <trfm:transform.java from="java:java.io.InputStream" to="java:org.w3c.dom.Element"  class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+
+    <trfm:transform.java from="java:org.xml.sax.InputSource" to="java:org.w3c.dom.Document" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+    <trfm:transform.java from="java:org.xml.sax.InputSource" to="java:org.w3c.dom.Element"  class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+
+    <trfm:transform.java from="java:char[]" to="java:org.w3c.dom.Document" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+    <trfm:transform.java from="java:char[]" to="java:org.w3c.dom.Element"  class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+
+    <trfm:transform.java from="java:byte[]" to="java:org.w3c.dom.Document" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+    <trfm:transform.java from="java:byte[]" to="java:org.w3c.dom.Element"  class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+
+</transforms>

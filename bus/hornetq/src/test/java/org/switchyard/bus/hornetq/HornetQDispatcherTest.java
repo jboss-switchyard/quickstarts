@@ -67,9 +67,9 @@ public class HornetQDispatcherTest {
         HandlerChain inHandlers = new DefaultHandlerChain();
         ExchangeSink sink = new ExchangeSink();
         inHandlers.addLast("in", sink);
-        Dispatcher dispatch = _provider.createDispatcher(service, inHandlers);
+        Dispatcher dispatch = _provider.createDispatcher(service, inHandlers, null);
         
-        Exchange exchange = new ExchangeImpl(service, ExchangeContract.IN_ONLY, dispatch, null);
+        Exchange exchange = new ExchangeImpl(service, ExchangeContract.IN_ONLY, dispatch, null, null);
         exchange.send(null);
         Thread.sleep(200);
         
@@ -86,12 +86,12 @@ public class HornetQDispatcherTest {
         ExchangeSink inHandler = new ExchangeSink(true);
         inHandlers.addLast("in", inHandler);
         // consumer handlers
-        Dispatcher dispatch = _provider.createDispatcher(service, inHandlers);
+        Dispatcher dispatch = _provider.createDispatcher(service, inHandlers, null);
         HandlerChain outHandlers = new DefaultHandlerChain();
         ExchangeSink outHandler = new ExchangeSink();
         outHandlers.addLast("out", outHandler);
         
-        Exchange exchange = new ExchangeImpl(service, ExchangeContract.IN_OUT, dispatch, outHandlers);
+        Exchange exchange = new ExchangeImpl(service, ExchangeContract.IN_OUT, dispatch, null, outHandlers);
         exchange.send(null);
         Thread.sleep(400);
         

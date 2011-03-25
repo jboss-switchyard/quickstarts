@@ -62,18 +62,18 @@ public class HornetQBusTest {
         // verify that dispatchers can be created for an InOnly service
         _provider.createDispatcher(
                 new MockServiceReference(new QName("inOnly"), new InOnlyService()), 
-                new DefaultHandlerChain());
+                new DefaultHandlerChain(), null);
 
         // verify that dispatchers can be created for an InOut service
         _provider.createDispatcher(
                 new MockServiceReference(new QName("inOut"), new InOutService()), 
-                new DefaultHandlerChain());
+                new DefaultHandlerChain(), null);
     }
     
     @Test
     public void testGetDispatcher() throws Exception {
         ServiceReference service = new MockServiceReference(new QName("testGetDispatcher"));
-        Dispatcher dispatch = _provider.createDispatcher(service, new DefaultHandlerChain());
+        Dispatcher dispatch = _provider.createDispatcher(service, new DefaultHandlerChain(), null);
         
         Assert.assertEquals(dispatch, _provider.getDispatcher(service));
     }

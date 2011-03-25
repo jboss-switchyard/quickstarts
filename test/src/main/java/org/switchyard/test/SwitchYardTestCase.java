@@ -41,6 +41,7 @@ import org.switchyard.deploy.internal.Deployment;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
+import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.TransformerFactory;
 import org.w3c.dom.Document;
@@ -622,7 +623,7 @@ public abstract class SwitchYardTestCase {
         }
     }
 
-    private final class TransformerWrapper implements Transformer {
+    private final class TransformerWrapper extends BaseTransformer {
 
         private Transformer _transformer;
         private TransformModel _transformModel;
@@ -635,16 +636,6 @@ public abstract class SwitchYardTestCase {
         @Override
         public Object transform(Object from) {
             return _transformer.transform(from);
-        }
-
-        @Override
-        public Class getFromType() {
-            return _transformer.getFromType();
-        }
-
-        @Override
-        public Class getToType() {
-            return _transformer.getToType();
         }
 
         @Override

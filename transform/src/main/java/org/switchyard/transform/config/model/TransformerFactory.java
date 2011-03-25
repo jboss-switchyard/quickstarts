@@ -41,18 +41,27 @@ public final class TransformerFactory {
 
         // TODO: Need a proper mechanism for building component instances (not just Transformers) from their config Model types Vs hard-wiring at this point in the code !  This makes it impossible for 3rd party impls.
 
+        Transformer<?, ?> transformer = null;
+
         if (transformModel instanceof JavaTransformModel) {
             String className = ((JavaTransformModel) transformModel).getClazz();
             try {
-                return (Transformer<?,?>) Classes.forName(className, TransformerFactory.class).newInstance();
+                transformer = (Transformer<?,?>) Classes.forName(className, TransformerFactory.class).newInstance();
             } catch (Exception e) {
                 throw new RuntimeException("Error constructing Transformer instance for class '" + className + "'.", e);
             }
         } else if (transformModel instanceof SmooksTransformModel) {
-            return SmooksTransformFactory.newTransformer((SmooksTransformModel) transformModel);
+            transformer = SmooksTransformFactory.newTransformer((SmooksTransformModel) transformModel);
         }
 
-        throw new RuntimeException("Unknown TransformModel type '" + transformModel.getClass().getName() + "'.");
+        if(transformer == null) {
+            throw new RuntimeException("Unknown TransformModel type '" + transformModel.getClass().getName() + "'.");
+        }
+
+        transformer.setFrom(transformModel.getFrom());
+        transformer.setTo(transformModel.getTo());
+
+        return transformer;
     }
 
 }

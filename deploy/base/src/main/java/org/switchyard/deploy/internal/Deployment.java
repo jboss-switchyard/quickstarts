@@ -87,7 +87,6 @@ public class Deployment extends AbstractDeployment {
         new HashMap<String, Activator>();
     private Map<String, Activator> _gatewayActivators = 
         new HashMap<String, Activator>();
-    private List<Transformer> _transformers = new LinkedList<Transformer>();
     private List<Activation> _services = new LinkedList<Activation>();
     private List<Activation> _serviceBindings = new LinkedList<Activation>();
     private List<Activation> _references = new LinkedList<Activation>();
@@ -177,7 +176,7 @@ public class Deployment extends AbstractDeployment {
         _references.clear();
         _referenceBindings.clear();
 
-        unregisterTransformers();
+        getTransformerRegistryLoader().unregisterTransformers();
     }
     
     void createGatewayActivator(String type, String runtimeClass) {
@@ -218,45 +217,8 @@ public class Deployment extends AbstractDeployment {
 
     private void registerTransformers() {
         _log.debug("Registering configured Transformers ...");
-
-        TransformerRegistry transformerRegistry = getDomain().getTransformerRegistry();
         TransformsModel transforms = _switchyardConfig.getTransforms();
-        
-        if (transforms == null) {
-            // No transformations are defined in switchyard config
-            return;
-        }
-
-        try {
-            for (TransformModel transformModel : transforms.getTransforms()) {
-                Transformer<?, ?> transformer = TransformerFactory.newTransformer(transformModel);
-                Transformer<?, ?> registeredTransformer = transformerRegistry.getTransformer(transformer.getFrom(), transformer.getTo());
-
-                // TODO: Need to review this... need a formalised way of sharing Transformer instance between apps in a Domain.
-                if (registeredTransformer != null) {
-                    throw new RuntimeException("Failed to register Transformer '" + toDescription(transformer)
-                            + "'.  A Transformer for these types is already registered: '"
-                            + toDescription(registeredTransformer) + "'.");
-                }
-
-                _log.debug("Adding transformer => \n"
-                       + "From: " + transformer.getFrom()
-                       + "To:" + transformer.getTo());
-                transformerRegistry.addTransformer(transformer);
-                _transformers.add(transformer);
-            }
-        } catch (RuntimeException e) {
-            // If there was an exception for any reason... remove all Transformer instance that have
-            // already been registered with the domain...
-            unregisterTransformers();
-            throw e;
-        }
-    }
-
-    private void unregisterTransformers() {
-        for (Transformer transformer : _transformers) {
-            getDomain().getTransformerRegistry().removeTransformer(transformer);
-        }
+        getTransformerRegistryLoader().registerTransformers(transforms);
     }
 
     private void deployReferenceBindings() {
@@ -383,10 +345,6 @@ public class Deployment extends AbstractDeployment {
         } catch (ClassNotFoundException cnfEx) {
             throw new RuntimeException(cnfEx);
         }
-    }
-
-    private String toDescription(Transformer<?, ?> transformer) {
-        return transformer.getClass().getName() + "(" + transformer.getFrom() + ", " + transformer.getTo() + ")";
     }
 
     private Activator getActivator(ComponentModel component) {

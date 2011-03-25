@@ -92,7 +92,7 @@ public class DomainImpl implements ServiceDomain {
         }
 
         // create the exchange
-        ExchangeImpl exchange = new ExchangeImpl(service, contract, dispatcher, replyChain);
+        ExchangeImpl exchange = new ExchangeImpl(service, contract, dispatcher, _transformerRegistry, replyChain);
         return exchange;
     }
 
@@ -113,7 +113,7 @@ public class DomainImpl implements ServiceDomain {
         // Add a handler chain with the provider at the end
         HandlerChain handlers = _defaultHandlers.copy();
         handlers.addLast("provider", handler);
-        Dispatcher ep = _exchangeBus.createDispatcher(reference, handlers);
+        Dispatcher ep = _exchangeBus.createDispatcher(reference, handlers, _transformerRegistry);
         
         // register the service
         return _registry.registerService(reference, ep, this).getReference();

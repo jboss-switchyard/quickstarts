@@ -30,6 +30,7 @@ import org.switchyard.internal.DomainImpl;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.spi.ExchangeBus;
 import org.switchyard.spi.ServiceRegistry;
+import org.switchyard.transform.TransformerRegistryLoader;
 
 /**
  * Abstract SwitchYard application deployment.
@@ -64,6 +65,10 @@ public abstract class AbstractDeployment {
      * The Service Domain.
      */
     private ServiceDomain _serviceDomain;
+    /**
+     * TransformerRegistry Loader class.
+     */
+    private TransformerRegistryLoader _transformerRegistryLoader;
 
     /**
      * Set the parent deployment.
@@ -111,6 +116,14 @@ public abstract class AbstractDeployment {
         }
     }
 
+    /**
+     * Get the {@link TransformerRegistryLoader} associated with the deployment.
+     * @return The TransformerRegistryLoader instance.
+     */
+    public TransformerRegistryLoader getTransformerRegistryLoader() {
+        return _transformerRegistryLoader;
+    }
+
     private void createDomain() {
         String registryClassName = System.getProperty(REGISTRY_CLASS_NAME, DefaultServiceRegistry.class.getName());
         String endpointProviderClassName = System.getProperty(ENDPOINT_PROVIDER_CLASS_NAME, LocalExchangeBus.class.getName());
@@ -121,6 +134,9 @@ public abstract class AbstractDeployment {
             BaseTransformerRegistry transformerRegistry = new BaseTransformerRegistry();
 
             _serviceDomain = new DomainImpl(ROOT_DOMAIN, registry, endpointProvider, transformerRegistry);
+
+            _transformerRegistryLoader = new TransformerRegistryLoader(transformerRegistry);
+            _transformerRegistryLoader.loadOOTBTransforms();
         } catch (NullPointerException npe) {
             throw new RuntimeException(npe);
         }

@@ -43,6 +43,7 @@ import org.switchyard.ServiceReference;
 import org.switchyard.handlers.HandlerChain;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.spi.ExchangeBus;
+import org.switchyard.transform.TransformerRegistry;
 
 /**
  * HornetQ provider implementation for ExchangeBus.  The provider uses a
@@ -80,8 +81,7 @@ public class HornetQBus implements ExchangeBus {
     private ClientSessionFactory _clientFactory;
     private HashMap<QName, HornetQDispatcher> _dispatchers = 
         new HashMap<QName, HornetQDispatcher>();
-    
-    
+
     /**
      * Create a new HornetQ bus provider using the specified config.
      * @param busConfig provider configuration
@@ -131,8 +131,8 @@ public class HornetQBus implements ExchangeBus {
 
     @Override
     public synchronized Dispatcher createDispatcher(
-            ServiceReference service, HandlerChain handlerChain) {
-        HornetQDispatcher endpoint = new HornetQDispatcher(service, _clientFactory, handlerChain);
+            ServiceReference service, HandlerChain handlerChain, TransformerRegistry transformerRegistry) {
+        HornetQDispatcher endpoint = new HornetQDispatcher(service, _clientFactory, handlerChain, transformerRegistry);
         _dispatchers.put(service.getName(), endpoint);
         endpoint.start();
         return endpoint;

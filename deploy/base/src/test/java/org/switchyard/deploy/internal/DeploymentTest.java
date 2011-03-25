@@ -89,8 +89,8 @@ public class DeploymentTest {
 
         // Check that the transformers are deployed...
         ServiceDomain domain = deployment.getDomain();
-        Transformer<?,?> abTransformer = domain.getTransformerRegistry().getTransformer(new QName("http://www.switchyard.org", "a"), new QName("http://www.switchyard.org", "b"));
-        Transformer<?,?> cdTransformer = domain.getTransformerRegistry().getTransformer(new QName("http://www.switchyard.org", "c"), new QName("http://www.switchyard.org", "d"));
+        Transformer<?,?> abTransformer = domain.getTransformerRegistry().getTransformer(new QName("A"), new QName("B"));
+        Transformer<?,?> cdTransformer = domain.getTransformerRegistry().getTransformer(new QName("C"), new QName("D"));
 
         Assert.assertTrue(abTransformer instanceof ABTransformer);
         Assert.assertTrue(cdTransformer instanceof CDTransformer);

@@ -23,15 +23,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.activation.DataSource;
+import javax.xml.namespace.QName;
 
 import org.switchyard.Context;
 import org.switchyard.Message;
+import org.switchyard.metadata.java.JavaService;
+import org.switchyard.transform.Transformer;
+import org.switchyard.transform.TransformerRegistry;
 
 /**
  * Default message.
  */
 public class DefaultMessage implements Message {
     
+    private TransformerRegistry _transformerRegistry;
     private Context _context;
     private Object _content;
     private Map<String, DataSource> _attachments = 
@@ -44,7 +49,7 @@ public class DefaultMessage implements Message {
     public DefaultMessage() {
         _context = new DefaultContext();
     }
-    
+
     /**
      * Create a new instance of DefaultMessage with the specified context.
      * @param context context instance to use with this message
@@ -52,7 +57,19 @@ public class DefaultMessage implements Message {
     public DefaultMessage(Context context) {
         _context = context;
     }
-    
+
+    /**
+     * Set the transformation registry to be used by the Message instance when
+     * performing payload conversions.
+     *
+     * @param transformerRegistry The transformation registry instance.
+     * @return <code>this</code> Message instance.
+     */
+    public DefaultMessage setTransformerRegistry(TransformerRegistry transformerRegistry) {
+        this._transformerRegistry = transformerRegistry;
+        return this;
+    }
+
     @Override
     public DefaultMessage addAttachment(final String name, final DataSource attachment) {
         _attachments.put(name, attachment);
@@ -81,7 +98,35 @@ public class DefaultMessage implements Message {
 
     @Override
     public <T> T getContent(final Class<T> type) {
-        return type.cast(_content);
+        if (type == null) {
+            throw new IllegalArgumentException("null 'type' argument.");
+        }
+        if (_content == null) {
+            return null;
+        }
+        if (type.isInstance(_content)) {
+            return type.cast(_content);
+        }
+        if (_transformerRegistry == null) {
+            throw new RuntimeException("Cannot convert from '" + _content.getClass().getName() + "' to '" + type.getName() + "'.  No TransformRegistry available.");
+        }
+
+        QName fromType = JavaService.toMessageType(_content.getClass());
+        QName toType = JavaService.toMessageType(type);
+        Transformer transformer = _transformerRegistry.getTransformer(fromType, toType);
+        if (transformer == null) {
+            throw new RuntimeException("Cannot convert from '" + _content.getClass().getName() + "' to '" + type.getName() + "'.  No registered Transformer available for transforming from '" + fromType + "' to '" + toType + "'.  A Transformer must be registered.");
+        }
+
+        Object transformedContent = transformer.transform(_content);
+        if (transformedContent == null) {
+            throw new RuntimeException("Error converting from '" + _content.getClass().getName() + "' to '" + type.getName() + "'.  Transformer '" + transformer.getClass().getName() + "' returned null.");
+        }
+        if (!type.isInstance(transformedContent)) {
+            throw new RuntimeException("Error converting from '" + _content.getClass().getName() + "' to '" + type.getName() + "'.  Transformer '" + transformer.getClass().getName() + "' returned incompatible type '" + transformedContent.getClass().getName() + "'.");
+        }
+
+        return type.cast(transformedContent);
     }
 
     @Override

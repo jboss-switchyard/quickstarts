@@ -21,27 +21,18 @@ package org.switchyard.transform.config.model.transformers;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.Transformer;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 @SuppressWarnings("rawtypes")
-public class ATransformer implements Transformer {
+public class ATransformer extends BaseTransformer {
 
     @Override
     public Object transform(Object from) {
         return from;
-    }
-
-    @Override
-    public Class<?> getFromType() {
-        return null;
-    }
-
-    @Override
-    public Class<?> getToType() {
-        return null;
     }
 
     @Override

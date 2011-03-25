@@ -52,6 +52,10 @@ public final class JavaService extends BaseService {
      *  The type returned from ServiceInterface.getType().
      */
     public static final String TYPE = "java";
+    /**
+     * Type prefix.
+     */
+    private static final String TYPE_PREFIX = TYPE + ":";
     
     // Java class used to create this ServiceInterface
     private Class<?> _serviceInterface;
@@ -160,7 +164,39 @@ public final class JavaService extends BaseService {
         if (payloadType != null) {
             return QName.valueOf(payloadType.value());
         } else {
-            return new QName(namespaceURI, TYPE + ":" + javaType.getCanonicalName());
+            if(javaType.isMemberClass()) {
+                return new QName(namespaceURI, TYPE_PREFIX + javaType.getName());
+            } else {
+                return new QName(namespaceURI, TYPE_PREFIX + javaType.getCanonicalName());
+            }
+        }
+    }
+
+    /**
+     * Is the specified message type QName a Java message type.
+     * @param name The message type {@link QName}to be tested.
+     * @return True if it is a Java message type, otherwise false.
+     */
+    public static boolean isJavaMessageType(QName name) {
+        return name.getLocalPart().startsWith(TYPE_PREFIX);
+    }
+
+    /**
+     * Is the specified message type QName a Java message type.
+     * @param name The message type {@link QName}to be tested.
+     * @return True if it is a Java message type, otherwise false.
+     */
+    public static Class<?> toJavaMessageType(QName name) {
+        if(!isJavaMessageType(name)) {
+            throw new RuntimeException("Invalid call.  Not a Java message type.  Use isJavaMessageType before calling this method.");
+        }
+
+        String className = name.getLocalPart().substring(TYPE_PREFIX.length());
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            // can't use this.... ignore...
+            return null;
         }
     }
 }

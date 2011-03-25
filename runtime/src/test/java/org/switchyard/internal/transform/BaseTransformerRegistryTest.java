@@ -25,8 +25,14 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.BaseTransformer;
+import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class BaseTransformerRegistryTest {
     
@@ -51,5 +57,115 @@ public class BaseTransformerRegistryTest {
         
         _registry.addTransformer(t);
         Assert.assertEquals(t, _registry.getTransformer(fromName, toName));      
-    }   
+    }
+
+    @Test
+    public void test_fallbackTransformerComparator_resolvable() {
+        List<BaseTransformerRegistry.JavaSourceFallbackTransformer> transformersList = new ArrayList<BaseTransformerRegistry.JavaSourceFallbackTransformer>();
+
+        // Mix them up when inserting
+        transformersList.add(new BaseTransformerRegistry.JavaSourceFallbackTransformer(C.class, null));
+        transformersList.add(new BaseTransformerRegistry.JavaSourceFallbackTransformer(E.class, null));
+        transformersList.add(new BaseTransformerRegistry.JavaSourceFallbackTransformer(D.class, null));
+        transformersList.add(new BaseTransformerRegistry.JavaSourceFallbackTransformer(A.class, null));
+        transformersList.add(new BaseTransformerRegistry.JavaSourceFallbackTransformer(B.class, null));
+
+        BaseTransformerRegistry.JavaSourceFallbackTransformerComparator comparator = new BaseTransformerRegistry.JavaSourceFallbackTransformerComparator();
+        Collections.sort(transformersList, comparator);
+
+        // Should be sorted, sub-types first...
+        Assert.assertTrue(transformersList.get(0).getJavaType() == E.class);
+        Assert.assertTrue(transformersList.get(1).getJavaType() == D.class);
+        Assert.assertTrue(transformersList.get(2).getJavaType() == C.class);
+        Assert.assertTrue(transformersList.get(3).getJavaType() == B.class);
+        Assert.assertTrue(transformersList.get(4).getJavaType() == A.class);
+    }
+
+    @Test
+    public void test_fallbackTransformerComparator_unresolvable() {
+        List<BaseTransformerRegistry.JavaSourceFallbackTransformer> transformersList = new ArrayList<BaseTransformerRegistry.JavaSourceFallbackTransformer>();
+
+        // Mix them up when inserting
+        transformersList.add(new BaseTransformerRegistry.JavaSourceFallbackTransformer(C.class, null));
+        transformersList.add(new BaseTransformerRegistry.JavaSourceFallbackTransformer(E.class, null));
+        transformersList.add(new BaseTransformerRegistry.JavaSourceFallbackTransformer(D.class, null));
+        transformersList.add(new BaseTransformerRegistry.JavaSourceFallbackTransformer(A.class, null));
+        transformersList.add(new BaseTransformerRegistry.JavaSourceFallbackTransformer(B.class, null));
+        transformersList.add(new BaseTransformerRegistry.JavaSourceFallbackTransformer(I.class, null)); // branch
+
+        BaseTransformerRegistry.JavaSourceFallbackTransformerComparator comparator = new BaseTransformerRegistry.JavaSourceFallbackTransformerComparator();
+        try {
+            Collections.sort(transformersList, comparator);
+            Assert.fail("Expected RuntimeException.");
+        } catch(RuntimeException e) {
+            Assert.assertEquals("Multiple possible fallback types 'java:org.switchyard.internal.transform.BaseTransformerRegistryTest$A' and 'java:org.switchyard.internal.transform.BaseTransformerRegistryTest$I'.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void test_getFallbackTransformer_resolvable() {
+        addTransformer(B.class);
+        addTransformer(C.class);
+        addTransformer(A.class);
+
+        Transformer<?,?> transformer;
+
+        // Should return no transformer...
+        transformer = _registry.getTransformer(getType(D.class), new QName("targetX"));
+        Assert.assertNull(transformer);
+
+        // Should return the C transformer...
+        transformer = _registry.getTransformer(getType(D.class), new QName("target1"));
+        Assert.assertNotNull(transformer);
+        Assert.assertEquals(getType(C.class), transformer.getFrom());
+
+        transformer = _registry.getTransformer(getType(D.class), new QName("target1"));
+    }
+
+    @Test
+    public void test_getFallbackTransformer_unresolvable() {
+        addTransformer(B.class);
+        addTransformer(C.class);
+        addTransformer(A.class);
+        addTransformer(I.class);
+
+        Transformer<?,?> transformer;
+
+        // Should return no transformer...
+        transformer = _registry.getTransformer(getType(D.class), new QName("targetX"));
+        Assert.assertNull(transformer);
+
+        // Should return no transformer because the existence of the I transformer makes a
+        // unique lookup impossible...
+        transformer = _registry.getTransformer(getType(D.class), new QName("target1"));
+        Assert.assertNull(transformer);
+    }
+
+    private void addTransformer(Class<?> type) {
+        QName fromType = getType(type);
+        QName toType = new QName("target1");
+        _registry.addTransformer(new TestTransformer(fromType, toType));
+    }
+
+    private QName getType(Class<?> type) {
+        return JavaService.toMessageType(type);
+    }
+
+    public class A {}
+    public class B extends A {}
+    public class C extends B {}
+    public class D extends C implements I {}
+    public class E extends D {}
+    public interface I {}
+
+    public class TestTransformer extends BaseTransformer {
+        public TestTransformer(QName from, QName to) {
+            super(from, to);
+        }
+
+        @Override
+        public Object transform(Object from) {
+            return from;
+        }
+    }
 }

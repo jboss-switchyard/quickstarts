@@ -42,6 +42,7 @@ import org.switchyard.internal.ExchangeImpl;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.spi.Dispatcher;
+import org.switchyard.transform.TransformerRegistry;
 
 /**
  * Creates a Dispatcher instance for handling message exchange for a SwitchYard
@@ -57,19 +58,22 @@ public class HornetQDispatcher implements Dispatcher, MessageHandler {
     private ClientSessionFactory _sessionFactory;
     private HandlerChain _inputHandler;
     private Map<String, HandlerChain> _outputHandlers = new ConcurrentHashMap<String, HandlerChain>();
-    
+    private TransformerRegistry _transformerRegistry;
+
     /**
      * Create a new Dispatcher instance.
      * @param service dispatch for this service
      * @param sessionFactory used to create client sessions for this dispatcher
      * @param inputHandler the exchange handler used to process exchanges for the service
+     * @param transformerRegistry The {@link TransformerRegistry}.
      */
-    public HornetQDispatcher(ServiceReference service, 
-            ClientSessionFactory sessionFactory, 
-            HandlerChain inputHandler) {
+    public HornetQDispatcher(ServiceReference service,
+                             ClientSessionFactory sessionFactory,
+                             HandlerChain inputHandler, TransformerRegistry transformerRegistry) {
         _service = service;
         _sessionFactory = sessionFactory;
         _inputHandler = inputHandler;
+        _transformerRegistry = transformerRegistry;
     }
     
     @Override
@@ -166,7 +170,7 @@ public class HornetQDispatcher implements Dispatcher, MessageHandler {
                 ? ExchangeContract.IN_ONLY : ExchangeContract.IN_OUT;
         ExchangePhase exchangePhase = ExchangePhase.valueOf(phase);
         
-        return new ExchangeImpl(exchangeId, this, exchangePhase, contract);
+        return new ExchangeImpl(exchangeId, this, _transformerRegistry, exchangePhase, contract);
     }
     
     private static Message exchangeToMessage(Exchange exchange, ClientSession session) {

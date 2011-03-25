@@ -21,6 +21,7 @@ package org.switchyard.spi;
 
 import org.switchyard.ServiceReference;
 import org.switchyard.handlers.HandlerChain;
+import org.switchyard.transform.TransformerRegistry;
 
 /**
  * An implementation-neutral representation of a message bus.  The bus handles
@@ -31,9 +32,10 @@ public interface ExchangeBus {
      * Create an exchange dispatcher for the specified service and handler chain.
      * @param service service metadata
      * @param handlerChain handlers invoked by dispatcher on delivery
+     * @param transformerRegistry The {@link TransformerRegistry}.
      * @return Dispatcher service dispatch reference
      */
-    Dispatcher createDispatcher(ServiceReference service, HandlerChain handlerChain);
+    Dispatcher createDispatcher(ServiceReference service, HandlerChain handlerChain, TransformerRegistry transformerRegistry);
     
     /**
      * Retrieves a dispatcher for the specified service.

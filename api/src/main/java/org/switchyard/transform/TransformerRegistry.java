@@ -34,11 +34,28 @@ public interface TransformerRegistry {
     TransformerRegistry addTransformer(Transformer<?, ?> transformer);
 
     /**
+     * Add a transformer.
+     * @param transformer transformer
+     * @param from from
+     * @param to to
+     * @return {@code this} TransformRegistry instance.
+     */
+    TransformerRegistry addTransformer(Transformer<?, ?> transformer, QName from, QName to);
+
+    /**
      * Remove a transformer.
      * @param transformer transformer
      * @return status of removal
      */
     boolean removeTransformer(Transformer<?, ?> transformer);
+
+    /**
+     * Does the registry have a transformer for the specified types.
+     * @param from from
+     * @param to to
+     * @return True if it has a transformer, otherwise false.
+     */
+    boolean hasTransformer(QName from, QName to);
 
     /**
      * Get a transformer.

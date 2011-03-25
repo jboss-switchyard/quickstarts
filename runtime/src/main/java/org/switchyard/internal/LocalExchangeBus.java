@@ -28,6 +28,7 @@ import org.switchyard.ServiceReference;
 import org.switchyard.handlers.HandlerChain;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.spi.ExchangeBus;
+import org.switchyard.transform.TransformerRegistry;
 
 /**
  * Default endpoint provider.
@@ -36,10 +37,10 @@ public class LocalExchangeBus implements ExchangeBus {
 
     private ConcurrentHashMap<QName, Dispatcher> _dispatchers = 
         new ConcurrentHashMap<QName, Dispatcher>();
-    
+
     @Override
     public synchronized Dispatcher createDispatcher(
-            ServiceReference service, HandlerChain handlerChain) {
+            ServiceReference service, HandlerChain handlerChain, TransformerRegistry transformerRegistry) {
         Dispatcher dispatcher = new LocalDispatcher(service, handlerChain);
         _dispatchers.put(service.getName(), dispatcher);
         return dispatcher;

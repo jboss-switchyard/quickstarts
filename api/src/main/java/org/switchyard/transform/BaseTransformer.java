@@ -19,6 +19,9 @@
 
 package org.switchyard.transform;
 
+import org.switchyard.metadata.java.JavaService;
+
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 
 import javax.xml.namespace.QName;
@@ -40,7 +43,8 @@ public abstract class BaseTransformer<F, T> implements Transformer<F, T> {
      * Constructor.
      */
     public BaseTransformer() {
-
+        _to = JavaService.toMessageType(getType(Types.T));
+        _from = JavaService.toMessageType(getType(Types.F));
     }
 
     /**
@@ -54,14 +58,20 @@ public abstract class BaseTransformer<F, T> implements Transformer<F, T> {
     }
 
     @Override
+    public Transformer setFrom(QName fromType) {
+        _from = fromType;
+        return this;
+    }
+
+    @Override
     public QName getFrom() {
         return _from;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Class<F> getFromType() {
-        return (Class<F>) getType(Types.F);
+    public Transformer setTo(QName toType) {
+        _to = toType;
+        return this;
     }
 
     @Override
@@ -69,19 +79,30 @@ public abstract class BaseTransformer<F, T> implements Transformer<F, T> {
         return _to;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public Class<T> getToType() {
-        return (Class<T>) getType(Types.T);
-    }
-
     @Override
     public abstract T transform(F from);
 
-    private Class<?> getType(Types type) {
-        ParameterizedType pt =
-            (ParameterizedType) getClass().getGenericSuperclass();
+    /**
+     * Get the type QName for the specified Java type.
+     * <p/>
+     * Utility method for {@link JavaService#toMessageType(Class)}.
+     *
+     * @param type The Java type.
+     * @return  The QName type.
+     */
+    protected static QName toMessageType(Class<?> type) {
+        return JavaService.toMessageType(type);
+    }
 
-        return (Class<?>) pt.getActualTypeArguments()[type.ordinal()];
+    private Class<?> getType(Types type) {
+        try {
+            ParameterizedType pt =
+                (ParameterizedType) getClass().getGenericSuperclass();
+
+            return (Class<?>) pt.getActualTypeArguments()[type.ordinal()];
+        } catch (Exception e) {
+            // Generics not specified...
+            return Object.class;
+        }
     }
 }

@@ -42,22 +42,22 @@ public interface Transformer<F, T> {
     T transform(F from);
 
     /**
-     * The Java type of the source format.
-     * @return class representing the Java type for the from format.
+     * Set the name of the from, or source, message type.
+     * @param fromType From type.
      */
-    Class<F> getFromType();
-
-    /**
-     * The Java type of the target format.
-     * @return class representing the Java type for the from format.
-     */
-    Class<T> getToType();
+    Transformer setFrom(QName fromType);
 
     /**
      * The name of the from, or source, message.
      * @return from message
      */
     QName getFrom();
+
+    /**
+     * Set the name of the to, or target, message type.
+     * @param toType To type.
+     */
+    Transformer setTo(QName toType);
 
     /**
      * The name of the to, or target, message.

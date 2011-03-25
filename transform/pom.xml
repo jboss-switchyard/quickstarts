@@ -64,6 +64,11 @@
             <scope>provided</scope>
 		</dependency>
         <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-runtime</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
