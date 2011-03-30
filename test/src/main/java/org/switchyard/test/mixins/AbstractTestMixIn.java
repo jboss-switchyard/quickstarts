@@ -46,7 +46,7 @@ public abstract class AbstractTestMixIn implements TestMixIn {
     }
 
     @Override
-    public void setUp() {
+    public void initialize() {
     }
 
     @Override
@@ -58,6 +58,6 @@ public abstract class AbstractTestMixIn implements TestMixIn {
     }
 
     @Override
-    public void tearDown() {
+    public void uninitialize() {
     }
 }

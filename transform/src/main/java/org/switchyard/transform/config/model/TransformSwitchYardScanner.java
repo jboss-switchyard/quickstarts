@@ -24,6 +24,7 @@ import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.List;
 
+import org.switchyard.config.model.Scannable;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.ScannerOutput;
@@ -61,7 +62,9 @@ public class TransformSwitchYardScanner implements Scanner<SwitchYardModel> {
             if (Modifier.isAbstract(transformer.getModifiers())) {
                 continue;
             }
-            if (transformer == SmooksTransformer.class || transformer == XMLBindingTransformer.class) {
+            Scannable scannable = transformer.getAnnotation(Scannable.class);
+            if (scannable != null && !scannable.value()) {
+                // Marked as being non-scannable...
                 continue;
             }
             try {

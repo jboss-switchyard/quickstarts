@@ -55,7 +55,7 @@ public class HTTPMixIn extends AbstractTestMixIn {
     }
 
     @Override
-    public void setUp() {
+    public void initialize() {
         _httpClient = new HttpClient();
     }
 

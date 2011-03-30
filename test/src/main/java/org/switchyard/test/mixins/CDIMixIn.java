@@ -40,7 +40,7 @@ public class CDIMixIn extends AbstractTestMixIn {
     private AbstractDeployment _simpleCdiDeployment;
 
     @Override
-    public void setUp() {
+    public void initialize() {
         // Deploy the weld container...
         _weld = new Weld();
         WeldContainer weldContainer = _weld.initialize();
@@ -87,7 +87,7 @@ public class CDIMixIn extends AbstractTestMixIn {
     }
 
     @Override
-    public void tearDown() {
+    public void uninitialize() {
         _weld.shutdown();
     }
 }

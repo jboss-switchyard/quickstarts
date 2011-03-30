@@ -25,6 +25,7 @@ import org.milyn.container.plugin.SourceFactory;
 import org.milyn.javabean.binding.model.Bean;
 import org.milyn.javabean.binding.model.ModelSet;
 import org.milyn.javabean.binding.xml.XMLBinding;
+import org.switchyard.config.model.Scannable;
 import org.switchyard.transform.BaseTransformer;
 
 import javax.xml.namespace.QName;
@@ -36,6 +37,7 @@ import java.io.IOException;
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
+@Scannable(false)
 public class XMLBindingTransformer extends BaseTransformer {
 
     private static Logger _log = Logger.getLogger(XMLBindingTransformer.class);

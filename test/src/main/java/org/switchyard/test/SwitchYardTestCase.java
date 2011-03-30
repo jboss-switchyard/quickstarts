@@ -19,19 +19,26 @@
 
 package org.switchyard.test;
 
+import org.apache.log4j.Logger;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.model.InitializationError;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.config.model.MergeScanner;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.Models;
+import org.switchyard.config.model.Scannable;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
+import org.switchyard.config.model.ScannerOutput;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
@@ -41,6 +48,7 @@ import org.switchyard.deploy.internal.Deployment;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
+import org.switchyard.test.mixins.AbstractTestMixIn;
 import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.TransformerFactory;
@@ -64,19 +72,31 @@ import java.util.List;
  * Base class for writing SwitchYard tests.
  * <p/>
  * This class creates a {@link ServiceDomain} instance (via an {@link AbstractDeployment}) for your TestCase.  It
- * can be configured via the following annotations:
+ * can be configured via the {@link SwitchYardTestCaseConfig} annotation:
  * <ul>
- * <li>{@link TestMixIns}: This annotation allows you to "mix-in" the test behavior that your test requires
+ * <li><b>mixins</b>:  This value allows you to "mix-in" the test behavior that your test requires
  * by listing {@link TestMixIn} types.  See the {@link org.switchyard.test.mixins} package for a list of the
  * {@link TestMixIn TestMixIns} available out of the box.  You can also implement your own {@link TestMixIn TestMixIn}.
  * (See {@link #getMixIn(Class)})</li>
- * <li>{@link SwitchYardDeploymentConfig}: Allows you to specify a SwitchYard application configuration file (switchyard.xml) to
+ * <li><b>config</b>:  This value allows you to specify a SwitchYard application configuration file (switchyard.xml) to
  * be used to initialize your TestCase instance {@link ServiceDomain}.</li>
+ * <li><b>scanners</b>:  This value allows you to specify which {@link Scanner Scanners} are to be used to augment the
+ * configuration model.</li>
  * </ul>
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
+@RunWith(SwitchYardTestCase.TestRunner.class)
 public abstract class SwitchYardTestCase {
+
+    /**
+     * Logger.
+     */
+    private static Logger _logger = Logger.getLogger(SwitchYardTestCase.class);
+    /**
+     * Constant for the {@link org.switchyard.test.SwitchYardTestCaseConfig#config()} default.
+     */
+    protected static final String NULL_CONFIG = "$$NULL_SW_CONFIG$$";
 
     /**
      * Test configuration model.
@@ -92,19 +112,42 @@ public abstract class SwitchYardTestCase {
     private List<Class<? extends TestMixIn>> _testMixIns;
     private List<TestMixIn> _testMixInInstances = new ArrayList<TestMixIn>();
 
+    private static final ThreadLocal<TestRunner> _testRunner = new ThreadLocal<TestRunner>();
+
     /**
      * Public default constructor.
      */
     public SwitchYardTestCase() {
-        SwitchYardDeploymentConfig deploymentConfig = getClass().getAnnotation(SwitchYardDeploymentConfig.class);
-        if (deploymentConfig != null && deploymentConfig.value() != null) {
-            _configModel = createSwitchYardModel(getClass().getResourceAsStream(deploymentConfig.value()), createScanners(deploymentConfig));
+        SwitchYardTestCaseConfig testCaseConfig = getClass().getAnnotation(SwitchYardTestCaseConfig.class);
+        if (testCaseConfig != null) {
+            String config = testCaseConfig.config();
+            if (config != null && !config.equals(NULL_CONFIG)) {
+                _configModel = createSwitchYardModel(getClass().getResourceAsStream(config), createScanners(testCaseConfig));
+            }
+            Class<? extends TestMixIn>[] testMixIns = testCaseConfig.mixins();
+            if (testMixIns == null) {
+                // No MixIns...
+                _logger.debug("No TestMixIns for test.");
+            } else if (testMixIns.length == 1 && testMixIns[0] == NullMixIns.class) {
+                // No MixIns...
+                _logger.debug("No TestMixIns for test.");
+            } else {
+                _testMixIns = Arrays.asList(testMixIns);
+            }
         }
+        MockInitialContextFactory.install();
+        createMixInInstances();
+        initializeMixIns();
 
-        TestMixIns testMixInsAnnotation = getClass().getAnnotation(TestMixIns.class);
-        if (testMixInsAnnotation != null) {
-            _testMixIns = Arrays.asList(testMixInsAnnotation.value());
-        }
+        _testRunner.get().setTestCase(this);
+    }
+
+    /**
+     * Cleanup
+     */
+    private void cleanup() {
+        cleanupMixIns();
+        MockInitialContextFactory.clear();
     }
 
     /**
@@ -112,8 +155,8 @@ public abstract class SwitchYardTestCase {
      * @param configModel Configuration model stream.
      */
     public SwitchYardTestCase(InputStream configModel) {
-        SwitchYardDeploymentConfig deploymentConfig = getClass().getAnnotation(SwitchYardDeploymentConfig.class);
-        _configModel = createSwitchYardModel(configModel, createScanners(deploymentConfig));
+        SwitchYardTestCaseConfig testCaseConfig = getClass().getAnnotation(SwitchYardTestCaseConfig.class);
+        _configModel = createSwitchYardModel(configModel, createScanners(testCaseConfig));
     }
 
     /**
@@ -125,8 +168,8 @@ public abstract class SwitchYardTestCase {
      */
     public SwitchYardTestCase(String configModelPath) {
         Assert.assertNotNull("Test 'configModel' is null.", configModelPath);
-        SwitchYardDeploymentConfig deploymentConfig = getClass().getAnnotation(SwitchYardDeploymentConfig.class);
-        _configModel = createSwitchYardModel(getClass().getResourceAsStream(configModelPath), createScanners(deploymentConfig));
+        SwitchYardTestCaseConfig testCaseConfig = getClass().getAnnotation(SwitchYardTestCaseConfig.class);
+        _configModel = createSwitchYardModel(getClass().getResourceAsStream(configModelPath), createScanners(testCaseConfig));
     }
 
     /**
@@ -155,9 +198,6 @@ public abstract class SwitchYardTestCase {
      */
     @Before
     public final void deploy() throws Exception {
-        MockInitialContextFactory.install();
-        createMixInInstances();
-        mixInSetup();
         _deployment = createDeployment();
         _deployment.init();
         mixInBefore();
@@ -173,8 +213,6 @@ public abstract class SwitchYardTestCase {
         _deployment.stop();
         mixInAfter();
         _deployment.destroy();
-        mixInTearDown();
-        MockInitialContextFactory.clear();
     }
 
     /**
@@ -319,7 +357,7 @@ public abstract class SwitchYardTestCase {
      * <p/>
      * This method can only be called from inside a test method.
      *
-     * @param type The {@link TestMixIn} type, as specified in the {@link TestMixIns} annotation.
+     * @param type The {@link TestMixIn} type, as specified in the {@link SwitchYardTestCaseConfig} annotation.
      * @param <T> type {@link TestMixIn} type.
      * @return The {@link TestMixIn} instance.
      */
@@ -490,9 +528,9 @@ public abstract class SwitchYardTestCase {
         }
     }
 
-    private void mixInSetup() {
+    private void initializeMixIns() {
         for (TestMixIn mixIn : _testMixInInstances) {
-            mixIn.setUp();
+            mixIn.initialize();
         }
     }
 
@@ -509,10 +547,10 @@ public abstract class SwitchYardTestCase {
         }
     }
 
-    private void mixInTearDown() {
-        // TearDown MixIns in reverse order...
+    private void cleanupMixIns() {
+        // Destroy MixIns in reverse order...
         for (int i = _testMixInInstances.size() - 1; i >= 0; i--) {
-            _testMixInInstances.get(i).tearDown();
+            _testMixInInstances.get(i).uninitialize();
         }
     }
 
@@ -565,18 +603,19 @@ public abstract class SwitchYardTestCase {
         }
     }
 
-    private List<Scanner<V1SwitchYardModel>> createScanners(SwitchYardDeploymentConfig deploymentConfig) {
+    private List<Scanner<V1SwitchYardModel>> createScanners(SwitchYardTestCaseConfig testCaseConfig) {
         List<Scanner<V1SwitchYardModel>> scanners = new ArrayList<Scanner<V1SwitchYardModel>>();
 
-        if (deploymentConfig != null) {
-            SwitchYardDeploymentScanners scannersAnno = getClass().getAnnotation(SwitchYardDeploymentScanners.class);
-            Class<? extends Scanner>[] scannerClasses = null;
+        if (testCaseConfig != null) {
+            Class<? extends Scanner>[] scannerClasses = testCaseConfig.scanners();
 
-            if (scannersAnno != null) {
-                scannerClasses = scannersAnno.value();
-            }
-
-            if (scannerClasses != null) {
+            if (scannerClasses == null) {
+                // No Scanners
+                _logger.debug("No Scanners for test.");
+            } else if (scannerClasses.length == 1 && scannerClasses[0] == NullScanners.class) {
+                // No Scanners
+                _logger.debug("No Scanners for test.");
+            } else {
                 for (Class<? extends Scanner> scannerClass : scannerClasses) {
                     try {
                         scanners.add(scannerClass.newInstance());
@@ -584,10 +623,6 @@ public abstract class SwitchYardTestCase {
                         Assert.fail("Exception creating instance of Scanner class '" + scannerClass.getName() + "': " + e.getMessage());
                     }
                 }
-            } else {
-                // Add the default scanners...
-                addScanner("org.switchyard.component.bean.config.model.BeanSwitchYardScanner", scanners);
-                addScanner("org.switchyard.transform.config.model.TransformSwitchYardScanner", scanners);
             }
         }
 
@@ -623,6 +658,7 @@ public abstract class SwitchYardTestCase {
         }
     }
 
+    @Scannable(false)
     private final class TransformerWrapper extends BaseTransformer {
 
         private Transformer _transformer;
@@ -647,5 +683,58 @@ public abstract class SwitchYardTestCase {
         public QName getTo() {
             return _transformModel.getTo();
         }
+    }
+
+    /**
+     * Test Runner
+     */
+    protected static class TestRunner extends BlockJUnit4ClassRunner {
+
+        private SwitchYardTestCase _testCase;
+
+        /**
+         * Public constructor.
+         * @param klass The test Class.
+         * @throws InitializationError Initialization error.
+         */
+        public TestRunner(Class<?> klass) throws InitializationError {
+            super(klass);
+        }
+
+        private void setTestCase(SwitchYardTestCase testCase) {
+            this._testCase = testCase;
+        }
+
+        @Override
+        public void run(RunNotifier notifier) {
+            try {
+                _testRunner.set(this);
+                super.run(notifier);
+            } finally {
+                try {
+                    _testCase.cleanup();
+                } finally {
+                    _testRunner.remove();
+                }
+            }
+        }
+    }
+
+    /**
+     * Hidden marker type to provide a valid NULL
+     * Scanners configuration for {@link SwitchYardTestCaseConfig}.
+     */
+    protected static final class NullScanners implements Scanner {
+        @Override
+        public ScannerOutput scan(ScannerInput scannerInput) throws IOException {
+            return null;
+        }
+    }
+
+    /**
+     * Hidden marker type to provide a valid NULL
+     * TestMixIns configuration for {@link SwitchYardTestCaseConfig}.
+     */
+    protected static final class NullMixIns extends AbstractTestMixIn {
     }
 }

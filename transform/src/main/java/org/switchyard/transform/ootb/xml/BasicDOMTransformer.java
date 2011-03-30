@@ -19,6 +19,7 @@
 
 package org.switchyard.transform.ootb.xml;
 
+import org.switchyard.config.model.Scannable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -35,6 +36,7 @@ import java.io.StringReader;
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
+@Scannable(false)
 public class BasicDOMTransformer extends AbstractDOMTransformer {
 
     private static final QName TYPE_DOCUMENT     = toMessageType(Document.class);

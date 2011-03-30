@@ -25,6 +25,7 @@ import org.milyn.payload.Export;
 import org.milyn.payload.Exports;
 import org.milyn.payload.JavaResult;
 import org.milyn.payload.StringResult;
+import org.switchyard.config.model.Scannable;
 import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.config.model.SmooksTransformModel;
 
@@ -36,6 +37,7 @@ import javax.xml.transform.Source;
  * Smooks {@link org.switchyard.transform.Transformer}.
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
+@Scannable(false)
 public class SmooksTransformer extends BaseTransformer {
 
     private static Logger _log = Logger.getLogger(SmooksTransformer.class);

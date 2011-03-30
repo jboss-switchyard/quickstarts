@@ -28,9 +28,10 @@ import org.switchyard.deploy.internal.AbstractDeployment;
  * See the {@link org.switchyard.test.mixins} package for a list of the {@link TestMixIn TestMixIns}
  * available out of the box.
  * <p/>
- * Test Mix-Ins have a lifecycle associated with your TestCase test methods.  The are created
- * and destroyed for each test method (<i>@Before</i> and <i>@After</i>).  See the javadoc on each of the
- * methods of this class.
+ * Test Mix-Ins have a lifecycle associated with your TestCase.  They are created
+ * and destroyed with the TestCase instance and the {@link #before(org.switchyard.deploy.internal.AbstractDeployment)}
+ * and {@link #after(org.switchyard.deploy.internal.AbstractDeployment)} methods are called <i>@Before</i> and <i>@After</i>)
+ * each test method.  See the javadoc on each of the methods of this class.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
@@ -43,11 +44,11 @@ public interface TestMixIn {
     void setTestCase(SwitchYardTestCase testCase);
 
     /**
-     * MixIn setUp.
+     * MixIn initialization.
      * <p/>
-     * Performed before the Test Deployment is created.
+     * Performed on test construction.
      */
-    void setUp();
+    void initialize();
 
     /**
      * Before test method execution (init).
@@ -65,9 +66,9 @@ public interface TestMixIn {
     void after(AbstractDeployment deployment);
 
     /**
-     * MixIn tear down.
+     * MixIn uninitialize.
      * <p/>
-     * Performed after test method execution and after the deployment is destroyed.
+     * Performed after TesCase TestRunner has finished running all the TestCase test methods.
      */
-    void tearDown();
+    void uninitialize();
 }

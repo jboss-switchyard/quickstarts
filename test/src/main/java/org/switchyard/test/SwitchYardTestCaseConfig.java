@@ -19,6 +19,7 @@
 
 package org.switchyard.test;
 
+import org.switchyard.config.model.Scanner;
 import org.switchyard.deploy.internal.AbstractDeployment;
 
 import java.lang.annotation.Documented;
@@ -36,14 +37,29 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({TYPE})
 @Retention(RUNTIME)
 @Documented
-public @interface SwitchYardDeploymentConfig {
+public @interface SwitchYardTestCaseConfig {
+
     /**
      * Default classpath location for the switchyard configuration.
      */
     public static final String SWITCHYARD_XML = AbstractDeployment.SWITCHYARD_XML;
 
     /**
-     * Classpath path to the configuration.
+     * Classpath path to a switchyard.xml configuration.
      */
-    String value();
+    String config() default SwitchYardTestCase.NULL_CONFIG;
+
+    /**
+     * {@link Scanner Scanners} to be used in the test.
+     * <p/>
+     * These are the same application scanners used by the SwitchYard maven plugin.  The
+     * augment the configuration model pointed to by the {@link #config()} value.  The scanners
+     * are only applied if a {@link #config()} is specified.
+     */
+    Class<? extends Scanner>[] scanners() default SwitchYardTestCase.NullScanners.class;
+
+    /**
+     * The Mix in types.
+     */
+    Class<? extends TestMixIn>[] mixins() default SwitchYardTestCase.NullMixIns.class;
 }

@@ -17,9 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.test;
-
-import org.switchyard.config.model.Scanner;
+package org.switchyard.config.model;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -29,17 +27,20 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * SwitchYard test deployment {@link Scanner Scanners} annotation.
+ * Annotation that marks a component as being scannable.
+ * <p/>
+ * SwitchYard picks up and installs/configures some application component types by scanning for them on
+ * the application classpath.  This annotation allows you to manage this behavior for a component.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 @Target({TYPE})
 @Retention(RUNTIME)
 @Documented
-public @interface SwitchYardDeploymentScanners {
+public @interface Scannable {
 
     /**
-     * {@link Scanner Scanners} to be used for augmenting the Application deployment model.
+     * Is the component scannable.  Default is true.
      */
-    Class<? extends Scanner>[] value();
+    boolean value() default true;
 }
