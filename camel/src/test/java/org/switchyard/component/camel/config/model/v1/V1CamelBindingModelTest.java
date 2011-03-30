@@ -20,9 +20,11 @@
  */
 package org.switchyard.component.camel.config.model.v1;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -30,6 +32,7 @@ import org.junit.Test;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.Validation;
 import org.switchyard.config.model.composite.BindingModel;
+import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
@@ -42,7 +45,7 @@ public class V1CamelBindingModelTest {
     
     @Test
     public void validateCamelBindingModelWithBeanElement() throws Exception {
-        final V1CamelBindingModel bindingModel = getFirstCamelBinding("switchyard-camel-binding-beans.xml");
+        final V1CamelBindingModel bindingModel = getCamelBindingFromCompositeService("switchyard-camel-binding-beans.xml");
         final Validation validateModel = bindingModel.validateModel();
         
         assertThat(validateModel.isValid(), is(true));
@@ -51,12 +54,28 @@ public class V1CamelBindingModelTest {
         assertThat(bindingModel.getOperationSelector().getOperationName(), is("print"));
     }
     
-    private V1CamelBindingModel getFirstCamelBinding(final String config) throws Exception {
-        final InputStream in = getClass().getResourceAsStream(config);
-        final SwitchYardModel model = (SwitchYardModel) new ModelResource<SwitchYardModel>().pull(in);
-        final List<CompositeServiceModel> services = model.getComposite().getServices();
+    private V1CamelBindingModel getCamelBindingFromCompositeService(final String config) throws Exception {
+        final List<CompositeServiceModel> services = getSwitchYardModel(config).getComposite().getServices();
         final CompositeServiceModel compositeServiceModel = services.get(0);
-        final List<BindingModel> bindings = compositeServiceModel.getBindings();
-        return (V1CamelBindingModel) bindings.get(0);
+        return (V1CamelBindingModel) compositeServiceModel.getBindings().get(0);
+    }
+    
+    private SwitchYardModel getSwitchYardModel(final String config) throws IOException {
+        final InputStream in = getClass().getResourceAsStream(config);
+        return (SwitchYardModel) new ModelResource<SwitchYardModel>().pull(in);
+    }
+    
+    @Test
+    public void validateCamelBindingModelWithReference() throws Exception {
+        final BindingModel bindingModel = getCamelBindingFromCompositeReference("switchyard-camel-ref-beans.xml");
+        final Validation validateModel = bindingModel.validateModel();
+        
+        assertThat(validateModel.isValid(), is(true));
+        assertThat(bindingModel, is(instanceOf(V1CamelBindingModel.class)));
+    }
+    
+    private BindingModel getCamelBindingFromCompositeReference(final String config) throws Exception {
+        final List<CompositeReferenceModel> references = getSwitchYardModel(config).getComposite().getReferences();
+        return references.get(0).getBindings().get(0);
     }
 }

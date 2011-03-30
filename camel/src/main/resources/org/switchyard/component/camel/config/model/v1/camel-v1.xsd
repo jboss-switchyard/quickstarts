@@ -36,7 +36,7 @@ MA  02110-1301, USA.
         <complexContent>
             <extension base="sca:Binding">
                 <sequence>
-                    <element name="operationSelector" type="camel:CamelOperationSelectorType"/>
+                    <element name="operationSelector" type="camel:CamelOperationSelectorType" minOccurs="0" maxOccurs="1"/>
                 </sequence>
                 <attribute name="configURI" type="anyURI"/>
             </extension>
@@ -75,5 +75,5 @@ MA  02110-1301, USA.
             </extension>
         </complexContent>
     </complexType>
-
+    
 </schema>

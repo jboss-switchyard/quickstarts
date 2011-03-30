@@ -24,6 +24,10 @@ package org.switchyard.camel.component;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.net.URI;
 
 import javax.xml.namespace.QName;
 
@@ -43,6 +47,7 @@ import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.camel.OutboundHandler;
+import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InOnlyOperation;
@@ -84,9 +89,11 @@ public class OutboundHandlerTest extends SwitchYardTestCase {
     
     @Before
     public void setupSwitchyardService() {
-        final QName serviceName = OutboundHandler.composeCamelServiceName("direct:to");
-        getServiceDomain().registerService(serviceName, new OutboundHandler(camelContext));
-        _service = getServiceDomain().getService(OutboundHandler.composeCamelServiceName("direct:to"));
+        final QName serviceName = new QName("TargetService");
+        final CamelBindingModel bindingModel = mock(CamelBindingModel.class);
+        when(bindingModel.getComponentURI()).thenReturn(URI.create("direct:to"));
+        getServiceDomain().registerService(serviceName, new OutboundHandler(bindingModel, camelContext));
+        _service = getServiceDomain().getService(serviceName);
     }
     
     @After
@@ -146,19 +153,17 @@ public class OutboundHandlerTest extends SwitchYardTestCase {
     }
     
     @Test
-    public void throwsIllegalArgumentExceptionIfCamelContextIsNull() {
+    public void throwsIllegalArgumentExceptionIfBindingModelIsNull() {
         exception.expect(IllegalArgumentException.class);
-        exception.expectMessage("camelContext must not be null");
-        new OutboundHandler(null);
+        exception.expectMessage("bindingModel argument must not be null");
+        new OutboundHandler(null, mock(CamelContext.class));
     }
     
     @Test
-    public void parseServiceName() {
-        QName serviceName = OutboundHandler.parseServiceName("{camel}someserviceuri");
-        assertThat(serviceName.getNamespaceURI(), is(equalTo("camel")));
-        assertThat(serviceName.getLocalPart(), is(equalTo("someserviceuri")));
-        serviceName = OutboundHandler.parseServiceName("someserviceuri");
-        assertThat(serviceName.getLocalPart(), is(equalTo("someserviceuri")));
+    public void throwsIllegalArgumentExceptionIfCamelContextIsNull() {
+        exception.expect(IllegalArgumentException.class);
+        exception.expectMessage("camelContext argument must not be null");
+        new OutboundHandler(mock(CamelBindingModel.class), null);
     }
     
     private static RouteBuilder createRouteBuilder() throws Exception {

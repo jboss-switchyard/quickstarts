@@ -22,10 +22,6 @@
 package org.switchyard.component.camel;
 
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
@@ -35,87 +31,97 @@ import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
+import org.switchyard.component.camel.config.model.CamelBindingModel;
 
 /**
- * A handler that is capable of exposing Apache Camel components directly as Switchyard services. 
+ * A handler that is capable of calling Apache Camel components and returning responses 
+ * from Camel to SwitchYard.
+ * <p>
+ * The typical usage would be when a POJO has a field with a reference annotation. SwitchYard 
+ * can inject a proxy instance which will invoke a Camel endpoint. It is an instance of this 
+ * class that will handle the invocation of the Camel endpoint.
  * 
  * @author Daniel Bevenius
  *
  */
 public class OutboundHandler extends BaseHandler {
-    /**
-     * Namespace prefix used Apache Camel endpoints that are registered in Switchyard.
-     */
-    public static final String CAMEL_PREFIX = "camel";
     
-    private ProducerTemplate _producerTemplate;
-    
-    private static final Pattern BRACKET_PATTERN = Pattern.compile("\\{(" + CAMEL_PREFIX +")\\}(.*)");
-
+    private final ProducerTemplate _producerTemplate;
     private final CamelContext _camelContext;
+    private final CamelBindingModel _bindingModel;
 
     /**
      * Sole constructor.
      * 
+     * @param bindingModel The {@link CamelBindingModel}.
      * @param context The {@link CamelContext}.
      */
-    public OutboundHandler(final CamelContext context) {
-        this._camelContext = context;
-        if (context == null) {
-            throw new IllegalArgumentException("camelContext must not be null");
+    public OutboundHandler(final CamelBindingModel bindingModel, final CamelContext context) {
+        if (bindingModel == null) {
+            throw new IllegalArgumentException("bindingModel argument must not be null");
         }
-        _producerTemplate = context.createProducerTemplate();
-    }
-    
-    /**
-     * Starts the CamelContext.
-     * 
-     * @throws Exception If an error occurs while trying to start the {@link CamelContext}.
-     */
-    public void start() throws Exception {
-        _camelContext.start();
+        _bindingModel = bindingModel;
+        
+        if (context == null) {
+            throw new IllegalArgumentException("camelContext argument must not be null");
+        }
+        _camelContext = context;
+        
         _producerTemplate = _camelContext.createProducerTemplate();
     }
     
     /**
-     * Stops the {@link CamelContext} and the producerTempalate.
+     * Stops the {@link ProducerTemplate}.
      * 
-     * @throws Exception If an error occurs while trying to start the {@link CamelContext}.
+     * @throws Exception If an error occurs while trying to stop the {@link ProducerTemplate}.
      */
     public void stop() throws Exception {
         _producerTemplate.stop();
-        _camelContext.stop();
     }
 
     @Override
     public void handleMessage(final Exchange exchange) throws HandlerException {
-        if (exchange.getContract().getServiceOperation().getExchangePattern() == ExchangePattern.IN_ONLY) {
+        if (isInOnly(exchange)) {
             handleInOnly(exchange);
         } else {
             handleInOut(exchange);
         }
     }
+    
+    private boolean isInOnly(final Exchange exchange) {
+        return exchange.getContract().getServiceOperation().getExchangePattern() == ExchangePattern.IN_ONLY;
+    }
 
     private void handleInOnly(final Exchange exchange) throws HandlerException {
         try {
-            _producerTemplate.send(getCamelDestination(exchange), createProcessor(exchange));
+            _producerTemplate.send(uriFromBindingModel(), createProcessor(exchange));
         } catch (final CamelExecutionException e) {
             throw new HandlerException(e);
         }
     }
     
-    private String getCamelDestination(final Exchange exchange) {
-        return exchange.getService().getName().getLocalPart();
+    private String uriFromBindingModel() {
+        return _bindingModel.getComponentURI().toString();
     }
-
+    
     private void handleInOut(final Exchange exchange) throws HandlerException {
-        final String toEndpoint = getCamelDestination(exchange);
         try {
-            final org.apache.camel.Exchange camelExchange = _producerTemplate.request(toEndpoint, createProcessor(exchange));
-            exchange.getMessage().setContent(camelExchange.getOut().getBody());
+            final Object payload = sendToCamel(exchange);
+            sendResponseToSwitchyard(exchange, payload);
         } catch (final CamelExecutionException e) {
             throw new HandlerException(e);
         }
+    }
+    
+    private Object sendToCamel(final Exchange exchange) {
+        final org.apache.camel.Exchange camelExchange = _producerTemplate.request(uriFromBindingModel(), createProcessor(exchange));
+        return camelExchange.getOut().getBody();
+    }
+    
+    private void sendResponseToSwitchyard(final Exchange exchange, final Object payload)
+    {
+        exchange.getMessage().setContent(payload);
+        exchange.send(exchange.getMessage());
     }
     
     private Processor createProcessor(final Exchange switchyardExchange) {
@@ -130,31 +136,4 @@ public class OutboundHandler extends BaseHandler {
         };
     }
     
-    /**
-     * A convenience method for creating service names for camel endpoints.
-     * Will simply add {@value #CAMEL_PREFIX} as the namespace for the QName
-     * 
-     * @param serviceName A new QName with {@value #CAMEL_PREFIX} as the QName namespace.
-     * @return QName The name of the service prefix with {@link #CAMEL_PREFIX}.
-     */
-    public static QName composeCamelServiceName(final String serviceName) {
-        return new QName(CAMEL_PREFIX, serviceName);
-    }
-
-    /**
-     * A convenience method for creating service names from a composite QName represented
-     * as a String (qname.toString()).
-     * 
-     * @param serviceName Service name string in the format "{camel}serviceName"
-     * @return QName A QName representation of the passed in serviceName.
-     */
-    public static QName parseServiceName(final String serviceName) {
-        final Matcher matcher = BRACKET_PATTERN.matcher(serviceName);
-        if (matcher.matches()) {
-            return new QName(matcher.group(1), matcher.group(2));
-        }
-        
-        return new QName(serviceName);
-    }
-
 }

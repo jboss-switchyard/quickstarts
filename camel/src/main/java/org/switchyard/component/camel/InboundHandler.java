@@ -24,12 +24,18 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
-import org.switchyard.HandlerException;
 import org.switchyard.ServiceReference;
+import org.switchyard.camel.component.SwitchyardComponent;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 
 /**
- * An {@link ExchangeHandler} that is able to.
+ * An {@link ExchangeHandler} that acts as a gateway/entrypoint for Camel Components.
+ * 
+ * This gives access to all component of Apache Camel and works by creating a
+ * Camel route that looks something like this 
+ * <pre>
+ * from("CamelComponentURI").to("switchyard://serviceName?operationName=operationName"); 
+ * </pre>
  * 
  * @author Daniel Bevenius
  *
@@ -57,18 +63,32 @@ public class InboundHandler implements ExchangeHandler {
      * @throws Exception If an error occurs while creating the route definition.
      */
     public void start(final ServiceReference serviceReference) throws Exception {
-        final RouteDefinition routeDefinition = new RouteDefinition();
-        routeDefinition.from(_camelBindingModel.getComponentURI().toString());
-        final String operationName = _camelBindingModel.getOperationSelector().getOperationName();
-        routeDefinition.to("switchyard://" + serviceReference.getName().getLocalPart() + "?operationName=" + operationName);
-        routeDefinition.routeId(composeRouteId(serviceReference));
-        _camelContext.addRouteDefinition(routeDefinition);
+        final RouteDefinition rd = new RouteDefinition();
+        rd.routeId(composeRouteId(serviceReference));
+        rd.from(uriFromBindingModel());
+        rd.to(composeSwitchYardComponentName(serviceReference));
+        
+        _camelContext.addRouteDefinition(rd);
     }
     
-    private String composeRouteId(final ServiceReference serviceRef)
+    private String composeSwitchYardComponentName(final ServiceReference serviceReference) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("switchyard://").append(serviceReference.getName().getLocalPart());
+        sb.append("?operationName=").append(operationName());
+        return sb.toString();
+    }
+    
+    private String uriFromBindingModel() {
+        return _camelBindingModel.getComponentURI().toString();
+    }
+    
+    private String operationName()
     {
+        return _camelBindingModel.getOperationSelector().getOperationName();
+    }
+    
+    private String composeRouteId(final ServiceReference serviceRef) {
         return serviceRef.getName().toString() + "-[" +_camelBindingModel.getComponentURI() + "]";
-        
     }
     
     /**
@@ -82,8 +102,13 @@ public class InboundHandler implements ExchangeHandler {
         _camelContext.removeRouteDefinition(rd);
     }
 
+    /**
+     * This is a noop for this handler. This handler is only responsible for setting up
+     * a route in camel and the {@link SwitchyardComponent} will take care of calling
+     * the configured SwitchYard service.
+     */
     @Override
-    public void handleMessage(final Exchange switchYardExchange) throws HandlerException {
+    public void handleMessage(final Exchange switchYardExchange) {
     }
 
     @Override
@@ -126,5 +151,4 @@ public class InboundHandler implements ExchangeHandler {
         return true;
     }
     
-
 }
