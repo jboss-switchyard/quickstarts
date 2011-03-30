@@ -25,27 +25,26 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 import org.apache.log4j.Logger;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceReference;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.ComponentReferenceInterfaceModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
-import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.deploy.Activator;
 import org.switchyard.extensions.wsdl.WSDLReaderException;
 import org.switchyard.extensions.wsdl.WSDLService;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.java.JavaService;
-import org.switchyard.transform.Transformer;
-import org.switchyard.transform.TransformerRegistry;
-import org.switchyard.transform.config.model.TransformerFactory;
 
 /**
  * Deployment is a framework-independent representation of a deployed SwitchYard 
@@ -226,15 +225,38 @@ public class Deployment extends AbstractDeployment {
         // activate bindings for each service
         for (CompositeReferenceModel reference : _switchyardConfig.getComposite().getReferences()) {
             for (BindingModel binding : reference.getBindings()) {
+                QName refQName = reference.getQName();
                 _log.debug("Deploying binding " + binding.getType() + " for reference " + reference.getName());
+                
                 Activator activator = _gatewayActivators.get(binding.getType());
-                ExchangeHandler handler = activator.init(reference.getQName(), reference);
-                ServiceReference serviceRef = getDomain().registerService(reference.getQName(), handler);
+                ExchangeHandler handler = activator.init(refQName, reference);
+                
+                ServiceInterface si = loadComponentRefServiceInterface(reference.getComponentReference());
+                ServiceReference serviceRef = si != null ?
+                        getDomain().registerService(refQName, handler, si):
+                        getDomain().registerService(refQName, handler);
+                        
                 Activation activation = new Activation(serviceRef, activator);
                 activation.start();
+                
                 _referenceBindings.add(activation);
             }
         }
+    }
+    
+    private ServiceInterface loadComponentRefServiceInterface(ComponentReferenceModel compRef) {
+        ComponentReferenceInterfaceModel referenceInterfaceModel = compRef.getInterface();
+        if (referenceInterfaceModel != null) {
+            if (isJavaInterface(referenceInterfaceModel.getType())) {
+                String interfaceName = compRef.getInterface().getInterface();
+                return JavaService.fromClass(loadClass(interfaceName));
+            }
+        }
+        return null;
+    }
+    
+    private boolean isJavaInterface(final String type) {
+	    return type.equals(JAVA_INTERFACE);
     }
 
     private void deployServices() {
@@ -248,7 +270,7 @@ public class Deployment extends AbstractDeployment {
                        + " for component " + component.getImplementation().getType());
                 ExchangeHandler handler = activator.init(service.getQName(), service);
                 ServiceReference serviceRef = null;
-                if (service.getInterface().getType().equals(JAVA_INTERFACE)) {
+                if (isJavaInterface(service.getInterface().getType())) {
                     ServiceInterface si = JavaService.fromClass(
                             loadClass(service.getInterface().getInterface()));
                     serviceRef = getDomain().registerService(service.getQName(), handler, si);
