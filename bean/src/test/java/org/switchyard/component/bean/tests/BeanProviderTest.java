@@ -23,13 +23,13 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.Message;
 import org.switchyard.test.SwitchYardTestCase;
-import org.switchyard.test.TestMixIns;
+import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
 
 /*
  * Assorted methods for testing a CDI bean providing a service in SwitchYard.
  */
-@TestMixIns(CDIMixIn.class)
+@SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
 public class BeanProviderTest extends SwitchYardTestCase {
 
     @Test

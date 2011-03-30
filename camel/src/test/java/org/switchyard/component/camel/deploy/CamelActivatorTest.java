@@ -28,9 +28,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.junit.Test;
 import org.switchyard.test.MockHandler;
-import org.switchyard.test.SwitchYardDeploymentConfig;
+import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.SwitchYardTestCase;
-import org.switchyard.test.TestMixIns;
 import org.switchyard.test.mixins.CDIMixIn;
 
 /**
@@ -39,8 +38,7 @@ import org.switchyard.test.mixins.CDIMixIn;
  * @author Daniel Bevenius
  * 
  */
-@SwitchYardDeploymentConfig (value = "switchyard-activator-test.xml")
-@TestMixIns(CDIMixIn.class)
+@SwitchYardTestCaseConfig(config = "switchyard-activator-test.xml", mixins = CDIMixIn.class)
 public class CamelActivatorTest extends SwitchYardTestCase {
     
     @Test

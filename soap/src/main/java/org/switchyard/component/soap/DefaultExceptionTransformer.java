@@ -25,9 +25,9 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
-import org.switchyard.HandlerException;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
+import org.switchyard.config.model.Scannable;
 import org.switchyard.transform.BaseTransformer;
 
 /**
@@ -38,6 +38,7 @@ import org.switchyard.transform.BaseTransformer;
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
+@Scannable(false)
 public class DefaultExceptionTransformer<F extends Exception, T extends SOAPMessage> extends BaseTransformer<F, T> {
 
     @Override

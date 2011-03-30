@@ -290,7 +290,7 @@ public class ClientProxyBean implements Bean {
                 Exchange exchangeIn = createExchange(_service, method, responseExchangeHandler);
                 exchangeIn.send(exchangeIn.createMessage().setContent(args));
 
-                Exchange exchangeOut = responseQueue.take();
+                    Exchange exchangeOut = responseQueue.take();
                 if (exchangeOut.getState() == ExchangeState.OK) {
                     return exchangeOut.getMessage().getContent();
                 } else {

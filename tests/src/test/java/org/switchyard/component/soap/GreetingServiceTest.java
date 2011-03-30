@@ -33,10 +33,10 @@ import org.switchyard.ServiceReference;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.StreamUtil;
 import org.switchyard.test.SwitchYardTestCase;
-import org.switchyard.test.TestMixIns;
+import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
 
-@TestMixIns(CDIMixIn.class)
+@SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
 public class GreetingServiceTest extends SwitchYardTestCase {
 
     private static final QName GREETING_SERVICE_NAME = new QName("GreetingService");

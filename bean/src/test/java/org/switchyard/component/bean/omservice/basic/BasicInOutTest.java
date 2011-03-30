@@ -25,13 +25,13 @@ import org.switchyard.Message;
 import org.switchyard.component.bean.omservice.model.OrderRequest;
 import org.switchyard.component.bean.omservice.model.OrderResponse;
 import org.switchyard.test.SwitchYardTestCase;
-import org.switchyard.test.TestMixIns;
+import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-@TestMixIns(CDIMixIn.class)
+@SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
 public class BasicInOutTest extends SwitchYardTestCase {
 
     @Test
