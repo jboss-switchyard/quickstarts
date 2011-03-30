@@ -61,6 +61,7 @@
      <log4j.version>1.2.14</log4j.version>
      <maven.plugin.api.version>3.0.2</maven.plugin.api.version>
      <maven.plugin.plugin.version>2.5.1</maven.plugin.plugin.version>
+     <protostuff.version>1.0.0</protostuff.version>
   </properties>
 
   <scm>
@@ -81,6 +82,11 @@
       <snapshots>
         <updatePolicy>never</updatePolicy>
       </snapshots>
+    </repository>
+    <repository>
+      <id>protostuff-repo</id>
+      <name>protostuff-repo</name>
+      <url>http://protostuff.googlecode.com/svn/repos/maven2</url>
     </repository>
   </repositories>
   <pluginRepositories>
@@ -446,6 +452,36 @@
         <groupId>xmlunit</groupId>
         <artifactId>xmlunit</artifactId>
         <version>${xmlunit.version}</version>
+     </dependency>
+     <dependency>
+        <groupId>com.dyuproject.protostuff</groupId>
+        <artifactId>protostuff-api</artifactId>
+        <version>${protostuff.version}</version>
+     </dependency>
+     <dependency>
+        <groupId>com.dyuproject.protostuff</groupId>
+        <artifactId>protostuff-core</artifactId>
+        <version>${protostuff.version}</version>
+     </dependency>
+     <dependency>
+        <groupId>com.dyuproject.protostuff</groupId>
+        <artifactId>protostuff-collectionschema</artifactId>
+        <version>${protostuff.version}</version>
+     </dependency>
+     <dependency>
+        <groupId>com.dyuproject.protostuff</groupId>
+        <artifactId>protostuff-runtime</artifactId>
+        <version>${protostuff.version}</version>
+     </dependency>
+     <dependency>
+        <groupId>com.dyuproject.protostuff</groupId>
+        <artifactId>protostuff-json</artifactId>
+        <version>${protostuff.version}</version>
+     </dependency>
+     <dependency>
+        <groupId>com.dyuproject.protostuff</groupId>
+        <artifactId>protostuff-xml</artifactId>
+        <version>${protostuff.version}</version>
      </dependency>
     </dependencies>
   </dependencyManagement>
