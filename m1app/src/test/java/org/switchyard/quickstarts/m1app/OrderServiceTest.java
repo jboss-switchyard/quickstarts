@@ -22,10 +22,10 @@ package org.switchyard.quickstarts.m1app;
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.test.SwitchYardTestCase;
-import org.switchyard.test.TestMixIns;
+import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
 
-@TestMixIns(CDIMixIn.class)
+@SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
 public class OrderServiceTest extends SwitchYardTestCase {
 
     @Test

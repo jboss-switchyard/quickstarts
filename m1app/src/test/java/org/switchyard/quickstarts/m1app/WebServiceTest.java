@@ -20,14 +20,17 @@
 package org.switchyard.quickstarts.m1app;
 
 import org.junit.Test;
+import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.test.SwitchYardTestCase;
-import org.switchyard.test.SwitchYardDeploymentConfig;
-import org.switchyard.test.TestMixIns;
+import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
 import org.switchyard.test.mixins.HTTPMixIn;
+import org.switchyard.transform.config.model.TransformSwitchYardScanner;
 
-@SwitchYardDeploymentConfig(SwitchYardDeploymentConfig.SWITCHYARD_XML)
-@TestMixIns({CDIMixIn.class, HTTPMixIn.class})
+@SwitchYardTestCaseConfig(
+        config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
+        scanners = {BeanSwitchYardScanner.class, TransformSwitchYardScanner.class},
+        mixins = {CDIMixIn.class, HTTPMixIn.class})
 public class WebServiceTest extends SwitchYardTestCase {
 
     @Test

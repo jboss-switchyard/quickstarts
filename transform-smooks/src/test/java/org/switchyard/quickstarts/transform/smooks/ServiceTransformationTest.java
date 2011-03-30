@@ -24,16 +24,14 @@ import javax.xml.namespace.QName;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.switchyard.test.SwitchYardDeploymentConfig;
+import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.SwitchYardTestCase;
-import org.switchyard.test.TestMixIns;
 import org.switchyard.test.mixins.CDIMixIn;
 
 /**
  * Test Smooks transformations around a service.
  */
-@TestMixIns(CDIMixIn.class)
-@SwitchYardDeploymentConfig(SwitchYardDeploymentConfig.SWITCHYARD_XML)
+@SwitchYardTestCaseConfig(config = SwitchYardTestCaseConfig.SWITCHYARD_XML, mixins = CDIMixIn.class)
 public class ServiceTransformationTest extends SwitchYardTestCase {
 
     // Message types being transformed

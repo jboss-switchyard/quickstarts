@@ -21,7 +21,7 @@ package org.switchyard.quickstarts.transform.smooks;
 
 import org.junit.Test;
 import org.switchyard.test.SwitchYardTestCase;
-import org.switchyard.test.TestMixIns;
+import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.SmooksMixIn;
 
 /**
@@ -29,7 +29,7 @@ import org.switchyard.test.mixins.SmooksMixIn;
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-@TestMixIns(SmooksMixIn.class)
+@SwitchYardTestCaseConfig(mixins = SmooksMixIn.class)
 public class SmooksTransformationTest extends SwitchYardTestCase {
 
     @Test
