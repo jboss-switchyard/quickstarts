@@ -38,6 +38,7 @@ import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
+import org.switchyard.config.model.composite.InterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.deploy.Activator;
@@ -231,9 +232,9 @@ public class Deployment extends AbstractDeployment {
                 Activator activator = _gatewayActivators.get(binding.getType());
                 ExchangeHandler handler = activator.init(refQName, reference);
                 
-                ServiceInterface si = loadComponentRefServiceInterface(reference.getComponentReference());
+                ServiceInterface si = getComponentReferenceInterface(reference.getComponentReference());
                 ServiceReference serviceRef = si != null ?
-                        getDomain().registerService(refQName, handler, si):
+                        getDomain().registerService(refQName, handler, si) :
                         getDomain().registerService(refQName, handler);
                         
                 Activation activation = new Activation(serviceRef, activator);
@@ -244,15 +245,41 @@ public class Deployment extends AbstractDeployment {
         }
     }
     
-    private ServiceInterface loadComponentRefServiceInterface(ComponentReferenceModel compRef) {
-        ComponentReferenceInterfaceModel referenceInterfaceModel = compRef.getInterface();
-        if (referenceInterfaceModel != null) {
-            if (isJavaInterface(referenceInterfaceModel.getType())) {
-                String interfaceName = compRef.getInterface().getInterface();
-                return JavaService.fromClass(loadClass(interfaceName));
+    private ServiceInterface getComponentReferenceInterface(ComponentReferenceModel reference) {
+        ServiceInterface serviceInterface = null;
+        
+        if (reference != null && reference.getInterface() != null) {
+            serviceInterface = loadServiceInterface(reference.getInterface());
+        }
+        return serviceInterface;
+    }
+    
+    private ServiceInterface getComponentServiceInterface(ComponentServiceModel service) {
+        ServiceInterface serviceInterface = null;
+        
+        if (service != null && service.getInterface() != null) {
+            serviceInterface = loadServiceInterface(service.getInterface());
+        }
+        return serviceInterface;
+    }
+    
+    private ServiceInterface loadServiceInterface(InterfaceModel intfModel) {
+        ServiceInterface serviceInterface = null;
+        
+        if (intfModel != null) {
+            if (isJavaInterface(intfModel.getType())) {
+                serviceInterface = JavaService.fromClass(
+                        loadClass(intfModel.getInterface()));
+            } else if (intfModel.getType().equals(WSDL_INTERFACE)) {
+                try {
+                    serviceInterface = WSDLService.fromWSDL(intfModel.getInterface());
+                } catch (WSDLReaderException wsdlre) {
+                    throw new RuntimeException(wsdlre);
+                }
             }
         }
-        return null;
+        
+        return serviceInterface;
     }
     
     private boolean isJavaInterface(final String type) {
@@ -269,21 +296,11 @@ public class Deployment extends AbstractDeployment {
                 _log.debug("Registering service " + service.getName()  
                        + " for component " + component.getImplementation().getType());
                 ExchangeHandler handler = activator.init(service.getQName(), service);
-                ServiceReference serviceRef = null;
-                if (isJavaInterface(service.getInterface().getType())) {
-                    ServiceInterface si = JavaService.fromClass(
-                            loadClass(service.getInterface().getInterface()));
-                    serviceRef = getDomain().registerService(service.getQName(), handler, si);
-                } else if (service.getInterface().getType().equals(WSDL_INTERFACE)) {
-                    try {
-                        ServiceInterface si = WSDLService.fromWSDL(service.getInterface().getInterface());
-                        serviceRef = getDomain().registerService(service.getQName(), handler, si);
-                    } catch (WSDLReaderException wsdlre) {
-                        throw new RuntimeException(wsdlre);
-                    }
-                } else {
-                    serviceRef = getDomain().registerService(service.getQName(), handler);
-                }
+                ServiceInterface serviceIntf = getComponentServiceInterface(service);
+                ServiceReference serviceRef = serviceIntf != null ?
+                        getDomain().registerService(service.getQName(), handler, serviceIntf) :
+                        getDomain().registerService(service.getQName(), handler);
+                        
                 Activation activation = new Activation(serviceRef, activator);
                 activation.start();
                 _services.add(activation);
