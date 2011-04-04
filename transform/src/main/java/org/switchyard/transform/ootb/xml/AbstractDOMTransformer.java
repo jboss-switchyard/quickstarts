@@ -44,6 +44,9 @@ import java.io.StringWriter;
 /**
  * Abstract DOM transformer.
  *
+ * @param <F> Java type representing the from, or source, format
+ * @param <T> Java type representing the to, or target, format
+ *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public abstract class AbstractDOMTransformer<F, T> extends BaseTransformer<F, T> {
@@ -57,10 +60,12 @@ public abstract class AbstractDOMTransformer<F, T> extends BaseTransformer<F, T>
         _docBuilderFactory = DocumentBuilderFactory.newInstance();
         _docBuilderFactory.setNamespaceAware(true);
         try {
-            _transformerFactory.setAttribute("indent-number", new Integer(4));
-        } catch(Exception e) {
+            _transformerFactory.setAttribute("indent-number", Integer.valueOf(4));
+        } catch (Exception e) {
             // Ignore... Xalan may throw on this!!
             // We handle Xalan indentation separately (see serialize method).
+            Logger.getLogger(AbstractDOMTransformer.class).debug(
+                    "Failed to set indent on transformer.", e);
         }
     }
 
@@ -104,11 +109,11 @@ public abstract class AbstractDOMTransformer<F, T> extends BaseTransformer<F, T>
             Reader reader = source.getCharacterStream();
             try {
                 try {
-                    if(stream != null) {
+                    if (stream != null) {
                         stream.close();
                     }
-                }finally {
-                    if(reader != null) {
+                } finally {
+                    if (reader != null) {
                         reader.close();
                     }
                 }

@@ -112,7 +112,7 @@ public abstract class SwitchYardTestCase {
     private List<Class<? extends TestMixIn>> _testMixIns;
     private List<TestMixIn> _testMixInInstances = new ArrayList<TestMixIn>();
 
-    private static final ThreadLocal<TestRunner> _testRunner = new ThreadLocal<TestRunner>();
+    private static final ThreadLocal<TestRunner> TEST_RUNNER = new ThreadLocal<TestRunner>();
 
     /**
      * Public default constructor.
@@ -139,7 +139,7 @@ public abstract class SwitchYardTestCase {
         createMixInInstances();
         initializeMixIns();
 
-        _testRunner.get().setTestCase(this);
+        TEST_RUNNER.get().setTestCase(this);
     }
 
     /**
@@ -708,13 +708,13 @@ public abstract class SwitchYardTestCase {
         @Override
         public void run(RunNotifier notifier) {
             try {
-                _testRunner.set(this);
+                TEST_RUNNER.set(this);
                 super.run(notifier);
             } finally {
                 try {
                     _testCase.cleanup();
                 } finally {
-                    _testRunner.remove();
+                    TEST_RUNNER.remove();
                 }
             }
         }

@@ -164,7 +164,7 @@ public final class JavaService extends BaseService {
         if (payloadType != null) {
             return QName.valueOf(payloadType.value());
         } else {
-            if(javaType.isMemberClass()) {
+            if (javaType.isMemberClass()) {
                 return new QName(namespaceURI, TYPE_PREFIX + javaType.getName());
             } else {
                 return new QName(namespaceURI, TYPE_PREFIX + javaType.getCanonicalName());
@@ -187,7 +187,7 @@ public final class JavaService extends BaseService {
      * @return True if it is a Java message type, otherwise false.
      */
     public static Class<?> toJavaMessageType(QName name) {
-        if(!isJavaMessageType(name)) {
+        if (!isJavaMessageType(name)) {
             throw new RuntimeException("Invalid call.  Not a Java message type.  Use isJavaMessageType before calling this method.");
         }
 

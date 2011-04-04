@@ -166,7 +166,7 @@ public class HornetQDispatcher implements Dispatcher, MessageHandler {
         String phase = message.getBodyBuffer().readString();
         
         // This is a hack until we have serialization stuff sorted
-        ExchangeContract contract = ExchangePattern.IN_ONLY.equals(mep)
+        ExchangeContract contract = ExchangePattern.IN_ONLY.equals(ExchangePattern.valueOf(mep))
                 ? ExchangeContract.IN_ONLY : ExchangeContract.IN_OUT;
         ExchangePhase exchangePhase = ExchangePhase.valueOf(phase);
         

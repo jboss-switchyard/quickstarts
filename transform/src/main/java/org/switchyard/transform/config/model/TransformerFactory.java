@@ -54,7 +54,7 @@ public final class TransformerFactory {
             transformer = SmooksTransformFactory.newTransformer((SmooksTransformModel) transformModel);
         }
 
-        if(transformer == null) {
+        if (transformer == null) {
             throw new RuntimeException("Unknown TransformModel type '" + transformModel.getClass().getName() + "'.");
         }
 

@@ -66,24 +66,24 @@ public class BasicDOMTransformer extends AbstractDOMTransformer {
     }
 
     private Object transformFromDOMNode(Node from) {
-        if(getTo().equals(TYPE_DOCUMENT)) {
+        if (getTo().equals(TYPE_DOCUMENT)) {
             return from.getOwnerDocument();
         }
-        if(getTo().equals(TYPE_ELEMENT)) {
-            if(from.getNodeType() == Node.ELEMENT_NODE) {
+        if (getTo().equals(TYPE_ELEMENT)) {
+            if (from.getNodeType() == Node.ELEMENT_NODE) {
                 return from;
             }
-            if(from.getNodeType() == Node.ATTRIBUTE_NODE) {
+            if (from.getNodeType() == Node.ATTRIBUTE_NODE) {
                 return from.getParentNode();
             }
-            if(from.getNodeType() == Node.DOCUMENT_NODE) {
+            if (from.getNodeType() == Node.DOCUMENT_NODE) {
                 return ((Document)from).getDocumentElement();
             }
         }
-        if(getTo().equals(TYPE_STRING)) {
+        if (getTo().equals(TYPE_STRING)) {
             return serialize(from);
         }
-        if(getTo().equals(TYPE_CHAR_ARRAY)) {
+        if (getTo().equals(TYPE_CHAR_ARRAY)) {
             return serialize(from).toCharArray();
         }
 
@@ -93,10 +93,10 @@ public class BasicDOMTransformer extends AbstractDOMTransformer {
     private Object transformFromInputSource(InputSource from) {
         Document document = parse(from);
 
-        if(getTo().equals(TYPE_DOCUMENT)) {
+        if (getTo().equals(TYPE_DOCUMENT)) {
             return document;
         }
-        if(getTo().equals(TYPE_ELEMENT)) {
+        if (getTo().equals(TYPE_ELEMENT)) {
             return document.getDocumentElement();
         }
 

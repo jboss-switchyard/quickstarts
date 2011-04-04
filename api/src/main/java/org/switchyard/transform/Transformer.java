@@ -44,8 +44,9 @@ public interface Transformer<F, T> {
     /**
      * Set the name of the from, or source, message type.
      * @param fromType From type.
+     * @return a reference to the current Transformer.
      */
-    Transformer setFrom(QName fromType);
+    Transformer<F, T> setFrom(QName fromType);
 
     /**
      * The name of the from, or source, message.
@@ -56,8 +57,9 @@ public interface Transformer<F, T> {
     /**
      * Set the name of the to, or target, message type.
      * @param toType To type.
+     * @return a reference to the current Transformer.
      */
-    Transformer setTo(QName toType);
+    Transformer<F, T> setTo(QName toType);
 
     /**
      * The name of the to, or target, message.

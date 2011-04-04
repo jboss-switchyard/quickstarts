@@ -93,6 +93,7 @@
         </module>
         <module name="JavadocStyle">
             <property name="scope" value="public"/>
+            <property name="checkHtml" value="false"/>
         </module>
 
 

@@ -19,12 +19,11 @@
 
 package org.switchyard.transform;
 
-import org.switchyard.metadata.java.JavaService;
-
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 
 import javax.xml.namespace.QName;
+
+import org.switchyard.metadata.java.JavaService;
 
 
 /**

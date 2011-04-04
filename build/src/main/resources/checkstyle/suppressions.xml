@@ -11,5 +11,5 @@
         Excusing ConfiguratorMojo.java from the checks to avoid checkstyle
         choking and throwing an Exception -->	
     <suppress checks="[a-zA-Z0-9]*"
-	files="org/switchyard/tools/maven/plugins/switchyard/ConfiguratorMojo.java"/>
+	files="org/switchyard/tools/maven/plugins/switchyard/ConfigureMojo.java"/>
 </suppressions>

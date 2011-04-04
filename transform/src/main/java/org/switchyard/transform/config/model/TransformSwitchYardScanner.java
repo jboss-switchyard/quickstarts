@@ -36,8 +36,6 @@ import org.switchyard.config.util.classpath.ClasspathScanner;
 import org.switchyard.config.util.classpath.InstanceOfFilter;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.v1.V1JavaTransformModel;
-import org.switchyard.transform.smooks.internal.SmooksTransformer;
-import org.switchyard.transform.smooks.internal.XMLBindingTransformer;
 
 /**
  * Scanner for {@link Transformer} implementations.

@@ -62,7 +62,7 @@ public class TransformerRegistryLoader {
      * @param transformerRegistry The registry instance.
      */
     public TransformerRegistryLoader(TransformerRegistry transformerRegistry) {
-        if(transformerRegistry == null) {
+        if (transformerRegistry == null) {
             throw new IllegalArgumentException("null 'transformerRegistry' argument.");
         }
         this._transformerRegistry = transformerRegistry;
@@ -120,7 +120,7 @@ public class TransformerRegistryLoader {
         try {
             Enumeration<URL> resources = Thread.currentThread().getContextClassLoader().getResources(TRANSFORMS_XML);
 
-            while(resources.hasMoreElements()) {
+            while (resources.hasMoreElements()) {
                 URL resource = resources.nextElement();
                 InputStream configStream = resource.openStream();
 

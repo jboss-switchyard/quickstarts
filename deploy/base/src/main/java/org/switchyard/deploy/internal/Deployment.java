@@ -33,7 +33,6 @@ import org.switchyard.ServiceReference;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;
-import org.switchyard.config.model.composite.ComponentReferenceInterfaceModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
@@ -233,9 +232,9 @@ public class Deployment extends AbstractDeployment {
                 ExchangeHandler handler = activator.init(refQName, reference);
                 
                 ServiceInterface si = getComponentReferenceInterface(reference.getComponentReference());
-                ServiceReference serviceRef = si != null ?
-                        getDomain().registerService(refQName, handler, si) :
-                        getDomain().registerService(refQName, handler);
+                ServiceReference serviceRef = si != null
+                        ? getDomain().registerService(refQName, handler, si)
+                        : getDomain().registerService(refQName, handler);
                         
                 Activation activation = new Activation(serviceRef, activator);
                 activation.start();
@@ -283,7 +282,7 @@ public class Deployment extends AbstractDeployment {
     }
     
     private boolean isJavaInterface(final String type) {
-	    return type.equals(JAVA_INTERFACE);
+        return type.equals(JAVA_INTERFACE);
     }
 
     private void deployServices() {
@@ -297,9 +296,9 @@ public class Deployment extends AbstractDeployment {
                        + " for component " + component.getImplementation().getType());
                 ExchangeHandler handler = activator.init(service.getQName(), service);
                 ServiceInterface serviceIntf = getComponentServiceInterface(service);
-                ServiceReference serviceRef = serviceIntf != null ?
-                        getDomain().registerService(service.getQName(), handler, serviceIntf) :
-                        getDomain().registerService(service.getQName(), handler);
+                ServiceReference serviceRef = serviceIntf != null
+                        ? getDomain().registerService(service.getQName(), handler, serviceIntf)
+                        : getDomain().registerService(service.getQName(), handler);
                         
                 Activation activation = new Activation(serviceRef, activator);
                 activation.start();
