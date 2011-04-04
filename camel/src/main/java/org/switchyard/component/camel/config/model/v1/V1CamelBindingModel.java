@@ -31,13 +31,15 @@ import org.switchyard.config.model.Descriptor;
  * A generic binding definintion for Apache Camel components.
  * 
  * Example of a binding implememtation:
- * <pre>{@code
+ * <pre>
+ * {@code
  *  <sca:service name="SimpleCamelService">
  *     <camel:binding.camel configURI="direct://input">
  *        <camel:operationSelector operationName="print"/>
  *     </camel:binding.camel>
  *  </sca:service>
- * }</pre>
+ * }
+ * </pre>
  * 
  * <ul>
  * <li> The 'configURI' attribute can be used to specify a Camel component uri.</li>

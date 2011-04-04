@@ -107,10 +107,10 @@ public class CamelActivator implements Activator {
                 try {
                     final Set<InboundHandler> handlers = getInboundHandlersForService(name);
                     final InboundHandler inboundHandler = new InboundHandler(camelBindingModel, _camelContext.get());
-                    if (handlers.contains(inboundHandler) == false) {
+                    if (!handlers.contains(inboundHandler)) {
                         handlers.add(inboundHandler);
                         _inboundGateways.put(name, handlers);
-				        return inboundHandler;
+                        return inboundHandler;
                     }
                 } catch (Exception e) {
                     throw new IllegalStateException(e);
@@ -133,7 +133,7 @@ public class CamelActivator implements Activator {
                     final CamelBindingModel camelBinding = (CamelBindingModel) bindingModel;
                     final Set<OutboundHandler> handlers = getOutboundHandlersForService(name);
                     final OutboundHandler outboundHandler = new OutboundHandler(camelBinding, _camelContext.get());
-                    if (handlers.contains(outboundHandler) == false) {
+                    if (!handlers.contains(outboundHandler)) {
                         handlers.add(outboundHandler);
                         _outboundHandlers.put(name, handlers);
                         return outboundHandler;
@@ -169,13 +169,13 @@ public class CamelActivator implements Activator {
         makeServiceReferenceAvailableToCamelSwitchyardComponent(serviceReference);
         final Set<InboundHandler> handlers = _inboundGateways.get(serviceReference.getName());
         if (handlers != null) {
-	        for (InboundHandler inboundHandler : handlers) {
-	            try {
-	                inboundHandler.start(serviceReference);
-	            } catch (Exception e) {
-	                throw new RuntimeException(e);
-	            }
-	        }
+            for (InboundHandler inboundHandler : handlers) {
+                try {
+                    inboundHandler.start(serviceReference);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
     }
     
@@ -187,14 +187,14 @@ public class CamelActivator implements Activator {
     public void stop(ServiceReference serviceReference) {
         final Set<InboundHandler> handlers = _inboundGateways.get(serviceReference.getName());
         if (handlers != null) {
-	        for (InboundHandler inboundHandler : handlers) {
-	            try {
-	                inboundHandler.stop(serviceReference);
-	                _inboundGateways.remove(serviceReference.getName());
-	            } catch (Exception e) {
-	                throw new RuntimeException(e);
-	            }
-	        }
+            for (InboundHandler inboundHandler : handlers) {
+                try {
+                    inboundHandler.stop(serviceReference);
+                    _inboundGateways.remove(serviceReference.getName());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
     }
 

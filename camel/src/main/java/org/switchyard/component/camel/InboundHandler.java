@@ -25,7 +25,6 @@ import org.apache.camel.model.RouteDefinition;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceReference;
-import org.switchyard.camel.component.SwitchyardComponent;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 
 /**
@@ -82,8 +81,7 @@ public class InboundHandler implements ExchangeHandler {
         return _camelBindingModel.getComponentURI().toString();
     }
     
-    private String operationName()
-    {
+    private String operationName() {
         return _camelBindingModel.getOperationSelector().getOperationName();
     }
     
@@ -106,6 +104,7 @@ public class InboundHandler implements ExchangeHandler {
      * This is a noop for this handler. This handler is only responsible for setting up
      * a route in camel and the {@link SwitchyardComponent} will take care of calling
      * the configured SwitchYard service.
+     * @param switchYardExchange message exchange
      */
     @Override
     public void handleMessage(final Exchange switchYardExchange) {
@@ -116,8 +115,7 @@ public class InboundHandler implements ExchangeHandler {
     }
     
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((_camelBindingModel == null) ? 0 : _camelBindingModel.getComponentURI().hashCode());
@@ -125,18 +123,14 @@ public class InboundHandler implements ExchangeHandler {
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (this == obj)
-        {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (obj == null)
-        {
+        if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass())
-        {
+        if (getClass() != obj.getClass()) {
             return false;
         }
         

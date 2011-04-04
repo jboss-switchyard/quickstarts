@@ -25,11 +25,11 @@ import java.net.URI;
 import org.switchyard.config.model.composite.BindingModel;
 
 /**
- * A binding definintion that specifies how communitcation between Apache Camel
- * and Switchyard components is done.
+ * A binding definition that specifies how communication between Apache Camel
+ * and SwitchYard components is done.
  * 
- * Example of a binding implememtation:
- * <pre>{@code
+ * Example of a binding implementation:
+ * <pre>{
  *  <sca:service name="SimpleCamelService">
  *     <camel:binding.xyz>
  *        <camel:operationSelector operationName="print"/>

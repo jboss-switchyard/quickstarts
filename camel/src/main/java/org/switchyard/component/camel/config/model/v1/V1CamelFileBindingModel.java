@@ -57,6 +57,11 @@ public class V1CamelFileBindingModel extends V1BaseCamelBindingModel {
         super(config, desc);
     }
 
+    /**
+     * Returns the input directory for file endpoints.
+     * @return file reference for the input path, or null if no INPUT_DIR config
+     * was specified.
+     */
     public File getInputDir() {
         if (_inputDir == null) {
             final Configuration childConfig = getModelConfiguration().getFirstChild(INPUT_DIR);
