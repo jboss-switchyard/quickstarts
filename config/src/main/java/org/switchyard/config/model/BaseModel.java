@@ -27,9 +27,6 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import javax.xml.namespace.QName;
-import javax.xml.transform.Source;
-import javax.xml.validation.Schema;
-import javax.xml.validation.Validator;
 
 import org.switchyard.config.Configuration;
 import org.switchyard.config.ConfigurationResource;
