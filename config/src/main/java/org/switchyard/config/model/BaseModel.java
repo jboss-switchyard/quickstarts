@@ -161,6 +161,9 @@ public abstract class BaseModel implements Model {
      */
     @Override
     public Validation validateModel() {
+        /** SWITCHYARD-208 : Disabling validation until SWITCHYARD-101
+         *  can be addressed.  This code should be uncommented as part
+         *  of SWITCHYARD-101.
         Schema schema = _desc.getSchema(_config);
         if (schema != null) {
             Validator validator = schema.newValidator();
@@ -173,6 +176,7 @@ public abstract class BaseModel implements Model {
         } else {
             return new Validation(false, "schema == null");
         }
+        */
         return new Validation(true);
     }
 
