@@ -41,6 +41,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 import org.switchyard.config.Configuration;
 import org.switchyard.config.util.Classes;
@@ -174,11 +175,7 @@ public final class Descriptor {
                     Source[] sources = sourceList.toArray(new Source[sourceList.size()]);
                     SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
                     factory.setResourceResolver(new DescriptorLSResourceResolver(this));
-                    //long start = System.currentTimeMillis();
-                    schema = factory.newSchema(sources); // TODO: Fix poor performance.
-                    //long stop = System.currentTimeMillis();
-                    //long total = stop - start;
-                    //System.err.println("SchemaFactory.newSchema(Source[]):Schema is taking " + total + " milliseconds!");
+                    schema = factory.newSchema(sources);
                     _namespaces_schema_map.put(namespaces, schema);
                 }
             } catch (Exception e) {
@@ -219,6 +216,45 @@ public final class Descriptor {
     }
 
     /**
+     * Creates a Validator based on the combined schema documents/definitions found that are associated with the specified namespace.
+     * @param namespaces the namespaces of the schemas
+     * @return the new Validator
+     */
+    public Validator getValidator(Set<String> namespaces) {
+        return getValidator(getSchema(namespaces));
+    }
+
+    /**
+     * Creates a new Validator based on the namespaces of the specified Configuration.
+     * @param config the Configuration
+     * @return the new Validator
+     * @see #getValidator(Set)
+     */
+    public Validator getValidator(Configuration config) {
+        return getValidator(getSchema(config));
+    }
+
+    /**
+     * Creates a new Validator based on the namespaces of the Configuration wrapped by the specified Model.
+     * @param model the Model
+     * @return the new Validator
+     * @see #getValidator(Configuration)
+     * @see #getValidator(Set)
+     */
+    public Validator getValidator(Model model) {
+        return getValidator(getSchema(model));
+    }
+
+    private Validator getValidator(Schema schema) {
+        if (schema != null) {
+            Validator validator = schema.newValidator();
+            validator.setResourceResolver(new DescriptorLSResourceResolver(this));
+            return validator;
+        }
+        return null;
+    }
+
+    /**
      * Gets the location property, based on the specified namespace.
      * @param namespace the namespace
      * @return the {@link #LOCATION} property value
@@ -237,15 +273,41 @@ public final class Descriptor {
     }
 
     private String getSchemaLocation(String namespace, String schema) {
-        if (namespace != null && schema != null) {
-            String location = getLocation(namespace);
-            if (location != null) {
-                String schemaLocation = location + "/" + schema;
-                schemaLocation = schemaLocation.replaceAll("\\\\", "/").replaceAll("//", "/");
-                return schemaLocation;
+        String schemaLocation = null;
+        if (schema != null) {
+            if (namespace != null) {
+                String location = getLocation(namespace);
+                if (location != null) {
+                    schemaLocation = location + "/" + schema;
+                    schemaLocation = schemaLocation.replaceAll("\\\\", "/").replaceAll("//", "/");
+                }
+            }
+            if (schemaLocation == null && schema.startsWith("http://")) {
+                schema = schema.substring(7);
+                int pos = schema.indexOf('/');
+                if (pos != -1) {
+                    String domain = schema.substring(0, pos);
+                    StringTokenizer st = new StringTokenizer(domain, ".");
+                    int len = st.countTokens();
+                    String[] parts = new String[len];
+                    for (int i=0; i < len; i++) {
+                        parts[(len-1)-i] = st.nextToken();
+                    }
+                    StringBuilder sb = new StringBuilder();
+                    sb.append('/');
+                    for (int i=0; i < len; i++) {
+                        sb.append(parts[i]);
+                        if (i != len-1) {
+                            sb.append('/');
+                        }
+                    }
+                    domain = sb.toString();
+                    String path = schema.substring(pos, schema.length());
+                    schemaLocation = domain + path;
+                }
             }
         }
-        return null;
+        return schemaLocation;
     }
 
     /**
