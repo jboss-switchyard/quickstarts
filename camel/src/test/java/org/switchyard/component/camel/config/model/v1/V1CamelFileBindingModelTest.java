@@ -24,6 +24,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
@@ -47,7 +48,11 @@ public class V1CamelFileBindingModelTest {
         final Validation validateModel = bindingModel.validateModel();
         
         assertThat(validateModel.isValid(), is(true));
-        assertThat(bindingModel.getInputDir().toString(), is(equalTo("/input/directory")));
+        assertThat(bindingModel.getInputDir().toString(), is(equalTo(expectedDirectoryName())));
+    }
+    
+    private String expectedDirectoryName() {
+        return File.separator + "input" + File.separator + "directory";
     }
     
     private V1CamelFileBindingModel getFirstCamelBinding(final String config) throws Exception {
