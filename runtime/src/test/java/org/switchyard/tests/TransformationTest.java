@@ -30,6 +30,7 @@ import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.MockHandler;
+import org.switchyard.Scope;
 import org.switchyard.ServiceReference;
 import org.switchyard.ServiceDomain;
 import org.switchyard.MockDomain;
@@ -90,11 +91,10 @@ public class TransformationTest {
             // name will not be necessary once the service definition is available
             // at runtime
             Message msg = exchange.createMessage().setContent(input);
-            Context msgCtx = msg.getContext();
             TransformSequence.
                     from(inType).
                     to(expectedDestType).
-                    associateWith(msgCtx);
+                    associateWith(exchange, Scope.IN);
 
             msg.setContent(input);
             exchange.send(msg);
@@ -132,11 +132,10 @@ public class TransformationTest {
         // name will not be necessary once the service definition is available
         // at runtime
         Message msg = exchange.createMessage().setContent(input);
-        Context msgCtx = msg.getContext();
         TransformSequence.
                 from(inType).
                 to(expectedDestType).
-                associateWith(msgCtx);
+                associateWith(exchange, Scope.IN);
 
         msg.setContent(input);
 

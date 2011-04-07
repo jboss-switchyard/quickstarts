@@ -33,6 +33,7 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.MockDomain;
 import org.switchyard.MockHandler;
+import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.metadata.BaseInvocationContract;
@@ -100,6 +101,35 @@ public class ExchangeImplTest {
         exchange.send(exchange.createMessage());
         replyHandler.waitForFaultMessage();
         Assert.assertEquals(ExchangePhase.OUT, exchange.getPhase());
+    }
+    
+    @Test
+    public void testMessageIdSetOnSend() {
+        ServiceReference service = _domain.registerService(
+                new QName("IdTest"), new MockHandler());
+        Exchange exchange = _domain.createExchange(service, ExchangeContract.IN_ONLY);
+        exchange.send(exchange.createMessage());
+        Assert.assertNotNull(exchange.getContext().getProperty(Exchange.MESSAGE_ID, Scope.IN));
+    }
+    
+    @Test
+    public void testRelatesToSetOnReply() {
+        ServiceReference service = _domain.registerService(
+                new QName("ReplyTest"), new MockHandler().forwardInToOut());
+        MockHandler replyHandler = new MockHandler();
+        Exchange exchange = _domain.createExchange(
+                service, ExchangeContract.IN_OUT, replyHandler);
+        exchange.send(exchange.createMessage());
+        String requestId = (String)exchange.getContext().getProperty(
+                Exchange.MESSAGE_ID, Scope.IN).getValue();
+        Exchange reply = replyHandler.waitForOKMessage().getMessages().peek();
+        String replyId = (String)exchange.getContext().getProperty(
+                Exchange.MESSAGE_ID, Scope.OUT).getValue();
+        String replyRelatesTo = (String)exchange.getContext().getProperty(
+                Exchange.RELATES_TO, Scope.OUT).getValue();
+        
+        Assert.assertEquals(requestId, replyRelatesTo);
+        Assert.assertFalse(requestId.equals(replyId));
     }
     
     /**

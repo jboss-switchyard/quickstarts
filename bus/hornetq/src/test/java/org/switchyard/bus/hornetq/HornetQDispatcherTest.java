@@ -34,6 +34,8 @@ import org.junit.Test;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
+import org.switchyard.Message;
+import org.switchyard.Scope;
 import org.switchyard.ServiceReference;
 import org.switchyard.handlers.HandlerChain;
 import org.switchyard.internal.DefaultHandlerChain;
@@ -69,11 +71,13 @@ public class HornetQDispatcherTest {
         inHandlers.addLast("in", sink);
         Dispatcher dispatch = _provider.createDispatcher(service, inHandlers, null);
         
-        Exchange exchange = new ExchangeImpl(service, ExchangeContract.IN_ONLY, dispatch, null, null);
+        Exchange exchange = new ExchangeImpl(service.getName(), ExchangeContract.IN_ONLY, dispatch, null, null);
         exchange.send(exchange.createMessage());
         Thread.sleep(200);
         
-        Assert.assertEquals(exchange, sink.getLastExchange());
+        Assert.assertEquals(
+                exchange.getContext().getProperty(Exchange.MESSAGE_ID, Scope.IN), 
+                sink.getLastExchange().getContext().getProperty(Exchange.MESSAGE_ID, Scope.IN));
     }
     
 
@@ -91,12 +95,14 @@ public class HornetQDispatcherTest {
         ExchangeSink outHandler = new ExchangeSink();
         outHandlers.addLast("out", outHandler);
         
-        Exchange exchange = new ExchangeImpl(service, ExchangeContract.IN_OUT, dispatch, null, outHandlers);
+        Exchange exchange = new ExchangeImpl(service.getName(), ExchangeContract.IN_OUT, dispatch, null, outHandlers);
         exchange.send(exchange.createMessage());
         Thread.sleep(400);
         
         Assert.assertNotNull(outHandler.getLastExchange());
-        Assert.assertEquals(exchange, outHandler.getLastExchange());
+        Assert.assertEquals(
+                exchange.getContext().getProperty(Exchange.MESSAGE_ID, Scope.IN).getValue(), 
+                outHandler.getLastExchange().getContext().getProperty(Exchange.RELATES_TO, Scope.OUT).getValue());
     }
     
 }

@@ -25,7 +25,6 @@ import java.util.Map;
 import javax.activation.DataSource;
 import javax.xml.namespace.QName;
 
-import org.switchyard.Context;
 import org.switchyard.Message;
 import org.switchyard.io.Serialization.AccessType;
 import org.switchyard.io.Serialization.CoverageType;
@@ -36,31 +35,21 @@ import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 
 /**
- * Default message.
+ * Serializable implementation of <code>Message</code>.
  */
 @Strategy(access=AccessType.FIELD, coverage=CoverageType.INCLUSIVE)
 public class DefaultMessage implements Message {
 
     @Exclude private TransformerRegistry _transformerRegistry;
-    private Context _context;
     private Object _content;
     private Map<String, DataSource> _attachments = 
         new HashMap<String, DataSource>();
     
 
     /**
-     * Create a new instance of DefaultMessage with an empty context.
+     * Create a new instance of DefaultMessage.
      */
     public DefaultMessage() {
-        _context = new DefaultContext();
-    }
-
-    /**
-     * Create a new instance of DefaultMessage with the specified context.
-     * @param context context instance to use with this message
-     */
-    public DefaultMessage(Context context) {
-        _context = context;
     }
 
     /**
@@ -139,10 +128,4 @@ public class DefaultMessage implements Message {
         _content = content;
         return this;
     }
-
-    @Override
-    public Context getContext() {
-        return _context;
-    }
-
 }

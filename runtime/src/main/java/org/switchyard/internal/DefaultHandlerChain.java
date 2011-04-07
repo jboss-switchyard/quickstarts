@@ -30,6 +30,7 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.Scope;
 import org.switchyard.handlers.HandlerChain;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.java.JavaService;
@@ -142,7 +143,7 @@ public class DefaultHandlerChain implements HandlerChain {
             TransformSequence.
                 from(exceptionTypeName).
                 to(invokerFaultTypeName).
-                associateWith(faultMessage.getContext());
+                associateWith(exchange, Scope.OUT);
         }
     }
     

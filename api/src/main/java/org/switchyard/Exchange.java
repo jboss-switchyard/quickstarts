@@ -20,6 +20,8 @@
 package org.switchyard;
 
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.metadata.ExchangeContract;
 
 /**
@@ -33,29 +35,31 @@ import org.switchyard.metadata.ExchangeContract;
 public interface Exchange {
 
     /**
+     * Context property name used for Message ID.
+     */
+    String MESSAGE_ID = "org.switchyard.messageId";
+    /**
+     * Context property name used for Relates To.
+     */
+    String RELATES_TO = "org.switchyard.relatesTo";
+
+    /**
      * Retrieves the exchange context.
      * @return the exchange context
      */
     Context getContext();
 
     /**
-     * The unique identifier for this Exchange instance.  The exchange
-     * id can be used to correlate message and fault activity within a message
-     * exchange.  This value is assigned at Exchange creation time and never
-     * changes over the lifetime of the exchange.
-     * @return exchange id as a string.
-     */
-    String getId();
-    /**
      * Get the contract associated with this exchange.
      * @return The exchange contract.
      */
     ExchangeContract getContract();
+    
     /**
      * The service being invoked by this exchange.
      * @return Service to be invoked
      */
-    ServiceReference getService();
+    QName getServiceName();
 
     /**
      * Returns the current message for the exchange.  On new exchanges, this

@@ -25,7 +25,6 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
-import org.switchyard.ExchangePhase;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.handlers.HandlerChain;
@@ -92,7 +91,8 @@ public class DomainImpl implements ServiceDomain {
         }
 
         // create the exchange
-        ExchangeImpl exchange = new ExchangeImpl(service, contract, dispatcher, _transformerRegistry, replyChain);
+        ExchangeImpl exchange = new ExchangeImpl(service.getName(), contract, 
+                dispatcher, _transformerRegistry, replyChain);
         return exchange;
     }
 
@@ -133,13 +133,5 @@ public class DomainImpl implements ServiceDomain {
     public ServiceReference getService(QName serviceName) {
         List<Service> services = _registry.getServices(serviceName);
         return services.isEmpty() ? null : services.get(0).getReference();
-    }
-    
-    /**
-     * Returns an endpoint name based on the domain name, service name, and 
-     * exchange phase.
-     */
-    private String getEndpointName(QName serviceName, ExchangePhase phase) {
-        return _name + ":" + serviceName + ":" + phase.toString();
     }
 }

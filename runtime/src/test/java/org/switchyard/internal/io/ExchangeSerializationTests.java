@@ -101,7 +101,6 @@ public class ExchangeSerializationTests {
             msg = new DefaultMessage();
         }
         msg.setContent("content");
-        buildContext((DefaultContext)msg.getContext());
         msg.addAttachment("data", new MockDataSource("mock", "text/plain", "abc123"));
         return msg;
     }
@@ -112,6 +111,7 @@ public class ExchangeSerializationTests {
         ServiceReference service = domain.registerService(new QName("InPhase"), handler);
         ExchangeImpl exchange = (ExchangeImpl)domain.createExchange(service, ExchangeContract.IN_ONLY, handler);
         exchange.getContext().setProperty("baz", "whiz");
+        buildContext((DefaultContext)exchange.getContext());
         DefaultMessage msg = buildMessage((DefaultMessage)exchange.createMessage());
         exchange.send(msg);
         handler.waitForOKMessage();
@@ -119,12 +119,11 @@ public class ExchangeSerializationTests {
     }
 
     private void assertContext(Context ctx) throws Exception {
-        Assert.assertEquals("bar", ctx.getProperty("foo"));
-        Assert.assertEquals("David", ((Car)ctx.getProperty("car")).getDriver().getName());
+        Assert.assertEquals("bar", ctx.getProperty("foo").getValue());
+        Assert.assertEquals("David", ((Car)ctx.getProperty("car").getValue()).getDriver().getName());
     }
 
     private void assertMessage(Message msg) throws Exception {
-        assertContext(msg.getContext());
         Assert.assertEquals("content", msg.getContent());
         InputStream is =  msg.getAttachment("data").getInputStream();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -138,11 +137,11 @@ public class ExchangeSerializationTests {
 
     private void assertExchange(Exchange exchange) throws Exception {
         assertMessage(exchange.getMessage());
-        Assert.assertNotNull(exchange.getId());
+        assertContext(exchange.getContext());
         Assert.assertEquals(ExchangeContract.IN_ONLY, exchange.getContract());
         Assert.assertEquals(ExchangePhase.IN, exchange.getPhase());
         Assert.assertEquals(ExchangeState.OK, exchange.getState());
-        Assert.assertEquals("whiz", exchange.getContext().getProperty("baz"));
+        Assert.assertEquals("whiz", exchange.getContext().getProperty("baz").getValue());
     }
 
     private static final class MockDataSource implements DataSource {

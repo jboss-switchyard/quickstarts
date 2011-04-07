@@ -38,6 +38,7 @@ import org.hornetq.api.core.client.MessageHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
+import org.switchyard.Scope;
 import org.switchyard.ServiceReference;
 import org.switchyard.handlers.HandlerChain;
 import org.switchyard.internal.DefaultMessage;
@@ -96,7 +97,9 @@ public class HornetQDispatcher implements Dispatcher, MessageHandler {
         if (exchange.getPhase().equals(ExchangePhase.IN)) {
              dispatch = _inQueue;
              if (ExchangePattern.IN_OUT.equals(exchange.getContract().getServiceOperation().getExchangePattern())) {
-                 _outputHandlers.put(exchange.getId(), ((ExchangeImpl)exchange).getReplyChain());
+                 String messageId = (String)exchange.getContext().getProperty(
+                         Exchange.MESSAGE_ID, Scope.IN).getValue();
+                 _outputHandlers.put(messageId, ((ExchangeImpl)exchange).getReplyChain());
              }
         } else if (exchange.getPhase().equals(ExchangePhase.OUT)) {
             dispatch = _outQueue;
@@ -119,7 +122,9 @@ public class HornetQDispatcher implements Dispatcher, MessageHandler {
         if (ExchangePhase.IN.equals(exchange.getPhase())) {
             _inputHandler.handle(exchange);
         } else if (ExchangePhase.OUT.equals(exchange.getPhase())) {
-            HandlerChain chain = _outputHandlers.remove(exchange.getId());
+            String relatesTo = (String)exchange.getContext().getProperty(
+                    Exchange.RELATES_TO, Scope.OUT).getValue();
+            HandlerChain chain = _outputHandlers.remove(relatesTo);
             if (chain != null) {
                 chain.handle(exchange);
             }
@@ -171,7 +176,6 @@ public class HornetQDispatcher implements Dispatcher, MessageHandler {
         ExchangeImpl exchange;
         try {
             exchange = SERIALIZER.deserialize(bytes, ExchangeImpl.class);
-            new FieldAccess(ExchangeImpl.class.getDeclaredField("_service")).write(exchange, _service);
             new FieldAccess(ExchangeImpl.class.getDeclaredField("_dispatch")).write(exchange, this);
             new FieldAccess(ExchangeImpl.class.getDeclaredField("_transformerRegistry")).write(exchange, _transformerRegistry);
             new FieldAccess(DefaultMessage.class.getDeclaredField("_transformerRegistry")).write(exchange.getMessage(), _transformerRegistry);
