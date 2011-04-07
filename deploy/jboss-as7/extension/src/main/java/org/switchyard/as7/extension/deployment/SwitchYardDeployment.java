@@ -23,6 +23,7 @@ import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.modules.Module;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.Deployment;
 
 /**
@@ -45,7 +46,7 @@ public class SwitchYardDeployment extends Deployment {
      */
     public SwitchYardDeployment(final DeploymentUnit deploymentUnit, final SwitchYardModel config) {
         
-        super(config);
+        super(ServiceDomainManager.createDomain(), config);
         _deployUnit = deploymentUnit;
     }
     

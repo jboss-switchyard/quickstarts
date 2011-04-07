@@ -224,6 +224,7 @@ public class ExchangeImpl implements Exchange {
             _log.warn("Fault generated during exchange without a handler: " + _message);
             return;
         }
+
         _dispatch.dispatch(this);
     }
 

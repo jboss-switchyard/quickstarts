@@ -19,18 +19,8 @@
 
 package org.switchyard.deploy.internal;
 
-import java.util.ServiceLoader;
-
-import javax.xml.namespace.QName;
-
 import org.switchyard.ServiceDomain;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
-import org.switchyard.internal.LocalExchangeBus;
-import org.switchyard.internal.DefaultServiceRegistry;
-import org.switchyard.internal.DomainImpl;
-import org.switchyard.internal.transform.BaseTransformerRegistry;
-import org.switchyard.spi.ExchangeBus;
-import org.switchyard.spi.ServiceRegistry;
 import org.switchyard.transform.TransformerRegistryLoader;
 
 /**
@@ -44,19 +34,6 @@ public abstract class AbstractDeployment {
      */
     public static final String SWITCHYARD_XML = "/META-INF/switchyard.xml";
     /**
-     * Root domain property.
-     */
-    public static final QName ROOT_DOMAIN = new QName("org.switchyard.domains.root");
-    /**
-     * Exchange Bus provider class name key.
-     */
-    public static final String BUS_CLASS_NAME = "busProvider";
-    /**
-     * Registry class name property.
-     */
-    public static final String REGISTRY_CLASS_NAME = "registryProvider";
-
-    /**
      * Parent deployment.
      */
     private AbstractDeployment _parentDeployment;
@@ -65,20 +42,35 @@ public abstract class AbstractDeployment {
      */
     private ServiceDomain _serviceDomain;
     /**
-     * TransformerRegistry Loader class.
+     * Transform registry loaded for the deployment.
      */
     private TransformerRegistryLoader _transformerRegistryLoader;
     /**
      * SwitchYard configuration.
      */
     private SwitchYardModel _switchyardConfig;
-    
+
     /**
      * Create a new instance of a deployment from a configuration model.
+     * @param appServiceDomain The ServiceDomain for the application.
+     */
+    protected AbstractDeployment(ServiceDomain appServiceDomain) {
+        this(appServiceDomain, null);
+    }
+
+    /**
+     * Create a new instance of a deployment from a configuration model.
+     * @param appServiceDomain The ServiceDomain for the application.
      * @param configModel switchyard config model
      */
-    protected AbstractDeployment(SwitchYardModel configModel) {
+    protected AbstractDeployment(ServiceDomain appServiceDomain, SwitchYardModel configModel) {
+        if (appServiceDomain == null) {
+            throw new IllegalArgumentException("null 'appServiceDomain' argument.");
+        }
         _switchyardConfig = configModel;
+        _serviceDomain = appServiceDomain;
+        _transformerRegistryLoader = new TransformerRegistryLoader(appServiceDomain.getTransformerRegistry());
+        _transformerRegistryLoader.loadOOTBTransforms();
     }
 
     /**
@@ -94,11 +86,7 @@ public abstract class AbstractDeployment {
     /**
      * Initialise the deployment.
      */
-    public void init() {
-        if (_parentDeployment == null) {
-            createDomain();
-        }
-    }
+    public abstract void init();
 
     /**
      * Start/un-pause the deployment.
@@ -134,72 +122,8 @@ public abstract class AbstractDeployment {
     public TransformerRegistryLoader getTransformerRegistryLoader() {
         return _transformerRegistryLoader;
     }
-    
+
     protected SwitchYardModel getConfig() {
         return _switchyardConfig;
-    }
-
-    private void createDomain() {
-        String registryClassName = DefaultServiceRegistry.class.getName();
-        String busClassName = LocalExchangeBus.class.getName();
-        
-        // Use domain configuration when creating registry and bus providers.
-        // This is really a temporary measure as a domain should support multiple
-        // bus and registry providers.
-        if (_switchyardConfig != null && _switchyardConfig.getDomain() != null) {
-            if (_switchyardConfig.getDomain().getProperty(REGISTRY_CLASS_NAME) != null) {
-                 registryClassName = _switchyardConfig.getDomain().getProperty(REGISTRY_CLASS_NAME);
-            }
-            if (_switchyardConfig.getDomain().getProperty(BUS_CLASS_NAME) != null) {
-                busClassName = _switchyardConfig.getDomain().getProperty(BUS_CLASS_NAME);
-            }
-        }
-
-        try {
-            ServiceRegistry registry = getRegistry(registryClassName);
-            ExchangeBus endpointProvider = getEndpointProvider(busClassName);
-            BaseTransformerRegistry transformerRegistry = new BaseTransformerRegistry();
-
-            _serviceDomain = new DomainImpl(ROOT_DOMAIN, registry, endpointProvider, transformerRegistry);
-
-            _transformerRegistryLoader = new TransformerRegistryLoader(transformerRegistry);
-            _transformerRegistryLoader.loadOOTBTransforms();
-        } catch (NullPointerException npe) {
-            throw new RuntimeException(npe);
-        }
-
-    }
-
-    /**
-     * Returns an instance of the ServiceRegistry.
-     * @param registryClass class name of the serviceregistry
-     * @return ServiceRegistry
-     */
-    private static ServiceRegistry getRegistry(final String registryClass) {
-        ServiceLoader<ServiceRegistry> registryServices
-                = ServiceLoader.load(ServiceRegistry.class);
-        for (ServiceRegistry serviceRegistry : registryServices) {
-            if (registryClass.equals(serviceRegistry.getClass().getName())) {
-                return serviceRegistry;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns an instance of the EndpointProvider.
-     * @param providerClass class name of the endpointprovider implementation
-     * @return EndpointProvider
-     */
-    private static ExchangeBus getEndpointProvider(final String providerClass) {
-        ServiceLoader<ExchangeBus> providerServices
-                = ServiceLoader.load(ExchangeBus.class);
-        
-        for (ExchangeBus provider : providerServices) {
-            if (providerClass.equals(provider.getClass().getName())) {
-                return provider;
-            }
-        }
-        return null;
     }
 }

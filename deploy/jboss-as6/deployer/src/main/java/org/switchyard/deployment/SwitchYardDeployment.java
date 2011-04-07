@@ -20,7 +20,9 @@
 package org.switchyard.deployment;
 
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.switchyard.ServiceDomain;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.Deployment;
 
 /**
@@ -29,21 +31,25 @@ import org.switchyard.deploy.internal.Deployment;
 public class SwitchYardDeployment extends Deployment {
     
     private final VFSDeploymentUnit _deployUnit;
+    private ServiceDomainManager _domainManager;
 
     /**
      * Creates a new SwitchYard deployment.
      * @param deploymentName name of the deployment
      * @param deploymentUnit mc deployment reference
      * @param config switchyard configuration
+     * @param domainManager The domain manager instance.
      */
     public SwitchYardDeployment(final String deploymentName, 
             final VFSDeploymentUnit deploymentUnit, 
-            final SwitchYardModel config) {
+            final SwitchYardModel config,
+            final ServiceDomainManager domainManager) {
         
-        super(config);
+        super(createDomain(config, domainManager), config);
         _deployUnit = deploymentUnit;
+        _domainManager = domainManager;
     }
-    
+
     /**
      * Create the application.
      */
@@ -54,6 +60,7 @@ public class SwitchYardDeployment extends Deployment {
      * Destroy the application.
      */
     public void destroy() {
+        _domainManager.removeApplicationServiceDomain(getDomain());
     }
 
     /**
@@ -82,5 +89,10 @@ public class SwitchYardDeployment extends Deployment {
         } finally {
             Thread.currentThread().setContextClassLoader(origCL);
         }
-    }    
+    }
+
+    private static ServiceDomain createDomain(SwitchYardModel config, ServiceDomainManager domainManager) {
+        // Use the ROOT_DOMAIN name for now.  Getting an exception SwitchYardModel.getQName().
+        return domainManager.addApplicationServiceDomain(ServiceDomainManager.ROOT_DOMAIN, config);
+    }
 }

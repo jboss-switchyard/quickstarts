@@ -31,6 +31,7 @@ import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.deploy.ServiceDomainManager;
 
 /**
  * AS6 Deployer for SwitchYard.
@@ -38,7 +39,9 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
 public class SwitchYardDeployer extends AbstractSimpleVFSRealDeployer<SwitchYardMetaData> {
     
     private static final String BEAN_PREFIX = "switchyard";
-    
+
+    private ServiceDomainManager _domainManager;
+
     /**
      * No args constructor.
      */
@@ -46,6 +49,14 @@ public class SwitchYardDeployer extends AbstractSimpleVFSRealDeployer<SwitchYard
         super(SwitchYardMetaData.class);
         setOutput(BeanMetaData.class);
         setStage(DeploymentStages.REAL);
+    }
+
+    /**
+     * Set the {@link ServiceDomainManager} instance for the deployment.
+     * @param domainManager The domain manager.
+     */
+    public void setDomainManager(ServiceDomainManager domainManager) {
+        this._domainManager = domainManager;
     }
 
     @Override
@@ -88,6 +99,8 @@ public class SwitchYardDeployer extends AbstractSimpleVFSRealDeployer<SwitchYard
         bmdBuilder.addConstructorParameter(VFSDeploymentUnit.class.getName(), deploymentUnit);
         // Setup the third constructor argument.
         bmdBuilder.addConstructorParameter(SwitchYardModel.class.getName(), metadata.getSwitchYardModel());
+        // Setup the fourth constructor argument.
+        bmdBuilder.addConstructorParameter(ServiceDomainManager.class.getName(), _domainManager);
 
         bmdBuilder.addDependency(deploymentUnit.getName());
         bmdBuilder.addDependency(deploymentUnit.getName() + "_WeldBootstrapBean");

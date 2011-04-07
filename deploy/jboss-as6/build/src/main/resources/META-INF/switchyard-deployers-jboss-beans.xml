@@ -5,6 +5,8 @@
 -->
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
+    <bean name="SwitchYardServiceDomainManager" class="org.switchyard.deploy.ServiceDomainManager" />
+
     <!--
         SwitchYard CDI BeanManager JNDI Deployer.
 
@@ -17,6 +19,8 @@
         SwitchYard Application Deployer.
     -->
     <bean name="SwitchYardConfigParser" class="org.switchyard.deployment.SwitchYardConfigParser" />
-    <bean name="SwitchYardDeployer" class="org.switchyard.deployment.SwitchYardDeployer" />
+    <bean name="SwitchYardDeployer" class="org.switchyard.deployment.SwitchYardDeployer">
+        <property name="domainManager"><inject bean="SwitchYardServiceDomainManager"/></property>
+    </bean>
 
 </deployment>

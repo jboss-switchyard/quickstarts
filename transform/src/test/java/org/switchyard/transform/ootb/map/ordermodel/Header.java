@@ -17,42 +17,38 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.test;
-
-import org.switchyard.ServiceDomain;
-import org.switchyard.deploy.internal.AbstractDeployment;
+package org.switchyard.transform.ootb.map.ordermodel;
 
 /**
- * Simple Test Deployment.
- * <p/>
- * Does nothing extra.
- *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class SimpleTestDeployment extends AbstractDeployment {
+public class Header {
 
-    /**
-     * Constructor.
-     *
-     * @param serviceDomain The ServiceDomain that the deployment is a member of.
-     */
-    protected SimpleTestDeployment(ServiceDomain serviceDomain) {
-        super(serviceDomain);
+    private long orderId;
+    private String originType;
+    private Customer customerDetails;
+
+    public long getOrderId() {
+        return orderId;
     }
 
-    @Override
-    public void init() {
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
     }
 
-    @Override
-    public void start() {
+    public String getOriginType() {
+        return originType;
     }
 
-    @Override
-    public void stop() {
+    public void setOriginType(String originType) {
+        this.originType = originType;
     }
 
-    @Override
-    public void destroy() {
+    public Customer getCustomerDetails() {
+        return customerDetails;
+    }
+
+    public void setCustomerDetails(Customer customerDetails) {
+        this.customerDetails = customerDetails;
     }
 }

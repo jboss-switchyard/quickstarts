@@ -91,7 +91,7 @@ public class DomainImpl implements ServiceDomain {
         }
 
         // create the exchange
-        ExchangeImpl exchange = new ExchangeImpl(service.getName(), contract, 
+        ExchangeImpl exchange = new ExchangeImpl(service.getName(), contract,
                 dispatcher, _transformerRegistry, replyChain);
         return exchange;
     }

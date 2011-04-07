@@ -19,6 +19,7 @@
 
 package org.switchyard.deploy.internal;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
 import org.switchyard.ExchangeHandler;
+import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelResource;
@@ -78,27 +80,28 @@ public class Deployment extends AbstractDeployment {
 
     /**
      * Create a new instance of Deployer from a configuration stream.
+     * @param appServiceDomain The ServiceDomain for the application.
      * @param configStream stream containing switchyard config
-     * @throws java.io.IOException failure reading config from stream
+     * @throws IOException Error reading configuration model.
      */
-    public Deployment(InputStream configStream) throws java.io.IOException {
-        super(new ModelResource<SwitchYardModel>().pull(configStream));
+    public Deployment(ServiceDomain appServiceDomain, InputStream configStream) throws IOException {
+        super(appServiceDomain, new ModelResource<SwitchYardModel>().pull(configStream));
     }
     
     /**
      * Create a new instance of Deployer from a configuration model.
+     * @param appServiceDomain The ServiceDomain for the application.
      * @param configModel switchyard config model
      */
-    public Deployment(SwitchYardModel configModel) {
-        super(configModel);
+    public Deployment(ServiceDomain appServiceDomain, SwitchYardModel configModel) {
+        super(appServiceDomain, configModel);
     }
     
     /**
      * Initialize the deployment.
      */
     public void init() {
-        super.init();
-        _log.debug("Initializing deployment " + getConfig().getName());
+        _log.debug("Initializing deployment for application " + getConfig().getName());
         // create a new domain and load transformer and activator instances for lifecycle
         registerTransformers();
         createActivators();

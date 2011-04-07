@@ -28,9 +28,9 @@ import org.junit.Test;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.type.Classes;
+import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.components.MockActivator;
 import org.switchyard.deploy.components.config.MockBindingModel;
-import org.switchyard.deploy.components.config.MockImplementationModel;
 import org.switchyard.deploy.internal.transformers.ABTransformer;
 import org.switchyard.deploy.internal.transformers.CDTransformer;
 import org.switchyard.extensions.wsdl.WSDLService;
@@ -47,7 +47,7 @@ public class DeploymentTest {
     @Test
     public void testEmptySwitchYardConfiguration() throws Exception {
         InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-empty-01.xml", getClass());
-        Deployment deployment = new Deployment(swConfigStream);
+        Deployment deployment = new Deployment(ServiceDomainManager.createDomain(), swConfigStream);
 
         deployment.init();
         deployment.destroy();
@@ -56,7 +56,7 @@ public class DeploymentTest {
     @Test
     public void testActivators() throws Exception {
         InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-mock-01.xml", getClass());
-        Deployment deployment = new Deployment(swConfigStream);
+        Deployment deployment = new Deployment(ServiceDomainManager.createDomain(), swConfigStream);
         deployment.init();
         
         // Grab a reference to our activators
@@ -76,7 +76,7 @@ public class DeploymentTest {
     @Test
     public void test_transform_registration() throws Exception {
         InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-transform-01.xml", getClass());
-        Deployment deployment = new Deployment(swConfigStream);
+        Deployment deployment = new Deployment(ServiceDomainManager.createDomain(), swConfigStream);
 
         deployment.init();
 
@@ -96,7 +96,7 @@ public class DeploymentTest {
     @Test
     public void interfaceWSDL() throws Exception {
         InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-interface-wsdl-01.xml", getClass());
-        Deployment deployment = new Deployment(swConfigStream);
+        Deployment deployment = new Deployment(ServiceDomainManager.createDomain(), swConfigStream);
         deployment.init();
         deployment.start();
 

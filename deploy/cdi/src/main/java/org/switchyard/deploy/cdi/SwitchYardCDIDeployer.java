@@ -29,6 +29,7 @@ import javax.enterprise.inject.spi.BeforeShutdown;
 import javax.enterprise.inject.spi.Extension;
 
 import org.switchyard.common.type.Classes;
+import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.deploy.internal.Deployment;
 
@@ -58,7 +59,7 @@ public class SwitchYardCDIDeployer implements Extension {
 
         if (swConfigStream != null) {
             try {
-                _deployment = new Deployment(swConfigStream);
+                _deployment = new Deployment(ServiceDomainManager.createDomain(), swConfigStream);
             } catch (java.io.IOException ioEx) {
                 throw new RuntimeException("Failed while reading config stream.", ioEx);
             }
