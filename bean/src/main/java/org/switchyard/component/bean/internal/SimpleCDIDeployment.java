@@ -27,6 +27,7 @@ import org.switchyard.ServiceReference;
 import org.switchyard.component.bean.deploy.BeanComponentActivator;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
 import org.switchyard.component.bean.deploy.ServiceDescriptor;
+import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.transform.Transformer;
@@ -45,9 +46,13 @@ public class SimpleCDIDeployment extends AbstractDeployment {
      * Creates a new CDI deployment with no configuration.
      */
     public SimpleCDIDeployment() {
-        super(null);
+        super(ServiceDomainManager.createDomain());
     }
-    
+
+    @Override
+    public void init() {
+    }
+
     @Override
     public void start() {
         BeanDeploymentMetaData beanDeploymentMetaData = BeanDeploymentMetaData.lookupBeanDeploymentMetaData();
