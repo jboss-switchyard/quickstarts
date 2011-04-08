@@ -21,10 +21,12 @@
 package org.switchyard.component.camel.config.model.v1;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.InputStream;
 
+import org.apache.camel.model.RouteDefinition;
 import org.junit.Test;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelResource;
@@ -46,12 +48,16 @@ public class V1CamelComponentImplementationModelTest {
         final Validation validateModel = implModel.validateModel();
         
         assertThat(validateModel.isValid(), is(true));
+        
+        
+        final RouteDefinition route = implModel.getRoute();
+        assertThat(route, is(notNullValue()));
     }
     
     private V1CamelImplementationModel getFirstCamelBinding(final String config) throws Exception {
         final InputStream in = Classes.getResourceAsStream(config, getClass());
         final SwitchYardModel model = new ModelResource<SwitchYardModel>().pull(in);
-        final ComponentModel componentModel = model.getComposite().getComponents().get(0);
+        final ComponentModel componentModel = model.getComposite().getComponents().get(1);
         final ComponentImplementationModel implementation = componentModel.getImplementation();
         return (V1CamelImplementationModel) implementation;
     }

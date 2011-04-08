@@ -65,7 +65,6 @@ MA  02110-1301, USA.
    
     <!--  camel:implementation.camel -->
     <element name="implementation.camel" type="camel:CamelImplementationType" substitutionGroup="sca:implementation"/>
-    
     <complexType name="CamelImplementationType">
         <complexContent>
             <extension base="sca:Implementation">

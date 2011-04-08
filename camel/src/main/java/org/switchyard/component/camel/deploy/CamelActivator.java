@@ -33,17 +33,23 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceReference;
 import org.switchyard.camel.component.SwitchyardEndpointStrategy;
+import org.switchyard.component.camel.ImplementationHandler;
 import org.switchyard.component.camel.InboundHandler;
 import org.switchyard.component.camel.OutboundHandler;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
+import org.switchyard.component.camel.config.model.CamelComponentImplementationModel;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.BindingModel;
+import org.switchyard.config.model.composite.ComponentImplementationModel;
+import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.ComponentReferenceModel;
+import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.deploy.BaseActivator;
 
 /**
- * Activates Camel bindings and references in Switchyward. 
+ * Activates Camel bindings, references and implementations in SwitchYard. 
  * 
  * @author Daniel Bevenius
  *
@@ -54,12 +60,12 @@ public class CamelActivator extends BaseActivator {
     private static final String DIRECT_TYPE = "direct";
     private static final String FILE_TYPE = "file";
     
-    private Map<QName, Set<InboundHandler>> _inboundGateways = new HashMap<QName, Set<InboundHandler>>();
-    
-    private Map<QName, Set<OutboundHandler>> _outboundHandlers = new HashMap<QName, Set<OutboundHandler>>();
+    private Map<QName, Set<InboundHandler>> _bindings = new HashMap<QName, Set<InboundHandler>>();
+    private Map<QName, Set<OutboundHandler>> _references = new HashMap<QName, Set<OutboundHandler>>();
+    private Map<QName, ImplementationHandler> _implementations = new HashMap<QName, ImplementationHandler>();
     
     private static ThreadLocal<CamelContext> _camelContext = new ThreadLocal<CamelContext>();
-
+    
     /**
      * Creates a new activator for Camel endpoint types.
      */
@@ -69,51 +75,103 @@ public class CamelActivator extends BaseActivator {
                 DIRECT_TYPE, 
                 FILE_TYPE});
     }
+    
     /**
-     * @param name The service name
+     * @param serviceName The service name
      * @param config The Java Object model representing a service configuration
      * @return {@link ExchangeHandler} the exchange handler.
      */
     @Override
-    public ExchangeHandler init(QName name, Model config) {
-        
-        initializeCamelContext();
+    public ExchangeHandler init(final QName serviceName, final Model config) {
         startCamelContext();
         
-        if (config instanceof CompositeServiceModel) {
-            final CompositeServiceModel serviceModel = (CompositeServiceModel) config;
-            final List<BindingModel> bindings = serviceModel.getBindings();
-            if (!bindings.isEmpty()) {
-                return createInboundHandler(bindings, name);
-            }
-        } else if (config instanceof CompositeReferenceModel) {
-            final CompositeReferenceModel refModel = (CompositeReferenceModel) config;
-            final List<BindingModel> bindings = refModel.getBindings();
-            if (!bindings.isEmpty()) {
-                return createOutboundHandler(bindings, name);
-            }
+        if (isServiceBinding(config)) {
+            return handleServiceBindnings((CompositeServiceModel)config, serviceName);
+        }
+        
+        if (isReferenceBinding(config)) {
+            return handleReferenceBindings((CompositeReferenceModel)config, serviceName);
+        }
+        
+        if (isComponentService(config)) {
+            return handleImplementation(config, serviceName);
+        } 
+        
+        if (isComponentReference(config)) {
+            return handleComponentReference(config, serviceName);
         }
             
-        throw new RuntimeException("No Camel bindings found for " + name);
+        throw new RuntimeException("No Camel bindings, references or implementations found for [" + serviceName + "] in config [" + config + "]");
     }
     
-    private void initializeCamelContext() {
-        if (getCamelContext() == null) {
-            setCamelContext(new DefaultCamelContext());
+    private ExchangeHandler handleComponentReference(final Model config, final QName serviceName) {
+        return addOutboundHandler(serviceName, ComponentNameComposer.composeComponenUri(serviceName));
+    }
+
+    private boolean isComponentReference(final Model config) {
+        return config instanceof ComponentReferenceModel;
+    }
+
+    private ExchangeHandler handleImplementation(final Model config, final QName serviceName) {
+        final ComponentImplementationModel implementation = getComponentImplementationModel(config);
+        if (implementation instanceof CamelComponentImplementationModel) {
+            final CamelComponentImplementationModel ccim = (CamelComponentImplementationModel) implementation;
+            final ImplementationHandler implHandler = new ImplementationHandler(_camelContext.get(), ccim);
+            _implementations.put(serviceName, implHandler);
+            return implHandler;
         }
+        return null;
+    }
+
+    private boolean isComponentService(final Model config) {
+        return config instanceof ComponentServiceModel;
+    }
+
+    private boolean isReferenceBinding(final Model config) {
+        return config instanceof CompositeReferenceModel;
+    }
+
+    private boolean isServiceBinding(final Model config) {
+        return config instanceof CompositeServiceModel;
+    }
+
+    private ExchangeHandler handleReferenceBindings(final CompositeReferenceModel config, final QName serviceName) {
+        final List<BindingModel> bindings = config.getBindings();
+        if (!bindings.isEmpty()) {
+            return createOutboundHandler(bindings, serviceName);
+        }
+            
+        return null;
+    }
+
+    private ExchangeHandler handleServiceBindnings(final CompositeServiceModel serviceModel, final QName serviceName) {
+        final List<BindingModel> bindings = serviceModel.getBindings();
+        if (!bindings.isEmpty()) {
+            return createInboundHandler(bindings, serviceName);
+        }
+            
+        return null;
+    }
+
+    private ComponentImplementationModel getComponentImplementationModel(final Model config) {
+        final Model modelParent = ((ComponentServiceModel)config).getModelParent();
+        final ComponentModel componentModel = (ComponentModel) modelParent;
+        return componentModel.getImplementation();
     }
     
     private void startCamelContext() {
+        if (getCamelContext() == null) {
+            setCamelContext(new DefaultCamelContext());
+        }
         try {
             CamelContext camelContext = getCamelContext();
             camelContext.start();
         } catch (Exception e1) {
-            e1.printStackTrace();
+            throw new IllegalStateException(e1);
         }
     }
     
-    private InboundHandler createInboundHandler(List<BindingModel> bindings, QName name)
-    {
+    private InboundHandler createInboundHandler(final List<BindingModel> bindings, final QName name) {
         for (BindingModel bindingModel : bindings) {
             if (isCamelBindingModel(bindingModel)) {
                 final CamelBindingModel camelBindingModel = (CamelBindingModel) bindingModel;
@@ -122,7 +180,7 @@ public class CamelActivator extends BaseActivator {
                     final InboundHandler inboundHandler = new InboundHandler(camelBindingModel, _camelContext.get());
                     if (!handlers.contains(inboundHandler)) {
                         handlers.add(inboundHandler);
-                        _inboundGateways.put(name, handlers);
+                        _bindings.put(name, handlers);
                         return inboundHandler;
                     }
                 } catch (Exception e) {
@@ -137,40 +195,42 @@ public class CamelActivator extends BaseActivator {
         return bm instanceof CamelBindingModel;
     }
     
-    
-    private OutboundHandler createOutboundHandler(List<BindingModel> bindings, QName name)
-    {
+    private OutboundHandler createOutboundHandler(final List<BindingModel> bindings, final QName name) {
         for (BindingModel bindingModel : bindings) {
             if (isCamelBindingModel(bindingModel)) {
-                try {
-                    final CamelBindingModel camelBinding = (CamelBindingModel) bindingModel;
-                    final Set<OutboundHandler> handlers = getOutboundHandlersForService(name);
-                    final OutboundHandler outboundHandler = new OutboundHandler(camelBinding, _camelContext.get());
-                    if (!handlers.contains(outboundHandler)) {
-                        handlers.add(outboundHandler);
-                        _outboundHandlers.put(name, handlers);
-                        return outboundHandler;
-                    }
-                } catch (Exception e) {
-                    throw new IllegalStateException(e);
-                }
+                final CamelBindingModel camelBinding = (CamelBindingModel) bindingModel;
+                final String endpointUri = camelBinding.getComponentURI().toString();
+                return addOutboundHandler(name, endpointUri);
             }
         }
         return null;
     }
     
-    private Set<OutboundHandler> getOutboundHandlersForService(final QName serviceName)
-    {
-        Set<OutboundHandler> handlers = _outboundHandlers.get(serviceName);
+    private OutboundHandler addOutboundHandler(final QName name, final String uri)  {
+        try {
+            final Set<OutboundHandler> handlers = getOutboundHandlersForService(name);
+            final OutboundHandler outboundHandler = new OutboundHandler(uri, _camelContext.get());
+            if (!handlers.contains(outboundHandler)) {
+                handlers.add(outboundHandler);
+                _references.put(name, handlers);
+                return outboundHandler;
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+        return null;
+    }
+    
+    private Set<OutboundHandler> getOutboundHandlersForService(final QName serviceName) {
+        Set<OutboundHandler> handlers = _references.get(serviceName);
         if (handlers == null) {
             handlers = new HashSet<OutboundHandler>();
         }
         return handlers;
     }
     
-    private Set<InboundHandler> getInboundHandlersForService(final QName serviceName)
-    {
-        Set<InboundHandler> handlers = _inboundGateways.get(serviceName);
+    private Set<InboundHandler> getInboundHandlersForService(final QName serviceName) {
+        Set<InboundHandler> handlers = _bindings.get(serviceName);
         if (handlers == null) {
             handlers = new HashSet<InboundHandler>();
         }
@@ -180,7 +240,12 @@ public class CamelActivator extends BaseActivator {
     @Override
     public void start(final ServiceReference serviceReference) {
         makeServiceReferenceAvailableToCamelSwitchyardComponent(serviceReference);
-        final Set<InboundHandler> handlers = _inboundGateways.get(serviceReference.getName());
+        startOutboundHandlers(serviceReference);
+        startImplementationHandler(serviceReference);
+    }
+    
+    private void startOutboundHandlers(final ServiceReference serviceReference) {
+        final Set<InboundHandler> handlers = _bindings.get(serviceReference.getName());
         if (handlers != null) {
             for (InboundHandler inboundHandler : handlers) {
                 try {
@@ -192,18 +257,29 @@ public class CamelActivator extends BaseActivator {
         }
     }
     
+    private void startImplementationHandler(final ServiceReference serviceReference) {
+        final ImplementationHandler implementationHandler = _implementations.get(serviceReference.getName());
+        if (implementationHandler != null) {
+            try {
+                implementationHandler.start(serviceReference);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+    
     private void makeServiceReferenceAvailableToCamelSwitchyardComponent(ServiceReference reference) {
         getCamelContext().addRegisterEndpointCallback(new SwitchyardEndpointStrategy(reference));
     }
     
     @Override
     public void stop(ServiceReference serviceReference) {
-        final Set<InboundHandler> handlers = _inboundGateways.get(serviceReference.getName());
+        final Set<InboundHandler> handlers = _bindings.get(serviceReference.getName());
         if (handlers != null) {
             for (InboundHandler inboundHandler : handlers) {
                 try {
                     inboundHandler.stop(serviceReference);
-                    _inboundGateways.remove(serviceReference.getName());
+                    _bindings.remove(serviceReference.getName());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

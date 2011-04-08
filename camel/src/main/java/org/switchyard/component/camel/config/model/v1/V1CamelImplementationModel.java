@@ -20,19 +20,27 @@
  */
 package org.switchyard.component.camel.config.model.v1;
 
+import java.util.List;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
+import org.apache.camel.model.RouteDefinition;
 import org.switchyard.component.camel.config.model.CamelComponentImplementationModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.v1.V1ComponentImplementationModel;
 
 /**
- * A Camel component implementation model.
- * This is currently a work in progress...
+ * Version 1 implementation.
  * 
  * @author Daniel Bevenius
  *
  */
 public class V1CamelImplementationModel extends V1ComponentImplementationModel implements CamelComponentImplementationModel {
+    
+    private static JAXBContext jaxbContext = createJAXBInstance();
     
     /**
      * Sole constructor.
@@ -44,5 +52,26 @@ public class V1CamelImplementationModel extends V1ComponentImplementationModel i
         super(config, desc);
         setModelChildrenOrder();
     }
+
+    @Override
+    public RouteDefinition getRoute() {
+        final Configuration routeConfig = getModelConfiguration().getFirstChild(ROUTE);
+        try {
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            return (RouteDefinition) unmarshaller.unmarshal(routeConfig.getSource());
+        } 
+        catch (JAXBException e) {
+            throw new RuntimeException(e);
+        }
+    }
     
+    private static JAXBContext createJAXBInstance() {
+        try {
+            return JAXBContext.newInstance("org.apache.camel.model");
+        } catch (JAXBException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

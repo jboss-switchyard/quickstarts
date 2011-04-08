@@ -18,41 +18,29 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
-package org.switchyard.component.camel.config.model;
+package org.switchyard.component.camel.deploy;
 
-import org.apache.camel.model.RouteDefinition;
-import org.switchyard.config.model.composite.ComponentImplementationModel;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import org.junit.Test;
+import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.SwitchYardTestCaseConfig;
+import org.switchyard.test.mixins.CDIMixIn;
 
 /**
- * Definition of a Camel implementation model (implementation.camel).
- * </p> 
- * This allows for the usage of Camel DSL for routing between SwichYard
- * Services.
+ * Test for {@link CamelActivator}.
  * 
  * @author Daniel Bevenius
- *
+ * 
  */
-public interface CamelComponentImplementationModel extends ComponentImplementationModel {
+@SwitchYardTestCaseConfig(config = "switchyard-activator-impl.xml", mixins = CDIMixIn.class)
+public class CamelImplementationTest extends SwitchYardTestCase {
     
-    /**
-     * The names space for the camel binding model.
-     */
-    String DEFAULT_NAMESPACE = "urn:switchyard-component-camel:config:1.0";
-    
-    /**
-     * The 'camel' implementation type.
-     */
-    String CAMEL = "camel";
-    
-    /**
-     * The name of the Camel route element.
-     */
-    String ROUTE = "route";
-    
-    /**
-     * The Camel route definition.
-     * @return {@link RouteDefinition} The Camel {@link RouteDefinition}.
-     */
-    RouteDefinition getRoute();
-    
+    @Test
+    public void sendOneWayMessageThroughCamelToSwitchYardService() throws Exception {
+        final String title = newInvoker("OrderService").operation("getTitleForItem").sendInOut("10").getContent(String.class);
+        assertThat(title, is(equalTo("Fletch")));
+    }
 }

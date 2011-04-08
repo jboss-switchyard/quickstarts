@@ -104,7 +104,8 @@ public class InboundHandler implements ExchangeHandler {
      * This is a noop for this handler. This handler is only responsible for setting up
      * a route in camel and the {@link SwitchyardComponent} will take care of calling
      * the configured SwitchYard service.
-     * @param switchYardExchange message exchange
+     * 
+     * @param switchYardExchange Message exchange.
      */
     @Override
     public void handleMessage(final Exchange switchYardExchange) {

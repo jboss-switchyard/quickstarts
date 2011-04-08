@@ -21,6 +21,8 @@
  */
 package org.switchyard.component.camel;
 
+import java.util.Set;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Processor;
@@ -30,7 +32,6 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Property;
-import org.switchyard.component.camel.config.model.CamelBindingModel;
 
 /**
  * A handler that is capable of calling Apache Camel components and returning responses 
@@ -47,19 +48,19 @@ public class OutboundHandler extends BaseHandler {
     
     private final ProducerTemplate _producerTemplate;
     private final CamelContext _camelContext;
-    private final CamelBindingModel _bindingModel;
+    private final String _uri;
 
     /**
      * Sole constructor.
      * 
-     * @param bindingModel The {@link CamelBindingModel}.
+     * @param uri The Camel endpoint uri.
      * @param context The {@link CamelContext}.
      */
-    public OutboundHandler(final CamelBindingModel bindingModel, final CamelContext context) {
-        if (bindingModel == null) {
-            throw new IllegalArgumentException("bindingModel argument must not be null");
+    public OutboundHandler(final String uri, final CamelContext context) {
+        if (uri == null) {
+            throw new IllegalArgumentException("uri argument must not be null");
         }
-        _bindingModel = bindingModel;
+        _uri = uri;
         
         if (context == null) {
             throw new IllegalArgumentException("camelContext argument must not be null");
@@ -93,14 +94,10 @@ public class OutboundHandler extends BaseHandler {
 
     private void handleInOnly(final Exchange exchange) throws HandlerException {
         try {
-            _producerTemplate.send(uriFromBindingModel(), createProcessor(exchange));
+            _producerTemplate.send(_uri, createProcessor(exchange));
         } catch (final CamelExecutionException e) {
             throw new HandlerException(e);
         }
-    }
-    
-    private String uriFromBindingModel() {
-        return _bindingModel.getComponentURI().toString();
     }
     
     private void handleInOut(final Exchange exchange) throws HandlerException {
@@ -113,7 +110,7 @@ public class OutboundHandler extends BaseHandler {
     }
     
     private Object sendToCamel(final Exchange exchange) {
-        final org.apache.camel.Exchange camelExchange = _producerTemplate.request(uriFromBindingModel(), createProcessor(exchange));
+        final org.apache.camel.Exchange camelExchange = _producerTemplate.request(_uri, createProcessor(exchange));
         return camelExchange.getOut().getBody();
     }
     
@@ -127,12 +124,29 @@ public class OutboundHandler extends BaseHandler {
         return new Processor() {
             @Override
             public void process(org.apache.camel.Exchange exchange) throws Exception {
-                for (Property prop : switchyardExchange.getContext().getProperties()) {
-                    exchange.setProperty(prop.getName(), prop.getValue());
+                final Set<Property> properties = switchyardExchange.getContext().getProperties();
+                for (Property property : properties)
+                {
+                    exchange.setProperty(property.getName(), property.getValue());
                 }
                 exchange.getIn().setBody(switchyardExchange.getMessage().getContent());
             }
         };
+    }
+    
+    
+    @Override
+    public void handleFault(Exchange exchange)
+    {
+        super.handleFault(exchange);
+    }
+
+    public CamelContext getCamelContext() {
+        return _camelContext;
+    }
+    
+    public String getUri() {
+        return _uri;
     }
     
 }

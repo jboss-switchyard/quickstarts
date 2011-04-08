@@ -20,6 +20,9 @@
  */
 package org.switchyard.camel.component;
 
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.switchyard.ServiceReference;
 
@@ -36,6 +39,7 @@ import org.switchyard.ServiceReference;
 public class SwitchyardEndpoint extends ProcessorEndpoint {
     
     private SwitchyardProcessor _processor;
+    private DefaultConsumer _consumer;
     
     /**
      * Sole constructor.
@@ -57,6 +61,25 @@ public class SwitchyardEndpoint extends ProcessorEndpoint {
      */
     public void setServiceReference(final ServiceReference serviceReference) {
         _processor.setServiceReference(serviceReference);
+    }
+    
+    /**
+     * Creates a event driven consumer as opposed to a polling consumer.
+     */
+    @Override
+    public Consumer createConsumer(Processor processor) throws Exception
+    {
+        _consumer = new DefaultConsumer(this, processor);
+        return _consumer;
+    }
+    
+    /**
+     * Gets the consumer for this endpoint.
+     * 
+     * @return {@link DefaultConsumer}
+     */
+    public DefaultConsumer getConsumer() {
+        return _consumer;
     }
 
 }

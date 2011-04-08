@@ -26,11 +26,14 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
- * SwitchyardComponent enable SwitchYard services to be exposed
- * through Apache Camel.
+ * SwitchyardComponent enable Switchyard services to be exposed through Apache Camel.
+ * <p/>
+ * This classes {@link #createEndpoint(String, String, Map)} creates a {@link SwitchyardEndpoint}.
  * 
  * Example usage using Camel's Java DSL:
  * <pre>
+ * from("switchyard://someIncomingService")
+ * ...
  * .to("switchyard://mySwitchyardService")
  * </pre>
  *
@@ -39,8 +42,7 @@ import org.apache.camel.impl.DefaultComponent;
 public class SwitchyardComponent extends DefaultComponent {
     
     @Override
-    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception
-    {
+    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
         final String operationName = (String) parameters.remove("operationName");
         return new SwitchyardEndpoint(uri, this, new SwitchyardProcessor(operationName));
     }

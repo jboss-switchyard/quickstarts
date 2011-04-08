@@ -92,7 +92,7 @@ public class OutboundHandlerTest extends SwitchYardTestCase {
         final QName serviceName = new QName("TargetService");
         final CamelBindingModel bindingModel = mock(CamelBindingModel.class);
         when(bindingModel.getComponentURI()).thenReturn(URI.create("direct:to"));
-        getServiceDomain().registerService(serviceName, new OutboundHandler(bindingModel, camelContext));
+        getServiceDomain().registerService(serviceName, new OutboundHandler(bindingModel.getComponentURI().toString(), camelContext));
         _service = getServiceDomain().getService(serviceName);
     }
     
@@ -155,7 +155,7 @@ public class OutboundHandlerTest extends SwitchYardTestCase {
     @Test
     public void throwsIllegalArgumentExceptionIfBindingModelIsNull() {
         exception.expect(IllegalArgumentException.class);
-        exception.expectMessage("bindingModel argument must not be null");
+        exception.expectMessage("uri argument must not be null");
         new OutboundHandler(null, mock(CamelContext.class));
     }
     
@@ -163,7 +163,7 @@ public class OutboundHandlerTest extends SwitchYardTestCase {
     public void throwsIllegalArgumentExceptionIfCamelContextIsNull() {
         exception.expect(IllegalArgumentException.class);
         exception.expectMessage("camelContext argument must not be null");
-        new OutboundHandler(mock(CamelBindingModel.class), null);
+        new OutboundHandler("mockuri", null);
     }
     
     private static RouteBuilder createRouteBuilder() throws Exception {
