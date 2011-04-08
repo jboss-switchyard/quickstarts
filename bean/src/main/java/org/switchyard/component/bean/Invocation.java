@@ -126,6 +126,6 @@ public class Invocation {
     }
 
     private String operationName() {
-        return _exchange.getService().getName() + "#" + _method.getName();
+        return _exchange.getServiceName() + "#" + _method.getName();
     }
 }

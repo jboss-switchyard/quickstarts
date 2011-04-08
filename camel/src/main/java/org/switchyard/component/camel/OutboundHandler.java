@@ -21,8 +21,6 @@
  */
 package org.switchyard.component.camel;
 
-import java.util.Map.Entry;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Processor;
@@ -31,6 +29,7 @@ import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
+import org.switchyard.Property;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 
 /**
@@ -128,8 +127,8 @@ public class OutboundHandler extends BaseHandler {
         return new Processor() {
             @Override
             public void process(org.apache.camel.Exchange exchange) throws Exception {
-                for (Entry<String, Object> entry : switchyardExchange.getContext().getProperties().entrySet()) {
-                    exchange.setProperty(entry.getKey(), entry.getValue());
+                for (Property prop : switchyardExchange.getContext().getProperties()) {
+                    exchange.setProperty(prop.getName(), prop.getValue());
                 }
                 exchange.getIn().setBody(switchyardExchange.getMessage().getContent());
             }

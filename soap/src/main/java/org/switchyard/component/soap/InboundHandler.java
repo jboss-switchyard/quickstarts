@@ -38,10 +38,10 @@ import javax.xml.ws.Endpoint;
 
 import org.apache.log4j.Logger;
 import org.switchyard.BaseHandler;
-import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.Scope;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
@@ -230,8 +230,9 @@ public class InboundHandler extends BaseHandler {
                 return _response.get();
             }
 
-            Context msgCtx = message.getContext();
-            msgCtx.setProperty(MESSAGE_NAME, operation.getInput().getMessage().getQName().getLocalPart());
+            exchange.getContext().setProperty(MESSAGE_NAME, 
+                    operation.getInput().getMessage().getQName().getLocalPart(),
+                    Scope.IN);
 
 
             if (oneWay) {
