@@ -59,6 +59,7 @@
         <module>tools/forge/bean</module>
         <module>tools/forge/camel</module>
         <module>tools/forge/soap</module>
+        <module>clojure</module>
     </modules>
 
     <repositories>
