@@ -44,7 +44,7 @@ public class DeploymentTest {
 
 
     @Test
-    public void testEmptySwitchYardConfiguration() {
+    public void testEmptySwitchYardConfiguration() throws Exception {
         InputStream swConfigStream = getClass().getResourceAsStream("/switchyard-config-empty-01.xml");
         Deployment deployment = new Deployment(swConfigStream);
 
@@ -53,35 +53,27 @@ public class DeploymentTest {
     }
     
     @Test
-    public void testActivators() {
+    public void testActivators() throws Exception {
         InputStream swConfigStream = getClass().getResourceAsStream("/switchyard-config-mock-01.xml");
         Deployment deployment = new Deployment(swConfigStream);
-        deployment.createGatewayActivator("mock", "org.switchyard.deploy.components.MockActivator");
-        deployment.createComponentActivator("mock", "org.switchyard.deploy.components.MockActivator");
         deployment.init();
         
         // Grab a reference to our activators
-        MockActivator gwActivator = (MockActivator)
-            deployment.getGatewayActivator(MockBindingModel.TYPE);
-        MockActivator implActivator = (MockActivator)
-        deployment.getGatewayActivator(MockImplementationModel.TYPE);
+        MockActivator activator = (MockActivator)
+            deployment.getActivator(MockBindingModel.TYPE);
         deployment.start();
         deployment.stop();
         deployment.destroy();
 
         // Verify the activators were poked
-        Assert.assertTrue(gwActivator.initCalled());
-        Assert.assertTrue(gwActivator.startCalled());
-        Assert.assertTrue(gwActivator.stopCalled());
-        Assert.assertTrue(gwActivator.destroyCalled());
-        Assert.assertTrue(implActivator.initCalled());
-        Assert.assertTrue(implActivator.startCalled());
-        Assert.assertTrue(implActivator.stopCalled());
-        Assert.assertTrue(implActivator.destroyCalled());
+        Assert.assertTrue(activator.initCalled());
+        Assert.assertTrue(activator.startCalled());
+        Assert.assertTrue(activator.stopCalled());
+        Assert.assertTrue(activator.destroyCalled());
     }
     
     @Test
-    public void test_transform_registration() {
+    public void test_transform_registration() throws Exception {
         InputStream swConfigStream = getClass().getResourceAsStream("/switchyard-config-transform-01.xml");
         Deployment deployment = new Deployment(swConfigStream);
 
@@ -101,10 +93,9 @@ public class DeploymentTest {
     }
 
     @Test
-    public void interfaceWSDL() {
+    public void interfaceWSDL() throws Exception {
         InputStream swConfigStream = getClass().getResourceAsStream("/switchyard-config-interface-wsdl-01.xml");
         Deployment deployment = new Deployment(swConfigStream);
-        deployment.createComponentActivator("mock", "org.switchyard.deploy.components.MockActivator");
         deployment.init();
         deployment.start();
 

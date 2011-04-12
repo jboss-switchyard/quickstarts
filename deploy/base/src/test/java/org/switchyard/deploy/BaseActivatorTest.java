@@ -17,63 +17,66 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.deploy.components;
+
+package org.switchyard.deploy;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.BaseHandler;
+import junit.framework.Assert;
+
+import org.junit.Test;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceReference;
 import org.switchyard.config.model.Model;
-import org.switchyard.deploy.BaseActivator;
 
-public class MockActivator extends BaseActivator {
+public class BaseActivatorTest {
 
-    public static final String ACTIVATION_TYPE = "mock";
-    
-    private boolean _destroyCalled;
-    private boolean _initCalled;
-    private boolean _startCalled;
-    private boolean _stopCalled;
-    
-    public MockActivator() {
-        super(ACTIVATION_TYPE);
+    @Test
+    public void testNullCtor() {
+        SimpleActivator activator = new SimpleActivator((String)null);
+        Assert.assertNotNull(activator.getActivationTypes());
+        Assert.assertFalse(activator.canActivate("foo"));
     }
     
+    @Test
+    public void testSingleActivationType() {
+        SimpleActivator activator = new SimpleActivator("bar");
+        Assert.assertEquals(1, activator.getActivationTypes().size());
+        Assert.assertTrue(activator.canActivate("bar"));
+    }
+    
+
+    @Test
+    public void testMultipleActivationTypes() {
+        SimpleActivator activator = new SimpleActivator(
+                new String[] {"abc", "xyz"});
+        Assert.assertEquals(2, activator.getActivationTypes().size());
+        Assert.assertTrue(activator.canActivate("abc"));
+        Assert.assertTrue(activator.canActivate("xyz"));
+    }
+}
+
+class SimpleActivator extends BaseActivator {
+    
+    SimpleActivator(String ... types) {
+        super(types);
+    }
+
     @Override
     public void destroy(ServiceReference service) {
-        _destroyCalled = true;
     }
 
     @Override
     public ExchangeHandler init(QName name, Model config) {
-        _initCalled = true;
-        return new BaseHandler();
+        return null;
     }
 
     @Override
-    public void start(ServiceReference service) {
-        _startCalled = true;
+    public void start(ServiceReference service) {        
     }
 
     @Override
-    public void stop(ServiceReference service) {
-        _stopCalled = true;
+    public void stop(ServiceReference service) {        
     }
     
-    public boolean destroyCalled() {
-        return _destroyCalled;
-    }
-
-    public boolean initCalled() {
-        return _initCalled;
-    }
-    
-    public boolean startCalled() {
-        return _startCalled;
-    }
-    
-    public boolean stopCalled() {
-        return _stopCalled;
-    }
 }

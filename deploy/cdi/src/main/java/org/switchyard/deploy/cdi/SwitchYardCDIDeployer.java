@@ -50,7 +50,11 @@ public class SwitchYardCDIDeployer implements Extension {
         InputStream swConfigStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(AbstractDeployment.SWITCHYARD_XML);
 
         if (swConfigStream != null) {
-            _deployment = new Deployment(swConfigStream);
+            try {
+                _deployment = new Deployment(swConfigStream);
+            } catch (java.io.IOException ioEx) {
+                throw new RuntimeException("Failed while reading config stream.", ioEx);
+            }
             _deployment.init();
             _deployment.start();
         }

@@ -29,6 +29,14 @@ import org.switchyard.deploy.internal.AbstractDeployment;
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public class SimpleTestDeployment extends AbstractDeployment {
+    
+    /**
+     * Create a new test deployment with no configuration.
+     */
+    public SimpleTestDeployment() {
+        super(null);
+    }
+    
     @Override
     public void start() {
     }

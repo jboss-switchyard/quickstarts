@@ -24,6 +24,7 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.CompositeModel;
+import org.switchyard.config.model.domain.DomainModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
 
@@ -36,13 +37,14 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
 
     private CompositeModel _composite;
     private TransformsModel _transforms;
+    private DomainModel _domain;
 
     /**
      * Constructs a new V1SwitchYardModel.
      */
     public V1SwitchYardModel() {
         super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, SwitchYardModel.SWITCHYARD));
-        setModelChildrenOrder(CompositeModel.COMPOSITE, TransformsModel.TRANSFORMS);
+        setModelChildrenOrder(CompositeModel.COMPOSITE, TransformsModel.TRANSFORMS, DomainModel.DOMAIN);
     }
 
     /**
@@ -52,7 +54,7 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
      */
     public V1SwitchYardModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setModelChildrenOrder(CompositeModel.COMPOSITE, TransformsModel.TRANSFORMS);
+        setModelChildrenOrder(CompositeModel.COMPOSITE, TransformsModel.TRANSFORMS, DomainModel.DOMAIN);
     }
 
     /**
@@ -94,6 +96,27 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
     public SwitchYardModel setTransforms(TransformsModel transforms) {
         setChildModel(transforms);
         _transforms = transforms;
+        return this;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DomainModel getDomain() {
+        if (_domain == null) {
+            _domain = (DomainModel)getFirstChildModelStartsWith(DomainModel.DOMAIN);
+        }
+        return _domain;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SwitchYardModel setDomain(DomainModel domain) {
+        setChildModel(domain);
+        _domain = domain;
         return this;
     }
 

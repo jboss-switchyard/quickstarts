@@ -120,6 +120,7 @@ public abstract class SwitchYardTestCase {
      */
     public SwitchYardTestCase() {
         SwitchYardTestCaseConfig testCaseConfig = getClass().getAnnotation(SwitchYardTestCaseConfig.class);
+
         if (testCaseConfig != null) {
             String config = testCaseConfig.config();
             if (config != null && !config.equals(NULL_CONFIG)) {

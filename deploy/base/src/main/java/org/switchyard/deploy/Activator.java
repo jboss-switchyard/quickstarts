@@ -19,6 +19,8 @@
 
 package org.switchyard.deploy;
 
+import java.util.Collection;
+
 import javax.xml.namespace.QName;
 
 import org.switchyard.ExchangeHandler;
@@ -64,4 +66,15 @@ public interface Activator {
      * @param service service to destroy
      */
     void destroy(ServiceReference service);
+    /**
+     * An Activator can handle activation of certain types.
+     * @param type activation type
+     * @return true If this Activator can activate the passed-in type.
+     */
+    boolean canActivate(String type);
+    /**
+     * Get the types that this Activator can activate.
+     * @return Collection<String> The activation types that this Activator supports.
+     */
+    Collection<String> getActivationTypes();
 }

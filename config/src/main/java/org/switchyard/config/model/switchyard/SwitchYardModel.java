@@ -20,6 +20,7 @@ package org.switchyard.config.model.switchyard;
 
 import org.switchyard.config.model.NamedModel;
 import org.switchyard.config.model.composite.CompositeModel;
+import org.switchyard.config.model.domain.DomainModel;
 import org.switchyard.config.model.transform.TransformsModel;
 
 /**
@@ -61,4 +62,16 @@ public interface SwitchYardModel extends NamedModel {
      */
     public SwitchYardModel setTransforms(TransformsModel transforms);
 
+    /**
+     * Gets the child domain model.
+     * @return the child domain model
+     */
+    public DomainModel getDomain();
+    
+    /**
+     * Sets the child domain model.
+     * @param domain the child domain model.
+     * @return this SwitchyardModel (useful for chaining)
+     */
+    public SwitchYardModel setDomain(DomainModel domain);
 }

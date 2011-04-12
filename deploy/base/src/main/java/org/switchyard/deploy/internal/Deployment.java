@@ -20,10 +20,12 @@
 package org.switchyard.deploy.internal;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 
 import javax.xml.namespace.QName;
 
@@ -54,21 +56,6 @@ import org.switchyard.metadata.java.JavaService;
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public class Deployment extends AbstractDeployment {
-    
-    /**
-     * Activator class for implementation.bean.  This really needs to go in a config file.
-     */
-    private static final String BEAN_ACTIVATOR_CLASS = 
-        "org.switchyard.component.bean.deploy.BeanComponentActivator";
-    /**
-     * Activator class for binding.soap.  This really needs to go in a config file.
-     */
-    private static final String SOAP_ACTIVATOR_CLASS = 
-        "org.switchyard.component.soap.deploy.SOAPActivator";
-    
-    private static final String CAMEL_ACTIVATOR_CLASS = 
-        "org.switchyard.component.camel.deploy.CamelActivator";
-    
     /**
      * Interface type used by a Java interface, e.g. "interface.java"
      */
@@ -81,10 +68,7 @@ public class Deployment extends AbstractDeployment {
 
     private static Logger _log = Logger.getLogger(Deployment.class);
 
-    private SwitchYardModel _switchyardConfig;
-    private Map<String, Activator> _componentActivators =
-        new HashMap<String, Activator>();
-    private Map<String, Activator> _gatewayActivators = 
+    private Map<String, Activator> _activators =
         new HashMap<String, Activator>();
     private List<Activation> _services = new LinkedList<Activation>();
     private List<Activation> _serviceBindings = new LinkedList<Activation>();
@@ -94,14 +78,10 @@ public class Deployment extends AbstractDeployment {
     /**
      * Create a new instance of Deployer from a configuration stream.
      * @param configStream stream containing switchyard config
+     * @throws java.io.IOException failure reading config from stream
      */
-    public Deployment(InputStream configStream) {
-        // parse the config
-        try {
-            _switchyardConfig = new ModelResource<SwitchYardModel>().pull(configStream);
-        } catch (java.io.IOException ioEx) {
-            throw new RuntimeException("Failed to read switchyard config.", ioEx);
-        }
+    public Deployment(InputStream configStream) throws java.io.IOException {
+        super(new ModelResource<SwitchYardModel>().pull(configStream));
     }
     
     /**
@@ -109,7 +89,7 @@ public class Deployment extends AbstractDeployment {
      * @param configModel switchyard config model
      */
     public Deployment(SwitchYardModel configModel) {
-        _switchyardConfig = configModel;
+        super(configModel);
     }
     
     /**
@@ -117,7 +97,7 @@ public class Deployment extends AbstractDeployment {
      */
     public void init() {
         super.init();
-        _log.debug("Initializing deployment for application " + _switchyardConfig.getName());
+        _log.debug("Initializing deployment " + getConfig().getName());
         // create a new domain and load transformer and activator instances for lifecycle
         registerTransformers();
         createActivators();
@@ -128,7 +108,7 @@ public class Deployment extends AbstractDeployment {
      * activators are triggered.
      */
     public void start() {
-        _log.debug("Starting deployment for application " + _switchyardConfig.getName());
+        _log.debug("Starting deployment " + getConfig().getName());
         // ordered startup lifecycle
         try {
             deployReferenceBindings();
@@ -137,12 +117,12 @@ public class Deployment extends AbstractDeployment {
             deployServiceBindings();
         } catch (RuntimeException e1) {
             // Undo partial deployment...
-            _log.debug("Undeploying partially deployed artifacts of failed deployment for application " + _switchyardConfig.getName());
+            _log.debug("Undeploying partially deployed artifacts of failed deployment " + getConfig().getName());
             try {
                 stop();
             } catch (RuntimeException e2) {
                 // Nothing we can do...
-                _log.debug("Failed to properly undeploy a partial/failed deployment for application " +  _switchyardConfig.getName(), e2);
+                _log.debug("Failed to properly undeploy a partial/failed deployment " +  getConfig().getName(), e2);
             }
             // Rethrow the exception...
             throw e1;
@@ -154,7 +134,7 @@ public class Deployment extends AbstractDeployment {
      * activators are triggered.
      */
     public void stop() {
-        _log.debug("Stopping deployment for application " + _switchyardConfig.getName());
+        _log.debug("Stopping deployment " + getConfig().getName());
         undeployServiceBindings();
         undeployServices();
         undeployReferences();
@@ -165,7 +145,7 @@ public class Deployment extends AbstractDeployment {
      * Tear everything down.
      */
     public void destroy() {
-        _log.debug("Destroying deployment for application " + _switchyardConfig.getName());
+        _log.debug("Destroying deployment " + getConfig().getName());
         
         destroyDomain();
         
@@ -178,57 +158,41 @@ public class Deployment extends AbstractDeployment {
         getTransformerRegistryLoader().unregisterTransformers();
     }
     
-    void createGatewayActivator(String type, String runtimeClass) {
-        try {
-            _gatewayActivators.put(
-                    type,
-                    (Activator)loadClass(runtimeClass).newInstance());
-        } catch (Exception ex) {
-            _log.debug("Failed to load Gateway Activator class '" + runtimeClass + "' for component type '" + type + "'.");
-        }
+    Activator getActivator(String type) {
+        return _activators.get(type);
     }
     
-    void createComponentActivator(String type, String runtimeClass) {
-        try {
-            _componentActivators.put(
-                    type,
-                    (Activator)loadClass(runtimeClass).newInstance());
-        } catch (Exception ex) {
-            _log.debug("Failed to load Component Activator class '" + runtimeClass + "' for component type '" + type + "'.");
-        }
-    }
-    
-    Activator getComponentActivator(String type) {
-        return _componentActivators.get(type);
-    }
 
-    Activator getGatewayActivator(String type) {
-        return _gatewayActivators.get(type);
+    private Activator getActivator(ComponentModel component) {
+        String type = component.getImplementation().getType();
+        return getActivator(type);
     }
     
     private void createActivators() {
-        createComponentActivator("bean", BEAN_ACTIVATOR_CLASS);
-        createGatewayActivator("soap", SOAP_ACTIVATOR_CLASS);
-        createGatewayActivator("camel", CAMEL_ACTIVATOR_CLASS);
-        createGatewayActivator("direct", CAMEL_ACTIVATOR_CLASS);
-        createGatewayActivator("file", CAMEL_ACTIVATOR_CLASS);
+        ServiceLoader<Activator> activatorLoader = ServiceLoader.load(Activator.class);
+        for (Activator activator : activatorLoader) {
+            Collection<String> activationTypes = activator.getActivationTypes();
+            for (String type : activationTypes) {
+                _activators.put(type, activator);
+            }
+        }
     }
 
     private void registerTransformers() {
         _log.debug("Registering configured Transformers ...");
-        TransformsModel transforms = _switchyardConfig.getTransforms();
+        TransformsModel transforms = getConfig().getTransforms();
         getTransformerRegistryLoader().registerTransformers(transforms);
     }
 
     private void deployReferenceBindings() {
         _log.debug("Deploying reference bindings ...");
         // activate bindings for each service
-        for (CompositeReferenceModel reference : _switchyardConfig.getComposite().getReferences()) {
+        for (CompositeReferenceModel reference : getConfig().getComposite().getReferences()) {
             for (BindingModel binding : reference.getBindings()) {
                 QName refQName = reference.getQName();
                 _log.debug("Deploying binding " + binding.getType() + " for reference " + reference.getName());
                 
-                Activator activator = _gatewayActivators.get(binding.getType());
+                Activator activator = getActivator(binding.getType());
                 ExchangeHandler handler = activator.init(refQName, reference);
                 
                 ServiceInterface si = getComponentReferenceInterface(reference.getComponentReference());
@@ -288,7 +252,7 @@ public class Deployment extends AbstractDeployment {
     private void deployServices() {
         _log.debug("Deploying services ...");
         // deploy services to each implementation found in the application
-        for (ComponentModel component : _switchyardConfig.getComposite().getComponents()) {
+        for (ComponentModel component : getConfig().getComposite().getComponents()) {
             Activator activator = getActivator(component);
             // register a service for each one declared in the component
             for (ComponentServiceModel service : component.getServices()) {
@@ -310,7 +274,7 @@ public class Deployment extends AbstractDeployment {
     
     private void deployReferences() {
         _log.debug("Deploying references ...");
-        for (ComponentModel component : _switchyardConfig.getComposite().getComponents()) {
+        for (ComponentModel component : getConfig().getComposite().getComponents()) {
             Activator activator = getActivator(component);
             // register a service for each one declared in the component
             for (ComponentReferenceModel reference : component.getReferences()) {
@@ -328,10 +292,10 @@ public class Deployment extends AbstractDeployment {
     private void deployServiceBindings() {
         _log.debug("Deploying service bindings ...");
         // activate bindings for each service
-        for (CompositeServiceModel service : _switchyardConfig.getComposite().getServices()) {
+        for (CompositeServiceModel service : getConfig().getComposite().getServices()) {
             for (BindingModel binding : service.getBindings()) {
                 _log.debug("Deploying binding " + binding.getType() + " for service " + service.getName());
-                Activator activator = _gatewayActivators.get(binding.getType());
+                Activator activator = getActivator(binding.getType());
                 ServiceReference serviceRef = getDomain().getService(service.getQName());
                 activator.init(serviceRef.getName(), service);
                 Activation activation = new Activation(serviceRef, activator);
@@ -385,16 +349,6 @@ public class Deployment extends AbstractDeployment {
         }
     }
 
-    private Activator getActivator(ComponentModel component) {
-        String type = component.getImplementation().getType();
-        Activator activator = _componentActivators.get(type);
-
-        if (activator == null) {
-            throw new RuntimeException("Unknown configuration component type '" + type + "'.  No Activator implementation registered for this type.");
-        }
-
-        return activator;
-    }
 }
 
 class Activation {

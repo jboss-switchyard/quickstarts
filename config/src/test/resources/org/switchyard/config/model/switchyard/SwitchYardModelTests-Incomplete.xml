@@ -45,4 +45,11 @@ MA  02110-1301, USA.
             <smooks:config>stuff</smooks:config>
         </smooks:transform.smooks>
     </transforms>
+    <domain name="TestDomain">
+        <transforms>
+            <java:transform.java from="msgD" to="msgA" class="org.examples.transform.DtoATransform"/>
+        </transforms>
+        <property name="foo" value="bar"/>
+        <property name="tuna" value="fish"/>
+    </domain>
 </switchyard>

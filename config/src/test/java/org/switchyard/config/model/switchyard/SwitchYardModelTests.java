@@ -20,6 +20,7 @@
 package org.switchyard.config.model.switchyard;
 
 import java.io.StringReader;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
@@ -36,6 +37,8 @@ import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.test.soap.PortModel;
 import org.switchyard.config.model.composite.test.soap.SOAPBindingModel;
+import org.switchyard.config.model.domain.DomainModel;
+import org.switchyard.config.model.domain.PropertyModel;
 import org.switchyard.config.model.switchyard.test.java.JavaTransformModel;
 import org.switchyard.config.model.switchyard.test.smooks.SmooksConfigModel;
 import org.switchyard.config.model.switchyard.test.smooks.SmooksTransformModel;
@@ -87,11 +90,13 @@ public class SwitchYardModelTests {
         SwitchYardModel switchyard = _res.pull(COMPLETE_XML);
         CompositeModel composite = switchyard.getComposite();
         CompositeServiceModel service = composite.getServices().get(0);
+        // Verify composite service binding
         SOAPBindingModel binding = (SOAPBindingModel)service.getBindings().get(0);
         PortModel port = binding.getPort();
         Assert.assertEquals("MyWebService/SOAPPort", port.getPort());
         String name = port.getBinding().getService().getComposite().getComponents().get(0).getName();
         Assert.assertEquals("SimpleService", name);
+        // Verify transform definitions
         TransformsModel transforms = switchyard.getTransforms();
         JavaTransformModel java_transform = (JavaTransformModel)transforms.getTransforms().get(0);
         Assert.assertEquals("msgA", java_transform.getFrom().getLocalPart());
@@ -102,6 +107,13 @@ public class SwitchYardModelTests {
         Assert.assertEquals("msgD", smooks_transform.getTo().getLocalPart());
         SmooksConfigModel smooks_config = smooks_transform.getConfig();
         Assert.assertEquals("stuff", smooks_config.getData());
+        // Verify domain configuration
+        DomainModel domain = switchyard.getDomain();
+        Assert.assertEquals("TestDomain", domain.getName());
+        Assert.assertEquals(2, domain.getProperties().size());
+        Assert.assertEquals("bar", domain.getProperty("foo"));
+        Assert.assertEquals("fish", domain.getProperty("tuna"));
+        Assert.assertEquals(switchyard, domain.getSwitchYard());
     }
 
     @Test

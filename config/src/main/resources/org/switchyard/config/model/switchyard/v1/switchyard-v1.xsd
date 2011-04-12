@@ -30,7 +30,8 @@ MA  02110-1301, USA.
     <complexType name="SwitchYardType">
         <sequence>
            <element ref="sca:composite" minOccurs="0" maxOccurs="1"/>
-           <element name="transforms" minOccurs="0" maxOccurs="1"/>
+           <element ref="swyd:transforms" minOccurs="0" maxOccurs="1"/>
+           <element ref="swyd:domain" minOccurs="0" maxOccurs="1"/>
         </sequence>
         <attribute name="name" type="string" use="optional"/>
         <attribute name="targetNamespace" type="string" use="optional"/>
@@ -39,7 +40,7 @@ MA  02110-1301, USA.
     <element name="transforms" type="swyd:TransformsType"/>
     <complexType name="TransformsType">
         <sequence>
-            <element name="transform" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="swyd:transform" minOccurs="0" maxOccurs="unbounded"/>
         </sequence>
     </complexType>
 
@@ -47,6 +48,21 @@ MA  02110-1301, USA.
     <complexType name="TransformType" abstract="true">
         <attribute name="from" type="string" use="required"/>
         <attribute name="to" type="string" use="required"/>
+    </complexType>
+    
+    <element name="domain" type="swyd:DomainType"/>
+    <complexType name="DomainType">
+        <sequence>
+            <element ref="swyd:transforms" minOccurs="0" maxOccurs="1"/>
+            <element ref="swyd:property" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+        <attribute name="name" type="QName" use="required"/>
+    </complexType>
+    
+    <element name="property" type="swyd:PropertyType"/>
+    <complexType name="PropertyType">
+        <attribute name="name" type="string" use="required"/>
+        <attribute name="value" type="string" use="required"/>
     </complexType>
 
 </schema>
