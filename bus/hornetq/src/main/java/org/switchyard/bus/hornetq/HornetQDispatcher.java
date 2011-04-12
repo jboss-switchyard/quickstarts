@@ -43,10 +43,9 @@ import org.switchyard.ServiceReference;
 import org.switchyard.handlers.HandlerChain;
 import org.switchyard.internal.DefaultMessage;
 import org.switchyard.internal.ExchangeImpl;
-import org.switchyard.internal.io.GraphSerializer;
-import org.switchyard.internal.io.NumericJSONProtostuffSerializer;
-import org.switchyard.internal.io.graph.Reflection.FieldAccess;
-import org.switchyard.io.Serializer;
+import org.switchyard.internal.io.Reflection.FieldAccess;
+import org.switchyard.internal.io.Serializer;
+import org.switchyard.internal.io.SerializerType;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.transform.TransformerRegistry;
@@ -59,7 +58,7 @@ import org.switchyard.transform.TransformerRegistry;
  */
 public class HornetQDispatcher implements Dispatcher, MessageHandler {
 
-    private static final Serializer SERIALIZER = new GraphSerializer(new NumericJSONProtostuffSerializer());
+    private static final Serializer SERIALIZER = SerializerType.DEFAULT.instance();
 
     private ServiceReference _service;
     private DispatchQueue _inQueue;
@@ -176,9 +175,9 @@ public class HornetQDispatcher implements Dispatcher, MessageHandler {
         ExchangeImpl exchange;
         try {
             exchange = SERIALIZER.deserialize(bytes, ExchangeImpl.class);
-            new FieldAccess(ExchangeImpl.class.getDeclaredField("_dispatch")).write(exchange, this);
-            new FieldAccess(ExchangeImpl.class.getDeclaredField("_transformerRegistry")).write(exchange, _transformerRegistry);
-            new FieldAccess(DefaultMessage.class.getDeclaredField("_transformerRegistry")).write(exchange.getMessage(), _transformerRegistry);
+            new FieldAccess<Dispatcher>(ExchangeImpl.class.getDeclaredField("_dispatch")).write(exchange, this);
+            new FieldAccess<TransformerRegistry>(ExchangeImpl.class.getDeclaredField("_transformerRegistry")).write(exchange, _transformerRegistry);
+            new FieldAccess<TransformerRegistry>(DefaultMessage.class.getDeclaredField("_transformerRegistry")).write(exchange.getMessage(), _transformerRegistry);
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         } catch (NoSuchFieldException nsfe) {

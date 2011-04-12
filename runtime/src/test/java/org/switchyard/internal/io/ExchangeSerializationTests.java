@@ -42,7 +42,8 @@ import org.switchyard.ServiceReference;
 import org.switchyard.internal.DefaultContext;
 import org.switchyard.internal.DefaultMessage;
 import org.switchyard.internal.ExchangeImpl;
-import org.switchyard.io.Serializer;
+import org.switchyard.internal.io.Data.Car;
+import org.switchyard.internal.io.Data.Person;
 import org.switchyard.metadata.ExchangeContract;
 
 /**
@@ -50,37 +51,34 @@ import org.switchyard.metadata.ExchangeContract;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class ExchangeSerializationTests {
+public final class ExchangeSerializationTests {
+
+    private static final Serializer SERIALIZER = SerializerType.DEFAULT.instance();
+
+    private static final <T> T serDeser(T object, Class<T> clazz) throws Exception {
+        byte[] bytes = SERIALIZER.serialize(object, clazz);
+        return SERIALIZER.deserialize(bytes, clazz);
+    }
 
     @Test
     public void testContextSerialization() throws Exception {
         DefaultContext ctx = buildContext(null);
-        Serializer ser = buildSerializer();
-        byte[] bytes = ser.serialize(ctx, DefaultContext.class);
-        ctx = ser.deserialize(bytes, DefaultContext.class);
+        ctx = serDeser(ctx, DefaultContext.class);
         assertContext(ctx);
     }
 
     @Test
     public void testMessageSerialization() throws Exception {
         DefaultMessage msg = buildMessage(null);
-        Serializer ser = buildSerializer();
-        byte[] bytes = ser.serialize(msg, DefaultMessage.class);
-        msg = ser.deserialize(bytes, DefaultMessage.class);
+        msg = serDeser(msg, DefaultMessage.class);
         assertMessage(msg);
     }
 
     @Test
     public void testExchangeSerialization() throws Exception {
         ExchangeImpl exchange = buildExchange();
-        Serializer ser = buildSerializer();
-        byte[] bytes = ser.serialize(exchange, ExchangeImpl.class);
-        exchange = ser.deserialize(bytes, ExchangeImpl.class);
+        exchange = serDeser(exchange, ExchangeImpl.class);
         assertExchange(exchange);
-    }
-
-    private Serializer buildSerializer() {
-        return new GraphSerializer(new NumericJSONProtostuffSerializer());
     }
 
     private DefaultContext buildContext(DefaultContext ctx) {
@@ -88,11 +86,7 @@ public class ExchangeSerializationTests {
             ctx = new DefaultContext();
         }
         ctx.setProperty("foo", "bar");
-        Person david = new Person();
-        david.setName("David");
-        Car mustang = new Car();
-        mustang.setDriver(david);
-        ctx.setProperty("car", mustang);
+        ctx.setProperty("car", new Car(new Person("driver")));
         return ctx;
     }
 
@@ -110,7 +104,6 @@ public class ExchangeSerializationTests {
         MockHandler handler = new MockHandler();
         ServiceReference service = domain.registerService(new QName("InPhase"), handler);
         ExchangeImpl exchange = (ExchangeImpl)domain.createExchange(service, ExchangeContract.IN_ONLY, handler);
-        exchange.getContext().setProperty("baz", "whiz");
         buildContext((DefaultContext)exchange.getContext());
         DefaultMessage msg = buildMessage((DefaultMessage)exchange.createMessage());
         exchange.send(msg);
@@ -120,7 +113,7 @@ public class ExchangeSerializationTests {
 
     private void assertContext(Context ctx) throws Exception {
         Assert.assertEquals("bar", ctx.getProperty("foo").getValue());
-        Assert.assertEquals("David", ((Car)ctx.getProperty("car").getValue()).getDriver().getName());
+        Assert.assertEquals("driver", ((Car)ctx.getProperty("car").getValue()).getDriver().getName());
     }
 
     private void assertMessage(Message msg) throws Exception {
@@ -136,12 +129,11 @@ public class ExchangeSerializationTests {
     }
 
     private void assertExchange(Exchange exchange) throws Exception {
-        assertMessage(exchange.getMessage());
         assertContext(exchange.getContext());
+        assertMessage(exchange.getMessage());
         Assert.assertEquals(ExchangeContract.IN_ONLY, exchange.getContract());
         Assert.assertEquals(ExchangePhase.IN, exchange.getPhase());
         Assert.assertEquals(ExchangeState.OK, exchange.getState());
-        Assert.assertEquals("whiz", exchange.getContext().getProperty("baz").getValue());
     }
 
     private static final class MockDataSource implements DataSource {

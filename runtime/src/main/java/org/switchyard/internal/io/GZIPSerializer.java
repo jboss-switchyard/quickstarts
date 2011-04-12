@@ -21,26 +21,23 @@ package org.switchyard.internal.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import org.switchyard.internal.io.graph.Graph;
-import org.switchyard.internal.io.graph.GraphBuilder;
-import org.switchyard.internal.io.graph.GraphWrapper;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
- * de/serializes objects using a wrapped Serializer.
- * The object is broken down into a {@link org.switchyard.internal.io.graph.Graph Graph} on serialization, and re-constituted during deserialization.
+ * de/serializes objects using GZIP compression.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public final class GraphSerializer extends BaseSerializer {
+public final class GZIPSerializer extends BaseSerializer {
 
     private final Serializer _serializer;
 
     /**
-     * Construction must include the defined Serializer for actual graph de/serialization.
-     * @param serializer the wrapped Serializer
+     * Constructs a new GZIPCompressionSerializer with the specified wrapped serializer.
+     * @param serializer the wrapped serializer
      */
-    public GraphSerializer(Serializer serializer) {
+    public GZIPSerializer(Serializer serializer) {
         _serializer = serializer;
     }
 
@@ -49,15 +46,18 @@ public final class GraphSerializer extends BaseSerializer {
      */
     @Override
     public <T> int serialize(T obj, Class<T> type, OutputStream out, int bufferSize) throws IOException {
-        Graph<T> graph = GraphBuilder.build(obj);
-        GraphWrapper<T> wrapper = graph instanceof GraphWrapper ? (GraphWrapper<T>)graph : GraphWrapper.wrap(graph);
+        out = new CountingOutputStream(out);
+        GZIPOutputStream gzip = new GZIPOutputStream(out, bufferSize);
         try {
-            return _serializer.serialize(wrapper, GraphWrapper.class, out, bufferSize);
+            _serializer.serialize(obj, type, gzip, bufferSize);
+            gzip.finish();
+            gzip.flush();
         } finally {
             if (isCloseEnabled()) {
-                out.close();
+                gzip.close();
             }
         }
+        return ((CountingOutputStream)out).getCount();
     }
 
     /**
@@ -65,10 +65,9 @@ public final class GraphSerializer extends BaseSerializer {
      */
     @Override
     public <T> T deserialize(InputStream in, Class<T> type, int bufferSize) throws IOException {
+        in = new GZIPInputStream(in, bufferSize);
         try {
-            @SuppressWarnings("unchecked")
-            GraphWrapper<T> wrapper = _serializer.deserialize(in, GraphWrapper.class, bufferSize);
-            return wrapper.decompose(null);
+            return _serializer.deserialize(in, type, bufferSize);
         } finally {
             if (isCloseEnabled()) {
                 in.close();

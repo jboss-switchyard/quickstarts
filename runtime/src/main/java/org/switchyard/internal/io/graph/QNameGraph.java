@@ -19,6 +19,7 @@
 package org.switchyard.internal.io.graph;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -86,7 +87,7 @@ public class QNameGraph implements Graph<QName> {
      * {@inheritDoc}
      */
     @Override
-    public void compose(QName object) throws IOException {
+    public void compose(QName object, Map<Integer,Object> visited) throws IOException {
         setNamespaceURI(object.getNamespaceURI());
         setLocalPart(object.getLocalPart());
         setPrefix(object.getPrefix());
@@ -96,8 +97,13 @@ public class QNameGraph implements Graph<QName> {
      * {@inheritDoc}
      */
     @Override
-    public QName decompose() throws IOException {
+    public QName decompose(Map<Integer,Object> visited) throws IOException {
         return new QName(getNamespaceURI(), getLocalPart(), getPrefix());
+    }
+
+    @Override
+    public String toString() {
+        return "QNameGraph(namespaceURI=" + getNamespaceURI() + ", localPart=" + getLocalPart() + ", prefix=" + getPrefix() + ")";
     }
 
 }

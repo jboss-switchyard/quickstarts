@@ -26,9 +26,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
-import org.switchyard.io.BaseSerializer;
-import org.switchyard.io.CountingOutputStream;
-
 /**
  * de/serializes objects using ObjectInputStream/ObjectOutputStream.
  *
@@ -42,19 +39,13 @@ public final class ObjectStreamSerializer extends BaseSerializer {
     @Override
     public <T> int serialize(T obj, Class<T> type, OutputStream out, int bufferSize) throws IOException {
         out = new CountingOutputStream(new BufferedOutputStream(out, bufferSize));
-        ObjectOutputStream oos = null;
         try {
-            oos = new ObjectOutputStream(out);
+            ObjectOutputStream oos = new ObjectOutputStream(out);
             oos.writeObject(obj);
             oos.flush();
         } finally {
-            try {
-                if (oos != null) {
-                    oos.close();
-                }
-            } catch (Throwable t) {
-                // minimum one statement just to keep checkstyle happy
-                t.getMessage();
+            if (isCloseEnabled()) {
+                out.close();
             }
         }
         return ((CountingOutputStream)out).getCount();
@@ -66,24 +57,17 @@ public final class ObjectStreamSerializer extends BaseSerializer {
     @Override
     public <T> T deserialize(InputStream in, Class<T> type, int bufferSize) throws IOException {
         in = new BufferedInputStream(in, bufferSize);
-        ObjectInputStream ois = null;
-        Object obj;
         try {
-            ois = new ObjectInputStream(in);
-            obj = ois.readObject();
+            ObjectInputStream ois = new ObjectInputStream(in);
+            Object obj = ois.readObject();
+            return type.cast(obj);
         } catch (ClassNotFoundException cnfe) {
             throw new IOException(cnfe);
         } finally {
-            try {
-                if (ois != null) {
-                    ois.close();
-                }
-            } catch (Throwable t) {
-                // minimum one statement just to keep checkstyle happy
-                t.getMessage();
+            if (isCloseEnabled()) {
+                in.close();
             }
         }
-        return type.cast(obj);
     }
 
 }

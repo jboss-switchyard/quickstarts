@@ -16,72 +16,78 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.io;
+package org.switchyard.internal.io;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * Implements most of the overloaded methods, leaving just one for serialization and one for deserialization for subclasses.
+ * An OutputStream that keeps track of the number of bytes written to it.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public abstract class BaseSerializer implements Serializer {
+public class CountingOutputStream extends OutputStream {
+
+    private final OutputStream _out;
+    private int _count;
 
     /**
-     * {@inheritDoc}
+     * Wraps a given OutputSteam.
+     * @param out the wrapped OutputStream
      */
-    @Override
-    public <T> byte[] serialize(T obj, Class<T> type) throws IOException {
-        return serialize(obj, type, DEFAULT_BUFFER_SIZE);
+    public CountingOutputStream(OutputStream out) {
+        _out = out;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public <T> byte[] serialize(T obj, Class<T> type, int bufferSize) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        int count = serialize(obj, type, out, bufferSize);
-        byte[] bytes = out.toByteArray();
-        assert count == bytes.length;
-        return bytes;
+    public void write(byte[] b) throws IOException {
+        _out.write(b);
+        _count += b.length;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public <T> int serialize(T obj, Class<T> type, OutputStream out) throws IOException {
-        return serialize(obj, type, out, DEFAULT_BUFFER_SIZE);
+    public void write(byte[] b, int off, int len) throws IOException {
+        _out.write(b, off, len);
+        _count += len;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public <T> T deserialize(byte[] bytes, Class<T> type) throws IOException {
-        return deserialize(bytes, type, DEFAULT_BUFFER_SIZE);
+    public void write(int b) throws IOException {
+        _out.write(b);
+        _count++;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public <T> T deserialize(byte[] bytes, Class<T> type, int bufferSize) throws IOException {
-        ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-        return deserialize(in, type, bufferSize);
+    public void flush() throws IOException {
+        _out.flush();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public <T> T deserialize(InputStream in, Class<T> type) throws IOException {
-        return deserialize(in, type, DEFAULT_BUFFER_SIZE);
+    public void close() throws IOException {
+        _out.close();
+    }
+
+    /**
+     * Retrieves the number of bytes written.
+     * @return the number of bytes written
+     */
+    public int getCount() {
+        return _count;
     }
 
 }

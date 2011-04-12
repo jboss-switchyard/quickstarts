@@ -20,6 +20,7 @@ package org.switchyard.internal.io.graph;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Represents a node in an object graph.
@@ -33,15 +34,17 @@ public interface Graph<T> extends Serializable {
     /**
      * Populates this Graph with the given object.
      * @param object the object to graph
+     * @param visited to handle cyclic references so as not to get a StackOverflowError
      * @throws IOException if a problem occurs during graphing
      */
-    public void compose(T object) throws IOException;
+    public void compose(T object, Map<Integer,Object> visited) throws IOException;
 
     /**
      * Extracts the object from this Graph.
+     * @param visited to handle cyclic references so as not to get a StackOverflowError
      * @return the extracted object
      * @throws IOException if a problem occurs during "de-graphing"
      */
-    public T decompose() throws IOException;
+    public T decompose(Map<Integer,Object> visited) throws IOException;
 
 }

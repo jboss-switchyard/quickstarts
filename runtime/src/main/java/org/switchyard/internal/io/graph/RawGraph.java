@@ -19,6 +19,7 @@
 package org.switchyard.internal.io.graph;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * A Graph representing a raw object, internalized as itself.
@@ -53,16 +54,30 @@ public class RawGraph<T> implements Graph<T> {
      * {@inheritDoc}
      */
     @Override
-    public void compose(T object) throws IOException {
-        setRaw(object);
+    public void compose(T object, Map<Integer,Object> visited) throws IOException {
+        setRaw(extract(object, visited));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public T decompose() throws IOException {
-        return getRaw();
+    public T decompose(Map<Integer,Object> visited) throws IOException {
+        return extract(getRaw(), visited);
+    }
+
+    // TODO: Find out why this method is necessary; it shouldn't be!
+    @SuppressWarnings("unchecked")
+    private T extract(T object, Map<Integer,Object> visited) throws IOException {
+        while (object instanceof Graph) {
+            object = ((Graph<T>)object).decompose(visited);
+        }
+        return object;
+    }
+
+    @Override
+    public String toString() {
+        return "RawGraph(raw=" + getRaw() + ")";
     }
 
 }

@@ -16,78 +16,50 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.io;
+package org.switchyard.internal.io;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.dyuproject.protostuff.GraphIOUtil;
+import com.dyuproject.protostuff.LinkedBuffer;
+import com.dyuproject.protostuff.Schema;
+
 /**
- * An OutputStream that keeps track of the number of bytes written to it.
+ * GraphProtostuffSerializer.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class CountingOutputStream extends OutputStream {
-
-    private OutputStream _out;
-    private int _count;
+public class GraphProtostuffSerializer extends BaseProtostuffSerializer {
 
     /**
-     * Wraps a given OutputSteam.
-     * @param out the wrapped OutputStream
+     * {@inheritDoc}
      */
-    public CountingOutputStream(OutputStream out) {
-        _out = out;
+    @Override
+    public <T> void writeTo(OutputStream out, T obj, Schema<T> schema, int bufferSize) throws IOException {
+        try {
+            GraphIOUtil.writeTo(out, obj, schema, LinkedBuffer.allocate(bufferSize));
+            out.flush();
+        } finally {
+            if (isCloseEnabled()) {
+                out.close();
+            }
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void write(byte[] b) throws IOException {
-        _out.write(b);
-        _count += b.length;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void write(byte[] b, int off, int len) throws IOException {
-        _out.write(b, off, len);
-        _count += len;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void write(int b) throws IOException {
-        _out.write(b);
-        _count++;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void flush() throws IOException {
-        _out.flush();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() throws IOException {
-        _out.close();
-    }
-
-    /**
-     * Retrieves the number of bytes written.
-     * @return the number of bytes written
-     */
-    public int getCount() {
-        return _count;
+    public <T> void mergeFrom(InputStream in, T obj, Schema<T> schema, int bufferSize) throws IOException {
+        try {
+            GraphIOUtil.mergeFrom(in, obj, schema, LinkedBuffer.allocate(bufferSize));
+        } finally {
+            if (isCloseEnabled()) {
+                in.close();
+            }
+        }
     }
 
 }

@@ -24,8 +24,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
-import org.switchyard.io.Serializer;
+import org.switchyard.internal.io.Serializer;
 
 /**
  * A Graph representing an InputStream, internalized as an array of bytes.
@@ -57,7 +58,7 @@ public class InputStreamGraph implements Graph<InputStream> {
      * {@inheritDoc}
      */
     @Override
-    public void compose(InputStream object) throws IOException {
+    public void compose(InputStream object, Map<Integer,Object> visited) throws IOException {
         int bs = Serializer.DEFAULT_BUFFER_SIZE;
         BufferedInputStream bis = new BufferedInputStream(object, bs);
         ByteArrayOutputStream baos = new ByteArrayOutputStream(bs);
@@ -75,8 +76,14 @@ public class InputStreamGraph implements Graph<InputStream> {
      * {@inheritDoc}
      */
     @Override
-    public InputStream decompose() throws IOException {
+    public InputStream decompose(Map<Integer,Object> visited) throws IOException {
         return new ByteArrayInputStream(getBytes());
+    }
+
+    @Override
+    public String toString() {
+        byte[] bytes = getBytes();
+        return "InputStreamGraph(bytes.length=" + (bytes != null ? bytes.length : "null") + ")";
     }
 
 }

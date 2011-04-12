@@ -18,11 +18,11 @@
  */
 package org.switchyard.internal.io;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import org.switchyard.io.BaseSerializer;
 
 import com.dyuproject.protostuff.Schema;
 import com.dyuproject.protostuff.runtime.RuntimeSchema;
@@ -39,8 +39,10 @@ public abstract class BaseProtostuffSerializer extends BaseSerializer {
      */
     @Override
     public <T> int serialize(T obj, Class<T> type, OutputStream out, int bufferSize) throws IOException {
+        out = new CountingOutputStream(new BufferedOutputStream(out, bufferSize));
         Schema<T> schema = RuntimeSchema.getSchema(type);
-        return writeTo(out, obj, schema, bufferSize);
+        writeTo(out, obj, schema, bufferSize);
+        return ((CountingOutputStream)out).getCount();
     }
 
     /**
@@ -50,24 +52,17 @@ public abstract class BaseProtostuffSerializer extends BaseSerializer {
      * @param obj the object to write
      * @param schema the object class runtime schema
      * @param bufferSize the buffer size to use
-     * @return the number of bytes written
      * @throws IOException if a problem ocurrs during serialization
      */
-    public abstract <T> int writeTo(OutputStream out, T obj, Schema<T> schema, int bufferSize) throws IOException;
+    public abstract <T> void writeTo(OutputStream out, T obj, Schema<T> schema, int bufferSize) throws IOException;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public <T> T deserialize(InputStream in, Class<T> type, int bufferSize) throws IOException {
-        T obj;
-        try {
-            obj = type.newInstance();
-        } catch (IllegalAccessException iae) {
-            throw new IOException(iae);
-        } catch (InstantiationException ie) {
-            throw new IOException(ie);
-        }
+        in = new BufferedInputStream(in, bufferSize);
+        T obj = Reflection.construct(type);
         Schema<T> schema = RuntimeSchema.getSchema(type);
         mergeFrom(in, obj, schema, bufferSize);
         return obj;

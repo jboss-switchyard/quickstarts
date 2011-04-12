@@ -21,6 +21,7 @@ package org.switchyard.internal.io.graph;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Map;
 
 import javax.activation.DataSource;
 
@@ -88,11 +89,11 @@ public class DataSourceGraph implements Graph<DataSource> {
      * {@inheritDoc}
      */
     @Override
-    public void compose(DataSource object) throws IOException {
+    public void compose(DataSource object, Map<Integer,Object> visited) throws IOException {
         setName(object.getName());
         setContentType(object.getContentType());
         InputStreamGraph isg = new InputStreamGraph();
-        isg.compose(object.getInputStream());
+        isg.compose(object.getInputStream(), visited);
         setInputStreamGraph(isg);
     }
 
@@ -100,8 +101,13 @@ public class DataSourceGraph implements Graph<DataSource> {
      * {@inheritDoc}
      */
     @Override
-    public DataSource decompose() throws IOException {
+    public DataSource decompose(Map<Integer,Object> visited) throws IOException {
         return new GraphDataSource(this);
+    }
+
+    @Override
+    public String toString() {
+        return "DataSourceGraph(name=" + getName() + ", contentType=" + getContentType() + ", inputStreamGraph=" + getInputStreamGraph() + ")";
     }
 
     /**
@@ -140,7 +146,7 @@ public class DataSourceGraph implements Graph<DataSource> {
          */
         @Override
         public InputStream getInputStream() throws IOException {
-            return _graph.getInputStreamGraph().decompose();
+            return _graph.getInputStreamGraph().decompose(null);
         }
 
         /**

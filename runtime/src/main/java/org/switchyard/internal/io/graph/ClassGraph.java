@@ -19,6 +19,7 @@
 package org.switchyard.internal.io.graph;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * A Graph representing a Class, internalized as the class' name.
@@ -52,7 +53,7 @@ public class ClassGraph<T> implements Graph<Class<T>> {
      * {@inheritDoc}
      */
     @Override
-    public void compose(Class<T> object) throws IOException {
+    public void compose(Class<T> object, Map<Integer,Object> visited) throws IOException {
         setName(object.getName());
     }
 
@@ -61,12 +62,17 @@ public class ClassGraph<T> implements Graph<Class<T>> {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public Class<T> decompose() throws IOException {
+    public Class<T> decompose(Map<Integer,Object> visited) throws IOException {
         try {
             return (Class<T>)Class.forName(getName());
         } catch (ClassNotFoundException cnfe) {
             throw new IOException(cnfe);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ClassGraph(name=" + getName() + ")";
     }
 
 }

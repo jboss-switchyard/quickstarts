@@ -23,9 +23,8 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.activation.DataSource;
 import javax.xml.namespace.QName;
@@ -56,50 +55,68 @@ public final class GraphBuilder {
      * @throws IOException if a problem building the graph occurs
      */
     public static <T> Graph<T> build(T object) throws IOException {
-        return build(object, new HashSet<Object>());
+        return build(object, null);
     }
 
-    // TODO: use visited to avoid cyclic stack overflow
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    static <T> Graph<T> build(T object, Set<Object> visited) throws IOException {
-        Graph<T> graph = null;
-        if (object != null) {
-            Class<?> clazz = object.getClass();
-            if (isRaw(clazz)) {
-                graph = new RawGraph<T>();
-                graph.compose(object);
-            } else if (isArray(clazz)) {
-                if (isRaw(clazz.getComponentType())) {
-                    graph = new RawGraph<T>();
-                    graph.compose(object);
-                } else {
-                    graph = (Graph<T>)new ArrayGraph();
-                    graph.compose(object);
-                }
-            } else if (isClass(clazz)) {
-                graph = (Graph<T>)new ClassGraph<T>();
-                graph.compose(object);
-            } else if (isCollection(clazz)) {
-                graph = (Graph<T>)new CollectionGraph();
-                graph.compose(object);
-            } else if (isMap(clazz)) {
-                graph = (Graph<T>)new MapGraph();
-                graph.compose(object);
-            } else if (isQName(clazz)) {
-                graph = (Graph<T>)new QNameGraph();
-                graph.compose(object);
-            } else if (isDataSource(clazz)) {
-                graph = (Graph<T>)new DataSourceGraph();
-                graph.compose(object);
-            } else if (isInputStream(clazz)) {
-                graph = (Graph<T>)new InputStreamGraph();
-                graph.compose(object);
-            } else {
-                graph = new PropertyGraph<T>();
-                graph.compose(object);
-            }
+    static <T> Graph<T> build(T object, Map<Integer,Object> visited) throws IOException {
+        if (object == null) {
+            return null;
         }
-        return graph;
+        Integer id = Integer.valueOf(System.identityHashCode(object));
+        if (visited == null) {
+            visited = new LinkedHashMap<Integer,Object>();
+        }
+        Graph<T> graph = (Graph<T>)visited.get(id);
+        if (graph != null) {
+            return graph;
+        }
+        boolean wrap;
+        Class<?> clazz = object.getClass();
+        if (isRaw(clazz)) {
+            graph = new RawGraph<T>();
+            graph.compose(object, visited);
+            wrap = false;
+        } else if (isArray(clazz)) {
+            if (isRaw(clazz.getComponentType())) {
+                graph = new RawGraph<T>();
+                graph.compose(object, visited);
+                wrap = false;
+            } else {
+                graph = (Graph<T>)new ArrayGraph();
+                graph.compose(object, visited);
+                wrap = true;
+            }
+        } else if (isClass(clazz)) {
+            graph = (Graph<T>)new ClassGraph<T>();
+            graph.compose(object, visited);
+            wrap = false;
+        } else if (isCollection(clazz)) {
+            graph = (Graph<T>)new CollectionGraph();
+            graph.compose(object, visited);
+            wrap = true;
+        } else if (isMap(clazz)) {
+            graph = (Graph<T>)new MapGraph();
+            graph.compose(object, visited);
+            wrap = true;
+        } else if (isQName(clazz)) {
+            graph = (Graph<T>)new QNameGraph();
+            graph.compose(object, visited);
+            wrap = false;
+        } else if (isDataSource(clazz)) {
+            graph = (Graph<T>)new DataSourceGraph();
+            graph.compose(object, visited);
+            wrap = false;
+        } else if (isInputStream(clazz)) {
+            graph = (Graph<T>)new InputStreamGraph();
+            graph.compose(object, visited);
+            wrap = false;
+        } else {
+            graph = new PropertyGraph<T>();
+            graph.compose(object, visited);
+            wrap = true;
+        }
+        return wrap ? GraphWrapper.wrap(graph) : graph;
     }
 
     static boolean isArray(Class<?> clazz) {

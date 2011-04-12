@@ -27,9 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.switchyard.io.BaseSerializer;
-import org.switchyard.io.CountingOutputStream;
-
 /**
  * de/serializes objects using java.beans.XMLDecoder/XMLEncoder.
  *
@@ -45,10 +42,15 @@ public final class BeanXMLSerializer extends BaseSerializer {
         out = new CountingOutputStream(new BufferedOutputStream(out, bufferSize));
         EL el = new EL();
         XMLEncoder enc = new XMLEncoder(out);
-        enc.setExceptionListener(el);
-        enc.writeObject(obj);
-        enc.flush();
-        enc.close();
+        try {
+            enc.setExceptionListener(el);
+            enc.writeObject(obj);
+            enc.flush();
+        } finally {
+            if (isCloseEnabled()) {
+                enc.close();
+            }
+        }
         IOException ioe = el.getIOException();
         if (ioe != null) {
             throw ioe;
@@ -64,8 +66,14 @@ public final class BeanXMLSerializer extends BaseSerializer {
         in = new BufferedInputStream(in, bufferSize);
         EL el = new EL();
         XMLDecoder dec = new XMLDecoder(in, null, el, Thread.currentThread().getContextClassLoader());
-        Object obj = dec.readObject();
-        dec.close();
+        Object obj;
+        try {
+            obj = dec.readObject();
+        } finally {
+            if (isCloseEnabled()) {
+                dec.close();
+            }
+        }
         IOException ioe = el.getIOException();
         if (ioe != null) {
             throw ioe;

@@ -19,10 +19,12 @@
 package org.switchyard.internal.io.graph;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
- * Wraps a Graph, and is itself a Graph. This is necessary for Protostuff, for example,
- * since the root object to create a runtime schema from must not be an interface or abstract class.
+ * Wraps a Graph, and is itself a Graph. This is necessary for Protostuff, for example, since the
+ * root object to create a runtime schema from must not be an interface or abstract class, and when
+ * handling circular references, objects of the same type cannot have a direct reference to themselves.
  * 
  * @param <T> the type of object at the root of this Graph node
  *
@@ -42,7 +44,7 @@ public class GraphWrapper<T> implements Graph<T> {
      * Constructs a new GraphWrapper, pre-populated with the specified Graph.
      * @param graph the Graph to wrap
      */
-    public GraphWrapper(Graph<T> graph) {
+    private GraphWrapper(Graph<T> graph) {
         setGraph(graph);
     }
 
@@ -66,16 +68,34 @@ public class GraphWrapper<T> implements Graph<T> {
      * {@inheritDoc}
      */
     @Override
-    public void compose(T object) throws IOException {
-        getGraph().compose(object);
+    public void compose(T object, Map<Integer,Object> visited) throws IOException {
+        getGraph().compose(object, visited);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public T decompose() throws IOException {
-        return getGraph().decompose();
+    public T decompose(Map<Integer,Object> visited) throws IOException {
+        return getGraph().decompose(visited);
+    }
+
+    @Override
+    public String toString() {
+        return "GraphWrapper(graph=" + getGraph() + ")";
+    }
+
+    /**
+     * Wraps a graph if it isn't already wrapped.
+     * @param <T> the type of graph
+     * @param graph the graph to wrap
+     * @return the wrapped graph, or the graph itself if it's already wrapped
+     */
+    public static <T> GraphWrapper<T> wrap(Graph<T> graph) {
+        if (graph instanceof GraphWrapper) {
+            return (GraphWrapper<T>)graph;
+        }
+        return new GraphWrapper<T>(graph);
     }
 
 }

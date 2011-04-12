@@ -23,6 +23,7 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -32,9 +33,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.switchyard.internal.io.graph.Reflection.Access;
-import org.switchyard.internal.io.graph.Reflection.BeanAccess;
-import org.switchyard.internal.io.graph.Reflection.FieldAccess;
+import org.switchyard.internal.io.Reflection.Access;
+import org.switchyard.internal.io.Reflection.BeanAccess;
+import org.switchyard.internal.io.Reflection.FieldAccess;
 import org.switchyard.io.Serialization.AccessType;
 import org.switchyard.io.Serialization.CoverageType;
 import org.switchyard.io.Serialization.DefaultFactory;
@@ -54,7 +55,7 @@ import org.switchyard.io.Serialization.Strategy;
 public class PropertyGraph<T> implements Graph<T> {
 
     private String _type;
-    private Map<String,Graph<Object>> _properties;
+    private LinkedHashMap<String,Graph<?>> _properties;
 
     /**
      * Gets the type of custom object.
@@ -76,7 +77,7 @@ public class PropertyGraph<T> implements Graph<T> {
      * Gets the graphs representing the properties of the custom object.
      * @return the graphs representing the properties of the custom object
      */
-    public Map<String,Graph<Object>> getProperties() {
+    public LinkedHashMap<String,Graph<?>> getProperties() {
         return _properties;
     }
 
@@ -84,7 +85,7 @@ public class PropertyGraph<T> implements Graph<T> {
      * Sets the graphs representing the properties of the custom object.
      * @param properties the graphs representing the properties of the custom object
      */
-    public void setProperties(Map<String,Graph<Object>> properties) {
+    public void setProperties(LinkedHashMap<String,Graph<?>> properties) {
         _properties = properties;
     }
 
@@ -92,25 +93,30 @@ public class PropertyGraph<T> implements Graph<T> {
      * {@inheritDoc}
      */
     @Override
-    public void compose(T object) throws IOException {
+    @SuppressWarnings("unchecked")
+    public void compose(T object, Map<Integer,Object> visited) throws IOException {
         if (object != null) {
-            Class<?> clazz = object.getClass();
-            setType(clazz.getName());
-            Map<String,Graph<Object>> props = null;
-            for (Access access : getAccessList(clazz)) {
-                if (!(access instanceof FieldAccess) && !access.isWriteable()) {
-                    continue;
-                }
-                Object value = access.read(object);
-                if (value != null) {
-                    if (props == null) {
-                        props = new LinkedHashMap<String,Graph<Object>>();
+            Integer id = Integer.valueOf(System.identityHashCode(object));
+            if (!visited.containsKey(id)) {
+                visited.put(id, (Graph<Object>)this);
+                Class<T> clazz = (Class<T>)object.getClass();
+                setType(clazz.getName());
+                LinkedHashMap<String,Graph<?>> props = null;
+                for (Access<?> access : getAccessList(clazz)) {
+                    if (!(access instanceof FieldAccess) && !access.isWriteable()) {
+                        continue;
                     }
-                    props.put(access.getName(), GraphBuilder.build(value));
+                    Object value = access.read(object);
+                    if (value != null) {
+                        if (props == null) {
+                            props = new LinkedHashMap<String,Graph<?>>();
+                        }
+                        props.put(access.getName(), GraphBuilder.build(value, visited));
+                    }
                 }
-            }
-            if (props != null) {
-                setProperties(props);
+                if (props != null) {
+                    setProperties(props);
+                }
             }
         }
     }
@@ -120,27 +126,34 @@ public class PropertyGraph<T> implements Graph<T> {
      */
     @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public T decompose() throws IOException {
+    public T decompose(Map<Integer,Object> visited) throws IOException {
+        if (visited == null) {
+            visited = new LinkedHashMap<Integer,Object>();
+        }
+        Integer id = Integer.valueOf(System.identityHashCode(this));
+        T object = (T)visited.get(id);
         String type = getType();
-        if (type != null) {
+        if (object == null && type != null) {
             Class<T> clazz;
             try {
                 clazz = (Class<T>)Class.forName(type);
             } catch (ClassNotFoundException cnfe) {
                 throw new IOException(cnfe);
             }
-            T object = getFactory(clazz).create(clazz);
+            object = getFactory(clazz).create(clazz);
             if (object != null) {
+                visited.put(id, object);
                 for (Access access : getAccessList(clazz)) {
-                    Map<String,Graph<Object>> props = getProperties();
+                    Map<String,Graph<?>> props = getProperties();
                     if (props != null) {
-                        Graph<Object> graph = props.get(access.getName());
+                        Graph<?> graph = props.get(access.getName());
                         if (graph != null) {
-                            Object value = graph.decompose();
+                            Object value = graph.decompose(visited);
                             if (value != null) {
                                 boolean skip = !access.isWriteable();
+                                Class<?> accessType = access.getType();
+                                Class<?> valueType = value.getClass();
                                 if (access instanceof FieldAccess) {
-                                    Class<?> accessType = access.getType();
                                     if (GraphBuilder.isCollection(accessType) && value instanceof Collection) {
                                         ((Collection)access.read(object)).addAll((Collection)value);
                                         skip = true;
@@ -150,6 +163,12 @@ public class PropertyGraph<T> implements Graph<T> {
                                     }
                                 }
                                 if (!skip) {
+                                    if (GraphBuilder.isArray(accessType) && valueType.isArray()) {
+                                        Object[] old_array = (Object[])value;
+                                        Object[] new_array = (Object[])Array.newInstance(accessType.getComponentType(), old_array.length);
+                                        System.arraycopy(old_array, 0, new_array, 0, old_array.length);
+                                        value = new_array;
+                                    }
                                     access.write(object, value);
                                 }
                             }
@@ -157,13 +176,12 @@ public class PropertyGraph<T> implements Graph<T> {
                     }
                 }
             }
-            return object;
         }
-        return null;
+        return object;
     }
 
-    private List<Access> getAccessList(Class<?> clazz) {
-        List<Access> accessList = new ArrayList<Access>();
+    private List<Access<?>> getAccessList(Class<?> clazz) {
+        List<Access<?>> accessList = new ArrayList<Access<?>>();
         if (clazz.getAnnotation(Deprecated.class) != null) {
             return accessList;
         }
@@ -185,7 +203,8 @@ public class PropertyGraph<T> implements Graph<T> {
                             || (CoverageType.EXCLUSIVE.equals(coverageType)
                                     && method.getAnnotation(Include.class) != null))
                                     && method.getAnnotation(Deprecated.class) == null) {
-                        Access access = new BeanAccess(desc);
+                        @SuppressWarnings("rawtypes")
+                        Access<?> access = new BeanAccess(desc);
                         if (access.isReadable() && !"class".equals(access.getName())) {
                             accessList.add(access);
                         }
@@ -200,7 +219,8 @@ public class PropertyGraph<T> implements Graph<T> {
                                     && field.getAnnotation(Include.class) != null))
                                     && field.getAnnotation(Deprecated.class) == null
                                     && !Modifier.isTransient(field.getModifiers())) {
-                        Access access = new FieldAccess(field);
+                        @SuppressWarnings("rawtypes")
+                        Access<?> access = new FieldAccess(field);
                         if (access.isReadable()) {
                             accessList.add(access);
                         }
@@ -224,6 +244,38 @@ public class PropertyGraph<T> implements Graph<T> {
             }
         }
         return new DefaultFactory<T>();
+    }
+
+    @Override
+    public String toString() {
+        String type = getType();
+        if (type != null) {
+            int pos = type.lastIndexOf('$');
+            if (pos == -1) {
+                pos = type.lastIndexOf('.');
+            }
+            if (pos != -1) {
+                type = type.substring(pos+1, type.length());
+            }
+        }
+        StringBuilder props = new StringBuilder();
+        LinkedHashMap<String,Graph<?>> properties = getProperties();
+        if (properties != null) {
+            props.append('[');
+            boolean started = false;
+            for (Map.Entry<String,Graph<?>> entry : properties.entrySet()) {
+                if (!started) {
+                    started = true;
+                } else {
+                    props.append(',');
+                }
+                props.append(entry.getKey());
+            }
+            props.append(']');
+        } else {
+            props.append("null");
+        }
+        return "PropertyGraph(type=" + type + ", properties=" + props + ")";
     }
 
 }

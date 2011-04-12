@@ -55,11 +55,11 @@ public class MapGraph<K,V> implements Graph<Map<K,V>> {
      * {@inheritDoc}
      */
     @Override
-    public void compose(Map<K,V> object) throws IOException {
+    public void compose(Map<K,V> object, Map<Integer,Object> visited) throws IOException {
         _map = new LinkedHashMap<Graph<K>,Graph<V>>();
         for (Map.Entry<K,V> entry : object.entrySet()) {
-            Graph<K> key = GraphBuilder.build(entry.getKey());
-            Graph<V> value = GraphBuilder.build(entry.getValue());
+            Graph<K> key = GraphBuilder.build(entry.getKey(), visited);
+            Graph<V> value = GraphBuilder.build(entry.getValue(), visited);
             _map.put(key, value);
         }
     }
@@ -68,12 +68,17 @@ public class MapGraph<K,V> implements Graph<Map<K,V>> {
      * {@inheritDoc}
      */
     @Override
-    public Map<K,V> decompose() throws IOException {
+    public Map<K,V> decompose(Map<Integer,Object> visited) throws IOException {
         Map<K,V> map = new LinkedHashMap<K,V>();
         for (Map.Entry<Graph<K>,Graph<V>> entry : getMap().entrySet()) {
-            map.put(entry.getKey().decompose(), entry.getValue().decompose());
+            map.put(entry.getKey().decompose(visited), entry.getValue().decompose(visited));
         }
         return map;
+    }
+
+    @Override
+    public String toString() {
+        return "MapGraph(map=" + getMap() + ")";
     }
 
 }

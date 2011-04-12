@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.io;
+package org.switchyard.internal.io;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -119,5 +119,18 @@ public interface Serializer {
      * @throws IOException if a problem happened during deserialization
      */
     public <T> T deserialize(InputStream in, Class<T> type, int bufferSize) throws IOException;
+
+    /**
+     * Gets whether this Serializer should close when it's done serializing or deserializing.
+     * @return if this Serializer should close when it's done serializing or deserializing
+     */
+    public boolean isCloseEnabled();
+
+    /**
+     * Sets whether this Serializer should close when it's done serializing or deserializing.
+     * @param closeEnabled if this Serializer should close when it's done serializing or deserializing
+     * @return this Serializer (useful for method chaining)
+     */
+    public Serializer setCloseEnabled(boolean closeEnabled);
 
 }

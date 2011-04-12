@@ -18,13 +18,9 @@
  */
 package org.switchyard.internal.io;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import org.switchyard.io.CountingOutputStream;
 
 import com.dyuproject.protostuff.Schema;
 import com.dyuproject.protostuff.XmlIOUtil;
@@ -40,21 +36,13 @@ public final class XMLProtostuffSerializer extends BaseProtostuffSerializer {
      * {@inheritDoc}
      */
     @Override
-    public <T> int writeTo(OutputStream out, T obj, Schema<T> schema, int bufferSize) throws IOException {
-        out = new CountingOutputStream(new BufferedOutputStream(out, bufferSize));
+    public <T> void writeTo(OutputStream out, T obj, Schema<T> schema, int bufferSize) throws IOException {
         try {
             XmlIOUtil.writeTo(out, obj, schema);
-            int count = ((CountingOutputStream)out).getCount();
             out.flush();
-            return count;
         } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (Throwable t) {
-                // minimum one statement just to keep checkstyle happy
-                t.getMessage();
+            if (isCloseEnabled()) {
+                out.close();
             }
         }
     }
@@ -64,17 +52,11 @@ public final class XMLProtostuffSerializer extends BaseProtostuffSerializer {
      */
     @Override
     public <T> void mergeFrom(InputStream in, T obj, Schema<T> schema, int bufferSize) throws IOException {
-        in = new BufferedInputStream(in, bufferSize);
         try {
             XmlIOUtil.mergeFrom(in, obj, schema);
         } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (Throwable t) {
-                // minimum one statement just to keep checkstyle happy
-                t.getMessage();
+            if (isCloseEnabled()) {
+                in.close();
             }
         }
     }

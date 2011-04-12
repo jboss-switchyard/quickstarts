@@ -18,13 +18,9 @@
  */
 package org.switchyard.internal.io;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import org.switchyard.io.CountingOutputStream;
 
 import com.dyuproject.protostuff.JsonIOUtil;
 import com.dyuproject.protostuff.Schema;
@@ -36,7 +32,7 @@ import com.dyuproject.protostuff.Schema;
  */
 public class JSONProtostuffSerializer extends BaseProtostuffSerializer {
 
-    private boolean _numeric;
+    private final boolean _numeric;
 
     /**
      * Calls JSONProtostuffSerializer(false).
@@ -57,22 +53,15 @@ public class JSONProtostuffSerializer extends BaseProtostuffSerializer {
      * {@inheritDoc}
      */
     @Override
-    public <T> int writeTo(OutputStream out, T obj, Schema<T> schema, int bufferSize) throws IOException {
-        out = new CountingOutputStream(new BufferedOutputStream(out, bufferSize));
+    public <T> void writeTo(OutputStream out, T obj, Schema<T> schema, int bufferSize) throws IOException {
         try {
             JsonIOUtil.writeTo(out, obj, schema, _numeric);
             out.flush();
         } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (Throwable t) {
-                // minimum one statement just to keep checkstyle happy
-                t.getMessage();
+            if (isCloseEnabled()) {
+                out.close();
             }
         }
-        return ((CountingOutputStream)out).getCount();
     }
 
     /**
@@ -80,17 +69,11 @@ public class JSONProtostuffSerializer extends BaseProtostuffSerializer {
      */
     @Override
     public <T> void mergeFrom(InputStream in, T obj, Schema<T> schema, int bufferSize) throws IOException {
-        in = new BufferedInputStream(in, bufferSize);
         try {
             JsonIOUtil.mergeFrom(in, obj, schema, _numeric);
         } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (Throwable t) {
-                // minimum one statement just to keep checkstyle happy
-                t.getMessage();
+            if (isCloseEnabled()) {
+                in.close();
             }
         }
     }

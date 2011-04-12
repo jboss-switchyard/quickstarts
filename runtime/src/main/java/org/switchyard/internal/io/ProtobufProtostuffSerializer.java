@@ -18,8 +18,6 @@
  */
 package org.switchyard.internal.io;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -39,20 +37,13 @@ public final class ProtobufProtostuffSerializer extends BaseProtostuffSerializer
      * {@inheritDoc}
      */
     @Override
-    public <T> int writeTo(OutputStream out, T obj, Schema<T> schema, int bufferSize) throws IOException {
-        out = new BufferedOutputStream(out, bufferSize);
+    public <T> void writeTo(OutputStream out, T obj, Schema<T> schema, int bufferSize) throws IOException {
         try {
-            int count = ProtobufIOUtil.writeTo(out, obj, schema, LinkedBuffer.allocate(bufferSize));
+            ProtobufIOUtil.writeTo(out, obj, schema, LinkedBuffer.allocate(bufferSize));
             out.flush();
-            return count;
         } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (Throwable t) {
-                // minimum one statement just to keep checkstyle happy
-                t.getMessage();
+            if (isCloseEnabled()) {
+                out.close();
             }
         }
     }
@@ -62,17 +53,11 @@ public final class ProtobufProtostuffSerializer extends BaseProtostuffSerializer
      */
     @Override
     public <T> void mergeFrom(InputStream in, T obj, Schema<T> schema, int bufferSize) throws IOException {
-        in = new BufferedInputStream(in, bufferSize);
         try {
             ProtobufIOUtil.mergeFrom(in, obj, schema, LinkedBuffer.allocate(bufferSize));
         } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (Throwable t) {
-                // minimum one statement just to keep checkstyle happy
-                t.getMessage();
+            if (isCloseEnabled()) {
+                in.close();
             }
         }
     }

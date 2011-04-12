@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.lang.reflect.Constructor;
 
 /**
  * A collection of annotations, enums and an interface and default implementation for strategic serialization.
@@ -115,7 +116,7 @@ public final class Serialization {
     }
 
     /**
-     * The default serialization factory. Simply calls type.newInstance().
+     * The default serialization factory. Assumes a no-arg constructor exists, and calls it.
      */
     public static final class DefaultFactory<T> implements Factory<T> {
 
@@ -125,11 +126,17 @@ public final class Serialization {
         @Override
         public T create(Class<T> type) throws IOException {
             try {
-                return type.newInstance();
-            } catch (IllegalAccessException iae) {
-                throw new IOException(iae);
-            } catch (InstantiationException ie) {
-                throw new IOException(ie);
+                Constructor<T> cnst = type.getConstructor();
+                if (!cnst.isAccessible()) {
+                    cnst.setAccessible(true);
+                }
+                return cnst.newInstance();
+            } catch (Exception e) {
+                if (e instanceof IOException) {
+                    throw (IOException)e;
+                } else {
+                    throw new IOException(e);
+                }
             }
         }
 

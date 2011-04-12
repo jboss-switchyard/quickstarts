@@ -16,9 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.internal.io.graph;
+package org.switchyard.internal.io;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -34,9 +35,48 @@ public final class Reflection {
     private Reflection() {}
 
     /**
+     * Constructs a new object of the specified type using it's no-arg constructor.
+     * @param <T> the type of object
+     * @param type the class type of the object
+     * @return the new object
+     */
+    public static <T> T construct(Class<T> type) {
+        return construct(type, new Class<?>[0], new Object[0]);
+    }
+
+    /**
+     * Constructs a new object of the specified type using it's no-arg constructor.
+     * @param <T> the type of object
+     * @param type the class type of the object
+     * @param paramTypes the types of the params
+     * @param params the param objects
+     * @return the new object
+     */
+    public static <T> T construct(Class<T> type, Class<?>[] paramTypes, Object[] params) {
+        Constructor<T> cnst;
+        try {
+            cnst = type.getConstructor(paramTypes);
+        } catch (NoSuchMethodException nsme) {
+            throw new RuntimeException(nsme);
+        }
+        if (!cnst.isAccessible()) {
+            cnst.setAccessible(true);
+        }
+        try {
+            return cnst.newInstance(params);
+        } catch (InvocationTargetException ite) {
+            throw new RuntimeException(ite);
+        } catch (IllegalAccessException iae) {
+            throw new RuntimeException(iae);
+        } catch (InstantiationException ie) {
+            throw new RuntimeException(ie);
+        }
+    }
+
+    /**
      * An abstraction of field and method access.
      */
-    public static interface Access {
+    public static interface Access<T> {
 
         /**
          * The name of the wrapped access mechanism.
@@ -48,7 +88,7 @@ public final class Reflection {
          * The Class type of the wrapped access mechanism.
          * @return the Class type
          */
-        public Class<?> getType();
+        public Class<T> getType();
 
         /**
          * Whether the wrapped access mechanism is readable.
@@ -67,21 +107,21 @@ public final class Reflection {
          * @param target the target object to read from
          * @return the read value
          */
-        public Object read(Object target);
+        public T read(Object target);
 
         /**
          * Writes via the wrapped access mechanism targeting the specified object.
          * @param target the target object to write to
          * @param value to value to write
          */
-        public void write(Object target, Object value);
+        public void write(Object target, T value);
 
     }
 
     /**
      * Access via a wrapped Field.
      */
-    public static final class FieldAccess implements Access {
+    public static final class FieldAccess<T> implements Access<T> {
 
         private Field _field;
 
@@ -108,8 +148,9 @@ public final class Reflection {
          * {@inheritDoc}
          */
         @Override
-        public Class<?> getType() {
-            return _field.getType();
+        @SuppressWarnings("unchecked")
+        public Class<T> getType() {
+            return (Class<T>)_field.getType();
         }
 
         /**
@@ -133,9 +174,10 @@ public final class Reflection {
          * {@inheritDoc}
          */
         @Override
-        public Object read(Object target) {
+        @SuppressWarnings("unchecked")
+        public T read(Object target) {
             try {
-                return _field.get(target);
+                return (T)_field.get(target);
             } catch (IllegalAccessException iae) {
                 throw new RuntimeException(iae);
             }
@@ -145,7 +187,7 @@ public final class Reflection {
          * {@inheritDoc}
          */
         @Override
-        public void write(Object target, Object value) {
+        public void write(Object target, T value) {
             try {
                 _field.set(target, value);
             } catch (IllegalAccessException iae) {
@@ -153,12 +195,19 @@ public final class Reflection {
             }
         }
 
+        @Override
+        public String toString() {
+            Class<?> clazz = getType();
+            String type = clazz != null ? clazz.getSimpleName() : null;
+            return "FieldAccess(name=" + getName() + ", type=" + type + ", readable=" + isReadable() + ", writeable=" + isWriteable() + ")";
+        }
+
     }
 
     /**
      * Access via a wrapped PropertyDescriptor.
      */
-    public static final class BeanAccess implements Access {
+    public static final class BeanAccess<T> implements Access<T> {
 
         private PropertyDescriptor _propDesc;
 
@@ -182,8 +231,9 @@ public final class Reflection {
          * {@inheritDoc}
          */
         @Override
-        public Class<?> getType() {
-            return _propDesc.getPropertyType();
+        @SuppressWarnings("unchecked")
+        public Class<T> getType() {
+            return (Class<T>)_propDesc.getPropertyType();
         }
 
         /**
@@ -206,11 +256,12 @@ public final class Reflection {
          * {@inheritDoc}
          */
         @Override
-        public Object read(Object target) {
+        @SuppressWarnings("unchecked")
+        public T read(Object target) {
             Method readMethod = _propDesc.getReadMethod();
             if (readMethod != null) {
                 try {
-                    return readMethod.invoke(target);
+                    return (T)readMethod.invoke(target);
                 } catch (IllegalAccessException iae) {
                     throw new RuntimeException(iae);
                 } catch (InvocationTargetException ite) {
@@ -224,7 +275,7 @@ public final class Reflection {
          * {@inheritDoc}
          */
         @Override
-        public void write(Object target, Object value) {
+        public void write(Object target, T value) {
             Method writeMethod = _propDesc.getWriteMethod();
             if (writeMethod != null) {
                 try {
@@ -237,30 +288,38 @@ public final class Reflection {
             }
         }
 
+        @Override
+        public String toString() {
+            Class<?> clazz = getType();
+            String type = clazz != null ? clazz.getSimpleName() : null;
+            return "BeanAccess(name=" + getName() + ", type=" + type + ", readable=" + isReadable() + ", writeable=" + isWriteable() + ")";
+        }
+
     }
 
     /**
      * Access via wrapped read and write Methods.
      */
-    public static final class MethodAccess implements Access {
+    public static final class MethodAccess<T> implements Access<T> {
 
         private Method _readMethod;
         private Method _writeMethod;
         private String _name = null;
-        private Class<?> _type;
+        private Class<T> _type;
 
         /**
          * Constructs a new MethodAccess.
          * @param readMethod the read Method to wrap
          * @param writeMethod the write Method to wrap
          */
+        @SuppressWarnings("unchecked")
         public MethodAccess(Method readMethod, Method writeMethod) {
             if (readMethod != null) {
                 _readMethod = readMethod;
                 if (!_readMethod.isAccessible()) {
                     _readMethod.setAccessible(true);
                 }
-                _type = _readMethod.getReturnType();
+                _type = (Class<T>)_readMethod.getReturnType();
                 String name = _readMethod.getName();
                 if (name.startsWith("get") || name.startsWith("is")) {
                     name = name.startsWith("get") ? name.substring(3) : name.substring(2);
@@ -274,7 +333,7 @@ public final class Reflection {
                     _writeMethod.setAccessible(true);
                 }
                 if (_type == null) {
-                    _type = _writeMethod.getParameterTypes()[0];
+                    _type = (Class<T>)_writeMethod.getParameterTypes()[0];
                 }
                 if (_name == null) {
                     String name = _writeMethod.getName();
@@ -299,7 +358,7 @@ public final class Reflection {
          * {@inheritDoc}
          */
         @Override
-        public Class<?> getType() {
+        public Class<T> getType() {
             return _type;
         }
 
@@ -323,10 +382,11 @@ public final class Reflection {
          * {@inheritDoc}
          */
         @Override
-        public Object read(Object target) {
+        @SuppressWarnings("unchecked")
+        public T read(Object target) {
             if (_readMethod != null) {
                 try {
-                    return _readMethod.invoke(target);
+                    return (T)_readMethod.invoke(target);
                 } catch (IllegalAccessException iae) {
                     throw new RuntimeException(iae);
                 } catch (InvocationTargetException ite) {
@@ -340,7 +400,7 @@ public final class Reflection {
          * {@inheritDoc}
          */
         @Override
-        public void write(Object target, Object value) {
+        public void write(Object target, T value) {
             if (_writeMethod != null) {
                 try {
                     _writeMethod.invoke(target, value);
@@ -351,6 +411,14 @@ public final class Reflection {
                 }
             }
         }
+
+        @Override
+        public String toString() {
+            Class<?> clazz = getType();
+            String type = clazz != null ? clazz.getSimpleName() : null;
+            return "MethodAccess(name=" + getName() + ", type=" + type + ", readable=" + isReadable() + ", writeable=" + isWriteable() + ")";
+        }
+
     }
 
 }
