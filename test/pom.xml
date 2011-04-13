@@ -38,7 +38,7 @@
 	<artifactId>switchyard-test</artifactId>
 	
 	<packaging>jar</packaging>
-	<name>Switchyard: Test Utilities</name>
+	<name>SwitchYard: Test Utilities</name>
 	<version>${project.parent.version}</version>
 	<description>Test Utility classes.</description>
 	<url>http://switchyard.org/</url>

@@ -26,6 +26,7 @@ import java.util.StringTokenizer;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
@@ -34,7 +35,6 @@ import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
-import org.switchyard.config.util.QNames;
 
 /**
  * A version 1 CompositeReferenceModel.
@@ -87,7 +87,7 @@ public class V1CompositeReferenceModel extends BaseNamedModel implements Composi
                 StringTokenizer st = new StringTokenizer(promote.getLocalPart(), "/");
                 int count = st.countTokens();
                 if (count == 1) {
-                    QName componentName = QNames.create(st.nextToken());
+                    QName componentName = XMLHelper.createQName(st.nextToken());
                     for (ComponentModel component : composite.getComponents()) {
                         if (componentName.equals(component.getQName())) {
                             List<ComponentReferenceModel> references = component.getReferences();
@@ -98,8 +98,8 @@ public class V1CompositeReferenceModel extends BaseNamedModel implements Composi
                         }
                     }
                 } else if (count == 2) {
-                    QName componentName = QNames.create(st.nextToken());
-                    QName componentReferenceName = QNames.create(st.nextToken());
+                    QName componentName = XMLHelper.createQName(st.nextToken());
+                    QName componentReferenceName = XMLHelper.createQName(st.nextToken());
                     for (ComponentModel component : composite.getComponents()) {
                         if (componentName.equals(component.getQName())) {
                             for (ComponentReferenceModel reference : component.getReferences()) {
@@ -120,7 +120,7 @@ public class V1CompositeReferenceModel extends BaseNamedModel implements Composi
      */
     @Override
     public QName getPromote() {
-        return QNames.create(getModelAttribute(CompositeReferenceModel.PROMOTE));
+        return XMLHelper.createQName(getModelAttribute(CompositeReferenceModel.PROMOTE));
     }
 
     /**

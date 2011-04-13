@@ -15,7 +15,7 @@
     <dependencySet>
        <useTransitiveDependencies>false</useTransitiveDependencies>
        <includes>
-          <include>org.switchyard:switchyard-common-xml</include>
+          <include>org.switchyard:switchyard-common</include>
           <include>org.switchyard:switchyard-config</include>
           <include>org.switchyard:switchyard-api</include>
           <include>org.switchyard:switchyard-extensions-wsdl</include>

@@ -38,7 +38,7 @@
 	<artifactId>switchyard-deployers-build</artifactId>
 	
 	<packaging>pom</packaging>
-	<name>Switchyard: Deployer Build</name>
+	<name>SwitchYard: Deployer Build</name>
 	<version>${project.parent.version}</version>
 	<description>The core deployers library.</description>
 	<url>http://switchyard.org/</url>
@@ -69,7 +69,7 @@
 	<dependencies>
             <dependency>
                 <groupId>org.switchyard</groupId>
-                <artifactId>switchyard-common-xml</artifactId>
+                <artifactId>switchyard-common</artifactId>
             </dependency>
             <dependency>
                 <groupId>org.switchyard</groupId>

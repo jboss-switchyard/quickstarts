@@ -24,9 +24,9 @@ import java.io.Reader;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.common.io.resource.ElementResource;
+import org.switchyard.common.io.resource.Resource;
 import org.switchyard.config.ConfigurationResource;
-import org.switchyard.config.util.ElementResource;
-import org.switchyard.config.util.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;

@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.switchyard.common.io.CountingOutputStream;
+import org.switchyard.common.type.reflect.Construction;
+
 import com.dyuproject.protostuff.Schema;
 import com.dyuproject.protostuff.runtime.RuntimeSchema;
 
@@ -62,7 +65,7 @@ public abstract class BaseProtostuffSerializer extends BaseSerializer {
     @Override
     public <T> T deserialize(InputStream in, Class<T> type, int bufferSize) throws IOException {
         in = new BufferedInputStream(in, bufferSize);
-        T obj = Reflection.construct(type);
+        T obj = Construction.construct(type);
         Schema<T> schema = RuntimeSchema.getSchema(type);
         mergeFrom(in, obj, schema, bufferSize);
         return obj;

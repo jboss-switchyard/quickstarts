@@ -33,9 +33,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.switchyard.internal.io.Reflection.Access;
-import org.switchyard.internal.io.Reflection.BeanAccess;
-import org.switchyard.internal.io.Reflection.FieldAccess;
+import org.switchyard.common.type.Classes;
+import org.switchyard.common.type.reflect.Access;
+import org.switchyard.common.type.reflect.BeanAccess;
+import org.switchyard.common.type.reflect.FieldAccess;
 import org.switchyard.io.Serialization.AccessType;
 import org.switchyard.io.Serialization.CoverageType;
 import org.switchyard.io.Serialization.DefaultFactory;
@@ -134,12 +135,7 @@ public class PropertyGraph<T> implements Graph<T> {
         T object = (T)visited.get(id);
         String type = getType();
         if (object == null && type != null) {
-            Class<T> clazz;
-            try {
-                clazz = (Class<T>)Class.forName(type);
-            } catch (ClassNotFoundException cnfe) {
-                throw new IOException(cnfe);
-            }
+            Class<T> clazz = (Class<T>)Classes.forName(type, getClass());
             object = getFactory(clazz).create(clazz);
             if (object != null) {
                 visited.put(id, object);

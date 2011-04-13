@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-    JBoss Switchyard + JBossAS integration
+    JBoss SwitchYard + JBossAS integration
 -->
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
     <!--
-        Switchyard CDI BeanManager JNDI Deployer.
+        SwitchYard CDI BeanManager JNDI Deployer.
 
         This deployer must be disabled in environments where https://issues.jboss.org/browse/JBAS-8939
         has been resolved.
@@ -14,7 +14,7 @@
     <bean name="CDIBeanManagerJNDIDeployer" class="org.switchyard.deployment.CDIBeanManagerJNDIDeployer" />
 
     <!--
-        Switchyard Application Deployer.
+        SwitchYard Application Deployer.
     -->
     <bean name="SwitchYardConfigParser" class="org.switchyard.deployment.SwitchYardConfigParser" />
     <bean name="SwitchYardDeployer" class="org.switchyard.deployment.SwitchYardDeployer" />

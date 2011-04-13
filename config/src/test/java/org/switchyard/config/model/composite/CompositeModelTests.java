@@ -28,6 +28,8 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
+import org.switchyard.common.io.resource.StringResource;
+import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.ModelResource;
@@ -37,8 +39,6 @@ import org.switchyard.config.model.composite.test.soap.PortModel;
 import org.switchyard.config.model.composite.test.soap.SOAPBindingModel;
 import org.switchyard.config.model.composite.test.soap.WSDLModel;
 import org.switchyard.config.model.composite.v1.V1ComponentImplementationModel;
-import org.switchyard.config.util.QNames;
-import org.switchyard.config.util.StringResource;
 
 /**
  * CompositeModelTests.
@@ -63,7 +63,7 @@ public class CompositeModelTests {
     public void testCreateEmptyModel() throws Exception {
         String namespace = CompositeModel.DEFAULT_NAMESPACE;
         String name = CompositeModel.COMPOSITE;
-        Model model = new ModelResource<Model>().pull(QNames.create(namespace, name));
+        Model model = new ModelResource<Model>().pull(XMLHelper.createQName(namespace, name));
         Assert.assertTrue(model instanceof CompositeModel);
         Assert.assertEquals(name, model.getModelConfiguration().getName());
         Assert.assertEquals(new QName(namespace, name), model.getModelConfiguration().getQName());

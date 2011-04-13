@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.config.util;
+package org.switchyard.common.type;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -93,7 +93,15 @@ public final class Classes {
      * @throws IOException if a problem occurred
      */
     public static URL getResource(String path, Class<?> caller) throws IOException {
-        return getResource(path, caller != null ? caller.getClassLoader() : null);
+        ClassLoader loader = caller != null ? caller.getClassLoader() : null;
+        URL url = getResource(path, loader);
+        if (url == null) {
+            String callerPath = callerPath(path, caller);
+            if (callerPath != null) {
+                url = getResource(callerPath, loader);
+            }
+        }
+        return url;
     }
 
     /**
@@ -126,7 +134,13 @@ public final class Classes {
      * @throws IOException if a problem occurred
      */
     public static List<URL> getResources(String path, Class<?> caller) throws IOException {
-        return getResources(path, caller != null ? caller.getClassLoader() : null);
+        ClassLoader loader = caller != null ? caller.getClassLoader() : null;
+        List<URL> urls = getResources(path, loader);
+        String callerPath = callerPath(path, caller);
+        if (callerPath != null) {
+            urls.addAll(getResources(callerPath, loader)); 
+        }
+        return urls;
     }
 
     /**
@@ -139,7 +153,7 @@ public final class Classes {
     public static List<URL> getResources(String path, ClassLoader loader) throws IOException {
         List<URL> urls = new ArrayList<URL>();
         if (path != null) {
-            if (path.startsWith("/")) {
+            while (path.startsWith("/")) {
                 path = path.substring(1);
             }
             for (ClassLoader cl : getClassLoaders(loader)) {
@@ -173,7 +187,15 @@ public final class Classes {
      * @throws IOException if a problem occurred
      */
     public static InputStream getResourceAsStream(String path, Class<?> caller) throws IOException {
-        return getResourceAsStream(path, caller != null ? caller.getClassLoader() : null);
+        ClassLoader loader = caller != null ? caller.getClassLoader() : null;
+        InputStream in = getResourceAsStream(path, loader);
+        if (in == null) {
+            String callerPath = callerPath(path, caller);
+            if (callerPath != null) {
+                in = getResourceAsStream(callerPath, loader);
+            }
+        }
+        return in;
     }
 
     /**
@@ -226,6 +248,17 @@ public final class Classes {
         ClassLoader previous = thread.getContextClassLoader();
         thread.setContextClassLoader(replacement);
         return previous;
+    }
+
+    private static String callerPath(String path, Class<?> caller) {
+        String callerPath = null;
+        if (path != null && caller != null) {
+            String pkg = caller.getPackage().getName().replace('.', '/');
+            if (!path.contains(pkg)) {
+                callerPath = pkg + "/" + path;
+            }
+        }
+        return callerPath;
     }
 
 }

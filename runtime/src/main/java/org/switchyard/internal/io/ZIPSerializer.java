@@ -25,6 +25,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.switchyard.common.io.CountingOutputStream;
+
 /**
  * de/serializes objects using ZIP compression.
  *

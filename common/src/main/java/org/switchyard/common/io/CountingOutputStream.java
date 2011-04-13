@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.internal.io;
+package org.switchyard.common.io;
 
 import java.io.IOException;
 import java.io.OutputStream;

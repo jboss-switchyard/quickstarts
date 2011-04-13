@@ -34,7 +34,6 @@ import org.junit.Test;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
-import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.ServiceReference;
 import org.switchyard.handlers.HandlerChain;

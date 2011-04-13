@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.switchyard.common.io.CountingOutputStream;
+
 /**
  * de/serializes objects using java.beans.XMLDecoder/XMLEncoder.
  *

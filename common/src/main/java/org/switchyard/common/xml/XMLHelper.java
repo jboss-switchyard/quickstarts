@@ -28,6 +28,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -55,13 +56,12 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 
 import org.apache.log4j.Logger;
-import org.w3c.dom.Element;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
 
 /**
  * Helper class for manipulating XML documents.
@@ -578,6 +578,78 @@ public final class XMLHelper {
         } else {
             return DOCUMENT_BUILDER.get();
         }
+    }
+
+    /**
+     * Gets the name of the node.
+     * @param node the node
+     * @return the name, first trying the local name (getLocalName()), but if null or zero-length, the node name (getNodeName())
+     */
+    public static String nameOf(Node node) {
+        if (node != null) {
+            String name = node.getLocalName();
+            if (name == null || name.length() == 0) {
+                name = node.getNodeName();
+            }
+            return name;
+        }
+        return null;
+    }
+
+    /**
+     * Safely creates a QName based on a DOM Document's root element.
+     * @param document the document
+     * @return the QName
+     */
+    public static QName createQName(Document document) {
+        return createQName(document.getDocumentElement());
+    }
+
+    /**
+     * Safely creates a QName based on a DOM Element.
+     * @param element the element
+     * @return the QName
+     */
+    public static QName createQName(Element element) {
+        return createQName(element.getNamespaceURI(), nameOf(element), element.getPrefix());
+    }
+
+    /**
+     * Safely creates a QName based on a name.
+     * @param name will turn into the local name
+     * @return the QName
+     */
+    public static QName createQName(String name) {
+        if (name != null) {
+            return QName.valueOf(name);
+        }
+        return null;
+    }
+
+    /**
+     * Safely creates a QName based on a namespace and a name.
+     * @param namespace the namespace
+     * @param localName the local name
+     * @return the QName
+     */
+    public static QName createQName(String namespace, String localName) {
+        return createQName(namespace, localName, null);
+    }
+    /**
+     * Safely creates a QName based on a namespace, a name and a prefix.
+     * @param namespace the namespace
+     * @param localName the local name
+     * @param prefix the prefix
+     * @return the QName
+     */
+    public static QName createQName(String namespace, String localName, String prefix) {
+        if (namespace != null && namespace.length() > 0) {
+            if (prefix != null && prefix.length() > 0) {
+                return new QName(namespace, localName, prefix);
+            }
+            return new QName(namespace, localName);
+        }
+        return createQName(localName);
     }
 
     static {

@@ -36,13 +36,13 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.MergeScanner;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.ModelResourceScanner;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
-import org.switchyard.config.util.Classes;
 
 /**
  * Maven mojo for configuring SwitchYard.

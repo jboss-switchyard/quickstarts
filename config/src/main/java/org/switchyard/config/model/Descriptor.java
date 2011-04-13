@@ -43,10 +43,10 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.switchyard.common.io.resource.PropertiesResource;
+import org.switchyard.common.io.resource.StringResource;
+import org.switchyard.common.type.Classes;
 import org.switchyard.config.Configuration;
-import org.switchyard.config.util.Classes;
-import org.switchyard.config.util.PropertiesResource;
-import org.switchyard.config.util.StringResource;
 import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
 
@@ -57,7 +57,7 @@ import org.w3c.dom.ls.LSResourceResolver;
  */
 public final class Descriptor {
 
-    /** The default location to looks for a Descriptor's Properties.  ALL properties found with this name via {@link org.switchyard.config.util.Classes#getResources(String, Class)} will be combined. */
+    /** The default location to looks for a Descriptor's Properties.  ALL properties found with this name via {@link org.switchyard.common.type.Classes#getResources(String, Class)} will be combined. */
     public static final String DEFAULT_PROPERTIES = "/org/switchyard/config/model/descriptor.properties";
 
     /** The "namespace" property. */
@@ -164,7 +164,7 @@ public final class Descriptor {
                 for (String namespace : namespaces) {
                     String schemaLocation = getSchemaLocation(namespace);
                     if (schemaLocation != null) {
-                        URL resource = Classes.getResource(schemaLocation);
+                        URL resource = Classes.getResource(schemaLocation, Descriptor.class);
                         if (resource != null) {
                             String xsd = new StringResource().pull(resource);
                             sourceList.add(new StreamSource(new StringReader(xsd)));

@@ -20,13 +20,13 @@ package org.switchyard.config.model.transform.v1;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseTypedModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
-import org.switchyard.config.util.QNames;
 
 /**
  * An abstract representation of a TransformModel.
@@ -60,7 +60,7 @@ public abstract class V1BaseTransformModel extends BaseTypedModel implements Tra
      */
     @Override
     public QName getFrom() {
-        return QNames.create(getModelAttribute(TransformModel.FROM));
+        return XMLHelper.createQName(getModelAttribute(TransformModel.FROM));
     }
 
     /**
@@ -77,7 +77,7 @@ public abstract class V1BaseTransformModel extends BaseTypedModel implements Tra
      */
     @Override
     public QName getTo() {
-        return QNames.create(getModelAttribute(TransformModel.TO));
+        return XMLHelper.createQName(getModelAttribute(TransformModel.TO));
     }
 
     /**

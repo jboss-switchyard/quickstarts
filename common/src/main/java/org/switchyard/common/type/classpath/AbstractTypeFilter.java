@@ -17,13 +17,13 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.config.util.classpath;
+package org.switchyard.common.type.classpath;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.switchyard.config.util.Classes;
+import org.switchyard.common.type.Classes;
 
 /**
  * Abstract Java type filter.

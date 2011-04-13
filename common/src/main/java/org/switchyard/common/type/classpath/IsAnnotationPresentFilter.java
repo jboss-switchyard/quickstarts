@@ -17,45 +17,32 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.config.util.classpath;
+package org.switchyard.common.type.classpath;
+
+import java.lang.annotation.Annotation;
 
 /**
+ * Filter classpath classes based on presence of an annotation.
+ * 
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class ResourceExistsFilter implements Filter {
+public class IsAnnotationPresentFilter extends AbstractTypeFilter {
 
-    private String _resourceName;
-    private boolean _resourceFound = false;
+    private Class<? extends Annotation> _searchType;
 
     /**
      * Public constructor.
-     * @param resourceName The name of the resource to be checked for.
+     * @param searchType The Java type to search for.
      */
-    public ResourceExistsFilter(String resourceName) {
-        this._resourceName = resourceName;
+    public IsAnnotationPresentFilter(Class<? extends Annotation> searchType) {
+        this._searchType = searchType;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void filter(String resourceName) {
-        _resourceFound = resourceName.equals(_resourceName);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean continueScanning() {
-        return !_resourceFound;
-    }
-
-    /**
-     * Was the resource was found on the scan.
-     * @return True if the resource was found, otherwise false.
-     */
-    public boolean resourceExists() {
-        return _resourceFound;
+    protected boolean matches(Class<?> clazz) {
+        return clazz.isAnnotationPresent(_searchType);
     }
 }

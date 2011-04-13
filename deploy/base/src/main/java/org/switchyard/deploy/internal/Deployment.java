@@ -32,6 +32,7 @@ import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceReference;
+import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;
@@ -342,11 +343,7 @@ public class Deployment extends AbstractDeployment {
     }
 
     private Class<?> loadClass(String className) {
-        try {
-            return Class.forName(className);
-        } catch (ClassNotFoundException cnfEx) {
-            throw new RuntimeException(cnfEx);
-        }
+        return Classes.forName(className, getClass());
     }
 
 }

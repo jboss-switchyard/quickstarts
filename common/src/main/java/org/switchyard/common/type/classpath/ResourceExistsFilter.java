@@ -17,25 +17,45 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.config.util.classpath;
+package org.switchyard.common.type.classpath;
 
 /**
- * Classpath resource filter.
- *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public interface Filter {
+public class ResourceExistsFilter implements Filter {
+
+    private String _resourceName;
+    private boolean _resourceFound = false;
 
     /**
-     * Classpath resource filter method.
-     * @param resourceName The classpath resource file name.  Needs to be converted to
-     * a proper class name
+     * Public constructor.
+     * @param resourceName The name of the resource to be checked for.
      */
-    void filter(String resourceName);
+    public ResourceExistsFilter(String resourceName) {
+        this._resourceName = resourceName;
+    }
 
     /**
-     * Should the scanner continue scanning.
-     * @return True of the scanner should continue, otherwise false.
+     * {@inheritDoc}
      */
-    boolean continueScanning();
+    @Override
+    public void filter(String resourceName) {
+        _resourceFound = resourceName.equals(_resourceName);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean continueScanning() {
+        return !_resourceFound;
+    }
+
+    /**
+     * Was the resource was found on the scan.
+     * @return True if the resource was found, otherwise false.
+     */
+    public boolean resourceExists() {
+        return _resourceFound;
+    }
 }

@@ -38,7 +38,7 @@
 	<artifactId>switchyard-deploy</artifactId>
 	
 	<packaging>jar</packaging>
-	<name>Switchyard: Deploy </name>
+	<name>SwitchYard: Deploy </name>
 	<version>${project.parent.version}</version>
 	<description>The Deploy SPI.</description>
 	<url>http://switchyard/</url>

@@ -19,8 +19,8 @@
 
 package org.switchyard.transform.config.model;
 
+import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.transform.TransformModel;
-import org.switchyard.config.util.Classes;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.smooks.internal.SmooksTransformFactory;
 

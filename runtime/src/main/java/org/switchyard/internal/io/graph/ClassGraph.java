@@ -21,6 +21,8 @@ package org.switchyard.internal.io.graph;
 import java.io.IOException;
 import java.util.Map;
 
+import org.switchyard.common.type.Classes;
+
 /**
  * A Graph representing a Class, internalized as the class' name.
  *
@@ -63,11 +65,7 @@ public class ClassGraph<T> implements Graph<Class<T>> {
     @Override
     @SuppressWarnings("unchecked")
     public Class<T> decompose(Map<Integer,Object> visited) throws IOException {
-        try {
-            return (Class<T>)Class.forName(getName());
-        } catch (ClassNotFoundException cnfe) {
-            throw new IOException(cnfe);
-        }
+        return (Class<T>)Classes.forName(getName(), getClass());
     }
 
     @Override

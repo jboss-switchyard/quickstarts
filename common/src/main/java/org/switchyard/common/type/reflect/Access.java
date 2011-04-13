@@ -16,46 +16,53 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
-package org.switchyard.config.util;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.Properties;
-
+package org.switchyard.common.type.reflect;
 
 /**
- * Utility class to safely access ("pull") Properties from various sources.
+ * An abstraction of field and method access.
+ *
+ * @param <T> the value type of this access
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class PropertiesResource extends Resource<Properties> {
+public interface Access<T> {
 
     /**
-     * {@inheritDoc}
+     * The name of the wrapped access mechanism.
+     * @return the name
      */
-    @Override
-    public Properties pull(InputStream is) throws IOException {
-        Properties props = new Properties();
-        if (is != null) {
-            props.load(is);
-        }
-        return props;
-    }
+    public String getName();
 
     /**
-     * Safely pulls Properties from a Reader.
-     * @param reader a Reader of the resource
-     * @return the resource, or null if not found
-     * @throws IOException if a problem occurred
+     * The Class type of the wrapped access mechanism.
+     * @return the Class type
      */
-    public Properties pull(Reader reader) throws IOException {
-        Properties props = new Properties();
-        if (reader != null) {
-            props.load(reader);
-        }
-        return props;
-    }
+    public Class<T> getType();
+
+    /**
+     * Whether the wrapped access mechanism is readable.
+     * @return true if it's readable
+     */
+    public boolean isReadable();
+
+    /**
+     * Whether the wrapped access mechanism is writable.
+     * @return true if it's writable
+     */
+    public boolean isWriteable();
+
+    /**
+     * Reads via the wrapped access mechanism targeting the specified object.
+     * @param target the target object to read from
+     * @return the read value
+     */
+    public T read(Object target);
+
+    /**
+     * Writes via the wrapped access mechanism targeting the specified object.
+     * @param target the target object to write to
+     * @param value to value to write
+     */
+    public void write(Object target, T value);
 
 }

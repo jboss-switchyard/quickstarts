@@ -122,7 +122,6 @@ public class ExchangeImplTest {
         exchange.send(exchange.createMessage());
         String requestId = (String)exchange.getContext().getProperty(
                 Exchange.MESSAGE_ID, Scope.IN).getValue();
-        Exchange reply = replyHandler.waitForOKMessage().getMessages().peek();
         String replyId = (String)exchange.getContext().getProperty(
                 Exchange.MESSAGE_ID, Scope.OUT).getValue();
         String replyRelatesTo = (String)exchange.getContext().getProperty(
@@ -263,7 +262,7 @@ public class ExchangeImplTest {
 
         try {
             // Don't provide a consumer...
-            Exchange exchange = _domain.createExchange(service, ExchangeContract.IN_OUT);
+            _domain.createExchange(service, ExchangeContract.IN_OUT);
             Assert.fail("Should not be able to create an InOut without specifying a reply handler");
         } catch (RuntimeException e) {
             // exception expected

@@ -30,6 +30,8 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
+import org.switchyard.common.io.resource.StringResource;
+import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.Models;
@@ -43,8 +45,6 @@ import org.switchyard.config.model.switchyard.test.java.JavaTransformModel;
 import org.switchyard.config.model.switchyard.test.smooks.SmooksConfigModel;
 import org.switchyard.config.model.switchyard.test.smooks.SmooksTransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
-import org.switchyard.config.util.QNames;
-import org.switchyard.config.util.StringResource;
 
 /**
  * SwitchYardModelTests.
@@ -68,7 +68,7 @@ public class SwitchYardModelTests {
     public void testCreateEmptyModel() throws Exception {
         String namespace = SwitchYardModel.DEFAULT_NAMESPACE;
         String name = SwitchYardModel.SWITCHYARD;
-        Model model = new ModelResource<Model>().pull(QNames.create(namespace, name));
+        Model model = new ModelResource<Model>().pull(XMLHelper.createQName(namespace, name));
         Assert.assertTrue(model instanceof SwitchYardModel);
         Assert.assertEquals(name, model.getModelConfiguration().getName());
         Assert.assertEquals(new QName(namespace, name), model.getModelConfiguration().getQName());

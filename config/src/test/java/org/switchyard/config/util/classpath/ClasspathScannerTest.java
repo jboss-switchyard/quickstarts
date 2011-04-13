@@ -21,6 +21,8 @@ package org.switchyard.config.util.classpath;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.switchyard.common.type.classpath.ClasspathScanner;
+import org.switchyard.common.type.classpath.InstanceOfFilter;
 import org.switchyard.config.BaseConfiguration;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.DOMConfiguration;

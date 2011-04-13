@@ -19,15 +19,16 @@
 
 package org.switchyard.test.mixins;
 
+import javax.naming.NamingException;
+
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.environment.se.events.ContainerInitialized;
 import org.junit.Assert;
+import org.switchyard.common.type.Classes;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.test.MockInitialContextFactory;
 import org.switchyard.test.SimpleTestDeployment;
-
-import javax.naming.NamingException;
 
 /**
  * CDI Test Mix-In for deploying the Weld CDI Standalone Edition container.
@@ -59,10 +60,9 @@ public class CDIMixIn extends AbstractTestMixIn {
         if (deployment instanceof SimpleTestDeployment) {
             // Not a user defined configuration based test... deploy the Services and Transformers
             // found by the CDI discovery process...
-            Class<? extends AbstractDeployment> simpleCdiDeploymentType = null;
-            try {
-                simpleCdiDeploymentType = (Class<? extends AbstractDeployment>) Class.forName("org.switchyard.component.bean.internal.SimpleCDIDeployment");
-            } catch (ClassNotFoundException e) {
+            @SuppressWarnings("unchecked")
+            Class<? extends AbstractDeployment> simpleCdiDeploymentType = (Class<? extends AbstractDeployment>) Classes.forName("org.switchyard.component.bean.internal.SimpleCDIDeployment", getClass());
+            if (simpleCdiDeploymentType == null) {
                 Assert.fail("Failed to locate the SimpleCDIDeployment class on the classpath.  Module must include the SwitchYard Bean Component as one of its depedencies.");
             }
             try {

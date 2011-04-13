@@ -27,8 +27,8 @@ import java.util.Map.Entry;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.config.model.composite.CompositeModel;
-import org.switchyard.config.util.QNames;
 
 /**
  * Utility class with helper methods dealing with Configurations.
@@ -38,7 +38,7 @@ import org.switchyard.config.util.QNames;
 public final class Configurations {
 
     // HACK: SWITCHYARD-145
-    private static final QName COMPOSITE_QNAME = QNames.create(CompositeModel.DEFAULT_NAMESPACE, CompositeModel.COMPOSITE);
+    private static final QName COMPOSITE_QNAME = XMLHelper.createQName(CompositeModel.DEFAULT_NAMESPACE, CompositeModel.COMPOSITE);
 
     private Configurations() {}
 
@@ -149,7 +149,7 @@ public final class Configurations {
         private Key(Configuration config) {
             _qname = config.getQName();
             for (String idc : ID_CANDIDATES) {
-                _id = id(config.getAttribute(QNames.create(_qname.getNamespaceURI(), idc)));
+                _id = id(config.getAttribute(XMLHelper.createQName(_qname.getNamespaceURI(), idc)));
                 if (_id == null) {
                     _id = id(config.getAttribute(idc));
                 }

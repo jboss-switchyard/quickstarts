@@ -45,7 +45,7 @@ public interface SwitchYardModel extends NamedModel {
     /**
      * Sets the child composite model.
      * @param composite the child composite model
-     * @return this SwitchyardModel (useful for chaining)
+     * @return this SwitchYardModel (useful for chaining)
      */
     public SwitchYardModel setComposite(CompositeModel composite);
 
@@ -58,7 +58,7 @@ public interface SwitchYardModel extends NamedModel {
     /**
      * Sets the child transforms model.
      * @param transforms the child transforms model.
-     * @return this SwitchyardModel (useful for chaining)
+     * @return this SwitchYardModel (useful for chaining)
      */
     public SwitchYardModel setTransforms(TransformsModel transforms);
 

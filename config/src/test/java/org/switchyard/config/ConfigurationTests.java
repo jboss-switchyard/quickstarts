@@ -28,8 +28,8 @@ import junit.framework.Assert;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
-import org.switchyard.config.util.ElementResource;
-import org.switchyard.config.util.StringResource;
+import org.switchyard.common.io.resource.ElementResource;
+import org.switchyard.common.io.resource.StringResource;
 
 /**
  * ConfigurationTests.

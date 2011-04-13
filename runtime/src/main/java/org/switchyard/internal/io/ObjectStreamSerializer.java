@@ -26,6 +26,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
+import org.switchyard.common.io.CountingOutputStream;
+
 /**
  * de/serializes objects using ObjectInputStream/ObjectOutputStream.
  *

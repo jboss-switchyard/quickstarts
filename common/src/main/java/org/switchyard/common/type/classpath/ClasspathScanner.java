@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.config.util.classpath;
+package org.switchyard.common.type.classpath;
 
 import org.apache.log4j.Logger;
 

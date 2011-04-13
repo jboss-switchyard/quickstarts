@@ -13,7 +13,7 @@
   <artifactId>switchyard-application</artifactId>
   <version>${project.parent.version}</version>
   <packaging>maven-archetype</packaging>
-  <name>Switchyard: Application Archetype</name>
+  <name>SwitchYard: Application Archetype</name>
   <properties>
     <switchyard.version>${project.parent.version}</switchyard.version>
   </properties>

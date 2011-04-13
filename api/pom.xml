@@ -38,7 +38,7 @@
 	<artifactId>switchyard-api</artifactId>
 	
 	<packaging>jar</packaging>
-	<name>Switchyard: API</name>
+	<name>SwitchYard: API</name>
 	<version>${project.parent.version}</version>
 	<description>The Core API.</description>
 	<url>http://switchyard/</url>

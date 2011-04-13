@@ -16,7 +16,7 @@
   <description>SwitchYard Core</description>
   <modules>
     <module>build</module>
-    <module>common/xml</module>
+    <module>common</module>
     <module>config</module>
     <module>api</module>
     <module>extensions/wsdl</module>
@@ -76,7 +76,7 @@
       </dependency>
       <dependency>
         <groupId>org.switchyard</groupId>
-        <artifactId>switchyard-common-xml</artifactId>
+        <artifactId>switchyard-common</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

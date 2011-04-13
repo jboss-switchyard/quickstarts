@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
@@ -32,7 +33,6 @@ import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
-import org.switchyard.config.util.QNames;
 
 /**
  * A version 1 CompositeServiceModel.
@@ -97,7 +97,7 @@ public class V1CompositeServiceModel extends BaseNamedModel implements Composite
      */
     @Override
     public QName getPromote() {
-        return QNames.create(getModelAttribute(CompositeServiceModel.PROMOTE));
+        return XMLHelper.createQName(getModelAttribute(CompositeServiceModel.PROMOTE));
     }
 
     /**

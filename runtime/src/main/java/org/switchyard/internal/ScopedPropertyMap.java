@@ -106,7 +106,6 @@ public class ScopedPropertyMap {
     /**
      * Removes all properties in all scopes.
      */
-    @SuppressWarnings("unchecked")
     public void clear() {
         for (Map map : _props.values()) {
             map.clear();

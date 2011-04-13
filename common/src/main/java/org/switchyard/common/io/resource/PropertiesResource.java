@@ -17,30 +17,45 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.config.util.classpath;
+package org.switchyard.common.io.resource;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.Properties;
+
 
 /**
- * Filter classpath classes based on their type.
- * 
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ * Utility class to safely access ("pull") Properties from various sources.
+ *
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class InstanceOfFilter extends AbstractTypeFilter {
-
-    private Class<?> _searchType;
-
-    /**
-     * Public constructor.
-     * @param searchType The Java type to search for.
-     */
-    public InstanceOfFilter(Class<?> searchType) {
-        this._searchType = searchType;
-    }
+public class PropertiesResource extends Resource<Properties> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected boolean matches(Class<?> clazz) {
-        return _searchType.isAssignableFrom(clazz);
+    public Properties pull(InputStream is) throws IOException {
+        Properties props = new Properties();
+        if (is != null) {
+            props.load(is);
+        }
+        return props;
     }
+
+    /**
+     * Safely pulls Properties from a Reader.
+     * @param reader a Reader of the resource
+     * @return the resource, or null if not found
+     * @throws IOException if a problem occurred
+     */
+    public Properties pull(Reader reader) throws IOException {
+        Properties props = new Properties();
+        if (reader != null) {
+            props.load(reader);
+        }
+        return props;
+    }
+
 }

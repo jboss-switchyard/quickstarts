@@ -19,18 +19,18 @@
 
 package org.switchyard.transform;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
+import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.transform.config.model.TransformerFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * {@link TransformerRegistry} loader class.
@@ -118,10 +118,9 @@ public class TransformerRegistryLoader {
      */
     public void loadOOTBTransforms() {
         try {
-            Enumeration<URL> resources = Thread.currentThread().getContextClassLoader().getResources(TRANSFORMS_XML);
+            List<URL> resources = Classes.getResources(TRANSFORMS_XML, getClass());
 
-            while (resources.hasMoreElements()) {
-                URL resource = resources.nextElement();
+            for (URL resource : resources) {
                 InputStream configStream = resource.openStream();
 
                 try {

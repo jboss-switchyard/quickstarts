@@ -24,6 +24,8 @@ import java.io.OutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import org.switchyard.common.io.CountingOutputStream;
+
 /**
  * de/serializes objects using GZIP compression.
  *

@@ -46,6 +46,8 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
+import org.switchyard.common.type.Classes;
+import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.config.model.MergeScanner;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.ModelResource;
@@ -57,7 +59,6 @@ import org.switchyard.config.model.ScannerOutput;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
-import org.switchyard.config.util.classpath.ClasspathScanner;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.deploy.internal.Deployment;
 import org.switchyard.metadata.InOnlyService;
@@ -126,7 +127,7 @@ public abstract class SwitchYardTestCase {
             if (config != null && !config.equals(NULL_CONFIG)) {
                 InputStream is = null;
                 try {
-                    is = getClass().getResourceAsStream(config);
+                    is = getResourceAsStream(config);
                     _configModel = createSwitchYardModel(is, createScanners(testCaseConfig));
                 } finally {
                     try {
@@ -186,7 +187,7 @@ public abstract class SwitchYardTestCase {
         SwitchYardTestCaseConfig testCaseConfig = getClass().getAnnotation(SwitchYardTestCaseConfig.class);
         InputStream is = null;
         try {
-            is = getClass().getResourceAsStream(configModelPath);
+            is = getResourceAsStream(configModelPath);
             _configModel = createSwitchYardModel(is, createScanners(testCaseConfig));
         } finally {
             try {
@@ -413,10 +414,14 @@ public abstract class SwitchYardTestCase {
      * @param name Name of the desired resource
      * @return A {@link java.io.InputStream} object or <tt>null</tt> if no resource with this name is found.
      *
-     * @see Class#getResourceAsStream(String)
+     * @see Classes#getResourceAsStream(String,Class)
      */
     public InputStream getResourceAsStream(String name) {
-        return getClass().getResourceAsStream(name);
+        try {
+            return Classes.getResourceAsStream(name, getClass());
+        } catch (IOException ioe) {
+            return null;
+        }
     }
 
     /**
@@ -511,7 +516,7 @@ public abstract class SwitchYardTestCase {
             throw new IllegalArgumentException("null 'configModel' arg.");
         }
         try {
-            return modelType.cast(new ModelResource().pull(configModel));
+            return new ModelResource<M>().pull(configModel);
         } catch (IOException e) {
             Assert.fail("Unexpected error building " + modelType.getSimpleName() + ": " + e.getMessage());
         } finally {
@@ -675,15 +680,6 @@ public abstract class SwitchYardTestCase {
         }
 
         return scanURLs;
-    }
-
-    private void addScanner(String className, List<Scanner<V1SwitchYardModel>> scanners) {
-        try {
-            scanners.add((Scanner) Class.forName(className).newInstance());
-        } catch (Exception e) {
-            // Ignore...
-            return;
-        }
     }
 
     @Scannable(false)

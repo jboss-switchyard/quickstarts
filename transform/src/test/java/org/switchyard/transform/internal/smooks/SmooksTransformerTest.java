@@ -19,10 +19,14 @@
 
 package org.switchyard.transform.internal.smooks;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
 import org.junit.Test;
+import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
@@ -31,9 +35,6 @@ import org.switchyard.transform.config.model.SmooksTransformModel;
 import org.switchyard.transform.smooks.internal.SmooksTransformFactory;
 import org.switchyard.transform.smooks.internal.SmooksTransformer;
 import org.xml.sax.SAXException;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
@@ -76,13 +77,13 @@ public class SmooksTransformerTest {
     }
 
     private Transformer getTransformer(String config) throws IOException {
-        InputStream swConfigStream = getClass().getResourceAsStream(config);
+        InputStream swConfigStream = Classes.getResourceAsStream(config, getClass());
 
         if(swConfigStream == null) {
             Assert.fail("null config stream.");
         }
 
-        SwitchYardModel switchyardConfig = (SwitchYardModel) new ModelResource().pull(swConfigStream);
+        SwitchYardModel switchyardConfig = new ModelResource<SwitchYardModel>().pull(swConfigStream);
         TransformsModel transforms = switchyardConfig.getTransforms();
 
         SmooksTransformModel smooksTransformModel = (SmooksTransformModel) transforms.getTransforms().get(0);

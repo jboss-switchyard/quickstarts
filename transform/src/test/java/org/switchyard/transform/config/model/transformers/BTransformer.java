@@ -22,7 +22,6 @@ package org.switchyard.transform.config.model.transformers;
 import javax.xml.namespace.QName;
 
 import org.switchyard.transform.BaseTransformer;
-import org.switchyard.transform.Transformer;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>

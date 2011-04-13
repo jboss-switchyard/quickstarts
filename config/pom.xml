@@ -45,7 +45,10 @@
 	
 	<dependencies>
 		<!-- internal dependencies -->
-		<!-- N/A -->
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-common</artifactId>
+        </dependency>
 		<!-- external dependencies -->
 		<dependency>
 			<groupId>log4j</groupId>

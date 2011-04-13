@@ -24,6 +24,8 @@ import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.List;
 
+import org.switchyard.common.type.classpath.ClasspathScanner;
+import org.switchyard.common.type.classpath.InstanceOfFilter;
 import org.switchyard.config.model.Scannable;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
@@ -32,8 +34,6 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.config.model.transform.v1.V1TransformsModel;
-import org.switchyard.config.util.classpath.ClasspathScanner;
-import org.switchyard.config.util.classpath.InstanceOfFilter;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.v1.V1JavaTransformModel;
 

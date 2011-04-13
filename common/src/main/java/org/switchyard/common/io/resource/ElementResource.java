@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.config.util;
+package org.switchyard.common.io.resource;
 
 import java.io.IOException;
 import java.io.InputStream;

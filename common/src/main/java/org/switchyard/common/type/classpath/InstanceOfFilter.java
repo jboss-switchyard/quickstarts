@@ -17,33 +17,30 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.config.util;
-
-import org.w3c.dom.Node;
+package org.switchyard.common.type.classpath;
 
 /**
- * Utility class for handling DOM nodes.
- *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * Filter classpath classes based on their type.
+ * 
+ * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public final class Nodes {
+public class InstanceOfFilter extends AbstractTypeFilter {
 
-    private Nodes() {}
+    private Class<?> _searchType;
 
     /**
-     * Gets the name of the node.
-     * @param node the node
-     * @return the name, first trying the local name (getLocalName()), but if null or zero-length, the node name (getNodeName())
+     * Public constructor.
+     * @param searchType The Java type to search for.
      */
-    public static String nameOf(Node node) {
-        if (node != null) {
-            String name = node.getLocalName();
-            if (name == null || name.length() == 0) {
-                name = node.getNodeName();
-            }
-            return name;
-        }
-        return null;
+    public InstanceOfFilter(Class<?> searchType) {
+        this._searchType = searchType;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean matches(Class<?> clazz) {
+        return _searchType.isAssignableFrom(clazz);
+    }
 }

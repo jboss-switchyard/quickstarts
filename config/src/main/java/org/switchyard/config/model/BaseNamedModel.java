@@ -20,8 +20,8 @@ package org.switchyard.config.model;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.config.Configuration;
-import org.switchyard.config.util.QNames;
 
 /**
  * An abstract representation of a NamedModel, useful for subclassing.
@@ -64,7 +64,7 @@ public abstract class BaseNamedModel extends BaseModel implements NamedModel {
      */
     @Override
     public QName getQName() {
-        return QNames.create(getName());
+        return XMLHelper.createQName(getName());
     }
 
     /**

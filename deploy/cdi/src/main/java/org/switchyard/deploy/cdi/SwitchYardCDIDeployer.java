@@ -19,6 +19,7 @@
 
 package org.switchyard.deploy.cdi;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -27,6 +28,7 @@ import javax.enterprise.inject.spi.AfterDeploymentValidation;
 import javax.enterprise.inject.spi.BeforeShutdown;
 import javax.enterprise.inject.spi.Extension;
 
+import org.switchyard.common.type.Classes;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.deploy.internal.Deployment;
 
@@ -47,7 +49,12 @@ public class SwitchYardCDIDeployer implements Extension {
      * @param event         CDI Event instance.
      */
     public void afterDeploymentValidation(@Observes AfterDeploymentValidation event) {
-        InputStream swConfigStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(AbstractDeployment.SWITCHYARD_XML);
+        InputStream swConfigStream;
+        try {
+            swConfigStream = Classes.getResourceAsStream(AbstractDeployment.SWITCHYARD_XML, getClass());
+        } catch (IOException ioe) {
+            swConfigStream = null;
+        }
 
         if (swConfigStream != null) {
             try {

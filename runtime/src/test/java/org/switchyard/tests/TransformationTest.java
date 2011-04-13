@@ -25,15 +25,14 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.MockDomain;
 import org.switchyard.MockHandler;
 import org.switchyard.Scope;
-import org.switchyard.ServiceReference;
 import org.switchyard.ServiceDomain;
-import org.switchyard.MockDomain;
+import org.switchyard.ServiceReference;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.TransformSequence;

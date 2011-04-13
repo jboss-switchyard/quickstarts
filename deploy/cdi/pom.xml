@@ -38,7 +38,7 @@
 	<artifactId>switchyard-deploy-cdi</artifactId>
 	
 	<packaging>jar</packaging>
-	<name>Switchyard: CDI Deployer</name>
+	<name>SwitchYard: CDI Deployer</name>
 	<version>${project.parent.version}</version>
 	<description>CDI-Based Deployer</description>
 	<url>http://switchyard/</url>

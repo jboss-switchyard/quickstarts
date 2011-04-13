@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.config.util;
+package org.switchyard.common.io.resource;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+
+import org.switchyard.common.type.Classes;
 
 /**
  * Utility class to safely access ("pull") resources from various sources.
@@ -36,7 +38,7 @@ import java.net.URL;
 public abstract class Resource<R> {
 
     /**
-     * Safely pulls a resource from a path using {@link org.switchyard.config.util.Classes#getResourceAsStream(String, Class)}.
+     * Safely pulls a resource from a path using {@link org.switchyard.common.type.Classes#getResourceAsStream(String, Class)}.
      * @param resource the path to the resource
      * @return the resource, or null if not found
      * @throws IOException if a problem occurred

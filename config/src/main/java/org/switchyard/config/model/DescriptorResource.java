@@ -23,8 +23,8 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.Properties;
 
-import org.switchyard.config.util.PropertiesResource;
-import org.switchyard.config.util.Resource;
+import org.switchyard.common.io.resource.PropertiesResource;
+import org.switchyard.common.io.resource.Resource;
 
 /**
  * Utility class to safely access ("pull") Descriptors from various sources.

@@ -33,6 +33,7 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
+import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
@@ -281,7 +282,12 @@ public class WSDLReader {
         if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("file://")) {
             return new URL(null, path);
         } else {
-            URL url = Thread.currentThread().getContextClassLoader().getResource(path);
+            URL url;
+            try {
+                url = Classes.getResource(path, getClass());
+            } catch (IOException ioe) {
+                url = null;
+            }
             if (url == null) {
                 File localFile = new File(path);
                 url = localFile.toURI().toURL();
