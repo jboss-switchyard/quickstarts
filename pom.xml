@@ -272,7 +272,7 @@
               <keywords>true</keywords>
               <linksource>true</linksource>
               <quiet>true</quiet>
-              <doctitle>Switchyard ${project.version}</doctitle>
+              <doctitle>SwitchYard ${project.version}</doctitle>
               <groups>
                 <group>
                   <title>Core API</title>
@@ -353,7 +353,7 @@
               <keywords>true</keywords>
               <linksource>true</linksource>
               <quiet>true</quiet>
-              <doctitle>Switchyard ${project.version}</doctitle>
+              <doctitle>SwitchYard ${project.version}</doctitle>
               <groups>
                 <group>
                   <title>Core API</title>
