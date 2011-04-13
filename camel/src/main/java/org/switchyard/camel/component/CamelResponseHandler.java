@@ -26,9 +26,9 @@ import org.switchyard.HandlerException;
 
 /**
  * A CamelResponseHandler is responsible for passing back result data from Apache Camel data to
- * Switchyard.
+ * SwitchYard.
  * 
- * By given access to the CamelExchange this ExchangeHandler can extract the Switchyard payload
+ * By given access to the CamelExchange this ExchangeHandler can extract the SwitchYard payload
  * and set in into the Camel Exchange.
  * 
  * @author Daniel Bevenius
@@ -48,12 +48,12 @@ public class CamelResponseHandler implements ExchangeHandler {
     }
 
     /**
-     * Will extract the message content from the Switchyard exchange and insert
+     * Will extract the message content from the SwitchYard exchange and insert
      * it into the Camel Exchange's In body.
      * 
-     * @param switchYardExchange Switchyards Exchange from which the payload will be extracted.
+     * @param switchYardExchange SwitchYards Exchange from which the payload will be extracted.
      * @throws HandlerException If there was an exception while trying to extract the payload from 
-     * the Switchyard Exchange.
+     * the SwitchYard Exchange.
      */
     @Override
     public void handleMessage(final Exchange switchYardExchange) throws HandlerException {

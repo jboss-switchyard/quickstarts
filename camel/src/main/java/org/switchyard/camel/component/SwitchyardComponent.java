@@ -26,7 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
- * SwitchyardComponent enable Switchyard services to be exposed
+ * SwitchyardComponent enable SwitchYard services to be exposed
  * through Apache Camel.
  * 
  * Example usage using Camel's Java DSL:

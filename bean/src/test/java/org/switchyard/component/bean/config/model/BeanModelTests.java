@@ -29,13 +29,13 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
+import org.switchyard.common.io.resource.StringResource;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
-import org.switchyard.config.util.StringResource;
 
 /**
  * BeanModelTests.

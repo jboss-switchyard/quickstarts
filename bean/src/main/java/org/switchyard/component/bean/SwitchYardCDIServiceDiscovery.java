@@ -102,9 +102,6 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
 
         // Create Service Proxy ExchangeHandlers and register them as Services, for all @Service beans...
         if (isServiceBean(bean)) {
-            Class<?> serviceType = bean.getBeanClass();
-            Service serviceAnnotation = serviceType.getAnnotation(Service.class);
-
             _logger.debug("Adding ServiceDescriptor for bean " + bean.getBeanClass().getName());
             _beanDeploymentMetaData.addServiceDescriptor(new CDIBeanServiceDescriptor(bean, beanManager, _beanDeploymentMetaData));
         }

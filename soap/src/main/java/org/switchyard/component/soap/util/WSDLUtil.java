@@ -46,6 +46,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
 import org.switchyard.ExchangePattern;
+import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.soap.PortName;
 import org.switchyard.component.soap.WebServicePublishException;
@@ -141,7 +142,12 @@ public final class WSDLUtil {
         if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("file://")) {
             return new URL(null, path);
         } else {
-            URL url = Thread.currentThread().getContextClassLoader().getResource(path);
+            URL url;
+            try {
+                url = Classes.getResource(path, WSDLUtil.class);
+            } catch (IOException ioe) {
+                url = null;
+            }
             if (url == null) {
                 File localFile = new File(path);
                 url = localFile.toURI().toURL();

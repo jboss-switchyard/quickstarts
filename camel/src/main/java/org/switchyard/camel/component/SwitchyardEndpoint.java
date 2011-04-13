@@ -26,7 +26,7 @@ import org.switchyard.ServiceReference;
 /**
  * A Camel Endpoint that is a simple {@link ProcessorEndpoint}.
  * 
- * This adds the ability to set a Switchyard {@link ServiceReference} on 
+ * This adds the ability to set a SwitchYard {@link ServiceReference} on 
  * the underlying processor, giving it access to the target service of the
  * {@link SwitchyardProcessor}.
  * 

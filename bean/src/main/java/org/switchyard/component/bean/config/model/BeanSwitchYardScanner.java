@@ -27,6 +27,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.switchyard.common.type.classpath.ClasspathScanner;
+import org.switchyard.common.type.classpath.IsAnnotationPresentFilter;
+import org.switchyard.common.type.classpath.ResourceExistsFilter;
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
 import org.switchyard.component.bean.config.model.v1.V1BeanComponentImplementationModel;
@@ -46,9 +49,6 @@ import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
-import org.switchyard.config.util.classpath.ClasspathScanner;
-import org.switchyard.config.util.classpath.IsAnnotationPresentFilter;
-import org.switchyard.config.util.classpath.ResourceExistsFilter;
 
 /**
  * Bean Scanner.

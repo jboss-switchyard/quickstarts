@@ -43,6 +43,7 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.ServiceReference;
+import org.switchyard.common.type.Classes;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
@@ -84,7 +85,7 @@ public class InboundHandler extends BaseHandler {
 
         if (composer != null && composer.length() > 0) {
             try {
-                Class<? extends MessageComposer> composerClass = Class.forName(composer).asSubclass(MessageComposer.class);
+                Class<? extends MessageComposer> composerClass = Classes.forName(composer, getClass()).asSubclass(MessageComposer.class);
                 _composer = composerClass.newInstance();
             } catch (Exception cnfe) {
                 LOGGER.error("Could not instantiate composer", cnfe);
@@ -95,7 +96,7 @@ public class InboundHandler extends BaseHandler {
         }
         if (decomposer != null && decomposer.length() > 0) {
             try {
-                Class<? extends MessageDecomposer> decomposerClass = Class.forName(decomposer).asSubclass(MessageDecomposer.class);
+                Class<? extends MessageDecomposer> decomposerClass = Classes.forName(decomposer, getClass()).asSubclass(MessageDecomposer.class);
                 _decomposer = decomposerClass.newInstance();
             } catch (Exception cnfe) {
                 LOGGER.error("Could not instantiate decomposer", cnfe);

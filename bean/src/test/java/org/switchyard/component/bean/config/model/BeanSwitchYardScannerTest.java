@@ -29,6 +29,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.switchyard.common.type.Classes;
 import org.switchyard.component.bean.Service;
 import org.switchyard.component.bean.tests.OneWay;
 import org.switchyard.component.bean.tests.ServiceWithReferenceBean;
@@ -37,7 +38,6 @@ import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
-import org.switchyard.config.util.Classes;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>

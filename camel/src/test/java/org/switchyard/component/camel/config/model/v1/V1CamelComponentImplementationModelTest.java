@@ -26,6 +26,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.io.InputStream;
 
 import org.junit.Test;
+import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.Validation;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
@@ -48,8 +49,8 @@ public class V1CamelComponentImplementationModelTest {
     }
     
     private V1CamelImplementationModel getFirstCamelBinding(final String config) throws Exception {
-        final InputStream in = getClass().getResourceAsStream(config);
-        final SwitchYardModel model = (SwitchYardModel) new ModelResource<SwitchYardModel>().pull(in);
+        final InputStream in = Classes.getResourceAsStream(config, getClass());
+        final SwitchYardModel model = new ModelResource<SwitchYardModel>().pull(in);
         final ComponentModel componentModel = model.getComposite().getComponents().get(0);
         final ComponentImplementationModel implementation = componentModel.getImplementation();
         return (V1CamelImplementationModel) implementation;

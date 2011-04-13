@@ -31,7 +31,7 @@ import org.switchyard.metadata.InOutOperation;
 
 /**
  * Switchard processor is a Camel {@link Processor} that is capable
- * of sending the contents of a Camel Message to a Switchyard Service.
+ * of sending the contents of a Camel Message to a SwitchYard Service.
  */
 public class SwitchyardProcessor implements Processor {
     
@@ -58,10 +58,10 @@ public class SwitchyardProcessor implements Processor {
 
     /**
      * Will extract the payload from the {@link org.apache.camel.Exchange}, by calling
-     * getIn(), and send that payload to the Switchyard service by using the {@link ServiceReference}.
+     * getIn(), and send that payload to the SwitchYard service by using the {@link ServiceReference}.
      * 
      * @param camelExchange The Camel Exchange instance
-     * @throws Exception If an error occurs while calling Switchyard.
+     * @throws Exception If an error occurs while calling SwitchYard.
      */
     @Override
     public void process(final org.apache.camel.Exchange camelExchange) throws Exception {

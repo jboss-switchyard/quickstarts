@@ -1,4 +1,4 @@
-# Switchyard Camel Component
+# SwitchYard Camel Component
 This project deals with integrating Apache Camel with SwitchYard.
 
 ## Using Apache Camel components as gateways/entrypoint into SwitchYard

@@ -49,7 +49,7 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-common-xml</artifactId>
+            <artifactId>switchyard-common</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
