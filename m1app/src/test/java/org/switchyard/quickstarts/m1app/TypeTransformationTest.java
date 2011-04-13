@@ -27,6 +27,7 @@ import junit.framework.Assert;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
+import org.switchyard.common.type.Classes;
 import org.switchyard.test.SwitchYardTestCase;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
@@ -73,6 +74,6 @@ public class TypeTransformationTest extends SwitchYardTestCase {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         DocumentBuilder db = dbf.newDocumentBuilder();
-        return db.parse(getClass().getClassLoader().getResourceAsStream(path));
+        return db.parse(Classes.getResourceAsStream(path, getClass()));
     }
 }
