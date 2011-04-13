@@ -30,16 +30,18 @@ import org.switchyard.component.bean.ClientProxyBean;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
-import org.switchyard.deploy.Activator;
+import org.switchyard.deploy.BaseActivator;
 import org.switchyard.metadata.ServiceInterface;
 
 /**
- * The Bean Component {@link Activator}.
+ * The Bean Component Activator.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class BeanComponentActivator implements Activator {
+public class BeanComponentActivator extends BaseActivator {
 
+    private static final String BEAN_TYPE = "bean";
+    
     private BeanDeploymentMetaData _beanDeploymentMetaData;
     private Map<QName, ComponentReferenceModel> _references = new HashMap<QName, ComponentReferenceModel>();
 
@@ -47,6 +49,7 @@ public class BeanComponentActivator implements Activator {
      * Public constructor.
      */
     public BeanComponentActivator() {
+        super(BEAN_TYPE);
         _beanDeploymentMetaData = BeanDeploymentMetaData.lookupBeanDeploymentMetaData();
     }
 

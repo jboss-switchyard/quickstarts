@@ -41,6 +41,13 @@ import org.switchyard.transform.TransformerRegistry;
  */
 public class SimpleCDIDeployment extends AbstractDeployment {
 
+    /**
+     * Creates a new CDI deployment with no configuration.
+     */
+    public SimpleCDIDeployment() {
+        super(null);
+    }
+    
     @Override
     public void start() {
         BeanDeploymentMetaData beanDeploymentMetaData = BeanDeploymentMetaData.lookupBeanDeploymentMetaData();

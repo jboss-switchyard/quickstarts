@@ -28,9 +28,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.mixins.CDIMixIn;
 import org.w3c.dom.Element;
 
-@SwitchYardTestCaseConfig(config = "/soap.bindingReference/switchyard.xml")
+@SwitchYardTestCaseConfig(mixins = CDIMixIn.class, config = "/soap.bindingReference/switchyard.xml")
 public class ReferenceBindingTest extends SwitchYardTestCase {
 
     private static final QName DUMMY_SOAP_SERVICE = 

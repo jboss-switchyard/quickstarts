@@ -33,19 +33,28 @@ import org.switchyard.component.soap.WebServicePublishException;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.BindingModel;
-import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
-import org.switchyard.deploy.Activator;
+import org.switchyard.config.model.composite.CompositeServiceModel;
+import org.switchyard.deploy.BaseActivator;
 
 /**
  * SOAP Activator.
  */
-public class SOAPActivator implements Activator {
+public class SOAPActivator extends BaseActivator {
 
+    private static final String SOAP_TYPE = "soap";
+    
     private Map<QName, InboundHandler> _inboundGateways = 
         new HashMap<QName, InboundHandler>();
     private Map<QName, OutboundHandler> _outboundGateways = 
         new HashMap<QName, OutboundHandler>();
+    
+    /**
+     * Creates a new activator for SOAP endpoints.
+     */
+    public SOAPActivator() {
+        super(SOAP_TYPE);
+    }
 
 
     @Override

@@ -40,7 +40,7 @@ import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
-import org.switchyard.deploy.Activator;
+import org.switchyard.deploy.BaseActivator;
 
 /**
  * Activates Camel bindings and references in Switchyward. 
@@ -48,7 +48,11 @@ import org.switchyard.deploy.Activator;
  * @author Daniel Bevenius
  *
  */
-public class CamelActivator implements Activator {
+public class CamelActivator extends BaseActivator {
+    
+    private static final String CAMEL_TYPE = "camel";
+    private static final String DIRECT_TYPE = "direct";
+    private static final String FILE_TYPE = "file";
     
     private Map<QName, Set<InboundHandler>> _inboundGateways = new HashMap<QName, Set<InboundHandler>>();
     
@@ -56,6 +60,15 @@ public class CamelActivator implements Activator {
     
     private static ThreadLocal<CamelContext> _camelContext = new ThreadLocal<CamelContext>();
 
+    /**
+     * Creates a new activator for Camel endpoint types.
+     */
+    public CamelActivator() {
+        super(new String[] {
+                CAMEL_TYPE, 
+                DIRECT_TYPE, 
+                FILE_TYPE});
+    }
     /**
      * @param name The service name
      * @param config The Java Object model representing a service configuration
