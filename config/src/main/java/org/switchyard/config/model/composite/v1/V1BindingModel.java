@@ -42,6 +42,16 @@ public class V1BindingModel extends BaseTypedModel implements BindingModel {
     public V1BindingModel(String type) {
         super(new QName(CompositeModel.DEFAULT_NAMESPACE, BindingModel.BINDING + '.' + type));
     }
+    
+    /**
+     * Constructs a new V1BindingModel of the specified "type" with the specified
+     * namespace.
+     * @param type the "type" of BindingModel
+     * @param namespace binding namespace
+     */
+    public V1BindingModel(String type, String namespace) {
+        super(new QName(namespace, BindingModel.BINDING + '.' + type));
+    }
 
     /**
      * Constructs a new V1BindingModel with the specified Configuration and Descriptor.

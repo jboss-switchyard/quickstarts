@@ -32,6 +32,8 @@
     <module>deploy/jboss-as7/extension</module>
     <module>deploy/jboss-as7/build</module>
     <module>tools/maven/archetypes/application</module>
+    <module>tools/forge/common</module>
+    <module>tools/forge/plugin</module>
   </modules>
   <repositories>
     <repository>
@@ -134,6 +136,11 @@
       <dependency>
         <groupId>org.switchyard</groupId>
         <artifactId>switchyard-plugin</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.switchyard</groupId>
+        <artifactId>switchyard-forge-common</artifactId>
         <version>${project.version}</version>
       </dependency>
       <!-- external dependencies -->
