@@ -29,20 +29,23 @@ import javax.xml.namespace.QName;
  * @author Daniel Bevenius
  *
  */
-public class ComponentNameComposer
-{
+public final class ComponentNameComposer {
+    /**
+     *Component name used for endpoint URIs.
+     */
     public static final String COMPONENT_NAME = "switchyard";
     
     private ComponentNameComposer() {
     }
     
     /**
+     * Creates a Camel endpoint URI based on the component and service name.  
      * Returns a String that has the format:
      * <pre>
      * {@value #COMPONENT_NAME}://serviceName.getLocalPart()
      * </pre>
-     * @param serviceName
-     * @return
+     * @param serviceName SwitchYard service name
+     * @return camel endpoint URI based on component and service name
      */
     public static String composeComponenUri(final QName serviceName) {
         final StringBuilder sb = new StringBuilder();

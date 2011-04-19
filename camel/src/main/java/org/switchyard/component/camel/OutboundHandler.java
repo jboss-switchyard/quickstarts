@@ -125,8 +125,7 @@ public class OutboundHandler extends BaseHandler {
             @Override
             public void process(org.apache.camel.Exchange exchange) throws Exception {
                 final Set<Property> properties = switchyardExchange.getContext().getProperties();
-                for (Property property : properties)
-                {
+                for (Property property : properties) {
                     exchange.setProperty(property.getName(), property.getValue());
                 }
                 exchange.getIn().setBody(switchyardExchange.getMessage().getContent());
@@ -136,15 +135,22 @@ public class OutboundHandler extends BaseHandler {
     
     
     @Override
-    public void handleFault(Exchange exchange)
-    {
+    public void handleFault(Exchange exchange) {
         super.handleFault(exchange);
     }
 
+    /**
+     * Return the CamelContext used by this handler.
+     * @return CamelContext
+     */
     public CamelContext getCamelContext() {
         return _camelContext;
     }
     
+    /**
+     * Return the Camel endpoint URI used by this handler.
+     * @return Camel endpoint URI
+     */
     public String getUri() {
         return _uri;
     }

@@ -65,10 +65,12 @@ public class SwitchyardEndpoint extends ProcessorEndpoint {
     
     /**
      * Creates a event driven consumer as opposed to a polling consumer.
+     * @param processor processor used by consumer
+     * @return event-driven consumer
+     * @throws Exception error creating consumer
      */
     @Override
-    public Consumer createConsumer(Processor processor) throws Exception
-    {
+    public Consumer createConsumer(Processor processor) throws Exception {
         _consumer = new DefaultConsumer(this, processor);
         return _consumer;
     }

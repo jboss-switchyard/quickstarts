@@ -55,15 +55,13 @@ import org.switchyard.component.camel.deploy.ComponentNameComposer;
  * @author Daniel Bevenius
  *
  */
-public class ImplementationHandler implements ExchangeHandler
-{
+public class ImplementationHandler implements ExchangeHandler {
     private final CamelComponentImplementationModel _configModel;
     private final CamelContext _camelContext;
     private DefaultConsumer _consumer;
     
     /**
-     * 
-     * @param serviceName The name of the SwitchYard service.
+     * Create a new ImplementationHandler.
      * @param context The CamelContext to be used by this instance.
      * @param configModel The {@link CamelComponentImplementationModel} which must have a route definition configured.
      */
@@ -93,7 +91,7 @@ public class ImplementationHandler implements ExchangeHandler
     
     private RouteDefinition addFromEndpointToRouteDefinition(final RouteDefinition rd, final String fromEndpointUri) throws Exception {
         final List<FromDefinition> inputs = rd.getInputs();
-        if (inputs.isEmpty() == false) {
+        if (!inputs.isEmpty()) {
             throw new RuntimeException("A Route must not define any 'from' endpoints as the 'from' endpoint will be created by SwithYard");
         }
         inputs.add(new FromDefinition(fromEndpointUri));
@@ -124,16 +122,16 @@ public class ImplementationHandler implements ExchangeHandler
      */
     private void invokeCamelProcessor(final org.apache.camel.Exchange camelExchange) throws HandlerException {
         try {
-	        _consumer.getProcessor().process(camelExchange);
+            _consumer.getProcessor().process(camelExchange);
         } catch (final Exception e) {
-           throw new HandlerException(e); 
+            throw new HandlerException(e); 
         }
     }
     
     private org.apache.camel.Exchange createCamelExchange(final Exchange switchyardExchange) {
-        org.apache.camel.Exchange camelExchange = isInOut(switchyardExchange) ? 
-                _consumer.getEndpoint().createExchange(org.apache.camel.ExchangePattern.InOut):
-                _consumer.getEndpoint().createExchange(org.apache.camel.ExchangePattern.InOnly);
+        org.apache.camel.Exchange camelExchange = isInOut(switchyardExchange) 
+                ? _consumer.getEndpoint().createExchange(org.apache.camel.ExchangePattern.InOut)
+                : _consumer.getEndpoint().createExchange(org.apache.camel.ExchangePattern.InOnly);
         
         camelExchange.getIn().setBody(switchyardExchange.getMessage().getContent());
         return camelExchange;
