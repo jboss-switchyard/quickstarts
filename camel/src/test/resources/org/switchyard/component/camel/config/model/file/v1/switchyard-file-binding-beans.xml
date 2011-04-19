@@ -21,7 +21,7 @@
 		<sca:service name="camelTest" promote="SimpleCamelService">
 			<camel:binding.file>
 			    <camel:operationSelector operationName="print"/>
-			    <camel:inputDir>/input/directory</camel:inputDir>
+			    <camel:targetDir>/input/directory</camel:targetDir>
 			</camel:binding.file>
 		</sca:service>
 	</sca:composite>

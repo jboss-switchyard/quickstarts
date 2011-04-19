@@ -19,7 +19,7 @@
  * site: http://www.fsf.org.
  */
 
-package org.switchyard.camel.component;
+package org.switchyard.component.camel;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Message;

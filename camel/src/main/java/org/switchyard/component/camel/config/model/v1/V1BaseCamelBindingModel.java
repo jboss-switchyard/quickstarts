@@ -31,23 +31,43 @@ import org.switchyard.config.model.composite.v1.V1BindingModel;
  * 
  * @author Daniel Bevenius
  */
-public abstract class V1BaseCamelBindingModel extends V1BindingModel implements CamelBindingModel {
-    
-    private OperationSelector _operationSelector;
-    
+public abstract class V1BaseCamelBindingModel extends V1BindingModel implements
+        CamelBindingModel {
+
     /**
+     * Camel endpoint type.
+     */
+    public static final String CAMEL = "camel";
+
+    private OperationSelector _operationSelector;
+
+    /**
+     * Constructor.
+     */
+    public V1BaseCamelBindingModel() {
+        this(CAMEL);
+        setModelChildrenOrder();
+    }
+
+    /**
+     * 
      * Create a new CamelBindingModel.
-     * @param type binding type
+     * 
+     * @param type
+     *            binding type
      */
     public V1BaseCamelBindingModel(String type) {
         super(type, CamelBindingModel.DEFAULT_NAMESPACE);
     }
-    
+
     /**
-     * Create a CamelBindingModel from the specified configuration and descriptor.
+     * Create a CamelBindingModel from the specified configuration and
+     * descriptor.
      * 
-     * @param config The switchyard configuration instance.
-     * @param desc The switchyard descriptor instance.
+     * @param config
+     *            The switchyard configuration instance.
+     * @param desc
+     *            The switchyard descriptor instance.
      */
     public V1BaseCamelBindingModel(Configuration config, Descriptor desc) {
         super(config, desc);
@@ -61,9 +81,10 @@ public abstract class V1BaseCamelBindingModel extends V1BindingModel implements 
         }
         return _operationSelector;
     }
-    
+
     @Override
-    public CamelBindingModel setOperationSelector(OperationSelector operationSelector) {
+    public CamelBindingModel setOperationSelector(
+            OperationSelector operationSelector) {
         if (_operationSelector == null) {
             setChildModel(operationSelector);
         }

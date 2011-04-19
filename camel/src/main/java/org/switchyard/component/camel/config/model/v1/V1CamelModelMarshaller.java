@@ -21,6 +21,9 @@
 package org.switchyard.component.camel.config.model.v1;
 
 import org.switchyard.component.camel.config.model.atom.v1.V1AtomBindingModel;
+import org.switchyard.component.camel.config.model.file.v1.V1CamelFileBindingModel;
+import org.switchyard.component.camel.config.model.file.v1.V1CamelFileConsumerBindingModel;
+import org.switchyard.component.camel.config.model.file.v1.V1CamelFileProducerBindingModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
@@ -28,8 +31,8 @@ import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 
 /**
- * A Marshaler that is able to read a {@link Configuration} and populate 
- * a {@link Model} corresponding to the configuration informations.
+ * A Marshaler that is able to read a {@link Configuration} and populate a
+ * {@link Model} corresponding to the configuration informations.
  * <p>
  * 
  * @author Daniel Bevenius
@@ -38,7 +41,8 @@ public class V1CamelModelMarshaller extends BaseMarshaller {
     /**
      * Sole constructor.
      * 
-     * @param desc The switchyard descriptor.
+     * @param desc
+     *            The switchyard descriptor.
      */
     public V1CamelModelMarshaller(final Descriptor desc) {
         super(desc);
@@ -47,9 +51,9 @@ public class V1CamelModelMarshaller extends BaseMarshaller {
     @Override
     public Model read(final Configuration config) {
         String name = config.getName();
-        
+
         if (name.startsWith(V1CamelFileBindingModel.BINDING)) {
-            
+
             if (name.endsWith(V1CamelFileBindingModel.FILE)) {
                 return new V1CamelFileBindingModel(config, getDescriptor());
             } else if (name.endsWith(V1CamelBindingModel.CAMEL)) {
@@ -58,15 +62,23 @@ public class V1CamelModelMarshaller extends BaseMarshaller {
                 return new V1AtomBindingModel(config, getDescriptor());
             }
         }
-            
+
+        if (name.endsWith(V1CamelFileBindingModel.CONSUME)) {
+            return new V1CamelFileConsumerBindingModel(config, getDescriptor());
+        }
+
+        if (name.endsWith(V1CamelFileBindingModel.PRODUCE)) {
+            return new V1CamelFileProducerBindingModel(config, getDescriptor());
+        }
+
         if (name.endsWith(V1OperationSelector.OPERATION_SELECTOR)) {
             return new V1OperationSelector(config, getDescriptor());
         }
-        
+
         if (name.startsWith(ComponentImplementationModel.IMPLEMENTATION)) {
             return new V1CamelImplementationModel(config, getDescriptor());
         }
-        
+
         return null;
     }
 

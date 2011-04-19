@@ -1,1 +1,1 @@
-class=org.switchyard.camel.component.SwitchyardComponent
+class=org.switchyard.component.camel.SwitchyardComponent

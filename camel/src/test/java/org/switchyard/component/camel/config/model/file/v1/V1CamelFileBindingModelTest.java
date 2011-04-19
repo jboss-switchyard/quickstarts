@@ -18,16 +18,20 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
-package org.switchyard.component.camel.config.model.v1;
+package org.switchyard.component.camel.config.model.file.v1;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 import org.junit.Test;
+import org.switchyard.common.type.Classes;
+import org.switchyard.component.camel.config.model.file.v1.V1CamelFileBindingModel;
+import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.Validation;
 import org.switchyard.config.model.composite.BindingModel;
@@ -47,15 +51,16 @@ public class V1CamelFileBindingModelTest {
         final Validation validateModel = bindingModel.validateModel();
         
         assertThat(validateModel.isValid(), is(true));
-        assertThat(bindingModel.getInputDir().toString(), is(equalTo(expectedDirectoryName())));
+        assertThat(bindingModel.getTargetDir().toString(), is(equalTo(expectedDirectoryName())));
     }
     
     private String expectedDirectoryName() {
-        return File.separator + "input" + File.separator + "directory";
+        return "/input/directory";
     }
     
     private V1CamelFileBindingModel getFirstCamelBinding(final String config) throws Exception {
-        final SwitchYardModel model = new ModelResource<SwitchYardModel>().pull(config, getClass());
+        final InputStream in = Classes.getResourceAsStream(config, getClass());
+        final SwitchYardModel model = new ModelResource<SwitchYardModel>().pull(in);
         final List<CompositeServiceModel> services = model.getComposite().getServices();
         final CompositeServiceModel compositeServiceModel = services.get(0);
         final List<BindingModel> bindings = compositeServiceModel.getBindings();

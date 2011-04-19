@@ -1,4 +1,4 @@
-package org.switchyard.camel.component;
+package org.switchyard.component.camel;
 
 import static org.switchyard.component.camel.deploy.ComponentNameComposer.componseSwitchYardServiceName;
 

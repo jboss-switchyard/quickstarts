@@ -29,7 +29,6 @@ MA  02110-1301, USA.
     <import namespace="http://www.springframework.org/schema/beans" schemaLocation="spring-beans-2.0.xsd"/>
     <import namespace="http://camel.apache.org/schema/spring" schemaLocation="camel-spring.xsd"/>
     
-    
     <!-- camel:binding.xxx -->
     <element name="binding.camel" type="camel:CamelBindingType" substitutionGroup="sca:binding"/>
     <complexType name="CamelBindingType">
@@ -48,8 +47,15 @@ MA  02110-1301, USA.
         <complexContent>
             <extension base="sca:Binding">
                 <sequence>
-                    <element name="operationSelector" type="camel:CamelOperationSelectorType"/>
-                    <element name="inputDir" type="string"/>
+                	<element name="operationSelector" type="camel:CamelOperationSelectorType"/>
+                    <element name="targetDir" type="string"/>
+                    <element name="autoCreate" type="boolean" minOccurs="0" maxOccurs="1"/>
+           			<element name="bufferSize" type="integer" minOccurs="0" maxOccurs="1"/>
+    	    		<element name="fileName" type="string" minOccurs="0" maxOccurs="1"/>
+    	    		<element name="flatten" type="boolean" minOccurs="0" maxOccurs="1"/>
+     	    		<element name="charset" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="consume" type="camel:FileConsumerType" minOccurs="0" maxOccurs="1"/>
+                    <element name="produce" type="camel:FileProducerType" minOccurs="0" maxOccurs="1"/>
                 </sequence>
             </extension>
         </complexContent>
@@ -102,4 +108,46 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
     
+    <complexType name="FileConsumerType">
+    	<sequence>
+        	<element name="initialDelay" type="integer" minOccurs="0" maxOccurs="1"/>
+            <element name="delay" type="integer" minOccurs="0" maxOccurs="1"/>
+            <element name="useFixedDelay" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <element name="recursive" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <element name="delete" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <element name="noop" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <element name="preMove" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="move" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="moveFailed" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="include" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="exclude" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="idempotent" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <element name="idempotentRepository" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="inProgressRepository" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="filter" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="sorter" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="sortBy" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="readLock" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="readLockTimeout " type="long" minOccurs="0" maxOccurs="1"/>
+            <element name="readLockCheckInterval" type="integer" minOccurs="0" maxOccurs="1"/>
+            <element name="exclusiveReadLockStrategy" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="processStrategy" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="maxMessagesPerPoll" type="integer" minOccurs="0" maxOccurs="1"/>
+            <element name="startingDirectoryMustExist" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <element name="directoryMustExist" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <element name="doneFileName" type="string" minOccurs="0" maxOccurs="1"/>
+		</sequence>
+    </complexType>
+
+    <complexType name="FileProducerType">
+        <sequence>
+        	<element name="fileExist" type="string" minOccurs="0" maxOccurs="1"/>
+			<element name="tempPrefix" type="string" minOccurs="0" maxOccurs="1"/>
+			<element name="tempFileName" type="string" minOccurs="0" maxOccurs="1"/>
+			<element name="keepLastModified" type="boolean" minOccurs="0" maxOccurs="1"/>
+			<element name="eagerDeleteTargetFile" type="boolean" minOccurs="0" maxOccurs="1"/>
+			<element name="doneFileName" type="string" minOccurs="0" maxOccurs="1"/>
+		</sequence>
+    </complexType>
+
 </schema>

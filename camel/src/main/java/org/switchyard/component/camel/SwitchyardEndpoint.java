@@ -18,7 +18,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
-package org.switchyard.camel.component;
+package org.switchyard.component.camel;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
