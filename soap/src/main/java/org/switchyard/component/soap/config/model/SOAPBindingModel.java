@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.component.soap.PortName;
 import org.switchyard.config.Configuration;
+import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.v1.V1BindingModel;
 
@@ -37,7 +38,23 @@ public class SOAPBindingModel extends V1BindingModel {
      *  Prefix for SOAP Gateway Configuration.
      */
     public static final String SOAP = "soap";
-
+    
+    /**
+     * Default namespace for SOAP Gateway Configuration.
+     */
+    public static final String DEFAULT_NAMESPACE = 
+        "urn:switchyard-component-soap:config:1.0";
+    
+    /**
+     * Config property names.
+     */
+    private static final String WSDL = "wsdl";
+    private static final String PORT = "port";
+    private static final String SERVER_HOST = "serverHost";
+    private static final String SERVER_PORT = "serverPort";
+    private static final String COMPOSER = "composer";
+    private static final String DECOMPOSER = "decomposer";
+    
     private static final int DEFAULT_PORT = 8080;
 
     private PortName _port;
@@ -53,7 +70,8 @@ public class SOAPBindingModel extends V1BindingModel {
      * Constructor.
      */
     public SOAPBindingModel() {
-        super(SOAP);
+        super(SOAP, DEFAULT_NAMESPACE);
+        setModelChildrenOrder(WSDL, PORT, SERVER_HOST, SERVER_PORT, COMPOSER, DECOMPOSER);
     }
 
     /**
@@ -73,7 +91,7 @@ public class SOAPBindingModel extends V1BindingModel {
      */
     public PortName getPort() {
         if (_port == null) {
-            Configuration childConfig = getModelConfiguration().getFirstChild("port");
+            Configuration childConfig = getModelConfiguration().getFirstChild(PORT);
             if (childConfig != null) {
                 _port = new PortName(childConfig.getValue());
             } else {
@@ -99,7 +117,7 @@ public class SOAPBindingModel extends V1BindingModel {
      */
     public String getWsdl() {
         if (_wsdl == null) {
-            Configuration childConfig = getModelConfiguration().getFirstChild("wsdl");
+            Configuration childConfig = getModelConfiguration().getFirstChild(WSDL);
             if (childConfig != null) {
                 _wsdl = childConfig.getValue();
             }
@@ -114,6 +132,14 @@ public class SOAPBindingModel extends V1BindingModel {
      */
     public void setWsdl(String wsdl) {
         this._wsdl = wsdl;
+        Configuration childConfig = getModelConfiguration().getFirstChild(WSDL);
+        if (childConfig == null) {
+            ValueModel portConfig = new ValueModel(WSDL);
+            portConfig.setValue(wsdl);
+            setChildModel(portConfig);
+        } else {
+            childConfig.setValue(wsdl);
+        }
     }
 
     /**
@@ -146,7 +172,7 @@ public class SOAPBindingModel extends V1BindingModel {
      */
     public String getServerHost() {
         if (_serverHost == null) {
-            Configuration childConfig = getModelConfiguration().getFirstChild("serverHost");
+            Configuration childConfig = getModelConfiguration().getFirstChild(SERVER_HOST);
             if (childConfig == null) {
                 _serverHost = "localhost";
             } else {
@@ -176,7 +202,7 @@ public class SOAPBindingModel extends V1BindingModel {
      */
     public int getServerPort() {
         if (_serverPort == -1) {
-            Configuration childConfig = getModelConfiguration().getFirstChild("serverPort");
+            Configuration childConfig = getModelConfiguration().getFirstChild(SERVER_PORT);
             if (childConfig == null) {
                 _serverPort = DEFAULT_PORT;
             } else {
@@ -195,6 +221,14 @@ public class SOAPBindingModel extends V1BindingModel {
      */
     public void setServerPort(int serverPort) {
         this._serverPort = serverPort;
+        Configuration childConfig = getModelConfiguration().getFirstChild(SERVER_PORT);
+        if (childConfig == null) {
+            ValueModel portConfig = new ValueModel(SERVER_PORT);
+            portConfig.setValue(String.valueOf(serverPort));
+            setChildModel(portConfig);
+        } else {
+            childConfig.setValue(String.valueOf(serverPort));
+        }
     }
 
     /**
@@ -232,7 +266,7 @@ public class SOAPBindingModel extends V1BindingModel {
      */
     public String getComposer() {
         if (_composer == null) {
-            Configuration childConfig = getModelConfiguration().getFirstChild("composer");
+            Configuration childConfig = getModelConfiguration().getFirstChild(COMPOSER);
             if (childConfig != null) {
                 _composer = childConfig.getValue();
             }
@@ -256,7 +290,7 @@ public class SOAPBindingModel extends V1BindingModel {
      */
     public String getDecomposer() {
         if (_decomposer == null) {
-            Configuration childConfig = getModelConfiguration().getFirstChild("decomposer");
+            Configuration childConfig = getModelConfiguration().getFirstChild(DECOMPOSER);
             if (childConfig != null) {
                 _decomposer = childConfig.getValue();
             }
@@ -289,5 +323,24 @@ public class SOAPBindingModel extends V1BindingModel {
      */
     public Boolean getPublishAsWS() {
         return _publishAsWS;
+    }
+}
+
+class ValueModel extends BaseModel {
+    
+    public ValueModel(String name) {
+        super(new QName(SOAPBindingModel.DEFAULT_NAMESPACE, name));
+    }
+    
+    public ValueModel(Configuration config) {
+        super(config);
+    }
+    
+    public String getValue() {
+        return super.getModelValue();
+    }
+    
+    public void setValue(String value) {
+        super.setModelValue(value);
     }
 }

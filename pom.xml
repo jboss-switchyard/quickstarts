@@ -56,6 +56,9 @@
         <module>soap</module>
         <module>tests</module>
         <module>camel</module>
+        <module>tools/forge/bean</module>
+        <module>tools/forge/camel</module>
+        <module>tools/forge/soap</module>
     </modules>
 
     <repositories>
@@ -106,6 +109,11 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.switchyard.components</groupId>
+                <artifactId>switchyard-component-camel</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-runtime</artifactId>
                 <version>${project.version}</version>
@@ -124,6 +132,16 @@
                 <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-deploy-cdi</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.switchyard</groupId>
+              <artifactId>switchyard-forge-common</artifactId>
+              <version>${project.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.switchyard</groupId>
+              <artifactId>switchyard-forge-plugin</artifactId>
+              <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.switchyard</groupId>

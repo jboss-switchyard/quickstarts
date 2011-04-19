@@ -41,7 +41,14 @@ public class V1CamelImplementationModel extends V1ComponentImplementationModel i
     private static JAXBContext jaxbContext = createJAXBInstance();
     
     /**
-     * Sole constructor.
+     * Create a new CamelImplementationModel.
+     */
+    public V1CamelImplementationModel() {
+        super(CAMEL, DEFAULT_NAMESPACE);
+    }
+    
+    /**
+     * Create a CamelImplementationModel from the specified configuration and descriptor.
      * 
      * @param config The switchyard configuration instance.
      * @param desc The switchyard descriptor instance.

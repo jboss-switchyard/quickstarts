@@ -62,7 +62,14 @@ public class V1CamelBindingModel extends V1BaseCamelBindingModel {
     private URI _configURI;
     
     /**
-     * Sole constructor.
+     * Create a new CamelBindingModel.
+     */
+    public V1CamelBindingModel() {
+        super(CAMEL);
+    }
+    
+    /**
+     * Create a CamelBindingModel from the specified configuration and descriptor.
      * 
      * @param config The switchyard configuration instance.
      * @param desc The switchyard descriptor instance.

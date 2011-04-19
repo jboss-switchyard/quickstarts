@@ -20,6 +20,8 @@
  */
 package org.switchyard.component.camel.config.model.v1;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.component.camel.config.model.OperationSelector;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
@@ -33,6 +35,13 @@ import org.switchyard.config.model.Descriptor;
 public class V1OperationSelector extends OperationSelector {
     private String _operationName;
 
+    /**
+     * Create a new OperationSelector.
+     */
+    public V1OperationSelector() {
+        super(new QName(DEFAULT_NAMESPACE, OPERATION_SELECTOR));
+    }
+    
     protected V1OperationSelector(Configuration config, Descriptor desc) {
         super(config, desc);
     }

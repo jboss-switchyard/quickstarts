@@ -36,7 +36,15 @@ public abstract class V1BaseCamelBindingModel extends V1BindingModel implements 
     private OperationSelector _operationSelector;
     
     /**
-     * Sole constructor.
+     * Create a new CamelBindingModel.
+     * @param type binding type
+     */
+    public V1BaseCamelBindingModel(String type) {
+        super(type, CamelBindingModel.DEFAULT_NAMESPACE);
+    }
+    
+    /**
+     * Create a CamelBindingModel from the specified configuration and descriptor.
      * 
      * @param config The switchyard configuration instance.
      * @param desc The switchyard descriptor instance.

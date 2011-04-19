@@ -20,6 +20,8 @@
  */
 package org.switchyard.component.camel.config.model;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
@@ -38,6 +40,11 @@ public abstract class OperationSelector extends BaseModel {
     public static final String OPERATION_SELECTOR = "operationSelector";
     
     /**
+     * The names space for the camel config model.
+     */
+    public static final String DEFAULT_NAMESPACE = "urn:switchyard-component-camel:config:1.0";
+    
+    /**
      * The 'operationName' attribute.
      */
     public static final String OPERATION_NAME = "operationName";
@@ -47,13 +54,20 @@ public abstract class OperationSelector extends BaseModel {
     }
     
     /**
-     * Sole constructor.
+     * Create a OperationSelector from the specified configuration and descriptor.
      * 
      * @param config The switchyard configuration instance.
      * @param desc The switchyard descriptor instance.
      */
     public OperationSelector(Configuration config, Descriptor desc) {
         super(config, desc);
+    }
+    
+    /**
+     * Create a new CamelImplementationModel.
+     */
+    protected OperationSelector(QName name) {
+        super(name);
     }
 
     /**
