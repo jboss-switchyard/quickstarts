@@ -55,10 +55,10 @@ public class TypeTransformationTest extends SwitchYardTestCase {
 
     @Test
     public void testTransformJavaToXML() throws Exception {
-        Order testOrder = new Order()
-            .setOrderId("PO-19838-XYZ")
-            .setItemId("BUTTER")
-            .setQuantity(100);
+        Order testOrder = new Order();
+        testOrder.setOrderId("PO-19838-XYZ");
+        testOrder.setItemId("BUTTER");
+        testOrder.setQuantity(100);
 
         Element result = newInvoker("OrderService")
             .operation("submitOrder")

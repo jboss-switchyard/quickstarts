@@ -15,4 +15,11 @@
             </soap:binding.soap>
         </sca:service>
     </sca:composite>
+
+    <transforms xmlns:trans="urn:switchyard-config:transform:1.0">
+        <trans:transform.java from="java:java.util.Map"
+                              to="java:org.switchyard.quickstarts.m1app.Order"
+                              class="org.switchyard.transform.ootb.map.FromMapToJava"/>
+    </transforms>
+
 </switchyard>
