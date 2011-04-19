@@ -63,7 +63,10 @@ public class CamelResponseHandler implements ExchangeHandler {
 
     @Override
     public void handleFault(final Exchange exchange) {
-        //TODO: Implement fault handling.
+        final Object content = exchange.getMessage().getContent();
+        if (content instanceof Throwable) {
+            _camelExchange.setException((Throwable)content);
+        }
     }
 
 }

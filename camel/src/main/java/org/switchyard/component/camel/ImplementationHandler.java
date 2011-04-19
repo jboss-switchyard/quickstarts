@@ -23,6 +23,7 @@ package org.switchyard.component.camel;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -107,6 +108,7 @@ public class ImplementationHandler implements ExchangeHandler {
     public void handleMessage(final Exchange switchyardExchange) throws HandlerException {
         final org.apache.camel.Exchange camelExchange = createCamelExchange(switchyardExchange);
         invokeCamelProcessor(camelExchange);
+        handleExceptionsFromCamel(camelExchange);
             
         if (isInOut(switchyardExchange)) {
             sendResponse(camelExchange, switchyardExchange);
@@ -125,6 +127,23 @@ public class ImplementationHandler implements ExchangeHandler {
             _consumer.getProcessor().process(camelExchange);
         } catch (final Exception e) {
             throw new HandlerException(e); 
+        }
+    }
+    
+    /**
+     * @param camelExchange The Camel Exchange which will be checked for exception or a fault.
+     * @throws HandlerException if the Camel {@link Exchange} has an exception set upon it, or if the Out Camel
+     * Message body contains a fault.
+     */
+    private void handleExceptionsFromCamel(final org.apache.camel.Exchange camelExchange) throws HandlerException {
+        final Exception camelException = camelExchange.getException();
+        if (camelException != null) {
+            throw new HandlerException(camelException);
+        }
+
+        final Message message = camelExchange.getOut();
+        if (message.isFault()) {
+            throw new HandlerException(message.getBody(String.class));
         }
     }
     
