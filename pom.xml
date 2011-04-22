@@ -27,8 +27,8 @@
     <module>tools/maven/plugins/switchyard</module>
     <module>deploy/base</module>
     <module>deploy/cdi</module>
-    <module>deploy/jboss-as6</module>
-    <module>deploy/build</module>
+    <module>deploy/jboss-as6/deployer</module>
+    <module>deploy/jboss-as6/build</module>
     <module>deploy/jboss-as7/extension</module>
     <module>deploy/jboss-as7/build</module>
     <module>tools/maven/archetypes/application</module>
@@ -168,6 +168,11 @@
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
             <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <version>2.5</version>
         </dependency>
     </dependencies>
   </dependencyManagement>
