@@ -25,19 +25,16 @@ public class Order {
     private String _itemId;
     private int _quantity;
     
-    public Order setItemId(String itemId) {
+    public void setItemId(String itemId) {
         _itemId = itemId;
-        return this;
     }
     
-    public Order setOrderId(String orderId) {
+    public void setOrderId(String orderId) {
         _orderId = orderId;
-        return this;
     }
 
-    public Order setQuantity(int quantity) {
+    public void setQuantity(int quantity) {
         _quantity = quantity;
-        return this;
     }
 
     public String getOrderId() {
