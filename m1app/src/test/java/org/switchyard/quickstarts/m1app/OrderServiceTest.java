@@ -30,10 +30,10 @@ public class OrderServiceTest extends SwitchYardTestCase {
 
     @Test
     public void testOrderAccepted() throws Exception {
-        Order testOrder = new Order()
-            .setOrderId("ORDER01")
-            .setItemId("BUTTER")
-            .setQuantity(100);
+        Order testOrder = new Order();
+        testOrder.setOrderId("ORDER01");
+        testOrder.setItemId("BUTTER");
+        testOrder.setQuantity(100);
         
         OrderAck testAck = newInvoker("OrderService")
             .operation("submitOrder")
