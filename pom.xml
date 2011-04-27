@@ -77,9 +77,11 @@
       <url>https://repository.jboss.org/nexus/content/groups/public/</url>
       <layout>default</layout>
       <releases>
+          <enabled>true</enabled>
         <updatePolicy>never</updatePolicy>
       </releases>
       <snapshots>
+          <enabled>true</enabled>
         <updatePolicy>never</updatePolicy>
       </snapshots>
     </repository>
@@ -87,6 +89,26 @@
       <id>protostuff-repo</id>
       <name>protostuff-repo</name>
       <url>http://protostuff.googlecode.com/svn/repos/maven2</url>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+        <snapshots>
+          <enabled>false</enabled>
+          <updatePolicy>never</updatePolicy>
+        </snapshots>
+    </repository>
+      <repository>
+      <id>codehaus.m2.snapshots</id>
+      <url>http://snapshots.repository.codehaus.org</url>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
     </repository>
   </repositories>
   <pluginRepositories>
