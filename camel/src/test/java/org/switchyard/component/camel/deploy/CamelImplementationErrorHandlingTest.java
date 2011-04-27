@@ -24,8 +24,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.switchyard.component.camel.deploy.support.CustomException;
 import org.switchyard.test.InvocationFaultException;
 import org.switchyard.test.SwitchYardTestCase;
 import org.switchyard.test.SwitchYardTestCaseConfig;
@@ -41,6 +46,9 @@ import org.switchyard.test.mixins.CDIMixIn;
 @SwitchYardTestCaseConfig(config = "switchyard-activator-impl-error.xml", mixins = CDIMixIn.class)
 public class CamelImplementationErrorHandlingTest extends SwitchYardTestCase {
     
+    @Rule
+    public SwitchYardExpectedException thrown = SwitchYardExpectedException.none();
+    
     @Before
     public void setupMockEndpoint() {
         final CamelContext camelContext = CamelActivator.getCamelContext();
@@ -48,17 +56,17 @@ public class CamelImplementationErrorHandlingTest extends SwitchYardTestCase {
         endpoint.whenAnyExchangeReceived(new ExceptionThrowingProcesor());
     }
 
-    @Test (expected = InvocationFaultException.class)
+    @Test 
     public void shouldThrowRuntimeExceptionFromCamelRoute() throws Exception {
+        thrown.expect(CustomException.class);
+        thrown.expectMessage("dummy exception");
         newInvoker("OrderService").operation("getTitleForItem").sendInOut("10");
     }
     
-    private class ExceptionThrowingProcesor implements Processor
-    {
+    private class ExceptionThrowingProcesor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception
-        {
-            throw new Exception("dummy exception");
+        public void process(Exchange exchange) throws Exception {
+            throw new CustomException("dummy exception");
         }
     }
 }

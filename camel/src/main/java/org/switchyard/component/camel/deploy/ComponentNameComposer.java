@@ -20,6 +20,8 @@
  */
 package org.switchyard.component.camel.deploy;
 
+import java.net.URI;
+
 import javax.xml.namespace.QName;
 
 /**
@@ -33,7 +35,7 @@ public final class ComponentNameComposer {
     /**
      *Component name used for endpoint URIs.
      */
-    public static final String COMPONENT_NAME = "switchyard";
+    public static final String SWITCHYARD_COMPONENT_NAME = "switchyard";
     
     private ComponentNameComposer() {
     }
@@ -42,15 +44,27 @@ public final class ComponentNameComposer {
      * Creates a Camel endpoint URI based on the component and service name.  
      * Returns a String that has the format:
      * <pre>
-     * {@value #COMPONENT_NAME}://serviceName.getLocalPart()
+     * {@value #SWITCHYARD_COMPONENT_NAME}://serviceName.getLocalPart()
      * </pre>
      * @param serviceName SwitchYard service name
      * @return camel endpoint URI based on component and service name
      */
     public static String composeComponenUri(final QName serviceName) {
         final StringBuilder sb = new StringBuilder();
-        sb.append(COMPONENT_NAME).append("://").append(serviceName.getLocalPart());
+        sb.append(SWITCHYARD_COMPONENT_NAME).append("://").append(serviceName.getLocalPart());
         return sb.toString();
+    }
+    
+    /**
+     * Composes a SwitchYard service name, a QName, from the passed-in string uri.
+     * 
+     * @param uri a string uri.
+     * @return QName a SwitchYard service name
+     */
+    public static QName componseSwitchYardServiceName(final String uri) {
+        final URI create = URI.create(uri);
+        final String path = create.getAuthority();
+        return new QName(path);
     }
     
 }

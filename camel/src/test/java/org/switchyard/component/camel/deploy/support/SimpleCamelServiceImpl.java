@@ -28,6 +28,7 @@ import org.switchyard.component.bean.Service;
 @Service(SimpleCamelService.class)
 public class SimpleCamelServiceImpl implements SimpleCamelService {
     
+    
     @Override
     public String print(Object msg) {
         System.out.println("SimpleCamelServiceImpl: " + msg);

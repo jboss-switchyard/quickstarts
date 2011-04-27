@@ -32,10 +32,12 @@ import javax.xml.namespace.QName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.RouteDefinition;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceReference;
-import org.switchyard.camel.component.SwitchyardEndpointStrategy;
-import org.switchyard.component.camel.ImplementationHandler;
+import org.switchyard.camel.component.SwitchYardConsumer;
+import org.switchyard.camel.component.SwitchyardEndpoint;
 import org.switchyard.component.camel.InboundHandler;
 import org.switchyard.component.camel.OutboundHandler;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
@@ -64,7 +66,7 @@ public class CamelActivator extends BaseActivator {
     
     private Map<QName, Set<InboundHandler>> _bindings = new HashMap<QName, Set<InboundHandler>>();
     private Map<QName, Set<OutboundHandler>> _references = new HashMap<QName, Set<OutboundHandler>>();
-    private Map<QName, ImplementationHandler> _implementations = new HashMap<QName, ImplementationHandler>();
+    private Map<QName, SwitchYardConsumer> _implementations = new HashMap<QName, SwitchYardConsumer>();
     
     private static ThreadLocal<CamelContext> _camelContext = new ThreadLocal<CamelContext>();
     
@@ -124,13 +126,32 @@ public class CamelActivator extends BaseActivator {
         final ComponentImplementationModel implementation = getComponentImplementationModel(config);
         if (implementation instanceof CamelComponentImplementationModel) {
             final CamelComponentImplementationModel ccim = (CamelComponentImplementationModel) implementation;
-            final ImplementationHandler implHandler = new ImplementationHandler(_camelContext.get(), ccim);
-            _implementations.put(serviceName, implHandler);
-            return implHandler;
+            
+            try {
+                final String endpointUri = ComponentNameComposer.composeComponenUri(serviceName);
+                final RouteDefinition routeDef = addFromEndpointToRouteDefinition(ccim.getRoute(), endpointUri);
+                final CamelContext camelContext = _camelContext.get();
+                camelContext.addRouteDefinition(routeDef);
+                final SwitchyardEndpoint endpoint = (SwitchyardEndpoint) camelContext.getEndpoint(endpointUri);
+                final SwitchYardConsumer consumer = endpoint.getConsumer();
+                _implementations.put(serviceName, consumer);
+                return consumer;
+            } catch (final Exception e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
         }
         return null;
     }
-
+    
+    private RouteDefinition addFromEndpointToRouteDefinition(final RouteDefinition rd, final String fromEndpointUri) throws Exception {
+        final List<FromDefinition> inputs = rd.getInputs();
+        if (!inputs.isEmpty()) {
+            throw new RuntimeException("A Route must not define any 'from' endpoints as the 'from' endpoint will be created by SwithYard");
+        }
+        inputs.add(new FromDefinition(fromEndpointUri));
+        return rd;
+    }
+    
     private boolean isComponentService(final Model config) {
         return config instanceof ComponentServiceModel;
     }
@@ -250,9 +271,13 @@ public class CamelActivator extends BaseActivator {
     
     @Override
     public void start(final ServiceReference serviceReference) {
-        makeServiceReferenceAvailableToCamelSwitchyardComponent(serviceReference);
+        addServiceReference(serviceReference);
         startOutboundHandlers(serviceReference);
-        startImplementationHandler(serviceReference);
+    }
+    
+    private void addServiceReference(final ServiceReference serviceReference) {
+        final QName serviceName = serviceReference.getName();
+        ServiceReferences.add(serviceName, serviceReference);
     }
     
     private void startOutboundHandlers(final ServiceReference serviceReference) {
@@ -268,21 +293,6 @@ public class CamelActivator extends BaseActivator {
         }
     }
     
-    private void startImplementationHandler(final ServiceReference serviceReference) {
-        final ImplementationHandler implementationHandler = _implementations.get(serviceReference.getName());
-        if (implementationHandler != null) {
-            try {
-                implementationHandler.start(serviceReference);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-    
-    private void makeServiceReferenceAvailableToCamelSwitchyardComponent(ServiceReference reference) {
-        getCamelContext().addRegisterEndpointCallback(new SwitchyardEndpointStrategy(reference));
-    }
-    
     @Override
     public void stop(ServiceReference serviceReference) {
         final Set<InboundHandler> handlers = _bindings.get(serviceReference.getName());
@@ -296,10 +306,12 @@ public class CamelActivator extends BaseActivator {
                 }
             }
         }
+        ServiceReferences.remove(serviceReference.getName());
     }
 
     @Override
     public void destroy(ServiceReference service) {
+        ServiceReferences.clear();
     }
 
     /**

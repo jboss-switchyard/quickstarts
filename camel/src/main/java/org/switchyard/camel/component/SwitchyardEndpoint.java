@@ -22,47 +22,39 @@ package org.switchyard.camel.component;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.impl.ProcessorEndpoint;
-import org.switchyard.ServiceReference;
+import org.apache.camel.Producer;
+import org.apache.camel.impl.DefaultEndpoint;
 
 /**
  * A Camel Endpoint that is a simple {@link ProcessorEndpoint}.
  * 
- * This adds the ability to set a SwitchYard {@link ServiceReference} on 
- * the underlying processor, giving it access to the target service of the
- * {@link SwitchyardProcessor}.
- * 
  * @author Daniel Bevenius
  *
  */
-public class SwitchyardEndpoint extends ProcessorEndpoint {
+public class SwitchyardEndpoint extends DefaultEndpoint {
+    /**
+     * Producer property.
+     */
+    private String _operationName;
     
-    private SwitchyardProcessor _processor;
-    private DefaultConsumer _consumer;
+    /**
+     * SwitchYard Consumer that handles events from SwitchYard and delegates
+     * to the Camel processors.
+     */
+    private SwitchYardConsumer _consumer;
     
     /**
      * Sole constructor.
      * 
      * @param endpointUri The uri of the Camel endpoint. 
      * @param component The {@link SwitchyardComponent}.
-     * @param processor The {@link SwitchyardProcessor}.
+     * @param operationName The operation name that a Producer requires
      */
-    public SwitchyardEndpoint(String endpointUri, SwitchyardComponent component, SwitchyardProcessor processor) {
-        super(endpointUri, component, processor);
-        _processor = processor;
+    public SwitchyardEndpoint(final String endpointUri, final SwitchyardComponent component, final String operationName) {
+        super(endpointUri, component);
+        _operationName = operationName;
     }
 
-    /**
-     * Passes through the {@link ServiceReference} reference to the underlying {@link SwitchyardProcessor}
-     * giving it access to the target service.
-     * 
-     * @param serviceReference The {@link ServiceReference} of {@link SwitchyardProcessor} target service.
-     */
-    public void setServiceReference(final ServiceReference serviceReference) {
-        _processor.setServiceReference(serviceReference);
-    }
-    
     /**
      * Creates a event driven consumer as opposed to a polling consumer.
      * @param processor processor used by consumer
@@ -70,9 +62,12 @@ public class SwitchyardEndpoint extends ProcessorEndpoint {
      * @throws Exception error creating consumer
      */
     @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
-        _consumer = new DefaultConsumer(this, processor);
-        return _consumer;
+    public Consumer createConsumer(final Processor processor) throws Exception {
+        if (_operationName == null) {
+            _consumer = new SwitchYardConsumer(this, processor);
+            return _consumer;
+        }
+        return null;
     }
     
     /**
@@ -80,8 +75,18 @@ public class SwitchyardEndpoint extends ProcessorEndpoint {
      * 
      * @return {@link DefaultConsumer}
      */
-    public DefaultConsumer getConsumer() {
+    public SwitchYardConsumer getConsumer() {
         return _consumer;
     }
 
+    @Override
+    public Producer createProducer() throws Exception {
+        return new SwitchYardProducer(this, _operationName);
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
+    
 }

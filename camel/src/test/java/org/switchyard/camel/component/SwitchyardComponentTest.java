@@ -37,6 +37,7 @@ import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.ServiceReference;
+import org.switchyard.component.camel.deploy.ServiceReferences;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardTestCase;
@@ -58,15 +59,17 @@ public class SwitchyardComponentTest extends SwitchYardTestCase {
         _camelContext.addRoutes(createRouteBuilder());
         _template = _camelContext.createProducerTemplate();
         _camelContext.start();
+        ServiceReferences.clear();
     }
     
     @Test
     public void sendToSwitchyardInOut() throws Exception {
         final String expectedResponse = "replacedContent";
         final String payload = "bajja";
+        final InOnlyService inService = new InOnlyService("testServiceName");
         
-        ServiceReference serviceReference = getServiceDomain().registerService(new QName(_serviceName), new ResponseService(expectedResponse), new InOnlyService());
-        _camelContext.addRegisterEndpointCallback(new SwitchyardEndpointStrategy(serviceReference));
+        final ServiceReference serviceReference = getServiceDomain().registerService(new QName(_serviceName), new ResponseService(expectedResponse), inService);
+        ServiceReferences.add(serviceReference.getName(), serviceReference);
         
         final String response = (String) _template.requestBody("direct:input", payload);
         assertThat(response, is(equalTo(expectedResponse)));
@@ -75,9 +78,10 @@ public class SwitchyardComponentTest extends SwitchYardTestCase {
     @Test
     public void sendToSwitchyardInOnly() throws Exception {
         final String payload = "bajja";
-        MockHandler mockService = new MockHandler();
-        ServiceReference serviceReference = getServiceDomain().registerService(new QName(_serviceName), mockService, new InOnlyService());
-        _camelContext.addRegisterEndpointCallback(new SwitchyardEndpointStrategy(serviceReference));
+        final MockHandler mockService = new MockHandler();
+        final InOnlyService inService = new InOnlyService("testServiceName");
+        final ServiceReference serviceReference = getServiceDomain().registerService(new QName(_serviceName), mockService, inService);
+        ServiceReferences.add(serviceReference.getName(), serviceReference);
         
         _template.sendBody("direct:input", payload);
         

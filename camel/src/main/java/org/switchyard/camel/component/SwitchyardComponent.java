@@ -42,9 +42,9 @@ import org.apache.camel.impl.DefaultComponent;
 public class SwitchyardComponent extends DefaultComponent {
     
     @Override
-    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(final String uri, final String path, final Map<String, Object> parameters) throws Exception {
         final String operationName = (String) parameters.remove("operationName");
-        return new SwitchyardEndpoint(uri, this, new SwitchyardProcessor(operationName));
+        return new SwitchyardEndpoint(uri, this, operationName);
     }
     
 }

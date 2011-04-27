@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
 
+
 @Service(OrderService.class)
 public class OrderServiceImpl implements OrderService {
     

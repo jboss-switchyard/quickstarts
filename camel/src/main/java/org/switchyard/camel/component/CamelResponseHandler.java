@@ -20,12 +20,17 @@
  */
 package org.switchyard.camel.component;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
+import org.switchyard.ServiceReference;
+import org.switchyard.component.camel.deploy.ServiceReferences;
+import org.switchyard.metadata.java.JavaService;
 
 /**
- * A CamelResponseHandler is responsible for passing back result data from Apache Camel data to
+ * A CamelResponseHandler is responsible for passing back result data from Apache Camel to
  * SwitchYard.
  * 
  * By given access to the CamelExchange this ExchangeHandler can extract the SwitchYard payload
@@ -37,14 +42,23 @@ import org.switchyard.HandlerException;
 public class CamelResponseHandler implements ExchangeHandler {
     
     private final org.apache.camel.Exchange _camelExchange;
+    private final ServiceReference _reference;
 
     /**
      * Sole constructor.
      * 
      * @param camelExchange The Camel {@link org.apache.camel.Exchange}
+     * @param reference The SwitchYard ServiceReference.
      */
-    public CamelResponseHandler(final org.apache.camel.Exchange camelExchange) {
-        this._camelExchange = camelExchange;
+    public CamelResponseHandler(final org.apache.camel.Exchange camelExchange, final ServiceReference reference) {
+        if (camelExchange ==  null) {
+            throw new RuntimeException("[camelExchange] argument must not be null");
+        }
+        if (reference == null) {
+            throw new RuntimeException("[reference] argument must not be null");
+        }
+        _camelExchange = camelExchange;
+        _reference = reference;
     }
 
     /**
@@ -57,8 +71,17 @@ public class CamelResponseHandler implements ExchangeHandler {
      */
     @Override
     public void handleMessage(final Exchange switchYardExchange) throws HandlerException {
-        final Object payload = switchYardExchange.getMessage().getContent();
+        final Object payload = getPayloadFromSwitchYardExchange(switchYardExchange);
         _camelExchange.getIn().setBody(payload);
+    }
+    
+    private Object getPayloadFromSwitchYardExchange(final Exchange switchYardExchange) {
+        final QName outputType = ServiceReferences.getOutputTypeForExchange(_reference, switchYardExchange);
+        if (outputType != null) {
+            return switchYardExchange.getMessage().getContent(JavaService.toJavaMessageType(outputType));
+        }
+        
+        return switchYardExchange.getMessage().getContent();
     }
 
     @Override
