@@ -56,10 +56,11 @@
         <module>soap</module>
         <module>tests</module>
         <module>camel</module>
+        <module>clojure</module>
         <module>tools/forge/bean</module>
         <module>tools/forge/camel</module>
+        <module>tools/forge/clojure</module>
         <module>tools/forge/soap</module>
-        <module>clojure</module>
     </modules>
 
     <repositories>
