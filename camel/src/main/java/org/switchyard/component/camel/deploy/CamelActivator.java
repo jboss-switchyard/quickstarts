@@ -24,12 +24,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceReference;
 import org.switchyard.camel.component.SwitchyardEndpointStrategy;
@@ -66,6 +68,8 @@ public class CamelActivator extends BaseActivator {
     
     private static ThreadLocal<CamelContext> _camelContext = new ThreadLocal<CamelContext>();
     
+    private PackageScanClassResolver _packageScanClassResolver;
+    
     /**
      * Creates a new activator for Camel endpoint types.
      */
@@ -74,6 +78,10 @@ public class CamelActivator extends BaseActivator {
                 CAMEL_TYPE, 
                 DIRECT_TYPE, 
                 FILE_TYPE});
+        final ServiceLoader<PackageScanClassResolver> resolverLoaders = ServiceLoader.load(PackageScanClassResolver.class);
+        for (PackageScanClassResolver packageScanClassResolver : resolverLoaders) {
+            _packageScanClassResolver = packageScanClassResolver;
+        }
     }
     
     /**
@@ -164,7 +172,10 @@ public class CamelActivator extends BaseActivator {
             setCamelContext(new DefaultCamelContext());
         }
         try {
-            CamelContext camelContext = getCamelContext();
+            final CamelContext camelContext = getCamelContext();
+            if (_packageScanClassResolver != null) {
+                camelContext.setPackageScanClassResolver(_packageScanClassResolver);
+            }
             camelContext.start();
         } catch (Exception e1) {
             throw new IllegalStateException(e1);

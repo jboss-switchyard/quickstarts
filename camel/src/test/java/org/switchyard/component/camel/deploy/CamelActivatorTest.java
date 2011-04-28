@@ -21,12 +21,15 @@
 package org.switchyard.component.camel.deploy;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.junit.Test;
+import org.switchyard.component.camel.deploy.support.CustomPackageScanResolver;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.SwitchYardTestCase;
@@ -53,6 +56,13 @@ public class CamelActivatorTest extends SwitchYardTestCase {
         producerTemplate.sendBody("direct://input2", "dummy payload");
         assertOneMessage(mockHandler, "dummy payload");
     }
+    
+    @Test
+    public void setCustomClassPathResolver() {
+        final CamelContext camelContext = CamelActivator.getCamelContext();
+        final PackageScanClassResolver p = camelContext.getPackageScanClassResolver();
+        assertThat(p, is(instanceOf(CustomPackageScanResolver.class)));
+   }
     
     private void assertOneMessage(final MockHandler mockHandler, final String expectedPayload)
     {
