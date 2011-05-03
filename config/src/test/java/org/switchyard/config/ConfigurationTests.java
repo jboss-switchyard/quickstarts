@@ -56,24 +56,24 @@ public class ConfigurationTests {
     public void testMerge() throws Exception {
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff;
-        String from_overrides_to_xml = new StringResource().pull(FROM_OVERRIDES_TO_XML);
+        String from_overrides_to_xml = new StringResource().pull(FROM_OVERRIDES_TO_XML, getClass());
         diff = XMLUnit.compareXML(from_overrides_to_xml, merge(true));
         Assert.assertTrue(diff.toString(), diff.identical());
-        String from_doesnt_override_to_xml = new StringResource().pull(FROM_DOESNT_OVERRIDE_TO_XML);
+        String from_doesnt_override_to_xml = new StringResource().pull(FROM_DOESNT_OVERRIDE_TO_XML, getClass());
         diff = XMLUnit.compareXML(from_doesnt_override_to_xml, merge(false));
         Assert.assertTrue(diff.toString(), diff.identical());
     }
 
     private String merge(boolean fromOverridesTo) throws Exception {
-        Configuration from_config = new ConfigurationResource().pull(new ElementResource().pull(FROM_XML));
-        Configuration to_config = new ConfigurationResource().pull(new ElementResource().pull(TO_XML));
+        Configuration from_config = new ConfigurationResource().pull(new ElementResource().pull(FROM_XML, getClass()));
+        Configuration to_config = new ConfigurationResource().pull(new ElementResource().pull(TO_XML, getClass()));
         Configuration merged_config = Configurations.merge(from_config, to_config, fromOverridesTo).setChildrenOrder("my", "his", "mythology").orderChildren();
         return merged_config.toString();
     }
 
     @Test
     public void testParenthood() throws Exception {
-        Configuration parent = new ConfigurationResource().pull(new ElementResource().pull(NAMESPACES_XML));
+        Configuration parent = new ConfigurationResource().pull(new ElementResource().pull(NAMESPACES_XML, getClass()));
         Assert.assertFalse(parent.hasParent());
         Assert.assertNull(parent.getParent());
         Configuration child = parent.getFirstChild("two");
@@ -95,7 +95,7 @@ public class ConfigurationTests {
 
     @Test
     public void testNamespaceCollections() throws Exception {
-        Configuration config = new ConfigurationResource().pull(new ElementResource().pull(NAMESPACES_XML));
+        Configuration config = new ConfigurationResource().pull(new ElementResource().pull(NAMESPACES_XML, getClass()));
         Set<String> n_set = config.getNamespaces();
         Assert.assertEquals(4, n_set.size());
         Map<String,String> np_map = config.getNamespacePrefixMap();
@@ -106,7 +106,7 @@ public class ConfigurationTests {
 
     @Test
     public void testNamespacesValues() throws Exception {
-        Configuration config = new ConfigurationResource().pull(new ElementResource().pull(NAMESPACES_XML));
+        Configuration config = new ConfigurationResource().pull(new ElementResource().pull(NAMESPACES_XML, getClass()));
         Assert.assertEquals("http://a.org/a.xsd", config.getQName().getNamespaceURI());
         Assert.assertEquals("bar", config.getAttribute("foo"));
         Assert.assertEquals("stuff", config.getFirstChild("two").getValue());

@@ -85,7 +85,7 @@ public class TransformModelTests {
         transforms.addTransform(smooksTransform);
         switchyard.setTransforms(transforms);
         String new_xml = switchyard.toString();
-        String old_xml = new ModelResource<SwitchYardModel>().pull(XML).toString();
+        String old_xml = new ModelResource<SwitchYardModel>().pull(XML, getClass()).toString();
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(old_xml, new_xml);
         Assert.assertTrue(diff.toString(), diff.identical());
@@ -93,7 +93,7 @@ public class TransformModelTests {
 
     @Test
     public void testRead() throws Exception {
-        SwitchYardModel switchyard = _res.pull(XML);
+        SwitchYardModel switchyard = _res.pull(XML, getClass());
         TransformsModel transforms = switchyard.getTransforms();
         JavaTransformModel java_transform = (JavaTransformModel)transforms.getTransforms().get(0);
         Assert.assertEquals("msgA", java_transform.getFrom().getLocalPart());
@@ -109,7 +109,7 @@ public class TransformModelTests {
 
     @Test
     public void testWrite() throws Exception {
-        String old_xml = new StringResource().pull(XML);
+        String old_xml = new StringResource().pull(XML, getClass());
         SwitchYardModel switchyard = _res.pull(new StringReader(old_xml));
         String new_xml = switchyard.toString();
         XMLUnit.setIgnoreWhitespace(true);
@@ -119,7 +119,7 @@ public class TransformModelTests {
 
     @Test
     public void testParenthood() throws Exception {
-        SwitchYardModel switchyard_1 = _res.pull(XML);
+        SwitchYardModel switchyard_1 = _res.pull(XML, getClass());
         TransformsModel transforms_1 = switchyard_1.getTransforms();
         TransformModel transform = transforms_1.getTransforms().get(0);
         TransformsModel transforms_2 = transform.getTransforms();
@@ -130,7 +130,7 @@ public class TransformModelTests {
 
     @Test
     public void testValidation() throws Exception {
-        SwitchYardModel switchyard = _res.pull(XML);
+        SwitchYardModel switchyard = _res.pull(XML, getClass());
         Assert.assertTrue(switchyard.isModelValid());
     }
 

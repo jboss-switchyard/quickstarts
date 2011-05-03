@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
-import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -46,6 +45,7 @@ import javax.xml.validation.Validator;
 import org.switchyard.common.io.resource.PropertiesResource;
 import org.switchyard.common.io.resource.StringResource;
 import org.switchyard.common.type.Classes;
+import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.config.Configuration;
 import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
@@ -83,11 +83,41 @@ public final class Descriptor {
      * Constructs a new Descriptor based on discovered default properties.
      */
     public Descriptor() {
-        String dp = DEFAULT_PROPERTIES.substring(1);
+        addDefaultProperties();
+    }
+
+    /**
+     * Constructs a new Descriptor based on the specified properties.
+     * @param props the Properties
+     */
+    public Descriptor(Properties props) {
+        addProperties(props);
+    }
+
+    /**
+     * Adds discovered default properties.
+     */
+    public void addDefaultProperties() {
+        addDefaultProperties(Descriptor.class);
+    }
+
+    /**
+     * Adds discovered default properties using the classloader of the specified class.
+     * @param caller the class whose classloader should be used to look up the default properties
+     */
+    public void addDefaultProperties(Class<?> caller) {
+        addDefaultProperties(caller != null ? caller.getClassLoader() : null);
+    }
+
+    /**
+     * Adds discovered default properties using the specified classloader.
+     * @param loader the classloader to use to look up the default properties
+     */
+    public void addDefaultProperties(ClassLoader loader) {
         Properties props = new Properties();
         PropertiesResource props_res = new PropertiesResource();
         try {
-            List<URL> urls = Classes.getResources(dp, Descriptor.class);
+            List<URL> urls = Classes.getResources(DEFAULT_PROPERTIES, loader);
             for (URL url : urls) {
                 Properties url_props = props_res.pull(url);
                 Enumeration<?> pn_enum = url_props.propertyNames();
@@ -100,18 +130,10 @@ public final class Descriptor {
             // should never happen
             throw new RuntimeException(ioe);
         }
-        setProperties(props);
+        addProperties(props);
     }
 
-    /**
-     * Constructs a new Descriptor based on the specified properties.
-     * @param props the Properties
-     */
-    public Descriptor(Properties props) {
-        setProperties(props);
-    }
-
-    private void setProperties(Properties props) {
+    private void addProperties(Properties props) {
         Enumeration<?> e = props.propertyNames();
         while (e.hasMoreElements()) {
             String prop_name = (String)e.nextElement();
@@ -316,16 +338,17 @@ public final class Descriptor {
      * @return the appropriate Marshaller to use
      */
     public synchronized Marshaller getMarshaller(String namespace) {
+        if (namespace == null) {
+            return null;
+        }
         Marshaller marshaller = _namespace_marshaller_map.get(namespace);
         if (marshaller == null) {
-            String name = getProperty(MARSHALLER, namespace);
-            if (name != null) {
-                try {
-                    Class<?> clazz = Classes.forName(name, Descriptor.class);
-                    Constructor<?> cnstr = clazz.getConstructor(Descriptor.class);
-                    marshaller = (Marshaller)cnstr.newInstance(this);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+            String typeName = getProperty(MARSHALLER, namespace);
+            if (typeName != null) {
+                Class<?> type = Classes.forName(typeName, Descriptor.class);
+                marshaller = (Marshaller)Construction.construct(type, new Class<?>[]{Descriptor.class}, new Object[]{this});
+                if (marshaller != null) {
+                    _namespace_marshaller_map.put(namespace, marshaller);
                 }
             }
         }
@@ -424,7 +447,7 @@ public final class Descriptor {
             String schemaLocation = _descriptor.getSchemaLocation(namespaceURI, systemId);
             if (schemaLocation != null) {
                 try {
-                    String xsd = new StringResource().pull(schemaLocation);
+                    String xsd = new StringResource().pull(schemaLocation, getClass());
                     if (xsd != null) {
                         return new DescriptorLSInput(xsd, publicId, systemId, baseURI);
                     }

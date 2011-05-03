@@ -20,7 +20,6 @@
 package org.switchyard.config.model.switchyard;
 
 import java.io.StringReader;
-import java.util.List;
 
 import javax.xml.namespace.QName;
 
@@ -40,7 +39,6 @@ import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.test.soap.PortModel;
 import org.switchyard.config.model.composite.test.soap.SOAPBindingModel;
 import org.switchyard.config.model.domain.DomainModel;
-import org.switchyard.config.model.domain.PropertyModel;
 import org.switchyard.config.model.switchyard.test.java.JavaTransformModel;
 import org.switchyard.config.model.switchyard.test.smooks.SmooksConfigModel;
 import org.switchyard.config.model.switchyard.test.smooks.SmooksTransformModel;
@@ -76,18 +74,18 @@ public class SwitchYardModelTests {
 
     @Test
     public void testMerge() throws Exception {
-        SwitchYardModel incomplete_switchyard = _res.pull(INCOMPLETE_XML);
-        SwitchYardModel fragment_switchyard = _res.pull(FRAGMENT_XML);
+        SwitchYardModel incomplete_switchyard = _res.pull(INCOMPLETE_XML, getClass());
+        SwitchYardModel fragment_switchyard = _res.pull(FRAGMENT_XML, getClass());
         SwitchYardModel merged_switchyard = Models.merge(fragment_switchyard, incomplete_switchyard);
         XMLUnit.setIgnoreWhitespace(true);
-        SwitchYardModel complete_switchyard = _res.pull(COMPLETE_XML);
+        SwitchYardModel complete_switchyard = _res.pull(COMPLETE_XML, getClass());
         Diff diff = XMLUnit.compareXML(complete_switchyard.toString(), merged_switchyard.toString());
         Assert.assertTrue(diff.toString(), diff.identical());
     }
 
     @Test
     public void testReadComplete() throws Exception {
-        SwitchYardModel switchyard = _res.pull(COMPLETE_XML);
+        SwitchYardModel switchyard = _res.pull(COMPLETE_XML, getClass());
         CompositeModel composite = switchyard.getComposite();
         CompositeServiceModel service = composite.getServices().get(0);
         // Verify composite service binding
@@ -118,7 +116,7 @@ public class SwitchYardModelTests {
 
     @Test
     public void testWriteComplete() throws Exception {
-        String old_xml = new StringResource().pull(COMPLETE_XML);
+        String old_xml = new StringResource().pull(COMPLETE_XML, getClass());
         SwitchYardModel switchyard = _res.pull(new StringReader(old_xml));
         String new_xml = switchyard.toString();
         XMLUnit.setIgnoreWhitespace(true);
@@ -128,7 +126,7 @@ public class SwitchYardModelTests {
 
     @Test
     public void testValidation() throws Exception {
-        SwitchYardModel switchyard = _res.pull(COMPLETE_XML);
+        SwitchYardModel switchyard = _res.pull(COMPLETE_XML, getClass());
         Assert.assertTrue(switchyard.isModelValid());
     }
 

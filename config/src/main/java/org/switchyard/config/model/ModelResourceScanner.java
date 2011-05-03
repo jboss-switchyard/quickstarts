@@ -157,7 +157,7 @@ public class ModelResourceScanner<M extends Model> implements Scanner<M> {
         M model;
         switch (_type) {
             case RESOURCE:
-                model = new ModelResource<M>().pull(_resource);
+                model = new ModelResource<M>().pull(_resource, getClass());
                 break;
             case URI:
                 model = new ModelResource<M>().pull(_uri);

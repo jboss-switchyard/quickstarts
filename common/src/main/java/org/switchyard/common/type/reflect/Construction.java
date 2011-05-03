@@ -38,7 +38,27 @@ public final class Construction {
      * @return the new object
      */
     public static Object construct(String typeName) {
-        return construct(Classes.forName(typeName, Construction.class));
+        return construct(typeName, Construction.class);
+    }
+
+    /**
+     * Constructs a new object of the specified type name using it's no-arg constructor.
+     * @param typeName the class type name of the object
+     * @param caller the class calling this method (for classloading purposes)
+     * @return the new object
+     */
+    public static Object construct(String typeName, Class<?> caller) {
+        return construct(typeName, (ClassLoader)(caller != null ? caller.getClassLoader() : null));
+    }
+
+    /**
+     * Constructs a new object of the specified type name using it's no-arg constructor.
+     * @param typeName the class type name of the object
+     * @param loader the classloader to use for classloading
+     * @return the new object
+     */
+    public static Object construct(String typeName, ClassLoader loader) {
+        return construct(Classes.forName(typeName, loader));
     }
 
     /**
@@ -59,10 +79,34 @@ public final class Construction {
      * @return the new object
      */
     public static Object construct(String typeName, String[] paramTypeNames, Object[] params) {
-        Class<?> type = Classes.forName(typeName, Construction.class);
+        return construct(typeName, paramTypeNames, params, Construction.class);
+    }
+
+    /**
+     * Constructs a new object of the specified type name using a multi-arg constructor.
+     * @param typeName the class type name of the object
+     * @param paramTypeNames the type names of the params
+     * @param params the param objects
+     * @param caller the class calling this method (for classloading purposes)
+     * @return the new object
+     */
+    public static Object construct(String typeName, String[] paramTypeNames, Object[] params, Class<?> caller) {
+        return construct(typeName, paramTypeNames, params, (ClassLoader)(caller != null ? caller.getClassLoader() : null));
+    }
+
+    /**
+     * Constructs a new object of the specified type name using a multi-arg constructor.
+     * @param typeName the class type name of the object
+     * @param paramTypeNames the type names of the params
+     * @param params the param objects
+     * @param loader the classloader to use for classloading
+     * @return the new object
+     */
+    public static Object construct(String typeName, String[] paramTypeNames, Object[] params, ClassLoader loader) {
+        Class<?> type = Classes.forName(typeName, loader);
         Class<?>[] paramTypes = new Class<?>[paramTypeNames.length];
         for (int i=0; i < paramTypeNames.length; i++) {
-            paramTypes[i] = Classes.forName(paramTypeNames[i], Construction.class);
+            paramTypes[i] = Classes.forName(paramTypeNames[i], loader);
         }
         return construct(type, paramTypes, params);
     }

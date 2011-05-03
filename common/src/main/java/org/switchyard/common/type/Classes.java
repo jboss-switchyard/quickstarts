@@ -24,7 +24,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Utility class to properly load classes and find resources.
@@ -210,24 +212,40 @@ public final class Classes {
         return url != null ? url.openStream() : null;
     }
 
+    /**
+     * Provides a non-duplicate List of ClassLoaders in the most appropriate search order.
+     * @param loader a user-specified ClassLoader
+     * @return the non-duplicate List
+     */
     private static List<ClassLoader> getClassLoaders(ClassLoader loader) {
-        List<ClassLoader> loaders = new ArrayList<ClassLoader>(4);
+        // We won't ever have more than 5 ClassLoaders, so an initial
+        // capacity of 6 and a load factor of 1 means no re-hash ever.
+        Set<ClassLoader> loaders = new LinkedHashSet<ClassLoader>(6, 1f);
+        // 1. The current Thread context ClassLoader
         ClassLoader cl = getTCCL();
         if (cl != null) {
             loaders.add(cl);
         }
+        // 2. The specified ClassLoader
         if (loader != null) {
             loaders.add(loader);
         }
+        // 3. This util class' ClassLoader
         cl = Classes.class.getClassLoader();
         if (cl != null) {
             loaders.add(cl);
         }
+        // 4. The system ClassLoader (possibly via -Djava.system.class.loader)
+        cl = ClassLoader.getSystemClassLoader();
+        if (cl != null) {
+            loaders.add(cl);
+        }
+        // 5. The runtime ClassLoader (possibly different than the system ClassLoader)
         cl = Class.class.getClassLoader();
         if (cl != null) {
             loaders.add(cl);
         }
-        return loaders;
+        return new ArrayList<ClassLoader>(loaders);
     }
 
     /**
