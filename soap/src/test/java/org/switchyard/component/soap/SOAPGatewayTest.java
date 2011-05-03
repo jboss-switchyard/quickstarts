@@ -133,7 +133,7 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
         _domain = getServiceDomain();
         SOAPProvider provider = new SOAPProvider();
 
-        CompositeModel composite = _res.pull("/HelloSwitchYard.xml");
+        CompositeModel composite = _res.pull("/HelloSwitchYard.xml", getClass());
         /*
         Validation v = composite.validateModel();
         if (!v.isValid()) {

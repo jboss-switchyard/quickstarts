@@ -55,7 +55,7 @@ public class BeanModelTests {
 
     @Test
     public void testReadComplete() throws Exception {
-        SwitchYardModel switchyard = _res.pull(COMPLETE_XML);
+        SwitchYardModel switchyard = _res.pull(COMPLETE_XML, getClass());
         CompositeModel composite = switchyard.getComposite();
         ComponentModel component = composite.getComponents().get(0);
         ComponentImplementationModel implementation = component.getImplementation();
@@ -72,7 +72,7 @@ public class BeanModelTests {
 
     @Test
     public void testWriteComplete() throws Exception {
-        String old_xml = new StringResource().pull(COMPLETE_XML);
+        String old_xml = new StringResource().pull(COMPLETE_XML, getClass());
         SwitchYardModel switchyard = _res.pull(new StringReader(old_xml));
         String new_xml = switchyard.toString();
         XMLUnit.setIgnoreWhitespace(true);
@@ -82,7 +82,7 @@ public class BeanModelTests {
 
     @Test
     public void testValidation() throws Exception {
-        SwitchYardModel switchyard = _res.pull(COMPLETE_XML);
+        SwitchYardModel switchyard = _res.pull(COMPLETE_XML, getClass());
         Assert.assertTrue(switchyard.isModelValid());
     }
 
