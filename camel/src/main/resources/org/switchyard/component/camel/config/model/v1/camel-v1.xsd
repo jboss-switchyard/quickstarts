@@ -55,6 +55,28 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
     
+    
+    <element name="binding.atom" type="camel:CamelAtomBindingType" substitutionGroup="sca:binding"/>
+    <complexType name="CamelAtomBindingType" >
+        <complexContent>
+            <extension base="sca:Binding">
+                <sequence>
+                    <element name="operationSelector" type="camel:CamelOperationSelectorType"/>
+                    <element name="feedURI" type="anyURI"/>
+                    <element name="splitEntries" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="filter" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="lastUpdate" type="dateTime" minOccurs="0" maxOccurs="1"/>
+                    <element name="throttleEntries" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="feedHeader" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="sortEntries" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="consumer.delay" type="integer" minOccurs="0" maxOccurs="1"/>
+                    <element name="consumer.initialDelay" type="integer" minOccurs="0" maxOccurs="1"/>
+                    <element name="consumer.userFixedDelay" type="boolean" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <complexType name="CamelOperationSelectorType">
       <complexContent>
          <extension base="sca:OperationSelectorType">
