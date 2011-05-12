@@ -20,6 +20,10 @@ package org.switchyard.as7.extension;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.jboss.as.controller.BasicOperationResult;
 import org.jboss.as.controller.ModelAddOperationHandler;
 import org.jboss.as.controller.OperationContext;
@@ -32,7 +36,9 @@ import org.jboss.as.server.BootOperationHandler;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
+import org.jboss.modules.ModuleIdentifier;
 import org.switchyard.as7.extension.deployment.SwitchYardConfigDeploymentProcessor;
+import org.switchyard.as7.extension.deployment.SwitchYardConfigProcessor;
 import org.switchyard.as7.extension.deployment.SwitchYardDependencyProcessor;
 import org.switchyard.as7.extension.deployment.SwitchYardDeploymentProcessor;
 
@@ -57,12 +63,24 @@ public final class SwitchYardSubsystemAdd implements ModelAddOperationHandler, B
         if (context instanceof BootOperationContext) {
             final BootOperationContext bootContext = (BootOperationContext) context;
             LOG.info("Activating SwitchYard Extension");
+            List<ModuleIdentifier> modules = new ArrayList<ModuleIdentifier>();
+            if (operation.has(CommonAttributes.MODULES)) {
+                ModelNode opmodules = operation.get(CommonAttributes.MODULES);
+                final ModelNode subModel = context.getSubModel();
+                subModel.get(CommonAttributes.MODULES).set(opmodules);
+                Set<String> keys = opmodules.keys();
+                if (keys != null) {
+                    for (String current : keys) {
+                        modules.add(ModuleIdentifier.fromString(current));
+                    }
+                }
+            }
             int priority = 0x4000;
             bootContext.addDeploymentProcessor(Phase.PARSE, priority++, new SwitchYardConfigDeploymentProcessor());
-            bootContext.addDeploymentProcessor(Phase.DEPENDENCIES, priority++, new SwitchYardDependencyProcessor());
+            bootContext.addDeploymentProcessor(Phase.DEPENDENCIES, priority++, new SwitchYardDependencyProcessor(modules));
+            bootContext.addDeploymentProcessor(Phase.POST_MODULE, priority++, new SwitchYardConfigProcessor());
             bootContext.addDeploymentProcessor(Phase.INSTALL, priority++, new SwitchYardDeploymentProcessor());
         }
-        context.getSubModel().setEmptyObject();
         // Create the compensating operation
         final ModelNode compensatingOperation = Util.getResourceRemoveOperation(operation.require(OP_ADDR));
         resultHandler.handleResultComplete();

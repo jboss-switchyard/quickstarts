@@ -67,8 +67,12 @@ public class SwitchYardService implements Service<SwitchYardDeployment> {
             LOG.info("Starting SwitchYard service");
             _switchyardDeployment.start();
         } catch (Exception e) {
-            LOG.error(e);
-            _switchyardDeployment.stop();
+            try {
+                _switchyardDeployment.stop();
+            } catch (Exception ex) {
+                LOG.error(ex);
+            }
+            throw new StartException(e);
         } finally {
             NamespaceContextSelector.popCurrentSelector();
         }

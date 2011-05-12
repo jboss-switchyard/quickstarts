@@ -22,8 +22,17 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.DESCRIBE;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
+import static org.jboss.as.controller.parsing.ParseUtils.missingRequired;
+import static org.jboss.as.controller.parsing.ParseUtils.requireNoAttributes;
+import static org.jboss.as.controller.parsing.ParseUtils.requireNoContent;
+import static org.jboss.as.controller.parsing.ParseUtils.requireNoNamespaceAttribute;
+import static org.jboss.as.controller.parsing.ParseUtils.unexpectedAttribute;
+import static org.jboss.as.controller.parsing.ParseUtils.unexpectedElement;
+import static org.switchyard.as7.extension.CommonAttributes.MODULES;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -33,7 +42,6 @@ import org.jboss.as.controller.ExtensionContext;
 import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
-import org.jboss.as.controller.parsing.ParseUtils;
 import org.jboss.as.controller.persistence.SubsystemMarshallingContext;
 import org.jboss.as.controller.registry.ModelNodeRegistration;
 import org.jboss.as.controller.registry.OperationEntry;
@@ -86,19 +94,98 @@ public class SwitchYardExtension implements Extension {
         /** {@inheritDoc} */
         @Override
         public void readElement(final XMLExtendedStreamReader reader, final List<ModelNode> list) throws XMLStreamException {
-            // Require no attributes or content
-            ParseUtils.requireNoAttributes(reader);
-            ParseUtils.requireNoContent(reader);
-            list.add(createAddSubSystemOperation());
+            // Require no attributes
+            requireNoAttributes(reader);
+            ModelNode subsytem = createAddSubSystemOperation();
+            // Elements
+            while (reader.hasNext() && reader.nextTag() != END_ELEMENT) {
+                if (reader.getNamespaceURI().equals(SwitchYardExtension.NAMESPACE)) {
+                    final Element element = Element.forName(reader.getLocalName());
+                    switch (element) {
+                        case MODULES: 
+                            ModelNode modules = parseModulesElement(reader);
+                            if (modules != null) {
+                                subsytem.get(MODULES).set(modules);
+                            }
+                            break;
+                        default:
+                            throw unexpectedElement(reader);
+                    }
+                }
+            }
+
+            list.add(subsytem);
         }
 
         /** {@inheritDoc} */
         @Override
-        public void writeContent(final XMLExtendedStreamWriter streamWriter, final SubsystemMarshallingContext context) throws XMLStreamException {
+        public void writeContent(final XMLExtendedStreamWriter writer, final SubsystemMarshallingContext context) throws XMLStreamException {
             context.startSubsystemElement(SwitchYardExtension.NAMESPACE, false);
-            streamWriter.writeEndElement();
+            ModelNode node = context.getModelNode();
+            if (has(node, MODULES)) {
+                ModelNode modules = node.get(MODULES);
+                writer.writeStartElement(Element.MODULES.getLocalName());
+                Set<String> keys = modules.keys();
+                for (String current : keys) {
+                    writer.writeEmptyElement(Element.MODULE.getLocalName());
+                    writer.writeAttribute(Attribute.IDENTIFIER.getLocalName(), current);
+                }
+                writer.writeEndElement();
+            }
+            writer.writeEndElement();
         }
 
+        private boolean has(ModelNode node, String name) {
+            return node.has(name) && node.get(name).isDefined();
+        }
+
+        ModelNode parseModulesElement(XMLExtendedStreamReader reader) throws XMLStreamException {
+
+            // Handle attributes
+            requireNoAttributes(reader);
+
+            ModelNode modules = null;
+
+            // Handle elements
+            while (reader.hasNext() && reader.nextTag() != END_ELEMENT) {
+                if (reader.getNamespaceURI().equals(SwitchYardExtension.NAMESPACE)) {
+                    final Element element = Element.forName(reader.getLocalName());
+                    if (element == Element.MODULE) {
+                        if (modules == null) {
+                            modules = new ModelNode();
+                        }
+                        String identifier = null;
+                        final int count = reader.getAttributeCount();
+                        for (int i = 0; i < count; i++) {
+                            requireNoNamespaceAttribute(reader, i);
+                            final Attribute attribute = Attribute.forName(reader.getAttributeLocalName(i));
+                            switch (attribute) {
+                                case IDENTIFIER:
+                                    identifier = reader.getAttributeValue(i);
+                                    break;
+                                default:
+                                    throw unexpectedAttribute(reader, i);
+                            }
+                        }
+                        if (identifier == null) {
+                            throw missingRequired(reader, Collections.singleton(Attribute.IDENTIFIER));
+                        }
+                        if (modules.has(identifier)) {
+                            throw new XMLStreamException(element.getLocalName() + " already declared", reader.getLocation());
+                        }
+
+                        ModelNode module = new ModelNode();
+                        modules.get(identifier).set(module);
+
+                        requireNoContent(reader);
+                    } else {
+                        throw unexpectedElement(reader);
+                    }
+                }
+            }
+
+            return modules;
+        }
     }
 
 }

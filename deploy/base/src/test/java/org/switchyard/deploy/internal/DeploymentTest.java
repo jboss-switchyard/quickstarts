@@ -47,17 +47,17 @@ public class DeploymentTest {
     @Test
     public void testEmptySwitchYardConfiguration() throws Exception {
         InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-empty-01.xml", getClass());
-        Deployment deployment = new Deployment(ServiceDomainManager.createDomain(), swConfigStream);
+        Deployment deployment = new Deployment(swConfigStream);
 
-        deployment.init();
+        deployment.init(ServiceDomainManager.createDomain());
         deployment.destroy();
     }
     
     @Test
     public void testActivators() throws Exception {
         InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-mock-01.xml", getClass());
-        Deployment deployment = new Deployment(ServiceDomainManager.createDomain(), swConfigStream);
-        deployment.init();
+        Deployment deployment = new Deployment(swConfigStream);
+        deployment.init(ServiceDomainManager.createDomain());
         
         // Grab a reference to our activators
         MockActivator activator = (MockActivator)
@@ -76,9 +76,9 @@ public class DeploymentTest {
     @Test
     public void test_transform_registration() throws Exception {
         InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-transform-01.xml", getClass());
-        Deployment deployment = new Deployment(ServiceDomainManager.createDomain(), swConfigStream);
+        Deployment deployment = new Deployment(swConfigStream);
 
-        deployment.init();
+        deployment.init(ServiceDomainManager.createDomain());
 
         // Check that the transformers are deployed...
         ServiceDomain domain = deployment.getDomain();
@@ -96,8 +96,8 @@ public class DeploymentTest {
     @Test
     public void interfaceWSDL() throws Exception {
         InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-interface-wsdl-01.xml", getClass());
-        Deployment deployment = new Deployment(ServiceDomainManager.createDomain(), swConfigStream);
-        deployment.init();
+        Deployment deployment = new Deployment(swConfigStream);
+        deployment.init(ServiceDomainManager.createDomain());
         deployment.start();
 
         // FIXME: new QName("urn:switchyard-interface-wsdl", "HelloService") does not work

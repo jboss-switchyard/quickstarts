@@ -229,7 +229,7 @@ public abstract class SwitchYardTestCase {
     @Before
     public final void deploy() throws Exception {
         _deployment = createDeployment();
-        _deployment.init();
+        _deployment.init(ServiceDomainManager.createDomain());
         mixInBefore();
         _deployment.start();
     }
@@ -252,9 +252,9 @@ public abstract class SwitchYardTestCase {
      */
     protected AbstractDeployment createDeployment() throws Exception {
         if (_configModel != null) {
-            return new Deployment(ServiceDomainManager.createDomain(), _configModel);
+            return new Deployment(_configModel);
         } else {
-            return new SimpleTestDeployment(ServiceDomainManager.createDomain());
+            return new SimpleTestDeployment();
         }
     }
 

@@ -59,11 +59,11 @@ public class SwitchYardCDIDeployer implements Extension {
 
         if (swConfigStream != null) {
             try {
-                _deployment = new Deployment(ServiceDomainManager.createDomain(), swConfigStream);
+                _deployment = new Deployment(swConfigStream);
             } catch (java.io.IOException ioEx) {
                 throw new RuntimeException("Failed while reading config stream.", ioEx);
             }
-            _deployment.init();
+            _deployment.init(ServiceDomainManager.createDomain());
             _deployment.start();
         }
     }

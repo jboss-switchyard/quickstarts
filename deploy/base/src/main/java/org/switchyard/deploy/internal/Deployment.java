@@ -80,27 +80,27 @@ public class Deployment extends AbstractDeployment {
 
     /**
      * Create a new instance of Deployer from a configuration stream.
-     * @param appServiceDomain The ServiceDomain for the application.
      * @param configStream stream containing switchyard config
      * @throws IOException Error reading configuration model.
      */
-    public Deployment(ServiceDomain appServiceDomain, InputStream configStream) throws IOException {
-        super(appServiceDomain, new ModelResource<SwitchYardModel>().pull(configStream));
+    public Deployment(InputStream configStream) throws IOException {
+        super(new ModelResource<SwitchYardModel>().pull(configStream));
     }
     
     /**
      * Create a new instance of Deployer from a configuration model.
-     * @param appServiceDomain The ServiceDomain for the application.
      * @param configModel switchyard config model
      */
-    public Deployment(ServiceDomain appServiceDomain, SwitchYardModel configModel) {
-        super(appServiceDomain, configModel);
+    public Deployment(SwitchYardModel configModel) {
+        super(configModel);
     }
     
     /**
      * Initialize the deployment.
+     * @param appServiceDomain The ServiceDomain for the application.
      */
-    public void init() {
+    public void init(ServiceDomain appServiceDomain) {
+        super.init(appServiceDomain);
         _log.debug("Initializing deployment for application " + getConfig().getName());
         // create a new domain and load transformer and activator instances for lifecycle
         registerTransformers();

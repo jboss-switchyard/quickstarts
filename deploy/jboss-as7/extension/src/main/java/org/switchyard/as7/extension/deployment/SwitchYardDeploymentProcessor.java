@@ -18,9 +18,6 @@
  */
 package org.switchyard.as7.extension.deployment;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.jboss.as.ee.naming.NamespaceSelectorService;
 import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
@@ -35,8 +32,6 @@ import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceTarget;
 import org.switchyard.as7.extension.SwitchYardDeploymentMarker;
 import org.switchyard.as7.extension.services.SwitchYardService;
-import org.switchyard.config.model.ModelResource;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * Deployment processor that installs the SwitchYard service and all other dependent services.
@@ -56,26 +51,19 @@ public class SwitchYardDeploymentProcessor implements DeploymentUnitProcessor {
         LOG.info("Deploying SwitchYard application '" + deploymentUnit.getName() + "'");
 
         SwitchYardMetaData metaData = deploymentUnit.getAttachment(SwitchYardMetaData.ATTACHMENT_KEY);
-        try {
-            InputStream is = metaData.getSwitchYardFile().openStream();
-            SwitchYardModel switchyardModel = new ModelResource<SwitchYardModel>().pull(is);
-            is.close();
-            SwitchYardDeployment deployment = new SwitchYardDeployment(deploymentUnit, switchyardModel);
-            SwitchYardService container = new SwitchYardService(deployment);
-            final ServiceTarget serviceTarget = phaseContext.getServiceTarget();
-            final ServiceName switchyardServiceName = deploymentUnit.getServiceName().append(SwitchYardService.SERVICE_NAME);
-            final ServiceBuilder<SwitchYardDeployment> switchyardServiceBuilder = serviceTarget.addService(switchyardServiceName, container);
+        SwitchYardDeployment deployment = new SwitchYardDeployment(deploymentUnit, metaData.geSwitchYardModel());
+        SwitchYardService container = new SwitchYardService(deployment);
+        final ServiceTarget serviceTarget = phaseContext.getServiceTarget();
+        final ServiceName switchyardServiceName = deploymentUnit.getServiceName().append(SwitchYardService.SERVICE_NAME);
+        final ServiceBuilder<SwitchYardDeployment> switchyardServiceBuilder = serviceTarget.addService(switchyardServiceName, container);
 
-            final ServiceName beanManagerServiceName = deploymentUnit.getServiceName().append(BeanManagerService.NAME);
+        final ServiceName beanManagerServiceName = deploymentUnit.getServiceName().append(BeanManagerService.NAME);
 
-            final ServiceName namespaceSelectorServiceName = deploymentUnit.getServiceName().append(NamespaceSelectorService.NAME);
-            switchyardServiceBuilder.addDependency(namespaceSelectorServiceName, NamespaceContextSelector.class, container.getNamespaceSelector());
-            switchyardServiceBuilder.addDependency(beanManagerServiceName);
-            switchyardServiceBuilder.setInitialMode(Mode.ACTIVE);
-            switchyardServiceBuilder.install();
-        } catch (IOException ioe) {
-            throw new DeploymentUnitProcessingException(ioe);
-        }
+        final ServiceName namespaceSelectorServiceName = deploymentUnit.getServiceName().append(NamespaceSelectorService.NAME);
+        switchyardServiceBuilder.addDependency(namespaceSelectorServiceName, NamespaceContextSelector.class, container.getNamespaceSelector());
+        switchyardServiceBuilder.addDependency(beanManagerServiceName);
+        switchyardServiceBuilder.setInitialMode(Mode.ACTIVE);
+        switchyardServiceBuilder.install();
     }
 
     @Override

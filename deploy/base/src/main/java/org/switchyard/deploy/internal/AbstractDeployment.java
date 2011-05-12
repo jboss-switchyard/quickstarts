@@ -52,25 +52,10 @@ public abstract class AbstractDeployment {
 
     /**
      * Create a new instance of a deployment from a configuration model.
-     * @param appServiceDomain The ServiceDomain for the application.
-     */
-    protected AbstractDeployment(ServiceDomain appServiceDomain) {
-        this(appServiceDomain, null);
-    }
-
-    /**
-     * Create a new instance of a deployment from a configuration model.
-     * @param appServiceDomain The ServiceDomain for the application.
      * @param configModel switchyard config model
      */
-    protected AbstractDeployment(ServiceDomain appServiceDomain, SwitchYardModel configModel) {
-        if (appServiceDomain == null) {
-            throw new IllegalArgumentException("null 'appServiceDomain' argument.");
-        }
+    protected AbstractDeployment(SwitchYardModel configModel) {
         _switchyardConfig = configModel;
-        _serviceDomain = appServiceDomain;
-        _transformerRegistryLoader = new TransformerRegistryLoader(appServiceDomain.getTransformerRegistry());
-        _transformerRegistryLoader.loadOOTBTransforms();
     }
 
     /**
@@ -85,8 +70,16 @@ public abstract class AbstractDeployment {
 
     /**
      * Initialise the deployment.
+     * @param appServiceDomain The ServiceDomain for the application.
      */
-    public abstract void init();
+    public void init(ServiceDomain appServiceDomain) {
+        if (appServiceDomain == null) {
+            throw new IllegalArgumentException("null 'appServiceDomain' argument.");
+        }
+        _serviceDomain = appServiceDomain;
+        _transformerRegistryLoader = new TransformerRegistryLoader(appServiceDomain.getTransformerRegistry());
+        _transformerRegistryLoader.loadOOTBTransforms();
+    }
 
     /**
      * Start/un-pause the deployment.

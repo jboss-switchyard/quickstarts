@@ -27,9 +27,30 @@
             attributeFormDefault="unqualified"
             version="1.0">
 
-    <!-- The naming subsystem root element -->
-    <xs:element name="subsystem" type="subsystem"/>
+    <!-- The SwitchYard subsystem root element -->
+    <xs:element name="subsystem" type="subsystemType"/>
 
-    <xs:complexType name="subsystem"/>
+    <xs:complexType name="subsystemType">
+        <xs:annotation>
+            <xs:documentation>
+            <![CDATA[
+                The configuration of the SwitchYard subsystem.
+            ]]>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="modules" type="modulesType" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="modulesType">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="module" type="moduleType"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="moduleType">
+        <xs:attribute name="identifier" type="xs:string" use="required"/>
+    </xs:complexType>
 
 </xs:schema>

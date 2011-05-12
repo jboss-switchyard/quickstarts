@@ -34,14 +34,19 @@ public class SimpleTestDeployment extends AbstractDeployment {
     /**
      * Constructor.
      *
-     * @param serviceDomain The ServiceDomain that the deployment is a member of.
      */
-    protected SimpleTestDeployment(ServiceDomain serviceDomain) {
-        super(serviceDomain);
+    protected SimpleTestDeployment() {
+        super(null);
     }
 
     @Override
-    public void init() {
+    /*
+     * Init method.
+     * 
+     * @param serviceDomain The ServiceDomain that the deployment is a member of.
+     */
+    public void init(ServiceDomain serviceDomain) {
+        super.init(serviceDomain);
     }
 
     @Override

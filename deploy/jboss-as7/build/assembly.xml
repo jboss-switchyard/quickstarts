@@ -8,6 +8,41 @@
   </formats>
   <files>
     <file>
+      <source>src/main/resources/modules/switchyard/api/module.xml</source>
+      <outputDirectory>/modules/org/switchyard/api/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/main/resources/modules/switchyard/api/extensions/wsdl/module.xml</source>
+      <outputDirectory>/modules/org/switchyard/api/extensions/wsdl/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/main/resources/modules/switchyard/common/module.xml</source>
+      <outputDirectory>/modules/org/switchyard/common/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/main/resources/modules/switchyard/config/module.xml</source>
+      <outputDirectory>/modules/org/switchyard/config/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/main/resources/modules/switchyard/runtime/module.xml</source>
+      <outputDirectory>/modules/org/switchyard/runtime/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/main/resources/modules/switchyard/transform/module.xml</source>
+      <outputDirectory>/modules/org/switchyard/transform/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/main/resources/modules/switchyard/deploy/module.xml</source>
+      <outputDirectory>/modules/org/switchyard/deploy/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
       <source>src/main/resources/modules/switchyard/module.xml</source>
       <outputDirectory>/modules/org/switchyard/main</outputDirectory>
       <filtered>true</filtered>
@@ -42,13 +77,55 @@
     <dependencySet>
        <useTransitiveDependencies>false</useTransitiveDependencies>
        <includes>
-          <include>org.switchyard:switchyard-common</include>
-          <include>org.switchyard:switchyard-config</include>
           <include>org.switchyard:switchyard-api</include>
+       </includes>
+       <outputDirectory>/modules/org/switchyard/api/main</outputDirectory>
+    </dependencySet>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
+          <include>org.switchyard:switchyard-common</include>
+       </includes>
+       <outputDirectory>/modules/org/switchyard/common/main</outputDirectory>
+    </dependencySet>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
+          <include>org.switchyard:switchyard-config</include>
+       </includes>
+       <outputDirectory>/modules/org/switchyard/config/main</outputDirectory>
+    </dependencySet>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
           <include>org.switchyard:switchyard-extensions-wsdl</include>
+       </includes>
+       <outputDirectory>/modules/org/switchyard/api/extensions/wsdl/main</outputDirectory>
+    </dependencySet>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
           <include>org.switchyard:switchyard-transform</include>
+       </includes>
+       <outputDirectory>/modules/org/switchyard/transform/main</outputDirectory>
+    </dependencySet>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
           <include>org.switchyard:switchyard-runtime</include>
+       </includes>
+       <outputDirectory>/modules/org/switchyard/runtime/main</outputDirectory>
+    </dependencySet>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
           <include>org.switchyard:switchyard-deploy</include>
+       </includes>
+       <outputDirectory>/modules/org/switchyard/deploy/main</outputDirectory>
+    </dependencySet>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
           <include>org.switchyard:switchyard-deploy-jboss-as7</include>
        </includes>
        <outputDirectory>/modules/org/switchyard/main</outputDirectory>

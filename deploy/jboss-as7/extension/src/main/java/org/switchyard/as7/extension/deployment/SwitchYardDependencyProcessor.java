@@ -18,6 +18,8 @@
  */
 package org.switchyard.as7.extension.deployment;
 
+import java.util.List;
+
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
@@ -28,6 +30,8 @@ import org.jboss.as.server.deployment.module.ModuleSpecification;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoader;
+import org.jboss.modules.filter.PathFilter;
+import org.jboss.modules.filter.PathFilters;
 import org.switchyard.as7.extension.SwitchYardDeploymentMarker;
 
 /**
@@ -37,7 +41,23 @@ import org.switchyard.as7.extension.SwitchYardDeploymentMarker;
  */
 public class SwitchYardDependencyProcessor implements DeploymentUnitProcessor {
 
+    private static final PathFilter META_INF_FILTER = PathFilters.isChildOf("META-INF/services");
     private static final ModuleIdentifier SWITCHYARD_ID = ModuleIdentifier.create("org.switchyard");
+    private static final ModuleIdentifier SWITCHYARD_API_ID = ModuleIdentifier.create("org.switchyard.api");
+    private static final ModuleIdentifier SWITCHYARD_COMMON_ID = ModuleIdentifier.create("org.switchyard.common");
+    private static final ModuleIdentifier SWITCHYARD_CONFIG_ID = ModuleIdentifier.create("org.switchyard.config");
+    private static final ModuleIdentifier SWITCHYARD_RUNTIME_ID = ModuleIdentifier.create("org.switchyard.runtime");
+    private static final ModuleIdentifier SWITCHYARD_TRANSFORM_ID = ModuleIdentifier.create("org.switchyard.transform");
+
+    private List<ModuleIdentifier> _componentModules;
+    /**
+     * Construct SwitchYard dependency processor with a list of component modules.
+     * 
+     * @param modules a list of component modules
+     */
+    public SwitchYardDependencyProcessor(List<ModuleIdentifier> modules) {
+        _componentModules = modules;
+    }
 
     /* (non-Javadoc)
      * @see org.jboss.as.server.deployment.DeploymentUnitProcessor#deploy(org.jboss.as.server.deployment.DeploymentPhaseContext)
@@ -49,9 +69,23 @@ public class SwitchYardDependencyProcessor implements DeploymentUnitProcessor {
         if (!SwitchYardDeploymentMarker.isSwitchYardDeployment(deploymentUnit)) {
             return;
         }
+
         final ModuleLoader moduleLoader = Module.getBootModuleLoader();
         moduleSpecification.addDependency(new ModuleDependency(moduleLoader, SWITCHYARD_ID, false, false, true));
-
+        moduleSpecification.addDependency(new ModuleDependency(moduleLoader, SWITCHYARD_API_ID, false, false, false));
+        moduleSpecification.addDependency(new ModuleDependency(moduleLoader, SWITCHYARD_COMMON_ID, false, false, false));
+        moduleSpecification.addDependency(new ModuleDependency(moduleLoader, SWITCHYARD_CONFIG_ID, false, false, false));
+        ModuleDependency dep = new ModuleDependency(moduleLoader, SWITCHYARD_RUNTIME_ID, false, false, true);
+        dep.addImportFilter(META_INF_FILTER, true);
+        moduleSpecification.addDependency(dep);
+        dep = new ModuleDependency(moduleLoader, SWITCHYARD_TRANSFORM_ID, false, false, true);
+        dep.addImportFilter(META_INF_FILTER, true);
+        moduleSpecification.addDependency(dep);
+        for (ModuleIdentifier moduleId : _componentModules) {
+            dep = new ModuleDependency(moduleLoader, moduleId, false, false, true);
+            dep.addImportFilter(META_INF_FILTER, true);
+            moduleSpecification.addDependency(dep);
+        }
     }
 
     /* (non-Javadoc)

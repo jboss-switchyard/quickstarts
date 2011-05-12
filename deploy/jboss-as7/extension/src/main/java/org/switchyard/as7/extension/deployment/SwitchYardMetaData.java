@@ -20,6 +20,7 @@ package org.switchyard.as7.extension.deployment;
 
 import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.vfs.VirtualFile;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * Information about a SwitchYard deployment that is attached to the DU.
@@ -38,6 +39,8 @@ public class SwitchYardMetaData {
     private String _deploymentName = null;
 
     private VirtualFile _switchYardFile = null;
+
+    private SwitchYardModel _switchYardModel = null;
 
     /**
      * Create a new SwitchYard metadata.
@@ -82,5 +85,21 @@ public class SwitchYardMetaData {
      */
     public void setSwitchYardFile(VirtualFile switchYardFile) {
         _switchYardFile = switchYardFile;
+    }
+
+    /**
+     * Getter for SwitchYard Model.
+     * @param switchYardModel the SwitchYardModel to set
+     */
+    public void setSwitchYardModel(SwitchYardModel switchYardModel) {
+        this._switchYardModel = switchYardModel;
+    }
+
+    /**
+     * Setter for SwitchYard Model.
+     * @return the SwitchYardModel
+     */
+    public SwitchYardModel geSwitchYardModel() {
+        return _switchYardModel;
     }
 }

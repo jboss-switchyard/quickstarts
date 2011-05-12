@@ -45,7 +45,7 @@ public class SwitchYardDeployment extends Deployment {
             final SwitchYardModel config,
             final ServiceDomainManager domainManager) {
         
-        super(createDomain(config, domainManager), config);
+        super(config);
         _deployUnit = deploymentUnit;
         _domainManager = domainManager;
     }
@@ -70,7 +70,7 @@ public class SwitchYardDeployment extends Deployment {
         ClassLoader origCL = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(_deployUnit.getClassLoader());
-            super.init();
+            super.init(createDomain(getConfig(), _domainManager));
             super.start();
         } finally {
             Thread.currentThread().setContextClassLoader(origCL);

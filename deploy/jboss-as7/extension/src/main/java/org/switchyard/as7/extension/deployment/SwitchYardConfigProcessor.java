@@ -18,23 +18,26 @@
  */
 package org.switchyard.as7.extension.deployment;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.jboss.as.server.deployment.module.ResourceRoot;
-import org.jboss.vfs.VirtualFile;
+import org.jboss.logging.Logger;
+import org.jboss.modules.Module;
 import org.switchyard.as7.extension.SwitchYardDeploymentMarker;
+import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
- * DU processor that finds <literal>switchyard.xml</literal> file and attaches the information to the deployment.
- * 
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
-public class SwitchYardConfigDeploymentProcessor implements DeploymentUnitProcessor {
+public class SwitchYardConfigProcessor implements DeploymentUnitProcessor {
 
-    private static final String SWITCHYARD_XML = "META-INF/switchyard.xml";
+    private static final Logger LOG = Logger.getLogger("org.switchyard");
 
     /* (non-Javadoc)
      * @see org.jboss.as.server.deployment.DeploymentUnitProcessor#deploy(org.jboss.as.server.deployment.DeploymentPhaseContext)
@@ -42,19 +45,33 @@ public class SwitchYardConfigDeploymentProcessor implements DeploymentUnitProces
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         final DeploymentUnit deploymentUnit = phaseContext.getDeploymentUnit();
-        final ResourceRoot deploymentRoot = deploymentUnit.getAttachment(Attachments.DEPLOYMENT_ROOT);
-        final VirtualFile switchyardXml = deploymentRoot.getRoot().getChild(SWITCHYARD_XML);
-
-        if (!switchyardXml.exists()) {
+        if (!SwitchYardDeploymentMarker.isSwitchYardDeployment(deploymentUnit)) {
             return;
         }
-        final String archiveName = deploymentUnit.getName();
-        final String deploymentName = archiveName.substring(0, archiveName.lastIndexOf('.'));
-        final SwitchYardMetaData switchYardMetaData = new SwitchYardMetaData(archiveName, deploymentName);
-        switchYardMetaData.setSwitchYardFile(switchyardXml);
+        SwitchYardMetaData switchYardMetaData = deploymentUnit.getAttachment(SwitchYardMetaData.ATTACHMENT_KEY);
 
-        deploymentUnit.putAttachment(SwitchYardMetaData.ATTACHMENT_KEY, switchYardMetaData);
-        SwitchYardDeploymentMarker.mark(deploymentUnit);
+
+        ClassLoader origCL = Thread.currentThread().getContextClassLoader();
+        InputStream is = null;
+        try {
+            final Module module = deploymentUnit.getAttachment(Attachments.MODULE);
+            Thread.currentThread().setContextClassLoader(module.getClassLoader());
+            is = switchYardMetaData.getSwitchYardFile().openStream();
+            SwitchYardModel switchyardModel = new ModelResource<SwitchYardModel>().pull(is);
+            switchYardMetaData.setSwitchYardModel(switchyardModel);
+        } catch (IOException ioe) {
+            throw new DeploymentUnitProcessingException(ioe);
+        } finally {
+            Thread.currentThread().setContextClassLoader(origCL);
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException ioe) {
+                    LOG.error(ioe);
+                }
+            }
+        }
+
     }
 
     /* (non-Javadoc)
@@ -62,6 +79,8 @@ public class SwitchYardConfigDeploymentProcessor implements DeploymentUnitProces
      */
     @Override
     public void undeploy(DeploymentUnit context) {
+        // TODO Auto-generated method stub
+
     }
 
 }
