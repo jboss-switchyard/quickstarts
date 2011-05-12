@@ -46,11 +46,12 @@ public class SimpleCDIDeployment extends AbstractDeployment {
      * Creates a new CDI deployment with no configuration.
      */
     public SimpleCDIDeployment() {
-        super(ServiceDomainManager.createDomain());
+        super(null);
     }
 
     @Override
-    public void init() {
+    public void init(ServiceDomain appServiceDomain) {
+        super.init(ServiceDomainManager.createDomain());
     }
 
     @Override
@@ -89,6 +90,7 @@ public class SimpleCDIDeployment extends AbstractDeployment {
             ServiceInterface serviceInterface;
             ServiceReference service;
 
+            activator.lookupBeanMetaData();
             serviceInterface = activator.buildServiceInterface(serviceName);
             service = domain.registerService(serviceName, handler, serviceInterface);
             activator.start(service);

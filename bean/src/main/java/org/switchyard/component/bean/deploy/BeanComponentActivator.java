@@ -50,11 +50,11 @@ public class BeanComponentActivator extends BaseActivator {
      */
     public BeanComponentActivator() {
         super(BEAN_TYPE);
-        _beanDeploymentMetaData = BeanDeploymentMetaData.lookupBeanDeploymentMetaData();
     }
 
     @Override
     public ExchangeHandler init(QName name, Model config) {
+        lookupBeanMetaData();
         if (config instanceof ComponentReferenceModel) {
             // policy and configuration validation can be performed here -
             // nothing to do for now
@@ -70,6 +70,13 @@ public class BeanComponentActivator extends BaseActivator {
         }
         // bean discovery did not find a bean providing this service
         throw new RuntimeException("Unknown Service name '" + name + "'.");
+    }
+
+    /**
+     * Looks up Bean meta data. 
+     */
+    public void lookupBeanMetaData() {
+        _beanDeploymentMetaData = BeanDeploymentMetaData.lookupBeanDeploymentMetaData();
     }
 
     /**
