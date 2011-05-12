@@ -8,6 +8,13 @@
     <bean name="SwitchYardServiceDomainManager" class="org.switchyard.deploy.ServiceDomainManager" />
 
     <!--
+        SwitchYardClassLoadingDeployer to configure the SwitchYard app to export/import nothing.
+        All classpath packages must be explicitly exported or imported through a jboss-classloading.xml
+        descriptor.
+    -->
+    <bean name="SwitchYardClassLoadingDeployer" class="org.switchyard.deployment.SwitchYardClassLoadingDeployer" />
+
+    <!--
         SwitchYard CDI BeanManager JNDI Deployer.
 
         This deployer must be disabled in environments where https://issues.jboss.org/browse/JBAS-8939
