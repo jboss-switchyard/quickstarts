@@ -30,8 +30,11 @@ import org.switchyard.component.bean.deploy.ServiceDescriptor;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.metadata.ServiceInterface;
-import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
+import org.switchyard.transform.config.model.TransformerFactory;
+import org.switchyard.transform.config.model.TransformerTypes;
+
+import java.util.List;
 
 /**
  * Simple CDI deployment.
@@ -72,8 +75,14 @@ public class SimpleCDIDeployment extends AbstractDeployment {
     private void deployTransformers(BeanDeploymentMetaData beanDeploymentMetaData, ServiceDomain domain) {
         TransformerRegistry transformerRegistry = domain.getTransformerRegistry();
 
-        for (Transformer transformer : beanDeploymentMetaData.getTransformers()) {
-            transformerRegistry.addTransformer(transformer);
+        for (Class<?> deploymentClass : beanDeploymentMetaData.getDeploymentClasses()) {
+            if (TransformerFactory.isTransformer(deploymentClass)) {
+                List<TransformerTypes> transformers = TransformerFactory.listTransformations(deploymentClass);
+                for (TransformerTypes transformer : transformers) {
+                    transformerRegistry.addTransformer(TransformerFactory.newTransformer(deploymentClass,
+                                                       transformer.getFrom(), transformer.getTo()));
+                }
+            }
         }
     }
 

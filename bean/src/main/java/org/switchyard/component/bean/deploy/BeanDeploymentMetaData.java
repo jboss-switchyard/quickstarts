@@ -20,7 +20,6 @@
 package org.switchyard.component.bean.deploy;
 
 import org.switchyard.component.bean.ClientProxyBean;
-import org.switchyard.transform.Transformer;
 
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -44,7 +43,7 @@ public class BeanDeploymentMetaData {
     private ClassLoader _deploymentClassLoader;
     private List<ServiceDescriptor> _serviceDescriptors = new ArrayList<ServiceDescriptor>();
     private List<ClientProxyBean> _clientProxies = new ArrayList<ClientProxyBean>();
-    private List<Transformer> _transformers = new ArrayList<Transformer>();
+    private List<Class<?>> _deploymentClasses = new ArrayList<Class<?>>();
 
     /**
      * Set the deployment ClassLoader.
@@ -81,11 +80,11 @@ public class BeanDeploymentMetaData {
     }
 
     /**
-     * Add a {@link Transformer}.
-     * @param transformer The transformer instance.
+     * Add a deployment Class.
+     * @param clazz The clazz.
      */
-    public void addTransformer(Transformer transformer) {
-        _transformers.add(transformer);
+    public void addDeploymentClass(Class<?> clazz) {
+        _deploymentClasses.add(clazz);
     }
 
     /**
@@ -105,11 +104,11 @@ public class BeanDeploymentMetaData {
     }
 
     /**
-     * Add a list of all the {@link Transformer Transformers}.
-     * @return The list of all the {@link Transformer Transformers}.
+     * Get a list of all classes in the deployment.
+     * @return The list of all classes in the deployment.
      */
-    public List<Transformer> getTransformers() {
-        return Collections.unmodifiableList(_transformers);
+    public List<Class<?>> getDeploymentClasses() {
+        return Collections.unmodifiableList(_deploymentClasses);
     }
 
     /**

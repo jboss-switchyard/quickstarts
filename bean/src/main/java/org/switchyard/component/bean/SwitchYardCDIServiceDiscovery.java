@@ -42,7 +42,6 @@ import org.apache.log4j.Logger;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaDataCDIBean;
 import org.switchyard.component.bean.deploy.CDIBeanServiceDescriptor;
-import org.switchyard.transform.Transformer;
 
 /**
  * Portable CDI extension for SwitchYard.
@@ -106,19 +105,8 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
             _beanDeploymentMetaData.addServiceDescriptor(new CDIBeanServiceDescriptor(bean, beanManager, _beanDeploymentMetaData));
         }
 
-        // Register all transformers we can find...
-        if (Transformer.class.isAssignableFrom(bean.getBeanClass())) {
-            Class<?> transformerRT = bean.getBeanClass();
-
-            try {
-                _logger.debug("Adding Transformer " + transformerRT.getName());
-                _beanDeploymentMetaData.addTransformer((Transformer) transformerRT.newInstance());
-            } catch (InstantiationException e) {
-                throw new IllegalStateException("Invalid Transformer implementation '" + transformerRT.getName() + "'.", e);
-            } catch (IllegalAccessException e) {
-                throw new IllegalStateException("Invalid Transformer implementation '" + transformerRT.getName() + "'.", e);
-            }
-        }
+        // Register all classes in the deployment...
+        _beanDeploymentMetaData.addDeploymentClass(bean.getBeanClass());
     }
 
     /**
