@@ -20,12 +20,11 @@
 package org.switchyard.transform.config.model;
 
 import java.io.IOException;
-import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.List;
 
+import org.switchyard.common.type.classpath.AbstractTypeFilter;
 import org.switchyard.common.type.classpath.ClasspathScanner;
-import org.switchyard.common.type.classpath.InstanceOfFilter;
 import org.switchyard.config.model.Scannable;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
@@ -34,11 +33,10 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.config.model.transform.v1.V1TransformsModel;
-import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.v1.V1JavaTransformModel;
 
 /**
- * Scanner for {@link Transformer} implementations.
+ * Scanner for {@link org.switchyard.transform.Transformer} implementations.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
@@ -54,47 +52,28 @@ public class TransformSwitchYardScanner implements Scanner<SwitchYardModel> {
 
         List<Class<?>> transformerClasses = scanForTransformers(input.getURLs());
         for (Class<?> transformer : transformerClasses) {
-            if (transformer.isInterface()) {
-                continue;
-            }
-            if (Modifier.isAbstract(transformer.getModifiers())) {
-                continue;
-            }
-            Scannable scannable = transformer.getAnnotation(Scannable.class);
-            if (scannable != null && !scannable.value()) {
-                // Marked as being non-scannable...
-                continue;
-            }
-            try {
-                // Must have a default constructor...
-                transformer.getConstructor();
-            } catch (NoSuchMethodException e) {
-                continue;
-            }
+            List<TransformerTypes> supportedTransforms = TransformerFactory.listTransformations(transformer);
 
-            JavaTransformModel transformModel = new V1JavaTransformModel();
-            // Need to create an instance to get the transform type info...
-            try {
-                Transformer<?,?> transformerInst = (Transformer<?,?>) transformer.newInstance();
-                transformModel.setFrom(transformerInst.getFrom());
-                transformModel.setTo(transformerInst.getTo());
-            } catch (Exception e) {
-                throw new IOException("Error creating instance of Transformer '" + transformer.getName() + "'.  May not contain a public default constructor.", e);
-            }
-            transformModel.setClazz(transformer.getName());
+            for (TransformerTypes supportedTransform : supportedTransforms) {
+                JavaTransformModel transformModel = new V1JavaTransformModel();
 
-            if (transformsModel == null) {
-                transformsModel = new V1TransformsModel();
-                switchyardModel.setTransforms(transformsModel);
+                transformModel.setClazz(transformer.getName());
+                transformModel.setFrom(supportedTransform.getFrom());
+                transformModel.setTo(supportedTransform.getTo());
+
+                if (transformsModel == null) {
+                    transformsModel = new V1TransformsModel();
+                    switchyardModel.setTransforms(transformsModel);
+                }
+                transformsModel.addTransform(transformModel);
             }
-            transformsModel.addTransform(transformModel);
         }
 
         return new ScannerOutput<SwitchYardModel>().setModel(switchyardModel);
     }
 
     private List<Class<?>> scanForTransformers(List<URL> urls) throws IOException {
-        InstanceOfFilter filter = new InstanceOfFilter(Transformer.class);
+        AbstractTypeFilter filter = new TransformerInstanceOfFilter();
         ClasspathScanner scanner = new ClasspathScanner(filter);
 
         for (URL url : urls) {
@@ -104,4 +83,15 @@ public class TransformSwitchYardScanner implements Scanner<SwitchYardModel> {
         return filter.getMatchedTypes();
     }
 
+    private class TransformerInstanceOfFilter extends AbstractTypeFilter {
+        @Override
+        protected boolean matches(Class<?> clazz) {
+            Scannable scannable = clazz.getAnnotation(Scannable.class);
+            if (scannable != null && !scannable.value()) {
+                // Marked as being non-scannable...
+                return false;
+            }
+            return TransformerFactory.isTransformer(clazz);
+        }
+    }
 }

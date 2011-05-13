@@ -29,7 +29,7 @@ import org.switchyard.transform.BaseTransformer;
 public class ABTransformer extends BaseTransformer {
 
     public ABTransformer() {
-        super(new QName("http://www.switchyard.org", "a"), new QName("http://www.switchyard.org", "b"));
+        super(new QName("A"), new QName("B"));
     }
 
     @Override

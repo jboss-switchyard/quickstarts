@@ -30,7 +30,7 @@ import org.switchyard.common.type.Classes;
  * 
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-abstract class AbstractTypeFilter implements Filter {
+public abstract class AbstractTypeFilter implements Filter {
 
     private Logger _logger;
     private List<Class<?>> _classes = new ArrayList<Class<?>>();

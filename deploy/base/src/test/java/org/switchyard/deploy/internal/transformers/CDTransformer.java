@@ -29,7 +29,7 @@ import javax.xml.namespace.QName;
 public class CDTransformer extends BaseTransformer {
 
     public CDTransformer() {
-        super(new QName("http://www.switchyard.org", "c"), new QName("http://www.switchyard.org", "d"));
+        super(new QName("C"), new QName("D"));
     }
 
     @Override
