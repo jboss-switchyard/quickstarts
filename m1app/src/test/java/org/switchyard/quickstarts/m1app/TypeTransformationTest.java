@@ -19,6 +19,7 @@
 
 package org.switchyard.quickstarts.m1app;
 
+import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -45,7 +46,7 @@ public class TypeTransformationTest extends SwitchYardTestCase {
 
         OrderAck orderAck = newInvoker("OrderService")
             .operation("submitOrder")
-            .inputType(TransformOrder_XML_Java.FROM_TYPE)
+            .inputType(QName.valueOf("{urn:switchyard-quickstarts:m1app:1.0}submitOrder"))
             .sendInOut(loadXML(ORDER_XML).getDocumentElement())
             .getContent(OrderAck.class);
 
@@ -62,7 +63,7 @@ public class TypeTransformationTest extends SwitchYardTestCase {
 
         Element result = newInvoker("OrderService")
             .operation("submitOrder")
-            .expectedOutputType(TransformOrderAck_Java_XML.TO_TYPE)
+            .expectedOutputType(QName.valueOf("{urn:switchyard-quickstarts:m1app:1.0}submitOrderResponse"))
             .sendInOut(testOrder)
             .getContent(Element.class);
         XMLUnit.setIgnoreWhitespace(true);
