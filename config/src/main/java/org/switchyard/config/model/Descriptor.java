@@ -445,6 +445,10 @@ public final class Descriptor {
 
         public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI) {
             String schemaLocation = _descriptor.getSchemaLocation(namespaceURI, systemId);
+            if (schemaLocation == null && baseURI != null && baseURI.endsWith(".dtd")) {
+                String schema = baseURI.substring(0, baseURI.lastIndexOf('/')+1) + systemId;
+                schemaLocation = _descriptor.getSchemaLocation(null, schema);
+            }
             if (schemaLocation != null) {
                 try {
                     String xsd = new StringResource().pull(schemaLocation, getClass());

@@ -19,9 +19,7 @@
    <include schemaLocation="sca-implementation-bpel-1.1-cd03.xsd"/>
    <include schemaLocation="sca-implementation-spring-1.1-csd01.xsd"/>
 
-   <!--
    <include schemaLocation="sca-binding-ws-1.1-cd04-rev2.xsd"/>
-   -->
    <include schemaLocation="sca-binding-ws-callback-1.1-cd04-rev1.xsd"/>
    <include schemaLocation="sca-binding-jms-1.1-csd05.xsd"/>
    <include schemaLocation="sca-binding-jca-1.1-cd04-rev2.xsd"/>   
