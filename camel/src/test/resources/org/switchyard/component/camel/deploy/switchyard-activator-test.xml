@@ -21,9 +21,7 @@
     <sca:composite>
     
         <sca:service name="SimpleCamelService">
-            <camel:binding.camel configURI="direct://input">
-			    <camel:operationSelector operationName="print"/>
-            </camel:binding.camel>
+            <camel:binding.camel configURI="direct://input"/>
             <camel:binding.camel configURI="direct://input2">
 			    <camel:operationSelector operationName="print"/>
             </camel:binding.camel>

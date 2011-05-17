@@ -20,12 +20,16 @@
  */
 package org.switchyard.component.camel;
 
+import java.util.Set;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
+import org.switchyard.component.camel.config.model.OperationSelector;
+import org.switchyard.metadata.ServiceOperation;
 
 /**
  * An {@link ExchangeHandler} that acts as a gateway/entrypoint for Camel Components.
@@ -73,7 +77,7 @@ public class InboundHandler implements ExchangeHandler {
     private String composeSwitchYardComponentName(final ServiceReference serviceReference) {
         final StringBuilder sb = new StringBuilder();
         sb.append("switchyard://").append(serviceReference.getName().getLocalPart());
-        sb.append("?operationName=").append(operationName());
+        sb.append("?operationName=").append(operationName(serviceReference));
         return sb.toString();
     }
     
@@ -81,8 +85,26 @@ public class InboundHandler implements ExchangeHandler {
         return _camelBindingModel.getComponentURI().toString();
     }
     
-    private String operationName() {
-        return _camelBindingModel.getOperationSelector().getOperationName();
+    private String operationName(final ServiceReference serviceRef) {
+        final OperationSelector os = _camelBindingModel.getOperationSelector();
+        if (os != null) {
+            return _camelBindingModel.getOperationSelector().getOperationName();
+        }
+        
+        return lookupOperationNameFor(serviceRef);
+    }
+    
+    private String lookupOperationNameFor(final ServiceReference serviceRef) {
+        final Set<ServiceOperation> operations = serviceRef.getInterface().getOperations();
+        if (operations.size() != 1) {
+            final StringBuilder msg = new StringBuilder();
+            msg.append("No operationSelector was configured for the Camel Component and the Service Interface ");
+            msg.append("contains more than one operation: ").append(operations);
+            msg.append("Please add an operationSelector element with the target 'operationName' as an attribute.");
+            throw new RuntimeException(msg.toString());
+        }
+        final ServiceOperation serviceOperation = operations.iterator().next();
+        return serviceOperation.getName();
     }
     
     private String composeRouteId(final ServiceReference serviceRef) {
