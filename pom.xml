@@ -45,8 +45,8 @@
     </organization>
 
     <modules>
-        <module>m1app</module>
         <module>transform-smooks</module>
+        <module>demos/orders</module>
     </modules>
     
     <repositories>

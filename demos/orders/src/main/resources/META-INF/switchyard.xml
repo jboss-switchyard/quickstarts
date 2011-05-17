@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+            xmlns:swyd="urn:switchyard-config:switchyard:1.0"
+            xmlns:trfm="urn:switchyard-config:transform:1.0"
+            xmlns:bean="urn:switchyard-component-bean:config:1.0"
+            xmlns:soap="urn:switchyard-component-soap:config:1.0"
+            xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+            targetNamespace="urn:switchyard-quickstart-demo:orders:0.1.0-SNAPSHOT"
+            name="orders">
+    <sca:composite name="orders">
+        <sca:service name="OrderService" promote="OrderService">
+            <soap:binding.soap>
+                <soap:serverPort>18001</soap:serverPort>
+                <soap:wsdl>wsdl/OrderService.wsdl</soap:wsdl>
+            </soap:binding.soap>
+        </sca:service>
+    </sca:composite>
+</switchyard>

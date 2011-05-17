@@ -36,9 +36,9 @@ public class ServiceTransformationTest extends SwitchYardTestCase {
 
     // Message types being transformed
     public static final QName FROM_TYPE =
-        new QName("urn:switchyard-quickstarts:transform-smooks:1.0", "submitOrder");
+        new QName("urn:switchyard-quickstart:transform-smooks:1.0", "submitOrder");
     public static final QName TO_TYPE =
-        new QName("urn:switchyard-quickstarts:transform-smooks:1.0", "submitOrderResponse");
+        new QName("urn:switchyard-quickstart:transform-smooks:1.0", "submitOrderResponse");
 
     // Paths to XML test files
     final String ORDER_XML = "/xml/order.xml";

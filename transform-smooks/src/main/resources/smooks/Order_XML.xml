@@ -22,13 +22,13 @@
                       xmlns:jb="http://www.milyn.org/xsd/smooks/javabean-1.4.xsd">
 
     <core:namespaces>
-        <core:namespace prefix="ord" uri="urn:switchyard-quickstarts:transform-smooks:1.0"/>
+        <core:namespace prefix="orders" uri="urn:switchyard-quickstart:transform-smooks:1.0"/>
     </core:namespaces>
 
-    <jb:bean beanId="order" class="org.switchyard.quickstarts.transform.smooks.Order" createOnElement="/ord:order">
-        <jb:value property="orderId" data="/ord:order/orderId" />
-        <jb:value property="itemId" data="/ord:order/itemId" />
-        <jb:value property="quantity" data="/ord:order/quantity" />
+    <jb:bean beanId="order" class="org.switchyard.quickstarts.transform.smooks.Order" createOnElement="/orders:order">
+        <jb:value property="orderId" data="/orders:order/orderId" />
+        <jb:value property="itemId" data="/orders:order/itemId" />
+        <jb:value property="quantity" data="/orders:order/quantity" />
     </jb:bean>
 
 </smooks-resource-list>
