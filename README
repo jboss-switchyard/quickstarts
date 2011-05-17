@@ -2,10 +2,11 @@ Welcome to the SwitchYard Quickstart Repository!
 
 Available Quickstarts
 =====================
-o m1app : an example application demonstrating features delivered in
-  SwitchYard milestone 1.
-  
 o transform-smooks : demonstrates the use of Smooks-based transformers
   to map between XML and Java.
 
-
+Available Quickstart Demos
+==========================
+o demos/orders : an example application demonstrating features
+  delivered in SwitchYard milestone 1.
+  

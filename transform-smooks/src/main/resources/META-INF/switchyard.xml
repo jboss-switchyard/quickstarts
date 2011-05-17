@@ -3,17 +3,17 @@
             xmlns:trfm="urn:switchyard-config:transform:1.0"
             xmlns:soap="urn:switchyard-component-soap:config:1.0"
             xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-            targetNamespace="urn:switchyard-quickstarts:transform-smooks:1.0-SNAPSHOT"
+            targetNamespace="urn:switchyard-quickstart:transform-smooks:1.0-SNAPSHOT"
             name="transform-smooks">
             
     <transforms>
         <trfm:transform.smooks type="JAVA2XML" 
             from="java:org.switchyard.quickstarts.transform.smooks.OrderAck" 
-            to="{urn:switchyard-quickstarts:transform-smooks:1.0}submitOrderResponse" 
+            to="{urn:switchyard-quickstart:transform-smooks:1.0}submitOrderResponse" 
             config="/smooks/OrderAck_XML.xml" />
     
         <trfm:transform.smooks type="XML2JAVA" 
-            from="{urn:switchyard-quickstarts:transform-smooks:1.0}submitOrder" 
+            from="{urn:switchyard-quickstart:transform-smooks:1.0}submitOrder" 
             to="java:org.switchyard.quickstarts.transform.smooks.Order" 
             config="/smooks/Order_XML.xml" />
     </transforms>
