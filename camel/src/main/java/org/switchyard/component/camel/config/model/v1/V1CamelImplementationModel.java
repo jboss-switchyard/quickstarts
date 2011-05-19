@@ -38,6 +38,9 @@ import org.switchyard.config.model.composite.v1.V1ComponentImplementationModel;
  */
 public class V1CamelImplementationModel extends V1ComponentImplementationModel implements CamelComponentImplementationModel {
     
+    // The class attribute for Java DSL routes
+    private static final String CLASS = "class";
+    
     private static JAXBContext jaxbContext = createJAXBInstance();
     
     /**
@@ -61,6 +64,10 @@ public class V1CamelImplementationModel extends V1ComponentImplementationModel i
     @Override
     public RouteDefinition getRoute() {
         final Configuration routeConfig = getModelConfiguration().getFirstChild(ROUTE);
+        if (routeConfig == null) {
+            return null;
+        }
+        
         try {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             return (RouteDefinition) unmarshaller.unmarshal(routeConfig.getSource());
@@ -75,6 +82,25 @@ public class V1CamelImplementationModel extends V1ComponentImplementationModel i
         } catch (JAXBException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public String getJavaClass() {
+        Configuration classConfig = getModelConfiguration().getFirstChild(JAVA);
+        return classConfig != null ? classConfig.getAttribute(CLASS) : null;
+    }
+
+    @Override
+    public CamelComponentImplementationModel setJavaClass(String className) {
+        Configuration classConfig = getModelConfiguration().getFirstChild(JAVA);
+        if (classConfig == null) {
+            NameValueModel model = new NameValueModel(JAVA);
+            model.getModelConfiguration().setAttribute(CLASS, className);
+            setChildModel(model);
+        } else {
+            classConfig.setAttribute(CLASS, className);
+        }
+        return this;
     }
 
 }

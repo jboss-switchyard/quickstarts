@@ -27,11 +27,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.io.InputStream;
 
 import org.apache.camel.model.RouteDefinition;
+import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.common.type.Classes;
+import org.switchyard.component.camel.config.model.CamelComponentImplementationModel;
+import org.switchyard.component.camel.config.model.SingleRouteService;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.Validation;
-import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
@@ -44,7 +46,7 @@ public class V1CamelComponentImplementationModelTest {
     
     @Test
     public void validateCamelImplementationModelWithBeanElement() throws Exception {
-        final V1CamelImplementationModel implModel = getFirstCamelBinding("switchyard-implementation-beans.xml");
+        final V1CamelImplementationModel implModel = getFirstCamelImplementation("switchyard-implementation-beans.xml");
         final Validation validateModel = implModel.validateModel();
         
         assertThat(validateModel.isValid(), is(true));
@@ -54,11 +56,25 @@ public class V1CamelComponentImplementationModelTest {
         assertThat(route, is(notNullValue()));
     }
     
-    private V1CamelImplementationModel getFirstCamelBinding(final String config) throws Exception {
+    @Test
+    public void validateCamelImplementationModelWithJavaDSLElement() throws Exception {
+        final V1CamelImplementationModel implModel = getFirstCamelImplementation("switchyard-implementation-java.xml");
+        final Validation validateModel = implModel.validateModel();
+        
+        assertThat(validateModel.isValid(), is(true));
+        Assert.assertEquals(SingleRouteService.class.getName(), implModel.getJavaClass());
+    }
+    
+    private V1CamelImplementationModel getFirstCamelImplementation(final String config) throws Exception {
+        V1CamelImplementationModel implementation = null;
         final InputStream in = Classes.getResourceAsStream(config, getClass());
         final SwitchYardModel model = new ModelResource<SwitchYardModel>().pull(in);
-        final ComponentModel componentModel = model.getComposite().getComponents().get(1);
-        final ComponentImplementationModel implementation = componentModel.getImplementation();
-        return (V1CamelImplementationModel) implementation;
+        for (ComponentModel componentModel : model.getComposite().getComponents()) {
+            if (CamelComponentImplementationModel.CAMEL.equals(componentModel.getImplementation().getType())) {
+                implementation = (V1CamelImplementationModel) componentModel.getImplementation();
+                break;
+            }
+        }
+        return implementation;
     }
 }

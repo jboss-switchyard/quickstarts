@@ -48,11 +48,29 @@ public interface CamelComponentImplementationModel extends ComponentImplementati
      * The name of the Camel route element.
      */
     String ROUTE = "route";
+
+    /**
+     * The name of the Camel java element.
+     */
+    String JAVA = "java";
     
     /**
      * The Camel route definition.
      * @return {@link RouteDefinition} The Camel {@link RouteDefinition}.
      */
     RouteDefinition getRoute();
+    
+    /**
+     * Name of a Class containing one or more @Route definitions.
+     * @return reference to the route class
+     */
+    String getJavaClass();
+    
+    /**
+     * Set the name of a Class with one ore more @Route definitions.
+     * @param className name of the class
+     * @return reference to this config model
+     */
+    CamelComponentImplementationModel setJavaClass(String className);
     
 }

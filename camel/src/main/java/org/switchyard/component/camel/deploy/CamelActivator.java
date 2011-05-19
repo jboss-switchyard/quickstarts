@@ -31,15 +31,16 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceReference;
 import org.switchyard.camel.component.SwitchYardConsumer;
 import org.switchyard.camel.component.SwitchyardEndpoint;
 import org.switchyard.component.camel.InboundHandler;
 import org.switchyard.component.camel.OutboundHandler;
+import org.switchyard.component.camel.RouteFactory;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.component.camel.config.model.CamelComponentImplementationModel;
 import org.switchyard.config.model.Model;
@@ -96,7 +97,7 @@ public class CamelActivator extends BaseActivator {
         startCamelContext();
         
         if (isServiceBinding(config)) {
-            return handleServiceBindnings((CompositeServiceModel)config, serviceName);
+            return handleServiceBindings((CompositeServiceModel)config, serviceName);
         }
         
         if (isReferenceBinding(config)) {
@@ -115,7 +116,7 @@ public class CamelActivator extends BaseActivator {
     }
     
     private ExchangeHandler handleComponentReference(final Model config, final QName serviceName) {
-        return addOutboundHandler(serviceName, ComponentNameComposer.composeComponenUri(serviceName));
+        return addOutboundHandler(serviceName, ComponentNameComposer.composeComponentUri(serviceName));
     }
 
     private boolean isComponentReference(final Model config) {
@@ -128,8 +129,9 @@ public class CamelActivator extends BaseActivator {
             final CamelComponentImplementationModel ccim = (CamelComponentImplementationModel) implementation;
             
             try {
-                final String endpointUri = ComponentNameComposer.composeComponenUri(serviceName);
-                final RouteDefinition routeDef = addFromEndpointToRouteDefinition(ccim.getRoute(), endpointUri);
+                final String endpointUri = ComponentNameComposer.composeComponentUri(serviceName);
+                final RouteDefinition routeDef = getRouteDefinition(ccim, serviceName);
+                addFromEndpointToRouteDefinition(routeDef, endpointUri);
                 final CamelContext camelContext = _camelContext.get();
                 camelContext.addRouteDefinition(routeDef);
                 final SwitchyardEndpoint endpoint = (SwitchyardEndpoint) camelContext.getEndpoint(endpointUri);
@@ -143,13 +145,25 @@ public class CamelActivator extends BaseActivator {
         return null;
     }
     
-    private RouteDefinition addFromEndpointToRouteDefinition(final RouteDefinition rd, final String fromEndpointUri) throws Exception {
+    private void addFromEndpointToRouteDefinition(final RouteDefinition rd, final String fromEndpointUri) throws Exception {
         final List<FromDefinition> inputs = rd.getInputs();
         if (!inputs.isEmpty()) {
             throw new RuntimeException("A Route must not define any 'from' endpoints as the 'from' endpoint will be created by SwithYard");
         }
         inputs.add(new FromDefinition(fromEndpointUri));
-        return rd;
+    }
+    
+    /**
+     * There are two options for Camel implementation : Spring XML or Java DSL.
+     * This method figures out which one were dealing with and returns the 
+     * corresponding RouteDefinition.
+     */
+    private RouteDefinition getRouteDefinition(CamelComponentImplementationModel model, QName serviceName) {
+        if (model.getRoute() != null) {
+            return model.getRoute();
+        } else {
+            return RouteFactory.createRoute(model.getJavaClass(), serviceName);
+        }
     }
     
     private boolean isComponentService(final Model config) {
@@ -173,7 +187,7 @@ public class CamelActivator extends BaseActivator {
         return null;
     }
 
-    private ExchangeHandler handleServiceBindnings(final CompositeServiceModel serviceModel, final QName serviceName) {
+    private ExchangeHandler handleServiceBindings(final CompositeServiceModel serviceModel, final QName serviceName) {
         final List<BindingModel> bindings = serviceModel.getBindings();
         if (!bindings.isEmpty()) {
             return createInboundHandler(bindings, serviceName);

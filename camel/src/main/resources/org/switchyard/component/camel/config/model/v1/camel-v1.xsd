@@ -83,16 +83,21 @@ MA  02110-1301, USA.
              <attribute name="operationName" type="string"/>           
          </extension>         
       </complexContent>
-   </complexType>    
+   </complexType>  
+   
+   <complexType name="JavaDSLType">
+      <attribute name="class" type="string"/>
+   </complexType>
    
     <!--  camel:implementation.camel -->
     <element name="implementation.camel" type="camel:CamelImplementationType" substitutionGroup="sca:implementation"/>
     <complexType name="CamelImplementationType">
         <complexContent>
             <extension base="sca:Implementation">
-                <sequence>
-                    <element ref="camelSpring:route" minOccurs="0"/>
-                </sequence>
+                <choice>
+                    <element ref="camelSpring:route"/>
+                    <element name="java" type="camel:JavaDSLType"/>
+                </choice>
             </extension>
         </complexContent>
     </complexType>

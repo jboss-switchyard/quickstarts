@@ -49,7 +49,7 @@ public final class ComponentNameComposer {
      * @param serviceName SwitchYard service name
      * @return camel endpoint URI based on component and service name
      */
-    public static String composeComponenUri(final QName serviceName) {
+    public static String composeComponentUri(final QName serviceName) {
         final StringBuilder sb = new StringBuilder();
         sb.append(SWITCHYARD_COMPONENT_NAME).append("://").append(serviceName.getLocalPart());
         return sb.toString();
