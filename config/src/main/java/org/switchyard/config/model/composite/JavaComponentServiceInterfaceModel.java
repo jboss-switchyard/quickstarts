@@ -19,8 +19,6 @@
 
 package org.switchyard.config.model.composite;
 
-import org.switchyard.config.model.composite.ComponentServiceInterfaceModel;
-
 /**
  * A "java" ComponentServiceInterfaceModel.
  *
