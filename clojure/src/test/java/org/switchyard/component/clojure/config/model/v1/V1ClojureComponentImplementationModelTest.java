@@ -25,8 +25,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import java.io.InputStream;
-
 import org.junit.Test;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelResource;
@@ -86,8 +84,7 @@ public class V1ClojureComponentImplementationModelTest {
     }
     
     private V1ClojureComponentImplementationModel getImplModel(final String config) throws Exception {
-        final InputStream in = getClass().getResourceAsStream(config);
-        final SwitchYardModel model = (SwitchYardModel) new ModelResource<SwitchYardModel>().pull(in);
+        final SwitchYardModel model = new ModelResource<SwitchYardModel>().pull(config, getClass());
         final ComponentModel componentModel = model.getComposite().getComponents().get(0);
         final ComponentImplementationModel implementation = componentModel.getImplementation();
         return (V1ClojureComponentImplementationModel) implementation;

@@ -25,11 +25,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import org.junit.Test;
-import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.Validation;
 import org.switchyard.config.model.composite.BindingModel;
@@ -62,8 +60,7 @@ public class V1CamelBindingModelTest {
     }
     
     private SwitchYardModel getSwitchYardModel(final String config) throws IOException {
-        final InputStream in = Classes.getResourceAsStream(config, getClass());
-        return new ModelResource<SwitchYardModel>().pull(in);
+        return new ModelResource<SwitchYardModel>().pull(config, getClass());
     }
     
     @Test

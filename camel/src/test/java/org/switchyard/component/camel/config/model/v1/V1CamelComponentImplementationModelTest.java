@@ -24,12 +24,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import java.io.InputStream;
-
 import org.apache.camel.model.RouteDefinition;
 import org.junit.Assert;
 import org.junit.Test;
-import org.switchyard.common.type.Classes;
 import org.switchyard.component.camel.config.model.CamelComponentImplementationModel;
 import org.switchyard.component.camel.config.model.SingleRouteService;
 import org.switchyard.config.model.ModelResource;
@@ -67,8 +64,7 @@ public class V1CamelComponentImplementationModelTest {
     
     private V1CamelImplementationModel getFirstCamelImplementation(final String config) throws Exception {
         V1CamelImplementationModel implementation = null;
-        final InputStream in = Classes.getResourceAsStream(config, getClass());
-        final SwitchYardModel model = new ModelResource<SwitchYardModel>().pull(in);
+        final SwitchYardModel model = new ModelResource<SwitchYardModel>().pull(config, getClass());
         for (ComponentModel componentModel : model.getComposite().getComponents()) {
             if (CamelComponentImplementationModel.CAMEL.equals(componentModel.getImplementation().getType())) {
                 implementation = (V1CamelImplementationModel) componentModel.getImplementation();
