@@ -144,7 +144,7 @@ public class ExchangeImpl implements Exchange {
 
     @Override
     public synchronized void send(Message message) {
-        assertExchangeStateOK();
+        assertMessageOK(message);
         
         // Set exchange phase
         if (_phase == null) {
@@ -166,7 +166,7 @@ public class ExchangeImpl implements Exchange {
 
     @Override
     public synchronized void sendFault(Message message) {
-        assertExchangeStateOK();
+        assertMessageOK(message);
         
         // You can't send a fault before you send a message
         if (_phase == null) {
@@ -228,7 +228,10 @@ public class ExchangeImpl implements Exchange {
         _dispatch.dispatch(this);
     }
 
-    private void assertExchangeStateOK() {
+    private void assertMessageOK(Message message) {
+        if(message == null) {
+            throw new IllegalArgumentException("Invalid null 'message' argument in method call.");
+        }
         if (_state == ExchangeState.FAULT) {
             throw new IllegalStateException("Exchange instance is in a FAULT state.");
         }
