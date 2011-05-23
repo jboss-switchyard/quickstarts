@@ -83,7 +83,13 @@ public class SmooksTransformerTest {
             Assert.fail("null config stream.");
         }
 
-        SwitchYardModel switchyardConfig = new ModelResource<SwitchYardModel>().pull(swConfigStream);
+        SwitchYardModel switchyardConfig;
+        try {
+            switchyardConfig = new ModelResource<SwitchYardModel>().pull(swConfigStream);
+        } finally {
+            swConfigStream.close();
+        }
+
         TransformsModel transforms = switchyardConfig.getTransforms();
 
         SmooksTransformModel smooksTransformModel = (SmooksTransformModel) transforms.getTransforms().get(0);

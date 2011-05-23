@@ -19,8 +19,8 @@
 
 package org.switchyard.deployment;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
@@ -78,9 +78,12 @@ public class SwitchYardDeployer extends AbstractSimpleVFSRealDeployer<SwitchYard
      */
     private void parseSwitchYardConfig(SwitchYardMetaData metaData) throws IOException {
         InputStream is = metaData.getSwitchYardFile().openStream();
-
-        SwitchYardModel switchyardModel = new ModelResource<SwitchYardModel>().pull(is);
-        metaData.setSwitchYardModel(switchyardModel);
+        try {
+            SwitchYardModel switchyardModel = new ModelResource<SwitchYardModel>().pull(is);
+            metaData.setSwitchYardModel(switchyardModel);
+        } finally {
+            is.close();
+        }
     }
     
     /**

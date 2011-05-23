@@ -48,6 +48,7 @@ public class DeploymentTest {
     public void testEmptySwitchYardConfiguration() throws Exception {
         InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-empty-01.xml", getClass());
         Deployment deployment = new Deployment(swConfigStream);
+        swConfigStream.close();
 
         deployment.init(ServiceDomainManager.createDomain());
         deployment.destroy();
@@ -57,6 +58,8 @@ public class DeploymentTest {
     public void testActivators() throws Exception {
         InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-mock-01.xml", getClass());
         Deployment deployment = new Deployment(swConfigStream);
+        swConfigStream.close();
+
         deployment.init(ServiceDomainManager.createDomain());
         
         // Grab a reference to our activators
@@ -77,6 +80,7 @@ public class DeploymentTest {
     public void test_transform_registration() throws Exception {
         InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-transform-01.xml", getClass());
         Deployment deployment = new Deployment(swConfigStream);
+        swConfigStream.close();
 
         deployment.init(ServiceDomainManager.createDomain());
 
@@ -97,6 +101,7 @@ public class DeploymentTest {
     public void interfaceWSDL() throws Exception {
         InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-interface-wsdl-01.xml", getClass());
         Deployment deployment = new Deployment(swConfigStream);
+        swConfigStream.close();
         deployment.init(ServiceDomainManager.createDomain());
         deployment.start();
 
