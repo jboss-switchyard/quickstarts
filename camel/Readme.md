@@ -31,6 +31,8 @@ attribute. This route will look like this for the above configuration:
 
     from("direct://input").to("switchyard://SimpleCamelService?operationName=print");
     
+The *operationName* is optional if the Service only has a single method and can left out in that case.
+    
 _ _ _
 
 ## Using SwitchYard reference bindings with Apache Camel
@@ -148,6 +150,17 @@ Running the above code snippet would generate the following in you console log:
     10:57:46,434 INFO  [Camel Test Route] Title Name [Fletch]
 
 Notice the Camel Endpoint **switchyard://OrderService**, this is the endpoint that SwitchYard generates and can be configured by setting the schema property like demonstrated above. 
+
+---
+## SwitchYard Transformers and Camel's TypeConverters
+SwitchYard has build in transformers and custom transformers can be registered with the runtime. Camel has TypeConverters
+that basically perform similar tasks. 
+
+SwitchYards Camel component provides a SwitchYard transformer that delegates to Camel's TypeConverters. To accomplish this the different type of converters have to be registered with SwitchYard as transformers. This is currently a static file, *META-INF/switchyard/transforms.xml* 
+which is parsed by SwitchYard. In future versions these will be dynamically registred with SwitchYard.
+
+If users have customer Camel TypeConverters they can be specified by either adding them to the transforms.xml in the SwitchYard Camel component or they 
+can add a transforms.xml to there deployment archive.
 
 _ _ _
 

@@ -34,5 +34,5 @@ public interface SimpleCamelService {
      * @param msg The message to be printed.
      * @return String A return message from the service.
      */
-    public String print(Object msg);
+    public String print(String msg);
 }

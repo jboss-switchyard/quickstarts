@@ -30,7 +30,7 @@ public class SimpleCamelServiceImpl implements SimpleCamelService {
     
     
     @Override
-    public String print(Object msg) {
+    public String print(String msg) {
         System.out.println("SimpleCamelServiceImpl: " + msg);
         return "SimpleCamelService: " + msg;
     }

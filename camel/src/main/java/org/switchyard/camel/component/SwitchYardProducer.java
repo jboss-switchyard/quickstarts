@@ -12,6 +12,9 @@ import org.switchyard.component.camel.deploy.ServiceReferences;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
+import org.switchyard.metadata.ServiceInterface;
+import org.switchyard.metadata.ServiceOperation;
+import org.switchyard.metadata.java.JavaService;
 
 /**
  * A Camel producer that is capable of calling SwitchYard services from a Camel route.
@@ -61,31 +64,61 @@ public class SwitchYardProducer extends DefaultProducer {
         return serviceRef;
     }
     
-    private Exchange createSwitchyardExchange(final org.apache.camel.Exchange ex, final ServiceReference serviceRef) {
-        return isInOnly(ex.getPattern()) ? createInOnlyExchange(serviceRef) : createInOutExchange(serviceRef, ex);
+    private Exchange createSwitchyardExchange(final org.apache.camel.Exchange camelExchange, final ServiceReference serviceRef) {
+        return isInOnly(camelExchange.getPattern()) ? createInOnlyExchange(serviceRef, camelExchange) : createInOutExchange(serviceRef, camelExchange);
     }
     
     private boolean isInOnly(final org.apache.camel.ExchangePattern pattern) {
         return pattern == org.apache.camel.ExchangePattern.InOnly;
     }
     
-    private Exchange createInOnlyExchange(final ServiceReference serviceReference) {
-        final BaseExchangeContract contract = new BaseExchangeContract(new InOnlyOperation(_operationName));
-        setOutputType(serviceReference, contract);
+    private Exchange createInOnlyExchange(final ServiceReference serviceReference, final org.apache.camel.Exchange ex) {
+        final QName operationInputType = getOperationInputType(serviceReference);
+        final InOnlyOperation inOnlyOperation = new InOnlyOperation(_operationName, operationInputType);
+        final BaseExchangeContract contract = new BaseExchangeContract(inOnlyOperation);
+        setInputMessageType(contract, getCamelBodyType(ex));
+        
         return serviceReference.createExchange(contract);
     }
     
-    private Exchange createInOutExchange(final ServiceReference serviceReference, final org.apache.camel.Exchange camelExchange) {
-        final BaseExchangeContract contract = new BaseExchangeContract(new InOutOperation(_operationName));
-        setOutputType(serviceReference, contract);
-        return serviceReference.createExchange(contract, new CamelResponseHandler(camelExchange, serviceReference));
+    private Exchange createInOutExchange(final ServiceReference ref, final org.apache.camel.Exchange camelExchange) {
+        final QName operationInputType = getOperationInputType(ref);
+        final QName operationOutputType = getOperationOutputType(ref);
+        final InOutOperation inOutOperation = new InOutOperation(_operationName, operationInputType, operationOutputType);
+        final BaseExchangeContract exchangeContract = new BaseExchangeContract(inOutOperation);
+        setInputMessageType(exchangeContract, getCamelBodyType(camelExchange));
+        
+        return ref.createExchange(exchangeContract, new CamelResponseHandler(camelExchange, ref));
     }
     
-    private void setOutputType(final ServiceReference ref, final BaseExchangeContract contract) {
-        final QName outputType = ServiceReferences.getOutputTypeForOperation(ref, _operationName);
-        if (outputType != null) {
-            contract.getInvokerInvocationMetaData().setOutputType(outputType);
+    private QName getOperationInputType(final ServiceReference ref) {
+        final ServiceOperation operation = ref.getInterface().getOperation(_operationName);
+        if (operation != null) {
+            return operation.getInputType();
         }
+        return null;
+    }
+    
+    private QName getOperationOutputType(final ServiceReference ref) {
+        final ServiceInterface serviceInterface = ref.getInterface();
+        final ServiceOperation operation = serviceInterface.getOperation(_operationName);
+        if (operation != null) {
+            return operation.getOutputType();
+        }
+        return null;
+    }
+    
+    private void setInputMessageType(final BaseExchangeContract exchangeContract, final Class<?> type) {
+        exchangeContract.getInvokerInvocationMetaData().setInputType(JavaService.toMessageType(type));
+    }
+    
+    private Class<?> getCamelBodyType(final org.apache.camel.Exchange exchange) {
+        final Object camelPayload = exchange.getIn().getBody();
+        if (camelPayload == null) {
+            return null;
+        }
+        
+        return camelPayload.getClass();
     }
     
 }
