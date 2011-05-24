@@ -130,7 +130,29 @@ public class ExchangeImplTest {
         Assert.assertEquals(requestId, replyRelatesTo);
         Assert.assertFalse(requestId.equals(replyId));
     }
-    
+
+    @Test
+    public void testNullSend() {
+        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, null);
+        try {
+            exchange.send(null);
+            Assert.fail("Expected IllegalArgumentException.");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals("Invalid null 'message' argument in method call.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testNullSendFault() {
+        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, null);
+        try {
+            exchange.sendFault(null);
+            Assert.fail("Expected IllegalArgumentException.");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals("Invalid null 'message' argument in method call.", e.getMessage());
+        }
+    }
+
     /**
      * Make sure that the current message is set correctly when an exchange
      * is sent.
