@@ -229,7 +229,7 @@ public class ExchangeImpl implements Exchange {
     }
 
     private void assertMessageOK(Message message) {
-        if(message == null) {
+        if (message == null) {
             throw new IllegalArgumentException("Invalid null 'message' argument in method call.");
         }
         if (_state == ExchangeState.FAULT) {
