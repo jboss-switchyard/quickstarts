@@ -25,7 +25,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.jaxen">
 
     <resources>
-        <resource-root path="jaxen-1.1.1.jar"/>
+        <resource-root path="jaxen-${version.jaxen}.jar"/>
     </resources>
 
     <dependencies>

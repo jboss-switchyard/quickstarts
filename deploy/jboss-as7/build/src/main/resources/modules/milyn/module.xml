@@ -25,7 +25,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.milyn">
 
     <resources>
-        <resource-root path="milyn-smooks-all-1.5-20110410.224823-7.jar"/>
+        <resource-root path="milyn-smooks-all-${version.milyn}.jar"/>
     </resources>
 
     <dependencies>

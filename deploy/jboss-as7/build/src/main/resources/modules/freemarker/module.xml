@@ -25,7 +25,7 @@
 <module xmlns="urn:jboss:module:1.0" name="freemaker">
 
     <resources>
-        <resource-root path="freemarker-2.3.15.jar"/>
+        <resource-root path="freemarker-${version.freemarker}.jar"/>
     </resources>
 
     <dependencies>
