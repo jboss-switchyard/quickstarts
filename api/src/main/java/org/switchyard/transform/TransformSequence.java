@@ -20,6 +20,7 @@
 package org.switchyard.transform;
 
 import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +60,7 @@ public final class TransformSequence implements Serializable {
     private List<QName> _sequence = new ArrayList<QName>();
 
     /**
-     * Create an {@link #associateWith(org.switchyard.Context) unassociated} sequence.
+     * Create an {@link #associateWith(Exchange, Scope) unassociated} sequence.
      */
     private TransformSequence() {
     }
@@ -113,10 +114,20 @@ public final class TransformSequence implements Serializable {
                 break;
             }
 
-            Object result = transformer.transform(message.getContent());
-            if (result != null) {
-                message.setContent(result);
+            Object result;
+            if (Message.class.isAssignableFrom(getFromType(transformer))) {
+                // A returned object just indicates that the transformation took place.
+                result = transformer.transform(message);
+            } else {
+                // A returned object indicates that the transformation took place and is
+                // used as the new Message payload.
+                result = transformer.transform(message.getContent());
+                if (result != null) {
+                    message.setContent(result);
+                }
+            }
 
+            if (result != null) {
                 // We can now remove the 1st element in the sequence.  2nd element will become the
                 // "from" for the next transformation in the sequence, if one is required...
                 _sequence.remove(0);
@@ -211,6 +222,16 @@ public final class TransformSequence implements Serializable {
             return (TransformSequence)sequenceProperty.getValue();
         } else {
             return null;
+        }
+    }
+
+    private Class<?> getFromType(Transformer transformer) {
+        try {
+            ParameterizedType pt = (ParameterizedType) transformer.getClass().getGenericSuperclass();
+            return (Class<?>) pt.getActualTypeArguments()[0];
+        } catch (Exception e) {
+            // Generics not specified...
+            return Object.class;
         }
     }
 }

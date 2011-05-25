@@ -74,15 +74,22 @@ public final class SmooksTransformFactory {
             throw new RuntimeException("Failed to create Smooks instance for config '" + config + "'.", e);
         }
 
+        Transformer transformer;
+
         if (transformationType == SmooksTransformType.JAVA2XML) {
-            return newXMLBindingTransformer(from, to, smooks, XMLBindingTransformer.BindingDirection.JAVA2XML);
+            transformer = newXMLBindingTransformer(from, to, smooks, XMLBindingTransformer.BindingDirection.JAVA2XML);
         } else if (transformationType == SmooksTransformType.XML2JAVA) {
-            return newXMLBindingTransformer(from, to, smooks, XMLBindingTransformer.BindingDirection.XML2JAVA);
+            transformer = newXMLBindingTransformer(from, to, smooks, XMLBindingTransformer.BindingDirection.XML2JAVA);
         } else if (transformationType == SmooksTransformType.SMOOKS) {
-            return new SmooksTransformer(from, to, smooks, model);
+            transformer = new SmooksTransformer(from, to, smooks, model);
         } else {
             throw new RuntimeException("Unhandled Smooks transformation type '" + transformationType + "'.");
         }
+
+        transformer.setFrom(model.getFrom());
+        transformer.setTo(model.getTo());
+
+        return transformer;
     }
 
     private static Transformer newXMLBindingTransformer(final QName from, final QName to, Smooks smooks, XMLBindingTransformer.BindingDirection direction) {

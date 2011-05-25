@@ -30,6 +30,7 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
+import org.switchyard.transform.AbstractTransformerTestCase;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.SmooksTransformModel;
 import org.switchyard.transform.smooks.internal.SmooksTransformFactory;
@@ -39,7 +40,7 @@ import org.xml.sax.SAXException;
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class SmooksTransformerTest {
+public class SmooksTransformerTest extends AbstractTransformerTestCase {
 
     @Test
     public void test_no_export() throws IOException {
@@ -76,29 +77,8 @@ public class SmooksTransformerTest {
         Assert.assertEquals(50, person.getAge());
     }
 
-    private Transformer getTransformer(String config) throws IOException {
-        InputStream swConfigStream = Classes.getResourceAsStream(config, getClass());
-
-        if(swConfigStream == null) {
-            Assert.fail("null config stream.");
-        }
-
-        SwitchYardModel switchyardConfig;
-        try {
-            switchyardConfig = new ModelResource<SwitchYardModel>().pull(swConfigStream);
-        } finally {
-            swConfigStream.close();
-        }
-
-        TransformsModel transforms = switchyardConfig.getTransforms();
-
-        SmooksTransformModel smooksTransformModel = (SmooksTransformModel) transforms.getTransforms().get(0);
-
-        if(smooksTransformModel == null) {
-            Assert.fail("No smooks config.");
-        }
-
-        Transformer transformer = SmooksTransformFactory.newTransformer(smooksTransformModel);
+    protected Transformer getTransformer(String config) throws IOException {
+        Transformer transformer = super.getTransformer(config);
 
         if(!(transformer instanceof SmooksTransformer)) {
             Assert.fail("Not an instance of SmooksTransformer.");

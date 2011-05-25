@@ -31,6 +31,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -48,33 +49,40 @@ public final class TransformerFactory {
      * @param transformModel The TransformModel instance.
      * @return The Transformer instance.
      */
-    public static org.switchyard.transform.Transformer<?, ?> newTransformer(TransformModel transformModel) {
+    public static Transformer<?, ?> newTransformer(TransformModel transformModel) {
+        return newTransformers(transformModel).iterator().next();
+    }
+
+    /**
+     * Create a Collection of {@link Transformer} instances from the supplied {@link TransformModel} instance.
+     * @param transformModel The TransformModel instance.
+     * @return The Transformer instance.
+     */
+    public static Collection<Transformer<?, ?>> newTransformers(TransformModel transformModel) {
 
         // TODO: Need a proper mechanism for building component instances (not just Transformers) from their config Model types Vs hard-wiring at this point in the code !  This makes it impossible for 3rd party impls.
 
-        org.switchyard.transform.Transformer<?, ?> transformer = null;
+        Collection<Transformer<?, ?>> transformers = null;
 
         if (transformModel instanceof JavaTransformModel) {
             String className = ((JavaTransformModel) transformModel).getClazz();
             try {
                 Class<?> transformClass = Classes.forName(className, TransformerFactory.class);
 
-                transformer = newTransformer(transformClass, transformModel.getFrom(), transformModel.getTo());
+                transformers = newTransformers(transformClass, transformModel.getFrom(), transformModel.getTo());
             } catch (Exception e) {
                 throw new RuntimeException("Error constructing Transformer instance for class '" + className + "'.", e);
             }
         } else if (transformModel instanceof SmooksTransformModel) {
-            transformer = SmooksTransformFactory.newTransformer((SmooksTransformModel) transformModel);
+            transformers = new ArrayList<Transformer<?, ?>>();
+            transformers.add(SmooksTransformFactory.newTransformer((SmooksTransformModel) transformModel));
         }
 
-        if (transformer == null) {
+        if (transformers == null || transformers.isEmpty()) {
             throw new RuntimeException("Unknown TransformModel type '" + transformModel.getClass().getName() + "'.");
         }
 
-        transformer.setFrom(transformModel.getFrom());
-        transformer.setTo(transformModel.getTo());
-
-        return transformer;
+        return transformers;
     }
 
     /**
@@ -86,12 +94,29 @@ public final class TransformerFactory {
      * @return The collection of Transformer instances.
      * @see #isTransformer(Class)
      */
-    public static org.switchyard.transform.Transformer<?, ?> newTransformer(Class<?> clazz, QName from, QName to) {
+    public static Transformer<?, ?> newTransformer(Class<?> clazz, QName from, QName to) {
+        return newTransformers(clazz, from, to).iterator().next();
+    }
+
+    /**
+     * Create a Collection of {@link Transformer} instances from the supplied
+     * Class and supporting the specified from and to.
+     * @param clazz The Class representing the Transformer.
+     * @param from The from type.
+     * @param to The to type.
+     * @return The collection of Transformer instances.
+     * @see #isTransformer(Class)
+     */
+    public static Collection<Transformer<?, ?>> newTransformers(Class<?> clazz, QName from, QName to) {
         if (!isTransformer(clazz)) {
             throw new RuntimeException("Invalid Transformer class '" + clazz.getName() + "'.  Must implement the Transformer interface, or have methods annotated with the @Transformer annotation.");
         }
 
+        boolean fromIsWild = from.toString().equals("*");
+        boolean toIsWild = to.toString().equals("*");
+        Collection<Transformer<?, ?>> transformers = new ArrayList<Transformer<?, ?>>();
         final Object transformerObject;
+
         try {
             transformerObject = clazz.newInstance();
         } catch (Exception e) {
@@ -100,8 +125,14 @@ public final class TransformerFactory {
 
         if (transformerObject instanceof org.switchyard.transform.Transformer) {
             Transformer transformer = (Transformer) transformerObject;
-            if (transformer.getFrom().equals(from) && transformer.getTo().equals(to)) {
-                return transformer;
+            if ((fromIsWild || transformer.getFrom().equals(from)) && (toIsWild || transformer.getTo().equals(to))) {
+                if (!fromIsWild) {
+                    transformer.setFrom(from);
+                }
+                if (!toIsWild) {
+                    transformer.setTo(to);
+                }
+                transformers.add(transformer);
             }
         }
 
@@ -111,20 +142,30 @@ public final class TransformerFactory {
             if (transformerAnno != null) {
                 TransformerMethod transformerMethod = toTransformerMethod(publicMethod, transformerAnno);
 
-                if (transformerMethod.getFrom().equals(from) && transformerMethod.getTo().equals(to)) {
-                    return newTransformer(transformerObject, transformerMethod.getMethod(), transformerMethod.getFrom(), transformerMethod.getTo());
+                if ((fromIsWild || transformerMethod.getFrom().equals(from)) && (toIsWild || transformerMethod.getTo().equals(to))) {
+                    transformers.add(newTransformer(transformerObject, transformerMethod.getMethod(), transformerMethod.getFrom(), transformerMethod.getTo()));
                 }
             }
         }
 
-        if (transformerObject instanceof org.switchyard.transform.Transformer) {
+        if (transformerObject instanceof Transformer) {
             Transformer transformer = (Transformer) transformerObject;
             if (transformer.getFrom().equals(OBJECT_TYPE) && transformer.getTo().equals(OBJECT_TYPE)) {
-                return transformer;
+                if (!fromIsWild) {
+                    transformer.setFrom(from);
+                }
+                if (!toIsWild) {
+                    transformer.setTo(to);
+                }
+                transformers.add(transformer);
             }
         }
 
-        throw new RuntimeException("Error constructing Transformer instance for class '" + clazz.getName() + "'.  Class does not support a transformation from type '" + from + "' to type '" + to + "'.");
+        if (transformers.isEmpty()) {
+            throw new RuntimeException("Error constructing Transformer instance for class '" + clazz.getName() + "'.  Class does not support a transformation from type '" + from + "' to type '" + to + "'.");
+        }
+
+        return transformers;
     }
 
     /**

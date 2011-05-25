@@ -32,8 +32,11 @@ import org.switchyard.transform.BaseTransformer;
  * Java to JSON Transformer.
  *
  * @author Alejandro Montenegro &lt;<a href="mailto:aamonten@gmail.com">aamonten@gmail.com</a>&gt;
+ *
+ * @param <F> From Type
+ * @param <T> To Type.
  */
-public class Java2JSONTransformer extends BaseTransformer {
+public class Java2JSONTransformer<F, T> extends BaseTransformer<Object, String> {
 
     private ObjectMapper _mapper;
     private Class _clazz;
@@ -53,7 +56,7 @@ public class Java2JSONTransformer extends BaseTransformer {
     }
 
     @Override
-    public Object transform(Object from) {
+    public String transform(Object from) {
 
         try {
             StringWriter writer = new StringWriter();

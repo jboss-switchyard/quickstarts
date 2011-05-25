@@ -35,7 +35,13 @@ import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
+import org.switchyard.internal.DefaultMessage;
+import org.switchyard.internal.transform.BaseTransformerRegistry;
+import org.switchyard.transform.Message2MessageTransformer;
+import org.switchyard.transform.TransformSequence;
 import org.switchyard.transform.Transformer;
+import org.switchyard.transform.TransformerRegistry;
+import org.switchyard.transform.TransformerRegistryLoader;
 import org.switchyard.transform.config.model.JSONTransformModel;
 import org.switchyard.transform.internal.json.User.Gender;
 import org.switchyard.transform.internal.json.User.Name;
@@ -52,8 +58,14 @@ public class JSONTransformerTest {
 	private final static String JSON_PERSON = "{\"age\":31,\"name\":\"Alejandro\"}";
 	private final static String JSON_USER = "{\"verified\":false,\"gender\":\"MALE\",\"name\":{\"first\":\"Joe\",\"last\":\"Sixpack\"}}";
 	private final static String JSON_USER_LIST = "[{\"name\":{\"first\":\"Joe\",\"last\":\"Sixpack\"},\"gender\":\"MALE\",\"verified\":false}]";
-	
-	@Test
+    private TransformerRegistry xformReg;
+
+    public JSONTransformerTest() {
+        xformReg = new BaseTransformerRegistry();
+        new TransformerRegistryLoader(xformReg).loadOOTBTransforms();
+    }
+
+    @Test
 	public void test_JSONResultPerson() {
 		try {
 			
@@ -69,15 +81,24 @@ public class JSONTransformerTest {
 	
 	@Test
 	public void test_JAVAResultPerson() {
-		try {
-			Transformer transformer = getTransformer("switchyard-config-02.xml");
-			assertEquals(new Person("Alejandro", 31),transformer.transform(JSON_PERSON));
+        try {
+            DefaultMessage message = newMessage(JSON_PERSON);
+            Transformer transformer = getTransformer("switchyard-config-02.xml");
+
+            transformer.transform(message);
+			assertEquals(new Person("Alejandro", 31), message.getContent());
 		} catch (Exception e) {
 			Assert.fail("caught an exception " + e.getMessage());
 		}
 	}
-	
-	@Test
+
+    private DefaultMessage newMessage(Object content) {
+        DefaultMessage message = new DefaultMessage().setContent(content);
+        message.setTransformerRegistry(xformReg);
+        return message;
+    }
+
+    @Test
 	public void test_JSONResultUser() {
 		try {
 			Transformer transformer = getTransformer("switchyard-config-03.xml");
@@ -92,8 +113,10 @@ public class JSONTransformerTest {
 	@Test
 	public void test_JAVAResultUser() {
 		try {
+            DefaultMessage message = newMessage(JSON_USER);
 			Transformer transformer = getTransformer("switchyard-config-04.xml");
-			assertEquals(getUser(),transformer.transform(JSON_USER));
+            transformer.transform(message);
+			assertEquals(getUser(), message.getContent());
 		} catch (Exception e) {
 			Assert.fail("caught an exception " + e.getMessage());
 		}
@@ -102,10 +125,10 @@ public class JSONTransformerTest {
 	@Test
 	public void test_JAVAResultList() {
 		try {
+            DefaultMessage message = newMessage(JSON_USER_LIST);
 			Transformer transformer = getTransformer("switchyard-config-05.xml");
-			Object result = transformer.transform(JSON_USER_LIST);
-			
-			assertEquals(toObject(JSON_USER_LIST, List.class),result);
+            transformer.transform(message);
+			assertEquals(toObject(JSON_USER_LIST, List.class), message.getContent());
 		} catch (Exception e) {
 			Assert.fail("caught an exception " + e.getMessage());
 		}
@@ -114,10 +137,10 @@ public class JSONTransformerTest {
 	@Test
 	public void test_JAVAResultMap() {
 		try {
+            DefaultMessage message = newMessage(JSON_USER);
 			Transformer transformer = getTransformer("switchyard-config-06.xml");
-			Object result = transformer.transform(JSON_USER);
-			
-			assertEquals(toObject(JSON_USER, Map.class),result);
+            transformer.transform(message);
+			assertEquals(toObject(JSON_USER, Map.class), message.getContent());
 		} catch (Exception e) {
 			Assert.fail("caught an exception " + e.getMessage());
 		}

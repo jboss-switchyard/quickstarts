@@ -54,4 +54,19 @@
     <trfm:transform.java from="java:byte[]" to="java:org.w3c.dom.Document" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
     <trfm:transform.java from="java:byte[]" to="java:org.w3c.dom.Element"  class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
 
+    <!-- String transforms... -->
+    <trfm:transform.java from="java:java.lang.String" to="*" class="org.switchyard.transform.ootb.lang.StringTransforms" />
+
+    <!-- Number transforms... -->
+    <trfm:transform.java from="java:java.lang.Number" to="*" class="org.switchyard.transform.ootb.lang.NumberTransforms" />
+
+    <!-- Reader transforms... -->
+    <trfm:transform.java from="java:java.io.Reader" to="*" class="org.switchyard.transform.ootb.io.ReaderTransforms" />
+
+    <!-- InputStream transforms... -->
+    <trfm:transform.java from="java:java.io.InputStream" to="*" class="org.switchyard.transform.ootb.io.InputStreamTransforms" />
+
+    <!-- InputSource transforms... -->
+    <trfm:transform.java from="java:org.xml.sax.InputSource" to="*" class="org.switchyard.transform.ootb.io.InputSourceTransforms" />
+
 </transforms>

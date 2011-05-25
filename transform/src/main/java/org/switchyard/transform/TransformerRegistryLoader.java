@@ -22,6 +22,7 @@ package org.switchyard.transform;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -79,20 +80,22 @@ public class TransformerRegistryLoader {
 
         try {
             for (TransformModel transformModel : transforms.getTransforms()) {
-                Transformer<?, ?> transformer = TransformerFactory.newTransformer(transformModel);
+                Collection<Transformer<?, ?>> transformers = TransformerFactory.newTransformers(transformModel);
 
-                if (_transformerRegistry.hasTransformer(transformModel.getFrom(), transformModel.getTo())) {
-                    Transformer<?, ?> registeredTransformer = _transformerRegistry.getTransformer(transformModel.getFrom(), transformModel.getTo());
-                    throw new RuntimeException("Failed to register Transformer '" + toDescription(transformer)
-                            + "'.  A Transformer for these types is already registered: '"
-                            + toDescription(registeredTransformer) + "'.");
+                for (Transformer<?, ?> transformer : transformers) {
+                    if (_transformerRegistry.hasTransformer(transformer.getFrom(), transformer.getTo())) {
+                        Transformer<?, ?> registeredTransformer = _transformerRegistry.getTransformer(transformer.getFrom(), transformer.getTo());
+                        throw new RuntimeException("Failed to register Transformer '" + toDescription(transformer)
+                                + "'.  A Transformer for these types is already registered: '"
+                                + toDescription(registeredTransformer) + "'.");
+                    }
+
+                    _log.debug("Adding transformer =>"
+                            + " From: " + transformer.getFrom()
+                            + ", To:" + transformer.getTo());
+                    _transformerRegistry.addTransformer(transformer);
+                    _transformers.add(transformer);
                 }
-
-                _log.debug("Adding transformer => \n"
-                        + "From: " + transformModel.getFrom()
-                        + "To:" + transformModel.getTo());
-                _transformerRegistry.addTransformer(transformer, transformModel.getFrom(), transformModel.getTo());
-                _transformers.add(transformer);
             }
         } catch (RuntimeException e) {
             // If there was an exception for any reason... remove all Transformer instance that have

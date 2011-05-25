@@ -32,6 +32,7 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
+import org.switchyard.transform.AbstractTransformerTestCase;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.v1.V1SmooksTransformModel;
 import org.switchyard.transform.smooks.internal.SmooksTransformFactory;
@@ -40,7 +41,7 @@ import org.xml.sax.SAXException;
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class XMLBindingTransformerTest {
+public class XMLBindingTransformerTest extends AbstractTransformerTestCase {
 
     @Test
     public void test_xml2java() throws IOException, SAXException {
@@ -94,30 +95,5 @@ public class XMLBindingTransformerTest {
         } catch (RuntimeException e) {
             Assert.assertEquals("Cannot transform to XML.  Input type is 'java.lang.String' but should be 'org.switchyard.transform.internal.smooks.Person'.", e.getMessage());
         }
-    }
-
-    private Transformer getTransformer(String config) throws IOException {
-        InputStream swConfigStream = Classes.getResourceAsStream(config, getClass());
-
-        if (swConfigStream == null) {
-            Assert.fail("null config stream.");
-        }
-
-        SwitchYardModel switchyardConfig;
-        try {
-            switchyardConfig = new ModelResource<SwitchYardModel>().pull(swConfigStream);
-        } finally {
-            swConfigStream.close();
-        }
-
-        TransformsModel transforms = switchyardConfig.getTransforms();
-
-        V1SmooksTransformModel transformModel = (V1SmooksTransformModel) transforms.getTransforms().get(0);
-
-        if (transformModel == null) {
-            Assert.fail("No smooks config.");
-        }
-
-        return SmooksTransformFactory.newTransformer(transformModel);
     }
 }
