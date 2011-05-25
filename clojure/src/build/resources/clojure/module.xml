@@ -25,7 +25,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.clojure.clojure">
 
     <resources>
-        <resource-root path="clojure-${clojure.version}.jar"/>
+        <resource-root path="clojure-${version.clojure}.jar"/>
     </resources>
 
     <dependencies>

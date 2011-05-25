@@ -25,6 +25,7 @@
           <include>org.switchyard.components:switchyard-component-clojure</include>
        </includes>
        <outputDirectory>/modules/org/switchyard/component/clojure/main</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${version.clojure}.${artifact.extension}</outputFileNameMapping>
     </dependencySet>
     <dependencySet>
        <useTransitiveDependencies>false</useTransitiveDependencies>
@@ -32,6 +33,7 @@
           <include>org.clojure:clojure</include>
        </includes>
        <outputDirectory>/modules/org/clojure/clojure/main</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${version.project}.${artifact.extension}</outputFileNameMapping>
     </dependencySet>
   </dependencySets>
 </assembly>

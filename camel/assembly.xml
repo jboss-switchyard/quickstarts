@@ -35,6 +35,7 @@
           <include>org.switchyard.components:switchyard-component-camel</include>
        </includes>
        <outputDirectory>/modules/org/switchyard/component/camel/main</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${version.project}.${artifact.extension}</outputFileNameMapping>
     </dependencySet>
     <dependencySet>
        <useTransitiveDependencies>false</useTransitiveDependencies>
@@ -42,6 +43,7 @@
           <include>org.apache.camel:camel-core</include>
        </includes>
        <outputDirectory>/modules/org/apache/camel/core/main</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${version.camel}.${artifact.extension}</outputFileNameMapping>
     </dependencySet>
     <dependencySet>
        <useTransitiveDependencies>false</useTransitiveDependencies>
@@ -49,6 +51,7 @@
           <include>org.apache.camel:camel-spring</include>
        </includes>
        <outputDirectory>/modules/org/apache/camel/spring/main</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${version.camel}.${artifact.extension}</outputFileNameMapping>
     </dependencySet>
     <dependencySet>
        <useTransitiveDependencies>false</useTransitiveDependencies>
@@ -56,6 +59,7 @@
           <include>org.fusesource.commonman:commons-management</include>
        </includes>
        <outputDirectory>/modules/org/fusesource/commonman/main</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${version.commonman}.${artifact.extension}</outputFileNameMapping>
     </dependencySet>
   </dependencySets>
 </assembly>

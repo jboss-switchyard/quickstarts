@@ -25,7 +25,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.apache.camel.core">
 
     <resources>
-        <resource-root path="camel-core-${camel.version}.jar"/>
+        <resource-root path="camel-core-${version.camel}.jar"/>
     </resources>
 
     <dependencies>

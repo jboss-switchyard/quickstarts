@@ -49,6 +49,7 @@
     <properties>
         <org.switchyard.test.soap.host>localhost</org.switchyard.test.soap.host>
         <org.switchyard.test.soap.port>48080</org.switchyard.test.soap.port>
+        <version.project>${project.version}</version.project>
     </properties>
 
     <modules>

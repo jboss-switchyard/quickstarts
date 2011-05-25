@@ -25,7 +25,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.fusesource.commonman">
 
     <resources>
-        <resource-root path="commons-management-1.0.jar"/>
+        <resource-root path="commons-management-${version.commonman}.jar"/>
     </resources>
 
     <dependencies>
