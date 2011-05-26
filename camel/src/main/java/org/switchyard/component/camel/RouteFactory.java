@@ -17,17 +17,11 @@
  * MA  02110-1301, USA.
  */
 
-
 package org.switchyard.component.camel;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
-import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.switchyard.common.type.Classes;
 
@@ -47,74 +41,55 @@ public final class RouteFactory {
     /**
      * Create a new route from the given class name and service name.
      * @param className name of the class containing an @Route definition
-     * @param serviceName name of the service which must match the value of the
-     *        @Route annotation
      * @return the route definition
      */
-    public static RouteDefinition createRoute(String className, QName serviceName) {
-        return createRoute(Classes.forName(className), serviceName);
+    public static RouteDefinition createRoute(String className) {
+        return createRoute(Classes.forName(className));
     }
     
     /**
      * Create a new route from the given class and service name.
      * @param routeClass class containing an @Route definition
-     * @param serviceName name of the service which must match the value of the
-     *        @Route annotation
      * @return the route definition
      */
-    public static RouteDefinition createRoute(Class<?> routeClass, QName serviceName) {
-        Method routeMethod = getRouteMethod(routeClass, serviceName);
-        if (routeMethod == null) {
-            throw new RuntimeException("No route definition found for service " 
-                    + serviceName + " on class " + routeClass.getName());
+    public static RouteDefinition createRoute(Class<?> routeClass) {
+        if (!routeClass.isAnnotationPresent(Route.class)) {
+            throw new RuntimeException("@Route definition is missing on class " 
+                    + routeClass.getName());
         }
         
-        // verify route method signature
-        if (!Modifier.isPublic(routeMethod.getModifiers())) {
-            throw new RuntimeException("@Route method must be public: " + routeMethod.getName());
+        if (!RouteBuilder.class.isAssignableFrom(routeClass)) {
+            throw new RuntimeException("Java DSL class " + routeClass.getName() 
+                    + " must extend " + RouteBuilder.class.getName());
         }
-        Class<?>[] params = routeMethod.getParameterTypes();
-        if (params.length != 1 || !ProcessorDefinition.class.isAssignableFrom(params[0])) {
-            throw new RuntimeException(
-                    "@Route methods must have a single parameter of type ProcessorDefinition: "
-                    + routeMethod.getName());
-        }
-        
-        RouteDefinition route = new RouteDefinition(); 
+
+        // Create the route and tell it to create a route
+        RouteBuilder builder;
+        RouteDefinition route = null;
         try {
-            routeMethod.invoke(routeClass.newInstance(), route);
+            builder = (RouteBuilder)routeClass.newInstance();
+            builder.configure();
         } catch (Exception ex) {
-            throw new RuntimeException("Error while invoking route builder method on " 
+            throw new RuntimeException("Failed to initialize Java DSL class " 
                     + routeClass.getName(), ex);
         }
         
+        
+        // Make sure the generated route is legit
+        List<RouteDefinition> routes = builder.getRouteCollection().getRoutes();
+        if (routes.isEmpty()) {
+            throw new RuntimeException("No routes found in Java DSL class "
+                    + routeClass.getName());
+        } else if (routes.size() > 1) {
+            throw new RuntimeException("Only one route allowed per Java DSL class "
+                    + routeClass.getName());
+        }
+        route = routes.get(0);
+        if (route.getInputs().size() != 1) {
+            throw new RuntimeException("Java DSL routes must contain a single 'from' "
+                    + routeClass.getName());
+        }
+        
         return route;
-    }
-    
-    /**
-     * Returns a list of methods annotated with @Route inside the specified class.
-     * @param clazz class to scan
-     * @return list of methods in the class annotated with @Route
-     */
-    public static List<Method> getRouteMethods(Class<?> clazz) {
-        List<Method> methods = new LinkedList<Method>();
-        for (Method publicMethod : clazz.getDeclaredMethods()) {
-            if (publicMethod.isAnnotationPresent(Route.class)) {
-                methods.add(publicMethod);
-            }
-        }
-        return methods;
-    }
-    
-    private static Method getRouteMethod(Class<?> clazz, QName serviceName) {
-        Method method = null;
-        for (Method routeMethod : getRouteMethods(clazz)) {
-            Route route = routeMethod.getAnnotation(Route.class);
-            if (route.value().getSimpleName().equals(serviceName.getLocalPart())) {
-                method = routeMethod;
-                break;
-            }
-        }
-        return method;
     }
 }

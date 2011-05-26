@@ -26,6 +26,7 @@ import org.jboss.seam.forge.parser.java.Annotation;
 import org.jboss.seam.forge.parser.java.JavaClass;
 import org.jboss.seam.forge.parser.java.JavaInterface;
 import org.jboss.seam.forge.project.facets.JavaSourceFacet;
+import org.jboss.seam.forge.project.facets.MetadataFacet;
 import org.jboss.seam.forge.shell.PromptType;
 import org.jboss.seam.forge.shell.ShellColor;
 import org.jboss.seam.forge.shell.plugins.Alias;
@@ -66,9 +67,13 @@ public class BeanServicePlugin extends AbstractPlugin {
       
         JavaSourceFacet java = getShell().getCurrentProject().getFacet(JavaSourceFacet.class);
         
-        String pkgName = getShell().promptCommon(
+        String pkgName = getProject().getFacet(MetadataFacet.class).getTopLevelPackage();
+        
+        if (pkgName == null) {
+            pkgName = getShell().promptCommon(
                 "Java package for service interface and implementation:",
                 PromptType.JAVA_PACKAGE);
+        }
         
         // Create the service interface
         JavaInterface beanInterface = JavaParser.create(JavaInterface.class)

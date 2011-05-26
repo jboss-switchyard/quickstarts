@@ -17,29 +17,25 @@
  * MA  02110-1301, USA.
  */
 
-
 package org.switchyard.component.camel.deploy.support;
 
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.builder.RouteBuilder;
 import org.switchyard.component.camel.Route;
 
 /**
- *  Java DSL route
+ *  Java DSL route equivalent to:
+ *  <route xmlns="http://camel.apache.org/schema/spring" id="Camel Test Route">
+ *   <log message="ItemId [${body}]"/>
+ *  <to uri="switchyard://WarehouseService?operationName=hasItem"/>
+ *  <log message="Title Name [${body}]"/>
+ *  </route>
  */
-public class OrderServiceRoute {
+@Route(OrderService.class)
+public class OrderServiceRoute extends RouteBuilder {
 
-    /*
-     *  Equivalent to:
-     *  <route xmlns="http://camel.apache.org/schema/spring" id="Camel Test Route">
-     *   <log message="ItemId [${body}]"/>
-     *  <to uri="switchyard://WarehouseService?operationName=hasItem"/>
-     *  <log message="Title Name [${body}]"/>
-     *  </route>
-     */
-    @Route(OrderService.class)
-    public void define(ProcessorDefinition<RouteDefinition> route) {
-        route.log("ItemId [${body}]")
+    public void configure() {
+        from("switchyard://OrderService")
+            .log("ItemId [${body}]")
             .to("switchyard://WarehouseService?operationName=hasItem")
             .log("Title Name [${body}]");
     }

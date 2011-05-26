@@ -63,7 +63,7 @@ public class CamelBindingPlugin extends AbstractPlugin {
                     name = "configURI",
                     description = "The configuration URI") 
             final String configURI,
-            @Option(required = true,
+            @Option(required = false,
                     name = "operationName",
                     description = "The operation name") 
             final String operationName,
@@ -79,11 +79,15 @@ public class CamelBindingPlugin extends AbstractPlugin {
         
         V1CamelBindingModel binding = new V1CamelBindingModel();
         binding.setConfigURI(URI.create(configURI));
-        V1OperationSelector operation = new V1OperationSelector();
-        operation.setOperationName(operationName);
-        binding.setOperationSelector(operation);
+        
+        // Add an operation selector if an operation name has been specified
+        if (operationName != null) {
+            V1OperationSelector operation = new V1OperationSelector();
+            operation.setOperationName(operationName);
+            binding.setOperationSelector(operation);
+        }
+        
         service.addBinding(binding);
-
         switchYard.saveConfig();
         out.println("Added binding.camel to service " + serviceName);
     }

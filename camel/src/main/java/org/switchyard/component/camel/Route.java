@@ -20,7 +20,7 @@
 
 package org.switchyard.component.camel;
 
-import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
@@ -28,19 +28,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Designates a method as a Camel route provider.  A required value element 
+ * Designates a class as a Camel route provider.  A required value element 
  * of type java.lang.Class is required to identify the service interface for the
- * route service.  A method annotated with <code>@Route</code> must take a 
- * single parameter of <code>ProcessorDefinition</code>, e.g.
- * <br>
- * <pre>
- *     @Route(MyService.class)
- *     public void someRoute(ProcessorDefinition route) {
- *        route.log("here I am!");
- *     }
- * </pre>
+ * route service.
  */
-@Target({METHOD})
+@Target({TYPE})
 @Retention(RUNTIME)
 @Documented
 public @interface Route {

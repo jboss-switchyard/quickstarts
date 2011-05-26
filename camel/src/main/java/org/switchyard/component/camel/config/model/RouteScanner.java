@@ -20,7 +20,6 @@
 package org.switchyard.component.camel.config.model;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.List;
@@ -28,7 +27,6 @@ import java.util.List;
 import org.switchyard.common.type.classpath.AbstractTypeFilter;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.component.camel.Route;
-import org.switchyard.component.camel.RouteFactory;
 import org.switchyard.component.camel.config.model.v1.V1CamelImplementationModel;
 import org.switchyard.config.model.Scannable;
 import org.switchyard.config.model.Scanner;
@@ -62,29 +60,27 @@ public class RouteScanner implements Scanner<SwitchYardModel> {
 
         // Create a Camel component model for each class
         for (Class<?> routeClass : routeClasses) {
+            // Top-level component definition
             ComponentModel componentModel = new V1ComponentModel();
             componentModel.setName(routeClass.getSimpleName());
-            for (Method routeMethod : RouteFactory.getRouteMethods(routeClass)) {
-                // Add a service to the component for each @Route method in the class
-                ComponentServiceModel serviceModel = new V1ComponentServiceModel();
-                JavaComponentServiceInterfaceModel csiModel = new V1JavaComponentServiceInterfaceModel();
-                
-                Class<?> serviceInterface = routeMethod.getAnnotation(Route.class).value();
-                serviceModel.setName(serviceInterface.getSimpleName());
-                csiModel.setInterface(serviceInterface.getName());
-                serviceModel.setInterface(csiModel);
-                componentModel.addService(serviceModel);
-                
-                /** Need to grab references from the route definition
-                RouteDefinition route = RouteFactory.createRoute(routeClass, 
-                        QName.valueOf(serviceInterface.getSimpleName()));
-                */
-            }
+            
+            // Component service definition
+            ComponentServiceModel serviceModel = new V1ComponentServiceModel();
+            JavaComponentServiceInterfaceModel csiModel = new V1JavaComponentServiceInterfaceModel();
+            Class<?> serviceInterface = routeClass.getAnnotation(Route.class).value();
+            serviceModel.setName(serviceInterface.getSimpleName());
+            csiModel.setInterface(serviceInterface.getName());
+            serviceModel.setInterface(csiModel);
+            componentModel.addService(serviceModel);
 
+            // Component implementation definition
             CamelComponentImplementationModel camelModel = new V1CamelImplementationModel();
             camelModel.setJavaClass(routeClass.getName());
             componentModel.setImplementation(camelModel);
             compositeModel.addComponent(componentModel);
+            
+            // Component reference definition(s)
+            // Need to add these!
         }
         
         return new ScannerOutput<SwitchYardModel>().setModel(switchyardModel);
@@ -123,7 +119,7 @@ public class RouteScanner implements Scanner<SwitchYardModel> {
             }
             
             // Check for @Route definitions
-            return RouteFactory.getRouteMethods(clazz).size() > 0;
+            return clazz.isAnnotationPresent(Route.class);
         }
     }
 }

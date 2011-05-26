@@ -130,7 +130,7 @@ public class CamelActivator extends BaseActivator {
             
             try {
                 final String endpointUri = ComponentNameComposer.composeComponentUri(serviceName);
-                final RouteDefinition routeDef = getRouteDefinition(ccim, serviceName);
+                final RouteDefinition routeDef = getRouteDefinition(ccim);
                 addFromEndpointToRouteDefinition(routeDef, endpointUri);
                 final CamelContext camelContext = _camelContext.get();
                 camelContext.addRouteDefinition(routeDef);
@@ -147,10 +147,20 @@ public class CamelActivator extends BaseActivator {
     
     private void addFromEndpointToRouteDefinition(final RouteDefinition rd, final String fromEndpointUri) throws Exception {
         final List<FromDefinition> inputs = rd.getInputs();
-        if (!inputs.isEmpty()) {
-            throw new RuntimeException("A Route must not define any 'from' endpoints as the 'from' endpoint will be created by SwithYard");
+        
+        // Make sure the route starts with a single switchyard:// endpoint
+        if (inputs.size() == 0) {
+            inputs.add(new FromDefinition(fromEndpointUri));
+        } else if (inputs.size() == 1) {
+            String routeURI = inputs.get(0).getUri();
+            if (!fromEndpointUri.equals(routeURI)) {
+                throw new RuntimeException("Endpoint URI on route " + routeURI 
+                        + " does not match expected URI : " + fromEndpointUri);
+            }
+        } else {
+            throw new RuntimeException("A route can only have one 'from' endpoint");
         }
-        inputs.add(new FromDefinition(fromEndpointUri));
+        
     }
     
     /**
@@ -158,11 +168,11 @@ public class CamelActivator extends BaseActivator {
      * This method figures out which one were dealing with and returns the 
      * corresponding RouteDefinition.
      */
-    private RouteDefinition getRouteDefinition(CamelComponentImplementationModel model, QName serviceName) {
+    private RouteDefinition getRouteDefinition(CamelComponentImplementationModel model) {
         if (model.getRoute() != null) {
             return model.getRoute();
         } else {
-            return RouteFactory.createRoute(model.getJavaClass(), serviceName);
+            return RouteFactory.createRoute(model.getJavaClass());
         }
     }
     

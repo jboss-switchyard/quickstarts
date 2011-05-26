@@ -19,17 +19,18 @@
 
 package org.switchyard.component.camel.config.model;
 
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.builder.RouteBuilder;
 import org.switchyard.component.camel.Route;
 
 /**
  * Defines a Camel route using Java DSL and the @Route annotation in SwitchYard.
  */
-public class SingleRouteService {
+@Route(ServiceInterface.class)
+public class SingleRouteService extends RouteBuilder {
     
-    @Route(ServiceInterface.class)
-    public void define(ProcessorDefinition<RouteDefinition> route) {
-        route.log("Inside of @Route service").to("mock:SingleRouteService");
+    public void configure() {
+        from("direct://in")
+        .log("Inside of @Route service")
+        .to("mock:SingleRouteService");
     }
 }

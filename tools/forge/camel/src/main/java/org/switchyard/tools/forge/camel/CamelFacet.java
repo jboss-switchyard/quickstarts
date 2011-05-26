@@ -26,12 +26,13 @@ import org.jboss.seam.forge.shell.plugins.Alias;
 import org.jboss.seam.forge.shell.plugins.RequiresFacet;
 import org.jboss.seam.forge.shell.plugins.RequiresPackagingType;
 import org.switchyard.tools.forge.AbstractFacet;
+import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 
 /**
  * Forge facet for Camel bindings and services.
  */
 @Alias("switchyard.camel")
-@RequiresFacet({ DependencyFacet.class, PackagingFacet.class })
+@RequiresFacet({ DependencyFacet.class, PackagingFacet.class, SwitchYardFacet.class })
 @RequiresPackagingType(PackagingType.JAR)
 public class CamelFacet extends AbstractFacet {
     

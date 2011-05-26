@@ -20,12 +20,7 @@
 
 package org.switchyard.component.camel.config.model;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-
-import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,118 +31,60 @@ public class RouteFactoryTest {
 
     @Test
     public void createRouteFromClass() {
-        RouteDefinition route = RouteFactory.createRoute(
-                SingleRouteService.class.getName(), 
-                QName.valueOf(ServiceInterface.class.getSimpleName()));
+        RouteDefinition route = RouteFactory.createRoute(SingleRouteService.class.getName());
         
         Assert.assertNotNull(route);
-        Assert.assertTrue(route.getInputs().isEmpty());
+        Assert.assertEquals(1, route.getInputs().size());
         Assert.assertEquals(2, route.getOutputs().size());
     }
     
     @Test
-    public void getRouteMethods() {
-        List<Method> routeMethods = RouteFactory.getRouteMethods(SingleRouteService.class);
-        Assert.assertEquals(1, routeMethods.size());
-    }
-    
-    @Test
-    public void nonPublicRouteMethod() {
+    public void noRouteAnnotation() {
         try {
-            RouteFactory.createRoute(
-                    NonPublicRoute.class.getName(), 
-                    QName.valueOf(ServiceInterface.class.getSimpleName()));
-            Assert.fail("Non public routes are bad!");
+            RouteFactory.createRoute(NoRouteAnnotation.class.getName());
+            Assert.fail("No route annotation on " + NoRouteAnnotation.class.getName());
         } catch (RuntimeException ex) {
-            System.out.println("Non-public route method was rejected: " + ex.toString());
-        }
-    }
-    
-    @Test
-    public void tooManyParametersOnRouteMethod() {
-        try {
-            RouteFactory.createRoute(
-                    TooManyParametersRoute.class.getName(), 
-                    QName.valueOf(ServiceInterface.class.getSimpleName()));
-            Assert.fail("Only one parameter for a route!");
-        } catch (RuntimeException ex) {
-            System.out.println("Route method with too many params was rejected: " + ex.toString());
+            System.out.println("Route without annotation was rejected: " + ex.toString());
         }
     }
 
     @Test
-    public void notEnoughParametersOnRouteMethod() {
+    public void doesntExtendRouteBuilder() {
         try {
-            RouteFactory.createRoute(
-                    NotEnoughParametersRoute.class.getName(), 
-                    QName.valueOf(ServiceInterface.class.getSimpleName()));
-            Assert.fail("Need one parameter for route methods!");
+            RouteFactory.createRoute(DoesntExtendRouteBuilder.class.getName());
+            Assert.fail("Java DSL class does not extend RouteBuilder " + DoesntExtendRouteBuilder.class.getName());
         } catch (RuntimeException ex) {
-            System.out.println("Route method with no params was rejected: " + ex.toString());
+            System.out.println("Route class that does not extend RouteBuilder was rejected: " + ex.toString());
         }
     }
 
     @Test
-    public void wrongTypeOnRouteMethod() {
+    public void noRoutesDefined() {
         try {
-            RouteFactory.createRoute(
-                    WrongTypeRoute.class.getName(), 
-                    QName.valueOf(ServiceInterface.class.getSimpleName()));
-            Assert.fail("Route paramter must be ProcessorDefinition!");
+            RouteFactory.createRoute(NoRoutesDefined.class.getName());
+            Assert.fail("No routes defined in Java DSL class " + NoRoutesDefined.class.getName());
         } catch (RuntimeException ex) {
-            System.out.println("Route method with wrong type was rejected: " + ex.toString());
-        }
-    }
-    
-
-    @Test
-    public void badServiceOnRouteMethod() {
-        try {
-            RouteFactory.createRoute(
-                    WrongInterfaceOnRoute.class.getName(), 
-                    QName.valueOf(ServiceInterface.class.getSimpleName()));
-            Assert.fail("Service interface didn't match - this should be an error!");
-        } catch (RuntimeException ex) {
-            System.out.println("Mismatched service interface on route method was rejected: " + ex.toString());
+            System.out.println("Java DSL class without a route was rejected: " + ex.toString());
         }
     }
 }
 
-class NonPublicRoute {
-    @Route(ServiceInterface.class)
-    void define(ProcessorDefinition<RouteDefinition> route) {
-        
+class NoRouteAnnotation extends RouteBuilder {
+    public void configure() {
+        from("direct://foo")
+        .to("mock:test");
     }
 }
 
 
-class WrongInterfaceOnRoute {
-    @Route(String.class)
-    public void define(ProcessorDefinition<RouteDefinition> route) {
-        
+@Route(ServiceInterface.class)
+class DoesntExtendRouteBuilder {
+    public void configure() {
     }
 }
 
-
-class TooManyParametersRoute {
-    @Route(ServiceInterface.class)
-    public void define(ProcessorDefinition<RouteDefinition> route, String extra) {
-        
-    }
-}
-
-
-class NotEnoughParametersRoute {
-    @Route(ServiceInterface.class)
-    public void define() {
-        
-    }
-}
-
-
-class WrongTypeRoute {
-    @Route(ServiceInterface.class)
-    public void define(String route) {
-        
+@Route(ServiceInterface.class)
+class NoRoutesDefined extends RouteBuilder {
+    public void configure() {
     }
 }
