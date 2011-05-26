@@ -74,9 +74,15 @@ public class FromMapToJava<F, T> extends BaseTransformer<Map, Object> {
         super.setTo(toType);
 
         if (!JavaService.isJavaMessageType(toType)) {
-            throw new RuntimeException("Invalid 'to' type.  Must be a Java Object type.");
+            throw new RuntimeException("Invalid 'to' type '" + toType + "'.  Must be a Java Object type.");
         }
-        _graphBuilder = new ComplexTypeBuilder(JavaService.toJavaMessageType(toType), null, null);
+
+        Class<?> javaType = JavaService.toJavaMessageType(toType);
+        if (javaType == null) {
+            throw new RuntimeException("Invalid 'to' type '" + toType + "'.  Class Not Found.");
+        }
+
+        _graphBuilder = new ComplexTypeBuilder(javaType, null, null);
         return this;
     }
 

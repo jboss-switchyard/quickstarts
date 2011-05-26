@@ -23,9 +23,12 @@ package org.switchyard.transform.ootb.map;
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.metadata.java.JavaService;
+import org.switchyard.transform.Transformer;
+import org.switchyard.transform.config.model.TransformerFactory;
 import org.switchyard.transform.ootb.map.ordermodel.Item;
 import org.switchyard.transform.ootb.map.ordermodel.Order;
 
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +40,16 @@ import java.util.Map;
 public class FromMapToJavaTest {
 
     @Test
-    public void test() {
+    public void test_factory_creation() {
+        QName from = JavaService.toMessageType(Map.class);
+        QName to = JavaService.toMessageType(Order.class);
+
+        Transformer<?,?> transformer = TransformerFactory.newTransformer(FromMapToJava.class, from, to);
+        Assert.assertTrue(transformer instanceof FromMapToJava);
+    }
+
+    @Test
+    public void test_transform() {
         Map orderHash = buildOrderMap();
         FromMapToJava transformer = new FromMapToJava();
 

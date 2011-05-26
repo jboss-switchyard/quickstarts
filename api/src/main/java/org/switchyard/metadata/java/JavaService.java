@@ -193,10 +193,14 @@ public final class JavaService extends BaseService {
 
         String className = name.getLocalPart().substring(TYPE_PREFIX.length());
         try {
-            return Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            // can't use this.... ignore...
-            return null;
+            return Thread.currentThread().getContextClassLoader().loadClass(className);
+        } catch (ClassNotFoundException e1) {
+            try {
+                return Class.forName(className);
+            } catch (ClassNotFoundException e2) {
+                // can't use this.... ignore...
+                return null;
+            }
         }
     }
 }

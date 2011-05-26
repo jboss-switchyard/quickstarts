@@ -112,8 +112,8 @@ public final class TransformerFactory {
             throw new RuntimeException("Invalid Transformer class '" + clazz.getName() + "'.  Must implement the Transformer interface, or have methods annotated with the @Transformer annotation.");
         }
 
-        boolean fromIsWild = from.toString().equals("*");
-        boolean toIsWild = to.toString().equals("*");
+        boolean fromIsWild = isWildcardType(from);
+        boolean toIsWild = isWildcardType(to);
         Collection<Transformer<?, ?>> transformers = new ArrayList<Transformer<?, ?>>();
         final Object transformerObject;
 
@@ -121,19 +121,6 @@ public final class TransformerFactory {
             transformerObject = clazz.newInstance();
         } catch (Exception e) {
             throw new RuntimeException("Error constructing Transformer instance for class '" + clazz.getName() + "'.  Class must have a public default constructor.", e);
-        }
-
-        if (transformerObject instanceof org.switchyard.transform.Transformer) {
-            Transformer transformer = (Transformer) transformerObject;
-            if ((fromIsWild || transformer.getFrom().equals(from)) && (toIsWild || transformer.getTo().equals(to))) {
-                if (!fromIsWild) {
-                    transformer.setFrom(from);
-                }
-                if (!toIsWild) {
-                    transformer.setTo(to);
-                }
-                transformers.add(transformer);
-            }
         }
 
         Method[] publicMethods = clazz.getMethods();
@@ -150,14 +137,25 @@ public final class TransformerFactory {
 
         if (transformerObject instanceof Transformer) {
             Transformer transformer = (Transformer) transformerObject;
-            if (transformer.getFrom().equals(OBJECT_TYPE) && transformer.getTo().equals(OBJECT_TYPE)) {
-                if (!fromIsWild) {
-                    transformer.setFrom(from);
-                }
-                if (!toIsWild) {
-                    transformer.setTo(to);
-                }
+            QName transFrom = transformer.getFrom();
+            QName transTo = transformer.getTo();
+
+            if (transFrom.equals(OBJECT_TYPE) && transTo.equals(OBJECT_TYPE)) {
+                // Type info not specified on transformer, so assuming it's a generic/multi-type transformer...
                 transformers.add(transformer);
+            } else if ((fromIsWild || transFrom.equals(from)) && (toIsWild || transTo.equals(to))) {
+                // Matching (specific) or wildcard type info specified...
+                transformers.add(transformer);
+            } else if (isAssignableFrom(transFrom, from) && isAssignableFrom(transTo, to)) {
+                // Compatible Java types...
+                transformers.add(transformer);
+            }
+
+            if (!fromIsWild) {
+                transformer.setFrom(from);
+            }
+            if (!toIsWild) {
+                transformer.setTo(to);
             }
         }
 
@@ -292,6 +290,25 @@ public final class TransformerFactory {
         transformer.setTo(to);
 
         return transformer;
+    }
+
+    private static boolean isAssignableFrom(QName a, QName b) {
+        if (JavaService.isJavaMessageType(a) && JavaService.isJavaMessageType(b)) {
+            Class<?> aType = JavaService.toJavaMessageType(a);
+            Class<?> bType = JavaService.toJavaMessageType(b);
+
+            if (aType == null || bType == null) {
+                return false;
+            }
+
+            return aType.isAssignableFrom(bType);
+        }
+
+        return false;
+    }
+
+    private static boolean isWildcardType(QName type) {
+        return type.toString().equals("*");
     }
 
     private static TransformerMethod toTransformerMethod(Method publicMethod, org.switchyard.annotations.Transformer transformerAnno) {
