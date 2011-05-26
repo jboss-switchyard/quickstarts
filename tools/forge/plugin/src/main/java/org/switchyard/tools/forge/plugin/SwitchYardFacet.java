@@ -229,6 +229,7 @@ public class SwitchYardFacet extends AbstractFacet {
             "<configuration>"
             + "<scannerClassNames>" 
             +   "<param>org.switchyard.component.bean.config.model.BeanSwitchYardScanner</param>"
+            +   "<param>org.switchyard.component.camel.config.model.RouteScanner</param>"
             +   "<param>org.switchyard.transform.config.model.TransformSwitchYardScanner</param>"
             + "</scannerClassNames>"
             + "</configuration>";
