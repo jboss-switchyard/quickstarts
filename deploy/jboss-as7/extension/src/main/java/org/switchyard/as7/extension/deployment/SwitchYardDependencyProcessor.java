@@ -41,7 +41,7 @@ import org.switchyard.as7.extension.SwitchYardDeploymentMarker;
  */
 public class SwitchYardDependencyProcessor implements DeploymentUnitProcessor {
 
-    private static final PathFilter META_INF_FILTER = PathFilters.isChildOf("META-INF/services");
+    private static final PathFilter META_INF_FILTER = PathFilters.isChildOf("META-INF");
     private static final ModuleIdentifier SWITCHYARD_ID = ModuleIdentifier.create("org.switchyard");
     private static final ModuleIdentifier SWITCHYARD_API_ID = ModuleIdentifier.create("org.switchyard.api");
     private static final ModuleIdentifier SWITCHYARD_COMMON_ID = ModuleIdentifier.create("org.switchyard.common");
