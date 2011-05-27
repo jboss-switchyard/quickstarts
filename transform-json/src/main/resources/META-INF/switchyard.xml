@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+            xmlns:trfm="urn:switchyard-config:transform:1.0"
+            xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+            targetNamespace="urn:switchyard-quickstart:transform-json:1.0-SNAPSHOT"
+            name="transform-smooks">
+            
+    <transforms>
+        <trfm:transform.json 
+            from="java:org.switchyard.quickstarts.transform.json.OrderAck" 
+            to="{urn:switchyard-quickstart:transform-json:1.0}orderResponse"/>
+            from="" 
+            
+        <trfm:transform.json 
+            from="{urn:switchyard-quickstart:transform-json:1.0}order" 
+            to="java:org.switchyard.quickstarts.transform.json.Order"/>
+    </transforms>
+
+</switchyard>
