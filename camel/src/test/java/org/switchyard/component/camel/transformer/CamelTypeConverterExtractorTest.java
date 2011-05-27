@@ -95,12 +95,11 @@ public class CamelTypeConverterExtractorTest
         assertThat(v1TransformsModel.getTransforms().size(), is(greaterThan(161)));
 	}
     
-    //@Ignore ("This method can be enabled to manually genereate a transforms.xml file in the output directory")
-    @Test
+    @Ignore ("This method can be enabled to manually genereate a transforms.xml file in the output directory")
     public void generateTransformsModelFile() throws FileNotFoundException, IOException {
         FileOutputStream fileOut = null;
         try {
-	        fileOut = new FileOutputStream("target/classes/META-INF/switchyard/transforms.xml");
+	        fileOut = new FileOutputStream("target/classes/new-transforms.xml");
 	        final TransformsModel v1TransformsModel = _extractor.getV1TransformsModel(_transformerRegistry);
 	        v1TransformsModel.write(fileOut);
         } finally {
