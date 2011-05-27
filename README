@@ -2,8 +2,13 @@ Welcome to the SwitchYard Quickstart Repository!
 
 Available Quickstarts
 =====================
+o camel-binding : binding service references using a Camel gateway
+  component.
+o camel-service : routing service example using the Java DSL and 
+  XML route definition languages.
 o transform-smooks : demonstrates the use of Smooks-based transformers
   to map between XML and Java.
+
 
 Available Quickstart Demos
 ==========================
