@@ -1,0 +1,16 @@
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-service">
+        <component name="XMLComponent">
+            <service name="XMLService">
+                <interface.java interface="org.switchyard.quickstarts.camel.service.JavaDSL"/>
+            </service>
+            <implementation.camel xmlns="urn:switchyard-component-camel:config:1.0">
+                <route xmlns="http://camel.apache.org/schema/spring">
+                    <log message="Inside XML Camel Route"/>
+                    <log message="[message] '${body}'"/>
+                </route>
+            </implementation.camel>
+        </component>
+        <service name="JavaDSL" promote="JavaDSL"/>
+    </composite>
+</switchyard>

@@ -45,6 +45,8 @@
     </organization>
 
     <modules>
+        <module>camel-service</module>
+        <module>camel-binding</module>
         <module>transform-smooks</module>
         <module>demos/orders</module>
     </modules>
