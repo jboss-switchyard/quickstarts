@@ -24,6 +24,7 @@ import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.Transformer;
+import org.switchyard.transform.json.internal.JSONTransformFactory;
 import org.switchyard.transform.smooks.internal.SmooksTransformFactory;
 
 import javax.xml.namespace.QName;
@@ -76,6 +77,9 @@ public final class TransformerFactory {
         } else if (transformModel instanceof SmooksTransformModel) {
             transformers = new ArrayList<Transformer<?, ?>>();
             transformers.add(SmooksTransformFactory.newTransformer((SmooksTransformModel) transformModel));
+        } else if (transformModel instanceof JSONTransformModel) {
+            transformers = new ArrayList<Transformer<?, ?>>();
+            transformers.add(JSONTransformFactory.newTransformer((JSONTransformModel) transformModel));
         }
 
         if (transformers == null || transformers.isEmpty()) {
