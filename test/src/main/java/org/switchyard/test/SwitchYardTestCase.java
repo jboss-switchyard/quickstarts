@@ -257,6 +257,14 @@ public abstract class SwitchYardTestCase {
             return new SimpleTestDeployment();
         }
     }
+    
+    /**
+     * Get the deployment instance associated with the test case.
+     * @return The deployment instance associated with the test case.
+     */
+    public AbstractDeployment getDeployment() {
+        return _deployment;
+    }
 
     /**
      * Get the ServiceDomain.
