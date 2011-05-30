@@ -228,7 +228,7 @@ public class CamelActivator extends BaseActivator {
                 final CamelBindingModel camelBindingModel = (CamelBindingModel) bindingModel;
                 try {
                     final Set<InboundHandler> handlers = getInboundHandlersForService(name);
-                    final InboundHandler inboundHandler = new InboundHandler(camelBindingModel, _camelContext);
+                    final InboundHandler inboundHandler = new InboundHandler(camelBindingModel, _camelContext, name);
                     if (!handlers.contains(inboundHandler)) {
                         handlers.add(inboundHandler);
                         _bindings.put(name, handlers);
@@ -290,16 +290,17 @@ public class CamelActivator extends BaseActivator {
     
     @Override
     public void start(final ServiceReference serviceReference) {
-        addServiceReference(serviceReference);
-        startOutboundHandlers(serviceReference);
+        ServiceReferences.add(serviceReference.getName(), serviceReference);
+        startInboundHandlers(serviceReference);
     }
-    
-    private void addServiceReference(final ServiceReference serviceReference) {
-        final QName serviceName = serviceReference.getName();
-        ServiceReferences.add(serviceName, serviceReference);
+
+    @Override
+    public void stop(ServiceReference serviceReference) {
+        stopInboundHandlers(serviceReference);
+        ServiceReferences.remove(serviceReference.getName());
     }
-    
-    private void startOutboundHandlers(final ServiceReference serviceReference) {
+
+    private void startInboundHandlers(final ServiceReference serviceReference) {
         final Set<InboundHandler> handlers = _bindings.get(serviceReference.getName());
         if (handlers != null) {
             for (InboundHandler inboundHandler : handlers) {
@@ -311,29 +312,26 @@ public class CamelActivator extends BaseActivator {
             }
         }
     }
-    
+
     @Override
-    public void stop(ServiceReference serviceReference) {
+    public void destroy(final ServiceReference service) {
+        _bindings.remove(service.getName());
+        stopCamelContext();
+    }
+
+    private void stopInboundHandlers(ServiceReference serviceReference) {
         final Set<InboundHandler> handlers = _bindings.get(serviceReference.getName());
         if (handlers != null) {
             for (InboundHandler inboundHandler : handlers) {
                 try {
                     inboundHandler.stop(serviceReference);
-                    _bindings.remove(serviceReference.getName());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }
         }
-        ServiceReferences.remove(serviceReference.getName());
     }
 
-    @Override
-    public void destroy(final ServiceReference service) {
-        ServiceReferences.clear();
-        stopCamelContext();
-    }
-    
     private void stopCamelContext() {
         try {
             _camelContext.stop();

@@ -26,6 +26,8 @@ import static org.mockito.Mockito.mock;
 
 import java.net.URI;
 
+import javax.xml.namespace.QName;
+
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
@@ -114,7 +116,7 @@ public class InboundHandlerTest {
     private InboundHandler createInboundHandler(final String uri) {
         final V1CamelBindingModel camelBindingModel = new V1CamelBindingModel(_configuration, new Descriptor());
         camelBindingModel.setConfigURI(URI.create(uri));
-        return new InboundHandler(camelBindingModel, _camelContext);
+        return new InboundHandler(camelBindingModel, _camelContext, new QName("dummyService"));
     }
 
 }

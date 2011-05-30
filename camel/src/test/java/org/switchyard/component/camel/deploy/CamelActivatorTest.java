@@ -26,9 +26,12 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.junit.Assert;
 import org.junit.Test;
+import org.switchyard.ServiceReference;
 import org.switchyard.component.camel.deploy.support.CustomPackageScanResolver;
 import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.internal.AbstractDeployment;
@@ -37,6 +40,8 @@ import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.SwitchYardTestCase;
 import org.switchyard.test.mixins.CDIMixIn;
+
+import javax.xml.namespace.QName;
 
 /**
  * Test for {@link CamelActivator}.
@@ -65,8 +70,36 @@ public class CamelActivatorTest extends SwitchYardTestCase {
         final CamelContext camelContext = getCamelContext();
         final PackageScanClassResolver p = camelContext.getPackageScanClassResolver();
         assertThat(p, is(instanceOf(CustomPackageScanResolver.class)));
-   }
-    
+    }
+
+    @Test
+    public void startStop() throws Exception {
+        final MockHandler mockHandler = registerInOnlyService("SimpleCamelService");
+        final ServiceReference serviceRef = getServiceDomain().getService(new QName("SimpleCamelService"));
+        final CamelActivator activator = getCamelActivator();
+        final CamelContext camelContext = activator.getCamelContext();
+        final ProducerTemplate producerTemplate = camelContext.createProducerTemplate();
+
+        producerTemplate.sendBody("direct://input", "dummy payload");
+        assertOneMessage(mockHandler, "dummy payload");
+
+        // Stop the camel components for the service...
+        activator.stop(serviceRef);
+
+        try {
+            producerTemplate.sendBody("direct://input2", "dummy payload");
+            Assert.fail("Expected CamelExecutionException.");
+        } catch (CamelExecutionException e) {
+            // Expected....
+        }
+
+        // Restart the camel components for the service...
+        activator.start(serviceRef);
+
+        producerTemplate.sendBody("direct://input", "dummy payload");
+        assertOneMessage(mockHandler, "dummy payload");
+    }
+
     private void assertOneMessage(final MockHandler mockHandler, final String expectedPayload)
     {
         mockHandler.waitForOKMessage();
@@ -75,10 +108,14 @@ public class CamelActivatorTest extends SwitchYardTestCase {
         assertThat(content, is(equalTo("dummy payload")));
     }
     
-    private CamelContext getCamelContext() {
+    private CamelActivator getCamelActivator() {
         final Deployment deployment = (Deployment) getDeployment();
-        final CamelActivator activator = (CamelActivator) deployment.getActivator("camel");
+        return (CamelActivator) deployment.getActivator("camel");
+    }
+
+    private CamelContext getCamelContext() {
+        final CamelActivator activator = getCamelActivator();
         return activator.getCamelContext();
     }
-    
+
 }

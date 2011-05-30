@@ -2,6 +2,8 @@ package org.switchyard.component.camel;
 
 import static org.switchyard.component.camel.deploy.ComponentNameComposer.componseSwitchYardServiceName;
 
+import java.util.Set;
+
 import javax.xml.namespace.QName;
 
 import org.apache.camel.Endpoint;
@@ -49,8 +51,11 @@ public class SwitchYardProducer extends DefaultProducer {
     public void process(final org.apache.camel.Exchange camelExchange) throws Exception {
         final String targetUri = (String) camelExchange.getProperty("CamelToEndpoint");
         final ServiceReference serviceRef = lookupServiceReference(targetUri);
-        final Exchange switchyardExchange = createSwitchyardExchange(camelExchange, serviceRef);
+        if (_operationName == null) {
+            _operationName = lookupOperationNameFor(serviceRef);
+        }
         
+        final Exchange switchyardExchange = createSwitchyardExchange(camelExchange, serviceRef);
         final Object camelPayload = camelExchange.getIn().getBody();
         final org.switchyard.Message switchyardMsg = switchyardExchange.createMessage().setContent(camelPayload);
         switchyardExchange.send(switchyardMsg);
@@ -79,6 +84,19 @@ public class SwitchYardProducer extends DefaultProducer {
         setInputMessageType(contract, getCamelBodyType(ex));
         
         return serviceReference.createExchange(contract);
+    }
+    
+    private String lookupOperationNameFor(final ServiceReference serviceRef) {
+        final Set<ServiceOperation> operations = serviceRef.getInterface().getOperations();
+        if (operations.size() != 1) {
+            final StringBuilder msg = new StringBuilder();
+            msg.append("No operationSelector was configured for the Camel Component and the Service Interface ");
+            msg.append("contains more than one operation: ").append(operations);
+            msg.append("Please add an operationSelector element with the target 'operationName' as an attribute.");
+            throw new RuntimeException(msg.toString());
+        }
+        final ServiceOperation serviceOperation = operations.iterator().next();
+        return serviceOperation.getName();
     }
     
     private Exchange createInOutExchange(final ServiceReference ref, final org.apache.camel.Exchange camelExchange) {
