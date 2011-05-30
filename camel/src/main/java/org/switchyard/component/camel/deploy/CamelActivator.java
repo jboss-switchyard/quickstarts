@@ -69,7 +69,7 @@ public class CamelActivator extends BaseActivator {
     private Map<QName, Set<OutboundHandler>> _references = new HashMap<QName, Set<OutboundHandler>>();
     private Map<QName, SwitchYardConsumer> _implementations = new HashMap<QName, SwitchYardConsumer>();
     
-    private static ThreadLocal<CamelContext> _camelContext = new ThreadLocal<CamelContext>();
+    private CamelContext _camelContext = new DefaultCamelContext();
     
     private PackageScanClassResolver _packageScanClassResolver;
     
@@ -132,9 +132,8 @@ public class CamelActivator extends BaseActivator {
                 final String endpointUri = ComponentNameComposer.composeComponentUri(serviceName);
                 final RouteDefinition routeDef = getRouteDefinition(ccim);
                 addFromEndpointToRouteDefinition(routeDef, endpointUri);
-                final CamelContext camelContext = _camelContext.get();
-                camelContext.addRouteDefinition(routeDef);
-                final SwitchyardEndpoint endpoint = (SwitchyardEndpoint) camelContext.getEndpoint(endpointUri);
+                _camelContext.addRouteDefinition(routeDef);
+                final SwitchyardEndpoint endpoint = (SwitchyardEndpoint) _camelContext.getEndpoint(endpointUri);
                 final SwitchYardConsumer consumer = endpoint.getConsumer();
                 _implementations.put(serviceName, consumer);
                 return consumer;
@@ -213,15 +212,11 @@ public class CamelActivator extends BaseActivator {
     }
     
     private void startCamelContext() {
-        if (getCamelContext() == null) {
-            setCamelContext(new DefaultCamelContext());
-        }
         try {
-            final CamelContext camelContext = getCamelContext();
             if (_packageScanClassResolver != null) {
-                camelContext.setPackageScanClassResolver(_packageScanClassResolver);
+                _camelContext.setPackageScanClassResolver(_packageScanClassResolver);
             }
-            camelContext.start();
+            _camelContext.start();
         } catch (Exception e1) {
             throw new IllegalStateException(e1);
         }
@@ -233,7 +228,7 @@ public class CamelActivator extends BaseActivator {
                 final CamelBindingModel camelBindingModel = (CamelBindingModel) bindingModel;
                 try {
                     final Set<InboundHandler> handlers = getInboundHandlersForService(name);
-                    final InboundHandler inboundHandler = new InboundHandler(camelBindingModel, _camelContext.get());
+                    final InboundHandler inboundHandler = new InboundHandler(camelBindingModel, _camelContext);
                     if (!handlers.contains(inboundHandler)) {
                         handlers.add(inboundHandler);
                         _bindings.put(name, handlers);
@@ -265,7 +260,7 @@ public class CamelActivator extends BaseActivator {
     private OutboundHandler addOutboundHandler(final QName name, final String uri)  {
         try {
             final Set<OutboundHandler> handlers = getOutboundHandlersForService(name);
-            final OutboundHandler outboundHandler = new OutboundHandler(uri, _camelContext.get());
+            final OutboundHandler outboundHandler = new OutboundHandler(uri, _camelContext);
             if (!handlers.contains(outboundHandler)) {
                 handlers.add(outboundHandler);
                 _references.put(name, handlers);
@@ -337,24 +332,23 @@ public class CamelActivator extends BaseActivator {
     public void destroy(ServiceReference service) {
         ServiceReferences.clear();
     }
-
+    
     /**
-     * Gets the ThreadLocal {@link CamelContext}.
+     * Set the {@link CamelContext} to be used by this Activator.
      * 
-     * @return {@link CamelContext} The CamelContext associated with the current thread
-     * or null if not CamelContext has been associated with the current thread.
+     * @param camelContext the CamelContext.
      */
-    public static CamelContext getCamelContext() {
-        return _camelContext.get();
+    public void setCamelContext(final CamelContext camelContext) {
+        _camelContext = camelContext;
     }
-
+    
     /**
-     * Sets the CamelContext as a ThreadLocal object.
+     * Gets the {@link CamelContext} used by this Activator.
      * 
-     * @param camelContext The {@link CamelContext} to associate with the current thread.
+     * @return CamelContext the {@link CamelContext} used by this Activator.
      */
-    public static void setCamelContext(CamelContext camelContext) {
-        _camelContext.set(camelContext);
+    public CamelContext getCamelContext() {
+        return _camelContext;
     }
 
 }

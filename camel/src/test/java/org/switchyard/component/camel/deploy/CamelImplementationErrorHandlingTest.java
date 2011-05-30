@@ -31,6 +31,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.switchyard.component.camel.deploy.support.CustomException;
+import org.switchyard.deploy.internal.Deployment;
 import org.switchyard.test.InvocationFaultException;
 import org.switchyard.test.SwitchYardTestCase;
 import org.switchyard.test.SwitchYardTestCaseConfig;
@@ -51,7 +52,7 @@ public class CamelImplementationErrorHandlingTest extends SwitchYardTestCase {
     
     @Before
     public void setupMockEndpoint() {
-        final CamelContext camelContext = CamelActivator.getCamelContext();
+        final CamelContext camelContext = getCamelContext();
         final MockEndpoint endpoint = camelContext.getEndpoint("mock://throw", MockEndpoint.class);
         endpoint.whenAnyExchangeReceived(new ExceptionThrowingProcesor());
     }
@@ -68,5 +69,11 @@ public class CamelImplementationErrorHandlingTest extends SwitchYardTestCase {
         public void process(Exchange exchange) throws Exception {
             throw new CustomException("dummy exception");
         }
+    }
+    
+    private CamelContext getCamelContext() {
+        final Deployment deployment = (Deployment) getDeployment();
+        final CamelActivator activator = (CamelActivator) deployment.getActivator("camel");
+        return activator.getCamelContext();
     }
 }

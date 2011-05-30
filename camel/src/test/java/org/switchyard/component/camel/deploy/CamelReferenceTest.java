@@ -27,6 +27,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
+import org.switchyard.deploy.internal.Deployment;
 import org.switchyard.test.SwitchYardTestCase;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
@@ -42,7 +43,7 @@ public class CamelReferenceTest extends SwitchYardTestCase {
     
     @Test
     public void invokeCamelEndpointViaInjection() throws Exception {
-        final CamelContext camelContext = CamelActivator.getCamelContext();
+        final CamelContext camelContext = getCamelContext();
         camelContext.addRoutes(new RouteBuilder()
         {
             @Override
@@ -55,5 +56,11 @@ public class CamelReferenceTest extends SwitchYardTestCase {
         final String title = (String) newInvoker("OrderService").operation("getTitleForItem").sendInOut(itemId).getContent();
         
         assertThat(title, is(equalTo("Fletch")));
+    }
+    
+    private CamelContext getCamelContext() {
+        final Deployment deployment = (Deployment) getDeployment();
+        final CamelActivator activator = (CamelActivator) deployment.getActivator("camel");
+        return activator.getCamelContext();
     }
 }
