@@ -329,8 +329,17 @@ public class CamelActivator extends BaseActivator {
     }
 
     @Override
-    public void destroy(ServiceReference service) {
+    public void destroy(final ServiceReference service) {
         ServiceReferences.clear();
+        stopCamelContext();
+    }
+    
+    private void stopCamelContext() {
+        try {
+            _camelContext.stop();
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
     
     /**
