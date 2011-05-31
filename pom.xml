@@ -50,13 +50,15 @@
         <org.switchyard.test.soap.host>localhost</org.switchyard.test.soap.host>
         <org.switchyard.test.soap.port>48080</org.switchyard.test.soap.port>
         <version.project>${project.version}</version.project>
+        <version.camel>2.6.0</version.camel>
     </properties>
 
     <modules>
         <module>bean</module>
         <module>soap</module>
         <module>tests</module>
-        <module>camel</module>
+        <module>camel/camel-core</module>
+        <module>camel/camel-as6</module>
         <module>clojure</module>
         <module>tools/forge/bean</module>
         <module>tools/forge/camel</module>
