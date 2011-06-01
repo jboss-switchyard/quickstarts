@@ -79,6 +79,16 @@
                 <groupId>org.jboss.jbossas</groupId>
                 <artifactId>weld-int-deployer</artifactId>
                 <version>6.0.0.Final</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jboss.jbossas</groupId>
+                        <artifactId>weld-int-ejb</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.ejb3.instantiator</groupId>
+                        <artifactId>jboss-ejb3-instantiator-deployer</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>log4j</groupId>
