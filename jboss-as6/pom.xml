@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JBoss, Home of Professional Open Source
+  ~ Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+  ~ as indicated by the @authors tag. All rights reserved.
+  ~ See the copyright.txt in the distribution for a
+  ~ full listing of individual contributors.
+  ~  *
+  ~ This copyrighted material is made available to anyone wishing to use,
+  ~ modify, copy, or redistribute it subject to the terms and conditions
+  ~ of the GNU Lesser General Public License, v. 2.1.
+  ~ This program is distributed in the hope that it will be useful, but WITHOUT A
+  ~ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  ~ PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  ~ You should have received a copy of the GNU Lesser General Public License,
+  ~ v.2.1 along with this distribution; if not, write to the Free Software
+  ~ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  ~ MA  02110-1301, USA.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>org.switchyard</groupId>
+        <artifactId>switchyard-release</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.switchyard</groupId>
+    <artifactId>switchyard-release-as6</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>SwitchYard: AS6 Distribution</name>
+    <description>SwitchYard AS6 Distribution</description>
+
+    <properties>
+        <version.jbossas>6.0.0.Final</version.jbossas>
+        <stagging.dir>${project.build.directory}/staging</stagging.dir>
+        <assembly.dir>${project.build.directory}/assembly</assembly.dir>
+        <as.root.dir>jboss-${version.jbossas}</as.root.dir>
+        <switchyard.root.dir>switchyard-as6-0.1</switchyard.root.dir>
+        <camel.version>2.6.0</camel.version>
+        <commonman.version>1.0</commonman.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <!-- Copy the dependencies to target/dependency -->
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>stage-jboss</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.jboss.jbossas</groupId>
+                                    <artifactId>jboss-as-distribution</artifactId>
+                                    <version>${version.jbossas}</version>
+                                    <type>zip</type>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.switchyard</groupId>
+                                    <artifactId>switchyard-as6-build</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>zip</type>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.switchyard.components</groupId>
+                                    <artifactId>switchyard-component-bean</artifactId>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.switchyard.components</groupId>
+                                    <artifactId>switchyard-component-soap</artifactId>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.switchyard.components</groupId>
+                                    <artifactId>switchyard-component-camel</artifactId>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.switchyard.components</groupId>
+                                    <artifactId>switchyard-component-camel-as6</artifactId>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-core</artifactId>
+                                    <version>${camel.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-spring</artifactId>
+                                    <version>${camel.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.fusesource.commonman</groupId>
+                                    <artifactId>commons-management</artifactId>
+                                    <version>${commonman.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Build the Server from the dependencies... -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.1</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <tasks>
+
+                                <property name="dependencies.dir" value="target/dependency" />
+
+                                <!-- Create the staging and assembly dirs... -->
+                                <mkdir dir="${stagging.dir}" />
+
+                                <!-- Unzip the AS distribution... -->
+                                <unzip src="${dependencies.dir}/jboss-as-distribution-${version.jbossas}.zip" dest="${stagging.dir}" />
+
+                                <property name="default.server" value="${stagging.dir}/${as.root.dir}/server/default" />
+
+                                <!-- Unzip the SwitchYard distribution on top of the AS... -->
+                                <unzip src="${dependencies.dir}/switchyard-as6-build-${project.version}.zip" dest="${default.server}/deployers" />
+
+                                <!-- Copy switchyard components to default server deploy folder... -->
+                                <copy todir="${default.server}/deploy">
+                                    <fileset dir="${dependencies.dir}">
+                                        <include name="switchyard-component-*.jar" />
+                                        <exclude name="switchyard-component-camel-as6-*.jar" /> <!-- Will be copied to switchyard.deployer folder. See below. -->
+                                    </fileset>
+                                </copy>
+
+                                <!-- Copy Camel dependencies to default server switchyard.deployer folder... -->
+                                <copy todir="${default.server}/deployers/switchyard.deployer">
+                                    <fileset dir="${dependencies.dir}">
+                                        <include name="camel-*.jar" />
+                                        <include name="commons-management-*.jar" />
+                                        <include name="switchyard-component-camel-as6-*.jar" />
+                                    </fileset>
+                                </copy>
+
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Assemble the Server... -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>SwitchYard-AS6-Standalone</finalName>
+                            <descriptors>
+                                <descriptor>${basedir}/assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

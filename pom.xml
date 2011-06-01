@@ -16,6 +16,7 @@
     <description>SwitchYard Distribution</description>
 
     <modules>
+        <module>jboss-as6</module>
         <module>jboss-as7</module>
     </modules>
 
