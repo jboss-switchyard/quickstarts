@@ -30,6 +30,8 @@ import org.apache.camel.impl.DefaultProducer;
 import org.switchyard.Exchange;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.camel.deploy.ServiceReferences;
+import org.switchyard.exception.SwitchYardException;
+
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
@@ -112,7 +114,7 @@ public class SwitchYardProducer extends DefaultProducer {
             msg.append("No operationSelector was configured for the Camel Component and the Service Interface ");
             msg.append("contains more than one operation: ").append(operations);
             msg.append("Please add an operationSelector element with the target 'operationName' as an attribute.");
-            throw new RuntimeException(msg.toString());
+            throw new SwitchYardException(msg.toString());
         }
         final ServiceOperation serviceOperation = operations.iterator().next();
         return serviceOperation.getName();

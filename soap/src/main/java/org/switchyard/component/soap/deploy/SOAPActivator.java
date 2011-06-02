@@ -36,6 +36,8 @@ import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.deploy.BaseActivator;
+import org.switchyard.exception.SwitchYardException;
+
 
 /**
  * SOAP Activator.
@@ -80,7 +82,7 @@ public class SOAPActivator extends BaseActivator {
         }
 
         // no bindings were found, raise a deployment error
-        throw new RuntimeException("No SOAP bindings found for service " + name);
+        throw new SwitchYardException("No SOAP bindings found for service " + name);
     }
 
     @Override
@@ -89,7 +91,7 @@ public class SOAPActivator extends BaseActivator {
             try {
                 _inboundGateways.get(service.getName()).start(service);
             } catch (WebServicePublishException ex) {
-                throw new RuntimeException(
+                throw new SwitchYardException(
                         "Failed to start inbound gateway for service " + service.getName(), ex);
             }
         }
@@ -97,7 +99,7 @@ public class SOAPActivator extends BaseActivator {
             try {
                 _outboundGateways.get(service.getName()).start();
             } catch (WebServiceConsumeException ex) {
-                throw new RuntimeException(
+                throw new SwitchYardException(
                         "Failed to start outbound gateway for service " + service.getName(), ex);
             }
         }

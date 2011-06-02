@@ -24,6 +24,8 @@ import java.util.List;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.switchyard.common.type.Classes;
+import org.switchyard.exception.SwitchYardException;
+
 
 /**
  * Creates RouteDefinition instances based off of a class containing @Route
@@ -54,12 +56,12 @@ public final class RouteFactory {
      */
     public static RouteDefinition createRoute(Class<?> routeClass) {
         if (!routeClass.isAnnotationPresent(Route.class)) {
-            throw new RuntimeException("@Route definition is missing on class " 
+            throw new SwitchYardException("@Route definition is missing on class " 
                     + routeClass.getName());
         }
         
         if (!RouteBuilder.class.isAssignableFrom(routeClass)) {
-            throw new RuntimeException("Java DSL class " + routeClass.getName() 
+            throw new SwitchYardException("Java DSL class " + routeClass.getName() 
                     + " must extend " + RouteBuilder.class.getName());
         }
 
@@ -70,7 +72,7 @@ public final class RouteFactory {
             builder = (RouteBuilder)routeClass.newInstance();
             builder.configure();
         } catch (Exception ex) {
-            throw new RuntimeException("Failed to initialize Java DSL class " 
+            throw new SwitchYardException("Failed to initialize Java DSL class " 
                     + routeClass.getName(), ex);
         }
         
@@ -78,15 +80,15 @@ public final class RouteFactory {
         // Make sure the generated route is legit
         List<RouteDefinition> routes = builder.getRouteCollection().getRoutes();
         if (routes.isEmpty()) {
-            throw new RuntimeException("No routes found in Java DSL class "
+            throw new SwitchYardException("No routes found in Java DSL class "
                     + routeClass.getName());
         } else if (routes.size() > 1) {
-            throw new RuntimeException("Only one route allowed per Java DSL class "
+            throw new SwitchYardException("Only one route allowed per Java DSL class "
                     + routeClass.getName());
         }
         route = routes.get(0);
         if (route.getInputs().size() != 1) {
-            throw new RuntimeException("Java DSL routes must contain a single 'from' "
+            throw new SwitchYardException("Java DSL routes must contain a single 'from' "
                     + routeClass.getName());
         }
         

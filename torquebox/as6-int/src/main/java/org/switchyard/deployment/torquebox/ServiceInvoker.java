@@ -116,7 +116,7 @@ public class ServiceInvoker {
             try {
                 exchangeOut = responseQueue.take();
             } catch (InterruptedException e) {
-                throw new RuntimeException("Operation '" + operationName + "' on Service '" + _serviceReference.getName() + "' interrupted.", e);
+                throw new SwitchYardException("Operation '" + operationName + "' on Service '" + _serviceReference.getName() + "' interrupted.", e);
             }
 
             if (exchangeOut.getState() == ExchangeState.OK) {
@@ -130,7 +130,7 @@ public class ServiceInvoker {
                         throw (Throwable) failureObj;
                     }
                 } else {
-                    throw new RuntimeException("Service invocation failure.  Service '" + _serviceReference.getName() + "', operation '" + operationName + "'.  Non Throwable failure message payload: " + failureObj);
+                    throw new SwitchYardException("Service invocation failure.  Service '" + _serviceReference.getName() + "', operation '" + operationName + "'.  Non Throwable failure message payload: " + failureObj);
                 }
             }
         } else {

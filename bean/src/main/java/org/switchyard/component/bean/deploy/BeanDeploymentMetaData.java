@@ -20,6 +20,8 @@
 package org.switchyard.component.bean.deploy;
 
 import org.switchyard.component.bean.ClientProxyBean;
+import org.switchyard.exception.SwitchYardException;
+
 
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -121,17 +123,17 @@ public class BeanDeploymentMetaData {
 
             Set<Bean<?>> beans = beanManager.getBeans(BeanDeploymentMetaData.class);
             if (beans.isEmpty()) {
-                throw new RuntimeException("Failed to lookup BeanDeploymentMetaData from BeanManager.  Must be bound into BeanManager.  Perhaps SwitchYard CDI Extensions not properly installed in container.");
+                throw new SwitchYardException("Failed to lookup BeanDeploymentMetaData from BeanManager.  Must be bound into BeanManager.  Perhaps SwitchYard CDI Extensions not properly installed in container.");
             }
             if (beans.size() > 1) {
-                throw new RuntimeException("Failed to lookup BeanDeploymentMetaData from BeanManager.  Multiple beans resolved for type '" + BeanDeploymentMetaData.class.getName() + "'.");
+                throw new SwitchYardException("Failed to lookup BeanDeploymentMetaData from BeanManager.  Multiple beans resolved for type '" + BeanDeploymentMetaData.class.getName() + "'.");
             }
 
             BeanDeploymentMetaDataCDIBean bean = (BeanDeploymentMetaDataCDIBean) beans.iterator().next();
 
             return bean.getBeanMetaData();
         } catch (NamingException e) {
-            throw new RuntimeException("Failed to lookup BeanManager.  Must be bound into java:comp as per CDI specification.", e);
+            throw new SwitchYardException("Failed to lookup BeanManager.  Must be bound into java:comp as per CDI specification.", e);
         }
     }
 
@@ -143,13 +145,13 @@ public class BeanDeploymentMetaData {
             initialContext = new InitialContext();
             javaComp = (Context) initialContext.lookup("java:comp");
         } catch (Exception e) {
-            throw new RuntimeException("Unexpected retrieving java:comp from JNDI namespace.", e);
+            throw new SwitchYardException("Unexpected retrieving java:comp from JNDI namespace.", e);
         } finally {
             if (initialContext != null) {
                 try {
                     initialContext.close();
                 } catch (NamingException e) {
-                    throw new RuntimeException("Unexpected error closing InitialContext.", e);
+                    throw new SwitchYardException("Unexpected error closing InitialContext.", e);
                 }
             }
         }

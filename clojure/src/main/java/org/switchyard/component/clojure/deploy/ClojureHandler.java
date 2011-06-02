@@ -33,6 +33,7 @@ import org.switchyard.ServiceReference;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.clojure.config.model.ClojureComponentImplementationModel;
 import org.switchyard.component.clojure.config.model.ClojureScriptModel;
+import org.switchyard.exception.SwitchYardException;
 
 import clojure.lang.Var;
 
@@ -69,7 +70,7 @@ public class ClojureHandler implements ExchangeHandler {
                     ? (Var) clojure.lang.Compiler.load(new StringReader(scriptModel.getScript())) 
                     : (Var) clojure.lang.Compiler.load(loadInputStream(_implModel.getScriptFile()));
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw new SwitchYardException(e);
         }
     }
     

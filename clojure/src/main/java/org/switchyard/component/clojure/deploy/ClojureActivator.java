@@ -32,6 +32,8 @@ import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
+import org.switchyard.exception.SwitchYardException;
+
 import org.switchyard.deploy.BaseActivator;
 
 /**
@@ -87,7 +89,7 @@ public class ClojureActivator extends BaseActivator {
             try {
                 handler.start(service);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new SwitchYardException(e);
             }
         }
     }

@@ -23,6 +23,8 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.component.bean.BeanServiceMetadata;
 import org.switchyard.component.bean.Service;
 import org.switchyard.component.bean.ServiceProxyHandler;
+import org.switchyard.exception.SwitchYardException;
+
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.java.JavaService;
 
@@ -105,9 +107,9 @@ public class CDIBeanServiceDescriptor implements ServiceDescriptor {
         Class<?> serviceInterface = serviceAnnotation.value();
 
         if (serviceInterface == null) {
-            throw new RuntimeException("Unexpected exception.  The @Service annotation requires a Service interface Class value to be defined, yet the annotation has no value.");
+            throw new SwitchYardException("Unexpected exception.  The @Service annotation requires a Service interface Class value to be defined, yet the annotation has no value.");
         } else if (!serviceInterface.isInterface()) {
-            throw new RuntimeException("Invalid @Service specification @Service(" + serviceInterface.getName() + ".class).  @Service interface Class must be a Java Interface.  Cannot be a concrete implementation.");
+            throw new SwitchYardException("Invalid @Service specification @Service(" + serviceInterface.getName() + ".class).  @Service interface Class must be a Java Interface.  Cannot be a concrete implementation.");
         }
 
         return serviceInterface;

@@ -27,6 +27,8 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.camel.deploy.ServiceReferences;
+import org.switchyard.exception.SwitchYardException;
+
 import org.switchyard.metadata.java.JavaService;
 
 /**
@@ -52,10 +54,10 @@ public class CamelResponseHandler implements ExchangeHandler {
      */
     public CamelResponseHandler(final org.apache.camel.Exchange camelExchange, final ServiceReference reference) {
         if (camelExchange ==  null) {
-            throw new RuntimeException("[camelExchange] argument must not be null");
+            throw new SwitchYardException("[camelExchange] argument must not be null");
         }
         if (reference == null) {
-            throw new RuntimeException("[reference] argument must not be null");
+            throw new SwitchYardException("[reference] argument must not be null");
         }
         _camelExchange = camelExchange;
         _reference = reference;

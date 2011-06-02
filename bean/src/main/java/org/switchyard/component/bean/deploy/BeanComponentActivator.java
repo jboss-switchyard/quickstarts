@@ -31,6 +31,8 @@ import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.deploy.BaseActivator;
+import org.switchyard.exception.SwitchYardException;
+
 import org.switchyard.metadata.ServiceInterface;
 
 /**
@@ -69,7 +71,7 @@ public class BeanComponentActivator extends BaseActivator {
             }
         }
         // bean discovery did not find a bean providing this service
-        throw new RuntimeException("Unknown Service name '" + name + "'.");
+        throw new SwitchYardException("Unknown Service name '" + name + "'.");
     }
 
     /**
@@ -91,7 +93,7 @@ public class BeanComponentActivator extends BaseActivator {
             }
         }
         // bean discovery did not find a bean providing this service
-        throw new RuntimeException("Unknown Service name '" + name + "'.");
+        throw new SwitchYardException("Unknown Service name '" + name + "'.");
     }
 
     /**

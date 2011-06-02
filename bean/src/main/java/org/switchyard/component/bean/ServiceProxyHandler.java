@@ -27,6 +27,7 @@ import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
+import org.switchyard.exception.SwitchYardException;
 
 /**
  * Service/Provider proxy handler.
@@ -111,7 +112,7 @@ public class ServiceProxyHandler implements ExchangeHandler {
                 throw new BeanComponentException("Invocation of operation '" + invocation.getMethod().getName() + "' on bean component '" + _serviceBean.getClass().getName() + "' failed with exception.  See attached cause.", e);
             }
         } else {
-            throw new RuntimeException("Unexpected error.  BeanServiceMetadata should return an Invocation instance, or throw a BeanComponentException.");
+            throw new SwitchYardException("Unexpected error.  BeanServiceMetadata should return an Invocation instance, or throw a BeanComponentException.");
         }
     }
 }

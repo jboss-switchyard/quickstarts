@@ -52,6 +52,7 @@ import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.deploy.BaseActivator;
+import org.switchyard.exception.SwitchYardException;
 
 /**
  * Activates Camel bindings, references and implementations in SwitchYard. 
@@ -123,7 +124,7 @@ public class CamelActivator extends BaseActivator {
             return handleComponentReference(config, serviceName);
         }
             
-        throw new RuntimeException("No Camel bindings, references or implementations found for [" + serviceName + "] in config [" + config + "]");
+        throw new SwitchYardException("No Camel bindings, references or implementations found for [" + serviceName + "] in config [" + config + "]");
     }
     
     private ExchangeHandler handleComponentReference(final Model config, final QName serviceName) {
@@ -149,7 +150,7 @@ public class CamelActivator extends BaseActivator {
                 _implementations.put(serviceName, consumer);
                 return consumer;
             } catch (final Exception e) {
-                throw new RuntimeException(e.getMessage(), e);
+                throw new SwitchYardException(e.getMessage(), e);
             }
         }
         return null;
@@ -164,11 +165,11 @@ public class CamelActivator extends BaseActivator {
         } else if (inputs.size() == 1) {
             String routeURI = inputs.get(0).getUri();
             if (!fromEndpointUri.equals(routeURI)) {
-                throw new RuntimeException("Endpoint URI on route " + routeURI 
+                throw new SwitchYardException("Endpoint URI on route " + routeURI 
                         + " does not match expected URI : " + fromEndpointUri);
             }
         } else {
-            throw new RuntimeException("A route can only have one 'from' endpoint");
+            throw new SwitchYardException("A route can only have one 'from' endpoint");
         }
         
     }
@@ -318,7 +319,7 @@ public class CamelActivator extends BaseActivator {
                 try {
                     inboundHandler.start(serviceReference);
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    throw new SwitchYardException(e);
                 }
             }
         }
@@ -337,7 +338,7 @@ public class CamelActivator extends BaseActivator {
                 try {
                     inboundHandler.stop(serviceReference);
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    throw new SwitchYardException(e);
                 }
             }
         }
@@ -347,7 +348,7 @@ public class CamelActivator extends BaseActivator {
         try {
             _camelContext.stop();
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw new SwitchYardException(e);
         }
     }
     

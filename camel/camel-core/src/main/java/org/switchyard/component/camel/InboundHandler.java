@@ -29,6 +29,7 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.component.camel.config.model.OperationSelector;
+import org.switchyard.exception.SwitchYardException;
 
 /**
  * An {@link ExchangeHandler} that acts as a gateway/entrypoint for Camel Components.
@@ -63,7 +64,7 @@ public class InboundHandler implements ExchangeHandler {
         try {
             _camelContext.addRouteDefinition(_routeDefinition);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw new SwitchYardException(e);
         }
     }
     

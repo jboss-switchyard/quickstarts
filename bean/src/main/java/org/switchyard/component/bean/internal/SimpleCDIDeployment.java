@@ -29,10 +29,12 @@ import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
 import org.switchyard.component.bean.deploy.ServiceDescriptor;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.AbstractDeployment;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.transform.TransformerRegistry;
 import org.switchyard.transform.config.model.TransformerFactory;
 import org.switchyard.transform.config.model.TransformerTypes;
+
 
 import java.util.List;
 
@@ -88,7 +90,7 @@ public class SimpleCDIDeployment extends AbstractDeployment {
 
     private void deployServicesAndProxies(BeanDeploymentMetaData beanDeploymentMetaData, ServiceDomain domain) {
         if (beanDeploymentMetaData == null) {
-            throw new RuntimeException("Failed to lookup BeanDeploymentMetaData from Naming Context.");
+            throw new SwitchYardException("Failed to lookup BeanDeploymentMetaData from Naming Context.");
         }
 
         BeanComponentActivator activator = new BeanComponentActivator();

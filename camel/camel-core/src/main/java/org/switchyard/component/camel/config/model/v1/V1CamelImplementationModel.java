@@ -27,6 +27,8 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.camel.model.RouteDefinition;
 import org.switchyard.component.camel.config.model.CamelComponentImplementationModel;
 import org.switchyard.config.Configuration;
+import org.switchyard.exception.SwitchYardException;
+
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.v1.V1ComponentImplementationModel;
 
@@ -72,7 +74,7 @@ public class V1CamelImplementationModel extends V1ComponentImplementationModel i
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             return (RouteDefinition) unmarshaller.unmarshal(routeConfig.getSource());
         } catch (JAXBException e) {
-            throw new RuntimeException(e);
+            throw new SwitchYardException(e);
         }
     }
     
@@ -80,7 +82,7 @@ public class V1CamelImplementationModel extends V1ComponentImplementationModel i
         try {
             return JAXBContext.newInstance("org.apache.camel.model");
         } catch (JAXBException e) {
-            throw new RuntimeException(e);
+            throw new SwitchYardException(e);
         }
     }
 
