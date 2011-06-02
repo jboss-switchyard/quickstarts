@@ -22,6 +22,7 @@ package org.switchyard.transform.json.internal;
 import javax.xml.namespace.QName;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.JSONTransformModel;
@@ -62,7 +63,7 @@ public final class JSONTransformFactory {
     private static Class toJavaMessageType(QName name) {
         Class clazz = JavaService.toJavaMessageType(name);
         if (clazz == null) {
-            throw new RuntimeException("Not able to find class definition " + name);
+            throw new SwitchYardException("Not able to find class definition " + name);
         }
         return clazz;
     }
@@ -85,6 +86,6 @@ public final class JSONTransformFactory {
     }
 
     private static void throwInvalidToFromSpecException() {
-        throw new RuntimeException("Invalid JSON Transformer configuration.  One (and only one) of the specified 'to' and 'from' transform types must be a Java type.");
+        throw new SwitchYardException("Invalid JSON Transformer configuration.  One (and only one) of the specified 'to' and 'from' transform types must be a Java type.");
     }
 }

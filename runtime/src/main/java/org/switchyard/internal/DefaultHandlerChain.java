@@ -31,6 +31,7 @@ import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Scope;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.handlers.HandlerChain;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.java.JavaService;
@@ -103,7 +104,7 @@ public class DefaultHandlerChain implements HandlerChain {
             }
         } catch (Exception e) {
             // This is terminal... a fault on a fault...
-            throw new RuntimeException("Unable to recover from fault on", e);
+            throw new SwitchYardException("Unable to recover from fault on", e);
         }
     }
 

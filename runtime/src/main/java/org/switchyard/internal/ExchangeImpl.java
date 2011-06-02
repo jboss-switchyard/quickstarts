@@ -32,6 +32,7 @@ import org.switchyard.ExchangePhase;
 import org.switchyard.ExchangeState;
 import org.switchyard.Message;
 import org.switchyard.Scope;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.handlers.HandlerChain;
 import org.switchyard.internal.ExchangeImpl.ExchangeImplFactory;
 import org.switchyard.io.Serialization.AccessType;
@@ -111,7 +112,7 @@ public class ExchangeImpl implements Exchange {
         // Make sure we have an output endpoint when the pattern is IN_OUT...
         ExchangePattern exchangePattern = contract.getServiceOperation().getExchangePattern();
         if (replyChain == null && exchangePattern == ExchangePattern.IN_OUT) {
-            throw new RuntimeException("Invalid Exchange construct.  Must supply an reply handler for an IN_OUT Exchange.");
+            throw new SwitchYardException("Invalid Exchange construct.  Must supply an reply handler for an IN_OUT Exchange.");
         }
 
         _serviceName = serviceName;

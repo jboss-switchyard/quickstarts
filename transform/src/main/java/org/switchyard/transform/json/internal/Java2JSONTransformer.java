@@ -26,6 +26,7 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.transform.BaseTransformer;
 
 /**
@@ -65,12 +66,12 @@ public class Java2JSONTransformer<F, T> extends BaseTransformer<Object, String> 
                 _mapper.writeValue(writer, from);
                 return writer.toString();
             } else {
-                throw new RuntimeException("The object to transform is of wrong instance type " + from.getClass());
+                throw new SwitchYardException("The object to transform is of wrong instance type " + from.getClass());
             }
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Unexpected JSON processing exception, check your transformer configuration", e);
+            throw new SwitchYardException("Unexpected JSON processing exception, check your transformer configuration", e);
         } catch (IOException e) {
-            throw new RuntimeException("Unexpected I/O exception, check your transformer configuration", e);
+            throw new SwitchYardException("Unexpected I/O exception, check your transformer configuration", e);
         }
     }
 }

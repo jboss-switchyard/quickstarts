@@ -21,6 +21,7 @@ package org.switchyard.common.type.reflect;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
+
 /**
  * Access via a wrapped Field.
  *

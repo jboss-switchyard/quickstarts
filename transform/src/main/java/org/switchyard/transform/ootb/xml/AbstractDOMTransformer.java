@@ -20,6 +20,7 @@
 package org.switchyard.transform.ootb.xml;
 
 import org.apache.log4j.Logger;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.transform.BaseTransformer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -95,15 +96,15 @@ public abstract class AbstractDOMTransformer<F, T> extends BaseTransformer<F, T>
         try {
             docBuilder = _docBuilderFactory.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
-            throw new RuntimeException("Unexpected DOM parser configuration exception.", e);
+            throw new SwitchYardException("Unexpected DOM parser configuration exception.", e);
         }
 
         try {
             return docBuilder.parse(source);
         } catch (SAXException e) {
-            throw new RuntimeException("Error parsing DOM source.", e);
+            throw new SwitchYardException("Error parsing DOM source.", e);
         } catch (IOException e) {
-            throw new RuntimeException("Error reading DOM source.", e);
+            throw new SwitchYardException("Error reading DOM source.", e);
         } finally {
             InputStream stream = source.getByteStream();
             Reader reader = source.getCharacterStream();
@@ -134,7 +135,7 @@ public abstract class AbstractDOMTransformer<F, T> extends BaseTransformer<F, T>
         try {
             transformer = _transformerFactory.newTransformer();
         } catch (TransformerConfigurationException e) {
-            throw new RuntimeException("Unexpected exception creating JDK Transformer instance.", e);
+            throw new SwitchYardException("Unexpected exception creating JDK Transformer instance.", e);
         }
 
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
@@ -146,7 +147,7 @@ public abstract class AbstractDOMTransformer<F, T> extends BaseTransformer<F, T>
         try {
             transformer.transform(new DOMSource(node), new StreamResult(writer));
         } catch (TransformerException e) {
-            throw new RuntimeException("Error serializing DOM node.", e);
+            throw new SwitchYardException("Error serializing DOM node.", e);
         }
 
         return writer.toString();

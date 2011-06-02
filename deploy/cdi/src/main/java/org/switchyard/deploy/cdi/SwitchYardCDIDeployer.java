@@ -32,6 +32,7 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.deploy.internal.Deployment;
+import org.switchyard.exception.SwitchYardException;
 
 /**
  * Deployer implemented as a CDI extension.  The deployer kicks in after all
@@ -61,7 +62,7 @@ public class SwitchYardCDIDeployer implements Extension {
             try {
                 _deployment = new Deployment(swConfigStream);
             } catch (java.io.IOException ioEx) {
-                throw new RuntimeException("Failed while reading config stream.", ioEx);
+                throw new SwitchYardException("Failed while reading config stream.", ioEx);
             } finally {
                 try {
                     swConfigStream.close();

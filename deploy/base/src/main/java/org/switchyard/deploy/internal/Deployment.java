@@ -46,6 +46,7 @@ import org.switchyard.config.model.composite.InterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.deploy.Activator;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.extensions.wsdl.WSDLReaderException;
 import org.switchyard.extensions.wsdl.WSDLService;
 import org.switchyard.metadata.ServiceInterface;
@@ -247,7 +248,7 @@ public class Deployment extends AbstractDeployment {
                 try {
                     serviceInterface = WSDLService.fromWSDL(intfModel.getInterface());
                 } catch (WSDLReaderException wsdlre) {
-                    throw new RuntimeException(wsdlre);
+                    throw new SwitchYardException(wsdlre);
                 }
             }
         }

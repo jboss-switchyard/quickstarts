@@ -62,6 +62,7 @@ import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.deploy.internal.Deployment;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
@@ -635,7 +636,7 @@ public abstract class SwitchYardTestCase {
                 return model;
             }
         } catch (java.io.IOException ioEx) {
-            throw new RuntimeException("Failed to read switchyard config.", ioEx);
+            throw new SwitchYardException("Failed to read switchyard config.", ioEx);
         }
     }
 

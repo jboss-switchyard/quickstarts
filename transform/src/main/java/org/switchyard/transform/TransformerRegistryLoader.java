@@ -31,6 +31,7 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.transform.config.model.TransformerFactory;
 
 /**
@@ -85,7 +86,7 @@ public class TransformerRegistryLoader {
                 for (Transformer<?, ?> transformer : transformers) {
                     if (_transformerRegistry.hasTransformer(transformer.getFrom(), transformer.getTo())) {
                         Transformer<?, ?> registeredTransformer = _transformerRegistry.getTransformer(transformer.getFrom(), transformer.getTo());
-                        throw new RuntimeException("Failed to register Transformer '" + toDescription(transformer)
+                        throw new SwitchYardException("Failed to register Transformer '" + toDescription(transformer)
                                 + "'.  A Transformer for these types is already registered: '"
                                 + toDescription(registeredTransformer) + "'.");
                     }
@@ -134,7 +135,7 @@ public class TransformerRegistryLoader {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException("Error reading out-of-the-box Transformer configurations from classpath (" + TRANSFORMS_XML + ").", e);
+            throw new SwitchYardException("Error reading out-of-the-box Transformer configurations from classpath (" + TRANSFORMS_XML + ").", e);
         }
     }
 

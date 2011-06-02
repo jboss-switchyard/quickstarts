@@ -20,6 +20,7 @@
 package org.switchyard.transform.ootb.map;
 
 import org.apache.log4j.Logger;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.Transformer;
@@ -74,12 +75,12 @@ public class FromMapToJava<F, T> extends BaseTransformer<Map, Object> {
         super.setTo(toType);
 
         if (!JavaService.isJavaMessageType(toType)) {
-            throw new RuntimeException("Invalid 'to' type '" + toType + "'.  Must be a Java Object type.");
+            throw new SwitchYardException("Invalid 'to' type '" + toType + "'.  Must be a Java Object type.");
         }
 
         Class<?> javaType = JavaService.toJavaMessageType(toType);
         if (javaType == null) {
-            throw new RuntimeException("Invalid 'to' type '" + toType + "'.  Class Not Found.");
+            throw new SwitchYardException("Invalid 'to' type '" + toType + "'.  Class Not Found.");
         }
 
         _graphBuilder = new ComplexTypeBuilder(javaType, null, null);
@@ -107,7 +108,7 @@ public class FromMapToJava<F, T> extends BaseTransformer<Map, Object> {
             try {
                 _beanInfo = Introspector.getBeanInfo(_javaType);
             } catch (IntrospectionException e) {
-                throw new RuntimeException("Failed to extract bean information from bean type '" + _javaType.getName() + "'.", e);
+                throw new SwitchYardException("Failed to extract bean information from bean type '" + _javaType.getName() + "'.", e);
             }
         }
 
@@ -195,7 +196,7 @@ public class FromMapToJava<F, T> extends BaseTransformer<Map, Object> {
             }
 
             if (setterMethod == null) {
-                throw new RuntimeException("No setter method for property '" + propertyName + "' on class '" + _javaType.getName() + "'.");
+                throw new SwitchYardException("No setter method for property '" + propertyName + "' on class '" + _javaType.getName() + "'.");
             }
 
             return setterMethod;
@@ -211,7 +212,7 @@ public class FromMapToJava<F, T> extends BaseTransformer<Map, Object> {
             try {
                 return _javaType.newInstance();
             } catch (Exception e) {
-                throw new RuntimeException("Unable to create instance of type '" + _javaType.getName() + "'.", e);
+                throw new SwitchYardException("Unable to create instance of type '" + _javaType.getName() + "'.", e);
             }
         }
     }
@@ -259,7 +260,7 @@ public class FromMapToJava<F, T> extends BaseTransformer<Map, Object> {
                     try {
                         setPropertyValue(instance, propertyVal, nodeBuilder._parentSetterMethod);
                     } catch (Exception e) {
-                        throw new RuntimeException("Error invoking setter method '" + nodeBuilder._parentSetterMethod.getName() + "' on type '" + getJavaType().getName() + "'.", e);
+                        throw new SwitchYardException("Error invoking setter method '" + nodeBuilder._parentSetterMethod.getName() + "' on type '" + getJavaType().getName() + "'.", e);
                     }
                 }
             }

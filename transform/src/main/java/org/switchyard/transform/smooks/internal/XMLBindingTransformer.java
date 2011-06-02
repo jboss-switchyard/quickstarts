@@ -26,6 +26,7 @@ import org.milyn.javabean.binding.model.Bean;
 import org.milyn.javabean.binding.model.ModelSet;
 import org.milyn.javabean.binding.xml.XMLBinding;
 import org.switchyard.config.model.Scannable;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.transform.BaseTransformer;
 
 import javax.xml.namespace.QName;
@@ -88,11 +89,11 @@ public class XMLBindingTransformer extends BaseTransformer {
             try {
                 return _xmlBinding.fromXML(source, _bean.getBeanClass());
             } catch (IOException e) {
-                throw new RuntimeException("Exception while transforming from XML to '" + _bean.getBeanClass().getName() + "'.", e);
+                throw new SwitchYardException("Exception while transforming from XML to '" + _bean.getBeanClass().getName() + "'.", e);
             }
         } else {
             if (!_bean.getBeanClass().isInstance(from)) {
-                throw new RuntimeException("Cannot transform to XML.  Input type is '" + from.getClass().getName() + "' but should be '" + _bean.getBeanClass().getName() + "'.");
+                throw new SwitchYardException("Cannot transform to XML.  Input type is '" + from.getClass().getName() + "' but should be '" + _bean.getBeanClass().getName() + "'.");
             }
 
             return _xmlBinding.toXML(from);

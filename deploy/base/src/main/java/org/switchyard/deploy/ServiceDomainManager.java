@@ -22,6 +22,7 @@ package org.switchyard.deploy;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.internal.DefaultServiceRegistry;
 import org.switchyard.internal.DomainImpl;
 import org.switchyard.internal.LocalExchangeBus;
@@ -145,7 +146,7 @@ public class ServiceDomainManager {
 
             return new DomainImpl(domainName, registry, endpointProvider, transformerRegistry);
         } catch (NullPointerException npe) {
-            throw new RuntimeException(npe);
+            throw new SwitchYardException(npe);
         }
     }
 

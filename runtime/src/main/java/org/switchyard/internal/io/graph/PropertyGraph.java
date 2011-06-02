@@ -37,6 +37,7 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.common.type.reflect.Access;
 import org.switchyard.common.type.reflect.BeanAccess;
 import org.switchyard.common.type.reflect.FieldAccess;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.io.Serialization.AccessType;
 import org.switchyard.io.Serialization.CoverageType;
 import org.switchyard.io.Serialization.DefaultFactory;
@@ -190,7 +191,7 @@ public class PropertyGraph<T> implements Graph<T> {
                 try {
                     info = Introspector.getBeanInfo(clazz);
                 } catch (IntrospectionException ie) {
-                    throw new RuntimeException(ie);
+                    throw new SwitchYardException(ie);
                 }
                 for (PropertyDescriptor desc : info.getPropertyDescriptors()) {
                     Method method = desc.getReadMethod();

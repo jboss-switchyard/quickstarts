@@ -41,6 +41,7 @@ import org.switchyard.ExchangePhase;
 import org.switchyard.Scope;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.type.reflect.FieldAccess;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.handlers.HandlerChain;
 import org.switchyard.internal.DefaultMessage;
 import org.switchyard.internal.ExchangeImpl;
@@ -111,7 +112,7 @@ public class HornetQDispatcher implements Dispatcher, MessageHandler {
             Message msg = exchangeToMessage(exchange, dispatch.getSession());
             dispatch.getProducer().send(msg);
         } catch (HornetQException hqEx) {
-            throw new RuntimeException("Send to HornetQ endpoint failed", hqEx);
+            throw new SwitchYardException("Send to HornetQ endpoint failed", hqEx);
         }
     }
 
@@ -141,7 +142,7 @@ public class HornetQDispatcher implements Dispatcher, MessageHandler {
                 _outQueue.destroy();
             }
         } catch (HornetQException ex) {
-            throw new RuntimeException("Failed to stop HornetQ endpoint " + _service.getName(), ex);
+            throw new SwitchYardException("Failed to stop HornetQ endpoint " + _service.getName(), ex);
         }
     }
     
@@ -164,7 +165,7 @@ public class HornetQDispatcher implements Dispatcher, MessageHandler {
                 }
             }
         } catch (HornetQException ex) {
-            throw new RuntimeException("Failed to start HornetQ endpoint " + _service.getName(), ex);
+            throw new SwitchYardException("Failed to start HornetQ endpoint " + _service.getName(), ex);
         }
     }
     
@@ -179,9 +180,9 @@ public class HornetQDispatcher implements Dispatcher, MessageHandler {
             new FieldAccess<TransformerRegistry>(ExchangeImpl.class.getDeclaredField("_transformerRegistry")).write(exchange, _transformerRegistry);
             new FieldAccess<TransformerRegistry>(DefaultMessage.class.getDeclaredField("_transformerRegistry")).write(exchange.getMessage(), _transformerRegistry);
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
+            throw new SwitchYardException(ioe);
         } catch (NoSuchFieldException nsfe) {
-            throw new RuntimeException(nsfe);
+            throw new SwitchYardException(nsfe);
         }
         return exchange;
     }
@@ -191,7 +192,7 @@ public class HornetQDispatcher implements Dispatcher, MessageHandler {
         try {
             bytes = SERIALIZER.serialize((ExchangeImpl)exchange, ExchangeImpl.class);
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
+            throw new SwitchYardException(ioe);
         }
         Message msg = session.createMessage(false); // NOT PERSISTENT
         msg.getBodyBuffer().writeBytes(bytes);

@@ -40,6 +40,7 @@ import org.hornetq.core.server.HornetQServer;
 import org.hornetq.core.server.HornetQServers;
 import org.hornetq.core.server.JournalType;
 import org.switchyard.ServiceReference;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.handlers.HandlerChain;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.spi.ExchangeBus;
@@ -105,7 +106,7 @@ public class HornetQBus implements ExchangeBus {
             _clientFactory = HornetQClient.createClientSessionFactory(
                     getInVMTransportConfig(InVMConnectorFactory.class.getName()));
         } catch (Exception ex) {
-            throw new RuntimeException("Failed to start HornetQProvider", ex);
+            throw new SwitchYardException("Failed to start HornetQProvider", ex);
         }
     }
     
@@ -120,7 +121,7 @@ public class HornetQBus implements ExchangeBus {
             }
             _server.stop();
         } catch (Exception ex) {
-            throw new RuntimeException("Failed to stop HornetQProvider", ex);
+            throw new SwitchYardException("Failed to stop HornetQProvider", ex);
         }
     }
 
@@ -160,7 +161,7 @@ public class HornetQBus implements ExchangeBus {
             try {
                 ((FileConfiguration)config).start();
             } catch (Exception ex) {
-                throw new RuntimeException("Failed to parse HornetQ configuration.", ex);
+                throw new SwitchYardException("Failed to parse HornetQ configuration.", ex);
             }
         } else {
             // Generate the HornetQ configuration

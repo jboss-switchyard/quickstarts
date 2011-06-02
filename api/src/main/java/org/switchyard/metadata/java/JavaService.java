@@ -26,6 +26,7 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.BaseService;
 import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
@@ -112,7 +113,7 @@ public final class JavaService extends BaseService {
                     QName faultType = null;
                     if (exceptions.length > 0) {
                         if (exceptions.length > 1) {
-                            throw new RuntimeException(
+                            throw new SwitchYardException(
                             "Service operations on a Java interface can only throw one type of exception.");
                         }
                         faultType = toMessageType(exceptions[0], namespaceURI);
