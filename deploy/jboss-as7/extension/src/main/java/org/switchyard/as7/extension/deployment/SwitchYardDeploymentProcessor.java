@@ -24,6 +24,7 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.jboss.as.weld.deployment.WeldDeploymentMetadata;
 import org.jboss.as.weld.services.BeanManagerService;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
@@ -57,11 +58,15 @@ public class SwitchYardDeploymentProcessor implements DeploymentUnitProcessor {
         final ServiceName switchyardServiceName = deploymentUnit.getServiceName().append(SwitchYardService.SERVICE_NAME);
         final ServiceBuilder<SwitchYardDeployment> switchyardServiceBuilder = serviceTarget.addService(switchyardServiceName, container);
 
-        final ServiceName beanManagerServiceName = deploymentUnit.getServiceName().append(BeanManagerService.NAME);
-
         final ServiceName namespaceSelectorServiceName = deploymentUnit.getServiceName().append(NamespaceSelectorService.NAME);
         switchyardServiceBuilder.addDependency(namespaceSelectorServiceName, NamespaceContextSelector.class, container.getNamespaceSelector());
-        switchyardServiceBuilder.addDependency(beanManagerServiceName);
+
+        // Only add a dependency on the Weld BeanManager if the deployment has beans (i.e. Weld Metadata)...
+        if (deploymentUnit.getAttachment(WeldDeploymentMetadata.ATTACHMENT_KEY) != null) {
+            final ServiceName beanManagerServiceName = deploymentUnit.getServiceName().append(BeanManagerService.NAME);
+            switchyardServiceBuilder.addDependency(beanManagerServiceName);
+        }
+
         switchyardServiceBuilder.setInitialMode(Mode.ACTIVE);
         switchyardServiceBuilder.install();
     }
