@@ -19,30 +19,39 @@
 package org.switchyard.exception;
 
 /**
- * Simple base exception class.
+ * SwitchYard base exception class.
  *
- * @author Tom Cunningham <tcunning@redhat.com> (C) 2011 Red Hat Inc.
+ * @author Tom Cunningham <a href="mailto:tcunning@redhat.com">&lt;tcunning@redhat.com&gt;</a> (C) 2011 Red Hat Inc.
  */
 public class SwitchYardException extends RuntimeException {
 
     /**
-     * 
+     * Serial UID.
      */
     private static final long serialVersionUID = -5932547061290094335L;
 
-    public SwitchYardException() {
-        super();
-    }
-    
+    /**
+     * Public constructor.
+     * @param message Exception message.
+     */
     public SwitchYardException(String message) {
         super(message);
     }
-    
-    public SwitchYardException(Throwable throwable) {
-        super(throwable);
+
+    /**
+     * Public constructor.
+     * @param cause Throwable cause.
+     */
+    public SwitchYardException(Throwable cause) {
+        super(cause);
     }
 
-    public SwitchYardException(String message, Throwable throwable) {
-        super (message, throwable);
+    /**
+     * Public constructor.
+     * @param message Exception message.
+     * @param cause Throwable cause.
+     */
+    public SwitchYardException(String message, Throwable cause) {
+        super(message, cause);
     }
 }
