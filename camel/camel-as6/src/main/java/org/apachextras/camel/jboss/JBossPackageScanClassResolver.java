@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
+
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VisitorAttributes;
@@ -25,8 +26,8 @@ public class JBossPackageScanClassResolver extends DefaultPackageScanClassResolv
     @Override
     protected void find(PackageScanFilter test, String packageName, ClassLoader loader, Set<Class<?>> classes) {
         if (log.isTraceEnabled()) {
-            log.trace("Searching for: " + test + " in package: " + packageName
-                    + " using classloader: " + loader.getClass().getName());
+            log.trace("Searching for: " + test + " in package: " + packageName + " using classloader: "
+                    + loader.getClass().getName());
         }
 
         Enumeration<URL> urls;
@@ -36,23 +37,26 @@ public class JBossPackageScanClassResolver extends DefaultPackageScanClassResolv
                 log.trace("No URLs returned by classloader");
             }
         } catch (IOException ioe) {
-            log.warn("Could not read package: " + packageName, ioe);
+            log.warn("Cannot read package: " + packageName, ioe);
             return;
         }
 
         while (urls.hasMoreElements()) {
-            URL url = null;
-            try {
-                url = urls.nextElement();
-                if (log.isTraceEnabled()) {
-                    log.trace("URL from classloader: " + url);
+            URL url = urls.nextElement();
+
+            if (log.isTraceEnabled()) {
+                log.trace("URL from classloader: " + url);
+            }
+
+            if (url.toString().startsWith("vfs:")) {
+                try {
+                    VirtualFile packageNode = VFS.getChild(url.toURI());
+                    packageNode.visit(new MatchingClassVisitor(test, classes));
+                } catch (IOException ioe) {
+                    log.warn("Could not read entries in url: " + url, ioe);
+                } catch (URISyntaxException use) {
+                    log.warn("Could not read entries in url: " + url, use);
                 }
-                VirtualFile packageNode = VFS.getChild(url.toURI());
-                packageNode.visit(new MatchingClassVisitor(test, classes));
-            } catch (IOException ioe) {
-                log.warn("Could not read entries in url: " + url, ioe);
-            } catch (URISyntaxException use) {
-                log.warn("Could not read entries in url: " + url, use);
             }
         }
     }
