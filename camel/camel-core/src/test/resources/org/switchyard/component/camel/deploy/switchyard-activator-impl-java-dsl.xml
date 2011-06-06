@@ -37,11 +37,7 @@
             </sca:reference>
             
             <implementation.camel>
-                <route xmlns="http://camel.apache.org/schema/spring" id="Camel Test Route">
-                    <log message="ItemId [${body}]"/>
-                    <to uri="switchyard://WarehouseService?operationName=hasItem"/>
-                    <log message="Title Name [${body}]"/>
-                </route>
+                <java class="org.switchyard.component.camel.deploy.support.OrderServiceRoute"/>
             </implementation.camel>
         </sca:component>
         
