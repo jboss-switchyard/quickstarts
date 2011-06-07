@@ -32,6 +32,7 @@ import org.jboss.seam.forge.shell.plugins.RequiresProject;
 import org.jboss.seam.forge.shell.plugins.Topic;
 import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
 import org.switchyard.component.camel.config.model.v1.V1OperationSelector;
+import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.tools.forge.AbstractPlugin;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
@@ -90,6 +91,41 @@ public class CamelBindingPlugin extends AbstractPlugin {
         service.addBinding(binding);
         switchYard.saveConfig();
         out.println("Added binding.camel to service " + serviceName);
+    }
+    
+
+    /**
+     * Bind a promoted reference using the Camel binding.
+     * @param referenceName name of the reference to bind
+     * @param configURI camel endpoint URI
+     * @param out shell output
+     */
+    @Command(value = "bind-reference", help = "Add a Camel binding to a reference.")
+    public void bindReference(
+            @Option(required = true,
+                    name = "referenceName",
+                    description = "The reference name") 
+            final String referenceName,
+            @Option(required = true,
+                    name = "configURI",
+                    description = "The configuration URI") 
+            final String configURI,
+            final PipeOut out) {
+
+        SwitchYardFacet switchYard = getProject().getFacet(SwitchYardFacet.class);
+        CompositeReferenceModel reference = switchYard.getCompositeReference(referenceName);
+        // Check to see if the reference is public
+        if (reference == null) {
+            out.println(out.renderColor(ShellColor.RED, "No public reference named: " + referenceName));
+            return;
+        }
+        
+        V1CamelBindingModel binding = new V1CamelBindingModel();
+        binding.setConfigURI(URI.create(configURI));
+        
+        reference.addBinding(binding);
+        switchYard.saveConfig();
+        out.println("Added binding.camel to reference " + referenceName);
     }
     
 }

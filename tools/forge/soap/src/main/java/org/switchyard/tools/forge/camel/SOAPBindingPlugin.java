@@ -28,7 +28,9 @@ import org.jboss.seam.forge.shell.plugins.PipeOut;
 import org.jboss.seam.forge.shell.plugins.RequiresFacet;
 import org.jboss.seam.forge.shell.plugins.RequiresProject;
 import org.jboss.seam.forge.shell.plugins.Topic;
+import org.switchyard.component.soap.PortName;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
+import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.tools.forge.AbstractPlugin;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
@@ -45,7 +47,7 @@ public class SOAPBindingPlugin extends AbstractPlugin {
     
     /**
      * Add a SOAP binding to a SwitchYard service.
-     * @param serviceName name of the serivce to bind
+     * @param serviceName name of the reference to bind
      * @param wsdlLocation location of the WSDL to configure the SOAP binding
      * @param port optional value for the endpoint port
      * @param out shell output
@@ -85,4 +87,46 @@ public class SOAPBindingPlugin extends AbstractPlugin {
         out.println("Added binding.soap to service " + serviceName);
     }
     
+
+    /**
+     * Add a SOAP binding to a SwitchYard reference.
+     * @param referenceName name of the reference to bind
+     * @param wsdlLocation location of the WSDL to configure the SOAP binding
+     * @param portName optional value for the endpoint port
+     * @param out shell output
+     */
+    @Command(value = "bind-reference", help = "Add a SOAP binding to a reference.")
+    public void bindReference(
+            @Option(required = true,
+                    name = "referenceName",
+                    description = "The reference name") 
+            final String referenceName,
+            @Option(required = true,
+                    name = "wsdl",
+                    description = "URL or package-local path to the endpoint WSDL") 
+            final String wsdlLocation,
+            @Option(required = false,
+                    name = "portName",
+                    description = "Port name in WSDL") 
+            final String portName,
+            final PipeOut out) {
+        
+        SwitchYardFacet switchYard = getProject().getFacet(SwitchYardFacet.class);
+        CompositeReferenceModel reference = switchYard.getCompositeReference(referenceName);
+        // Check to see if the service is public
+        if (reference == null) {
+            out.println(out.renderColor(ShellColor.RED, "No public reference named: " + referenceName));
+            return;
+        }
+        
+        SOAPBindingModel binding = new SOAPBindingModel();
+        binding.setWsdl(wsdlLocation);
+        if (portName != null) {
+            binding.setPort(new PortName(portName));
+        }
+        reference.addBinding(binding);
+
+        switchYard.saveConfig();
+        out.println("Added binding.soap to reference " + referenceName);
+    }
 }

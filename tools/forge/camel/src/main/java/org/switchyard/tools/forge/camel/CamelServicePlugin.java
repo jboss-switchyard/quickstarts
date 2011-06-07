@@ -19,13 +19,11 @@
 
 package org.switchyard.tools.forge.camel;
 
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.builder.RouteBuilder;
 import org.jboss.seam.forge.parser.JavaParser;
 import org.jboss.seam.forge.parser.java.Annotation;
 import org.jboss.seam.forge.parser.java.JavaClass;
 import org.jboss.seam.forge.parser.java.JavaInterface;
-import org.jboss.seam.forge.parser.java.Method;
 import org.jboss.seam.forge.project.facets.JavaSourceFacet;
 import org.jboss.seam.forge.project.facets.MetadataFacet;
 import org.jboss.seam.forge.shell.PromptType;
@@ -56,8 +54,11 @@ import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 @Help("Provides commands to create and edit Camel routes in SwitchYard.")
 public class CamelServicePlugin extends AbstractPlugin {
     
+    private static final String SERVICE_TOKEN = "${service.name}";
     private static final String ROUTE_TEMPLATE = 
-        "public void define(ProcessorDefinition<RouteDefinition> route) { }";
+        "public void configure() {\n"
+        + "from(\"switchyard://" + SERVICE_TOKEN + "\")"
+        +"}";
     
     private enum RouteType {
         JAVA, XML;
@@ -150,18 +151,14 @@ public class CamelServicePlugin extends AbstractPlugin {
         // Now create the service implementation
         JavaClass routeClass = JavaParser.create(JavaClass.class)
             .setPackage(pkgName)
-            .setName(routeName + "Route")
+            .setName(routeName + "Builder")
+            .setSuperType(RouteBuilder.class)
             .setPublic();
-        // Add required imports
-        routeClass.addImport(RouteDefinition.class);
-        routeClass.addImport(ProcessorDefinition.class);
         
-        Method<JavaClass> routeMethod = routeClass.addMethod(ROUTE_TEMPLATE);
-        Annotation<JavaClass> routeAnnotation = routeMethod.addAnnotation(Route.class);
+        Annotation<JavaClass> routeAnnotation = routeClass.addAnnotation(Route.class);
         routeAnnotation.setLiteralValue(routeInterface.getName() + ".class");
         
-        
-        
+        routeClass.addMethod(ROUTE_TEMPLATE.replace(SERVICE_TOKEN, routeInterface.getName()));
         java.saveJavaSource(routeClass);
           
         // Notify user of success
