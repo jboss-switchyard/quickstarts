@@ -35,6 +35,7 @@ import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
+import org.switchyard.config.model.composite.InterfaceModel;
 
 /**
  * A version 1 CompositeReferenceModel.
@@ -44,6 +45,7 @@ import org.switchyard.config.model.composite.CompositeReferenceModel;
 public class V1CompositeReferenceModel extends BaseNamedModel implements CompositeReferenceModel {
 
     private List<BindingModel> _bindings = new ArrayList<BindingModel>();
+    private InterfaceModel _interface;
 
     /**
      * Constructs a new V1CompositeReferenceModel.
@@ -147,6 +149,28 @@ public class V1CompositeReferenceModel extends BaseNamedModel implements Composi
     public synchronized CompositeReferenceModel addBinding(BindingModel binding) {
         addChildModel(binding);
         _bindings.add(binding);
+        return this;
+    }
+    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public InterfaceModel getInterface() {
+        if (_interface == null) {
+            _interface = (InterfaceModel)getFirstChildModelStartsWith(InterfaceModel.INTERFACE);
+        }
+        return _interface;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CompositeReferenceModel setInterface(InterfaceModel interfaze) {
+        setChildModel(interfaze);
+        _interface = interfaze;
         return this;
     }
 

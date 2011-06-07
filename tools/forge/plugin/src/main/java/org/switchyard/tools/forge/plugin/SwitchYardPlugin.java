@@ -30,9 +30,13 @@ import org.jboss.seam.forge.shell.plugins.PipeOut;
 import org.jboss.seam.forge.shell.plugins.RequiresFacet;
 import org.jboss.seam.forge.shell.plugins.RequiresProject;
 import org.jboss.seam.forge.shell.plugins.Topic;
+import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
+import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
+import org.switchyard.config.model.composite.v1.V1CompositeReferenceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeServiceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.tools.forge.AbstractPlugin;
@@ -51,21 +55,69 @@ public class SwitchYardPlugin extends AbstractPlugin {
      * List SwitchYard services available in the project.
      * @param out shell output
      */
-    @Command(value = "list-services", help = "List services in this project.")
+    @Command(value = "show-config", help = "Show the current configuration state of the application.")
     public void listServices(final PipeOut out) {
         SwitchYardModel config = getProject().getFacet(SwitchYardFacet.class).getMergedSwitchYardConfig();
+        out.println();
         out.println("[Public]");
+        // Print promoted service info
         for (CompositeServiceModel service : config.getComposite().getServices()) {
+            out.print(out.renderColor(ShellColor.BOLD, "service: "));
             out.println(service.getName());
-        }
-        out.println("[Private]");
-        for (ComponentModel component : config.getComposite().getComponents()) {
-            for (ComponentServiceModel service : component.getServices()) {
-                out.println(service.getName() 
-                        + out.renderColor(ShellColor.BOLD, " : ")
-                        + out.renderColor(ShellColor.YELLOW, service.getComponent().getName()));
+            out.print(out.renderColor(ShellColor.BOLD, "   interface: "));
+            if (service.getInterface() != null) {
+                out.println(service.getInterface().getInterface());
+            } else {
+                out.println(out.renderColor(ShellColor.YELLOW, "inherited"));
+            }
+            for (BindingModel binding : service.getBindings()) {
+                out.print(out.renderColor(ShellColor.BOLD, "   binding: "));
+                out.println(binding.getType());
             }
         }
+        // Print promoted reference info
+        for (CompositeReferenceModel reference : config.getComposite().getReferences()) {
+            out.print(out.renderColor(ShellColor.BOLD, "reference: "));
+            out.println(reference.getName());
+            out.print(out.renderColor(ShellColor.BOLD, "   interface: "));
+            if (reference.getInterface() != null) {
+                out.println(reference.getInterface().getInterface());
+            } else {
+                out.println(out.renderColor(ShellColor.YELLOW, "inherited"));
+            }
+            for (BindingModel binding : reference.getBindings()) {
+                out.print(out.renderColor(ShellColor.BOLD, "   binding: "));
+                out.println(binding.getType());
+            }
+        }
+        
+        out.println();
+        out.println("[Private]");
+        for (ComponentModel component : config.getComposite().getComponents()) {
+            out.print(out.renderColor(ShellColor.BOLD, "component: "));
+            out.println(component.getName());
+            for (ComponentServiceModel service : component.getServices()) {
+                out.print(out.renderColor(ShellColor.BOLD, "   service: "));
+                out.println(service.getName());
+                out.print(out.renderColor(ShellColor.BOLD, "      interface: "));
+                if (service.getInterface() != null) {
+                    out.println(service.getInterface().getInterface());
+                } else {
+                    out.println(out.renderColor(ShellColor.RED, "unspecified"));
+                }
+            }
+            for (ComponentReferenceModel reference : component.getReferences()) {
+                out.print(out.renderColor(ShellColor.BOLD, "   reference: "));
+                out.println(reference.getName());
+                out.print(out.renderColor(ShellColor.BOLD, "      interface: "));
+                if (reference.getInterface() != null) {
+                    out.println(reference.getInterface().getInterface());
+                } else {
+                    out.println(out.renderColor(ShellColor.RED, "unspecified"));
+                }
+            }
+        }
+        out.println();
     }
     
     /**
@@ -101,5 +153,41 @@ public class SwitchYardPlugin extends AbstractPlugin {
         // Save configuration changes
         switchYard.saveConfig();
         out.println("Promoted service " + serviceName);
+    }
+    
+
+    /**
+     * Promote a component-level reference to a composite-level reference.
+     * @param referenceName name of the reference to promote
+     * @param out shell output
+     */
+    @Command(value = "promote-reference", help = "Promote a private reference to public.")
+    public void promoteReference(
+            @Option(required = true,
+                     name = "referenceName",
+                     description = "The reference name") final String referenceName,
+            final PipeOut out) {
+        
+        SwitchYardFacet switchYard = getProject().getFacet(SwitchYardFacet.class);
+        
+        // Check to see if the service is already promoted
+        if (switchYard.getCompositeReference(referenceName) != null) {
+            out.println(out.renderColor(ShellColor.RED, "Reference has already been promoted: " + referenceName));
+            return;
+        }
+        // Make sure a component service exists
+        if (switchYard.getComponentReference(referenceName) == null) {
+            out.println(out.renderColor(ShellColor.RED, "Component reference not found: " + referenceName));
+            return;
+        }
+        // Create the composite service
+        V1CompositeReferenceModel reference = new V1CompositeReferenceModel();
+        reference.setName(referenceName);
+        reference.setPromote(new QName(referenceName));
+        switchYard.getSwitchYardConfig().getComposite().addReference(reference);
+        
+        // Save configuration changes
+        switchYard.saveConfig();
+        out.println("Promoted reference " + referenceName);
     }
 }

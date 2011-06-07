@@ -42,7 +42,9 @@ import org.jboss.seam.forge.shell.plugins.RequiresPackagingType;
 import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.Models;
 import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
+import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
@@ -140,6 +142,38 @@ public class SwitchYardFacet extends AbstractFacet {
             }
         }
         // no matching service
+        return null;
+    }
+    
+    /**
+     * Retrieve the composite reference config for the specified reference name.
+     * @param name composite reference name
+     * @return composite reference config fragment, or null if the reference does not exist
+     */
+    public CompositeReferenceModel getCompositeReference(String name) {
+        for (CompositeReferenceModel reference : getSwitchYardConfig().getComposite().getReferences()) {
+            if (reference.getName().equals(name)) {
+                return reference;
+            }
+        }
+        // no matching reference
+        return null;
+    }
+    
+    /**
+     * Retrieve the component reference config for the specified reference name.
+     * @param name component reference name
+     * @return component reference config fragment, or null if the reference does not exist
+     */
+    public ComponentReferenceModel getComponentReference(String name) {
+        for (ComponentModel component : getMergedSwitchYardConfig().getComposite().getComponents()) {
+            for (ComponentReferenceModel reference : component.getReferences()) {
+                if (reference.getName().equals(name)) {
+                    return reference;
+                }
+            }
+        }
+        // no matching reference
         return null;
     }
     

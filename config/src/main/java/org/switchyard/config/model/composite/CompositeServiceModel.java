@@ -74,5 +74,18 @@ public interface CompositeServiceModel extends NamedModel {
      * @return this CompositeServiceModel (useful for chaining)
      */
     public CompositeServiceModel addBinding(BindingModel binding);
+    
+    /**
+     * Gets the child service interface model.
+     * @return the child service interface model
+     */
+    public InterfaceModel getInterface();
+
+    /**
+     * Sets the child service interface model.
+     * @param interfaze child service interface model
+     * @return this CompositeServiceModel (useful for chaining)
+     */
+    public CompositeServiceModel setInterface(InterfaceModel interfaze);
 
 }

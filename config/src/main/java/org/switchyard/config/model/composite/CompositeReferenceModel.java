@@ -75,4 +75,18 @@ public interface CompositeReferenceModel extends NamedModel {
      */
     public CompositeReferenceModel addBinding(BindingModel binding);
 
+    /**
+     * Gets the child reference interface model.
+     * @return the child reference interface model
+     */
+    public InterfaceModel getInterface();
+
+    /**
+     * Sets the child reference interface model.
+     * @param interfaze the child reference interface model
+     * @return this CompositeReferenceModel (useful for chaining)
+     */
+    public CompositeReferenceModel setInterface(InterfaceModel interfaze);
+
+
 }
