@@ -272,7 +272,7 @@ public class ClientProxyBean implements Bean {
                 throw new BeanComponentException("A service reference to service '" + _serviceQName + "' is not bound into "
                         + "this client proxy instance.  A reference configuration to the service may be required in the application configuration.");
             }
-
+            
             if (method.getReturnType() != null && !Void.TYPE.isAssignableFrom(method.getReturnType())) {
                 final BlockingQueue<Exchange> responseQueue = new ArrayBlockingQueue<Exchange>(1);
 
@@ -288,7 +288,12 @@ public class ClientProxyBean implements Bean {
 
 
                 Exchange exchangeIn = createExchange(_service, method, responseExchangeHandler);
-                exchangeIn.send(exchangeIn.createMessage().setContent(args));
+                // Don't set the message content as an array unless there are multiple arguments
+                if (args.length == 1) {
+                    exchangeIn.send(exchangeIn.createMessage().setContent(args[0]));
+                } else {
+                    exchangeIn.send(exchangeIn.createMessage().setContent(args));
+                }
 
                     Exchange exchangeOut = responseQueue.take();
                 if (exchangeOut.getState() == ExchangeState.OK) {
@@ -313,7 +318,12 @@ public class ClientProxyBean implements Bean {
                 }
             } else {
                 Exchange exchange = createExchange(_service, method, null);
-                exchange.send(exchange.createMessage().setContent(args));
+                // Don't set the message content as an array unless there are multiple arguments
+                if (args.length == 1) {
+                    exchange.send(exchange.createMessage().setContent(args[0]));
+                } else {
+                    exchange.send(exchange.createMessage().setContent(args));
+                }
 
                 return null;
             }
