@@ -167,7 +167,7 @@
                             <includes>
                                 <include>standalone.xml</include>
                             </includes>
-                            <outputDir>${staging.dir}/jboss-${version.jbossas}/standalone/configuration</outputDir>
+                            <outputDir>${staging.dir}</outputDir>
                             <stylesheet>src/main/resources/switchyard.xsl</stylesheet>
                         </transformationSet>
                         <!-- We are not ready for domain config yet -->
@@ -177,7 +177,7 @@
                             <includes>
                                 <include>domain.xml</include>
                             </includes>
-                            <outputDir>${staging.dir}/jboss-${version.jbossas}/domain/configuration</outputDir>
+                            <outputDir>${staging.dir}</outputDir>
                             <stylesheet>src/main/resources/switchyard.xsl</stylesheet>
                         </transformationSet>
                         -->
