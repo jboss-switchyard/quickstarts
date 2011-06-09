@@ -12,3 +12,5 @@ artifactIds [switchyard-release-as6](https://repository.jboss.org/nexus/content/
 and [switchyard-release-as7](https://repository.jboss.org/nexus/content/groups/public/org/switchyard/switchyard-release-as7)),
 which means you can skip the build step and go straight to running SwitchYard.
 
+The assembly definition for both release distributions assumes that the quickstarts repository has been checked out and exists in the same directory as your release checkout (i.e. quickstarts and release share the same parent directory).  The build will still work if this directory is not present, but the quickstarts will not be included in the built distributions.
+

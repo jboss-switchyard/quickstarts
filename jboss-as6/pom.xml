@@ -38,7 +38,7 @@
 
     <properties>
         <version.jbossas>6.0.0.Final</version.jbossas>
-        <stagging.dir>${project.build.directory}/staging</stagging.dir>
+        <staging.dir>${project.build.directory}/staging</staging.dir>
         <assembly.dir>${project.build.directory}/assembly</assembly.dir>
         <as.root.dir>jboss-${version.jbossas}</as.root.dir>
         <switchyard.root.dir>switchyard-as6-0.1</switchyard.root.dir>
@@ -126,12 +126,12 @@
                                 <property name="dependencies.dir" value="target/dependency" />
 
                                 <!-- Create the staging and assembly dirs... -->
-                                <mkdir dir="${stagging.dir}" />
+                                <mkdir dir="${staging.dir}" />
 
                                 <!-- Unzip the AS distribution... -->
-                                <unzip src="${dependencies.dir}/jboss-as-distribution-${version.jbossas}.zip" dest="${stagging.dir}" />
+                                <unzip src="${dependencies.dir}/jboss-as-distribution-${version.jbossas}.zip" dest="${staging.dir}" />
 
-                                <property name="default.server" value="${stagging.dir}/${as.root.dir}/server/default" />
+                                <property name="default.server" value="${staging.dir}/${as.root.dir}/server/default" />
 
                                 <!-- Unzip the SwitchYard distribution on top of the AS... -->
                                 <unzip src="${dependencies.dir}/switchyard-as6-build-${project.version}.zip" dest="${default.server}/deployers" />
@@ -158,10 +158,33 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
-                    </execution>
+                    </execution>  
                 </executions>
             </plugin>
-
+            <!-- Include distribution files -->
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>  
+                <executions>
+                  <execution>
+                      <id>install-distribution-files</id>
+                      <phase>generate-sources</phase>
+                      <goals>
+                        <goal>unpack</goal>
+                      </goals>
+                      <configuration>
+                        <artifactItems>
+                          <artifactItem>
+                            <groupId>org.switchyard</groupId>
+                            <artifactId>switchyard-release-distribution</artifactId>
+                            <type>jar</type>
+                            <version>${project.version}</version>
+                          </artifactItem>
+                        </artifactItems>
+                        <outputDirectory>${staging.dir}</outputDirectory>
+                      </configuration>
+                  </execution>
+                </executions>
+            </plugin>
             <!-- Assemble the Server... -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

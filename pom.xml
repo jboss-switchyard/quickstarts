@@ -16,8 +16,21 @@
     <description>SwitchYard Distribution</description>
 
     <modules>
+        <module>distribution</module>
         <module>jboss-as6</module>
         <module>jboss-as7</module>
     </modules>
+
+    <dependencyManagement>
+        <!-- internal dependencies -->
+      <dependencies>
+        <dependency>
+          <groupId>org.switchyard</groupId>
+          <artifactId>switchyard-release-distribution</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+      </dependencies>
+    </dependencyManagement>
+
 
 </project>

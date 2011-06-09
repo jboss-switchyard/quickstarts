@@ -29,17 +29,39 @@
 
     <fileSets>
         <fileSet>
-            <directory>${stagging.dir}/${as.root.dir}</directory>
+            <directory>${staging.dir}</directory>
+            <includes>
+                <include>*.txt</include>
+            </includes>
+            <outputDirectory>/${switchyard.root.dir}</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${staging.dir}/${as.root.dir}</directory>
             <excludes>
                 <exclude>bin/*</exclude>
             </excludes>
             <outputDirectory>/${switchyard.root.dir}</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>${stagging.dir}/${as.root.dir}/bin</directory>
+            <directory>${staging.dir}/${as.root.dir}/bin</directory>
             <fileMode>755</fileMode>
             <lineEnding>keep</lineEnding>
             <outputDirectory>/${switchyard.root.dir}/bin</outputDirectory>
+        </fileSet>
+        <fileSet>
+          <directory>../../quickstarts</directory>
+          <outputDirectory>${switchyard.root.dir}/quickstarts</outputDirectory>
+            <excludes>
+            <exclude>**/.git</exclude>
+            <exclude>**/.gitignore</exclude>
+            <exclude>**/.DS_Store</exclude>
+            <exclude>**/.project</exclude>
+            <exclude>**/.classpath</exclude>
+            <exclude>**/.settings</exclude>
+            <exclude>**/.settings/**/*</exclude>
+            <exclude>**/target</exclude>
+            <exclude>**/target/**/*</exclude>
+          </excludes>
         </fileSet>
     </fileSets>
 </assembly>
