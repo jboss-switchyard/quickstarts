@@ -59,6 +59,10 @@
       </license>
    </licenses>
 
+  <scm>
+    <url>http://github.com/switchyard/core</url>
+  </scm>
+
 
     <distributionManagement>
         <repository>
