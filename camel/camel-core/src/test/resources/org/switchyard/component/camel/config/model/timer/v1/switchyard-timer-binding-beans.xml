@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- JBoss, Home of Professional Open Source Copyright 2011 Red Hat Inc. 
+	and/or its affiliates and other contributors as indicated by the @authors 
+	tag. All rights reserved. See the copyright.txt in the distribution for a 
+	full listing of individual contributors. This copyrighted material is made 
+	available to anyone wishing to use, modify, copy, or redistribute it subject 
+	to the terms and conditions of the GNU Lesser General Public License, v. 
+	2.1. This program is distributed in the hope that it will be useful, but 
+	WITHOUT A WARRANTY; without even the implied warranty of MERCHANTABILITY 
+	or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License 
+	for more details. You should have received a copy of the GNU Lesser General 
+	Public License, v.2.1 along with this distribution; if not, write to the 
+	Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+	MA 02110-1301, USA. -->
+<switchyard 
+    xmlns="urn:switchyard-config:switchyard:1.0"
+    xmlns:camel="urn:switchyard-component-camel:config:1.0" 
+    xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" >
+
+	<sca:composite>
+		<sca:service name="camelTest" promote="SimpleCamelService">
+			<camel:binding.timer>
+			    <camel:name>fooTimer</camel:name>
+			    <camel:time>2011-01-01T12:00:00</camel:time>
+                <camel:pattern>fooPattern</camel:pattern>
+                <camel:period>555</camel:period>
+                <camel:delay>100</camel:delay>
+                <camel:fixedRate>true</camel:fixedRate>
+                <camel:daemon>false</camel:daemon>
+                <camel:repeatCount>99</camel:repeatCount>
+			</camel:binding.timer>
+		</sca:service>
+	</sca:composite>
+
+</switchyard>

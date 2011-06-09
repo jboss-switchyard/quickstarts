@@ -94,6 +94,24 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
     
+    <element name="binding.timer" type="camel:CamelTimerBindingType" substitutionGroup="sca:binding"/>
+    <complexType name="CamelTimerBindingType" >
+        <complexContent>
+            <extension base="sca:Binding">
+                <sequence>
+                    <element name="name" type="string"/>
+                    <element name="time" type="dateTime" minOccurs="0" maxOccurs="1"/>
+                    <element name="pattern" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="period" type="long" minOccurs="0" maxOccurs="1"/>
+                    <element name="delay" type="long" minOccurs="0" maxOccurs="1"/>
+                    <element name="fixedRate" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="daemon" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="repeatCount" type="integer" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <complexType name="CamelOperationSelectorType">
       <complexContent>
          <extension base="sca:OperationSelectorType">
