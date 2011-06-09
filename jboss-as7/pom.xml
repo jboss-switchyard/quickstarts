@@ -148,6 +148,35 @@
                             <outputDirectory>${staging.dir}/jboss-${version.jbossas}</outputDirectory>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>install-forge-plugins</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                          <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.switchyard</groupId>
+                                    <artifactId>switchyard-forge-plugin</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.switchyard</groupId>
+                                    <artifactId>switchyard-forge-camel-plugin</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.switchyard</groupId>
+                                    <artifactId>switchyard-forge-bean-plugin</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.switchyard</groupId>
+                                    <artifactId>switchyard-forge-soap-plugin</artifactId>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${staging.dir}/jboss-${version.jbossas}/forge</outputDirectory>
+                            <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>

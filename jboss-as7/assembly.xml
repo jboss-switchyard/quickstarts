@@ -79,5 +79,9 @@
          <exclude>**/target/**/*</exclude>
       </excludes>
     </fileSet>
+    <fileSet>
+      <directory>${staging.dir}/jboss-${version.jbossas}/forge</directory>
+      <outputDirectory>${distro.root.dir}forge</outputDirectory>
+    </fileSet>
   </fileSets>
 </assembly>

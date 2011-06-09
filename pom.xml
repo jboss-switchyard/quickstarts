@@ -30,6 +30,32 @@
           <artifactId>switchyard-release-distribution</artifactId>
           <version>${project.version}</version>
         </dependency>
+        <dependency>
+          <groupId>org.switchyard</groupId>
+          <artifactId>switchyard-release-distribution</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.switchyard</groupId>
+          <artifactId>switchyard-forge-plugin</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.switchyard</groupId>
+          <artifactId>switchyard-forge-bean-plugin</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.switchyard</groupId>
+          <artifactId>switchyard-forge-camel-plugin</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.switchyard</groupId>
+          <artifactId>switchyard-forge-soap-plugin</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+
       </dependencies>
     </dependencyManagement>
 
