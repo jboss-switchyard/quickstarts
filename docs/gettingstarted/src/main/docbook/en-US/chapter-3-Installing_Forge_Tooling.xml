@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JBoss, Home of Professional Open Source
+  ~ Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+  ~ as indicated by the @authors tag. All rights reserved.
+  ~ See the copyright.txt in the distribution for a
+  ~ full listing of individual contributors.
+  ~ *
+  ~ This copyrighted material is made available to anyone wishing to use,
+  ~ modify, copy, or redistribute it subject to the terms and conditions
+  ~ of the GNU Lesser General Public License, v. 2.1.
+  ~ This program is distributed in the hope that it will be useful, but WITHOUT A
+  ~ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  ~ PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  ~ You should have received a copy of the GNU Lesser General Public License,
+  ~ v.2.1 along with this distribution; if not, write to the Free Software
+  ~ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  ~ MA  02110-1301, USA.
+  -->
+
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="sid-2883634">
+    
+    <title>Installing Forge Tooling</title>
+    <para>After installing SwitchYard and trying the Orders demo application, you are going to want to build your own SwitchYard applications.  The easiest way to get started with this is by using the Forge Tooling.  Before you can use the Forge tooling however, you need to install Forge and configure it with the SwitchYard plugins for Forge.</para>
+    <para>
+      The first step is to install Forge itself, which is covered nicely in the
+      <ulink url="http://docs.jboss.org/forge/1.0.0.Alpha3/reference/en-US/html_single/#forge.installation">Forge documentation</ulink>
+      .  Make sure you setup the $FORGE_HOME environment variable.
+    </para>
+    <para>
+      Once Forge is installed it's time to install the SwitchYard extensions to Forge.  These are located in the forge directory within the SwitchYard distribution.  Simply copy these jars into the
+      <emphasis role="italics">$FORGE_HOME/lib</emphasis>
+      directory.
+    </para>
+    <informalexample>
+      <programlisting>cp forge/*.jar $FORGE_HOME/lib</programlisting>
+    </informalexample>
+    <para>For more details on using the Forge tooling for SwitchYard, please see the User Guide.</para>
+  </chapter>
