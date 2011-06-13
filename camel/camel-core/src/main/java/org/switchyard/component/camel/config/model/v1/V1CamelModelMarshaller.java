@@ -21,6 +21,7 @@
 package org.switchyard.component.camel.config.model.v1;
 
 import org.switchyard.component.camel.config.model.atom.v1.V1AtomBindingModel;
+import org.switchyard.component.camel.config.model.direct.v1.V1CamelDirectBindingModel;
 import org.switchyard.component.camel.config.model.file.v1.V1CamelFileBindingModel;
 import org.switchyard.component.camel.config.model.file.v1.V1CamelFileConsumerBindingModel;
 import org.switchyard.component.camel.config.model.file.v1.V1CamelFileProducerBindingModel;
@@ -60,6 +61,8 @@ public class V1CamelModelMarshaller extends BaseMarshaller {
                 return new V1CamelBindingModel(config, getDescriptor());
             } else if (name.endsWith(V1AtomBindingModel.ATOM)) {
                 return new V1AtomBindingModel(config, getDescriptor());
+            } else if (name.endsWith(V1CamelDirectBindingModel.DIRECT)) {
+                return new V1CamelDirectBindingModel(config, getDescriptor());
             }
         }
 

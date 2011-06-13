@@ -82,6 +82,17 @@ MA  02110-1301, USA.
             </extension>
         </complexContent>
     </complexType>
+   
+    <element name="binding.direct" type="camel:CamelDirectBindingType" substitutionGroup="sca:binding"/>
+    <complexType name="CamelDirectBindingType" >
+        <complexContent>
+            <extension base="sca:Binding">
+                <sequence>
+                    <element name="name" type="string"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
     
     <complexType name="CamelOperationSelectorType">
       <complexContent>
