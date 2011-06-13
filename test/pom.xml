@@ -24,14 +24,14 @@
     <parent>
         <groupId>org.switchyard</groupId>
         <artifactId>switchyard-release</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>0.2.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.switchyard</groupId>
     <artifactId>switchyard-release-test</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.2.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>SwitchYard: Release Distribution Tests</name>
     <description>SwitchYard Release Distribution Tests</description>

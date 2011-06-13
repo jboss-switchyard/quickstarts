@@ -4,14 +4,14 @@
     <parent>
         <groupId>org.switchyard</groupId>
         <artifactId>switchyard-release</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>0.2.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.switchyard</groupId>
     <artifactId>switchyard-release-as7</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>SwitchYard: AS7 Distribution</name>
     <description>SwitchYard AS7 Distribution</description>
