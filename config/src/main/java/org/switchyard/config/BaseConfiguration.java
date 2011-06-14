@@ -169,8 +169,8 @@ public abstract class BaseConfiguration implements Configuration {
      * {@inheritDoc}
      */
     @Override
-    public void write(OutputStream out) throws IOException {
-        write(new OutputStreamWriter(out));
+    public void write(OutputStream out, OutputKey... keys) throws IOException {
+        write(new OutputStreamWriter(out), keys);
     }
 
     /**

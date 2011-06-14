@@ -29,7 +29,7 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
 import org.jboss.modules.Module;
 import org.switchyard.as7.extension.SwitchYardDeploymentMarker;
-import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
@@ -57,7 +57,7 @@ public class SwitchYardConfigProcessor implements DeploymentUnitProcessor {
             final Module module = deploymentUnit.getAttachment(Attachments.MODULE);
             Thread.currentThread().setContextClassLoader(module.getClassLoader());
             is = switchYardMetaData.getSwitchYardFile().openStream();
-            SwitchYardModel switchyardModel = new ModelResource<SwitchYardModel>().pull(is);
+            SwitchYardModel switchyardModel = new ModelPuller<SwitchYardModel>().pull(is);
             switchYardMetaData.setSwitchYardModel(switchyardModel);
         } catch (IOException ioe) {
             throw new DeploymentUnitProcessingException(ioe);

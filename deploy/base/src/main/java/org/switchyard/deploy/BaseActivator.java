@@ -25,6 +25,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.switchyard.ServiceDomain;
+
 /**
  * Base implementation of Activator which provides a convenience implementation
  * for declaring activation types.
@@ -32,6 +34,7 @@ import java.util.List;
 public abstract class BaseActivator implements Activator {
     
     private List<String> _activationTypes = new LinkedList<String>();
+    private ServiceDomain _serviceDomain;
 
     protected BaseActivator(String ... types) {
         if (types != null) {
@@ -39,11 +42,33 @@ public abstract class BaseActivator implements Activator {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setServiceDomain(ServiceDomain serviceDomain) {
+        _serviceDomain = serviceDomain;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ServiceDomain getServiceDomain() {
+        return _serviceDomain;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean canActivate(String type) {
         return _activationTypes.contains(type);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Collection<String> getActivationTypes() {
         return Collections.unmodifiableList(_activationTypes);

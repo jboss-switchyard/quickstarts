@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.common.io.resource;
+package org.switchyard.common.io.pull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +38,7 @@ import org.xml.sax.SAXException;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class ElementResource extends Resource<Element> {
+public class ElementPuller extends Puller<Element> {
 
     /**
      * {@inheritDoc}

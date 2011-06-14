@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.common.io.resource;
+package org.switchyard.common.io.pull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,7 +35,7 @@ import org.switchyard.common.type.Classes;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public abstract class Resource<R> {
+public abstract class Puller<R> {
 
     /**
      * Safely pulls a resource from a path using {@link org.switchyard.common.type.Classes#getResourceAsStream(String, Class)}.

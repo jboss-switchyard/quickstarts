@@ -31,7 +31,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
-import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
@@ -165,7 +165,7 @@ public class JSONTransformerTest {
 			Assert.fail("null config stream.");
 		}
 
-		SwitchYardModel switchyardConfig = (SwitchYardModel) new ModelResource()
+		SwitchYardModel switchyardConfig = (SwitchYardModel) new ModelPuller()
 				.pull(swConfigStream);
 		TransformsModel transforms = switchyardConfig.getTransforms();
 

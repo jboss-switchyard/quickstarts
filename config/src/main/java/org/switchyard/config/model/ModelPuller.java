@@ -24,9 +24,9 @@ import java.io.Reader;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.common.io.resource.ElementResource;
-import org.switchyard.common.io.resource.Resource;
-import org.switchyard.config.ConfigurationResource;
+import org.switchyard.common.io.pull.ElementPuller;
+import org.switchyard.common.io.pull.Puller;
+import org.switchyard.config.ConfigurationPuller;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -38,14 +38,14 @@ import org.xml.sax.InputSource;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class ModelResource<M extends Model> extends Resource<M> {
+public class ModelPuller<M extends Model> extends Puller<M> {
 
     private Descriptor _desc;
 
     /**
      * Constructs a default ModelResource with a default Descriptor.
      */
-    public ModelResource() {
+    public ModelPuller() {
         this(null);
     }
 
@@ -53,7 +53,7 @@ public class ModelResource<M extends Model> extends Resource<M> {
      * Constructs a ModelResource with the specified Descriptor.
      * @param desc the Descriptor
      */
-    public ModelResource(Descriptor desc) {
+    public ModelPuller(Descriptor desc) {
         _desc = desc != null ? desc : new Descriptor();
     }
 
@@ -70,7 +70,7 @@ public class ModelResource<M extends Model> extends Resource<M> {
      */
     @Override
     public M pull(InputStream is) throws IOException {
-        return pull(new ElementResource().pull(is));
+        return pull(new ElementPuller().pull(is));
     }
 
     /**
@@ -80,7 +80,7 @@ public class ModelResource<M extends Model> extends Resource<M> {
      * @throws IOException if a problem occurred
      */
     public M pull(Reader reader) throws IOException {
-        return pull(new ElementResource().pull(reader));
+        return pull(new ElementPuller().pull(reader));
     }
 
     /**
@@ -90,7 +90,7 @@ public class ModelResource<M extends Model> extends Resource<M> {
      * @throws IOException if a problem occurred
      */
     public M pull(InputSource is) throws IOException {
-        return pull(new ElementResource().pull(is));
+        return pull(new ElementPuller().pull(is));
     }
 
     /**
@@ -99,7 +99,7 @@ public class ModelResource<M extends Model> extends Resource<M> {
      * @return the Model, or null if document is null
      */
     public M pull(Document document) {
-        return pull(new ElementResource().pull(document));
+        return pull(new ElementPuller().pull(document));
     }
 
     /**
@@ -113,7 +113,7 @@ public class ModelResource<M extends Model> extends Resource<M> {
         if (namespace != null) {
             Marshaller marshaller = _desc.getMarshaller(namespace);
             if (marshaller != null) {
-                return (M)marshaller.read(new ConfigurationResource().pull(element));
+                return (M)marshaller.read(new ConfigurationPuller().pull(element));
             }
         }
         return null;
@@ -125,7 +125,7 @@ public class ModelResource<M extends Model> extends Resource<M> {
      * @return the model, or null if the qualified name is null
      */
     public M pull(QName qname) {
-        return pull(new ElementResource().pull(qname));
+        return pull(new ElementPuller().pull(qname));
     }
 
 }

@@ -29,7 +29,7 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.deploy.ServiceDomainManager;
 
@@ -79,7 +79,7 @@ public class SwitchYardDeployer extends AbstractSimpleVFSRealDeployer<SwitchYard
     private void parseSwitchYardConfig(SwitchYardMetaData metaData) throws IOException {
         InputStream is = metaData.getSwitchYardFile().openStream();
         try {
-            SwitchYardModel switchyardModel = new ModelResource<SwitchYardModel>().pull(is);
+            SwitchYardModel switchyardModel = new ModelPuller<SwitchYardModel>().pull(is);
             metaData.setSwitchYardModel(switchyardModel);
         } finally {
             is.close();

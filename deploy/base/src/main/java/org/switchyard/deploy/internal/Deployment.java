@@ -35,7 +35,7 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.type.Classes;
-import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
@@ -85,7 +85,7 @@ public class Deployment extends AbstractDeployment {
      * @throws IOException Error reading configuration model.
      */
     public Deployment(InputStream configStream) throws IOException {
-        super(new ModelResource<SwitchYardModel>().pull(configStream));
+        super(new ModelPuller<SwitchYardModel>().pull(configStream));
     }
     
     /**
@@ -180,8 +180,10 @@ public class Deployment extends AbstractDeployment {
     }
     
     private void createActivators() {
+        ServiceDomain serviceDomain = getDomain();
         ServiceLoader<Activator> activatorLoader = ServiceLoader.load(Activator.class);
         for (Activator activator : activatorLoader) {
+            activator.setServiceDomain(serviceDomain);
             Collection<String> activationTypes = activator.getActivationTypes();
             for (String type : activationTypes) {
                 _activators.put(type, activator);

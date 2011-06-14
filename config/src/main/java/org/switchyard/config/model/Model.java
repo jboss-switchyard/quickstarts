@@ -24,6 +24,7 @@ import java.io.Writer;
 import java.util.List;
 
 import org.switchyard.config.Configuration;
+import org.switchyard.config.OutputKey;
 
 /**
  * The central and most important interface of the Model API.  A Model "wraps" a {@link org.switchyard.config.Configuration Configuration}.
@@ -71,15 +72,17 @@ public interface Model {
     /**
      * Writes this model out in it's native form (which most likely means writing out the wrapped Configuration).
      * @param out the OutputStream to write to
+     * @param keys the OutputKeys to respect
      * @throws IOException if a problem occurs
      */
-    public void write(OutputStream out) throws IOException;
+    public void write(OutputStream out, OutputKey... keys) throws IOException;
 
     /**
      * Writes this model out in it's native form (which most likely means writing out the wrapped Configuration).
      * @param writer the Writer to write to
+     * @param keys the OutputKeys to respect
      * @throws IOException if a problem occurs
      */
-    public void write(Writer writer) throws IOException;
+    public void write(Writer writer, OutputKey... keys) throws IOException;
 
 }

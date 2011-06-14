@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.common.io.resource;
+package org.switchyard.common.io.pull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +30,7 @@ import java.util.Properties;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class PropertiesResource extends Resource<Properties> {
+public class PropertiesPuller extends Puller<Properties> {
 
     /**
      * {@inheritDoc}

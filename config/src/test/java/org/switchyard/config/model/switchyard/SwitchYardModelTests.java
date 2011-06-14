@@ -29,10 +29,10 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.common.io.resource.StringResource;
+import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.config.model.Model;
-import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Models;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
@@ -55,18 +55,18 @@ public class SwitchYardModelTests {
     private static final String FRAGMENT_XML = "/org/switchyard/config/model/switchyard/SwitchYardModelTests-Fragment.xml";
     private static final String COMPLETE_XML = "/org/switchyard/config/model/switchyard/SwitchYardModelTests-Complete.xml";
 
-    private ModelResource<SwitchYardModel> _res;
+    private ModelPuller<SwitchYardModel> _puller;
 
     @Before
     public void before() throws Exception {
-        _res = new ModelResource<SwitchYardModel>();
+        _puller = new ModelPuller<SwitchYardModel>();
     }
 
     @Test
     public void testCreateEmptyModel() throws Exception {
         String namespace = SwitchYardModel.DEFAULT_NAMESPACE;
         String name = SwitchYardModel.SWITCHYARD;
-        Model model = new ModelResource<Model>().pull(XMLHelper.createQName(namespace, name));
+        Model model = new ModelPuller<Model>().pull(XMLHelper.createQName(namespace, name));
         Assert.assertTrue(model instanceof SwitchYardModel);
         Assert.assertEquals(name, model.getModelConfiguration().getName());
         Assert.assertEquals(new QName(namespace, name), model.getModelConfiguration().getQName());
@@ -74,18 +74,18 @@ public class SwitchYardModelTests {
 
     @Test
     public void testMerge() throws Exception {
-        SwitchYardModel incomplete_switchyard = _res.pull(INCOMPLETE_XML, getClass());
-        SwitchYardModel fragment_switchyard = _res.pull(FRAGMENT_XML, getClass());
+        SwitchYardModel incomplete_switchyard = _puller.pull(INCOMPLETE_XML, getClass());
+        SwitchYardModel fragment_switchyard = _puller.pull(FRAGMENT_XML, getClass());
         SwitchYardModel merged_switchyard = Models.merge(fragment_switchyard, incomplete_switchyard);
         XMLUnit.setIgnoreWhitespace(true);
-        SwitchYardModel complete_switchyard = _res.pull(COMPLETE_XML, getClass());
+        SwitchYardModel complete_switchyard = _puller.pull(COMPLETE_XML, getClass());
         Diff diff = XMLUnit.compareXML(complete_switchyard.toString(), merged_switchyard.toString());
         Assert.assertTrue(diff.toString(), diff.identical());
     }
 
     @Test
     public void testReadComplete() throws Exception {
-        SwitchYardModel switchyard = _res.pull(COMPLETE_XML, getClass());
+        SwitchYardModel switchyard = _puller.pull(COMPLETE_XML, getClass());
         CompositeModel composite = switchyard.getComposite();
         CompositeServiceModel service = composite.getServices().get(0);
         // Verify composite service binding
@@ -116,8 +116,8 @@ public class SwitchYardModelTests {
 
     @Test
     public void testWriteComplete() throws Exception {
-        String old_xml = new StringResource().pull(COMPLETE_XML, getClass());
-        SwitchYardModel switchyard = _res.pull(new StringReader(old_xml));
+        String old_xml = new StringPuller().pull(COMPLETE_XML, getClass());
+        SwitchYardModel switchyard = _puller.pull(new StringReader(old_xml));
         String new_xml = switchyard.toString();
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(old_xml, new_xml);
@@ -126,7 +126,7 @@ public class SwitchYardModelTests {
 
     @Test
     public void testValidation() throws Exception {
-        SwitchYardModel switchyard = _res.pull(COMPLETE_XML, getClass());
+        SwitchYardModel switchyard = _puller.pull(COMPLETE_XML, getClass());
         Assert.assertTrue(switchyard.isModelValid());
     }
 

@@ -21,7 +21,7 @@ package org.switchyard.transform;
 
 import org.junit.Assert;
 import org.switchyard.common.type.Classes;
-import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
@@ -43,7 +43,7 @@ public abstract class AbstractTransformerTestCase {
 
         SwitchYardModel switchyardConfig;
         try {
-            switchyardConfig = new ModelResource<SwitchYardModel>().pull(swConfigStream);
+            switchyardConfig = new ModelPuller<SwitchYardModel>().pull(swConfigStream);
         } finally {
             swConfigStream.close();
         }

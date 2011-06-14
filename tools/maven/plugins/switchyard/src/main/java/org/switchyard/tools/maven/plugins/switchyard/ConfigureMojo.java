@@ -39,7 +39,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.MergeScanner;
 import org.switchyard.config.model.Model;
-import org.switchyard.config.model.ModelResourceScanner;
+import org.switchyard.config.model.ModelPullerScanner;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
@@ -131,7 +131,7 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
                     scanners.add(scanner);
                 }
             }
-            scanners.add(new ModelResourceScanner<M>());
+            scanners.add(new ModelPullerScanner<M>());
             if (modelClassName == null) {
                 modelClassName = V1SwitchYardModel.class.getName();
             }

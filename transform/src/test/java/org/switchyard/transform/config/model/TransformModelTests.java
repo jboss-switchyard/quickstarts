@@ -29,10 +29,10 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.common.io.resource.StringResource;
+import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.config.model.Model;
-import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
@@ -50,18 +50,18 @@ public class TransformModelTests {
 
     private static final String XML = "/org/switchyard/transform/config/model/TransformModelTests.xml";
 
-    private ModelResource<SwitchYardModel> _res;
+    private ModelPuller<SwitchYardModel> _puller;
 
     @Before
     public void before() throws Exception {
-        _res = new ModelResource<SwitchYardModel>();
+        _puller = new ModelPuller<SwitchYardModel>();
     }
 
     @Test
     public void testCreateEmptyModel() throws Exception {
         String namespace = TransformModel.DEFAULT_NAMESPACE;
         String name = TransformModel.TRANSFORM + '.' + JavaTransformModel.JAVA;
-        Model model = new ModelResource<Model>().pull(XMLHelper.createQName(namespace, name));
+        Model model = new ModelPuller<Model>().pull(XMLHelper.createQName(namespace, name));
         Assert.assertTrue(model instanceof JavaTransformModel);
         Assert.assertEquals(name, model.getModelConfiguration().getName());
         Assert.assertEquals(new QName(namespace, name), model.getModelConfiguration().getQName());
@@ -85,7 +85,7 @@ public class TransformModelTests {
         transforms.addTransform(smooksTransform);
         switchyard.setTransforms(transforms);
         String new_xml = switchyard.toString();
-        String old_xml = new ModelResource<SwitchYardModel>().pull(XML, getClass()).toString();
+        String old_xml = new ModelPuller<SwitchYardModel>().pull(XML, getClass()).toString();
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(old_xml, new_xml);
         Assert.assertTrue(diff.toString(), diff.identical());
@@ -93,7 +93,7 @@ public class TransformModelTests {
 
     @Test
     public void testRead() throws Exception {
-        SwitchYardModel switchyard = _res.pull(XML, getClass());
+        SwitchYardModel switchyard = _puller.pull(XML, getClass());
         TransformsModel transforms = switchyard.getTransforms();
         JavaTransformModel java_transform = (JavaTransformModel)transforms.getTransforms().get(0);
         Assert.assertEquals("msgA", java_transform.getFrom().getLocalPart());
@@ -109,8 +109,8 @@ public class TransformModelTests {
 
     @Test
     public void testWrite() throws Exception {
-        String old_xml = new StringResource().pull(XML, getClass());
-        SwitchYardModel switchyard = _res.pull(new StringReader(old_xml));
+        String old_xml = new StringPuller().pull(XML, getClass());
+        SwitchYardModel switchyard = _puller.pull(new StringReader(old_xml));
         String new_xml = switchyard.toString();
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(old_xml, new_xml);
@@ -119,7 +119,7 @@ public class TransformModelTests {
 
     @Test
     public void testParenthood() throws Exception {
-        SwitchYardModel switchyard_1 = _res.pull(XML, getClass());
+        SwitchYardModel switchyard_1 = _puller.pull(XML, getClass());
         TransformsModel transforms_1 = switchyard_1.getTransforms();
         TransformModel transform = transforms_1.getTransforms().get(0);
         TransformsModel transforms_2 = transform.getTransforms();
@@ -130,7 +130,7 @@ public class TransformModelTests {
 
     @Test
     public void testValidation() throws Exception {
-        SwitchYardModel switchyard = _res.pull(XML, getClass());
+        SwitchYardModel switchyard = _puller.pull(XML, getClass());
         Assert.assertTrue(switchyard.isModelValid());
     }
 

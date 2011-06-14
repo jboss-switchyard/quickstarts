@@ -28,8 +28,8 @@ import junit.framework.Assert;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
-import org.switchyard.common.io.resource.ElementResource;
-import org.switchyard.common.io.resource.StringResource;
+import org.switchyard.common.io.pull.ElementPuller;
+import org.switchyard.common.io.pull.StringPuller;
 
 /**
  * ConfigurationTests.
@@ -47,7 +47,7 @@ public class ConfigurationTests {
     @Test
     public void testCreateEmptyConfig() throws Exception {
         String name = "root";
-        Configuration config = new ConfigurationResource().pull(new QName(name));
+        Configuration config = new ConfigurationPuller().pull(new QName(name));
         Assert.assertEquals(name, config.getName());
         Assert.assertEquals(new QName(name), config.getQName());
     }
@@ -56,24 +56,24 @@ public class ConfigurationTests {
     public void testMerge() throws Exception {
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff;
-        String from_overrides_to_xml = new StringResource().pull(FROM_OVERRIDES_TO_XML, getClass());
+        String from_overrides_to_xml = new StringPuller().pull(FROM_OVERRIDES_TO_XML, getClass());
         diff = XMLUnit.compareXML(from_overrides_to_xml, merge(true));
         Assert.assertTrue(diff.toString(), diff.identical());
-        String from_doesnt_override_to_xml = new StringResource().pull(FROM_DOESNT_OVERRIDE_TO_XML, getClass());
+        String from_doesnt_override_to_xml = new StringPuller().pull(FROM_DOESNT_OVERRIDE_TO_XML, getClass());
         diff = XMLUnit.compareXML(from_doesnt_override_to_xml, merge(false));
         Assert.assertTrue(diff.toString(), diff.identical());
     }
 
     private String merge(boolean fromOverridesTo) throws Exception {
-        Configuration from_config = new ConfigurationResource().pull(new ElementResource().pull(FROM_XML, getClass()));
-        Configuration to_config = new ConfigurationResource().pull(new ElementResource().pull(TO_XML, getClass()));
+        Configuration from_config = new ConfigurationPuller().pull(new ElementPuller().pull(FROM_XML, getClass()));
+        Configuration to_config = new ConfigurationPuller().pull(new ElementPuller().pull(TO_XML, getClass()));
         Configuration merged_config = Configurations.merge(from_config, to_config, fromOverridesTo).setChildrenOrder("my", "his", "mythology").orderChildren();
         return merged_config.toString();
     }
 
     @Test
     public void testParenthood() throws Exception {
-        Configuration parent = new ConfigurationResource().pull(new ElementResource().pull(NAMESPACES_XML, getClass()));
+        Configuration parent = new ConfigurationPuller().pull(new ElementPuller().pull(NAMESPACES_XML, getClass()));
         Assert.assertFalse(parent.hasParent());
         Assert.assertNull(parent.getParent());
         Configuration child = parent.getFirstChild("two");
@@ -86,7 +86,7 @@ public class ConfigurationTests {
     @Test
     public void testQNames() throws Exception {
         QName expected = new QName("http://foo.org", "bar", "foo");
-        QName actual = new ConfigurationResource().pull(expected).getQName();
+        QName actual = new ConfigurationPuller().pull(expected).getQName();
         Assert.assertEquals(expected, actual);
         Assert.assertEquals(expected.getNamespaceURI(), actual.getNamespaceURI());
         Assert.assertEquals(expected.getLocalPart(), actual.getLocalPart());
@@ -95,7 +95,7 @@ public class ConfigurationTests {
 
     @Test
     public void testNamespaceCollections() throws Exception {
-        Configuration config = new ConfigurationResource().pull(new ElementResource().pull(NAMESPACES_XML, getClass()));
+        Configuration config = new ConfigurationPuller().pull(new ElementPuller().pull(NAMESPACES_XML, getClass()));
         Set<String> n_set = config.getNamespaces();
         Assert.assertEquals(4, n_set.size());
         Map<String,String> np_map = config.getNamespacePrefixMap();
@@ -106,7 +106,7 @@ public class ConfigurationTests {
 
     @Test
     public void testNamespacesValues() throws Exception {
-        Configuration config = new ConfigurationResource().pull(new ElementResource().pull(NAMESPACES_XML, getClass()));
+        Configuration config = new ConfigurationPuller().pull(new ElementPuller().pull(NAMESPACES_XML, getClass()));
         Assert.assertEquals("http://a.org/a.xsd", config.getQName().getNamespaceURI());
         Assert.assertEquals("bar", config.getAttribute("foo"));
         Assert.assertEquals("stuff", config.getFirstChild("two").getValue());

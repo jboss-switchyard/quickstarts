@@ -288,15 +288,17 @@ public interface Configuration {
     /**
      * Writes this config out in it's native form (implementation-specific).
      * @param out the OutputStream to write to
+     * @param keys the OutputKeys to respect
      * @throws IOException if a problem occurs
      */
-    public void write(OutputStream out) throws IOException;
+    public void write(OutputStream out, OutputKey... keys) throws IOException;
 
     /**
      * Writes this config out in it's native form (implementation-specific).
      * @param writer the Writer to write to
+     * @param keys the OutputKeys to respect
      * @throws IOException if a problem occurs
      */
-    public void write(Writer writer) throws IOException;
+    public void write(Writer writer, OutputKey... keys) throws IOException;
 
 }

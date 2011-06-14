@@ -23,22 +23,22 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.Properties;
 
-import org.switchyard.common.io.resource.PropertiesResource;
-import org.switchyard.common.io.resource.Resource;
+import org.switchyard.common.io.pull.PropertiesPuller;
+import org.switchyard.common.io.pull.Puller;
 
 /**
  * Utility class to safely access ("pull") Descriptors from various sources.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class DescriptorResource extends Resource<Descriptor> {
+public class DescriptorPuller extends Puller<Descriptor> {
 
     /**
      * {@inheritDoc}
      */
     @Override
     public Descriptor pull(InputStream is) throws IOException {
-        return pull(new PropertiesResource().pull(is));
+        return pull(new PropertiesPuller().pull(is));
     }
 
     /**
@@ -48,7 +48,7 @@ public class DescriptorResource extends Resource<Descriptor> {
      * @throws IOException if a problem occurred
      */
     public Descriptor pull(Reader reader) throws IOException {
-        return pull(new PropertiesResource().pull(reader));
+        return pull(new PropertiesPuller().pull(reader));
     }
 
     /**

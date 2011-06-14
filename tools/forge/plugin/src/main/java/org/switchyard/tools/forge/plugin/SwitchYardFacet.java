@@ -39,7 +39,7 @@ import org.jboss.seam.forge.resources.FileResource;
 import org.jboss.seam.forge.shell.plugins.Alias;
 import org.jboss.seam.forge.shell.plugins.RequiresFacet;
 import org.jboss.seam.forge.shell.plugins.RequiresPackagingType;
-import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Models;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
@@ -281,7 +281,7 @@ public class SwitchYardFacet extends AbstractFacet {
     }
 
     private SwitchYardModel readSwitchYardConfig(FileResource<?> file) throws java.io.IOException {
-        return new ModelResource<SwitchYardModel>().pull(file.getUnderlyingResourceObject());
+        return new ModelPuller<SwitchYardModel>().pull(file.getUnderlyingResourceObject());
     }
     
     /**

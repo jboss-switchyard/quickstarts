@@ -16,46 +16,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
-package org.switchyard.common.io.resource;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-
+package org.switchyard.config;
 
 /**
- * Utility class to safely access ("pull") Strings from various sources.
+ * Hints for configuration output.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class StringResource extends Resource<String> {
+public enum OutputKey {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String pull(InputStream is) throws IOException {
-        return pull(new InputStreamReader(is));
-    }
-
-    /**
-     * Safely pulls a String from a Reader.
-     * @param reader a Reader of the resource
-     * @return the resource, or null if not found
-     * @throws IOException if a problem occurred
-     */
-    public String pull(Reader reader) throws IOException {
-        StringBuffer buffer = new StringBuffer(1024);
-        reader = new BufferedReader(reader);
-        char[] c = new char[1024];
-        int i = 0;
-        while ((i = reader.read(c)) != -1) {
-            buffer.append(c, 0, i);
-        }
-        return buffer.toString();
-    }
+    /** The omit-xml-declaration hint. */
+    OMIT_XML_DECLARATION
 
 }

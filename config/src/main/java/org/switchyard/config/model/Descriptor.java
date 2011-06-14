@@ -42,8 +42,8 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import org.switchyard.common.io.resource.PropertiesResource;
-import org.switchyard.common.io.resource.StringResource;
+import org.switchyard.common.io.pull.PropertiesPuller;
+import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.config.Configuration;
@@ -115,11 +115,11 @@ public final class Descriptor {
      */
     public void addDefaultProperties(ClassLoader loader) {
         Properties props = new Properties();
-        PropertiesResource props_res = new PropertiesResource();
+        PropertiesPuller props_puller = new PropertiesPuller();
         try {
             List<URL> urls = Classes.getResources(DEFAULT_PROPERTIES, loader);
             for (URL url : urls) {
-                Properties url_props = props_res.pull(url);
+                Properties url_props = props_puller.pull(url);
                 Enumeration<?> pn_enum = url_props.propertyNames();
                 while (pn_enum.hasMoreElements()) {
                     String pn = (String)pn_enum.nextElement();
@@ -188,7 +188,7 @@ public final class Descriptor {
                     if (schemaLocation != null) {
                         URL resource = Classes.getResource(schemaLocation, Descriptor.class);
                         if (resource != null) {
-                            String xsd = new StringResource().pull(resource);
+                            String xsd = new StringPuller().pull(resource);
                             sourceList.add(new StreamSource(new StringReader(xsd)));
                         }
                     }
@@ -451,7 +451,7 @@ public final class Descriptor {
             }
             if (schemaLocation != null) {
                 try {
-                    String xsd = new StringResource().pull(schemaLocation, getClass());
+                    String xsd = new StringPuller().pull(schemaLocation, getClass());
                     if (xsd != null) {
                         return new DescriptorLSInput(xsd, publicId, systemId, baseURI);
                     }

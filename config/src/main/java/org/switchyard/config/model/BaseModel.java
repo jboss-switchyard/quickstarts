@@ -31,7 +31,8 @@ import javax.xml.transform.Source;
 import javax.xml.validation.Validator;
 
 import org.switchyard.config.Configuration;
-import org.switchyard.config.ConfigurationResource;
+import org.switchyard.config.ConfigurationPuller;
+import org.switchyard.config.OutputKey;
 
 /**
  * An abstract representation of a Model, containing many helper methods, as well as default implementations for some of the defined methods..
@@ -46,7 +47,7 @@ public abstract class BaseModel implements Model {
     private Model _parent;
 
     protected BaseModel(QName qname) {
-        this(new ConfigurationResource().pull(qname));
+        this(new ConfigurationPuller().pull(qname));
     }
 
     protected BaseModel(Configuration config) {
@@ -298,16 +299,16 @@ public abstract class BaseModel implements Model {
      * {@inheritDoc}
      */
     @Override
-    public void write(OutputStream out) throws IOException {
-        getModelConfiguration().write(out);
+    public void write(OutputStream out, OutputKey... keys) throws IOException {
+        getModelConfiguration().write(out, keys);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void write(Writer writer) throws IOException {
-        getModelConfiguration().write(writer);
+    public void write(Writer writer, OutputKey... keys) throws IOException {
+        getModelConfiguration().write(writer, keys);
     }
 
     /**

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -35,8 +36,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.switchyard.common.io.resource.ElementResource;
-import org.switchyard.common.io.resource.StringResource;
+import org.switchyard.common.io.pull.ElementPuller;
+import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.common.xml.XMLHelper;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -57,7 +58,7 @@ public class DOMConfiguration extends BaseConfiguration {
     private DOMConfiguration _parent_config;
 
     DOMConfiguration(Document document) {
-        _element = new ElementResource().pull(document);
+        _element = new ElementPuller().pull(document);
     }
 
     DOMConfiguration(Element element) {
@@ -65,11 +66,11 @@ public class DOMConfiguration extends BaseConfiguration {
     }
 
     private DOMConfiguration(Element element, boolean normalize) {
-        _element = new ElementResource().pull(element, normalize);
+        _element = new ElementPuller().pull(element, normalize);
     }
 
     DOMConfiguration(QName qname) {
-        _element = new ElementResource().pull(qname);
+        _element = new ElementPuller().pull(qname);
     }
 
     DOMConfiguration(Configuration from) {
@@ -77,7 +78,7 @@ public class DOMConfiguration extends BaseConfiguration {
         if (from instanceof DOMConfiguration) {
             config = (DOMConfiguration)from;
         } else {
-            Element element = new ElementResource().pull(from.getQName());
+            Element element = new ElementPuller().pull(from.getQName());
             config = new DOMConfiguration(element);
             for (QName qname : from.getAttributeQNames()) {
                 config.setAttribute(qname, from.getAttribute(qname));
@@ -218,7 +219,8 @@ public class DOMConfiguration extends BaseConfiguration {
     @Override
     public String getAttribute(String name) {
         if (name != null) {
-            return _element.getAttribute(name);
+            String value = _element.getAttribute(name);
+            return "".equals(value) ? null : value;
         }
         return null;
     }
@@ -231,7 +233,8 @@ public class DOMConfiguration extends BaseConfiguration {
         if (qname != null) {
             Attr attr = _element.getAttributeNodeNS(qname.getNamespaceURI(), qname.getLocalPart());
             if (attr != null) {
-                return attr.getValue();
+                String value = attr.getValue();
+                return "".equals(value) ? null : value;
             }
         }
         return null;
@@ -557,13 +560,16 @@ public class DOMConfiguration extends BaseConfiguration {
      * {@inheritDoc}
      */
     @Override
-    public void write(Writer writer) throws IOException {
+    public void write(Writer writer, OutputKey... keys) throws IOException {
         orderChildren();
         try {
             TransformerFactory tf = TransformerFactory.newInstance();
-            String xsl = new StringResource().pull("/org/switchyard/config/pretty-print.xsl", getClass());
+            String xsl = new StringPuller().pull("/org/switchyard/config/pretty-print.xsl", getClass());
             Transformer t = tf.newTransformer(new StreamSource(new StringReader(xsl)));
-            t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            List<OutputKey> key_list = Arrays.asList(keys);
+            if (key_list.contains(OutputKey.OMIT_XML_DECLARATION)) {
+                t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            }
             t.transform(getSource(), new StreamResult(writer));
         } catch (TransformerException te) {
             throw new IOException(te);

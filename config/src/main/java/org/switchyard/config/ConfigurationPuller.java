@@ -27,7 +27,7 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.switchyard.common.io.resource.Resource;
+import org.switchyard.common.io.pull.Puller;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -38,7 +38,7 @@ import org.xml.sax.SAXException;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class ConfigurationResource extends Resource<Configuration> {
+public class ConfigurationPuller extends Puller<Configuration> {
 
     /**
      * {@inheritDoc}

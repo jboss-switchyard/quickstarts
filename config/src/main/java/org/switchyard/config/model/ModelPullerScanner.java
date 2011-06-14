@@ -32,13 +32,13 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 /**
- * A {@link Scanner} that uses {@link org.switchyard.config.model.ModelResource ModelResource} to pull {@link org.switchyard.config.model.Model Model}s.
+ * A {@link Scanner} that uses {@link org.switchyard.config.model.ModelPuller ModelPuller} to pull {@link org.switchyard.config.model.Model Model}s.
  *
  * @param <M> the Model type to scan for
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class ModelResourceScanner<M extends Model> implements Scanner<M> {
+public class ModelPullerScanner<M extends Model> implements Scanner<M> {
 
     private Type _type;
     private String _resource;
@@ -55,7 +55,7 @@ public class ModelResourceScanner<M extends Model> implements Scanner<M> {
     /**
      * Constructs a default ModelResourceScanner that scans for "/META-INF/switchyard.xml" resource(s).
      */
-    public ModelResourceScanner() {
+    public ModelPullerScanner() {
         this("/META-INF/switchyard.xml");
     }
 
@@ -63,7 +63,7 @@ public class ModelResourceScanner<M extends Model> implements Scanner<M> {
      * Constructs a ModelResourceScanner that scans for the specified resource.
      * @param resource the resource
      */
-    public ModelResourceScanner(String resource) {
+    public ModelPullerScanner(String resource) {
         _type = Type.RESOURCE;
         _resource = resource;
     }
@@ -72,7 +72,7 @@ public class ModelResourceScanner<M extends Model> implements Scanner<M> {
      * Constructs a ModelResourceScanner that scans for the specified URI.
      * @param uri the URI
      */
-    public ModelResourceScanner(URI uri) {
+    public ModelPullerScanner(URI uri) {
         _type = Type.URI;
         _uri = uri;
     }
@@ -81,7 +81,7 @@ public class ModelResourceScanner<M extends Model> implements Scanner<M> {
      * Constructs a ModelResourceScanner that scans for the specified URL.
      * @param url the URL
      */
-    public ModelResourceScanner(URL url) {
+    public ModelPullerScanner(URL url) {
         _type = Type.URL;
         _url = url;
     }
@@ -90,7 +90,7 @@ public class ModelResourceScanner<M extends Model> implements Scanner<M> {
      * Constructs a ModelResourceScanner that scans for the specified File.
      * @param file the File
      */
-    public ModelResourceScanner(File file) {
+    public ModelPullerScanner(File file) {
         _type = Type.FILE;
         _file = file;
     }
@@ -99,7 +99,7 @@ public class ModelResourceScanner<M extends Model> implements Scanner<M> {
      * Constructs a ModelResourceScanner that scans for the specified InputStream.
      * @param inputStream the InputStream
      */
-    public ModelResourceScanner(InputStream inputStream) {
+    public ModelPullerScanner(InputStream inputStream) {
         _type = Type.INPUT_STREAM;
         _inputStream = inputStream;
     }
@@ -108,7 +108,7 @@ public class ModelResourceScanner<M extends Model> implements Scanner<M> {
      * Constructs a ModelResourceScanner that scans for the specified Reader.
      * @param reader the Reader
      */
-    public ModelResourceScanner(Reader reader) {
+    public ModelPullerScanner(Reader reader) {
         _type = Type.READER;
         _reader = reader;
     }
@@ -117,7 +117,7 @@ public class ModelResourceScanner<M extends Model> implements Scanner<M> {
      * Constructs a ModelResourceScanner that scans for the specified InputSource.
      * @param inputSource the InputSource
      */
-    public ModelResourceScanner(InputSource inputSource) {
+    public ModelPullerScanner(InputSource inputSource) {
         _type = Type.INPUT_SOURCE;
         _inputSource = inputSource;
     }
@@ -126,7 +126,7 @@ public class ModelResourceScanner<M extends Model> implements Scanner<M> {
      * Constructs a ModelResourceScanner that scans for the specified Document.
      * @param document the Document
      */
-    public ModelResourceScanner(Document document) {
+    public ModelPullerScanner(Document document) {
         _type = Type.DOCUMENT;
         _document = document;
     }
@@ -135,7 +135,7 @@ public class ModelResourceScanner<M extends Model> implements Scanner<M> {
      * Constructs a ModelResourceScanner that scans for the specified Element.
      * @param element the Element
      */
-    public ModelResourceScanner(Element element) {
+    public ModelPullerScanner(Element element) {
         _type = Type.ELEMENT;
         _element = element;
     }
@@ -144,7 +144,7 @@ public class ModelResourceScanner<M extends Model> implements Scanner<M> {
      * Constructs a ModelResourceScanner that scans for the specified QName.
      * @param qname the QName
      */
-    public ModelResourceScanner(QName qname) {
+    public ModelPullerScanner(QName qname) {
         _type = Type.QNAME;
         _qname = qname;
     }
@@ -157,34 +157,34 @@ public class ModelResourceScanner<M extends Model> implements Scanner<M> {
         M model;
         switch (_type) {
             case RESOURCE:
-                model = new ModelResource<M>().pull(_resource, getClass());
+                model = new ModelPuller<M>().pull(_resource, getClass());
                 break;
             case URI:
-                model = new ModelResource<M>().pull(_uri);
+                model = new ModelPuller<M>().pull(_uri);
                 break;
             case URL:
-                model = new ModelResource<M>().pull(_url);
+                model = new ModelPuller<M>().pull(_url);
                 break;
             case FILE:
-                model = new ModelResource<M>().pull(_file);
+                model = new ModelPuller<M>().pull(_file);
                 break;
             case INPUT_STREAM:
-                model = new ModelResource<M>().pull(_inputStream);
+                model = new ModelPuller<M>().pull(_inputStream);
                 break;
             case READER:
-                model = new ModelResource<M>().pull(_reader);
+                model = new ModelPuller<M>().pull(_reader);
                 break;
             case INPUT_SOURCE:
-                model = new ModelResource<M>().pull(_inputSource);
+                model = new ModelPuller<M>().pull(_inputSource);
                 break;
             case DOCUMENT:
-                model = new ModelResource<M>().pull(_document);
+                model = new ModelPuller<M>().pull(_document);
                 break;
             case ELEMENT:
-                model = new ModelResource<M>().pull(_element);
+                model = new ModelPuller<M>().pull(_element);
                 break;
             case QNAME:
-                model = new ModelResource<M>().pull(_qname);
+                model = new ModelPuller<M>().pull(_qname);
                 break;
             default:
                 model = null;

@@ -50,7 +50,7 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.config.model.MergeScanner;
 import org.switchyard.config.model.Model;
-import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Models;
 import org.switchyard.config.model.Scannable;
 import org.switchyard.config.model.Scanner;
@@ -526,7 +526,7 @@ public abstract class SwitchYardTestCase {
             throw new IllegalArgumentException("null 'configModel' arg.");
         }
         try {
-            return new ModelResource<M>().pull(configModel);
+            return new ModelPuller<M>().pull(configModel);
         } catch (IOException e) {
             Assert.fail("Unexpected error building " + modelType.getSimpleName() + ": " + e.getMessage());
         } finally {

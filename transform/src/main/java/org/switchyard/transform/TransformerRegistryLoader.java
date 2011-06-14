@@ -28,7 +28,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.switchyard.common.type.Classes;
-import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.exception.SwitchYardException;
@@ -127,7 +127,7 @@ public class TransformerRegistryLoader {
                 InputStream configStream = resource.openStream();
 
                 try {
-                    TransformsModel transformsModel = new ModelResource<TransformsModel>().pull(configStream);
+                    TransformsModel transformsModel = new ModelPuller<TransformsModel>().pull(configStream);
                     registerTransformers(transformsModel);
                 } finally {
                     configStream.close();
