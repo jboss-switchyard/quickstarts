@@ -27,7 +27,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.Test;
 import org.switchyard.common.type.Classes;
-import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Validation;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
@@ -84,7 +84,7 @@ public class V1ClojureComponentImplementationModelTest {
     }
     
     private V1ClojureComponentImplementationModel getImplModel(final String config) throws Exception {
-        final SwitchYardModel model = new ModelResource<SwitchYardModel>().pull(config, getClass());
+        final SwitchYardModel model = new ModelPuller<SwitchYardModel>().pull(config, getClass());
         final ComponentModel componentModel = model.getComposite().getComponents().get(0);
         final ComponentImplementationModel implementation = componentModel.getImplementation();
         return (V1ClojureComponentImplementationModel) implementation;

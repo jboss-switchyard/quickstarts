@@ -29,9 +29,9 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.common.io.resource.StringResource;
+import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.config.Configuration;
-import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeModel;
@@ -46,16 +46,16 @@ public class BeanModelTests {
 
     private static final String COMPLETE_XML = "/org/switchyard/component/bean/config/model/BeanModelTests-Complete.xml";
 
-    private ModelResource<SwitchYardModel> _res;
+    private ModelPuller<SwitchYardModel> _puller;
 
     @Before
     public void before() throws Exception {
-        _res = new ModelResource<SwitchYardModel>();
+        _puller = new ModelPuller<SwitchYardModel>();
     }
 
     @Test
     public void testReadComplete() throws Exception {
-        SwitchYardModel switchyard = _res.pull(COMPLETE_XML, getClass());
+        SwitchYardModel switchyard = _puller.pull(COMPLETE_XML, getClass());
         CompositeModel composite = switchyard.getComposite();
         ComponentModel component = composite.getComponents().get(0);
         ComponentImplementationModel implementation = component.getImplementation();
@@ -72,8 +72,8 @@ public class BeanModelTests {
 
     @Test
     public void testWriteComplete() throws Exception {
-        String old_xml = new StringResource().pull(COMPLETE_XML, getClass());
-        SwitchYardModel switchyard = _res.pull(new StringReader(old_xml));
+        String old_xml = new StringPuller().pull(COMPLETE_XML, getClass());
+        SwitchYardModel switchyard = _puller.pull(new StringReader(old_xml));
         String new_xml = switchyard.toString();
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(old_xml, new_xml);
@@ -82,7 +82,7 @@ public class BeanModelTests {
 
     @Test
     public void testValidation() throws Exception {
-        SwitchYardModel switchyard = _res.pull(COMPLETE_XML, getClass());
+        SwitchYardModel switchyard = _puller.pull(COMPLETE_XML, getClass());
         Assert.assertTrue(switchyard.isModelValid());
     }
 

@@ -19,10 +19,13 @@
 
 package org.switchyard.component.soap;
 
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
-import org.switchyard.Message;
+import org.switchyard.Exchange;
 
 /**
  * Message decomposer holds the logic for converting SwitchYard messages to SOAP/XML messages.
@@ -33,9 +36,11 @@ public interface MessageDecomposer {
 
     /**
      * Converts the Message to SOAPMessage.
-     * @param message a Message to be converted
+     * 
+     * @param exchange the exchange that the message will be a part of
+     * @param mappedVariableNames names of properties that should be taken out of the Exchange's Context and into the SOAPMessage
      * @return the SOAP message as SOAPMessage
      * @throws SOAPException If the SOAP message could not be created/formatted.
      */
-    SOAPMessage decompose(Message message) throws SOAPException;
+    SOAPMessage decompose(Exchange exchange, Set<QName> mappedVariableNames) throws SOAPException;
 }

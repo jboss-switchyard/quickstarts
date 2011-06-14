@@ -30,7 +30,7 @@ import java.util.List;
 import org.junit.Test;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
-import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Validation;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
@@ -58,7 +58,7 @@ public class V1CamelFileBindingModelTest {
     
     private V1CamelFileBindingModel getFirstCamelBinding(final String config) throws Exception {
         final InputStream in = Classes.getResourceAsStream(config, getClass());
-        final SwitchYardModel model = new ModelResource<SwitchYardModel>().pull(in);
+        final SwitchYardModel model = new ModelPuller<SwitchYardModel>().pull(in);
         final List<CompositeServiceModel> services = model.getComposite().getServices();
         final CompositeServiceModel compositeServiceModel = services.get(0);
         final List<BindingModel> bindings = compositeServiceModel.getBindings();

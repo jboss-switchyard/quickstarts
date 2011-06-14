@@ -19,10 +19,18 @@
 
 package org.switchyard.component.soap;
 
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 
+import org.switchyard.Context;
+import org.switchyard.Exchange;
 import org.switchyard.Message;
+import org.switchyard.Property;
+import org.switchyard.Scope;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -36,12 +44,12 @@ import org.w3c.dom.Node;
 public class DefaultMessageDecomposer implements MessageDecomposer {
 
     /**
-     * Extract the SOAPMessage from Message.
-     * @param message a Message to be converted
-     * @return the SOAPMessage
-     * @throws SOAPException If the SOAP message could not be created/formatted.
+     * {@inheritDoc}
      */
-    public SOAPMessage decompose(final Message message) throws SOAPException {
+    @Override
+    public SOAPMessage decompose(final Exchange exchange, final Set<QName> mappedVariableNames) throws SOAPException {
+        final Message message = exchange.getMessage();
+
         if (SOAPUtil.SOAP_MESSAGE_FACTORY == null) {
             throw new SOAPException("Failed to instantiate SOAP Message Factory");
         }
@@ -65,6 +73,19 @@ public class DefaultMessageDecomposer implements MessageDecomposer {
                 throw new SOAPException("Unable to parse SOAP Message", e);
             }
         }
+
+        final Context context = exchange.getContext();
+        SOAPHeader soapHeader = response.getSOAPHeader();
+        for (QName name : mappedVariableNames) {
+            Property property = context.getProperty(name.toString(), Scope.OUT);
+            if (property != null) {
+                Object value = property.getValue();
+                if (value != null) {
+                    soapHeader.addChildElement(name).setValue(String.valueOf(value));
+                }
+            }
+        }
+
         return response;
     }
 

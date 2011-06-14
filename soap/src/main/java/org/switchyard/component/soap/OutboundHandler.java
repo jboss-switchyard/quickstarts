@@ -21,9 +21,12 @@ package org.switchyard.component.soap;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.wsdl.Port;
 import javax.wsdl.WSDLException;
+import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.Dispatch;
@@ -50,7 +53,9 @@ public class OutboundHandler extends BaseHandler {
 
     private static final Logger LOGGER = Logger.getLogger(OutboundHandler.class);
     private MessageComposer _composer;
+    private Set<QName> _composerMappedHeaderNames = new LinkedHashSet<QName>();
     private MessageDecomposer _decomposer;
+    private Set<QName> _decomposerMappedVariableNames = new LinkedHashSet<QName>();
     private Dispatch<SOAPMessage> _dispatcher;
     private Port _port;
     private SOAPBindingModel _config;
@@ -61,6 +66,10 @@ public class OutboundHandler extends BaseHandler {
      */
     public OutboundHandler(final SOAPBindingModel config) {
         _config = config;
+
+        _composerMappedHeaderNames.addAll(config.getComposerMappedVariableNames());
+        _decomposerMappedVariableNames.addAll(config.getDecomposerMappedVariableNames());
+
         String composer = config.getComposer();
         String decomposer = config.getDecomposer();
 
@@ -124,6 +133,8 @@ public class OutboundHandler extends BaseHandler {
      * Stop lifecycle.
      */
     public void stop() {
+        _composerMappedHeaderNames.clear();
+        _decomposerMappedVariableNames.clear();
     }
 
     /**
@@ -135,10 +146,10 @@ public class OutboundHandler extends BaseHandler {
     @Override
     public void handleMessage(final Exchange exchange) throws HandlerException {
         try {
-            SOAPMessage request = _decomposer.decompose(exchange.getMessage());
+            SOAPMessage request = _decomposer.decompose(exchange, _decomposerMappedVariableNames);
             SOAPMessage response = invokeService(request);
             if (response != null) {
-                Message message = _composer.compose(response, exchange);
+                Message message = _composer.compose(response, exchange, _composerMappedHeaderNames);
                 exchange.send(message);
             }
         } catch (SOAPException se) {

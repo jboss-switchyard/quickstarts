@@ -19,8 +19,14 @@
 
 package org.switchyard.component.soap.config.model;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.StringTokenizer;
+
 import javax.xml.namespace.QName;
 
+import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.soap.PortName;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
@@ -275,6 +281,14 @@ public class SOAPBindingModel extends V1BindingModel {
     }
 
     /**
+     * Gets the MessageComposer's mappedVariableNames.
+     * @return the mappedVariableNames
+     */
+    public Set<QName> getComposerMappedVariableNames() {
+        return getMappedVariableNames(COMPOSER);
+    }
+
+    /**
      * Sets the MessageComposer class name.
      * 
      * @param composer the composer to set
@@ -299,12 +313,57 @@ public class SOAPBindingModel extends V1BindingModel {
     }
 
     /**
-     * Sets the MessageComposer class name.
+     * Gets the MessageDecomposer's mappedVariableNames.
+     * @return the mappedVariableNames
+     */
+    public Set<QName> getDecomposerMappedVariableNames() {
+        return getMappedVariableNames(DECOMPOSER);
+    }
+
+    /**
+     * Sets the MessageDecomposer class name.
      * 
      * @param decomposer the decomposer to set
      */
     public void setDecomposer(String decomposer) {
         this._decomposer = decomposer;
+    }
+
+    /**
+     * Gets the specified Configuration's mappedVariableNames.
+     * @param childConfigName "composer" or "decomposer"
+     * @return the mappedVariableNames
+     */
+    private Set<QName> getMappedVariableNames(String childConfigName) {
+        Configuration childConfig = getModelConfiguration().getFirstChild(childConfigName);
+        if (childConfig != null) {
+            String namespace = childConfig.getAttribute("mappedVariableNamespace");
+            if (namespace != null) {
+                namespace = namespace.trim();
+                if (namespace.length() == 0) {
+                    namespace = null;
+                }
+            }
+            String names = childConfig.getAttribute("mappedVariableNames");
+            if (names != null) {
+                Set<QName> qnames = new LinkedHashSet<QName>();
+                StringTokenizer st = new StringTokenizer(names, ",;| ");
+                while (st.hasMoreTokens()) {
+                    String name = st.nextToken().trim();
+                    if (name.length() > 0) {
+                        QName qname;
+                        if (namespace != null) {
+                            qname = XMLHelper.createQName(namespace, name);
+                        } else {
+                            qname = XMLHelper.createQName(name);
+                        }
+                        qnames.add(qname);
+                    }
+                }
+                return qnames;
+            }
+        }
+        return Collections.emptySet();
     }
 
     /**

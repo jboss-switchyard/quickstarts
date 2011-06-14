@@ -23,7 +23,7 @@ package org.switchyard.tools.forge.clojure;
 import java.io.File;
 import java.io.IOException;
 
-import org.switchyard.common.io.resource.StringResource;
+import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.component.clojure.config.model.ClojureComponentImplementationModel;
 import org.switchyard.component.clojure.config.model.v1.V1ClojureComponentImplementationModel;
 import org.switchyard.component.clojure.config.model.v1.V1ClojureScriptModel;
@@ -119,7 +119,7 @@ public class ClojureModelBuilder {
         
         if (isInlineScript()) {
             try {
-                final String clojureScript = _emptyInlineScript ? "" : new StringResource().pull(new File(_inlineScript));
+                final String clojureScript = _emptyInlineScript ? "" : new StringPuller().pull(new File(_inlineScript));
                 final V1ClojureScriptModel scriptModel = new V1ClojureScriptModel();
                 scriptModel.setScript(clojureScript);
                 implModel.setScriptModel(scriptModel);

@@ -29,6 +29,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -51,7 +52,7 @@ import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
-import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.metadata.BaseService;
@@ -73,6 +74,7 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
     private static final int DEFAULT_THREAD_COUNT = 10;
     private static final long DEFAULT_NO_OF_THREADS = 100;
 
+    private SOAPBindingModel _config;
     private static URL _serviceURL;
     private ServiceDomain _domain;
     private SOAPGateway _soapInbound;
@@ -80,7 +82,7 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
     private SOAPGateway _soapOutbound2;
     private long _noOfThreads = DEFAULT_NO_OF_THREADS;
     
-    private static ModelResource<CompositeModel> _res;
+    private static ModelPuller<CompositeModel> _puller;
 
     private class WebServiceInvoker implements Callable<String> {
 
@@ -127,13 +129,13 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
 
     @Before
     public void setUp() throws Exception {
-        _res = new ModelResource<CompositeModel>();
+        _puller = new ModelPuller<CompositeModel>();
         
         // Provide a switchyard service
         _domain = getServiceDomain();
         SOAPProvider provider = new SOAPProvider();
 
-        CompositeModel composite = _res.pull("/HelloSwitchYard.xml", getClass());
+        CompositeModel composite = _puller.pull("/HelloSwitchYard.xml", getClass());
         /*
         Validation v = composite.validateModel();
         if (!v.isValid()) {
@@ -143,9 +145,9 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
         */
 
         CompositeServiceModel compositeService = composite.getServices().get(0);
-        SOAPBindingModel config = (SOAPBindingModel)compositeService.getBindings().get(0);
+        _config = (SOAPBindingModel)compositeService.getBindings().get(0);
 
-        _domain.registerService(config.getServiceName(), provider, new HelloWebServiceInterface());
+        _domain.registerService(_config.getServiceName(), provider, new HelloWebServiceInterface());
 
         String host = System.getProperty("org.switchyard.test.soap.host", "localhost");
         String port = System.getProperty("org.switchyard.test.soap.port", "48080");
@@ -153,10 +155,10 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
         // Service exposed as WS
         _soapInbound = new SOAPGateway();
 
-        config.setPublishAsWS(true);
-        config.setServerHost(host);
-        config.setServerPort(Integer.parseInt(port));
-        _soapInbound.init(config, _domain);
+        _config.setPublishAsWS(true);
+        _config.setServerHost(host);
+        _config.setServerPort(Integer.parseInt(port));
+        _soapInbound.init(_config, _domain);
 
         _soapInbound.start();
 
@@ -172,7 +174,7 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
 
         _soapOutbound2 = new SOAPGateway();
         SOAPBindingModel config3 = new SOAPBindingModel();
-        config3.setWsdl(config.getWsdl());
+        config3.setWsdl(_config.getWsdl());
         config3.setServiceName(WS_CONSUMER_CLASSPATH_WSDL);
         _soapOutbound2.init(config3, _domain);
         _soapOutbound2.start();
@@ -188,6 +190,22 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
         _soapInbound.destroy();
         _soapOutbound.destroy();
         _soapOutbound2.destroy();
+    }
+
+    @Test
+    public void testMappedVariableNames() throws Exception {
+        Set<QName> expected = new LinkedHashSet<QName>();
+        expected.add(QName.valueOf("one"));
+        expected.add(QName.valueOf("two"));
+        expected.add(QName.valueOf("three"));
+        Set<QName> actual = _config.getComposerMappedVariableNames();
+        Assert.assertEquals(expected, actual);
+        expected.clear();
+        expected.add(QName.valueOf("{urn:foo-bar}four"));
+        expected.add(QName.valueOf("{urn:foo-bar}five"));
+        expected.add(QName.valueOf("{urn:foo-bar}six"));
+        actual = _config.getDecomposerMappedVariableNames();
+        Assert.assertEquals(expected, actual);
     }
 
     @Test

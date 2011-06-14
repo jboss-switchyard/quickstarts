@@ -20,15 +20,21 @@
 package org.switchyard.component.soap;
 
 import java.util.Iterator;
+import java.util.Set;
 
+import javax.xml.namespace.QName;
 import javax.xml.soap.Node;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 
+import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.Message;
+import org.switchyard.Scope;
 
 /**
  * The default implementation of MessageComposer simply copies the SOAP body into
@@ -39,23 +45,37 @@ import org.switchyard.Message;
 public class DefaultMessageComposer implements MessageComposer {
 
     /**
-     * Create a Message from the given SOAP message.
-     *
-     *
-     * @param soapMessage the SOAP message to be converted
-     * @param exchange The message Exchange.
-     * @return a Message
-     * @throws SOAPException If the SOAP message is not correct.
+     * {@inheritDoc}
      */
-    public Message compose(final SOAPMessage soapMessage, final Exchange exchange)
-    throws SOAPException {
-        Message message = exchange.createMessage();
+    @Override
+    public Message compose(final SOAPMessage soapMessage, final Exchange exchange, final Set<QName> mappedVariableNames) throws SOAPException {
+        final Message message = exchange.createMessage();
+
+        final Context context = exchange.getContext();
+        try {
+            SOAPHeader soapHeader = soapMessage.getSOAPHeader();
+            @SuppressWarnings("unchecked")
+            Iterator<SOAPHeaderElement> iter = soapHeader.examineAllHeaderElements();
+            while (iter.hasNext()) {
+                SOAPHeaderElement elem = iter.next();
+                QName name = elem.getElementQName();
+                if (mappedVariableNames.contains(elem.getElementQName())) {
+                    String value = elem.getValue();
+                    if (value != null) {
+                        context.setProperty(name.toString(), value, Scope.IN);
+                    }
+                }
+            }
+        } catch (SOAPException se) {
+            // ignore but to keep checkstyle happy...
+            se.getMessage();
+        }
 
         final SOAPBody soapBody = soapMessage.getSOAPBody();
         if (soapBody == null) {
             throw new SOAPException("Missing SOAP body from request");
         }
-        final Iterator children = soapBody.getChildElements();
+        final Iterator<?> children = soapBody.getChildElements();
         boolean found = false;
 
         try {

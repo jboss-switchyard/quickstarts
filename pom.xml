@@ -55,6 +55,7 @@
 
     <modules>
         <module>bean</module>
+        <module>bpm</module>
         <module>soap</module>
         <module>tests</module>
         <module>camel/camel-as7</module>
@@ -109,6 +110,11 @@
             <dependency>
                 <groupId>org.switchyard.components</groupId>
                 <artifactId>switchyard-component-bean</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.components</groupId>
+                <artifactId>switchyard-component-bpm</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

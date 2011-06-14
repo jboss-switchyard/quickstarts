@@ -19,6 +19,9 @@
 
 package org.switchyard.component.soap;
 
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
@@ -34,12 +37,12 @@ public interface MessageComposer {
 
     /**
      * Converts the SOAPMessage to Message.
-     *
-     *
+     * 
      * @param soapMessage the SOAPMessage to be converted
      * @param exchange the exchange that the message will be a part of
+     * @param mappedVariableNames names of headers that should be taken out of the SOAPMessage and into the Exchange's Context
      * @return the composed Message
      * @throws SOAPException If the SOAP message is not correct.
      */
-    Message compose(SOAPMessage soapMessage, Exchange exchange) throws SOAPException;
+    Message compose(SOAPMessage soapMessage, Exchange exchange, Set<QName> mappedVariableNames) throws SOAPException;
 }

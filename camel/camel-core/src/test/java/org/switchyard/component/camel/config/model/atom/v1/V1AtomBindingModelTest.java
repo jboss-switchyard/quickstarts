@@ -30,9 +30,9 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.common.io.resource.StringResource;
+import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.component.camel.config.model.atom.AtomBindingModel;
-import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.ModelPuller;
 
 public class V1AtomBindingModelTest {
 
@@ -73,7 +73,7 @@ public class V1AtomBindingModelTest {
     
     @Test
     public void testReadConfig() throws Exception {
-        AtomBindingModel atomModel = new ModelResource<AtomBindingModel>().pull(ATOM_XML, getClass());
+        AtomBindingModel atomModel = new ModelPuller<AtomBindingModel>().pull(ATOM_XML, getClass());
         Assert.assertEquals(atomModel.getFeedURI(), FEED_URI);
         Assert.assertEquals(atomModel.getDelay(), DELAY);
         Assert.assertEquals(atomModel.isFiltered(), Boolean.TRUE);
@@ -81,7 +81,7 @@ public class V1AtomBindingModelTest {
     
     @Test
     public void testWriteConfig() throws Exception {
-        String refXml = new StringResource().pull(ATOM_XML, getClass());
+        String refXml = new StringPuller().pull(ATOM_XML, getClass());
         String newXml = createAtomModel().toString();
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(refXml, newXml);

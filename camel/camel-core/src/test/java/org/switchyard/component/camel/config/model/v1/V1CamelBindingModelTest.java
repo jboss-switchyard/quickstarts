@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.junit.Test;
-import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Validation;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
@@ -60,7 +60,7 @@ public class V1CamelBindingModelTest {
     }
     
     private SwitchYardModel getSwitchYardModel(final String config) throws IOException {
-        return new ModelResource<SwitchYardModel>().pull(config, getClass());
+        return new ModelPuller<SwitchYardModel>().pull(config, getClass());
     }
     
     @Test

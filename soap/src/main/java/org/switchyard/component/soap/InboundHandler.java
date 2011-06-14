@@ -21,8 +21,10 @@ package org.switchyard.component.soap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.wsdl.Operation;
@@ -67,7 +69,9 @@ public class InboundHandler extends BaseHandler {
     private static ThreadLocal<SOAPMessage> _response = new ThreadLocal<SOAPMessage>();
 
     private MessageComposer _composer;
+    private Set<QName> _composerMappedHeaderNames = new LinkedHashSet<QName>();
     private MessageDecomposer _decomposer;
+    private Set<QName> _decomposerMappedVariableNames = new LinkedHashSet<QName>();
     private ServiceReference _service;
     private long _waitTimeout = DEFAULT_TIMEOUT; // default of 15 seconds
     private Endpoint _endpoint;
@@ -81,6 +85,10 @@ public class InboundHandler extends BaseHandler {
      */
     public InboundHandler(SOAPBindingModel config) {
         _config = config;
+
+        _composerMappedHeaderNames.addAll(config.getComposerMappedVariableNames());
+        _decomposerMappedVariableNames.addAll(config.getDecomposerMappedVariableNames());
+
         String composer = config.getComposer();
         String decomposer = config.getDecomposer();
 
@@ -158,6 +166,8 @@ public class InboundHandler extends BaseHandler {
      * Stop lifecycle.
      */
     public void stop() {
+        _composerMappedHeaderNames.clear();
+        _decomposerMappedVariableNames.clear();
         _endpoint.stop();
         LOGGER.info("WebService " + _config.getPort() + " stopped.");
     }
@@ -170,7 +180,7 @@ public class InboundHandler extends BaseHandler {
     @Override
     public void handleMessage(final Exchange exchange) throws HandlerException {
         try {
-            _response.set(_decomposer.decompose(exchange.getMessage()));
+            _response.set(_decomposer.decompose(exchange, _decomposerMappedVariableNames));
         } catch (SOAPException se) {
             throw new HandlerException("Unexpected exception generating SOAP Message", se);
         }
@@ -183,7 +193,7 @@ public class InboundHandler extends BaseHandler {
     @Override
     public void handleFault(final Exchange exchange) {
         try {
-            _response.set(_decomposer.decompose(exchange.getMessage()));
+            _response.set(_decomposer.decompose(exchange, _decomposerMappedVariableNames));
         } catch (SOAPException se) {
             try {
                 _response.set(SOAPUtil.generateFault(se));
@@ -226,7 +236,7 @@ public class InboundHandler extends BaseHandler {
             Exchange exchange;
 
             exchange = _service.createExchange(exchangeContract, this);
-            Message message = _composer.compose(soapMessage, exchange);
+            Message message = _composer.compose(soapMessage, exchange, _composerMappedHeaderNames);
 
             if (!assertComposedMessageOK(message, operation, oneWay)) {
                 return _response.get();

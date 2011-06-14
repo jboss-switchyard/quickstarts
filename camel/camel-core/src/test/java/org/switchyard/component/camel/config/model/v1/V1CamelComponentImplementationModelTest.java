@@ -29,7 +29,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.component.camel.config.model.CamelComponentImplementationModel;
 import org.switchyard.component.camel.config.model.SingleRouteService;
-import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Validation;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
@@ -64,7 +64,7 @@ public class V1CamelComponentImplementationModelTest {
     
     private V1CamelImplementationModel getFirstCamelImplementation(final String config) throws Exception {
         V1CamelImplementationModel implementation = null;
-        final SwitchYardModel model = new ModelResource<SwitchYardModel>().pull(config, getClass());
+        final SwitchYardModel model = new ModelPuller<SwitchYardModel>().pull(config, getClass());
         for (ComponentModel componentModel : model.getComposite().getComponents()) {
             if (CamelComponentImplementationModel.CAMEL.equals(componentModel.getImplementation().getType())) {
                 implementation = (V1CamelImplementationModel) componentModel.getImplementation();
