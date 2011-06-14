@@ -59,7 +59,7 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <sourceDocumentName>Getting_started.xml</sourceDocumentName>
+                    <sourceDocumentName>Getting_Started.xml</sourceDocumentName>
                     <imageResource>
                         <directory>${basedir}/src/main/docbook/en-US</directory>
                         <includes>
