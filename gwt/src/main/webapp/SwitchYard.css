@@ -1,0 +1,8 @@
+@IMPORT url("CoreGUI.css");
+
+/* overwrite header height */
+.header-panel {
+    min-height:16px;
+    height:200px;
+    width:100%;
+}

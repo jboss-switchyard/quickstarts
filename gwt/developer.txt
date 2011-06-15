@@ -1,0 +1,18 @@
+1.  Eclipse configuration
+	1.  Import using Import... "Existing Maven Projects"
+	2.  After importing, open project properties.
+		1.  On the Google->Web Application page:
+			1.  Ensure "This project has a WAR directory" is checked.
+			2.  Change the WAR directory to point to
+				${project.build.directory}/${project.build.finalName} (e.g.
+				"target/switchyard-console-gwt-0.1.0-SNAPSHOT").
+			3.  Make sure "Launch and deploy from this directory..." is checked.
+		2.  On the Google->Web Toolkit page:
+			1.  Ensure "Use Google Web Toolkit" is checked.
+			2.  Ensure "Use specific SDK" is selected and is pointing to the
+				maven dependencies (e.g. ~/.m2/repository/com/google/gwt/...).
+	3.  To run you can do one of the following:
+		1.  Right-click project and select Run as->Web Application.  This will
+			launch the application from within Eclipse.
+		2.  Right-click module file (e.g. Application.gwt.xml) and select
+			Run as->GWT application.  This will launch an external GWT console.
