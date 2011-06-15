@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
 
+import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
@@ -36,11 +37,11 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceReference;
-import org.switchyard.component.camel.SwitchYardConsumer;
-import org.switchyard.component.camel.SwitchyardEndpoint;
 import org.switchyard.component.camel.InboundHandler;
 import org.switchyard.component.camel.OutboundHandler;
 import org.switchyard.component.camel.RouteFactory;
+import org.switchyard.component.camel.SwitchYardConsumer;
+import org.switchyard.component.camel.SwitchyardEndpoint;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.component.camel.config.model.CamelComponentImplementationModel;
 import org.switchyard.config.model.Model;
@@ -70,9 +71,7 @@ public class CamelActivator extends BaseActivator {
     private Map<QName, Set<OutboundHandler>> _references = new HashMap<QName, Set<OutboundHandler>>();
     private Map<QName, SwitchYardConsumer> _implementations = new HashMap<QName, SwitchYardConsumer>();
     
-    private CamelContext _camelContext = new DefaultCamelContext();
-    
-    private PackageScanClassResolver _packageScanClassResolver;
+    private CamelContext _camelContext;
     
     /**
      * Creates a new activator for Camel endpoint types.
@@ -82,9 +81,13 @@ public class CamelActivator extends BaseActivator {
                 CAMEL_TYPE, 
                 DIRECT_TYPE, 
                 FILE_TYPE});
-        _packageScanClassResolver = getPackageScanClassResolver();
+        _camelContext = createCamelContext();
+        final PackageScanClassResolver packageScanClassResolver = getPackageScanClassResolver();
+        if (packageScanClassResolver != null) {
+            _camelContext.setPackageScanClassResolver(packageScanClassResolver);
+        }
     }
-
+    
     /**
      * Get the first PackageScanClassResolver Service found on the classpath.
      * @return The first PackageScanClassResolver Service found on the classpath.
@@ -98,7 +101,19 @@ public class CamelActivator extends BaseActivator {
 
         return null;
     }
-
+    
+    private CamelContext createCamelContext() {
+        try {
+            //TODO: We are currently creating a DefaultCamelContext
+            // which is going to lead to issues when for example running
+            // in an OSGI container in which Camel requires a different CamelContext.
+            // Perhaps we could make the CamelContext injectable?
+            return new DefaultCamelContext(new InitialContext());
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
     /**
      * @param serviceName The service name
      * @param config The Java Object model representing a service configuration
@@ -225,12 +240,9 @@ public class CamelActivator extends BaseActivator {
     
     private void startCamelContext() {
         try {
-            if (_packageScanClassResolver != null) {
-                _camelContext.setPackageScanClassResolver(_packageScanClassResolver);
-            }
             _camelContext.start();
-        } catch (Exception e1) {
-            throw new IllegalStateException(e1);
+        } catch (final Exception e) {
+            throw new IllegalStateException(e);
         }
     }
     

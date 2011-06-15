@@ -19,6 +19,7 @@
 
     <properties>
         <version.commonman>1.0</version.commonman>
+        <version.hornetq>2.2.2.Final</version.hornetq>
     </properties>
 
     <build>
@@ -94,6 +95,13 @@
             <version>${version.camel}</version>
             <scope>compile</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jms</artifactId>
+            <version>${version.camel}</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.fusesource.commonman</groupId>
@@ -105,6 +113,41 @@
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>javax.jms</groupId>
+            <artifactId>jms</artifactId>
+            <version>1.1</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.hornetq</groupId>
+            <artifactId>hornetq-core</artifactId>
+            <version>${version.hornetq}</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.hornetq</groupId>
+            <artifactId>hornetq-jms-client</artifactId>
+            <version>${version.hornetq}</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.hornetq</groupId>
+            <artifactId>hornetq-jms</artifactId>
+            <version>${version.hornetq}</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.jboss.netty</groupId>
+            <artifactId>netty</artifactId>
+            <version>3.2.1.Final</version>
             <scope>test</scope>
         </dependency>
 
