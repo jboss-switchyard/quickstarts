@@ -1,15 +1,17 @@
 <?xml version='1.0' encoding='utf-8' ?>
 <!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<bookinfo id="booki-Getting_Started">
-  <title>Getting Started Guide</title>
-  <subtitle>Getting Started with JBoss SwitchYard 0.1</subtitle>
+<bookinfo id="booki-User_Guide">
+  <title>User Guide</title>
+  <subtitle>User Guide for SwitchYard 0.1</subtitle>
   <productname>JBoss SwitchYard</productname>
   <productnumber>0.1</productnumber>
   <edition>0.1</edition>
   <pubsnumber>0.1</pubsnumber>
   <!--<abstract>-->
     <!--<para>-->
-      <!--Getting Started Guide for JBoss SwitchYard v0.1.0-->
+      <!--ToDo A short overview and summary of the book's subject and purpose, traditionally no more than one paragraph long.-->
+      <!--Note: the abstract will appear in the front matter of your book and will also be placed in the description field-->
+      <!--of the book's RPM spec file.-->
     <!--</para>-->
   <!--</abstract>-->
   <!--<corpauthor>-->

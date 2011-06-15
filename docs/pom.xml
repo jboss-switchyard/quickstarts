@@ -30,6 +30,7 @@
 
     <modules>
         <module>gettingstarted</module>
+        <module>userguide</module>
     </modules>
 
     <repositories>

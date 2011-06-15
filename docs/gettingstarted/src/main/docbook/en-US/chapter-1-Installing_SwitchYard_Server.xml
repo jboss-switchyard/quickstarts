@@ -35,10 +35,10 @@
     <section id="sid-2883612_InstallingSwitchYardServer-Prerequisites">
       
       <title>Prerequisites</title>
-      <para>SwitchYard is low on prerequisites.  The only thing you need is:</para>
+      <para>SwitchYard is low on prerequisites. The only things you need check are:</para>
       <orderedlist>
         <listitem>
-          <para>To make sure of is that you are running it on a Java 6 JDK.</para>
+          <para>You are running on a Java 6 JDK.</para>
         </listitem>
         <listitem>
           <para>
@@ -52,7 +52,11 @@
     <section id="sid-2883612_InstallingSwitchYardServer-InstallingSwitchYardAS6">
       
       <title>Installing SwitchYard AS6</title>
-      <para>Download the[ SwitchYard Distribution Zip file|http://www.jboss.org/switchyard/downloads] and simply unzip it into a suitable location on your file system.</para>
+      <para>
+        Download the
+        <ulink url="http://www.jboss.org/switchyard/downloads">SwitchYard Distribution Zip file</ulink>
+        and simply unzip it into a suitable location on your file system.
+      </para>
       <important>
         <para>It is not mandatory to configure $JBOSS_HOME on your system, but if you already have it configured you will need to reset it to point to the root of the unzipped SwitchYard AS6 distribution.</para>
       </important>
@@ -76,7 +80,7 @@
         on Windows).
       </para>
     </section>
-    <section id="sid-2883612_InstallingSwitchYardServer-">
+    <section id="sid-2883612_InstallingSwitchYardServer-InstallingSwitchYardAS7">
       
       <title>Installing SwitchYard AS7</title>
       <para>
