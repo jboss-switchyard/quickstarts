@@ -126,6 +126,12 @@ public class MockInitialContextFactory implements InitialContextFactory {
             if (methodName.equals("bind") && args.length == 2) {
                 _boundObjects.put(args[0], args[1]);
                 return null;
+            } else if (methodName.equals("rebind") && args.length == 2) {
+                _boundObjects.put(args[0], args[1]);
+                return null;
+            } else if (methodName.equals("unbind") && args.length == 1) {
+                _boundObjects.remove(args[0]);
+                return null;
             } else if (methodName.equals("lookup") && args.length == 1) {
                 Object object = _boundObjects.get(args[0]);
                 if (object != null) {
