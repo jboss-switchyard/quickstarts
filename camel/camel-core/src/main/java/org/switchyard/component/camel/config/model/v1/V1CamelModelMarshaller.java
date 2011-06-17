@@ -25,6 +25,7 @@ import org.switchyard.component.camel.config.model.direct.v1.V1CamelDirectBindin
 import org.switchyard.component.camel.config.model.file.v1.V1CamelFileBindingModel;
 import org.switchyard.component.camel.config.model.file.v1.V1CamelFileConsumerBindingModel;
 import org.switchyard.component.camel.config.model.file.v1.V1CamelFileProducerBindingModel;
+import org.switchyard.component.camel.config.model.seda.v1.V1CamelSedaBindingModel;
 import org.switchyard.component.camel.config.model.timer.v1.V1CamelTimerBindingModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseMarshaller;
@@ -66,6 +67,8 @@ public class V1CamelModelMarshaller extends BaseMarshaller {
                 return new V1CamelTimerBindingModel(config, getDescriptor());
             } else if (name.endsWith(V1CamelDirectBindingModel.DIRECT)) {
                 return new V1CamelDirectBindingModel(config, getDescriptor());
+            } else if (name.endsWith(V1CamelSedaBindingModel.SEDA)) {
+                return new V1CamelSedaBindingModel(config, getDescriptor());
             }
         }
 

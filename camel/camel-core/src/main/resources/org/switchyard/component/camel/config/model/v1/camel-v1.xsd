@@ -94,7 +94,7 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
     
-    <element name="binding.timer" type="camel:CamelTimerBindingType" substitutionGroup="sca:binding"/>
+<element name="binding.timer" type="camel:CamelTimerBindingType" substitutionGroup="sca:binding"/>
     <complexType name="CamelTimerBindingType" >
         <complexContent>
             <extension base="sca:Binding">
@@ -107,6 +107,23 @@ MA  02110-1301, USA.
                     <element name="fixedRate" type="boolean" minOccurs="0" maxOccurs="1"/>
                     <element name="daemon" type="boolean" minOccurs="0" maxOccurs="1"/>
                     <element name="repeatCount" type="integer" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <element name="binding.seda" type="camel:CamelSedaBindingType" substitutionGroup="sca:binding"/>
+    <complexType name="CamelSedaBindingType" >
+        <complexContent>
+            <extension base="sca:Binding">
+                <sequence>
+                    <element name="name" type="string"/>
+                    <element name="size" type="integer"/>
+                    <element name="concurrentConsumers" type="integer"/>
+                    <element name="waitForTaskToComplete" type="string"/>
+                    <element name="timeout" type="long"/>
+                    <element name="multipleConsumers" type="boolean"/>
+                    <element name="limitConcurrentConsumers" type="boolean"/>
                 </sequence>
             </extension>
         </complexContent>
