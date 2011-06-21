@@ -129,6 +129,18 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
     
+    <element name="binding.mock" type="camel:CamelMockBindingType" substitutionGroup="sca:binding"/>
+    <complexType name="CamelMockBindingType" >
+        <complexContent>
+            <extension base="sca:Binding">
+                <sequence>
+                    <element name="name" type="string"/>
+                    <element name="reportGroup" type="integer"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <complexType name="CamelOperationSelectorType">
       <complexContent>
          <extension base="sca:OperationSelectorType">
