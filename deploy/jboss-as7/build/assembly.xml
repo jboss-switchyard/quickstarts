@@ -69,7 +69,7 @@
     </file>
     <file>
       <source>src/main/resources/modules/jaxen/module.xml</source>
-      <outputDirectory>/modules/jaxen/main</outputDirectory>
+      <outputDirectory>/modules/org/jaxen/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
@@ -175,7 +175,7 @@
        <includes>
            <include>jaxen:jaxen</include>
        </includes>
-       <outputDirectory>/modules/jaxen/main</outputDirectory>
+       <outputDirectory>/modules/org/jaxen/main</outputDirectory>
        <outputFileNameMapping>${artifact.artifactId}-${version.jaxen}.${artifact.extension}</outputFileNameMapping>
     </dependencySet>
   </dependencySets>
