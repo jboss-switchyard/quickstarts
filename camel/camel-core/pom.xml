@@ -68,7 +68,13 @@
 			<artifactId>switchyard-component-bean</artifactId>
 			<scope>test</scope>
 		</dependency>
-        
+         <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-camel-as7</artifactId>
+            <version>${project.version}</version>
+            <scope>package</scope>
+        </dependency>
+
          <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>

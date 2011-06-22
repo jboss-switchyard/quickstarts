@@ -33,6 +33,7 @@
        <useTransitiveDependencies>false</useTransitiveDependencies>
        <includes>
           <include>org.switchyard.components:switchyard-component-camel</include>
+          <include>org.switchyard.components:switchyard-component-camel-as7</include>
        </includes>
        <outputDirectory>/modules/org/switchyard/component/camel/main</outputDirectory>
        <outputFileNameMapping>${artifact.artifactId}-${version.project}.${artifact.extension}</outputFileNameMapping>

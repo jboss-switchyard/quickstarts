@@ -57,6 +57,7 @@
         <module>bean</module>
         <module>soap</module>
         <module>tests</module>
+        <module>camel/camel-as7</module>
         <module>camel/camel-core</module>
         <module>camel/camel-as6</module>
         <module>clojure</module>
