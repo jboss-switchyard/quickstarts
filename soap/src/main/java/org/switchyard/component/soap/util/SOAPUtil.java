@@ -114,7 +114,11 @@ public final class SOAPUtil {
                 pw.close();
                 faultMsg.getSOAPBody().addFault(SERVER_FAULT_QN, sw.toString());
             } else {
-                faultMsg.getSOAPBody().addFault(SERVER_FAULT_QN, th.getMessage());
+                String message = th.getMessage();
+                if (message == null) {
+                    message = th.toString();
+                }
+                faultMsg.getSOAPBody().addFault(SERVER_FAULT_QN, message);
             }
         }
         return faultMsg;
