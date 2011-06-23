@@ -20,6 +20,7 @@
 package org.switchyard.component.bean;
 
 import org.switchyard.Exchange;
+import org.switchyard.Message;
 
 import java.lang.reflect.Method;
 
@@ -54,7 +55,7 @@ public class Invocation {
     Invocation(Method method, Exchange exchange) throws BeanComponentException {
         this._method = method;
         this._exchange = exchange;
-        this._args = castArg(method, exchange.getMessage().getContent());
+        this._args = castArg(method, exchange.getMessage());
         assertOK();
     }
 
@@ -85,13 +86,9 @@ public class Invocation {
         return _method;
     }
 
-    private static Object[] castArg(Method method, Object content) {
-        if (method.getParameterTypes().length == 1 && content != null) {
-            if (content.getClass().isArray()) {
-                return (Object[].class).cast(content);
-            } else {
-                return new Object[]{content};
-            }
+    private static Object[] castArg(Method method, Message message) {
+        if (method.getParameterTypes().length == 1 && message != null) {
+            return new Object[]{message.getContent(method.getParameterTypes()[0])};
         }
         return null;
     }

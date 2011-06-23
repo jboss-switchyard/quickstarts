@@ -20,10 +20,20 @@
 package org.switchyard.component.bean.tests;
 
 import javax.inject.Inject;
+import javax.xml.parsers.ParserConfigurationException;
 
+import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
+import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
+import java.io.StringReader;
 
 @Service(ConsumerService.class)
 public class ConsumerBean implements ConsumerService {
@@ -53,5 +63,17 @@ public class ConsumerBean implements ConsumerService {
             // and throw a new exception...
             throw new ConsumerException("remote-exception-received");
         }
+    }
+
+
+    @Override
+    public String domOperation(Document message) {
+        try {
+            XMLUnit.compareXML(XMLHelper.getDocument(new InputSource(new StringReader("<a><b/></a>"))), message);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
+
+        return "<c/>";
     }
 }
