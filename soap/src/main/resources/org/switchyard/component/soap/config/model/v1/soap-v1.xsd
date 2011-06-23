@@ -38,7 +38,7 @@ MA  02110-1301, USA.
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="port" type="soap:wsdlPortType" minOccurs="0" maxOccurs="1">
+                    <element name="wsdlPort" type="soap:wsdlPortType" minOccurs="0" maxOccurs="1">
                         <annotation>
                             <documentation>
                                 Specify the WSDL port to be used. The string can be in the form {namespaceURI}serviceName:portName", with the "{namespaceURI}" and "serviceName:" part being optional.

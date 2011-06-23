@@ -49,7 +49,7 @@ public class SOAPBindingModel extends V1BindingModel {
      * Config property names.
      */
     private static final String WSDL = "wsdl";
-    private static final String PORT = "port";
+    private static final String PORT = "wsdlPort";
     private static final String SERVER_HOST = "serverHost";
     private static final String SERVER_PORT = "serverPort";
     private static final String COMPOSER = "composer";
