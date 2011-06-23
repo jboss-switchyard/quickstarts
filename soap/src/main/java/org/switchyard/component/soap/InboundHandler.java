@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.wsdl.Operation;
+import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
@@ -266,11 +267,20 @@ public class InboundHandler extends BaseHandler {
         }
 
         Node inputMessage = (Node) content;
-        QName expectedPayloadType = operation.getInput().getMessage().getQName();
-        String expectedNS = expectedPayloadType.getNamespaceURI();
-        String expectedLN = expectedPayloadType.getLocalPart();
         String actualNS = inputMessage.getNamespaceURI();
         String actualLN = inputMessage.getLocalName();
+        List<Part> parts = operation.getInput().getMessage().getOrderedParts(null);
+
+        if (parts.isEmpty()) {
+            handleException(oneWay, new SOAPException("Invalid input SOAP payload for service operation '" + operation.getName() + "' (service '" + _service.getName()
+                                                                              + "').  No such Part '" + actualLN + "'."));
+            return false;
+        }
+
+        Part part = parts.get(0);
+        QName expectedPayloadType = part.getElementName();
+        String expectedNS = expectedPayloadType.getNamespaceURI();
+        String expectedLN = expectedPayloadType.getLocalPart();
 
         if (expectedNS != null && !expectedNS.equals(actualNS)) {
             handleException(oneWay, new SOAPException("Invalid input SOAP payload namespace for service operation '" + operation.getName() + "' (service '" + _service.getName()

@@ -35,6 +35,7 @@ import java.util.Map;
 import javax.wsdl.Definition;
 import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
+import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
@@ -318,7 +319,12 @@ public final class WSDLUtil {
             }
             BaseExchangeContract exchangeContract = new BaseExchangeContract(targetServiceOperation);
             BaseInvocationContract soapMetaData = exchangeContract.getInvokerInvocationMetaData();
-            QName inputMessageQName = operation.getInput().getMessage().getQName();
+            List<Part> parts = operation.getInput().getMessage().getOrderedParts(null);
+            if (parts.isEmpty()) {
+                throw new WebServicePublishException("WSDL Operation " + name + " does not have any Message parts");
+            }
+            // Only one Part (one child of the soap:body) allowed per WS-I similar to Document/Literal wrapped
+            QName inputMessageQName = parts.get(0).getElementName();
             soapMetaData.setInputType(inputMessageQName);
             soapMetaData.setFaultType(SOAP_FAULT_MESSAGE_TYPE);
 

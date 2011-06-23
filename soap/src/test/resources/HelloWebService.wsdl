@@ -28,10 +28,10 @@
         </xs:complexType>
     </xsd:schema>
   </types>
-  <message name="sayHello">
+  <message name="sayHelloWorld">
     <part name="parameters" element="tns:sayHello"/>
   </message>
-  <message name="sayHelloResponse">
+  <message name="sayHelloWorldResponse">
     <part name="parameters" element="tns:sayHelloResponse"/>
   </message>
   <message name="helloWS">
@@ -39,8 +39,8 @@
   </message>
   <portType name="HelloWebService">
     <operation name="sayHello">
-      <input message="tns:sayHello"/>
-      <output message="tns:sayHelloResponse"/>
+      <input message="tns:sayHelloWorld"/>
+      <output message="tns:sayHelloWorldResponse"/>
     </operation>
     <operation name="helloWS">
       <input message="tns:helloWS"/>
