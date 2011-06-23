@@ -26,6 +26,8 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.annotations.DefaultType;
+import org.switchyard.annotations.OperationTypes;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.BaseService;
 import org.switchyard.metadata.InOnlyOperation;
@@ -80,18 +82,6 @@ public final class JavaService extends BaseService {
      * @return ServiceInterface representing the Java class
      */
     public static JavaService fromClass(Class<?> serviceInterface) {
-        return fromClass(serviceInterface, null);
-    }
-    
-    /**
-     * Creates a ServiceInterface from the specified Java class or interface.
-     * All QNames in the interface will use the specified namespace URI.
-     * @param serviceInterface class or interface representing the service 
-     * interface
-     * @param namespaceURI namespace to be used for type QNames
-     * @return ServiceInterface representing the Java class
-     */
-    public static JavaService fromClass(Class<?> serviceInterface, String namespaceURI) {
         HashSet<ServiceOperation> ops = new HashSet<ServiceOperation>();
         for (Method m : serviceInterface.getDeclaredMethods()) {
             // We only consider public methods
@@ -103,22 +93,13 @@ public final class JavaService extends BaseService {
                     throw new RuntimeException(
                             "Service operations on a Java interface must have exactly one parameter.");
                 }
+
                 // Create the appropriate service operation and add it to the list
-                QName inputType = toMessageType(params[0], namespaceURI);
+                OperationTypeQNames operationTypeNames = new OperationTypeQNames(m);
                 if (m.getReturnType().equals(Void.TYPE)) {
-                    ops.add(new InOnlyOperation(m.getName(), inputType));
+                    ops.add(new InOnlyOperation(m.getName(), operationTypeNames.in()));
                 } else {
-                    QName outputName = toMessageType(m.getReturnType(), namespaceURI);
-                    Class<?>[] exceptions = m.getExceptionTypes();
-                    QName faultType = null;
-                    if (exceptions.length > 0) {
-                        if (exceptions.length > 1) {
-                            throw new SwitchYardException(
-                            "Service operations on a Java interface can only throw one type of exception.");
-                        }
-                        faultType = toMessageType(exceptions[0], namespaceURI);
-                    }
-                    ops.add(new InOutOperation(m.getName(), inputType, outputName, faultType));
+                    ops.add(new InOutOperation(m.getName(), operationTypeNames.in(), operationTypeNames.out(), operationTypeNames.fault()));
                 }
             }
         }
@@ -139,40 +120,38 @@ public final class JavaService extends BaseService {
      * Equivalent to <code>toMessageType(javaType, null)</code>.
      * <br>
      * @see JavaService#toMessageType(Class)
-     * Checks for a {@link org.switchyard.metadata.java.PayloadTypeName} on the type.  If not found,
+     * Checks for a {@link org.switchyard.annotations.DefaultType} on the type.  If not found,
      * the type name is derived from the Java Class name.
      *
      * @param javaType The Java type.
      * @return The payload type.
      */
     public static QName toMessageType(Class<?> javaType) {
-        return toMessageType(javaType, null);
+        return QName.valueOf(toMessageTypeString(javaType));
     }
-    
+
     /**
      * Convert the supplied java type to a payload type name.
      * <p/>
-     * Checks for a {@link org.switchyard.metadata.java.PayloadTypeName} on the type.  If not found,
+     * Checks for a {@link org.switchyard.annotations.DefaultType} on the type.  If not found,
      * the type name is derived from the Java Class name.
      *
      * @param javaType The Java type.
-     * @param namespaceURI namespace for the type QName
      * @return The payload type.
      */
-    public static QName toMessageType(Class<?> javaType, String namespaceURI) {
-        PayloadTypeName payloadType = javaType.getAnnotation(PayloadTypeName.class);
+    public static String toMessageTypeString(Class<?> javaType) {
+        DefaultType defaultType = javaType.getAnnotation(DefaultType.class);
 
-        if (payloadType != null) {
-            return QName.valueOf(payloadType.value());
+        if (defaultType != null) {
+            return defaultType.value();
         } else {
             if (javaType.isMemberClass()) {
-                return new QName(namespaceURI, TYPE_PREFIX + javaType.getName());
+                return TYPE_PREFIX + javaType.getName();
             } else {
-                return new QName(namespaceURI, TYPE_PREFIX + javaType.getCanonicalName());
+                return TYPE_PREFIX + javaType.getCanonicalName();
             }
         }
     }
-
     /**
      * Is the specified message type QName a Java message type.
      * @param name The message type {@link QName}to be tested.
@@ -202,6 +181,52 @@ public final class JavaService extends BaseService {
                 // can't use this.... ignore...
                 return null;
             }
+        }
+    }
+
+    private final static class OperationTypeQNames {
+
+        private Method _operationMethod;
+        private OperationTypes _methodTypeNames;
+
+        private OperationTypeQNames(Method operationMethod) {
+            this._operationMethod = operationMethod;
+            this._methodTypeNames = operationMethod.getAnnotation(OperationTypes.class);
+        }
+
+        public QName in() {
+            Class<?> inputType = _operationMethod.getParameterTypes()[0];
+
+            if (_methodTypeNames != null && _methodTypeNames.in().length() != 0) {
+                return QName.valueOf(_methodTypeNames.in());
+            }
+
+            return toMessageType(inputType);
+        }
+
+        public QName out() {
+            if (_methodTypeNames != null && _methodTypeNames.out().length() != 0) {
+                return QName.valueOf(_methodTypeNames.out());
+            }
+
+            return toMessageType(_operationMethod.getReturnType());
+        }
+
+        public QName fault() {
+            Class<?>[] exceptions = _operationMethod.getExceptionTypes();
+
+            if (exceptions.length == 0) {
+                return null;
+            }
+            if (exceptions.length > 1) {
+                throw new SwitchYardException("Service operations on a Java interface can only throw one type of exception.");
+            }
+
+            if (_methodTypeNames != null && _methodTypeNames.fault().length() != 0) {
+                return QName.valueOf(_methodTypeNames.fault());
+            }
+
+            return toMessageType(exceptions[0]);
         }
     }
 }

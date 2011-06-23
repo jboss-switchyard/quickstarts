@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.metadata.java;
+package org.switchyard.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -26,14 +26,21 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Message payload type name.
+ * Default payload type name.
+ * <p/>
+ * For Java Service implementations, SwitchYard uses the Java class name as the
+ * default {@link org.switchyard.metadata.InvocationContract invocation operation}
+ * input, output and fault type.  This annotation allows you to set the default
+ * type name for a class hierarchy (note the annotation is inherited).  This is
+ * very useful for setting the default type for e.g. a family of Exception types.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ * @see OperationTypes
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Inherited
-public @interface PayloadTypeName {
+public @interface DefaultType {
 
     /**
      * Value.

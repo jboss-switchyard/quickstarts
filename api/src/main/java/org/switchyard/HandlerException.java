@@ -19,7 +19,7 @@
 
 package org.switchyard;
 
-import org.switchyard.metadata.java.PayloadTypeName;
+import org.switchyard.annotations.DefaultType;
 
 /**
  * Represents a processing error when handling an exchange.  A
@@ -27,7 +27,7 @@ import org.switchyard.metadata.java.PayloadTypeName;
  * is automagically converted into a fault by the chain when throw by an
  * {@code ExchangeHandler}.
  */
-@PayloadTypeName(HandlerException.MESSAGE_TYPE)
+@DefaultType(HandlerException.MESSAGE_TYPE)
 public class HandlerException extends Exception {
 
     /**

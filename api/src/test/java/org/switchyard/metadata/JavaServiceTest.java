@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.ExchangePattern;
+import org.switchyard.annotations.OperationTypes;
 import org.switchyard.metadata.java.JavaService;
 
 public class JavaServiceTest {
@@ -98,6 +99,37 @@ public class JavaServiceTest {
                 " shoud not be accepted as a valid ServiceInterface", error);
     }
 
+    @Test
+    public void testOperationTypes() {
+        JavaService service = JavaService.fromClass(TyepAnnotatedServiceClass.class);
+
+        testOperationTypes("op1", service, QName.valueOf("A"), QName.valueOf("B"), null);
+        testOperationTypes("op2", service, QName.valueOf("java:java.lang.String"), null, null);
+        testOperationTypes("op3", service, QName.valueOf("java:java.lang.String"), QName.valueOf("java:java.lang.String"), QName.valueOf("C"));
+        testOperationTypes("op4", service, QName.valueOf("java:java.lang.String"), QName.valueOf("java:java.lang.String"), null);
+    }
+
+    private void testOperationTypes(String opName, JavaService service, QName in, QName out, QName fault) {
+        ServiceOperation operation = service.getOperation(opName);
+        Assert.assertEquals(in, operation.getInputType());
+        Assert.assertEquals(out, operation.getOutputType());
+        Assert.assertEquals(fault, operation.getFaultType());
+    }
+
+    public interface TyepAnnotatedServiceClass {
+
+        @OperationTypes(in = "A", out = "B")
+        public String op1(String input);
+
+        @OperationTypes(out = "B") // Should have no effect since there's no return value
+        public void op2(String input);
+
+        @OperationTypes(fault = "C")
+        public String op3(String input) throws RuntimeException;
+
+        @OperationTypes(fault = "C") // Should have no effect since there's no exception
+        public String op4(String input);
+    }
 }
 
 // This interface has two methods eligible for service operations
@@ -123,7 +155,7 @@ class JavaClassOnly {
 // This class has one method eligible for service operation; the inherited method
 // from the base class is *not* included
 class JavaClassExtendsClass extends JavaClassOnly {
- public void blorg(Object obj) {};
+    public void blorg(Object obj) {};
 }
 
 // This class has three methods eligible; one from the class and two from the

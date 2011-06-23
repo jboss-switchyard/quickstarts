@@ -24,21 +24,25 @@ import javax.xml.namespace.QName;
 /**
  * Generic Invocation Contract.
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ * @see org.switchyard.annotations.OperationTypes
  */
 public interface InvocationContract {
     /**
      * The name of the input message type.
      * @return input message type or null if no type information is available.
+     * @see org.switchyard.annotations.OperationTypes
      */
     QName getInputType();
     /**
      * The name of the output message type.
      * @return output message name or null if no type information is available.
+     * @see org.switchyard.annotations.OperationTypes
      */
     QName getOutputType();
     /**
      * The name of the output message type.
      * @return output message name or null if no type information is available.
+     * @see org.switchyard.annotations.OperationTypes
      */
     QName getFaultType();
 }
