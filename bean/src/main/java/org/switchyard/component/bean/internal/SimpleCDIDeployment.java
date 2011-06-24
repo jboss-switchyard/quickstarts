@@ -32,8 +32,8 @@ import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.transform.TransformerRegistry;
-import org.switchyard.transform.config.model.TransformerFactory;
-import org.switchyard.transform.config.model.TransformerTypes;
+import org.switchyard.transform.TransformerTypes;
+import org.switchyard.transform.TransformerUtil;
 
 
 import java.util.List;
@@ -78,11 +78,11 @@ public class SimpleCDIDeployment extends AbstractDeployment {
         TransformerRegistry transformerRegistry = domain.getTransformerRegistry();
 
         for (Class<?> deploymentClass : beanDeploymentMetaData.getDeploymentClasses()) {
-            if (TransformerFactory.isTransformer(deploymentClass)) {
-                List<TransformerTypes> transformers = TransformerFactory.listTransformations(deploymentClass);
+            if (TransformerUtil.isTransformer(deploymentClass)) {
+                List<TransformerTypes> transformers = TransformerUtil.listTransformations(deploymentClass);
                 for (TransformerTypes transformer : transformers) {
-                    transformerRegistry.addTransformer(TransformerFactory.newTransformer(deploymentClass,
-                                                       transformer.getFrom(), transformer.getTo()));
+                    transformerRegistry.addTransformer(TransformerUtil.newTransformer(deploymentClass,
+                            transformer.getFrom(), transformer.getTo()));
                 }
             }
         }
