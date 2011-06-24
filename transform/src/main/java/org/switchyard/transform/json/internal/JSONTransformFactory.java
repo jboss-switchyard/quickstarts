@@ -25,6 +25,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.Transformer;
+import org.switchyard.transform.TransformerFactory;
 import org.switchyard.transform.config.model.JSONTransformModel;
 
 /**
@@ -32,17 +33,14 @@ import org.switchyard.transform.config.model.JSONTransformModel;
  *
  * @author Alejandro Montenegro &lt;<a href="mailto:aamonten@gmail.com">aamonten@gmail.com</a>&gt;
  */
-public final class JSONTransformFactory {
-
-    private JSONTransformFactory() {
-    }
+public final class JSONTransformFactory implements TransformerFactory<JSONTransformModel> {
 
     /**
      * Create a {@link Transformer} instance from the supplied {@link JSONTransformModel}.
      * @param model the JSON transformer model. 
      * @return the Transformer instance.
      */
-    public static Transformer newTransformer(JSONTransformModel model) {
+    public Transformer newTransformer(JSONTransformModel model) {
 
         QName from = model.getFrom();
         QName to = model.getTo();

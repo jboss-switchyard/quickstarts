@@ -21,18 +21,21 @@ package org.switchyard.transform.config.model.v1;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.transform.TransformerFactoryClass;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.v1.V1BaseTransformModel;
 import org.switchyard.transform.config.model.SmooksTransformModel;
 import org.switchyard.transform.smooks.SmooksTransformType;
+import org.switchyard.transform.smooks.internal.SmooksTransformFactory;
 
 /**
  * A version 1 SmooksTransformModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
+@TransformerFactoryClass(SmooksTransformFactory.class)
 public class V1SmooksTransformModel extends V1BaseTransformModel implements SmooksTransformModel {
 
     /**

@@ -24,7 +24,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.Transformer;
-import org.switchyard.transform.config.model.TransformerFactory;
+import org.switchyard.transform.TransformerUtil;
 import org.switchyard.transform.ootb.map.ordermodel.Item;
 import org.switchyard.transform.ootb.map.ordermodel.Order;
 
@@ -44,7 +44,7 @@ public class FromMapToJavaTest {
         QName from = JavaService.toMessageType(Map.class);
         QName to = JavaService.toMessageType(Order.class);
 
-        Transformer<?,?> transformer = TransformerFactory.newTransformer(FromMapToJava.class, from, to);
+        Transformer<?,?> transformer = TransformerUtil.newTransformer(FromMapToJava.class, from, to);
         Assert.assertTrue(transformer instanceof FromMapToJava);
     }
 

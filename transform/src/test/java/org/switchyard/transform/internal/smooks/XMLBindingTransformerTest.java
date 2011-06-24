@@ -69,7 +69,7 @@ public class XMLBindingTransformerTest extends AbstractTransformerTestCase {
         V1SmooksTransformModel model = (V1SmooksTransformModel) new V1SmooksTransformModel().setTransformType("XML2JAVA").setFrom(new QName("a")).setTo(new QName("b"));
         model.setConfig("/org/switchyard/transform/internal/smooks/smooks-config-01.xml");
         try {
-            SmooksTransformFactory.newTransformer(model);
+            new SmooksTransformFactory().newTransformer(model);
         } catch (RuntimeException e) {
             Assert.assertEquals("Invalid XML2JAVA binding configuration.  No <jb:bean> configurations found.", e.getMessage());
         }
@@ -80,7 +80,7 @@ public class XMLBindingTransformerTest extends AbstractTransformerTestCase {
         V1SmooksTransformModel model = (V1SmooksTransformModel) new V1SmooksTransformModel().setTransformType("JAVA2XML").setFrom(new QName("a")).setTo(new QName("b"));
         model.setConfig("/org/switchyard/transform/internal/smooks/smooks-config-01.xml");
         try {
-            SmooksTransformFactory.newTransformer(model);
+            new SmooksTransformFactory().newTransformer(model);
         } catch (RuntimeException e) {
             Assert.assertEquals("Invalid JAVA2XML binding configuration.  No <jb:bean> configurations found.", e.getMessage());
         }

@@ -24,6 +24,8 @@ import org.junit.Test;
 import org.switchyard.annotations.Transformer;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.BaseTransformer;
+import org.switchyard.transform.TransformerTypes;
+import org.switchyard.transform.TransformerUtil;
 
 import javax.xml.namespace.QName;
 import java.util.List;
@@ -31,11 +33,11 @@ import java.util.List;
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class TransformerFactoryTest {
+public class TransformerUtilTest {
 
     @Test
     public void test_listTransformations() {
-        List<TransformerTypes> transformTypes = TransformerFactory.listTransformations(TestTransformer.class);
+        List<TransformerTypes> transformTypes = TransformerUtil.listTransformations(TestTransformer.class);
 
         Assert.assertEquals(5, transformTypes.size());
         Assert.assertEquals(JavaService.toMessageType(A.class), transformTypes.get(0).getFrom());
@@ -52,7 +54,7 @@ public class TransformerFactoryTest {
 
     @Test
     public void test_transform_interface_impl() {
-        org.switchyard.transform.Transformer transformer = TransformerFactory.newTransformer(TestTransformer.class, JavaService.toMessageType(A.class), JavaService.toMessageType(B.class));
+        org.switchyard.transform.Transformer transformer = TransformerUtil.newTransformer(TestTransformer.class, JavaService.toMessageType(A.class), JavaService.toMessageType(B.class));
 
         Assert.assertTrue(transformer instanceof TestTransformer);
         Assert.assertTrue(transformer.transform(new A()) instanceof B);
@@ -60,7 +62,7 @@ public class TransformerFactoryTest {
 
     @Test
     public void test_transform_anno_no_types_defined() {
-        org.switchyard.transform.Transformer transformer = TransformerFactory.newTransformer(TestTransformer.class, JavaService.toMessageType(B.class), JavaService.toMessageType(A.class));
+        org.switchyard.transform.Transformer transformer = TransformerUtil.newTransformer(TestTransformer.class, JavaService.toMessageType(B.class), JavaService.toMessageType(A.class));
 
         Assert.assertTrue(!(transformer instanceof TestTransformer));
         Assert.assertTrue(transformer.transform(new B()) instanceof A);
@@ -69,10 +71,10 @@ public class TransformerFactoryTest {
     @Test
     public void test_transform_unknown() {
         try {
-            TransformerFactory.newTransformer(TestTransformer.class, QName.valueOf("AAA"), QName.valueOf("BBB"));
+            TransformerUtil.newTransformer(TestTransformer.class, QName.valueOf("AAA"), QName.valueOf("BBB"));
             Assert.fail("Expected Exception");
         } catch(RuntimeException e) {
-            Assert.assertEquals("Error constructing Transformer instance for class 'org.switchyard.transform.config.model.TransformerFactoryTest$TestTransformer'.  " +
+            Assert.assertEquals("Error constructing Transformer instance for class 'org.switchyard.transform.config.model.TransformerUtilTest$TestTransformer'.  " +
                     "Class does not support a transformation from type 'AAA' to type 'BBB'.",
                     e.getMessage());
         }
@@ -80,7 +82,7 @@ public class TransformerFactoryTest {
 
     @Test
     public void test_transform_anno_types_defined() {
-        org.switchyard.transform.Transformer transformer = TransformerFactory.newTransformer(TestTransformer.class, QName.valueOf("X"), QName.valueOf("Y"));
+        org.switchyard.transform.Transformer transformer = TransformerUtil.newTransformer(TestTransformer.class, QName.valueOf("X"), QName.valueOf("Y"));
 
         Assert.assertTrue(!(transformer instanceof TestTransformer));
         Assert.assertEquals("Y", transformer.transform("X"));

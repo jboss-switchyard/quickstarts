@@ -23,6 +23,7 @@ import org.milyn.Smooks;
 import org.milyn.javabean.binding.model.ModelSet;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.transform.Transformer;
+import org.switchyard.transform.TransformerFactory;
 import org.switchyard.transform.config.model.SmooksTransformModel;
 import org.switchyard.transform.smooks.SmooksTransformType;
 
@@ -33,20 +34,14 @@ import javax.xml.namespace.QName;
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public final class SmooksTransformFactory {
-
-    /**
-     * Private constructor.
-     */
-    private SmooksTransformFactory() {
-    }
+public class SmooksTransformFactory implements TransformerFactory<SmooksTransformModel> {
 
     /**
      * Create a {@link Transformer} instance from the supplied {@link SmooksTransformModel}.
      * @param model The model.
      * @return The Transformer instance.
      */
-    public static Transformer newTransformer(SmooksTransformModel model) {
+    public Transformer newTransformer(SmooksTransformModel model) {
         String transformType = model.getTransformType();
         String config = model.getConfig();
         QName from = model.getFrom();

@@ -19,43 +19,21 @@
 
 package org.switchyard.transform;
 
-import org.junit.Assert;
-import org.switchyard.common.type.Classes;
-import org.switchyard.config.model.ModelResource;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
-import org.switchyard.config.model.transform.TransformsModel;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
+ * Transformer Factory.
+ *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ *
+ * @param <T> TransformerModel type.
  */
-public abstract class AbstractTransformerTestCase {
+public interface TransformerFactory<T extends TransformModel> {
 
-    protected Transformer getTransformer(String config) throws IOException {
-        InputStream swConfigStream = Classes.getResourceAsStream(config, getClass());
-
-        if (swConfigStream == null) {
-            Assert.fail("null config stream.");
-        }
-
-        SwitchYardModel switchyardConfig;
-        try {
-            switchyardConfig = new ModelResource<SwitchYardModel>().pull(swConfigStream);
-        } finally {
-            swConfigStream.close();
-        }
-
-        TransformsModel transforms = switchyardConfig.getTransforms();
-
-        TransformModel transformModel = transforms.getTransforms().get(0);
-
-        if (transformModel == null) {
-            Assert.fail("No smooks config.");
-        }
-
-        return TransformerUtil.newTransformer(transformModel);
-    }
+    /**
+     * Create a new {@link Transformer} instance.
+     * @param model The Transformer config model.
+     * @return The Transformer instance.
+     */
+    Transformer<?, ?> newTransformer(T model);
 }

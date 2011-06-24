@@ -33,6 +33,8 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.config.model.transform.v1.V1TransformsModel;
+import org.switchyard.transform.TransformerTypes;
+import org.switchyard.transform.TransformerUtil;
 import org.switchyard.transform.config.model.v1.V1JavaTransformModel;
 
 /**
@@ -52,7 +54,7 @@ public class TransformSwitchYardScanner implements Scanner<SwitchYardModel> {
 
         List<Class<?>> transformerClasses = scanForTransformers(input.getURLs());
         for (Class<?> transformer : transformerClasses) {
-            List<TransformerTypes> supportedTransforms = TransformerFactory.listTransformations(transformer);
+            List<TransformerTypes> supportedTransforms = TransformerUtil.listTransformations(transformer);
 
             for (TransformerTypes supportedTransform : supportedTransforms) {
                 JavaTransformModel transformModel = new V1JavaTransformModel();
@@ -91,7 +93,7 @@ public class TransformSwitchYardScanner implements Scanner<SwitchYardModel> {
                 // Marked as being non-scannable...
                 return false;
             }
-            return TransformerFactory.isTransformer(clazz);
+            return TransformerUtil.isTransformer(clazz);
         }
     }
 }

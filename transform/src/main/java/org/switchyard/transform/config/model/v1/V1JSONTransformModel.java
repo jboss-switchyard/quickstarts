@@ -21,17 +21,20 @@ package org.switchyard.transform.config.model.v1;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.transform.TransformerFactoryClass;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.v1.V1BaseTransformModel;
 import org.switchyard.transform.config.model.JSONTransformModel;
+import org.switchyard.transform.json.internal.JSONTransformFactory;
 
 /**
  * Version 1 JSON Transform Model.
  *
  * @author Alejandro Montenegro &lt;<a href="mailto:aamonten@gmail.com">aamonten@gmail.com</a>&gt;
  */
+@TransformerFactoryClass(JSONTransformFactory.class)
 public class V1JSONTransformModel extends V1BaseTransformModel implements JSONTransformModel {
 
     /**

@@ -32,7 +32,6 @@ import org.switchyard.config.model.ModelResource;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.exception.SwitchYardException;
-import org.switchyard.transform.config.model.TransformerFactory;
 
 /**
  * {@link TransformerRegistry} loader class.
@@ -81,7 +80,7 @@ public class TransformerRegistryLoader {
 
         try {
             for (TransformModel transformModel : transforms.getTransforms()) {
-                Collection<Transformer<?, ?>> transformers = TransformerFactory.newTransformers(transformModel);
+                Collection<Transformer<?, ?>> transformers = TransformerUtil.newTransformers(transformModel);
 
                 for (Transformer<?, ?> transformer : transformers) {
                     if (_transformerRegistry.hasTransformer(transformer.getFrom(), transformer.getTo())) {

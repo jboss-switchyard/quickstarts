@@ -16,46 +16,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.transform.config.model;
 
-import javax.xml.namespace.QName;
+package org.switchyard.transform;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Transformer data types.
+ * Transformer factory class annotation.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class TransformerTypes {
-
-    private QName _from;
-    private QName _to;
-
-    /**
-     * Public constructor.
-     *
-     * @param from From type.
-     * @param to   To type.
-     */
-    TransformerTypes(QName from, QName to) {
-        this._from = from;
-        this._to = to;
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@Inherited
+public @interface TransformerFactoryClass {
 
     /**
-     * Get from.
-     *
-     * @return from.
+     * The component factory class.
      */
-    public QName getFrom() {
-        return _from;
-    }
-
-    /**
-     * Get to.
-     *
-     * @return to.
-     */
-    public QName getTo() {
-        return _to;
-    }
+    Class<? extends TransformerFactory> value();
 }
