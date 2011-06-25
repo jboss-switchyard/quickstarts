@@ -23,8 +23,33 @@
       <filtered>true</filtered>
     </file>
     <file>
+      <source>src/build/resources/camel/jms/module.xml</source>
+      <outputDirectory>/modules/org/apache/camel/jms/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
       <source>src/build/resources/fusesource/commonman/module.xml</source>
       <outputDirectory>/modules/org/fusesource/commonman/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/build/resources/springframework/core/module.xml</source>
+      <outputDirectory>/modules/org/springframework/core/${version.spring}</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/build/resources/springframework/jms/module.xml</source>
+      <outputDirectory>/modules/org/springframework/jms/${version.spring}</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/build/resources/springframework/beans/module.xml</source>
+      <outputDirectory>/modules/org/springframework/beans/${version.spring}</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/build/resources/springframework/tx/module.xml</source>
+      <outputDirectory>/modules/org/springframework/tx/${version.spring}</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
@@ -61,6 +86,47 @@
        </includes>
        <outputDirectory>/modules/org/fusesource/commonman/main</outputDirectory>
        <outputFileNameMapping>${artifact.artifactId}-${version.commonman}.${artifact.extension}</outputFileNameMapping>
+    </dependencySet>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
+          <include>org.apache.camel:camel-jms</include>
+       </includes>
+       <outputDirectory>/modules/org/apache/camel/jms/main</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${version.camel}.${artifact.extension}</outputFileNameMapping>
+    </dependencySet>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
+          <include>org.springframework:spring-core</include>
+          <include>org.springframework:spring-context</include>
+       </includes>
+       <outputDirectory>/modules/org/springframework/core/${version.spring}</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${version.spring}.${artifact.extension}</outputFileNameMapping>
+    </dependencySet>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
+          <include>org.springframework:spring-beans</include>
+       </includes>
+       <outputDirectory>/modules/org/springframework/beans/${version.spring}</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${version.spring}.${artifact.extension}</outputFileNameMapping>
+    </dependencySet>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
+          <include>org.springframework:spring-jms</include>
+       </includes>
+       <outputDirectory>/modules/org/springframework/jms/${version.spring}</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${version.spring}.${artifact.extension}</outputFileNameMapping>
+    </dependencySet>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
+          <include>org.springframework:spring-tx</include>
+       </includes>
+       <outputDirectory>/modules/org/springframework/tx/${version.spring}</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${version.spring}.${artifact.extension}</outputFileNameMapping>
     </dependencySet>
   </dependencySets>
 </assembly>

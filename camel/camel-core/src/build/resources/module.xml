@@ -34,6 +34,15 @@
         <module name="javax.xml.bind.api"/>
         <module name="org.apache.camel.core" services="export" export="true"/>
         <module name="org.apache.camel.spring" services="export" export="true"/>
+        <module name="org.apache.camel.jms" export="true" optional="true">
+            <imports>
+                <include path="META-INF/services/org/apache/camel/component"/>
+            </imports>
+            <exports>
+                <include path="META-INF/services/org/apache/camel/component"/>
+            </exports>
+        </module>
+        <module name="org.jboss.as.naming" export="true"/>
         <module name="org.switchyard.api"/>
         <module name="org.switchyard.common"/>
         <module name="org.switchyard.config"/>

@@ -22,19 +22,14 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 
-<module xmlns="urn:jboss:module:1.0" name="org.apache.camel.spring">
+<module xmlns="urn:jboss:module:1.0" name="org.springframework.tx" slot="${version.spring}">
 
     <resources>
-        <resource-root path="camel-spring-${version.camel}.jar"/>
+        <resource-root path="spring-tx-${version.spring}.jar"/>
     </resources>
 
     <dependencies>
-        <module name="org.apache.camel.core"/>
+        <module name="org.springframework.core" slot="${version.spring}"/>
         <module name="org.apache.commons.logging"/>
-        <module name="javax.jms.api"/>
-        <module name="org.springframework.core" slot="${version.spring}" export="true"/>
-        <module name="org.springframework.jms" slot="${version.spring}" export="true"/>
-        <module name="org.springframework.tx" slot="${version.spring}" export="true"/>
-        <module name="org.springframework.beans" slot="${version.spring}" export="true"/>
     </dependencies>
 </module>
