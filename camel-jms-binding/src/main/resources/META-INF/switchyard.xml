@@ -1,0 +1,11 @@
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+            xmlns:camel="urn:switchyard-component-camel:config:1.0">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-binding">
+    
+        <service name="GreetingService" promote="GreetingService">
+            <!--camel:binding.camel configURI="jms://GreetingServiceQueue?connectionFactory=#RemoteConnectionFactory"/-->
+            <camel:binding.camel configURI="jms://GreetingServiceQueue?connectionFactory=#ConnectionFactory"/>
+        </service>
+        
+    </composite>
+</switchyard>
