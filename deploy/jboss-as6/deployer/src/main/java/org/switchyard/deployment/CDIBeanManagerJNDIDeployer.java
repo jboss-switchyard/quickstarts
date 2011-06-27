@@ -75,16 +75,19 @@ public class CDIBeanManagerJNDIDeployer extends AbstractRealDeployer {
     private class BinderVisitor implements DeploymentUnitVisitor {
 
         public void visit(DeploymentUnit unit) throws DeploymentException {
-            Context javaComp = getJavaComp(unit);
+            if (unit.isTopLevel()) {
+                Context javaComp = getJavaComp(unit);
 
-            try {
-                Reference reference = new Reference("javax.enterprise.inject.spi.BeanManager", "org.jboss.weld.integration.deployer.jndi.JBossBeanManagerObjectFactory", null);
-                reference.add(new StringRefAddr("id", IdFactory.getIdFromClassLoader(unit.getClassLoader())));
-                javaComp.bind("BeanManager", reference);
-            } catch (NamingException e) {
-                throw new DeploymentException("Error binding BeanManager.", e);
+                try {
+                    Reference reference = new Reference("javax.enterprise.inject.spi.BeanManager", "org.jboss.weld.integration.deployer.jndi.JBossBeanManagerObjectFactory", null);
+                    reference.add(new StringRefAddr("id", IdFactory.getIdFromClassLoader(unit.getClassLoader())));
+                    javaComp.bind("BeanManager", reference);
+                } catch (NamingException e) {
+                    throw new DeploymentException("Error binding BeanManager.", e);
+                }
             }
         }
+            
 
         public void error(DeploymentUnit unit) {
             // TODO: Any info on the error please?
@@ -96,11 +99,13 @@ public class CDIBeanManagerJNDIDeployer extends AbstractRealDeployer {
     private class UnbinderVisitor implements DeploymentUnitVisitor {
 
         public void visit(DeploymentUnit unit) throws DeploymentException {
-            try {
-                Context javaComp = getJavaComp(unit);
-                javaComp.unbind("BeanManager");
-            } catch (NamingException e) {
-                throw new DeploymentException("Error unbinding BeanManager.", e);
+            if (unit.isTopLevel()) {
+                try {
+                    Context javaComp = getJavaComp(unit);
+                    javaComp.unbind("BeanManager");
+                } catch (NamingException e) {
+                    throw new DeploymentException("Error unbinding BeanManager.", e);
+                }
             }
         }
 
