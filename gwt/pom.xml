@@ -132,7 +132,7 @@
                   <version>1.0.0.Beta9</version>
                   <classifier>sources</classifier>
                   <type>jar</type>
-                  <includes>org/jboss/dmr/**,org/jboss/as/console/client/widgets/**,org/jboss/as/console/client/auth/**,org/jboss/as/console/client/core/*.*,org/jboss/as/console/client/core/message/*.*,org/jboss/as/console/client/shared/*.*,org/jboss/as/console/client/shared/dispatch/**,org/jboss/as/console/client/Build.java,org/jboss/as/console/server/proxy/**,gwt-proxy.properties</includes>
+                  <includes>org/jboss/dmr/**,org/jboss/as/console/client/widgets/**,org/jboss/as/console/client/auth/**,org/jboss/as/console/client/core/*.*,org/jboss/as/console/client/core/message/*.*,org/jboss/as/console/client/shared/*.*,org/jboss/as/console/client/shared/dispatch/**,org/jboss/as/console/client/Build.java,gwt-proxy.properties</includes>
                   <excludes>org/jboss/as/console/client/shared/BeanFactory.java,org/jboss/as/console/client/widgets/forms/Form.java</excludes>
                   <outputDirectory>${asConsoleIncludesDirectory}/java</outputDirectory>
                 </artifactItem>
