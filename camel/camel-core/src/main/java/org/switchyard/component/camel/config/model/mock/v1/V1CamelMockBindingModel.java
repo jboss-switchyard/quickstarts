@@ -95,7 +95,7 @@ public class V1CamelMockBindingModel  extends V1BaseCamelBindingModel
     @Override
     public URI getComponentURI() {
         // base URI without params
-        String uriStr = MOCK + ":" + getConfig(NAME);
+        String uriStr = MOCK + "://" + getConfig(NAME);
         // create query string from config values
         QueryString queryStr = new QueryString()
         .add(REPORT_GROUP, getConfig(REPORT_GROUP));

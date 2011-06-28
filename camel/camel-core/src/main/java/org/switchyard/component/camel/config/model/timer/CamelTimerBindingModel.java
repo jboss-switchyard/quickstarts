@@ -137,18 +137,4 @@ public interface CamelTimerBindingModel extends CamelBindingModel {
      */
     public CamelTimerBindingModel setDaemon(Boolean daemon);
     
-    /**
-     * Camel 2.8: Maximum limit of number of fires.   
-     * @return the quantity of fires
-     */
-    public Integer getRepeatCount();
-
-    /**
-     * Specify a maximum limit of number of fires. So if you set it to 5, 
-     * the timer will fire once five times. A value of zero or negative 
-     * means fire forever.
-     * @param repeatCount the maximum number fires
-     * @return a reference to this Camel Timer binding model
-     */
-    public CamelTimerBindingModel setRepeatCount(Integer repeatCount);
 }

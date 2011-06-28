@@ -21,11 +21,15 @@
 
 package org.switchyard.component.camel.config.model.file.v1;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
 import junit.framework.Assert;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.file.FileEndpoint;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
@@ -67,6 +71,10 @@ public class V1CamelFileConsumerBindingModelTest {
 	private static final String NEW_CAMEL_URI = 
 		"file:///input/directory?autoCreate=true&bufferSize=1024&initialDelay=10" +
 		"&readLockCheckInterval=1000&delete=false&directoryMustExist=true";
+	
+	private static final String CAMEL_ENDPOINT_URI = 
+        "file:///input/directory?autoCreate=true&bufferSize=1024&delete=false&" +
+        "directoryMustExist=true&initialDelay=10&readLockCheckInterval=1000";
 	
     @Before
     public void setUp() throws Exception {
@@ -132,6 +140,27 @@ public class V1CamelFileConsumerBindingModelTest {
         CamelFileBindingModel bindingModel = createFileConsumerModel();
         Assert.assertEquals(NEW_CAMEL_URI, bindingModel.getComponentURI().toString());
     }
+    
+    @Test
+    public void testCamelEndpoint() {
+        CamelFileBindingModel model = createFileConsumerModel();
+        String configUri = model.getComponentURI().toString();
+        
+        CamelContext context = new DefaultCamelContext();
+        FileEndpoint endpoint = context.getEndpoint(configUri, FileEndpoint.class);
+        //Assert.assertEquals(endpoint.getId(), OPERATION_NAME); //No way to get the operation name
+        Assert.assertEquals(endpoint.getConfiguration().getDirectory(), 
+                TARGET_DIR.replace("/", File.separator));
+        Assert.assertEquals(endpoint.isAutoCreate(), AUTO_CREATE.booleanValue());
+        Assert.assertEquals(endpoint.getBufferSize(), BUFFER_SIZE.intValue());
+        Assert.assertEquals(endpoint.getConsumerProperties().get(
+                V1CamelFileConsumerBindingModel.INITIAL_DELAY), INITIAL_DELAY.toString());
+        Assert.assertEquals(endpoint.isDelete(), DELETE.booleanValue());
+        Assert.assertEquals(endpoint.getReadLockCheckInterval(), READ_LOCK_CHECK_INTERVAL.longValue());
+        Assert.assertEquals(endpoint.isDirectoryMustExist(), DIRECTORY_MUST_EXIST.booleanValue());
+        Assert.assertEquals(endpoint.getEndpointUri().toString(), CAMEL_ENDPOINT_URI);
+    }
+
 	  
     private CamelFileBindingModel createFileConsumerModel() {
     

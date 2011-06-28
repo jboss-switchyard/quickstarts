@@ -21,16 +21,21 @@
 
 package org.switchyard.component.camel.config.model.direct.v1;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
 import junit.framework.Assert;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.direct.DirectEndpoint;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.component.camel.config.model.direct.CamelDirectBindingModel;
+import org.switchyard.component.camel.config.model.file.v1.V1CamelFileConsumerBindingModel;
 import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Validation;
@@ -97,6 +102,17 @@ public class V1CamelDirectBindingModelTest {
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(refXml, newXml);
         Assert.assertTrue(diff.toString(), diff.similar());
+    }
+    
+    @Test
+    public void testCamelEndpoint() {
+        CamelDirectBindingModel model = createDirectModel();
+        String configUri = model.getComponentURI().toString();
+        
+        CamelContext context = new DefaultCamelContext();
+        DirectEndpoint endpoint = context.getEndpoint(configUri, DirectEndpoint.class);
+        //Assert.assertEquals(endpoint.getId(), NAME);
+        Assert.assertEquals(endpoint.getEndpointUri().toString(), CAMEL_URI);
     }
 
     private CamelDirectBindingModel createDirectModel() {

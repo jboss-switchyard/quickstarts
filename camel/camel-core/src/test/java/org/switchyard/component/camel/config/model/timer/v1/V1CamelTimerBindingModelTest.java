@@ -28,6 +28,9 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.timer.TimerEndpoint;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
@@ -52,23 +55,25 @@ public class V1CamelTimerBindingModelTest {
 	private static final String CAMEL_XML = "switchyard-timer-binding-beans.xml";
 	
 	private static final String NAME = "fooTimer";
-	private static final String PATTERN = "fooPattern";
+	private static final String PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
 	private static final Long PERIOD = new Long(555);
 	private static final Long DELAY = new Long(100);
 	private static final Boolean FIXED_RATE = Boolean.TRUE;
 	private static final Boolean DAEMON = Boolean.FALSE;
-	private static final Integer REPEAT_COUNT= new Integer(99);
 
 	private static final String CAMEL_URI = 
-		"timer://fooTimer?time=2011-01-01T12:00:00&pattern=fooPattern&" +
-		"period=555&delay=100&fixedRate=true&daemon=false&repeatCount=99";
+		"timer://fooTimer?time=2011-01-01T12:00:00&pattern=yyyy-MM-dd'T'HH:mm:ss&" +
+		"period=555&delay=100&fixedRate=true&daemon=false";
+	
+	private static final String CAMEL_ENDPOINT_URI = "timer://fooTimer?" +
+			"daemon=false&delay=100&fixedRate=true&pattern=yyyy-MM-dd%27T%27HH%3Amm%3Ass&" +
+			"period=555&time=2011-01-01T12%3A00%3A00";
 	
     private Date referenceDate;
 	
 	@Before
     public void setUp() throws Exception {
-        referenceDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-            .parse("2011-01-01T12:00:00");
+        referenceDate = new SimpleDateFormat(PATTERN).parse("2011-01-01T12:00:00");
     }
 
     @Test
@@ -94,7 +99,6 @@ public class V1CamelTimerBindingModelTest {
         Assert.assertEquals(bindingModel.getDelay(), DELAY);
         Assert.assertEquals(bindingModel.isFixedRate(), FIXED_RATE);
         Assert.assertEquals(bindingModel.isDaemon(), DAEMON);
-        Assert.assertEquals(bindingModel.getRepeatCount(), REPEAT_COUNT);
         Assert.assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
     }
     
@@ -112,13 +116,9 @@ public class V1CamelTimerBindingModelTest {
         Assert.assertEquals(bindingModel.getDelay(), DELAY);
         Assert.assertEquals(bindingModel.isFixedRate(), FIXED_RATE);
         Assert.assertEquals(bindingModel.isDaemon(), DAEMON);
-        Assert.assertEquals(bindingModel.getRepeatCount(), REPEAT_COUNT);
         Assert.assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
     }
-    /**
-     * This test fails because of namespace prefix
-     * 
-     */
+    
     @Test
     public void compareWriteConfig() throws Exception {
     	String refXml = getCamelBinding(CAMEL_XML).toString();
@@ -127,7 +127,22 @@ public class V1CamelTimerBindingModelTest {
         Diff diff = XMLUnit.compareXML(refXml, newXml);
         Assert.assertTrue(diff.toString(), diff.similar());
     }
-	  
+	
+    @Test
+    public void testCamelEndpoint() {
+        CamelTimerBindingModel model = createTimerModel();
+        String configUri = model.getComponentURI().toString();
+        CamelContext context = new DefaultCamelContext();
+        TimerEndpoint endpoint = context.getEndpoint(configUri, TimerEndpoint.class);
+        Assert.assertEquals(endpoint.getTimerName(), NAME);
+        Assert.assertEquals(endpoint.getTime().toString(), referenceDate.toString());
+        Assert.assertEquals(endpoint.getPeriod(), PERIOD.longValue());
+        Assert.assertEquals(endpoint.getDelay(), DELAY.longValue());
+        Assert.assertEquals(endpoint.isFixedRate(), FIXED_RATE.booleanValue());
+        Assert.assertEquals(endpoint.isDaemon(), DAEMON.booleanValue());
+        Assert.assertEquals(endpoint.getEndpointUri().toString(), CAMEL_ENDPOINT_URI);
+    }
+    
     private CamelTimerBindingModel createTimerModel() {
     	return new V1CamelTimerBindingModel().setName(NAME)
     		.setTime(referenceDate)
@@ -135,8 +150,7 @@ public class V1CamelTimerBindingModelTest {
     		.setPeriod(PERIOD)
     		.setDelay(DELAY)
     		.setFixedRate(FIXED_RATE)
-    		.setDaemon(DAEMON)
-    		.setRepeatCount(REPEAT_COUNT);
+    		.setDaemon(DAEMON);
     }
     
     

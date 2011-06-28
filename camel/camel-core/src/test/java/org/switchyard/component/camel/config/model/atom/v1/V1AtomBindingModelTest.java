@@ -26,6 +26,9 @@ import java.util.Date;
 
 import junit.framework.Assert;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.atom.AtomEndpoint;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
@@ -94,23 +97,23 @@ public class V1AtomBindingModelTest {
         Assert.assertEquals(ATOM_URI, atomModel.getComponentURI().toString());
     }
     
-    /** Need to investigate the proper way to create endpoint URIs with a 
-     *  camel component.
     @Test
     public void testCamelEndpoint() {
-        AtomEndpoint atomEndpoint = new AtomEndpoint(
-                createAtomModel().getComponentURI().toString());
         
-        System.out.println("--->" + createAtomModel().getComponentURI().toString());
-        Assert.assertEquals(FEED_URI, atomEndpoint.getFeedUri());
-        Assert.assertEquals(referenceDate, atomEndpoint.getLastUpdate());
-        Assert.assertTrue(atomEndpoint.isFeedHeader());
-        Assert.assertTrue(atomEndpoint.isFilter());
-        Assert.assertTrue(atomEndpoint.isSortEntries());
-        Assert.assertTrue(atomEndpoint.isSplitEntries());
-        Assert.assertTrue(atomEndpoint.isThrottleEntries());
+        AtomBindingModel model = createAtomModel();
+        String configUri = model.getComponentURI().toString();
+        CamelContext context = new DefaultCamelContext();
+        AtomEndpoint endpoint = context.getEndpoint(configUri, AtomEndpoint.class);
+        
+        Assert.assertEquals(FEED_URI.toString(), endpoint.getFeedUri().toString());
+        Assert.assertEquals(referenceDate, endpoint.getLastUpdate());
+        Assert.assertTrue(endpoint.isFeedHeader());
+        Assert.assertTrue(endpoint.isFilter());
+        Assert.assertTrue(endpoint.isSortEntries());
+        Assert.assertTrue(endpoint.isSplitEntries());
+        Assert.assertTrue(endpoint.isThrottleEntries());
     }
-    */
+    
     
     private void assertDefaults(AtomBindingModel atomModel) {
         Assert.assertEquals(FEED_URI, atomModel.getFeedURI());

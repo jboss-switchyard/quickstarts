@@ -57,7 +57,6 @@ public class V1CamelTimerBindingModel  extends V1BaseCamelBindingModel
     private static final String DELAY               = "delay";
     private static final String FIXED_RATE          = "fixedRate";
     private static final String DAEMON              = "daemon";
-    private static final String REPEAT_COUNT        = "repeatCount";
 
     // Used for dateTime fields
     private static DateFormat _dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -74,8 +73,7 @@ public class V1CamelTimerBindingModel  extends V1BaseCamelBindingModel
                 PERIOD,
                 DELAY,
                 FIXED_RATE,
-                DAEMON,
-                REPEAT_COUNT);
+                DAEMON);
     }
 
     /**
@@ -166,17 +164,6 @@ public class V1CamelTimerBindingModel  extends V1BaseCamelBindingModel
     }
 
     @Override
-    public Integer getRepeatCount() {
-        return getIntegerConfig(REPEAT_COUNT);
-    }
-
-    @Override
-    public CamelTimerBindingModel setRepeatCount(Integer repeatCount) {
-        setConfig(REPEAT_COUNT, String.valueOf(repeatCount));
-        return this;
-    }
-    
-    @Override
     public URI getComponentURI() {
         // base URI without params
         String uriStr = TIMER + "://" + getConfig(NAME);
@@ -187,8 +174,7 @@ public class V1CamelTimerBindingModel  extends V1BaseCamelBindingModel
         .add(PERIOD, getConfig(PERIOD))
         .add(DELAY, getConfig(DELAY))
         .add(FIXED_RATE, getConfig(FIXED_RATE))
-        .add(DAEMON, getConfig(DAEMON))
-        .add(REPEAT_COUNT, getConfig(REPEAT_COUNT));
+        .add(DAEMON, getConfig(DAEMON));
 
         return URI.create(uriStr.toString() + queryStr);
     }

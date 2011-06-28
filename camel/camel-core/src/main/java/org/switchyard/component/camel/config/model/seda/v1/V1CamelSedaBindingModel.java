@@ -83,7 +83,7 @@ implements CamelSedaBindingModel {
     @Override
     public URI getComponentURI() {
         // base URI without params
-        String uriStr = SEDA + ":" + getConfig(NAME);
+        String uriStr = SEDA + "://" + getConfig(NAME);
         // create query string from config values
         QueryString queryStr = new QueryString()
         .add(SIZE, getConfig(SIZE))

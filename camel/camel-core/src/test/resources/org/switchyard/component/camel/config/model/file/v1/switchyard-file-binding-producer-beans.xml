@@ -24,9 +24,8 @@
 			    <camel:targetDir>/input/directory</camel:targetDir>
 				<camel:autoCreate>false</camel:autoCreate>
 				<camel:produce>
-					<camel:fileExist>override</camel:fileExist>
+					<camel:fileExist>Override</camel:fileExist>
 					<camel:tempPrefix>prefix_</camel:tempPrefix>
-					<camel:tempFileName>tempdir</camel:tempFileName>
 					<camel:keepLastModified>false</camel:keepLastModified>
 					<camel:eagerDeleteTargetFile>true</camel:eagerDeleteTargetFile>
 					<camel:doneFileName>processed</camel:doneFileName>

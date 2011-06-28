@@ -24,11 +24,18 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
+import junit.framework.Assert;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.file.FileEndpoint;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 import org.switchyard.common.type.Classes;
+import org.switchyard.component.camel.config.model.file.CamelFileBindingModel;
 import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Validation;
@@ -54,6 +61,18 @@ public class V1CamelFileBindingModelTest {
     
     private String expectedDirectoryName() {
         return "/input/directory";
+    }
+    
+    @Test
+    public void testCamelEndpoint()  throws Exception {
+        CamelFileBindingModel model = getFirstCamelBinding("switchyard-file-binding-beans.xml");
+        String configUri = model.getComponentURI().toString();
+        
+        CamelContext context = new DefaultCamelContext();
+        FileEndpoint endpoint = context.getEndpoint(configUri, FileEndpoint.class);
+        Assert.assertEquals(endpoint.getConfiguration().getDirectory(), 
+                expectedDirectoryName().replace("/", File.separator));
+        Assert.assertEquals(endpoint.getEndpointUri().toString(), "file:///input/directory");
     }
     
     private V1CamelFileBindingModel getFirstCamelBinding(final String config) throws Exception {

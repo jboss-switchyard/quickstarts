@@ -26,6 +26,9 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.seda.SedaEndpoint;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
@@ -57,10 +60,15 @@ public class V1CamelSedaBindingModelTest {
     private static final Boolean MULTIPLE_CONSUMERS = Boolean.TRUE;
     private static final Boolean LIMIT_CONCURRENT_CONSUMERS = Boolean.FALSE;
     
-    private static final String CAMEL_URI = "seda:fooSedaName?size=55" +
+    private static final String CAMEL_URI = "seda://fooSedaName?size=55" +
     		"&waitForTaskToComplete=Always&concurrentConsumers=3" +
     		"&timeout=1000&multipleConsumers=true&limitConcurrentConsumers=false";
 
+    private static final String CAMEL_ENDPOINT_URI = "seda://fooSedaName?" +
+    		"concurrentConsumers=3&limitConcurrentConsumers=false&multipleConsumers=true&" +
+    		"size=55&timeout=1000&waitForTaskToComplete=Always";
+    
+    
     @Before
     public void setUp() throws Exception {
     }
@@ -117,6 +125,22 @@ public class V1CamelSedaBindingModelTest {
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(refXml, newXml);
         Assert.assertTrue(diff.toString(), diff.similar());
+    }
+    
+    @Test
+    public void testCamelEndpoint() {
+        CamelSedaBindingModel model = createSedaModel();
+        String configUri = model.getComponentURI().toString();
+        CamelContext context = new DefaultCamelContext();
+        SedaEndpoint endpoint = context.getEndpoint(configUri, SedaEndpoint.class);
+        //Assert.assertEquals(endpoint.getId(), NAME); //No way to get the endpoint name
+        Assert.assertEquals(endpoint.getSize(), SIZE.intValue());
+        Assert.assertEquals(endpoint.getConcurrentConsumers(), CONCURRENT_CONSUMERS.intValue());
+        Assert.assertEquals(endpoint.getWaitForTaskToComplete().toString(), WAIT_FOR_TASK_TO_COMPLETE);
+        Assert.assertEquals(endpoint.getTimeout(), TIMEOUT.longValue());
+        Assert.assertEquals(endpoint.isMultipleConsumers(), MULTIPLE_CONSUMERS.booleanValue());
+        Assert.assertEquals(endpoint.isMultipleConsumersSupported() , !LIMIT_CONCURRENT_CONSUMERS.booleanValue());
+        Assert.assertEquals(endpoint.getEndpointUri().toString(), CAMEL_ENDPOINT_URI);
     }
 
     private CamelSedaBindingModel createSedaModel() {

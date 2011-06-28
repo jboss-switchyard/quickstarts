@@ -26,6 +26,11 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Processor;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.processor.ThroughputLogger;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
@@ -52,7 +57,7 @@ public class V1CamelMockBindingModelTest {
     private static final String NAME = "fooMockName";
     private static final Integer REPORT_GROUP = new Integer(999);
 
-    private static final String CAMEL_URI = "mock:fooMockName?reportGroup=999";
+    private static final String CAMEL_URI = "mock://fooMockName?reportGroup=999";
 
     @Before
     public void setUp() throws Exception {
@@ -102,6 +107,18 @@ public class V1CamelMockBindingModelTest {
         Assert.assertTrue(diff.toString(), diff.similar());
     }
 
+    @Test
+    public void testCamelEndpoint() {
+        CamelMockBindingModel model = createMockModel();
+        String configUri = model.getComponentURI().toString();
+        CamelContext context = new DefaultCamelContext();
+        MockEndpoint endpoint = context.getEndpoint(configUri, MockEndpoint.class);
+        //Assert.assertEquals(endpoint.getId(), NAME); //No way to get the endpoint name
+        ThroughputLogger logger = (ThroughputLogger)endpoint.getReporter();
+        Assert.assertEquals(logger.getGroupSize(), REPORT_GROUP);
+        Assert.assertEquals(endpoint.getEndpointUri().toString(), CAMEL_URI);
+    }
+    
     private CamelMockBindingModel createMockModel() {
         return new V1CamelMockBindingModel().setName(NAME).setReportGroup(REPORT_GROUP);
     }

@@ -21,11 +21,15 @@
 
 package org.switchyard.component.camel.config.model.file.v1;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
 import junit.framework.Assert;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.file.FileEndpoint;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
@@ -50,17 +54,20 @@ public class V1CamelFileProducerBindingModelTest {
 	
 	private static final String TARGET_DIR = "/input/directory";
 	private static final Boolean AUTO_CREATE = Boolean.FALSE;
-	private static final String FILE_EXIST = "override";
+	private static final String FILE_EXIST = "Override";
 	private static final String TEMP_PREFIX = "prefix_";
-	private static final String TEMP_FILENAME= "tempdir";
 	private static final Boolean KEEP_LAST_MODIFIED = Boolean.FALSE;
 	private static final Boolean EAGER_DELETE_TARGET_FLE = Boolean.TRUE;
 	private static final String DONE_FILENAME = "processed";
 	private static final String CAMEL_URI = 
-    	"file:///input/directory?autoCreate=false&fileExist=override" +
-    	"&tempPrefix=prefix_&tempFileName=tempdir&keepLastModified=false" +
+    	"file:///input/directory?autoCreate=false&fileExist=Override" +
+    	"&tempPrefix=prefix_&keepLastModified=false" +
     	"&eagerDeleteTargetFile=true&doneFileName=processed";
 	
+	private static final String CAMEL_ENDPOINT_URI = 
+        "file:///input/directory?autoCreate=false&doneFileName=processed&" +
+        "eagerDeleteTargetFile=true&fileExist=Override&keepLastModified=false&" +
+        "tempPrefix=prefix_";
 	
 	@Before
     public void setUp() throws Exception {
@@ -87,7 +94,6 @@ public class V1CamelFileProducerBindingModelTest {
         //Camel File Producer
         Assert.assertEquals(bindingModel.getProducer().getFileExist(), FILE_EXIST);
         Assert.assertEquals(bindingModel.getProducer().getTempPrefix(), TEMP_PREFIX);
-        Assert.assertEquals(bindingModel.getProducer().getTempFileName(), TEMP_FILENAME);
         Assert.assertEquals(bindingModel.getProducer().isKeepLastModified(), KEEP_LAST_MODIFIED);
         Assert.assertEquals(bindingModel.getProducer().isEagerDeleteTargetFile(), EAGER_DELETE_TARGET_FLE);
         Assert.assertEquals(bindingModel.getProducer().getDoneFileName(), DONE_FILENAME);
@@ -113,6 +119,25 @@ public class V1CamelFileProducerBindingModelTest {
         Assert.assertEquals(CAMEL_URI.toString(), bindingModel.getComponentURI().toString());
     }
 	  
+    @Test
+    public void testCamelEndpoint() {
+        CamelFileBindingModel model = createFileProducerModel();
+        String configUri = model.getComponentURI().toString();
+        
+        CamelContext context = new DefaultCamelContext();
+        FileEndpoint endpoint = context.getEndpoint(configUri, FileEndpoint.class);
+        //Assert.assertEquals(endpoint.getId(), OPERATION_NAME); //No way to get the operation name
+        Assert.assertEquals(endpoint.getConfiguration().getDirectory(), 
+                TARGET_DIR.replace("/", File.separator));
+        Assert.assertEquals(endpoint.isAutoCreate(), AUTO_CREATE.booleanValue());
+        Assert.assertEquals(endpoint.getFileExist().toString(), FILE_EXIST.toString());
+        Assert.assertEquals(endpoint.getTempPrefix(), TEMP_PREFIX);
+        Assert.assertEquals(endpoint.isKeepLastModified(), KEEP_LAST_MODIFIED.booleanValue());
+        Assert.assertEquals(endpoint.isEagerDeleteTargetFile(), EAGER_DELETE_TARGET_FLE.booleanValue());
+        Assert.assertEquals(endpoint.getDoneFileName(), DONE_FILENAME);
+        Assert.assertEquals(endpoint.getEndpointUri().toString(), CAMEL_ENDPOINT_URI);
+    }
+    
     private CamelFileBindingModel createFileProducerModel() {
     	
     	V1CamelFileBindingModel fileModel = new V1CamelFileBindingModel()
@@ -122,7 +147,6 @@ public class V1CamelFileProducerBindingModelTest {
     	CamelFileProducerBindingModel producer = new V1CamelFileProducerBindingModel()
     		.setFileExist(FILE_EXIST)
     		.setTempPrefix(TEMP_PREFIX)
-    		.setTempFileName(TEMP_FILENAME)
     		.setKeepLastModified(KEEP_LAST_MODIFIED)
     		.setEagerDeleteTargetFile(EAGER_DELETE_TARGET_FLE)
     		.setDoneFileName(DONE_FILENAME);

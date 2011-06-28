@@ -22,12 +22,11 @@
 			<camel:binding.timer>
 			    <camel:name>fooTimer</camel:name>
 			    <camel:time>2011-01-01T12:00:00</camel:time>
-                <camel:pattern>fooPattern</camel:pattern>
+                <camel:pattern>yyyy-MM-dd'T'HH:mm:ss</camel:pattern>
                 <camel:period>555</camel:period>
                 <camel:delay>100</camel:delay>
                 <camel:fixedRate>true</camel:fixedRate>
                 <camel:daemon>false</camel:daemon>
-                <camel:repeatCount>99</camel:repeatCount>
 			</camel:binding.timer>
 		</sca:service>
 	</sca:composite>
