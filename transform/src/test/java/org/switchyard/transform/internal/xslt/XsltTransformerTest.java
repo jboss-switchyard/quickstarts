@@ -1,0 +1,147 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * as indicated by the @authors tag. All rights reserved.
+ * See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA  02110-1301, USA.
+ */
+package org.switchyard.transform.internal.xslt;
+
+import java.io.IOException;
+import java.io.InputStream;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.Assert;
+import org.junit.Test;
+import org.switchyard.common.type.Classes;
+import org.switchyard.config.model.ModelResource;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.transform.TransformsModel;
+import org.switchyard.exception.SwitchYardException;
+import org.switchyard.internal.DefaultMessage;
+import org.switchyard.internal.transform.BaseTransformerRegistry;
+import org.switchyard.transform.Transformer;
+import org.switchyard.transform.TransformerRegistry;
+import org.switchyard.transform.TransformerRegistryLoader;
+import org.switchyard.transform.config.model.XsltTransformModel;
+import org.switchyard.transform.xslt.XsltTransformFactory;
+import org.switchyard.transform.xslt.XsltTransformer;
+import org.xml.sax.SAXException;
+
+/**
+ * @author Alejandro Montenegro <a
+ *         href="mailto:aamonten@gmail.com">aamonten@gmail.com</a>
+ */
+public class XsltTransformerTest {
+
+    private TransformerRegistry xformReg;
+
+    private final static String INITIAL = "<?xml version=\"1.0\"?><project><topic><title>Switchyard</title><url>http://www.jboss.org/switchyard</url>"
+            + "</topic><topic><title>Arquillian</title><url>http://www.jboss.org/arquillian</url></topic><topic><title>Drools</title>"
+            + "<url>http://www.jboss.org/drools</url></topic><topic><title>JBoss Tools</title><url>http://www.jboss.org/tools</url>"
+            + "</topic></project>";
+
+    private final static String INITIAL_FAIL = "<?xml version=\"1.0\"?><project><topic><title>Switchyard</title><url>http://www.jboss.org/switchyard</url>"
+            + "</topic><topic><title>Arquillian</title><url>http://www.jboss.org/arquillian</url></topic><topic><title>Drools</title>"
+            + "<url>http://www.jboss.org/drools</url></topic><topic><title>JBoss Tools</title><url>http://www.jboss.org/tools</url>";
+
+    private final static String EXPECTED = "<?xml version=\"1.0\"?><index><head>"
+            + "<title>JBoss Project's'</title></head><body><table border=\"1\"><tr><th>Title</th><th>URL</th></tr><tr>"
+            + "<td>Switchyard</td><td>http://www.jboss.org/switchyard</td></tr><tr><td>Arquillian</td><td>http://www.jboss.org/arquillian</td>"
+            + "</tr><tr><td>Drools</td><td>http://www.jboss.org/drools</td></tr><tr><td>JBoss Tools</td><td>http://www.jboss.org/tools</td>"
+            + "</tr></table></body></index>";
+
+    public XsltTransformerTest() {
+        xformReg = new BaseTransformerRegistry();
+        new TransformerRegistryLoader(xformReg).loadOOTBTransforms();
+    }
+
+    @Test
+    public void test_no_validation() throws IOException {
+        try {
+            getTransformer("xslt-config-01.xml");
+        } catch (RuntimeException e) {
+            Assert.fail("failed to load configuration file xslt-config-01.xml");
+        }
+    }
+
+    @Test
+    public void test_no_xslt_file() throws IOException {
+        try {
+            getTransformer("xslt-config-02.xml");
+            Assert.fail("the configuration file should be invalid");
+        } catch (RuntimeException e) {
+            Assert.assertEquals("No xsl file has been defined. Check your transformer configuration.",e.getMessage());
+        }
+    }
+
+    @Test
+    public void test_xslt_result() throws IOException, SAXException {
+        Transformer transformer = getTransformer("xslt-config-03.xml");
+        DefaultMessage message = newMessage(INITIAL);
+        transformer.transform(message);
+        String result = message.getContent(String.class);
+
+        XMLUnit.setIgnoreWhitespace(true);
+        Diff diff = new Diff(EXPECTED, result);
+        Assert.assertTrue(diff.toString(), diff.identical());
+    }
+
+    @Test
+    public void test_local_xslt_file_fail() throws IOException {
+        try {
+            Transformer transformer = getTransformer("xslt-config-03.xml");
+            DefaultMessage message = newMessage(INITIAL_FAIL);
+            Object result = transformer.transform(message);
+            Assert.fail("xml to transform should be invalid");
+        } catch (SwitchYardException e) {
+            Assert.assertEquals("Error during xslt transformation",e.getMessage());
+        }
+    }
+
+    private Transformer getTransformer(String config) throws IOException {
+        InputStream swConfigStream = Classes.getResourceAsStream(config,
+                getClass());
+
+        if (swConfigStream == null) {
+            Assert.fail("null config stream.");
+        }
+
+        SwitchYardModel switchyardConfig = new ModelResource<SwitchYardModel>()
+                .pull(swConfigStream);
+        TransformsModel transforms = switchyardConfig.getTransforms();
+
+        XsltTransformModel xsltTransformModel = (XsltTransformModel) transforms
+                .getTransforms().get(0);
+
+        if (xsltTransformModel == null) {
+            Assert.fail("No xslt config.");
+        }
+
+        Transformer transformer = new XsltTransformFactory().newTransformer(xsltTransformModel);
+
+        if (!(transformer instanceof XsltTransformer)) {
+            Assert.fail("Not an instance of XsltTransformer.");
+        }
+
+        return transformer;
+    }
+
+    private DefaultMessage newMessage(Object content) {
+        DefaultMessage message = new DefaultMessage().setContent(content);
+        message.setTransformerRegistry(xformReg);
+        return message;
+    }
+
+}
