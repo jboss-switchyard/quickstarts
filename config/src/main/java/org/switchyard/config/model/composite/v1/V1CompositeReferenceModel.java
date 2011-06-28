@@ -44,6 +44,11 @@ import org.switchyard.config.model.composite.InterfaceModel;
  */
 public class V1CompositeReferenceModel extends BaseNamedModel implements CompositeReferenceModel {
 
+    /**
+     * The separator used between component-name service-name combination.
+     */
+    public static final String REFERENCE_SEPARATOR = "/";
+
     private List<BindingModel> _bindings = new ArrayList<BindingModel>();
     private InterfaceModel _interface;
 
@@ -86,7 +91,7 @@ public class V1CompositeReferenceModel extends BaseNamedModel implements Composi
         if (composite != null) {
             QName promote = getPromote();
             if (promote != null) {
-                StringTokenizer st = new StringTokenizer(promote.getLocalPart(), "/");
+                StringTokenizer st = new StringTokenizer(promote.getLocalPart(), REFERENCE_SEPARATOR);
                 int count = st.countTokens();
                 if (count == 1) {
                     QName componentName = XMLHelper.createQName(st.nextToken());

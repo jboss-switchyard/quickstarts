@@ -176,14 +176,15 @@ public class SwitchYardPlugin extends AbstractPlugin {
             return;
         }
         // Make sure a component service exists
-        if (switchYard.getComponentReference(referenceName) == null) {
+        ComponentReferenceModel component = switchYard.getComponentReference(referenceName);
+        if (component == null) {
             out.println(out.renderColor(ShellColor.RED, "Component reference not found: " + referenceName));
             return;
         }
         // Create the composite service
         V1CompositeReferenceModel reference = new V1CompositeReferenceModel();
         reference.setName(referenceName);
-        reference.setPromote(new QName(referenceName));
+        reference.setPromote(new QName(component.getComponent().getName() + V1CompositeReferenceModel.REFERENCE_SEPARATOR + referenceName));
         switchYard.getSwitchYardConfig().getComposite().addReference(reference);
         
         // Save configuration changes
