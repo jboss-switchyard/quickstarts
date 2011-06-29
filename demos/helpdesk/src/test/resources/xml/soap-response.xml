@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope
+    xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:bpm="urn:switchyard-component-bpm:process:1.0"
+    xmlns:helpdesk="urn:switchyard-quickstart-demo:helpdesk:1.0">
+    <SOAP-ENV:Header>
+        <bpm:processInstanceId>1</bpm:processInstanceId>
+    </SOAP-ENV:Header>
+    <SOAP-ENV:Body>
+        <helpdesk:openTicketResponse>
+            <ticketAck>
+                <id>TCKT-17761852</id>
+                <received>true</received>
+            </ticketAck>
+        </helpdesk:openTicketResponse>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
