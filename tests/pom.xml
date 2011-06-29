@@ -66,15 +66,18 @@
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-bean</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-soap</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.milyn</groupId>
             <artifactId>milyn-smooks-javabean</artifactId>
             <version>1.5-SNAPSHOT</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

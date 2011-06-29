@@ -81,25 +81,31 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             ComponentModel componentModel = new V1ComponentModel();
             String name;
             Class<?>[] componentIfaces = serviceClass.getInterfaces();
+
             if (componentIfaces.length > 0) {
-                Class<?> iface = componentIfaces[0];
-                name = iface.getSimpleName();
                 // Add the service
+                Class<?> iface = componentIfaces[0];
                 ComponentServiceModel serviceModel = new V1ComponentServiceModel();
-                serviceModel.setName(name);
                 JavaComponentServiceInterfaceModel csiModel = new V1JavaComponentServiceInterfaceModel();
-                csiModel.setInterface(iface.getName());
+
+                name = iface.getSimpleName();
+
+                serviceModel.setName(name);
                 serviceModel.setInterface(csiModel);
+                csiModel.setInterface(iface.getName());
                 componentModel.addService(serviceModel);
+
                 // Add any references
                 for (Class<?> reference : getReferences(serviceClass)) {
                     ComponentReferenceModel referenceModel = new V1ComponentReferenceModel();
-                    referenceModel.setName(reference.getSimpleName());
                     ComponentReferenceInterfaceModel interfaceModel = new V1JavaComponentReferenceInterfaceModel();
-                    interfaceModel.setInterface(reference.getCanonicalName());
+
+                    referenceModel.setName(reference.getSimpleName());
                     referenceModel.setInterface(interfaceModel);
+                    interfaceModel.setInterface(reference.getCanonicalName());
                     componentModel.addReference(referenceModel);
                 }
+
                 compositeModel.addComponent(componentModel);
             } else {
                 name = serviceClass.getSimpleName();

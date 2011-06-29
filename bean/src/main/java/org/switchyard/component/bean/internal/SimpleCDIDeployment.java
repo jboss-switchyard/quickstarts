@@ -68,6 +68,7 @@ public class SimpleCDIDeployment extends AbstractDeployment {
 
     @Override
     public void stop() {
+        undeployAutoRegisteredTransformers();
     }
 
     @Override
@@ -105,6 +106,8 @@ public class SimpleCDIDeployment extends AbstractDeployment {
             serviceInterface = activator.buildServiceInterface(serviceName);
             service = domain.registerService(serviceName, handler, serviceInterface);
             activator.start(service);
+
+            deployAutoRegisteredTransformers(serviceInterface);
         }
     }
 }

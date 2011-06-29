@@ -1,29 +1,23 @@
-/* 
- * JBoss, Home of Professional Open Source 
+/*
+ * JBoss, Home of Professional Open Source
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved. 
- * See the copyright.txt in the distribution for a 
+ * as indicated by the @authors tag. All rights reserved.
+ * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
- * This copyrighted material is made available to anyone wishing to use, 
- * modify, copy, or redistribute it subject to the terms and conditions 
- * of the GNU Lesser General Public License, v. 2.1. 
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details. 
- * You should have received a copy of the GNU Lesser General Public License, 
- * v.2.1 along with this distribution; if not, write to the Free Software 
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
 
 package org.switchyard.component.soap;
-
-import java.io.ByteArrayOutputStream;
-import java.net.MalformedURLException;
-
-import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPMessage;
 
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -31,15 +25,24 @@ import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
+import org.switchyard.component.soap.jaxb.greeting.Greeting;
 import org.switchyard.component.soap.util.StreamUtil;
+import org.switchyard.metadata.java.JavaService;
 import org.switchyard.test.SwitchYardTestCase;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
+import org.switchyard.transform.jaxb.internal.JAXBMarshalTransformer;
+import org.switchyard.transform.jaxb.internal.JAXBTransformerFactory;
+
+import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPMessage;
+import java.io.ByteArrayOutputStream;
+import java.net.MalformedURLException;
 
 @SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
-public class GreetingServiceTest extends SwitchYardTestCase {
+public class JAXBGreetingServiceTest extends SwitchYardTestCase {
 
-    private static final QName GREETING_SERVICE_NAME = new QName("GreetingService");
+    private static final QName GREETING_SERVICE_NAME = new QName("JAXBGreetingService");
 
     private SOAPBindingModel config;
 
@@ -81,23 +84,9 @@ public class GreetingServiceTest extends SwitchYardTestCase {
     }
 
     @Test
-    public void invokeRequestResponse_App_Exception() throws Exception {
-        String soapRequest = "<gre:greet xmlns:gre=\"urn:switchyard-component-soap:test-greeting:1.0\">\n" +
-                " <arg0>\n" +
-                "    <person>\n" +
-                "       <firstname>throwme</firstname>\n" + // This tells the service to throw an exception
-                "    </person>\n" +
-                " </arg0>\n" +
-                "</gre:greet>";
-        String expectedResponse = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault><faultcode>SOAP-ENV:Server</faultcode><faultstring>Application Exception from GreetingService !!</faultstring></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
-
-        test(soapRequest, expectedResponse, true);
-    }
-
-    @Test
     public void invokeRequestResponse_bad_soap_01() throws Exception {
         String soapRequest = "<gre:greet xmlns:gre=\"http://broken/unknown/namespace\" />";
-        String expectedResponse = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault><faultcode>SOAP-ENV:Server</faultcode><faultstring>Invalid input SOAP payload namespace for service operation 'greet' (service 'GreetingService').  Port defines operation namespace as 'urn:switchyard-component-soap:test-greeting:1.0'.  Actual namespace on input SOAP message 'http://broken/unknown/namespace'.</faultstring></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+        String expectedResponse = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault><faultcode>SOAP-ENV:Server</faultcode><faultstring>Invalid input SOAP payload namespace for service operation 'greet' (service 'JAXBGreetingService').  Port defines operation namespace as 'urn:switchyard-component-soap:test-greeting:1.0'.  Actual namespace on input SOAP message 'http://broken/unknown/namespace'.</faultstring></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
         test(soapRequest, expectedResponse, false);
     }
@@ -105,7 +94,7 @@ public class GreetingServiceTest extends SwitchYardTestCase {
     @Test
     public void invokeRequestResponse_bad_soap_02() throws Exception {
         String soapRequest = "<gre:xxxxx xmlns:gre=\"urn:switchyard-component-soap:test-greeting:1.0\" />";
-        String expectedResponse = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault><faultcode>SOAP-ENV:Server</faultcode><faultstring>Operation 'xxxxx' not available on target Service 'GreetingService'.</faultstring></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+        String expectedResponse = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault><faultcode>SOAP-ENV:Server</faultcode><faultstring>Operation 'xxxxx' not available on target Service 'JAXBGreetingService'.</faultstring></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
         test(soapRequest, expectedResponse, false);
     }

@@ -50,7 +50,6 @@
     <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.io.Reader" to="java:javax.xml.transform.stream.StreamSource"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.io.Reader" to="java:org.apache.camel.StreamCache"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.io.Reader" to="java:javax.xml.stream.XMLStreamReader"/>
-    <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:org.w3c.dom.Document" to="java:java.io.InputStream"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:org.w3c.dom.Document" to="java:javax.xml.transform.dom.DOMSource"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:org.apache.camel.Predicate" to="java:org.apache.camel.Processor"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:char[]" to="java:java.lang.String"/>
