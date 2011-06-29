@@ -14,4 +14,6 @@ Available Quickstart Demos
 ==========================
 o demos/orders : an example application demonstrating features
   delivered in SwitchYard milestone 1.
+o demos/helpdesk : an example application demonstrating features
+  of BPM and SOAP.
   
