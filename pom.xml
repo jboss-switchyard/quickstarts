@@ -50,6 +50,7 @@
         <module>transform-json</module>
         <module>transform-smooks</module>
         <module>demos/orders</module>
+        <module>demos/helpdesk</module>
     </modules>
     
     <repositories>
