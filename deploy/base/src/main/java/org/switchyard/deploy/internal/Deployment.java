@@ -72,8 +72,7 @@ public class Deployment extends AbstractDeployment {
 
     private static Logger _log = Logger.getLogger(Deployment.class);
 
-    private Map<String, Activator> _activators =
-        new HashMap<String, Activator>();
+    private Map<String, Activator> _activators = new HashMap<String, Activator>();
     private List<Activation> _services = new LinkedList<Activation>();
     private List<Activation> _serviceBindings = new LinkedList<Activation>();
     private List<Activation> _references = new LinkedList<Activation>();
@@ -120,6 +119,7 @@ public class Deployment extends AbstractDeployment {
             deployServices();
             deployReferences();
             deployServiceBindings();
+            deployAutoRegisteredTransformers();
         } catch (RuntimeException e1) {
             // Undo partial deployment...
             _log.debug("Undeploying partially deployed artifacts of failed deployment " + getConfig().getName());
@@ -144,6 +144,7 @@ public class Deployment extends AbstractDeployment {
         undeployServices();
         undeployReferences();
         undeployReferenceBindings();
+        undeployAutoRegisteredTransformers();
     }
 
     /**
@@ -347,6 +348,18 @@ public class Deployment extends AbstractDeployment {
         for (Activation activation : _referenceBindings) {
             activation.stop();
             activation.destroy();
+        }
+    }
+
+    private void deployAutoRegisteredTransformers() {
+        deployAutoRegisteredTransformers(_services);
+        deployAutoRegisteredTransformers(_references);
+    }
+
+    private void deployAutoRegisteredTransformers(List<Activation> activationList) {
+        for (Activation activation : activationList) {
+            ServiceInterface serviceInterface = activation.getService().getInterface();
+            deployAutoRegisteredTransformers(serviceInterface);
         }
     }
 

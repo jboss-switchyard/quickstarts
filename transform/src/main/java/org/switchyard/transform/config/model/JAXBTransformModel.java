@@ -17,33 +17,17 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.transform.smooks;
+package org.switchyard.transform.config.model;
+
+import org.switchyard.config.model.transform.TransformModel;
 
 /**
- * Smooks transformation type.
+ * A "transform.jaxb" configuration model.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public enum SmooksTransformType {
-    /**
-     * Basic Smooks Transformation.
-     * <p/>
-     * The result type is defined through the &lt;core:exports&gt;
-     * section of the configuration.
-     * <p/>
-     * See the <a href="www.smooks.org">Smooks User Guide</a>.
-     */
-    SMOOKS,
-    /**
-     * XML to Java Transformation via Smooks Java Binding configurations.
-     * <p/>
-     * See the <a href="www.smooks.org">Smooks User Guide</a>.
-     */
-    XML2JAVA,
-    /**
-     * Java to XML Transformation via Smooks Java Binding configurations.
-     * <p/>
-     * See the <a href="www.smooks.org">Smooks User Guide</a>.
-     */
-    JAVA2XML
+public interface JAXBTransformModel extends TransformModel {
+
+    /** The "jaxb" name. */
+    public static final String JAXB = "jaxb";
 }

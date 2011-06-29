@@ -24,6 +24,7 @@ import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.transform.TransformModel;
+import org.switchyard.transform.config.model.JAXBTransformModel;
 import org.switchyard.transform.config.model.JSONTransformModel;
 import org.switchyard.transform.config.model.JavaTransformModel;
 import org.switchyard.transform.config.model.SmooksTransformModel;
@@ -40,6 +41,7 @@ public class V1TransformMarshaller extends BaseMarshaller {
     private static final String TRANSFORM_SMOOKS = TransformModel.TRANSFORM + "." + SmooksTransformModel.SMOOKS;
     private static final String TRANSFORM_JSON = TransformModel.TRANSFORM + "." + JSONTransformModel.JSON;
     private static final String TRANSFORM_XSLT = TransformModel.TRANSFORM + "." + XsltTransformModel.XSLT;
+    private static final String TRANSFORM_JAXB = TransformModel.TRANSFORM + "." + JAXBTransformModel.JAXB;
 
     /**
      * Constructs a new V1TransformMarshaller with the specified Descriptor.
@@ -56,6 +58,7 @@ public class V1TransformMarshaller extends BaseMarshaller {
     public Model read(Configuration config) {
         String name = config.getName();
         Descriptor desc = getDescriptor();
+
         if (name.equals(TRANSFORM_JAVA)) {
             return new V1JavaTransformModel(config, desc);
         } else if (name.equals(TRANSFORM_SMOOKS)) {
@@ -64,7 +67,10 @@ public class V1TransformMarshaller extends BaseMarshaller {
             return new V1JSONTransformModel(config, desc);
         } else if (name.equals(TRANSFORM_XSLT)) {
             return new V1XsltTransformModel(config, desc);
+        } else if (name.equals(TRANSFORM_JAXB)) {
+            return new V1JAXBTransformModel(config, desc);
         }
+
         return null;
     }
 

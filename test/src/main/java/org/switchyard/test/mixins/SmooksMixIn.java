@@ -24,8 +24,8 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.transform.Transformer;
+import org.switchyard.transform.config.model.SmooksTransformType;
 import org.switchyard.transform.config.model.v1.V1SmooksTransformModel;
-import org.switchyard.transform.smooks.SmooksTransformType;
 
 import javax.xml.namespace.QName;
 

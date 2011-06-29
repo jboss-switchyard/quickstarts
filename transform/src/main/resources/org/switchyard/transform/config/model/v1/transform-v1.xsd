@@ -120,4 +120,52 @@ MA  02110-1301, USA.
         </restriction>
     </simpleType>
 
+    <simpleType name="javaTransformType">
+        <restriction base="string">
+            <enumeration value="XML2JAVA">
+                <annotation>
+                    <documentation xml:lang="en">
+                        XML to Java Transformation.
+                    </documentation>
+                </annotation>
+            </enumeration>
+            <enumeration value="JAVA2XML">
+                <annotation>
+                    <documentation xml:lang="en">
+                        Java to XML Transformation.
+                    </documentation>
+                </annotation>
+            </enumeration>
+        </restriction>
+    </simpleType>
+
+    <element name="transform.jaxb" type="trfm:JAXBTransformType" substitutionGroup="swyd:transform" />
+    <complexType name="JAXBTransformType">
+        <annotation>
+            <documentation xml:lang="en">
+                JAXB Transformer Configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="swyd:TransformType">
+                <attribute name="type" type="trfm:javaTransformType" use="required">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            Transform type.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="contextPath" type="string" use="required">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            List of java package names that contain schema
+                            derived class and/or java to schema (JAXB-annotated)
+                            mapped classes.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
 </schema>

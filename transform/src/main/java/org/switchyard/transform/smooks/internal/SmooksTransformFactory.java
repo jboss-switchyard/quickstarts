@@ -25,7 +25,7 @@ import org.switchyard.exception.SwitchYardException;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerFactory;
 import org.switchyard.transform.config.model.SmooksTransformModel;
-import org.switchyard.transform.smooks.SmooksTransformType;
+import org.switchyard.transform.config.model.SmooksTransformType;
 
 import javax.xml.namespace.QName;
 

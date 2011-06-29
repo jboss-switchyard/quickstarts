@@ -43,6 +43,9 @@ public class BasicDOMTransformer extends AbstractDOMTransformer {
     private static final QName TYPE_ELEMENT      = toMessageType(Element.class);
     private static final QName TYPE_STRING       = toMessageType(String.class);
     private static final QName TYPE_CHAR_ARRAY   = toMessageType(char[].class);
+    private static final QName TYPE_INPUTSOURCE  = toMessageType(InputSource.class);
+    private static final QName TYPE_READER       = toMessageType(Reader.class);
+    private static final QName TYPE_INPUTSTREAM  = toMessageType(InputStream.class);
 
     @Override
     public Object transform(Object from) {
@@ -85,6 +88,15 @@ public class BasicDOMTransformer extends AbstractDOMTransformer {
         }
         if (getTo().equals(TYPE_CHAR_ARRAY)) {
             return serialize(from).toCharArray();
+        }
+        if (getTo().equals(TYPE_INPUTSOURCE)) {
+            return new InputSource(new StringReader(serialize(from)));
+        }
+        if (getTo().equals(TYPE_READER)) {
+            return new StringReader(serialize(from));
+        }
+        if (getTo().equals(TYPE_INPUTSTREAM)) {
+            return new ByteArrayInputStream(serialize(from).getBytes());
         }
 
         return null;

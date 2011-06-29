@@ -34,6 +34,15 @@
     <trfm:transform.java from="java:org.w3c.dom.Document" to="java:char[]" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
     <trfm:transform.java from="java:org.w3c.dom.Element" to="java:char[]"  class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
 
+    <trfm:transform.java from="java:org.w3c.dom.Document" to="java:java.io.Reader" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+    <trfm:transform.java from="java:org.w3c.dom.Element" to="java:java.io.Reader"  class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+
+    <trfm:transform.java from="java:org.w3c.dom.Document" to="java:java.io.InputStream" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+    <trfm:transform.java from="java:org.w3c.dom.Element" to="java:java.io.InputStream"  class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+
+    <trfm:transform.java from="java:org.w3c.dom.Document" to="java:org.xml.sax.InputSource" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+    <trfm:transform.java from="java:org.w3c.dom.Element" to="java:org.xml.sax.InputSource"  class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+
     <!-- To DOM Transformations... -->
 
     <trfm:transform.java from="java:java.lang.String" to="java:org.w3c.dom.Document" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
