@@ -31,19 +31,25 @@ import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.internal.DefaultMessage;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
+import org.switchyard.transform.AbstractTransformerTestCase;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 import org.switchyard.transform.TransformerRegistryLoader;
+import org.switchyard.transform.TransformerUtil;
 import org.switchyard.transform.config.model.XsltTransformModel;
+import org.switchyard.transform.config.model.v1.V1XsltTransformModel;
+import org.switchyard.transform.ootb.AbstractTransformerTest;
 import org.switchyard.transform.xslt.XsltTransformFactory;
 import org.switchyard.transform.xslt.XsltTransformer;
 import org.xml.sax.SAXException;
+
+import javax.xml.namespace.QName;
 
 /**
  * @author Alejandro Montenegro <a
  *         href="mailto:aamonten@gmail.com">aamonten@gmail.com</a>
  */
-public class XsltTransformerTest {
+public class XsltTransformerTest extends AbstractTransformerTestCase {
 
     private TransformerRegistry xformReg;
 
@@ -110,32 +116,17 @@ public class XsltTransformerTest {
         }
     }
 
-    private Transformer getTransformer(String config) throws IOException {
-        InputStream swConfigStream = Classes.getResourceAsStream(config,
-                getClass());
+    @Test
+    public void test_factoryLoad() {
+        V1XsltTransformModel model = new V1XsltTransformModel();
 
-        if (swConfigStream == null) {
-            Assert.fail("null config stream.");
-        }
+        model.setXsltFile("org/switchyard/transform/internal/xslt/topics.xslt");
+        model.setFrom(new QName("A"));
+        model.setTo(new QName("B"));
 
-        SwitchYardModel switchyardConfig = new ModelResource<SwitchYardModel>()
-                .pull(swConfigStream);
-        TransformsModel transforms = switchyardConfig.getTransforms();
+        Transformer<?,?> transformer = TransformerUtil.newTransformer(model);
 
-        XsltTransformModel xsltTransformModel = (XsltTransformModel) transforms
-                .getTransforms().get(0);
-
-        if (xsltTransformModel == null) {
-            Assert.fail("No xslt config.");
-        }
-
-        Transformer transformer = new XsltTransformFactory().newTransformer(xsltTransformModel);
-
-        if (!(transformer instanceof XsltTransformer)) {
-            Assert.fail("Not an instance of XsltTransformer.");
-        }
-
-        return transformer;
+        Assert.assertTrue(transformer instanceof XsltTransformer);
     }
 
     private DefaultMessage newMessage(Object content) {

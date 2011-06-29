@@ -16,6 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
+
 package org.switchyard.transform.config.model.v1;
 
 import javax.xml.namespace.QName;
@@ -23,12 +24,15 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.v1.V1BaseTransformModel;
+import org.switchyard.transform.TransformerFactoryClass;
 import org.switchyard.transform.config.model.XsltTransformModel;
+import org.switchyard.transform.xslt.XsltTransformFactory;
 
 /**
  * @author Alejandro Montenegro <a
  *         href="mailto:aamonten@gmail.com">aamonten@gmail.com</a>
  */
+@TransformerFactoryClass(XsltTransformFactory.class)
 public class V1XsltTransformModel extends V1BaseTransformModel implements
         XsltTransformModel {
 
