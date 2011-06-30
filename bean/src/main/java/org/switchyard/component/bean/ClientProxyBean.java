@@ -47,7 +47,9 @@ import org.switchyard.HandlerException;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
 import org.switchyard.metadata.BaseExchangeContract;
+import org.switchyard.metadata.InvocationContract;
 import org.switchyard.metadata.ServiceOperation;
+import org.switchyard.metadata.java.JavaService;
 
 /**
  * Client Proxy CDI Bean.
@@ -109,8 +111,8 @@ public class ClientProxyBean implements Bean {
         }
 
         _proxyBean = Proxy.newProxyInstance(beanDeploymentMetaData.getDeploymentClassLoader(),
-                new Class[]{proxyInterface},
-                new ClientProxyInvocationHandler());
+                new Class[]{_serviceInterface},
+                new ClientProxyInvocationHandler(_serviceInterface));
     }
 
     /**
@@ -267,6 +269,12 @@ public class ClientProxyBean implements Bean {
      */
     private class ClientProxyInvocationHandler implements InvocationHandler {
 
+        private JavaService _invokerInterface;
+
+        public ClientProxyInvocationHandler(Class<?> invokerInterface) {
+            _invokerInterface = JavaService.fromClass(invokerInterface);
+        }
+
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             if (_service == null) {
                 throw new BeanComponentException("A service reference to service '" + _serviceQName + "' is not bound into "
@@ -297,7 +305,7 @@ public class ClientProxyBean implements Bean {
 
                     Exchange exchangeOut = responseQueue.take();
                 if (exchangeOut.getState() == ExchangeState.OK) {
-                    return exchangeOut.getMessage().getContent();
+                    return exchangeOut.getMessage().getContent(method.getReturnType());
                 } else {
                     Object exceptionObj = exchangeOut.getMessage().getContent();
 
@@ -331,13 +339,20 @@ public class ClientProxyBean implements Bean {
 
         private Exchange createExchange(ServiceReference service, Method method, ExchangeHandler responseExchangeHandler) throws BeanComponentException {
             String operationName = method.getName();
-            ServiceOperation operation = service.getInterface().getOperation(operationName);
+            InvocationContract clientInvocationContext = _invokerInterface.getOperation(operationName);
+            ServiceOperation serviceOperation = service.getInterface().getOperation(operationName);
 
-            if (operation == null) {
+            if (serviceOperation == null) {
                 throw new BeanComponentException("Bean Component invocation failure.  Operation '" + operationName + "' is not defined on Service '" + _serviceQName + "'.");
             }
 
-            return service.createExchange(new BaseExchangeContract(operation), responseExchangeHandler);
+            BaseExchangeContract exchangeContext = new BaseExchangeContract(serviceOperation);
+            exchangeContext.getInvokerInvocationMetaData()
+                    .setInputType(clientInvocationContext.getInputType())
+                    .setOutputType(clientInvocationContext.getOutputType())
+                    .setFaultType(clientInvocationContext.getFaultType());
+
+            return service.createExchange(exchangeContext, responseExchangeHandler);
         }
 
     }

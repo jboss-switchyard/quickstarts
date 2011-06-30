@@ -125,7 +125,13 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
     }
 
     private void addInjectableClientProxyBean(Field injectionPointField, Reference serviceReference, Set<Annotation> qualifiers, BeanManager beanManager) {
-        QName serviceQName = toServiceQName(injectionPointField.getType());
+        QName serviceQName;
+
+        if (serviceReference.value().length() > 0) {
+            serviceQName = QName.valueOf(serviceReference.value());
+        } else {
+            serviceQName = toServiceQName(injectionPointField.getType());
+        }
 
         addClientProxyBean(serviceQName, injectionPointField.getType(), qualifiers);
     }
