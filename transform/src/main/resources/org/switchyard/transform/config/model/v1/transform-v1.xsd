@@ -25,6 +25,19 @@ MA  02110-1301, USA.
 
     <import namespace="urn:switchyard-config:switchyard:1.0" schemaLocation="http://www.smooks.org/switchyard-v1.xsd"/>
 
+	<element name="transform.json" type="trfm:JsonTransformType" substitutionGroup="swyd:transform" />
+	<complexType name="JsonTransformType">
+        <annotation>
+            <documentation xml:lang="en">
+                JSON Transformer Configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="swyd:TransformType">
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <element name="transform.java" type="trfm:JavaTransformType" substitutionGroup="swyd:transform" />
     <complexType name="JavaTransformType">
         <annotation>
