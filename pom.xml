@@ -15,6 +15,10 @@
     <name>SwitchYard: Distribution</name>
     <description>SwitchYard Distribution</description>
 
+    <properties>
+        <distro.version>0.2</distro.version>
+    </properties>
+
     <modules>
         <module>distribution</module>
         <module>jboss-as6</module>

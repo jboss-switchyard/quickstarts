@@ -41,7 +41,7 @@
         <staging.dir>${project.build.directory}/staging</staging.dir>
         <assembly.dir>${project.build.directory}/assembly</assembly.dir>
         <as.root.dir>jboss-${version.jbossas}</as.root.dir>
-        <switchyard.root.dir>switchyard-as6-0.1</switchyard.root.dir>
+        <switchyard.root.dir>switchyard-as6-${distro.version}</switchyard.root.dir>
         <camel.version>2.6.0</camel.version>
         <commonman.version>1.0</commonman.version>
     </properties>

@@ -42,7 +42,7 @@
     -->
 
     <properties>
-        <switchyard.jboss.home>${project.build.directory}/switchyard-as6-0.1</switchyard.jboss.home>
+        <switchyard.jboss.home>${project.build.directory}/switchyard-as6-${distro.version}</switchyard.jboss.home>
         <arquillian.version>1.0.0.Alpha5</arquillian.version>
         <version.camel>2.6.0</version.camel>
     </properties>
