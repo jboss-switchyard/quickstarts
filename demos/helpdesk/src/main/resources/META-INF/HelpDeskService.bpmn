@@ -288,7 +288,7 @@ kcontext.setVariable("ticket", ticket);</script>
     <sequenceFlow id="_12-_13" sourceRef="_12" targetRef="_13" />
     <sequenceFlow id="_13-_14" sourceRef="_13" targetRef="_14" />
     <sequenceFlow id="_14-_15" sourceRef="_14" targetRef="_15" />
-    <sequenceFlow id="_11-_16" sourceRef="_11" targetRef="_16" name="requested" tns:priority="1" >
+    <sequenceFlow id="_11-_16" sourceRef="_11" targetRef="_16" name="request" tns:priority="1" >
       <conditionExpression xsi:type="tFormalExpression" language="http://www.java.com/java" >return ((Ticket)kcontext.getVariable("ticket")).getStatus().equals("requested");</conditionExpression>
     </sequenceFlow>
 
