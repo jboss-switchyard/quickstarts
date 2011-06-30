@@ -18,7 +18,7 @@
  */
 package org.switchyard.component.bpm.drools;
 
-import static org.switchyard.component.bpm.process.ProcessConstants.MESSAGE_CONTENT_NAME_VAR;
+import static org.switchyard.component.bpm.process.ProcessConstants.MESSAGE_CONTENT_VAR;
 import static org.switchyard.component.bpm.process.ProcessConstants.PROCESS_ACTION_TYPE_VAR;
 import static org.switchyard.component.bpm.process.ProcessConstants.PROCESS_ID_VAR;
 import static org.switchyard.component.bpm.process.ProcessConstants.PROCESS_INSTANCE_ID_VAR;
@@ -31,6 +31,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.log4j.Logger;
 import org.drools.KnowledgeBase;
 import org.drools.builder.KnowledgeBuilder;
 import org.drools.builder.KnowledgeBuilderFactory;
@@ -66,6 +67,8 @@ import org.switchyard.component.bpm.task.TaskHandler;
  */
 public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
 
+    private static final Logger LOGGER = Logger.getLogger(DroolsBpmExchangeHandler.class);
+
     private final ServiceDomain _serviceDomain;
     private String _processId;
     private String _messageContentName;
@@ -89,7 +92,7 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
         _processId = model.getProcessId();
         _messageContentName = model.getMessageContentName();
         if (_messageContentName == null) {
-            _messageContentName = MESSAGE_CONTENT_NAME_VAR;
+            _messageContentName = MESSAGE_CONTENT_VAR;
         }
         for (TaskHandlerModel tihm : model.getTaskHandlers()) {
             TaskHandler tih = Construction.construct(tihm.getClazz());
@@ -144,7 +147,15 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
         Context context = exchange.getContext();
         ProcessActionType actionType = getProcessActionType(context);
         if (actionType == null) {
-            handleNullParameter(null, PROCESS_ACTION_TYPE_VAR);
+            if (LOGGER.isDebugEnabled()) {
+                String msg = new StringBuilder()
+                    .append(getNullParameterMessage(null, PROCESS_ACTION_TYPE_VAR))
+                    .append("; defaulting to: ")
+                    .append(ProcessActionType.START_PROCESS.qname())
+                    .toString();
+                LOGGER.debug(msg);
+            }
+            actionType = ProcessActionType.START_PROCESS;
         }
         Message message = exchange.getMessage();
         Long processInstanceId = null;
@@ -162,7 +173,7 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
                     }
                     processInstanceId = Long.valueOf(processInstance.getId());
                 } else {
-                    handleNullParameter(actionType, PROCESS_ID_VAR);
+                    throwNullParameterException(actionType, PROCESS_ID_VAR);
                 }
                 break;
             case SIGNAL_EVENT:
@@ -172,7 +183,7 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
                 if (processInstanceId != null) {
                     _ksession.signalEvent(processEventType, processEvent, processInstanceId.longValue());
                 } else {
-                    handleNullParameter(actionType, PROCESS_INSTANCE_ID_VAR);
+                    throwNullParameterException(actionType, PROCESS_INSTANCE_ID_VAR);
                 }
                 break;
             case ABORT_PROCESS_INSTANCE:
@@ -180,7 +191,7 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
                 if (processInstanceId != null) {
                     _ksession.abortProcessInstance(processInstanceId.longValue());
                 } else {
-                    handleNullParameter(actionType, PROCESS_INSTANCE_ID_VAR);
+                    throwNullParameterException(actionType, PROCESS_INSTANCE_ID_VAR);
                 }
                 break;
         }
@@ -204,7 +215,7 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
         }
     }
 
-    private void handleNullParameter(ProcessActionType processActionType, String parameterName)  throws HandlerException {
+    private String getNullParameterMessage(ProcessActionType processActionType, String parameterName) {
         StringBuilder sb = new StringBuilder();
         sb.append("handleMessage: ");
         if (processActionType != null) {
@@ -214,7 +225,11 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
         }
         sb.append(parameterName);
         sb.append(" == null");
-        throw new HandlerException(sb.toString());
+        return sb.toString();
+    }
+
+    private void throwNullParameterException(ProcessActionType processActionType, String parameterName) throws HandlerException {
+        throw new HandlerException(getNullParameterMessage(processActionType, parameterName));
     }
 
     /**

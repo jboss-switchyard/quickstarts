@@ -67,6 +67,11 @@ public final class ProcessConstants {
     /** {urn:switchyard-component-bpm:process:1.0}processInstanceId . */
     public static final String PROCESS_INSTANCE_ID_VAR = new QName(PROCESS_NAMESPACE, PROCESS_INSTANCE_ID).toString();
 
+    /** messageContent . */
+    public static final String MESSAGE_CONTENT = "messageContent";
+    /** {urn:switchyard-component-bpm:process:1.0}messageContent . */
+    public static final String MESSAGE_CONTENT_VAR = new QName(PROCESS_NAMESPACE, MESSAGE_CONTENT).toString();
+
     /** messageContentName . */
     public static final String MESSAGE_CONTENT_NAME = "messageContentName";
     /** {urn:switchyard-component-bpm:process:1.0}messageContentName . */
