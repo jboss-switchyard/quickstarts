@@ -9,7 +9,6 @@
         <trfm:transform.json 
             from="java:org.switchyard.quickstarts.transform.json.OrderAck" 
             to="{urn:switchyard-quickstart:transform-json:1.0}orderResponse"/>
-            from="" 
             
         <trfm:transform.json 
             from="{urn:switchyard-quickstart:transform-json:1.0}order" 
