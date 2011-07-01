@@ -60,7 +60,7 @@ public class CamelReferenceTest extends SwitchYardTestCase {
     
     private CamelContext getCamelContext() {
         final Deployment deployment = (Deployment) getDeployment();
-        final CamelActivator activator = (CamelActivator) deployment.getActivator("camel");
+        final CamelActivator activator = (CamelActivator) deployment.findActivator("camel");
         return activator.getCamelContext();
     }
 }

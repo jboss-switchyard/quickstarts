@@ -108,7 +108,7 @@ public class CamelActivatorTest extends SwitchYardTestCase {
     
     private CamelActivator getCamelActivator() {
         final Deployment deployment = (Deployment) getDeployment();
-        return (CamelActivator) deployment.getActivator("camel");
+        return (CamelActivator) deployment.findActivator("camel");
     }
 
     private CamelContext getCamelContext() {
