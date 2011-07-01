@@ -23,6 +23,7 @@ package org.switchyard.component.camel;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Route;
 import org.apache.camel.model.RouteDefinition;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
@@ -102,13 +103,21 @@ public class InboundHandler implements ExchangeHandler {
     }
 
     /**
-     * Removes the route associated with the {@link ServiceReference}.
+     * Suspends the route associated with the {@link ServiceReference}.
      *
      * @param serviceRef The {@link ServiceReference} of the target service.
-     * @throws Exception If an error occurs while trying to removed the route from the {@link CamelContext}.
+     * @throws Exception If an error occurs while trying to suspend the route from the {@link CamelContext}.
      */
     public void stop(final ServiceReference serviceRef) throws Exception {
-        _camelContext.stopRoute(_routeDefinition);
+        final String routeId = _routeDefinition.getId();
+        final Route route = _camelContext.getRoute(routeId);
+        if (route.supportsSuspension()) {
+            _camelContext.suspendRoute(routeId);
+        }
+        else {
+            _camelContext.stopRoute(routeId);
+        }
+            
     }
 
     private String operationName() {

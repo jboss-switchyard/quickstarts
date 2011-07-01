@@ -14,6 +14,7 @@
    
    <queue name="TestQueue">
       <entry name="testQueue"/>
+      <durable>true</durable>
    </queue>
    
 </configuration>
