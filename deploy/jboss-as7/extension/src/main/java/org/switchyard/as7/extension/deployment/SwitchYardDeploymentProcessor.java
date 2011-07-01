@@ -18,19 +18,20 @@
  */
 package org.switchyard.as7.extension.deployment;
 
-import org.jboss.as.ee.naming.NamespaceSelectorService;
+import org.jboss.as.ee.component.EEModuleDescription;
 import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.jboss.as.weld.deployment.WeldDeploymentMetadata;
+import org.jboss.as.weld.WeldDeploymentMarker;
 import org.jboss.as.weld.services.BeanManagerService;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceTarget;
+import org.jboss.msc.value.ImmediateValue;
 import org.switchyard.as7.extension.SwitchYardDeploymentMarker;
 import org.switchyard.as7.extension.services.SwitchYardService;
 
@@ -58,11 +59,13 @@ public class SwitchYardDeploymentProcessor implements DeploymentUnitProcessor {
         final ServiceName switchyardServiceName = deploymentUnit.getServiceName().append(SwitchYardService.SERVICE_NAME);
         final ServiceBuilder<SwitchYardDeployment> switchyardServiceBuilder = serviceTarget.addService(switchyardServiceName, container);
 
-        final ServiceName namespaceSelectorServiceName = deploymentUnit.getServiceName().append(NamespaceSelectorService.NAME);
-        switchyardServiceBuilder.addDependency(namespaceSelectorServiceName, NamespaceContextSelector.class, container.getNamespaceSelector());
+        final EEModuleDescription moduleDescription = deploymentUnit.getAttachment(org.jboss.as.ee.component.Attachments.EE_MODULE_DESCRIPTION);
+        if (moduleDescription != null) {
+            container.getNamespaceSelector().setValue(new ImmediateValue<NamespaceContextSelector>(moduleDescription.getNamespaceContextSelector()));
+        }
 
         // Only add a dependency on the Weld BeanManager if the deployment has beans (i.e. Weld Metadata)...
-        if (deploymentUnit.getAttachment(WeldDeploymentMetadata.ATTACHMENT_KEY) != null) {
+        if (WeldDeploymentMarker.isPartOfWeldDeployment(deploymentUnit)) {
             final ServiceName beanManagerServiceName = deploymentUnit.getServiceName().append(BeanManagerService.NAME);
             switchyardServiceBuilder.addDependency(beanManagerServiceName);
         }

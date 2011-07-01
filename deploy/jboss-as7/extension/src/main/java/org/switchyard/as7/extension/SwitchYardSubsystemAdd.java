@@ -18,25 +18,22 @@
  */
 package org.switchyard.as7.extension;
 
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.jboss.as.controller.BasicOperationResult;
-import org.jboss.as.controller.ModelAddOperationHandler;
+import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
-import org.jboss.as.controller.OperationResult;
-import org.jboss.as.controller.ResultHandler;
-import org.jboss.as.controller.operations.common.Util;
-import org.jboss.as.server.BootOperationContext;
-import org.jboss.as.server.BootOperationHandler;
+import org.jboss.as.controller.ServiceVerificationHandler;
+import org.jboss.as.server.AbstractDeploymentChainStep;
+import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.modules.ModuleIdentifier;
+import org.jboss.msc.service.ServiceController;
+import org.switchyard.as7.extension.deployment.SwitchYardCdiIntegrationProcessor;
 import org.switchyard.as7.extension.deployment.SwitchYardConfigDeploymentProcessor;
 import org.switchyard.as7.extension.deployment.SwitchYardConfigProcessor;
 import org.switchyard.as7.extension.deployment.SwitchYardDependencyProcessor;
@@ -47,7 +44,7 @@ import org.switchyard.as7.extension.deployment.SwitchYardDeploymentProcessor;
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
-public final class SwitchYardSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
+public final class SwitchYardSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
     private static final Logger LOG = Logger.getLogger("org.switchyard");
 
@@ -58,33 +55,35 @@ public final class SwitchYardSubsystemAdd implements ModelAddOperationHandler, B
     }
 
     @Override
-    public OperationResult execute(final OperationContext context, final ModelNode operation, final ResultHandler resultHandler) throws OperationFailedException {
+    protected void populateModel(final ModelNode operation, final ModelNode submodel) throws OperationFailedException {
+        if (operation.has(CommonAttributes.MODULES)) {
+            submodel.get(CommonAttributes.MODULES).set(operation.get(CommonAttributes.MODULES));
+        }
+    }
 
-        if (context instanceof BootOperationContext) {
-            final BootOperationContext bootContext = (BootOperationContext) context;
-            LOG.info("Activating SwitchYard Extension");
-            List<ModuleIdentifier> modules = new ArrayList<ModuleIdentifier>();
-            if (operation.has(CommonAttributes.MODULES)) {
-                ModelNode opmodules = operation.get(CommonAttributes.MODULES);
-                final ModelNode subModel = context.getSubModel();
-                subModel.get(CommonAttributes.MODULES).set(opmodules);
-                Set<String> keys = opmodules.keys();
-                if (keys != null) {
-                    for (String current : keys) {
-                        modules.add(ModuleIdentifier.fromString(current));
-                    }
+    @Override
+    protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler, List<ServiceController<?>> newControllers) {
+        final List<ModuleIdentifier> modules = new ArrayList<ModuleIdentifier>();
+        if (operation.has(CommonAttributes.MODULES)) {
+            ModelNode opmodules = operation.get(CommonAttributes.MODULES);
+            Set<String> keys = opmodules.keys();
+            if (keys != null) {
+                for (String current : keys) {
+                    modules.add(ModuleIdentifier.fromString(current));
                 }
             }
-            int priority = 0x4000;
-            bootContext.addDeploymentProcessor(Phase.PARSE, priority++, new SwitchYardConfigDeploymentProcessor());
-            bootContext.addDeploymentProcessor(Phase.DEPENDENCIES, priority++, new SwitchYardDependencyProcessor(modules));
-            bootContext.addDeploymentProcessor(Phase.POST_MODULE, priority++, new SwitchYardConfigProcessor());
-            bootContext.addDeploymentProcessor(Phase.INSTALL, priority++, new SwitchYardDeploymentProcessor());
         }
-        // Create the compensating operation
-        final ModelNode compensatingOperation = Util.getResourceRemoveOperation(operation.require(OP_ADDR));
-        resultHandler.handleResultComplete();
-        return new BasicOperationResult(compensatingOperation);
+        context.addStep(new AbstractDeploymentChainStep() {
+            protected void execute(DeploymentProcessorTarget processorTarget) {
+                int priority = 0x4000;
+                processorTarget.addDeploymentProcessor(Phase.PARSE, priority++, new SwitchYardConfigDeploymentProcessor());
+                processorTarget.addDeploymentProcessor(Phase.DEPENDENCIES, priority++, new SwitchYardDependencyProcessor(modules));
+                processorTarget.addDeploymentProcessor(Phase.POST_MODULE, priority++, new SwitchYardCdiIntegrationProcessor());
+                processorTarget.addDeploymentProcessor(Phase.POST_MODULE, priority++, new SwitchYardConfigProcessor());
+                processorTarget.addDeploymentProcessor(Phase.INSTALL, priority++, new SwitchYardDeploymentProcessor());
+            }
+        }, OperationContext.Stage.RUNTIME);
+        LOG.info("Activating SwitchYard Extension");
     }
 
 }

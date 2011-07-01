@@ -29,6 +29,7 @@
     </resources>
 
     <dependencies>
+        <module name="javaee.api"/>
         <module name="org.jboss.as.controller"/>
         <module name="org.jboss.staxmapper"/>
         <module name="org.jboss.logging"/>
@@ -38,6 +39,7 @@
         <module name="org.jboss.as.naming"/>
         <module name="org.jboss.as.server"/>
         <module name="org.jboss.as.weld"/>
+        <module name="org.jboss.weld.spi"/>
         <module name="org.switchyard.api"/>
         <module name="org.switchyard.common"/>
         <module name="org.switchyard.config"/>

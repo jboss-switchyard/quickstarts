@@ -22,13 +22,10 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
 
-import org.jboss.as.controller.BasicOperationResult;
-import org.jboss.as.controller.ModelQueryOperationHandler;
 import org.jboss.as.controller.OperationContext;
-import org.jboss.as.controller.OperationResult;
-import org.jboss.as.controller.ResultHandler;
+import org.jboss.as.controller.OperationFailedException;
+import org.jboss.as.controller.OperationStepHandler;
 import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
-import org.jboss.as.controller.operations.common.Util;
 import org.jboss.dmr.ModelNode;
 
 /**
@@ -36,7 +33,7 @@ import org.jboss.dmr.ModelNode;
  * 
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
-final class SwitchYardSubsystemDescribe implements ModelQueryOperationHandler {
+final class SwitchYardSubsystemDescribe implements OperationStepHandler {
 
     static final SwitchYardSubsystemDescribe INSTANCE = new SwitchYardSubsystemDescribe();
 
@@ -45,23 +42,17 @@ final class SwitchYardSubsystemDescribe implements ModelQueryOperationHandler {
     }
 
     /* (non-Javadoc)
-     * @see org.jboss.as.controller.ModelQueryOperationHandler#execute(org.jboss.as.controller.OperationContext, org.jboss.dmr.ModelNode, org.jboss.as.controller.ResultHandler)
+     * @see org.jboss.as.controller.OperationStepHandler#execute(org.jboss.as.controller.OperationContext, org.jboss.dmr.ModelNode)
      */
     @Override
-    public OperationResult execute(final OperationContext context, final ModelNode operation,
-            final ResultHandler resultHandler) {
-
-        final ModelNode result = new ModelNode();
+    public void execute(final OperationContext context, final ModelNode operation) throws OperationFailedException {
 
         final ModelNode subsystemAdd = new ModelNode();
         subsystemAdd.get(OP).set(ADD);
         subsystemAdd.get(OP_ADDR).add(ModelDescriptionConstants.SUBSYSTEM, SwitchYardExtension.SUBSYSTEM_NAME);
 
-        result.add(subsystemAdd);
-
-        resultHandler.handleResultFragment(Util.NO_LOCATION, result);
-        resultHandler.handleResultComplete();
-        return new BasicOperationResult();
+        context.getResult().add(subsystemAdd);
+        context.completeStep();
     }
 
 }
