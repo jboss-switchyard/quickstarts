@@ -19,6 +19,7 @@
 
 package org.switchyard.deploy.internal;
 
+import org.apache.log4j.Logger;
 import org.switchyard.ServiceDomain;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.exception.SwitchYardException;
@@ -63,6 +64,8 @@ public abstract class AbstractDeployment {
      * Automatically registered transformers (e.g. JAXB type transformers).
      */
     private List<Transformer<?, ?>> _autoRegisteredTransformers = new ArrayList<Transformer<?, ?>>();
+
+    private static Logger _log = Logger.getLogger(AbstractDeployment.class);
 
     /**
      * Create a new instance of a deployment from a configuration model.

@@ -33,6 +33,7 @@ import org.switchyard.deploy.components.MockActivator;
 import org.switchyard.deploy.components.config.MockBindingModel;
 import org.switchyard.deploy.internal.transformers.ABTransformer;
 import org.switchyard.deploy.internal.transformers.CDTransformer;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.extensions.wsdl.WSDLService;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.ServiceOperation;
@@ -64,7 +65,7 @@ public class DeploymentTest {
         
         // Grab a reference to our activators
         MockActivator activator = (MockActivator)
-            deployment.getActivator(MockBindingModel.TYPE);
+            deployment.findActivator(MockBindingModel.TYPE);
         deployment.start();
         deployment.stop();
         deployment.destroy();
@@ -118,5 +119,28 @@ public class DeploymentTest {
         deployment.stop();
         deployment.destroy();
 
+    }
+    
+    @Test
+    public void nonExistentActivatorThrowsException() throws Exception {
+        InputStream swConfigStream = null;
+        SwitchYardException exception = null;
+        
+        // Load an app config which references a mock component, but provide no activator
+        try {
+            swConfigStream = Classes.getResourceAsStream("/switchyard-config-activator-01.xml", getClass());
+            Deployment deployment = new Deployment(swConfigStream);
+            deployment.init(ServiceDomainManager.createDomain());
+            deployment.start();
+        } catch (SwitchYardException sye) {
+            exception = sye;
+            System.out.println(sye.toString());
+        } finally {
+            if (swConfigStream != null) {
+                swConfigStream.close();
+            }
+        }
+        
+        Assert.assertNotNull("Missing activator did not trigger SwitchYardException!", exception);
     }
 }
