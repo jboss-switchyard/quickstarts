@@ -187,8 +187,8 @@ public class Deployment extends AbstractDeployment {
      */
     private Activator findActivator(ComponentModel component) throws SwitchYardException {
         if (component.getImplementation() == null) {
-            throw new SwitchYardException("Component defintion " + component.getName() + 
-                    " does not included an implementation definition.");
+            throw new SwitchYardException("Component defintion " + component.getName() 
+                    + " does not included an implementation definition.");
         }
         return findActivator(component.getImplementation().getType());
     }
@@ -201,8 +201,8 @@ public class Deployment extends AbstractDeployment {
             Collection<String> activationTypes = activator.getActivationTypes();
             if (activationTypes != null) {
                 for (String type : activationTypes) {
-                    _log.debug("Registered activation type " + type +
-                            " for activator " + activator.getClass());
+                    _log.debug("Registered activation type " + type
+                            + " for activator " + activator.getClass());
                     _activators.put(type, activator);
                 }
             }
@@ -286,8 +286,8 @@ public class Deployment extends AbstractDeployment {
         for (ComponentModel component : getConfig().getComposite().getComponents()) {
             Activator activator = findActivator(component);
             if (activator == null) {
-                throw new SwitchYardException("Activator not found for " + 
-                        component.getImplementation().getType());
+                throw new SwitchYardException("Activator not found for "
+                        + component.getImplementation().getType());
             }
             // register a service for each one declared in the component
             for (ComponentServiceModel service : component.getServices()) {
