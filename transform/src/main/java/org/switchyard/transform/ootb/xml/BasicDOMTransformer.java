@@ -26,6 +26,8 @@ import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
 import javax.xml.namespace.QName;
+import javax.xml.transform.dom.DOMSource;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Reader;
@@ -46,6 +48,7 @@ public class BasicDOMTransformer extends AbstractDOMTransformer {
     private static final QName TYPE_INPUTSOURCE  = toMessageType(InputSource.class);
     private static final QName TYPE_READER       = toMessageType(Reader.class);
     private static final QName TYPE_INPUTSTREAM  = toMessageType(InputStream.class);
+    private static final QName TYPE_NODE         = toMessageType(Node.class);
 
     @Override
     public Object transform(Object from) {
@@ -63,6 +66,8 @@ public class BasicDOMTransformer extends AbstractDOMTransformer {
             return transformFromInputSource(new InputSource((InputStream) from));
         } else if (from instanceof InputSource) {
             return transformFromInputSource((InputSource) from);
+        } else if (from instanceof DOMSource) {
+            return transformFromDOMSource((DOMSource) from);
         }
 
         return null;
@@ -107,11 +112,24 @@ public class BasicDOMTransformer extends AbstractDOMTransformer {
 
         if (getTo().equals(TYPE_DOCUMENT)) {
             return document;
-        }
-        if (getTo().equals(TYPE_ELEMENT)) {
+        } else if (getTo().equals(TYPE_ELEMENT)) {
+            return document.getDocumentElement();
+        } else if (getTo().equals(TYPE_NODE)) {
             return document.getDocumentElement();
         }
 
         return null;
+    }
+    
+    private Object transformFromDOMSource(DOMSource source) {
+        if (getTo().equals(TYPE_NODE)) {
+            return source.getNode();
+        } else if (getTo().equals(TYPE_ELEMENT)) {
+            return source.getNode() instanceof Element
+                ? (Element)source.getNode()
+                : null;
+        } else {
+            return null;
+        }
     }
 }

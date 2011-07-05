@@ -19,17 +19,17 @@
 
 package org.switchyard.transform.jaxb.internal;
 
-import org.switchyard.Message;
-import org.switchyard.config.model.Scannable;
-import org.switchyard.exception.SwitchYardException;
-import org.switchyard.transform.BaseTransformer;
-import org.xml.sax.InputSource;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
+
+import org.switchyard.Message;
+import org.switchyard.config.model.Scannable;
+import org.switchyard.exception.SwitchYardException;
+import org.switchyard.transform.BaseTransformer;
 
 /**
  * JAXB Unmarshalling transformer.
@@ -73,7 +73,7 @@ public class JAXBUnmarshalTransformer<F, T> extends BaseTransformer<Message, Mes
         }
 
         try {
-            JAXBElement unmarshalledObjectElement = (JAXBElement) unmarshaller.unmarshal(message.getContent(InputSource.class));
+            JAXBElement unmarshalledObjectElement = (JAXBElement) unmarshaller.unmarshal(message.getContent(Source.class));
             message.setContent(unmarshalledObjectElement.getValue());
         } catch (JAXBException e) {
             throw new SwitchYardException("Failed to unmarshall for contextPath '" + _contextPath + "'.", e);

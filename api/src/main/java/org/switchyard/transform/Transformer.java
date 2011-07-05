@@ -66,4 +66,16 @@ public interface Transformer<F, T> {
      * @return to message
      */
     QName getTo();
+    
+    /**
+     * The Java type of the source format.
+     * @return class representing the Java type for the from format.
+     */
+    Class<F> getFromType();
+
+    /**
+     * The Java type of the target format.
+     * @return class representing the Java type for the from format.
+     */
+    Class<T> getToType();
 }

@@ -19,6 +19,12 @@
 
 package org.switchyard.transform.jaxb.internal;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.List;
+
+import javax.xml.transform.stream.StreamSource;
+
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
 import org.junit.Test;
@@ -26,12 +32,7 @@ import org.switchyard.internal.DefaultMessage;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.AbstractTransformerTestCase;
 import org.switchyard.transform.Transformer;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.List;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
@@ -53,7 +54,7 @@ public class JAXBTransformerTest extends AbstractTransformerTestCase {
 
         DefaultMessage message = new DefaultMessage();
 
-        message.setContent(new InputSource(new StringReader(PO_XML)));
+        message.setContent(new StreamSource(new StringReader(PO_XML)));
 
         // Transform XML to Java POType and back to XML...
         unmarshalTransformer.transform(message);

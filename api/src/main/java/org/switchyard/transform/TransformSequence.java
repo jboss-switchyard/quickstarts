@@ -20,7 +20,6 @@
 package org.switchyard.transform;
 
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,13 +114,13 @@ public final class TransformSequence implements Serializable {
             }
 
             Object result;
-            if (Message.class.isAssignableFrom(getFromType(transformer))) {
+            if (Message.class.isAssignableFrom(transformer.getFromType())) {
                 // A returned object just indicates that the transformation took place.
                 result = transformer.transform(message);
             } else {
                 // A returned object indicates that the transformation took place and is
                 // used as the new Message payload.
-                result = transformer.transform(message.getContent());
+                result = transformer.transform(message.getContent(transformer.getFromType()));
                 if (result != null) {
                     message.setContent(result);
                 }
@@ -222,16 +221,6 @@ public final class TransformSequence implements Serializable {
             return (TransformSequence)sequenceProperty.getValue();
         } else {
             return null;
-        }
-    }
-
-    private Class<?> getFromType(Transformer transformer) {
-        try {
-            ParameterizedType pt = (ParameterizedType) transformer.getClass().getGenericSuperclass();
-            return (Class<?>) pt.getActualTypeArguments()[0];
-        } catch (Exception e) {
-            // Generics not specified...
-            return Object.class;
         }
     }
 }

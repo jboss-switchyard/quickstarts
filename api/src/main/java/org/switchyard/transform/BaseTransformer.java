@@ -57,7 +57,7 @@ public abstract class BaseTransformer<F, T> implements Transformer<F, T> {
     }
 
     @Override
-    public Transformer setFrom(QName fromType) {
+    public Transformer<F,T> setFrom(QName fromType) {
         _from = fromType;
         return this;
     }
@@ -68,7 +68,7 @@ public abstract class BaseTransformer<F, T> implements Transformer<F, T> {
     }
 
     @Override
-    public Transformer setTo(QName toType) {
+    public Transformer<F,T> setTo(QName toType) {
         _to = toType;
         return this;
     }
@@ -76,6 +76,18 @@ public abstract class BaseTransformer<F, T> implements Transformer<F, T> {
     @Override
     public QName getTo() {
         return _to;
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public Class<F> getFromType() {
+        return (Class<F>) getType(Types.F);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Class<T> getToType() {
+        return (Class<T>) getType(Types.T);
     }
 
     @Override

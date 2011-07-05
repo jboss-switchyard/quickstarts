@@ -243,7 +243,7 @@ public final class TransformerUtil {
     }
 
     private static Transformer newTransformer(final Object transformerObject, final Method publicMethod, QName from, QName to) {
-        Transformer transformer = new BaseTransformer() {
+        Transformer transformer = new BaseTransformer(from, to) {
             @Override
             public Object transform(Object from) {
                 try {
@@ -254,10 +254,17 @@ public final class TransformerUtil {
                     throw new SwitchYardException("Error executing @Transformer method '" + publicMethod.getName() + "' on class '" + publicMethod.getDeclaringClass().getName() + "'.", e);
                 }
             }
+            
+            @Override
+            public Class<?> getFromType() {
+                return publicMethod.getParameterTypes()[0];
+            }
+            
+            @Override
+            public Class<?> getToType() {
+                return publicMethod.getReturnType();
+            }
         };
-
-        transformer.setFrom(from);
-        transformer.setTo(to);
 
         return transformer;
     }
