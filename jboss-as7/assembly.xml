@@ -58,14 +58,14 @@
       <directory>${staging.dir}/jboss-${version.jbossas}/standalone</directory>
       <outputDirectory>${distro.root.dir}standalone</outputDirectory>
       <excludes>
-         <exclude>**/standalone.xml</exclude>
+         <exclude>**/standalone*.xml</exclude>
       </excludes>
     </fileSet>
     <fileSet>
       <directory>${staging.dir}</directory>
       <outputDirectory>${distro.root.dir}standalone/configuration</outputDirectory>
       <includes>
-         <include>standalone.xml</include>
+         <include>standalone*.xml</include>
       </includes>
     </fileSet>
     <fileSet>

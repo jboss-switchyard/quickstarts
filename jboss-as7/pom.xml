@@ -12,26 +12,55 @@
     <groupId>org.switchyard</groupId>
     <artifactId>switchyard-release-as7</artifactId>
     <version>0.2.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <name>SwitchYard: AS7 Distribution</name>
     <description>SwitchYard AS7 Distribution</description>
 
     <properties>
         <version.jbossas>7.0.0.CR1</version.jbossas>
+        <version.arquillian>1.0.0.CR1</version.arquillian>
         <staging.dir>${project.build.directory}/jboss-switchyard</staging.dir>
+        <staging.jboss.dir>${staging.dir}/jboss-${version.jbossas}</staging.jboss.dir>
         <distro.root.dir>/switchyard-as7-${distro.version}/</distro.root.dir>
+        <switchyard.jboss.home>${project.build.directory}${distro.root.dir}</switchyard.jboss.home>
     </properties>
 
     <dependencies>
         <dependency>
+          <groupId>org.switchyard</groupId>
+          <artifactId>switchyard-release-distribution</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+        </dependency>
+
+        <dependency>
           <groupId>org.jboss.as</groupId>
-          <artifactId>jboss-as-build</artifactId>
+          <artifactId>jboss-as-dist</artifactId>
           <type>zip</type>
           <version>${version.jbossas}</version>
         </dependency>
+
         <dependency>
-          <groupId>org.switchyard</groupId>
-          <artifactId>switchyard-release-distribution</artifactId>
+          <groupId>org.jboss.arquillian.junit</groupId>
+          <artifactId>arquillian-junit-container</artifactId>
+            <version>${version.arquillian}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.arquillian.container</groupId>
+          <artifactId>arquillian-container-test-api</artifactId>
+            <version>${version.arquillian}</version>
+          <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-arquillian-container-managed</artifactId>
+            <version>${version.jbossas}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -73,7 +102,7 @@
                                     <version>${project.version}</version>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${staging.dir}/jboss-${version.jbossas}</outputDirectory>
+                            <outputDirectory>${staging.jboss.dir}</outputDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -91,7 +120,7 @@
                                     <version>${project.version}</version>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${staging.dir}/jboss-${version.jbossas}</outputDirectory>
+                            <outputDirectory>${staging.jboss.dir}</outputDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -109,7 +138,7 @@
                                     <version>${project.version}</version>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${staging.dir}/jboss-${version.jbossas}</outputDirectory>
+                            <outputDirectory>${staging.jboss.dir}</outputDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -127,7 +156,7 @@
                                     <version>${project.version}</version>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${staging.dir}/jboss-${version.jbossas}</outputDirectory>
+                            <outputDirectory>${staging.jboss.dir}</outputDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -145,7 +174,7 @@
                                     <version>${project.version}</version>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${staging.dir}/jboss-${version.jbossas}</outputDirectory>
+                            <outputDirectory>${staging.jboss.dir}</outputDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -173,8 +202,26 @@
                                     <artifactId>switchyard-forge-soap-plugin</artifactId>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${staging.dir}/jboss-${version.jbossas}/forge</outputDirectory>
+                            <outputDirectory>${staging.jboss.dir}/forge</outputDirectory>
                             <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unzip-distro</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                          <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.switchyard</groupId>
+                                    <artifactId>switchyard-release-as7</artifactId>
+                                    <type>zip</type>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -192,9 +239,9 @@
                 <configuration>
                     <transformationSets>
                         <transformationSet>
-                            <dir>${staging.dir}/jboss-${version.jbossas}/standalone/configuration</dir>
+                            <dir>${staging.jboss.dir}/standalone/configuration</dir>
                             <includes>
-                                <include>standalone.xml</include>
+                                <include>standalone*.xml</include>
                             </includes>
                             <outputDir>${staging.dir}</outputDir>
                             <stylesheet>src/main/resources/switchyard.xsl</stylesheet>
@@ -202,7 +249,7 @@
                         <!-- We are not ready for domain config yet -->
                         <!--
                         <transformationSet>
-                            <dir>${staging.dir}/jboss-${version.jbossas}/domain/configuration</dir>
+                            <dir>${staging.jboss.dir}/domain/configuration</dir>
                             <includes>
                                 <include>domain.xml</include>
                             </includes>
@@ -228,7 +275,7 @@
                 <executions>
                     <execution>
                         <id>make-assembly</id>
-                        <phase>package</phase>
+                        <phase>generate-test-resources</phase>
                         <goals>
                             <goal>attached</goal>
                         </goals>
@@ -247,6 +294,31 @@
               <configuration>
                 <skip>false</skip>
               </configuration>
+            </plugin>
+
+            <!-- Configure the Surefire plugin for running the tests.  Be sure to make these same setting if running in your IDE... -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <environmentVariables>
+                        <JBOSS_HOME>${switchyard.jboss.home}</JBOSS_HOME>
+                        <SWITCHYARD_VERSION>${project.version}</SWITCHYARD_VERSION>
+                    </environmentVariables>
+                    <systemProperties>
+                        <property>
+                          <name>jboss.home</name>
+                          <value>${switchyard.jboss.home}</value>
+                        </property>
+                        <property>
+                          <name>module.path</name>
+                          <value>${switchyard.jboss.home}/modules</value>
+                        </property>
+                    </systemProperties>
+                    <trimStackTrace>false</trimStackTrace>
+                    <printSummary>true</printSummary>
+                    <forkMode>once</forkMode>
+                </configuration>
             </plugin>
         </plugins>
     </build>
