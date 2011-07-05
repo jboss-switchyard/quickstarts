@@ -32,11 +32,23 @@
         <module name="javax.api"/>
         <module name="javax.xml.bind.api"/>
         <module name="org.apache.log4j"/>
+        <module name="org.apache.xerces" services="export" export="true"/>
         <module name="org.codehaus.jackson.jackson-core-asl"/>
         <module name="org.codehaus.jackson.jackson-mapper-asl"/>
         <module name="org.switchyard.api"/>
         <module name="org.switchyard.common"/>
         <module name="org.switchyard.config"/>
-        <module name="org.milyn"/>
+        <module name="org.milyn" export="true">
+            <imports>
+                <include path="META-INF/schema"/>
+                <include path="META-INF/xsd/smooks"/>
+                <include path="META-INF/services/org/apache/camel/component"/>
+            </imports>
+            <exports>
+                <include path="META-INF/schema"/>
+                <include path="META-INF/xsd/smooks"/>
+                <include path="META-INF/services/org/apache/camel/component"/>
+            </exports>
+        </module>
     </dependencies>
 </module>
