@@ -41,4 +41,17 @@ public @interface Service {
      * Get the Service Interface for the Service.
      */
     Class<?> value();
+    
+    /**
+     * Optional Service name.
+     */
+    String name() default EMPTY;
+    
+    /**
+     * Constant representing a null (i.e. unassigned) value.
+     * Annotations are not allowed to have empty values, so a default
+     * representation for an empty value is used.
+     */
+    public static final String EMPTY = "";
+    
 }

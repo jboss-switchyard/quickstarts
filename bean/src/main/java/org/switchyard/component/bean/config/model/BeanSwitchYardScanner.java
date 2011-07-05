@@ -80,36 +80,40 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
 
             ComponentModel componentModel = new V1ComponentModel();
             String name;
-            Class<?>[] componentIfaces = serviceClass.getInterfaces();
-
-            if (componentIfaces.length > 0) {
-                // Add the service
-                Class<?> iface = componentIfaces[0];
-                ComponentServiceModel serviceModel = new V1ComponentServiceModel();
-                JavaComponentServiceInterfaceModel csiModel = new V1JavaComponentServiceInterfaceModel();
-
-                name = iface.getSimpleName();
-
-                serviceModel.setName(name);
-                serviceModel.setInterface(csiModel);
-                csiModel.setInterface(iface.getName());
-                componentModel.addService(serviceModel);
-
-                // Add any references
-                for (Class<?> reference : getReferences(serviceClass)) {
-                    ComponentReferenceModel referenceModel = new V1ComponentReferenceModel();
-                    ComponentReferenceInterfaceModel interfaceModel = new V1JavaComponentReferenceInterfaceModel();
-
-                    referenceModel.setName(reference.getSimpleName());
-                    referenceModel.setInterface(interfaceModel);
-                    interfaceModel.setInterface(reference.getCanonicalName());
-                    componentModel.addReference(referenceModel);
-                }
-
-                compositeModel.addComponent(componentModel);
-            } else {
-                name = serviceClass.getSimpleName();
+            
+            // @Service annotation is required for generation
+            Service service = serviceClass.getAnnotation(Service.class);
+            if (service == null) {
+                continue;
             }
+            
+            Class<?> iface = service.value();
+            ComponentServiceModel serviceModel = new V1ComponentServiceModel();
+            JavaComponentServiceInterfaceModel csiModel = new V1JavaComponentServiceInterfaceModel();
+
+            if (service.name().equals(Service.EMPTY)) {
+                name = iface.getSimpleName();
+            } else {
+                name = service.name();
+            }
+
+            serviceModel.setName(name);
+            serviceModel.setInterface(csiModel);
+            csiModel.setInterface(iface.getName());
+            componentModel.addService(serviceModel);
+
+            // Add any references
+            for (Class<?> reference : getReferences(serviceClass)) {
+                ComponentReferenceModel referenceModel = new V1ComponentReferenceModel();
+                ComponentReferenceInterfaceModel interfaceModel = new V1JavaComponentReferenceInterfaceModel();
+
+                referenceModel.setName(reference.getSimpleName());
+                referenceModel.setInterface(interfaceModel);
+                interfaceModel.setInterface(reference.getCanonicalName());
+                componentModel.addReference(referenceModel);
+            }
+
+            compositeModel.addComponent(componentModel);
             componentModel.setName(name);
             compositeModel.addComponent(componentModel);
 
