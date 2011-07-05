@@ -262,7 +262,8 @@ public class BaseTransformerRegistry implements TransformerRegistry {
             } else {
                 // Unrelated types.  This means there are branches in the inheritance options,
                 // which means there are multiple possibilities, therefore it's not uniquely resolvable.
-                throw new MultipleFallbacks("Multiple possible fallback types '" + JavaService.toMessageType(t1._javaType) + "' and '" + JavaService.toMessageType(t2._javaType) + "'.");
+                // Marking as equal for now...
+                return 0;
             }
         }
     }
