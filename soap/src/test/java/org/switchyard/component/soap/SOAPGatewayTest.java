@@ -62,6 +62,7 @@ import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.test.InvocationFaultException;
 import org.switchyard.test.SwitchYardTestCase;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Contains tests for SOAPGateway.
@@ -247,16 +248,16 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
 
         Message responseMsg = newInvoker(WS_CONSUMER_SERVICE).sendInOut(input);
 
-        String response = toString(responseMsg.getContent(Element.class));
+        String response = toString(responseMsg.getContent(Node.class));
         XMLAssert.assertXMLEqual(output, response);
     }
 
-    private String toString(Element element) throws Exception
+    private String toString(Node node) throws Exception
     {
         TransformerFactory transFactory = TransformerFactory.newInstance();
         Transformer transformer = transFactory.newTransformer();
         StringWriter sw = new StringWriter();
-        DOMSource source = new DOMSource(element);
+        DOMSource source = new DOMSource(node);
         StreamResult result = new StreamResult(sw);
         transformer.transform(source, result);
         return sw.toString();
@@ -278,7 +279,7 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
                         + "</soap:Fault>";
 
         Message responseMsg = newInvoker(WS_CONSUMER_SERVICE).sendInOut(input);
-        String response = toString(responseMsg.getContent(Element.class));
+        String response = toString(responseMsg.getContent(Node.class));
         XMLAssert.assertXMLEqual(output, response);
     }
 

@@ -30,6 +30,7 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.transform.dom.DOMSource;
 
 import org.switchyard.Context;
 import org.switchyard.Exchange;
@@ -86,7 +87,7 @@ public class DefaultMessageComposer implements MessageComposer {
                         throw new SOAPException("Found multiple SOAPElements in SOAPBody");
                     }
                     node.detachNode();
-                    message.setContent(node);
+                    message.setContent(new DOMSource(node));
                     found = true;
                 }
             }

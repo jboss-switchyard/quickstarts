@@ -35,7 +35,7 @@ import org.xml.sax.SAXException;
  * @param <T> To type.
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class SOAPGreetingToJava<F extends Node, T extends Greeting>  extends BaseTransformer<F, T> {
+public class SOAPGreetingToJava extends BaseTransformer<Node, Greeting> {
 
     private XMLBinding _binder;
 

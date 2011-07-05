@@ -32,7 +32,6 @@ import org.switchyard.Message;
 import org.switchyard.Property;
 import org.switchyard.Scope;
 import org.switchyard.component.soap.util.SOAPUtil;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
@@ -55,17 +54,17 @@ public class DefaultMessageDecomposer implements MessageDecomposer {
         }
         final SOAPMessage response = SOAPUtil.SOAP_MESSAGE_FACTORY.createMessage();
         if (message != null) {
-            Object messagePayload = message.getContent();
-
-            if (messagePayload instanceof SOAPMessage) {
-                return (SOAPMessage) messagePayload;
-            }
-            
-            final Element input = toElement(messagePayload);
-
-            if (input == null) {
+            // check to see if the payload is null or it's a full SOAP Message
+            if (message.getContent() == null) {
                 throw new SOAPException("Null response from service");
             }
+            if (message.getContent() instanceof SOAPMessage) {
+                return (SOAPMessage) message.getContent();
+            }
+            
+            // convert the message content to a form we can work with
+            Node input = message.getContent(Node.class);
+            
             try {
                 Node node = response.getSOAPBody().getOwnerDocument().importNode(input, true);
                 response.getSOAPBody().appendChild(node);
@@ -87,25 +86,5 @@ public class DefaultMessageDecomposer implements MessageDecomposer {
         }
 
         return response;
-    }
-
-    private Element toElement(Object messagePayload) throws SOAPException {
-        if (messagePayload == null) {
-            // Let the caller deal with null...
-            return null;
-        }
-
-        if (messagePayload instanceof Element) {
-            return (Element) messagePayload;
-        } else if (messagePayload instanceof String) {
-            try {
-                return SOAPUtil.parseAsDom((String) messagePayload).getDocumentElement();
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new SOAPException("Error parsing SOAP message to DOM Element.", e);
-            }
-        }
-
-        throw new SOAPException("Unsupported SOAP message payload type '" + messagePayload.getClass().getName() + "'.  Must be a DOM Element, or a String.");
     }
 }

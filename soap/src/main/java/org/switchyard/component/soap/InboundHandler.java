@@ -32,7 +32,6 @@ import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
-import javax.xml.soap.Node;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
@@ -51,6 +50,8 @@ import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
 import org.switchyard.metadata.BaseExchangeContract;
+import org.w3c.dom.Node;
+
 
 /**
  * Hanldes SOAP requests to invoke a SwitchYard service.
@@ -266,17 +267,13 @@ public class InboundHandler extends BaseHandler {
     }
 
     private boolean assertComposedMessageOK(Message soapMessage, Operation operation, Boolean oneWay) {
-        Object content = soapMessage.getContent();
+        Node inputMessage = soapMessage.getContent(Node.class);
 
-        if (content == null) {
+        if (inputMessage == null) {
             handleException(oneWay, new SOAPException("Composer created a null ESB Message payload for service '" + _service.getName() + "'.  Must be of type '" + SOAPMessage.class.getName() + "'."));
             return false;
-        } else if (!(content instanceof Node)) {
-            handleException(oneWay, new SOAPException("Composer created invalid ESB Message payload type '" + content.getClass().getName() + "' for service '" + _service.getName() + "'.  Must be of type '" + Node.class.getName() + "'."));
-            return false;
         }
-
-        Node inputMessage = (Node) content;
+        
         String actualNS = inputMessage.getNamespaceURI();
         String actualLN = inputMessage.getLocalName();
         List<Part> parts = operation.getInput().getMessage().getOrderedParts(null);
