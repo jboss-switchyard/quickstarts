@@ -86,6 +86,27 @@ public class V1CompositeReferenceModel extends BaseNamedModel implements Composi
      * {@inheritDoc}
      */
     @Override
+    public ComponentModel getComponent() {
+        CompositeModel composite = getComposite();
+        if (composite != null) {
+            QName promote = getPromote();
+            if (promote != null) {
+                StringTokenizer st = new StringTokenizer(promote.getLocalPart(), REFERENCE_SEPARATOR);
+                QName componentName = XMLHelper.createQName(st.nextToken());
+                for (ComponentModel component : composite.getComponents()) {
+                    if (componentName.equals(component.getQName())) {
+                        return component;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ComponentReferenceModel getComponentReference() {
         CompositeModel composite = getComposite();
         if (composite != null) {
@@ -93,23 +114,18 @@ public class V1CompositeReferenceModel extends BaseNamedModel implements Composi
             if (promote != null) {
                 StringTokenizer st = new StringTokenizer(promote.getLocalPart(), REFERENCE_SEPARATOR);
                 int count = st.countTokens();
-                if (count == 1) {
-                    QName componentName = XMLHelper.createQName(st.nextToken());
-                    for (ComponentModel component : composite.getComponents()) {
-                        if (componentName.equals(component.getQName())) {
-                            List<ComponentReferenceModel> references = component.getReferences();
+                QName componentName = XMLHelper.createQName(st.nextToken());
+                QName componentReferenceName = (count == 2) ? XMLHelper.createQName(st.nextToken()) : null;
+                for (ComponentModel component : composite.getComponents()) {
+                    if (componentName.equals(component.getQName())) {
+                        List<ComponentReferenceModel> references = component.getReferences();
+                        if (count == 1) {
                             if (references.size() > 0) {
                                 return references.get(0);
                             }
                             break;
-                        }
-                    }
-                } else if (count == 2) {
-                    QName componentName = XMLHelper.createQName(st.nextToken());
-                    QName componentReferenceName = XMLHelper.createQName(st.nextToken());
-                    for (ComponentModel component : composite.getComponents()) {
-                        if (componentName.equals(component.getQName())) {
-                            for (ComponentReferenceModel reference : component.getReferences()) {
+                        } else if (count == 2) {
+                            for (ComponentReferenceModel reference : references) {
                                 if (componentReferenceName.equals(reference.getQName())) {
                                     return reference;
                                 }

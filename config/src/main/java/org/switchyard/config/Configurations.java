@@ -24,8 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.TreeMap;
 
 import javax.xml.namespace.QName;
 
@@ -146,18 +145,18 @@ public final class Configurations {
         private static final String[] ID_CANDIDATES = {"id", "name", "class", "interface", "from", "to"};
 
         private QName _qname;
-        private Set<Object> _ids;
+        private Map<String,Object> _ids;
 
         private Key(Configuration config) {
             _qname = config.getQName();
-            _ids = new TreeSet<Object>();
+            _ids = new TreeMap<String,Object>();
             for (String idc : ID_CANDIDATES) {
                 Object id = id(config.getAttribute(XMLHelper.createQName(_qname.getNamespaceURI(), idc)));
                 if (id == null) {
                     id = id(config.getAttribute(idc));
                 }
                 if (id != null) {
-                    _ids.add(id);
+                    _ids.put(idc, id);
                 }
             }
         }

@@ -22,6 +22,7 @@ package org.switchyard.config.model.composite.v1;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.xml.namespace.QName;
 
@@ -31,6 +32,7 @@ import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.InterfaceModel;
@@ -41,6 +43,11 @@ import org.switchyard.config.model.composite.InterfaceModel;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class V1CompositeServiceModel extends BaseNamedModel implements CompositeServiceModel {
+
+    /**
+     * The separator used between component-name service-name combination.
+     */
+    public static final String REFERENCE_SEPARATOR = "/";
 
     private List<BindingModel> _bindings = new ArrayList<BindingModel>();
     private InterfaceModel _interface;
@@ -84,9 +91,46 @@ public class V1CompositeServiceModel extends BaseNamedModel implements Composite
         if (composite != null) {
             QName promote = getPromote();
             if (promote != null) {
+                StringTokenizer st = new StringTokenizer(promote.getLocalPart(), REFERENCE_SEPARATOR);
+                QName componentName = XMLHelper.createQName(st.nextToken());
                 for (ComponentModel component : composite.getComponents()) {
-                    if (promote.equals(component.getQName())) {
+                    if (componentName.equals(component.getQName())) {
                         return component;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ComponentServiceModel getComponentService() {
+        CompositeModel composite = getComposite();
+        if (composite != null) {
+            QName promote = getPromote();
+            if (promote != null) {
+                StringTokenizer st = new StringTokenizer(promote.getLocalPart(), REFERENCE_SEPARATOR);
+                int count = st.countTokens();
+                QName componentName = XMLHelper.createQName(st.nextToken());
+                QName componentServiceName = (count == 2) ? XMLHelper.createQName(st.nextToken()) : null;
+                for (ComponentModel component : composite.getComponents()) {
+                    if (componentName.equals(component.getQName())) {
+                        List<ComponentServiceModel> services = component.getServices();
+                        if (count == 1) {
+                            if (services.size() > 0) {
+                                return services.get(0);
+                            }
+                            break;
+                        } else if (count == 2) {
+                            for (ComponentServiceModel service : services) {
+                                if (componentServiceName.equals(service.getQName())) {
+                                    return service;
+                                }
+                            }
+                        }
                     }
                 }
             }

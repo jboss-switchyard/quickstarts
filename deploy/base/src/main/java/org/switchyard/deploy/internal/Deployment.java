@@ -101,7 +101,7 @@ public class Deployment extends AbstractDeployment {
      */
     public void init(ServiceDomain appServiceDomain) {
         super.init(appServiceDomain);
-        _log.debug("Initializing deployment for application " + getConfig().getName());
+        _log.debug("Initializing deployment for application " + getConfig().getQName());
         // create a new domain and load transformer and activator instances for lifecycle
         registerTransformers();
         createActivators();
@@ -112,7 +112,7 @@ public class Deployment extends AbstractDeployment {
      * activators are triggered.
      */
     public void start() {
-        _log.debug("Starting deployment " + getConfig().getName());
+        _log.debug("Starting deployment " + getConfig().getQName());
         // ordered startup lifecycle
         try {
             deployReferenceBindings();
@@ -122,12 +122,12 @@ public class Deployment extends AbstractDeployment {
             deployAutoRegisteredTransformers();
         } catch (RuntimeException e1) {
             // Undo partial deployment...
-            _log.debug("Undeploying partially deployed artifacts of failed deployment " + getConfig().getName());
+            _log.debug("Undeploying partially deployed artifacts of failed deployment " + getConfig().getQName());
             try {
                 stop();
             } catch (RuntimeException e2) {
                 // Nothing we can do...
-                _log.debug("Failed to properly undeploy a partial/failed deployment " +  getConfig().getName(), e2);
+                _log.debug("Failed to properly undeploy a partial/failed deployment " +  getConfig().getQName(), e2);
             }
             // Rethrow the exception...
             throw e1;
@@ -139,7 +139,7 @@ public class Deployment extends AbstractDeployment {
      * activators are triggered.
      */
     public void stop() {
-        _log.debug("Stopping deployment " + getConfig().getName());
+        _log.debug("Stopping deployment " + getConfig().getQName());
         undeployServiceBindings();
         undeployServices();
         undeployReferences();
@@ -151,7 +151,7 @@ public class Deployment extends AbstractDeployment {
      * Tear everything down.
      */
     public void destroy() {
-        _log.debug("Destroying deployment " + getConfig().getName());
+        _log.debug("Destroying deployment " + getConfig().getQName());
         
         destroyDomain();
         
@@ -221,7 +221,7 @@ public class Deployment extends AbstractDeployment {
         for (CompositeReferenceModel reference : getConfig().getComposite().getReferences()) {
             for (BindingModel binding : reference.getBindings()) {
                 QName refQName = reference.getQName();
-                _log.debug("Deploying binding " + binding.getType() + " for reference " + reference.getName());
+                _log.debug("Deploying binding " + binding.getType() + " for reference " + reference.getQName());
                 
                 Activator activator = findActivator(binding.getType());
                 ExchangeHandler handler = activator.init(refQName, reference);
@@ -282,6 +282,14 @@ public class Deployment extends AbstractDeployment {
 
     private void deployServices() {
         _log.debug("Deploying services ...");
+        // discover any service promotions
+        Map<ComponentServiceModel,CompositeServiceModel> servicePromotions = new HashMap<ComponentServiceModel,CompositeServiceModel>();
+        for (CompositeServiceModel compositeService : getConfig().getComposite().getServices()) {
+            ComponentServiceModel componentService = compositeService.getComponentService();
+            if (componentService != null) {
+                servicePromotions.put(componentService, compositeService);
+            }
+        }
         // deploy services to each implementation found in the application
         for (ComponentModel component : getConfig().getComposite().getComponents()) {
             Activator activator = findActivator(component);
@@ -291,14 +299,22 @@ public class Deployment extends AbstractDeployment {
             }
             // register a service for each one declared in the component
             for (ComponentServiceModel service : component.getServices()) {
-                _log.debug("Registering service " + service.getName()  
+                _log.debug("Registering service " + service.getQName()
                        + " for component " + component.getImplementation().getType());
                 ExchangeHandler handler = activator.init(service.getQName(), service);
                 ServiceInterface serviceIntf = getComponentServiceInterface(service);
                 ServiceReference serviceRef = serviceIntf != null
                         ? getDomain().registerService(service.getQName(), handler, serviceIntf)
                         : getDomain().registerService(service.getQName(), handler);
-                        
+                // register any service promotions
+                CompositeServiceModel promotion = servicePromotions.get(service);
+                if (promotion != null) {
+                    if (serviceIntf != null) {
+                        getDomain().registerService(promotion.getQName(), handler, serviceIntf);
+                    } else {
+                        getDomain().registerService(promotion.getQName(), handler);
+                    }
+                }
                 Activation activation = new Activation(serviceRef, activator);
                 activation.start();
                 _services.add(activation);
@@ -313,7 +329,7 @@ public class Deployment extends AbstractDeployment {
             Activator activator = findActivator(component);
             // register a service for each one declared in the component
             for (ComponentReferenceModel reference : component.getReferences()) {
-                _log.debug("Registering reference " + reference.getName()  
+                _log.debug("Registering reference " + reference.getQName()
                        + " for component " + component.getImplementation().getType());
                 ServiceReference service = getDomain().getService(reference.getQName());
                 if (service == null) {
@@ -333,11 +349,11 @@ public class Deployment extends AbstractDeployment {
         // activate bindings for each service
         for (CompositeServiceModel service : getConfig().getComposite().getServices()) {
             for (BindingModel binding : service.getBindings()) {
-                _log.debug("Deploying binding " + binding.getType() + " for service " + service.getName());
+                _log.debug("Deploying binding " + binding.getType() + " for service " + service.getQName());
                 Activator activator = findActivator(binding.getType());
                 ServiceReference serviceRef = getDomain().getService(service.getQName());
                 if (serviceRef == null) {
-                    throw new SwitchYardException("Unable to activate binding, service not found: " 
+                    throw new SwitchYardException("Unable to activate binding, service not found: "
                             + service.getQName());
                 }
                 activator.init(serviceRef.getName(), service);

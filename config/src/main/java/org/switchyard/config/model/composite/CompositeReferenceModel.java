@@ -44,6 +44,12 @@ public interface CompositeReferenceModel extends NamedModel {
     public CompositeModel getComposite();
 
     /**
+     * Gets the child component model.
+     * @return the child component model
+     */
+    public ComponentModel getComponent();
+
+    /**
      * Gets the child component reference model.
      * @return the child component reference model
      */

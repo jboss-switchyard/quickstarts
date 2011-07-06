@@ -38,16 +38,22 @@ public interface CompositeServiceModel extends NamedModel {
     public static final String PROMOTE = "promote";
 
     /**
-     * Gets the grandparent composite model.
-     * @return the grandparent composite model
+     * Gets the parent composite model.
+     * @return the parent composite model
      */
     public CompositeModel getComposite();
 
     /**
-     * Gets the parent component model.
-     * @return the parent component model
+     * Gets the child component model.
+     * @return the child component model
      */
     public ComponentModel getComponent();
+
+    /**
+     * Gets the child component service model.
+     * @return the child component service model
+     */
+    public ComponentServiceModel getComponentService();
 
     /**
      * Gets the promote attribute.
