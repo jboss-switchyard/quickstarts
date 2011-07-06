@@ -24,6 +24,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.xml.namespace.QName;
 
@@ -141,20 +143,21 @@ public final class Configurations {
 
     private static final class Key {
 
-        private static final String[] ID_CANDIDATES = {"id", "name", "class", "interface"};
+        private static final String[] ID_CANDIDATES = {"id", "name", "class", "interface", "from", "to"};
 
         private QName _qname;
-        private Object _id;
+        private Set<Object> _ids;
 
         private Key(Configuration config) {
             _qname = config.getQName();
+            _ids = new TreeSet<Object>();
             for (String idc : ID_CANDIDATES) {
-                _id = id(config.getAttribute(XMLHelper.createQName(_qname.getNamespaceURI(), idc)));
-                if (_id == null) {
-                    _id = id(config.getAttribute(idc));
+                Object id = id(config.getAttribute(XMLHelper.createQName(_qname.getNamespaceURI(), idc)));
+                if (id == null) {
+                    id = id(config.getAttribute(idc));
                 }
-                if (_id != null) {
-                    break;
+                if (id != null) {
+                    _ids.add(id);
                 }
             }
         }
@@ -174,7 +177,7 @@ public final class Configurations {
          */
         @Override
         public String toString() {
-            return "Key [_qname=" + _qname + ", _id=" + _id + "]";
+            return "Key [_qname=" + _qname + ", _ids=" + _ids + "]";
         }
 
         /**
@@ -184,7 +187,7 @@ public final class Configurations {
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + ((_id == null) ? 0 : _id.hashCode());
+            result = prime * result + ((_ids == null) ? 0 : _ids.hashCode());
             result = prime * result + ((_qname == null) ? 0 : _qname.hashCode());
             return result;
         }
@@ -204,11 +207,11 @@ public final class Configurations {
                 return false;
             }
             Key other = (Key)obj;
-            if (_id == null) {
-                if (other._id != null) {
+            if (_ids == null) {
+                if (other._ids != null) {
                     return false;
                 }
-            } else if (!_id.equals(other._id)) {
+            } else if (!_ids.equals(other._ids)) {
                 return false;
             }
             if (_qname == null) {
