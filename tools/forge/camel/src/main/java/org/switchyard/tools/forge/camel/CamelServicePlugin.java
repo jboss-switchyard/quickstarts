@@ -19,29 +19,33 @@
 
 package org.switchyard.tools.forge.camel;
 
+import javax.inject.Inject;
+
 import org.apache.camel.builder.RouteBuilder;
-import org.jboss.seam.forge.parser.JavaParser;
-import org.jboss.seam.forge.parser.java.Annotation;
-import org.jboss.seam.forge.parser.java.JavaClass;
-import org.jboss.seam.forge.parser.java.JavaInterface;
-import org.jboss.seam.forge.project.facets.JavaSourceFacet;
-import org.jboss.seam.forge.project.facets.MetadataFacet;
-import org.jboss.seam.forge.shell.PromptType;
-import org.jboss.seam.forge.shell.ShellColor;
-import org.jboss.seam.forge.shell.plugins.Alias;
-import org.jboss.seam.forge.shell.plugins.Command;
-import org.jboss.seam.forge.shell.plugins.Help;
-import org.jboss.seam.forge.shell.plugins.Option;
-import org.jboss.seam.forge.shell.plugins.PipeOut;
-import org.jboss.seam.forge.shell.plugins.RequiresFacet;
-import org.jboss.seam.forge.shell.plugins.RequiresProject;
-import org.jboss.seam.forge.shell.plugins.Topic;
+import org.jboss.forge.parser.JavaParser;
+import org.jboss.forge.parser.java.Annotation;
+import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.JavaInterface;
+import org.jboss.forge.project.Project;
+import org.jboss.forge.project.facets.JavaSourceFacet;
+import org.jboss.forge.project.facets.MetadataFacet;
+import org.jboss.forge.shell.PromptType;
+import org.jboss.forge.shell.Shell;
+import org.jboss.forge.shell.ShellColor;
+import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.Command;
+import org.jboss.forge.shell.plugins.Help;
+import org.jboss.forge.shell.plugins.Option;
+import org.jboss.forge.shell.plugins.PipeOut;
+import org.jboss.forge.shell.plugins.Plugin;
+import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.shell.plugins.RequiresProject;
+import org.jboss.forge.shell.plugins.Topic;
 import org.switchyard.component.camel.Route;
 import org.switchyard.component.camel.config.model.v1.V1CamelImplementationModel;
 import org.switchyard.config.model.composite.v1.V1ComponentModel;
 import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
-import org.switchyard.tools.forge.AbstractPlugin;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 
 /**
@@ -52,7 +56,7 @@ import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 @RequiresFacet({SwitchYardFacet.class, CamelFacet.class})
 @Topic("SOA")
 @Help("Provides commands to create and edit Camel routes in SwitchYard.")
-public class CamelServicePlugin extends AbstractPlugin {
+public class CamelServicePlugin implements Plugin {
     
     private static final String SERVICE_TOKEN = "${service.name}";
     private static final String ROUTE_TEMPLATE = 
@@ -73,6 +77,13 @@ public class CamelServicePlugin extends AbstractPlugin {
             }
         }
     }
+    
+    @Inject
+    private Project _project;
+    
+    @Inject
+    private Shell _shell;
+    
     
     /**
      * Create a new Camel component service.
@@ -105,7 +116,7 @@ public class CamelServicePlugin extends AbstractPlugin {
     }
     
     private void createXMLRoute(String routeName) {
-        SwitchYardFacet switchYard = getProject().getFacet(SwitchYardFacet.class);
+        SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
         // Create the component service model
         V1ComponentModel component = new V1ComponentModel();
         component.setName(routeName + "Component");
@@ -131,12 +142,12 @@ public class CamelServicePlugin extends AbstractPlugin {
      */
     private void createJavaRoute(String routeName, PipeOut out) 
     throws java.io.FileNotFoundException {
-        JavaSourceFacet java = getShell().getCurrentProject().getFacet(JavaSourceFacet.class);
+        JavaSourceFacet java = _shell.getCurrentProject().getFacet(JavaSourceFacet.class);
         
-        String pkgName = getProject().getFacet(MetadataFacet.class).getTopLevelPackage();
+        String pkgName = _project.getFacet(MetadataFacet.class).getTopLevelPackage();
         
         if (pkgName == null) {
-            pkgName = getShell().promptCommon(
+            pkgName = _shell.promptCommon(
                 "Java package for route interface and implementation:",
                 PromptType.JAVA_PACKAGE);
         }

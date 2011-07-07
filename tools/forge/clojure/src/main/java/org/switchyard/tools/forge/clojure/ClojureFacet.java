@@ -19,12 +19,12 @@
 
 package org.switchyard.tools.forge.clojure;
 
-import org.jboss.seam.forge.project.facets.DependencyFacet;
-import org.jboss.seam.forge.project.facets.PackagingFacet;
-import org.jboss.seam.forge.project.packaging.PackagingType;
-import org.jboss.seam.forge.shell.plugins.Alias;
-import org.jboss.seam.forge.shell.plugins.RequiresFacet;
-import org.jboss.seam.forge.shell.plugins.RequiresPackagingType;
+import org.jboss.forge.project.facets.DependencyFacet;
+import org.jboss.forge.project.facets.PackagingFacet;
+import org.jboss.forge.project.packaging.PackagingType;
+import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.shell.plugins.RequiresPackagingType;
 import org.switchyard.tools.forge.AbstractFacet;
 
 /**
@@ -45,4 +45,11 @@ public class ClojureFacet extends AbstractFacet {
     public ClojureFacet() {
         super(CLOJURE_MAVEN_ID);
     }
+    
+    @Override
+    public boolean install() {
+        installDependencies();
+        return true;
+    }
+    
 }

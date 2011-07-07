@@ -21,24 +21,28 @@ package org.switchyard.tools.forge.bean;
 
 import java.io.FileNotFoundException;
 
-import org.jboss.seam.forge.parser.JavaParser;
-import org.jboss.seam.forge.parser.java.Annotation;
-import org.jboss.seam.forge.parser.java.JavaClass;
-import org.jboss.seam.forge.parser.java.JavaInterface;
-import org.jboss.seam.forge.project.facets.JavaSourceFacet;
-import org.jboss.seam.forge.project.facets.MetadataFacet;
-import org.jboss.seam.forge.shell.PromptType;
-import org.jboss.seam.forge.shell.ShellColor;
-import org.jboss.seam.forge.shell.plugins.Alias;
-import org.jboss.seam.forge.shell.plugins.Command;
-import org.jboss.seam.forge.shell.plugins.Help;
-import org.jboss.seam.forge.shell.plugins.Option;
-import org.jboss.seam.forge.shell.plugins.PipeOut;
-import org.jboss.seam.forge.shell.plugins.RequiresFacet;
-import org.jboss.seam.forge.shell.plugins.RequiresProject;
-import org.jboss.seam.forge.shell.plugins.Topic;
+import javax.inject.Inject;
+
+import org.jboss.forge.parser.JavaParser;
+import org.jboss.forge.parser.java.Annotation;
+import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.JavaInterface;
+import org.jboss.forge.project.Project;
+import org.jboss.forge.project.facets.JavaSourceFacet;
+import org.jboss.forge.project.facets.MetadataFacet;
+import org.jboss.forge.shell.PromptType;
+import org.jboss.forge.shell.Shell;
+import org.jboss.forge.shell.ShellColor;
+import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.Command;
+import org.jboss.forge.shell.plugins.Help;
+import org.jboss.forge.shell.plugins.Option;
+import org.jboss.forge.shell.plugins.PipeOut;
+import org.jboss.forge.shell.plugins.Plugin;
+import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.shell.plugins.RequiresProject;
+import org.jboss.forge.shell.plugins.Topic;
 import org.switchyard.component.bean.Service;
-import org.switchyard.tools.forge.AbstractPlugin;
 
 /**
  * Forge plugin for Bean component commands.
@@ -48,7 +52,13 @@ import org.switchyard.tools.forge.AbstractPlugin;
 @RequiresFacet({BeanFacet.class})
 @Topic("SOA")
 @Help("Provides commands to create, edit, and remove CDI-based services in SwitchYard.")
-public class BeanServicePlugin extends AbstractPlugin {
+public class BeanServicePlugin implements Plugin {
+    
+    @Inject
+    private Project _project;
+    
+    @Inject
+    private Shell _shell;
     
     /**
      * Create a new Bean service interface and implementation.
@@ -65,12 +75,12 @@ public class BeanServicePlugin extends AbstractPlugin {
              final PipeOut out)
     throws FileNotFoundException {
       
-        JavaSourceFacet java = getShell().getCurrentProject().getFacet(JavaSourceFacet.class);
+        JavaSourceFacet java = _shell.getCurrentProject().getFacet(JavaSourceFacet.class);
         
-        String pkgName = getProject().getFacet(MetadataFacet.class).getTopLevelPackage();
+        String pkgName = _project.getFacet(MetadataFacet.class).getTopLevelPackage();
         
         if (pkgName == null) {
-            pkgName = getShell().promptCommon(
+            pkgName = _shell.promptCommon(
                 "Java package for service interface and implementation:",
                 PromptType.JAVA_PACKAGE);
         }

@@ -14,14 +14,11 @@
     <version>${project.parent.version}</version>
     <description>SOAP Gateway Forge Support</description>
     <url>http://switchyard.org/</url>
-  <properties>
-    <forge.api.version>1.0.0.Alpha3</forge.api.version>
-  </properties>
   <dependencies>
     <dependency>
-      <groupId>org.jboss.seam.forge</groupId>
+      <groupId>org.jboss.forge</groupId>
       <artifactId>forge-shell-api</artifactId>
-      <version>${forge.api.version}</version>
+      <version>${forge.version}</version>
     </dependency>
     <dependency>
       <groupId>org.switchyard.components</groupId>

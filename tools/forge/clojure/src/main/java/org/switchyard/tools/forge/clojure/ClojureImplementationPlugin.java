@@ -19,19 +19,22 @@
 
 package org.switchyard.tools.forge.clojure;
 
-import org.jboss.seam.forge.shell.plugins.Alias;
-import org.jboss.seam.forge.shell.plugins.Command;
-import org.jboss.seam.forge.shell.plugins.Help;
-import org.jboss.seam.forge.shell.plugins.Option;
-import org.jboss.seam.forge.shell.plugins.PipeOut;
-import org.jboss.seam.forge.shell.plugins.RequiresFacet;
-import org.jboss.seam.forge.shell.plugins.RequiresProject;
-import org.jboss.seam.forge.shell.plugins.Topic;
+import javax.inject.Inject;
+
+import org.jboss.forge.project.Project;
+import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.Command;
+import org.jboss.forge.shell.plugins.Help;
+import org.jboss.forge.shell.plugins.Option;
+import org.jboss.forge.shell.plugins.PipeOut;
+import org.jboss.forge.shell.plugins.Plugin;
+import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.shell.plugins.RequiresProject;
+import org.jboss.forge.shell.plugins.Topic;
 import org.switchyard.component.clojure.config.model.ClojureComponentImplementationModel;
 import org.switchyard.config.model.composite.v1.V1ComponentModel;
 import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
-import org.switchyard.tools.forge.AbstractPlugin;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 
 /**
@@ -44,7 +47,10 @@ import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 @RequiresProject
 @RequiresFacet({SwitchYardFacet.class, ClojureFacet.class})
 @Help("Provides commands to create Clojure services in SwitchYard.")
-public class ClojureImplementationPlugin extends AbstractPlugin {
+public class ClojureImplementationPlugin implements Plugin {
+    
+    @Inject
+    private Project _project;
     
     /**
      * Create a new Clojure implementation service.
@@ -112,7 +118,7 @@ public class ClojureImplementationPlugin extends AbstractPlugin {
     }
     
     private void saveSwitchYardModel(final V1ComponentModel component) {
-        final SwitchYardFacet switchYard = getProject().getFacet(SwitchYardFacet.class);
+        final SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
         final SwitchYardModel syConfig = switchYard.getSwitchYardConfig();
         syConfig.getComposite().addComponent(component);
         switchYard.saveConfig();

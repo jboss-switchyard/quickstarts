@@ -19,12 +19,12 @@
 
 package org.switchyard.tools.forge.camel;
 
-import org.jboss.seam.forge.project.facets.DependencyFacet;
-import org.jboss.seam.forge.project.facets.PackagingFacet;
-import org.jboss.seam.forge.project.packaging.PackagingType;
-import org.jboss.seam.forge.shell.plugins.Alias;
-import org.jboss.seam.forge.shell.plugins.RequiresFacet;
-import org.jboss.seam.forge.shell.plugins.RequiresPackagingType;
+import org.jboss.forge.project.facets.DependencyFacet;
+import org.jboss.forge.project.facets.PackagingFacet;
+import org.jboss.forge.project.packaging.PackagingType;
+import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.shell.plugins.RequiresPackagingType;
 import org.switchyard.tools.forge.AbstractFacet;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 
@@ -38,6 +38,12 @@ public class CamelFacet extends AbstractFacet {
     
     private static final String CAMEL_MAVEN_ID = 
         "org.switchyard.components:switchyard-component-camel";
+    
+    @Override
+    public boolean install() {
+        installDependencies();
+        return true;
+    }
     
     /**
      * Create a new Camel Facet.

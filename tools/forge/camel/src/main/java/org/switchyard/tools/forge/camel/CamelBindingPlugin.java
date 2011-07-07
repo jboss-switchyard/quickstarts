@@ -21,20 +21,23 @@ package org.switchyard.tools.forge.camel;
 
 import java.net.URI;
 
-import org.jboss.seam.forge.shell.ShellColor;
-import org.jboss.seam.forge.shell.plugins.Alias;
-import org.jboss.seam.forge.shell.plugins.Command;
-import org.jboss.seam.forge.shell.plugins.Help;
-import org.jboss.seam.forge.shell.plugins.Option;
-import org.jboss.seam.forge.shell.plugins.PipeOut;
-import org.jboss.seam.forge.shell.plugins.RequiresFacet;
-import org.jboss.seam.forge.shell.plugins.RequiresProject;
-import org.jboss.seam.forge.shell.plugins.Topic;
+import javax.inject.Inject;
+
+import org.jboss.forge.project.Project;
+import org.jboss.forge.shell.ShellColor;
+import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.Command;
+import org.jboss.forge.shell.plugins.Help;
+import org.jboss.forge.shell.plugins.Option;
+import org.jboss.forge.shell.plugins.PipeOut;
+import org.jboss.forge.shell.plugins.Plugin;
+import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.shell.plugins.RequiresProject;
+import org.jboss.forge.shell.plugins.Topic;
 import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
 import org.switchyard.component.camel.config.model.v1.V1OperationSelector;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
-import org.switchyard.tools.forge.AbstractPlugin;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 
 /**
@@ -45,7 +48,10 @@ import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 @RequiresFacet({SwitchYardFacet.class, CamelFacet.class})
 @Topic("SOA")
 @Help("Provides commands to manage Camel service bindings in SwitchYard.")
-public class CamelBindingPlugin extends AbstractPlugin {
+public class CamelBindingPlugin implements Plugin {
+
+    @Inject
+    private Project _project;
     
     /**
      * Bind a promoted service using the Camel binding.
@@ -70,7 +76,7 @@ public class CamelBindingPlugin extends AbstractPlugin {
             final String operationName,
             final PipeOut out) {
 
-        SwitchYardFacet switchYard = getProject().getFacet(SwitchYardFacet.class);
+        SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
         CompositeServiceModel service = switchYard.getCompositeService(serviceName);
         // Check to see if the service is public
         if (service == null) {
@@ -112,7 +118,7 @@ public class CamelBindingPlugin extends AbstractPlugin {
             final String configURI,
             final PipeOut out) {
 
-        SwitchYardFacet switchYard = getProject().getFacet(SwitchYardFacet.class);
+        SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
         CompositeReferenceModel reference = switchYard.getCompositeReference(referenceName);
         // Check to see if the reference is public
         if (reference == null) {
