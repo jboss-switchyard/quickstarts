@@ -18,17 +18,17 @@
  */
 package org.switchyard.component.bpm.config.model;
 
-import static org.switchyard.component.bpm.process.ProcessResourceType.BPMN2;
-import static org.switchyard.component.bpm.process.ProcessResourceType.DSL;
-import static org.switchyard.component.bpm.process.ProcessResourceType.DSLR;
+import static org.switchyard.component.bpm.resource.ResourceType.BPMN2;
+import static org.switchyard.component.bpm.resource.ResourceType.DSL;
+import static org.switchyard.component.bpm.resource.ResourceType.DSLR;
 
-import org.switchyard.component.bpm.BPM;
+import org.switchyard.component.bpm.Process;
 import org.switchyard.component.bpm.config.model.ComplexProcess.My1stHandler;
 import org.switchyard.component.bpm.config.model.ComplexProcess.My2ndHandler;
 import org.switchyard.component.bpm.config.model.ComplexProcess.MyDsl;
 import org.switchyard.component.bpm.config.model.ComplexProcess.MyDslr;
 import org.switchyard.component.bpm.config.model.ComplexProcess.ProcessIface;
-import org.switchyard.component.bpm.process.BaseProcessResource;
+import org.switchyard.component.bpm.resource.BaseResource;
 import org.switchyard.component.bpm.task.BaseTaskHandler;
 import org.switchyard.component.bpm.task.Task;
 import org.switchyard.component.bpm.task.TaskManager;
@@ -38,25 +38,24 @@ import org.switchyard.component.bpm.task.TaskManager;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-@BPM(
-    processInterface=ProcessIface.class,
-    processDefinition="path/to/my.bpmn",
-    processDefinitionType=BPMN2,
-    processId="ComplexProcess",
-    processResources={MyDsl.class, MyDslr.class},
-    taskHandlers={My1stHandler.class, My2ndHandler.class}
-)
-public class ComplexProcess {
+@Process(
+    value=ProcessIface.class,
+    definition="path/to/my.bpmn",
+    definitionType=BPMN2,
+    id="ComplexProcess",
+    resources={MyDsl.class, MyDslr.class},
+    taskHandlers={My1stHandler.class, My2ndHandler.class})
+public interface ComplexProcess {
 
     public static interface ProcessIface {}
 
-    public static final class MyDsl extends BaseProcessResource {
+    public static final class MyDsl extends BaseResource {
         public MyDsl() {
             super("path/to/my.dsl", DSL);
         }
     }
 
-    public static final class MyDslr extends BaseProcessResource {
+    public static final class MyDslr extends BaseResource {
         public MyDslr() {
             super("path/to/my.dslr", DSLR);
         }

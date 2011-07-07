@@ -19,11 +19,11 @@
 package org.switchyard.component.bpm.exchange;
 
 import static org.switchyard.Scope.IN;
-import static org.switchyard.component.bpm.process.ProcessConstants.PROCESS_ACTION_TYPE_VAR;
-import static org.switchyard.component.bpm.process.ProcessConstants.PROCESS_EVENT_VAR;
-import static org.switchyard.component.bpm.process.ProcessConstants.PROCESS_EVENT_TYPE_VAR;
-import static org.switchyard.component.bpm.process.ProcessConstants.PROCESS_INSTANCE_ID_VAR;
-import static org.switchyard.component.bpm.process.ProcessConstants.PROCESS_NAMESPACE;
+import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_ACTION_TYPE_VAR;
+import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_EVENT_TYPE_VAR;
+import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_EVENT_VAR;
+import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_INSTANCE_ID_VAR;
+import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_NAMESPACE;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,13 +31,16 @@ import java.net.URL;
 
 import javax.xml.namespace.QName;
 
+import org.apache.log4j.Logger;
 import org.switchyard.BaseHandler;
 import org.switchyard.Context;
+import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Property;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.XMLHelper;
-import org.switchyard.component.bpm.process.ProcessActionType;
+import org.switchyard.component.bpm.common.ProcessActionType;
+import org.switchyard.component.bpm.config.model.ProcessActionModel;
 import org.switchyard.exception.SwitchYardException;
 
 /**
@@ -47,22 +50,41 @@ import org.switchyard.exception.SwitchYardException;
  */
 public abstract class BaseBpmExchangeHandler extends BaseHandler implements BpmExchangeHandler {
 
+    private static final Logger LOGGER = Logger.getLogger(BaseBpmExchangeHandler.class);
+
     /**
      * Gets the ProcessActionType from the Exchange Context.
      * @param context the Exchange Context
+     * @param model the associated ProcessActionModel
      * @return the ProcessActionType
      */
-    protected ProcessActionType getProcessActionType(Context context) {
-        Property property = context.getProperty(PROCESS_ACTION_TYPE_VAR, IN);
-        Object value = property != null ? property.getValue() : null;
-        if (value instanceof ProcessActionType) {
-            return (ProcessActionType)value;
-        } else if (value instanceof QName) {
-            return ProcessActionType.valueOf((QName)value);
-        } else if (value instanceof String) {
-            return ProcessActionType.valueOf(XMLHelper.createQName(PROCESS_NAMESPACE, (String)value));
+    protected ProcessActionType getProcessActionType(Context context, ProcessActionModel model) {
+        if (model != null) {
+            ProcessActionType pat = model.getType();
+            if (pat != null) {
+                return pat;
+            }
         }
-        return null;
+        Property property = context.getProperty(PROCESS_ACTION_TYPE_VAR, IN);
+        if (property != null) {
+            Object value = property.getValue();
+            if (value instanceof ProcessActionType) {
+                return (ProcessActionType)value;
+            } else if (value instanceof QName) {
+                return ProcessActionType.valueOf((QName)value);
+            } else if (value instanceof String) {
+                return ProcessActionType.valueOf(XMLHelper.createQName(PROCESS_NAMESPACE, (String)value));
+            }
+        }
+        if (LOGGER.isDebugEnabled()) {
+            String msg = new StringBuilder()
+                .append(getNullParameterMessage(null, PROCESS_ACTION_TYPE_VAR))
+                .append("; defaulting to: ")
+                .append(ProcessActionType.START_PROCESS.qname())
+                .toString();
+            LOGGER.debug(msg);
+        }
+        return ProcessActionType.START_PROCESS;
     }
 
     /**
@@ -72,13 +94,15 @@ public abstract class BaseBpmExchangeHandler extends BaseHandler implements BpmE
      */
     protected Long getProcessInstanceId(Context context) {
         Property property = context.getProperty(PROCESS_INSTANCE_ID_VAR, IN);
-        Object value = property != null ? property.getValue() : null;
-        if (value instanceof Long) {
-            return (Long)value;
-        } else if (value instanceof Number) {
-            return Long.valueOf(((Number)value).longValue());
-        } else if (value instanceof String) {
-            return Long.valueOf((String)value);
+        if (property != null) {
+            Object value = property.getValue();
+            if (value instanceof Long) {
+                return (Long)value;
+            } else if (value instanceof Number) {
+                return Long.valueOf(((Number)value).longValue());
+            } else if (value instanceof String) {
+                return Long.valueOf((String)value);
+            }
         }
         return null;
     }
@@ -86,15 +110,24 @@ public abstract class BaseBpmExchangeHandler extends BaseHandler implements BpmE
     /**
      * Gets the process event type from the Exchange Context.
      * @param context the Exchange Context
+     * @param model the associated ProcessActionModel
      * @return the process event type
      */
-    protected String getProcessEventType(Context context) {
+    protected String getProcessEventType(Context context, ProcessActionModel model) {
+        if (model != null) {
+            String pet = model.getEventType();
+            if (pet != null) {
+                return pet;
+            }
+        }
         Property property = context.getProperty(PROCESS_EVENT_TYPE_VAR, IN);
-        Object value = property != null ? property.getValue() : null;
-        if (value instanceof String) {
-            return (String)value;
-        } else if (value != null) {
-            return String.valueOf(value);
+        if (property != null) {
+            Object value = property.getValue();
+            if (value instanceof String) {
+                return (String)value;
+            } else if (value != null) {
+                return String.valueOf(value);
+            }
         }
         return null;
     }
@@ -102,15 +135,20 @@ public abstract class BaseBpmExchangeHandler extends BaseHandler implements BpmE
     /**
      * Gets the process event from the Exchange Context.
      * @param context the Exchange Context
+     * @param message the Message
      * @return the process event
      */
     protected Object getProcessEvent(Context context, Message message) {
         Property property = context.getProperty(PROCESS_EVENT_VAR, IN);
-        Object value = property != null ? property.getValue() : null;
-        if (value == null && message != null) {
-            value = message.getContent();
+        if (property != null) {
+            Object value = property.getValue();
+            if (value != null) {
+                return value;
+            } else if (message != null) {
+                return message.getContent();
+            }
         }
-        return value;
+        return null;
     }
 
     /**
@@ -132,6 +170,34 @@ public abstract class BaseBpmExchangeHandler extends BaseHandler implements BpmE
             throw new SwitchYardException(ioe);
         }
         return url;
+    }
+
+    /**
+     * Creates and error message for a null parameter.
+     * @param processActionType the optional process action type
+     * @param parameterName the name of the parameter
+     * @return the error message
+     */
+    protected String getNullParameterMessage(ProcessActionType processActionType, String parameterName) {
+        StringBuilder sb = new StringBuilder("implementation.bpm: ");
+        if (processActionType != null) {
+            sb.append("[");
+            sb.append(processActionType.qname());
+            sb.append("] ");
+        }
+        sb.append(parameterName);
+        sb.append(" == null");
+        return sb.toString();
+    }
+
+    /**
+     * Throws a new exception for a null parameter.
+     * @param processActionType the optional process action type
+     * @param parameterName the name of the parameter
+     * @throws HandlerException the exception thrown for the null parameter
+     */
+    protected void throwNullParameterException(ProcessActionType processActionType, String parameterName) throws HandlerException {
+        throw new HandlerException(getNullParameterMessage(processActionType, parameterName));
     }
 
 }

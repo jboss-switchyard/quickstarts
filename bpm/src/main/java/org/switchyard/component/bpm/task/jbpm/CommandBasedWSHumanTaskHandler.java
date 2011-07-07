@@ -16,38 +16,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.jbpm;
+package org.switchyard.component.bpm.task.jbpm;
 
-import org.switchyard.component.bpm.drools.DroolsTaskHandler;
+import org.drools.runtime.KnowledgeRuntime;
 import org.switchyard.component.bpm.task.Task;
 import org.switchyard.component.bpm.task.TaskManager;
+import org.switchyard.component.bpm.task.drools.DroolsTaskHandler;
 
 /**
- * Wraps a jBPM {@link org.jbpm.process.workitem.wsht.WSHumanTaskHandler WSHumanTaskHandler}.
+ * Wraps a jBPM {@link org.jbpm.process.workitem.wsht.CommandBasedWSHumanTaskHandler CommandBasedWSHumanTaskHandler}.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class WSHumanTaskHandler extends DroolsTaskHandler {
+public class CommandBasedWSHumanTaskHandler extends DroolsTaskHandler {
 
     /**
      * The default name for this TaskHandler.
      */
     public static final String HUMAN_TASK = "Human Task";
 
-    private org.jbpm.process.workitem.wsht.WSHumanTaskHandler _wshth;
+    private org.jbpm.process.workitem.wsht.CommandBasedWSHumanTaskHandler _cbwshth;
 
     /**
-     * Constructs a new WSHumanTaskHandler with the default name.
+     * Constructs a new CommandBasedWSHumanTaskHandler with the default name.
      */
-    public WSHumanTaskHandler() {
+    public CommandBasedWSHumanTaskHandler() {
         super(HUMAN_TASK);
     }
 
     /**
-     * Constructs a new WSHumanTaskHandler with the specified name.
+     * Constructs a new CommandBasedWSHumanTaskHandler with the specified name.
      * @param name the specified name
      */
-    public WSHumanTaskHandler(String name) {
+    public CommandBasedWSHumanTaskHandler(String name) {
         super(name);
     }
 
@@ -74,7 +75,8 @@ public class WSHumanTaskHandler extends DroolsTaskHandler {
     }
 
     private void connect() {
-        _wshth = new org.jbpm.process.workitem.wsht.WSHumanTaskHandler() {
+        KnowledgeRuntime kruntime = (KnowledgeRuntime)getProcessRuntime();
+        _cbwshth = new org.jbpm.process.workitem.wsht.CommandBasedWSHumanTaskHandler(kruntime) {
             @Override
             public void connect() {
                 boolean ready = false;
@@ -98,17 +100,17 @@ public class WSHumanTaskHandler extends DroolsTaskHandler {
                 }
             }
         };
-        setWorkItemHandler(_wshth);
+        setWorkItemHandler(_cbwshth);
     }
 
     private void disconnect() {
-        if (_wshth != null) {
+        if (_cbwshth != null) {
             try {
-                _wshth.dispose();
+                _cbwshth.dispose();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             } finally {
-                _wshth = null;
+                _cbwshth = null;
                 setWorkItemHandler(null);
             }
         }

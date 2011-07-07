@@ -35,7 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.common.type.Classes;
-import org.switchyard.component.bpm.process.ProcessResourceType;
+import org.switchyard.component.bpm.resource.ResourceType;
 import org.switchyard.component.bpm.task.SwitchYardServiceTaskHandler;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.ModelPuller;
@@ -80,9 +80,9 @@ public class BpmModelTests {
         QName qname = config.getQName();
         Assert.assertEquals("urn:switchyard-component-bpm:config:1.0", qname.getNamespaceURI());
         Assert.assertEquals("implementation.bpm", qname.getLocalPart());
-        ProcessResourceModel prm = bci.getProcessResources().iterator().next();
+        ResourceModel prm = bci.getResources().iterator().next();
         Assert.assertEquals("foobar.drl", prm.getLocation());
-        Assert.assertEquals(ProcessResourceType.DRL, prm.getType());
+        Assert.assertEquals(ResourceType.DRL, prm.getType());
         TaskHandlerModel tih = bci.getTaskHandlers().iterator().next();
         Assert.assertEquals(SwitchYardServiceTaskHandler.class, tih.getClazz());
         Assert.assertNull(tih.getName());
@@ -124,17 +124,17 @@ public class BpmModelTests {
             String processId = bci.getProcessId();
             if ("SimpleProcess".equals(processId)) {
                 Assert.assertEquals("META-INF/SimpleProcess.bpmn", bci.getProcessDefinition());
-                Assert.assertEquals(ProcessResourceType.BPMN2, bci.getProcessDefinitionType());
+                Assert.assertEquals(ResourceType.BPMN2, bci.getProcessDefinitionType());
             } else if ("ComplexProcess".equals(processId)) {
                 Assert.assertEquals("path/to/my.bpmn", bci.getProcessDefinition());
-                Assert.assertEquals(ProcessResourceType.BPMN2, bci.getProcessDefinitionType());
-                Iterator<ProcessResourceModel> prm_iter = bci.getProcessResources().iterator();
-                ProcessResourceModel prm = prm_iter.next();
+                Assert.assertEquals(ResourceType.BPMN2, bci.getProcessDefinitionType());
+                Iterator<ResourceModel> prm_iter = bci.getResources().iterator();
+                ResourceModel prm = prm_iter.next();
                 Assert.assertEquals("path/to/my.dsl", prm.getLocation());
-                Assert.assertEquals(ProcessResourceType.DSL, prm.getType());
+                Assert.assertEquals(ResourceType.DSL, prm.getType());
                 prm = prm_iter.next();
                 Assert.assertEquals("path/to/my.dslr", prm.getLocation());
-                Assert.assertEquals(ProcessResourceType.DSLR, prm.getType());
+                Assert.assertEquals(ResourceType.DSLR, prm.getType());
                 Iterator<TaskHandlerModel> wih_iter = bci.getTaskHandlers().iterator();
                 TaskHandlerModel wih = wih_iter.next();
                 Assert.assertEquals(SwitchYardServiceTaskHandler.class, wih.getClazz());
@@ -150,4 +150,5 @@ public class BpmModelTests {
             }
         }
     }
+
 }

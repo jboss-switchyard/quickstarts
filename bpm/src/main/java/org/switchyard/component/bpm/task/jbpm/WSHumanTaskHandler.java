@@ -16,39 +16,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.jbpm;
+package org.switchyard.component.bpm.task.jbpm;
 
-import org.drools.runtime.KnowledgeRuntime;
-import org.switchyard.component.bpm.drools.DroolsTaskHandler;
 import org.switchyard.component.bpm.task.Task;
 import org.switchyard.component.bpm.task.TaskManager;
+import org.switchyard.component.bpm.task.drools.DroolsTaskHandler;
 
 /**
- * Wraps a jBPM {@link org.jbpm.process.workitem.wsht.CommandBasedWSHumanTaskHandler CommandBasedWSHumanTaskHandler}.
+ * Wraps a jBPM {@link org.jbpm.process.workitem.wsht.WSHumanTaskHandler WSHumanTaskHandler}.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class CommandBasedWSHumanTaskHandler extends DroolsTaskHandler {
+public class WSHumanTaskHandler extends DroolsTaskHandler {
 
     /**
      * The default name for this TaskHandler.
      */
     public static final String HUMAN_TASK = "Human Task";
 
-    private org.jbpm.process.workitem.wsht.CommandBasedWSHumanTaskHandler _wshth;
+    private org.jbpm.process.workitem.wsht.WSHumanTaskHandler _wshth;
 
     /**
-     * Constructs a new CommandBasedWSHumanTaskHandler with the default name.
+     * Constructs a new WSHumanTaskHandler with the default name.
      */
-    public CommandBasedWSHumanTaskHandler() {
+    public WSHumanTaskHandler() {
         super(HUMAN_TASK);
     }
 
     /**
-     * Constructs a new CommandBasedWSHumanTaskHandler with the specified name.
+     * Constructs a new WSHumanTaskHandler with the specified name.
      * @param name the specified name
      */
-    public CommandBasedWSHumanTaskHandler(String name) {
+    public WSHumanTaskHandler(String name) {
         super(name);
     }
 
@@ -75,8 +74,7 @@ public class CommandBasedWSHumanTaskHandler extends DroolsTaskHandler {
     }
 
     private void connect() {
-        KnowledgeRuntime kruntime = (KnowledgeRuntime)getProcessRuntime();
-        _wshth = new org.jbpm.process.workitem.wsht.CommandBasedWSHumanTaskHandler(kruntime) {
+        _wshth = new org.jbpm.process.workitem.wsht.WSHumanTaskHandler() {
             @Override
             public void connect() {
                 boolean ready = false;

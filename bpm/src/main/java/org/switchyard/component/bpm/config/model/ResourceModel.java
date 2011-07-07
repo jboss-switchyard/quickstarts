@@ -16,25 +16,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.process;
+package org.switchyard.component.bpm.config.model;
+
+import org.switchyard.component.bpm.resource.Resource;
+import org.switchyard.component.bpm.resource.ResourceType;
+import org.switchyard.config.model.Model;
 
 /**
- * Represents a resource a process requires.
+ * A configuration model for Resources.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface ProcessResource {
+public interface ResourceModel extends Resource, Model {
 
     /**
-     * Gets the location of the process resource.
-     * @return the location of the process resource
+     * The resource XML element.
      */
-    public String getLocation();
+    public static final String RESOURCE = "resource";
 
     /**
-     * Gets the type of the process resource.
-     * @return the type of the process resource
+     * Sets the location of the Resource.
+     * @param location the location of the Resource.
+     * @return this ResourceModel (useful for chaining)
      */
-    public ProcessResourceType getType();
+    public ResourceModel setLocation(String location);
+
+    /**
+     * Sets the type of the Resource.
+     * @param type the type of Resource
+     * @return this ResourceModel (useful for chaining)
+     */
+    public ResourceModel setType(ResourceType type);
 
 }

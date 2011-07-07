@@ -16,25 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.drools;
-
-import org.switchyard.ServiceDomain;
-import org.switchyard.component.bpm.exchange.BpmExchangeHandler;
-import org.switchyard.component.bpm.exchange.BpmExchangeHandlerFactory;
+package org.switchyard.component.bpm.resource;
 
 /**
- * The factory for DroolsBpmExchangeHandler.
+ * Represents the type of a Resource.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class DroolsBpmExchangeHandlerFactory extends BpmExchangeHandlerFactory {
+public enum ResourceType {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public BpmExchangeHandler newBpmExchangeHandler(ServiceDomain serviceDomain) {
-        return new DroolsBpmExchangeHandler(serviceDomain);
-    }
+    /** Business Process Modeling Notation 2. */
+    BPMN2,
+    /** Business Rule Language. */
+    BRL,
+    /** Drools Rule Flow. */
+    DRF,
+    /** Drools Rule Language. */
+    DRL,
+    /** Domain Specific Language. */
+    DSL,
+    /** Domain Specific Language Rules. */
+    DSLR,
+    /** Decision  Table. */
+    DTABLE,
+    /** Package. */
+    PKG,
+    /** XML Drools Rule Language. */
+    XDRL,
+    /** XML Schema Definition. */
+    XSD
 
 }

@@ -16,12 +16,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.drools;
+package org.switchyard.component.bpm.exchange.drools;
 
-import static org.switchyard.component.bpm.process.ProcessConstants.MESSAGE_CONTENT_VAR;
-import static org.switchyard.component.bpm.process.ProcessConstants.PROCESS_ACTION_TYPE_VAR;
-import static org.switchyard.component.bpm.process.ProcessConstants.PROCESS_ID_VAR;
-import static org.switchyard.component.bpm.process.ProcessConstants.PROCESS_INSTANCE_ID_VAR;
+import static org.switchyard.component.bpm.common.ProcessConstants.MESSAGE_CONTENT_VAR;
+import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_ID_VAR;
+import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_INSTANCE_ID_VAR;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -31,12 +30,9 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.drools.KnowledgeBase;
 import org.drools.builder.KnowledgeBuilder;
 import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.builder.ResourceType;
-import org.drools.io.Resource;
 import org.drools.io.ResourceFactory;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.process.ProcessInstance;
@@ -52,13 +48,16 @@ import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.type.reflect.Construction;
+import org.switchyard.component.bpm.common.ProcessActionType;
 import org.switchyard.component.bpm.config.model.BpmComponentImplementationModel;
+import org.switchyard.component.bpm.config.model.ProcessActionModel;
 import org.switchyard.component.bpm.config.model.TaskHandlerModel;
 import org.switchyard.component.bpm.exchange.BaseBpmExchangeHandler;
-import org.switchyard.component.bpm.process.ProcessActionType;
-import org.switchyard.component.bpm.process.ProcessResource;
-import org.switchyard.component.bpm.process.ProcessResourceType;
+import org.switchyard.component.bpm.resource.Resource;
+import org.switchyard.component.bpm.resource.ResourceType;
 import org.switchyard.component.bpm.task.TaskHandler;
+import org.switchyard.component.bpm.task.drools.DroolsWorkItemHandler;
+import org.switchyard.metadata.ServiceOperation;
 
 /**
  * A Drools implmentation of a BPM ExchangeHandler.
@@ -67,12 +66,11 @@ import org.switchyard.component.bpm.task.TaskHandler;
  */
 public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
 
-    private static final Logger LOGGER = Logger.getLogger(DroolsBpmExchangeHandler.class);
-
     private final ServiceDomain _serviceDomain;
     private String _processId;
     private String _messageContentName;
     private List<TaskHandler> _taskHandlers = new ArrayList<TaskHandler>();
+    private Map<String,ProcessActionModel> _actions = new HashMap<String,ProcessActionModel>();
     private KnowledgeBase _kbase;
     private StatefulKnowledgeSession _ksession;
 
@@ -106,21 +104,24 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
         }
         KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
         String processDefinition = model.getProcessDefinition();
-        ProcessResourceType processDefinitionType = model.getProcessDefinitionType();
+        ResourceType processDefinitionType = model.getProcessDefinitionType();
         if (processDefinitionType == null) {
-            processDefinitionType = ProcessResourceType.BPMN2;
+            processDefinitionType = ResourceType.BPMN2;
         }
         addResource(processDefinition, processDefinitionType.name(), kbuilder);
-        for (ProcessResource pr : model.getProcessResources()) {
+        for (Resource pr : model.getResources()) {
             addResource(pr.getLocation(), pr.getType().name(), kbuilder);
         }
         _kbase = kbuilder.newKnowledgeBase();
+        for (ProcessActionModel pam : model.getProcessActions()) {
+            _actions.put(pam.getName(), pam);
+        }
     }
 
     private void addResource(String location, String type, KnowledgeBuilder kbuilder) {
         URL url = getResourceURL(location);
-        Resource resource = ResourceFactory.newUrlResource(url);
-        ResourceType resourceType = ResourceType.getResourceType(type);
+        org.drools.io.Resource resource = ResourceFactory.newUrlResource(url);
+        org.drools.builder.ResourceType resourceType = org.drools.builder.ResourceType.getResourceType(type);
         kbuilder.add(resource, resourceType);
     }
 
@@ -145,22 +146,13 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
             return;
         }
         Context context = exchange.getContext();
-        ProcessActionType actionType = getProcessActionType(context);
-        if (actionType == null) {
-            if (LOGGER.isDebugEnabled()) {
-                String msg = new StringBuilder()
-                    .append(getNullParameterMessage(null, PROCESS_ACTION_TYPE_VAR))
-                    .append("; defaulting to: ")
-                    .append(ProcessActionType.START_PROCESS.qname())
-                    .toString();
-                LOGGER.debug(msg);
-            }
-            actionType = ProcessActionType.START_PROCESS;
-        }
+        ServiceOperation serviceOperation = exchange.getContract().getServiceOperation();
+        ProcessActionModel processActionModel = _actions.get(serviceOperation.getName());
+        ProcessActionType processActionType = getProcessActionType(context, processActionModel);
         Message message = exchange.getMessage();
         Long processInstanceId = null;
         ProcessInstance processInstance = null;
-        switch (actionType) {
+        switch (processActionType) {
             case START_PROCESS:
                 if (_processId != null) {
                     Object content = message.getContent();
@@ -173,17 +165,17 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
                     }
                     processInstanceId = Long.valueOf(processInstance.getId());
                 } else {
-                    throwNullParameterException(actionType, PROCESS_ID_VAR);
+                    throwNullParameterException(processActionType, PROCESS_ID_VAR);
                 }
                 break;
             case SIGNAL_EVENT:
-                String processEventType = getProcessEventType(context);
+                String processEventType = getProcessEventType(context, processActionModel);
                 Object processEvent = getProcessEvent(context, message);
                 processInstanceId = getProcessInstanceId(context);
                 if (processInstanceId != null) {
                     _ksession.signalEvent(processEventType, processEvent, processInstanceId.longValue());
                 } else {
-                    throwNullParameterException(actionType, PROCESS_INSTANCE_ID_VAR);
+                    throwNullParameterException(processActionType, PROCESS_INSTANCE_ID_VAR);
                 }
                 break;
             case ABORT_PROCESS_INSTANCE:
@@ -191,13 +183,13 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
                 if (processInstanceId != null) {
                     _ksession.abortProcessInstance(processInstanceId.longValue());
                 } else {
-                    throwNullParameterException(actionType, PROCESS_INSTANCE_ID_VAR);
+                    throwNullParameterException(processActionType, PROCESS_INSTANCE_ID_VAR);
                 }
                 break;
         }
         if (processInstanceId != null) {
             context.setProperty(PROCESS_INSTANCE_ID_VAR, processInstanceId, Scope.OUT);
-            ExchangePattern exchangePattern = exchange.getContract().getServiceOperation().getExchangePattern();
+            ExchangePattern exchangePattern = serviceOperation.getExchangePattern();
             if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
                 if (processInstance == null) {
                     processInstance = _ksession.getProcessInstance(processInstanceId.longValue());
@@ -213,23 +205,6 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
                 exchange.send(message);
             }
         }
-    }
-
-    private String getNullParameterMessage(ProcessActionType processActionType, String parameterName) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("handleMessage: ");
-        if (processActionType != null) {
-            sb.append("[");
-            sb.append(processActionType.qname());
-            sb.append("] ");
-        }
-        sb.append(parameterName);
-        sb.append(" == null");
-        return sb.toString();
-    }
-
-    private void throwNullParameterException(ProcessActionType processActionType, String parameterName) throws HandlerException {
-        throw new HandlerException(getNullParameterMessage(processActionType, parameterName));
     }
 
     /**
@@ -257,6 +232,7 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
     public void destroy(ServiceReference serviceRef) {
         _kbase = null;
         _taskHandlers.clear();
+        _actions.clear();
         _messageContentName = null;
         _processId = null;
     }

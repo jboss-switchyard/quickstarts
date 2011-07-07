@@ -22,6 +22,7 @@ import org.drools.runtime.process.WorkItem;
 import org.drools.runtime.process.WorkItemHandler;
 import org.drools.runtime.process.WorkItemManager;
 import org.switchyard.component.bpm.drools.BpmDroolsTests.Holder;
+import org.switchyard.component.bpm.task.drools.DroolsTaskHandler;
 
 /**
  * An example handler being reused.

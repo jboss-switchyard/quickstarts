@@ -18,19 +18,20 @@
  */
 package org.switchyard.component.bpm.config.model.v1;
 
-import static org.switchyard.component.bpm.process.ProcessConstants.MESSAGE_CONTENT_NAME;
-import static org.switchyard.component.bpm.process.ProcessConstants.PROCESS_DEFINITION;
-import static org.switchyard.component.bpm.process.ProcessConstants.PROCESS_DEFINITION_TYPE;
-import static org.switchyard.component.bpm.process.ProcessConstants.PROCESS_ID;
+import static org.switchyard.component.bpm.common.ProcessConstants.MESSAGE_CONTENT_NAME;
+import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_DEFINITION;
+import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_DEFINITION_TYPE;
+import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_ID;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.switchyard.component.bpm.config.model.BpmComponentImplementationModel;
-import org.switchyard.component.bpm.config.model.ProcessResourceModel;
+import org.switchyard.component.bpm.config.model.ProcessActionModel;
+import org.switchyard.component.bpm.config.model.ResourceModel;
 import org.switchyard.component.bpm.config.model.TaskHandlerModel;
-import org.switchyard.component.bpm.process.ProcessResourceType;
+import org.switchyard.component.bpm.resource.ResourceType;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.v1.V1ComponentImplementationModel;
@@ -42,7 +43,8 @@ import org.switchyard.config.model.composite.v1.V1ComponentImplementationModel;
  */
 public class V1BpmComponentImplementationModel extends V1ComponentImplementationModel implements BpmComponentImplementationModel {
 
-    private List<ProcessResourceModel> _processResources = new ArrayList<ProcessResourceModel>();
+    private List<ProcessActionModel> _processActions = new ArrayList<ProcessActionModel>();
+    private List<ResourceModel> _resources = new ArrayList<ResourceModel>();
     private List<TaskHandlerModel> _taskHandlers = new ArrayList<TaskHandlerModel>();
 
     /**
@@ -50,7 +52,7 @@ public class V1BpmComponentImplementationModel extends V1ComponentImplementation
      */
     public V1BpmComponentImplementationModel() {
         super(BPM, DEFAULT_NAMESPACE);
-        setModelChildrenOrder(ProcessResourceModel.PROCESS_RESOURCE, TaskHandlerModel.TASK_HANDLER);
+        setModelChildrenOrder(ProcessActionModel.PROCESS_ACTION, ResourceModel.RESOURCE, TaskHandlerModel.TASK_HANDLER);
     }
 
     /**
@@ -61,10 +63,16 @@ public class V1BpmComponentImplementationModel extends V1ComponentImplementation
      */
     public V1BpmComponentImplementationModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        for (Configuration processResource_config : config.getChildren(ProcessResourceModel.PROCESS_RESOURCE)) {
-            ProcessResourceModel processResource = (ProcessResourceModel)readModel(processResource_config);
-            if (processResource != null) {
-                _processResources.add(processResource);
+        for (Configuration processAction_config : config.getChildren(ProcessActionModel.PROCESS_ACTION)) {
+            ProcessActionModel processAction = (ProcessActionModel)readModel(processAction_config);
+            if (processAction != null) {
+                _processActions.add(processAction);
+            }
+        }
+        for (Configuration resource_config : config.getChildren(ResourceModel.RESOURCE)) {
+            ResourceModel resource = (ResourceModel)readModel(resource_config);
+            if (resource != null) {
+                _resources.add(resource);
             }
         }
         for (Configuration taskHandler_config : config.getChildren(TaskHandlerModel.TASK_HANDLER)) {
@@ -73,7 +81,7 @@ public class V1BpmComponentImplementationModel extends V1ComponentImplementation
                 _taskHandlers.add(taskHandler);
             }
         }
-        setModelChildrenOrder(ProcessResourceModel.PROCESS_RESOURCE, TaskHandlerModel.TASK_HANDLER);
+        setModelChildrenOrder(ProcessActionModel.PROCESS_ACTION, ResourceModel.RESOURCE, TaskHandlerModel.TASK_HANDLER);
     }
 
     /**
@@ -97,16 +105,16 @@ public class V1BpmComponentImplementationModel extends V1ComponentImplementation
      * {@inheritDoc}
      */
     @Override
-    public ProcessResourceType getProcessDefinitionType() {
+    public ResourceType getProcessDefinitionType() {
         String pdt = getModelAttribute(PROCESS_DEFINITION_TYPE);
-        return pdt != null ? ProcessResourceType.valueOf(pdt) : null;
+        return pdt != null ? ResourceType.valueOf(pdt) : null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public BpmComponentImplementationModel setProcessDefinitionType(ProcessResourceType processDefinitionType) {
+    public BpmComponentImplementationModel setProcessDefinitionType(ResourceType processDefinitionType) {
         String pdt = processDefinitionType != null ? processDefinitionType.name() : null;
         setModelAttribute(PROCESS_DEFINITION_TYPE, pdt);
         return this;
@@ -150,17 +158,35 @@ public class V1BpmComponentImplementationModel extends V1ComponentImplementation
      * {@inheritDoc}
      */
     @Override
-    public List<ProcessResourceModel> getProcessResources() {
-        return Collections.unmodifiableList(_processResources);
+    public List<ProcessActionModel> getProcessActions() {
+        return Collections.unmodifiableList(_processActions);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public BpmComponentImplementationModel addProcessResource(ProcessResourceModel processResource) {
-        addChildModel(processResource);
-        _processResources.add(processResource);
+    public BpmComponentImplementationModel addProcessAction(ProcessActionModel processAction) {
+        addChildModel(processAction);
+        _processActions.add(processAction);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ResourceModel> getResources() {
+        return Collections.unmodifiableList(_resources);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BpmComponentImplementationModel addResource(ResourceModel resource) {
+        addChildModel(resource);
+        _resources.add(resource);
         return this;
     }
 

@@ -16,14 +16,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.config.model;
-
-import org.switchyard.component.bpm.Process;
+package org.switchyard.component.bpm.resource;
 
 /**
- * A simple process example.
+ * Represents a resource a process requires.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-@Process
-public interface SimpleProcess {}
+public interface Resource {
+
+    /**
+     * Gets the location of the process resource.
+     * @return the location of the process resource
+     */
+    public String getLocation();
+
+    /**
+     * Gets the type of the process resource.
+     * @return the type of the process resource
+     */
+    public ResourceType getType();
+
+}

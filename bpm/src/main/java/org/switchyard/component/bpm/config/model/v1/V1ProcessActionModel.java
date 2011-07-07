@@ -22,32 +22,32 @@ import static org.switchyard.component.bpm.config.model.BpmComponentImplementati
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.component.bpm.config.model.ProcessResourceModel;
-import org.switchyard.component.bpm.process.ProcessResourceType;
+import org.switchyard.component.bpm.common.ProcessActionType;
+import org.switchyard.component.bpm.config.model.ProcessActionModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
 
 /**
- * The 1st version ProcessResourceModel.
+ * The 1st version ProcessActionModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1ProcessResourceModel extends BaseModel implements ProcessResourceModel {
+public class V1ProcessActionModel extends BaseModel implements ProcessActionModel {
 
     /**
-     * Creates a new ProcessResourceModel in the default namespace.
+     * Creates a new ProcessActionModel in the default namespace.
      */
-    public V1ProcessResourceModel() {
-        super(new QName(DEFAULT_NAMESPACE, PROCESS_RESOURCE));
+    public V1ProcessActionModel() {
+        super(new QName(DEFAULT_NAMESPACE, PROCESS_ACTION));
     }
 
     /**
-     * Creates a new ProcessResourceModel with the specified configuration and descriptor.
+     * Creates a new ProcessActionModel with the specified configuration and descriptor.
      * @param config the configuration
      * @param desc the descriptor
      */
-    public V1ProcessResourceModel(Configuration config, Descriptor desc) {
+    public V1ProcessActionModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
@@ -55,16 +55,16 @@ public class V1ProcessResourceModel extends BaseModel implements ProcessResource
      * {@inheritDoc}
      */
     @Override
-    public String getLocation() {
-        return getModelAttribute("location");
+    public String getName() {
+        return getModelAttribute("name");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ProcessResourceModel setLocation(String location) {
-        setModelAttribute("location", location);
+    public ProcessActionModel setName(String name) {
+        setModelAttribute("name", name);
         return this;
     }
 
@@ -72,18 +72,35 @@ public class V1ProcessResourceModel extends BaseModel implements ProcessResource
      * {@inheritDoc}
      */
     @Override
-    public ProcessResourceType getType() {
-        String prt = getModelAttribute("type");
-        return prt != null ? ProcessResourceType.valueOf(prt) : null;
+    public ProcessActionType getType() {
+        String pat = getModelAttribute("type");
+        return pat != null ? ProcessActionType.valueOf(pat) : null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ProcessResourceModel setType(ProcessResourceType type) {
-        String prt = type != null ? type.name() : null;
-        setModelAttribute("type", prt);
+    public ProcessActionModel setType(ProcessActionType type) {
+        String pat = type != null ? type.name() : null;
+        setModelAttribute("type", pat);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getEventType() {
+        return getModelAttribute("eventType");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ProcessActionModel setEventType(String eventType) {
+        setModelAttribute("eventType", eventType);
         return this;
     }
 

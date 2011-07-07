@@ -18,7 +18,8 @@
  */
 package org.switchyard.component.bpm.config.model.v1;
 
-import static org.switchyard.component.bpm.config.model.ProcessResourceModel.PROCESS_RESOURCE;
+import static org.switchyard.component.bpm.config.model.ProcessActionModel.PROCESS_ACTION;
+import static org.switchyard.component.bpm.config.model.ResourceModel.RESOURCE;
 import static org.switchyard.component.bpm.config.model.TaskHandlerModel.TASK_HANDLER;
 
 import org.switchyard.component.bpm.config.model.BpmComponentImplementationModel;
@@ -29,7 +30,7 @@ import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.v1.V1CompositeMarshaller;
 
 /**
- * A CompositeMarshaller which can also create BpmComponentImplementationModels, ProcessResourceModels and TaskHandlerModels.
+ * A CompositeMarshaller which can also create BpmComponentImplementationModels, ResourceModels and TaskHandlerModels.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
@@ -50,7 +51,7 @@ public class V1BpmMarshaller extends V1CompositeMarshaller {
     }
 
     /**
-     * Reads in the Configuration, looking for "implementation.bpm", "processResource" or "taskHandler".
+     * Reads in the Configuration, looking for "implementation.bpm", "resource" or "taskHandler".
      * If not found, it falls back to the super class (V1CompositeMarshaller).
      *
      * @param config the Configuration
@@ -61,8 +62,10 @@ public class V1BpmMarshaller extends V1CompositeMarshaller {
         String name = config.getName();
         if (IMPLEMENTATION_BPM.equals(name)) {
             return new V1BpmComponentImplementationModel(config, getDescriptor());
-        } else if (PROCESS_RESOURCE.equals(name)) {
-            return new V1ProcessResourceModel(config, getDescriptor());
+        } else if (PROCESS_ACTION.equals(name)) {
+            return new V1ProcessActionModel(config, getDescriptor());
+        } else if (RESOURCE.equals(name)) {
+            return new V1ResourceModel(config, getDescriptor());
         } else if (TASK_HANDLER.equals(name)) {
             return new V1TaskHandlerModel(config, getDescriptor());
         }

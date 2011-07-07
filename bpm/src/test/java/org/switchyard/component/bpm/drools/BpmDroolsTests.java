@@ -20,12 +20,12 @@ package org.switchyard.component.bpm.drools;
 
 import static org.switchyard.Scope.IN;
 import static org.switchyard.Scope.OUT;
-import static org.switchyard.component.bpm.process.ProcessActionType.SIGNAL_EVENT;
-import static org.switchyard.component.bpm.process.ProcessActionType.START_PROCESS;
-import static org.switchyard.component.bpm.process.ProcessConstants.PROCESS_ACTION_TYPE_VAR;
-import static org.switchyard.component.bpm.process.ProcessConstants.PROCESS_EVENT_TYPE_VAR;
-import static org.switchyard.component.bpm.process.ProcessConstants.PROCESS_INSTANCE_ID_VAR;
-import static org.switchyard.component.bpm.process.ProcessResourceType.BPMN2;
+import static org.switchyard.component.bpm.common.ProcessActionType.SIGNAL_EVENT;
+import static org.switchyard.component.bpm.common.ProcessActionType.START_PROCESS;
+import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_ACTION_TYPE_VAR;
+import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_EVENT_TYPE_VAR;
+import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_INSTANCE_ID_VAR;
+import static org.switchyard.component.bpm.resource.ResourceType.BPMN2;
 import static org.switchyard.metadata.ExchangeContract.IN_ONLY;
 
 import javax.xml.namespace.QName;
@@ -51,6 +51,7 @@ import org.switchyard.component.bpm.config.model.v1.V1TaskHandlerModel;
 import org.switchyard.component.bpm.exchange.BpmExchangeHandler;
 import org.switchyard.component.bpm.exchange.BpmExchangeHandlerFactory;
 import org.switchyard.component.bpm.task.SwitchYardServiceTaskHandler;
+import org.switchyard.component.bpm.task.drools.DroolsWorkItemHandler;
 import org.switchyard.test.SwitchYardTestCase;
 
 /**

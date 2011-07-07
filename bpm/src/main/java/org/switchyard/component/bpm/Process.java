@@ -20,52 +20,52 @@ package org.switchyard.component.bpm;
 
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static org.switchyard.component.bpm.process.ProcessResourceType.BPMN2;
+import static org.switchyard.component.bpm.resource.ResourceType.BPMN2;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.switchyard.component.bpm.process.BaseProcessResource;
-import org.switchyard.component.bpm.process.ProcessResource;
-import org.switchyard.component.bpm.process.ProcessResourceType;
+import org.switchyard.component.bpm.resource.BaseResource;
+import org.switchyard.component.bpm.resource.Resource;
+import org.switchyard.component.bpm.resource.ResourceType;
 import org.switchyard.component.bpm.task.BaseTaskHandler;
 import org.switchyard.component.bpm.task.TaskHandler;
 
 /**
- * BPM annotation.
+ * Process annotation.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 @Target(TYPE)
 @Retention(RUNTIME)
 @Documented
-public @interface BPM {
+public @interface Process {
 
     /**
      * Specified process interface.
      */
-    public Class<?> processInterface() default UndefinedProcessInterface.class;
+    public Class<?> value() default UndefinedProcessInterface.class;
 
     /**
      * Specified process definition.
      */
-    public String processDefinition() default UNDEFINED_PROCESS_DEFINITION;
+    public String definition() default UNDEFINED_PROCESS_DEFINITION;
 
     /**
      * Specified process definition type.
      */
-    public ProcessResourceType processDefinitionType() default BPMN2;
+    public ResourceType definitionType() default BPMN2;
 
     /**
      * Specified process id.
      */
-    public String processId() default UNDEFINED_PROCESS_ID;
+    public String id() default UNDEFINED_PROCESS_ID;
 
     /**
      * Additional resources the process requires.
      */
-    public Class<? extends ProcessResource>[] processResources() default UndefinedProcessResource.class;
+    public Class<? extends Resource>[] resources() default UndefinedResource.class;
 
     /**
      * Specified task handlers for the process.
@@ -74,21 +74,12 @@ public @interface BPM {
 
     /** An undefined process interface. */
     public static interface UndefinedProcessInterface {};
-    /** The default process interface. */
-    public static interface DefaultProcessInterface {
-        /**
-         * The default process interface process method.
-         * @param o in
-         * @return out
-         */
-        public Object process(Object o);
-    };
     /** An undefined process definition. */
     public static final String UNDEFINED_PROCESS_DEFINITION = "";
     /** An undefined process id. */
     public static final String UNDEFINED_PROCESS_ID = "";
     /** An undefined process resource. */
-    public static final class UndefinedProcessResource extends BaseProcessResource {};
+    public static final class UndefinedResource extends BaseResource {};
     /** An undefined task handler. */
     public static final class UndefinedTaskHandler extends BaseTaskHandler {};
 

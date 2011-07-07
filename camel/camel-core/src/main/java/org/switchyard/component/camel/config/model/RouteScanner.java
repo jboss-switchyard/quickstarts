@@ -99,7 +99,7 @@ public class RouteScanner implements Scanner<SwitchYardModel> {
 
     private class RouteFilter extends AbstractTypeFilter {
         @Override
-        protected boolean matches(Class<?> clazz) {
+        public boolean matches(Class<?> clazz) {
             // Check to see if it's been excluded from scans
             Scannable scannable = clazz.getAnnotation(Scannable.class);
             if (scannable != null && !scannable.value()) {

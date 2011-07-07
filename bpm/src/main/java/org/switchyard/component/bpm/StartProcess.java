@@ -16,36 +16,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.config.model;
+package org.switchyard.component.bpm;
 
-import org.switchyard.component.bpm.process.ProcessResource;
-import org.switchyard.component.bpm.process.ProcessResourceType;
-import org.switchyard.config.model.Model;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
- * A configuration model for ProcessResources.
+ * StartProcess annotation.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface ProcessResourceModel extends ProcessResource, Model {
-
-    /**
-     * The processResource XML element.
-     */
-    public static final String PROCESS_RESOURCE = "processResource";
-
-    /**
-     * Sets the location of the ProcessResource.
-     * @param location the location of the ProcessResource.
-     * @return this ProcessResourceModel (useful for chaining)
-     */
-    public ProcessResourceModel setLocation(String location);
-
-    /**
-     * Sets the type of the ProcessResource.
-     * @param type the type of ProcessResource
-     * @return this ProcessResourceModel (useful for chaining)
-     */
-    public ProcessResourceModel setType(ProcessResourceType type);
-
-}
+@Target(METHOD)
+@Retention(RUNTIME)
+@Documented
+public @interface StartProcess {}

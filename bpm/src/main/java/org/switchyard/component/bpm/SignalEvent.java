@@ -16,14 +16,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.config.model;
+package org.switchyard.component.bpm;
 
-import org.switchyard.component.bpm.Process;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
- * A simple process example.
+ * SignalEvent annotation.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-@Process
-public interface SimpleProcess {}
+@Target(METHOD)
+@Retention(RUNTIME)
+@Documented
+public @interface SignalEvent {
+
+    /**
+     * Specified event type.
+     */
+    public String value() default UNDEFINED_EVENT_TYPE;
+
+    /** An undefined event type. */
+    public static final String UNDEFINED_EVENT_TYPE = "";
+
+}

@@ -16,37 +16,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.process;
+package org.switchyard.component.bpm.resource;
 
 /**
- * Base class for ProcessResources.
+ * Base class for Resources.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public abstract class BaseProcessResource implements ProcessResource {
+public abstract class BaseResource implements Resource {
 
     private String _location;
-    private ProcessResourceType _type;
+    private ResourceType _type;
 
     /**
-     * Constructs a new BaseProcessResource.
+     * Constructs a new BaseResource.
      */
-    public BaseProcessResource() {}
+    public BaseResource() {}
 
     /**
-     * Constructs a new BaseProcessResource with the specified resource location.
+     * Constructs a new BaseResource with the specified resource location.
      * @param location the resource location
      */
-    public BaseProcessResource(String location) {
+    public BaseResource(String location) {
         setLocation(location);
     }
 
     /**
-     * Constructs a new BaseProcessResource with the specified resource location and type.
+     * Constructs a new BaseResource with the specified resource location and type.
      * @param location the resource location
      * @param type the resource type
      */
-    public BaseProcessResource(String location, ProcessResourceType type) {
+    public BaseResource(String location, ResourceType type) {
         setLocation(location);
         setType(type);
     }
@@ -62,9 +62,9 @@ public abstract class BaseProcessResource implements ProcessResource {
     /**
      * Sets the resource location.
      * @param location the resource location
-     * @return this BaseProcessResource (useful for chaining)
+     * @return this BaseResource (useful for chaining)
      */
-    public BaseProcessResource setLocation(String location) {
+    public BaseResource setLocation(String location) {
         _location = location;
         return this;
     }
@@ -73,16 +73,16 @@ public abstract class BaseProcessResource implements ProcessResource {
      * {@inheritDoc}
      */
     @Override
-    public ProcessResourceType getType() {
+    public ResourceType getType() {
         return _type;
     }
 
     /**
      * Sets the resource type.
      * @param type the resource type
-     * @return this BaseProcessResource (useful for chaining)
+     * @return this BaseResource (useful for chaining)
      */
-    public BaseProcessResource setType(ProcessResourceType type) {
+    public BaseResource setType(ResourceType type) {
         _type = type;
         return this;
     }
