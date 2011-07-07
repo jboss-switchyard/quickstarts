@@ -113,8 +113,7 @@ public class InboundHandler implements ExchangeHandler {
         final Route route = _camelContext.getRoute(routeId);
         if (route.supportsSuspension()) {
             _camelContext.suspendRoute(routeId);
-        }
-        else {
+        } else {
             _camelContext.stopRoute(routeId);
         }
             
