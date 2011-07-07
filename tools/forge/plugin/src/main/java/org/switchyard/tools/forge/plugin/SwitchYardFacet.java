@@ -24,21 +24,25 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.model.PluginExecution;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
-import org.jboss.seam.forge.project.dependencies.Dependency;
-import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
-import org.jboss.seam.forge.project.facets.DependencyFacet;
-import org.jboss.seam.forge.project.facets.MavenCoreFacet;
-import org.jboss.seam.forge.project.facets.PackagingFacet;
-import org.jboss.seam.forge.project.packaging.PackagingType;
-import org.jboss.seam.forge.resources.DirectoryResource;
-import org.jboss.seam.forge.resources.FileResource;
-import org.jboss.seam.forge.shell.plugins.Alias;
-import org.jboss.seam.forge.shell.plugins.RequiresFacet;
-import org.jboss.seam.forge.shell.plugins.RequiresPackagingType;
+import org.jboss.forge.maven.MavenCoreFacet;
+import org.jboss.forge.maven.MavenPluginFacet;
+import org.jboss.forge.project.dependencies.Dependency;
+import org.jboss.forge.project.dependencies.DependencyBuilder;
+import org.jboss.forge.project.facets.DependencyFacet;
+import org.jboss.forge.project.facets.PackagingFacet;
+import org.jboss.forge.project.packaging.PackagingType;
+import org.jboss.forge.resources.DirectoryResource;
+import org.jboss.forge.resources.FileResource;
+import org.jboss.forge.shell.Shell;
+import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.shell.plugins.RequiresPackagingType;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Models;
 import org.switchyard.config.model.composite.ComponentModel;
@@ -57,7 +61,7 @@ import org.switchyard.tools.forge.AbstractFacet;
  * reference the SwitchYard facet using <code>@RequiresFacet</code>.
  */
 @Alias("switchyard")
-@RequiresFacet({ DependencyFacet.class, MavenCoreFacet.class, PackagingFacet.class })
+@RequiresFacet({ DependencyFacet.class, MavenPluginFacet.class, PackagingFacet.class })
 @RequiresPackagingType(PackagingType.JAR)
 public class SwitchYardFacet extends AbstractFacet {
     
@@ -72,6 +76,11 @@ public class SwitchYardFacet extends AbstractFacet {
             "org.switchyard:switchyard-plugin",
             "org.switchyard:switchyard-test"
     };
+
+    @Inject
+    private Shell _shell;
+    
+    private String _version;
     
     /**
      * Create a new SwitchYard facet.
@@ -82,9 +91,17 @@ public class SwitchYardFacet extends AbstractFacet {
     
     @Override
     public boolean install() {
-        super.install();
 
-        String appName = getShell().prompt("Application name (e.g. myApp)");
+        // Ask the user which version of SwitchYard they want to use
+        DependencyFacet deps = project.getFacet(DependencyFacet.class);
+        List<Dependency> versions = deps.resolveAvailableVersions(DEPENDENCIES[0] + ":[,]");
+        Dependency dep = _shell.promptChoiceTyped("Please select a version to install:", versions);
+        
+        // Update the project with version and dependency info
+        setVersion(dep.getVersion());
+        installDependencies();
+        
+        String appName = _shell.prompt("Application name (e.g. myApp)");
         
         try {
             addScannerPlugin();
@@ -100,7 +117,7 @@ public class SwitchYardFacet extends AbstractFacet {
             // Save an initial version of the config
             writeSwitchYardConfig();
         } catch (Exception ex) {
-            getShell().println("Failed to install switchyard facet: " + ex.getMessage());
+            _shell.println("Failed to install switchyard facet: " + ex.getMessage());
             return false;
         }
         return true;
@@ -186,13 +203,13 @@ public class SwitchYardFacet extends AbstractFacet {
      */
     public synchronized SwitchYardModel getSwitchYardConfig() {
         SwitchYardModel config = (SwitchYardModel) 
-            getShell().getCurrentProject().getAttribute(CONFIG_ATTR);
+            _shell.getCurrentProject().getAttribute(CONFIG_ATTR);
         if (config == null) {
             try {
                 config = readSwitchYardConfig(getSwitchYardConfigFile());
                 setSwitchYardConfig(config);
             } catch (java.io.IOException ioEx) {
-                getShell().println("Error while reading SwitchYard configuration: " + ioEx.getMessage());
+                _shell.println("Error while reading SwitchYard configuration: " + ioEx.getMessage());
             }
         }
         return config;
@@ -212,7 +229,7 @@ public class SwitchYardFacet extends AbstractFacet {
                 SwitchYardModel generatedConfig = readSwitchYardConfig(generatedFile);
                 mergedConfig = Models.merge(generatedConfig, getSwitchYardConfig());
             } catch (java.io.IOException ioEx) {
-                getShell().println("Error while reading SwitchYard configuration: " + ioEx.getMessage());
+                _shell.println("Error while reading SwitchYard configuration: " + ioEx.getMessage());
             }
         }
         
@@ -225,7 +242,6 @@ public class SwitchYardFacet extends AbstractFacet {
         return mergedConfig;
     }
     
-    
     void writeSwitchYardConfig() {
         FileResource<?> configFile = getSwitchYardConfigFile();
         SwitchYardModel config = getSwitchYardConfig();
@@ -234,7 +250,7 @@ public class SwitchYardFacet extends AbstractFacet {
             fos = new FileOutputStream(configFile.getUnderlyingResourceObject());
             config.write(fos);
         } catch (java.io.IOException ioEx) {
-            getShell().println("Error while saving SwitchYard configuration: " + ioEx.getMessage());
+            _shell.println("Error while saving SwitchYard configuration: " + ioEx.getMessage());
         } finally {
             if (fos != null) {
                 try {
@@ -288,7 +304,7 @@ public class SwitchYardFacet extends AbstractFacet {
      * Any write activity to the project's config property should be synchronized.
      */
     private synchronized void setSwitchYardConfig(SwitchYardModel config) {
-        getShell().getCurrentProject().setAttribute(CONFIG_ATTR, config);
+        _shell.getCurrentProject().setAttribute(CONFIG_ATTR, config);
     }
     
     private FileResource<?> getSwitchYardConfigFile() {

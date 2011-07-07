@@ -19,17 +19,20 @@
 
 package org.switchyard.tools.forge.plugin;
 
+import javax.inject.Inject;
 import javax.xml.namespace.QName;
 
-import org.jboss.seam.forge.shell.ShellColor;
-import org.jboss.seam.forge.shell.plugins.Alias;
-import org.jboss.seam.forge.shell.plugins.Command;
-import org.jboss.seam.forge.shell.plugins.Help;
-import org.jboss.seam.forge.shell.plugins.Option;
-import org.jboss.seam.forge.shell.plugins.PipeOut;
-import org.jboss.seam.forge.shell.plugins.RequiresFacet;
-import org.jboss.seam.forge.shell.plugins.RequiresProject;
-import org.jboss.seam.forge.shell.plugins.Topic;
+import org.jboss.forge.project.Project;
+import org.jboss.forge.shell.ShellColor;
+import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.Command;
+import org.jboss.forge.shell.plugins.Help;
+import org.jboss.forge.shell.plugins.Option;
+import org.jboss.forge.shell.plugins.PipeOut;
+import org.jboss.forge.shell.plugins.Plugin;
+import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.shell.plugins.RequiresProject;
+import org.jboss.forge.shell.plugins.Topic;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
@@ -39,7 +42,6 @@ import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeReferenceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeServiceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
-import org.switchyard.tools.forge.AbstractPlugin;
 
 /**
  * Project-level commands for SwitchYard applications.
@@ -49,7 +51,10 @@ import org.switchyard.tools.forge.AbstractPlugin;
 @Topic("SOA")
 @RequiresFacet(SwitchYardFacet.class)
 @Help("Plugin for creating service-oriented applications with SwitchYard.")
-public class SwitchYardPlugin extends AbstractPlugin {
+public class SwitchYardPlugin implements Plugin {
+
+    @Inject
+    private Project _project;
 
     /**
      * List SwitchYard services available in the project.
@@ -57,7 +62,7 @@ public class SwitchYardPlugin extends AbstractPlugin {
      */
     @Command(value = "show-config", help = "Show the current configuration state of the application.")
     public void listServices(final PipeOut out) {
-        SwitchYardModel config = getProject().getFacet(SwitchYardFacet.class).getMergedSwitchYardConfig();
+        SwitchYardModel config = _project.getFacet(SwitchYardFacet.class).getMergedSwitchYardConfig();
         out.println();
         out.println("[Public]");
         // Print promoted service info
@@ -121,6 +126,16 @@ public class SwitchYardPlugin extends AbstractPlugin {
     }
     
     /**
+     * Print SwitchYard version used in this application.
+     * @param out shell output
+     */
+    @Command(value = "get-version", help = "Show the version of SwitchYard used by this application.")
+    public void getVersion(final PipeOut out) {
+        String version = _project.getFacet(SwitchYardFacet.class).getVersion();
+        out.println("SwitchYard version " + version);
+    }
+    
+    /**
      * Promote a component-level service to a composite-level service.
      * @param serviceName name of the service to promote
      * @param out shell output
@@ -132,7 +147,7 @@ public class SwitchYardPlugin extends AbstractPlugin {
                      description = "The service name") final String serviceName,
             final PipeOut out) {
         
-        SwitchYardFacet switchYard = getProject().getFacet(SwitchYardFacet.class);
+        SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
         
         // Check to see if the service is already promoted
         if (switchYard.getCompositeService(serviceName) != null) {
@@ -168,7 +183,7 @@ public class SwitchYardPlugin extends AbstractPlugin {
                      description = "The reference name") final String referenceName,
             final PipeOut out) {
         
-        SwitchYardFacet switchYard = getProject().getFacet(SwitchYardFacet.class);
+        SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
         
         // Check to see if the service is already promoted
         if (switchYard.getCompositeReference(referenceName) != null) {

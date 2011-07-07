@@ -23,15 +23,12 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import org.jboss.seam.forge.project.dependencies.Dependency;
-import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
-import org.jboss.seam.forge.project.facets.BaseFacet;
-import org.jboss.seam.forge.project.facets.DependencyFacet;
-import org.jboss.seam.forge.project.facets.PackagingFacet;
-import org.jboss.seam.forge.project.packaging.PackagingType;
-import org.jboss.seam.forge.shell.Shell;
+import org.jboss.forge.project.dependencies.Dependency;
+import org.jboss.forge.project.dependencies.DependencyBuilder;
+import org.jboss.forge.project.facets.BaseFacet;
+import org.jboss.forge.project.facets.DependencyFacet;
+import org.jboss.forge.project.facets.PackagingFacet;
+import org.jboss.forge.project.packaging.PackagingType;
 
 /**
  * Base implementation for SwitchYard facets.
@@ -46,32 +43,21 @@ public abstract class AbstractFacet extends BaseFacet {
     // List of dependencies added to every SwitchYard application
     private List<String> _depends = new LinkedList<String>();
 
-    @Inject
-    private Shell _shell;
-    
     protected AbstractFacet(String ... dependencies) {
         if (dependencies != null && dependencies.length > 0) {
             _depends = Arrays.asList(dependencies);
         }
     }
     
-    @Override
-    public boolean install() {
+    protected void installDependencies() {
         DependencyFacet deps = project.getFacet(DependencyFacet.class);
         if (!_depends.isEmpty()) {
-            // Version choice can be driven off of first dependency
-            List<Dependency> versions = deps.resolveAvailableVersions(_depends.get(0) + ":[,]");
-            Dependency version = _shell.promptChoiceTyped("Please select a version to install:", versions);
-            // Set the version property in the pom so it can be changed easily
-            deps.setProperty(VERSION, version.getVersion());
             // Add base required dependencies
             for (String artifact : _depends) {
                 DependencyBuilder dep = DependencyBuilder.create(artifact + ":${" + VERSION  + "}");
                 deps.addDependency(dep);
             }
         }
-        
-        return true;
     }
 
     @Override
@@ -87,7 +73,19 @@ public abstract class AbstractFacet extends BaseFacet {
         return installed;
     }
     
-    protected Shell getShell() {
-        return _shell;
+    /**
+     * Get the version of SwitchYard used by the application.
+     * @return SwitchYard version
+     */
+    public String getVersion() {
+        return project.getFacet(DependencyFacet.class).getProperty(VERSION);
+    }
+    
+    /**
+     * Get the version of SwitchYard used by the application.
+     * @param version SwitchYard version
+     */
+    public void setVersion(String version) {
+        project.getFacet(DependencyFacet.class).setProperty(VERSION, version);
     }
 }

@@ -14,18 +14,15 @@
     <version>${project.parent.version}</version>
     <description>SwitchYard Forge Support</description>
     <url>http://switchyard.org/</url>
-  <properties>
-    <forge.version>1.0.0.Alpha3</forge.version>
-  </properties>
   <dependencies>
     <dependency>
-      <groupId>org.jboss.seam.forge</groupId>
+      <groupId>org.jboss.forge</groupId>
       <artifactId>forge-shell-api</artifactId>
       <version>${forge.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.jboss.seam.forge</groupId>
-      <artifactId>forge-project-model</artifactId>
+      <groupId>org.jboss.forge</groupId>
+      <artifactId>forge-project-model-maven</artifactId>
       <version>${forge.version}</version>
     </dependency>
     <dependency>
