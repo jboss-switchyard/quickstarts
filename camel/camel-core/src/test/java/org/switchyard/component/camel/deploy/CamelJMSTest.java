@@ -110,7 +110,7 @@ public class CamelJMSTest extends SwitchYardTestCase {
     
     private CamelActivator getCamelActivator() {
         final Deployment deployment = (Deployment) getDeployment();
-        return (CamelActivator) deployment.getActivator("camel");
+        return (CamelActivator) deployment.findActivator("camel");
     }
     
     private void sendTextToQueue(final String text, final String destinationName) throws Exception {

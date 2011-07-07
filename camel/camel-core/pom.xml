@@ -19,7 +19,7 @@
 
     <properties>
         <version.commonman>1.0</version.commonman>
-        <version.hornetq>2.1.2.Final</version.hornetq>
+        <version.hornetq>2.2.2.Final</version.hornetq>
         <version.spring>3.0.5.RELEASE</version.spring>
     </properties>
 
