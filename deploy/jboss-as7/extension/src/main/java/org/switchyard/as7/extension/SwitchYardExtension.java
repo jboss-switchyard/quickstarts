@@ -32,6 +32,7 @@ import static org.switchyard.as7.extension.CommonAttributes.MODULES;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.xml.stream.XMLStreamConstants;
@@ -39,7 +40,9 @@ import javax.xml.stream.XMLStreamException;
 
 import org.jboss.as.controller.Extension;
 import org.jboss.as.controller.ExtensionContext;
+import org.jboss.as.controller.PathElement;
 import org.jboss.as.controller.SubsystemRegistration;
+import org.jboss.as.controller.descriptions.DescriptionProvider;
 import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
 import org.jboss.as.controller.persistence.SubsystemMarshallingContext;
@@ -74,6 +77,15 @@ public class SwitchYardExtension implements Extension {
         registration.registerOperationHandler(ADD, SwitchYardSubsystemAdd.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_ADD, false);
         registration.registerOperationHandler(DESCRIBE, SwitchYardSubsystemDescribe.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_DESCRIBE, false, OperationEntry.EntryType.PRIVATE);
         subsystem.registerXMLElementWriter(PARSER);
+
+        DescriptionProvider nullDescriptionProvider = new DescriptionProvider() {
+            @Override
+            public ModelNode getModelDescription(Locale locale) {
+                return new ModelNode();
+            }
+        };
+        final ManagementResourceRegistration deployments = subsystem.registerDeploymentModel(nullDescriptionProvider);
+        deployments.registerSubModel(PathElement.pathElement("service-name"), nullDescriptionProvider);
     }
 
     /** {@inheritDoc} */
