@@ -306,9 +306,9 @@ public class Deployment extends AbstractDeployment {
                 ServiceReference serviceRef = serviceIntf != null
                         ? getDomain().registerService(service.getQName(), handler, serviceIntf)
                         : getDomain().registerService(service.getQName(), handler);
-                // register any service promotions
+                // register any service promotions, avoiding duplicate service names
                 CompositeServiceModel promotion = servicePromotions.get(service);
-                if (promotion != null) {
+                if (promotion != null && !promotion.getQName().equals(service.getQName())) {
                     if (serviceIntf != null) {
                         getDomain().registerService(promotion.getQName(), handler, serviceIntf);
                     } else {
