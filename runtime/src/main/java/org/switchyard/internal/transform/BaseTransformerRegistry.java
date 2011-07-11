@@ -94,7 +94,13 @@ public class BaseTransformerRegistry implements TransformerRegistry {
         if (transformer == null) {
             transformer = _fallbackTransformers.get(nameKey);
             if (transformer == null && JavaService.isJavaMessageType(from)) {
+                if (_log.isDebugEnabled()) {
+                    _log.debug("No exact transformer available for transforming from '" + from + "' to '" + to + "'.");
+                }
                 transformer = getJavaFallbackTransformer(from, to);
+                if (transformer != null && _log.isDebugEnabled()) {
+                    _log.debug("Selecting fallback transformer: from '" + transformer.getFrom() + "' to '" + transformer.getTo() + "'.");
+                }
             }
         }
 
@@ -140,18 +146,23 @@ public class BaseTransformerRegistry implements TransformerRegistry {
             return fallbackTransformer;
         }
 
-        try {
-            JavaSourceFallbackTransformerComparator comparator = new JavaSourceFallbackTransformerComparator();
-            Collections.sort(fallbackTransforms, comparator);
+        JavaSourceFallbackTransformerComparator comparator = new JavaSourceFallbackTransformerComparator();
+        Collections.sort(fallbackTransforms, comparator);
 
-            // Closest super-type will be first in the list..
-            Transformer<?, ?> fallbackTransformer = fallbackTransforms.get(0)._transformer;
-            addFallbackTransformer(fallbackTransformer, from, to);
-            return fallbackTransformer;
-        } catch (MultipleFallbacks e) {
-            _log.debug("Cannot resolve fallback Transformer from '" + from + "' to '" + to + "'.  " + e.getMessage());
-            return null;
+        if (_log.isDebugEnabled()) {
+            StringBuilder messageBuilder = new StringBuilder();
+
+            messageBuilder.append("Multiple possible fallback transformers available:");
+            for (JavaSourceFallbackTransformer t : fallbackTransforms) {
+                messageBuilder.append("\n\t- from '" + t._transformer.getFrom() + "' to '" + t._transformer.getTo() + "'");
+            }
+            _log.debug(messageBuilder.toString());
         }
+
+        // Closest super-type will be first in the list..
+        Transformer<?, ?> fallbackTransformer = fallbackTransforms.get(0)._transformer;
+        addFallbackTransformer(fallbackTransformer, from, to);
+        return fallbackTransformer;
     }
 
     private void addFallbackTransformer(Transformer<?, ?> fallbackTransformer, QName from, QName to) {
@@ -265,12 +276,6 @@ public class BaseTransformerRegistry implements TransformerRegistry {
                 // Marking as equal for now...
                 return 0;
             }
-        }
-    }
-
-    private static final class MultipleFallbacks extends RuntimeException {
-        private MultipleFallbacks(String s) {
-            super(s);
         }
     }
 }
