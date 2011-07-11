@@ -152,37 +152,6 @@ public final class JavaService extends BaseService {
             }
         }
     }
-    /**
-     * Is the specified message type QName a Java message type.
-     * @param name The message type {@link QName}to be tested.
-     * @return True if it is a Java message type, otherwise false.
-     */
-    public static boolean isJavaMessageType(QName name) {
-        return name.getLocalPart().startsWith(TYPE_PREFIX);
-    }
-
-    /**
-     * Is the specified message type QName a Java message type.
-     * @param name The message type {@link QName}to be tested.
-     * @return True if it is a Java message type, otherwise false.
-     */
-    public static Class<?> toJavaMessageType(QName name) {
-        if (!isJavaMessageType(name)) {
-            throw new RuntimeException("Invalid call.  Not a Java message type.  Use isJavaMessageType before calling this method.");
-        }
-
-        String className = name.getLocalPart().substring(TYPE_PREFIX.length());
-        try {
-            return Thread.currentThread().getContextClassLoader().loadClass(className);
-        } catch (ClassNotFoundException e1) {
-            try {
-                return Class.forName(className);
-            } catch (ClassNotFoundException e2) {
-                // can't use this.... ignore...
-                return null;
-            }
-        }
-    }
 
     private final static class OperationTypeQNames {
 

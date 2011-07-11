@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
-import org.switchyard.metadata.java.JavaService;
+import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 
@@ -93,10 +93,7 @@ public class BaseTransformerRegistry implements TransformerRegistry {
 
         if (transformer == null) {
             transformer = _fallbackTransformers.get(nameKey);
-            if (transformer == null && JavaService.isJavaMessageType(from)) {
-                if (_log.isDebugEnabled()) {
-                    _log.debug("No exact transformer available for transforming from '" + from + "' to '" + to + "'.");
-                }
+            if (transformer == null && QNameUtil.isJavaMessageType(from)) {
                 transformer = getJavaFallbackTransformer(from, to);
                 if (transformer != null && _log.isDebugEnabled()) {
                     _log.debug("Selecting fallback transformer: from '" + transformer.getFrom() + "' to '" + transformer.getTo() + "'.");
@@ -114,7 +111,7 @@ public class BaseTransformerRegistry implements TransformerRegistry {
     }
 
     private Transformer<?, ?> getJavaFallbackTransformer(QName from, QName to) {
-        Class<?> javaType = JavaService.toJavaMessageType(from);
+        Class<?> javaType = QNameUtil.toJavaMessageType(from);
 
         if (javaType == null) {
             return null;
@@ -127,8 +124,8 @@ public class BaseTransformerRegistry implements TransformerRegistry {
 
             // "to" must be an exact match...
             if (nameKey.getTo().equals(to)) {
-                if (JavaService.isJavaMessageType(nameKey.getFrom())) {
-                    Class<?> candidateType = JavaService.toJavaMessageType(nameKey.getFrom());
+                if (QNameUtil.isJavaMessageType(nameKey.getFrom())) {
+                    Class<?> candidateType = QNameUtil.toJavaMessageType(nameKey.getFrom());
                     if (candidateType != null && candidateType.isAssignableFrom(javaType)) {
                         fallbackTransforms.add(new JavaSourceFallbackTransformer(candidateType, entry.getValue()));
                     }

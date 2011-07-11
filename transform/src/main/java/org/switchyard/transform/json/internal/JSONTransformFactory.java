@@ -22,8 +22,8 @@ package org.switchyard.transform.json.internal;
 import javax.xml.namespace.QName;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.exception.SwitchYardException;
-import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerFactory;
 import org.switchyard.transform.config.model.JSONTransformModel;
@@ -47,7 +47,7 @@ public final class JSONTransformFactory implements TransformerFactory<JSONTransf
 
         assertValidJSONTransformSpec(from, to);
 
-        if (JavaService.isJavaMessageType(from)) {
+        if (QNameUtil.isJavaMessageType(from)) {
             // Java to JSON....
             Class clazz = toJavaMessageType(from);
             return new Java2JSONTransformer(from, to, new ObjectMapper(), clazz);
@@ -59,7 +59,7 @@ public final class JSONTransformFactory implements TransformerFactory<JSONTransf
     }
 
     private static Class toJavaMessageType(QName name) {
-        Class clazz = JavaService.toJavaMessageType(name);
+        Class clazz = QNameUtil.toJavaMessageType(name);
         if (clazz == null) {
             throw new SwitchYardException("Not able to find class definition " + name);
         }
@@ -67,13 +67,13 @@ public final class JSONTransformFactory implements TransformerFactory<JSONTransf
     }
 
     private static void assertValidJSONTransformSpec(QName from, QName to) {
-        if (JavaService.isJavaMessageType(from)) {
-            if (JavaService.isJavaMessageType(to)) {
+        if (QNameUtil.isJavaMessageType(from)) {
+            if (QNameUtil.isJavaMessageType(to)) {
                 // Both of them is a Java type spec...
                 throwInvalidToFromSpecException();
             }
-        } else if (JavaService.isJavaMessageType(to)) {
-            if (JavaService.isJavaMessageType(from)) {
+        } else if (QNameUtil.isJavaMessageType(to)) {
+            if (QNameUtil.isJavaMessageType(from)) {
                 // Both of them is a Java type spec...
                 throwInvalidToFromSpecException();
             }

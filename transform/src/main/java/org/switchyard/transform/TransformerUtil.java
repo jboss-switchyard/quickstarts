@@ -20,6 +20,7 @@
 package org.switchyard.transform;
 
 import org.switchyard.common.type.Classes;
+import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.java.JavaService;
@@ -270,9 +271,9 @@ public final class TransformerUtil {
     }
 
     private static boolean isAssignableFrom(QName a, QName b) {
-        if (JavaService.isJavaMessageType(a) && JavaService.isJavaMessageType(b)) {
-            Class<?> aType = JavaService.toJavaMessageType(a);
-            Class<?> bType = JavaService.toJavaMessageType(b);
+        if (QNameUtil.isJavaMessageType(a) && QNameUtil.isJavaMessageType(b)) {
+            Class<?> aType = QNameUtil.toJavaMessageType(a);
+            Class<?> bType = QNameUtil.toJavaMessageType(b);
 
             if (aType == null || bType == null) {
                 return false;

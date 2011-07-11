@@ -20,8 +20,8 @@
 package org.switchyard.transform.ootb.map;
 
 import org.apache.log4j.Logger;
+import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.exception.SwitchYardException;
-import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.Transformer;
 
@@ -74,11 +74,11 @@ public class FromMapToJava<F, T> extends BaseTransformer<Map, Object> {
     public Transformer setTo(QName toType) {
         super.setTo(toType);
 
-        if (!JavaService.isJavaMessageType(toType)) {
+        if (!QNameUtil.isJavaMessageType(toType)) {
             throw new SwitchYardException("Invalid 'to' type '" + toType + "'.  Must be a Java Object type.");
         }
 
-        Class<?> javaType = JavaService.toJavaMessageType(toType);
+        Class<?> javaType = QNameUtil.toJavaMessageType(toType);
         if (javaType == null) {
             throw new SwitchYardException("Invalid 'to' type '" + toType + "'.  Class Not Found.");
         }

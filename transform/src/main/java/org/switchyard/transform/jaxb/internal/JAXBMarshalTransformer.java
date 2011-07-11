@@ -20,9 +20,9 @@
 package org.switchyard.transform.jaxb.internal;
 
 import org.switchyard.Message;
+import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.config.model.Scannable;
 import org.switchyard.exception.SwitchYardException;
-import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.BaseTransformer;
 
 import javax.xml.bind.JAXBContext;
@@ -76,7 +76,7 @@ public class JAXBMarshalTransformer<F, T> extends BaseTransformer<Message, Messa
         try {
             StringWriter resultWriter = new StringWriter();
             Object javaObject = message.getContent();
-            JAXBElement jaxbElement = new JAXBElement(getTo(), JavaService.toJavaMessageType(getFrom()), javaObject);
+            JAXBElement jaxbElement = new JAXBElement(getTo(), QNameUtil.toJavaMessageType(getFrom()), javaObject);
 
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             marshaller.marshal(jaxbElement, resultWriter);

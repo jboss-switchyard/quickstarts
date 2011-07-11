@@ -21,6 +21,7 @@ package org.switchyard.transform.jaxb.internal;
 
 import org.apache.log4j.Logger;
 import org.switchyard.common.type.Classes;
+import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.Transformer;
@@ -201,13 +202,13 @@ public class JAXBTransformerFactory implements TransformerFactory<JAXBTransformM
     }
 
     private static JavaTransformType toJavaTransformType(QName fromType, QName toType) {
-        if (JavaService.isJavaMessageType(fromType)) {
-            if (JavaService.isJavaMessageType(toType)) {
+        if (QNameUtil.isJavaMessageType(fromType)) {
+            if (QNameUtil.isJavaMessageType(toType)) {
                 throw new SwitchYardException("Invalid JAXB Transformer configuration.  The 'from' and 'to' transformation types are both Java types.  Exactly one must be a Java type.");
             }
             return JavaTransformType.JAVA2XML;
-        } else if (JavaService.isJavaMessageType(toType)) {
-            if (JavaService.isJavaMessageType(fromType)) {
+        } else if (QNameUtil.isJavaMessageType(toType)) {
+            if (QNameUtil.isJavaMessageType(fromType)) {
                 throw new SwitchYardException("Invalid JAXB Transformer configuration.  The 'from' and 'to' transformation types are both Java types.  Exactly one must be a Java type.");
             }
             return JavaTransformType.XML2JAVA;
@@ -217,6 +218,6 @@ public class JAXBTransformerFactory implements TransformerFactory<JAXBTransformM
     }
 
     private static String getJavaPackage(QName type) {
-        return JavaService.toJavaMessageType(type).getPackage().getName();
+        return QNameUtil.toJavaMessageType(type).getPackage().getName();
     }
 }
