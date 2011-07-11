@@ -1,0 +1,10 @@
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:soap="urn:switchyard-component-soap:config:1.0">
+    <sca:composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="switchyard-quickstart-transform-jaxb">
+        <sca:service name="OrderService" promote="OrderService">
+            <soap:binding.soap>
+                <soap:serverPort>18001</soap:serverPort>
+                <soap:wsdl>wsdl/OrderService.wsdl</soap:wsdl>
+            </soap:binding.soap>
+        </sca:service>
+	</sca:composite>
+</switchyard>
