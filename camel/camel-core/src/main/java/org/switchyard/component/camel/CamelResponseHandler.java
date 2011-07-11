@@ -26,10 +26,9 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
 import org.switchyard.ServiceReference;
+import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.component.camel.deploy.ServiceReferences;
 import org.switchyard.exception.SwitchYardException;
-
-import org.switchyard.metadata.java.JavaService;
 
 /**
  * A CamelResponseHandler is responsible for passing back result data from Apache Camel to
@@ -80,7 +79,7 @@ public class CamelResponseHandler implements ExchangeHandler {
     private Object getPayloadFromSwitchYardExchange(final Exchange switchYardExchange) {
         final QName outputType = ServiceReferences.getOutputTypeForExchange(_reference, switchYardExchange);
         if (outputType != null) {
-            return switchYardExchange.getMessage().getContent(JavaService.toJavaMessageType(outputType));
+            return switchYardExchange.getMessage().getContent(QNameUtil.toJavaMessageType(outputType));
         }
         
         return switchYardExchange.getMessage().getContent();

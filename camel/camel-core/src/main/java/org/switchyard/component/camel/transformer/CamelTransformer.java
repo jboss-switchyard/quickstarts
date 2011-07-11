@@ -22,7 +22,7 @@ package org.switchyard.component.camel.transformer;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.metadata.java.JavaService;
+import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.transform.BaseTransformer;
 
 /**
@@ -61,7 +61,7 @@ public class CamelTransformer extends BaseTransformer {
              return null;
          }
          
-         final Class<?> toType = JavaService.toJavaMessageType(getTo());
+         final Class<?> toType = QNameUtil.toJavaMessageType(getTo());
          return _camelConverter.convert(toType, from);
      }
      
