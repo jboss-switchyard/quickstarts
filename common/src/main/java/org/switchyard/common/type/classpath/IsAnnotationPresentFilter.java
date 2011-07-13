@@ -20,6 +20,7 @@
 package org.switchyard.common.type.classpath;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 /**
  * Filter classpath classes based on presence of an annotation.
@@ -42,7 +43,17 @@ public class IsAnnotationPresentFilter extends AbstractTypeFilter {
      * {@inheritDoc}
      */
     @Override
-    protected boolean matches(Class<?> clazz) {
+    public boolean matches(Class<?> clazz) {
         return clazz.isAnnotationPresent(_searchType);
     }
+
+    /**
+     * Is the Java method a filter match.
+     * @param method The Java method to be checked.
+     * @return true if the Java method is a match, otherwise false.
+     */
+    public boolean matches(Method method) {
+        return method.isAnnotationPresent(_searchType);
+    }
+
 }

@@ -53,9 +53,9 @@ public abstract class AbstractTypeFilter implements Filter {
     /**
      * Is the Java type a filter match.
      * @param clazz The Java type to be checked.
-     * @return True if the Java type is a match, otherwise false.
+     * @return true if the Java type is a match, otherwise false.
      */
-    protected abstract boolean matches(Class<?> clazz);
+    public abstract boolean matches(Class<?> clazz);
 
     /**
      * Get the set of filtered (i.e. matching) types.

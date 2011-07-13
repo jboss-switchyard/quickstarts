@@ -142,7 +142,7 @@ public final class Configurations {
 
     private static final class Key {
 
-        private static final String[] ID_CANDIDATES = {"id", "name", "class", "interface", "from", "to"};
+        private static final String[] ID_CANDIDATES = {"id", "name", "type", "class", "interface", "from", "to"};
 
         private QName _qname;
         private Map<String,Object> _ids;

@@ -87,7 +87,7 @@ public class TransformSwitchYardScanner implements Scanner<SwitchYardModel> {
 
     private class TransformerInstanceOfFilter extends AbstractTypeFilter {
         @Override
-        protected boolean matches(Class<?> clazz) {
+        public boolean matches(Class<?> clazz) {
             Scannable scannable = clazz.getAnnotation(Scannable.class);
             if (scannable != null && !scannable.value()) {
                 // Marked as being non-scannable...

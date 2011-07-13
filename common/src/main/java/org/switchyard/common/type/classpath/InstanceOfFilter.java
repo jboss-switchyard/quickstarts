@@ -40,7 +40,7 @@ public class InstanceOfFilter extends AbstractTypeFilter {
      * {@inheritDoc}
      */
     @Override
-    protected boolean matches(Class<?> clazz) {
+    public boolean matches(Class<?> clazz) {
         return _searchType.isAssignableFrom(clazz);
     }
 }
