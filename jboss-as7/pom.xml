@@ -17,10 +17,10 @@
     <description>SwitchYard AS7 Distribution</description>
 
     <properties>
-        <version.jbossas>7.0.0.CR1</version.jbossas>
+        <version.jbossas>7.0.0.Final</version.jbossas>
         <version.arquillian>1.0.0.CR1</version.arquillian>
         <staging.dir>${project.build.directory}/jboss-switchyard</staging.dir>
-        <staging.jboss.dir>${staging.dir}/jboss-${version.jbossas}</staging.jboss.dir>
+        <staging.jboss.dir>${staging.dir}/jboss-as-${version.jbossas}</staging.jboss.dir>
         <distro.root.dir>/switchyard-as7-${distro.version}/</distro.root.dir>
         <switchyard.jboss.home>${project.build.directory}${distro.root.dir}</switchyard.jboss.home>
     </properties>

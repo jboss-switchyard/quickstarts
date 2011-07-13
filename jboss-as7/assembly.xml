@@ -9,7 +9,7 @@
   <!-- We are not ready for domain config yet -->
   <fileSets>
     <fileSet>
-      <directory>${staging.dir}/jboss-${version.jbossas}</directory>
+      <directory>${staging.jboss.dir}</directory>
       <includes>
         <include>*.jar</include>
         <include>*.txt</include>
@@ -17,7 +17,7 @@
       <outputDirectory>${distro.root.dir}</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>${staging.dir}/jboss-${version.jbossas}/bin</directory>
+      <directory>${staging.jboss.dir}/bin</directory>
       <excludes>
         <exclude>domain.*</exclude>
       </excludes>
@@ -29,7 +29,7 @@
       <outputDirectory>${distro.root.dir}bin</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>${staging.dir}/jboss-${version.jbossas}/bin</directory>
+      <directory>${staging.jboss.dir}/bin</directory>
       <excludes>
         <exclude>domain.*</exclude>
         <exclude>*.sh</exclude>
@@ -39,23 +39,23 @@
       <outputDirectory>${distro.root.dir}bin</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>${staging.dir}/jboss-${version.jbossas}/bundles</directory>
+      <directory>${staging.jboss.dir}/bundles</directory>
       <outputDirectory>${distro.root.dir}bundles</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>${staging.dir}/jboss-${version.jbossas}/docs</directory>
+      <directory>${staging.jboss.dir}/docs</directory>
       <outputDirectory>${distro.root.dir}docs</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>${staging.dir}/jboss-${version.jbossas}/modules</directory>
+      <directory>${staging.jboss.dir}/modules</directory>
       <outputDirectory>${distro.root.dir}modules</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>${staging.dir}/jboss-${version.jbossas}/welcome-content</directory>
+      <directory>${staging.jboss.dir}/welcome-content</directory>
       <outputDirectory>${distro.root.dir}welcome-content</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>${staging.dir}/jboss-${version.jbossas}/standalone</directory>
+      <directory>${staging.jboss.dir}/standalone</directory>
       <outputDirectory>${distro.root.dir}standalone</outputDirectory>
       <excludes>
          <exclude>**/standalone*.xml</exclude>
@@ -84,7 +84,7 @@
       </excludes>
     </fileSet>
     <fileSet>
-      <directory>${staging.dir}/jboss-${version.jbossas}/forge</directory>
+      <directory>${staging.jboss.dir}/forge</directory>
       <outputDirectory>${distro.root.dir}forge</outputDirectory>
     </fileSet>
   </fileSets>
