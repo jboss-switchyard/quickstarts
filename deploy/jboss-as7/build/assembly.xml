@@ -18,6 +18,11 @@
       <filtered>true</filtered>
     </file>
     <file>
+      <source>src/main/resources/modules/switchyard/admin/module.xml</source>
+      <outputDirectory>/modules/org/switchyard/admin/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
       <source>src/main/resources/modules/switchyard/common/module.xml</source>
       <outputDirectory>/modules/org/switchyard/common/main</outputDirectory>
       <filtered>true</filtered>
@@ -80,6 +85,14 @@
           <include>org.switchyard:switchyard-api</include>
        </includes>
        <outputDirectory>/modules/org/switchyard/api/main</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${version.project}.${artifact.extension}</outputFileNameMapping>
+    </dependencySet>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
+          <include>org.switchyard:switchyard-admin</include>
+       </includes>
+       <outputDirectory>/modules/org/switchyard/admin/main</outputDirectory>
        <outputFileNameMapping>${artifact.artifactId}-${version.project}.${artifact.extension}</outputFileNameMapping>
     </dependencySet>
     <dependencySet>

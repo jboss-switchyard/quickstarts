@@ -18,6 +18,7 @@
           <include>org.switchyard:switchyard-common</include>
           <include>org.switchyard:switchyard-config</include>
           <include>org.switchyard:switchyard-api</include>
+          <include>org.switchyard:switchyard-admin</include>
           <include>org.switchyard:switchyard-extensions-wsdl</include>
           <include>org.switchyard:switchyard-transform</include>
           <include>org.switchyard:switchyard-runtime</include>
