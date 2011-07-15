@@ -18,6 +18,10 @@
     <url>http://www.switchyard.org</url>
 
     <properties>
+        <drools.version>5.2.0.Final</drools.version>
+        <jdt.version>3.3.0-v_771</jdt.version>
+        <antlr-runtime.version>3.3</antlr-runtime.version>
+        <mina-core.version>2.0.1</mina-core.version>
         <jbpm.version>5.1.0.Final</jbpm.version>
     </properties>
 
@@ -35,6 +39,25 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>switchyard.deployer</finalName>
+                            <descriptors>
+                                <descriptor>${basedir}/assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-deploy-plugin</artifactId>
               <configuration>
@@ -49,6 +72,41 @@
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-config</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.mina</groupId>
+            <artifactId>mina-core</artifactId>
+            <version>${mina-core.version}</version>
+        </dependency>        
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr-runtime</artifactId>
+            <version>${antlr-runtime.version}</version>
+        </dependency>        
+        <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>core</artifactId>
+            <version>${jdt.version}</version>
+        </dependency>        
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-compiler</artifactId>
+            <version>${drools.version}</version>
+        </dependency>        
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>knowledge-api</artifactId>
+            <version>${drools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-core</artifactId>
+            <version>${drools.version}</version>
+        </dependency>        
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-persistence-jpa</artifactId>
+            <version>${drools.version}</version>
+        </dependency>        
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-flow</artifactId>
@@ -69,13 +127,13 @@
             <artifactId>jbpm-bpmn2</artifactId>
             <version>${jbpm.version}</version>
         </dependency>
-		<!--
+                <!--
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-bam</artifactId>
             <version>${jbpm.version}</version>
         </dependency>
-		-->
+                -->
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-workitems</artifactId>
