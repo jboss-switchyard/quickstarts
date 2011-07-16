@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -686,6 +687,16 @@ public abstract class SwitchYardTestCase {
                 }
             } catch (IOException e) {
                 Assert.fail("Failed to convert classpath URL '" + classpathURL + "' to a File instance.");
+            }
+        }
+
+        // Temp hack to work around SWITCHYARD-343 (https://issues.jboss.org/browse/SWITCHYARD-343)...
+        if (scanURLs.isEmpty()) {
+            try {
+                scanURLs.add(new File("target/test-classes").toURI().toURL());
+                scanURLs.add(new File("target/classes").toURI().toURL());
+            } catch (MalformedURLException e) {
+                Assert.fail("Unexpected exception adding target test classes folders to test scan URLs: " + e.getMessage());
             }
         }
 

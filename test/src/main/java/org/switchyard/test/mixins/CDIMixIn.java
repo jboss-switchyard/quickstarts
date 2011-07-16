@@ -19,6 +19,9 @@
 
 package org.switchyard.test.mixins;
 
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.NamingException;
 
 import org.jboss.weld.environment.se.Weld;
@@ -31,6 +34,8 @@ import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.test.MockInitialContextFactory;
 import org.switchyard.test.SimpleTestDeployment;
 
+import java.util.Set;
+
 /**
  * CDI Test Mix-In for deploying the Weld CDI Standalone Edition container.
  *
@@ -39,18 +44,19 @@ import org.switchyard.test.SimpleTestDeployment;
 public class CDIMixIn extends AbstractTestMixIn {
 
     private Weld _weld;
+    private WeldContainer _weldContainer;
     private AbstractDeployment _simpleCdiDeployment;
 
     @Override
     public void initialize() {
         // Deploy the weld container...
         _weld = new Weld();
-        WeldContainer weldContainer = _weld.initialize();
-        weldContainer.event().select(ContainerInitialized.class).fire(new ContainerInitialized());
+        _weldContainer = _weld.initialize();
+        _weldContainer.event().select(ContainerInitialized.class).fire(new ContainerInitialized());
 
         // And bind the BeanManager instance into java:comp...
         try {
-            MockInitialContextFactory.getJavaComp().bind("BeanManager", weldContainer.getBeanManager());
+            MockInitialContextFactory.getJavaComp().bind("BeanManager", getBeanManager());
         } catch (NamingException e) {
             Assert.fail("Failed to bind BeanManager into 'java:comp'.");
         }
@@ -75,8 +81,79 @@ public class CDIMixIn extends AbstractTestMixIn {
                 e.printStackTrace();
                 Assert.fail("Failed to manually deploy Bean Service.  Exception: " + e.getMessage());
             }
-
         }
+    }
+
+    /**
+     * Get the CDI {@link BeanManager}.
+     * @return The CDI {@link BeanManager}.
+     */
+    public BeanManager getBeanManager() {
+        return _weldContainer.getBeanManager();
+    }
+
+    /**
+     * Get the {@link javax.inject.Named @Named} CDI {@link Bean}.
+     * @param name The name of the bean.
+     * @return The {@link javax.inject.Named @Named} CDI {@link Bean}.
+     */
+    public Bean<?> getBean(String name) {
+        BeanManager beanManager = getBeanManager();
+        Set<Bean<?>> beans = beanManager.getBeans(name);
+
+        if (beans != null && !beans.isEmpty()) {
+            return beans.iterator().next();
+        } else {
+            throw new IllegalStateException("Unable to find CDI bean @Named '" + name + "'.  \n\t - Check for a typo in the name. \n\t - Make sure the Class is annotated with the @Name annotation.");
+        }
+    }
+
+    /**
+     * Get the CDI {@link Bean} associated with CDI the specified type.
+     * @param type The bean type.
+     * @return The the CDI {@link Bean} associated with CDI the specified type.
+     */
+    public Bean getBean(Class<?> type) {
+        BeanManager beanManager = getBeanManager();
+        Set<Bean<?>> beans = beanManager.getBeans(type);
+
+        if (beans != null && !beans.isEmpty()) {
+            return beans.iterator().next();
+        } else {
+            throw new IllegalStateException("Unable to find CDI bean of type '" + type.getName() + "'.");
+        }
+    }
+
+    /**
+     * Get the object instance associated with a {@link javax.inject.Named @Named} CDI {@link Bean}.
+     * @param name The name of the bean.
+     * @return The object instance associated with a {@link javax.inject.Named @Named} CDI {@link Bean}.
+     */
+    public Object getObject(String name) {
+        return createBeanInstance(getBean(name));
+    }
+
+    /**
+     * Get the object instance associated with a {@link javax.inject.Named @Named} CDI {@link Bean}.
+     * @param name The name of the bean.
+     * @param type The bean type.
+     * @return The object instance associated with a {@link javax.inject.Named @Named} CDI {@link Bean}.
+     *
+     * @param <T> Type.
+     */
+    public <T> T getObject(String name, Class<T> type) {
+        return type.cast(getObject(name));
+    }
+
+    /**
+     * Get the object instance associated with CDI {@link Bean} of the specified type.
+     * @param type The bean type.
+     * @return The object instance associated with CDI {@link Bean} of the specified type.
+     *
+     * @param <T> Type.
+     */
+    public <T> T getObject(Class<T> type) {
+        return type.cast(createBeanInstance(getBean(type)));
     }
 
     @Override
@@ -90,5 +167,12 @@ public class CDIMixIn extends AbstractTestMixIn {
     @Override
     public void uninitialize() {
         _weld.shutdown();
+    }
+
+    private Object createBeanInstance(Bean<?> bean) {
+        BeanManager beanManager = getBeanManager();
+        CreationalContext<?> creationalContext = beanManager.createCreationalContext(null);
+
+        return beanManager.getReference(bean, bean.getBeanClass(), creationalContext);
     }
 }
