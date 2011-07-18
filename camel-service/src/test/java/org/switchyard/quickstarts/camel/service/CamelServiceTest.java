@@ -1,7 +1,9 @@
 package org.switchyard.quickstarts.camel.service;
 import org.junit.Test;
+import org.switchyard.component.camel.config.model.RouteScanner;
 import org.switchyard.test.SwitchYardTestCase;
 import org.switchyard.test.SwitchYardTestCaseConfig;
+import org.switchyard.test.mixins.CDIMixIn;
 
 /* 
  * JBoss, Home of Professional Open Source 
@@ -22,7 +24,11 @@ import org.switchyard.test.SwitchYardTestCaseConfig;
  * MA  02110-1301, USA.
  */
 
-@SwitchYardTestCaseConfig(config = SwitchYardTestCaseConfig.SWITCHYARD_XML)
+@SwitchYardTestCaseConfig(
+        config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
+        mixins = CDIMixIn.class,
+        scanners = RouteScanner.class
+)
 public class CamelServiceTest extends SwitchYardTestCase  {
     
     private static final String TEST_MESSAGE = "\n"
