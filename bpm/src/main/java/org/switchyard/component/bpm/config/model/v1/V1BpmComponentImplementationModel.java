@@ -27,14 +27,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.switchyard.common.io.resource.Resource;
+import org.switchyard.common.io.resource.ResourceType;
+import org.switchyard.common.io.resource.SimpleResource;
 import org.switchyard.component.bpm.config.model.BpmComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.ProcessActionModel;
-import org.switchyard.component.bpm.config.model.ResourceModel;
 import org.switchyard.component.bpm.config.model.TaskHandlerModel;
-import org.switchyard.component.bpm.resource.ResourceType;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.v1.V1ComponentImplementationModel;
+import org.switchyard.config.model.resource.ResourceModel;
 
 /**
  * A "bpm" implementation of a ComponentImplementationModel.
@@ -88,35 +90,23 @@ public class V1BpmComponentImplementationModel extends V1ComponentImplementation
      * {@inheritDoc}
      */
     @Override
-    public String getProcessDefinition() {
-        return getModelAttribute(PROCESS_DEFINITION);
+    public Resource getProcessDefinition() {
+        String pd = getModelAttribute(PROCESS_DEFINITION);
+        if (pd != null) {
+            String pdt = getModelAttribute(PROCESS_DEFINITION_TYPE);
+            return new SimpleResource(pd, pdt != null ? ResourceType.valueOf(pdt) : null);
+        }
+        return null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public BpmComponentImplementationModel setProcessDefinition(String processDefinition) {
-        setModelAttribute(PROCESS_DEFINITION, processDefinition);
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ResourceType getProcessDefinitionType() {
-        String pdt = getModelAttribute(PROCESS_DEFINITION_TYPE);
-        return pdt != null ? ResourceType.valueOf(pdt) : null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public BpmComponentImplementationModel setProcessDefinitionType(ResourceType processDefinitionType) {
-        String pdt = processDefinitionType != null ? processDefinitionType.name() : null;
-        setModelAttribute(PROCESS_DEFINITION_TYPE, pdt);
+    public BpmComponentImplementationModel setProcessDefinition(Resource processDefinition) {
+        setModelAttribute(PROCESS_DEFINITION, processDefinition != null ? processDefinition.getLocation() : null);
+        ResourceType pdt = processDefinition != null ? processDefinition.getType() : null;
+        setModelAttribute(PROCESS_DEFINITION_TYPE, pdt != null ? pdt.name() : null);
         return this;
     }
 

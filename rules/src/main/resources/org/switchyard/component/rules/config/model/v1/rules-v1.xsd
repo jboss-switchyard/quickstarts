@@ -20,8 +20,8 @@ MA  02110-1301, USA.
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
         xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
         xmlns:swyd="urn:switchyard-config:switchyard:1.0"
-        xmlns:bpm="urn:switchyard-component-bpm:config:1.0"
-        targetNamespace="urn:switchyard-component-bpm:config:1.0"
+        xmlns:rules="urn:switchyard-component-rules:config:1.0"
+        targetNamespace="urn:switchyard-component-rules:config:1.0"
         elementFormDefault="qualified">
 
     <import namespace="urn:switchyard-config:switchyard:1.0"
@@ -30,40 +30,38 @@ MA  02110-1301, USA.
     <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"
             schemaLocation="sca-1.1-cd06.xsd"/>
 
-    <element name="implementation.bpm" type="bpm:BpmImplementationType" substitutionGroup="sca:implementation"/>
-    <complexType name="BpmImplementationType">
+    <element name="implementation.rules" type="rules:RulesImplementationType" substitutionGroup="sca:implementation"/>
+    <complexType name="RulesImplementationType">
         <complexContent>
             <extension base="sca:Implementation">
                 <sequence>
-                    <element ref="bpm:processAction" minOccurs="0" maxOccurs="unbounded"/>
                     <element ref="swyd:resource" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="bpm:taskHandler" minOccurs="0" maxOccurs="unbounded"/>
+                    <element ref="rules:rulesAction" minOccurs="0" maxOccurs="unbounded"/>
+                    <element ref="rules:rulesAudit" minOccurs="0" maxOccurs="1"/>
                 </sequence>
-                <attribute name="processDefinition" type="string" use="required"/>
-                <attribute name="processDefinitionType" type="NCName" use="optional" default="BPMN2"/>
-                <attribute name="processId" type="string" use="required"/>
+                <attribute name="stateful" type="boolean" use="optional" default="false"/>
                 <attribute name="messageContentName" type="string" use="optional"/>
             </extension>
         </complexContent>
     </complexType>
 
-    <element name="processAction" type="bpm:ProcessActionType"/>
-    <complexType name="ProcessActionType">
+    <element name="rulesAction" type="rules:RulesActionType"/>
+    <complexType name="RulesActionType">
         <complexContent>
             <extension base="sca:CommonExtensionBase">
                 <attribute name="name" type="string" use="required"/>
                 <attribute name="type" type="NCName" use="required"/>
-                <attribute name="eventType" type="string" use="optional"/>
             </extension>
         </complexContent>
     </complexType>
 
-    <element name="taskHandler" type="bpm:TaskHandlerType"/>
-    <complexType name="TaskHandlerType">
+    <element name="rulesAudit" type="rules:RulesAuditType"/>
+    <complexType name="RulesAuditType">
         <complexContent>
             <extension base="sca:CommonExtensionBase">
-                <attribute name="class" type="NCName" use="required"/>
-                <attribute name="name" type="string" use="optional"/>
+                <attribute name="interval" type="integer" use="optional" default="1000"/>
+                <attribute name="file" type="string" use="optional" default="event"/>
+                <attribute name="type" type="NCName" use="optional" default="THREADED_FILE"/>
             </extension>
         </complexContent>
     </complexType>

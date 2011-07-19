@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.config.model;
+package org.switchyard.component.rules.config.model;
 
 import java.io.File;
 import java.io.StringReader;
@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
 import junit.framework.Assert;
 
 import org.custommonkey.xmlunit.Diff;
@@ -34,10 +32,10 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.common.io.pull.StringPuller;
+import org.switchyard.common.io.resource.Resource;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.type.Classes;
-import org.switchyard.component.bpm.task.SwitchYardServiceTaskHandler;
-import org.switchyard.config.Configuration;
+import org.switchyard.component.rules.common.RulesAuditType;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
@@ -49,13 +47,13 @@ import org.switchyard.config.model.resource.ResourceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
- * Tests BPM models.
+ * Tests Rules models.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class BpmModelTests {
+public class RulesModelTests {
 
-    private static final String COMPLETE_XML = "/org/switchyard/component/bpm/config/model/BpmModelTests-Complete.xml";
+    private static final String COMPLETE_XML = "/org/switchyard/component/rules/config/model/RulesModelTests-Complete.xml";
 
     private ModelPuller<SwitchYardModel> _puller;
 
@@ -70,23 +68,22 @@ public class BpmModelTests {
         CompositeModel composite = switchyard.getComposite();
         ComponentModel component = composite.getComponents().get(0);
         ComponentImplementationModel implementation = component.getImplementation();
-        Assert.assertTrue(implementation instanceof BpmComponentImplementationModel);
-        BpmComponentImplementationModel bci = (BpmComponentImplementationModel)implementation;
-        Assert.assertEquals("bpm", bci.getType());
-        Assert.assertEquals("foobar.bpmn", bci.getProcessDefinition().getLocation());
-        Assert.assertEquals("BPMN2", bci.getProcessDefinition().getType().name());
-        Assert.assertEquals("foobar", bci.getProcessId());
-        Configuration config = bci.getModelConfiguration();
-        Assert.assertEquals("implementation.bpm", config.getName());
-        QName qname = config.getQName();
-        Assert.assertEquals("urn:switchyard-component-bpm:config:1.0", qname.getNamespaceURI());
-        Assert.assertEquals("implementation.bpm", qname.getLocalPart());
-        ResourceModel prm = bci.getResources().iterator().next();
-        Assert.assertEquals("foobar.drl", prm.getLocation());
-        Assert.assertEquals(ResourceType.DRL, prm.getType());
-        TaskHandlerModel tih = bci.getTaskHandlers().iterator().next();
-        Assert.assertEquals(SwitchYardServiceTaskHandler.class, tih.getClazz());
-        Assert.assertNull(tih.getName());
+        Assert.assertTrue(implementation instanceof RulesComponentImplementationModel);
+        RulesComponentImplementationModel rci = (RulesComponentImplementationModel)implementation;
+        Assert.assertEquals("rules", rci.getType());
+        Assert.assertEquals(true, rci.isStateful());
+        Iterator<ResourceModel> resource_iter = rci.getResources().iterator();
+        Resource dsl = resource_iter.next();
+        Assert.assertEquals("foo.dsl", dsl.getLocation());
+        Assert.assertEquals(ResourceType.DSL, dsl.getType());
+        Resource dslr = resource_iter.next();
+        Assert.assertEquals("bar.dslr", dslr.getLocation());
+        Assert.assertEquals(ResourceType.DSLR, dslr.getType());
+        RulesAuditModel ram = rci.getRulesAudit();
+        Assert.assertNotNull(ram);
+        Assert.assertEquals(Integer.valueOf(2000), ram.getInterval());
+        Assert.assertEquals("/tmp/foobar", ram.getFile().getAbsolutePath());
+        Assert.assertEquals(RulesAuditType.CONSOLE, ram.getType());
     }
 
     @Test
@@ -106,8 +103,8 @@ public class BpmModelTests {
     }
 
     @Test
-    public void testScanForProcesses() throws Exception {
-        Scanner<SwitchYardModel> scanner = new BpmSwitchYardScanner();
+    public void testScanForRules() throws Exception {
+        Scanner<SwitchYardModel> scanner = new RulesSwitchYardScanner();
         ScannerInput<SwitchYardModel> input = new ScannerInput<SwitchYardModel>().setName(getClass().getSimpleName());
         List<URL> urls = new ArrayList<URL>();
         String resPath = getClass().getName().replaceAll("\\.", "/") + ".class";
@@ -119,36 +116,13 @@ public class BpmModelTests {
         CompositeModel composite = output.getModel().getComposite();
         Assert.assertEquals(getClass().getSimpleName(), composite.getName());
         List<ComponentModel> cm_list = composite.getComponents();
-        Assert.assertEquals(2, cm_list.size());
+        Assert.assertEquals(1, cm_list.size());
         for (ComponentModel c : cm_list) {
-            BpmComponentImplementationModel bci = (BpmComponentImplementationModel)c.getImplementation();
-            String processId = bci.getProcessId();
-            if ("SimpleProcess".equals(processId)) {
-                Assert.assertEquals("META-INF/SimpleProcess.bpmn", bci.getProcessDefinition().getLocation());
-                Assert.assertEquals(ResourceType.BPMN2, bci.getProcessDefinition().getType());
-            } else if ("ComplexProcess".equals(processId)) {
-                Assert.assertEquals("path/to/my.bpmn", bci.getProcessDefinition().getLocation());
-                Assert.assertEquals(ResourceType.BPMN2, bci.getProcessDefinition().getType());
-                Iterator<ResourceModel> prm_iter = bci.getResources().iterator();
-                ResourceModel prm = prm_iter.next();
-                Assert.assertEquals("path/to/my.dsl", prm.getLocation());
-                Assert.assertEquals(ResourceType.DSL, prm.getType());
-                prm = prm_iter.next();
-                Assert.assertEquals("path/to/my.dslr", prm.getLocation());
-                Assert.assertEquals(ResourceType.DSLR, prm.getType());
-                Iterator<TaskHandlerModel> wih_iter = bci.getTaskHandlers().iterator();
-                TaskHandlerModel wih = wih_iter.next();
-                Assert.assertEquals(SwitchYardServiceTaskHandler.class, wih.getClazz());
-                Assert.assertEquals(SwitchYardServiceTaskHandler.SWITCHYARD_SERVICE, wih.getName());
-                wih = wih_iter.next();
-                Assert.assertEquals(ComplexProcess.My1stHandler.class, wih.getClazz());
-                Assert.assertEquals("My1stHandler", wih.getName());
-                wih = wih_iter.next();
-                Assert.assertEquals(ComplexProcess.My2ndHandler.class, wih.getClazz());
-                Assert.assertEquals("My2ndHandler", wih.getName());
-            } else {
-                Assert.fail(processId);
-            }
+            RulesComponentImplementationModel rci = (RulesComponentImplementationModel)c.getImplementation();
+            Iterator<ResourceModel> rm_iter = rci.getResources().iterator();
+            ResourceModel rm = rm_iter.next();
+            Assert.assertEquals("path/to/my.drl", rm.getLocation());
+            Assert.assertEquals(ResourceType.DRL, rm.getType());
         }
     }
 

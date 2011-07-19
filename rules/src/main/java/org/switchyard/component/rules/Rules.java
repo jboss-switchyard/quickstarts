@@ -16,71 +16,46 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm;
+package org.switchyard.component.rules;
 
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static org.switchyard.common.io.resource.ResourceType.BPMN2;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.switchyard.common.io.resource.SimpleResource;
 import org.switchyard.common.io.resource.Resource;
-import org.switchyard.common.io.resource.ResourceType;
-import org.switchyard.component.bpm.task.BaseTaskHandler;
-import org.switchyard.component.bpm.task.TaskHandler;
+import org.switchyard.common.io.resource.SimpleResource;
 
 /**
- * Process annotation.
+ * Rules annotation.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 @Target(TYPE)
 @Retention(RUNTIME)
 @Documented
-public @interface Process {
+public @interface Rules {
 
     /**
-     * Specified process interface.
+     * Specified rules interface.
      */
-    public Class<?> value() default UndefinedProcessInterface.class;
+    public Class<?> value() default UndefinedRulesInterface.class;
 
     /**
-     * Specified process definition.
+     * Specified stateful flag.
      */
-    public String definition() default UNDEFINED_PROCESS_DEFINITION;
+    public boolean stateful() default false;
 
     /**
-     * Specified process definition type.
-     */
-    public ResourceType definitionType() default BPMN2;
-
-    /**
-     * Specified process id.
-     */
-    public String id() default UNDEFINED_PROCESS_ID;
-
-    /**
-     * Additional resources the process requires.
+     * Additional resources the rules require.
      */
     public Class<? extends Resource>[] resources() default UndefinedResource.class;
 
-    /**
-     * Specified task handlers for the process.
-     */
-    public Class<? extends TaskHandler>[] taskHandlers() default UndefinedTaskHandler.class;
-
-    /** An undefined process interface. */
-    public static interface UndefinedProcessInterface {};
-    /** An undefined process definition. */
-    public static final String UNDEFINED_PROCESS_DEFINITION = "";
-    /** An undefined process id. */
-    public static final String UNDEFINED_PROCESS_ID = "";
-    /** An undefined process resource. */
+    /** An undefined rules interface. */
+    public static interface UndefinedRulesInterface {};
+    /** An undefined rules resource. */
     public static final class UndefinedResource extends SimpleResource {};
-    /** An undefined task handler. */
-    public static final class UndefinedTaskHandler extends BaseTaskHandler {};
 
 }

@@ -55,6 +55,7 @@
 
     <modules>
         <module>bean</module>
+        <module>rules</module>
         <module>bpm</module>
         <module>soap</module>
         <module>tests</module>
@@ -110,6 +111,11 @@
             <dependency>
                 <groupId>org.switchyard.components</groupId>
                 <artifactId>switchyard-component-bean</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.components</groupId>
+                <artifactId>switchyard-component-rules</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

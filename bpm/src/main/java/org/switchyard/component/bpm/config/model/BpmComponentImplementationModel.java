@@ -21,8 +21,9 @@ package org.switchyard.component.bpm.config.model;
 
 import java.util.List;
 
-import org.switchyard.component.bpm.resource.ResourceType;
+import org.switchyard.common.io.resource.Resource;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
+import org.switchyard.config.model.resource.ResourceModel;
 
 /**
  * A "bpm" ComponentImplementationModel.
@@ -42,34 +43,19 @@ public interface BpmComponentImplementationModel extends ComponentImplementation
     public static final String BPM = "bpm";
 
     /**
-     * Gets the "processDefinition" attribute.
+     * Gets the "processDefinition" resource.
      *
-     * @return the "processDefinition" attribute
+     * @return the "processDefinition" resource
      */
-    public String getProcessDefinition();
+    public Resource getProcessDefinition();
 
     /**
-     * Sets the "processDefinition" attribute.
+     * Sets the "processDefinition" resource.
      *
-     * @param processDefinition the "processDefinition" attribute
+     * @param processDefinition the "processDefinition" resource
      * @return this instance (useful for chaining)
      */
-    public BpmComponentImplementationModel setProcessDefinition(String processDefinition);
-
-    /**
-     * Gets the "processDefinitionType" attribute.
-     *
-     * @return the "processDefinitionType" attribute
-     */
-    public ResourceType getProcessDefinitionType();
-
-    /**
-     * Sets the "processDefinitionType" attribute.
-     *
-     * @param processDefinitionType the "processDefinitionType" attribute
-     * @return this instance (useful for chaining)
-     */
-    public BpmComponentImplementationModel setProcessDefinitionType(ResourceType processDefinitionType);
+    public BpmComponentImplementationModel setProcessDefinition(Resource processDefinition);
 
     /**
      * Gets the "processId" attribute.
@@ -122,7 +108,7 @@ public interface BpmComponentImplementationModel extends ComponentImplementation
 
     /**
      * Adds a child resource model.
-     * @param resource the child process resource model
+     * @param resource the child resource model
      * @return this BpmComponentImplementationModel (useful for chaining)
      */
     public BpmComponentImplementationModel addResource(ResourceModel resource);

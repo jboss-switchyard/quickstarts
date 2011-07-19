@@ -16,36 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.config.model;
-
-import org.switchyard.component.bpm.resource.Resource;
-import org.switchyard.component.bpm.resource.ResourceType;
-import org.switchyard.config.model.Model;
+package org.switchyard.component.rules.config.model;
 
 /**
- * A configuration model for Resources.
- *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface ResourceModel extends Resource, Model {
+public interface DoStuff {
 
-    /**
-     * The resource XML element.
-     */
-    public static final String RESOURCE = "resource";
-
-    /**
-     * Sets the location of the Resource.
-     * @param location the location of the Resource.
-     * @return this ResourceModel (useful for chaining)
-     */
-    public ResourceModel setLocation(String location);
-
-    /**
-     * Sets the type of the Resource.
-     * @param type the type of Resource
-     * @return this ResourceModel (useful for chaining)
-     */
-    public ResourceModel setType(ResourceType type);
+    public void doStuff(Object stuff);
 
 }

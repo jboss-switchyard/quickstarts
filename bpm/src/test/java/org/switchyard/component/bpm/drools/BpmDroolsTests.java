@@ -20,12 +20,12 @@ package org.switchyard.component.bpm.drools;
 
 import static org.switchyard.Scope.IN;
 import static org.switchyard.Scope.OUT;
+import static org.switchyard.common.io.resource.ResourceType.BPMN2;
 import static org.switchyard.component.bpm.common.ProcessActionType.SIGNAL_EVENT;
 import static org.switchyard.component.bpm.common.ProcessActionType.START_PROCESS;
 import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_ACTION_TYPE_VAR;
 import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_EVENT_TYPE_VAR;
 import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_INSTANCE_ID_VAR;
-import static org.switchyard.component.bpm.resource.ResourceType.BPMN2;
 import static org.switchyard.metadata.ExchangeContract.IN_ONLY;
 
 import javax.xml.namespace.QName;
@@ -45,6 +45,7 @@ import org.switchyard.HandlerException;
 import org.switchyard.Property;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.common.io.resource.SimpleResource;
 import org.switchyard.component.bpm.config.model.BpmComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.v1.V1BpmComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.v1.V1TaskHandlerModel;
@@ -100,8 +101,7 @@ public class BpmDroolsTests extends SwitchYardTestCase {
         BpmExchangeHandler handler = BpmExchangeHandlerFactory.instance().newBpmExchangeHandler(serviceDomain);
         ServiceReference serviceRef = serviceDomain.registerService(qname, handler);
         BpmComponentImplementationModel bci_model = new V1BpmComponentImplementationModel();
-        bci_model.setProcessDefinition(TEST_CONTROL_PROCESS);
-        bci_model.setProcessDefinitionType(BPMN2);
+        bci_model.setProcessDefinition(new SimpleResource(TEST_CONTROL_PROCESS, BPMN2));
         bci_model.setProcessId(qname.getLocalPart());
         bci_model.addTaskHandler(new V1TaskHandlerModel().setClazz(SwitchYardServiceTaskHandler.class).setName(SwitchYardServiceTaskHandler.SWITCHYARD_SERVICE));
         handler.init(qname, bci_model);
@@ -130,8 +130,7 @@ public class BpmDroolsTests extends SwitchYardTestCase {
         BpmExchangeHandler handler = BpmExchangeHandlerFactory.instance().newBpmExchangeHandler(serviceDomain);
         ServiceReference serviceRef = serviceDomain.registerService(qname, handler);
         BpmComponentImplementationModel bci_model = new V1BpmComponentImplementationModel();
-        bci_model.setProcessDefinition(TEST_REUSE_HANDLER);
-        bci_model.setProcessDefinitionType(BPMN2);
+        bci_model.setProcessDefinition(new SimpleResource(TEST_REUSE_HANDLER, BPMN2));
         bci_model.setProcessId(qname.getLocalPart());
         bci_model.addTaskHandler(new V1TaskHandlerModel().setClazz(ReuseHandler.class).setName(qname.getLocalPart()));
         handler.init(qname, bci_model);

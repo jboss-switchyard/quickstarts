@@ -23,6 +23,9 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.List;
 
+import org.switchyard.common.io.resource.Resource;
+import org.switchyard.common.io.resource.ResourceType;
+import org.switchyard.common.io.resource.SimpleResource;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.type.classpath.IsAnnotationPresentFilter;
 import org.switchyard.common.type.reflect.Construction;
@@ -33,10 +36,7 @@ import org.switchyard.component.bpm.StartProcess;
 import org.switchyard.component.bpm.common.ProcessActionType;
 import org.switchyard.component.bpm.config.model.v1.V1BpmComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.v1.V1ProcessActionModel;
-import org.switchyard.component.bpm.config.model.v1.V1ResourceModel;
 import org.switchyard.component.bpm.config.model.v1.V1TaskHandlerModel;
-import org.switchyard.component.bpm.resource.Resource;
-import org.switchyard.component.bpm.resource.ResourceType;
 import org.switchyard.component.bpm.task.SwitchYardServiceTaskHandler;
 import org.switchyard.component.bpm.task.TaskHandler;
 import org.switchyard.config.model.Scanner;
@@ -50,13 +50,14 @@ import org.switchyard.config.model.composite.v1.V1ComponentModel;
 import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeModel;
 import org.switchyard.config.model.composite.v1.V1JavaComponentServiceInterfaceModel;
+import org.switchyard.config.model.resource.v1.V1ResourceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.metadata.java.JavaService;
 
 /**
- * A SwitchYardScanner which process @BPM annotations.
+ * A SwitchYardScanner which scans for @Process, @StartProcess, @SignalEvent and @AbortProcessInstance annotations.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
@@ -108,8 +109,7 @@ public class BpmSwitchYardScanner implements Scanner<SwitchYardModel> {
             if (Process.UNDEFINED_PROCESS_DEFINITION.equals(processDefinition)) {
                 processDefinition = "META-INF/" + processName + ".bpmn";
             }
-            bciModel.setProcessDefinition(processDefinition);
-            bciModel.setProcessDefinitionType(process.definitionType());
+            bciModel.setProcessDefinition(new SimpleResource(processDefinition, process.definitionType()));
             String processId = process.id();
             if (Process.UNDEFINED_PROCESS_ID.equals(processId)) {
                 processId = processName;

@@ -16,34 +16,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.resource;
+package org.switchyard.component.rules;
+
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
- * Represents the type of a Resource.
+ * ExecuteRules annotation.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public enum ResourceType {
-
-    /** Business Process Modeling Notation 2. */
-    BPMN2,
-    /** Business Rule Language. */
-    BRL,
-    /** Drools Rule Flow. */
-    DRF,
-    /** Drools Rule Language. */
-    DRL,
-    /** Domain Specific Language. */
-    DSL,
-    /** Domain Specific Language Rules. */
-    DSLR,
-    /** Decision  Table. */
-    DTABLE,
-    /** Package. */
-    PKG,
-    /** XML Drools Rule Language. */
-    XDRL,
-    /** XML Schema Definition. */
-    XSD
-
-}
+@Target(METHOD)
+@Retention(RUNTIME)
+@Documented
+public @interface ExecuteRules {}

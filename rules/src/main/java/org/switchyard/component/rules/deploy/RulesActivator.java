@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.deploy;
+package org.switchyard.component.rules.deploy;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,28 +25,28 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceReference;
-import org.switchyard.component.bpm.config.model.BpmComponentImplementationModel;
-import org.switchyard.component.bpm.exchange.BpmExchangeHandler;
-import org.switchyard.component.bpm.exchange.BpmExchangeHandlerFactory;
+import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
+import org.switchyard.component.rules.exchange.RulesExchangeHandler;
+import org.switchyard.component.rules.exchange.RulesExchangeHandlerFactory;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.deploy.BaseActivator;
 import org.switchyard.exception.SwitchYardException;
 
 /**
- * Activator for the BPM component.
+ * Activator for the Rules component.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class BpmActivator extends BaseActivator {
+public class RulesActivator extends BaseActivator {
 
-    private Map<QName,BpmExchangeHandler> _handlers = new HashMap<QName,BpmExchangeHandler>();
+    private Map<QName,RulesExchangeHandler> _handlers = new HashMap<QName,RulesExchangeHandler>();
 
     /**
-     * Constructs a new Activator of type "bpm".
+     * Constructs a new Activator of type "rules".
      */
-    public BpmActivator() {
-        super("bpm");
+    public RulesActivator() {
+        super("rules");
     }
 
     /**
@@ -55,13 +55,13 @@ public class BpmActivator extends BaseActivator {
     @Override
     public ExchangeHandler init(QName qname, Model model) {
         if (model instanceof ComponentServiceModel) {
-            BpmExchangeHandler handler = BpmExchangeHandlerFactory.instance().newBpmExchangeHandler(getServiceDomain());
-            BpmComponentImplementationModel bciModel = (BpmComponentImplementationModel)((ComponentServiceModel)model).getComponent().getImplementation();
-            handler.init(qname, bciModel);
+            RulesExchangeHandler handler = RulesExchangeHandlerFactory.instance().newRulesExchangeHandler();
+            RulesComponentImplementationModel rciModel = (RulesComponentImplementationModel)((ComponentServiceModel)model).getComponent().getImplementation();
+            handler.init(qname, rciModel);
             _handlers.put(qname, handler);
             return handler;
         }
-        throw new SwitchYardException("No BPM component implementations found for service " + qname);
+        throw new SwitchYardException("No Rules component implementations found for service " + qname);
     }
 
     /**
@@ -69,7 +69,7 @@ public class BpmActivator extends BaseActivator {
      */
     @Override
     public void start(ServiceReference serviceRef) {
-        BpmExchangeHandler handler = _handlers.get(serviceRef.getName());
+        RulesExchangeHandler handler = _handlers.get(serviceRef.getName());
         if (handler != null) {
             handler.start(serviceRef);
         }
@@ -80,7 +80,7 @@ public class BpmActivator extends BaseActivator {
      */
     @Override
     public void stop(ServiceReference serviceRef) {
-        BpmExchangeHandler handler = _handlers.get(serviceRef.getName());
+        RulesExchangeHandler handler = _handlers.get(serviceRef.getName());
         if (handler != null) {
             handler.stop(serviceRef);
         }
@@ -91,7 +91,7 @@ public class BpmActivator extends BaseActivator {
      */
     @Override
     public void destroy(ServiceReference serviceRef) {
-        BpmExchangeHandler handler = _handlers.get(serviceRef.getName());
+        RulesExchangeHandler handler = _handlers.get(serviceRef.getName());
         if (handler != null) {
             try {
                 handler.destroy(serviceRef);

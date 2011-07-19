@@ -18,17 +18,17 @@
  */
 package org.switchyard.component.bpm.config.model;
 
-import static org.switchyard.component.bpm.resource.ResourceType.BPMN2;
-import static org.switchyard.component.bpm.resource.ResourceType.DSL;
-import static org.switchyard.component.bpm.resource.ResourceType.DSLR;
+import static org.switchyard.common.io.resource.ResourceType.BPMN2;
+import static org.switchyard.common.io.resource.ResourceType.DSL;
+import static org.switchyard.common.io.resource.ResourceType.DSLR;
 
+import org.switchyard.common.io.resource.SimpleResource;
 import org.switchyard.component.bpm.Process;
 import org.switchyard.component.bpm.config.model.ComplexProcess.My1stHandler;
 import org.switchyard.component.bpm.config.model.ComplexProcess.My2ndHandler;
 import org.switchyard.component.bpm.config.model.ComplexProcess.MyDsl;
 import org.switchyard.component.bpm.config.model.ComplexProcess.MyDslr;
 import org.switchyard.component.bpm.config.model.ComplexProcess.ProcessIface;
-import org.switchyard.component.bpm.resource.BaseResource;
 import org.switchyard.component.bpm.task.BaseTaskHandler;
 import org.switchyard.component.bpm.task.Task;
 import org.switchyard.component.bpm.task.TaskManager;
@@ -49,13 +49,13 @@ public interface ComplexProcess {
 
     public static interface ProcessIface {}
 
-    public static final class MyDsl extends BaseResource {
+    public static final class MyDsl extends SimpleResource {
         public MyDsl() {
             super("path/to/my.dsl", DSL);
         }
     }
 
-    public static final class MyDslr extends BaseResource {
+    public static final class MyDslr extends SimpleResource {
         public MyDslr() {
             super("path/to/my.dslr", DSLR);
         }

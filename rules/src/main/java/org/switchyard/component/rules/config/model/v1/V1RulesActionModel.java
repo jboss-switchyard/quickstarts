@@ -16,38 +16,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.config.model.v1;
+package org.switchyard.component.rules.config.model.v1;
 
-import static org.switchyard.component.bpm.config.model.BpmComponentImplementationModel.DEFAULT_NAMESPACE;
+import static org.switchyard.component.rules.config.model.RulesComponentImplementationModel.DEFAULT_NAMESPACE;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.component.bpm.config.model.ResourceModel;
-import org.switchyard.component.bpm.resource.ResourceType;
+import org.switchyard.component.rules.common.RulesActionType;
+import org.switchyard.component.rules.config.model.RulesActionModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
 
 /**
- * The 1st version ResourceModel.
+ * The 1st version RulesActionModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1ResourceModel extends BaseModel implements ResourceModel {
+public class V1RulesActionModel extends BaseModel implements RulesActionModel {
 
     /**
-     * Creates a new ResourceModel in the default namespace.
+     * Creates a new RulesActionModel in the default namespace.
      */
-    public V1ResourceModel() {
-        super(new QName(DEFAULT_NAMESPACE, RESOURCE));
+    public V1RulesActionModel() {
+        super(new QName(DEFAULT_NAMESPACE, RULES_ACTION));
     }
 
     /**
-     * Creates a new ResourceModel with the specified configuration and descriptor.
+     * Creates a new RulesActionModel with the specified configuration and descriptor.
      * @param config the configuration
      * @param desc the descriptor
      */
-    public V1ResourceModel(Configuration config, Descriptor desc) {
+    public V1RulesActionModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
@@ -55,16 +55,16 @@ public class V1ResourceModel extends BaseModel implements ResourceModel {
      * {@inheritDoc}
      */
     @Override
-    public String getLocation() {
-        return getModelAttribute("location");
+    public String getName() {
+        return getModelAttribute("name");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ResourceModel setLocation(String location) {
-        setModelAttribute("location", location);
+    public RulesActionModel setName(String name) {
+        setModelAttribute("name", name);
         return this;
     }
 
@@ -72,18 +72,18 @@ public class V1ResourceModel extends BaseModel implements ResourceModel {
      * {@inheritDoc}
      */
     @Override
-    public ResourceType getType() {
-        String prt = getModelAttribute("type");
-        return prt != null ? ResourceType.valueOf(prt) : null;
+    public RulesActionType getType() {
+        String rat = getModelAttribute("type");
+        return rat != null ? RulesActionType.valueOf(rat) : null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ResourceModel setType(ResourceType type) {
-        String prt = type != null ? type.name() : null;
-        setModelAttribute("type", prt);
+    public RulesActionModel setType(RulesActionType type) {
+        String rat = type != null ? type.name() : null;
+        setModelAttribute("type", rat);
         return this;
     }
 

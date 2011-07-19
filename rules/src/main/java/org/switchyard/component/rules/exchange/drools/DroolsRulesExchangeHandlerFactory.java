@@ -16,25 +16,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.resource;
+package org.switchyard.component.rules.exchange.drools;
+
+import org.switchyard.component.rules.exchange.RulesExchangeHandler;
+import org.switchyard.component.rules.exchange.RulesExchangeHandlerFactory;
 
 /**
- * Represents a resource a process requires.
+ * The factory for DroolsBpmExchangeHandler.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface Resource {
+public class DroolsRulesExchangeHandlerFactory extends RulesExchangeHandlerFactory {
 
     /**
-     * Gets the location of the process resource.
-     * @return the location of the process resource
+     * {@inheritDoc}
      */
-    public String getLocation();
-
-    /**
-     * Gets the type of the process resource.
-     * @return the type of the process resource
-     */
-    public ResourceType getType();
+    @Override
+    public RulesExchangeHandler newRulesExchangeHandler() {
+        return new DroolsRulesExchangeHandler();
+    }
 
 }

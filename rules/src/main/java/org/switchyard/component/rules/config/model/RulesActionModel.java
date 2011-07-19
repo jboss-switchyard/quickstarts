@@ -16,22 +16,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.config.model;
+package org.switchyard.component.rules.config.model;
 
-import org.switchyard.component.bpm.common.ProcessActionType;
+import org.switchyard.component.rules.common.RulesActionType;
 import org.switchyard.config.model.Model;
 
 /**
- * ProcessActionModel.
+ * RulesActionModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface ProcessActionModel extends Model {
+public interface RulesActionModel extends Model {
 
     /**
-     * The processAction XML element.
+     * The rulesAction XML element.
      */
-    public static final String PROCESS_ACTION = "processAction";
+    public static final String RULES_ACTION = "rulesAction";
 
     /**
      * Gets the name of the action.
@@ -42,34 +42,21 @@ public interface ProcessActionModel extends Model {
     /**
      * Sets the name of the action.
      * @param name the name of the action
-     * @return this ProcessActionModel (useful for chaining)
+     * @return this RulesActionModel (useful for chaining)
      */
-    public ProcessActionModel setName(String name);
+    public RulesActionModel setName(String name);
 
     /**
      * Gets the type of the action.
      * @return the type of the action
      */
-    public ProcessActionType getType();
+    public RulesActionType getType();
  
     /**
      * Sets the type of the action.
      * @param type the type of the action
-     * @return this ProcessActionModel (useful for chaining)
+     * @return this RulesActionModel (useful for chaining)
      */
-    public ProcessActionModel setType(ProcessActionType type);
-
-    /**
-     * Gets the event type.
-     * @return the event type
-     */
-    public String getEventType();
-
-    /**
-     * Sets the event type.
-     * @param eventType the event type
-     * @return this ProcessActionModel (useful for chaining)
-     */
-    public ProcessActionModel setEventType(String eventType);
+    public RulesActionModel setType(RulesActionType type);
 
 }

@@ -16,60 +16,62 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.config.model;
+package org.switchyard.component.rules.config.model;
 
-import org.switchyard.component.bpm.common.ProcessActionType;
+import java.io.File;
+
+import org.switchyard.component.rules.common.RulesAuditType;
 import org.switchyard.config.model.Model;
 
 /**
- * ProcessActionModel.
+ * RulesAuditModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface ProcessActionModel extends Model {
+public interface RulesAuditModel extends Model {
 
     /**
-     * The processAction XML element.
+     * The rulesAudit XML element.
      */
-    public static final String PROCESS_ACTION = "processAction";
+    public static final String RULES_AUDIT = "rulesAudit";
 
     /**
-     * Gets the name of the action.
-     * @return the name of the action
+     * Gets the interval of the audit.
+     * @return the interval of the audit
      */
-    public String getName();
+    public Integer getInterval();
 
     /**
-     * Sets the name of the action.
-     * @param name the name of the action
-     * @return this ProcessActionModel (useful for chaining)
+     * Sets the interval of the audit.
+     * @param interval the interval of the audit
+     * @return this RulesAuditModel (useful for chaining)
      */
-    public ProcessActionModel setName(String name);
+    public RulesAuditModel setInterval(Integer interval);
 
     /**
-     * Gets the type of the action.
-     * @return the type of the action
+     * Gets the file of the audit.
+     * @return the file of the audit
      */
-    public ProcessActionType getType();
+    public File getFile();
+
+    /**
+     * Sets the file of the audit.
+     * @param file the file of the audit
+     * @return this RulesAuditModel (useful for chaining)
+     */
+    public RulesAuditModel setFile(File file);
  
     /**
-     * Sets the type of the action.
-     * @param type the type of the action
-     * @return this ProcessActionModel (useful for chaining)
+     * Gets the type of the audit.
+     * @return the type of the audit
      */
-    public ProcessActionModel setType(ProcessActionType type);
-
+    public RulesAuditType getType();
+ 
     /**
-     * Gets the event type.
-     * @return the event type
+     * Sets the type of the audit.
+     * @param type the type of the audit
+     * @return this RulesAuditModel (useful for chaining)
      */
-    public String getEventType();
-
-    /**
-     * Sets the event type.
-     * @param eventType the event type
-     * @return this ProcessActionModel (useful for chaining)
-     */
-    public ProcessActionModel setEventType(String eventType);
+    public RulesAuditModel setType(RulesAuditType type);
 
 }

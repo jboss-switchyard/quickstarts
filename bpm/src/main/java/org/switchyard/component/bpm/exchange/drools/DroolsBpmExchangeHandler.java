@@ -22,7 +22,6 @@ import static org.switchyard.component.bpm.common.ProcessConstants.MESSAGE_CONTE
 import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_ID_VAR;
 import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_INSTANCE_ID_VAR;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,14 +46,14 @@ import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.common.io.resource.Resource;
+import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.component.bpm.common.ProcessActionType;
 import org.switchyard.component.bpm.config.model.BpmComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.ProcessActionModel;
 import org.switchyard.component.bpm.config.model.TaskHandlerModel;
 import org.switchyard.component.bpm.exchange.BaseBpmExchangeHandler;
-import org.switchyard.component.bpm.resource.Resource;
-import org.switchyard.component.bpm.resource.ResourceType;
 import org.switchyard.component.bpm.task.TaskHandler;
 import org.switchyard.component.bpm.task.drools.DroolsWorkItemHandler;
 import org.switchyard.metadata.ServiceOperation;
@@ -103,14 +102,9 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
             _taskHandlers.add(tih);
         }
         KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-        String processDefinition = model.getProcessDefinition();
-        ResourceType processDefinitionType = model.getProcessDefinitionType();
-        if (processDefinitionType == null) {
-            processDefinitionType = ResourceType.BPMN2;
-        }
-        addResource(processDefinition, processDefinitionType.name(), kbuilder);
-        for (Resource pr : model.getResources()) {
-            addResource(pr.getLocation(), pr.getType().name(), kbuilder);
+        addResource(model.getProcessDefinition(), kbuilder);
+        for (Resource resource : model.getResources()) {
+            addResource(resource, kbuilder);
         }
         _kbase = kbuilder.newKnowledgeBase();
         for (ProcessActionModel pam : model.getProcessActions()) {
@@ -118,11 +112,16 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
         }
     }
 
-    private void addResource(String location, String type, KnowledgeBuilder kbuilder) {
-        URL url = getResourceURL(location);
-        org.drools.io.Resource resource = ResourceFactory.newUrlResource(url);
-        org.drools.builder.ResourceType resourceType = org.drools.builder.ResourceType.getResourceType(type);
-        kbuilder.add(resource, resourceType);
+    private void addResource(Resource resource, KnowledgeBuilder kbuilder) {
+        if (resource != null) {
+            org.drools.io.Resource kres = ResourceFactory.newUrlResource(resource.getLocationURL());
+            ResourceType resourceType = resource.getType();
+            if (resourceType == null) {
+                resourceType = ResourceType.BPMN2;
+            }
+            org.drools.builder.ResourceType kresType = org.drools.builder.ResourceType.getResourceType(resourceType.name());
+            kbuilder.add(kres, kresType);
+        }
     }
 
     /**

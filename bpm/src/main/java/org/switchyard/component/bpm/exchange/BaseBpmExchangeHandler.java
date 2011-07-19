@@ -25,10 +25,6 @@ import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_EVENT
 import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_INSTANCE_ID_VAR;
 import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_NAMESPACE;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
@@ -37,11 +33,9 @@ import org.switchyard.Context;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Property;
-import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.bpm.common.ProcessActionType;
 import org.switchyard.component.bpm.config.model.ProcessActionModel;
-import org.switchyard.exception.SwitchYardException;
 
 /**
  * Contains base BpmExchangeHandler functionality and/or utility methods.
@@ -149,27 +143,6 @@ public abstract class BaseBpmExchangeHandler extends BaseHandler implements BpmE
             }
         }
         return null;
-    }
-
-    /**
-     * Creates a URL for the given resource location.
-     * @param location the resource location (http://, https://, file:, or classpath location)
-     * @return the resource URL
-     */
-    protected URL getResourceURL(String location) {
-        URL url;
-        try {
-            if (location.startsWith("http:") || location.startsWith("https:")) {
-                url = new URL(location);
-            } else if (location.startsWith("file:")) {
-                url = new File(location.substring(5)).toURI().toURL();
-            } else {
-                url = Classes.getResource(location, getClass());
-            }
-        } catch (IOException ioe) {
-            throw new SwitchYardException(ioe);
-        }
-        return url;
     }
 
     /**
