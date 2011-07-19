@@ -27,16 +27,28 @@ import javax.xml.namespace.QName;
 import org.switchyard.admin.Application;
 import org.switchyard.admin.Service;
 
+/**
+ * Base implementation of Application.
+ */
 public class BaseApplication implements Application {
     
     private QName _name;
     private List<Service> _services;
     
+    /**
+     * Create a new BaseApplication with the specified services.
+     * @param name application name
+     * @param services list of services
+     */
     public BaseApplication(QName name, List<Service> services) {
         this(name);
         _services = services;
     }
 
+    /**
+     * Create a new BaseApplication.
+     * @param name application name
+     */
     public BaseApplication(QName name) {
         _name = name;
     }
@@ -54,6 +66,10 @@ public class BaseApplication implements Application {
         return _services;
     }
     
+    /**
+     * Set the list of services offered by this application.
+     * @param services list of services
+     */
     public void setServices(List<Service> services) {
         _services = services;
     }

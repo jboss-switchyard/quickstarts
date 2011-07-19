@@ -34,9 +34,10 @@ import org.switchyard.admin.Service;
 import org.switchyard.admin.SwitchYard;
 
 /**
- * In-memory representation of System admin contract.  Note that references
- * to Application, Component, and Service are stored in a list and that 
- * removals are based on object identity and not object value.
+ * In-memory representation of System admin contract.  Note that Service objects
+ * are stored in a list and that removals are based on object identity and not 
+ * object value.  This is to support multiple services registered with the 
+ * same name.
  */
 public class BaseSwitchYard implements SwitchYard {
     
@@ -62,6 +63,11 @@ public class BaseSwitchYard implements SwitchYard {
         return new ArrayList<Application>(_applications.values());
     }
     
+    /**
+     * Add an application.
+     * @param application application to add
+     * @return reference to this admin object
+     */
     public BaseSwitchYard addApplication(Application application) {
         Application existing = _applications.putIfAbsent(application.getName(), application);
         if (existing == null) {
@@ -70,6 +76,11 @@ public class BaseSwitchYard implements SwitchYard {
         return this;
     }
     
+    /**
+     * Remove an application.
+     * @param application application to remove
+     * @return reference to this admin object
+     */
     public BaseSwitchYard removeApplication(Application application) {
         _applications.remove(application.getName());
         return this;
@@ -80,11 +91,21 @@ public class BaseSwitchYard implements SwitchYard {
         return new ArrayList<Component>(_components.values());
     }
 
+    /**
+     * Add a component.
+     * @param component component to add
+     * @return reference to this admin object
+     */
     public BaseSwitchYard addComponent(Component component) {
         _components.putIfAbsent(component.getName(), component);
         return this;
     }
     
+    /**
+     * Remove a component.
+     * @param component component to remove
+     * @return reference to this admin object
+     */
     public BaseSwitchYard removeComponent(Component component) {
         _components.remove(component.getName());
         return this;
@@ -95,11 +116,21 @@ public class BaseSwitchYard implements SwitchYard {
         return new ArrayList<Service>(_services);
     }
     
+    /**
+     * Add a service.
+     * @param service service to add
+     * @return reference to this admin object
+     */
     public BaseSwitchYard addService(Service service) {
         _services.add(service);
         return this;
     }
     
+    /**
+     * Remove a service.
+     * @param service service to remove
+     * @return reference to this admin object
+     */
     public BaseSwitchYard removeService(Service service) {
         _services.remove(service);
         return this;
@@ -110,6 +141,10 @@ public class BaseSwitchYard implements SwitchYard {
         return _version;
     }
     
+    /**
+     * Set the version of the SwitchYard runtime.
+     * @param version SwitchYard version
+     */
     public void setVersion(String version) {
         _version = version;
     }
