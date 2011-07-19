@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 
+import org.switchyard.common.io.resource.Resource;
 import org.switchyard.common.type.Classes;
 
 /**
@@ -110,6 +111,16 @@ public abstract class Puller<R> {
                 is.close();
             }
         }
+    }
+
+    /**
+     * Safely pulls a resource from a Resource.
+     * @param resource the Resource
+     * @return the resource, or null if not found
+     * @throws IOException if a problem occurred
+     */
+    public R pull(Resource resource) throws IOException {
+        return pull(resource.getLocationURL());
     }
 
     /**

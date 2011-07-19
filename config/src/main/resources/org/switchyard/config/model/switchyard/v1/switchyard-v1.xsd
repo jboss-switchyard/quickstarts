@@ -65,4 +65,15 @@ MA  02110-1301, USA.
         <attribute name="value" type="string" use="required"/>
     </complexType>
 
+   <!--
+        A reusable element; currently used as:
+            a child of the BPM component's BpmImplementationType, defined in bpm-v1.xsd, and
+            a child of the Rules component's RulesImplementationType defined in rules-v1.xsd.
+    -->
+    <element name="resource" type="swyd:ResourceType"/>
+    <complexType name="ResourceType">
+        <attribute name="location" type="string" use="required"/>
+        <attribute name="type" type="NCName" use="required"/>
+    </complexType>
+
 </schema>

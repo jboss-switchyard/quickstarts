@@ -26,6 +26,8 @@ import org.switchyard.config.model.domain.DomainModel;
 import org.switchyard.config.model.domain.PropertyModel;
 import org.switchyard.config.model.domain.v1.V1DomainModel;
 import org.switchyard.config.model.domain.v1.V1PropertyModel;
+import org.switchyard.config.model.resource.ResourceModel;
+import org.switchyard.config.model.resource.v1.V1ResourceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.config.model.transform.v1.V1TransformsModel;
@@ -60,6 +62,8 @@ public class V1SwitchYardMarshaller extends BaseMarshaller {
             return new V1DomainModel(config, desc);
         } else if (name.equals(PropertyModel.PROPERTY)) {
             return new V1PropertyModel(config, desc);
+        } else if (name.equals(ResourceModel.RESOURCE)) {
+            return new V1ResourceModel(config, desc);
         }
         return null;
     }
