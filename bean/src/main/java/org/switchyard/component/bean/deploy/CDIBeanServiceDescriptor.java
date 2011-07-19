@@ -34,30 +34,37 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.xml.namespace.QName;
 
 /**
+ * SwitchYard CDI bean Service Descriptor.
+ *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public class CDIBeanServiceDescriptor implements ServiceDescriptor {
 
+    private CDIBean _cdiBean;
     private QName _serviceName;
-    private Bean _bean;
     private BeanServiceMetadata _serviceMetadata;
-    private BeanManager _beanManager;
     private BeanDeploymentMetaData _beanDeploymentMetaData;
 
     /**
      * Public constructor.
-     * @param bean The CDI bean instance.
-     * @param beanManager The CDI BeanManager.
+     * @param cdiBean The CDI bean instance.
      * @param beanDeploymentMetaData bean deployment info
      */
-    public CDIBeanServiceDescriptor(Bean bean, BeanManager beanManager, BeanDeploymentMetaData beanDeploymentMetaData) {
-        Class<?> serviceInterface = getServiceInterface(bean);
+    public CDIBeanServiceDescriptor(CDIBean cdiBean, BeanDeploymentMetaData beanDeploymentMetaData) {
+        Class<?> serviceInterface = getServiceInterface(cdiBean.getBean());
 
-        this._bean = bean;
-        this._beanManager = beanManager;
+        this._cdiBean = cdiBean;
         this._serviceName = new QName(serviceInterface.getSimpleName());
         this._serviceMetadata = new BeanServiceMetadata(serviceInterface);
         this._beanDeploymentMetaData = beanDeploymentMetaData;
+    }
+
+    /**
+     * Get the CDI bean.
+     * @return The CDI bean.
+     */
+    public CDIBean getCDIBean() {
+        return _cdiBean;
     }
 
     @Override
@@ -79,8 +86,9 @@ public class CDIBeanServiceDescriptor implements ServiceDescriptor {
         try {
             Thread.currentThread().setContextClassLoader(_beanDeploymentMetaData.getDeploymentClassLoader());
 
-            CreationalContext creationalContext = _beanManager.createCreationalContext(_bean);
-            Object beanRef = _beanManager.getReference(_bean, Object.class, creationalContext);
+            BeanManager beanManager = _cdiBean.getBeanManager();
+            CreationalContext creationalContext = beanManager.createCreationalContext(_cdiBean.getBean());
+            Object beanRef = beanManager.getReference(_cdiBean.getBean(), Object.class, creationalContext);
 
             return new ServiceProxyHandler(beanRef, _serviceMetadata, _beanDeploymentMetaData);
         } finally {

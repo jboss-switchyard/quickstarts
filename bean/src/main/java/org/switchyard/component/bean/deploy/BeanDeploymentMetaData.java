@@ -42,10 +42,29 @@ import java.util.Set;
  */
 public class BeanDeploymentMetaData {
 
+    private BeanManager _beanManager;
     private ClassLoader _deploymentClassLoader;
     private List<ServiceDescriptor> _serviceDescriptors = new ArrayList<ServiceDescriptor>();
     private List<ClientProxyBean> _clientProxies = new ArrayList<ClientProxyBean>();
-    private List<Class<?>> _deploymentClasses = new ArrayList<Class<?>>();
+    private List<CDIBean> _deploymentBeans = new ArrayList<CDIBean>();
+
+    /**
+     * Set the deployment CDI BeanManager.
+     * @param beanManager The bean manager.
+     * @return this instance.
+     */
+    public BeanDeploymentMetaData setBeanManager(BeanManager beanManager) {
+        _beanManager = beanManager;
+        return this;
+    }
+
+    /**
+     * Get the deployment CDI BeanManager.
+     * @return The bean manager.
+     */
+    public BeanManager getBeanManager() {
+        return _beanManager;
+    }
 
     /**
      * Set the deployment ClassLoader.
@@ -82,11 +101,11 @@ public class BeanDeploymentMetaData {
     }
 
     /**
-     * Add a deployment Class.
-     * @param clazz The clazz.
+     * Add a deployment CDI bean.
+     * @param bean The CDI bean instance.
      */
-    public void addDeploymentClass(Class<?> clazz) {
-        _deploymentClasses.add(clazz);
+    public void addDeploymentBean(CDIBean bean) {
+        _deploymentBeans.add(bean);
     }
 
     /**
@@ -106,11 +125,11 @@ public class BeanDeploymentMetaData {
     }
 
     /**
-     * Get a list of all classes in the deployment.
-     * @return The list of all classes in the deployment.
+     * Get a list of all beans in the deployment.
+     * @return The list of all beans in the deployment.
      */
-    public List<Class<?>> getDeploymentClasses() {
-        return Collections.unmodifiableList(_deploymentClasses);
+    public List<CDIBean> getDeploymentBeans() {
+        return Collections.unmodifiableList(_deploymentBeans);
     }
 
     /**
@@ -119,7 +138,7 @@ public class BeanDeploymentMetaData {
      */
     public static BeanDeploymentMetaData lookupBeanDeploymentMetaData() {
         try {
-            BeanManager beanManager = (BeanManager) getJavaComp().lookup("BeanManager");
+            BeanManager beanManager = getCDIBeanManager();
 
             Set<Bean<?>> beans = beanManager.getBeans(BeanDeploymentMetaData.class);
             if (beans.isEmpty()) {
@@ -135,6 +154,15 @@ public class BeanDeploymentMetaData {
         } catch (NamingException e) {
             throw new SwitchYardException("Failed to lookup BeanManager.  Must be bound into java:comp as per CDI specification.", e);
         }
+    }
+
+    /**
+     * Get the CDI BeanManager for the current context.
+     * @return The CDI BeanManager for the current context.
+     * @throws NamingException Error looking up BeanManager instance.
+     */
+    public static BeanManager getCDIBeanManager() throws NamingException {
+        return (BeanManager) getJavaComp().lookup("BeanManager");
     }
 
     private static Context getJavaComp() {
