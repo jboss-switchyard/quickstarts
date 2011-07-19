@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.tools.forge.camel;
+package org.switchyard.tools.forge.soap;
 
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.PackagingFacet;

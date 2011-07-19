@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.tools.forge.camel;
+package org.switchyard.tools.forge.soap;
 
 import javax.inject.Inject;
 
