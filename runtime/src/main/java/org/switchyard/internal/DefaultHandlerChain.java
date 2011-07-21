@@ -19,6 +19,7 @@
 
 package org.switchyard.internal;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,11 +29,11 @@ import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangeState;
+import org.switchyard.HandlerChain;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.exception.SwitchYardException;
-import org.switchyard.handlers.HandlerChain;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.TransformSequence;
@@ -128,6 +129,15 @@ public class DefaultHandlerChain implements HandlerChain {
             exchange.sendFault(faultMessage);
         }
     }
+    
+    @Override
+    public List<ExchangeHandler> getHandlers() {
+        List<ExchangeHandler> handlers = new LinkedList<ExchangeHandler>();
+        for (HandlerRef hr : listHandlers()) {
+            handlers.add(hr.getHandler());
+        }
+        return Collections.unmodifiableList(handlers);
+    }
 
     private void initFaultTransformsequence(Exchange exchange, HandlerException handlerEx, Message faultMessage) {
         ExchangeContract contract = exchange.getContract();
@@ -178,4 +188,5 @@ public class DefaultHandlerChain implements HandlerChain {
         private final ExchangeHandler _handler;
         private final String _name;
     }
+
 }

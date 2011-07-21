@@ -25,9 +25,9 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
+import org.switchyard.HandlerChain;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
-import org.switchyard.handlers.HandlerChain;
 import org.switchyard.handlers.TransformHandler;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InOutService;
@@ -133,5 +133,10 @@ public class DomainImpl implements ServiceDomain {
     public ServiceReference getService(QName serviceName) {
         List<Service> services = _registry.getServices(serviceName);
         return services.isEmpty() ? null : services.get(0).getReference();
+    }
+
+    @Override
+    public HandlerChain getHandlerChain() {
+        return _defaultHandlers;
     }
 }

@@ -19,8 +19,18 @@
 
 package org.switchyard.deploy;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.ServiceLoader;
+
+import javax.xml.namespace.QName;
+
+import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.common.type.Classes;
+import org.switchyard.config.model.domain.HandlerModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.internal.DefaultServiceRegistry;
@@ -29,12 +39,6 @@ import org.switchyard.internal.LocalExchangeBus;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.spi.ExchangeBus;
 import org.switchyard.spi.ServiceRegistry;
-
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.ServiceLoader;
 
 /**
  * {@link org.switchyard.ServiceDomain} manager class.
@@ -96,7 +100,7 @@ public class ServiceDomainManager {
      * @return The ServiceDomain instance.
      */
     public static ServiceDomain createDomain() {
-        return createDomain(ROOT_DOMAIN, null, null);
+        return createDomain(ROOT_DOMAIN, null);
     }
 
     /**
@@ -106,50 +110,19 @@ public class ServiceDomainManager {
      * @return The ServiceDomain instance.
      */
     public static ServiceDomain createDomain(QName domainName, SwitchYardModel switchyardConfig) {
-        String registryClassName = null;
-        String busClassName = null;
-
-        // Use domain configuration when creating registry and bus providers.
-        // This is really a temporary measure as a domain should support multiple
-        // bus and registry providers.
-        if (switchyardConfig != null && switchyardConfig.getDomain() != null) {
-            if (switchyardConfig.getDomain().getProperty(REGISTRY_CLASS_NAME) != null) {
-                 registryClassName = switchyardConfig.getDomain().getProperty(REGISTRY_CLASS_NAME);
-            }
-            if (switchyardConfig.getDomain().getProperty(BUS_CLASS_NAME) != null) {
-                busClassName = switchyardConfig.getDomain().getProperty(BUS_CLASS_NAME);
-            }
+        ServiceRegistry registry = getRegistry(DefaultServiceRegistry.class.getName());
+        ExchangeBus endpointProvider = getEndpointProvider(LocalExchangeBus.class.getName());
+        BaseTransformerRegistry transformerRegistry = new BaseTransformerRegistry();
+        
+        DomainImpl domain = new DomainImpl(domainName, registry, endpointProvider, transformerRegistry);
+        // add appropriate domain config
+        if (switchyardConfig != null) {
+            addHandlersToDomain(domain, switchyardConfig);
         }
 
-        return createDomain(domainName, registryClassName, busClassName);
+        return domain;
     }
-
-    /**
-     * Create a ServiceDomain instance.
-     * @param domainName The domain name.
-     * @param registryClassName The Registry class name.
-     * @param busClassName The bus class name.
-     * @return The Service domain.
-     */
-    public static ServiceDomain createDomain(QName domainName, String registryClassName, String busClassName) {
-        if (registryClassName == null) {
-            registryClassName = DefaultServiceRegistry.class.getName();
-        }
-        if (busClassName == null) {
-            busClassName = LocalExchangeBus.class.getName();
-        }
-
-        try {
-            ServiceRegistry registry = getRegistry(registryClassName);
-            ExchangeBus endpointProvider = getEndpointProvider(busClassName);
-            BaseTransformerRegistry transformerRegistry = new BaseTransformerRegistry();
-
-            return new DomainImpl(domainName, registry, endpointProvider, transformerRegistry);
-        } catch (NullPointerException npe) {
-            throw new SwitchYardException(npe);
-        }
-    }
-
+    
     /**
      * Add a new ServiceDomain for the specified application.
      * @param applicationName The application name.
@@ -189,13 +162,21 @@ public class ServiceDomainManager {
      * @return ServiceRegistry
      */
     private static ServiceRegistry getRegistry(final String registryClass) {
+        ServiceRegistry registry = null;
         ServiceLoader<ServiceRegistry> registryServices = ServiceLoader.load(ServiceRegistry.class);
+        
         for (ServiceRegistry serviceRegistry : registryServices) {
             if (registryClass.equals(serviceRegistry.getClass().getName())) {
-                return serviceRegistry;
+                registry = serviceRegistry;
+                break;
             }
         }
-        return null;
+        
+        if (registry != null) {
+            return registry;
+        } else {
+            throw new SwitchYardException("Unable to load registry provider: " + registryClass);
+        }
     }
 
     /**
@@ -205,11 +186,43 @@ public class ServiceDomainManager {
      */
     private static ExchangeBus getEndpointProvider(final String providerClass) {
         ServiceLoader<ExchangeBus> providerServices = ServiceLoader.load(ExchangeBus.class);
+        ExchangeBus bus = null;
+        
         for (ExchangeBus provider : providerServices) {
             if (providerClass.equals(provider.getClass().getName())) {
                 return provider;
             }
         }
-        return null;
+        
+        if (bus != null) {
+            return bus;
+        } else {
+            throw new SwitchYardException("Unable to load exchange bus provider: " + providerClass);
+        }
+    }
+    
+    /**
+     * Looks for handler definitions in the switchyard config and attempts to 
+     * create and add them to the domain's global handler chain.
+     */
+    private static void addHandlersToDomain(ServiceDomain domain, SwitchYardModel config) {
+        if (config.getDomain() != null && config.getDomain().getHandlers() != null) {
+            for (HandlerModel handlerConfig : config.getDomain().getHandlers().getHandlers()) {
+                Class<?> handlerClass = Classes.forName(handlerConfig.getClassName());
+                if (handlerClass == null) {
+                    throw new SwitchYardException("Handler class not found " + handlerConfig.getClassName());
+                }
+                if (!ExchangeHandler.class.isAssignableFrom(handlerClass)) {
+                    throw new SwitchYardException("Handler " + handlerConfig.getName() 
+                            + " is not an instance of " + ExchangeHandler.class.getName());
+                }
+                try {
+                    ExchangeHandler handler = (ExchangeHandler)handlerClass.newInstance();
+                    domain.getHandlerChain().addFirst(handlerConfig.getName(), handler);
+                } catch (Exception ex) {
+                    throw new SwitchYardException("Failed to initialize handler class " + handlerClass.getName(), ex);
+                }
+            }
+        }
     }
 }

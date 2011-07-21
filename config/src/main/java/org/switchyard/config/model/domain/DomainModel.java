@@ -18,8 +18,6 @@
  */
 package org.switchyard.config.model.domain;
 
-import java.util.Map;
-
 import org.switchyard.config.model.NamedModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
@@ -41,24 +39,14 @@ public interface DomainModel extends NamedModel {
     public SwitchYardModel getSwitchYard();
     
     /**
-     * Gets the child property value.
-     * @param name the property name
-     * @return the child property value, or null if the property does not exist
+     * Gets the properties defined for the domain.
+     * @return properties for the domain
      */
-    public String getProperty(String name);
+    public PropertiesModel getProperties();
     
     /**
-     * Sets the child property value.
-     * @param name property name
-     * @param value property value
-     * @return this DomainModel (useful for chaining)
+     * Gets the list of handlers defined at the domain level.
+     * @return properties for the domain
      */
-    public DomainModel setProperty(String name, String value);
-    
-    /**
-     * Returns a map representation of domain properties, with property name
-     * as the map key and property value as a map entry's value.
-     * @return property map
-     */
-    public Map<String, String> getProperties();
+    public HandlersModel getHandlers();
 }

@@ -19,8 +19,8 @@
 
 package org.switchyard.spi;
 
+import org.switchyard.HandlerChain;
 import org.switchyard.ServiceReference;
-import org.switchyard.handlers.HandlerChain;
 import org.switchyard.transform.TransformerRegistry;
 
 /**

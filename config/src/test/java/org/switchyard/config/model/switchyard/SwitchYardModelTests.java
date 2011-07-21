@@ -39,6 +39,9 @@ import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.test.soap.PortModel;
 import org.switchyard.config.model.composite.test.soap.SOAPBindingModel;
 import org.switchyard.config.model.domain.DomainModel;
+import org.switchyard.config.model.domain.HandlerModel;
+import org.switchyard.config.model.domain.HandlersModel;
+import org.switchyard.config.model.domain.PropertiesModel;
 import org.switchyard.config.model.switchyard.test.java.JavaTransformModel;
 import org.switchyard.config.model.switchyard.test.smooks.SmooksConfigModel;
 import org.switchyard.config.model.switchyard.test.smooks.SmooksTransformModel;
@@ -108,10 +111,15 @@ public class SwitchYardModelTests {
         // Verify domain configuration
         DomainModel domain = switchyard.getDomain();
         Assert.assertEquals("TestDomain", domain.getName());
-        Assert.assertEquals(2, domain.getProperties().size());
-        Assert.assertEquals("bar", domain.getProperty("foo"));
-        Assert.assertEquals("fish", domain.getProperty("tuna"));
+        PropertiesModel props = domain.getProperties();
+        Assert.assertEquals(2, props.getProperties().size());
+        Assert.assertEquals("bar", props.getProperty("foo").getValue());
+        Assert.assertEquals("fish", props.getProperty("tuna").getValue());
         Assert.assertEquals(switchyard, domain.getSwitchYard());
+        Assert.assertEquals(1, domain.getHandlers().getHandlers().size());
+        HandlerModel handler = domain.getHandlers().getHandlers().get(0);
+        Assert.assertEquals("handler1", handler.getName());
+        Assert.assertEquals("org.switchyard.handlers.TestHandler", handler.getClassName());
     }
 
     @Test

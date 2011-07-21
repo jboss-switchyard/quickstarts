@@ -25,8 +25,10 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
+import org.switchyard.HandlerException;
 import org.switchyard.MockHandler;
 import org.switchyard.ServiceReference;
 import org.switchyard.metadata.ExchangeContract;
@@ -86,8 +88,50 @@ public class DomainImplTest {
         Assert.assertNotNull(service);
     }
     
+    @Test
+    public void testDomainHandler() throws Exception {
+        // Add a domain-level handler
+        MockHandler provider = new MockHandler();
+        CountingHandler counter = new CountingHandler();
+        _domain.getHandlerChain().addFirst("counter", counter);
+        ServiceReference service = _domain.registerService(
+                new QName("Counting"), provider);
+        
+        // Verify counter is called once for in-only exchange
+        Exchange inOnly = _domain.createExchange(service, ExchangeContract.IN_ONLY);
+        inOnly.send(new DefaultMessage());
+        Assert.assertEquals(1, counter.getCount());
+        
+        // clear the counter
+        counter.clear();
+        provider.forwardInToOut();
+        
+        // Verify counter is called twice for in-out exchange
+        Exchange inOut = _domain.createExchange(service, ExchangeContract.IN_OUT, new MockHandler());
+        inOut.send(new DefaultMessage().setContent("hello"));
+        Assert.assertEquals(2, counter.getCount());
+        
+    }
+    
 }
 
 interface MyInterface {
     void myOperation(String msg);
+}
+
+class CountingHandler extends BaseHandler {
+    private int count;
+    
+    @Override
+    public void handleMessage(Exchange exchange) throws HandlerException {
+        ++count;
+    }
+    
+    public int getCount() {
+        return count;
+    }
+    
+    public void clear() {
+        count = 0;
+    }
 }

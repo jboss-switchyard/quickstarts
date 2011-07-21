@@ -18,32 +18,30 @@
  */
 package org.switchyard.config.model.domain.v1;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.xml.namespace.QName;
 
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.domain.DomainModel;
-import org.switchyard.config.model.domain.PropertyModel;
+import org.switchyard.config.model.domain.HandlersModel;
+import org.switchyard.config.model.domain.PropertiesModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * Implementation of DomainModel : v1.
  */
 public class V1DomainModel extends BaseNamedModel implements DomainModel {
-
-    private Map<String, String> _properties = new HashMap<String, String>();
+    
+    private PropertiesModel _properties;
+    private HandlersModel _handlers;
     
     /**
      * Constructs a new V1DomainModel.
      */
     public V1DomainModel() {
         super(new QName(DomainModel.DEFAULT_NAMESPACE, DomainModel.DOMAIN));
-        setModelChildrenOrder(PropertyModel.PROPERTY);
+        setModelChildrenOrder(PropertiesModel.PROPERTIES, HandlersModel.HANDLERS);
     }
 
     /**
@@ -53,13 +51,7 @@ public class V1DomainModel extends BaseNamedModel implements DomainModel {
      */
     public V1DomainModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        for (Configuration property_config : config.getChildren(PropertyModel.PROPERTY)) {
-            PropertyModel property = (PropertyModel)readModel(property_config);
-            if (property != null) {
-                _properties.put(property.getName(), property.getValue());
-            }
-        }
-        setModelChildrenOrder(PropertyModel.PROPERTY);
+        setModelChildrenOrder(PropertiesModel.PROPERTIES, HandlersModel.HANDLERS);
     }
     
     @Override
@@ -68,20 +60,19 @@ public class V1DomainModel extends BaseNamedModel implements DomainModel {
     }
 
     @Override
-    public DomainModel setProperty(String name, String value) {
-        PropertyModel property = new V1PropertyModel().setName(name).setValue(value);
-        addChildModel(property);
-        _properties.put(name, value);
-        return this;
+    public synchronized HandlersModel getHandlers() {
+        if (_handlers == null) {
+            _handlers = (HandlersModel)getFirstChildModelStartsWith(HandlersModel.HANDLERS);
+        }
+        return _handlers;
     }
 
     @Override
-    public Map<String, String> getProperties() {
-        return Collections.unmodifiableMap(_properties);
+    public synchronized PropertiesModel getProperties() {
+        if (_properties == null) {
+            _properties = (PropertiesModel)getFirstChildModelStartsWith(PropertiesModel.PROPERTIES);
+        }
+        return _properties;
     }
-
-    @Override
-    public String getProperty(String name) {
-        return _properties.get(name);
-    }
+    
 }

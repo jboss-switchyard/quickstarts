@@ -24,8 +24,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.namespace.QName;
 
 import org.switchyard.Exchange;
+import org.switchyard.HandlerChain;
 import org.switchyard.ServiceReference;
-import org.switchyard.handlers.HandlerChain;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.spi.ExchangeBus;
 import org.switchyard.transform.TransformerRegistry;

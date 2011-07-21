@@ -56,7 +56,12 @@ MA  02110-1301, USA.
         <transforms>
             <java:transform.java from="msgD" to="msgA" class="org.examples.transform.DtoATransform"/>
         </transforms>
-        <property name="foo" value="bar"/>
-        <property name="tuna" value="fish"/>
+        <properties>
+	        <property name="foo" value="bar"/>
+	        <property name="tuna" value="fish"/>
+        </properties>
+        <handlers>
+            <handler name="handler1" class="org.switchyard.handlers.TestHandler"/>
+        </handlers>
     </domain>
 </switchyard>

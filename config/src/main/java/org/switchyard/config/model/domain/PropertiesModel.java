@@ -18,53 +18,43 @@
  */
 package org.switchyard.config.model.domain;
 
+import java.util.List;
+
 import org.switchyard.config.model.Model;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
- * The "property" configuration model.
+ * The "properties" configuration model.
  */
-public interface PropertyModel extends Model {
+public interface PropertiesModel extends Model {
 
-    /** The "property" name. */
-    public static final String PROPERTY = "property";
-
-    /** The "name" name. */
-    public static final String NAME = "name";
-
-    /** The "value" name. */
-    public static final String VALUE = "value";
+    /** The "properties" name. */
+    public static final String PROPERTIES = "properties";
 
     /**
-     * Gets the name attribute.
-     * @return the name attribute
+     * Gets the parent switchyard model.
+     * @return the parent switchyard model
      */
-    public String getName();
+    public SwitchYardModel getSwitchYard();
 
     /**
-     * Sets the name attribute.
-     * @param name the name attribute
-     * @return this PropertyModel (useful for chaining)
+     * Gets the child property models.
+     * @return the child property models
      */
-    public PropertyModel setName(String name);
+    public List<PropertyModel> getProperties();
 
     /**
-     * Gets the value attribute.
-     * @return the value attribute
+     * Adds a child property model.
+     * @param property the child property model to add
+     * @return this TransformsModel (useful for chaining)
      */
-    public String getValue();
-
-    /**
-     * Sets the value attribute.
-     * @param value the value attribute
-     * @return this PropertyModel (useful for chaining)
-     */
-    public PropertyModel setValue(String value);
+    public PropertiesModel addProperty(PropertyModel property);
     
     /**
-     * Gets the parent properties model.
-     * @return the parent properties model.
+     * Fetch a property model by name.
+     * @param name name of the property
+     * @return property with the specified name, or null if no such property exists
      */
-    public PropertiesModel getProperties();
-
+    public PropertyModel getProperty(String name);
 
 }

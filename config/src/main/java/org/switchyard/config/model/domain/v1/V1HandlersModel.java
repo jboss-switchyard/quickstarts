@@ -18,76 +18,73 @@
  */
 package org.switchyard.config.model.domain.v1;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.domain.DomainModel;
-import org.switchyard.config.model.domain.PropertiesModel;
-import org.switchyard.config.model.domain.PropertyModel;
+import org.switchyard.config.model.domain.HandlerModel;
+import org.switchyard.config.model.domain.HandlersModel;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
- * Implementation of PropertyModel : v1.
+ * A version 1 PropertiesModel.
  */
-public class V1PropertyModel extends BaseModel implements PropertyModel {
+public class V1HandlersModel extends BaseModel implements HandlersModel {
+
+    private List<HandlerModel> _handlers = new ArrayList<HandlerModel>();
 
     /**
-     * Constructs a new V1PropertyModel.
+     * Constructs a new V1PropertiesModel.
      */
-    public V1PropertyModel() {
-        super(new QName(DomainModel.DEFAULT_NAMESPACE, PropertyModel.PROPERTY));
+    public V1HandlersModel() {
+        super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, HandlersModel.HANDLERS));
+        setModelChildrenOrder(HandlerModel.HANDLER);
     }
 
     /**
-     * Constructs a new V1PropertyModel with the specified Configuration and Descriptor.
+     * Constructs a new V1PropertiesModel with the specified Configuration and Descriptor.
      * @param config the Configuration
      * @param desc the Descriptor
      */
-    public V1PropertyModel(Configuration config, Descriptor desc) {
+    public V1HandlersModel(Configuration config, Descriptor desc) {
         super(config, desc);
+        for (Configuration handler_config : config.getChildrenStartsWith(HandlerModel.HANDLER)) {
+            HandlerModel handler = (HandlerModel)readModel(handler_config);
+            if (handler != null) {
+                _handlers.add(handler);
+            }
+        }
+        setModelChildrenOrder(HandlerModel.HANDLER);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public PropertiesModel getProperties() {
-        return (PropertiesModel)getModelParent();
+    public SwitchYardModel getSwitchYard() {
+        return (SwitchYardModel)getModelParent();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getName() {
-        return getModelAttribute(PropertyModel.NAME);
+    public synchronized List<HandlerModel> getHandlers() {
+        return Collections.unmodifiableList(_handlers);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public PropertyModel setName(String name) {
-        setModelAttribute(PropertyModel.NAME, name);
+    public synchronized HandlersModel addHandler(HandlerModel handler) {
+        addChildModel(handler);
+        _handlers.add(handler);
         return this;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getValue() {
-        return getModelAttribute(PropertyModel.VALUE);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PropertyModel setValue(String value) {
-        setModelAttribute(PropertyModel.VALUE, value);
-        return this;
-    }
-
 }

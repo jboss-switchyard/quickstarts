@@ -96,4 +96,12 @@ public interface ServiceDomain {
      * @return transformer registry instance
      */
     TransformerRegistry getTransformerRegistry();
+    
+    /**
+     * Returns the default handler chain for this service domain.  Handlers
+     * present in this chain will execute for all message exchange activity
+     * within the domain.
+     * @return default handler chain
+     */
+    HandlerChain getHandlerChain();
 }

@@ -17,10 +17,10 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.handlers;
+package org.switchyard;
 
-import org.switchyard.Exchange;
-import org.switchyard.ExchangeHandler;
+import java.util.List;
+
 
 /**
  * An ordered list of {@code Handler} instances that can be associated with a
@@ -57,4 +57,10 @@ public interface HandlerChain extends ExchangeHandler {
      * @param exchange exchange that needs to be handled
      */
     void handle(Exchange exchange);
+    
+    /**
+     * Returns an unmodifiable list of handlers in this chain.
+     * @return list of handlers in chain
+     */
+    List<ExchangeHandler> getHandlers();
 }

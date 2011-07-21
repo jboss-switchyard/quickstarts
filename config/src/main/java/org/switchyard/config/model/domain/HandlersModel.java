@@ -18,53 +18,36 @@
  */
 package org.switchyard.config.model.domain;
 
+import java.util.List;
+
 import org.switchyard.config.model.Model;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
- * The "property" configuration model.
+ * The "handlers" configuration model.
  */
-public interface PropertyModel extends Model {
+public interface HandlersModel extends Model {
 
-    /** The "property" name. */
-    public static final String PROPERTY = "property";
-
-    /** The "name" name. */
-    public static final String NAME = "name";
-
-    /** The "value" name. */
-    public static final String VALUE = "value";
+    /** The "handlers" name. */
+    public static final String HANDLERS = "handlers";
 
     /**
-     * Gets the name attribute.
-     * @return the name attribute
+     * Gets the parent switchyard model.
+     * @return the parent switchyard model
      */
-    public String getName();
+    public SwitchYardModel getSwitchYard();
 
     /**
-     * Sets the name attribute.
-     * @param name the name attribute
-     * @return this PropertyModel (useful for chaining)
+     * Gets the child handler models.
+     * @return the child handler models
      */
-    public PropertyModel setName(String name);
+    public List<HandlerModel> getHandlers();
 
     /**
-     * Gets the value attribute.
-     * @return the value attribute
+     * Adds a child handler model.
+     * @param handler the child handler model to add
+     * @return this TransformsModel (useful for chaining)
      */
-    public String getValue();
-
-    /**
-     * Sets the value attribute.
-     * @param value the value attribute
-     * @return this PropertyModel (useful for chaining)
-     */
-    public PropertyModel setValue(String value);
-    
-    /**
-     * Gets the parent properties model.
-     * @return the parent properties model.
-     */
-    public PropertiesModel getProperties();
-
+    public HandlersModel addHandler(HandlerModel handler);
 
 }

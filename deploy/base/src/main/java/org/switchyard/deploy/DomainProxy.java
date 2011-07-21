@@ -21,6 +21,7 @@ package org.switchyard.deploy;
 
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
+import org.switchyard.HandlerChain;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.metadata.ExchangeContract;
@@ -95,5 +96,10 @@ class DomainProxy implements ServiceDomain {
     @Override
     public TransformerRegistry getTransformerRegistry() {
         return _domain.getTransformerRegistry();
+    }
+
+    @Override
+    public HandlerChain getHandlerChain() {
+        return _domain.getHandlerChain();
     }
 }

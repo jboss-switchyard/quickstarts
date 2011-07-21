@@ -23,8 +23,14 @@ import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.domain.DomainModel;
+import org.switchyard.config.model.domain.HandlerModel;
+import org.switchyard.config.model.domain.HandlersModel;
+import org.switchyard.config.model.domain.PropertiesModel;
 import org.switchyard.config.model.domain.PropertyModel;
 import org.switchyard.config.model.domain.v1.V1DomainModel;
+import org.switchyard.config.model.domain.v1.V1HandlerModel;
+import org.switchyard.config.model.domain.v1.V1HandlersModel;
+import org.switchyard.config.model.domain.v1.V1PropertiesModel;
 import org.switchyard.config.model.domain.v1.V1PropertyModel;
 import org.switchyard.config.model.resource.ResourceModel;
 import org.switchyard.config.model.resource.v1.V1ResourceModel;
@@ -58,10 +64,16 @@ public class V1SwitchYardMarshaller extends BaseMarshaller {
             return new V1SwitchYardModel(config, desc);
         } else if (name.equals(TransformsModel.TRANSFORMS)) {
             return new V1TransformsModel(config, desc);
-        } else if (name.equals(DomainModel.DOMAIN)) {
-            return new V1DomainModel(config, desc);
+        } else if (name.equals(PropertiesModel.PROPERTIES)) {
+            return new V1PropertiesModel(config, desc);
         } else if (name.equals(PropertyModel.PROPERTY)) {
             return new V1PropertyModel(config, desc);
+        } else if (name.equals(HandlersModel.HANDLERS)) {
+            return new V1HandlersModel(config, desc);
+        } else if (name.equals(HandlerModel.HANDLER)) {
+            return new V1HandlerModel(config, desc);
+        } else if (name.equals(DomainModel.DOMAIN)) {
+            return new V1DomainModel(config, desc);
         } else if (name.equals(ResourceModel.RESOURCE)) {
             return new V1ResourceModel(config, desc);
         }

@@ -19,12 +19,18 @@
 
 package org.switchyard.deploy;
 
+import java.io.InputStream;
+
+import javax.xml.namespace.QName;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.BaseHandler;
 import org.switchyard.ServiceDomain;
-
-import javax.xml.namespace.QName;
+import org.switchyard.common.type.Classes;
+import org.switchyard.config.model.ModelPuller;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.deploy.internal.Deployment;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
@@ -70,5 +76,16 @@ public class ServiceDomainManagerTest {
         // Test that lookup fails after removing the domain ala undeploy...
         domainManager.removeApplicationServiceDomain(d1);
         Assert.assertNull(domainManager.findService(s1, d2));
+    }
+    
+    @Test
+    public void testHandlerRegistration() throws Exception {
+        SwitchYardModel switchyard = new ModelPuller<SwitchYardModel>().pull(
+                "/switchyard-config-handler-01.xml", getClass());
+        
+        ServiceDomain domain = ServiceDomainManager.createDomain(
+                new QName("test"), switchyard);
+        
+        Assert.assertEquals(2, domain.getHandlerChain().getHandlers().size());
     }
 }

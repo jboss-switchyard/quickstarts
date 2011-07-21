@@ -18,76 +18,89 @@
  */
 package org.switchyard.config.model.domain.v1;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.domain.DomainModel;
 import org.switchyard.config.model.domain.PropertiesModel;
 import org.switchyard.config.model.domain.PropertyModel;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
- * Implementation of PropertyModel : v1.
+ * A version 1 PropertiesModel.
  */
-public class V1PropertyModel extends BaseModel implements PropertyModel {
+public class V1PropertiesModel extends BaseModel implements PropertiesModel {
+
+    private List<PropertyModel> _properties = new ArrayList<PropertyModel>();
 
     /**
-     * Constructs a new V1PropertyModel.
+     * Constructs a new V1PropertiesModel.
      */
-    public V1PropertyModel() {
-        super(new QName(DomainModel.DEFAULT_NAMESPACE, PropertyModel.PROPERTY));
+    public V1PropertiesModel() {
+        super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, PropertiesModel.PROPERTIES));
+        setModelChildrenOrder(PropertyModel.PROPERTY);
     }
 
     /**
-     * Constructs a new V1PropertyModel with the specified Configuration and Descriptor.
+     * Constructs a new V1PropertiesModel with the specified Configuration and Descriptor.
      * @param config the Configuration
      * @param desc the Descriptor
      */
-    public V1PropertyModel(Configuration config, Descriptor desc) {
+    public V1PropertiesModel(Configuration config, Descriptor desc) {
         super(config, desc);
+        for (Configuration property_config : config.getChildrenStartsWith(PropertyModel.PROPERTY)) {
+            PropertyModel property = (PropertyModel)readModel(property_config);
+            if (property != null) {
+                _properties.add(property);
+            }
+        }
+        setModelChildrenOrder(PropertyModel.PROPERTY);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public PropertiesModel getProperties() {
-        return (PropertiesModel)getModelParent();
+    public SwitchYardModel getSwitchYard() {
+        return (SwitchYardModel)getModelParent();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getName() {
-        return getModelAttribute(PropertyModel.NAME);
+    public synchronized List<PropertyModel> getProperties() {
+        return Collections.unmodifiableList(_properties);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public PropertyModel setName(String name) {
-        setModelAttribute(PropertyModel.NAME, name);
+    public synchronized PropertiesModel addProperty(PropertyModel property) {
+        addChildModel(property);
+        _properties.add(property);
         return this;
     }
-
+    
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getValue() {
-        return getModelAttribute(PropertyModel.VALUE);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PropertyModel setValue(String value) {
-        setModelAttribute(PropertyModel.VALUE, value);
-        return this;
+    public PropertyModel getProperty(String name) {
+        PropertyModel property = null;
+        for (PropertyModel p : _properties) {
+            if (p.getName().equals(name)) {
+                property = p;
+                break;
+            }
+        }
+        return property;
     }
 
 }

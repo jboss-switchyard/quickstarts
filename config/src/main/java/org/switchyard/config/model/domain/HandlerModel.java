@@ -21,50 +21,50 @@ package org.switchyard.config.model.domain;
 import org.switchyard.config.model.Model;
 
 /**
- * The "property" configuration model.
+ * The "handler" configuration model.
  */
-public interface PropertyModel extends Model {
+public interface HandlerModel extends Model {
 
-    /** The "property" name. */
-    public static final String PROPERTY = "property";
+    /** The "handler" name. */
+    public static final String HANDLER = "handler";
 
     /** The "name" name. */
     public static final String NAME = "name";
 
-    /** The "value" name. */
-    public static final String VALUE = "value";
+    /** The "class" name. */
+    public static final String CLASS = "class";
 
     /**
-     * Gets the name attribute.
+     * Gets the handler name attribute.
      * @return the name attribute
      */
     public String getName();
 
     /**
-     * Sets the name attribute.
+     * Sets the handler name attribute.
      * @param name the name attribute
-     * @return this PropertyModel (useful for chaining)
+     * @return this HandlerModel (useful for chaining)
      */
-    public PropertyModel setName(String name);
+    public HandlerModel setName(String name);
 
     /**
-     * Gets the value attribute.
-     * @return the value attribute
+     * Gets the class attribute.
+     * @return the class attribute
      */
-    public String getValue();
+    public String getClassName();
 
     /**
-     * Sets the value attribute.
-     * @param value the value attribute
-     * @return this PropertyModel (useful for chaining)
+     * Sets the class attribute.
+     * @param className the class attribute
+     * @return this HandlerModel (useful for chaining)
      */
-    public PropertyModel setValue(String value);
-    
+    public HandlerModel setClassName(String className);
+
     /**
-     * Gets the parent properties model.
-     * @return the parent properties model.
+     * Gets the parent handlers model.
+     * @return the parent handlers model.
      */
-    public PropertiesModel getProperties();
+    public HandlersModel getHandlers();
 
 
 }

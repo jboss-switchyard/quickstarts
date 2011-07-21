@@ -24,27 +24,27 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.domain.DomainModel;
-import org.switchyard.config.model.domain.PropertiesModel;
-import org.switchyard.config.model.domain.PropertyModel;
+import org.switchyard.config.model.domain.HandlerModel;
+import org.switchyard.config.model.domain.HandlersModel;
 
 /**
- * Implementation of PropertyModel : v1.
+ * Implementation of HandlerModel : v1.
  */
-public class V1PropertyModel extends BaseModel implements PropertyModel {
+public class V1HandlerModel extends BaseModel implements HandlerModel {
 
     /**
      * Constructs a new V1PropertyModel.
      */
-    public V1PropertyModel() {
-        super(new QName(DomainModel.DEFAULT_NAMESPACE, PropertyModel.PROPERTY));
+    public V1HandlerModel() {
+        super(new QName(DomainModel.DEFAULT_NAMESPACE, HandlerModel.HANDLER));
     }
 
     /**
-     * Constructs a new V1PropertyModel with the specified Configuration and Descriptor.
+     * Constructs a new V1HandlerModel with the specified Configuration and Descriptor.
      * @param config the Configuration
      * @param desc the Descriptor
      */
-    public V1PropertyModel(Configuration config, Descriptor desc) {
+    public V1HandlerModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
@@ -52,8 +52,8 @@ public class V1PropertyModel extends BaseModel implements PropertyModel {
      * {@inheritDoc}
      */
     @Override
-    public PropertiesModel getProperties() {
-        return (PropertiesModel)getModelParent();
+    public HandlersModel getHandlers() {
+        return (HandlersModel)getModelParent();
     }
 
     /**
@@ -61,15 +61,15 @@ public class V1PropertyModel extends BaseModel implements PropertyModel {
      */
     @Override
     public String getName() {
-        return getModelAttribute(PropertyModel.NAME);
+        return getModelAttribute(HandlerModel.NAME);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public PropertyModel setName(String name) {
-        setModelAttribute(PropertyModel.NAME, name);
+    public HandlerModel setName(String name) {
+        setModelAttribute(HandlerModel.NAME, name);
         return this;
     }
 
@@ -77,17 +77,16 @@ public class V1PropertyModel extends BaseModel implements PropertyModel {
      * {@inheritDoc}
      */
     @Override
-    public String getValue() {
-        return getModelAttribute(PropertyModel.VALUE);
+    public String getClassName() {
+        return getModelAttribute(HandlerModel.CLASS);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public PropertyModel setValue(String value) {
-        setModelAttribute(PropertyModel.VALUE, value);
+    public HandlerModel setClassName(String className) {
+        setModelAttribute(HandlerModel.CLASS, className);
         return this;
     }
-
 }
