@@ -20,25 +20,28 @@
 package org.switchyard.quickstarts.demos.orders;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
-import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
 import org.switchyard.test.mixins.HTTPMixIn;
 import org.switchyard.transform.config.model.TransformSwitchYardScanner;
 
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(
         config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
         scanners = {BeanSwitchYardScanner.class, TransformSwitchYardScanner.class},
         mixins = {CDIMixIn.class, HTTPMixIn.class})
-public class WebServiceTest extends SwitchYardTestCase {
+public class WebServiceTest {
+
+    private HTTPMixIn httpMixIn;
 
     @Test
     public void invokeOrderWebService() throws Exception {
         // Use the HttpMixIn to invoke the SOAP binding endpoint with a SOAP input (from the test classpath)
         // and compare the SOAP response to a SOAP response resource (from the test classpath)...
-        getMixIn(HTTPMixIn.class).
-                postResourceAndTestXML("http://localhost:18001/OrderService", "/xml/soap-request.xml", "/xml/soap-response.xml");
+        httpMixIn.postResourceAndTestXML("http://localhost:18001/OrderService", "/xml/soap-request.xml", "/xml/soap-response.xml");
     }
 }
 

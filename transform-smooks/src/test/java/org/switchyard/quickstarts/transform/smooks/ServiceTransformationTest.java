@@ -24,15 +24,26 @@ import javax.xml.namespace.QName;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.switchyard.test.Invoker;
+import org.switchyard.test.ServiceOperation;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
-import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.SwitchYardTestKit;
 import org.switchyard.test.mixins.CDIMixIn;
 
 /**
  * Test Smooks transformations around a service.
  */
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(config = SwitchYardTestCaseConfig.SWITCHYARD_XML, mixins = CDIMixIn.class)
-public class ServiceTransformationTest extends SwitchYardTestCase {
+public class ServiceTransformationTest {
+
+    @ServiceOperation("OrderService.submitOrder")
+    private Invoker submitOrder;
+
+    private SwitchYardTestKit _testKit;
+
 
     // Message types being transformed
     public static final QName FROM_TYPE =
@@ -46,10 +57,9 @@ public class ServiceTransformationTest extends SwitchYardTestCase {
 
     @Test
     public void testTransformXMLtoJava() throws Exception {
-        OrderAck orderAck = newInvoker("OrderService")
-            .operation("submitOrder")
+        OrderAck orderAck = submitOrder
             .inputType(FROM_TYPE)
-            .sendInOut(readResourceString(ORDER_XML))
+            .sendInOut(_testKit.readResourceString(ORDER_XML))
             .getContent(OrderAck.class);
 
         Assert.assertTrue(orderAck.isAccepted());
@@ -62,12 +72,11 @@ public class ServiceTransformationTest extends SwitchYardTestCase {
             .setItemId("BUTTER")
             .setQuantity(100);
 
-        String result = newInvoker("OrderService")
-            .operation("submitOrder")
+        String result = submitOrder
             .expectedOutputType(TO_TYPE)
             .sendInOut(testOrder)
             .getContent(String.class);
 
-        compareXMLToResource(result, ORDER_ACK_XML);
+        _testKit.compareXMLToResource(result, ORDER_ACK_XML);
     }
 }

@@ -4,7 +4,8 @@ import java.io.File;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.switchyard.test.SwitchYardTestCase;
+import org.junit.runner.RunWith;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
 
@@ -27,8 +28,9 @@ import org.switchyard.test.mixins.CDIMixIn;
  * MA  02110-1301, USA.
  */
 
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(config = SwitchYardTestCaseConfig.SWITCHYARD_XML, mixins = CDIMixIn.class)
-public class CamelBindingTest extends SwitchYardTestCase  {
+public class CamelBindingTest {
     
     private static String SOURCE_FILE = "target/test-classes/test.txt";
     private static String DEST_FILE = "target/input/test.txt";

@@ -19,17 +19,24 @@
 package org.switchyard.quickstarts.rules.interview;
 
 import org.junit.Test;
-import org.switchyard.test.SwitchYardTestCase;
+import org.junit.runner.RunWith;
+import org.switchyard.test.Invoker;
+import org.switchyard.test.ServiceOperation;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(config = SwitchYardTestCaseConfig.SWITCHYARD_XML)
-public class RulesInterviewTest extends SwitchYardTestCase  {
+public class RulesInterviewTest {
+
+    @ServiceOperation("Interview.verify")
+    private Invoker verify;
 
     @Test
     public void testInterviewRules() {
-        newInvoker("Interview").operation("verify").sendInOnly(new Applicant("David", 39));
+        verify.sendInOnly(new Applicant("David", 39));
     }
 }

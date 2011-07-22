@@ -19,9 +19,10 @@
 package org.switchyard.quickstarts.demos.helpdesk;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.component.bpm.config.model.BpmSwitchYardScanner;
-import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.BPMMixIn;
 import org.switchyard.test.mixins.CDIMixIn;
@@ -31,19 +32,21 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(
     config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
     scanners = {BeanSwitchYardScanner.class, BpmSwitchYardScanner.class, TransformSwitchYardScanner.class},
     mixins = {BPMMixIn.class, CDIMixIn.class, HTTPMixIn.class}
 )
-public class HelpDeskTests extends SwitchYardTestCase {
+public class HelpDeskTests {
+
+    private BPMMixIn bpm;
+    private HTTPMixIn http;
 
     @Test
     public void testHelpDesk() throws Exception {
-        BPMMixIn bpm = getMixIn(BPMMixIn.class);
         if (bpm.startTaskServer("Developer", "User")) {
             try {
-                HTTPMixIn http = getMixIn(HTTPMixIn.class);
                 http.postResourceAndTestXML("http://localhost:18001/HelpDeskService", "/xml/soap-request.xml", "/xml/soap-response.xml");
                 boolean keepWorking = true;
                 while (keepWorking) {

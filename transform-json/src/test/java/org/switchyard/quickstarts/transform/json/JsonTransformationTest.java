@@ -25,15 +25,25 @@ import junit.framework.Assert;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
-import org.switchyard.test.SwitchYardTestCase;
+import org.junit.runner.RunWith;
+import org.switchyard.test.Invoker;
+import org.switchyard.test.ServiceOperation;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
+import org.switchyard.test.SwitchYardTestKit;
 import org.switchyard.test.mixins.CDIMixIn;
 
 /**
  * Test JSON transformations around a service.
  */
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(config = SwitchYardTestCaseConfig.SWITCHYARD_XML, mixins = CDIMixIn.class)
-public class JsonTransformationTest extends SwitchYardTestCase {
+public class JsonTransformationTest {
+
+    @ServiceOperation("OrderService.submitOrder")
+    private Invoker submitOrder;
+
+    private SwitchYardTestKit _testKit;
 
     // Message types being transformed
     public static final QName FROM_TYPE =
@@ -47,10 +57,9 @@ public class JsonTransformationTest extends SwitchYardTestCase {
 
     @Test
     public void testTransformJSONtoJava() throws Exception {
-        OrderAck orderAck = newInvoker("OrderService")
-            .operation("submitOrder")
+        OrderAck orderAck = submitOrder
             .inputType(FROM_TYPE)
-            .sendInOut(readResourceString(ORDER_JSON))
+            .sendInOut(_testKit.readResourceString(ORDER_JSON))
             .getContent(OrderAck.class);
 
         Assert.assertTrue(orderAck.isAccepted());
@@ -63,16 +72,15 @@ public class JsonTransformationTest extends SwitchYardTestCase {
             .setItemId("BUTTER")
             .setQuantity(100);
 
-        String result = newInvoker("OrderService")
-            .operation("submitOrder")
+        String result = submitOrder
             .expectedOutputType(TO_TYPE)
             .sendInOut(testOrder)
             .getContent(String.class);
-        
+
         // parse the reference and returned JSON strings and compare for equality
         ObjectMapper mapper = new ObjectMapper();
         OrderAck expected = mapper.readValue(
-                readResourceString(ORDER_ACK_JSON), OrderAck.class);
+                _testKit.readResourceString(ORDER_ACK_JSON), OrderAck.class);
         OrderAck returned = mapper.readValue(result, OrderAck.class);
         
         Assert.assertEquals(expected, returned);

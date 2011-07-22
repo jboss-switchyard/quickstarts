@@ -21,12 +21,19 @@ package org.switchyard.quickstarts.demos.orders;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.switchyard.test.SwitchYardTestCase;
+import org.junit.runner.RunWith;
+import org.switchyard.test.Invoker;
+import org.switchyard.test.ServiceOperation;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
 
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
-public class OrderServiceTest extends SwitchYardTestCase {
+public class OrderServiceTest {
+
+    @ServiceOperation("OrderService.submitOrder")
+    private Invoker submitOrder;
 
     @Test
     public void testOrderAccepted() throws Exception {
@@ -35,8 +42,7 @@ public class OrderServiceTest extends SwitchYardTestCase {
             .setItemId("BUTTER")
             .setQuantity(100);
         
-        OrderAck testAck = newInvoker("OrderService")
-            .operation("submitOrder")
+        OrderAck testAck = submitOrder
             .sendInOut(testOrder)
             .getContent(OrderAck.class);
 

@@ -1,7 +1,10 @@
 package org.switchyard.quickstarts.camel.service;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.switchyard.component.camel.config.model.RouteScanner;
-import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.Invoker;
+import org.switchyard.test.ServiceOperation;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
 
@@ -24,12 +27,13 @@ import org.switchyard.test.mixins.CDIMixIn;
  * MA  02110-1301, USA.
  */
 
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(
         config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
         mixins = CDIMixIn.class,
         scanners = RouteScanner.class
 )
-public class CamelServiceTest extends SwitchYardTestCase  {
+public class CamelServiceTest {
     
     private static final String TEST_MESSAGE = "\n"
       + "bob: Hello there!\n"
@@ -40,10 +44,11 @@ public class CamelServiceTest extends SwitchYardTestCase  {
       + "bob: Four score and seven years\n"
       + "sally: Actually, any kind of dairy is OK in my book\n";
 
+    @ServiceOperation("JavaDSL.acceptMessage")
+    private Invoker acceptMessage;
+
     @Test
     public void testCamelRoute() {
-        newInvoker("JavaDSL")
-        .operation("acceptMessage")
-        .sendInOnly(TEST_MESSAGE);
+        acceptMessage.sendInOnly(TEST_MESSAGE);
     }
 }
