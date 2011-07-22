@@ -21,19 +21,25 @@ package org.switchyard.quickstarts.demos.orders;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.switchyard.test.InvocationFaultException;
-import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.Invoker;
+import org.switchyard.test.ServiceOperation;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
 
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
-public class InventoryServiceTest extends SwitchYardTestCase {
+public class InventoryServiceTest {
+
+    @ServiceOperation("InventoryService.lookupItem")
+    private Invoker lookupItem;
 
     @Test
     public void testItemLookupExists() throws Exception {
         final String ITEM_ID = "BUTTER";
-        Item item = newInvoker("InventoryService")
-            .operation("lookupItem")
+        Item item = lookupItem
             .sendInOut(ITEM_ID)
             .getContent(Item.class);
 
@@ -46,8 +52,7 @@ public class InventoryServiceTest extends SwitchYardTestCase {
         final String ITEM_ID = "GUNS";
         try {
             // This should generate a fault because the ITEM_ID is not found
-            newInvoker("InventoryService")
-                .operation("lookupItem")
+            lookupItem
                 .sendInOut(ITEM_ID)
                 .getContent(Item.class);
             // Looks like we didn't fault, so fail

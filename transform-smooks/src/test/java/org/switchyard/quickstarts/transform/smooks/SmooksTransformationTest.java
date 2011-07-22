@@ -20,7 +20,8 @@
 package org.switchyard.quickstarts.transform.smooks;
 
 import org.junit.Test;
-import org.switchyard.test.SwitchYardTestCase;
+import org.junit.runner.RunWith;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.SmooksMixIn;
 
@@ -29,14 +30,16 @@ import org.switchyard.test.mixins.SmooksMixIn;
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(mixins = SmooksMixIn.class)
-public class SmooksTransformationTest extends SwitchYardTestCase {
+public class SmooksTransformationTest {
+
+    private SmooksMixIn smooksMixIn;
 
     @Test
     public void test_Order_read_write() throws Exception {
         // Use the Smooks TestMixIn to verify that the Order_XML.xml
         // Smooks java binding transform works against the supplied order.xml...
-        SmooksMixIn smooksMixIn = getMixIn(SmooksMixIn.class);
         smooksMixIn.testJavaXMLReadWrite(Order.class, "/smooks/Order_XML.xml", "/xml/order.xml");
     }
 
@@ -44,7 +47,6 @@ public class SmooksTransformationTest extends SwitchYardTestCase {
     public void test_OrderAck_read_write() throws Exception {
         // Use the Smooks TestMixIn to verify that the OrderAck_XML.xml
         // Smooks java binding transform works against the supplied orderAck.xml...
-        SmooksMixIn smooksMixIn = getMixIn(SmooksMixIn.class);
         smooksMixIn.testJavaXMLReadWrite(OrderAck.class, "/smooks/OrderAck_XML.xml", "/xml/orderAck.xml");
     }
 }

@@ -28,12 +28,22 @@ import javax.xml.transform.dom.DOMSource;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.switchyard.test.SwitchYardTestCase;
+import org.junit.runner.RunWith;
+import org.switchyard.test.Invoker;
+import org.switchyard.test.ServiceOperation;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
+import org.switchyard.test.SwitchYardTestKit;
 import org.switchyard.test.mixins.CDIMixIn;
 
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
-public class JaxbTransformationTest extends SwitchYardTestCase {
+public class JaxbTransformationTest {
+
+    @ServiceOperation("OrderService.submitOrder")
+    private Invoker submitOrder;
+
+    private SwitchYardTestKit _testKit;
     
     public static final QName FROM_TYPE =
         new QName("urn:switchyard-quickstart:transform-jaxb:1.0", "order");
@@ -56,7 +66,7 @@ public class JaxbTransformationTest extends SwitchYardTestCase {
         Marshaller marshaller = jaxbContext.createMarshaller();
         
         marshaller.marshal(order, resultWriter);
-        compareXMLToResource(resultWriter.toString(), ORDER_XML);
+        _testKit.compareXMLToResource(resultWriter.toString(), ORDER_XML);
     }
     
     @Test
@@ -71,15 +81,14 @@ public class JaxbTransformationTest extends SwitchYardTestCase {
         Marshaller marshaller = jaxbContext.createMarshaller();
         
         marshaller.marshal(orderAck, resultWriter);
-        compareXMLToResource(resultWriter.toString(), ORDER_ACK_XML);
+        _testKit.compareXMLToResource(resultWriter.toString(), ORDER_ACK_XML);
     }
     
     @Test
     public void testTransformXMLtoJava() throws Exception {
-        OrderAck orderAck = newInvoker("OrderService")
-            .operation("submitOrder")
+        OrderAck orderAck = submitOrder
             .inputType(FROM_TYPE)
-            .sendInOut(new DOMSource(readResourceDocument(ORDER_XML)))
+            .sendInOut(new DOMSource(_testKit.readResourceDocument(ORDER_XML)))
             .getContent(OrderAck.class);
 
         Assert.assertTrue(orderAck.isAccepted());
@@ -92,12 +101,11 @@ public class JaxbTransformationTest extends SwitchYardTestCase {
         testOrder.setItemId("BUTTER");
         testOrder.setQuantity(100);
 
-        String result = newInvoker("OrderService")
-            .operation("submitOrder")
+        String result = submitOrder
             .expectedOutputType(TO_TYPE)
             .sendInOut(testOrder)
             .getContent(String.class);
 
-        compareXMLToResource(result, ORDER_ACK_XML);
+        _testKit.compareXMLToResource(result, ORDER_ACK_XML);
     }
 }

@@ -28,24 +28,29 @@ import junit.framework.Assert;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
-import org.switchyard.test.SwitchYardTestCase;
+import org.junit.runner.RunWith;
+import org.switchyard.test.Invoker;
+import org.switchyard.test.ServiceOperation;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
-public class TypeTransformationTest extends SwitchYardTestCase {
+public class TypeTransformationTest {
 
-    final String ITEM_ID = "BUTTER";
+    @ServiceOperation("OrderService.submitOrder")
+    private Invoker submitOrder;
+
     final String ORDER_XML = "xml/order.xml";
     final String ORDER_ACK_XML = "xml/orderAck.xml";
 
     @Test
     public void testTransformXMLtoJava() throws Exception {
 
-        OrderAck orderAck = newInvoker("OrderService")
-            .operation("submitOrder")
+        OrderAck orderAck = submitOrder
             .inputType(QName.valueOf("{urn:switchyard-quickstart-demo:orders:1.0}submitOrder"))
             .sendInOut(loadXML(ORDER_XML).getDocumentElement())
             .getContent(OrderAck.class);
@@ -61,8 +66,7 @@ public class TypeTransformationTest extends SwitchYardTestCase {
             .setItemId("BUTTER")
             .setQuantity(100);
 
-        Element result = newInvoker("OrderService")
-            .operation("submitOrder")
+        Element result = submitOrder
             .expectedOutputType(QName.valueOf("{urn:switchyard-quickstart-demo:orders:1.0}submitOrderResponse"))
             .sendInOut(testOrder)
             .getContent(Element.class);
