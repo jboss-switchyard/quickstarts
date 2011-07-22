@@ -61,14 +61,14 @@ public class SmooksMixIn extends AbstractTestMixIn {
      *
      * @param javaType The Java type.
      * @param bindingConfigResPath The Smooks java binding configuration.  This path can be relative to
-     * the java package containing the {@link org.switchyard.test.SwitchYardTestCase} using this {@link org.switchyard.test.TestMixIn}.
+     * the java package containing the test class using this {@link org.switchyard.test.TestMixIn}.
      * @param xmlResPath The XML classpath resource used to bind to the {@code javaType}.  This path can be relative to
-     * the java package containing the {@link org.switchyard.test.SwitchYardTestCase} using this {@link org.switchyard.test.TestMixIn}.
+     * the java package containing the test class using this {@link org.switchyard.test.TestMixIn}.
      */
     public void testJavaXMLReadWrite(Class<?> javaType, String bindingConfigResPath, String xmlResPath) {
         Transformer xml2JavaTransformer = newTransformer(bindingConfigResPath, SmooksTransformType.XML2JAVA);
         Transformer java2xmlTransformer = newTransformer(bindingConfigResPath, SmooksTransformType.JAVA2XML);
-        String xml = getTestCase().readResourceString(xmlResPath);
+        String xml = getTestKit().readResourceString(xmlResPath);
 
         // XML to Java...
         Object javaObject = xml2JavaTransformer.transform(xml);
@@ -108,6 +108,6 @@ public class SmooksMixIn extends AbstractTestMixIn {
                                             .setTransformType(transformerType)
                                             .setFrom(new QName("from")).setTo(new QName("to"));
 
-        return getTestCase().newTransformer(transformModel);
+        return getTestKit().newTransformer(transformModel);
     }
 }

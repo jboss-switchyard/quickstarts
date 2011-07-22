@@ -87,6 +87,22 @@ public class Invoker {
     }
 
     /**
+     * Get the target Service Name.
+     * @return The target Service Name.
+     */
+    public QName getServiceName() {
+        return _serviceName;
+    }
+
+    /**
+     * Get the target Operation Name.
+     * @return The target Operation Name.
+     */
+    public String getOperationName() {
+        return _operationName;
+    }
+
+    /**
      * Set the target operation name.
      * @param operationName The operation name.
      * @return This invoker instance.

@@ -86,11 +86,15 @@ public class MergeScanner<M extends Model> implements Scanner<M> {
             throw new IOException(e);
         }
         for (Scanner<M> scanner : _scanners) {
-            List<M> scanned_list = scanner.scan(input).getModels();
-            if (scanned_list != null) {
-                for (M scanned : scanned_list) {
-                    if (scanned != null) {
-                        merged = Models.merge(scanned, merged, _fromOverridesTo);
+            ScannerOutput<M> scannerOutput = scanner.scan(input);
+
+            if (scannerOutput != null) {
+                List<M> scanned_list = scannerOutput.getModels();
+                if (scanned_list != null) {
+                    for (M scanned : scanned_list) {
+                        if (scanned != null) {
+                            merged = Models.merge(scanned, merged, _fromOverridesTo);
+                        }
                     }
                 }
             }

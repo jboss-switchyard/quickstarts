@@ -42,12 +42,16 @@ public @interface SwitchYardTestCaseConfig {
     /**
      * Default classpath location for the switchyard configuration.
      */
-    public static final String SWITCHYARD_XML = AbstractDeployment.SWITCHYARD_XML;
+    String SWITCHYARD_XML = AbstractDeployment.SWITCHYARD_XML;
+    /**
+     * Constant for the {@link SwitchYardTestCaseConfig#config()} default.
+     */
+    String NULL_CONFIG = "$$NULL_SW_CONFIG$$";
 
     /**
      * Classpath path to a switchyard.xml configuration.
      */
-    String config() default SwitchYardTestCase.NULL_CONFIG;
+    String config() default NULL_CONFIG;
 
     /**
      * {@link Scanner Scanners} to be used in the test.
@@ -56,10 +60,10 @@ public @interface SwitchYardTestCaseConfig {
      * augment the configuration model pointed to by the {@link #config()} value.  The scanners
      * are only applied if a {@link #config()} is specified.
      */
-    Class<? extends Scanner>[] scanners() default SwitchYardTestCase.NullScanners.class;
+    Class<? extends Scanner>[] scanners() default SwitchYardTestKit.NullScanners.class;
 
     /**
      * The Mix in types.
      */
-    Class<? extends TestMixIn>[] mixins() default SwitchYardTestCase.NullMixIns.class;
+    Class<? extends TestMixIn>[] mixins() default SwitchYardTestKit.NullMixIns.class;
 }

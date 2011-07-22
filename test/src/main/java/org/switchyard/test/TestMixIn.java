@@ -24,7 +24,7 @@ import org.switchyard.deploy.internal.AbstractDeployment;
 /**
  * Test Mix-In.
  * <p/>
- * Test Mix-Ins are used to extend the behavior of a {@link SwitchYardTestCase} implementation.
+ * Test Mix-Ins are used to extend the behavior of {@link SwitchYardTestKit}.
  * See the {@link org.switchyard.test.mixins} package for a list of the {@link TestMixIn TestMixIns}
  * available out of the box.
  * <p/>
@@ -38,10 +38,10 @@ import org.switchyard.deploy.internal.AbstractDeployment;
 public interface TestMixIn {
 
     /**
-     * Set the test case instance on the {@link TestMixIn}.
-     * @param testCase The test case.
+     * Set the test kit instance on the MixIn.
+     * @param kit The kit instance.
      */
-    void setTestCase(SwitchYardTestCase testCase);
+    void setTestKit(SwitchYardTestKit kit);
 
     /**
      * MixIn initialization.

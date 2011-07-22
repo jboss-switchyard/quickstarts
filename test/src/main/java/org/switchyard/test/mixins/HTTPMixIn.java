@@ -89,7 +89,7 @@ public class HTTPMixIn extends AbstractTestMixIn {
      */
     public String postStringAndTestXML(String endpointURL, String request, String expectedResponse) {
         String response = postString(endpointURL, request);
-        getTestCase().compareXMLToString(response, expectedResponse);
+        getTestKit().compareXMLToString(response, expectedResponse);
         return response;
     }
 
@@ -101,7 +101,7 @@ public class HTTPMixIn extends AbstractTestMixIn {
      */
     public String postResource(String endpointURL, String requestResource) {
         PostMethod postMethod = new PostMethod(endpointURL);
-        InputStream requestStream = getTestCase().getResourceAsStream(requestResource);
+        InputStream requestStream = getTestKit().getResourceAsStream(requestResource);
 
         try {
             postMethod.setRequestEntity(new InputStreamRequestEntity(requestStream, _contentType + "; charset=utf-8"));
@@ -127,7 +127,7 @@ public class HTTPMixIn extends AbstractTestMixIn {
      */
     public String postResourceAndTestXML(String endpointURL, String requestResource, String expectedResponseResource) {
         String response = postResource(endpointURL, requestResource);
-        getTestCase().compareXMLToResource(response, expectedResponseResource);
+        getTestKit().compareXMLToResource(response, expectedResponseResource);
         return response;
     }
 

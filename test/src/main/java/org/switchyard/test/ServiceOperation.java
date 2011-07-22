@@ -17,47 +17,29 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.test.mixins;
+package org.switchyard.test;
 
-import org.switchyard.deploy.internal.AbstractDeployment;
-import org.switchyard.test.SwitchYardTestKit;
-import org.switchyard.test.TestMixIn;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Abstract {@link TestMixIn}.
+ * Service Operation name.
+ * <p/>
+ * Dot delimited Service operation name ("[service-name].[operation-name]") e.g. "OrderService.createOrder".
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public abstract class AbstractTestMixIn implements TestMixIn {
-
-    private SwitchYardTestKit _kit;
-
-    @Override
-    public void setTestKit(SwitchYardTestKit kit) {
-        this._kit = kit;
-    }
+@Target({FIELD})
+@Retention(RUNTIME)
+@Documented
+public @interface ServiceOperation {
 
     /**
-     * Get the test kit instance associated with the test mixin.
-     * @return The test kit instance instance.
+     * Dot delimited Service operation name ("[service-name].[operation-name]").
      */
-    public SwitchYardTestKit getTestKit() {
-        return _kit;
-    }
-
-    @Override
-    public void initialize() {
-    }
-
-    @Override
-    public void before(AbstractDeployment deployment) {
-    }
-
-    @Override
-    public void after(AbstractDeployment deployment) {
-    }
-
-    @Override
-    public void uninitialize() {
-    }
+    String value();
 }

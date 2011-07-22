@@ -1,50 +1,28 @@
-/* 
- * JBoss, Home of Professional Open Source 
+/*
+ * JBoss, Home of Professional Open Source
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved. 
- * See the copyright.txt in the distribution for a 
+ * as indicated by the @authors tag. All rights reserved.
+ * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
- * This copyrighted material is made available to anyone wishing to use, 
- * modify, copy, or redistribute it subject to the terms and conditions 
- * of the GNU Lesser General Public License, v. 2.1. 
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details. 
- * You should have received a copy of the GNU Lesser General Public License, 
- * v.2.1 along with this distribution; if not, write to the Free Software 
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
 
 package org.switchyard.test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.apache.log4j.Logger;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.runner.RunWith;
-import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.BlockJUnit4ClassRunner;
-import org.junit.runners.model.InitializationError;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.type.Classes;
@@ -73,36 +51,39 @@ import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerUtil;
 import org.w3c.dom.Document;
 
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
- * Base class for writing SwitchYard tests.
- * <p/>
- * This class creates a {@link ServiceDomain} instance (via an {@link AbstractDeployment}) for your TestCase.  It
- * can be configured via the {@link SwitchYardTestCaseConfig} annotation:
- * <ul>
- * <li><b>mixins</b>:  This value allows you to "mix-in" the test behavior that your test requires
- * by listing {@link TestMixIn} types.  See the {@link org.switchyard.test.mixins} package for a list of the
- * {@link TestMixIn TestMixIns} available out of the box.  You can also implement your own {@link TestMixIn TestMixIn}.
- * (See {@link #getMixIn(Class)})</li>
- * <li><b>config</b>:  This value allows you to specify a SwitchYard application configuration file (switchyard.xml) to
- * be used to initialize your TestCase instance {@link ServiceDomain}.</li>
- * <li><b>scanners</b>:  This value allows you to specify which {@link Scanner Scanners} are to be used to augment the
- * configuration model.</li>
- * </ul>
- *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-@RunWith(SwitchYardTestCase.TestRunner.class)
-public abstract class SwitchYardTestCase {
+public class SwitchYardTestKit {
 
     /**
      * Logger.
      */
-    private static Logger _logger = Logger.getLogger(SwitchYardTestCase.class);
+    private static Logger _logger = Logger.getLogger(SwitchYardTestKit.class);
     /**
      * Constant for the {@link org.switchyard.test.SwitchYardTestCaseConfig#config()} default.
      */
     protected static final String NULL_CONFIG = "$$NULL_SW_CONFIG$$";
 
+    /**
+     * Class test instance.
+     */
+    private Object _testInstance;
     /**
      * Test configuration model.
      */
@@ -115,15 +96,18 @@ public abstract class SwitchYardTestCase {
      * Test Mix-Ins.
      */
     private List<Class<? extends TestMixIn>> _testMixIns;
-    private List<TestMixIn> _testMixInInstances = new ArrayList<TestMixIn>();
 
-    private static final ThreadLocal<TestRunner> TEST_RUNNER = new ThreadLocal<TestRunner>();
+    private List<TestMixIn> _testMixInInstances = new ArrayList<TestMixIn>();
 
     /**
      * Public default constructor.
+     * @param testInstance The test instance.
+     * @exception Exception Error initializing test kit.
      */
-    public SwitchYardTestCase() {
-        SwitchYardTestCaseConfig testCaseConfig = getClass().getAnnotation(SwitchYardTestCaseConfig.class);
+    public SwitchYardTestKit(Object testInstance) throws Exception {
+        this._testInstance = testInstance;
+
+        SwitchYardTestCaseConfig testCaseConfig = testInstance.getClass().getAnnotation(SwitchYardTestCaseConfig.class);
 
         if (testCaseConfig != null) {
             String config = testCaseConfig.config();
@@ -156,61 +140,32 @@ public abstract class SwitchYardTestCase {
         }
         MockInitialContextFactory.install();
         createMixInInstances();
-        initializeMixIns();
-
-        TEST_RUNNER.get().setTestCase(this);
+        intialize();
     }
 
     /**
-     * Cleanup
+     * Initialize.
      */
-    private void cleanup() {
+    private void intialize() throws Exception {
+        initializeMixIns();
+        deploy();
+    }
+
+    /**
+     * Cleanup.
+     */
+    public void cleanup() {
+        undeploy();
         cleanupMixIns();
         MockInitialContextFactory.clear();
     }
 
     /**
-     * Public constructor.
-     * @param configModel Configuration model stream.
+     * Get the test class instance.
+     * @return The test class instance.
      */
-    public SwitchYardTestCase(InputStream configModel) {
-        SwitchYardTestCaseConfig testCaseConfig = getClass().getAnnotation(SwitchYardTestCaseConfig.class);
-        _configModel = createSwitchYardModel(configModel, createScanners(testCaseConfig));
-    }
-
-    /**
-     * Public constructor.
-     * <p/>
-     * Loads the config model from the classpath.
-     *
-     * @param configModelPath Configuration model classpath path.
-     */
-    public SwitchYardTestCase(String configModelPath) {
-        Assert.assertNotNull("Test 'configModel' is null.", configModelPath);
-        SwitchYardTestCaseConfig testCaseConfig = getClass().getAnnotation(SwitchYardTestCaseConfig.class);
-        InputStream is = null;
-        try {
-            is = getResourceAsStream(configModelPath);
-            _configModel = createSwitchYardModel(is, createScanners(testCaseConfig));
-        } finally {
-            try {
-                if (is != null) {
-                    is.close();
-                }
-            } catch (Throwable t) {
-                // just to keep checkstyle happy
-                t.getMessage();
-            }
-        }
-    }
-
-    /**
-     * Public constructor.
-     * @param configModel Configuration model.
-     */
-    public SwitchYardTestCase(SwitchYardModel configModel) {
-        Assert.assertNotNull("Test 'configModel' is null.", configModel);
-        _configModel = configModel;
+    public Object getTestInstance() {
+        return _testInstance;
     }
 
     /**
@@ -228,8 +183,7 @@ public abstract class SwitchYardTestCase {
      * Create and initialise the deployment.
      * @throws Exception creating the deployment.
      */
-    @Before
-    public final void deploy() throws Exception {
+    private final void deploy() throws Exception {
         _deployment = createDeployment();
         _deployment.init(ServiceDomainManager.createDomain());
         mixInBefore();
@@ -239,8 +193,7 @@ public abstract class SwitchYardTestCase {
     /**
      * Undeploy the deployment.
      */
-    @After
-    public final void undeploy() {
+    private final void undeploy() {
         assertDeployed();
         _deployment.stop();
         mixInAfter();
@@ -252,14 +205,14 @@ public abstract class SwitchYardTestCase {
      * @return The deployment instance.
      * @throws Exception creating the deployment.
      */
-    protected AbstractDeployment createDeployment() throws Exception {
+    private AbstractDeployment createDeployment() throws Exception {
         if (_configModel != null) {
             return new Deployment(_configModel);
         } else {
             return new SimpleTestDeployment();
         }
     }
-    
+
     /**
      * Get the deployment instance associated with the test case.
      * @return The deployment instance associated with the test case.
@@ -285,7 +238,7 @@ public abstract class SwitchYardTestCase {
      * @param serviceName The Service name.
      * @return The {@link MockHandler} service handler.
      */
-    protected MockHandler registerInOutService(String serviceName) {
+    public MockHandler registerInOutService(String serviceName) {
         MockHandler handler = new MockHandler();
         getServiceDomain().registerService(QName.valueOf(serviceName), handler, new InOutService());
         return handler;
@@ -297,7 +250,7 @@ public abstract class SwitchYardTestCase {
      * @param serviceName The Service name.
      * @param serviceHandler The service handler.
      */
-    protected void registerInOutService(String serviceName, ExchangeHandler serviceHandler) {
+    public void registerInOutService(String serviceName, ExchangeHandler serviceHandler) {
         getServiceDomain().registerService(QName.valueOf(serviceName), serviceHandler, new InOutService());
     }
 
@@ -308,7 +261,7 @@ public abstract class SwitchYardTestCase {
      * @param serviceHandler The service handler.
      * @param metadata Service interface.
      */
-    protected void registerInOutService(String serviceName, ExchangeHandler serviceHandler, ServiceInterface metadata) {
+    public void registerInOutService(String serviceName, ExchangeHandler serviceHandler, ServiceInterface metadata) {
         getServiceDomain().registerService(QName.valueOf(serviceName), serviceHandler, metadata);
     }
 
@@ -320,7 +273,7 @@ public abstract class SwitchYardTestCase {
      * @param serviceName The Service name.
      * @return The {@link MockHandler} service fault handler.
      */
-    protected MockHandler registerInOnlyService(String serviceName) {
+    public MockHandler registerInOnlyService(String serviceName) {
         MockHandler handler = new MockHandler();
         getServiceDomain().registerService(QName.valueOf(serviceName), handler, new InOnlyService());
         return handler;
@@ -332,7 +285,7 @@ public abstract class SwitchYardTestCase {
      * @param serviceName The Service name.
      * @param serviceHandler The service handler.
      */
-    protected void registerInOnlyService(String serviceName, ExchangeHandler serviceHandler) {
+    public void registerInOnlyService(String serviceName, ExchangeHandler serviceHandler) {
         getServiceDomain().registerService(QName.valueOf(serviceName), serviceHandler, new InOnlyService());
     }
 
@@ -349,7 +302,7 @@ public abstract class SwitchYardTestCase {
      * @param serviceName The target Service name.
      * @return The invoker instance.
      */
-    protected Invoker newInvoker(QName serviceName) {
+    public Invoker newInvoker(QName serviceName) {
         return new Invoker(getServiceDomain(), serviceName);
     }
 
@@ -359,12 +312,12 @@ public abstract class SwitchYardTestCase {
      * include the operation name e.g. "OrderManagementService.createOrder".
      * @return The invoker instance.
      */
-    protected Invoker newInvoker(String serviceName) {
+    public Invoker newInvoker(String serviceName) {
         return new Invoker(getServiceDomain(), serviceName);
     }
 
     /**
-     * Create a new {@link Transformer} instance from the specified {@link TransformModel}.
+     * Create a new {@link Transformer} instance from the specified {@link org.switchyard.config.model.transform.TransformModel}.
      * @param transformModel The TransformModel.
      * @return The Transformer instance.
      */
@@ -393,6 +346,14 @@ public abstract class SwitchYardTestCase {
     }
 
     /**
+     * Get the {@link TestMixIn} instances associated with this test instance.
+     * @return The {@link TestMixIn} instances associated with this test instance.
+     */
+    public List<TestMixIn> getMixIns() {
+        return _testMixInInstances;
+    }
+
+    /**
      * Get the "active" {@link TestMixIn} instance of the specified type.
      * <p/>
      * This method can only be called from inside a test method.
@@ -411,7 +372,7 @@ public abstract class SwitchYardTestCase {
 
         int indexOf = _testMixIns.indexOf(type);
         if (indexOf == -1) {
-            Assert.fail("Required TestMixIn '" + type.getName() + "' is not specified on TestCase '" + getClass().getName() + "'.");
+            Assert.fail("Required TestMixIn '" + type.getName() + "' is not specified on TestCase '" + _testInstance.getClass().getName() + "'.");
         }
 
         return type.cast(_testMixInInstances.get(indexOf));
@@ -425,11 +386,11 @@ public abstract class SwitchYardTestCase {
      * @param name Name of the desired resource
      * @return A {@link java.io.InputStream} object or <tt>null</tt> if no resource with this name is found.
      *
-     * @see Classes#getResourceAsStream(String,Class)
+     * @see org.switchyard.common.type.Classes#getResourceAsStream(String,Class)
      */
     public InputStream getResourceAsStream(String name) {
         try {
-            return Classes.getResourceAsStream(name, getClass());
+            return Classes.getResourceAsStream(name, _testInstance.getClass());
         } catch (IOException ioe) {
             return null;
         }
@@ -448,7 +409,7 @@ public abstract class SwitchYardTestCase {
 
         InputStream resourceStream = getResourceAsStream(path);
         if (resourceStream == null) {
-            Assert.fail("Resource '" + path + "' not found on classpath relative to test class '" + getClass().getName() + "'.  May need to fix the relative path, or make the path absolute.");
+            Assert.fail("Resource '" + path + "' not found on classpath relative to test class '" + _testInstance.getClass().getName() + "'.  May need to fix the relative path, or make the path absolute.");
         }
 
         ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
@@ -609,7 +570,7 @@ public abstract class SwitchYardTestCase {
         for (Class<? extends TestMixIn> mixInType : _testMixIns) {
             try {
                 TestMixIn testMixIn = mixInType.newInstance();
-                testMixIn.setTestCase(this);
+                testMixIn.setTestKit(this);
                 _testMixInInstances.add(testMixIn);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -623,7 +584,7 @@ public abstract class SwitchYardTestCase {
 
         try {
             SwitchYardModel model = loadSwitchYardModel(configModel);
-            ClassLoader classLoader = getClass().getClassLoader();
+            ClassLoader classLoader = _testInstance.getClass().getClassLoader();
 
             if (scanners != null && !scanners.isEmpty() && classLoader instanceof URLClassLoader) {
                 MergeScanner<V1SwitchYardModel> merge_scanner = new MergeScanner<V1SwitchYardModel>(V1SwitchYardModel.class, true, scanners);
@@ -727,41 +688,6 @@ public abstract class SwitchYardTestCase {
         @Override
         public QName getTo() {
             return _transformModel.getTo();
-        }
-    }
-
-    /**
-     * Test Runner
-     */
-    protected static class TestRunner extends BlockJUnit4ClassRunner {
-
-        private SwitchYardTestCase _testCase;
-
-        /**
-         * Public constructor.
-         * @param klass The test Class.
-         * @throws InitializationError Initialization error.
-         */
-        public TestRunner(Class<?> klass) throws InitializationError {
-            super(klass);
-        }
-
-        private void setTestCase(SwitchYardTestCase testCase) {
-            this._testCase = testCase;
-        }
-
-        @Override
-        public void run(RunNotifier notifier) {
-            try {
-                TEST_RUNNER.set(this);
-                super.run(notifier);
-            } finally {
-                try {
-                    _testCase.cleanup();
-                } finally {
-                    TEST_RUNNER.remove();
-                }
-            }
         }
     }
 
