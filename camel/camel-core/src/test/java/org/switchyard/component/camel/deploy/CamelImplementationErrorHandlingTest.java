@@ -27,9 +27,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.switchyard.component.camel.deploy.support.CustomException;
 import org.switchyard.deploy.internal.Deployment;
-import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.Invoker;
+import org.switchyard.test.ServiceOperation;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
 
@@ -40,12 +43,18 @@ import org.switchyard.test.mixins.CDIMixIn;
  * @author Daniel Bevenius
  * 
  */
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(config = "switchyard-activator-impl-error.xml", mixins = CDIMixIn.class)
-public class CamelImplementationErrorHandlingTest extends SwitchYardTestCase {
-    
+public class CamelImplementationErrorHandlingTest {
+
+    @ServiceOperation("OrderService.getTitleForItem")
+    private Invoker _getTitleForItem;
+
+    private Deployment _deployment;
+
     @Rule
     public SwitchYardExpectedException thrown = SwitchYardExpectedException.none();
-    
+
     @Before
     public void setupMockEndpoint() {
         final CamelContext camelContext = getCamelContext();
@@ -57,7 +66,7 @@ public class CamelImplementationErrorHandlingTest extends SwitchYardTestCase {
     public void shouldThrowRuntimeExceptionFromCamelRoute() throws Exception {
         thrown.expect(CustomException.class);
         thrown.expectMessage("dummy exception");
-        newInvoker("OrderService").operation("getTitleForItem").sendInOut("10");
+        _getTitleForItem.sendInOut("10");
     }
     
     private class ExceptionThrowingProcesor implements Processor {
@@ -66,10 +75,9 @@ public class CamelImplementationErrorHandlingTest extends SwitchYardTestCase {
             throw new CustomException("dummy exception");
         }
     }
-    
+
     private CamelContext getCamelContext() {
-        final Deployment deployment = (Deployment) getDeployment();
-        final CamelActivator activator = (CamelActivator) deployment.findActivator("camel");
+        final CamelActivator activator = (CamelActivator) _deployment.findActivator("camel");
         return activator.getCamelContext();
     }
 }

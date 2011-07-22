@@ -21,21 +21,28 @@ package org.switchyard.component.bean.tests;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.switchyard.Message;
-import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.Invoker;
+import org.switchyard.test.ServiceOperation;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
-public class InputTypeMismatchTest extends SwitchYardTestCase {
+public class InputTypeMismatchTest {
+
+    @ServiceOperation("ConsumerService.domOperation")
+    private Invoker domOperation;
 
     @Test
     public void test_invokeWithWrongInputParameterType() {
         // A basic type conversion should happen automatically...
-        Message response = newInvoker("ConsumerService.domOperation").sendInOut("<a><b/></a>");
+        Message response = domOperation.sendInOut("<a><b/></a>");
 
         Assert.assertEquals("<c/>", response.getContent());
     }

@@ -27,8 +27,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.switchyard.deploy.internal.Deployment;
-import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.Invoker;
+import org.switchyard.test.ServiceOperation;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
 
@@ -38,9 +41,15 @@ import org.switchyard.test.mixins.CDIMixIn;
  * @author Daniel Bevenius
  * 
  */
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(config = "switchyard-activator-ref.xml", mixins = CDIMixIn.class)
-public class CamelReferenceTest extends SwitchYardTestCase {
-    
+public class CamelReferenceTest {
+
+    @ServiceOperation("OrderService.getTitleForItem")
+    private Invoker _getTitleForItem;
+
+    private Deployment _deployment;
+
     @Test
     public void invokeCamelEndpointViaInjection() throws Exception {
         final CamelContext camelContext = getCamelContext();
@@ -53,14 +62,13 @@ public class CamelReferenceTest extends SwitchYardTestCase {
             }
         });
         final String itemId = "1";
-        final String title = (String) newInvoker("OrderService").operation("getTitleForItem").sendInOut(itemId).getContent();
+        final String title = (String) _getTitleForItem.sendInOut(itemId).getContent();
         
         assertThat(title, is(equalTo("Fletch")));
     }
     
     private CamelContext getCamelContext() {
-        final Deployment deployment = (Deployment) getDeployment();
-        final CamelActivator activator = (CamelActivator) deployment.findActivator("camel");
+        final CamelActivator activator = (CamelActivator) _deployment.findActivator("camel");
         return activator.getCamelContext();
     }
 }

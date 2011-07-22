@@ -38,6 +38,7 @@ import org.drools.io.ResourceFactory;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.switchyard.BaseHandler;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
@@ -53,24 +54,26 @@ import org.switchyard.component.bpm.exchange.BpmExchangeHandler;
 import org.switchyard.component.bpm.exchange.BpmExchangeHandlerFactory;
 import org.switchyard.component.bpm.task.SwitchYardServiceTaskHandler;
 import org.switchyard.component.bpm.task.drools.DroolsWorkItemHandler;
-import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.SwitchYardRunner;
 
 /**
  * Tests the Drools BPM implementation.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class BpmDroolsTests extends SwitchYardTestCase {
+@RunWith(SwitchYardRunner.class)
+public class BpmDroolsTests {
 
     private static final String TEST_CALL_SERVICE = "org/switchyard/component/bpm/drools/BpmDroolsTests-CallService.bpmn";
     private static final String TEST_CONTROL_PROCESS = "org/switchyard/component/bpm/drools/BpmDroolsTests-ControlProcess.bpmn";
     private static final String TEST_REUSE_HANDLER = "org/switchyard/component/bpm/drools/BpmDroolsTests-ReuseHandler.bpmn";
 
+    private ServiceDomain serviceDomain;
+
     @Test
     public void testCallService() throws Exception {
         final Holder holder = new Holder();
-        ServiceDomain domain = getServiceDomain();
-        domain.registerService(new QName("CallService"), new BaseHandler(){
+        serviceDomain.registerService(new QName("CallService"), new BaseHandler(){
             public void handleMessage(Exchange exchange) throws HandlerException {
                 holder.value = "message handled";
             }
@@ -80,7 +83,7 @@ public class BpmDroolsTests extends SwitchYardTestCase {
         KnowledgeBase kbase = kbuilder.newKnowledgeBase();
         StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession();
         SwitchYardServiceTaskHandler stih = new SwitchYardServiceTaskHandler();
-        stih.setServiceDomain(getServiceDomain());
+        stih.setServiceDomain(serviceDomain);
         ksession.getWorkItemManager().registerWorkItemHandler(stih.getName(), new DroolsWorkItemHandler(ksession, stih));
         ksession.startProcess("CallService");
         ksession.halt();
@@ -91,7 +94,6 @@ public class BpmDroolsTests extends SwitchYardTestCase {
     @Test
     public void testControlProcess() throws Exception {
         final Holder holder = new Holder();
-        ServiceDomain serviceDomain = getServiceDomain();
         serviceDomain.registerService(new QName("CallService"), new BaseHandler(){
             public void handleMessage(Exchange exchange) throws HandlerException {
                 holder.value = "message handled";
@@ -125,7 +127,6 @@ public class BpmDroolsTests extends SwitchYardTestCase {
 
     @Test
     public void testReuseHandler() throws Exception {
-        ServiceDomain serviceDomain = getServiceDomain();
         QName qname = new QName("ReuseHandler");
         BpmExchangeHandler handler = BpmExchangeHandlerFactory.instance().newBpmExchangeHandler(serviceDomain);
         ServiceReference serviceRef = serviceDomain.registerService(qname, handler);

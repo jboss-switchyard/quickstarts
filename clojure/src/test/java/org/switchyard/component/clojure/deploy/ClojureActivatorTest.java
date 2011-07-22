@@ -25,7 +25,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.Test;
-import org.switchyard.test.SwitchYardTestCase;
+import org.junit.runner.RunWith;
+import org.switchyard.test.Invoker;
+import org.switchyard.test.ServiceOperation;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
 
@@ -35,12 +38,16 @@ import org.switchyard.test.mixins.CDIMixIn;
  * @author Daniel Bevenius
  *
  */
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(config = "switchyard-clojure.xml", mixins = CDIMixIn.class)
-public class ClojureActivatorTest extends SwitchYardTestCase {
-    
+public class ClojureActivatorTest {
+
+    @ServiceOperation("OrderService.getTitleForItem")
+    private Invoker _getTitleForItem;
+
     @Test
     public void activtor() {
-        final String title = (String) newInvoker("OrderService").operation("getTitleForItem").sendInOut(10).getContent(String.class);
+        final String title = _getTitleForItem.sendInOut(10).getContent(String.class);
         assertThat(title, is(equalTo("Fletch")));
     }
     

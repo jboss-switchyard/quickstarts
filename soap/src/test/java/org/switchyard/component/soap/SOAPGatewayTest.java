@@ -48,6 +48,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
@@ -60,7 +61,8 @@ import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.test.InvocationFaultException;
-import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.Invoker;
+import org.switchyard.test.SwitchYardRunner;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -69,15 +71,21 @@ import org.w3c.dom.Node;
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
-public class SOAPGatewayTest extends SwitchYardTestCase {
-    private static final QName WS_CONSUMER_SERVICE = new QName("webservice-consumer");
-    private static final QName WS_CONSUMER_CLASSPATH_WSDL = new QName("webservice-consumer-classpath-wsdl");
+@RunWith(SwitchYardRunner.class)
+public class SOAPGatewayTest {
     private static final int DEFAULT_THREAD_COUNT = 10;
     private static final long DEFAULT_NO_OF_THREADS = 100;
 
+    private ServiceDomain _domain;
+
+    @org.switchyard.test.ServiceOperation("webservice-consumer")
+    private Invoker consumerService;
+
+    @org.switchyard.test.ServiceOperation("webservice-consumer-classpath-wsdl")
+    private Invoker consumerCPWsdl;
+
     private SOAPBindingModel _config;
     private static URL _serviceURL;
-    private ServiceDomain _domain;
     private SOAPGateway _soapInbound;
     private SOAPGateway _soapOutbound;
     private SOAPGateway _soapOutbound2;
@@ -133,7 +141,6 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
         _puller = new ModelPuller<CompositeModel>();
         
         // Provide a switchyard service
-        _domain = getServiceDomain();
         SOAPProvider provider = new SOAPProvider();
 
         CompositeModel composite = _puller.pull("/HelloSwitchYard.xml", getClass());
@@ -169,14 +176,14 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
         _soapOutbound = new SOAPGateway();
         SOAPBindingModel config2 = new SOAPBindingModel();
         config2.setWsdl(_serviceURL.toExternalForm() + "?wsdl");
-        config2.setServiceName(WS_CONSUMER_SERVICE);
+        config2.setServiceName(consumerService.getServiceName());
         _soapOutbound.init(config2, _domain);
         _soapOutbound.start();
 
         _soapOutbound2 = new SOAPGateway();
         SOAPBindingModel config3 = new SOAPBindingModel();
         config3.setWsdl(_config.getWsdl());
-        config3.setServiceName(WS_CONSUMER_CLASSPATH_WSDL);
+        config3.setServiceName(consumerCPWsdl.getServiceName());
         _soapOutbound2.init(config3, _domain);
         _soapOutbound2.start();
 
@@ -216,7 +223,7 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
                      + "</test:sayHello>").getDocumentElement();
         String rootCause = null;
         try {
-            newInvoker(WS_CONSUMER_CLASSPATH_WSDL).sendInOut(input);
+            consumerCPWsdl.sendInOut(input);
         } catch (InvocationFaultException ife) {
             rootCause = getRootCause(ife);
         }
@@ -232,7 +239,7 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
                      + "   <arg0>Hello</arg0>"
                      + "</test:helloWS>").getDocumentElement();
 
-        newInvoker(WS_CONSUMER_SERVICE).sendInOnly(input);
+        consumerService.sendInOnly(input);
     }
 
     @Test
@@ -246,7 +253,7 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
                      + "</test:sayHelloResponse>";
 
 
-        Message responseMsg = newInvoker(WS_CONSUMER_SERVICE).sendInOut(input);
+        Message responseMsg = consumerService.sendInOut(input);
 
         String response = toString(responseMsg.getContent(Node.class));
         XMLAssert.assertXMLEqual(output, response);
@@ -278,7 +285,7 @@ public class SOAPGatewayTest extends SwitchYardTestCase {
                         + "   </detail>"
                         + "</soap:Fault>";
 
-        Message responseMsg = newInvoker(WS_CONSUMER_SERVICE).sendInOut(input);
+        Message responseMsg = consumerService.sendInOut(input);
         String response = toString(responseMsg.getContent(Node.class));
         XMLAssert.assertXMLEqual(output, response);
     }

@@ -23,26 +23,27 @@ import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
-import org.switchyard.component.soap.jaxb.greeting.Greeting;
 import org.switchyard.component.soap.util.StreamUtil;
-import org.switchyard.metadata.java.JavaService;
-import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
-import org.switchyard.transform.jaxb.internal.JAXBMarshalTransformer;
-import org.switchyard.transform.jaxb.internal.JAXBTransformerFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
 import java.io.ByteArrayOutputStream;
 import java.net.MalformedURLException;
 
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
-public class JAXBGreetingServiceTest extends SwitchYardTestCase {
+public class JAXBGreetingServiceTest {
 
     private static final QName GREETING_SERVICE_NAME = new QName("JAXBGreetingService");
+
+    private ServiceDomain _domain;
 
     private SOAPBindingModel config;
 
@@ -102,7 +103,7 @@ public class JAXBGreetingServiceTest extends SwitchYardTestCase {
     public void test(String request, String expectedResponse, boolean dumpResponse) throws Exception {
 
         // Launch the SOAP Handler...
-        ServiceReference service = getServiceDomain().getService(GREETING_SERVICE_NAME);
+        ServiceReference service = _domain.getService(GREETING_SERVICE_NAME);
         InboundHandler inboundHandler = new InboundHandler(config);
         inboundHandler.start(service);
 

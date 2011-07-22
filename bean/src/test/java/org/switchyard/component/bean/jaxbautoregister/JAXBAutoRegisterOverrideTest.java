@@ -21,29 +21,30 @@ package org.switchyard.component.bean.jaxbautoregister;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.switchyard.metadata.java.JavaService;
-import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 import org.switchyard.transform.jaxb.internal.JAXBMarshalTransformer;
-import org.switchyard.transform.jaxb.internal.JAXBUnmarshalTransformer;
 
 import javax.xml.namespace.QName;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(config = "/jaxbautoregister/switchyard-config-02.xml", mixins = CDIMixIn.class)
-public class JAXBAutoRegisterOverrideTest extends SwitchYardTestCase {
+public class JAXBAutoRegisterOverrideTest {
+
+    private TransformerRegistry _transformRegistry;
 
     @Test
     public void test_userOverride() {
-        TransformerRegistry transformRegistry = getServiceDomain().getTransformerRegistry();
-
-        Transformer<?,?> unmarshaller = transformRegistry.getTransformer(new QName("purchaseOrder"), JavaService.toMessageType(POType.class));
-        Transformer<?,?> marshaller   = transformRegistry.getTransformer(JavaService.toMessageType(POType.class), new QName("purchaseOrder"));
+        Transformer<?,?> unmarshaller = _transformRegistry.getTransformer(new QName("purchaseOrder"), JavaService.toMessageType(POType.class));
+        Transformer<?,?> marshaller   = _transformRegistry.getTransformer(JavaService.toMessageType(POType.class), new QName("purchaseOrder"));
 
         Assert.assertTrue(unmarshaller instanceof OverrideTransformer); // The unmarshaler should be the user defined override
         Assert.assertEquals("purchaseOrder", unmarshaller.getFrom().toString());

@@ -21,22 +21,28 @@ package org.switchyard.component.bean.omservice.basic;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.switchyard.Message;
 import org.switchyard.component.bean.omservice.model.OrderRequest;
 import org.switchyard.component.bean.omservice.model.OrderResponse;
-import org.switchyard.test.SwitchYardTestCase;
 import org.switchyard.test.SwitchYardTestCaseConfig;
+import org.switchyard.test.SwitchYardRunner;
+import org.switchyard.test.SwitchYardTestKit;
 import org.switchyard.test.mixins.CDIMixIn;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
-public class BasicInOutTest extends SwitchYardTestCase {
+public class BasicInOutTest {
+
+    private SwitchYardTestKit _testKit;
 
     @Test
     public void test_New_Way() {
-        Message responseMsg = newInvoker("BasicOrderManagementService.createOrder").
+
+        Message responseMsg = _testKit.newInvoker("BasicOrderManagementService.createOrder").
                                     sendInOut(new OrderRequest("D123", "ABCD"));
 
         OrderResponse response = (OrderResponse) responseMsg.getContent();

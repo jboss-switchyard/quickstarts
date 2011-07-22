@@ -37,31 +37,34 @@ import javax.xml.namespace.QName;
 
 import org.hornetq.core.registry.JndiBindingRegistry;
 import org.hornetq.jms.server.embedded.EmbeddedJMS;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.switchyard.Exchange;
 import org.switchyard.deploy.internal.Deployment;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.MockInitialContextFactory;
-import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
+import org.switchyard.test.SwitchYardTestKit;
 import org.switchyard.test.mixins.CDIMixIn;
 
 /**
  * Test using Camel's JMS Component in SwitchYard.
- * 
+ *
  * @author Daniel Bevenius
- * 
+ *
  */
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(config = "switchyard-jms-test.xml", mixins = CDIMixIn.class)
-public class CamelJMSTest extends SwitchYardTestCase {
-    
-    private static EmbeddedJMS embeddedJMS;
+public class CamelJMSTest {
+
     private static final QName SERVICE_NAME = new QName("SimpleCamelService");
-    
-    @BeforeClass
-    public static void setupHornetQServer() throws Exception {
+
+    private EmbeddedJMS embeddedJMS;
+    private SwitchYardTestKit _testKit;
+
+    public CamelJMSTest() throws Exception {
         MockInitialContextFactory.install();
         embeddedJMS = new EmbeddedJMS();
         embeddedJMS.setRegistry(new JndiBindingRegistry());
@@ -69,47 +72,47 @@ public class CamelJMSTest extends SwitchYardTestCase {
         embeddedJMS.setJmsConfigResourcePath("hornetq-jms.xml");
         embeddedJMS.start();
     }
-    
+
     @Test
     public void sendOneWayTextMessageToJMSQueue() throws Exception {
         sendAndAssertOneMessage();
     }
-    
+
     @Test
     public void stopAndStartCamelActivator() throws Exception {
         sendAndAssertOneMessage();
         stopCamelActivator();
-        
+
         Thread.sleep(2000);
-        
+
         startCamelActivator();
         sendAndAssertOneMessage();
     }
-    
+
     private void stopCamelActivator() {
-        getCamelActivator().stop(getServiceDomain().getService(SERVICE_NAME));
+        getCamelActivator().stop(_testKit.getServiceDomain().getService(SERVICE_NAME));
     }
-    
+
     private void startCamelActivator() {
-        getCamelActivator().start(getServiceDomain().getService(SERVICE_NAME));
+        getCamelActivator().start(_testKit.getServiceDomain().getService(SERVICE_NAME));
     }
-    
+
     private void sendAndAssertOneMessage() throws Exception, InterruptedException {
         final String payload = "dummy payload";
-        final MockHandler simpleCamelService = registerInOnlyService("SimpleCamelService");
-        
+        final MockHandler simpleCamelService = _testKit.registerInOnlyService("SimpleCamelService");
+
         sendTextToQueue(payload, "testQueue");
         // Allow for the JMS Message to be processed.
         Thread.sleep(3000);
-        
+
         final LinkedBlockingQueue<Exchange> recievedMessages = simpleCamelService.getMessages();
         assertThat(recievedMessages, is(notNullValue()));
         final Exchange recievedExchange = recievedMessages.iterator().next();
         assertThat(recievedExchange.getMessage().getContent(String.class), is(equalTo(payload)));
     }
-    
+
     private CamelActivator getCamelActivator() {
-        final Deployment deployment = (Deployment) getDeployment();
+        final Deployment deployment = (Deployment) _testKit.getDeployment();
         return (CamelActivator) deployment.findActivator("camel");
     }
     
@@ -143,8 +146,8 @@ public class CamelJMSTest extends SwitchYardTestCase {
         }
     }
     
-    @AfterClass
-    public static void stopHornetQServer() throws Exception {
+    @After
+    public void stopHornetQServer() throws Exception {
         embeddedJMS.stop();
     }
     

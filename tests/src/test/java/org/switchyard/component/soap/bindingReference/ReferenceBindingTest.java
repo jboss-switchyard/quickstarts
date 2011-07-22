@@ -19,24 +19,27 @@
 
 package org.switchyard.component.soap.bindingReference;
 
-import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.switchyard.test.Invoker;
+import org.switchyard.test.ServiceOperation;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
-import org.switchyard.test.SwitchYardTestCase;
 import org.switchyard.test.mixins.CDIMixIn;
 import org.w3c.dom.Element;
 
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(mixins = CDIMixIn.class, config = "/soap.bindingReference/switchyard.xml")
-public class ReferenceBindingTest extends SwitchYardTestCase {
+public class ReferenceBindingTest {
 
-    private static final QName DUMMY_SOAP_SERVICE = 
-        new QName("DummySOAPServiceService");
-    
+    @ServiceOperation("DummySOAPServiceService.testOperation")
+    private Invoker _testOperation;
+
     private static final String NAMESPACE_URI = 
         "http://bindingReference.soap.component.switchyard.org/";
     
@@ -64,8 +67,7 @@ public class ReferenceBindingTest extends SwitchYardTestCase {
             "<arg0>" + requestString + "</arg0>" +
             "</foo:testOperation>";
         
-        Element replyMessage = newInvoker(DUMMY_SOAP_SERVICE)
-            .operation("testOperation")
+        Element replyMessage = _testOperation
             .sendInOut(requestMessage)
             .getContent(Element.class);
          

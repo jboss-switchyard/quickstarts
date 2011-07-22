@@ -20,9 +20,11 @@
 package org.switchyard.component.model;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.switchyard.config.model.Models;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
-import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.SwitchYardRunner;
+import org.switchyard.test.SwitchYardTestKit;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -30,12 +32,15 @@ import java.io.StringWriter;
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class ModelMergeTest extends SwitchYardTestCase {
+@RunWith(SwitchYardRunner.class)
+public class ModelMergeTest {
+
+    private SwitchYardTestKit _testKit;
 
     @Test
     public void test() throws IOException {
-        SwitchYardModel model1 = loadSwitchYardModel(getResourceAsStream("switchyard_1.xml"));
-        SwitchYardModel model2 = loadSwitchYardModel(getResourceAsStream("switchyard_2.xml"));
+        SwitchYardModel model1 = _testKit.loadSwitchYardModel(getClass().getResourceAsStream("switchyard_1.xml"));
+        SwitchYardModel model2 = _testKit.loadSwitchYardModel(getClass().getResourceAsStream("switchyard_2.xml"));
 
         // Merge and compare...
         SwitchYardModel model3 = Models.merge(model1, model2, false);
@@ -43,7 +48,7 @@ public class ModelMergeTest extends SwitchYardTestCase {
 
         // Testing that merging the same model multiple times has no effect...
         model3 = Models.merge(model3, model2, false);
-        model2 = loadSwitchYardModel(getResourceAsStream("switchyard_2.xml")); // re-read in case only works for instance equality
+        model2 = _testKit.loadSwitchYardModel(getClass().getResourceAsStream("switchyard_2.xml")); // re-read in case only works for instance equality
         model3 = Models.merge(model3, model2, false);
         compareToExpected(model3);
     }
@@ -52,6 +57,6 @@ public class ModelMergeTest extends SwitchYardTestCase {
         StringWriter stringWriter = new StringWriter();
         mergedModel.write(stringWriter);
 //        System.out.println(stringWriter);
-        compareXMLToResource(stringWriter.toString(), "expected_merged_switchyard.xml");
+        _testKit.compareXMLToResource(stringWriter.toString(), "expected_merged_switchyard.xml");
     }
 }

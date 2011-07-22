@@ -21,27 +21,38 @@ package org.switchyard.component.bean.tests;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.switchyard.Message;
 import org.switchyard.component.bean.BeanComponentException;
 import org.switchyard.test.InvocationFaultException;
-import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.Invoker;
+import org.switchyard.test.ServiceOperation;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
 
 /*
  * Assorted methods for testing a CDI bean consuming a service in SwitchYard.
  */
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
-public class BeanConsumerTest extends SwitchYardTestCase {
+public class BeanConsumerTest {
+
+    @ServiceOperation("ConsumerService.consumeInOnlyService")
+    private Invoker inOnly;
+    @ServiceOperation("ConsumerService.consumeInOutService")
+    private Invoker inOut;
+    @ServiceOperation("ConsumerService.unknownXOp")
+    private Invoker unknownXOp;
 
     @Test
     public void consumeInOnlyServiceFromBean_new_way() {
-        newInvoker("ConsumerService.consumeInOnlyService").sendInOnly("hello");
+        inOnly.sendInOnly("hello");
     }
 
     @Test
     public void consumeInOutServiceFromBean_new_way() {
-        Message responseMsg = newInvoker("ConsumerService.consumeInOutService").sendInOut("hello");
+        Message responseMsg = inOut.sendInOut("hello");
 
         Assert.assertEquals("hello", responseMsg.getContent());
     }
@@ -50,7 +61,7 @@ public class BeanConsumerTest extends SwitchYardTestCase {
     public void consumeInOnlyServiceFromBean_Fault_invalid_opertion() {
         try {
             // this should result in a fault
-            newInvoker("ConsumerService.unknownXOp").sendInOut("hello");
+            unknownXOp.sendInOut("hello");
             // if we got here, then our negative test failed
             Assert.fail("Invalid operation allowed!");
         } catch (InvocationFaultException infEx) {
@@ -65,7 +76,7 @@ public class BeanConsumerTest extends SwitchYardTestCase {
     public void consumeInOnlyServiceFromBean_Fault_service_exception() {
         try {
             // this should result in a fault
-            newInvoker("ConsumerService.consumeInOutService").sendInOut(new ConsumerException("throw me a remote exception please!!"));
+            inOut.sendInOut(new ConsumerException("throw me a remote exception please!!"));
             // if we got here, then our negative test failed
             Assert.fail("Exception thrown by bean but not turned into fault!");
         } catch (InvocationFaultException infEx) {

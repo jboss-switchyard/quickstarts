@@ -31,12 +31,14 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.camel.deploy.support.CustomPackageScanResolver;
 import org.switchyard.deploy.internal.Deployment;
 import org.switchyard.test.MockHandler;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
-import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.SwitchYardTestKit;
 import org.switchyard.test.mixins.CDIMixIn;
 
 import javax.xml.namespace.QName;
@@ -47,12 +49,15 @@ import javax.xml.namespace.QName;
  * @author Daniel Bevenius
  * 
  */
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(config = "switchyard-activator-test.xml", mixins = CDIMixIn.class)
-public class CamelActivatorTest extends SwitchYardTestCase {
-    
+public class CamelActivatorTest {
+
+    private SwitchYardTestKit _testKit;
+
     @Test
     public void sendOneWayMessageThroughCamelToSwitchYardService() throws Exception {
-        final MockHandler mockHandler = registerInOnlyService("SimpleCamelService");
+        final MockHandler mockHandler = _testKit.registerInOnlyService("SimpleCamelService");
         final CamelContext camelContext = getCamelContext();
         final ProducerTemplate producerTemplate = camelContext.createProducerTemplate();
         
@@ -72,8 +77,8 @@ public class CamelActivatorTest extends SwitchYardTestCase {
 
     @Test
     public void startStop() throws Exception {
-        final MockHandler mockHandler = registerInOnlyService("SimpleCamelService");
-        final ServiceReference serviceRef = getServiceDomain().getService(new QName("SimpleCamelService"));
+        final MockHandler mockHandler = _testKit.registerInOnlyService("SimpleCamelService");
+        final ServiceReference serviceRef = _testKit.getServiceDomain().getService(new QName("SimpleCamelService"));
         final CamelActivator activator = getCamelActivator();
         final CamelContext camelContext = activator.getCamelContext();
         final ProducerTemplate producerTemplate = camelContext.createProducerTemplate();
@@ -107,7 +112,7 @@ public class CamelActivatorTest extends SwitchYardTestCase {
     }
     
     private CamelActivator getCamelActivator() {
-        final Deployment deployment = (Deployment) getDeployment();
+        final Deployment deployment = (Deployment) _testKit.getDeployment();
         return (CamelActivator) deployment.findActivator("camel");
     }
 

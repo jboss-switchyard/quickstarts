@@ -21,19 +21,26 @@ package org.switchyard.component.camel.cdi;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
-import org.switchyard.component.camel.config.model.RouteScanner;
-import org.switchyard.test.SwitchYardTestCase;
+import org.junit.runner.RunWith;
+import org.switchyard.test.Invoker;
+import org.switchyard.test.ServiceOperation;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(
         config = "/switchyard-configs/cdireg-switchyard.xml",
         mixins = CDIMixIn.class)
-public class CDIAwareRegistryTest extends SwitchYardTestCase {
+public class CDIAwareRegistryTest {
+
+    @ServiceOperation("JavaDSL.acceptMessage")
+    private Invoker _acceptMessage;
+
+    private CDIMixIn _cdiMixIn;
 
     private static final String TEST_MESSAGE = "\n"
       + "bob: Hello there!\n"
@@ -46,9 +53,9 @@ public class CDIAwareRegistryTest extends SwitchYardTestCase {
 
     @Test
     public void testCamelRoute() {
-        newInvoker("JavaDSL.acceptMessage").sendInOnly(TEST_MESSAGE);
+        _acceptMessage.sendInOnly(TEST_MESSAGE);
 
-        SallyMuncherBean sallyMuncher = getMixIn(CDIMixIn.class).getObject(SallyMuncherBean.class);
+        SallyMuncherBean sallyMuncher = _cdiMixIn.getObject(SallyMuncherBean.class);
         Assert.assertEquals(3, sallyMuncher.getMunched().size());
         Assert.assertEquals("sally: I like cheese", sallyMuncher.getMunched().get(0));
         Assert.assertEquals("sally: And milk too", sallyMuncher.getMunched().get(1));

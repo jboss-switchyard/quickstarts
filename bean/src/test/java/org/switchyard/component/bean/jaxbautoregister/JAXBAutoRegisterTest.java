@@ -21,8 +21,9 @@ package org.switchyard.component.bean.jaxbautoregister;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.switchyard.metadata.java.JavaService;
-import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
 import org.switchyard.transform.Transformer;
@@ -35,13 +36,14 @@ import javax.xml.namespace.QName;
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(config = "/jaxbautoregister/switchyard-config-01.xml", mixins = CDIMixIn.class)
-public class JAXBAutoRegisterTest extends SwitchYardTestCase {
+public class JAXBAutoRegisterTest {
+
+    private TransformerRegistry transformRegistry;
 
     @Test
     public void test_userOverride() {
-        TransformerRegistry transformRegistry = getServiceDomain().getTransformerRegistry();
-
         Transformer<?,?> unmarshaller = transformRegistry.getTransformer(new QName("purchaseOrder"), JavaService.toMessageType(POType.class));
         Transformer<?,?> marshaller   = transformRegistry.getTransformer(JavaService.toMessageType(POType.class), new QName("purchaseOrder"));
 

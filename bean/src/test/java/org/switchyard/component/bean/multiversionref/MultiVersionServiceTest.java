@@ -21,7 +21,10 @@ package org.switchyard.component.bean.multiversionref;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.switchyard.test.SwitchYardTestCase;
+import org.junit.runner.RunWith;
+import org.switchyard.test.Invoker;
+import org.switchyard.test.ServiceOperation;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
 
@@ -38,19 +41,26 @@ import org.switchyard.test.mixins.CDIMixIn;
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
+@RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
-public class MultiVersionServiceTest extends SwitchYardTestCase {
+public class MultiVersionServiceTest {
+
+    @ServiceOperation("InventoryClientService1.doStuff")
+    private Invoker doStuffOp1;
+
+    @ServiceOperation("InventoryClientService2.doStuff")
+    private Invoker doStuffOp2;
 
     @Test
     public void test_InventoryClientService1() {
-        String response = newInvoker("InventoryClientService1.doStuff").sendInOut("hello").getContent(String.class);
+        String response = doStuffOp1.sendInOut("hello").getContent(String.class);
 
         Assert.assertEquals("old", response);
     }
 
     @Test
     public void test_InventoryClientService2() {
-        String response = newInvoker("InventoryClientService2.doStuff").sendInOut("hello").getContent(String.class);
+        String response = doStuffOp2.sendInOut("hello").getContent(String.class);
 
         Assert.assertEquals("new", response);
     }

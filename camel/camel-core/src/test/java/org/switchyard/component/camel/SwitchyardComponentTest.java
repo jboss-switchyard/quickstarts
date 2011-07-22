@@ -22,25 +22,24 @@ package org.switchyard.component.camel;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 import javax.xml.namespace.QName;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.camel.deploy.ServiceReferences;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.test.MockHandler;
-import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.SwitchYardRunner;
 
 /**
  * Test for {@link SwitchyardComponent}.
@@ -48,17 +47,14 @@ import org.switchyard.test.SwitchYardTestCase;
  * @author Daniel Bevenius
  *
  */
-public class SwitchyardComponentTest extends SwitchYardTestCase {
+@RunWith(SwitchYardRunner.class)
+public class SwitchyardComponentTest extends CamelTestSupport {
     private String _serviceName = "testServiceName";
-    private CamelContext _camelContext;
-    private ProducerTemplate _template;
+
+    private ServiceDomain _serviceDomain;
 
     @Before
     public void setup() throws Exception {
-        _camelContext = new DefaultCamelContext();
-        _camelContext.addRoutes(createRouteBuilder());
-        _template = _camelContext.createProducerTemplate();
-        _camelContext.start();
         ServiceReferences.clear();
     }
     
@@ -68,10 +64,10 @@ public class SwitchyardComponentTest extends SwitchYardTestCase {
         final String payload = "bajja";
         final InOnlyService inService = new InOnlyService("testServiceName");
         
-        final ServiceReference serviceReference = getServiceDomain().registerService(new QName(_serviceName), new ResponseService(expectedResponse), inService);
+        final ServiceReference serviceReference = _serviceDomain.registerService(new QName(_serviceName), new ResponseService(expectedResponse), inService);
         ServiceReferences.add(serviceReference.getName(), serviceReference);
         
-        final String response = (String) _template.requestBody("direct:input", payload);
+        final String response = (String) template.requestBody("direct:input", payload);
         assertThat(response, is(equalTo(expectedResponse)));
     }
     
@@ -80,16 +76,17 @@ public class SwitchyardComponentTest extends SwitchYardTestCase {
         final String payload = "bajja";
         final MockHandler mockService = new MockHandler();
         final InOnlyService inService = new InOnlyService("testServiceName");
-        final ServiceReference serviceReference = getServiceDomain().registerService(new QName(_serviceName), mockService, inService);
+        final ServiceReference serviceReference = _serviceDomain.registerService(new QName(_serviceName), mockService, inService);
         ServiceReferences.add(serviceReference.getName(), serviceReference);
         
-        _template.sendBody("direct:input", payload);
+        template.sendBody("direct:input", payload);
         
         assertThat(mockService.getMessages().size(), is(1));
         final String actualPayload = mockService.getMessages().iterator().next().getMessage().getContent(String.class);
         assertThat(actualPayload, is(equalTo(payload)));
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder()
         {
