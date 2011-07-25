@@ -63,6 +63,7 @@
         <module>camel/camel-core</module>
         <module>camel/camel-as6</module>
         <module>clojure</module>
+        <module>hornetq</module>
         <module>tools/forge/bean</module>
         <module>tools/forge/camel</module>
         <module>tools/forge/clojure</module>
