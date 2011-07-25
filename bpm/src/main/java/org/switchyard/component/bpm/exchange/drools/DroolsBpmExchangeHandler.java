@@ -117,9 +117,9 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
             org.drools.io.Resource kres = ResourceFactory.newUrlResource(resource.getLocationURL());
             ResourceType resourceType = resource.getType();
             if (resourceType == null) {
-                resourceType = ResourceType.BPMN2;
+                resourceType = ResourceType.valueOf("BPMN2");
             }
-            org.drools.builder.ResourceType kresType = org.drools.builder.ResourceType.getResourceType(resourceType.name());
+            org.drools.builder.ResourceType kresType = org.drools.builder.ResourceType.getResourceType(resourceType.getName());
             kbuilder.add(kres, kresType);
         }
     }

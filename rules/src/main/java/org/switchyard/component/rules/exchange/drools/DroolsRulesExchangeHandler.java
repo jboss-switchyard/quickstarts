@@ -98,7 +98,7 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
             ResourceType resourceType = resource.getType();
             if (resourceType != null) {
                 org.drools.io.Resource kres = ResourceFactory.newUrlResource(resource.getLocationURL());
-                org.drools.builder.ResourceType kresType = org.drools.builder.ResourceType.getResourceType(resourceType.name());
+                org.drools.builder.ResourceType kresType = org.drools.builder.ResourceType.getResourceType(resourceType.getName());
                 kbuilder.add(kres, kresType);
             }
         }

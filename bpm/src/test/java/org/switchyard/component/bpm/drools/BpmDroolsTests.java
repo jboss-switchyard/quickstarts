@@ -20,7 +20,6 @@ package org.switchyard.component.bpm.drools;
 
 import static org.switchyard.Scope.IN;
 import static org.switchyard.Scope.OUT;
-import static org.switchyard.common.io.resource.ResourceType.BPMN2;
 import static org.switchyard.component.bpm.common.ProcessActionType.SIGNAL_EVENT;
 import static org.switchyard.component.bpm.common.ProcessActionType.START_PROCESS;
 import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_ACTION_TYPE_VAR;
@@ -103,7 +102,7 @@ public class BpmDroolsTests {
         BpmExchangeHandler handler = BpmExchangeHandlerFactory.instance().newBpmExchangeHandler(serviceDomain);
         ServiceReference serviceRef = serviceDomain.registerService(qname, handler);
         BpmComponentImplementationModel bci_model = new V1BpmComponentImplementationModel();
-        bci_model.setProcessDefinition(new SimpleResource(TEST_CONTROL_PROCESS, BPMN2));
+        bci_model.setProcessDefinition(new SimpleResource(TEST_CONTROL_PROCESS, "BPMN2"));
         bci_model.setProcessId(qname.getLocalPart());
         bci_model.addTaskHandler(new V1TaskHandlerModel().setClazz(SwitchYardServiceTaskHandler.class).setName(SwitchYardServiceTaskHandler.SWITCHYARD_SERVICE));
         handler.init(qname, bci_model);
@@ -131,7 +130,7 @@ public class BpmDroolsTests {
         BpmExchangeHandler handler = BpmExchangeHandlerFactory.instance().newBpmExchangeHandler(serviceDomain);
         ServiceReference serviceRef = serviceDomain.registerService(qname, handler);
         BpmComponentImplementationModel bci_model = new V1BpmComponentImplementationModel();
-        bci_model.setProcessDefinition(new SimpleResource(TEST_REUSE_HANDLER, BPMN2));
+        bci_model.setProcessDefinition(new SimpleResource(TEST_REUSE_HANDLER, "BPMN2"));
         bci_model.setProcessId(qname.getLocalPart());
         bci_model.addTaskHandler(new V1TaskHandlerModel().setClazz(ReuseHandler.class).setName(qname.getLocalPart()));
         handler.init(qname, bci_model);

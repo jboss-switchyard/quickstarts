@@ -18,8 +18,6 @@
  */
 package org.switchyard.component.rules.config.model;
 
-import static org.switchyard.common.io.resource.ResourceType.DRL;
-
 import org.switchyard.common.io.resource.SimpleResource;
 import org.switchyard.component.rules.ExecuteRules;
 import org.switchyard.component.rules.Rules;
@@ -37,7 +35,7 @@ public interface DoStuffRules extends DoStuff {
 
     public static final class MyDrl extends SimpleResource {
         public MyDrl() {
-            super("path/to/my.drl", DRL);
+            super("path/to/my.drl", "DRL");
         }
     }
 

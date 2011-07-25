@@ -20,15 +20,13 @@ package org.switchyard.component.bpm;
 
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static org.switchyard.common.io.resource.ResourceType.BPMN2;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.switchyard.common.io.resource.SimpleResource;
 import org.switchyard.common.io.resource.Resource;
-import org.switchyard.common.io.resource.ResourceType;
+import org.switchyard.common.io.resource.SimpleResource;
 import org.switchyard.component.bpm.task.BaseTaskHandler;
 import org.switchyard.component.bpm.task.TaskHandler;
 
@@ -55,7 +53,7 @@ public @interface Process {
     /**
      * Specified process definition type.
      */
-    public ResourceType definitionType() default BPMN2;
+    public String definitionType() default BPMN2;
 
     /**
      * Specified process id.
@@ -76,6 +74,8 @@ public @interface Process {
     public static interface UndefinedProcessInterface {};
     /** An undefined process definition. */
     public static final String UNDEFINED_PROCESS_DEFINITION = "";
+    /** The BPMN2 ResourceType name . */
+    public static final String BPMN2 = "BPMN2";
     /** An undefined process id. */
     public static final String UNDEFINED_PROCESS_ID = "";
     /** An undefined process resource. */

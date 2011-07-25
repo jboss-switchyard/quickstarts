@@ -74,7 +74,7 @@ public class BpmModelTests {
         BpmComponentImplementationModel bci = (BpmComponentImplementationModel)implementation;
         Assert.assertEquals("bpm", bci.getType());
         Assert.assertEquals("foobar.bpmn", bci.getProcessDefinition().getLocation());
-        Assert.assertEquals("BPMN2", bci.getProcessDefinition().getType().name());
+        Assert.assertSame(ResourceType.valueOf("BPMN2"), bci.getProcessDefinition().getType());
         Assert.assertEquals("foobar", bci.getProcessId());
         Configuration config = bci.getModelConfiguration();
         Assert.assertEquals("implementation.bpm", config.getName());
@@ -83,7 +83,7 @@ public class BpmModelTests {
         Assert.assertEquals("implementation.bpm", qname.getLocalPart());
         ResourceModel prm = bci.getResources().iterator().next();
         Assert.assertEquals("foobar.drl", prm.getLocation());
-        Assert.assertEquals(ResourceType.DRL, prm.getType());
+        Assert.assertSame(ResourceType.valueOf("DRL"), prm.getType());
         TaskHandlerModel tih = bci.getTaskHandlers().iterator().next();
         Assert.assertEquals(SwitchYardServiceTaskHandler.class, tih.getClazz());
         Assert.assertNull(tih.getName());
@@ -125,17 +125,17 @@ public class BpmModelTests {
             String processId = bci.getProcessId();
             if ("SimpleProcess".equals(processId)) {
                 Assert.assertEquals("META-INF/SimpleProcess.bpmn", bci.getProcessDefinition().getLocation());
-                Assert.assertEquals(ResourceType.BPMN2, bci.getProcessDefinition().getType());
+                Assert.assertSame(ResourceType.valueOf("BPMN2"), bci.getProcessDefinition().getType());
             } else if ("ComplexProcess".equals(processId)) {
                 Assert.assertEquals("path/to/my.bpmn", bci.getProcessDefinition().getLocation());
-                Assert.assertEquals(ResourceType.BPMN2, bci.getProcessDefinition().getType());
+                Assert.assertSame(ResourceType.valueOf("BPMN2"), bci.getProcessDefinition().getType());
                 Iterator<ResourceModel> prm_iter = bci.getResources().iterator();
                 ResourceModel prm = prm_iter.next();
                 Assert.assertEquals("path/to/my.dsl", prm.getLocation());
-                Assert.assertEquals(ResourceType.DSL, prm.getType());
+                Assert.assertSame(ResourceType.valueOf("DSL"), prm.getType());
                 prm = prm_iter.next();
                 Assert.assertEquals("path/to/my.dslr", prm.getLocation());
-                Assert.assertEquals(ResourceType.DSLR, prm.getType());
+                Assert.assertSame(ResourceType.valueOf("DSLR"), prm.getType());
                 Iterator<TaskHandlerModel> wih_iter = bci.getTaskHandlers().iterator();
                 TaskHandlerModel wih = wih_iter.next();
                 Assert.assertEquals(SwitchYardServiceTaskHandler.class, wih.getClazz());

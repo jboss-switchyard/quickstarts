@@ -75,10 +75,10 @@ public class RulesModelTests {
         Iterator<ResourceModel> resource_iter = rci.getResources().iterator();
         Resource dsl = resource_iter.next();
         Assert.assertEquals("foo.dsl", dsl.getLocation());
-        Assert.assertEquals(ResourceType.DSL, dsl.getType());
+        Assert.assertSame(ResourceType.valueOf("DSL"), dsl.getType());
         Resource dslr = resource_iter.next();
         Assert.assertEquals("bar.dslr", dslr.getLocation());
-        Assert.assertEquals(ResourceType.DSLR, dslr.getType());
+        Assert.assertSame(ResourceType.valueOf("DSLR"), dslr.getType());
         RulesAuditModel ram = rci.getRulesAudit();
         Assert.assertNotNull(ram);
         Assert.assertEquals(Integer.valueOf(2000), ram.getInterval());
@@ -122,7 +122,7 @@ public class RulesModelTests {
             Iterator<ResourceModel> rm_iter = rci.getResources().iterator();
             ResourceModel rm = rm_iter.next();
             Assert.assertEquals("path/to/my.drl", rm.getLocation());
-            Assert.assertEquals(ResourceType.DRL, rm.getType());
+            Assert.assertSame(ResourceType.valueOf("DRL"), rm.getType());
         }
     }
 

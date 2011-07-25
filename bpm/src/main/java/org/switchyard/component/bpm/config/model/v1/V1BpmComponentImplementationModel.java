@@ -106,7 +106,7 @@ public class V1BpmComponentImplementationModel extends V1ComponentImplementation
     public BpmComponentImplementationModel setProcessDefinition(Resource processDefinition) {
         setModelAttribute(PROCESS_DEFINITION, processDefinition != null ? processDefinition.getLocation() : null);
         ResourceType pdt = processDefinition != null ? processDefinition.getType() : null;
-        setModelAttribute(PROCESS_DEFINITION_TYPE, pdt != null ? pdt.name() : null);
+        setModelAttribute(PROCESS_DEFINITION_TYPE, pdt != null ? pdt.getName() : null);
         return this;
     }
 
