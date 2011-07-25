@@ -1,0 +1,10 @@
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:mock="urn:switchyard-component-mock:config:1.0">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="orders">
+        <component name="OrderService">
+            <service name="OrderService">
+                <interface.java interface="org.acme.Blah"/>
+            </service>
+            <mock:implementation.mock/>
+        </component>
+    </composite>
+</switchyard>

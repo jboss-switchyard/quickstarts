@@ -143,4 +143,19 @@ public class DeploymentTest {
         
         Assert.assertNotNull("Missing activator did not trigger SwitchYardException!", exception);
     }
+
+    @Test
+    public void testUnknownInterfaceClassName() throws Exception {
+        InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-unknown-interface.xml", getClass());
+        Deployment deployment = new Deployment(swConfigStream);
+        swConfigStream.close();
+
+        deployment.init(ServiceDomainManager.createDomain());
+        try {
+            deployment.start();
+            Assert.fail("Expected SwitchYardException");
+        } catch (SwitchYardException e) {
+            Assert.assertEquals("Failed to load Service interface class 'org.acme.Blah'.", e.getMessage());
+        }
+    }
 }

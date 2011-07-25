@@ -262,8 +262,14 @@ public class Deployment extends AbstractDeployment {
         
         if (intfModel != null) {
             if (isJavaInterface(intfModel.getType())) {
-                serviceInterface = JavaService.fromClass(
-                        loadClass(intfModel.getInterface()));
+                String interfaceClass = intfModel.getInterface();
+                Class<?> serviceInterfaceType = loadClass(interfaceClass);
+
+                if (serviceInterfaceType == null) {
+                    throw new SwitchYardException("Failed to load Service interface class '" + interfaceClass + "'.");
+                }
+
+                serviceInterface = JavaService.fromClass(serviceInterfaceType);
             } else if (intfModel.getType().equals(WSDL_INTERFACE)) {
                 try {
                     serviceInterface = WSDLService.fromWSDL(intfModel.getInterface());
