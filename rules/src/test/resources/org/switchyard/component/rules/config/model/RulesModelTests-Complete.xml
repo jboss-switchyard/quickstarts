@@ -26,7 +26,7 @@ MA  02110-1301, USA.
             <rules:implementation.rules stateful="true">
                 <swyd:resource location="foo.dsl" type="DSL"/>
                 <swyd:resource location="bar.dslr" type="DSLR"/>
-                <rules:rulesAudit interval="2000" file="/tmp/foobar" type="CONSOLE"/>
+                <rules:rulesAudit interval="2000" log="foobar" type="CONSOLE"/>
             </rules:implementation.rules>
             <sca:service name="FoobarService">
                 <sca:interface.java interface="org.test.FoobarService"/>

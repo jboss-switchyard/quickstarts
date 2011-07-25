@@ -18,8 +18,6 @@
  */
 package org.switchyard.component.rules.config.model;
 
-import java.io.File;
-
 import org.switchyard.component.rules.common.RulesAuditType;
 import org.switchyard.config.model.Model;
 
@@ -49,17 +47,17 @@ public interface RulesAuditModel extends Model {
     public RulesAuditModel setInterval(Integer interval);
 
     /**
-     * Gets the file of the audit.
-     * @return the file of the audit
+     * Gets the log of the audit.
+     * @return the log of the audit
      */
-    public File getFile();
+    public String getLog();
 
     /**
-     * Sets the file of the audit.
-     * @param file the file of the audit
+     * Sets the log of the audit.
+     * @param log the log of the audit
      * @return this RulesAuditModel (useful for chaining)
      */
-    public RulesAuditModel setFile(File file);
+    public RulesAuditModel setLog(String log);
  
     /**
      * Gets the type of the audit.

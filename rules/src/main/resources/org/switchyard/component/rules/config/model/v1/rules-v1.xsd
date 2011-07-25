@@ -60,7 +60,7 @@ MA  02110-1301, USA.
         <complexContent>
             <extension base="sca:CommonExtensionBase">
                 <attribute name="interval" type="integer" use="optional" default="1000"/>
-                <attribute name="file" type="string" use="optional" default="event"/>
+                <attribute name="log" type="string" use="optional" default="event"/>
                 <attribute name="type" type="NCName" use="optional" default="THREADED_FILE"/>
             </extension>
         </complexContent>

@@ -20,8 +20,6 @@ package org.switchyard.component.rules.config.model.v1;
 
 import static org.switchyard.component.rules.config.model.RulesComponentImplementationModel.DEFAULT_NAMESPACE;
 
-import java.io.File;
-
 import javax.xml.namespace.QName;
 
 import org.switchyard.component.rules.common.RulesAuditType;
@@ -75,17 +73,16 @@ public class V1RulesAuditModel extends BaseModel implements RulesAuditModel {
      * {@inheritDoc}
      */
     @Override
-    public File getFile() {
-        String file = getModelAttribute("file");
-        return file != null ? new File(file) : null;
+    public String getLog() {
+        return getModelAttribute("log");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public RulesAuditModel setFile(File file) {
-        setModelAttribute("file", file != null ? file.getAbsolutePath() : null);
+    public RulesAuditModel setLog(String log) {
+        setModelAttribute("log", log);
         return this;
     }
 

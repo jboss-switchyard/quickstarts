@@ -82,7 +82,7 @@ public class RulesModelTests {
         RulesAuditModel ram = rci.getRulesAudit();
         Assert.assertNotNull(ram);
         Assert.assertEquals(Integer.valueOf(2000), ram.getInterval());
-        Assert.assertEquals("/tmp/foobar", ram.getFile().getAbsolutePath());
+        Assert.assertEquals("foobar", ram.getLog());
         Assert.assertEquals(RulesAuditType.CONSOLE, ram.getType());
     }
 

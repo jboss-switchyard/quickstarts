@@ -21,7 +21,6 @@ package org.switchyard.component.rules.exchange.drools;
 import static org.switchyard.component.rules.common.RulesConstants.MESSAGE;
 import static org.switchyard.component.rules.common.RulesConstants.MESSAGE_CONTENT;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -225,8 +224,8 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
             if (type == null) {
                 type = RulesAuditType.THREADED_FILE;
             }
-            File file = _rulesAudit.getFile();
-            String path = file != null ? file.getAbsolutePath() : "event";
+            String log = _rulesAudit.getLog();
+            String fileName = log != null ? log : "event";
             Integer interval = _rulesAudit.getInterval();
             if (interval == null) {
                 interval = Integer.valueOf(1000);
@@ -235,9 +234,9 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
                 case CONSOLE:
                     return KnowledgeRuntimeLoggerFactory.newConsoleLogger(ksession);
                 case FILE:
-                    return KnowledgeRuntimeLoggerFactory.newFileLogger(ksession, path);
+                    return KnowledgeRuntimeLoggerFactory.newFileLogger(ksession, fileName);
                 case THREADED_FILE:
-                    return KnowledgeRuntimeLoggerFactory.newThreadedFileLogger(ksession, path, interval.intValue());
+                    return KnowledgeRuntimeLoggerFactory.newThreadedFileLogger(ksession, fileName, interval.intValue());
             }
         }
         return null;
