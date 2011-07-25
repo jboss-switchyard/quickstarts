@@ -88,6 +88,16 @@ public class TransformerUtilTest {
         Assert.assertEquals("Y", transformer.transform("X"));
     }
 
+
+    @Test
+    public void test_listNSdTransformations() {
+        List<TransformerTypes> transformTypes = TransformerUtil.listTransformations(NSdTestTransformer.class);
+
+        Assert.assertEquals(1, transformTypes.size());
+        Assert.assertEquals(new QName("http://b", "B"), transformTypes.get(0).getFrom());
+        Assert.assertEquals(new QName("http://a", "A"), transformTypes.get(0).getTo());
+    }
+
     public static class TestTransformer extends BaseTransformer {
 
         public TestTransformer() {
@@ -121,6 +131,14 @@ public class TransformerUtilTest {
         // #5: B to Z
         @Transformer(to = "Z")
         public A bToZ(B b) {
+            return new A();
+        }
+    }
+
+    public static class NSdTestTransformer {
+
+        @Transformer(from = "{http://b}B", to = "{http://a}A")
+        public A bToA(B b) {
             return new A();
         }
     }

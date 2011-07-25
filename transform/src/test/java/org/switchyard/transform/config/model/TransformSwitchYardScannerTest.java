@@ -51,7 +51,7 @@ public class TransformSwitchYardScannerTest {
         SwitchYardModel switchyard = scanner.scan(input).getModel();
         List<TransformModel> models = switchyard.getTransforms().getTransforms();
 
-        Assert.assertEquals(8, models.size());
+        Assert.assertEquals(9, models.size());
         assertModelInstanceOK((JavaTransformModel) models.get(0));
         assertModelInstanceOK((JavaTransformModel) models.get(1));
     }
