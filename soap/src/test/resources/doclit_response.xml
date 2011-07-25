@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP-ENV:Body>
+      <ns2:orderAck xmlns:ns2="urn:switchyard-component-soap:test-ws:1.0">
+         <orderId>PO-19838-XYZ</orderId>
+         <accepted>true</accepted>
+         <status>Order Accepted</status>
+      </ns2:orderAck>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

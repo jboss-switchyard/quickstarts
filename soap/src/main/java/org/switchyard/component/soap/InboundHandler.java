@@ -209,23 +209,27 @@ public class InboundHandler extends BaseHandler {
      * @return the SOAP response
      */
     public SOAPMessage invoke(final SOAPMessage soapMessage) {
-        String operationName;
-        BaseExchangeContract exchangeContract;
+        String operationName = null;
+        BaseExchangeContract exchangeContract = null;
         Operation operation;
         Boolean oneWay = false;
+        String firstBodyElement = null;
 
         try {
-            operationName = SOAPUtil.getOperationName(soapMessage);
-            operation = WSDLUtil.getOperation(_wsdlPort, operationName);
-            oneWay = WSDLUtil.isOneWay(operation);
-            exchangeContract = _contracts.get(operationName);
+            firstBodyElement = SOAPUtil.getFirstBodyElement(soapMessage);
+            operation = WSDLUtil.getOperation(_wsdlPort, firstBodyElement);
+            if(operation != null){
+                operationName = operation.getName();
+                oneWay = WSDLUtil.isOneWay(operation);
+                exchangeContract = _contracts.get(operationName);
+            }
         } catch (SOAPException e) {
             LOGGER.error(e);
             return null;
         }
 
         if (exchangeContract == null) {
-            return handleException(oneWay, new SOAPException("Operation '" + operationName + "' not available on target Service '" + _service.getName() + "'."));
+            return handleException(oneWay, new SOAPException("Operation for '" + firstBodyElement + "' not available on target Service '" + _service.getName() + "'."));
         }
 
         try {
@@ -286,7 +290,7 @@ public class InboundHandler extends BaseHandler {
                                         + "').  Port defines operation namespace as '" + expectedNS + "'.  Actual namespace on input SOAP message '" + actualNS + "'.");
         } else if (expectedLN != null && !expectedLN.equals(actualLN)) {
             throw new SOAPException("Invalid input SOAP payload localNamePart for service operation '" + operation.getName() + "' (service '" + _service.getName()
-                                                                              + "').  Port defines operation localNamePart as '" + expectedLN + "'.  Actual localNamePart on input SOAP message '" + actualLN + "'.");
+                    + "').  Port defines operation localNamePart as '" + expectedLN + "'.  Actual localNamePart on input SOAP message '" + actualLN + "'.");
         }
     }
 

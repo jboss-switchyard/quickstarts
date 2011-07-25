@@ -58,17 +58,18 @@ public final class SOAPUtil {
 
     private SOAPUtil() {
     }
-
+    
     /**
-     * Retrives the operation name from the SOAP Envelope.
+     * Retrieves the first element name in the SOAP Envelope's body.
      *
      * @param soapMessage The SOAP message.
-     * @return The operation name.
+     * @return The first Element name.
      * @throws SOAPException If the SOAP message is invalid
      */
-    public static String getOperationName(final SOAPMessage soapMessage) throws SOAPException {
+    public static String getFirstBodyElement(final SOAPMessage soapMessage) throws SOAPException {
         String operationName = null;
         SOAPBody body = soapMessage.getSOAPPart().getEnvelope().getBody();
+        
         if (body != null) {
             Iterator<Node> nodes = body.getChildElements();
             Node node = null;
@@ -79,9 +80,10 @@ public final class SOAPUtil {
                 }
             }
         }
+        
         return operationName;
     }
-
+    
     /**
      * Generates a SOAP Fault Message based on the Exception passed.
      * @param th The Exception.

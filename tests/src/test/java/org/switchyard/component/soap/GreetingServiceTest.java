@@ -110,7 +110,7 @@ public class GreetingServiceTest {
     @Test
     public void invokeRequestResponse_bad_soap_02() throws Exception {
         String soapRequest = "<gre:xxxxx xmlns:gre=\"urn:switchyard-component-soap:test-greeting:1.0\" />";
-        String expectedResponse = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault><faultcode>SOAP-ENV:Server</faultcode><faultstring>Operation 'xxxxx' not available on target Service 'GreetingService'.</faultstring></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+        String expectedResponse = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault><faultcode>SOAP-ENV:Server</faultcode><faultstring>Operation for 'xxxxx' not available on target Service 'GreetingService'.</faultstring></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
         test(soapRequest, expectedResponse, false);
     }
