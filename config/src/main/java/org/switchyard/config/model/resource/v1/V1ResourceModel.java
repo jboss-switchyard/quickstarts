@@ -84,8 +84,8 @@ public class V1ResourceModel extends BaseModel implements ResourceModel {
      */
     @Override
     public ResourceType getType() {
-        String prt = getModelAttribute("type");
-        return prt != null ? ResourceType.valueOf(prt) : null;
+        String rt = getModelAttribute("type");
+        return rt != null ? ResourceType.valueOf(rt) : null;
     }
 
     /**
@@ -93,8 +93,8 @@ public class V1ResourceModel extends BaseModel implements ResourceModel {
      */
     @Override
     public ResourceModel setType(ResourceType type) {
-        String prt = type != null ? type.name() : null;
-        setModelAttribute("type", prt);
+        String rt = type != null ? type.getName() : null;
+        setModelAttribute("type", rt);
         return this;
     }
 

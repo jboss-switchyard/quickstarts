@@ -52,6 +52,16 @@ public class SimpleResource extends BaseResource {
     }
 
     /**
+     * Constructs a new BaseResource with the specified resource location and type.
+     * @param location the resource location
+     * @param type the resource type
+     */
+    public SimpleResource(String location, String type) {
+        setLocation(location);
+        setType(ResourceType.valueOf(type));
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
