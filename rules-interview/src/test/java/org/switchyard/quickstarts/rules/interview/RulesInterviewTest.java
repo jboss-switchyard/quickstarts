@@ -39,4 +39,5 @@ public class RulesInterviewTest {
     public void testInterviewRules() {
         verify.sendInOnly(new Applicant("David", 39));
     }
+
 }

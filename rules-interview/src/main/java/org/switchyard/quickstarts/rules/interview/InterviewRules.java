@@ -18,8 +18,6 @@
  */
 package org.switchyard.quickstarts.rules.interview;
 
-import static org.switchyard.common.io.resource.ResourceType.DRL;
-
 import org.switchyard.common.io.resource.SimpleResource;
 import org.switchyard.component.rules.ExecuteRules;
 import org.switchyard.component.rules.Rules;
@@ -37,7 +35,7 @@ public interface InterviewRules extends Interview {
 
     public static final class InterviewDrl extends SimpleResource {
         public InterviewDrl() {
-            super("/org/switchyard/quickstarts/rules/interview/Interview.drl", DRL);
+            super("/org/switchyard/quickstarts/rules/interview/Interview.drl", "DRL");
         }
     }
 
