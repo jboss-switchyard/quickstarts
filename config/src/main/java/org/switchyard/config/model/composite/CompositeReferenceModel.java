@@ -20,8 +20,6 @@ package org.switchyard.config.model.composite;
 
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.config.model.NamedModel;
 
 /**
@@ -59,14 +57,14 @@ public interface CompositeReferenceModel extends NamedModel {
      * Gets the promote attribute.
      * @return the promote attribute
      */
-    public QName getPromote();
+    public String getPromote();
 
     /**
      * Sets the promote attribute.
      * @param promote the promote attribute
      * @return this CompositeReferenceModel (useful for chaining)
      */
-    public CompositeReferenceModel setPromote(QName promote);
+    public CompositeReferenceModel setPromote(String promote);
 
     /**
      * Gets the child binding models.
@@ -94,5 +92,5 @@ public interface CompositeReferenceModel extends NamedModel {
      */
     public CompositeReferenceModel setInterface(InterfaceModel interfaze);
 
-
 }
+

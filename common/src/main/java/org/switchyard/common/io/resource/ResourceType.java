@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 import org.switchyard.common.io.pull.PropertiesPuller;
+import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.Classes;
 
 /**
@@ -57,17 +58,10 @@ public final class ResourceType {
                 Properties props = props_puller.pull(url);
                 for (Object key : props.keySet()) {
                     String name = (String)key;
-                    String value = props.getProperty(name);
-                    StringTokenizer desc_exts = new StringTokenizer(value, "|");
-                    String description = desc_exts.hasMoreTokens() ? desc_exts.nextToken() : null;
-                    Set<String> ext_set = new LinkedHashSet<String>();
-                    if (desc_exts.hasMoreTokens()) {
-                        StringTokenizer exts = new StringTokenizer(desc_exts.nextToken(), ",");
-                        while (exts.hasMoreTokens()) {
-                            ext_set.add(exts.nextToken());
-                        }
-                    }
-                    install(name, description, ext_set);
+                    StringTokenizer st = new StringTokenizer(props.getProperty(name), "|");
+                    String description = st.hasMoreTokens() ? Strings.trimToNull(st.nextToken()) : null;
+                    Set<String> extensions = st.hasMoreTokens() ? Strings.uniqueSplitTrimToNull(st.nextToken(), ",") : null;
+                    install(name, description, extensions);
                 }
             } catch (Throwable t) {
                 LOGGER.error(t.getMessage());
@@ -165,6 +159,7 @@ public final class ResourceType {
         Set<String> ext_set = null;
         if (extensions != null) {
             for (String ext : extensions) {
+                ext = Strings.trimToNull(ext);
                 if (ext != null) {
                     if (ext_set == null) {
                         ext_set = new LinkedHashSet<String>();
@@ -185,28 +180,20 @@ public final class ResourceType {
      */
     public static synchronized ResourceType install(String name, String description, Set<String> extensions) {
         // name
+        name = Strings.trimToNull(name);
         if (name == null) {
-            throw new IllegalArgumentException("name == null");
-        }
-        name = name.trim();
-        if (name.length() == 0) {
-            throw new IllegalArgumentException("name.trim().length() == 0");
+            throw new IllegalArgumentException("name");
         }
         name = name.toUpperCase();
         // description
-        if (description != null) {
-            description = description.trim();
-        }
+        description = Strings.trimToNull(description);
         // extensions
         Set<String> ext_set = new LinkedHashSet<String>();
         if (extensions != null) {
             for (String ext : extensions) {
+                ext = Strings.trimToNull(ext);
                 if (ext != null) {
-                    ext = ext.trim();
-                    if (ext.length() > 0) {
-                        ext = ext.toLowerCase();
-                        ext_set.add(ext);
-                    }
+                    ext_set.add(ext.toLowerCase());
                 }
             }
         }

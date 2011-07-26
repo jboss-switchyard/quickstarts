@@ -16,11 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
 package org.switchyard.tools.forge.plugin;
 
 import javax.inject.Inject;
-import javax.xml.namespace.QName;
 
 import org.jboss.forge.project.Project;
 import org.jboss.forge.shell.ShellColor;
@@ -162,7 +160,7 @@ public class SwitchYardPlugin implements Plugin {
         // Create the composite service
         V1CompositeServiceModel service = new V1CompositeServiceModel();
         service.setName(serviceName);
-        service.setPromote(new QName(serviceName));
+        service.setPromote(serviceName);
         switchYard.getSwitchYardConfig().getComposite().addService(service);
         
         // Save configuration changes
@@ -199,7 +197,7 @@ public class SwitchYardPlugin implements Plugin {
         // Create the composite service
         V1CompositeReferenceModel reference = new V1CompositeReferenceModel();
         reference.setName(referenceName);
-        reference.setPromote(new QName(component.getComponent().getName() + V1CompositeReferenceModel.REFERENCE_SEPARATOR + referenceName));
+        reference.setPromote(component.getComponent().getName() + "/" + referenceName);
         switchYard.getSwitchYardConfig().getComposite().addReference(reference);
         
         // Save configuration changes

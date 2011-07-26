@@ -22,11 +22,10 @@ package org.switchyard.config.model.composite.v1;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.common.xml.XMLHelper;
+import org.switchyard.common.lang.Strings;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
@@ -43,11 +42,6 @@ import org.switchyard.config.model.composite.InterfaceModel;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class V1CompositeReferenceModel extends BaseNamedModel implements CompositeReferenceModel {
-
-    /**
-     * The separator used between component-name service-name combination.
-     */
-    public static final String REFERENCE_SEPARATOR = "/";
 
     private List<BindingModel> _bindings = new ArrayList<BindingModel>();
     private InterfaceModel _interface;
@@ -89,12 +83,11 @@ public class V1CompositeReferenceModel extends BaseNamedModel implements Composi
     public ComponentModel getComponent() {
         CompositeModel composite = getComposite();
         if (composite != null) {
-            QName promote = getPromote();
-            if (promote != null) {
-                StringTokenizer st = new StringTokenizer(promote.getLocalPart(), REFERENCE_SEPARATOR);
-                QName componentName = XMLHelper.createQName(st.nextToken());
+            String[] promote = Strings.splitTrimToNullArray(getPromote(), "/");
+            if (promote.length > 0) {
+                String componentName = promote[0];
                 for (ComponentModel component : composite.getComponents()) {
-                    if (componentName.equals(component.getQName())) {
+                    if (componentName.equals(component.getName())) {
                         return component;
                     }
                 }
@@ -110,14 +103,15 @@ public class V1CompositeReferenceModel extends BaseNamedModel implements Composi
     public ComponentReferenceModel getComponentReference() {
         CompositeModel composite = getComposite();
         if (composite != null) {
-            QName promote = getPromote();
-            if (promote != null) {
-                StringTokenizer st = new StringTokenizer(promote.getLocalPart(), REFERENCE_SEPARATOR);
-                int count = st.countTokens();
-                QName componentName = XMLHelper.createQName(st.nextToken());
-                QName componentReferenceName = (count == 2) ? XMLHelper.createQName(st.nextToken()) : null;
+            String[] promote = Strings.splitTrimToNullArray(getPromote(), "/");
+            int count = promote.length;
+            if (count > 0) {
+                String componentName = promote[0];
+                String componentReferenceName = (count == 2) ? promote[1] : null;
+                boolean missingComponent = true;
                 for (ComponentModel component : composite.getComponents()) {
-                    if (componentName.equals(component.getQName())) {
+                    if (componentName.equals(component.getName())) {
+                        missingComponent = false;
                         List<ComponentReferenceModel> references = component.getReferences();
                         if (count == 1) {
                             if (references.size() > 0) {
@@ -126,13 +120,15 @@ public class V1CompositeReferenceModel extends BaseNamedModel implements Composi
                             break;
                         } else if (count == 2) {
                             for (ComponentReferenceModel reference : references) {
-                                if (componentReferenceName.equals(reference.getQName())) {
+                                if (componentReferenceName.equals(reference.getName())) {
                                     return reference;
                                 }
                             }
+                            throw new IllegalArgumentException("missing component reference [" + componentReferenceName + "] for component [" + componentName + "]");
                         }
                     }
                 }
+                throw new IllegalArgumentException("missing component reference for " + (missingComponent ? "missing " : "") + "component [" + componentName + "]");
             }
         }
         return null;
@@ -142,16 +138,16 @@ public class V1CompositeReferenceModel extends BaseNamedModel implements Composi
      * {@inheritDoc}
      */
     @Override
-    public QName getPromote() {
-        return XMLHelper.createQName(getModelAttribute(CompositeReferenceModel.PROMOTE));
+    public String getPromote() {
+        return getModelAttribute(CompositeReferenceModel.PROMOTE);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public CompositeReferenceModel setPromote(QName promote) {
-        setModelAttribute(CompositeReferenceModel.PROMOTE, promote != null ? promote.toString() : null);
+    public CompositeReferenceModel setPromote(String promote) {
+        setModelAttribute(CompositeReferenceModel.PROMOTE, promote);
         return this;
     }
 

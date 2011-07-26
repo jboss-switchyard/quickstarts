@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
 package org.switchyard.config.model.switchyard;
 
 import java.io.StringReader;
@@ -40,7 +39,6 @@ import org.switchyard.config.model.composite.test.soap.PortModel;
 import org.switchyard.config.model.composite.test.soap.SOAPBindingModel;
 import org.switchyard.config.model.domain.DomainModel;
 import org.switchyard.config.model.domain.HandlerModel;
-import org.switchyard.config.model.domain.HandlersModel;
 import org.switchyard.config.model.domain.PropertiesModel;
 import org.switchyard.config.model.switchyard.test.java.JavaTransformModel;
 import org.switchyard.config.model.switchyard.test.smooks.SmooksConfigModel;

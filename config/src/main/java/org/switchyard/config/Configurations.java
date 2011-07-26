@@ -28,6 +28,7 @@ import java.util.TreeMap;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.config.model.composite.CompositeModel;
 
@@ -151,24 +152,14 @@ public final class Configurations {
             _qname = config.getQName();
             _ids = new TreeMap<String,Object>();
             for (String idc : ID_CANDIDATES) {
-                Object id = id(config.getAttribute(XMLHelper.createQName(_qname.getNamespaceURI(), idc)));
+                Object id = Strings.trimToNull(config.getAttribute(XMLHelper.createQName(_qname.getNamespaceURI(), idc)));
                 if (id == null) {
-                    id = id(config.getAttribute(idc));
+                    id = Strings.trimToNull(config.getAttribute(idc));
                 }
                 if (id != null) {
                     _ids.put(idc, id);
                 }
             }
-        }
-
-        private String id(String str) {
-            if (str != null) {
-                str = str.trim();
-                if (str.length() == 0) {
-                    str = null;
-                }
-            }
-            return str;
         }
 
         /**

@@ -117,7 +117,7 @@ public class CompositeModelTests {
         Assert.assertEquals("m1app", composite.getName());
         CompositeServiceModel compositeService = composite.getServices().get(0);
         Assert.assertEquals("M1AppService", compositeService.getName());
-        Assert.assertEquals(new QName("SimpleService"), compositeService.getPromote());
+        Assert.assertEquals("SimpleService", compositeService.getPromote());
         SOAPBindingModel binding1 = (SOAPBindingModel)compositeService.getBindings().get(0);
         Assert.assertEquals("soap", binding1.getType());
         PortModel port = binding1.getPort();
@@ -128,7 +128,7 @@ public class CompositeModelTests {
         Assert.assertEquals("foobar", wsdl1.getDescription());
         CompositeReferenceModel compositeReference = composite.getReferences().get(0);
         Assert.assertEquals("SomeOtherService", compositeReference.getName());
-        Assert.assertEquals(new QName("SimpleService/AnotherService"), compositeReference.getPromote());
+        Assert.assertEquals("SimpleService/AnotherService", compositeReference.getPromote());
         SOAPBindingModel binding2 = (SOAPBindingModel)compositeReference.getBindings().get(0);
         Assert.assertEquals("soap", binding2.getType());
         WSDLModel wsdl = binding2.getWSDL();

@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
 package org.switchyard.tools.forge.plugin;
 
 import java.io.ByteArrayInputStream;
@@ -79,8 +78,6 @@ public class SwitchYardFacet extends AbstractFacet {
 
     @Inject
     private Shell _shell;
-    
-    private String _version;
     
     /**
      * Create a new SwitchYard facet.

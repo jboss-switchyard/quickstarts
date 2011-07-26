@@ -22,11 +22,10 @@ package org.switchyard.config.model.composite.v1;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.common.xml.XMLHelper;
+import org.switchyard.common.lang.Strings;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
@@ -43,11 +42,6 @@ import org.switchyard.config.model.composite.InterfaceModel;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class V1CompositeServiceModel extends BaseNamedModel implements CompositeServiceModel {
-
-    /**
-     * The separator used between component-name service-name combination.
-     */
-    public static final String REFERENCE_SEPARATOR = "/";
 
     private List<BindingModel> _bindings = new ArrayList<BindingModel>();
     private InterfaceModel _interface;
@@ -89,12 +83,11 @@ public class V1CompositeServiceModel extends BaseNamedModel implements Composite
     public ComponentModel getComponent() {
         CompositeModel composite = getComposite();
         if (composite != null) {
-            QName promote = getPromote();
-            if (promote != null) {
-                StringTokenizer st = new StringTokenizer(promote.getLocalPart(), REFERENCE_SEPARATOR);
-                QName componentName = XMLHelper.createQName(st.nextToken());
+            String[] promote = Strings.splitTrimToNullArray(getPromote(), "/");
+            if (promote.length > 0) {
+                String componentName = promote[0];
                 for (ComponentModel component : composite.getComponents()) {
-                    if (componentName.equals(component.getQName())) {
+                    if (componentName.equals(component.getName())) {
                         return component;
                     }
                 }
@@ -110,14 +103,15 @@ public class V1CompositeServiceModel extends BaseNamedModel implements Composite
     public ComponentServiceModel getComponentService() {
         CompositeModel composite = getComposite();
         if (composite != null) {
-            QName promote = getPromote();
-            if (promote != null) {
-                StringTokenizer st = new StringTokenizer(promote.getLocalPart(), REFERENCE_SEPARATOR);
-                int count = st.countTokens();
-                QName componentName = XMLHelper.createQName(st.nextToken());
-                QName componentServiceName = (count == 2) ? XMLHelper.createQName(st.nextToken()) : null;
+            String[] promote = Strings.splitTrimToNullArray(getPromote(), "/");
+            int count = promote.length;
+            if (count > 0) {
+                String componentName = promote[0];
+                String componentServiceName = (count == 2) ? promote[1] : null;
+                boolean missingComponent = true;
                 for (ComponentModel component : composite.getComponents()) {
-                    if (componentName.equals(component.getQName())) {
+                    if (componentName.equals(component.getName())) {
+                        missingComponent = false;
                         List<ComponentServiceModel> services = component.getServices();
                         if (count == 1) {
                             if (services.size() > 0) {
@@ -126,13 +120,15 @@ public class V1CompositeServiceModel extends BaseNamedModel implements Composite
                             break;
                         } else if (count == 2) {
                             for (ComponentServiceModel service : services) {
-                                if (componentServiceName.equals(service.getQName())) {
+                                if (componentServiceName.equals(service.getName())) {
                                     return service;
                                 }
                             }
+                            throw new IllegalArgumentException("missing component service [" + componentServiceName + "] for component [" + componentName + "]");
                         }
                     }
                 }
+                throw new IllegalArgumentException("missing component service for " + (missingComponent ? "missing " : "") + "component [" + componentName + "]");
             }
         }
         return null;
@@ -142,16 +138,16 @@ public class V1CompositeServiceModel extends BaseNamedModel implements Composite
      * {@inheritDoc}
      */
     @Override
-    public QName getPromote() {
-        return XMLHelper.createQName(getModelAttribute(CompositeServiceModel.PROMOTE));
+    public String getPromote() {
+        return getModelAttribute(CompositeServiceModel.PROMOTE);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public CompositeServiceModel setPromote(QName promote) {
-        setModelAttribute(CompositeServiceModel.PROMOTE, promote != null ? promote.toString() : null);
+    public CompositeServiceModel setPromote(String promote) {
+        setModelAttribute(CompositeServiceModel.PROMOTE, promote);
         return this;
     }
 
