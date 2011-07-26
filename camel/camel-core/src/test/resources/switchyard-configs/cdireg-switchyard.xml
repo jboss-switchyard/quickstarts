@@ -19,7 +19,7 @@
 
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0">
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-service">
-        <service name="JavaDSL" promote="JavaDSL"/>
+        <service name="JavaDSL" promote="JavaDSLBuilder/JavaDSL"/>
         <component name="JavaDSLBuilder">
             <service name="JavaDSL">
                 <interface.java interface="org.switchyard.component.camel.cdi.JavaDSL"/>

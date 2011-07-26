@@ -22,10 +22,10 @@ package org.switchyard.component.soap.config.model;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.soap.PortName;
 import org.switchyard.config.Configuration;
@@ -337,28 +337,18 @@ public class SOAPBindingModel extends V1BindingModel {
     private Set<QName> getMappedVariableNames(String childConfigName) {
         Configuration childConfig = getModelConfiguration().getFirstChild(childConfigName);
         if (childConfig != null) {
-            String namespace = childConfig.getAttribute("mappedVariableNamespace");
-            if (namespace != null) {
-                namespace = namespace.trim();
-                if (namespace.length() == 0) {
-                    namespace = null;
-                }
-            }
-            String names = childConfig.getAttribute("mappedVariableNames");
+            String names = Strings.trimToNull(childConfig.getAttribute("mappedVariableNames"));
             if (names != null) {
+                String namespace = Strings.trimToNull(childConfig.getAttribute("mappedVariableNamespace"));
                 Set<QName> qnames = new LinkedHashSet<QName>();
-                StringTokenizer st = new StringTokenizer(names, ",;| ");
-                while (st.hasMoreTokens()) {
-                    String name = st.nextToken().trim();
-                    if (name.length() > 0) {
-                        QName qname;
-                        if (namespace != null) {
-                            qname = XMLHelper.createQName(namespace, name);
-                        } else {
-                            qname = XMLHelper.createQName(name);
-                        }
-                        qnames.add(qname);
+                for (String name : Strings.uniqueSplitTrimToNull(names, ",;| ")) {
+                    QName qname;
+                    if (namespace != null) {
+                        qname = XMLHelper.createQName(namespace, name);
+                    } else {
+                        qname = XMLHelper.createQName(name);
                     }
+                    qnames.add(qname);
                 }
                 return qnames;
             }
