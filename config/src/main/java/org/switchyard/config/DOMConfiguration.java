@@ -208,7 +208,13 @@ public class DOMConfiguration extends BaseConfiguration {
     @Override
     public boolean hasAttribute(QName qname) {
         if (qname != null) {
-            return _element.hasAttributeNS(qname.getNamespaceURI(), qname.getLocalPart());
+            String namespaceURI = qname.getNamespaceURI();
+            String localPart = qname.getLocalPart();
+            if (namespaceURI != null && !namespaceURI.equals(NULL_NS_URI)) {
+                return _element.hasAttributeNS(namespaceURI, localPart);
+            } else {
+                return hasAttribute(localPart);
+            }
         }
         return false;
     }
@@ -231,10 +237,16 @@ public class DOMConfiguration extends BaseConfiguration {
     @Override
     public String getAttribute(QName qname) {
         if (qname != null) {
-            Attr attr = _element.getAttributeNodeNS(qname.getNamespaceURI(), qname.getLocalPart());
-            if (attr != null) {
-                String value = attr.getValue();
-                return "".equals(value) ? null : value;
+            String namespaceURI = qname.getNamespaceURI();
+            String localPart = qname.getLocalPart();
+            if (namespaceURI != null && !namespaceURI.equals(NULL_NS_URI)) {
+                Attr attr = _element.getAttributeNodeNS(namespaceURI, localPart);
+                if (attr != null) {
+                    String value = attr.getValue();
+                    return "".equals(value) ? null : value;
+                }
+            } else {
+                return getAttribute(localPart);
             }
         }
         return null;
@@ -245,6 +257,9 @@ public class DOMConfiguration extends BaseConfiguration {
      */
     @Override
     public Configuration setAttribute(String name, String value) {
+        if (name == null) {
+            throw new IllegalArgumentException("name == null");
+        }
         if (value == null) {
             _element.removeAttribute(name);
         } else {
@@ -258,15 +273,20 @@ public class DOMConfiguration extends BaseConfiguration {
      */
     @Override
     public Configuration setAttribute(QName qname, String value) {
-        Attr attr = _element.getAttributeNodeNS(qname.getNamespaceURI(), qname.getLocalPart());
+        if (qname == null) {
+            throw new IllegalArgumentException("qname == null");
+        }
+        String namespaceURI = qname.getNamespaceURI();
+        String localPart = qname.getLocalPart();
+        Attr attr = _element.getAttributeNodeNS(namespaceURI, localPart);
         if (attr != null) {
             if (value == null) {
                 _element.removeAttributeNode(attr);
             } else {
                 attr.setValue(value);
             }
-        } else if (value != null && !DEFAULT_XMLNS_URI.equals(qname.getNamespaceURI())) {
-            attr = _element.getOwnerDocument().createAttributeNS(qname.getNamespaceURI(), qname.getLocalPart());
+        } else if (value != null && !DEFAULT_XMLNS_URI.equals(namespaceURI)) {
+            attr = _element.getOwnerDocument().createAttributeNS(namespaceURI, localPart);
             String prefix = qname.getPrefix();
             if (prefix != null  && prefix.length() > 0) {
                 attr.setPrefix(prefix);

@@ -41,9 +41,9 @@ import org.switchyard.config.OutputKey;
  */
 public abstract class BaseModel implements Model {
 
-    private Configuration _config;
-    private Descriptor _desc;
-    private Map<Configuration,Model> _config_model_map;
+    private final Configuration _config;
+    private final Descriptor _desc;
+    private final Map<Configuration,Model> _config_model_map;
     private Model _parent;
 
     protected BaseModel(QName qname) {

@@ -31,9 +31,9 @@ import java.util.List;
  */
 public class MergeScanner<M extends Model> implements Scanner<M> {
 
-    private Class<M> _clazz;
-    private boolean _fromOverridesTo;
-    private List<Scanner<M>> _scanners;
+    private final Class<M> _clazz;
+    private final boolean _fromOverridesTo;
+    private final List<Scanner<M>> _scanners;
 
     /**
      * Constructs a new MergeScanner using the specified parameters.
@@ -87,7 +87,6 @@ public class MergeScanner<M extends Model> implements Scanner<M> {
         }
         for (Scanner<M> scanner : _scanners) {
             ScannerOutput<M> scannerOutput = scanner.scan(input);
-
             if (scannerOutput != null) {
                 List<M> scanned_list = scannerOutput.getModels();
                 if (scanned_list != null) {

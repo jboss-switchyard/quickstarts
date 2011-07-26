@@ -43,6 +43,7 @@ public abstract class BaseConfiguration implements Configuration {
 
     protected static final String DEFAULT_XMLNS_URI = XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
     protected static final String DEFAULT_XMLNS_PFX = "ns0";
+    protected static final String NULL_NS_URI = XMLConstants.NULL_NS_URI;
 
     private String[] _childrenOrder = new String[0];
 

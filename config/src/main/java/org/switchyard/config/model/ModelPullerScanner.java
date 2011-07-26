@@ -27,6 +27,7 @@ import java.net.URL;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.common.io.resource.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -41,9 +42,10 @@ import org.xml.sax.InputSource;
 public class ModelPullerScanner<M extends Model> implements Scanner<M> {
 
     private Type _type;
-    private String _resource;
+    private String _classpath;
     private URI _uri;
     private URL _url;
+    private Resource _resource;
     private File _file;
     private InputStream _inputStream;
     private Reader _reader;
@@ -53,23 +55,23 @@ public class ModelPullerScanner<M extends Model> implements Scanner<M> {
     private QName _qname;
 
     /**
-     * Constructs a default ModelResourceScanner that scans for "/META-INF/switchyard.xml" resource(s).
+     * Constructs a default ModelPullerScanner that scans for "/META-INF/switchyard.xml" resource(s).
      */
     public ModelPullerScanner() {
         this("/META-INF/switchyard.xml");
     }
 
     /**
-     * Constructs a ModelResourceScanner that scans for the specified resource.
-     * @param resource the resource
+     * Constructs a ModelPullerScanner that scans for the specified classpath resource.
+     * @param classpath the classpath resource
      */
-    public ModelPullerScanner(String resource) {
-        _type = Type.RESOURCE;
-        _resource = resource;
+    public ModelPullerScanner(String classpath) {
+        _type = Type.CLASSPATH;
+        _classpath = classpath;
     }
 
     /**
-     * Constructs a ModelResourceScanner that scans for the specified URI.
+     * Constructs a ModelPullerScanner that scans for the specified URI.
      * @param uri the URI
      */
     public ModelPullerScanner(URI uri) {
@@ -78,7 +80,7 @@ public class ModelPullerScanner<M extends Model> implements Scanner<M> {
     }
 
     /**
-     * Constructs a ModelResourceScanner that scans for the specified URL.
+     * Constructs a ModelPullerScanner that scans for the specified URL.
      * @param url the URL
      */
     public ModelPullerScanner(URL url) {
@@ -87,7 +89,16 @@ public class ModelPullerScanner<M extends Model> implements Scanner<M> {
     }
 
     /**
-     * Constructs a ModelResourceScanner that scans for the specified File.
+     * Constructs a ModelPullerScanner that scans for the specified Resource.
+     * @param resource the Resource
+     */
+    public ModelPullerScanner(Resource resource) {
+        _type = Type.RESOURCE;
+        _resource = resource;
+    }
+
+    /**
+     * Constructs a ModelPullerScanner that scans for the specified File.
      * @param file the File
      */
     public ModelPullerScanner(File file) {
@@ -96,7 +107,7 @@ public class ModelPullerScanner<M extends Model> implements Scanner<M> {
     }
 
     /**
-     * Constructs a ModelResourceScanner that scans for the specified InputStream.
+     * Constructs a ModelPullerScanner that scans for the specified InputStream.
      * @param inputStream the InputStream
      */
     public ModelPullerScanner(InputStream inputStream) {
@@ -105,7 +116,7 @@ public class ModelPullerScanner<M extends Model> implements Scanner<M> {
     }
 
     /**
-     * Constructs a ModelResourceScanner that scans for the specified Reader.
+     * Constructs a ModelPullerScanner that scans for the specified Reader.
      * @param reader the Reader
      */
     public ModelPullerScanner(Reader reader) {
@@ -114,7 +125,7 @@ public class ModelPullerScanner<M extends Model> implements Scanner<M> {
     }
 
     /**
-     * Constructs a ModelResourceScanner that scans for the specified InputSource.
+     * Constructs a ModelPullerScanner that scans for the specified InputSource.
      * @param inputSource the InputSource
      */
     public ModelPullerScanner(InputSource inputSource) {
@@ -123,7 +134,7 @@ public class ModelPullerScanner<M extends Model> implements Scanner<M> {
     }
 
     /**
-     * Constructs a ModelResourceScanner that scans for the specified Document.
+     * Constructs a ModelPullerScanner that scans for the specified Document.
      * @param document the Document
      */
     public ModelPullerScanner(Document document) {
@@ -132,7 +143,7 @@ public class ModelPullerScanner<M extends Model> implements Scanner<M> {
     }
 
     /**
-     * Constructs a ModelResourceScanner that scans for the specified Element.
+     * Constructs a ModelPullerScanner that scans for the specified Element.
      * @param element the Element
      */
     public ModelPullerScanner(Element element) {
@@ -141,7 +152,7 @@ public class ModelPullerScanner<M extends Model> implements Scanner<M> {
     }
 
     /**
-     * Constructs a ModelResourceScanner that scans for the specified QName.
+     * Constructs a ModelPullerScanner that scans for the specified QName.
      * @param qname the QName
      */
     public ModelPullerScanner(QName qname) {
@@ -156,14 +167,17 @@ public class ModelPullerScanner<M extends Model> implements Scanner<M> {
     public ScannerOutput<M> scan(ScannerInput<M> input) throws IOException {
         M model;
         switch (_type) {
-            case RESOURCE:
-                model = new ModelPuller<M>().pull(_resource, getClass());
+            case CLASSPATH:
+                model = new ModelPuller<M>().pull(_classpath, getClass());
                 break;
             case URI:
                 model = new ModelPuller<M>().pull(_uri);
                 break;
             case URL:
                 model = new ModelPuller<M>().pull(_url);
+                break;
+            case RESOURCE:
+                model = new ModelPuller<M>().pull(_resource);
                 break;
             case FILE:
                 model = new ModelPuller<M>().pull(_file);
@@ -193,7 +207,7 @@ public class ModelPullerScanner<M extends Model> implements Scanner<M> {
     }
 
     private static enum Type {
-        RESOURCE, URI, URL, FILE, INPUT_STREAM, READER, INPUT_SOURCE, DOCUMENT, ELEMENT, QNAME;
+        CLASSPATH, URI, URL, RESOURCE, FILE, INPUT_STREAM, READER, INPUT_SOURCE, DOCUMENT, ELEMENT, QNAME;
     }
 
 }
