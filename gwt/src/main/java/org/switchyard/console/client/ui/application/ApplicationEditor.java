@@ -17,39 +17,38 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.console.client.ui.module;
+package org.switchyard.console.client.ui.application;
 
+import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.switchyard.console.client.Singleton;
-import org.switchyard.console.client.model.SwitchYardModule;
+import org.switchyard.console.client.model.Application;
 
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * ModuleEditor
+ * ApplicationEditor
  * 
- * Editor for SwitchYard _module configuration.
+ * Editor widget for SwitchYard application details.
  * 
  * @author Rob Cernich
  */
-public class ModuleEditor {
+public class ApplicationEditor {
 
-    private ModulePresenter _presenter;
+    private ApplicationPresenter _presenter;
 
     private ContentHeaderLabel _headerLabel;
+    private ServicesList _servicesList;
 
-    private SwitchYardModule _module;
+    private Application _application;
 
     /**
-     * Create a new ModuleEditor.
+     * Create a new ApplicationEditor.
      * 
-     * @param presenter
-     *            the associated presenter.
+     * @param presenter the associated presenter.
      */
-    public ModuleEditor(ModulePresenter presenter) {
+    public ApplicationEditor(ApplicationPresenter presenter) {
         this._presenter = presenter;
     }
 
@@ -61,26 +60,29 @@ public class ModuleEditor {
         ScrollPanel scroll = new ScrollPanel();
 
         VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("fill-layout-width");
+        layout.setStyleName("rhs-content-panel");
 
         scroll.add(layout);
 
         _headerLabel = new ContentHeaderLabel();
         layout.add(_headerLabel);
 
-        layout.add(new Label("TODO: Module specific configuration settings."));
+        _servicesList = new ServicesList();
+
+        layout.add(new ContentGroupLabel("Services"));
+        layout.add(_servicesList.asWidget());
 
         return scroll;
     }
 
     /**
-     * @param module
-     *            the module to be edited.
+     * @param application the application being edited by this editor.
      */
-    public void setModule(SwitchYardModule module) {
-        this._module = module;
+    public void setApplication(Application application) {
+        this._application = application;
 
-        _headerLabel.setText(Singleton.MESSAGES.header_editor_moduleEditor(module.getName()));
+        _headerLabel.setText("Application: " + application.getName());
+        _servicesList.setApplication(application);
     }
 
 }

@@ -19,21 +19,41 @@
 package org.switchyard.console.client.model;
 
 /**
- * SwitchYardModule
+ * Component
  * 
- * Represents a SwitchYard module.
+ * Represents a SwitchYard component.
  * 
  * @author Rob Cernich
  */
-public interface SwitchYardModule {
+public interface Component {
 
     /**
-     * @return the name of the SwitchYard module.
+     * @return the name of the SwitchYard component.
      */
     public String getName();
 
     /**
-     * @param name the name of the SwitchYard module.
+     * @param name the name of the SwitchYard component.
      */
     public void setName(String name);
+
+    /**
+     * @return component type, e.g. GATEWAY.
+     */
+    public String getType();
+
+    /**
+     * @param type component type.
+     */
+    public void setType(String type);
+
+    /**
+     * @return the configuration schema defined by the component.
+     */
+    public String getConfigSchema();
+
+    /**
+     * @param configSchema the configuration schema defined by the component.
+     */
+    public void setConfigSchema(String configSchema);
 }

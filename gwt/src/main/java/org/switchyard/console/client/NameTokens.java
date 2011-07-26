@@ -19,6 +19,8 @@
 
 package org.switchyard.console.client;
 
+import com.google.gwt.http.client.URL;
+
 /**
  * NameTokens
  * 
@@ -32,9 +34,42 @@ public class NameTokens extends org.jboss.as.console.client.core.NameTokens {
     public static final String SWITCH_YARD_PRESENTER = "switchyard";
     /** The subpath for the SwitchYard system configuration view. */
     public static final String SYSTEM_CONFIG_PRESENTER = "system";
-    /** The subpath for the SwitchYard module configuration view. */
-    public static final String MODULE_CONFIG_PRESENTER = "module";
-    /** The subpath for the SwitchYard package configuration view. */
-    public static final String PACKAGE_CONFIG_PRESENTER = "deployment";
+    /** The subpath for the SwitchYard component configuration view. */
+    public static final String COMPONENT_CONFIG_PRESENTER = "component";
+    /** The subpath for the SwitchYard application configuration view. */
+    public static final String APPLICATION_CONFIG_PRESENTER = "application";
+    /** The subpath for the SwitchYard service view. */
+    public static final String SERVICE_CONFIG_PRESENTER = "service";
+
+    /**
+     * Helper method to create URL to a specific application page.
+     * 
+     * @param applicationName the name of the application page.
+     * @return a token URL for displaying the application's page.
+     */
+    public static String createApplicationLink(String applicationName) {
+        return "switchyard/application;application=" + URL.encode(applicationName);
+    }
+
+    /**
+     * Helper method to create URL to a specific component page.
+     * 
+     * @param componentName the name of the component page.
+     * @return a token URL for displaying the component page.
+     */
+    public static String createComponentLink(String componentName) {
+        return "switchyard/component;component=" + URL.encode(componentName);
+    }
+
+    /**
+     * Helper method to create URL to a specific service page.
+     * 
+     * @param serviceName the name of the service.
+     * @param applicationName the name of the service's containing application.
+     * @return a token URL for displaying the service page.
+     */
+    public static String createServiceLink(String serviceName, String applicationName) {
+        return "switchyard/service;service=" + URL.encode(serviceName) + ";application=" + URL.encode(applicationName);
+    }
 
 }

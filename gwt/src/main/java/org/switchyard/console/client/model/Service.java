@@ -16,43 +16,66 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.console.client;
+package org.switchyard.console.client.model;
 
-import org.switchyard.console.client.model.Application;
-import org.switchyard.console.client.model.Component;
-import org.switchyard.console.client.model.Service;
-import org.switchyard.console.client.model.SystemDetails;
-
-import com.google.gwt.autobean.shared.AutoBean;
-import com.google.gwt.autobean.shared.AutoBeanFactory;
+import java.util.List;
 
 /**
- * BeanFactory
+ * Service
  * 
- * Factory for SwitchYard specific model beans.
+ * Represents a SwitchYard service.
  * 
  * @author Rob Cernich
  */
-public interface BeanFactory extends AutoBeanFactory {
+public interface Service {
+    /**
+     * @return the service's name.
+     */
+    public String getName();
 
     /**
-     * @return a new AutoBean<SystemDetails>
+     * @param name the service's name
      */
-    AutoBean<SystemDetails> systemDetails();
+    public void setName(String name);
 
     /**
-     * @return a new AutoBean<Application>
+     * @return the interface name
      */
-    AutoBean<Application> application();
+    public String getInterface();
 
     /**
-     * @return a new AutoBean<Component>
+     * @param interfaceName the interface name
      */
-    AutoBean<Component> component();
+    public void setInterface(String interfaceName);
 
     /**
-     * @return a new AutoBean<Service>
+     * @return the implementation name
      */
-    AutoBean<Service> service();
+    public String getImplementation();
+
+    /**
+     * @param implementation the implementation name
+     */
+    public void setImplementation(String implementation);
+
+    /**
+     * @return the gateways
+     */
+    List<String> getGateways();
+
+    /**
+     * @param gateways the gateways
+     */
+    public void setGateways(List<String> gateways);
+
+    /**
+     * @return the application name
+     */
+    public String getApplication();
+
+    /**
+     * @param application the application name
+     */
+    public void setApplication(String application);
 
 }

@@ -33,10 +33,11 @@ import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
 import org.switchyard.console.client.model.SwitchYardStore;
+import org.switchyard.console.client.ui.application.ApplicationPresenter;
+import org.switchyard.console.client.ui.component.ComponentPresenter;
 import org.switchyard.console.client.ui.config.ConfigPresenter;
-import org.switchyard.console.client.ui.design.PackagePresenter;
-import org.switchyard.console.client.ui.main.ApplicationPresenter;
-import org.switchyard.console.client.ui.module.ModulePresenter;
+import org.switchyard.console.client.ui.main.MainPresenter;
+import org.switchyard.console.client.ui.service.ServicePresenter;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
@@ -143,9 +144,9 @@ public interface SwitchYardGinjector extends Ginjector {
     AsyncProvider<MainLayoutPresenter> getMainLayoutPresenter();
 
     /**
-     * @return the ApplicationPresenter configured for the module.
+     * @return the MainPresenter configured for the module.
      */
-    AsyncProvider<ApplicationPresenter> getApplicationPresenter();
+    AsyncProvider<MainPresenter> getMainPresenter();
 
     /**
      * @return the ConfigPresenter configured for the module.
@@ -153,14 +154,19 @@ public interface SwitchYardGinjector extends Ginjector {
     AsyncProvider<ConfigPresenter> getConfigPresenter();
 
     /**
-     * @return the ModulePresenter configured for the module.
+     * @return the ComponentPresenter configured for the module.
      */
-    AsyncProvider<ModulePresenter> getModulePresenter();
+    AsyncProvider<ComponentPresenter> getComponentPresenter();
 
     /**
-     * @return the PackagePresenter configured for the module.
+     * @return the ApplicationPresenter configured for the module.
      */
-    AsyncProvider<PackagePresenter> getPackagePresenter();
+    AsyncProvider<ApplicationPresenter> getApplicationPresenter();
+
+    /**
+     * @return the ServicePresenter configured for the module.
+     */
+    AsyncProvider<ServicePresenter> getServicePresenter();
 
     /**
      * @return the SwitchYardStore configured for the module.

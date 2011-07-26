@@ -21,70 +21,70 @@ package org.switchyard.console.client.model;
 import java.util.List;
 
 /**
- * SwitchYardDeployment
+ * Application
  * 
- * Represents a SwitchYard deployment.
+ * Represents a SwitchYard application.
  * 
  * @author Rob Cernich
  */
-public interface SwitchYardDeployment {
+public interface Application {
     /**
-     * @return the name of this deployment.
+     * @return the name of this application.
      */
     public String getName();
 
     /**
-     * @param name the name of this deployment.
+     * @param name the name of this application.
      */
     public void setName(String name);
 
     /**
-     * @return the services defined within this deployment.
+     * @return the services defined within this application.
      */
-    public List<CompositeService> getCompositeServices();
+    public List<String> getServices();
 
     /**
-     * @param services the services defined within this deployment.
+     * @param services the services defined within this application.
      */
-    public void setCompositeServices(List<CompositeService> services);
+    public void setServices(List<String> services);
 
     /**
-     * @return the transforms defined within this deployment.
+     * @return the transforms defined within this application.
      */
     public List<Transform> getTransforms();
 
     /**
-     * @param transforms the transforms defined within this deployment.
+     * @param transforms the transforms defined within this application.
      */
     public void setTransforms(List<Transform> transforms);
 
     /**
-     * @return the domains defined within this deployment.
+     * @return the domains defined within this application.
      */
     public List<Domain> getDomains();
 
     /**
-     * @param domains the domains defined within this deployment.
+     * @param domains the domains defined within this application.
      */
     public void setDomains(List<Domain> domains);
 
     /**
-     * @return the runtime name of this deployment.
+     * @return the runtime name of this application.
      */
     public String getRuntimeName();
 
     /**
-     * @param runtimeName the runtime name of this deployment.
+     * @param runtimeName the runtime name of this application.
      */
     public void setRuntimeName(String runtimeName);
 
     /**
-     * @return true if this deployment is enabled.
+     * @return true if this application is enabled.
      */
     public boolean isEnabled();
 
     /**
-     * @param enabled true if this deployment is enabled.
+     * @param enabled true if this application is enabled.
      */
     public void setEnabled(boolean enabled);
 

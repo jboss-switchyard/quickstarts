@@ -17,47 +17,47 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.console.client.ui.design;
+package org.switchyard.console.client.ui.component;
 
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.widgets.RHSContentPanel;
-import org.switchyard.console.client.model.SwitchYardDeployment;
+import org.switchyard.console.client.Singleton;
+import org.switchyard.console.client.model.Component;
 
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * PackageView
+ * ComponentView
  * 
- * View for SwitchYard deployment package details.
+ * View for SwitchYard module configuration.
  * 
  * @author Rob Cernich
  */
-public class PackageView extends DisposableViewImpl implements PackagePresenter.MyView {
+public class ComponentView extends DisposableViewImpl implements ComponentPresenter.MyView {
 
-    private PackagePresenter _presenter;
-
-    private PackageEditor _moduleEditor;
+    private ComponentPresenter _presenter;
+    private ComponentEditor _componentEditor;
 
     @Override
     public Widget createWidget() {
 
-        LayoutPanel layout = new RHSContentPanel("Deployment Configuration");
+        LayoutPanel layout = new RHSContentPanel(Singleton.MESSAGES.header_content_componentConfiguration());
 
-        _moduleEditor = new PackageEditor(_presenter);
-        layout.add(_moduleEditor.asWidget());
+        _componentEditor = new ComponentEditor(_presenter);
+        layout.add(_componentEditor.asWidget());
 
         return layout;
     }
 
     @Override
-    public void setPresenter(PackagePresenter presenter) {
+    public void setPresenter(ComponentPresenter presenter) {
         this._presenter = presenter;
     }
 
     @Override
-    public void setDeployment(SwitchYardDeployment deployment) {
-        _moduleEditor.setDeployment(deployment);
+    public void setComponent(Component component) {
+        _componentEditor.setComponent(component);
     }
 
 }

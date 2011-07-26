@@ -19,7 +19,6 @@
 
 package org.jboss.as.console.client.shared;
 
-import com.google.gwt.autobean.shared.AutoBeanFactory;
 
 /**
  * BeanFactory
@@ -28,6 +27,6 @@ import com.google.gwt.autobean.shared.AutoBeanFactory;
  * 
  * @author Rob Cernich
  */
-public interface BeanFactory extends AutoBeanFactory {
+public interface BeanFactory extends org.switchyard.console.client.BeanFactory {
 
 }

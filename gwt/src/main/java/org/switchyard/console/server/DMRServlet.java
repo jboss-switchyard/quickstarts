@@ -62,6 +62,18 @@ public class DMRServlet extends HttpServlet {
     }
 
     @Override
+    public void destroy() {
+        try {
+            _modelControllerClient.close();
+        } catch (IOException e) {
+            // FIXME
+            e.getCause();
+        }
+        _modelControllerClient = null;
+        super.destroy();
+    }
+
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String contentTypeValue = req.getContentType();
         if (contentTypeValue == null) {

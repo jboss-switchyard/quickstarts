@@ -17,18 +17,21 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.console.client.ui.module;
+package org.switchyard.console.client.ui.component;
 
+import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.switchyard.console.client.BeanFactory;
 import org.switchyard.console.client.Console;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.Singleton;
-import org.switchyard.console.client.model.SwitchYardModule;
-import org.switchyard.console.client.ui.main.ApplicationPresenter;
+import org.switchyard.console.client.model.Component;
+import org.switchyard.console.client.model.SwitchYardStore;
+import org.switchyard.console.client.ui.main.MainPresenter;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -41,19 +44,19 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 
 /**
- * ModulePresenter
+ * ComponentPresenter
  * 
- * Presenter for SwitchYard module configuration.
+ * Presenter for SwitchYard component configuration.
  * 
  * @author Rob Cernich
  */
-public class ModulePresenter extends Presenter<ModulePresenter.MyView, ModulePresenter.MyProxy> {
+public class ComponentPresenter extends Presenter<ComponentPresenter.MyView, ComponentPresenter.MyProxy> {
 
     private final PlaceManager _placeManager;
 
     private DispatchAsync _dispatcher;
 
-    private BeanFactory _factory;
+    private SwitchYardStore _switchYardStore;
 
     /**
      * MyProxy
@@ -61,8 +64,8 @@ public class ModulePresenter extends Presenter<ModulePresenter.MyView, ModulePre
      * The proxy type used by this presenter.
      */
     @ProxyCodeSplit
-    @NameToken(NameTokens.MODULE_CONFIG_PRESENTER)
-    public interface MyProxy extends Proxy<ModulePresenter>, Place {
+    @NameToken(NameTokens.COMPONENT_CONFIG_PRESENTER)
+    public interface MyProxy extends Proxy<ComponentPresenter>, Place {
     }
 
     /**
@@ -72,42 +75,34 @@ public class ModulePresenter extends Presenter<ModulePresenter.MyView, ModulePre
      */
     public interface MyView extends View {
         /**
-         * @param presenter
-         *            the presenter associated with the view.
+         * @param presenter the presenter associated with the view.
          */
-        void setPresenter(ModulePresenter presenter);
+        void setPresenter(ComponentPresenter presenter);
 
         /**
-         * @param module
-         *            set the module to be viewed/edited.
+         * @param component set the component to be viewed/edited.
          */
-        void setModule(SwitchYardModule module);
+        void setComponent(Component component);
     }
 
     /**
-     * Create a new ModulePresenter.
+     * Create a new ComponentPresenter.
      * 
-     * @param eventBus
-     *            the injected EventBus.
-     * @param view
-     *            the injected MyView.
-     * @param proxy
-     *            the injected MyProxy.
-     * @param placeManager
-     *            the injected PlaceManager.
-     * @param dispatcher
-     *            the injected DispatchAsync.
-     * @param factory
-     *            the injected BeanFactory.
+     * @param eventBus the injected EventBus.
+     * @param view the injected MyView.
+     * @param proxy the injected MyProxy.
+     * @param placeManager the injected PlaceManager.
+     * @param dispatcher the injected DispatchAsync.
+     * @param switchYardStore the injected SwitchYardStore.
      */
     @Inject
-    public ModulePresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager placeManager,
-            DispatchAsync dispatcher, BeanFactory factory) {
+    public ComponentPresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager placeManager,
+            DispatchAsync dispatcher, SwitchYardStore switchYardStore) {
         super(eventBus, view, proxy);
 
         this._placeManager = placeManager;
         this._dispatcher = dispatcher;
-        this._factory = factory;
+        this._switchYardStore = switchYardStore;
     }
 
     @Override
@@ -121,25 +116,34 @@ public class ModulePresenter extends Presenter<ModulePresenter.MyView, ModulePre
         super.onReset();
 
         HTML headerContent = new HTML(new SafeHtmlBuilder().appendEscaped(
-                Singleton.MESSAGES.header_content_moduleConfiguration()).toSafeHtml());
+                Singleton.MESSAGES.header_content_componentConfiguration()).toSafeHtml());
         headerContent.setStylePrimaryName("header-content");
         Console.MODULES.getHeader().setContent(headerContent);
-        Console.MODULES.getHeader().highlight(NameTokens.MODULE_CONFIG_PRESENTER);
+        Console.MODULES.getHeader().highlight(NameTokens.COMPONENT_CONFIG_PRESENTER);
 
-        loadModule(_placeManager.getCurrentPlaceRequest().getParameter("module", null));
+        loadComponent(_placeManager.getCurrentPlaceRequest().getParameter("component", null));
     }
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), ApplicationPresenter.TYPE_MAIN_CONTENT, this);
+        RevealContentEvent.fire(getEventBus(), MainPresenter.TYPE_MAIN_CONTENT, this);
     }
 
-    private void loadModule(String moduleName) {
-        // TODO: read module properties
-        SwitchYardModule module = _factory.switchYardModule().as();
-        module.setName(moduleName);
+    private void loadComponent(String componentName) {
+        _switchYardStore.loadComponent(componentName, new AsyncCallback<Component>() {
 
-        getView().setModule(module);
+            @Override
+            public void onSuccess(Component component) {
+                getView().setComponent(component);
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                Log.error("Unknown error", caught);
+                Console.MODULES.getMessageCenter().notify(
+                        new Message("Unknown error", caught.getMessage(), Message.Severity.Error));
+            }
+        });
     }
 
 }

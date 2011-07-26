@@ -91,17 +91,18 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- managment api -->
     <dependency>
     	<groupId>org.jboss</groupId>
     	<artifactId>jboss-dmr</artifactId>
-    	<version>1.0.0.Beta5</version>
+    	<version>1.0.0.Final</version>
     	<type>jar</type>
     	<scope>provided</scope>
     </dependency>
     <dependency>
     	<groupId>org.jboss.as</groupId>
     	<artifactId>jboss-as-controller-client</artifactId>
-    	<version>7.0.0.Beta3</version>
+    	<version>7.0.0.Final</version>
     	<type>jar</type>
     	<scope>provided</scope>
     </dependency>
@@ -129,11 +130,11 @@
                 <artifactItem>
                   <groupId>org.jboss.as</groupId>
                   <artifactId>jboss-as-console</artifactId>
-                  <version>1.0.0.Beta9</version>
+                  <version>1.0.0.Beta13</version>
                   <classifier>sources</classifier>
                   <type>jar</type>
                   <includes>org/jboss/dmr/**,org/jboss/as/console/client/widgets/**,org/jboss/as/console/client/auth/**,org/jboss/as/console/client/core/*.*,org/jboss/as/console/client/core/message/*.*,org/jboss/as/console/client/shared/*.*,org/jboss/as/console/client/shared/dispatch/**,org/jboss/as/console/client/Build.java,gwt-proxy.properties</includes>
-                  <excludes>org/jboss/as/console/client/shared/BeanFactory.java,org/jboss/as/console/client/widgets/forms/Form.java</excludes>
+                  <excludes>org/jboss/as/console/client/shared/BeanFactory.java</excludes>
                   <outputDirectory>${asConsoleIncludesDirectory}/java</outputDirectory>
                 </artifactItem>
               </artifactItems>
@@ -150,7 +151,7 @@
                 <artifactItem>
                   <groupId>org.jboss.as</groupId>
                   <artifactId>jboss-as-console</artifactId>
-                  <version>1.0.0.Beta9</version>
+                  <version>1.0.0.Beta13</version>
                   <classifier>resources</classifier>
                   <type>jar</type>
                   <includes>images/**,*.css</includes>

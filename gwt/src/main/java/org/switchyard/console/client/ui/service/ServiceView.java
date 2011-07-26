@@ -17,47 +17,47 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.console.client.ui.config;
+package org.switchyard.console.client.ui.service;
 
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.widgets.RHSContentPanel;
 import org.switchyard.console.client.Singleton;
-import org.switchyard.console.client.model.SystemDetails;
+import org.switchyard.console.client.model.Service;
 
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * ConfigView
+ * ServiceView
  * 
- * View implementation for SwitchYard system configuration.
+ * View for SwitchYard service configuration.
  * 
  * @author Rob Cernich
  */
-public class ConfigView extends DisposableViewImpl implements ConfigPresenter.MyView {
+public class ServiceView extends DisposableViewImpl implements ServicePresenter.MyView {
 
-    private ConfigPresenter _presenter;
-    private ConfigEditor _configEditor;
+    private ServicePresenter _presenter;
+    private ServiceEditor _serviceEditor;
 
     @Override
     public Widget createWidget() {
 
-        LayoutPanel layout = new RHSContentPanel(Singleton.MESSAGES.header_content_switchYardConfiguration());
+        LayoutPanel layout = new RHSContentPanel(Singleton.MESSAGES.header_content_serviceDetails());
 
-        _configEditor = new ConfigEditor(_presenter);
-        layout.add(_configEditor.asWidget());
+        _serviceEditor = new ServiceEditor(_presenter);
+        layout.add(_serviceEditor.asWidget());
 
         return layout;
     }
 
     @Override
-    public void setPresenter(ConfigPresenter presenter) {
+    public void setPresenter(ServicePresenter presenter) {
         this._presenter = presenter;
     }
 
     @Override
-    public void setSystemDetails(SystemDetails systemDetails) {
-        _configEditor.setSystemDetails(systemDetails);
+    public void setService(Service service) {
+        _serviceEditor.setService(service);
     }
 
 }

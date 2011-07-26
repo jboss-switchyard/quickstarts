@@ -33,28 +33,57 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface SwitchYardStore {
 
     /**
-     * Load SwitchYard deployments.
+     * Load details about the SwitchYard subsystem.
      * 
-     * @param callback
-     *            the callback.
+     * @param callback the callback.
      */
-    void loadDeployments(AsyncCallback<List<SwitchYardDeployment>> callback);
+    void loadSystemDetails(AsyncCallback<SystemDetails> callback);
 
     /**
-     * Load modules registered with the SwitchYard subsystem.
+     * Load applications deployed on the SwitchYard subsystem.
      * 
-     * @param callback
-     *            the callback.
+     * @param callback the callback.
      */
-    void loadModules(AsyncCallback<List<SwitchYardModule>> callback);
+    void loadApplications(AsyncCallback<List<Application>> callback);
 
     /**
-     * Load details for a specific deployment.
+     * Load details for a specific application.
      * 
-     * @param deploymentName
-     *            the name of the deployment to load.
-     * @param callback
-     *            the callback.
+     * @param applicationName the name of the application to load.
+     * @param callback the callback.
      */
-    void loadDeployment(String deploymentName, AsyncCallback<SwitchYardDeployment> callback);
+    void loadApplication(String applicationName, AsyncCallback<Application> callback);
+
+    /**
+     * Load components registered with the SwitchYard subsystem.
+     * 
+     * @param callback the callback.
+     */
+    void loadComponents(AsyncCallback<List<Component>> callback);
+
+    /**
+     * Load details for a specific component.
+     * 
+     * @param componentName the name of the component to load.
+     * @param callback the callback.
+     */
+    void loadComponent(String componentName, AsyncCallback<Component> callback);
+
+    /**
+     * Load services deployed on the SwitchYard subsystem.
+     * 
+     * @param callback the callback.
+     */
+    void loadServices(AsyncCallback<List<Service>> callback);
+
+    /**
+     * Load details for a specific service.
+     * 
+     * @param serviceName the name of the service to load.
+     * @param applicationName the name of the application containing the
+     *            service.
+     * @param callback the callback.
+     */
+    void loadService(String serviceName, String applicationName, AsyncCallback<Service> callback);
+
 }

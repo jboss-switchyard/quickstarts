@@ -17,10 +17,11 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.console.client.ui.design;
+package org.switchyard.console.client.ui.component;
 
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.switchyard.console.client.model.SwitchYardDeployment;
+import org.switchyard.console.client.Singleton;
+import org.switchyard.console.client.model.Component;
 
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -28,27 +29,26 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * PackageEditor
+ * ComponentEditor
  * 
- * Editor widget for SwitchYard _deployment package details.
+ * Editor for SwitchYard component configuration.
  * 
  * @author Rob Cernich
  */
-public class PackageEditor {
+public class ComponentEditor {
 
-    private PackagePresenter _presenter;
+    private ComponentPresenter _presenter;
 
     private ContentHeaderLabel _headerLabel;
 
-    private SwitchYardDeployment _deployment;
+    private Component _component;
 
     /**
-     * Create a new PackageEditor.
+     * Create a new ComponentEditor.
      * 
-     * @param presenter
-     *            the associated presenter.
+     * @param presenter the associated presenter.
      */
-    public PackageEditor(PackagePresenter presenter) {
+    public ComponentEditor(ComponentPresenter presenter) {
         this._presenter = presenter;
     }
 
@@ -67,19 +67,18 @@ public class PackageEditor {
         _headerLabel = new ContentHeaderLabel();
         layout.add(_headerLabel);
 
-        layout.add(new Label("TODO: Deployment specific configuration settings."));
+        layout.add(new Label("TODO: Component specific configuration settings."));
 
         return scroll;
     }
 
     /**
-     * @param deployment
-     *            the deployment being edited by this editor.
+     * @param component the component to be edited.
      */
-    public void setDeployment(SwitchYardDeployment deployment) {
-        this._deployment = deployment;
+    public void setComponent(Component component) {
+        this._component = component;
 
-        _headerLabel.setText("Deployment: " + deployment.getName());
+        _headerLabel.setText(Singleton.MESSAGES.header_editor_componentEditor(component.getName()));
     }
 
 }

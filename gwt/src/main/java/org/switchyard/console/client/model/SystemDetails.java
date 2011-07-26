@@ -19,15 +19,22 @@
 package org.switchyard.console.client.model;
 
 /**
- * CompositeService
+ * SystemDetails
  * 
- * Represents a SwitchYard SCA composite service configuration.
+ * Provides access to details about the SwitchYard system.
  * 
  * @author Rob Cernich
  */
-public interface CompositeService {
+public interface SystemDetails {
+
     /**
-     * @return the service's name.
+     * @return the runtime version.
      */
-    public String getName();
+    public String getVersion();
+
+    /**
+     * @param version the runtime version.
+     */
+    public void setVersion(String version);
+
 }

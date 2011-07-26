@@ -23,8 +23,9 @@ import java.util.List;
 
 import org.jboss.as.console.client.core.message.Message;
 import org.switchyard.console.client.Console;
-import org.switchyard.console.client.model.SwitchYardDeployment;
-import org.switchyard.console.client.model.SwitchYardModule;
+import org.switchyard.console.client.model.Application;
+import org.switchyard.console.client.model.Component;
+import org.switchyard.console.client.model.Service;
 
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -32,31 +33,31 @@ import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.ViewImpl;
 
 /**
- * ApplicationViewImpl
+ * MainViewImpl
  * 
  * Main application view for SwitchYard console. Provides navigator and content
  * widgets.
  * 
  * @author Rob Cernich
  */
-public class ApplicationViewImpl extends ViewImpl implements ApplicationPresenter.ApplicationView {
+public class MainViewImpl extends ViewImpl implements MainPresenter.MyView {
 
-    private ApplicationPresenter _presenter;
+    private MainPresenter _presenter;
 
     private SplitLayoutPanel _layout;
     private LayoutPanel _contentCanvas;
-    private ApplicationNavigator _lhsNavigation;
+    private MainNavigator _lhsNavigation;
 
     /**
-     * Create a new ApplicationViewImpl.
+     * Create a new MainViewImpl.
      */
-    public ApplicationViewImpl() {
+    public MainViewImpl() {
         super();
 
         _layout = new SplitLayoutPanel(4);
 
         _contentCanvas = new LayoutPanel();
-        _lhsNavigation = new ApplicationNavigator();
+        _lhsNavigation = new MainNavigator();
 
         _layout.addWest(_lhsNavigation.asWidget(), 240);
         _layout.add(_contentCanvas);
@@ -69,19 +70,24 @@ public class ApplicationViewImpl extends ViewImpl implements ApplicationPresente
     }
 
     @Override
-    public void updateDeployments(List<SwitchYardDeployment> deployments) {
-        _lhsNavigation.updateDeployments(deployments);
+    public void updateApplications(List<Application> applications) {
+        _lhsNavigation.updateApplications(applications);
     }
 
     @Override
-    public void updateModules(List<SwitchYardModule> modules) {
-        _lhsNavigation.updateModules(modules);
+    public void updateComponents(List<Component> components) {
+        _lhsNavigation.updateComponents(components);
+    }
+
+    @Override
+    public void updateServices(List<Service> services) {
+        _lhsNavigation.updateServices(services);
     }
 
     @Override
     public void setInSlot(Object slot, Widget content) {
 
-        if (slot == ApplicationPresenter.TYPE_MAIN_CONTENT) {
+        if (slot == MainPresenter.TYPE_MAIN_CONTENT) {
             if (content != null) {
                 setContent(content);
             }

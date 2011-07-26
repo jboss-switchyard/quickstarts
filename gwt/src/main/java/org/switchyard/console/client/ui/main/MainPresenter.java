@@ -26,8 +26,9 @@ import org.jboss.as.console.client.core.message.Message;
 import org.switchyard.console.client.Console;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.Singleton;
-import org.switchyard.console.client.model.SwitchYardDeployment;
-import org.switchyard.console.client.model.SwitchYardModule;
+import org.switchyard.console.client.model.Application;
+import org.switchyard.console.client.model.Component;
+import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.model.SwitchYardStore;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -49,14 +50,13 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
 /**
- * ApplicationPresenter
+ * MainPresenter
  * 
  * Main presenter for SwitchYard console.
  * 
  * @author Rob Cernich
  */
-public class ApplicationPresenter extends
-        Presenter<ApplicationPresenter.ApplicationView, ApplicationPresenter.ApplicationProxy> {
+public class MainPresenter extends Presenter<MainPresenter.MyView, MainPresenter.MyProxy> {
 
     private PlaceManager _placeManager;
 
@@ -65,32 +65,35 @@ public class ApplicationPresenter extends
     private SwitchYardStore _switchYardStore;
 
     /**
-     * ApplicationView
+     * MyView
      * 
      * The view type for this presenter.
      */
-    public interface ApplicationView extends View {
+    public interface MyView extends View {
         /**
-         * @param deployments
-         *            the deployments to be used by the view.
+         * @param applications the applications to be used by the view.
          */
-        void updateDeployments(List<SwitchYardDeployment> deployments);
+        void updateApplications(List<Application> applications);
 
         /**
-         * @param modules
-         *            the modules to be used by the view.
+         * @param components the components to be used by the view.
          */
-        void updateModules(List<SwitchYardModule> modules);
+        void updateComponents(List<Component> components);
+
+        /**
+         * @param services the services to be used by the view.
+         */
+        void updateServices(List<Service> services);
     }
 
     /**
-     * ApplicationProxy
+     * MyProxy
      * 
      * The proxy type for this presenter.
      */
     @ProxyCodeSplit
     @NameToken(NameTokens.SWITCH_YARD_PRESENTER)
-    public interface ApplicationProxy extends ProxyPlace<ApplicationPresenter> {
+    public interface MyProxy extends ProxyPlace<MainPresenter> {
     }
 
     /** The main content slot for this presenter. */
@@ -98,33 +101,27 @@ public class ApplicationPresenter extends
     public static final GwtEvent.Type<RevealContentHandler<?>> TYPE_MAIN_CONTENT = new GwtEvent.Type<RevealContentHandler<?>>();
 
     /**
-     * Create a new ApplicationPresenter.
+     * Create a new MainPresenter.
      * 
-     * @param eventBus
-     *            the injected EventBus.
-     * @param view
-     *            the injected ApplicationView.
-     * @param proxy
-     *            the injected ApplicationProxy.
-     * @param placeManager
-     *            the injected PlaceManager
-     * @param deploymentStore
-     *            the injected SwitchYardStore.
+     * @param eventBus the injected EventBus.
+     * @param view the injected MyView.
+     * @param proxy the injected MyProxy.
+     * @param placeManager the injected PlaceManager
+     * @param switchYardStore the injected SwitchYardStore.
      */
     @Inject
-    public ApplicationPresenter(EventBus eventBus, ApplicationView view, ApplicationProxy proxy,
-            PlaceManager placeManager, SwitchYardStore deploymentStore) {
+    public MainPresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager placeManager,
+            SwitchYardStore switchYardStore) {
         super(eventBus, view, proxy);
         this._placeManager = placeManager;
-        this._switchYardStore = deploymentStore;
+        this._switchYardStore = switchYardStore;
     }
 
     /**
      * Load a default sub page upon first reveal and highlight navigation
      * sections in subsequent requests.
      * 
-     * @param request
-     *            the place request.
+     * @param request the place request.
      */
     @Override
     public void prepareFromRequest(PlaceRequest request) {
@@ -147,10 +144,10 @@ public class ApplicationPresenter extends
         Console.MODULES.getHeader().setContent(headerContent);
         Console.MODULES.getHeader().highlight(NameTokens.SYSTEM_CONFIG_PRESENTER);
 
-        _switchYardStore.loadDeployments(new AsyncCallback<List<SwitchYardDeployment>>() {
+        _switchYardStore.loadApplications(new AsyncCallback<List<Application>>() {
             @Override
-            public void onSuccess(List<SwitchYardDeployment> result) {
-                getView().updateDeployments(result);
+            public void onSuccess(List<Application> result) {
+                getView().updateApplications(result);
             }
 
             @Override
@@ -161,10 +158,24 @@ public class ApplicationPresenter extends
             }
         });
 
-        _switchYardStore.loadModules(new AsyncCallback<List<SwitchYardModule>>() {
+        _switchYardStore.loadComponents(new AsyncCallback<List<Component>>() {
             @Override
-            public void onSuccess(List<SwitchYardModule> result) {
-                getView().updateModules(result);
+            public void onSuccess(List<Component> result) {
+                getView().updateComponents(result);
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                Log.error("Unknown error", caught);
+                Console.MODULES.getMessageCenter().notify(
+                        new Message("Unknown error", caught.getMessage(), Message.Severity.Error));
+            }
+        });
+
+        _switchYardStore.loadServices(new AsyncCallback<List<Service>>() {
+            @Override
+            public void onSuccess(List<Service> result) {
+                getView().updateServices(result);
             }
 
             @Override

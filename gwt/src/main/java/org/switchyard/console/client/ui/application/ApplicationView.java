@@ -17,47 +17,47 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.console.client.ui.module;
+package org.switchyard.console.client.ui.application;
 
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.widgets.RHSContentPanel;
-import org.switchyard.console.client.Singleton;
-import org.switchyard.console.client.model.SwitchYardModule;
+import org.switchyard.console.client.model.Application;
 
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * ModuleView
+ * ApplicationView
  * 
- * View for SwitchYard module configuration.
+ * View for SwitchYard application details.
  * 
  * @author Rob Cernich
  */
-public class ModuleView extends DisposableViewImpl implements ModulePresenter.MyView {
+public class ApplicationView extends DisposableViewImpl implements ApplicationPresenter.MyView {
 
-    private ModulePresenter _presenter;
-    private ModuleEditor _moduleEditor;
+    private ApplicationPresenter _presenter;
+
+    private ApplicationEditor _applicationEditor;
 
     @Override
     public Widget createWidget() {
 
-        LayoutPanel layout = new RHSContentPanel(Singleton.MESSAGES.header_content_moduleConfiguration());
+        LayoutPanel layout = new RHSContentPanel("Application Details");
 
-        _moduleEditor = new ModuleEditor(_presenter);
-        layout.add(_moduleEditor.asWidget());
+        _applicationEditor = new ApplicationEditor(_presenter);
+        layout.add(_applicationEditor.asWidget());
 
         return layout;
     }
 
     @Override
-    public void setPresenter(ModulePresenter presenter) {
+    public void setPresenter(ApplicationPresenter presenter) {
         this._presenter = presenter;
     }
 
     @Override
-    public void setModule(SwitchYardModule module) {
-        _moduleEditor.setModule(module);
+    public void setApplication(Application application) {
+        _applicationEditor.setApplication(application);
     }
 
 }

@@ -17,15 +17,15 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.console.client.ui.config;
+package org.switchyard.console.client.ui.service;
 
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.switchyard.console.client.Console;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.Singleton;
+import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.model.SwitchYardStore;
-import org.switchyard.console.client.model.SystemDetails;
 import org.switchyard.console.client.ui.main.MainPresenter;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -44,13 +44,13 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 
 /**
- * ConfigPresenter
+ * ServicePresenter
  * 
- * Presenter for SwitchYard system configuration.
+ * Presenter for SwitchYard component configuration.
  * 
  * @author Rob Cernich
  */
-public class ConfigPresenter extends Presenter<ConfigPresenter.MyView, ConfigPresenter.MyProxy> {
+public class ServicePresenter extends Presenter<ServicePresenter.MyView, ServicePresenter.MyProxy> {
 
     private final PlaceManager _placeManager;
 
@@ -61,32 +61,32 @@ public class ConfigPresenter extends Presenter<ConfigPresenter.MyView, ConfigPre
     /**
      * MyProxy
      * 
-     * The proxy type associated with this presenter.
+     * The proxy type used by this presenter.
      */
     @ProxyCodeSplit
-    @NameToken(NameTokens.SYSTEM_CONFIG_PRESENTER)
-    public interface MyProxy extends Proxy<ConfigPresenter>, Place {
+    @NameToken(NameTokens.SERVICE_CONFIG_PRESENTER)
+    public interface MyProxy extends Proxy<ServicePresenter>, Place {
     }
 
     /**
      * MyView
      * 
-     * The view type associated with this presenter.
+     * The view type used by this presenter.
      */
     public interface MyView extends View {
         /**
-         * @param presenter the presenter for the view.
+         * @param presenter the presenter associated with the view.
          */
-        void setPresenter(ConfigPresenter presenter);
+        void setPresenter(ServicePresenter presenter);
 
         /**
-         * @param systemDetails details of the SwitchYard system.
+         * @param service set the service to be viewed/edited.
          */
-        void setSystemDetails(SystemDetails systemDetails);
+        void setService(Service service);
     }
 
     /**
-     * Create a new ConfigPresenter.
+     * Create a new ServicePresenter.
      * 
      * @param eventBus the injected EventBus.
      * @param view the injected MyView.
@@ -96,7 +96,7 @@ public class ConfigPresenter extends Presenter<ConfigPresenter.MyView, ConfigPre
      * @param switchYardStore the injected SwitchYardStore.
      */
     @Inject
-    public ConfigPresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager placeManager,
+    public ServicePresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager placeManager,
             DispatchAsync dispatcher, SwitchYardStore switchYardStore) {
         super(eventBus, view, proxy);
 
@@ -116,11 +116,14 @@ public class ConfigPresenter extends Presenter<ConfigPresenter.MyView, ConfigPre
         super.onReset();
 
         HTML headerContent = new HTML(new SafeHtmlBuilder().appendEscaped(
-                Singleton.MESSAGES.header_content_switchYardConfiguration()).toSafeHtml());
+                Singleton.MESSAGES.header_content_serviceDetails()).toSafeHtml());
         headerContent.setStylePrimaryName("header-content");
         Console.MODULES.getHeader().setContent(headerContent);
-        Console.MODULES.getHeader().highlight(NameTokens.SYSTEM_CONFIG_PRESENTER);
-        loadSystemDetails();
+        Console.MODULES.getHeader().highlight(NameTokens.COMPONENT_CONFIG_PRESENTER);
+
+        String serviceName = _placeManager.getCurrentPlaceRequest().getParameter("service", null);
+        String applicationName = _placeManager.getCurrentPlaceRequest().getParameter("application", null);
+        loadService(serviceName, applicationName);
     }
 
     @Override
@@ -128,12 +131,12 @@ public class ConfigPresenter extends Presenter<ConfigPresenter.MyView, ConfigPre
         RevealContentEvent.fire(getEventBus(), MainPresenter.TYPE_MAIN_CONTENT, this);
     }
 
-    private void loadSystemDetails() {
-        _switchYardStore.loadSystemDetails(new AsyncCallback<SystemDetails>() {
+    private void loadService(String serviceName, String applicationName) {
+        _switchYardStore.loadService(serviceName, applicationName, new AsyncCallback<Service>() {
 
             @Override
-            public void onSuccess(SystemDetails systemDetails) {
-                getView().setSystemDetails(systemDetails);
+            public void onSuccess(Service service) {
+                getView().setService(service);
             }
 
             @Override

@@ -17,16 +17,15 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.console.client.ui.design;
+package org.switchyard.console.client.ui.application;
 
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.switchyard.console.client.BeanFactory;
 import org.switchyard.console.client.Console;
 import org.switchyard.console.client.NameTokens;
-import org.switchyard.console.client.model.SwitchYardDeployment;
+import org.switchyard.console.client.model.Application;
 import org.switchyard.console.client.model.SwitchYardStore;
-import org.switchyard.console.client.ui.main.ApplicationPresenter;
+import org.switchyard.console.client.ui.main.MainPresenter;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
@@ -44,19 +43,17 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 
 /**
- * PackagePresenter
+ * ApplicationPresenter
  * 
- * Presenter for SwitchYard deployment package.
+ * Presenter for SwitchYard application.
  * 
  * @author Rob Cernich
  */
-public class PackagePresenter extends Presenter<PackagePresenter.MyView, PackagePresenter.MyProxy> {
+public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView, ApplicationPresenter.MyProxy> {
 
     private final PlaceManager _placeManager;
 
     private DispatchAsync _dispatcher;
-
-    private BeanFactory _factory;
 
     private SwitchYardStore _switchYardStore;
 
@@ -66,8 +63,8 @@ public class PackagePresenter extends Presenter<PackagePresenter.MyView, Package
      * The proxy type associated with this presenter.
      */
     @ProxyCodeSplit
-    @NameToken(NameTokens.PACKAGE_CONFIG_PRESENTER)
-    public interface MyProxy extends Proxy<PackagePresenter>, Place {
+    @NameToken(NameTokens.APPLICATION_CONFIG_PRESENTER)
+    public interface MyProxy extends Proxy<ApplicationPresenter>, Place {
     }
 
     /**
@@ -77,44 +74,33 @@ public class PackagePresenter extends Presenter<PackagePresenter.MyView, Package
      */
     public interface MyView extends View {
         /**
-         * @param presenter
-         *            the associated presenter.
+         * @param presenter the associated presenter.
          */
-        void setPresenter(PackagePresenter presenter);
+        void setPresenter(ApplicationPresenter presenter);
 
         /**
-         * @param deployment
-         *            the deployment being viewed/processed/edited.
+         * @param application the application being viewed/processed/edited.
          */
-        void setDeployment(SwitchYardDeployment deployment);
+        void setApplication(Application application);
     }
 
     /**
-     * Create a new PackagePresenter.
+     * Create a new ApplicationPresenter.
      * 
-     * @param eventBus
-     *            the injected EventBus.
-     * @param view
-     *            the injected MyView.
-     * @param proxy
-     *            the injected MyProxy.
-     * @param placeManager
-     *            the injected PlaceManager.
-     * @param dispatcher
-     *            the injected DispatchAsync.
-     * @param factory
-     *            the injected BeanFactory.
-     * @param switchYardStore
-     *            the injected SwitchYardStore.
+     * @param eventBus the injected EventBus.
+     * @param view the injected MyView.
+     * @param proxy the injected MyProxy.
+     * @param placeManager the injected PlaceManager.
+     * @param dispatcher the injected DispatchAsync.
+     * @param switchYardStore the injected SwitchYardStore.
      */
     @Inject
-    public PackagePresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager placeManager,
-            DispatchAsync dispatcher, BeanFactory factory, SwitchYardStore switchYardStore) {
+    public ApplicationPresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager placeManager,
+            DispatchAsync dispatcher, SwitchYardStore switchYardStore) {
         super(eventBus, view, proxy);
 
         this._placeManager = placeManager;
         this._dispatcher = dispatcher;
-        this._factory = factory;
         this._switchYardStore = switchYardStore;
     }
 
@@ -128,25 +114,25 @@ public class PackagePresenter extends Presenter<PackagePresenter.MyView, Package
     protected void onReset() {
         super.onReset();
 
-        HTML headerContent = new HTML(new SafeHtmlBuilder().appendEscaped("Deployment Configuration").toSafeHtml());
+        HTML headerContent = new HTML(new SafeHtmlBuilder().appendEscaped("Application Details").toSafeHtml());
         headerContent.setStylePrimaryName("header-content");
         Console.MODULES.getHeader().setContent(headerContent);
-        Console.MODULES.getHeader().highlight(NameTokens.MODULE_CONFIG_PRESENTER);
+        Console.MODULES.getHeader().highlight(NameTokens.COMPONENT_CONFIG_PRESENTER);
 
-        loadModule(_placeManager.getCurrentPlaceRequest().getParameter("deployment", null));
+        loadApplication(_placeManager.getCurrentPlaceRequest().getParameter("application", null));
     }
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), ApplicationPresenter.TYPE_MAIN_CONTENT, this);
+        RevealContentEvent.fire(getEventBus(), MainPresenter.TYPE_MAIN_CONTENT, this);
     }
 
-    private void loadModule(String deploymentName) {
-        _switchYardStore.loadDeployment(deploymentName, new AsyncCallback<SwitchYardDeployment>() {
+    private void loadApplication(String applicationName) {
+        _switchYardStore.loadApplication(applicationName, new AsyncCallback<Application>() {
 
             @Override
-            public void onSuccess(SwitchYardDeployment result) {
-                getView().setDeployment(result);
+            public void onSuccess(Application result) {
+                getView().setApplication(result);
             }
 
             @Override
