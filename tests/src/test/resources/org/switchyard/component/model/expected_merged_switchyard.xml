@@ -18,7 +18,7 @@
   ~ MA  02110-1301, USA.
   -->
 
-<switchyard xmlns="urn:switchyard-config:switchyard:1.0">
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" name="m1app" targetNamespace="urn:switchyard-quickstarts:m1app:0.1.0-SNAPSHOT">
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="m1app">
         <sca:service xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="OrderService" promote="OrderService">
             <soap:binding.soap xmlns:soap="urn:switchyard-component-soap:config:1.0">
