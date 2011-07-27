@@ -11,6 +11,6 @@
                 </route>
             </implementation.camel>
         </component>
-        <service name="JavaDSL" promote="JavaDSL"/>
+        <service name="JavaDSL" promote="JavaDSLBuilder/JavaDSL"/>
     </composite>
 </switchyard>
