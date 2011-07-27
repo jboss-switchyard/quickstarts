@@ -43,11 +43,20 @@
     </parent>
 
     <dependencies>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-deploy</artifactId>
+        </dependency>
         <!-- external dependencies -->
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <scope>test</scope>
+         </dependency>
     </dependencies>
 
 </project>

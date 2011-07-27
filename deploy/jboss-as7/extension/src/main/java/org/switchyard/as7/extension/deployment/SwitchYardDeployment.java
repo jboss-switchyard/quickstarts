@@ -31,13 +31,14 @@ import org.switchyard.deploy.internal.Deployment;
  * 
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
-public class SwitchYardDeployment extends Deployment {
+public class SwitchYardDeployment {
 
     /** The attachment key. */
     public static final AttachmentKey<SwitchYardDeployment> ATTACHMENT_KEY = AttachmentKey.create(SwitchYardDeployment.class);
 
     private final DeploymentUnit _deployUnit;
     private SwitchYardDeploymentState _deploymentState;
+    private Deployment _deployment;
  
     /**
      * Creates a new SwitchYard deployment.
@@ -46,8 +47,8 @@ public class SwitchYardDeployment extends Deployment {
      */
     public SwitchYardDeployment(final DeploymentUnit deploymentUnit, final SwitchYardModel config) {
         
-        super(config);
         _deployUnit = deploymentUnit;
+        _deployment = new Deployment(config);
     }
     
     /**
@@ -71,9 +72,9 @@ public class SwitchYardDeployment extends Deployment {
         try {
             Thread.currentThread().setContextClassLoader(module.getClassLoader());
             setDeploymentState(SwitchYardDeploymentState.INITIALIZING);
-            super.init(ServiceDomainManager.createDomain());
+            _deployment.init(ServiceDomainManager.createDomain());
             setDeploymentState(SwitchYardDeploymentState.STARTING);
-            super.start();
+            _deployment.start();
             setDeploymentState(SwitchYardDeploymentState.STARTED);
         } finally {
             Thread.currentThread().setContextClassLoader(origCL);
@@ -89,12 +90,12 @@ public class SwitchYardDeployment extends Deployment {
             final Module module = _deployUnit.getAttachment(Attachments.MODULE);
             Thread.currentThread().setContextClassLoader(module.getClassLoader());
             if (_deploymentState == SwitchYardDeploymentState.STARTED) {
-                super.stop();
+                _deployment.stop();
                 setDeploymentState(SwitchYardDeploymentState.STOPPED);
             }
             if (_deploymentState == SwitchYardDeploymentState.STARTING
                    || _deploymentState == SwitchYardDeploymentState.STOPPED) {
-                super.destroy();
+                _deployment.destroy();
                 setDeploymentState(SwitchYardDeploymentState.DESTROYED);
             }
         } finally {

@@ -23,10 +23,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 
@@ -99,8 +101,7 @@ public class Deployment extends AbstractDeployment {
      * Initialize the deployment.
      * @param appServiceDomain The ServiceDomain for the application.
      */
-    public void init(ServiceDomain appServiceDomain) {
-        super.init(appServiceDomain);
+    protected void doInit() {
         _log.debug("Initializing deployment for application " + getConfig().getQName());
         // create a new domain and load transformer and activator instances for lifecycle
         registerTransformers();
@@ -111,7 +112,7 @@ public class Deployment extends AbstractDeployment {
      * Starts the deployment.  All services are registered and the appropriate 
      * activators are triggered.
      */
-    public void start() {
+    protected void doStart() {
         _log.debug("Starting deployment " + getConfig().getQName());
         // ordered startup lifecycle
         try {
@@ -138,7 +139,7 @@ public class Deployment extends AbstractDeployment {
      * Stops the deployment.  All services are unregistered and the appropriate
      * activators are triggered.
      */
-    public void stop() {
+    protected void doStop() {
         _log.debug("Stopping deployment " + getConfig().getQName());
         undeployServiceBindings();
         undeployServices();
@@ -150,7 +151,7 @@ public class Deployment extends AbstractDeployment {
     /**
      * Tear everything down.
      */
-    public void destroy() {
+    protected void doDestroy() {
         _log.debug("Destroying deployment " + getConfig().getQName());
         
         destroyDomain();
@@ -367,14 +368,21 @@ public class Deployment extends AbstractDeployment {
                 activation.start();
                 _serviceBindings.add(activation);
             }
+            fireServiceDeployed(service);
         }
     }
 
     private void undeployServiceBindings() {
-        _log.debug("Undeploying reference bindings ...");
+       _log.debug("Undeploying reference bindings ...");
+       Set<QName> undeployedServiceNames = new LinkedHashSet<QName>();
        for (Activation activation : _serviceBindings) {
            activation.stop();
            activation.destroy();
+           undeployedServiceNames.add(activation.getService().getName());
+       }
+       // notify listeners
+       for (QName serviceName : undeployedServiceNames) {
+           fireServiceUndeployed(serviceName);
        }
     }
 

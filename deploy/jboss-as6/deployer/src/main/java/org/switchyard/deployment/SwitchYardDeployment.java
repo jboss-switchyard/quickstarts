@@ -28,10 +28,11 @@ import org.switchyard.deploy.internal.Deployment;
 /**
  * Represents a single AS6 deployment containing a SwitchYard application.
  */
-public class SwitchYardDeployment extends Deployment {
+public class SwitchYardDeployment {
     
     private final VFSDeploymentUnit _deployUnit;
     private ServiceDomainManager _domainManager;
+    private Deployment _deployment;
 
     /**
      * Creates a new SwitchYard deployment.
@@ -45,9 +46,9 @@ public class SwitchYardDeployment extends Deployment {
             final SwitchYardModel config,
             final ServiceDomainManager domainManager) {
         
-        super(config);
         _deployUnit = deploymentUnit;
         _domainManager = domainManager;
+        _deployment = new Deployment(config);
     }
 
     /**
@@ -60,7 +61,7 @@ public class SwitchYardDeployment extends Deployment {
      * Destroy the application.
      */
     public void destroy() {
-        _domainManager.removeApplicationServiceDomain(getDomain());
+        _domainManager.removeApplicationServiceDomain(_deployment.getDomain());
     }
 
     /**
@@ -70,8 +71,8 @@ public class SwitchYardDeployment extends Deployment {
         ClassLoader origCL = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(_deployUnit.getClassLoader());
-            super.init(createDomain(getConfig(), _domainManager));
-            super.start();
+            _deployment.init(createDomain(_deployment.getConfig(), _domainManager));
+            _deployment.start();
         } finally {
             Thread.currentThread().setContextClassLoader(origCL);
         }
@@ -84,8 +85,8 @@ public class SwitchYardDeployment extends Deployment {
         ClassLoader origCL = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(_deployUnit.getClassLoader());
-            super.stop();
-            super.destroy();
+            _deployment.stop();
+            _deployment.destroy();
         } finally {
             Thread.currentThread().setContextClassLoader(origCL);
         }

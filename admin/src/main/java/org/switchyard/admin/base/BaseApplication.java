@@ -19,8 +19,11 @@
 
 package org.switchyard.admin.base;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -32,25 +35,34 @@ import org.switchyard.admin.Service;
  */
 public class BaseApplication implements Application {
     
+    private BaseSwitchYard _switchYard;
     private QName _name;
-    private List<Service> _services;
+    private Map<QName, Service> _services;
     
     /**
      * Create a new BaseApplication with the specified services.
+     * @param switchYard SwitchYard object containing this application
      * @param name application name
      * @param services list of services
      */
-    public BaseApplication(QName name, List<Service> services) {
-        this(name);
-        _services = services;
+    public BaseApplication(BaseSwitchYard switchYard, QName name, List<Service> services) {
+        this(switchYard, name);
+        if (services != null) {
+            for (Service service : services) {
+                _services.put(service.getName(), service);
+            }
+        }
     }
 
     /**
      * Create a new BaseApplication.
+     * @param switchYard SwitchYard object containing this application
      * @param name application name
      */
-    public BaseApplication(QName name) {
+    public BaseApplication(BaseSwitchYard switchYard, QName name) {
+        _switchYard = switchYard;
         _name = name;
+        _services = new LinkedHashMap<QName, Service>();
     }
 
     @Override
@@ -63,7 +75,7 @@ public class BaseApplication implements Application {
         if (_services == null) {
             return Collections.emptyList();
         }
-        return _services;
+        return new ArrayList<Service>(_services.values());
     }
     
     /**
@@ -71,7 +83,22 @@ public class BaseApplication implements Application {
      * @param services list of services
      */
     public void setServices(List<Service> services) {
-        _services = services;
+        _services = new LinkedHashMap<QName, Service>();
+        for (Service service : services) {
+            _services.put(service.getName(), service);
+        }
     }
 
+    protected void addService(Service service) {
+        _services.put(service.getName(), service);
+        _switchYard.addService(service);
+    }
+    
+    protected Service removeService(QName serviceName) {
+        Service service = _services.remove(serviceName);
+        if (service != null) {
+            _switchYard.removeService(service);
+        }
+        return service;
+    }
 }

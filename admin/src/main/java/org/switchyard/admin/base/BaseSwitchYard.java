@@ -82,7 +82,19 @@ public class BaseSwitchYard implements SwitchYard {
      * @return reference to this admin object
      */
     public BaseSwitchYard removeApplication(Application application) {
-        _applications.remove(application.getName());
+        return removeApplication(application.getName());
+    }
+
+    /**
+     * Remove an application.
+     * @param name name of the application to remove.
+     * @return reference to this admin object
+     */
+    public BaseSwitchYard removeApplication(QName name) {
+        Application application = _applications.remove(name);
+        if (application != null) {
+            _services.removeAll(application.getServices());
+        }
         return this;
     }
 

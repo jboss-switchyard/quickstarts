@@ -19,8 +19,16 @@
 
 package org.switchyard.deploy.internal;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
+
 import org.apache.log4j.Logger;
 import org.switchyard.ServiceDomain;
+import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceInterface;
@@ -29,9 +37,6 @@ import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 import org.switchyard.transform.TransformerRegistryLoader;
 import org.switchyard.transform.jaxb.internal.JAXBTransformerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Abstract SwitchYard application deployment.
@@ -59,6 +64,14 @@ public abstract class AbstractDeployment {
      * SwitchYard configuration.
      */
     private SwitchYardModel _switchyardConfig;
+    /**
+     * The name for this deployment.
+     */
+    private QName _name;
+    /**
+     * DeploymentListener objects registered with this deployment.
+     */
+    private Set<DeploymentListener> _listeners = new LinkedHashSet<DeploymentListener>();
 
     /**
      * Automatically registered transformers (e.g. JAXB type transformers).
@@ -76,6 +89,28 @@ public abstract class AbstractDeployment {
     }
 
     /**
+     * Add a listener to this deployment.
+     * 
+     * @param listener the listener to add.
+     */
+    public void addDeploymentListener(DeploymentListener listener) {
+        synchronized (_listeners) {
+            _listeners.add(listener);
+        }
+    }
+    
+    /**
+     * Remove a listener from this deployment.
+     * 
+     * @param listener the listener to remove.
+     */
+    public void removeDeploymentListener(DeploymentListener listener) {
+        synchronized (_listeners) {
+            _listeners.remove(listener);
+        }
+    }
+
+    /**
      * Set the parent deployment.
      * <p/>
      * This must be called before calling {@link #init(org.switchyard.ServiceDomain)}.
@@ -89,29 +124,92 @@ public abstract class AbstractDeployment {
      * Initialise the deployment.
      * @param appServiceDomain The ServiceDomain for the application.
      */
-    public void init(ServiceDomain appServiceDomain) {
+    public final void init(ServiceDomain appServiceDomain) {
         if (appServiceDomain == null) {
             throw new IllegalArgumentException("null 'appServiceDomain' argument.");
         }
-        _serviceDomain = appServiceDomain;
-        _transformerRegistryLoader = new TransformerRegistryLoader(appServiceDomain.getTransformerRegistry());
-        _transformerRegistryLoader.loadOOTBTransforms();
+
+        // initialize deployment name
+        if (getConfig() != null) {
+            _name = getConfig().getQName();
+            if (_name == null) {
+                // initialize to composite name if config name is missing
+                if (getConfig().getComposite() != null) {
+                    _name = getConfig().getComposite().getQName();
+                }
+            }
+        }
+
+        notifyListeners(new InitializingNotifier());
+
+        try {
+            _serviceDomain = appServiceDomain;
+            _transformerRegistryLoader = new TransformerRegistryLoader(appServiceDomain.getTransformerRegistry());
+            _transformerRegistryLoader.loadOOTBTransforms();
+            
+            doInit();
+        } catch (RuntimeException e) {
+            notifyListeners(new InitializationFailedNotifier(e));
+            throw e;
+        }
+
+        notifyListeners(new InitializedNotifier());
     }
 
     /**
      * Start/un-pause the deployment.
      */
-    public abstract void start();
+    public final void start() {
+        notifyListeners(new StartingNotifier());
+        
+        try {
+            doStart();
+        } catch (RuntimeException e) {
+            notifyListeners(new StartFailedNotifier(e));
+            throw e;
+        }
+
+        notifyListeners(new StartedNotifier());
+    }
 
     /**
      * Stop/pause the deployment.
      */
-    public abstract void stop();
+    public final void stop() {
+        notifyListeners(new StoppingNotifier());
+        
+        try {
+            doStop();
+        } catch (RuntimeException e) {
+            notifyListeners(new StopFailedNotifier(e));
+            throw e;
+        }
+
+        notifyListeners(new StoppedNotifier());
+    }
 
     /**
      * Destroy the deployment.
      */
-    public abstract void destroy();
+    public final void destroy() {
+        notifyListeners(new DestroyingNotifier());
+        
+        try {
+            doDestroy();
+        } finally {
+            notifyListeners(new DestroyedNotifier());
+        }
+    }
+
+    /**
+     * This field is not available until after the deployment has been
+     * initialized.
+     * 
+     * @return the name for this deployment; may be null.
+     */
+    public QName getName() {
+        return _name;
+    }
 
     /**
      * Get the {@link ServiceDomain} associated with the deployment.
@@ -133,7 +231,30 @@ public abstract class AbstractDeployment {
         return _transformerRegistryLoader;
     }
 
-    protected SwitchYardModel getConfig() {
+    /**
+     * Notify the implementation to initialize itself.
+     */
+    protected abstract void doInit();
+
+    /**
+     * Notify the implementation to start itself.
+     */
+    protected abstract void doStart();
+
+    /**
+     * Notify the implementation to stop itself.
+     */
+    protected abstract void doStop();
+
+    /**
+     * Notify the implementation to destroy itself.
+     */
+    protected abstract void doDestroy();
+
+    /**
+     * @return the SwitchYard configuration for this deployment.
+     */
+    public SwitchYardModel getConfig() {
         return _switchyardConfig;
     }
 
@@ -161,4 +282,139 @@ public abstract class AbstractDeployment {
         }
         _autoRegisteredTransformers.clear();
     }
+
+    protected final void fireServiceDeployed(CompositeServiceModel serviceModel) {
+        notifyListeners(new ServiceDeployedNotifier(serviceModel));
+    }
+
+    protected final void fireServiceUndeployed(QName serviceName) {
+        notifyListeners(new ServiceUndeployedNotifier(serviceName));
+    }
+
+    private void notifyListeners(DeploymentEventNotifier notifier) {
+        List<DeploymentListener> listeners;
+        synchronized (_listeners) {
+            listeners = new ArrayList<DeploymentListener>(_listeners);
+        }
+        for (DeploymentListener listener : listeners) {
+            try {
+                notifier.notify(listener);
+            } catch (Exception e) {
+                _log.warn("DeploymentListener threw exception during notify.", e);
+            }
+        }
+    }
+
+    private static interface DeploymentEventNotifier {
+        public void notify(DeploymentListener listener);
+    }
+
+    private class ServiceDeployedNotifier implements DeploymentEventNotifier {
+        private CompositeServiceModel _serviceModel;
+
+        protected ServiceDeployedNotifier(CompositeServiceModel serviceModel) {
+            _serviceModel = serviceModel;
+        }
+
+        public void notify(DeploymentListener listener) {
+            listener.serviceDeployed(AbstractDeployment.this, _serviceModel);
+        }
+    }
+
+    private class ServiceUndeployedNotifier implements DeploymentEventNotifier {
+        private QName _serviceName;
+
+        protected ServiceUndeployedNotifier(QName serviceName) {
+            _serviceName = serviceName;
+        }
+
+        public void notify(DeploymentListener listener) {
+            listener.serviceUndeployed(AbstractDeployment.this, _serviceName);
+        }
+    }
+
+    private class InitializingNotifier implements DeploymentEventNotifier {
+        public void notify(DeploymentListener listener) {
+            listener.initializing(AbstractDeployment.this);
+        }
+    }
+
+    private class InitializedNotifier implements DeploymentEventNotifier {
+        public void notify(DeploymentListener listener) {
+            listener.initialized(AbstractDeployment.this);
+        }
+    }
+
+    private class InitializationFailedNotifier implements DeploymentEventNotifier {
+        private Throwable _exception;
+
+        protected InitializationFailedNotifier(Throwable exception) {
+            _exception = exception;
+        }
+
+        public void notify(DeploymentListener listener) {
+            listener.initializationFailed(AbstractDeployment.this, _exception);
+        }
+    }
+
+    private class StartingNotifier implements DeploymentEventNotifier {
+        public void notify(DeploymentListener listener) {
+            listener.starting(AbstractDeployment.this);
+        }
+    }
+
+    private class StartedNotifier implements DeploymentEventNotifier {
+        public void notify(DeploymentListener listener) {
+            listener.started(AbstractDeployment.this);
+        }
+    }
+
+    private class StartFailedNotifier implements DeploymentEventNotifier {
+        private Throwable _exception;
+
+        protected StartFailedNotifier(Throwable exception) {
+            _exception = exception;
+        }
+
+        public void notify(DeploymentListener listener) {
+            listener.startFailed(AbstractDeployment.this, _exception);
+        }
+    }
+
+    private class StoppingNotifier implements DeploymentEventNotifier {
+        public void notify(DeploymentListener listener) {
+            listener.stopping(AbstractDeployment.this);
+        }
+    }
+
+    private class StoppedNotifier implements DeploymentEventNotifier {
+        public void notify(DeploymentListener listener) {
+            listener.stopped(AbstractDeployment.this);
+        }
+    }
+
+    private class StopFailedNotifier implements DeploymentEventNotifier {
+        private Throwable _exception;
+
+        protected StopFailedNotifier(Throwable exception) {
+            _exception = exception;
+        }
+
+        public void notify(DeploymentListener listener) {
+            listener.stopFailed(AbstractDeployment.this, _exception);
+        }
+    }
+
+    private class DestroyingNotifier implements DeploymentEventNotifier {
+        public void notify(DeploymentListener listener) {
+            listener.destroying(AbstractDeployment.this);
+        }
+    }
+
+    private class DestroyedNotifier implements DeploymentEventNotifier {
+        public void notify(DeploymentListener listener) {
+            listener.destroyed(AbstractDeployment.this);
+        }
+    }
+
 }

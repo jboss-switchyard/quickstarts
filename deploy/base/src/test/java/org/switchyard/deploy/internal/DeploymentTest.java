@@ -25,9 +25,11 @@ import javax.xml.namespace.QName;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.type.Classes;
+import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.components.MockActivator;
 import org.switchyard.deploy.components.config.MockBindingModel;
@@ -43,7 +45,6 @@ import org.switchyard.transform.Transformer;
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public class DeploymentTest {
-
 
     @Test
     public void testEmptySwitchYardConfiguration() throws Exception {
@@ -157,5 +158,94 @@ public class DeploymentTest {
         } catch (SwitchYardException e) {
             Assert.assertEquals("Failed to load Service interface class 'org.acme.Blah'.", e.getMessage());
         }
+    }
+
+    @Test
+    public void testNotifications() throws Exception {
+        InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-mock-01.xml", getClass());
+        Deployment deployment = new Deployment(swConfigStream);
+        swConfigStream.close();
+
+        DeploymentListener listener = Mockito.mock(DeploymentListener.class);
+        deployment.addDeploymentListener(listener);
+
+        deployment.init(ServiceDomainManager.createDomain());
+        deployment.start();
+        deployment.stop();
+        deployment.destroy();
+
+        Mockito.verify(listener).initializing(deployment);
+        Mockito.verify(listener).initialized(deployment);
+        Mockito.verify(listener).starting(deployment);
+        Mockito.verify(listener, Mockito.times(1)).serviceDeployed(deployment,
+                deployment.getConfig().getComposite().getServices().get(0));
+        Mockito.verify(listener).started(deployment);
+        Mockito.verify(listener).stopping(deployment);
+        Mockito.verify(listener).stopped(deployment);
+        Mockito.verify(listener).destroying(deployment);
+        Mockito.verify(listener).destroyed(deployment);
+    }
+    
+    @Test
+    public void testListenerThrowing() throws Exception {
+        InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-mock-01.xml", getClass());
+        Deployment deployment = new Deployment(swConfigStream);
+        swConfigStream.close();
+
+        DeploymentListener listener = Mockito.mock(DeploymentListener.class);
+        Mockito.doThrow(new RuntimeException("error")).when(listener).initializing(deployment);
+        Mockito.doThrow(new RuntimeException("error")).when(listener).initialized(deployment);
+        Mockito.doThrow(new RuntimeException("error")).when(listener).starting(deployment);
+        Mockito.doThrow(new RuntimeException("error")).when(listener)
+                .serviceDeployed(Mockito.any(Deployment.class), Mockito.any(CompositeServiceModel.class));
+        Mockito.doThrow(new RuntimeException("error")).when(listener).started(deployment);
+        Mockito.doThrow(new RuntimeException("error")).when(listener).stopping(deployment);
+        Mockito.doThrow(new RuntimeException("error")).when(listener).stopped(deployment);
+        Mockito.doThrow(new RuntimeException("error")).when(listener).destroying(deployment);
+        Mockito.doThrow(new RuntimeException("error")).when(listener).destroyed(deployment);
+        deployment.addDeploymentListener(listener);
+
+        deployment.init(ServiceDomainManager.createDomain());
+        deployment.start();
+        deployment.stop();
+        deployment.destroy();
+
+        Mockito.verify(listener).initializing(deployment);
+        Mockito.verify(listener).initialized(deployment);
+        Mockito.verify(listener).starting(deployment);
+        Mockito.verify(listener, Mockito.times(1)).serviceDeployed(deployment,
+                deployment.getConfig().getComposite().getServices().get(0));
+        Mockito.verify(listener).started(deployment);
+        Mockito.verify(listener).stopping(deployment);
+        Mockito.verify(listener).stopped(deployment);
+        Mockito.verify(listener).destroying(deployment);
+        Mockito.verify(listener).destroyed(deployment);
+    }
+
+    @Test
+    public void testMockExtenders() throws Exception {
+        AbstractDeployment mock = new AbstractDeployment(null) {
+            
+            @Override
+            protected void doStop() {
+            }
+            
+            @Override
+            protected void doStart() {
+            }
+            
+            @Override
+            protected void doInit() {
+            }
+            
+            @Override
+            protected void doDestroy() {
+            }
+        };
+        
+        mock.init(ServiceDomainManager.createDomain());
+        mock.start();
+        mock.stop();
+        mock.destroy();
     }
 }

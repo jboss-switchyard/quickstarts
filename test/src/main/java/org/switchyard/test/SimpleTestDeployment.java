@@ -19,7 +19,6 @@
 
 package org.switchyard.test;
 
-import org.switchyard.ServiceDomain;
 import org.switchyard.deploy.internal.AbstractDeployment;
 
 /**
@@ -45,19 +44,18 @@ public class SimpleTestDeployment extends AbstractDeployment {
      * 
      * @param serviceDomain The ServiceDomain that the deployment is a member of.
      */
-    public void init(ServiceDomain serviceDomain) {
-        super.init(serviceDomain);
+    protected void doInit() {
     }
 
     @Override
-    public void start() {
+    protected void doStart() {
     }
 
     @Override
-    public void stop() {
+    protected void doStop() {
     }
 
     @Override
-    public void destroy() {
+    protected void doDestroy() {
     }
 }
