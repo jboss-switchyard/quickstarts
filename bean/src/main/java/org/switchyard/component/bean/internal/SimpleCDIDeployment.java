@@ -28,7 +28,6 @@ import org.switchyard.component.bean.deploy.BeanComponentActivator;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
 import org.switchyard.component.bean.deploy.CDIBean;
 import org.switchyard.component.bean.deploy.ServiceDescriptor;
-import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceInterface;
@@ -56,24 +55,23 @@ public class SimpleCDIDeployment extends AbstractDeployment {
     }
 
     @Override
-    public void init(ServiceDomain appServiceDomain) {
-        super.init(ServiceDomainManager.createDomain());
+    protected void doInit() {
     }
 
     @Override
-    public void start() {
+    protected void doStart() {
         BeanDeploymentMetaData beanDeploymentMetaData = BeanDeploymentMetaData.lookupBeanDeploymentMetaData();
         deployTransformers(beanDeploymentMetaData, getDomain());
         deployServicesAndProxies(beanDeploymentMetaData, getDomain());
     }
 
     @Override
-    public void stop() {
+    protected void doStop() {
         undeployAutoRegisteredTransformers();
     }
 
     @Override
-    public void destroy() {
+    protected void doDestroy() {
     }
 
     private void deployTransformers(BeanDeploymentMetaData beanDeploymentMetaData, ServiceDomain domain) {
