@@ -28,8 +28,6 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.spi.CreationalContext;
@@ -43,9 +41,9 @@ import javax.xml.namespace.QName;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangeState;
-import org.switchyard.HandlerException;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
+import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.InvocationContract;
 import org.switchyard.metadata.ServiceOperation;
@@ -282,20 +280,9 @@ public class ClientProxyBean implements Bean {
             }
             
             if (method.getReturnType() != null && !Void.TYPE.isAssignableFrom(method.getReturnType())) {
-                final BlockingQueue<Exchange> responseQueue = new ArrayBlockingQueue<Exchange>(1);
+                SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
 
-                ExchangeHandler responseExchangeHandler = new ExchangeHandler() {
-                    public void handleMessage(Exchange exchange) throws HandlerException {
-                        responseQueue.offer(exchange);
-                    }
-
-                    public void handleFault(Exchange exchange) {
-                        responseQueue.offer(exchange);
-                    }
-                };
-
-
-                Exchange exchangeIn = createExchange(_service, method, responseExchangeHandler);
+                Exchange exchangeIn = createExchange(_service, method, inOutHandler);
                 // Don't set the message content as an array unless there are multiple arguments
                 if (args.length == 1) {
                     exchangeIn.send(exchangeIn.createMessage().setContent(args[0]));
@@ -303,7 +290,7 @@ public class ClientProxyBean implements Bean {
                     exchangeIn.send(exchangeIn.createMessage().setContent(args));
                 }
 
-                    Exchange exchangeOut = responseQueue.take();
+                Exchange exchangeOut = inOutHandler.waitForOut();
                 if (exchangeOut.getState() == ExchangeState.OK) {
                     return exchangeOut.getMessage().getContent(method.getReturnType());
                 } else {

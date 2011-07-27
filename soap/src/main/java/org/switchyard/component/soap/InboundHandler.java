@@ -45,13 +45,14 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.ServiceReference;
+import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
+import org.switchyard.exception.DeliveryException;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.w3c.dom.Node;
-
 
 /**
  * Hanldes SOAP requests to invoke a SwitchYard service.
@@ -62,12 +63,10 @@ public class InboundHandler extends BaseHandler {
 
     private static final Logger LOGGER = Logger.getLogger(InboundHandler.class);
     private static final long DEFAULT_TIMEOUT = 15000;
-    private static final int DEFAULT_SLEEP = 100;
     private static final String MESSAGE_NAME = "MESSAGE_NAME";
     private static final String WSDL_LOCATION = "javax.xml.ws.wsdl.description";
 
     private final ConcurrentHashMap<String, BaseExchangeContract> _contracts = new ConcurrentHashMap<String, BaseExchangeContract>();
-    private static ThreadLocal<SOAPMessage> _response = new ThreadLocal<SOAPMessage>();
 
     private MessageComposer _composer;
     private Set<QName> _composerMappedHeaderNames = new LinkedHashSet<QName>();
@@ -173,35 +172,35 @@ public class InboundHandler extends BaseHandler {
         LOGGER.info("WebService " + _config.getPort() + " stopped.");
     }
 
-    /**
-     * The handler method that handles responses from a WebService.
-     * @param exchange the Exchange
-     * @throws HandlerException handler exception
-     */
     @Override
-    public void handleMessage(final Exchange exchange) throws HandlerException {
-        try {
-            _response.set(_decomposer.decompose(exchange, _decomposerMappedVariableNames));
-        } catch (SOAPException se) {
-            throw new HandlerException("Unexpected exception generating SOAP Message", se);
-        }
+    public void handleFault(Exchange exchange) {
+        // TODO: Why is this class an ExchangeHandler?  See SOAPActivator
+        throw new IllegalStateException("Unexpected");
+    }
+
+    @Override
+    public void handleMessage(Exchange exchange) throws HandlerException {
+        // TODO: Why is this class an ExchangeHandler?  See SOAPActivator
+        throw new IllegalStateException("Unexpected");
     }
 
     /**
-     * The handler method that handles faults from a WebService.
+     * The handler method that handles responses from a WebService.
+     *
      * @param exchange the Exchange
+     * @return Decomposed SOAPMessage.
      */
-    @Override
-    public void handleFault(final Exchange exchange) {
+    public SOAPMessage decompose(final Exchange exchange) {
         try {
-            _response.set(_decomposer.decompose(exchange, _decomposerMappedVariableNames));
+            return _decomposer.decompose(exchange, _decomposerMappedVariableNames);
         } catch (SOAPException se) {
             try {
-                _response.set(SOAPUtil.generateFault(se));
+                return SOAPUtil.generateFault(se);
             } catch (SOAPException e) {
                 LOGGER.error(e);
             }
         }
+        return null;
     }
 
     /**
@@ -215,9 +214,6 @@ public class InboundHandler extends BaseHandler {
         Operation operation;
         Boolean oneWay = false;
 
-        // Clear the response...
-        _response.remove();
-
         try {
             operationName = SOAPUtil.getOperationName(soapMessage);
             operation = WSDLUtil.getOperation(_wsdlPort, operationName);
@@ -229,19 +225,17 @@ public class InboundHandler extends BaseHandler {
         }
 
         if (exchangeContract == null) {
-            handleException(oneWay, new SOAPException("Operation '" + operationName + "' not available on target Service '" + _service.getName() + "'."));
-            return _response.get();
+            return handleException(oneWay, new SOAPException("Operation '" + operationName + "' not available on target Service '" + _service.getName() + "'."));
         }
 
         try {
+            SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
             Exchange exchange;
 
-            exchange = _service.createExchange(exchangeContract, this);
+            exchange = _service.createExchange(exchangeContract, inOutHandler);
             Message message = _composer.compose(soapMessage, exchange, _composerMappedHeaderNames);
 
-            if (!assertComposedMessageOK(message, operation, oneWay)) {
-                return _response.get();
-            }
+            assertComposedMessageOK(message, operation);
 
             exchange.getContext().setProperty(MESSAGE_NAME, 
                     operation.getInput().getMessage().getQName().getLocalPart(),
@@ -250,28 +244,27 @@ public class InboundHandler extends BaseHandler {
 
             if (oneWay) {
                 exchange.send(message);
+                return null;
             } else {
                 exchange.send(message);
-                waitForResponse();
+                try {
+                    exchange = inOutHandler.waitForOut(_waitTimeout);
+                } catch (DeliveryException e) {
+                    return handleException(oneWay, new SOAPException("Timed out after " + _waitTimeout + " ms waiting on synchronous response from target service '" + _service.getName() + "'."));
+                }
+
+                return decompose(exchange);
             }
-
-            return _response.get();
-
         } catch (SOAPException se) {
-            handleException(oneWay, se);
-        } finally {
-            _response.remove();
+            return handleException(oneWay, se);
         }
-
-        return null;
     }
 
-    private boolean assertComposedMessageOK(Message soapMessage, Operation operation, Boolean oneWay) {
+    private void assertComposedMessageOK(Message soapMessage, Operation operation) throws SOAPException {
         Node inputMessage = soapMessage.getContent(Node.class);
 
         if (inputMessage == null) {
-            handleException(oneWay, new SOAPException("Composer created a null ESB Message payload for service '" + _service.getName() + "'.  Must be of type '" + SOAPMessage.class.getName() + "'."));
-            return false;
+            throw new SOAPException("Composer created a null ESB Message payload for service '" + _service.getName() + "'.  Must be of type '" + SOAPMessage.class.getName() + "'.");
         }
         
         String actualNS = inputMessage.getNamespaceURI();
@@ -279,9 +272,8 @@ public class InboundHandler extends BaseHandler {
         List<Part> parts = operation.getInput().getMessage().getOrderedParts(null);
 
         if (parts.isEmpty()) {
-            handleException(oneWay, new SOAPException("Invalid input SOAP payload for service operation '" + operation.getName() + "' (service '" + _service.getName()
-                                                                              + "').  No such Part '" + actualLN + "'."));
-            return false;
+            throw new SOAPException("Invalid input SOAP payload for service operation '" + operation.getName() + "' (service '" + _service.getName()
+                                                                              + "').  No such Part '" + actualLN + "'.");
         }
 
         Part part = parts.get(0);
@@ -290,46 +282,24 @@ public class InboundHandler extends BaseHandler {
         String expectedLN = expectedPayloadType.getLocalPart();
 
         if (expectedNS != null && !expectedNS.equals(actualNS)) {
-            handleException(oneWay, new SOAPException("Invalid input SOAP payload namespace for service operation '" + operation.getName() + "' (service '" + _service.getName()
-                                                                              + "').  Port defines operation namespace as '" + expectedNS + "'.  Actual namespace on input SOAP message '" + actualNS + "'."));
-            return false;
+            throw new SOAPException("Invalid input SOAP payload namespace for service operation '" + operation.getName() + "' (service '" + _service.getName()
+                                        + "').  Port defines operation namespace as '" + expectedNS + "'.  Actual namespace on input SOAP message '" + actualNS + "'.");
         } else if (expectedLN != null && !expectedLN.equals(actualLN)) {
-            handleException(oneWay, new SOAPException("Invalid input SOAP payload localNamePart for service operation '" + operation.getName() + "' (service '" + _service.getName()
-                                                                              + "').  Port defines operation localNamePart as '" + expectedLN + "'.  Actual localNamePart on input SOAP message '" + actualLN + "'."));
-            return false;
+            throw new SOAPException("Invalid input SOAP payload localNamePart for service operation '" + operation.getName() + "' (service '" + _service.getName()
+                                                                              + "').  Port defines operation localNamePart as '" + expectedLN + "'.  Actual localNamePart on input SOAP message '" + actualLN + "'.");
         }
-
-        return true;
     }
 
-    private void handleException(Boolean oneWay, SOAPException se) {
+    private SOAPMessage handleException(Boolean oneWay, SOAPException se) {
         if (oneWay) {
             LOGGER.error(se);
         } else {
             try {
-                _response.set(SOAPUtil.generateFault(se));
+                return SOAPUtil.generateFault(se);
             } catch (SOAPException e) {
                 LOGGER.error(e);
             }
         }
-    }
-
-    /**
-     * Sleep until we get a response or timeout has reached.
-     */
-    private void waitForResponse() {
-        long start = System.currentTimeMillis();
-
-        while (System.currentTimeMillis() < start + _waitTimeout) {
-            if (_response.get() != null) {
-                return;
-            }
-            try {
-                Thread.sleep(DEFAULT_SLEEP);
-            } catch (InterruptedException e) {
-                //ignore
-                continue;
-            }
-        }
+        return null;
     }
 }

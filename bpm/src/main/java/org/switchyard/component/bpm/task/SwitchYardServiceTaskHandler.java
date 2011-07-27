@@ -24,16 +24,16 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
-import org.switchyard.BaseHandler;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
-import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Property;
 import org.switchyard.Scope;
 import org.switchyard.ServiceReference;
+import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.common.xml.XMLHelper;
+import org.switchyard.exception.DeliveryException;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceOperation;
@@ -46,9 +46,6 @@ import org.switchyard.metadata.ServiceOperation;
 public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
 
     private static final Logger LOGGER = Logger.getLogger(SwitchYardServiceTaskHandler.class);
-
-    private static final ThreadLocal<Object> RESPONSE = new ThreadLocal<Object>();
-    private static final Object RESPONSE_FLAG = new Object();
 
     /** SwitchYard Service . */
     public static final String SWITCHYARD_SERVICE = "SwitchYard Service";
@@ -86,42 +83,44 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
             if (serviceRef != null) {
                 ExchangeContract exchangeContract = getExchangeContract(serviceRef, parameters);
                 ExchangePattern exchangePattern = exchangeContract.getServiceOperation().getExchangePattern();
-                final Exchange exchange;
+                SynchronousInOutHandler inOutHandler = null;
+
+                final Exchange exchangeIn;
                 if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
-                    exchange = serviceRef.createExchange(exchangeContract, new BaseHandler() {
-                        public void handleMessage(Exchange exchange) throws HandlerException {
-                            RESPONSE.set(RESPONSE_FLAG);
-                        }
-                        public void handleFault(Exchange exchange) {
-                            RESPONSE.set(RESPONSE_FLAG);
-                        }
-                    });
+                    inOutHandler = new SynchronousInOutHandler();
+                    exchangeIn = serviceRef.createExchange(exchangeContract, inOutHandler);
                 } else {
-                    exchange = serviceRef.createExchange(exchangeContract);
+                    exchangeIn = serviceRef.createExchange(exchangeContract);
                 }
-                Context context = exchange.getContext();
+                Context context = exchangeIn.getContext();
                 for (Map.Entry<String,Object> entry : parameters.entrySet()) {
                     context.setProperty(entry.getKey(), entry.getValue(), Scope.IN);
                 }
-                Message message = exchange.createMessage();
+                Message message = exchangeIn.createMessage();
                 Object content = task.getProcessInstanceVariable(getMessageContentName());
                 if (content != null) {
                     message.setContent(content);
                 }
-                if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
-                    RESPONSE.remove();
-                    exchange.send(message);
-                    waitForResponse();
-                    context = exchange.getContext();
-                    message = exchange.getMessage();
-                    content = message.getContent();
-                    task.setProcessInstanceVariable(getMessageContentName(), content);
-                    results = new HashMap<String,Object>();
-                    for (Property property : context.getProperties(Scope.OUT)) {
-                        results.put(property.getName(), property.getValue());
+                if (inOutHandler != null && ExchangePattern.IN_OUT.equals(exchangePattern)) {
+                    exchangeIn.send(message);
+
+                    try {
+                        Exchange exchangeOut = inOutHandler.waitForOut();
+
+                        context = exchangeOut.getContext();
+                        message = exchangeOut.getMessage();
+
+                        content = message.getContent();
+                        task.setProcessInstanceVariable(getMessageContentName(), content);
+                        results = new HashMap<String,Object>();
+                        for (Property property : context.getProperties(Scope.OUT)) {
+                            results.put(property.getName(), property.getValue());
+                        }
+                    } catch (DeliveryException e) {
+                        problem = e.getMessage();
                     }
                 } else {
-                    exchange.send(message);
+                    exchangeIn.send(message);
                 }
             } else {
                 problem = "serviceRef (" + serviceName + ") == null";
@@ -162,20 +161,4 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
         }
         return exchangeContract;
     }
-
-    // TODO: don't hardcode the wait and sleep times
-    private void waitForResponse() {
-        long start = System.currentTimeMillis();
-        while (System.currentTimeMillis() < start + 15000) {
-            if (RESPONSE.get() != null) {
-                return;
-            }
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                continue;
-            }
-        }
-    }
-
 }
