@@ -18,7 +18,6 @@
  */
 package org.switchyard.as7.extension.deployment;
 
-import org.jboss.as.controller.PathElement;
 import org.jboss.as.ee.component.EEModuleDescription;
 import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
@@ -34,7 +33,6 @@ import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceTarget;
 import org.jboss.msc.value.ImmediateValue;
 import org.switchyard.as7.extension.SwitchYardDeploymentMarker;
-import org.switchyard.as7.extension.SwitchYardExtension;
 import org.switchyard.as7.extension.services.SwitchYardService;
 
 /**
@@ -74,17 +72,10 @@ public class SwitchYardDeploymentProcessor implements DeploymentUnitProcessor {
 
         switchyardServiceBuilder.setInitialMode(Mode.ACTIVE);
         switchyardServiceBuilder.install();
-
-        processManagement(deploymentUnit, switchyardServiceName);
     }
 
     @Override
     public void undeploy(DeploymentUnit deploymentUnit) {
-    }
-
-    private void processManagement(DeploymentUnit deploymentUnit, ServiceName switchyardServiceName) {
-        deploymentUnit.createDeploymentSubModel(SwitchYardExtension.SUBSYSTEM_NAME,
-                PathElement.pathElement("service-name", switchyardServiceName.getCanonicalName()));
     }
 
 }

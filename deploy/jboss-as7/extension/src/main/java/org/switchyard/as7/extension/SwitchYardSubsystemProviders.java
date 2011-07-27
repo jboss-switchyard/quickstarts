@@ -21,10 +21,30 @@ package org.switchyard.as7.extension;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.DESCRIPTION;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.HEAD_COMMENT_ALLOWED;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.INTERFACE;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.NAME;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.NAMESPACE;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.NILLABLE;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OPERATION_NAME;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.REPLY_PROPERTIES;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.REQUEST_PROPERTIES;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.TAIL_COMMENT_ALLOWED;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.TYPE;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.VALUE_TYPE;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.APPLICATION;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.APPLICATION_NAME;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.CONFIG_SCHEMA;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.GATEWAYS;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.GET_VERSION;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.IMPLEMENTATION;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.LIST_APPLICATIONS;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.LIST_COMPONENTS;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.LIST_SERVICES;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.READ_APPLICATION;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.READ_COMPONENT;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.READ_SERVICE;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.SERVICES;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.SERVICE_NAME;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -32,6 +52,7 @@ import java.util.ResourceBundle;
 import org.jboss.as.controller.descriptions.DescriptionProvider;
 import org.jboss.as.controller.descriptions.common.CommonDescriptions;
 import org.jboss.dmr.ModelNode;
+import org.jboss.dmr.ModelType;
 
 /**
  * The SwitchYard subsystem providers.
@@ -62,6 +83,55 @@ final class SwitchYardSubsystemProviders {
 
         public ModelNode getModelDescription(final Locale locale) {
             return CommonDescriptions.getSubsystemDescribeOperation(locale);
+        }
+    };
+
+    static final DescriptionProvider SUBSYSTEM_GET_VERSION = new DescriptionProvider() {
+
+        public ModelNode getModelDescription(final Locale locale) {
+            return Descriptions.getSubsystemGetVersion(locale);
+        }
+    };
+
+    static final DescriptionProvider SUBSYSTEM_LIST_APPLICATIONS = new DescriptionProvider() {
+
+        public ModelNode getModelDescription(final Locale locale) {
+            return Descriptions.getSubsystemListApplications(locale);
+        }
+    };
+
+    static final DescriptionProvider SUBSYSTEM_LIST_COMPONENTS = new DescriptionProvider() {
+
+        public ModelNode getModelDescription(final Locale locale) {
+            return Descriptions.getSubsystemListComponents(locale);
+        }
+    };
+
+    static final DescriptionProvider SUBSYSTEM_LIST_SERVICES = new DescriptionProvider() {
+
+        public ModelNode getModelDescription(final Locale locale) {
+            return Descriptions.getSubsystemListServices(locale);
+        }
+    };
+
+    static final DescriptionProvider SUBSYSTEM_READ_APPLICATION = new DescriptionProvider() {
+
+        public ModelNode getModelDescription(final Locale locale) {
+            return Descriptions.getSubsystemReadApplication(locale);
+        }
+    };
+
+    static final DescriptionProvider SUBSYSTEM_READ_COMPONENT = new DescriptionProvider() {
+
+        public ModelNode getModelDescription(final Locale locale) {
+            return Descriptions.getSubsystemReadComponent(locale);
+        }
+    };
+
+    static final DescriptionProvider SUBSYSTEM_READ_SERVICE = new DescriptionProvider() {
+
+        public ModelNode getModelDescription(final Locale locale) {
+            return Descriptions.getSubsystemReadService(locale);
         }
     };
 
@@ -101,5 +171,171 @@ final class SwitchYardSubsystemProviders {
 
             return op;
         }
+
+        static ModelNode getSubsystemGetVersion(Locale locale) {
+            final ResourceBundle bundle = getResourceBundle(locale);
+
+            final ModelNode op = new ModelNode();
+
+            op.get(OPERATION_NAME).set(GET_VERSION);
+            op.get(DESCRIPTION).set(bundle.getString("switchyard.get-version"));
+
+            op.get(REPLY_PROPERTIES, TYPE).set(ModelType.STRING);
+            op.get(REPLY_PROPERTIES, DESCRIPTION).set(bundle.getString("switchyard.get-version.reply"));
+
+            return op;
+        }
+
+        static ModelNode getSubsystemListApplications(Locale locale) {
+            final ResourceBundle bundle = getResourceBundle(locale);
+
+            final ModelNode op = new ModelNode();
+
+            op.get(OPERATION_NAME).set(LIST_APPLICATIONS);
+            op.get(DESCRIPTION).set(bundle.getString("switchyard.list-applications"));
+
+            op.get(REPLY_PROPERTIES, TYPE).set(ModelType.LIST);
+            op.get(REPLY_PROPERTIES, DESCRIPTION).set(bundle.getString("switchyard.list-applications.reply"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE).set(ModelType.STRING);
+
+            return op;
+        }
+
+        static ModelNode getSubsystemListComponents(Locale locale) {
+            final ResourceBundle bundle = getResourceBundle(locale);
+
+            final ModelNode op = new ModelNode();
+
+            op.get(OPERATION_NAME).set(LIST_COMPONENTS);
+            op.get(DESCRIPTION).set(bundle.getString("switchyard.list-components"));
+
+            op.get(REQUEST_PROPERTIES, TYPE, TYPE).set(ModelType.STRING);
+            op.get(REQUEST_PROPERTIES, TYPE, DESCRIPTION).set(bundle.getString("switchyard.list-components.param.type"));
+            op.get(REQUEST_PROPERTIES, TYPE, NILLABLE).set(true);
+
+            op.get(REPLY_PROPERTIES, TYPE).set(ModelType.LIST);
+            op.get(REPLY_PROPERTIES, DESCRIPTION).set(bundle.getString("switchyard.list-components.reply"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE).set(ModelType.STRING);
+
+            return op;
+        }
+
+        static ModelNode getSubsystemListServices(Locale locale) {
+            final ResourceBundle bundle = getResourceBundle(locale);
+
+            final ModelNode op = new ModelNode();
+
+            op.get(OPERATION_NAME).set(LIST_SERVICES);
+            op.get(DESCRIPTION).set(bundle.getString("switchyard.list-services"));
+
+            op.get(REQUEST_PROPERTIES, APPLICATION_NAME, TYPE).set(ModelType.STRING);
+            op.get(REQUEST_PROPERTIES, APPLICATION_NAME, DESCRIPTION).set(
+                    bundle.getString("switchyard.list-services.param.application-name"));
+            op.get(REQUEST_PROPERTIES, APPLICATION_NAME, NILLABLE).set(true);
+
+            op.get(REPLY_PROPERTIES, TYPE).set(ModelType.LIST);
+            op.get(REPLY_PROPERTIES, DESCRIPTION).set(bundle.getString("switchyard.list-services.reply"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE).set(ModelType.STRING);
+
+            return op;
+        }
+
+        static ModelNode getSubsystemReadApplication(Locale locale) {
+            final ResourceBundle bundle = getResourceBundle(locale);
+
+            final ModelNode op = new ModelNode();
+
+            op.get(OPERATION_NAME).set(READ_APPLICATION);
+            op.get(DESCRIPTION).set(bundle.getString("switchyard.read-application"));
+
+            op.get(REQUEST_PROPERTIES, NAME, TYPE).set(ModelType.STRING);
+            op.get(REQUEST_PROPERTIES, NAME, DESCRIPTION).set(
+                    bundle.getString("switchyard.read-application.param.name"));
+            op.get(REQUEST_PROPERTIES, NAME, NILLABLE).set(true);
+
+            op.get(REPLY_PROPERTIES, TYPE).set(ModelType.LIST);
+            op.get(REPLY_PROPERTIES, DESCRIPTION).set(bundle.getString("switchyard.read-application.reply"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, NAME, TYPE).set(ModelType.STRING);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, NAME, DESCRIPTION).set(
+                    bundle.getString("switchyard.read-application.reply.name"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, SERVICES, TYPE).set(ModelType.LIST);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, SERVICES, DESCRIPTION).set(
+                    bundle.getString("switchyard.read-application.reply.services"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, SERVICES, VALUE_TYPE).set(ModelType.STRING);
+
+            return op;
+        }
+
+        static ModelNode getSubsystemReadComponent(Locale locale) {
+            final ResourceBundle bundle = getResourceBundle(locale);
+
+            final ModelNode op = new ModelNode();
+
+            op.get(OPERATION_NAME).set(READ_COMPONENT);
+            op.get(DESCRIPTION).set(bundle.getString("switchyard.read-component"));
+
+            op.get(REQUEST_PROPERTIES, NAME, TYPE).set(ModelType.STRING);
+            op.get(REQUEST_PROPERTIES, NAME, DESCRIPTION).set(bundle.getString("switchyard.read-component.param.name"));
+            op.get(REQUEST_PROPERTIES, NAME, NILLABLE).set(true);
+            op.get(REQUEST_PROPERTIES, TYPE, TYPE).set(ModelType.STRING);
+            op.get(REQUEST_PROPERTIES, TYPE, DESCRIPTION).set(bundle.getString("switchyard.read-component.param.type"));
+            op.get(REQUEST_PROPERTIES, TYPE, NILLABLE).set(true);
+
+            op.get(REPLY_PROPERTIES, TYPE).set(ModelType.LIST);
+            op.get(REPLY_PROPERTIES, DESCRIPTION).set(bundle.getString("switchyard.read-component.reply"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, NAME, TYPE).set(ModelType.STRING);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, NAME, DESCRIPTION).set(
+                    bundle.getString("switchyard.read-component.reply.name"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, TYPE, TYPE).set(ModelType.STRING);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, TYPE, DESCRIPTION).set(
+                    bundle.getString("switchyard.read-component.reply.type"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, CONFIG_SCHEMA, TYPE).set(ModelType.STRING);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, CONFIG_SCHEMA, DESCRIPTION).set(
+                    bundle.getString("switchyard.read-component.reply.config-schema"));
+
+            return op;
+        }
+
+        static ModelNode getSubsystemReadService(Locale locale) {
+            final ResourceBundle bundle = getResourceBundle(locale);
+
+            final ModelNode op = new ModelNode();
+
+            op.get(OPERATION_NAME).set(READ_SERVICE);
+            op.get(DESCRIPTION).set(bundle.getString("switchyard.read-service"));
+
+            op.get(REQUEST_PROPERTIES, SERVICE_NAME, TYPE).set(ModelType.STRING);
+            op.get(REQUEST_PROPERTIES, SERVICE_NAME, DESCRIPTION).set(
+                    bundle.getString("switchyard.read-service.param.service-name"));
+            op.get(REQUEST_PROPERTIES, SERVICE_NAME, NILLABLE).set(true);
+            op.get(REQUEST_PROPERTIES, APPLICATION_NAME, TYPE).set(ModelType.STRING);
+            op.get(REQUEST_PROPERTIES, APPLICATION_NAME, DESCRIPTION).set(
+                    bundle.getString("switchyard.read-service.param.application-name"));
+            op.get(REQUEST_PROPERTIES, APPLICATION_NAME, NILLABLE).set(true);
+
+            op.get(REPLY_PROPERTIES, TYPE).set(ModelType.LIST);
+            op.get(REPLY_PROPERTIES, DESCRIPTION).set(bundle.getString("switchyard.read-service.reply"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, NAME, TYPE).set(ModelType.STRING);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, NAME, DESCRIPTION).set(
+                    bundle.getString("switchyard.read-service.reply.name"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, APPLICATION, TYPE).set(ModelType.STRING);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, APPLICATION, DESCRIPTION).set(
+                    bundle.getString("switchyard.read-service.reply.application"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, INTERFACE, TYPE).set(ModelType.STRING);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, INTERFACE, DESCRIPTION).set(
+                    bundle.getString("switchyard.read-service.reply.interface"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, IMPLEMENTATION, TYPE).set(ModelType.STRING);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, IMPLEMENTATION, DESCRIPTION).set(
+                    bundle.getString("switchyard.read-service.reply.implementation"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, GATEWAYS, TYPE).set(ModelType.LIST);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, GATEWAYS, DESCRIPTION).set(
+                    bundle.getString("switchyard.read-service.reply.gateways"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, GATEWAYS, VALUE_TYPE, TYPE).set(ModelType.STRING);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, GATEWAYS, VALUE_TYPE, DESCRIPTION).set(
+                    bundle.getString("switchyard.read-service.reply.gateways.gateway"));
+
+            return op;
+        }
+
     }
 }

@@ -18,13 +18,25 @@
  */
 package org.switchyard.as7.extension.deployment;
 
+import javax.xml.namespace.QName;
+
+import org.jboss.as.controller.PathElement;
 import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.dmr.ModelNode;
 import org.jboss.modules.Module;
+import org.jboss.msc.service.ServiceController;
+import org.switchyard.admin.Application;
+import org.switchyard.admin.base.BaseSwitchYard;
+import org.switchyard.as7.extension.SwitchYardExtension;
+import org.switchyard.as7.extension.SwitchYardModelConstants;
+import org.switchyard.as7.extension.admin.ModelNodeCreationUtil;
+import org.switchyard.as7.extension.services.SwitchYardAdminService;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.Deployment;
+import org.switchyard.deploy.internal.DeploymentListener;
 
 /**
  * Represents a single AS7 deployment containing a SwitchYard application.
@@ -34,23 +46,25 @@ import org.switchyard.deploy.internal.Deployment;
 public class SwitchYardDeployment {
 
     /** The attachment key. */
-    public static final AttachmentKey<SwitchYardDeployment> ATTACHMENT_KEY = AttachmentKey.create(SwitchYardDeployment.class);
+    public static final AttachmentKey<SwitchYardDeployment> ATTACHMENT_KEY = AttachmentKey
+            .create(SwitchYardDeployment.class);
 
     private final DeploymentUnit _deployUnit;
     private SwitchYardDeploymentState _deploymentState;
     private Deployment _deployment;
- 
+
     /**
      * Creates a new SwitchYard deployment.
+     * 
      * @param deploymentUnit deployment reference
      * @param config switchyard configuration
      */
     public SwitchYardDeployment(final DeploymentUnit deploymentUnit, final SwitchYardModel config) {
-        
+
         _deployUnit = deploymentUnit;
         _deployment = new Deployment(config);
     }
-    
+
     /**
      * Create the application.
      */
@@ -76,6 +90,7 @@ public class SwitchYardDeployment {
             setDeploymentState(SwitchYardDeploymentState.STARTING);
             _deployment.start();
             setDeploymentState(SwitchYardDeploymentState.STARTED);
+            registerManagementNodes();
         } finally {
             Thread.currentThread().setContextClassLoader(origCL);
         }
@@ -92,9 +107,10 @@ public class SwitchYardDeployment {
             if (_deploymentState == SwitchYardDeploymentState.STARTED) {
                 _deployment.stop();
                 setDeploymentState(SwitchYardDeploymentState.STOPPED);
+                unregisterManagementNodes();
             }
             if (_deploymentState == SwitchYardDeploymentState.STARTING
-                   || _deploymentState == SwitchYardDeploymentState.STOPPED) {
+                    || _deploymentState == SwitchYardDeploymentState.STOPPED) {
                 _deployment.destroy();
                 setDeploymentState(SwitchYardDeploymentState.DESTROYED);
             }
@@ -105,6 +121,7 @@ public class SwitchYardDeployment {
 
     /**
      * Set the deployment state.
+     * 
      * @param deploymentState the deployment state
      */
     public void setDeploymentState(SwitchYardDeploymentState deploymentState) {
@@ -113,9 +130,67 @@ public class SwitchYardDeployment {
 
     /**
      * Get the deployment state.
+     * 
      * @return DeploymentState
      */
     public SwitchYardDeploymentState getDeploymentState() {
         return _deploymentState;
     }
+
+    /**
+     * Pass through method for use by
+     * {@link org.switchyard.as7.extension.services.SwitchYardService}.
+     * 
+     * @param listener the deployment listener.
+     */
+    public void setDeploymentListener(DeploymentListener listener) {
+        _deployment.addDeploymentListener(listener);
+    }
+
+    /**
+     * Pass through method for use by
+     * {@link org.switchyard.as7.extension.services.SwitchYardService}.
+     * 
+     * @param listener the deployment listener.
+     */
+    public void removeDeploymentListener(DeploymentListener listener) {
+        _deployment.removeDeploymentListener(listener);
+    }
+
+    private void registerManagementNodes() {
+        QName applicationName = _deployment.getName();
+        if (applicationName == null) {
+            return;
+        }
+
+        ServiceController<?> adminService = _deployUnit.getServiceRegistry().getService(
+                SwitchYardAdminService.SERVICE_NAME);
+        if (adminService == null) {
+            return;
+        }
+
+        BaseSwitchYard switchYard = BaseSwitchYard.class.cast(adminService.getValue());
+        if (switchYard == null) {
+            return;
+        }
+
+        ModelNode deployNode = _deployUnit.createDeploymentSubModel(SwitchYardExtension.SUBSYSTEM_NAME,
+                PathElement.pathElement(SwitchYardModelConstants.APPLICATION, applicationName.toString()));
+
+        Application application = switchYard.findApplication(applicationName);
+        if (application == null) {
+            return;
+        }
+        deployNode.set(ModelNodeCreationUtil.createApplicationNode(application));
+    }
+
+    private void unregisterManagementNodes() {
+        QName applicationName = _deployment.getName();
+        if (applicationName == null) {
+            return;
+        }
+        _deployUnit.createDeploymentSubModel(SwitchYardExtension.SUBSYSTEM_NAME,
+                PathElement.pathElement(SwitchYardModelConstants.APPLICATION, applicationName.toString())).clear();
+    }
+
 }

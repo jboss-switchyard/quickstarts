@@ -53,6 +53,13 @@ import org.jboss.staxmapper.XMLElementReader;
 import org.jboss.staxmapper.XMLElementWriter;
 import org.jboss.staxmapper.XMLExtendedStreamReader;
 import org.jboss.staxmapper.XMLExtendedStreamWriter;
+import org.switchyard.as7.extension.admin.SwitchYardSubsystemListApplications;
+import org.switchyard.as7.extension.admin.SwitchYardSubsystemListComponents;
+import org.switchyard.as7.extension.admin.SwitchYardSubsystemListServices;
+import org.switchyard.as7.extension.admin.SwitchYardSubsystemGetVersion;
+import org.switchyard.as7.extension.admin.SwitchYardSubsystemReadApplication;
+import org.switchyard.as7.extension.admin.SwitchYardSubsystemReadComponent;
+import org.switchyard.as7.extension.admin.SwitchYardSubsystemReadService;
 
 /**
  * Domain extension used to initialize the SwitchYard subsystem.
@@ -78,6 +85,15 @@ public class SwitchYardExtension implements Extension {
         registration.registerOperationHandler(DESCRIBE, SwitchYardSubsystemDescribe.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_DESCRIBE, false, OperationEntry.EntryType.PRIVATE);
         subsystem.registerXMLElementWriter(PARSER);
 
+        // register administrative functions
+        registration.registerOperationHandler(SwitchYardModelConstants.GET_VERSION, SwitchYardSubsystemGetVersion.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_GET_VERSION, false);
+        registration.registerOperationHandler(SwitchYardModelConstants.LIST_APPLICATIONS, SwitchYardSubsystemListApplications.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_LIST_APPLICATIONS, false);
+        registration.registerOperationHandler(SwitchYardModelConstants.LIST_COMPONENTS, SwitchYardSubsystemListComponents.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_LIST_COMPONENTS, false);
+        registration.registerOperationHandler(SwitchYardModelConstants.LIST_SERVICES, SwitchYardSubsystemListServices.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_LIST_SERVICES, false);
+        registration.registerOperationHandler(SwitchYardModelConstants.READ_APPLICATION, SwitchYardSubsystemReadApplication.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_READ_APPLICATION, false);
+        registration.registerOperationHandler(SwitchYardModelConstants.READ_COMPONENT, SwitchYardSubsystemReadComponent.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_READ_COMPONENT, false);
+        registration.registerOperationHandler(SwitchYardModelConstants.READ_SERVICE, SwitchYardSubsystemReadService.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_READ_SERVICE, false);
+
         DescriptionProvider nullDescriptionProvider = new DescriptionProvider() {
             @Override
             public ModelNode getModelDescription(Locale locale) {
@@ -85,7 +101,8 @@ public class SwitchYardExtension implements Extension {
             }
         };
         final ManagementResourceRegistration deployments = subsystem.registerDeploymentModel(nullDescriptionProvider);
-        deployments.registerSubModel(PathElement.pathElement("service-name"), nullDescriptionProvider);
+        deployments.registerSubModel(PathElement.pathElement(SwitchYardModelConstants.APPLICATION),
+                nullDescriptionProvider);
     }
 
     /** {@inheritDoc} */

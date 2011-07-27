@@ -21,11 +21,14 @@ package org.switchyard.as7.extension.services;
 import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.Service;
+import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
+import org.switchyard.admin.base.BaseSwitchYard;
+import org.switchyard.admin.base.SwitchYardBuilder;
 import org.switchyard.as7.extension.deployment.SwitchYardDeployment;
 
 /**
@@ -44,6 +47,7 @@ public class SwitchYardService implements Service<SwitchYardDeployment> {
 
     private final InjectedValue<NamespaceContextSelector> _namespaceSelector = new InjectedValue<NamespaceContextSelector>();
     private SwitchYardDeployment _switchyardDeployment;
+    private SwitchYardBuilder _switchYardBuilder;
 
     /**
      * Constructs a SwitchYard service.
@@ -65,6 +69,17 @@ public class SwitchYardService implements Service<SwitchYardDeployment> {
         try {
             NamespaceContextSelector.pushCurrentSelector(_namespaceSelector.getValue());
             LOG.info("Starting SwitchYard service");
+
+            ServiceController<?> adminService = context.getController().getServiceContainer()
+                    .getService(SwitchYardAdminService.SERVICE_NAME);
+            if (adminService != null) {
+                BaseSwitchYard switchYard = BaseSwitchYard.class.cast(adminService.getValue());
+                if (switchYard != null) {
+                    _switchYardBuilder = new SwitchYardBuilder(switchYard);
+                    _switchyardDeployment.setDeploymentListener(_switchYardBuilder);
+                }
+            }
+
             _switchyardDeployment.start();
         } catch (Exception e) {
             try {
@@ -81,6 +96,10 @@ public class SwitchYardService implements Service<SwitchYardDeployment> {
     @Override
     public void stop(StopContext context) {
         _switchyardDeployment.stop();
+        if (_switchYardBuilder != null) {
+            _switchyardDeployment.removeDeploymentListener(_switchYardBuilder);
+            _switchYardBuilder = null;
+        }
     }
 
     /**
