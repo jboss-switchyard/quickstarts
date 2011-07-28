@@ -218,7 +218,7 @@ public class InboundHandler extends BaseHandler {
         try {
             firstBodyElement = SOAPUtil.getFirstBodyElement(soapMessage);
             operation = WSDLUtil.getOperation(_wsdlPort, firstBodyElement);
-            if(operation != null){
+            if (operation != null) {
                 operationName = operation.getName();
                 oneWay = WSDLUtil.isOneWay(operation);
                 exchangeContract = _contracts.get(operationName);

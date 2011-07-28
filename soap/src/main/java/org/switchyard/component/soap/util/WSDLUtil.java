@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Operation;
@@ -235,7 +234,7 @@ public final class WSDLUtil {
         
         for (Operation operation : operations) {
             Part part = (Part)operation.getInput().getMessage().getParts().values().iterator().next();
-            if(elementName.equals(part.getElementName().getLocalPart())){
+            if (elementName.equals(part.getElementName().getLocalPart())) {
                 return operation;
             }
         }

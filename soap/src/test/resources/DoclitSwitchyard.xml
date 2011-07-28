@@ -24,7 +24,7 @@ MA  02110-1301, USA.
 
     <sca:service name="OrderService"  promote="publish-as-ws">
        <soap:binding.soap>
-           <soap:wsdl>DocLitOrderService.wsdl</soap:wsdl>
+           <soap:wsdl>DoclitOrderService.wsdl</soap:wsdl>
            <soap:wsdlPort>{urn:switchyard-component-soap:test-ws:1.0}OrderService:OrderServicePort</soap:wsdlPort>
        </soap:binding.soap>
     </sca:service>
