@@ -34,7 +34,6 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
-	<groupId>org.switchyard</groupId>
 	<artifactId>switchyard-test</artifactId>
 	
 	<packaging>jar</packaging>
@@ -47,6 +46,7 @@
         <weld.version>1.1.0.Final</weld.version>
         <jbpm.version>5.1.0.Final</jbpm.version>
         <camel.version>2.6.0</camel.version>
+        <hornetq.version>2.2.5.Final</hornetq.version>
     </properties>
 
 	<dependencies>
@@ -128,5 +128,34 @@
             <artifactId>jbpm-human-task</artifactId>
             <version>${jbpm.version}</version>
         </dependency>
+        
+        <dependency>
+            <groupId>org.hornetq</groupId>
+            <artifactId>hornetq-core</artifactId>
+            <version>${hornetq.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.hornetq</groupId>
+            <artifactId>hornetq-jms-client</artifactId>
+            <version>${hornetq.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.hornetq</groupId>
+            <artifactId>hornetq-jms</artifactId>
+            <version>${hornetq.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.jboss.netty</groupId>
+            <artifactId>netty</artifactId>
+            <version>3.2.1.Final</version>
+            <scope>compile</scope>
+        </dependency>
+        
     </dependencies>
 </project>
