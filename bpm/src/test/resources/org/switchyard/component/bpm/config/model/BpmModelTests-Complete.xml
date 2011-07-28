@@ -24,8 +24,8 @@ MA  02110-1301, USA.
     <sca:composite name="Foobar" targetNamespace="urn:bpm:test:1.0">
         <sca:component name="FoobarService">
             <bpm:implementation.bpm processDefinition="foobar.bpmn" processDefinitionType="BPMN2" processId="foobar">
-                <swyd:resource location="foobar.drl" type="DRL"/>
                 <bpm:taskHandler class="org.switchyard.component.bpm.task.SwitchYardServiceTaskHandler"/>
+                <swyd:resource location="foobar.drl" type="DRL"/>
             </bpm:implementation.bpm>
             <sca:service name="FoobarService">
                 <sca:interface.java interface="org.test.FoobarService"/>

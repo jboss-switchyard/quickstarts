@@ -35,9 +35,9 @@ MA  02110-1301, USA.
         <complexContent>
             <extension base="sca:Implementation">
                 <sequence>
-                    <element ref="swyd:resource" minOccurs="0" maxOccurs="unbounded"/>
                     <element ref="rules:rulesAction" minOccurs="0" maxOccurs="unbounded"/>
                     <element ref="rules:rulesAudit" minOccurs="0" maxOccurs="1"/>
+                    <element ref="swyd:resource" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
                 <attribute name="stateful" type="boolean" use="optional" default="false"/>
                 <attribute name="messageContentName" type="string" use="optional"/>

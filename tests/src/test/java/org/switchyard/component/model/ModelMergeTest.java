@@ -56,7 +56,6 @@ public class ModelMergeTest {
     private void compareToExpected(SwitchYardModel mergedModel) throws IOException {
         StringWriter stringWriter = new StringWriter();
         mergedModel.write(stringWriter);
-//        System.out.println(stringWriter);
         _testKit.compareXMLToResource(stringWriter.toString(), "expected_merged_switchyard.xml");
     }
 }

@@ -45,6 +45,11 @@ public abstract class OperationSelector extends BaseModel {
     public static final String DEFAULT_NAMESPACE = "urn:switchyard-component-camel:config:1.0";
     
     /**
+     * The 'namespace' attribute.
+     */
+    public static final String NAMESPACE = "namespace";
+    
+    /**
      * The 'operationName' attribute.
      */
     public static final String OPERATION_NAME = "operationName";
@@ -69,6 +74,20 @@ public abstract class OperationSelector extends BaseModel {
     protected OperationSelector(QName name) {
         super(name);
     }
+
+    /**
+     * Gets the namespace attribute from the underlying model.
+     * 
+     * @return String the content of the namespace attribute.
+     */
+    public abstract String getNamespace();
+    
+    /**
+     * Sets the namespace attribute on the underlying model.
+     * 
+     * @param namespace The operation name.
+     */
+    public abstract void setNamespace(String namespace);
 
     /**
      * Gets the operationName attribute from the underlying model.

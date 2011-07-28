@@ -18,9 +18,9 @@
     xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
     xmlns:bean="urn:switchyard-component-bean:config:1.0">
 
-    <sca:composite>
+    <sca:composite name="SimpleCamelService" targetNamespace="urn:camel-core:test:1.0">
     
-        <sca:service name="SimpleCamelService">
+        <sca:service name="SimpleCamelService" promote="ComponentName/SimpleCamelService">
             <camel:binding.camel configURI="jms://TestQueue?connectionFactory=#ConnectionFactory"/>
         </sca:service>
         

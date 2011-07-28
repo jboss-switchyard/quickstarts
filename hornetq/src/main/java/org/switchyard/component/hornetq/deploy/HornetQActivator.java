@@ -250,7 +250,7 @@ public class HornetQActivator extends BaseActivator {
                 }
             }
         }
-        final Set<OutboundHandler> outboundHandlers = _refBindings.get(serviceReference);
+        final Set<OutboundHandler> outboundHandlers = _refBindings.get(serviceReference.getName());
         if (outboundHandlers != null) {
             for (OutboundHandler outboundHandler : outboundHandlers) {
                 outboundHandler.stop();

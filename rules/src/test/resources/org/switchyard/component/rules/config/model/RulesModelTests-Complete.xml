@@ -24,9 +24,9 @@ MA  02110-1301, USA.
     <sca:composite name="Foobar" targetNamespace="urn:rules:test:1.0">
         <sca:component name="FoobarService">
             <rules:implementation.rules stateful="true">
+                <rules:rulesAudit interval="2000" log="foobar" type="CONSOLE"/>
                 <swyd:resource location="foo.dsl" type="DSL"/>
                 <swyd:resource location="bar.dslr" type="DSLR"/>
-                <rules:rulesAudit interval="2000" log="foobar" type="CONSOLE"/>
             </rules:implementation.rules>
             <sca:service name="FoobarService">
                 <sca:interface.java interface="org.test.FoobarService"/>

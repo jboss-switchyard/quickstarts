@@ -36,8 +36,8 @@ MA  02110-1301, USA.
             <extension base="sca:Implementation">
                 <sequence>
                     <element ref="bpm:processAction" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="swyd:resource" minOccurs="0" maxOccurs="unbounded"/>
                     <element ref="bpm:taskHandler" minOccurs="0" maxOccurs="unbounded"/>
+                    <element ref="swyd:resource" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
                 <attribute name="processDefinition" type="string" use="required"/>
                 <attribute name="processDefinitionType" type="NCName" use="optional" default="BPMN2"/>

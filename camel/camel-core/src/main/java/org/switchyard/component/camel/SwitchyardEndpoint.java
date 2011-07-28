@@ -33,6 +33,11 @@ public class SwitchyardEndpoint extends DefaultEndpoint {
     /**
      * Producer property.
      */
+    private String _namespace;
+    
+    /**
+     * Producer property.
+     */
     private String _operationName;
     
     /**
@@ -46,10 +51,12 @@ public class SwitchyardEndpoint extends DefaultEndpoint {
      * 
      * @param endpointUri The uri of the Camel endpoint. 
      * @param component The {@link SwitchyardComponent}.
+     * @param namespace The service namespace that a Producer requires
      * @param operationName The operation name that a Producer requires
      */
-    public SwitchyardEndpoint(final String endpointUri, final SwitchyardComponent component, final String operationName) {
+    public SwitchyardEndpoint(final String endpointUri, final SwitchyardComponent component, final String namespace, final String operationName) {
         super(endpointUri, component);
+        _namespace = namespace;
         _operationName = operationName;
     }
 
@@ -79,7 +86,7 @@ public class SwitchyardEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new SwitchYardProducer(this, _operationName);
+        return new SwitchYardProducer(this, _namespace, _operationName);
     }
 
     @Override

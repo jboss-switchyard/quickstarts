@@ -17,7 +17,7 @@
     xmlns:hornetq="urn:switchyard-component-hornetq:config:1.0" 
     xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" >
 
-    <sca:composite>
+    <sca:composite name="hornetQTest" targetNamespace="urn:hornetq:test:1.0">
         <sca:service name="hornetQTest" promote="HornetQTestService">
             <hornetq:binding.hornetq>
                 <hornetq:config>

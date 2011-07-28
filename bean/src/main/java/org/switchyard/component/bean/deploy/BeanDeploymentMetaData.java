@@ -19,9 +19,10 @@
 
 package org.switchyard.component.bean.deploy;
 
-import org.switchyard.component.bean.ClientProxyBean;
-import org.switchyard.exception.SwitchYardException;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -29,10 +30,9 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+
+import org.switchyard.component.bean.ClientProxyBean;
+import org.switchyard.exception.SwitchYardException;
 
 /**
  * Bean Deployment Meta Data.
@@ -48,6 +48,11 @@ public class BeanDeploymentMetaData {
     private List<ServiceDescriptor> _serviceDescriptors = new ArrayList<ServiceDescriptor>();
     private List<ClientProxyBean> _clientProxies = new ArrayList<ClientProxyBean>();
     private List<CDIBean> _deploymentBeans = new ArrayList<CDIBean>();
+
+    /**
+     * Default no-arg constructor.
+     */
+    public BeanDeploymentMetaData() {}
 
     /**
      * Set the deployment CDI BeanManager.

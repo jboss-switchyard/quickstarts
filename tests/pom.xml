@@ -78,6 +78,20 @@
             <artifactId>milyn-smooks-javabean</artifactId>
             <version>1.5-SNAPSHOT</version>
             <scope>test</scope>
+		    <exclusions>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xmlParserAPIs</artifactId>
+                </exclusion>
+		    </exclusions>
         </dependency>
 
     </dependencies>

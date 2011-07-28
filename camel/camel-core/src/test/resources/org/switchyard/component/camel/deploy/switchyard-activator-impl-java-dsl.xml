@@ -18,16 +18,20 @@
     xmlns:sd="urn:switchyard-config:switchyard:1.0"
     xmlns:bean="urn:switchyard-component-bean:config:1.0">
 
-    <sca:composite>
+    <sca:composite name="OrderService" targetNamespace="urn:camel-core:test:1.0">
     
         <sca:component name="WarehouseComponent" >
             <bean:implementation.bean class="org.switchyard.component.camel.deploy.support.WarehouseServiceImpl"/>
-            <sca:service name="WarehouseService" promote="WarehouseService">
+            <sca:service name="WarehouseService">
                 <sca:interface.java interface="org.switchyard.component.camel.deploy.support.WarehouseService"/>
             </sca:service>
         </sca:component>
     
         <sca:component name="CamelComponent">
+            <implementation.camel>
+                <java class="org.switchyard.component.camel.deploy.support.OrderServiceRoute"/>
+            </implementation.camel>
+            
             <sca:service name="OrderService" >
                 <sca:interface.java interface="org.switchyard.component.camel.deploy.support.OrderService"/>
             </sca:service>
@@ -35,10 +39,6 @@
             <sca:reference name="WarehouseService">
                 <sca:interface.java interface="org.switchyard.component.camel.deploy.support.WarehouseService"/>
             </sca:reference>
-            
-            <implementation.camel>
-                <java class="org.switchyard.component.camel.deploy.support.OrderServiceRoute"/>
-            </implementation.camel>
         </sca:component>
         
     </sca:composite>

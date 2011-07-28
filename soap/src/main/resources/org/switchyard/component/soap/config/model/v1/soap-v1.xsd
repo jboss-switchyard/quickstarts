@@ -59,7 +59,7 @@ MA  02110-1301, USA.
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="composer" type="string" minOccurs="0" maxOccurs="1">
+                    <element name="composer" minOccurs="0" maxOccurs="1">
                         <annotation>
                             <documentation>
                                 The fully qualified JAVA Class name for custom composition of SwitchYard Message from SOAP.
@@ -73,7 +73,7 @@ MA  02110-1301, USA.
                                     </documentation>
                                 </annotation>
                             </attribute>
-                            <attribute name="mappedVariableNames" type="QName" use="optional">
+                            <attribute name="mappedVariableNames" type="string" use="optional">
                                 <annotation>
                                     <documentation>
                                         Headers that should be mapped from the request SOAPMessage to the SwitchYard Exchange Context (Scope.IN).
@@ -82,7 +82,7 @@ MA  02110-1301, USA.
                             </attribute>
                         </complexType>
                     </element>
-                    <element name="decomposer" type="string" minOccurs="0" maxOccurs="1">
+                    <element name="decomposer" minOccurs="0" maxOccurs="1">
                         <annotation>
                             <documentation>
                                 The fully qualified JAVA Class name for custom conversion of SwitchYard Message to SOAP.
@@ -96,7 +96,7 @@ MA  02110-1301, USA.
                                     </documentation>
                                 </annotation>
                             </attribute>
-                            <attribute name="mappedVariableNames" type="QName" use="optional">
+                            <attribute name="mappedVariableNames" type="string" use="optional">
                                 <annotation>
                                     <documentation>
                                         Properties that should be mapped from the SwitchYard Exchange Context (Scope.OUT) to the response SOAPMessage.

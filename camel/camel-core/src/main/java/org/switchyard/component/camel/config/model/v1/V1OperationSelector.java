@@ -33,7 +33,6 @@ import org.switchyard.config.model.Descriptor;
  *
  */
 public class V1OperationSelector extends OperationSelector {
-    private String _operationName;
 
     /**
      * Create a new OperationSelector.
@@ -45,23 +44,37 @@ public class V1OperationSelector extends OperationSelector {
     protected V1OperationSelector(Configuration config, Descriptor desc) {
         super(config, desc);
     }
-    
+
     /**
-     * Sets the operation name on the underlying model.
-     * 
-     * @param operationName Then name of the target operation.
+     * {@inheritDoc}
      */
-    public void setOperationName(String operationName) {
-        setModelAttribute(OPERATION_NAME, operationName);
-        _operationName = operationName;
+    @Override
+    public void setNamespace(String namespace) {
+        setModelAttribute(NAMESPACE, namespace);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getNamespace() {
+        return getModelAttribute(NAMESPACE);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setOperationName(String operationName) {
+        setModelAttribute(OPERATION_NAME, operationName);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getOperationName() {
-        if (_operationName == null) {
-            _operationName = getModelAttribute(OPERATION_NAME);
-        }
-        return _operationName;
+        return getModelAttribute(OPERATION_NAME);
     }
-    
+
 }

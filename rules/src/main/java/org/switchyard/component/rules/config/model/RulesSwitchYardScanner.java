@@ -86,15 +86,8 @@ public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
                 throw new IOException(rulesInterface.getName() + INTERFACE_ERR_MSG);
             }
             String rulesName = rulesInterface.getSimpleName();
-            JavaComponentServiceInterfaceModel csiModel = new V1JavaComponentServiceInterfaceModel();
-            csiModel.setInterface(rulesInterface.getName());
-            ComponentServiceModel serviceModel = new V1ComponentServiceModel();
-            serviceModel.setInterface(csiModel);
-            serviceModel.setName(rulesName);
             ComponentModel componentModel = new V1ComponentModel();
             componentModel.setName(rulesName);
-            componentModel.addService(serviceModel);
-            compositeModel.addComponent(componentModel);
             RulesComponentImplementationModel rciModel = new V1RulesComponentImplementationModel();
             rciModel.setStateful(rules.stateful());
             JavaService javaService = JavaService.fromClass(rulesInterface);
@@ -121,6 +114,13 @@ public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
                 rciModel.addResource(new V1ResourceModel().setLocation(location).setType(type));
             }
             componentModel.setImplementation(rciModel);
+            ComponentServiceModel serviceModel = new V1ComponentServiceModel();
+            JavaComponentServiceInterfaceModel csiModel = new V1JavaComponentServiceInterfaceModel();
+            csiModel.setInterface(rulesInterface.getName());
+            serviceModel.setInterface(csiModel);
+            serviceModel.setName(rulesName);
+            componentModel.addService(serviceModel);
+            compositeModel.addComponent(componentModel);
         }
         return new ScannerOutput<SwitchYardModel>().setModel(switchyardModel);
     }

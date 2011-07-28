@@ -143,6 +143,7 @@ MA  02110-1301, USA.
     <complexType name="CamelOperationSelectorType">
       <complexContent>
          <extension base="sca:OperationSelectorType">
+             <attribute name="namespace" type="string" use="optional"/>
              <attribute name="operationName" type="string"/>           
          </extension>         
       </complexContent>

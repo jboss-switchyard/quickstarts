@@ -36,9 +36,9 @@ import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.ProcessBean;
-import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
+import org.switchyard.common.type.Classes;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaDataCDIBean;
 import org.switchyard.component.bean.deploy.CDIBean;
@@ -75,7 +75,7 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
     public void beforeBeanDiscovery(@Observes BeforeBeanDiscovery beforeEvent, BeanManager beanManager) {
         _beanDeploymentMetaData = new BeanDeploymentMetaData();
         _beanDeploymentMetaData.setBeanManager(beanManager);
-        _beanDeploymentMetaData.setDeploymentClassLoader(Thread.currentThread().getContextClassLoader());
+        _beanDeploymentMetaData.setDeploymentClassLoader(Classes.getTCCL());
     }
 
     /**
@@ -122,7 +122,7 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
      */
     public void afterBeanDiscovery(@Observes AfterBeanDiscovery afterEvent) {
         for (ClientProxyBean proxyBean : _createdProxyBeans) {
-            _logger.debug("Adding ClientProxyBean for bean Service " + proxyBean.getServiceQName() + ".  Service Interface type is " + proxyBean.getServiceInterface().getName());
+            _logger.debug("Adding ClientProxyBean for bean Service " + proxyBean.getServiceName() + ".  Service Interface type is " + proxyBean.getServiceInterface().getName());
             afterEvent.addBean(proxyBean);
             _beanDeploymentMetaData.addClientProxy(proxyBean);
         }
@@ -132,27 +132,27 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
     }
 
     private void addInjectableClientProxyBean(Field injectionPointField, Reference serviceReference, Set<Annotation> qualifiers, BeanManager beanManager) {
-        QName serviceQName;
+        final String serviceName;
 
         if (serviceReference.value().length() > 0) {
-            serviceQName = QName.valueOf(serviceReference.value());
+            serviceName = serviceReference.value();
         } else {
-            serviceQName = toServiceQName(injectionPointField.getType());
+            serviceName = injectionPointField.getType().getSimpleName();
         }
 
-        addClientProxyBean(serviceQName, injectionPointField.getType(), qualifiers);
+        addClientProxyBean(serviceName, injectionPointField.getType(), qualifiers);
     }
 
-    private void addClientProxyBean(QName serviceQName, Class<?> beanClass, Set<Annotation> qualifiers) {
+    private void addClientProxyBean(String serviceName, Class<?> beanClass, Set<Annotation> qualifiers) {
         // Check do we already have a proxy for this service interface...
         for (ClientProxyBean clientProxyBean : _createdProxyBeans) {
-            if (serviceQName.equals(clientProxyBean.getServiceQName()) && beanClass == clientProxyBean.getBeanClass()) {
+            if (serviceName.equals(clientProxyBean.getServiceName()) && beanClass == clientProxyBean.getBeanClass()) {
                 // ignore... we already have a proxy ...
                 return;
             }
         }
 
-        ClientProxyBean clientProxyBean = new ClientProxyBean(serviceQName, beanClass, qualifiers, _beanDeploymentMetaData);
+        ClientProxyBean clientProxyBean = new ClientProxyBean(serviceName, beanClass, qualifiers, _beanDeploymentMetaData);
         _createdProxyBeans.add(clientProxyBean);
     }
 
@@ -161,7 +161,4 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
         return (Modifier.isPublic(beanClass.getModifiers()) && beanClass.isAnnotationPresent(Service.class));
     }
 
-    private QName toServiceQName(Class<?> serviceType) {
-        return new QName(serviceType.getSimpleName());
-    }
 }

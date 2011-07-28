@@ -28,6 +28,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceReference;
+import org.switchyard.common.lang.Strings;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.component.camel.config.model.OperationSelector;
 import org.switchyard.exception.SwitchYardException;
@@ -70,7 +71,7 @@ public class InboundHandler implements ExchangeHandler {
     }
     
     private RouteDefinition createRouteDefinition(final QName serviceName) {
-        final RouteDefinition rd = new RouteDefinition();
+        final RouteDefinition rd = new SwitchYardRouteDefinition(serviceName.getNamespaceURI());
         final String routeId = serviceName.toString() + "-[" +_camelBindingModel.getComponentURI() + "]";
         return rd.routeId(routeId).from(uriFromBindingModel()).to(composeSwitchYardComponentName(serviceName));
     }
@@ -80,14 +81,13 @@ public class InboundHandler implements ExchangeHandler {
     }
 
     private String composeSwitchYardComponentName(final QName serviceName) {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("switchyard://").append(serviceName.getLocalPart());
-        
+        final StringBuilder sb = new StringBuilder().append("switchyard://").append(serviceName.getLocalPart());
         final String operationName = operationName();
         if (operationName != null) {
             sb.append("?operationName=").append(operationName);
         }
-        return sb.toString();
+        final String namespace = namespace(serviceName);
+        return SwitchYardRouteDefinition.addNamespaceParameter(sb.toString(), namespace);
     }
 
     /**
@@ -119,10 +119,22 @@ public class InboundHandler implements ExchangeHandler {
             
     }
 
+    private String namespace(QName serviceName) {
+        String namespace = null;
+        final OperationSelector os = _camelBindingModel.getOperationSelector();
+        if (os != null) {
+            namespace = Strings.trimToNull(_camelBindingModel.getOperationSelector().getNamespace());
+        }
+        if (namespace == null) {
+            namespace = Strings.trimToNull(serviceName.getNamespaceURI());
+        }
+        return namespace;
+    }
+
     private String operationName() {
         final OperationSelector os = _camelBindingModel.getOperationSelector();
         if (os != null) {
-            return _camelBindingModel.getOperationSelector().getOperationName();
+            return Strings.trimToNull(_camelBindingModel.getOperationSelector().getOperationName());
         }
 
         return null;

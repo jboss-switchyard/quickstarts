@@ -41,8 +41,9 @@ public class SwitchyardComponent extends DefaultComponent {
     
     @Override
     protected Endpoint createEndpoint(final String uri, final String path, final Map<String, Object> parameters) throws Exception {
+        final String namespace = (String) parameters.remove("namespace");
         final String operationName = (String) parameters.remove("operationName");
-        return new SwitchyardEndpoint(uri, this, operationName);
+        return new SwitchyardEndpoint(uri, this, namespace, operationName);
     }
     
 }

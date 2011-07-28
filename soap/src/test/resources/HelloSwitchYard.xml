@@ -18,7 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA  02110-1301, USA.
 -->
 <sca:composite xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-           targetNamespace="http://www.jboss.org/switchyard/example/m1app"
+           targetNamespace="urn:soap:test:1.0"
            xmlns:soap="urn:switchyard-component-soap:config:1.0"
            name="m1app">
 

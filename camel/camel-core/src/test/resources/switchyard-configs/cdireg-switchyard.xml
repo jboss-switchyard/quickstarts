@@ -18,15 +18,15 @@
   -->
 
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0">
-    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-service">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-service" targetNamespace="urn:camel-core:test:1.0">
         <service name="JavaDSL" promote="JavaDSLBuilder/JavaDSL"/>
         <component name="JavaDSLBuilder">
-            <service name="JavaDSL">
-                <interface.java interface="org.switchyard.component.camel.cdi.JavaDSL"/>
-            </service>
             <implementation.camel xmlns="urn:switchyard-component-camel:config:1.0">
                 <java class="org.switchyard.component.camel.cdi.JavaDSLBuilder"/>
             </implementation.camel>
+            <service name="JavaDSL">
+                <interface.java interface="org.switchyard.component.camel.cdi.JavaDSL"/>
+            </service>
         </component>
     </composite>
 </switchyard>

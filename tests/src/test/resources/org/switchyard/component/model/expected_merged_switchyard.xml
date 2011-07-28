@@ -18,8 +18,8 @@
   ~ MA  02110-1301, USA.
   -->
 
-<switchyard xmlns="urn:switchyard-config:switchyard:1.0" name="m1app" targetNamespace="urn:switchyard-quickstarts:m1app:0.1.0-SNAPSHOT">
-    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="m1app">
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" name="m1app">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="m1app" targetNamespace="urn:tests:order:1.0">
         <sca:service xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="OrderService" promote="OrderService">
             <soap:binding.soap xmlns:soap="urn:switchyard-component-soap:config:1.0">
                 <soap:serverPort>18001</soap:serverPort>
@@ -27,19 +27,19 @@
             </soap:binding.soap>
         </sca:service>
         <component name="InventoryService">
-            <service name="InventoryService">
-                <interface.java xmlns="urn:switchyard-component-bean:config:1.0" interface="org.switchyard.quickstarts.m1app.InventoryService"/>
-            </service>
             <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.m1app.InventoryServiceBean"/>
+            <service name="InventoryService">
+                <interface.java interface="org.switchyard.quickstarts.m1app.InventoryService"/>
+            </service>
         </component>
         <component name="OrderService">
+            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.m1app.OrderServiceBean"/>
             <service name="OrderService">
-                <interface.java xmlns="urn:switchyard-component-bean:config:1.0" interface="org.switchyard.quickstarts.m1app.OrderService"/>
+                <interface.java interface="org.switchyard.quickstarts.m1app.OrderService"/>
             </service>
             <reference name="InventoryService">
-                <interface.java xmlns="urn:switchyard-component-bean:config:1.0" interface="org.switchyard.quickstarts.m1app.InventoryService"/>
+                <interface.java interface="org.switchyard.quickstarts.m1app.InventoryService"/>
             </reference>
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.m1app.OrderServiceBean"/>
         </component>
     </composite>
     <transforms>

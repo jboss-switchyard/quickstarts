@@ -24,6 +24,9 @@ import java.net.URI;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.common.xml.XMLHelper;
+import org.switchyard.component.camel.SwitchYardRouteDefinition;
+
 /**
  * Utility class that takes care of creating Camel component uris for 
  * SwitchYard services.
@@ -52,19 +55,20 @@ public final class ComponentNameComposer {
     public static String composeComponentUri(final QName serviceName) {
         final StringBuilder sb = new StringBuilder();
         sb.append(SWITCHYARD_COMPONENT_NAME).append("://").append(serviceName.getLocalPart());
-        return sb.toString();
+        return SwitchYardRouteDefinition.addNamespaceParameter(sb.toString(), serviceName.getNamespaceURI());
     }
     
     /**
      * Composes a SwitchYard service name, a QName, from the passed-in string uri.
      * 
+     * @param namespace the service namespace
      * @param uri a string uri.
      * @return QName a SwitchYard service name
      */
-    public static QName componseSwitchYardServiceName(final String uri) {
+    public static QName composeSwitchYardServiceName(final String namespace, final String uri) {
         final URI create = URI.create(uri);
         final String path = create.getAuthority();
-        return new QName(path);
+        return XMLHelper.createQName(namespace, path);
     }
     
 }

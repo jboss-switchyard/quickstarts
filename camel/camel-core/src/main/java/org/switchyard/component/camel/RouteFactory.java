@@ -46,15 +46,35 @@ public final class RouteFactory {
      * @return the route definition
      */
     public static RouteDefinition createRoute(String className) {
-        return createRoute(Classes.forName(className));
+        return createRoute(className, null);
     }
-    
+
+    /**
+     * Create a new route from the given class name and service name.
+     * @param className name of the class containing an @Route definition
+     * @param namespace the namespace to append to switchyard:// service URIs
+     * @return the route definition
+     */
+    public static RouteDefinition createRoute(String className, String namespace) {
+        return createRoute(Classes.forName(className), namespace);
+    }
+
     /**
      * Create a new route from the given class and service name.
      * @param routeClass class containing an @Route definition
      * @return the route definition
      */
     public static RouteDefinition createRoute(Class<?> routeClass) {
+        return createRoute(routeClass, null);
+    }
+
+    /**
+     * Create a new route from the given class and service name.
+     * @param routeClass class containing an @Route definition
+     * @param namespace the namespace to append to switchyard:// service URIs
+     * @return the route definition
+     */
+    public static RouteDefinition createRoute(Class<?> routeClass, String namespace) {
         if (!routeClass.isAnnotationPresent(Route.class)) {
             throw new SwitchYardException("@Route definition is missing on class " 
                     + routeClass.getName());
@@ -76,7 +96,6 @@ public final class RouteFactory {
                     + routeClass.getName(), ex);
         }
         
-        
         // Make sure the generated route is legit
         List<RouteDefinition> routes = builder.getRouteCollection().getRoutes();
         if (routes.isEmpty()) {
@@ -91,7 +110,8 @@ public final class RouteFactory {
             throw new SwitchYardException("Java DSL routes must contain a single 'from' "
                     + routeClass.getName());
         }
-        
+        SwitchYardRouteDefinition.addNamespaceParameter(route, namespace);
         return route;
     }
+
 }

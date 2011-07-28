@@ -59,7 +59,7 @@ import org.switchyard.test.mixins.CDIMixIn;
 @SwitchYardTestCaseConfig(config = "switchyard-jms-test.xml", mixins = CDIMixIn.class)
 public class CamelJMSTest {
 
-    private static final QName SERVICE_NAME = new QName("SimpleCamelService");
+    private static final QName SERVICE_NAME = new QName("urn:camel-core:test:1.0", "SimpleCamelService");
 
     private EmbeddedJMS embeddedJMS;
     private SwitchYardTestKit _testKit;

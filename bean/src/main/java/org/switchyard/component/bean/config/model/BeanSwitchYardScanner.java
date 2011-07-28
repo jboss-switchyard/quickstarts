@@ -87,6 +87,10 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
                 continue;
             }
             
+            BeanComponentImplementationModel beanModel = new V1BeanComponentImplementationModel();
+            beanModel.setClazz(serviceClass.getName());
+            componentModel.setImplementation(beanModel);
+            
             Class<?> iface = service.value();
             ComponentServiceModel serviceModel = new V1ComponentServiceModel();
             JavaComponentServiceInterfaceModel csiModel = new V1JavaComponentServiceInterfaceModel();
@@ -116,10 +120,6 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             compositeModel.addComponent(componentModel);
             componentModel.setName(name);
             compositeModel.addComponent(componentModel);
-
-            BeanComponentImplementationModel beanModel = new V1BeanComponentImplementationModel();
-            beanModel.setClazz(serviceClass.getName());
-            componentModel.setImplementation(beanModel);
         }
 
         return new ScannerOutput<SwitchYardModel>().setModel(switchyardModel);

@@ -25,12 +25,12 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.model.RouteDefinition;
+import org.switchyard.component.camel.SwitchYardRouteDefinition;
 import org.switchyard.component.camel.config.model.CamelComponentImplementationModel;
 import org.switchyard.config.Configuration;
-import org.switchyard.exception.SwitchYardException;
-
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.v1.V1ComponentImplementationModel;
+import org.switchyard.exception.SwitchYardException;
 
 /**
  * Version 1 implementation.
@@ -69,13 +69,18 @@ public class V1CamelImplementationModel extends V1ComponentImplementationModel i
         if (routeConfig == null) {
             return null;
         }
-        
+        RouteDefinition route;
         try {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            return (RouteDefinition) unmarshaller.unmarshal(routeConfig.getSource());
+            route = (RouteDefinition) unmarshaller.unmarshal(routeConfig.getSource());
         } catch (JAXBException e) {
             throw new SwitchYardException(e);
         }
+        String namespace = getComponent().getTargetNamespace();
+        if (route != null && namespace != null) {
+            SwitchYardRouteDefinition.addNamespaceParameter(route, namespace);
+        }
+        return route;
     }
     
     private static JAXBContext createJAXBInstance() {

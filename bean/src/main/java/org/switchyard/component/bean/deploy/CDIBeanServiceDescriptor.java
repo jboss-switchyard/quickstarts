@@ -16,22 +16,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
 package org.switchyard.component.bean.deploy;
 
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.BeanManager;
+
 import org.switchyard.ExchangeHandler;
+import org.switchyard.common.lang.Strings;
 import org.switchyard.component.bean.BeanServiceMetadata;
 import org.switchyard.component.bean.Service;
 import org.switchyard.component.bean.ServiceProxyHandler;
 import org.switchyard.exception.SwitchYardException;
-
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.java.JavaService;
-
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.xml.namespace.QName;
 
 /**
  * SwitchYard CDI bean Service Descriptor.
@@ -40,10 +37,10 @@ import javax.xml.namespace.QName;
  */
 public class CDIBeanServiceDescriptor implements ServiceDescriptor {
 
-    private CDIBean _cdiBean;
-    private QName _serviceName;
-    private BeanServiceMetadata _serviceMetadata;
-    private BeanDeploymentMetaData _beanDeploymentMetaData;
+    private final CDIBean _cdiBean;
+    private final BeanDeploymentMetaData _beanDeploymentMetaData;
+    private final String _serviceName;
+    private final BeanServiceMetadata _serviceMetadata;
 
     /**
      * Public constructor.
@@ -51,12 +48,11 @@ public class CDIBeanServiceDescriptor implements ServiceDescriptor {
      * @param beanDeploymentMetaData bean deployment info
      */
     public CDIBeanServiceDescriptor(CDIBean cdiBean, BeanDeploymentMetaData beanDeploymentMetaData) {
-        Class<?> serviceInterface = getServiceInterface(cdiBean.getBean());
-
         this._cdiBean = cdiBean;
-        this._serviceName = new QName(serviceInterface.getSimpleName());
-        this._serviceMetadata = new BeanServiceMetadata(serviceInterface);
         this._beanDeploymentMetaData = beanDeploymentMetaData;
+        final Class<?> beanClass = cdiBean.getBean().getBeanClass();
+        this._serviceName = getServiceName(beanClass);
+        this._serviceMetadata = new BeanServiceMetadata(getServiceInterface(beanClass));
     }
 
     /**
@@ -68,7 +64,7 @@ public class CDIBeanServiceDescriptor implements ServiceDescriptor {
     }
 
     @Override
-    public QName getServiceName() {
+    public String getServiceName() {
         return _serviceName;
     }
 
@@ -101,8 +97,13 @@ public class CDIBeanServiceDescriptor implements ServiceDescriptor {
         return JavaService.fromClass(_serviceMetadata.getServiceClass());
     }
 
-    private Class<?> getServiceInterface(Bean bean) {
-        return getServiceInterface(bean.getBeanClass());
+    private String getServiceName(Class<?> beanClass) {
+        Service service = beanClass.getAnnotation(Service.class);
+        String name = Strings.trimToNull(service.name());
+        if (name == null) {
+            name = getServiceInterface(beanClass).getSimpleName();
+        }
+        return name;
     }
 
     /**

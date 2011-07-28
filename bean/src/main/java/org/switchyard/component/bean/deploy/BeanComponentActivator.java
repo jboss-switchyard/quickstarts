@@ -32,7 +32,6 @@ import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.deploy.BaseActivator;
 import org.switchyard.exception.SwitchYardException;
-
 import org.switchyard.metadata.ServiceInterface;
 
 /**
@@ -65,7 +64,7 @@ public class BeanComponentActivator extends BaseActivator {
         } else if (config instanceof ComponentServiceModel) {
             // lookup the handler for the initialized service
             for (ServiceDescriptor descriptor : _beanDeploymentMetaData.getServiceDescriptors()) {
-                if (descriptor.getServiceName().equals(name)) {
+                if (descriptor.getServiceName().equals(name.getLocalPart())) {
                     return descriptor.getHandler();
                 }
             }
@@ -86,7 +85,7 @@ public class BeanComponentActivator extends BaseActivator {
      * @param name The Service Name.
      * @return The ServiceInterface instance.
      */
-    public ServiceInterface buildServiceInterface(QName name) {
+    public ServiceInterface buildServiceInterface(String name) {
         for (ServiceDescriptor descriptor : _beanDeploymentMetaData.getServiceDescriptors()) {
             if (descriptor.getServiceName().equals(name)) {
                 return descriptor.getInterface();
@@ -103,7 +102,7 @@ public class BeanComponentActivator extends BaseActivator {
     public void start(ServiceReference service) {
         // Initialise any client proxies to the started service...
         for (ClientProxyBean proxyBean : _beanDeploymentMetaData.getClientProxies()) {
-            if (proxyBean.getServiceQName().equals(service.getName())) {
+            if (proxyBean.getServiceName().equals(service.getName().getLocalPart())) {
                 proxyBean.setService(service);
             }
         }

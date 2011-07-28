@@ -64,6 +64,12 @@ public class RouteScanner implements Scanner<SwitchYardModel> {
             ComponentModel componentModel = new V1ComponentModel();
             componentModel.setName(routeClass.getSimpleName());
             
+            // Component implementation definition
+            CamelComponentImplementationModel camelModel = new V1CamelImplementationModel();
+            camelModel.setJavaClass(routeClass.getName());
+            componentModel.setImplementation(camelModel);
+            compositeModel.addComponent(componentModel);
+            
             // Component service definition
             ComponentServiceModel serviceModel = new V1ComponentServiceModel();
             JavaComponentServiceInterfaceModel csiModel = new V1JavaComponentServiceInterfaceModel();
@@ -72,12 +78,6 @@ public class RouteScanner implements Scanner<SwitchYardModel> {
             csiModel.setInterface(serviceInterface.getName());
             serviceModel.setInterface(csiModel);
             componentModel.addService(serviceModel);
-
-            // Component implementation definition
-            CamelComponentImplementationModel camelModel = new V1CamelImplementationModel();
-            camelModel.setJavaClass(routeClass.getName());
-            componentModel.setImplementation(camelModel);
-            compositeModel.addComponent(componentModel);
             
             // Component reference definition(s)
             // Need to add these!

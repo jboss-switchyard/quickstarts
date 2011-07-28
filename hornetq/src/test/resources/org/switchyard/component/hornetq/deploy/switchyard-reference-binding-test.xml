@@ -18,7 +18,7 @@
     xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
     xmlns:bean="urn:switchyard-component-bean:config:1.0">
 
-    <sca:composite>
+    <sca:composite name="hornetQTest" targetNamespace="urn:hornetq:test:1.0">
     
         <!-- Reference binding example -->
         <sca:component name="OrderComponent">
@@ -29,7 +29,7 @@
             <sca:reference name="WarehouseService"/>
         </sca:component>
         
-        <sca:reference name="WarehouseService" promote="WarehouseService">
+        <sca:reference name="WarehouseService" promote="WarehouseService" multiplicity="1..1">
             <sca:interface.java interface="org.switchyard.component.hornetq.support.WarehouseService"/>
             <hornetq:binding.hornetq>
 	            <hornetq:operationSelector operationName="processOrder"/>

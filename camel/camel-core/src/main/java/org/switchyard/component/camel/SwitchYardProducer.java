@@ -19,7 +19,7 @@
 
 package org.switchyard.component.camel;
 
-import static org.switchyard.component.camel.deploy.ComponentNameComposer.componseSwitchYardServiceName;
+import static org.switchyard.component.camel.deploy.ComponentNameComposer.composeSwitchYardServiceName;
 
 import java.util.Set;
 
@@ -55,16 +55,19 @@ import org.switchyard.metadata.java.JavaService;
  */
 public class SwitchYardProducer extends DefaultProducer {
     
+    private String _namespace;
     private String _operationName;
     
     /**
      * Sole constructor.
      * 
      * @param endpoint the Camel Endpoint that this Producer belongs to.
-     * @param operationName the operation name of the target SwitchYard servcie.
+     * @param namespace the service namespace of the target SwitchYard service.
+     * @param operationName the operation name of the target SwitchYard service.
      */
-    public SwitchYardProducer(final Endpoint endpoint, final String operationName) {
+    public SwitchYardProducer(final Endpoint endpoint, final String namespace, final String operationName) {
         super(endpoint);
+        _namespace = namespace;
         _operationName = operationName;
     }
     
@@ -83,7 +86,8 @@ public class SwitchYardProducer extends DefaultProducer {
     }
     
     private ServiceReference lookupServiceReference(final String targetUri) {
-        final ServiceReference serviceRef = ServiceReferences.get(componseSwitchYardServiceName(targetUri));
+        final QName serviceName = composeSwitchYardServiceName(_namespace, targetUri);
+        final ServiceReference serviceRef = ServiceReferences.get(serviceName);
         if (serviceRef == null) {
             throw new NullPointerException("No ServiceReference was found for uri [" + targetUri + "]");
         }

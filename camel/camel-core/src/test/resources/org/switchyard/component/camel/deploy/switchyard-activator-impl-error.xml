@@ -18,13 +18,9 @@
     xmlns:sd="urn:switchyard-config:switchyard:1.0"
     xmlns:bean="urn:switchyard-component-bean:config:1.0">
 
-    <sca:composite>
+    <sca:composite name="OrderService" targetNamespace="urn:camel-core:test:1.0">
     
         <sca:component name="CamelComponent">
-            <sca:service name="OrderService" >
-                <sca:interface.java interface="org.switchyard.component.camel.deploy.support.OrderService"/>
-            </sca:service>
-            
             <implementation.camel>
                 <route xmlns="http://camel.apache.org/schema/spring" id="CamelTestRoute">
                     <log message="ItemId [${body}]"/>
@@ -32,6 +28,9 @@
                     <log message="Title Name [${body}]"/>
                 </route>
             </implementation.camel>
+            <sca:service name="OrderService" >
+                <sca:interface.java interface="org.switchyard.component.camel.deploy.support.OrderService"/>
+            </sca:service>
         </sca:component>
         
     </sca:composite>

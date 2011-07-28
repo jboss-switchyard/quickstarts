@@ -17,7 +17,7 @@
     xmlns:camel="urn:switchyard-component-camel:config:1.0" 
     xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" >
 
-	<sca:composite>
+	<sca:composite name="camelTest" targetNamespace="urn:camel-core:test:1.0">
 		<sca:service name="camelTest" promote="SimpleCamelService">
 			<camel:binding.file>
 			    <camel:operationSelector operationName="print"/>

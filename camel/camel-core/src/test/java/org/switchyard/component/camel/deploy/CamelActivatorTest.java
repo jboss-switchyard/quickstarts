@@ -78,7 +78,7 @@ public class CamelActivatorTest {
     @Test
     public void startStop() throws Exception {
         final MockHandler mockHandler = _testKit.registerInOnlyService("SimpleCamelService");
-        final ServiceReference serviceRef = _testKit.getServiceDomain().getService(new QName("SimpleCamelService"));
+        final ServiceReference serviceRef = _testKit.getServiceDomain().getService(_testKit.createQName("SimpleCamelService"));
         final CamelActivator activator = getCamelActivator();
         final CamelContext camelContext = activator.getCamelContext();
         final ProducerTemplate producerTemplate = camelContext.createProducerTemplate();

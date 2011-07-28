@@ -44,7 +44,7 @@ public class RouteFactoryTest {
             RouteFactory.createRoute(NoRouteAnnotation.class.getName());
             Assert.fail("No route annotation on " + NoRouteAnnotation.class.getName());
         } catch (RuntimeException ex) {
-            System.out.println("Route without annotation was rejected: " + ex.toString());
+            System.err.println("Route without annotation was rejected: " + ex.toString());
         }
     }
 
@@ -54,7 +54,7 @@ public class RouteFactoryTest {
             RouteFactory.createRoute(DoesntExtendRouteBuilder.class.getName());
             Assert.fail("Java DSL class does not extend RouteBuilder " + DoesntExtendRouteBuilder.class.getName());
         } catch (RuntimeException ex) {
-            System.out.println("Route class that does not extend RouteBuilder was rejected: " + ex.toString());
+            System.err.println("Route class that does not extend RouteBuilder was rejected: " + ex.toString());
         }
     }
 
@@ -64,7 +64,7 @@ public class RouteFactoryTest {
             RouteFactory.createRoute(NoRoutesDefined.class.getName());
             Assert.fail("No routes defined in Java DSL class " + NoRoutesDefined.class.getName());
         } catch (RuntimeException ex) {
-            System.out.println("Java DSL class without a route was rejected: " + ex.toString());
+            System.err.println("Java DSL class without a route was rejected: " + ex.toString());
         }
     }
 }

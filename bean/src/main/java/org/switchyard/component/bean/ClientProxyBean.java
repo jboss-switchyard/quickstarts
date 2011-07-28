@@ -36,14 +36,13 @@ import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.util.AnnotationLiteral;
-import javax.xml.namespace.QName;
 
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangeState;
 import org.switchyard.ServiceReference;
-import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
 import org.switchyard.SynchronousInOutHandler;
+import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.InvocationContract;
 import org.switchyard.metadata.ServiceOperation;
@@ -60,9 +59,9 @@ import org.switchyard.metadata.java.JavaService;
 public class ClientProxyBean implements Bean {
 
     /**
-     * The target Service {@link QName}.
+     * The target Service.
      */
-    private QName _serviceQName;
+    private String _serviceName;
 
     /**
      * Target service reference.
@@ -89,13 +88,13 @@ public class ClientProxyBean implements Bean {
     /**
      * Public constructor.
      *
-     * @param serviceQName   The name of the ESB Service being proxied to.
+     * @param serviceName   The name of the ESB Service being proxied to.
      * @param proxyInterface The proxy Interface.
      * @param qualifiers     The CDI bean qualifiers.  Copied from the injection point.
      * @param beanDeploymentMetaData Deployment metadata.
      */
-    public ClientProxyBean(QName serviceQName, Class<?> proxyInterface, Set<Annotation> qualifiers, BeanDeploymentMetaData beanDeploymentMetaData) {
-        this._serviceQName = serviceQName;
+    public ClientProxyBean(String serviceName, Class<?> proxyInterface, Set<Annotation> qualifiers, BeanDeploymentMetaData beanDeploymentMetaData) {
+        this._serviceName = serviceName;
         this._serviceInterface = proxyInterface;
 
         if (qualifiers != null) {
@@ -118,8 +117,8 @@ public class ClientProxyBean implements Bean {
      *
      * @return The Service name.
      */
-    public QName getServiceQName() {
-        return _serviceQName;
+    public String getServiceName() {
+        return _serviceName;
     }
 
     /**
@@ -275,7 +274,7 @@ public class ClientProxyBean implements Bean {
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             if (_service == null) {
-                throw new BeanComponentException("A service reference to service '" + _serviceQName + "' is not bound into "
+                throw new BeanComponentException("A service reference to service '" + _serviceName + "' is not bound into "
                         + "this client proxy instance.  A reference configuration to the service may be required in the application configuration.");
             }
             
@@ -308,7 +307,7 @@ public class ClientProxyBean implements Bean {
                         }
                         throw (Throwable) exceptionObj;
                     } else {
-                        throw new BeanComponentException("Bean Component invocation failure.  Service '" + _serviceQName + "', operation '" + method.getName() + "'.").setFaultExchange(exchangeOut);
+                        throw new BeanComponentException("Bean Component invocation failure.  Service '" + _serviceName + "', operation '" + method.getName() + "'.").setFaultExchange(exchangeOut);
                     }
                 }
             } else {
@@ -330,7 +329,7 @@ public class ClientProxyBean implements Bean {
             ServiceOperation serviceOperation = service.getInterface().getOperation(operationName);
 
             if (serviceOperation == null) {
-                throw new BeanComponentException("Bean Component invocation failure.  Operation '" + operationName + "' is not defined on Service '" + _serviceQName + "'.");
+                throw new BeanComponentException("Bean Component invocation failure.  Operation '" + operationName + "' is not defined on Service '" + _serviceName + "'.");
             }
 
             BaseExchangeContract exchangeContext = new BaseExchangeContract(serviceOperation);
