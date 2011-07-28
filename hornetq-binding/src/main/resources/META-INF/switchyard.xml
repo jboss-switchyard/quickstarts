@@ -3,7 +3,7 @@
 		    xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
 		    xmlns:bean="urn:switchyard-component-bean:config:1.0">
             
-    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="hornetq-service-binding">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="hornetq-binding" targetNamespace="urn:switchyard-quickstart:hornetq-binding:0.1.0">
     
         <service name="GreetingService" promote="GreetingService">
             <hornetq:binding.hornetq>

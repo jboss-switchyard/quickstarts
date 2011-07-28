@@ -1,6 +1,6 @@
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0"
             xmlns:camel="urn:switchyard-component-camel:config:1.0">
-    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-binding">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-binding" targetNamespace="urn:switchyard-quickstart:camel-binding:0.1.0">
     
         <service name="GreetingService" promote="GreetingService">
             <camel:binding.camel configURI="file://target/input?fileName=test.txt&amp;initialDelay=50&amp;delete=true"/>
