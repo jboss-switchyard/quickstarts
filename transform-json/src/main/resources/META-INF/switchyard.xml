@@ -2,8 +2,7 @@
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0"
             xmlns:trfm="urn:switchyard-config:transform:1.0"
             xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-            targetNamespace="urn:switchyard-quickstart:transform-json:1.0-SNAPSHOT"
-            name="transform-smooks">
+            name="transform-json">
             
     <transforms>
         <trfm:transform.json 
