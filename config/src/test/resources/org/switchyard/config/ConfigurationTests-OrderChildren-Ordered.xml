@@ -17,7 +17,19 @@ v.2.1 along with this distribution; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA  02110-1301, USA.
 -->
-<one xmlns='http://a.org/a.xsd' xmlns:b='http://b.org/b.xsd' xmlns:c='http://c.org/c.xsd' foo='bar' targetNamespace='urn:test'>
-    <b:two baz='whiz' c:boy='girl'>stuff</b:two>
-    <three toy='robot' b:man='woman'>junk</three>
-</one>
+<root>
+    <one>
+        <a>a</a>
+        <b>b</b>
+        <c>c</c>
+    </one>
+    <two>2</two>
+    <three>
+        <c>c</c>
+        <b>b</b>
+        <a>a</a>
+    </three>
+    <four>4</four>
+    <foo>foo</foo>
+    <bar>bar</bar>
+</root>

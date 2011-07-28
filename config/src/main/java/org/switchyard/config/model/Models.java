@@ -32,6 +32,7 @@ public final class Models {
 
     /**
      * Merges two models into a new model.
+     * Note: The act of merging results in fromModel and toModel to have their configurations normalized and children ordered!
      * @param <M> the type of Model being merged
      * @param fromModel merge from this model, overriding anything in toModel
      * @param toModel merge into a copy of this model
@@ -43,6 +44,7 @@ public final class Models {
 
     /**
      * Merges two models into a new model.
+     * Note: The act of merging results in fromModel and toModel to have their configurations normalized and children ordered!
      * @param <M> the type of Model being merged
      * @param fromModel merge from this model, optionally overriding anything in toModel
      * @param toModel merge into a copy of this model

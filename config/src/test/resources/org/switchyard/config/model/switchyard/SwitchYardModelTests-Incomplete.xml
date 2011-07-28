@@ -21,8 +21,9 @@ MA  02110-1301, USA.
             xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
             xmlns:bean="urn:switchyard-config:test-bean:1.0"
             xmlns:java="urn:switchyard-config:test-java:1.0"
-            xmlns:smooks="urn:switchyard-config:test-smooks:1.0">
-    <sca:composite name="m1app" targetNamespace="urn:m1app:example:1.0">
+            xmlns:smooks="urn:switchyard-config:test-smooks:1.0"
+            name="m1app">
+    <sca:composite name="m1app"  targetNamespace="urn:m1app:example:1.0">
         <sca:component name="SimpleService">
             <bean:implementation.bean class="org.switchyard.example.m1app.SimpleBean"/>
             <sca:service name="SimpleService">

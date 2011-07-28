@@ -33,6 +33,7 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InOnlyOperation;
@@ -64,16 +65,7 @@ public class Invoker {
      * @param serviceName The Service name.
      */
     protected Invoker(ServiceDomain domain, String serviceName) {
-        _domain = domain;
-
-        String[] serviceNameTokens = serviceName.split("\\.");
-
-        if (serviceNameTokens.length == 1) {
-            _serviceName = QName.valueOf(serviceName);
-        } else if (serviceNameTokens.length == 2) {
-            _serviceName = QName.valueOf(serviceNameTokens[0]);
-            _operationName = serviceNameTokens[1];
-        }
+        this(domain, XMLHelper.createQName(domain.getName().getNamespaceURI(), serviceName));
     }
 
     /**
@@ -83,7 +75,15 @@ public class Invoker {
      */
     public Invoker(ServiceDomain domain, QName serviceName) {
         _domain = domain;
-        _serviceName = serviceName;
+
+        String[] serviceNameTokens = serviceName.getLocalPart().split("\\.");
+
+        if (serviceNameTokens.length == 1) {
+            _serviceName = serviceName;
+        } else if (serviceNameTokens.length == 2) {
+            _serviceName = XMLHelper.createQName(serviceName.getNamespaceURI(), serviceNameTokens[0]);
+            _operationName = serviceNameTokens[1];
+        }
     }
 
     /**

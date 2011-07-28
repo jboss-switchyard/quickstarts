@@ -52,6 +52,7 @@ import java.io.StringWriter;
  */
 public abstract class AbstractDOMTransformer<F, T> extends BaseTransformer<F, T> {
 
+    private static final Logger LOGGER = Logger.getLogger(AbstractDOMTransformer.class);
     private Logger _log;
 
     private static DocumentBuilderFactory _docBuilderFactory;
@@ -119,7 +120,7 @@ public abstract class AbstractDOMTransformer<F, T> extends BaseTransformer<F, T>
                     }
                 }
             } catch (IOException e) {
-                System.out.println("Exception while closing DOM InputSource: " + e.getMessage());
+                LOGGER.error("Exception while closing DOM InputSource: " + e.getMessage());
             }
         }
     }

@@ -50,7 +50,7 @@ public class V1ComponentModel extends BaseNamedModel implements ComponentModel {
      */
     public V1ComponentModel() {
         super(new QName(CompositeModel.DEFAULT_NAMESPACE, ComponentModel.COMPONENT));
-        setModelChildrenOrder(ComponentImplementationModel.IMPLEMENTATION, ComponentServiceModel.SERVICE, ComponentReferenceModel.REFERENCE);
+        setModelChildrenOrder(ComponentImplementationModel.IMPLEMENTATION + ".*", ComponentServiceModel.SERVICE, ComponentReferenceModel.REFERENCE);
     }
 
     /**
@@ -72,7 +72,7 @@ public class V1ComponentModel extends BaseNamedModel implements ComponentModel {
                 _references.add(reference);
             }
         }
-        setModelChildrenOrder(ComponentImplementationModel.IMPLEMENTATION, ComponentServiceModel.SERVICE, ComponentReferenceModel.REFERENCE);
+        setModelChildrenOrder(ComponentImplementationModel.IMPLEMENTATION + ".*", ComponentServiceModel.SERVICE, ComponentReferenceModel.REFERENCE);
     }
 
     /**

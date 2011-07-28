@@ -46,6 +46,7 @@ public final class Configurations {
 
     /**
      * Merges two configs into a new config.
+     * Note: The act of merging results in fromConfig and toConfig to be normalized and their children ordered!
      * @param fromConfig merge from this config, overriding anything in toConfig
      * @param toConfig merge into a copy of this config
      * @return the newly merged config
@@ -56,6 +57,7 @@ public final class Configurations {
 
     /**
      * Merges two configs into a new config.
+     * Note: The act of merging results in fromConfig and toConfig to be normalized and their children ordered!
      * @param fromConfig merge from this config, optionally overriding anything in toConfig
      * @param toConfig merge into a copy of this config
      * @param fromOverridesTo whether fromConfig attributes/values should override those in toConfig
@@ -67,9 +69,10 @@ public final class Configurations {
         if (!fromConfigQName.equals(toConfigQName)) {
             throw new IllegalArgumentException(fromConfigQName + " != " + toConfigQName);
         }
+        fromConfig.normalize().orderChildren();
+        toConfig.normalize().orderChildren();
         Configuration mergedConfig = toConfig.copy();
         recursiveMerge(fromConfig.copy(), mergedConfig, fromOverridesTo);
-        mergedConfig.normalize();
         return mergedConfig;
     }
 
@@ -138,7 +141,6 @@ public final class Configurations {
         for (Configuration merged_config_orphan : merged_config_orphans.values()) {
             merged_config.addChild(merged_config_orphan);
         }
-        merged_config.orderChildren();
     }
 
     private static final class Key {

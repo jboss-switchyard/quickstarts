@@ -22,7 +22,8 @@ MA  02110-1301, USA.
             xmlns:soap="urn:switchyard-config:test-soap:1.0"
             xmlns:bean="urn:switchyard-config:test-bean:1.0"
             xmlns:java="urn:switchyard-config:test-java:1.0"
-            xmlns:smooks="urn:switchyard-config:test-smooks:1.0">
+            xmlns:smooks="urn:switchyard-config:test-smooks:1.0"
+            name="m1app">
     <sca:composite name="m1app" targetNamespace="urn:m1app:example:1.0">
         <sca:service name="M1AppService" promote="SimpleService">
             <soap:binding.soap>
@@ -57,8 +58,8 @@ MA  02110-1301, USA.
             <java:transform.java from="msgD" to="msgA" class="org.examples.transform.DtoATransform"/>
         </transforms>
         <properties>
-	        <property name="foo" value="bar"/>
-	        <property name="tuna" value="fish"/>
+            <property name="foo" value="bar"/>
+            <property name="tuna" value="fish"/>
         </properties>
         <handlers>
             <handler name="handler1" class="org.switchyard.handlers.TestHandler"/>

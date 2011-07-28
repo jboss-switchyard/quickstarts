@@ -45,8 +45,6 @@ public abstract class BaseConfiguration implements Configuration {
     protected static final String DEFAULT_XMLNS_PFX = "ns0";
     protected static final String NULL_NS_URI = XMLConstants.NULL_NS_URI;
 
-    private String[] _childrenOrder = new String[0];
-
     /**
      * {@inheritDoc}
      */
@@ -113,41 +111,29 @@ public abstract class BaseConfiguration implements Configuration {
      * {@inheritDoc}
      */
     @Override
-    public String[] getChildrenOrder() {
-        int length = _childrenOrder.length;
-        String[] copy = new String[length];
-        System.arraycopy(_childrenOrder, 0, copy, 0, length);
-        return copy;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Configuration setChildrenOrder(String... childrenOrder) {
-        _childrenOrder = childrenOrder;
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Configuration orderChildren() {
+        return orderChildren(true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Configuration orderChildren(boolean recursive) {
         String[] childrenGroups = getChildrenOrder();
         if (childrenGroups != null && childrenGroups.length > 0) {
             Map<String,List<Configuration>> config_map = new LinkedHashMap<String,List<Configuration>>();
             for (String childrenGroup : childrenGroups) {
                 List<Configuration> config_list;
-                for (Configuration selected_config : getChildren(childrenGroup)) {
+                for (Configuration selected_config : getChildrenMatches(childrenGroup)) {
                     config_list = config_map.get(childrenGroup);
                     if (config_list == null) {
                         config_list = new ArrayList<Configuration>();
                         config_map.put(childrenGroup, config_list);
                     }
                     config_list.add(selected_config);
-                    removeChildren(childrenGroup);
                 }
+                removeChildrenMatches(childrenGroup);
             }
             List<Configuration> config_remainder_list = new ArrayList<Configuration>();
             for (Configuration config_remainder : getChildren()) {
@@ -156,10 +142,16 @@ public abstract class BaseConfiguration implements Configuration {
             removeChildren();
             for (List<Configuration> config_list : config_map.values()) {
                 for (Configuration selected_config : config_list) {
+                    if (recursive) {
+                        selected_config.orderChildren(recursive);
+                    }
                     addChild(selected_config);
                 }
             }
             for (Configuration config_remainder : config_remainder_list) {
+                if (recursive) {
+                    config_remainder.orderChildren(recursive);
+                }
                 addChild(config_remainder);
             }
         }

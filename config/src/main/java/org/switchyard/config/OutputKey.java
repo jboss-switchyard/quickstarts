@@ -25,6 +25,12 @@ package org.switchyard.config;
  */
 public enum OutputKey {
 
+    /** The omit-normalization hint. */
+    OMIT_NORMALIZATION,
+
+    /** The omit-ordering hint. */
+    OMIT_ORDERING,
+
     /** The omit-xml-declaration hint. */
     OMIT_XML_DECLARATION
 

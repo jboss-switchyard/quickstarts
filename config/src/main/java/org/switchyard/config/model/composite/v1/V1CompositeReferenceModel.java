@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.apache.log4j.Logger;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
@@ -42,6 +43,8 @@ import org.switchyard.config.model.composite.InterfaceModel;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class V1CompositeReferenceModel extends BaseNamedModel implements CompositeReferenceModel {
+
+    private static final Logger LOGGER = Logger.getLogger(V1CompositeReferenceModel.class);
 
     private List<BindingModel> _bindings = new ArrayList<BindingModel>();
     private InterfaceModel _interface;
@@ -124,11 +127,11 @@ public class V1CompositeReferenceModel extends BaseNamedModel implements Composi
                                     return reference;
                                 }
                             }
-                            throw new IllegalArgumentException("missing component reference [" + componentReferenceName + "] for component [" + componentName + "]");
+                            LOGGER.warn("missing component reference [" + componentReferenceName + "] for component [" + componentName + "]");
                         }
                     }
                 }
-                throw new IllegalArgumentException("missing component reference for " + (missingComponent ? "missing " : "") + "component [" + componentName + "]");
+                LOGGER.warn("missing component reference for " + (missingComponent ? "missing " : "") + "component [" + componentName + "]");
             }
         }
         return null;

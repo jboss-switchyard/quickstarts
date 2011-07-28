@@ -58,6 +58,12 @@ public interface Model {
     public List<Model> getModelChildren();
 
     /**
+     * Orders the children based on what was set via {@link #setModelChildrenOrder(String...)}.
+     * @return this model (useful for chaining)
+     */
+    public Model orderModelChildren();
+
+    /**
      * Validates this model against schema(s) defined in this model's descriptor.
      * @return the result of the validation
      */

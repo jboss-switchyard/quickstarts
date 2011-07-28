@@ -299,6 +299,31 @@ public abstract class BaseModel implements Model {
      * {@inheritDoc}
      */
     @Override
+    public Model orderModelChildren() {
+        primeModelChildren();
+        getModelConfiguration().orderChildren();
+        return this;
+    }
+
+    /**
+     * Recursively iterates over the children, which will force instantiation of a Model for every child Configuration.
+     * @return this model (useful for chaining)
+     */
+    protected final Model primeModelChildren() {
+        primeModelChildren(this);
+        return this;
+    }
+
+    private final void primeModelChildren(Model model) {
+        for (Model child : model.getModelChildren()) {
+            primeModelChildren(child);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void write(OutputStream out, OutputKey... keys) throws IOException {
         getModelConfiguration().write(out, keys);
     }

@@ -107,8 +107,7 @@ public class DeploymentTest {
         deployment.init(ServiceDomainManager.createDomain());
         deployment.start();
 
-        // FIXME: new QName("urn:switchyard-interface-wsdl", "HelloService") does not work
-        ServiceReference service = deployment.getDomain().getService(new QName("HelloService"));
+        ServiceReference service = deployment.getDomain().getService(new QName("urn:switchyard-interface-wsdl", "HelloService"));
         Assert.assertNotNull(service);
         ServiceInterface iface = service.getInterface();
         Assert.assertEquals(WSDLService.TYPE, iface.getType());
@@ -135,7 +134,7 @@ public class DeploymentTest {
             deployment.start();
         } catch (SwitchYardException sye) {
             exception = sye;
-            System.out.println(sye.toString());
+            System.err.println(sye.toString());
         } finally {
             if (swConfigStream != null) {
                 swConfigStream.close();

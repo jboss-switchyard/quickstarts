@@ -194,6 +194,13 @@ public interface Configuration {
     public List<Configuration> getChildrenStartsWith(String name);
 
     /**
+     * Gets all children configs of this config with a name that matches the specified regexp.
+     * @param regexp the regexp to match against
+     * @return all children configs with a matching name
+     */
+    public List<Configuration> getChildrenMatches(String regexp);
+
+    /**
      * Gets all children configs of this config with the specified qualified name.
      * @param qname the qualified name of the children configs
      * @return all children configs with the specified qualified name
@@ -242,6 +249,20 @@ public interface Configuration {
     public Configuration removeChildren(String name);
 
     /**
+     * Removes all children configs of this config with a name that starts with the specified prefix.
+     * @param name the prefix to match against
+     * @return this config (useful for chaining)
+     */
+    public Configuration removeChildrenStartsWith(String name);
+
+    /**
+     * Removes all children configs of this config with a name that matches the specified regexp.
+     * @param regexp the regexp to match against
+     * @return this config (useful for chaining)
+     */
+    public Configuration removeChildrenMatches(String regexp);
+
+    /**
      * Removes all children configs with the specified qualified name.
      * @param qname the qualified name of the child configs to remove
      * @return this config (useful for chaining)
@@ -263,9 +284,17 @@ public interface Configuration {
 
     /**
      * Orders the child configs based on {@link #getChildrenOrder()}.
+     * Same as {@link #orderChildren(boolean)} with recursive as true.
      * @return this config (useful for chaining)
      */
     public Configuration orderChildren();
+
+    /**
+     * Orders the child configs based on {@link #getChildrenOrder()}.
+     * @param recursive whether the children/grandchildren/great-grandchildren/etc should also be ordered
+     * @return this config (useful for chaining)
+     */
+    public Configuration orderChildren(boolean recursive);
 
     /**
      * Copies this config.

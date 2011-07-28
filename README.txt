@@ -19,7 +19,6 @@ the tested version specified above
 - 'mvn install checkstyle:checkstyle' to enable checkstyle
 - 'mvn javadoc:aggregate' to just run javadoc (see target/site/apidocs/index.html)
 
-
 Eclipse:
 --------
 - Tested version = JBoss Developer Studio 3.0.0

@@ -33,6 +33,9 @@ import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Models;
+import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.ComponentReferenceModel;
+import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.test.soap.PortModel;
@@ -134,6 +137,29 @@ public class SwitchYardModelTests {
     public void testValidation() throws Exception {
         SwitchYardModel switchyard = _puller.pull(COMPLETE_XML, getClass());
         Assert.assertTrue(switchyard.isModelValid());
+    }
+
+    @Test
+    public void testTargetNamespace() throws Exception {
+        SwitchYardModel switchyard = _puller.pull(COMPLETE_XML, getClass());
+        Assert.assertEquals("m1app", switchyard.getName());
+        Assert.assertEquals(new QName("m1app"), switchyard.getQName());
+        final String tns = "urn:m1app:example:1.0";
+        CompositeModel composite = switchyard.getComposite();
+        Assert.assertEquals("m1app", composite.getName());
+        Assert.assertEquals(new QName(tns, "m1app"), composite.getQName());
+        CompositeServiceModel compositeService = composite.getServices().iterator().next();
+        Assert.assertEquals("M1AppService", compositeService.getName());
+        Assert.assertEquals(new QName(tns, "M1AppService"), compositeService.getQName());
+        ComponentModel component = composite.getComponents().iterator().next();
+        Assert.assertEquals("SimpleService", component.getName());
+        Assert.assertEquals(new QName(tns, "SimpleService"), component.getQName());
+        ComponentServiceModel componentService = component.getServices().iterator().next();
+        Assert.assertEquals("SimpleService", componentService.getName());
+        Assert.assertEquals(new QName(tns, "SimpleService"), componentService.getQName());
+        ComponentReferenceModel componentReference = component.getReferences().iterator().next();
+        Assert.assertEquals("anotherService", componentReference.getName());
+        Assert.assertEquals(new QName(tns, "anotherService"), componentReference.getQName());
     }
 
 }

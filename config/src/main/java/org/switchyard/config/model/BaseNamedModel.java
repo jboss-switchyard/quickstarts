@@ -18,8 +18,11 @@
  */
 package org.switchyard.config.model;
 
+import java.net.URI;
+
 import javax.xml.namespace.QName;
 
+import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.config.Configuration;
 
@@ -63,17 +66,34 @@ public abstract class BaseNamedModel extends BaseModel implements NamedModel {
      * {@inheritDoc}
      */
     @Override
-    public QName getQName() {
-        return XMLHelper.createQName(getName());
+    public String getTargetNamespace() {
+        String tns = null;
+        Model model = this;
+        while (model instanceof BaseModel) {
+            tns = Strings.trimToNull(((BaseModel)model).getModelAttribute("targetNamespace"));
+            if (tns != null) {
+                break;
+            }
+            model = model.getModelParent();
+        }
+        return tns;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public NamedModel setQName(QName qname) {
-        setName(qname != null ? qname.toString() : null);
-        return this;
+    public URI getTargetNamespaceURI() {
+        String tns = getTargetNamespace();
+        return tns != null ? URI.create(tns) : null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public QName getQName() {
+        return XMLHelper.createQName(getTargetNamespace(), getName());
     }
 
 }

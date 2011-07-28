@@ -113,4 +113,53 @@ public final class Strings {
         return set.toArray(new String[set.size()]);
     }
 
+    /**
+     * Concatenates Strings using no delimiter, trimming each to null. Nulls are not concatenated.
+     * @param str the original Strings
+     * @return the concatenated String
+     * @see #trimToNull(String)
+     */
+    public static String concat(String... str) {
+        return concat(null, str);
+    }
+
+    /**
+     * Concatenates Strings using the specified delimiter, trimming each to null. Nulls are not concatenated.
+     * @param delim the delimiter
+     * @param str the original Strings
+     * @return the concatenated String
+     * @see #trimToNull(String)
+     */
+    public static String concat(String delim, String... str) {
+        return concat(delim, true, str);
+    }
+
+    /**
+     * Concatenates Strings using the specified delimiter, possibly trimming each to null. Nulls are not concatenated.
+     * @param delim the delimiter
+     * @param trimToNull should each String be trimmed to null first?
+     * @param str the original Strings
+     * @return the concatenated String
+     * @see #trimToNull(String)
+     */
+    public static String concat(String delim, boolean trimToNull, String... str) {
+        if (str != null && str.length > 0) {
+            StringBuilder sb = new StringBuilder();
+            for (int i=0; i < str.length; i++) {
+                String s = str[i];
+                if (trimToNull) {
+                    s = trimToNull(s);
+                }
+                if (s != null) {
+                    sb.append(s);
+                    if (i < str.length-1) {
+                        sb.append(delim);
+                    }
+                }
+            }
+            return sb.toString();
+        }
+        return null;
+    }
+
 }

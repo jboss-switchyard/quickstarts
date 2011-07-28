@@ -18,6 +18,8 @@
  */
 package org.switchyard.config.model;
 
+import java.net.URI;
+
 import javax.xml.namespace.QName;
 
 /**
@@ -41,16 +43,21 @@ public interface NamedModel extends Model {
     public NamedModel setName(String name);
 
     /**
+     * Gets the targetNamespace of this Model from the wrapped Configuration.
+     * @return the targetNamespace
+     */
+    public String getTargetNamespace();
+
+    /**
+     * Gets the targetNamespace URI of this Model from the wrapped Configuration.
+     * @return the targetNamespace URI
+     */
+    public URI getTargetNamespaceURI();
+
+    /**
      * Gets the qualified name <b>attribute</b> of this Model (<i>not</i> the qualified name of the wrapped Configuration).
      * @return the qualified name
      */
     public QName getQName();
-
-    /**
-     * Sets the qualified name <b>attribute</b> of this Model (<i>not</i> the qualified name of the wrapped Configuration).
-     * @param qname the qualified name
-     * @return this NamedModel (useful for chaining)
-     */
-    public NamedModel setQName(QName qname);
 
 }

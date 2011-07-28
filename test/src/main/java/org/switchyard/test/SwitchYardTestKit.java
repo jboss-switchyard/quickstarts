@@ -16,8 +16,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-
 package org.switchyard.test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.log4j.Logger;
 import org.custommonkey.xmlunit.XMLAssert;
@@ -27,6 +42,7 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.type.classpath.ClasspathScanner;
+import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.config.model.MergeScanner;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.ModelPuller;
@@ -35,6 +51,8 @@ import org.switchyard.config.model.Scannable;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.ScannerOutput;
+import org.switchyard.config.model.Validation;
+import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
@@ -50,21 +68,6 @@ import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerUtil;
 import org.w3c.dom.Document;
-
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
@@ -231,6 +234,22 @@ public class SwitchYardTestKit {
     }
 
     /**
+     * Creates a QName given this test kit's config model's targetNamespace + the specified localPart.
+     * @param localPart the specified localPart
+     * @return the QName
+     */
+    public QName createQName(String localPart) {
+        final String tns;
+        if (_configModel != null) {
+            CompositeModel composite = _configModel.getComposite();
+            tns = composite != null ? composite.getTargetNamespace() : _configModel.getTargetNamespace();
+        } else {
+            tns = null;
+        }
+        return XMLHelper.createQName(tns, localPart);
+    }
+
+    /**
      * Register an IN_OUT Service.
      * <p/>
      * Registers a {@link MockHandler} as the service handler.
@@ -240,7 +259,7 @@ public class SwitchYardTestKit {
      */
     public MockHandler registerInOutService(String serviceName) {
         MockHandler handler = new MockHandler();
-        getServiceDomain().registerService(QName.valueOf(serviceName), handler, new InOutService());
+        getServiceDomain().registerService(createQName(serviceName), handler, new InOutService());
         return handler;
     }
 
@@ -251,7 +270,7 @@ public class SwitchYardTestKit {
      * @param serviceHandler The service handler.
      */
     public void registerInOutService(String serviceName, ExchangeHandler serviceHandler) {
-        getServiceDomain().registerService(QName.valueOf(serviceName), serviceHandler, new InOutService());
+        getServiceDomain().registerService(createQName(serviceName), serviceHandler, new InOutService());
     }
 
     /**
@@ -262,7 +281,7 @@ public class SwitchYardTestKit {
      * @param metadata Service interface.
      */
     public void registerInOutService(String serviceName, ExchangeHandler serviceHandler, ServiceInterface metadata) {
-        getServiceDomain().registerService(QName.valueOf(serviceName), serviceHandler, metadata);
+        getServiceDomain().registerService(createQName(serviceName), serviceHandler, metadata);
     }
 
     /**
@@ -275,7 +294,7 @@ public class SwitchYardTestKit {
      */
     public MockHandler registerInOnlyService(String serviceName) {
         MockHandler handler = new MockHandler();
-        getServiceDomain().registerService(QName.valueOf(serviceName), handler, new InOnlyService());
+        getServiceDomain().registerService(createQName(serviceName), handler, new InOnlyService());
         return handler;
     }
 
@@ -286,7 +305,7 @@ public class SwitchYardTestKit {
      * @param serviceHandler The service handler.
      */
     public void registerInOnlyService(String serviceName, ExchangeHandler serviceHandler) {
-        getServiceDomain().registerService(QName.valueOf(serviceName), serviceHandler, new InOnlyService());
+        getServiceDomain().registerService(createQName(serviceName), serviceHandler, new InOnlyService());
     }
 
     /**
@@ -313,7 +332,7 @@ public class SwitchYardTestKit {
      * @return The invoker instance.
      */
     public Invoker newInvoker(String serviceName) {
-        return new Invoker(getServiceDomain(), serviceName);
+        return newInvoker(createQName(serviceName));
     }
 
     /**
@@ -473,7 +492,28 @@ public class SwitchYardTestKit {
      * @return The SwitchYard config model.
      */
     public SwitchYardModel loadSwitchYardModel(InputStream configModel) {
-        return loadConfigModel(configModel, SwitchYardModel.class);
+        return loadSwitchYardModel(configModel, true);
+    }
+
+    /**
+     * Load the SwitchYard configuration model specified by the configModel stream.
+     * @param configModel The config model stream.
+     * @param validate Validate the model?
+     * @return The SwitchYard config model.
+     */
+    public SwitchYardModel loadSwitchYardModel(InputStream configModel, boolean validate) {
+        return loadConfigModel(configModel, SwitchYardModel.class, validate);
+    }
+
+    /**
+     * Load the configuration model specified by the configModel stream.
+     * @param <M> Model type.
+     * @param configModel The config model stream.
+     * @param modelType Model type.
+     * @return The config model.
+     */
+    public <M extends Model> M loadConfigModel(InputStream configModel, Class<M> modelType) {
+        return loadConfigModel(configModel, modelType, true);
     }
 
     /**
@@ -481,14 +521,22 @@ public class SwitchYardTestKit {
      * @param <M> Model type.
      * @param configModel The config model stream.
      * @param modelType Model type.
+     * @param validate Validate the model?
      * @return The SwitchYard config model.
      */
-    public <M extends Model> M loadConfigModel(InputStream configModel, Class<M> modelType) {
+    public <M extends Model> M loadConfigModel(InputStream configModel, Class<M> modelType, boolean validate) {
         if (configModel == null) {
             throw new IllegalArgumentException("null 'configModel' arg.");
         }
         try {
-            return new ModelPuller<M>().pull(configModel);
+            M pulledModel = new ModelPuller<M>().pull(configModel);
+            if (validate) {
+                Validation v = pulledModel.validateModel();
+                if (!v.isValid()) {
+                    Assert.fail("Error validating " + modelType.getSimpleName() + ": " + v.getMessage());
+                }
+            }
+            return pulledModel;
         } catch (IOException e) {
             Assert.fail("Unexpected error building " + modelType.getSimpleName() + ": " + e.getMessage());
         } finally {
@@ -582,21 +630,27 @@ public class SwitchYardTestKit {
     private SwitchYardModel createSwitchYardModel(InputStream configModel, List<Scanner<V1SwitchYardModel>> scanners) {
         Assert.assertNotNull("Test 'configModel' is null.", configModel);
 
+        final SwitchYardModel returnModel;
         try {
-            SwitchYardModel model = loadSwitchYardModel(configModel);
+            SwitchYardModel model = loadSwitchYardModel(configModel, false);
             ClassLoader classLoader = _testInstance.getClass().getClassLoader();
 
             if (scanners != null && !scanners.isEmpty() && classLoader instanceof URLClassLoader) {
                 MergeScanner<V1SwitchYardModel> merge_scanner = new MergeScanner<V1SwitchYardModel>(V1SwitchYardModel.class, true, scanners);
                 List<URL> scanURLs = getScanURLs((URLClassLoader)classLoader);
 
-                ScannerInput<V1SwitchYardModel> scanner_input = new ScannerInput<V1SwitchYardModel>().setName("").setURLs(scanURLs);
+                ScannerInput<V1SwitchYardModel> scanner_input = new ScannerInput<V1SwitchYardModel>().setName(model.getName()).setURLs(scanURLs);
                 V1SwitchYardModel scannedModel = merge_scanner.scan(scanner_input).getModel();
 
-                return Models.merge(scannedModel, model, false);
+                returnModel = Models.merge(scannedModel, model, false);
             } else {
-                return model;
+                returnModel = model;
             }
+            Validation v = returnModel.validateModel();
+            if (!v.isValid()) {
+                Assert.fail("Error validating " + SwitchYardModel.class.getSimpleName() + ": " + v.getMessage());
+            }
+            return returnModel;
         } catch (java.io.IOException ioEx) {
             throw new SwitchYardException("Failed to read switchyard config.", ioEx);
         }

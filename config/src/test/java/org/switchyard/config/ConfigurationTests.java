@@ -44,6 +44,8 @@ public class ConfigurationTests {
     private static final String FROM_OVERRIDES_TO_XML = "/org/switchyard/config/ConfigurationTests-FromOverridesTo.xml";
     private static final String FROM_DOESNT_OVERRIDE_TO_XML = "/org/switchyard/config/ConfigurationTests-FromDoesntOverrideTo.xml";
     private static final String NAMESPACES_XML = "/org/switchyard/config/ConfigurationTests-Namespaces.xml";
+    private static final String ORDER_CHILDREN_UNORDERED_XML = "/org/switchyard/config/ConfigurationTests-OrderChildren-Unordered.xml";
+    private static final String ORDER_CHILDREN_ORDERED_XML = "/org/switchyard/config/ConfigurationTests-OrderChildren-Ordered.xml";
 
     private ConfigurationPuller _cfg_puller;
     private StringPuller _str_puller;
@@ -123,6 +125,7 @@ public class ConfigurationTests {
     @Test
     public void testNamespacesValues() throws Exception {
         Configuration config = _cfg_puller.pull(NAMESPACES_XML, getClass());
+        Assert.assertEquals("urn:test", config.getAttribute("targetNamespace"));
         Assert.assertEquals("http://a.org/a.xsd", config.getQName().getNamespaceURI());
         Assert.assertEquals("bar", config.getAttribute("foo"));
         Assert.assertEquals("stuff", config.getFirstChild("two").getValue());
@@ -132,6 +135,21 @@ public class ConfigurationTests {
         Assert.assertEquals("junk", config.getChildren().get(1).getValue());
         Assert.assertEquals("woman", config.getChildren().get(1).getAttribute(new QName("http://b.org/b.xsd", "man")));
         Assert.assertEquals("robot", config.getChildren().get(1).getAttribute("toy"));
+    }
+
+    @Test
+    public void testOrderChildren() throws Exception {
+        Configuration root = _cfg_puller.pull(ORDER_CHILDREN_UNORDERED_XML, getClass());
+        root.setChildrenOrder("one", "two", "three", "four");
+        Configuration one = root.getFirstChild("one");
+        one.setChildrenOrder("a", "b", "c");
+        Configuration three = root.getFirstChild("three");
+        three.setChildrenOrder("c", "b", "a");
+        String actual_xml = root.toString(); // toString() orders the children by default (but can be overridden by OutputKey.OMIT_ORDERING)
+        String expected_xml = _str_puller.pull(ORDER_CHILDREN_ORDERED_XML, getClass());
+        XMLUnit.setIgnoreWhitespace(true);
+        Diff diff = XMLUnit.compareXML(expected_xml, actual_xml);
+        Assert.assertTrue(diff.toString(), diff.identical());
     }
 
 }

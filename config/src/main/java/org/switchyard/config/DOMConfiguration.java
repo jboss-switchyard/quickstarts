@@ -38,6 +38,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.switchyard.common.io.pull.ElementPuller;
 import org.switchyard.common.io.pull.StringPuller;
+import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -53,24 +54,31 @@ import org.w3c.dom.NodeList;
  */
 public class DOMConfiguration extends BaseConfiguration {
 
+    private static final String CHILDREN_ORDER_KEY = "childrenOrder";
+    private static final String CHILDREN_ORDER_DELIM = ",";
+
     private Element _element;
     private Element _parent_element;
     private DOMConfiguration _parent_config;
 
     DOMConfiguration(Document document) {
         _element = new ElementPuller().pull(document);
+        getParent(); // initializes parent
     }
 
     DOMConfiguration(Element element) {
-        this(element, true);
+        _element = new ElementPuller().pull(element);
+        getParent(); // initializes parent
     }
 
     private DOMConfiguration(Element element, boolean normalize) {
         _element = new ElementPuller().pull(element, normalize);
+        getParent(); // initializes parent
     }
 
     DOMConfiguration(QName qname) {
         _element = new ElementPuller().pull(qname);
+        getParent(); // initializes parent
     }
 
     DOMConfiguration(Configuration from) {
@@ -88,6 +96,7 @@ public class DOMConfiguration extends BaseConfiguration {
             }
         }
         _element = config._element;
+        getParent(); // initializes parent
     }
 
     /**
@@ -406,9 +415,8 @@ public class DOMConfiguration extends BaseConfiguration {
         for (int i=0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
-                Element element = (Element)node;
-                if (XMLHelper.nameOf(element).equals(name)) {
-                    configs.add(new DOMConfiguration(element));
+                if (XMLHelper.nameOf(node).equals(name)) {
+                    configs.add(new DOMConfiguration((Element)node));
                 }
             }
         }
@@ -425,9 +433,26 @@ public class DOMConfiguration extends BaseConfiguration {
         for (int i=0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
-                Element element = (Element)node;
-                if (XMLHelper.nameOf(element).startsWith(name)) {
-                    configs.add(new DOMConfiguration(element));
+                if (XMLHelper.nameOf(node).startsWith(name)) {
+                    configs.add(new DOMConfiguration((Element)node));
+                }
+            }
+        }
+        return configs;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Configuration> getChildrenMatches(String regexp) {
+        List<Configuration> configs = new ArrayList<Configuration>();
+        NodeList nodes = _element.getChildNodes();
+        for (int i=0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                if (XMLHelper.nameOf(node).matches(regexp)) {
+                    configs.add(new DOMConfiguration((Element)node));
                 }
             }
         }
@@ -456,9 +481,8 @@ public class DOMConfiguration extends BaseConfiguration {
         for (int i=0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
-                Element element = (Element)node;
-                if (XMLHelper.nameOf(element).equals(name)) {
-                    return new DOMConfiguration(element);
+                if (XMLHelper.nameOf(node).equals(name)) {
+                    return new DOMConfiguration((Element)node);
                 }
             }
         }
@@ -474,9 +498,8 @@ public class DOMConfiguration extends BaseConfiguration {
         for (int i=0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
-                Element element = (Element)node;
-                if (XMLHelper.nameOf(element).startsWith(name)) {
-                    return new DOMConfiguration(element);
+                if (XMLHelper.nameOf(node).startsWith(name)) {
+                    return new DOMConfiguration((Element)node);
                 }
             }
         }
@@ -530,9 +553,42 @@ public class DOMConfiguration extends BaseConfiguration {
         for (int i=0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
-                Element element = (Element)node;
-                if (XMLHelper.nameOf(element).equals(name)) {
-                    _element.removeChild(element);
+                if (XMLHelper.nameOf(node).equals(name)) {
+                    _element.removeChild(node);
+                }
+            }
+        }
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Configuration removeChildrenStartsWith(String name) {
+        NodeList nodes = _element.getChildNodes();
+        for (int i=0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                if (XMLHelper.nameOf(node).startsWith(name)) {
+                    _element.removeChild(node);
+                }
+            }
+        }
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Configuration removeChildrenMatches(String regexp) {
+        NodeList nodes = _element.getChildNodes();
+        for (int i=0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                if (XMLHelper.nameOf(node).matches(regexp)) {
+                    _element.removeChild(node);
                 }
             }
         }
@@ -550,13 +606,33 @@ public class DOMConfiguration extends BaseConfiguration {
         }
         return this;
     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String[] getChildrenOrder() {
+        String co = (String)_element.getUserData(CHILDREN_ORDER_KEY);
+        return Strings.splitTrimToNullArray(co, CHILDREN_ORDER_DELIM);
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
+    public Configuration setChildrenOrder(String... childrenOrder) {
+        String co = Strings.concat(CHILDREN_ORDER_DELIM, childrenOrder);
+        _element.setUserData(CHILDREN_ORDER_KEY, co, null);
+        return this;
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Configuration copy() {
-        return new DOMConfiguration((Element)_element.cloneNode(true), false);
+        Element clone = (Element)_element.cloneNode(true);
+        DOMConfiguration copy = new DOMConfiguration(clone, false);
+        copy.setChildrenOrder(getChildrenOrder());
+        return copy;
     }
 
     /**
@@ -581,12 +657,17 @@ public class DOMConfiguration extends BaseConfiguration {
      */
     @Override
     public void write(Writer writer, OutputKey... keys) throws IOException {
-        orderChildren();
         try {
             TransformerFactory tf = TransformerFactory.newInstance();
             String xsl = new StringPuller().pull("/org/switchyard/config/pretty-print.xsl", getClass());
             Transformer t = tf.newTransformer(new StreamSource(new StringReader(xsl)));
             List<OutputKey> key_list = Arrays.asList(keys);
+            if (!key_list.contains(OutputKey.OMIT_NORMALIZATION)) {
+                normalize();
+            }
+            if (!key_list.contains(OutputKey.OMIT_ORDERING)) {
+                orderChildren();
+            }
             if (key_list.contains(OutputKey.OMIT_XML_DECLARATION)) {
                 t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             }
