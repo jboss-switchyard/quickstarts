@@ -59,7 +59,7 @@ public final class SwitchYardSubsystemListApplications implements OperationStepH
             @Override
             public void execute(final OperationContext context, final ModelNode operation)
                     throws OperationFailedException {
-                final ModelNode applications = context.getResult().get("applications");
+                final ModelNode applications = context.getResult();
                 final ServiceController<?> controller = context.getServiceRegistry(false).getRequiredService(
                         SwitchYardAdminService.SERVICE_NAME);
 

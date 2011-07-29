@@ -69,7 +69,7 @@ public final class SwitchYardModelConstants {
     /**
      * Constant for model key: config-schema.
      */
-    public static final String CONFIG_SCHEMA = "config-schema";
+    public static final String CONFIG_SCHEMA = "configSchema";
     /**
      * Constant for model key: implementation.
      */

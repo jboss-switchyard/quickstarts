@@ -196,7 +196,8 @@ final class SwitchYardSubsystemProviders {
 
             op.get(REPLY_PROPERTIES, TYPE).set(ModelType.LIST);
             op.get(REPLY_PROPERTIES, DESCRIPTION).set(bundle.getString("switchyard.list-applications.reply"));
-            op.get(REPLY_PROPERTIES, VALUE_TYPE).set(ModelType.STRING);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, NAME, TYPE).set(ModelType.STRING);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, NAME, DESCRIPTION).set(bundle.getString("switchyard.list-services.reply.name"));
 
             return op;
         }
@@ -235,7 +236,10 @@ final class SwitchYardSubsystemProviders {
 
             op.get(REPLY_PROPERTIES, TYPE).set(ModelType.LIST);
             op.get(REPLY_PROPERTIES, DESCRIPTION).set(bundle.getString("switchyard.list-services.reply"));
-            op.get(REPLY_PROPERTIES, VALUE_TYPE).set(ModelType.STRING);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, NAME, TYPE).set(ModelType.STRING);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, NAME, DESCRIPTION).set(bundle.getString("switchyard.list-services.reply.name"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, APPLICATION, TYPE).set(ModelType.STRING);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, APPLICATION, DESCRIPTION).set(bundle.getString("switchyard.list-services.reply.application"));
 
             return op;
         }

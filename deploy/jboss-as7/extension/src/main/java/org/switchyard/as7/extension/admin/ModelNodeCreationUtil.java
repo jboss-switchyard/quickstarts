@@ -48,7 +48,7 @@ final public class ModelNodeCreationUtil {
      * <code><pre>
      *      "name" => "name",
      *      "services" =&gt; [
-     *          ("serviceName" =&gt; {
+     *          {
      *              "name" =&gt; "serviceName",
      *              "application" =&gt; "name",
      *              "interface" =&gt; "interfaceName",
@@ -57,7 +57,7 @@ final public class ModelNodeCreationUtil {
      *                  "gatewayTypeName",
      *                  ...
      *              ]
-     *          }),
+     *          },
      *          ...
      *      ]
      * </pre></code>
@@ -69,7 +69,7 @@ final public class ModelNodeCreationUtil {
         ModelNode applicationNode = new ModelNode();
         ModelNode servicesNode = new ModelNode();
         for (Service service : application.getServices()) {
-            servicesNode.get(service.getName().toString()).set(createServiceNode(service));
+            servicesNode.add(createServiceNode(service));
         }
 
         applicationNode.get(NAME).set(application.getName().toString());
@@ -122,12 +122,7 @@ final public class ModelNodeCreationUtil {
      * @return a new {@link ModelNode}
      */
     public static ModelNode createServiceNode(Service service) {
-        ModelNode serviceNode = new ModelNode();
-
-        String serviceName = service.getName().toString();
-        serviceNode.get(NAME).set(serviceName);
-
-        serviceNode.get(APPLICATION).set(service.getApplication().getName().toString());
+        ModelNode serviceNode = createSimpleServiceNode(service);
 
         String interfaceName = service.getInterface();
         if (interfaceName == null) {
@@ -153,12 +148,33 @@ final public class ModelNodeCreationUtil {
     }
 
     /**
+     * Creates a new {@link ModelNode} tree from the {@link Service}. The tree
+     * has the form: <br>
+     * <code><pre>
+     *      "name" =&gt; "serviceName",
+     *      "application =&gt; "applicationName",
+     * </pre></code>
+     * 
+     * @param service the {@link Service} used to populate the node.
+     * @return a new {@link ModelNode}
+     */
+    public static ModelNode createSimpleServiceNode(Service service) {
+        ModelNode serviceNode = new ModelNode();
+
+        serviceNode.get(NAME).set(service.getName().toString());
+
+        serviceNode.get(APPLICATION).set(service.getApplication().getName().toString());
+
+        return serviceNode;
+    }
+
+    /**
      * Creates a new {@link ModelNode} tree from the {@link Component}. The tree
      * has the form: <br>
      * <code><pre>
      *      "name" =&gt; "componentName"
      *      "type" =&gt; "GATEWAY"
-     *      "config-schema" =&gt; "&lt;?xml ..."
+     *      "configSchema" =&gt; "&lt;?xml ..."
      * </pre></code>
      * 
      * @param component the {@link Component} used to populate the node.

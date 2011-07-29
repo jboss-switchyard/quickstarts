@@ -64,7 +64,7 @@ public final class SwitchYardSubsystemListServices implements OperationStepHandl
             @Override
             public void execute(final OperationContext context, final ModelNode operation)
                     throws OperationFailedException {
-                final ModelNode services = context.getResult().get("services");
+                final ModelNode services = context.getResult();
                 final ServiceController<?> controller = context.getServiceRegistry(false).getRequiredService(
                         SwitchYardAdminService.SERVICE_NAME);
 
@@ -74,12 +74,12 @@ public final class SwitchYardSubsystemListServices implements OperationStepHandl
                     final Application application = switchYard.findApplication(applicationName);
                     if (application != null) {
                         for (Service service : application.getServices()) {
-                            services.add(service.getName().toString());
+                            services.add(ModelNodeCreationUtil.createSimpleServiceNode(service));
                         }
                     }
                 } else {
                     for (Service service : switchYard.getServices()) {
-                        services.add(service.getName().toString());
+                        services.add(ModelNodeCreationUtil.createSimpleServiceNode(service));
                     }
                 }
                 context.completeStep();
