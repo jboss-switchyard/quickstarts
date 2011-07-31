@@ -43,6 +43,7 @@ import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaDataCDIBean;
 import org.switchyard.component.bean.deploy.CDIBean;
 import org.switchyard.component.bean.deploy.CDIBeanServiceDescriptor;
+import org.switchyard.component.bean.internal.context.ContextBean;
 
 /**
  * Portable CDI extension for SwitchYard.
@@ -127,6 +128,7 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
         }
 
         afterEvent.addBean(new BeanDeploymentMetaDataCDIBean(_beanDeploymentMetaData));
+        afterEvent.addBean(new ContextBean());
     }
 
     private void addInjectableClientProxyBean(Field injectionPointField, Reference serviceReference, Set<Annotation> qualifiers, BeanManager beanManager) {

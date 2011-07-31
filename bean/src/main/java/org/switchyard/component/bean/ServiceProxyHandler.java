@@ -27,6 +27,7 @@ import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
+import org.switchyard.component.bean.internal.context.ContextProxy;
 import org.switchyard.exception.SwitchYardException;
 
 /**
@@ -97,7 +98,14 @@ public class ServiceProxyHandler implements ExchangeHandler {
         if (invocation != null) {
             try {
                 if (exchange.getContract().getServiceOperation().getExchangePattern() == ExchangePattern.IN_OUT) {
-                    Object responseObject = invocation.getMethod().invoke(_serviceBean, invocation.getArgs());
+                    Object responseObject;
+
+                    ContextProxy.setContext(exchange.getContext());
+                    try {
+                        responseObject = invocation.getMethod().invoke(_serviceBean, invocation.getArgs());
+                    } finally {
+                        ContextProxy.setContext(null);
+                    }
 
                     Message message = exchange.createMessage();
 
