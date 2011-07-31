@@ -209,7 +209,7 @@ public class Invoker {
             exchangeHandlerProxy = createHandlerProxy(responseCatcher);
         }
 
-        Exchange exchange = createExchange(exchangeHandlerProxy, ExchangePattern.IN_ONLY);
+        Exchange exchange = createExchange(ExchangePattern.IN_ONLY, exchangeHandlerProxy._exchangeHandlerProxy);
 
         Message message = exchange.createMessage().setContent(messagePayload);
         exchange.send(message);
@@ -230,7 +230,7 @@ public class Invoker {
             exchangeHandlerProxy = createHandlerProxy(responseCatcher);
         }
 
-        Exchange exchange = createExchange(exchangeHandlerProxy, ExchangePattern.IN_OUT);
+        Exchange exchange = createExchange(ExchangePattern.IN_OUT, exchangeHandlerProxy._exchangeHandlerProxy);
 
         Message message = exchange.createMessage().setContent(messagePayload);
         exchange.send(message);
@@ -247,7 +247,16 @@ public class Invoker {
         return null;
     }
 
-    private Exchange createExchange(ExchangeHandlerProxy exchangeHandlerProxy, ExchangePattern pattern) {
+    /**
+     * Create an {@link Exchange} instance for the target service operation.
+     * @param handler The ExchangeHandler to be used on the Exchange.
+     * @return The Exchange instance.
+     */
+    public Exchange createExchange(ExchangeHandler handler) {
+        return createExchange(null, handler);
+    }
+
+    private Exchange createExchange(ExchangePattern pattern, ExchangeHandler handler) {
         ServiceReference service;
         ServiceOperation serviceOperation = _serviceOperation;
         ExchangeContract exchangeContract;
@@ -264,6 +273,10 @@ public class Invoker {
                 // service operation has not been specified, check the registered service
                 serviceOperation = service.getInterface().getOperation(_operationName != null ? _operationName : ServiceInterface.DEFAULT_OPERATION);
                 if (serviceOperation == null) {
+                    if (pattern == null) {
+                        Assert.fail("Operation '" + _operationName + "' is undefined.  You need to create the Exchange instance directly from the ServiceDomain, which you can get from the SwitchYardTestKit.");
+                    }
+
                     // nothing on the registered service, need to create our own
                     if (pattern == ExchangePattern.IN_ONLY) {
                         serviceOperation = new InOnlyOperation(_operationName);
@@ -284,8 +297,8 @@ public class Invoker {
             exchangeContract = _exchangeContract;
         }
 
-        if (exchangeHandlerProxy != null) {
-            return _domain.createExchange(service, exchangeContract, exchangeHandlerProxy._exchangeHandlerProxy);
+        if (handler != null) {
+            return _domain.createExchange(service, exchangeContract, handler);
         } else {
             return _domain.createExchange(service, exchangeContract);
         }
