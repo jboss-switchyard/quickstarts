@@ -22,21 +22,12 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 
-<module xmlns="urn:jboss:module:1.0" name="org.switchyard.component.soap">
+<module xmlns="urn:jboss:module:1.0" name="org.switchyard.component.soap.ws-impl">
 
     <resources>
-        <resource-root path="switchyard-component-soap-${project.version}.jar"/>
     </resources>
 
     <dependencies>
-        <module name="javax.api"/>
-        <module name="javax.wsdl4j.api"/>
-        <module name="org.apache.log4j"/>
-        <module name="org.switchyard.api"/>
-        <module name="org.switchyard.common"/>
-        <module name="org.switchyard.config"/>
-        <module name="org.switchyard.deploy"/>
-        <module name="org.switchyard.component.soap.ws-impl"/>
-        <module name="org.switchyard.component.soap.saaj-impl"/>
+        <module name="javax.xml.ws.api" export="true"/>
     </dependencies>
 </module>

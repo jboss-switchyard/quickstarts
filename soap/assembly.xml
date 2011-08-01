@@ -8,6 +8,16 @@
   </formats>
   <files>
     <file>
+      <source>src/build/resources/ws-impl/module.xml</source>
+      <outputDirectory>/modules/org/switchyard/component/soap/ws-impl/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/build/resources/saaj-impl/module.xml</source>
+      <outputDirectory>/modules/org/switchyard/component/soap/saaj-impl/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
       <source>src/build/resources/module.xml</source>
       <outputDirectory>/modules/org/switchyard/component/soap/main</outputDirectory>
       <filtered>true</filtered>
