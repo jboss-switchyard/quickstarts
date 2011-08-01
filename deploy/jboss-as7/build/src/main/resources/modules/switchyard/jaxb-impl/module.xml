@@ -22,33 +22,13 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 
-<module xmlns="urn:jboss:module:1.0" name="org.switchyard.transform">
+<module xmlns="urn:jboss:module:1.0" name="org.switchyard.jaxb-impl">
 
     <resources>
-        <resource-root path="switchyard-transform-${project.version}.jar"/>
     </resources>
 
     <dependencies>
-        <module name="javax.api"/>
-        <module name="org.apache.log4j"/>
-        <module name="org.apache.xerces" services="export" export="true"/>
-        <module name="org.codehaus.jackson.jackson-core-asl"/>
-        <module name="org.codehaus.jackson.jackson-mapper-asl"/>
-        <module name="org.switchyard.api"/>
-        <module name="org.switchyard.common"/>
-        <module name="org.switchyard.config"/>
-        <module name="org.switchyard.jaxb-impl"/>
-        <module name="org.milyn" export="true">
-            <imports>
-                <include path="META-INF/schema"/>
-                <include path="META-INF/xsd/smooks"/>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </imports>
-            <exports>
-                <include path="META-INF/schema"/>
-                <include path="META-INF/xsd/smooks"/>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </exports>
-        </module>
+        <module name="javax.xml.bind.api" export="true"/>
+        <module name="com.sun.xml.bind" services="export" export="true"/>
     </dependencies>
 </module>

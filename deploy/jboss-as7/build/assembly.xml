@@ -48,6 +48,11 @@
       <filtered>true</filtered>
     </file>
     <file>
+      <source>src/main/resources/modules/switchyard/jaxb-impl/module.xml</source>
+      <outputDirectory>/modules/org/switchyard/jaxb-impl/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
       <source>src/main/resources/modules/switchyard/module.xml</source>
       <outputDirectory>/modules/org/switchyard/main</outputDirectory>
       <filtered>true</filtered>
