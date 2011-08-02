@@ -22,18 +22,16 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 
-<module xmlns="urn:jboss:module:1.0" name="org.springframework.jms" slot="${version.spring}">
+<module xmlns="urn:jboss:module:1.0" name="org.springframework">
 
     <resources>
+        <resource-root path="spring-beans-${version.spring}.jar"/>
+        <resource-root path="spring-core-${version.spring}.jar"/>
+        <resource-root path="spring-context-${version.spring}.jar"/>
         <resource-root path="spring-jms-${version.spring}.jar"/>
+        <resource-root path="spring-tx-${version.spring}.jar"/>
     </resources>
 
     <dependencies>
-        <module name="org.springframework.core" slot="${version.spring}"/>
-        <module name="org.springframework.beans" slot="${version.spring}"/>
-        <module name="org.springframework.tx" slot="${version.spring}"/>
-        <module name="javax.jms.api"/>
-        <module name="org.hornetq" export="true"/>
-        <module name="org.apache.commons.logging"/>
     </dependencies>
 </module>

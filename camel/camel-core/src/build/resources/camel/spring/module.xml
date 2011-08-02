@@ -32,9 +32,6 @@
         <module name="org.apache.camel.core"/>
         <module name="org.apache.commons.logging"/>
         <module name="javax.jms.api"/>
-        <module name="org.springframework.core" slot="${version.spring}" export="true"/>
-        <module name="org.springframework.jms" slot="${version.spring}" export="true"/>
-        <module name="org.springframework.tx" slot="${version.spring}" export="true"/>
-        <module name="org.springframework.beans" slot="${version.spring}" export="true"/>
+        <module name="org.springframework" export="false"/>
     </dependencies>
 </module>
