@@ -134,6 +134,10 @@
                                   <groupId>org.switchyard</groupId>
                                   <artifactId>switchyard-forge-soap-plugin</artifactId>
                               </artifactItem>
+                              <artifactItem>
+                                  <groupId>org.switchyard</groupId>
+                                  <artifactId>switchyard-forge-bpm-plugin</artifactId>
+                              </artifactItem>
                           </artifactItems>
                           <outputDirectory>${staging.dir}/${as.root.dir}/forge</outputDirectory>
                           <stripVersion>true</stripVersion>
