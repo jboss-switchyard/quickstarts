@@ -44,6 +44,12 @@
         <switchyard.root.dir>switchyard-as6-${distro.version}</switchyard.root.dir>
         <camel.version>2.6.0</camel.version>
         <commonman.version>1.0</commonman.version>
+        <drools.version>5.2.0.Final</drools.version>
+        <jbpm.version>5.1.0.Final</jbpm.version>
+        <version.mvel>2.1.Beta3</version.mvel>
+        <ecj.version>3.5.1</ecj.version>
+        <antlr-runtime.version>3.3</antlr-runtime.version>
+        <mina-core.version>2.0.1</mina-core.version>
     </properties>
 
     <build>
@@ -93,6 +99,11 @@
                                     <version>${project.version}</version>
                                 </artifactItem>
                                 <artifactItem>
+                                    <groupId>org.switchyard.components</groupId>
+                                    <artifactId>switchyard-component-bpm</artifactId>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                                <artifactItem>
                                     <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-core</artifactId>
                                     <version>${camel.version}</version>
@@ -107,6 +118,90 @@
                                     <artifactId>commons-management</artifactId>
                                     <version>${commonman.version}</version>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.mvel</groupId>
+                                    <artifactId>mvel2</artifactId>
+                                    <version>${version.mvel}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.mina</groupId>
+                                    <artifactId>mina-core</artifactId>
+                                    <version>${mina-core.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.antlr</groupId>
+                                    <artifactId>antlr-runtime</artifactId>
+                                    <version>${antlr-runtime.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jdt.core.compiler</groupId>
+                                    <artifactId>ecj</artifactId>
+                                    <version>${ecj.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.drools</groupId>
+                                    <artifactId>drools-compiler</artifactId>
+                                    <version>${drools.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.drools</groupId>
+                                    <artifactId>knowledge-api</artifactId>
+                                    <version>${drools.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.drools</groupId>
+                                    <artifactId>drools-core</artifactId>
+                                    <version>${drools.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.drools</groupId>
+                                    <artifactId>drools-persistence-jpa</artifactId>
+                                    <version>${drools.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-flow</artifactId>
+                                    <version>${jbpm.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-flow-builder</artifactId>
+                                    <version>${jbpm.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-persistence-jpa</artifactId>
+                                    <version>${jbpm.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-bpmn2</artifactId>
+                                    <version>${jbpm.version}</version>
+                                </artifactItem>
+                                <!--
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-bam</artifactId>
+                                    <version>${jbpm.version}</version>
+                                </artifactItem>
+                                -->
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-workitems</artifactId>
+                                    <version>${jbpm.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-human-task</artifactId>
+                                    <version>${jbpm.version}</version>
+                                </artifactItem>
+                                <!--
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-gwt</artifactId>
+                                    <version>${jbpm.version}</version>
+                                </artifactItem>
+                                -->
                             </artifactItems>
                         </configuration>
                     </execution>
@@ -183,6 +278,19 @@
                                         <include name="camel-*.jar" />
                                         <include name="commons-management-*.jar" />
                                         <include name="switchyard-component-camel-as6-*.jar" />
+                                    </fileset>
+                                </copy>
+
+                                <!-- Copy Drools & JBPM dependencies to default server switchyard.deployer folder... -->
+                                <copy todir="${default.server}/deployers/switchyard.deployer">
+                                    <fileset dir="${dependencies.dir}">
+                                        <include name="drools-*.jar" />
+                                        <include name="jbpm-*.jar" />
+                                        <include name="knowledge*.jar" />
+                                        <include name="antlr*.jar" />
+                                        <include name="mina*.jar" />
+                                        <include name="ecj*.jar" />
+                                        <include name="mvel2*.jar" />
                                     </fileset>
                                 </copy>
 

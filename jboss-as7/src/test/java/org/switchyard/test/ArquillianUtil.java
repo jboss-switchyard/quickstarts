@@ -87,8 +87,9 @@ public abstract class ArquillianUtil {
         }
 
         String artifact = groupId + ":" + artifactId + ":" + version;
-        Collection<JavaArchive> resolvedArtifacts = DependencyResolvers.use(MavenDependencyResolver.class)
-                .loadReposFromPom(jbossHome + "/quickstarts/pom.xml").artifact(artifact).resolveAs(JavaArchive.class);
+        MavenDependencyResolver resolver = DependencyResolvers.use(MavenDependencyResolver.class)
+        .loadReposFromPom(jbossHome + "/quickstarts/pom.xml");
+        Collection<JavaArchive> resolvedArtifacts = resolver.artifact(artifact).resolveAs(JavaArchive.class);
 
         if (resolvedArtifacts.isEmpty()) {
             Assert.fail("Failed to resolve artifact '" + artifact + "'.");

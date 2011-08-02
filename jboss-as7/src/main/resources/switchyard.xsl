@@ -58,6 +58,7 @@
                 <module identifier="org.switchyard.component.bean"/>
                 <module identifier="org.switchyard.component.soap"/>
                 <module identifier="org.switchyard.component.camel"/>
+                <module identifier="org.switchyard.component.bpm"/>
             </modules>
         </subsystem>
     </xsl:copy>
