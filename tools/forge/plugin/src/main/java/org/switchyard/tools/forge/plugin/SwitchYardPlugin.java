@@ -18,9 +18,15 @@
  */
 package org.switchyard.tools.forge.plugin;
 
+import java.io.File;
+
 import javax.inject.Inject;
 
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.facets.MetadataFacet;
+import org.jboss.forge.project.facets.ResourceFacet;
+import org.jboss.forge.shell.PromptType;
+import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.Command;
@@ -50,9 +56,18 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
 @RequiresFacet(SwitchYardFacet.class)
 @Help("Plugin for creating service-oriented applications with SwitchYard.")
 public class SwitchYardPlugin implements Plugin {
+    
+    // Template file used for unit testing services
+    private static final String TEST_SERVICE_TEMPLATE = "java/TestTemplate.java";
+    // VAR_* constants reference substitution tokens in the process definition template 
+    private static final String VAR_SERVICE_NAME = "${service.name}";
+    private static final String VAR_PACKAGE_NAME = "${package.name}";
 
     @Inject
     private Project _project;
+
+    @Inject
+    private Shell _shell;
 
     /**
      * List SwitchYard services available in the project.
@@ -203,5 +218,44 @@ public class SwitchYardPlugin implements Plugin {
         // Save configuration changes
         switchYard.saveConfig();
         out.println("Promoted reference " + referenceName);
+    }
+    
+    /**
+     * Add a unit test for a service.
+     * @param serviceName name of the service to test
+     * @param out shell output
+     * @throws java.io.IOException failed to create unit test file
+     */
+    @Command(value = "create-service-test", help = "Create a unit test for a SwitchYard service.")
+    public void createServiceTest(
+            @Option(required = true,
+                     name = "serviceName",
+                     description = "The service name") final String serviceName,
+            final PipeOut out) throws java.io.IOException {
+        
+        String pkgName = _project.getFacet(MetadataFacet.class).getTopLevelPackage();
+        if (pkgName == null) {
+            pkgName = _shell.promptCommon(
+                "Java package for service test:",
+                PromptType.JAVA_PACKAGE);
+        }
+        
+        TemplateResource template = new TemplateResource(TEST_SERVICE_TEMPLATE)
+            .replaceToken(VAR_SERVICE_NAME, serviceName)
+            .replaceToken(VAR_PACKAGE_NAME, pkgName);
+        
+        String destDir = ".." + File.separator + ".." + File.separator
+                + File.separator + "test"
+                + File.separator + "java";
+        if (pkgName != null && pkgName.length() > 0) {
+            for (String pkgDir : pkgName.split("\\.")) {
+                destDir += File.separator + pkgDir;
+            }
+        }
+        String destFile = serviceName + "Test.java";
+        template.writeTo(_project.getFacet(ResourceFacet.class).getResource(
+                destDir + File.separator + destFile));
+        
+        out.println("Created unit test " + destFile);
     }
 }
