@@ -33,7 +33,6 @@ import org.switchyard.HandlerChain;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Scope;
-import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.TransformSequence;
@@ -99,13 +98,12 @@ public class DefaultHandlerChain implements HandlerChain {
 
     @Override
     public void handleFault(Exchange exchange) {
-        try {
-            for (HandlerRef ref : listHandlers()) {
+        for (HandlerRef ref : listHandlers()) {
+            try {
                 ref.getHandler().handleFault(exchange);
+            } catch (Exception e) {
+                _logger.warn("Handler '" + ref.getName() + "' failed to handle fault.", e);
             }
-        } catch (Exception e) {
-            // This is terminal... a fault on a fault...
-            throw new SwitchYardException("Unable to recover from fault on", e);
         }
     }
 
