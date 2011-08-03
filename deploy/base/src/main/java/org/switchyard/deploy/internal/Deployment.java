@@ -227,7 +227,7 @@ public class Deployment extends AbstractDeployment {
                 Activator activator = findActivator(binding.getType());
                 ExchangeHandler handler = activator.init(refQName, reference);
                 
-                ServiceInterface si = getComponentReferenceInterface(reference.getComponentReference());
+                ServiceInterface si = getReferenceInterface(reference);
                 ServiceReference serviceRef = si != null
                         ? getDomain().registerService(refQName, handler, si)
                         : getDomain().registerService(refQName, handler);
@@ -240,13 +240,23 @@ public class Deployment extends AbstractDeployment {
         }
     }
     
-    private ServiceInterface getComponentReferenceInterface(ComponentReferenceModel reference) {
+    private ServiceInterface getReferenceInterface(CompositeReferenceModel compositeRefModel) {
         ServiceInterface serviceInterface = null;
         
-        if (reference != null && reference.getInterface() != null) {
-            serviceInterface = loadServiceInterface(reference.getInterface());
+        if (hasCompositeReferenceInterface(compositeRefModel)) {
+            serviceInterface = loadServiceInterface(compositeRefModel.getInterface());
+        } else if (hasComponentReferenceInterface(compositeRefModel.getComponentReference())) {
+            serviceInterface = loadServiceInterface(compositeRefModel.getComponentReference().getInterface());
         }
         return serviceInterface;
+    }
+    
+    private boolean hasComponentReferenceInterface(ComponentReferenceModel componentRef) {
+        return componentRef != null && componentRef.getInterface() != null; 
+    }
+    
+    private boolean hasCompositeReferenceInterface(CompositeReferenceModel compositeRef) {
+        return compositeRef != null && compositeRef.getInterface() != null; 
     }
     
     private ServiceInterface getComponentServiceInterface(ComponentServiceModel service) {
