@@ -29,6 +29,7 @@ import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePhase;
+import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.MockDomain;
@@ -307,6 +308,28 @@ public class ExchangeImplTest {
         Exchange exchange = _domain.createExchange(service, ExchangeContract.IN_ONLY);
 
         exchange.send(exchange.createMessage());
+    }
+    
+    @Test
+    public void testFaultWithNoHandler() throws Exception {
+
+        final QName serviceName = new QName("testFaultWithNoHandler");
+        // Provide the service
+        MockHandler provider = new MockHandler() {
+            @Override
+            public void handleMessage(Exchange exchange) throws HandlerException {
+                throw new HandlerException("Fault With No Handler!");
+            }
+        };
+        ServiceReference service = _domain.registerService(serviceName, provider);
+
+        // Consume the service
+        Exchange exchange = _domain.createExchange(
+                service, ExchangeContract.IN_ONLY);
+        exchange.send(exchange.createMessage());
+
+        // Make sure the exchange is in fault status
+        Assert.assertEquals(ExchangeState.FAULT, exchange.getState());
     }
 
 }

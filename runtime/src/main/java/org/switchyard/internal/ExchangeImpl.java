@@ -222,7 +222,15 @@ public class ExchangeImpl implements Exchange {
         // we need to log.
         // TODO : stick this in a central fault/error queue
         if (ExchangeState.FAULT.equals(_state) && _replyChain == null) {
-            _log.warn("Fault generated during exchange without a handler: " + _message);
+            // Attempt to convert content to String
+            String faultContent;
+            try {
+                faultContent = _message.getContent(String.class);
+            } catch (Exception ex) {
+                // Well, that didn't work.  Try the next best thing.
+                faultContent = _message.getContent().toString();
+            }
+            _log.warn("Fault generated during exchange without a handler: " + faultContent);
             return;
         }
 
