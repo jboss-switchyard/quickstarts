@@ -29,7 +29,6 @@ import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.project.facets.ResourceFacet;
-import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.plugins.Alias;
@@ -41,9 +40,7 @@ import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
-import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.common.io.resource.SimpleResource;
-import org.switchyard.common.type.Classes;
 import org.switchyard.component.bpm.config.model.v1.V1BpmComponentImplementationModel;
 import org.switchyard.config.model.composite.JavaComponentServiceInterfaceModel;
 import org.switchyard.config.model.composite.v1.V1ComponentModel;
@@ -51,6 +48,7 @@ import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
 import org.switchyard.config.model.composite.v1.V1JavaComponentServiceInterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
+import org.switchyard.tools.forge.plugin.TemplateResource;
 
 /**
  * Forge plugin for Bean component commands.
@@ -141,14 +139,11 @@ public class BPMServicePlugin implements Plugin {
         if (processDefinitionPath == null) {
             // Create an empty process definition
             processDefinitionPath = PROCESS_DIR + File.separator + argServiceName + PROCESS_EXTENSION;
-            String processDefinition = new StringPuller().pull(Classes.getResourceAsStream(PROCESS_TEMPLATE));
-            processDefinition = processDefinition
-                    .replaceAll(regexFormat(VAR_SERVICE_NAME), argServiceName)
-                    .replaceAll(regexFormat(VAR_PROCESS_ID), processId)
-                    .replaceAll(regexFormat(VAR_PACKAGE_NAME), pkgName);
-            
-            FileResource<?> processFile = _project.getFacet(ResourceFacet.class).getResource(processDefinitionPath);
-            processFile.setContents(processDefinition);
+            TemplateResource template = new TemplateResource(PROCESS_TEMPLATE)
+                .replaceToken(VAR_SERVICE_NAME, argServiceName)
+                .replaceToken(VAR_PROCESS_ID, processId)
+                .replaceToken(VAR_PACKAGE_NAME, pkgName);
+            template.writeTo(_project.getFacet(ResourceFacet.class).getResource(processDefinitionPath));
             
             out.println("Created process definition [" + processDefinitionPath + "]");
         }
@@ -188,9 +183,4 @@ public class BPMServicePlugin implements Plugin {
         switchYard.saveConfig();
     }
 
-    private String regexFormat(String token) {
-        return token.replaceAll("\\$", "\\\\\\$")
-                .replaceAll("\\{", "\\\\\\{")
-                .replaceAll("\\}", "\\\\\\}");
-    }
 }
