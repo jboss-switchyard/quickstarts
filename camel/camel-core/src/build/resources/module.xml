@@ -33,9 +33,9 @@
         <module name="javax.api"/>
         <module name="javax.enterprise.api"/>
         <module name="org.apache.log4j"/>
-        <module name="org.apache.camel.core" services="export" export="true"/>
-        <module name="org.apache.camel.spring" services="export" export="true"/>
-        <module name="org.apache.camel.jms" export="true" optional="true">
+        <module name="org.apache.camel.core" services="export" export="true" slot="${version.camel}"/>
+        <module name="org.apache.camel.spring" services="export" export="true" slot="${version.camel}"/>
+        <module name="org.apache.camel.jms" export="true" optional="true" slot="${version.camel}">
             <imports>
                 <include path="META-INF/services/org/apache/camel/component"/>
             </imports>
