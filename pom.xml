@@ -47,6 +47,7 @@
     <modules>
         <module>camel-service</module>
         <module>camel-binding</module>
+        <module>hornetq-binding</module>
         <module>transform-jaxb</module>
         <module>transform-json</module>
         <module>transform-smooks</module>
