@@ -32,7 +32,7 @@
         <module name="javax.api"/>
         <module name="org.mvel2"/>
         <module name="org.antlr.antlr-runtime"/>
-        <module name="org.eclipse.jdt.core"/>
+        <module name="org.eclipse.jdt.core.compiler"/>
         <module name="org.drools.knowledge-api"/>
         <module name="org.drools.drools-core"/>
         <module name="org.jbpm.jbpm-flow"/>

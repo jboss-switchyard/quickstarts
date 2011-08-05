@@ -63,8 +63,8 @@
       <filtered>true</filtered>
     </file>
     <file>
-      <source>src/build/resources/eclipse/jdt-core/module.xml</source>
-      <outputDirectory>/modules/org/eclipse/jdt/core/main</outputDirectory>
+      <source>src/build/resources/eclipse/ecj/module.xml</source>
+      <outputDirectory>/modules/org/eclipse/jdt/core/compiler/main</outputDirectory>
       <filtered>true</filtered>
     </file>
     <file>
@@ -170,10 +170,10 @@
     <dependencySet>
        <useTransitiveDependencies>false</useTransitiveDependencies>
        <includes>
-          <include>org.eclipse.jdt:core</include>
+          <include>org.eclipse.jdt.core.compiler:ecj</include>
        </includes>
-       <outputDirectory>/modules/org/eclipse/jdt/core/main</outputDirectory>
-       <outputFileNameMapping>${artifact.artifactId}-${jdt.version}.${artifact.extension}</outputFileNameMapping>
+       <outputDirectory>/modules/org/eclipse/jdt/core/compiler/main</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${ecj.version}.${artifact.extension}</outputFileNameMapping>
     </dependencySet>
     <dependencySet>
        <useTransitiveDependencies>false</useTransitiveDependencies>

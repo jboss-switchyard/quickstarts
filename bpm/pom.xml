@@ -19,7 +19,7 @@
 
     <properties>
         <drools.version>5.2.0.Final</drools.version>
-        <jdt.version>3.3.0-v_771</jdt.version>
+        <ecj.version>3.5.1</ecj.version>
         <antlr-runtime.version>3.3</antlr-runtime.version>
         <mina-core.version>2.0.1</mina-core.version>
         <jbpm.version>5.1.0.Final</jbpm.version>
@@ -75,11 +75,11 @@
             <artifactId>antlr-runtime</artifactId>
             <version>${antlr-runtime.version}</version>
         </dependency>        
-        <dependency>
-            <groupId>org.eclipse.jdt</groupId>
-            <artifactId>core</artifactId>
-            <version>${jdt.version}</version>
-        </dependency>        
+      <dependency>
+        <groupId>org.eclipse.jdt.core.compiler</groupId>
+        <artifactId>ecj</artifactId>
+        <version>${ecj.version}</version>
+      </dependency>
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-compiler</artifactId>
