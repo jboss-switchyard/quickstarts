@@ -178,6 +178,9 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.6</version>
         <configuration>
+          <environmentVariables>
+            <SWITCHYARD_VERSION>${project.version}</SWITCHYARD_VERSION>
+          </environmentVariables>
           <includes>
             <include>**/*Test*.java</include>
           </includes>
@@ -200,38 +203,34 @@
           <downloadJavadocs>false</downloadJavadocs>
         </configuration>
       </plugin>
-      <plugin>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.6</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-build</artifactId>
-            <version>${project.version}</version>
-          </dependency>
-        </dependencies>
-        <executions>
-          <execution>
-            <id>check-style</id>
-            <phase>site</phase>
-            <goals>
-              <goal>checkstyle</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.6</version>
-        <configuration>
-          <configLocation>checkstyle/checkstyle.xml</configLocation>
-          <consoleOutput>false</consoleOutput>
-          <suppressionsLocation>checkstyle/suppressions.xml</suppressionsLocation>
-          <failsOnError>false</failsOnError>
-          <useFile/>
-        </configuration>
-      </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>2.6</version>
+            <configuration>
+              <configLocation>checkstyle/checkstyle.xml</configLocation>
+              <consoleOutput>false</consoleOutput>
+              <suppressionsLocation>checkstyle/suppressions.xml</suppressionsLocation>
+              <failsOnError>false</failsOnError>
+              <useFile/>
+            </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.switchyard</groupId>
+              <artifactId>switchyard-build</artifactId>
+              <version>${project.version}</version>
+            </dependency>
+          </dependencies>
+          <executions>
+            <execution>
+              <id>check-style</id>
+              <phase>site</phase>
+              <goals>
+                <goal>checkstyle</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
