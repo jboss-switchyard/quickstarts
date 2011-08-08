@@ -27,6 +27,7 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -162,16 +163,39 @@ public class BeanDeploymentMetaData {
      * @throws NamingException Error looking up BeanManager instance.
      */
     public static BeanManager getCDIBeanManager() throws NamingException {
-        return (BeanManager) getJavaComp().lookup("BeanManager");
+        BeanManager beanManager = getCDIBeanManager("java:comp");
+
+        if (beanManager == null) {
+            beanManager = getCDIBeanManager("java:comp/env");
+            if (beanManager == null) {
+                throw new NameNotFoundException("Name BeanManager is not bound in this Context");
+            }
+        }
+
+        return beanManager;
     }
 
-    private static Context getJavaComp() {
-        Context javaComp = null;
+    private static BeanManager getCDIBeanManager(String jndiLocation) {
+        Context javaComp = getJavaComp(jndiLocation);
+
+        if (javaComp != null) {
+            try {
+                return (BeanManager) javaComp.lookup("BeanManager");
+            } catch (NamingException e) {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    private static Context getJavaComp(String jndiName) {
+        Context javaComp;
         InitialContext initialContext = null;
 
         try {
             initialContext = new InitialContext();
-            javaComp = (Context) initialContext.lookup("java:comp");
+            javaComp = (Context) initialContext.lookup(jndiName);
         } catch (Exception e) {
             throw new SwitchYardException("Unexpected retrieving java:comp from JNDI namespace.", e);
         } finally {
@@ -183,7 +207,6 @@ public class BeanDeploymentMetaData {
                 }
             }
         }
-
         return javaComp;
     }
 }

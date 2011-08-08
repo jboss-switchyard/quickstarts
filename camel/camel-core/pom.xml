@@ -78,6 +78,12 @@
         </dependency>
 
         <dependency>
+           <groupId>org.jboss.weld.se</groupId>
+           <artifactId>weld-se-core</artifactId>
+           <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
             <version>${version.camel}</version>
