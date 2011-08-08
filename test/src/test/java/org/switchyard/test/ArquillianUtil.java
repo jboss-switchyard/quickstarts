@@ -20,11 +20,6 @@
 package org.switchyard.test;
 
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
-import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
-import org.junit.Assert;
-
-import java.util.Collection;
 
 /**
  * Arquillian Test utilities.
@@ -34,8 +29,6 @@ import java.util.Collection;
 public abstract class ArquillianUtil {
 
     public static final String QS_DEMO_GID = "org.switchyard.quickstarts.demos";
-
-    public static final String SWITCHYARD_VERSION = "SWITCHYARD_VERSION";
 
     /**
      * Create a SwitchYard Quickstart Demo Deployment.
@@ -60,25 +53,6 @@ public abstract class ArquillianUtil {
      * @return The Maven artifact archive.
      */
     public static JavaArchive createDeployment(String groupId, String artifactId) {
-        Assert.assertNotNull("'groupId' argument is null.", groupId);
-        Assert.assertNotNull("'artifactId' argument is null.", artifactId);
-
-        String version = System.getenv(SWITCHYARD_VERSION);
-
-        if (version == null || (version = version.trim()).length() == 0) {
-            Assert.fail("Test environment variable " + SWITCHYARD_VERSION + " not configured.");
-        }
-
-        String artifact = groupId + ":" + artifactId + ":" + version;
-        Collection<JavaArchive> resolvedArtifacts = DependencyResolvers.use(MavenDependencyResolver.class)
-                .loadReposFromPom("./pom.xml").artifact(artifact).resolveAs(JavaArchive.class);
-
-        if (resolvedArtifacts.isEmpty()) {
-            Assert.fail("Failed to resolve artifact '" + artifact + "'.");
-        }
-
-        // Multiple artifacts can be returned (transitive dependencies), but it appears as though
-        // the first artifact in the Collection is the artifact being sought.
-        return resolvedArtifacts.iterator().next();
+        return ShrinkwrapUtil.getSwitchYardJavaArchive(groupId, artifactId);
     }
 }
