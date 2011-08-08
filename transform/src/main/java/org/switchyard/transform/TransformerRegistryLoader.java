@@ -31,6 +31,7 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
+import org.switchyard.exception.DuplicateTransformerException;
 import org.switchyard.exception.SwitchYardException;
 
 /**
@@ -72,8 +73,9 @@ public class TransformerRegistryLoader {
     /**
      * Register a set of transformers in the transform registry associated with this deployment.
      * @param transforms The transforms model.
+     * @throws DuplicateTransformerException an existing transformer has already been registered for the from and to types
      */
-    public void registerTransformers(TransformsModel transforms) {
+    public void registerTransformers(TransformsModel transforms) throws DuplicateTransformerException {
         if (transforms == null) {
             return;
         }
@@ -85,7 +87,7 @@ public class TransformerRegistryLoader {
                 for (Transformer<?, ?> transformer : transformers) {
                     if (_transformerRegistry.hasTransformer(transformer.getFrom(), transformer.getTo())) {
                         Transformer<?, ?> registeredTransformer = _transformerRegistry.getTransformer(transformer.getFrom(), transformer.getTo());
-                        throw new SwitchYardException("Failed to register Transformer '" + toDescription(transformer)
+                        throw new DuplicateTransformerException("Failed to register Transformer '" + toDescription(transformer)
                                 + "'.  A Transformer for these types is already registered: '"
                                 + toDescription(registeredTransformer) + "'.");
                     }
@@ -97,6 +99,8 @@ public class TransformerRegistryLoader {
                     _transformers.add(transformer);
                 }
             }
+        } catch (DuplicateTransformerException e) {
+            throw e;
         } catch (RuntimeException e) {
             // If there was an exception for any reason... remove all Transformer instance that have
             // already been registered with the domain...
@@ -129,6 +133,8 @@ public class TransformerRegistryLoader {
                 try {
                     TransformsModel transformsModel = new ModelPuller<TransformsModel>().pull(configStream);
                     registerTransformers(transformsModel);
+                } catch (final DuplicateTransformerException e) {
+                    _log.warn(e.getMessage(), e);
                 } finally {
                     configStream.close();
                 }
