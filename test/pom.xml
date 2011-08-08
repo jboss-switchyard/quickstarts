@@ -128,7 +128,7 @@
             <artifactId>jbpm-human-task</artifactId>
             <version>${jbpm.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.hornetq</groupId>
             <artifactId>hornetq-core</artifactId>
@@ -156,6 +156,37 @@
             <version>3.2.1.Final</version>
             <scope>compile</scope>
         </dependency>
-        
+
+        <dependency>
+            <groupId>org.jboss.shrinkwrap</groupId>
+            <artifactId>shrinkwrap-impl-base</artifactId>
+            <version>1.0.0-alpha-12</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.shrinkwrap</groupId>
+                    <artifactId>shrinkwrap-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.shrinkwrap</groupId>
+                    <artifactId>shrinkwrap-spi</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap</groupId>
+            <artifactId>shrinkwrap-api</artifactId>
+            <version>1.0.0-alpha-12</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap</groupId>
+            <artifactId>shrinkwrap-spi</artifactId>
+            <version>1.0.0-alpha-12</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+            <version>1.0.0-alpha-12</version>
+        </dependency>
+
     </dependencies>
 </project>

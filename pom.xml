@@ -32,6 +32,7 @@
     <module>deploy/jboss-as6/build</module>
     <module>deploy/jboss-as7/extension</module>
     <module>deploy/jboss-as7/build</module>
+    <module>deploy/webapp</module>
     <module>tools/maven/archetypes/application</module>
     <module>tools/forge/common</module>
     <module>tools/forge/plugin</module>
