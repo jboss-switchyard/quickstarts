@@ -47,6 +47,7 @@
         <jbpm.version>5.1.0.Final</jbpm.version>
         <camel.version>2.6.0</camel.version>
         <hornetq.version>2.2.5.Final</hornetq.version>
+        <shrinkwrap.version>1.0.0-alpha-12</shrinkwrap.version>
     </properties>
 
 	<dependencies>
@@ -160,7 +161,7 @@
         <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-impl-base</artifactId>
-            <version>1.0.0-alpha-12</version>
+            <version>${shrinkwrap.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.jboss.shrinkwrap</groupId>
@@ -175,17 +176,17 @@
         <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-api</artifactId>
-            <version>1.0.0-alpha-12</version>
+            <version>${shrinkwrap.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-spi</artifactId>
-            <version>1.0.0-alpha-12</version>
+            <version>${shrinkwrap.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
             <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-            <version>1.0.0-alpha-12</version>
+            <version>${shrinkwrap.version}</version>
         </dependency>
 
     </dependencies>
