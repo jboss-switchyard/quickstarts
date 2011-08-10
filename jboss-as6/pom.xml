@@ -103,6 +103,11 @@
                                     <artifactId>switchyard-component-bpm</artifactId>
                                     <version>${project.version}</version>
                                 </artifactItem>
+                                    <artifactItem>
+                                        <groupId>org.switchyard.components</groupId>
+                                        <artifactId>switchyard-component-rules</artifactId>
+                                        <version>${project.version}</version>
+                                    </artifactItem>
                                 <artifactItem>
                                     <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-core</artifactId>

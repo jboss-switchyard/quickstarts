@@ -82,6 +82,11 @@
           <artifactId>switchyard-forge-bpm-plugin</artifactId>
           <version>${project.version}</version>
         </dependency>
+          <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-forge-rules-plugin</artifactId>
+            <version>${project.version}</version>
+          </dependency>
 
       </dependencies>
     </dependencyManagement>

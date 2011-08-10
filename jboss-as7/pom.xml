@@ -257,6 +257,10 @@
                                     <groupId>org.switchyard</groupId>
                                     <artifactId>switchyard-forge-bpm-plugin</artifactId>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.switchyard</groupId>
+                                    <artifactId>switchyard-forge-rules-plugin</artifactId>
+                                </artifactItem>
                             </artifactItems>
                             <outputDirectory>${staging.jboss.dir}/forge</outputDirectory>
                             <stripVersion>true</stripVersion>
