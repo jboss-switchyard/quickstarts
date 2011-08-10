@@ -278,6 +278,7 @@ public class SwitchYardFacet extends AbstractFacet {
             +   "<param>org.switchyard.component.bean.config.model.BeanSwitchYardScanner</param>"
             +   "<param>org.switchyard.component.camel.config.model.RouteScanner</param>"
             +   "<param>org.switchyard.component.bpm.config.model.BpmSwitchYardScanner</param>"
+            +   "<param>org.switchyard.component.rules.config.model.RulesSwitchYardScanner</param>"
             +   "<param>org.switchyard.transform.config.model.TransformSwitchYardScanner</param>"
             + "</scannerClassNames>"
             + "</configuration>";
