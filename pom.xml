@@ -69,6 +69,7 @@
         <module>tools/forge/clojure</module>
         <module>tools/forge/soap</module>
         <module>tools/forge/bpm</module>
+        <module>tools/forge/rules</module>
     </modules>
 
     <repositories>
