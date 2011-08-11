@@ -51,7 +51,7 @@
         <org.switchyard.test.soap.host>localhost</org.switchyard.test.soap.host>
         <org.switchyard.test.soap.port>48080</org.switchyard.test.soap.port>
         <version.project>${project.version}</version.project>
-        <version.camel>2.6.0</version.camel>
+        <version.camel>2.8.0</version.camel>
     </properties>
 
     <modules>

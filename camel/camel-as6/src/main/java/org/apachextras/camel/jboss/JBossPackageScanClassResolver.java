@@ -22,7 +22,7 @@ import org.jboss.vfs.util.AbstractVirtualFileVisitor;
  * inside JBoss Application Server.
  */
 public class JBossPackageScanClassResolver extends DefaultPackageScanClassResolver {
-
+    
     @Override
     protected void find(PackageScanFilter test, String packageName, ClassLoader loader, Set<Class<?>> classes) {
         if (log.isTraceEnabled()) {
