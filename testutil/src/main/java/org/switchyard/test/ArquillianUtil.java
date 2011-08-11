@@ -24,10 +24,12 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 /**
  * Arquillian Test utilities.
  *
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public abstract class ArquillianUtil {
 
+    public static final String QS_GID = "org.switchyard.quickstarts";
     public static final String QS_DEMO_GID = "org.switchyard.quickstarts.demos";
 
     /**
@@ -41,6 +43,19 @@ public abstract class ArquillianUtil {
      */
     public static JavaArchive createDemoDeployment(String artifactId) {
         return createDeployment(QS_DEMO_GID, artifactId);
+    }
+
+    /**
+     * Create a SwitchYard Quickstart Deployment.
+     * <p/>
+     * Uses "org.switchyard.quickstarts" as the groupId and gets the SwitchYard
+     * version from the mandatory SWITCHYARD_VERSION env property.
+     *
+     * @param artifactId Maven artifactId.
+     * @return The Maven artifact archive.
+     */
+    public static JavaArchive createQSDeployment(String artifactId) {
+        return createDeployment(QS_GID, artifactId);
     }
 
     /**

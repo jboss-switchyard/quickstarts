@@ -18,20 +18,12 @@
  */
 package org.switchyard.test.quickstarts.demo;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.List;
 import java.util.Locale;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.drools.agent.impl.DoNothingSystemEventListener;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -48,14 +40,13 @@ import org.jbpm.task.service.mina.MinaTaskClientHandler;
 import org.jbpm.task.service.mina.MinaTaskServer;
 import org.jbpm.task.service.responsehandlers.BlockingTaskOperationResponseHandler;
 import org.jbpm.task.service.responsehandlers.BlockingTaskSummaryResponseHandler;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.test.ArquillianUtil;
+import org.switchyard.test.mixins.HTTPMixIn;
 
 /**
  *
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 @RunWith(Arquillian.class)
 public class HelpDeskDemoQuickstartTest {
@@ -70,8 +61,15 @@ public class HelpDeskDemoQuickstartTest {
         HumanTaskServerHelper ht = new HumanTaskServerHelper();
         if (ht.startTaskServer("Developer", "User")) {
             try {
-                HttpHelper http = new HttpHelper();
-                http.postStringAndTestXML("http://localhost:18001/HelpDeskService", SOAP_REQUEST, EXPECTED_SOAP_RESPONSE);
+                HTTPMixIn httpMixIn = new HTTPMixIn();
+
+                httpMixIn.initialize();
+                try {
+                    httpMixIn.postStringAndTestXML("http://localhost:18001/HelpDeskService", SOAP_REQUEST, EXPECTED_SOAP_RESPONSE);
+                } finally {
+                    httpMixIn.uninitialize();
+                }
+
                 boolean keepWorking = true;
                 while (keepWorking) {
                     keepWorking = ht.completeTasksForUsers("Developer", "User");
@@ -103,124 +101,6 @@ public class HelpDeskDemoQuickstartTest {
             + "        </helpdesk:openTicketResponse>\n"
             + "    </SOAP-ENV:Body>\n"
             + "</SOAP-ENV:Envelope>";
-
-    class HttpHelper {
-
-        private HttpClient _httpClient;
-        private String _contentType = "text/xml";
-
-        /**
-         * Set the content type.
-         * <p/>
-         * Default content type is "text/xml".
-         *
-         * @param contentType The content type.
-         * @return This HTTPMixIn instance.
-         */
-        public HttpHelper() {
-            initialize();
-        }
-
-        public HttpHelper setContentType(String contentType) {
-            this._contentType = contentType;
-            return this;
-        }
-
-        public void initialize() {
-            _httpClient = new HttpClient();
-        }
-
-        /**
-         * POST the specified request payload to the specified HTTP endpoint.
-         * @param endpointURL The HTTP endpoint URL.
-         * @param request The request payload.
-         * @return The HTTP response payload.
-         */
-        public String postString(String endpointURL, String request) {
-            PostMethod postMethod = new PostMethod(endpointURL);
-            try {
-                postMethod.setRequestEntity(new StringRequestEntity(request, _contentType, "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            try {
-                return execute(postMethod);
-            } finally {
-                postMethod.releaseConnection();
-            }
-        }
-
-        /**
-         * POST the specified String request to the specified HTTP endpoint and perform an XML compare
-         * between the HTTP response and the specified expected response String.
-         * @param endpointURL The HTTP endpoint URL.
-         * @param request The classpath resource to be posted to the endpoint.
-         * @param expectedResponse The String to use to perform the XML test on the response.
-         * @return The HTTP response payload.
-         */
-        public String postStringAndTestXML(String endpointURL, String request, String expectedResponse) {
-            String response = postString(endpointURL, request);
-            System.err.println(response);
-            return response;
-        }
-
-        /**
-         * POST the specified classpath resource to the specified HTTP endpoint.
-         * @param endpointURL The HTTP endpoint URL.
-         * @param requestResource The classpath resource to be posted to the endpoint.
-         * @return The HTTP response payload.
-         */
-        public String postResource(String endpointURL, String requestResource) {
-            PostMethod postMethod = new PostMethod(endpointURL);
-            InputStream requestStream = this.getClass().getResourceAsStream(requestResource);
-
-            try {
-                postMethod.setRequestEntity(new InputStreamRequestEntity(requestStream, _contentType + "; charset=utf-8"));
-                return execute(postMethod);
-            } finally {
-                try {
-                    requestStream.close();
-                } catch (IOException e) {
-                    Assert.fail("Unexpected exception closing HTTP request resource stream.");
-                } finally {
-                    postMethod.releaseConnection();
-                }
-            }
-        }
-
-        /**
-         * POST the specified classpath resource to the specified HTTP endpoint and perform an XML compare
-         * between the HTTP response and the specified expected classpath response resource.
-         * @param endpointURL The HTTP endpoint URL.
-         * @param requestResource The classpath resource to be posted to the endpoint.
-         * @param expectedResponseResource The classpath resource to use to perform the XML test on the response.
-         * @return The HTTP response payload.
-         */
-        public String postResourceAndTestXML(String endpointURL, String requestResource, String expectedResponseResource) {
-            String response = postResource(endpointURL, requestResource);
-            System.err.println(response);
-            return response;
-        }
-
-        /**
-         * Execute the supplied HTTP Method.
-         * <p/>
-         * Does not release the {@link org.apache.commons.httpclient.HttpMethod#releaseConnection() HttpMethod connection}.
-         *
-         * @param method The HTTP Method.
-         * @return The HTTP Response.
-         */
-        public String execute(HttpMethod method) {
-            try {
-                _httpClient.executeMethod(method);
-                return method.getResponseBodyAsString();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-    }
 
     /**
      * Human Task Server Helper. Based off the BPMMixIn from the jbpm-component.

@@ -51,16 +51,26 @@
     <dependencies>
         <dependency>
             <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-test</artifactId>
-            <version>${project.version}</version>
+            <artifactId>switchyard-release-testutil</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+           <groupId>org.jboss.arquillian</groupId>
+           <artifactId>arquillian-junit</artifactId>
+            <version>${arquillian.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-jbossas-managed-6</artifactId>
+            <version>${arquillian.version}</version>
             <exclusions>
                 <exclusion>
-                    <artifactId>hibernate-annotations</artifactId>
-                    <groupId>org.hibernate</groupId>
+                    <groupId>org.jboss.shrinkwrap</groupId>
+                    <artifactId>shrinkwrap-impl-base</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-impl-base</artifactId>

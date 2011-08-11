@@ -18,15 +18,13 @@
  */
 package org.switchyard.test.quickstarts.demo;
 
-import org.custommonkey.xmlunit.XMLUnit;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.test.ArquillianUtil;
-import org.switchyard.test.WebServiceInvoker;
+import org.switchyard.test.mixins.HTTPMixIn;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -39,19 +37,21 @@ import java.io.IOException;
 @RunWith(Arquillian.class)
 public class OrdersDemoQuickstartTest {
 
-    @Deployment
+    @Deployment(testable = false)
     public static JavaArchive createDeployment() {
         return ArquillianUtil.createDemoDeployment("switchyard-quickstart-demo-orders");
     }
 
     @Test
     public void testOrders() throws IOException, SAXException {
-        String response =
-                WebServiceInvoker.target("http://localhost:18001/OrderService")
-                .send(SOAP_REQUEST);
+        HTTPMixIn httpMixIn = new HTTPMixIn();
 
-        XMLUnit.setIgnoreWhitespace(true);
-        XMLUnit.compareXML(EXPECTED_SOAP_RESPONSE, response);
+        httpMixIn.initialize();
+        try {
+            httpMixIn.postStringAndTestXML("http://localhost:18001/OrderService", SOAP_REQUEST, EXPECTED_SOAP_RESPONSE);
+        } finally {
+            httpMixIn.uninitialize();
+        }
     }
 
     private static final String SOAP_REQUEST = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
@@ -67,6 +67,7 @@ public class OrdersDemoQuickstartTest {
             "</soap:Envelope>";
 
     private static final String EXPECTED_SOAP_RESPONSE = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
+            "    <SOAP-ENV:Header/>\n" +
             "    <SOAP-ENV:Body>\n" +
             "        <orders:submitOrderResponse xmlns:orders=\"urn:switchyard-quickstart-demo:orders:1.0\">\n" +
             "            <orderAck>\n" +

@@ -33,7 +33,7 @@ import org.switchyard.test.ArquillianUtil;
 @RunWith(Arquillian.class)
 public class TransformJsonQuickstartTest {
 
-    @Deployment
+    @Deployment(testable = false)
     public static JavaArchive createDeployment() {
         return ArquillianUtil.createQSDeployment("switchyard-quickstart-transform-json");
     }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.switchyard</groupId>
@@ -11,7 +12,6 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.switchyard</groupId>
     <artifactId>switchyard-release-as7</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>SwitchYard: AS7 Distribution</name>
     <description>SwitchYard AS7 Distribution</description>
@@ -27,8 +27,14 @@
 
     <dependencies>
         <dependency>
-          <groupId>org.switchyard</groupId>
-          <artifactId>switchyard-release-distribution</artifactId>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-release-distribution</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-release-testutil</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -39,23 +45,23 @@
         </dependency>
 
         <dependency>
-          <groupId>org.jboss.as</groupId>
-          <artifactId>jboss-as-dist</artifactId>
-          <type>zip</type>
-          <version>${version.jbossas}</version>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-dist</artifactId>
+            <type>zip</type>
+            <version>${version.jbossas}</version>
         </dependency>
 
         <dependency>
-          <groupId>org.jboss.arquillian.junit</groupId>
-          <artifactId>arquillian-junit-container</artifactId>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
             <version>${version.arquillian}</version>
-          <scope>test</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
-          <groupId>org.jboss.arquillian.container</groupId>
-          <artifactId>arquillian-container-test-api</artifactId>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-test-api</artifactId>
             <version>${version.arquillian}</version>
-          <scope>test</scope>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -63,13 +69,6 @@
             <artifactId>jboss-as-arquillian-container-managed</artifactId>
             <version>${version.jbossas}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>3.1-jbossorg-1</version>
-            <scope>test</scope>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
@@ -107,7 +106,7 @@
                         <id>stage-jboss</id>
                         <phase>generate-sources</phase>
                         <goals>
-                          <goal>unpack</goal>
+                            <goal>unpack</goal>
                         </goals>
                         <configuration>
                             <artifactItems>
@@ -125,7 +124,7 @@
                         <id>install-switchyard-core</id>
                         <phase>generate-sources</phase>
                         <goals>
-                          <goal>unpack</goal>
+                            <goal>unpack</goal>
                         </goals>
                         <configuration>
                             <artifactItems>
@@ -143,7 +142,7 @@
                         <id>install-switchyard-component-bean</id>
                         <phase>generate-sources</phase>
                         <goals>
-                          <goal>unpack</goal>
+                            <goal>unpack</goal>
                         </goals>
                         <configuration>
                             <artifactItems>
@@ -161,7 +160,7 @@
                         <id>install-switchyard-component-camel</id>
                         <phase>generate-sources</phase>
                         <goals>
-                          <goal>unpack</goal>
+                            <goal>unpack</goal>
                         </goals>
                         <configuration>
                             <artifactItems>
@@ -179,7 +178,7 @@
                         <id>install-switchyard-component-soap</id>
                         <phase>generate-sources</phase>
                         <goals>
-                          <goal>unpack</goal>
+                            <goal>unpack</goal>
                         </goals>
                         <configuration>
                             <artifactItems>
@@ -197,7 +196,7 @@
                         <id>install-switchyard-component-bpm</id>
                         <phase>generate-sources</phase>
                         <goals>
-                          <goal>unpack</goal>
+                            <goal>unpack</goal>
                         </goals>
                         <configuration>
                             <artifactItems>
@@ -215,7 +214,7 @@
                         <id>install-distribution-files</id>
                         <phase>generate-sources</phase>
                         <goals>
-                          <goal>unpack</goal>
+                            <goal>unpack</goal>
                         </goals>
                         <configuration>
                             <artifactItems>
@@ -233,7 +232,7 @@
                         <id>install-forge-plugins</id>
                         <phase>generate-sources</phase>
                         <goals>
-                          <goal>copy</goal>
+                            <goal>copy</goal>
                         </goals>
                         <configuration>
                             <artifactItems>
@@ -270,7 +269,7 @@
                         <id>unzip-distro</id>
                         <phase>process-test-classes</phase>
                         <goals>
-                          <goal>unpack</goal>
+                            <goal>unpack</goal>
                         </goals>
                         <configuration>
                             <artifactItems>
@@ -369,12 +368,12 @@
                     </environmentVariables>
                     <systemProperties>
                         <property>
-                          <name>jboss.home</name>
-                          <value>${switchyard.jboss.home}</value>
+                            <name>jboss.home</name>
+                            <value>${switchyard.jboss.home}</value>
                         </property>
                         <property>
-                          <name>module.path</name>
-                          <value>${switchyard.jboss.home}/modules</value>
+                            <name>module.path</name>
+                            <value>${switchyard.jboss.home}/modules</value>
                         </property>
                     </systemProperties>
                     <trimStackTrace>false</trimStackTrace>
