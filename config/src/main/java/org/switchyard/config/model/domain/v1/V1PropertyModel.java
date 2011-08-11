@@ -23,9 +23,9 @@ import javax.xml.namespace.QName;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.domain.DomainModel;
 import org.switchyard.config.model.domain.PropertiesModel;
 import org.switchyard.config.model.domain.PropertyModel;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * Implementation of PropertyModel : v1.
@@ -36,7 +36,7 @@ public class V1PropertyModel extends BaseModel implements PropertyModel {
      * Constructs a new V1PropertyModel.
      */
     public V1PropertyModel() {
-        super(new QName(DomainModel.DEFAULT_NAMESPACE, PropertyModel.PROPERTY));
+        super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, PropertyModel.PROPERTY));
     }
 
     /**

@@ -56,5 +56,11 @@ public interface PropertiesModel extends Model {
      * @return property with the specified name, or null if no such property exists
      */
     public PropertyModel getProperty(String name);
-
+    
+    /**
+     * Removes a child property model.
+     * @param propertyName the name of the property
+     * @return the removed property or null if the named property was not present
+     */
+    public PropertyModel removeProperty(String propertyName);
 }

@@ -103,4 +103,17 @@ public class V1PropertiesModel extends BaseModel implements PropertiesModel {
         return property;
     }
 
+    @Override
+    public PropertyModel removeProperty(String propertyName) {
+        PropertyModel removed = null;
+        
+        for (PropertyModel property : _properties) {
+            if (property.getName().equals(propertyName)) {
+                removed = property;
+                _properties.remove(property);
+            }
+        }
+        return removed;
+    }
+
 }

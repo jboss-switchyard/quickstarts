@@ -25,9 +25,6 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
  * The "domain" configuration model.
  */
 public interface DomainModel extends NamedModel {
-
-    /** The default "domain" namespace. */
-    public static final String DEFAULT_NAMESPACE = "urn:switchyard-config:domain:1.0";
     
     /** The "domain" name. :-) */
     public static final String DOMAIN = "domain";
@@ -45,8 +42,22 @@ public interface DomainModel extends NamedModel {
     public PropertiesModel getProperties();
     
     /**
+     * Sets the child properties model.
+     * @param properties the child properties model.
+     * @return this SwitchYardModel (useful for chaining)
+     */
+    public DomainModel setProperties(PropertiesModel properties);
+    
+    /**
      * Gets the list of handlers defined at the domain level.
      * @return properties for the domain
      */
     public HandlersModel getHandlers();
+    
+    /**
+     * Sets the child handlers model.
+     * @param handlers the child handlers model.
+     * @return this SwitchYardModel (useful for chaining)
+     */
+    public DomainModel setHandlers(HandlersModel handlers);
 }

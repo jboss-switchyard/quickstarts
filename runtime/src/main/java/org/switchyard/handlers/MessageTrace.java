@@ -20,9 +20,12 @@
 package org.switchyard.handlers;
 
 import org.apache.log4j.Logger;
+import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
+import org.switchyard.Property;
+import org.switchyard.Scope;
 
 /**
  * Half-baked message tracing implementation, used primarily as an example
@@ -30,7 +33,7 @@ import org.switchyard.HandlerException;
  */
 public class MessageTrace implements ExchangeHandler {
     
-    private static final String INDENT = System.getProperty("line.separator") + "\t";
+    private static final String INDENT = System.getProperty("line.separator");
     private static Logger _log = Logger.getLogger(MessageTrace.class);
 
     @Override
@@ -48,10 +51,48 @@ public class MessageTrace implements ExchangeHandler {
     }
 
     private String createTrace(Exchange exchange) {
-        String summary = ":: Message Trace ::"
-            + INDENT + "Service -> " + exchange.getServiceName()
-            + INDENT + "Phase -> " + exchange.getPhase()
-            + INDENT + "State -> " + exchange.getState();
-        return summary;
+        StringBuilder summary = new StringBuilder()
+            .append(indent(0) + "------- Begin Message Trace -------")
+            .append(indent(0) + "Service -> " + exchange.getServiceName())
+            .append(indent(0) + "Phase -> " + exchange.getPhase())
+            .append(indent(0) + "State -> " + exchange.getState());
+        
+        // Add context properties
+        Context ctx = exchange.getContext();
+        summary.append(indent(0) + "Exchange Context -> ");
+        for (Property p : ctx.getProperties(Scope.EXCHANGE)) {
+            summary.append(indent(1) + p.getName() + " : " + p.getValue());
+        }
+        summary.append(indent(0) + "Message Context -> ");
+        for (Property p : ctx.getProperties(Scope.valueOf(exchange.getPhase().toString()))) {
+            summary.append(indent(1) + p.getName() + " : " + p.getValue());
+        }
+        
+        // Add message content
+        String content = null;
+        try {
+            // try to convert the payload to a string
+            content = exchange.getMessage().getContent(String.class);
+        } catch (Exception ex) {
+            // conversion failed, fall back on toString()
+            if (exchange.getMessage().getContent() != null) {
+                content = exchange.getMessage().getContent().toString();
+            }
+        }
+        summary.append(indent(0) + "Message Content -> ")
+            .append(indent(0) + content);
+        
+        summary.append(indent(0) + "------ End Message Trace -------");
+        return summary.toString();
+    }
+    
+    private String indent(int column) {
+        String indent = INDENT;
+        if (column > 0) {
+            for (int i = 0; i < column; i++) {
+                indent += "\t";
+            }
+        }
+        return indent;
     }
 }

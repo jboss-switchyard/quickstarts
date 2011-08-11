@@ -57,7 +57,7 @@ MA  02110-1301, USA.
             <element ref="swyd:properties" minOccurs="0" maxOccurs="1"/>
             <element ref="swyd:handlers" minOccurs="0" maxOccurs="1"/>
         </sequence>
-        <attribute name="name" type="QName" use="required"/>
+        <attribute name="name" type="QName" use="optional"/>
     </complexType>
     
     <element name="properties" type="swyd:PropertiesType"/>

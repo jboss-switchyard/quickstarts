@@ -142,5 +142,13 @@ public class V1CompositeModel extends BaseNamedModel implements CompositeModel {
         _components.add(component);
         return this;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTargetNamespace(String namespaceUri) {
+        this.setModelAttribute(TARGET_NAMESPACE, namespaceUri);
+    }
 
 }

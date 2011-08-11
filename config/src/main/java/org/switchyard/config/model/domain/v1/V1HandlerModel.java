@@ -23,9 +23,9 @@ import javax.xml.namespace.QName;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.domain.DomainModel;
 import org.switchyard.config.model.domain.HandlerModel;
 import org.switchyard.config.model.domain.HandlersModel;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * Implementation of HandlerModel : v1.
@@ -36,7 +36,7 @@ public class V1HandlerModel extends BaseModel implements HandlerModel {
      * Constructs a new V1PropertyModel.
      */
     public V1HandlerModel() {
-        super(new QName(DomainModel.DEFAULT_NAMESPACE, HandlerModel.HANDLER));
+        super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, HandlerModel.HANDLER));
     }
 
     /**

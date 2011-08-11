@@ -45,6 +45,12 @@ import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeReferenceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeServiceModel;
+import org.switchyard.config.model.domain.DomainModel;
+import org.switchyard.config.model.domain.HandlerModel;
+import org.switchyard.config.model.domain.HandlersModel;
+import org.switchyard.config.model.domain.v1.V1DomainModel;
+import org.switchyard.config.model.domain.v1.V1HandlerModel;
+import org.switchyard.config.model.domain.v1.V1HandlersModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
@@ -62,6 +68,9 @@ public class SwitchYardPlugin implements Plugin {
     // VAR_* constants reference substitution tokens in the process definition template 
     private static final String VAR_SERVICE_NAME = "${service.name}";
     private static final String VAR_PACKAGE_NAME = "${package.name}";
+    // MessageTrace handler name and class
+    private static final String TRACE_CLASS = "org.switchyard.handlers.MessageTrace";
+    private static final String TRACE_NAME = "MessageTrace";
 
     @Inject
     private Project _project;
@@ -257,5 +266,58 @@ public class SwitchYardPlugin implements Plugin {
                 destDir + File.separator + destFile));
         
         out.println("Created unit test " + destFile);
+    }
+    
+    /**
+     * Adds or removes the message trace handler based on message tracing preference.
+     * @param enable true to enable tracing, false to disable
+     * @param out shell output
+     */
+    @Command(value = "trace-messages", help = "Enable tracing of messages moving between services")
+    public void traceMessages(
+            @Option(required = true,
+                     name = "enableTrace",
+                     description = "Set to true to enable tracing, false to disable.") 
+            final Boolean enable,
+            final PipeOut out) {
+
+        SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
+        DomainModel domain = switchYard.getSwitchYardConfig().getDomain();
+        String result;
+        
+        // If enable option is not specified or enable=true, then enable the MessageTrace handler
+        if (enable == null || enable) {
+            // create the domain config if it doesn't exist already
+            if (domain == null) {
+                domain = new V1DomainModel();
+                switchYard.getSwitchYardConfig().setDomain(domain);
+            }
+            // need to create the handlers config if it's not already present
+            HandlersModel handlers = domain.getHandlers();
+            if (handlers == null) {
+                handlers = new V1HandlersModel();
+                domain.setHandlers(handlers);
+            }
+            handlers.addHandler(new V1HandlerModel()
+                .setClassName(TRACE_CLASS)
+                .setName(TRACE_NAME));
+            result = "Message tracing has been enabled.";
+        } else {
+            // Disable the handler by removing the configuration
+            if (domain != null && domain.getHandlers() != null) {
+                for (HandlerModel handler : domain.getHandlers().getHandlers()) {
+                    if (TRACE_CLASS.equals(handler.getClass()) 
+                        && TRACE_NAME.equals(handler.getName())) {
+                        domain.getHandlers().removeHandler(TRACE_NAME);
+                    }
+                }
+            }
+            result = "Message tracing has been disabled.";
+        }
+
+        // Save configuration changes
+        switchYard.saveConfig();
+        out.println(result);
+        
     }
 }

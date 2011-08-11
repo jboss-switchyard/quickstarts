@@ -49,5 +49,12 @@ public interface HandlersModel extends Model {
      * @return this TransformsModel (useful for chaining)
      */
     public HandlersModel addHandler(HandlerModel handler);
+    
+    /**
+     * Removes a child handler model.
+     * @param handlerName the name of the handler
+     * @return the removed handler or null if the named handler was not present
+     */
+    public HandlerModel removeHandler(String handlerName);
 
 }

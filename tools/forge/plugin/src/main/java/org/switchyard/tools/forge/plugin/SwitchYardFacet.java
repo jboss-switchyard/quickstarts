@@ -107,6 +107,7 @@ public class SwitchYardFacet extends AbstractFacet {
             V1SwitchYardModel syConfig = new V1SwitchYardModel();
             V1CompositeModel composite = new V1CompositeModel();
             composite.setName(appName);
+            composite.setTargetNamespace("urn:switchyard:application:" + appName);
             syConfig.setComposite(composite);
             
             // Attach a reference to the current config to the current project

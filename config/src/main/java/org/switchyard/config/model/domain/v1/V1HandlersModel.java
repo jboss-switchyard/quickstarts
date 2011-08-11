@@ -87,4 +87,17 @@ public class V1HandlersModel extends BaseModel implements HandlersModel {
         _handlers.add(handler);
         return this;
     }
+
+    @Override
+    public HandlerModel removeHandler(String handlerName) {
+        HandlerModel removed = null;
+        
+        for (HandlerModel handler : _handlers) {
+            if (handler.getName().equals(handlerName)) {
+                removed = handler;
+                _handlers.remove(handler);
+            }
+        }
+        return removed;
+    }
 }

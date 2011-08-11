@@ -40,7 +40,7 @@ public class V1DomainModel extends BaseNamedModel implements DomainModel {
      * Constructs a new V1DomainModel.
      */
     public V1DomainModel() {
-        super(new QName(DomainModel.DEFAULT_NAMESPACE, DomainModel.DOMAIN));
+        super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, DomainModel.DOMAIN));
         setModelChildrenOrder(PropertiesModel.PROPERTIES, HandlersModel.HANDLERS);
     }
 
@@ -73,6 +73,20 @@ public class V1DomainModel extends BaseNamedModel implements DomainModel {
             _properties = (PropertiesModel)getFirstChildModelStartsWith(PropertiesModel.PROPERTIES);
         }
         return _properties;
+    }
+
+    @Override
+    public DomainModel setProperties(PropertiesModel properties) {
+        setChildModel(properties);
+        _properties = properties;
+        return this;
+    }
+
+    @Override
+    public DomainModel setHandlers(HandlersModel handlers) {
+        setChildModel(handlers);
+        _handlers = handlers;
+        return this;
     }
     
 }

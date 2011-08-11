@@ -32,6 +32,8 @@ import org.switchyard.config.Configuration;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public abstract class BaseNamedModel extends BaseModel implements NamedModel {
+    
+    protected static final String TARGET_NAMESPACE = "targetNamespace";
 
     protected BaseNamedModel(QName qname) {
         super(qname);
@@ -70,7 +72,7 @@ public abstract class BaseNamedModel extends BaseModel implements NamedModel {
         String tns = null;
         Model model = this;
         while (model instanceof BaseModel) {
-            tns = Strings.trimToNull(((BaseModel)model).getModelAttribute("targetNamespace"));
+            tns = Strings.trimToNull(((BaseModel)model).getModelAttribute(TARGET_NAMESPACE));
             if (tns != null) {
                 break;
             }

@@ -188,7 +188,8 @@ public class SwitchYardTestKit {
      */
     private final void deploy() throws Exception {
         _deployment = createDeployment();
-        _deployment.init(ServiceDomainManager.createDomain());
+        _deployment.init(ServiceDomainManager.createDomain(
+                ServiceDomainManager.ROOT_DOMAIN, _deployment.getConfig()));
         mixInBefore();
         _deployment.start();
     }

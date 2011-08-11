@@ -80,5 +80,11 @@ public interface CompositeModel extends NamedModel {
      * @return this CompositeModel (useful for chaining)
      */
     public CompositeModel addComponent(ComponentModel component);
+    
+    /**
+     * Sets the target namespace for the composite.
+     * @param namespaceUri namespace URI
+     */
+    public void setTargetNamespace(String namespaceUri);
 
 }
