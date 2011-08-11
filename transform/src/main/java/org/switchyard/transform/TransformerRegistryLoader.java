@@ -134,7 +134,7 @@ public class TransformerRegistryLoader {
                     TransformsModel transformsModel = new ModelPuller<TransformsModel>().pull(configStream);
                     registerTransformers(transformsModel);
                 } catch (final DuplicateTransformerException e) {
-                    _log.warn(e.getMessage(), e);
+                    _log.debug(e.getMessage(), e);
                 } finally {
                     configStream.close();
                 }
