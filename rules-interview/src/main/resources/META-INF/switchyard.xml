@@ -3,11 +3,10 @@
             xmlns:swyd="urn:switchyard-config:switchyard:1.0"
             xmlns:rules="urn:switchyard-component-rules:config:1.0"
             xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-            targetNamespace="urn:switchyard-quickstart:rules-interview:0.2.0-SNAPSHOT"
-            name="Interview">
-    <sca:composite name="Interview">
-        <sca:service name="Interview">
-            <interface.java interface="org.switchyard.quickstarts.rules.interview.Interview" promote="Interview"/>
+            name="rules-interview">
+    <sca:composite name="Interview" targetNamespace="urn:switchyard-quickstart:rules-interview:0.1.0">
+        <sca:service name="Interview" promote="Interview">
+            <sca:interface.java interface="org.switchyard.quickstarts.rules.interview.Interview"/>
         </sca:service>
     </sca:composite>
 </switchyard>

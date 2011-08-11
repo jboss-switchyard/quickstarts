@@ -34,7 +34,7 @@
       <dataInputAssociation>
         <targetRef>_4_ServiceNameInput</targetRef>
         <assignment>
-          <from xsi:type="tFormalExpression">TicketManagementService</from>
+          <from xsi:type="tFormalExpression">{urn:switchyard-quickstart-demo:helpdesk:0.1.0}TicketManagementService</from>
           <to xsi:type="tFormalExpression">_4_ServiceNameInput</to>
         </assignment>
       </dataInputAssociation>
@@ -60,7 +60,7 @@
       <dataInputAssociation>
         <targetRef>_5_ServiceNameInput</targetRef>
         <assignment>
-          <from xsi:type="tFormalExpression">TicketManagementService</from>
+          <from xsi:type="tFormalExpression">{urn:switchyard-quickstart-demo:helpdesk:0.1.0}TicketManagementService</from>
           <to xsi:type="tFormalExpression">_5_ServiceNameInput</to>
         </assignment>
       </dataInputAssociation>
@@ -172,7 +172,7 @@ kcontext.setVariable("ticket", ticket);</script>
       <dataInputAssociation>
         <targetRef>_12_ServiceNameInput</targetRef>
         <assignment>
-          <from xsi:type="tFormalExpression">TicketManagementService</from>
+          <from xsi:type="tFormalExpression">{urn:switchyard-quickstart-demo:helpdesk:0.1.0}TicketManagementService</from>
           <to xsi:type="tFormalExpression">_12_ServiceNameInput</to>
         </assignment>
       </dataInputAssociation>
@@ -229,7 +229,7 @@ kcontext.setVariable("ticket", ticket);</script>
       <dataInputAssociation>
         <targetRef>_14_ServiceNameInput</targetRef>
         <assignment>
-          <from xsi:type="tFormalExpression">TicketManagementService</from>
+          <from xsi:type="tFormalExpression">{urn:switchyard-quickstart-demo:helpdesk:0.1.0}TicketManagementService</from>
           <to xsi:type="tFormalExpression">_14_ServiceNameInput</to>
         </assignment>
       </dataInputAssociation>
@@ -258,7 +258,7 @@ kcontext.setVariable("ticket", ticket);</script>
       <dataInputAssociation>
         <targetRef>_16_ServiceNameInput</targetRef>
         <assignment>
-          <from xsi:type="tFormalExpression">TicketManagementService</from>
+          <from xsi:type="tFormalExpression">{urn:switchyard-quickstart-demo:helpdesk:0.1.0}TicketManagementService</from>
           <to xsi:type="tFormalExpression">_16_ServiceNameInput</to>
         </assignment>
       </dataInputAssociation>
