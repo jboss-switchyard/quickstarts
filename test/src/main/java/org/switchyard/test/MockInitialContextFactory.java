@@ -20,6 +20,7 @@
 package org.switchyard.test;
 
 import org.junit.Assert;
+import org.switchyard.test.mixins.CDIMixIn;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -137,6 +138,7 @@ public class MockInitialContextFactory implements InitialContextFactory {
                 if (object != null) {
                     return object;
                 }
+                tryHelpDeveloper(args[0]);
                 throw new NamingException("Unknown object name '" + args[0] + "'.");
             } else if (methodName.equals("createSubcontext")) {
                 Object name = args[0];
@@ -160,6 +162,13 @@ public class MockInitialContextFactory implements InitialContextFactory {
             }
 
             throw new NamingException("Unexpected call to '" + method.getName() + "'.");
+        }
+
+        private void tryHelpDeveloper(Object objectName) {
+            if (objectName.equals("BeanManager")) {
+                Assert.fail("Your test requires access to the CDI BeanManager.  You need to annotate your test class with '@"
+                        + SwitchYardTestCaseConfig.class.getSimpleName() + "(mixins = " + CDIMixIn.class.getSimpleName() + ".class)'");
+            }
         }
     }
 }
