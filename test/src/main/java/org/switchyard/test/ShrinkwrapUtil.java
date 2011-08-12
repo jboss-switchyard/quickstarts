@@ -19,12 +19,18 @@
 
 package org.switchyard.test;
 
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.importer.ZipImporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
-import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
+import org.jboss.shrinkwrap.resolver.api.ResolutionException;
+import org.jboss.shrinkwrap.resolver.impl.maven.MavenRepositorySettings;
 import org.junit.Assert;
+import org.sonatype.aether.repository.LocalRepository;
 
-import java.util.Collection;
+import java.io.File;
+import java.io.IOException;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 /**
  * Shrinkwrap utilities.
@@ -51,24 +57,7 @@ public final class ShrinkwrapUtil {
      * @return The Maven artifact archive.
      */
     public static JavaArchive getSwitchYardJavaArchive(String groupId, String artifactId) {
-        Collection<JavaArchive> artifactArchives = getSwitchYardJavaArchives(groupId, artifactId);
-
-        // Multiple artifacts can be returned (transitive dependencies), but it appears as though
-        // the first artifact in the Collection is the artifact being sought.
-        return artifactArchives.iterator().next();
-    }
-
-    /**
-     * Get a SwitchYard maven Artifact Archive and all it's transitive dependencies.
-     * <p/>
-     * Gets the SwitchYard version from the mandatory {@link #SWITCHYARD_VERSION} env property.
-     *
-     * @param groupId    Maven groupId
-     * @param artifactId Maven artifactId.
-     * @return The Collection of Maven artifact archives.
-     */
-    public static Collection<JavaArchive> getSwitchYardJavaArchives(String groupId, String artifactId) {
-        return getJavaArchives(groupId, artifactId, getSwitchYardVersion());
+        return getJavaArchive(groupId, artifactId, getSwitchYardVersion());
     }
 
     /**
@@ -80,11 +69,26 @@ public final class ShrinkwrapUtil {
      * @return The Maven artifact archive.
      */
     public static JavaArchive getJavaArchive(String groupId, String artifactId, String version) {
-        Collection<JavaArchive> artifactArchives = getJavaArchives(groupId, artifactId, version);
+        Assert.assertNotNull("'groupId' argument is null.", groupId);
+        Assert.assertNotNull("'artifactId' argument is null.", artifactId);
+        Assert.assertNotNull("'version' argument is null.", version);
 
-        // Multiple artifacts can be returned (transitive dependencies), but it appears as though
-        // the first artifact in the Collection is the artifact being sought.
-        return artifactArchives.iterator().next();
+        MavenRepositorySettings repoSettings = new MavenRepositorySettings();
+        LocalRepository localRepo = repoSettings.getLocalRepository();
+        File artifactFile = new File(localRepo.getBasedir(),
+                groupId.replace(".", "/")
+                        + "/" + artifactId
+                        + "/" + version
+                        + "/" + artifactId + "-" + version + ".jar");
+
+        if (!artifactFile.isFile()) {
+            String artifact = groupId + ":" + artifactId + ":" + version;
+            Assert.fail("Failed to resolve artifact '" + artifact + "'.  The artifact must be declared as a dependency in your POM, thereby making it available in your local repository.");
+        }
+
+        JavaArchive archive = ShrinkWrap.create(ZipImporter.class, artifactFile.getName()).importFrom(convert(artifactFile)).as(JavaArchive.class);
+
+        return archive;
     }
 
     /**
@@ -110,27 +114,14 @@ public final class ShrinkwrapUtil {
         return version;
     }
 
-    /**
-     * Get a maven Artifact Archive and all it's transitive dependencies.
-     *
-     * @param groupId    Maven groupId
-     * @param artifactId Maven artifactId.
-     * @param version    Artifact version.
-     * @return The Collection of Maven artifact archives.
-     */
-    public static Collection<JavaArchive> getJavaArchives(String groupId, String artifactId, String version) {
-        Assert.assertNotNull("'groupId' argument is null.", groupId);
-        Assert.assertNotNull("'artifactId' argument is null.", artifactId);
-        Assert.assertNotNull("'version' argument is null.", version);
-
-        String artifact = groupId + ":" + artifactId + ":" + version;
-        Collection<JavaArchive> resolvedArtifacts = DependencyResolvers.use(MavenDependencyResolver.class)
-                .loadReposFromPom("./pom.xml").artifact(artifact).resolveAs(JavaArchive.class);
-
-        if (resolvedArtifacts.isEmpty()) {
-            Assert.fail("Failed to resolve artifact '" + artifact + "'.");
+    // converts a file to a ZIP file
+    private static ZipFile convert(File file) throws ResolutionException {
+        try {
+            return new ZipFile(file);
+        } catch (ZipException e) {
+            throw new ResolutionException("Unable to treat dependency artifact \"" + file.getAbsolutePath() + "\" as a ZIP file", e);
+        } catch (IOException e) {
+            throw new ResolutionException("Unable to access artifact file at \"" + file.getAbsolutePath() + "\".", e);
         }
-
-        return resolvedArtifacts;
     }
 }

@@ -572,7 +572,7 @@ public class SwitchYardTestKit {
      * @param string The String against which the XML is to be
      * compared.
      */
-    public void compareXMLToString(String xml, String string) {
+    public static void compareXMLToString(String xml, String string) {
         XMLUnit.setIgnoreWhitespace(true);
         try {
             XMLAssert.assertXMLEqual(string, xml);

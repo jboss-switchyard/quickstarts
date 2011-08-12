@@ -110,6 +110,12 @@
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-persistence-jpa</artifactId>
             <version>${jbpm.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>hibernate-annotations</artifactId>
+                    <groupId>org.hibernate</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -140,6 +146,10 @@
                 <exclusion>
                     <groupId>xerces</groupId>
                     <artifactId>xmlParserAPIs</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>hibernate-annotations</artifactId>
+                    <groupId>org.hibernate</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

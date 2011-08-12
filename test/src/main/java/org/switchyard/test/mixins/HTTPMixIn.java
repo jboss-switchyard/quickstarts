@@ -20,12 +20,15 @@
 package org.switchyard.test.mixins;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.junit.Assert;
+import org.switchyard.test.SwitchYardTestKit;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -89,7 +92,7 @@ public class HTTPMixIn extends AbstractTestMixIn {
      */
     public String postStringAndTestXML(String endpointURL, String request, String expectedResponse) {
         String response = postString(endpointURL, request);
-        getTestKit().compareXMLToString(response, expectedResponse);
+        SwitchYardTestKit.compareXMLToString(response, expectedResponse);
         return response;
     }
 
@@ -140,6 +143,10 @@ public class HTTPMixIn extends AbstractTestMixIn {
      * @return The HTTP Response.
      */
     public String execute(HttpMethod method) {
+        if (_httpClient == null) {
+            Assert.fail("HTTPMixIn not initialized.  You must call the initialize() method before using this MixIn");
+        }
+
         try {
             _httpClient.executeMethod(method);
             return method.getResponseBodyAsString();
@@ -152,5 +159,16 @@ public class HTTPMixIn extends AbstractTestMixIn {
         }
 
         return null;
+    }
+
+    @Override
+    public void uninitialize() {
+        if (_httpClient != null) {
+            final HttpConnectionManager connectionManager = _httpClient.getHttpConnectionManager();
+            if (connectionManager instanceof MultiThreadedHttpConnectionManager) {
+                final MultiThreadedHttpConnectionManager multiThreadedHttpConnectionManager = (MultiThreadedHttpConnectionManager)connectionManager;
+                multiThreadedHttpConnectionManager.shutdown();
+            }
+        }
     }
 }
