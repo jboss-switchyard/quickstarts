@@ -195,14 +195,15 @@ public class BeanDeploymentMetaData {
     }
 
     private static Context getJavaComp(String jndiName) {
-        Context javaComp;
         InitialContext initialContext = null;
 
         try {
             initialContext = new InitialContext();
-            javaComp = (Context) initialContext.lookup(jndiName);
+            return (Context) initialContext.lookup(jndiName);
+        } catch (NamingException e) {
+            return null;
         } catch (Exception e) {
-            throw new SwitchYardException("Unexpected retrieving java:comp from JNDI namespace.", e);
+            throw new SwitchYardException("Unexpected Exception retrieving '" + jndiName + "' from JNDI namespace.", e);
         } finally {
             if (initialContext != null) {
                 try {
@@ -212,6 +213,5 @@ public class BeanDeploymentMetaData {
                 }
             }
         }
-        return javaComp;
     }
 }
