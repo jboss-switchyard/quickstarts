@@ -42,7 +42,7 @@
         <assembly.dir>${project.build.directory}/assembly</assembly.dir>
         <as.root.dir>jboss-${version.jbossas}</as.root.dir>
         <switchyard.root.dir>switchyard-as6-${distro.version}</switchyard.root.dir>
-        <camel.version>2.6.0</camel.version>
+        <camel.version>2.8.0</camel.version>
         <commonman.version>1.0</commonman.version>
         <drools.version>5.2.0.Final</drools.version>
         <jbpm.version>5.1.0.Final</jbpm.version>

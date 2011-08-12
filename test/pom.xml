@@ -45,7 +45,7 @@
         <switchyard.jboss.home>${project.build.directory}/switchyard-as6-${distro.version}</switchyard.jboss.home>
         <arquillian.version>1.0.0.Alpha5</arquillian.version>
         <shrinkwrap.version>1.0.0-alpha-12</shrinkwrap.version>
-        <version.camel>2.6.0</version.camel>
+        <camel.version>2.8.0</camel.version>
     </properties>
 
     <dependencies>
@@ -139,7 +139,7 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-http4</artifactId>
-            <version>${version.camel}</version>
+            <version>${camel.version}</version>
             <scope>test</scope>
          </dependency>
 
