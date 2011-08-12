@@ -16,42 +16,43 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
-package org.switchyard.admin;
-
-import java.util.List;
+package org.switchyard.admin.base;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.admin.ComponentReference;
+
 /**
- * Service
+ * BaseComponentReference
  * 
- * Represents an application service exported through the SwitchYard runtime.
+ * Base implementation for {@link ComponentReference}.
+ * 
+ * @author Rob Cernich
  */
-public interface Service {
+public class BaseComponentReference implements ComponentReference {
+
+    private final QName _name;
+    private final String _interface;
 
     /**
-     * @return the name of this service.
+     * Create a new BaseComponentReference.
+     * 
+     * @param name the name of the reference
+     * @param interfaceName the required interface
      */
-    QName getName();
+    public BaseComponentReference(QName name, String interfaceName) {
+        _name = name;
+        _interface = interfaceName;
+    }
 
-    /**
-     * @return the component service promoted by this service.
-     */
-    ComponentService getPromotedService();
+    @Override
+    public QName getName() {
+        return _name;
+    }
 
-    /**
-     * @return the gateway bindings for this service.
-     */
-    List<Binding> getGateways();
+    @Override
+    public String getInterface() {
+        return _interface;
+    }
 
-    /**
-     * @return the interface implemented by this service.
-     */
-    String getInterface();
-
-    /**
-     * @return the application which exports this service.
-     */
-    Application getApplication();
 }

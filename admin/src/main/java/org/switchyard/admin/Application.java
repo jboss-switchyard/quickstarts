@@ -35,6 +35,29 @@ public interface Application {
     public List<Service> getServices();
 
     /**
+     * @param serviceName the name of a service provided by this application.
+     * @return the requested service, may be null
+     */
+    public Service getService(QName serviceName);
+
+    /**
+     * @return the component services contained by this application.
+     */
+    public List<ComponentService> getComponentServices();
+
+    /**
+     * @param componentServiceName the name of a component service contained by
+     *            this application.
+     * @return the requested service, may be null
+     */
+    public ComponentService getComponentService(QName componentServiceName);
+
+    /**
+     * @return the transformers provided by this application
+     */
+    public List<Transformer> getTransformers();
+
+    /**
      * Returns the name of the application. This will be the name specified
      * within the switchyard.xml file, if one exists. If a name is not specified
      * within the switchyard.xml file, the deployment archive name will be

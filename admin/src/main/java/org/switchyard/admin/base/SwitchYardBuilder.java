@@ -18,19 +18,29 @@
  */
 package org.switchyard.admin.base;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
-import org.switchyard.admin.Component;
+import org.switchyard.admin.Binding;
+import org.switchyard.admin.ComponentReference;
+import org.switchyard.admin.ComponentService;
+import org.switchyard.admin.Transformer;
+import org.switchyard.config.OutputKey;
+import org.switchyard.config.model.TypedModel;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.InterfaceModel;
+import org.switchyard.config.model.transform.TransformModel;
+import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.deploy.internal.DeploymentListener;
 
@@ -122,24 +132,73 @@ public class SwitchYardBuilder implements DeploymentListener {
     }
 
     @Override
+    public void componentServiceDeployed(AbstractDeployment deployment, ComponentModel componentModel) {
+        final QName applicationName = deployment.getName();
+        if (applicationName == null) {
+            _log.warn("componentServiceDeployed() received deployment with null application name.");
+            return;
+        }
+        final BaseApplication application = (BaseApplication) _switchYard.getApplication(applicationName);
+        if (componentModel.getServices().size() != 1) {
+            _log.warn("componentServiceDeployed() received component with service count != 1.");
+            return;
+        }
+        final ComponentServiceModel componentServiceModel = componentModel.getServices().get(0);
+        final QName name = componentServiceModel.getQName();
+        final String interfaceName = getInterfaceName(componentServiceModel.getInterface());
+        final String implementation = getComponentImplementationType(componentModel);
+        final List<ComponentReference> references = new ArrayList<ComponentReference>();
+        for (ComponentReferenceModel referenceModel : componentModel.getReferences()) {
+            references.add(new BaseComponentReference(referenceModel.getQName(), getInterfaceName(referenceModel
+                    .getInterface())));
+        }
+        application.addComponentService(new BaseComponentService(name, implementation, interfaceName, application,
+                references));
+    }
+
+    @Override
+    public void componentServiceUndeployed(AbstractDeployment deployment, QName serviceName) {
+        final QName applicationName = deployment.getName();
+        if (applicationName == null) {
+            _log.warn("componentServiceUndeployed() received deployment with null application name.");
+            return;
+        }
+        final BaseApplication application = (BaseApplication) _switchYard.getApplication(applicationName);
+        application.removeComponentService(serviceName);
+    }
+
+    @Override
     public void serviceDeployed(AbstractDeployment deployment, CompositeServiceModel serviceModel) {
         final QName applicationName = deployment.getName();
         if (applicationName == null) {
             _log.warn("serviceDeployed() received deployment with null application name.");
             return;
         }
-        final BaseApplication application = (BaseApplication) _switchYard.findApplication(applicationName);
+        final BaseApplication application = (BaseApplication) _switchYard.getApplication(applicationName);
         final QName name = serviceModel.getQName();
-        final String interfaceName = getServiceInterface(serviceModel);
-        final Component implementation = getServiceImplementation(serviceModel);
-        final List<Component> gateways = new ArrayList<Component>();
-        for (BindingModel binding : serviceModel.getBindings()) {
-            Component component = _switchYard.findComponent(binding.getType());
-            if (component != null) {
-                gateways.add(component);
+        final String interfaceName = getInterfaceName(serviceModel.getInterface());
+        final ComponentService promotedService = getPromotedService(application, serviceModel);
+        final List<Binding> gateways = new ArrayList<Binding>();
+        for (BindingModel bindingModel : serviceModel.getBindings()) {
+            String bindingConfiguration = null;
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            try {
+                bindingModel.getModelConfiguration().write(baos, OutputKey.OMIT_XML_DECLARATION);
+                bindingConfiguration = baos.toString();
+            } catch (IOException e) {
+                // FIXME: do we need to log this?
+                _log.error("Could not retrieve binding configuration as string.", e);
+            } finally {
+                try {
+                    baos.close();
+                } catch (IOException e) {
+                    // prevent code style error
+                    e.getMessage();
+                }
             }
+            gateways.add(new BaseBinding(bindingModel.getType(), bindingConfiguration));
         }
-        BaseService service = new BaseService(name, interfaceName, application, implementation, gateways);
+        BaseService service = new BaseService(name, interfaceName, application, promotedService, gateways);
 
         application.addService(service);
     }
@@ -151,35 +210,62 @@ public class SwitchYardBuilder implements DeploymentListener {
             _log.warn("serviceUndeployed() received deployment with null application name.");
             return;
         }
-        final BaseApplication application = (BaseApplication) _switchYard.findApplication(applicationName);
+        final BaseApplication application = (BaseApplication) _switchYard.getApplication(applicationName);
         application.removeService(serviceName);
     }
 
-    private Component getServiceImplementation(CompositeServiceModel compositeService) {
-        ComponentModel componentModel = compositeService.getComponent();
-        if (componentModel == null) {
-            return null;
+    @Override
+    public void transformersRegistered(AbstractDeployment deployment, TransformsModel transformsModel) {
+        if (transformsModel == null) {
+            return;
         }
-        ComponentImplementationModel componentImplementationModel = componentModel.getImplementation();
-        if (componentImplementationModel == null) {
-            return null;
+
+        final QName applicationName = deployment.getName();
+        if (applicationName == null) {
+            _log.warn("serviceUndeployed() received deployment with null application name.");
+            return;
         }
-        return _switchYard.findComponent(componentImplementationModel.getType());
+
+        final List<TransformModel> transformModels = transformsModel.getTransforms();
+        if (transformModels == null) {
+            return;
+        }
+
+        final BaseApplication application = (BaseApplication) _switchYard.getApplication(applicationName);
+        final List<Transformer> transformers = new ArrayList<Transformer>(transformModels.size());
+        for (TransformModel transformModel : transformModels) {
+            String type;
+            if (transformModel instanceof TypedModel) {
+                type = ((TypedModel)transformModel).getType();
+            } else {
+                type = null;
+            }
+            transformers.add(new BaseTransformer(transformModel.getFrom(), transformModel.getTo(), type));
+        }
+        application.setTransformers(transformers);
     }
 
-    private String getServiceInterface(CompositeServiceModel compositeService) {
-        InterfaceModel interfaceModel = compositeService.getInterface();
-        if (interfaceModel != null) {
-            return interfaceModel.getInterface();
-        }
+    private ComponentService getPromotedService(BaseApplication application, CompositeServiceModel compositeService) {
         ComponentServiceModel componentServiceModel = compositeService.getComponentService();
         if (componentServiceModel == null) {
             return null;
         }
-        if (componentServiceModel.getInterface() == null) {
+        return application.getComponentService(componentServiceModel.getQName());
+    }
+
+    private String getInterfaceName(InterfaceModel interfaceModel) {
+        if (interfaceModel == null) {
             return null;
         }
-        return componentServiceModel.getInterface().getInterface();
+        return interfaceModel.getInterface();
+    }
+
+    private String getComponentImplementationType(ComponentModel componentModel) {
+        ComponentImplementationModel implementationModel = componentModel.getImplementation();
+        if (implementationModel == null) {
+            return null;
+        }
+        return implementationModel.getType();
     }
 
 }

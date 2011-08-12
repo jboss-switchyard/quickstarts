@@ -77,7 +77,7 @@ public final class SwitchYardSubsystemReadService implements OperationStepHandle
                 SwitchYard switchYard = SwitchYard.class.cast(controller.getService().getValue());
                 if (operation.hasDefined(APPLICATION_NAME)) {
                     final QName applicationName = QName.valueOf(operation.get(APPLICATION_NAME).asString());
-                    final Application application = switchYard.findApplication(applicationName);
+                    final Application application = switchYard.getApplication(applicationName);
                     if (application != null) {
                         if (operation.hasDefined(SERVICE_NAME)) {
                             Service service = findService(QName.valueOf(operation.get(SERVICE_NAME).asString()),

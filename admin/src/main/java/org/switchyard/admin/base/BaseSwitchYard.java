@@ -162,12 +162,12 @@ public class BaseSwitchYard implements SwitchYard {
     }
 
     @Override
-    public Component findComponent(String name) {
+    public Component getComponent(String name) {
         return _components.get(name);
     }
 
     @Override
-    public Application findApplication(QName name) {
+    public Application getApplication(QName name) {
         return _applications.get(name);
     }
 

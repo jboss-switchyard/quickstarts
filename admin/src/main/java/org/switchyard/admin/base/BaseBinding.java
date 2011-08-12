@@ -16,42 +16,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
+package org.switchyard.admin.base;
 
-package org.switchyard.admin;
-
-import java.util.List;
-
-import javax.xml.namespace.QName;
+import org.switchyard.admin.Binding;
 
 /**
- * Service
+ * BaseBinding
  * 
- * Represents an application service exported through the SwitchYard runtime.
+ * Base implementation for {@link Binding}.
+ * 
+ * @author Rob Cernich
  */
-public interface Service {
+public class BaseBinding implements Binding {
+
+    private final String _type;
+    private final String _configuration;
 
     /**
-     * @return the name of this service.
+     * Create a new BaseBinding.
+     * 
+     * @param type the binding's type (e.g. soap)
+     * @param configuration the binding's raw configuration
      */
-    QName getName();
+    public BaseBinding(String type, String configuration) {
+        _type = type;
+        _configuration = configuration;
+    }
 
-    /**
-     * @return the component service promoted by this service.
-     */
-    ComponentService getPromotedService();
+    @Override
+    public String getType() {
+        return _type;
+    }
 
-    /**
-     * @return the gateway bindings for this service.
-     */
-    List<Binding> getGateways();
+    @Override
+    public String getConfiguration() {
+        return _configuration;
+    }
 
-    /**
-     * @return the interface implemented by this service.
-     */
-    String getInterface();
-
-    /**
-     * @return the application which exports this service.
-     */
-    Application getApplication();
 }

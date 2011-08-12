@@ -22,7 +22,9 @@ import java.util.EventListener;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
+import org.switchyard.config.model.transform.TransformsModel;
 
 /**
  * DeploymentListener
@@ -134,6 +136,25 @@ public interface DeploymentListener extends EventListener {
     // services
 
     /**
+     * Notification that the deployment has deployed/instantiated a component
+     * service. This notification is sent after the service implementation has
+     * been deployed/instantiated.
+     * 
+     * @param deployment the notifier
+     * @param componentModel the component service being deployed/instantiated
+     */
+    public void componentServiceDeployed(AbstractDeployment deployment, ComponentModel componentModel);
+
+    /**
+     * Notification that the deployment has undeployed a component service. This
+     * notification is sent after the service has been undeployed.
+     * 
+     * @param deployment the notifier
+     * @param serviceName the service being removed.
+     */
+    public void componentServiceUndeployed(AbstractDeployment deployment, QName serviceName);
+
+    /**
      * Notification that the deployment has deployed/instantiated a service.
      * This notification is sent after all bindings have been
      * deployed/instantiated.
@@ -151,4 +172,14 @@ public interface DeploymentListener extends EventListener {
      * @param serviceName the name of the service being removed.
      */
     public void serviceUndeployed(AbstractDeployment deployment, QName serviceName);
+
+    /**
+     * Notification that the deployment has registered the transformers defined
+     * within it.
+     * 
+     * @param deployment the notifier
+     * @param transformers the transformers registered by the deployment.
+     */
+    public void transformersRegistered(AbstractDeployment deployment, TransformsModel transformers);
+
 }

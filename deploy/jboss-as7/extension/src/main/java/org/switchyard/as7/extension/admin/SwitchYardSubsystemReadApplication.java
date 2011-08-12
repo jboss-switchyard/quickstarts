@@ -71,13 +71,13 @@ public final class SwitchYardSubsystemReadApplication implements OperationStepHa
                 SwitchYard switchYard = SwitchYard.class.cast(controller.getService().getValue());
                 if (operation.hasDefined(NAME)) {
                     final QName applicationName = QName.valueOf(operation.get(NAME).asString());
-                    final Application application = switchYard.findApplication(applicationName);
+                    final Application application = switchYard.getApplication(applicationName);
                     if (application != null) {
-                        applications.add(ModelNodeCreationUtil.createSimpleApplicationNode(application));
+                        applications.add(ModelNodeCreationUtil.createApplicationNode(application));
                     }
                 } else {
                     for (Application application : switchYard.getApplications()) {
-                        applications.add(ModelNodeCreationUtil.createSimpleApplicationNode(application));
+                        applications.add(ModelNodeCreationUtil.createApplicationNode(application));
                     }
                 }
                 context.completeStep();

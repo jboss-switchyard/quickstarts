@@ -16,42 +16,51 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
-package org.switchyard.admin;
-
-import java.util.List;
+package org.switchyard.admin.base;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.admin.Transformer;
+
 /**
- * Service
+ * BaseTransformer
  * 
- * Represents an application service exported through the SwitchYard runtime.
+ * Base implementation for {@link Transformer}.
+ * 
+ * @author Rob Cernich
  */
-public interface Service {
+public class BaseTransformer implements Transformer {
+
+    private final QName _from;
+    private final QName _to;
+    private final String _type;
 
     /**
-     * @return the name of this service.
+     * Create a new BaseTransformer.
+     * 
+     * @param from the from type
+     * @param to the to type
+     * @param type the implementation type (e.g. java)
      */
-    QName getName();
+    public BaseTransformer(QName from, QName to, String type) {
+        _from = from;
+        _to = to;
+        _type = type;
+    }
 
-    /**
-     * @return the component service promoted by this service.
-     */
-    ComponentService getPromotedService();
+    @Override
+    public QName getFrom() {
+        return _from;
+    }
 
-    /**
-     * @return the gateway bindings for this service.
-     */
-    List<Binding> getGateways();
+    @Override
+    public QName getTo() {
+        return _to;
+    }
 
-    /**
-     * @return the interface implemented by this service.
-     */
-    String getInterface();
+    @Override
+    public String getType() {
+        return _type;
+    }
 
-    /**
-     * @return the application which exports this service.
-     */
-    Application getApplication();
 }

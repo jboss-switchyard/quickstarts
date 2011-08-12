@@ -177,7 +177,7 @@ public class SwitchYardDeployment {
         ModelNode deployNode = _deployUnit.createDeploymentSubModel(SwitchYardExtension.SUBSYSTEM_NAME,
                 PathElement.pathElement(SwitchYardModelConstants.APPLICATION, applicationName.toString()));
 
-        Application application = switchYard.findApplication(applicationName);
+        Application application = switchYard.getApplication(applicationName);
         if (application == null) {
             return;
         }

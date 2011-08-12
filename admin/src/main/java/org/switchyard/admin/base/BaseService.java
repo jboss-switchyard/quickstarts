@@ -25,7 +25,8 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.switchyard.admin.Application;
-import org.switchyard.admin.Component;
+import org.switchyard.admin.Binding;
+import org.switchyard.admin.ComponentService;
 import org.switchyard.admin.Service;
 
 /**
@@ -36,8 +37,8 @@ public class BaseService implements Service {
     private QName _name;
     private String _serviceInterface;
     private Application _application;
-    private Component _implementation;
-    private List<Component> _gateways = new LinkedList<Component>();
+    private ComponentService _promotedService;
+    private List<Binding> _gateways = new LinkedList<Binding>();
     
     /**
      * Create a new BaseService.
@@ -51,13 +52,13 @@ public class BaseService implements Service {
     public BaseService(QName name,
             String serviceInterface,
             Application application, 
-            Component implementation,
-            List<Component> gateways) {
+            ComponentService implementation,
+            List<Binding> gateways) {
         
         _name = name;
         _serviceInterface = serviceInterface;
         _application = application;
-        _implementation = implementation;
+        _promotedService = implementation;
         _gateways = gateways;
     }
 
@@ -67,13 +68,13 @@ public class BaseService implements Service {
     }
 
     @Override
-    public List<Component> getGateways() {
+    public List<Binding> getGateways() {
         return _gateways;
     }
 
     @Override
-    public Component getImplementation() {
-       return _implementation;
+    public ComponentService getPromotedService() {
+       return _promotedService;
     }
 
     @Override

@@ -67,9 +67,21 @@ public final class SwitchYardModelConstants {
      */
     public static final String APPLICATION_NAME = "application-name";
     /**
+     * Constant for model key: componentServices.
+     */
+    public static final String COMPONENT_SERVICES = "componentServices";
+    /**
      * Constant for model key: config-schema.
      */
     public static final String CONFIG_SCHEMA = "configSchema";
+    /**
+     * Constant for model key: configuration.
+     */
+    public static final String CONFIGURATION = "configuration";
+    /**
+     * Constant for model key: from.
+     */
+    public static final String FROM = "from";
     /**
      * Constant for model key: implementation.
      */
@@ -83,6 +95,14 @@ public final class SwitchYardModelConstants {
      */
     public static final String GATEWAYS = "gateways";
     /**
+     * Constant for model key: promotedService.
+     */
+    public static final String PROMOTED_SERVICE = "promotedService";
+    /**
+     * Constant for model key: references.
+     */
+    public static final String REFERENCES = "references";
+    /**
      * Constant for model key: service-name.
      */
     public static final String SERVICE_NAME = "service-name";
@@ -90,6 +110,14 @@ public final class SwitchYardModelConstants {
      * Constant for model key: services.
      */
     public static final String SERVICES = "services";
+    /**
+     * Constant for model key: to.
+     */
+    public static final String TO = "to";
+    /**
+     * Constant for model key: transformations.
+     */
+    public static final String TRANSFORMERS = "transformers";
 
     private SwitchYardModelConstants() {
     }

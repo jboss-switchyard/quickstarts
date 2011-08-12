@@ -74,7 +74,7 @@ public final class SwitchYardSubsystemReadComponent implements OperationStepHand
                 SwitchYard switchYard = SwitchYard.class.cast(controller.getService().getValue());
                 if (operation.hasDefined(NAME)) {
                     final String componentName = operation.get(NAME).asString();
-                    final Component component = switchYard.findComponent(componentName);
+                    final Component component = switchYard.getComponent(componentName);
                     if (component != null) {
                         components.add(ModelNodeCreationUtil.createComponentNode(component));
                     }

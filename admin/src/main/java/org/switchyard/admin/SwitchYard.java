@@ -65,7 +65,7 @@ public interface SwitchYard {
      * @return the component with the specified name; may be null if a component
      *         with the specified name is not registered with the system.
      */
-    Component findComponent(String name);
+    Component getComponent(String name);
 
     /**
      * Find an application with the specified name.
@@ -76,6 +76,6 @@ public interface SwitchYard {
      *         application with the specified name is not deployed on the
      *         system.
      */
-    Application findApplication(QName name);
+    Application getApplication(QName name);
 
 }

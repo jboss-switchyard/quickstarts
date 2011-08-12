@@ -28,8 +28,10 @@ import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
 import org.switchyard.ServiceDomain;
+import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.java.JavaService;
@@ -291,6 +293,18 @@ public abstract class AbstractDeployment {
         notifyListeners(new ServiceUndeployedNotifier(serviceName));
     }
 
+    protected final void fireComponentDeployed(ComponentModel componentModel) {
+        notifyListeners(new ComponentServiceDeployedNotifier(componentModel));
+    }
+
+    protected final void fireComponentUndeployed(QName serviceName) {
+        notifyListeners(new ComponentServiceUndeployedNotifier(serviceName));
+    }
+
+    protected final void fireTransformersRegistered(TransformsModel transforms) {
+        notifyListeners(new TransformersRegisteredNotifier(transforms));
+    }
+
     private void notifyListeners(DeploymentEventNotifier notifier) {
         List<DeploymentListener> listeners;
         synchronized (_listeners) {
@@ -330,6 +344,42 @@ public abstract class AbstractDeployment {
 
         public void notify(DeploymentListener listener) {
             listener.serviceUndeployed(AbstractDeployment.this, _serviceName);
+        }
+    }
+
+    private class ComponentServiceDeployedNotifier implements DeploymentEventNotifier {
+        private ComponentModel _componentModel;
+
+        protected ComponentServiceDeployedNotifier(ComponentModel componentModel) {
+            _componentModel = componentModel;
+        }
+
+        public void notify(DeploymentListener listener) {
+            listener.componentServiceDeployed(AbstractDeployment.this, _componentModel);
+        }
+    }
+
+    private class ComponentServiceUndeployedNotifier implements DeploymentEventNotifier {
+        private QName _serviceName;
+
+        protected ComponentServiceUndeployedNotifier(QName serviceName) {
+            _serviceName = serviceName;
+        }
+
+        public void notify(DeploymentListener listener) {
+            listener.componentServiceUndeployed(AbstractDeployment.this, _serviceName);
+        }
+    }
+
+    private class TransformersRegisteredNotifier implements DeploymentEventNotifier {
+        private TransformsModel _transforms;
+
+        protected TransformersRegisteredNotifier(TransformsModel transforms) {
+            _transforms = transforms;
+        }
+
+        public void notify(DeploymentListener listener) {
+            listener.transformersRegistered(AbstractDeployment.this, _transforms);
         }
     }
 

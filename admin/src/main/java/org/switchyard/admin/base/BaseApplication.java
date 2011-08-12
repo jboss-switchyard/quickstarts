@@ -22,13 +22,16 @@ package org.switchyard.admin.base;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
 
 import org.switchyard.admin.Application;
+import org.switchyard.admin.ComponentService;
 import org.switchyard.admin.Service;
+import org.switchyard.admin.Transformer;
 
 /**
  * Base implementation of Application.
@@ -38,6 +41,8 @@ public class BaseApplication implements Application {
     private BaseSwitchYard _switchYard;
     private QName _name;
     private Map<QName, Service> _services;
+    private Map<QName, ComponentService> _componentServices;
+    private List<Transformer> _transformers;
     
     /**
      * Create a new BaseApplication with the specified services.
@@ -63,6 +68,8 @@ public class BaseApplication implements Application {
         _switchYard = switchYard;
         _name = name;
         _services = new LinkedHashMap<QName, Service>();
+        _componentServices = new LinkedHashMap<QName, ComponentService>();
+        _transformers = new LinkedList<Transformer>();
     }
 
     @Override
@@ -78,6 +85,14 @@ public class BaseApplication implements Application {
         return new ArrayList<Service>(_services.values());
     }
     
+    @Override
+    public Service getService(QName serviceName) {
+        if (_services == null) {
+            return null;
+        }
+        return _services.get(serviceName);
+    }
+
     /**
      * Set the list of services offered by this application.
      * @param services list of services
@@ -101,4 +116,55 @@ public class BaseApplication implements Application {
         }
         return service;
     }
+
+    @Override
+    public List<ComponentService> getComponentServices() {
+        if (_componentServices == null) {
+            return Collections.emptyList();
+        }
+        return new ArrayList<ComponentService>(_componentServices.values());
+    }
+
+    @Override
+    public ComponentService getComponentService(QName componentServiceName) {
+        if (_componentServices == null) {
+            return null;
+        }
+        return _componentServices.get(componentServiceName);
+    }
+
+    /**
+     * Set the list of services offered by this application.
+     * @param services list of services
+     */
+    public void setComponentServices(List<ComponentService> services) {
+        _componentServices = new LinkedHashMap<QName, ComponentService>();
+        for (ComponentService service : services) {
+            _componentServices.put(service.getName(), service);
+        }
+    }
+
+    protected void addComponentService(ComponentService service) {
+        _componentServices.put(service.getName(), service);
+    }
+
+    protected ComponentService removeComponentService(QName serviceName) {
+        ComponentService service = _componentServices.remove(serviceName);
+        return service;
+    }
+
+    @Override
+    public List<Transformer> getTransformers() {
+        return Collections.unmodifiableList(_transformers);
+    }
+
+    protected void setTransformers(List<Transformer> transformers) {
+        _transformers.clear();
+        _transformers.addAll(transformers);
+    }
+
+    protected void addTransformer(Transformer transformer) {
+        _transformers.add(transformer);
+    }
+
 }

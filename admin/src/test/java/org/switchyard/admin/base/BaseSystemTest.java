@@ -29,7 +29,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.switchyard.admin.Application;
+import org.switchyard.admin.Binding;
 import org.switchyard.admin.Component;
+import org.switchyard.admin.ComponentService;
 import org.switchyard.admin.ComponentType;
 import org.switchyard.admin.Service;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
@@ -144,12 +146,12 @@ public class BaseSystemTest {
         }
 
         @Override
-        public Component getImplementation() {
+        public ComponentService getPromotedService() {
             return null;
         }
 
         @Override
-        public List<Component> getGateways() {
+        public List<Binding> getGateways() {
             return null;
         }
 

@@ -214,6 +214,7 @@ public class Deployment extends AbstractDeployment {
         _log.debug("Registering configured Transformers ...");
         TransformsModel transforms = getConfig().getTransforms();
         getTransformerRegistryLoader().registerTransformers(transforms);
+        fireTransformersRegistered(transforms);
     }
 
     private void deployReferenceBindings() {
@@ -335,6 +336,7 @@ public class Deployment extends AbstractDeployment {
                 Activation activation = new Activation(serviceRef, activator);
                 activation.start();
                 _services.add(activation);
+                fireComponentDeployed(component);
             }
         }
         
@@ -398,9 +400,14 @@ public class Deployment extends AbstractDeployment {
 
     private void undeployServices() {
         _log.debug("Undeploying services ...");
+        Set<QName> undeployedServiceNames = new LinkedHashSet<QName>();
         for (Activation activation : _services) {
             activation.stop();
             activation.destroy();
+        }
+        // notify listeners
+        for (QName serviceName : undeployedServiceNames) {
+            fireComponentUndeployed(serviceName);
         }
     }
 

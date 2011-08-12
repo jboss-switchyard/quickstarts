@@ -71,7 +71,7 @@ public final class SwitchYardSubsystemListServices implements OperationStepHandl
                 SwitchYard switchYard = SwitchYard.class.cast(controller.getService().getValue());
                 if (operation.hasDefined(APPLICATION_NAME)) {
                     final QName applicationName = QName.valueOf(operation.get(APPLICATION_NAME).asString());
-                    final Application application = switchYard.findApplication(applicationName);
+                    final Application application = switchYard.getApplication(applicationName);
                     if (application != null) {
                         for (Service service : application.getServices()) {
                             services.add(ModelNodeCreationUtil.createSimpleServiceNode(service));
