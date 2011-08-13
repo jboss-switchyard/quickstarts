@@ -30,7 +30,9 @@ import org.switchyard.console.client.ui.main.MainPresenter;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.inject.Inject;
@@ -119,10 +121,19 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
                 Singleton.MESSAGES.header_content_serviceDetails()).toSafeHtml());
         headerContent.setStylePrimaryName("header-content");
         Console.MODULES.getHeader().setContent(headerContent);
-        Console.MODULES.getHeader().highlight(NameTokens.COMPONENT_CONFIG_PRESENTER);
+        Console.MODULES.getHeader().highlight(NameTokens.SERVICE_CONFIG_PRESENTER);
 
         String serviceName = _placeManager.getCurrentPlaceRequest().getParameter("service", null);
         String applicationName = _placeManager.getCurrentPlaceRequest().getParameter("application", null);
+
+        if (serviceName != null) {
+            serviceName = URL.decode(serviceName);
+        }
+        if (applicationName != null) {
+            applicationName = URL.decode(applicationName);
+        }
+        Window.setTitle("SwitchYard: Service - " + NameTokens.parseQName(applicationName)[1] + ":" + NameTokens.parseQName(serviceName)[1]);
+
         loadService(serviceName, applicationName);
     }
 

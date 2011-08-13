@@ -19,9 +19,12 @@
 package org.switchyard.console.client;
 
 import org.switchyard.console.client.model.Application;
+import org.switchyard.console.client.model.Binding;
 import org.switchyard.console.client.model.Component;
+import org.switchyard.console.client.model.ComponentService;
 import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.model.SystemDetails;
+import org.switchyard.console.client.model.Transformer;
 
 import com.google.gwt.autobean.shared.AutoBean;
 import com.google.gwt.autobean.shared.AutoBeanFactory;
@@ -54,5 +57,20 @@ public interface BeanFactory extends AutoBeanFactory {
      * @return a new AutoBean<Service>
      */
     AutoBean<Service> service();
+
+    /**
+     * @return a new AutoBean<ComponentService>
+     */
+    AutoBean<ComponentService> componentService();
+
+    /**
+     * @return a new AutoBean<Binding>
+     */
+    AutoBean<Binding> binding();
+
+    /**
+     * @return a new AutoBean<Transformer>
+     */
+    AutoBean<Transformer> transformer();
 
 }

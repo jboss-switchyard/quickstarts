@@ -19,20 +19,41 @@
 package org.switchyard.console.client.model;
 
 /**
- * Transform
+ * Transformer
  * 
  * Represents a SwitchYard configuration transform.
  * 
  * @author Rob Cernich
  */
-public interface Transform {
+public interface Transformer {
     /**
      * @return the from type.
      */
     public String getFrom();
+    
+    /**
+     * @param from the from type.
+     */
+    public void setFrom(String from);
 
     /**
      * @return the to type.
      */
     public String getTo();
+    
+    /**
+     * @param to the to type.
+     */
+    public void setTo(String to);
+
+    /**
+     * @return the implementation type.
+     */
+    public String getType();
+    
+    /**
+     * @param type the implementation type.
+     */
+    public void setType(String type);
+
 }

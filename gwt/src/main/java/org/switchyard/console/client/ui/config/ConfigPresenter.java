@@ -31,6 +31,7 @@ import org.switchyard.console.client.ui.main.MainPresenter;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.inject.Inject;
@@ -120,6 +121,9 @@ public class ConfigPresenter extends Presenter<ConfigPresenter.MyView, ConfigPre
         headerContent.setStylePrimaryName("header-content");
         Console.MODULES.getHeader().setContent(headerContent);
         Console.MODULES.getHeader().highlight(NameTokens.SYSTEM_CONFIG_PRESENTER);
+
+        Window.setTitle("SwitchYard: System");
+
         loadSystemDetails();
     }
 

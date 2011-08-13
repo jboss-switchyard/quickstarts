@@ -18,64 +18,33 @@
  */
 package org.switchyard.console.client.model;
 
-import java.util.List;
-
 /**
- * Service
+ * Binding
  * 
- * Represents a SwitchYard service.
+ * Represents a gateway binding on a service.
  * 
  * @author Rob Cernich
  */
-public interface Service {
+public interface Binding {
+    
     /**
-     * @return the service's name.
+     * @return the type of binding (e.g. soap)
      */
-    public String getName();
-
+    public String getType();
+    
     /**
-     * @param name the service's name
+     * @param type the type of binding (e.g. soap)
      */
-    public void setName(String name);
-
+    public void setType(String type);
+    
     /**
-     * @return the interface name
+     * @return the raw configuration of the binding
      */
-    public String getInterface();
-
+    public String getConfiguration();
+    
     /**
-     * @param interfaceName the interface name
+     * @param configuration the raw configuration of the binding.
      */
-    public void setInterface(String interfaceName);
-
-    /**
-     * @return the promoted service's name
-     */
-    public String getPromotedService();
-
-    /**
-     * @param promotedService the promoted service's name
-     */
-    public void setPromotedService(String promotedService);
-
-    /**
-     * @return the gateways
-     */
-    List<Binding> getGateways();
-
-    /**
-     * @param gateways the gateways
-     */
-    public void setGateways(List<Binding> gateways);
-
-    /**
-     * @return the application name
-     */
-    public String getApplication();
-
-    /**
-     * @param application the application name
-     */
-    public void setApplication(String application);
+    public void setConfiguration(String configuration);
 
 }

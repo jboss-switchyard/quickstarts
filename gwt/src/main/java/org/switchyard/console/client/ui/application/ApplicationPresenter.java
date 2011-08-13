@@ -29,7 +29,9 @@ import org.switchyard.console.client.ui.main.MainPresenter;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.inject.Inject;
@@ -117,9 +119,15 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
         HTML headerContent = new HTML(new SafeHtmlBuilder().appendEscaped("Application Details").toSafeHtml());
         headerContent.setStylePrimaryName("header-content");
         Console.MODULES.getHeader().setContent(headerContent);
-        Console.MODULES.getHeader().highlight(NameTokens.COMPONENT_CONFIG_PRESENTER);
+        Console.MODULES.getHeader().highlight(NameTokens.APPLICATION_CONFIG_PRESENTER);
+        
+        String applicationName = _placeManager.getCurrentPlaceRequest().getParameter("application", null);
+        if (applicationName != null) {
+            applicationName = URL.decode(applicationName);
+        }
+        Window.setTitle("SwitchYard: Application - " + NameTokens.parseQName(applicationName)[1]);
 
-        loadApplication(_placeManager.getCurrentPlaceRequest().getParameter("application", null));
+        loadApplication(applicationName);
     }
 
     @Override

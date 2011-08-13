@@ -21,13 +21,13 @@ package org.switchyard.console.client.model;
 import java.util.List;
 
 /**
- * Service
+ * ComponentService
  * 
- * Represents a SwitchYard service.
+ * Represents a SwitchYard component service.
  * 
  * @author Rob Cernich
  */
-public interface Service {
+public interface ComponentService {
     /**
      * @return the service's name.
      */
@@ -49,24 +49,24 @@ public interface Service {
     public void setInterface(String interfaceName);
 
     /**
-     * @return the promoted service's name
+     * @return the implementation name
      */
-    public String getPromotedService();
+    public String getImplementation();
 
     /**
-     * @param promotedService the promoted service's name
+     * @param implementation the implementation name
      */
-    public void setPromotedService(String promotedService);
-
+    public void setImplementation(String implementation);
+    
     /**
-     * @return the gateways
+     * @return the references required by this component
      */
-    List<Binding> getGateways();
-
+    public List<String> getReferences();
+    
     /**
-     * @param gateways the gateways
+     * @param references the references required by this component
      */
-    public void setGateways(List<Binding> gateways);
+    public void setReferences(List<String> references);
 
     /**
      * @return the application name

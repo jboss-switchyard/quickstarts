@@ -21,6 +21,7 @@ package org.switchyard.console.client.ui.application;
 
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
+import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.model.Application;
 
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -28,27 +29,29 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * ApplicationEditor
+ * ApplicationServicesEditor
  * 
  * Editor widget for SwitchYard application details.
  * 
  * @author Rob Cernich
  */
-public class ApplicationEditor {
+public class ApplicationServicesEditor {
 
     private ApplicationPresenter _presenter;
 
-    private ContentHeaderLabel _headerLabel;
+    private ContentHeaderLabel _applicationHeaderLabel;
+    private ContentHeaderLabel _namespaceHeaderLabel;
     private ServicesList _servicesList;
+    private ComponentServicesList _componentServicesList;
 
     private Application _application;
 
     /**
-     * Create a new ApplicationEditor.
+     * Create a new ApplicationServicesEditor.
      * 
      * @param presenter the associated presenter.
      */
-    public ApplicationEditor(ApplicationPresenter presenter) {
+    public ApplicationServicesEditor(ApplicationPresenter presenter) {
         this._presenter = presenter;
     }
 
@@ -64,13 +67,22 @@ public class ApplicationEditor {
 
         scroll.add(layout);
 
-        _headerLabel = new ContentHeaderLabel();
-        layout.add(_headerLabel);
+        _applicationHeaderLabel = new ContentHeaderLabel();
+        layout.add(_applicationHeaderLabel);
+
+        _namespaceHeaderLabel = new ContentHeaderLabel();
+        layout.add(_namespaceHeaderLabel);
 
         _servicesList = new ServicesList();
+        _componentServicesList = new ComponentServicesList();
 
         layout.add(new ContentGroupLabel("Services"));
         layout.add(_servicesList.asWidget());
+
+        layout.add(new ContentGroupLabel("Component Services"));
+        layout.add(_componentServicesList.asWidget());
+
+        _componentServicesList.bind(_servicesList);
 
         return scroll;
     }
@@ -81,8 +93,11 @@ public class ApplicationEditor {
     public void setApplication(Application application) {
         this._application = application;
 
-        _headerLabel.setText("Application: " + application.getName());
+        String[] tnsLocal = NameTokens.parseQName(application.getName());
+        _applicationHeaderLabel.setText("Application: " + tnsLocal[1]);
+        _namespaceHeaderLabel.setText("Namespace: " + tnsLocal[0]);
         _servicesList.setApplication(application);
+        _componentServicesList.setApplication(application);
     }
 
 }

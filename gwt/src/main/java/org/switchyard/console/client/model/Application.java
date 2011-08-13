@@ -39,53 +39,33 @@ public interface Application {
     public void setName(String name);
 
     /**
-     * @return the services defined within this application.
+     * @return the services provided by this application.
      */
-    public List<String> getServices();
+    public List<Service> getServices();
 
     /**
-     * @param services the services defined within this application.
+     * @param services the services provided by this application.
      */
-    public void setServices(List<String> services);
+    public void setServices(List<Service> services);
+    
+    /**
+     * @return the component services defined within this application.
+     */
+    public List<ComponentService> getComponentServices();
+    
+    /**
+     * @param componentServices the component services defined within this application.
+     */
+    public void setComponentServices(List<ComponentService> componentServices);
 
     /**
-     * @return the transforms defined within this application.
+     * @return the transformers defined within this application.
      */
-    public List<Transform> getTransforms();
+    public List<Transformer> getTransformers();
 
     /**
-     * @param transforms the transforms defined within this application.
+     * @param transformers the transforms defined within this application.
      */
-    public void setTransforms(List<Transform> transforms);
-
-    /**
-     * @return the domains defined within this application.
-     */
-    public List<Domain> getDomains();
-
-    /**
-     * @param domains the domains defined within this application.
-     */
-    public void setDomains(List<Domain> domains);
-
-    /**
-     * @return the runtime name of this application.
-     */
-    public String getRuntimeName();
-
-    /**
-     * @param runtimeName the runtime name of this application.
-     */
-    public void setRuntimeName(String runtimeName);
-
-    /**
-     * @return true if this application is enabled.
-     */
-    public boolean isEnabled();
-
-    /**
-     * @param enabled true if this application is enabled.
-     */
-    public void setEnabled(boolean enabled);
+    public void setTransformers(List<Transformer> transformers);
 
 }

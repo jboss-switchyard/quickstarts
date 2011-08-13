@@ -34,9 +34,9 @@ public interface Domain {
     public String getName();
 
     /**
-     * @return the transforms definined in this domain.
+     * @return the transformers definined in this domain.
      */
-    public List<Transform> getTransforms();
+    public List<Transformer> getTransformers();
 
     /**
      * @return the properties defined in this domain.

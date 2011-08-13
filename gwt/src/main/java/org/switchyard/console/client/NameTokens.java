@@ -72,4 +72,19 @@ public class NameTokens extends org.jboss.as.console.client.core.NameTokens {
         return "switchyard/service;service=" + URL.encode(serviceName) + ";application=" + URL.encode(applicationName);
     }
 
+    /**
+     * @param name a string representation of a javax.xml.namespace.QName
+     * @return the QName components, {namespace,local}
+     */
+    public static String[] parseQName(String name) {
+        if (name == null) {
+            return new String[] {"", "" };
+        }
+        int namespaceEnd = name.indexOf('}');
+        if (namespaceEnd > 0) {
+            return new String[] {name.substring(1, namespaceEnd), name.substring(namespaceEnd + 1) };
+        }
+        return new String[] {"", name };
+    }
+
 }

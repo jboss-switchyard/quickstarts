@@ -20,10 +20,10 @@
 package org.switchyard.console.client.ui.application;
 
 import org.jboss.as.console.client.core.DisposableViewImpl;
-import org.jboss.as.console.client.widgets.RHSContentPanel;
 import org.switchyard.console.client.model.Application;
 
-import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -37,17 +37,24 @@ public class ApplicationView extends DisposableViewImpl implements ApplicationPr
 
     private ApplicationPresenter _presenter;
 
-    private ApplicationEditor _applicationEditor;
+    private ApplicationServicesEditor _servicesEditor;
+    private ApplicationTransformationsEditor _transformationsEditor;
 
     @Override
     public Widget createWidget() {
 
-        LayoutPanel layout = new RHSContentPanel("Application Details");
+        _servicesEditor = new ApplicationServicesEditor(_presenter);
+        _transformationsEditor = new ApplicationTransformationsEditor(_presenter);
 
-        _applicationEditor = new ApplicationEditor(_presenter);
-        layout.add(_applicationEditor.asWidget());
+        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
+        tabLayoutpanel.addStyleName("default-tabpanel");
 
-        return layout;
+        tabLayoutpanel.add(_servicesEditor.asWidget(), "Services");
+        tabLayoutpanel.add(_transformationsEditor.asWidget(), "Transformers");
+
+        tabLayoutpanel.selectTab(0);
+
+        return tabLayoutpanel;
     }
 
     @Override
@@ -57,7 +64,8 @@ public class ApplicationView extends DisposableViewImpl implements ApplicationPr
 
     @Override
     public void setApplication(Application application) {
-        _applicationEditor.setApplication(application);
+        _servicesEditor.setApplication(application);
+        _transformationsEditor.setApplication(application);
     }
 
 }

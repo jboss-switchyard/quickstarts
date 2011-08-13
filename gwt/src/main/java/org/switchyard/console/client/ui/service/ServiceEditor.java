@@ -44,7 +44,8 @@ public class ServiceEditor {
 
     private ServicePresenter _presenter;
 
-    private ContentHeaderLabel _headerLabel;
+    private ContentHeaderLabel _serviceHeaderLabel;
+    private ContentHeaderLabel _namespaceHeaderLabel;
     private Form<Service> _implementationDetailsForm;
     private GatewaysList _gatewaysList;
 
@@ -71,8 +72,11 @@ public class ServiceEditor {
 
         scroll.add(layout);
 
-        _headerLabel = new ContentHeaderLabel();
-        layout.add(_headerLabel);
+        _serviceHeaderLabel = new ContentHeaderLabel();
+        layout.add(_serviceHeaderLabel);
+
+        _namespaceHeaderLabel = new ContentHeaderLabel();
+        layout.add(_namespaceHeaderLabel);
 
         layout.add(createImplementationDetailsPanel());
         layout.add(createGatewayDetailsPanel());
@@ -86,7 +90,10 @@ public class ServiceEditor {
     public void setService(Service service) {
         this._service = service;
 
-        _headerLabel.setText(Singleton.MESSAGES.header_editor_service_name(service.getName()));
+        String[] tnsLocal = NameTokens.parseQName(service.getName());
+        _serviceHeaderLabel
+                .setText(Singleton.MESSAGES.header_editor_service_name(tnsLocal[1]));
+        _namespaceHeaderLabel.setText("Namespace: " + tnsLocal[0]);
         _implementationDetailsForm.edit(service);
         _gatewaysList.setService(service);
     }
@@ -96,7 +103,7 @@ public class ServiceEditor {
                 new ValueAdapter<String>() {
                     @Override
                     public String getText(String value) {
-                        return value;
+                        return NameTokens.parseQName(value)[1];
                     }
 
                     @Override
@@ -104,17 +111,18 @@ public class ServiceEditor {
                         return NameTokens.createApplicationLink(value);
                     }
                 });
+        // TODO: add item for target namespace
         TextItem interfaceItem = new TextItem("interface", "Interface");
-        ClickableTextItem<String> implementationItem = new ClickableTextItem<String>("implementation",
-                "Implementation", new ValueAdapter<String>() {
+        ClickableTextItem<String> implementationItem = new ClickableTextItem<String>("promotedService",
+                "Promoted Service", new ValueAdapter<String>() {
                     @Override
                     public String getText(String value) {
-                        return value;
+                        return NameTokens.parseQName(value)[1];
                     }
 
                     @Override
                     public String getTargetHistoryToken(String value) {
-                        return NameTokens.createComponentLink(value);
+                        return NameTokens.createApplicationLink(_service.getApplication());
                     }
                 });
 
