@@ -22,29 +22,17 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 
-<module xmlns="urn:jboss:module:1.0" name="org.switchyard.component.bpm">
+<module xmlns="urn:jboss:module:1.0" name="org.drools.knowledge-api" slot="jbpm-${jbpm.version}">
 
     <resources>
-        <resource-root path="switchyard-component-bpm-${project.version}.jar"/>
-        <resource-root path="jbpm-bpmn2-xsds-${jbpm.version}.jar"/>
+        <resource-root path="knowledge-api-${drools.version}.jar"/>
     </resources>
 
     <dependencies>
-        <module name="javax.api"/>
-        <module name="org.apache.log4j"/>
-        <module name="org.switchyard.api"/>
-        <module name="org.switchyard.common"/>
-        <module name="org.switchyard.config"/>
-        <module name="org.switchyard.deploy"/>
         <module name="org.drools.drools-compiler" slot="jbpm-${jbpm.version}"/>
         <module name="org.drools.drools-core" slot="jbpm-${jbpm.version}"/>
-        <module name="org.drools.knowledge-api" slot="jbpm-${jbpm.version}"/>
-        <module name="org.drools.drools-persistence-jpa" slot="jbpm-${jbpm.version}"/>
         <module name="org.jbpm.jbpm-flow"/>
         <module name="org.jbpm.jbpm-flow-builder"/>
         <module name="org.jbpm.jbpm-bpmn2"/>
-        <module name="org.jbpm.jbpm-persistence-jpa"/>
-        <module name="org.jbpm.jbpm-workitems"/>
-        <module name="org.jbpm.jbpm-human-task"/>
     </dependencies>
 </module>

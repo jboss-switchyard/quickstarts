@@ -69,8 +69,8 @@
         <module>tools/forge/camel</module>
         <module>tools/forge/clojure</module>
         <module>tools/forge/soap</module>
-        <module>tools/forge/bpm</module>
         <module>tools/forge/rules</module>
+        <module>tools/forge/bpm</module>
     </modules>
 
     <repositories>

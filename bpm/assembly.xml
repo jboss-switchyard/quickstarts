@@ -17,67 +17,82 @@
       <outputDirectory>/modules/org/switchyard/component/bpm/main</outputDirectory>
     </file>
     <file>
-      <source>src/build/resources/drools/drools-compiler/module.xml</source>
-      <outputDirectory>/modules/org/drools/drools-compiler/main</outputDirectory>
+      <source>src/build/resources/org/drools/knowledge-api/module.xml</source>
+      <outputDirectory>/modules/org/drools/knowledge-api/jbpm-${jbpm.version}</outputDirectory>
       <filtered>true</filtered>
     </file>
     <file>
-      <source>src/build/resources/drools/drools-core/module.xml</source>
-      <outputDirectory>/modules/org/drools/drools-core/main</outputDirectory>
+      <source>src/build/resources/org/drools/drools-core/module.xml</source>
+      <outputDirectory>/modules/org/drools/drools-core/jbpm-${jbpm.version}</outputDirectory>
       <filtered>true</filtered>
     </file>
     <file>
-      <source>src/build/resources/drools/knowledge-api/module.xml</source>
-      <outputDirectory>/modules/org/drools/knowledge-api/main</outputDirectory>
+      <source>src/build/resources/org/drools/drools-compiler/module.xml</source>
+      <outputDirectory>/modules/org/drools/drools-compiler/jbpm-${jbpm.version}</outputDirectory>
       <filtered>true</filtered>
     </file>
     <file>
-      <source>src/build/resources/drools/drools-persistence-jpa/module.xml</source>
-      <outputDirectory>/modules/org/drools/drools-persistence-jpa/main</outputDirectory>
+      <source>src/build/resources/org/drools/drools-persistence-jpa/module.xml</source>
+      <outputDirectory>/modules/org/drools/drools-persistence-jpa/jbpm-${jbpm.version}</outputDirectory>
       <filtered>true</filtered>
     </file>
     <file>
-      <source>src/build/resources/jbpm/jbpm-flow/module.xml</source>
-      <outputDirectory>/modules/org/jbpm/jbpm-flow/main</outputDirectory>
-      <filtered>true</filtered>
-    </file>
-    <file>
-      <source>src/build/resources/jbpm/jbpm-flow-builder/module.xml</source>
-      <outputDirectory>/modules/org/jbpm/jbpm-flow-builder/main</outputDirectory>
-      <filtered>true</filtered>
-    </file>
-    <file>
-      <source>src/build/resources/jbpm/jbpm-persistence-jpa/module.xml</source>
-      <outputDirectory>/modules/org/jbpm/jbpm-persistence-jpa/main</outputDirectory>
-      <filtered>true</filtered>
-    </file>
-    <file>
-      <source>src/build/resources/jbpm/jbpm-bpmn2/module.xml</source>
-      <outputDirectory>/modules/org/jbpm/jbpm-bpmn2/main</outputDirectory>
-      <filtered>true</filtered>
-    </file>
-    <file>
-      <source>src/build/resources/jbpm/jbpm-workitems/module.xml</source>
-      <outputDirectory>/modules/org/jbpm/jbpm-workitems/main</outputDirectory>
-      <filtered>true</filtered>
-    </file>
-    <file>
-      <source>src/build/resources/jbpm/jbpm-human-task/module.xml</source>
-      <outputDirectory>/modules/org/jbpm/jbpm-human-task/main</outputDirectory>
-      <filtered>true</filtered>
-    </file>
-    <file>
-      <source>src/build/resources/eclipse/ecj/module.xml</source>
-      <outputDirectory>/modules/org/eclipse/jdt/core/compiler/main</outputDirectory>
-      <filtered>true</filtered>
-    </file>
-    <file>
-      <source>src/build/resources/antlr/antlr-runtime/module.xml</source>
+      <source>src/build/resources/org/antlr/antlr-runtime/module.xml</source>
       <outputDirectory>/modules/org/antlr/antlr-runtime/main</outputDirectory>
       <filtered>true</filtered>
     </file>
     <file>
-      <source>src/build/resources/mina/mina-core/module.xml</source>
+      <source>src/build/resources/org/eclipse/jdt/core/compiler/ecj/module.xml</source>
+      <outputDirectory>/modules/org/eclipse/jdt/core/compiler/ecj/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/build/resources/org/mvel/mvel2/module.xml</source>
+      <outputDirectory>/modules/org/mvel/mvel2/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/build/resources/org/jbpm/jbpm-flow/module.xml</source>
+      <outputDirectory>/modules/org/jbpm/jbpm-flow/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/build/resources/org/jbpm/jbpm-flow-builder/module.xml</source>
+      <outputDirectory>/modules/org/jbpm/jbpm-flow-builder/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/build/resources/org/jbpm/jbpm-persistence-jpa/module.xml</source>
+      <outputDirectory>/modules/org/jbpm/jbpm-persistence-jpa/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/build/resources/org/jbpm/jbpm-bpmn2/module.xml</source>
+      <outputDirectory>/modules/org/jbpm/jbpm-bpmn2/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/build/resources/org/jbpm/jbpm-workitems/module.xml</source>
+      <outputDirectory>/modules/org/jbpm/jbpm-workitems/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/build/resources/org/jbpm/jbpm-human-task/module.xml</source>
+      <outputDirectory>/modules/org/jbpm/jbpm-human-task/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/build/resources/org/hibernate/module.xml</source>
+      <outputDirectory>/modules/org/hibernate/jbpm-${jbpm.version}</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/build/resources/javax/persistence/api/module.xml</source>
+      <outputDirectory>/modules/javax/persistence/api/jbpm-${jbpm.version}</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/build/resources/org/apache/mina/mina-core/module.xml</source>
       <outputDirectory>/modules/org/apache/mina/mina-core/main</outputDirectory>
       <filtered>true</filtered>
     </file>
@@ -94,9 +109,9 @@
     <dependencySet>
        <useTransitiveDependencies>false</useTransitiveDependencies>
        <includes>
-          <include>org.drools:drools-compiler</include>
+          <include>org.drools:knowledge-api</include>
        </includes>
-       <outputDirectory>/modules/org/drools/drools-compiler/main</outputDirectory>
+       <outputDirectory>/modules/org/drools/knowledge-api/jbpm-${jbpm.version}</outputDirectory>
        <outputFileNameMapping>${artifact.artifactId}-${drools.version}.${artifact.extension}</outputFileNameMapping>
     </dependencySet>
     <dependencySet>
@@ -104,15 +119,15 @@
        <includes>
           <include>org.drools:drools-core</include>
        </includes>
-       <outputDirectory>/modules/org/drools/drools-core/main</outputDirectory>
+       <outputDirectory>/modules/org/drools/drools-core/jbpm-${jbpm.version}</outputDirectory>
        <outputFileNameMapping>${artifact.artifactId}-${drools.version}.${artifact.extension}</outputFileNameMapping>
     </dependencySet>
     <dependencySet>
        <useTransitiveDependencies>false</useTransitiveDependencies>
        <includes>
-          <include>org.drools:knowledge-api</include>
+          <include>org.drools:drools-compiler</include>
        </includes>
-       <outputDirectory>/modules/org/drools/knowledge-api/main</outputDirectory>
+       <outputDirectory>/modules/org/drools/drools-compiler/jbpm-${jbpm.version}</outputDirectory>
        <outputFileNameMapping>${artifact.artifactId}-${drools.version}.${artifact.extension}</outputFileNameMapping>
     </dependencySet>
     <dependencySet>
@@ -120,8 +135,32 @@
        <includes>
           <include>org.drools:drools-persistence-jpa</include>
        </includes>
-       <outputDirectory>/modules/org/drools/drools-persistence-jpa/main</outputDirectory>
+       <outputDirectory>/modules/org/drools/drools-persistence-jpa/jbpm-${jbpm.version}</outputDirectory>
        <outputFileNameMapping>${artifact.artifactId}-${drools.version}.${artifact.extension}</outputFileNameMapping>
+    </dependencySet>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
+          <include>org.antlr:antlr-runtime</include>
+       </includes>
+       <outputDirectory>/modules/org/antlr/antlr-runtime/main</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${antlr.version}.${artifact.extension}</outputFileNameMapping>
+    </dependencySet>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
+          <include>org.eclipse.jdt.core.compiler:ecj</include>
+       </includes>
+       <outputDirectory>/modules/org/eclipse/jdt/core/compiler/ecj/main</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${ecj.version}.${artifact.extension}</outputFileNameMapping>
+    </dependencySet>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
+          <include>org.mvel:mvel2</include>
+       </includes>
+       <outputDirectory>/modules/org/mvel/mvel2/main</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${mvel.version}.${artifact.extension}</outputFileNameMapping>
     </dependencySet>
     <dependencySet>
        <useTransitiveDependencies>false</useTransitiveDependencies>
@@ -174,18 +213,50 @@
     <dependencySet>
        <useTransitiveDependencies>false</useTransitiveDependencies>
        <includes>
-          <include>org.eclipse.jdt.core.compiler:ecj</include>
+          <include>org.hibernate:hibernate-core</include>
        </includes>
-       <outputDirectory>/modules/org/eclipse/jdt/core/compiler/main</outputDirectory>
-       <outputFileNameMapping>${artifact.artifactId}-${ecj.version}.${artifact.extension}</outputFileNameMapping>
+       <outputDirectory>/modules/org/hibernate/jbpm-${jbpm.version}</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${hibernate.core.version}.${artifact.extension}</outputFileNameMapping>
     </dependencySet>
     <dependencySet>
        <useTransitiveDependencies>false</useTransitiveDependencies>
        <includes>
-          <include>org.antlr:antlr-runtime</include>
+          <include>org.hibernate:hibernate-entitymanager</include>
        </includes>
-       <outputDirectory>/modules/org/antlr/antlr-runtime/main</outputDirectory>
-       <outputFileNameMapping>${artifact.artifactId}-${antlr-runtime.version}.${artifact.extension}</outputFileNameMapping>
+       <outputDirectory>/modules/org/hibernate/jbpm-${jbpm.version}</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${hibernate.entitymanager.version}.${artifact.extension}</outputFileNameMapping>
+    </dependencySet>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
+          <include>org.hibernate:hibernate-annotations</include>
+       </includes>
+       <outputDirectory>/modules/org/hibernate/jbpm-${jbpm.version}</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${hibernate.annotations.version}.${artifact.extension}</outputFileNameMapping>
+    </dependencySet>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
+          <include>org.hibernate:hibernate-commons-annotations</include>
+       </includes>
+       <outputDirectory>/modules/org/hibernate/jbpm-${jbpm.version}</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${hibernate.commons-annotations.version}.${artifact.extension}</outputFileNameMapping>
+    </dependencySet>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
+          <include>org.hibernate:ejb3-persistence</include>
+       </includes>
+       <outputDirectory>/modules/org/hibernate/jbpm-${jbpm.version}</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${hibernate.ejb3-persistence.version}.${artifact.extension}</outputFileNameMapping>
+    </dependencySet>
+    <dependencySet>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
+          <include>javax.persistence:persistence-api</include>
+       </includes>
+       <outputDirectory>/modules/javax/persistence/api/jbpm-${jbpm.version}</outputDirectory>
+       <outputFileNameMapping>${artifact.artifactId}-${hibernate.jpa.version}.${artifact.extension}</outputFileNameMapping>
     </dependencySet>
     <dependencySet>
        <useTransitiveDependencies>false</useTransitiveDependencies>
@@ -193,7 +264,7 @@
           <include>org.apache.mina:mina-core</include>
        </includes>
        <outputDirectory>/modules/org/apache/mina/mina-core/main</outputDirectory>
-       <outputFileNameMapping>${artifact.artifactId}-${mina-core.version}.${artifact.extension}</outputFileNameMapping>
+       <outputFileNameMapping>${artifact.artifactId}-${mina.version}.${artifact.extension}</outputFileNameMapping>
     </dependencySet>
   </dependencySets>
 </assembly>

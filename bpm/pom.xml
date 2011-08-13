@@ -19,10 +19,17 @@
 
     <properties>
         <drools.version>5.2.0.Final</drools.version>
+        <antlr.version>3.3</antlr.version>
         <ecj.version>3.5.1</ecj.version>
-        <antlr-runtime.version>3.3</antlr-runtime.version>
-        <mina-core.version>2.0.1</mina-core.version>
+        <mvel.version>2.1.0.drools2</mvel.version>
         <jbpm.version>5.1.0.Final</jbpm.version>
+        <hibernate.core.version>3.3.2.GA</hibernate.core.version>
+        <hibernate.entitymanager.version>3.3.2.GA</hibernate.entitymanager.version>
+        <hibernate.annotations.version>3.3.1.GA</hibernate.annotations.version>
+        <hibernate.commons-annotations.version>3.1.0.GA</hibernate.commons-annotations.version>
+        <hibernate.ejb3-persistence.version>1.0.1.GA</hibernate.ejb3-persistence.version>
+        <hibernate.jpa.version>1.0</hibernate.jpa.version>
+        <mina.version>2.0.1</mina.version>
     </properties>
 
     <build>
@@ -103,26 +110,6 @@
             <artifactId>switchyard-config</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.mina</groupId>
-            <artifactId>mina-core</artifactId>
-            <version>${mina-core.version}</version>
-        </dependency>        
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr-runtime</artifactId>
-            <version>${antlr-runtime.version}</version>
-        </dependency>        
-      <dependency>
-        <groupId>org.eclipse.jdt.core.compiler</groupId>
-        <artifactId>ecj</artifactId>
-        <version>${ecj.version}</version>
-      </dependency>
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-compiler</artifactId>
-            <version>${drools.version}</version>
-        </dependency>        
-        <dependency>
             <groupId>org.drools</groupId>
             <artifactId>knowledge-api</artifactId>
             <version>${drools.version}</version>
@@ -131,12 +118,32 @@
             <groupId>org.drools</groupId>
             <artifactId>drools-core</artifactId>
             <version>${drools.version}</version>
-        </dependency>        
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-compiler</artifactId>
+            <version>${drools.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-persistence-jpa</artifactId>
             <version>${drools.version}</version>
-        </dependency>        
+        </dependency>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr-runtime</artifactId>
+            <version>${antlr.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jdt.core.compiler</groupId>
+            <artifactId>ecj</artifactId>
+            <version>${ecj.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mvel</groupId>
+            <artifactId>mvel2</artifactId>
+            <version>${mvel.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-flow</artifactId>
@@ -157,13 +164,6 @@
             <artifactId>jbpm-bpmn2</artifactId>
             <version>${jbpm.version}</version>
         </dependency>
-                <!--
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-bam</artifactId>
-            <version>${jbpm.version}</version>
-        </dependency>
-                -->
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-workitems</artifactId>
@@ -188,13 +188,41 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--
         <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-gwt</artifactId>
-            <version>${jbpm.version}</version>
+            <groupId>org.apache.mina</groupId>
+            <artifactId>mina-core</artifactId>
+            <version>${mina.version}</version>
         </dependency>
-        -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernate.entitymanager.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-annotations</artifactId>
+            <version>${hibernate.annotations.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-commons-annotations</artifactId>
+            <version>${hibernate.commons-annotations.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>ejb3-persistence</artifactId>
+            <version>${hibernate.ejb3-persistence.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>persistence-api</artifactId>
+            <version>${hibernate.jpa.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-test</artifactId>

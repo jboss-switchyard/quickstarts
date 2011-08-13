@@ -114,7 +114,7 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
 
     private void addResource(Resource resource, KnowledgeBuilder kbuilder) {
         if (resource != null) {
-            org.drools.io.Resource kres = ResourceFactory.newUrlResource(resource.getLocationURL());
+            org.drools.io.Resource kres = ResourceFactory.newUrlResource(resource.getLocationURL(getClass()));
             ResourceType resourceType = resource.getType();
             if (resourceType == null) {
                 resourceType = ResourceType.valueOf("BPMN2");
