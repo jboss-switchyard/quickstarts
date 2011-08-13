@@ -45,11 +45,11 @@
         <camel.version>2.8.0</camel.version>
         <commonman.version>1.0</commonman.version>
         <drools.version>5.2.0.Final</drools.version>
-        <jbpm.version>5.1.0.Final</jbpm.version>
-        <version.mvel>2.1.Beta3</version.mvel>
+        <antlr.version>3.3</antlr.version>
         <ecj.version>3.5.1</ecj.version>
-        <antlr-runtime.version>3.3</antlr-runtime.version>
-        <mina-core.version>2.0.1</mina-core.version>
+        <mvel.version>2.1.0.drools2</mvel.version>
+        <jbpm.version>5.1.0.Final</jbpm.version>
+        <mina.version>2.0.1</mina.version>
     </properties>
 
     <build>
@@ -100,14 +100,14 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.switchyard.components</groupId>
+                                    <artifactId>switchyard-component-rules</artifactId>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.switchyard.components</groupId>
                                     <artifactId>switchyard-component-bpm</artifactId>
                                     <version>${project.version}</version>
                                 </artifactItem>
-                                    <artifactItem>
-                                        <groupId>org.switchyard.components</groupId>
-                                        <artifactId>switchyard-component-rules</artifactId>
-                                        <version>${project.version}</version>
-                                    </artifactItem>
                                 <artifactItem>
                                     <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-core</artifactId>
@@ -124,31 +124,6 @@
                                     <version>${commonman.version}</version>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>org.mvel</groupId>
-                                    <artifactId>mvel2</artifactId>
-                                    <version>${version.mvel}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.mina</groupId>
-                                    <artifactId>mina-core</artifactId>
-                                    <version>${mina-core.version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.antlr</groupId>
-                                    <artifactId>antlr-runtime</artifactId>
-                                    <version>${antlr-runtime.version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.eclipse.jdt.core.compiler</groupId>
-                                    <artifactId>ecj</artifactId>
-                                    <version>${ecj.version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.drools</groupId>
-                                    <artifactId>drools-compiler</artifactId>
-                                    <version>${drools.version}</version>
-                                </artifactItem>
-                                <artifactItem>
                                     <groupId>org.drools</groupId>
                                     <artifactId>knowledge-api</artifactId>
                                     <version>${drools.version}</version>
@@ -160,8 +135,28 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.drools</groupId>
+                                    <artifactId>drools-compiler</artifactId>
+                                    <version>${drools.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.drools</groupId>
                                     <artifactId>drools-persistence-jpa</artifactId>
                                     <version>${drools.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.antlr</groupId>
+                                    <artifactId>antlr</artifactId>
+                                    <version>${antlr.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jdt.core.compiler</groupId>
+                                    <artifactId>ecj</artifactId>
+                                    <version>${ecj.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.mvel</groupId>
+                                    <artifactId>mvel2</artifactId>
+                                    <version>${mvel.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.jbpm</groupId>
@@ -183,13 +178,6 @@
                                     <artifactId>jbpm-bpmn2</artifactId>
                                     <version>${jbpm.version}</version>
                                 </artifactItem>
-                                <!--
-                                <artifactItem>
-                                    <groupId>org.jbpm</groupId>
-                                    <artifactId>jbpm-bam</artifactId>
-                                    <version>${jbpm.version}</version>
-                                </artifactItem>
-                                -->
                                 <artifactItem>
                                     <groupId>org.jbpm</groupId>
                                     <artifactId>jbpm-workitems</artifactId>
@@ -200,13 +188,11 @@
                                     <artifactId>jbpm-human-task</artifactId>
                                     <version>${jbpm.version}</version>
                                 </artifactItem>
-                                <!--
                                 <artifactItem>
-                                    <groupId>org.jbpm</groupId>
-                                    <artifactId>jbpm-gwt</artifactId>
-                                    <version>${jbpm.version}</version>
+                                    <groupId>org.apache.mina</groupId>
+                                    <artifactId>mina-core</artifactId>
+                                    <version>${mina.version}</version>
                                 </artifactItem>
-                                -->
                             </artifactItems>
                         </configuration>
                     </execution>
@@ -233,6 +219,10 @@
                               <artifactItem>
                                   <groupId>org.switchyard</groupId>
                                   <artifactId>switchyard-forge-soap-plugin</artifactId>
+                              </artifactItem>
+                              <artifactItem>
+                                  <groupId>org.switchyard</groupId>
+                                  <artifactId>switchyard-forge-rules-plugin</artifactId>
                               </artifactItem>
                               <artifactItem>
                                   <groupId>org.switchyard</groupId>
@@ -307,13 +297,13 @@
                                 <!-- Copy Drools & JBPM dependencies to default server switchyard.deployer folder... -->
                                 <copy todir="${default.server}/deployers/switchyard.deployer">
                                     <fileset dir="${dependencies.dir}">
-                                        <include name="drools-*.jar" />
-                                        <include name="jbpm-*.jar" />
                                         <include name="knowledge*.jar" />
+                                        <include name="drools-*.jar" />
                                         <include name="antlr*.jar" />
-                                        <include name="mina*.jar" />
                                         <include name="ecj*.jar" />
                                         <include name="mvel2*.jar" />
+                                        <include name="jbpm-*.jar" />
+                                        <include name="mina*.jar" />
                                     </fileset>
                                 </copy>
 

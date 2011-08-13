@@ -71,13 +71,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-human-task</artifactId>
-            <version>5.1.0.Final</version>
-            <scope>test</scope>
-            <type>jar</type>
-        </dependency>
-        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>1.3.154</version>
@@ -245,6 +238,24 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>install-switchyard-component-rules</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.switchyard.components</groupId>
+                                    <artifactId>switchyard-component-rules</artifactId>
+                                    <type>zip</type>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${staging.jboss.dir}</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>install-switchyard-component-bpm</id>
                         <phase>generate-sources</phase>
                         <goals>
@@ -306,11 +317,11 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-forge-bpm-plugin</artifactId>
+                                    <artifactId>switchyard-forge-rules-plugin</artifactId>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-forge-rules-plugin</artifactId>
+                                    <artifactId>switchyard-forge-bpm-plugin</artifactId>
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>${staging.jboss.dir}/forge</outputDirectory>
