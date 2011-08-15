@@ -34,6 +34,8 @@ import org.jboss.msc.service.ServiceTarget;
 import org.jboss.msc.value.ImmediateValue;
 import org.switchyard.as7.extension.SwitchYardDeploymentMarker;
 import org.switchyard.as7.extension.services.SwitchYardService;
+import org.switchyard.as7.extension.services.SwitchYardServiceDomainManagerService;
+import org.switchyard.deploy.ServiceDomainManager;
 
 /**
  * Deployment processor that installs the SwitchYard service and all other dependent services.
@@ -52,8 +54,11 @@ public class SwitchYardDeploymentProcessor implements DeploymentUnitProcessor {
         }
         LOG.info("Deploying SwitchYard application '" + deploymentUnit.getName() + "'");
 
+        ServiceDomainManager domainManager =
+                (ServiceDomainManager) phaseContext.getServiceRegistry().getRequiredService(SwitchYardServiceDomainManagerService.SERVICE_NAME).getService().getValue();
+
         SwitchYardMetaData metaData = deploymentUnit.getAttachment(SwitchYardMetaData.ATTACHMENT_KEY);
-        SwitchYardDeployment deployment = new SwitchYardDeployment(deploymentUnit, metaData.geSwitchYardModel());
+        SwitchYardDeployment deployment = new SwitchYardDeployment(deploymentUnit, metaData.geSwitchYardModel(), domainManager);
         SwitchYardService container = new SwitchYardService(deployment);
         final ServiceTarget serviceTarget = phaseContext.getServiceTarget();
         final ServiceName switchyardServiceName = deploymentUnit.getServiceName().append(SwitchYardService.SERVICE_NAME);

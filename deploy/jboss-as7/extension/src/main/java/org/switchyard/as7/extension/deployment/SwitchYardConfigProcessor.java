@@ -50,7 +50,6 @@ public class SwitchYardConfigProcessor implements DeploymentUnitProcessor {
         }
         SwitchYardMetaData switchYardMetaData = deploymentUnit.getAttachment(SwitchYardMetaData.ATTACHMENT_KEY);
 
-
         ClassLoader origCL = Thread.currentThread().getContextClassLoader();
         InputStream is = null;
         try {

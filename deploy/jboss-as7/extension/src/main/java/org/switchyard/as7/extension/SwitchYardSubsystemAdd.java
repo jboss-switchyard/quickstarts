@@ -39,6 +39,7 @@ import org.switchyard.as7.extension.deployment.SwitchYardConfigProcessor;
 import org.switchyard.as7.extension.deployment.SwitchYardDependencyProcessor;
 import org.switchyard.as7.extension.deployment.SwitchYardDeploymentProcessor;
 import org.switchyard.as7.extension.services.SwitchYardAdminService;
+import org.switchyard.as7.extension.services.SwitchYardServiceDomainManagerService;
 
 /**
  * The SwitchYard subsystem add update handler.
@@ -91,6 +92,9 @@ public final class SwitchYardSubsystemAdd extends AbstractBoottimeAddStepHandler
         final SwitchYardAdminService adminService = new SwitchYardAdminService(version);
         newControllers.add(context.getServiceTarget().addService(SwitchYardAdminService.SERVICE_NAME, adminService)
                 .install());
+
+        // Add the AS7 Service for the ServiceDomainManager...
+        newControllers.add(context.getServiceTarget().addService(SwitchYardServiceDomainManagerService.SERVICE_NAME, new SwitchYardServiceDomainManagerService()).install());
     }
 
 }

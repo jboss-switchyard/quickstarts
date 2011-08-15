@@ -51,6 +51,7 @@ public class SwitchYardCdiIntegrationProcessor implements DeploymentUnitProcesso
         if (!SwitchYardDeploymentMarker.isSwitchYardDeployment(deploymentUnit)) {
             return;
         }
+
         if (WeldDeploymentMarker.isPartOfWeldDeployment(deploymentUnit)) {
             // Add the Weld portable extension
             final DeploymentUnit parent = deploymentUnit.getParent() == null ? deploymentUnit : deploymentUnit.getParent();

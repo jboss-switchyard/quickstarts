@@ -27,6 +27,7 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.dmr.ModelNode;
 import org.jboss.modules.Module;
 import org.jboss.msc.service.ServiceController;
+import org.switchyard.ServiceDomain;
 import org.switchyard.admin.Application;
 import org.switchyard.admin.base.BaseSwitchYard;
 import org.switchyard.as7.extension.SwitchYardExtension;
@@ -52,17 +53,20 @@ public class SwitchYardDeployment {
     private final DeploymentUnit _deployUnit;
     private SwitchYardDeploymentState _deploymentState;
     private Deployment _deployment;
+    private ServiceDomainManager _domainManager;
+    private ServiceDomain _appServiceDomain;
 
     /**
      * Creates a new SwitchYard deployment.
-     * 
+     *
      * @param deploymentUnit deployment reference
      * @param config switchyard configuration
+     * @param domainManager Service Domain Manager instance.
      */
-    public SwitchYardDeployment(final DeploymentUnit deploymentUnit, final SwitchYardModel config) {
-
+    public SwitchYardDeployment(final DeploymentUnit deploymentUnit, final SwitchYardModel config, ServiceDomainManager domainManager) {
         _deployUnit = deploymentUnit;
         _deployment = new Deployment(config);
+        _domainManager = domainManager;
     }
 
     /**
@@ -86,7 +90,11 @@ public class SwitchYardDeployment {
         try {
             Thread.currentThread().setContextClassLoader(module.getClassLoader());
             setDeploymentState(SwitchYardDeploymentState.INITIALIZING);
-            _deployment.init(ServiceDomainManager.createDomain());
+
+            // Use the ROOT_DOMAIN name for now.  Getting an exception SwitchYardModel.getQName().
+            _appServiceDomain = _domainManager.addApplicationServiceDomain(ServiceDomainManager.ROOT_DOMAIN, _deployment.getConfig());
+
+            _deployment.init(_appServiceDomain);
             setDeploymentState(SwitchYardDeploymentState.STARTING);
             _deployment.start();
             setDeploymentState(SwitchYardDeploymentState.STARTED);
@@ -102,17 +110,23 @@ public class SwitchYardDeployment {
     public void stop() {
         ClassLoader origCL = Thread.currentThread().getContextClassLoader();
         try {
-            final Module module = _deployUnit.getAttachment(Attachments.MODULE);
-            Thread.currentThread().setContextClassLoader(module.getClassLoader());
-            if (_deploymentState == SwitchYardDeploymentState.STARTED) {
-                _deployment.stop();
-                setDeploymentState(SwitchYardDeploymentState.STOPPED);
-                unregisterManagementNodes();
-            }
-            if (_deploymentState == SwitchYardDeploymentState.STARTING
-                    || _deploymentState == SwitchYardDeploymentState.STOPPED) {
-                _deployment.destroy();
-                setDeploymentState(SwitchYardDeploymentState.DESTROYED);
+            try {
+                final Module module = _deployUnit.getAttachment(Attachments.MODULE);
+                Thread.currentThread().setContextClassLoader(module.getClassLoader());
+                if (_deploymentState == SwitchYardDeploymentState.STARTED) {
+                    _deployment.stop();
+                    setDeploymentState(SwitchYardDeploymentState.STOPPED);
+                    unregisterManagementNodes();
+                }
+                if (_deploymentState == SwitchYardDeploymentState.STARTING
+                        || _deploymentState == SwitchYardDeploymentState.STOPPED) {
+                    _deployment.destroy();
+                    setDeploymentState(SwitchYardDeploymentState.DESTROYED);
+                }
+            } finally {
+                if (_appServiceDomain != null) {
+                    _domainManager.removeApplicationServiceDomain(_appServiceDomain);
+                }
             }
         } finally {
             Thread.currentThread().setContextClassLoader(origCL);
