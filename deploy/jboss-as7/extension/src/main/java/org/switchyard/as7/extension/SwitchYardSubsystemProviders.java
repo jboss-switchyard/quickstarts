@@ -40,6 +40,7 @@ import static org.switchyard.as7.extension.SwitchYardModelConstants.FROM;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.GATEWAYS;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.GET_VERSION;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.IMPLEMENTATION;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.IMPLEMENTATION_CONFIGURATION;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.LIST_APPLICATIONS;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.LIST_COMPONENTS;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.LIST_SERVICES;
@@ -384,6 +385,9 @@ final class SwitchYardSubsystemProviders {
             op.get(VALUE_TYPE, IMPLEMENTATION, TYPE).set(ModelType.STRING);
             op.get(VALUE_TYPE, IMPLEMENTATION, DESCRIPTION).set(
                     bundle.getString("switchyard.read-service.reply.implementation"));
+            op.get(VALUE_TYPE, IMPLEMENTATION_CONFIGURATION, TYPE).set(ModelType.STRING);
+            op.get(VALUE_TYPE, IMPLEMENTATION_CONFIGURATION, DESCRIPTION).set(
+                    bundle.getString("switchyard.read-service.reply.implementationConfiguration"));
             op.get(VALUE_TYPE, REFERENCES, TYPE).set(ModelType.LIST);
             op.get(VALUE_TYPE, REFERENCES, DESCRIPTION).set(bundle.getString("switchyard.read-service.reply.references"));
             op.get(VALUE_TYPE, REFERENCES, VALUE_TYPE, NAME, TYPE).set(ModelType.STRING);

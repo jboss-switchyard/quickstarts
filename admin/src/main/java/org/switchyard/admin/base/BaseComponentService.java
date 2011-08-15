@@ -42,17 +42,19 @@ public class BaseComponentService implements ComponentService {
     private final String _interface;
     private final Application _application;
     private List<ComponentReference> _references;
+    private final String _implementationConfiguration;
 
     /**
      * Create a new BaseComponentService.
      * 
      * @param name the name of this service
      * @param implementation the implementation of this service
+     * @param implementationConfiguration the raw configuration for the implementation of this service
      * @param interfaceName the interface this service implements
      * @param application the application providing this service
      * @param references the references required by this service
      */
-    public BaseComponentService(QName name, String implementation, String interfaceName, Application application, List<ComponentReference> references) {
+    public BaseComponentService(QName name, String implementation, String implementationConfiguration, String interfaceName, Application application, List<ComponentReference> references) {
         _name = name;
         _implementation = implementation;
         _interface = interfaceName;
@@ -60,6 +62,7 @@ public class BaseComponentService implements ComponentService {
         if (references != null) {
             _references = new LinkedList<ComponentReference>(references);
         }
+        _implementationConfiguration = implementationConfiguration;
     }
 
     @Override
@@ -88,6 +91,11 @@ public class BaseComponentService implements ComponentService {
     @Override
     public Application getApplication() {
         return _application;
+    }
+
+    @Override
+    public String getImplementationConfiguration() {
+        return _implementationConfiguration;
     }
 
 }

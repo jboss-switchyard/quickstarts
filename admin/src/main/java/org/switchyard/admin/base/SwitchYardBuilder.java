@@ -147,13 +147,14 @@ public class SwitchYardBuilder implements DeploymentListener {
         final QName name = componentServiceModel.getQName();
         final String interfaceName = getInterfaceName(componentServiceModel.getInterface());
         final String implementation = getComponentImplementationType(componentModel);
+        final String implementationConfiguration = getComponentImplementationConfiguration(componentModel);
         final List<ComponentReference> references = new ArrayList<ComponentReference>();
         for (ComponentReferenceModel referenceModel : componentModel.getReferences()) {
             references.add(new BaseComponentReference(referenceModel.getQName(), getInterfaceName(referenceModel
                     .getInterface())));
         }
-        application.addComponentService(new BaseComponentService(name, implementation, interfaceName, application,
-                references));
+        application.addComponentService(new BaseComponentService(name, implementation, implementationConfiguration,
+                interfaceName, application, references));
     }
 
     @Override
@@ -266,6 +267,30 @@ public class SwitchYardBuilder implements DeploymentListener {
             return null;
         }
         return implementationModel.getType();
+    }
+
+    private String getComponentImplementationConfiguration(ComponentModel componentModel) {
+        ComponentImplementationModel implementationModel = componentModel.getImplementation();
+        if (implementationModel == null) {
+            return null;
+        }
+        String configuration = null;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            implementationModel.getModelConfiguration().write(baos, OutputKey.OMIT_XML_DECLARATION);
+            configuration = baos.toString();
+        } catch (IOException e) {
+            // FIXME: do we need to log this?
+            _log.error("Could not retrieve implementation configuration as string.", e);
+        } finally {
+            try {
+                baos.close();
+            } catch (IOException e) {
+                // prevent code style error
+                e.getMessage();
+            }
+        }
+        return configuration;
     }
 
 }

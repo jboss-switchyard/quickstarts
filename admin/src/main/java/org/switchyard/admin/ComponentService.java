@@ -42,6 +42,12 @@ public interface ComponentService {
     String getImplementation();
 
     /**
+     * @return the raw configuration for the implementation defined for this
+     *         service.
+     */
+    String getImplementationConfiguration();
+
+    /**
      * @return the interface implemented by this service.
      */
     String getInterface();

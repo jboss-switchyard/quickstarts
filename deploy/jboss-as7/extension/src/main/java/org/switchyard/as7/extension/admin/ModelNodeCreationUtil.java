@@ -28,6 +28,7 @@ import static org.switchyard.as7.extension.SwitchYardModelConstants.CONFIG_SCHEM
 import static org.switchyard.as7.extension.SwitchYardModelConstants.FROM;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.GATEWAYS;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.IMPLEMENTATION;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.IMPLEMENTATION_CONFIGURATION;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.PROMOTED_SERVICE;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.REFERENCES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.SERVICES;
@@ -217,6 +218,13 @@ final public class ModelNodeCreationUtil {
             serviceNode.get(IMPLEMENTATION);
         } else {
             serviceNode.get(IMPLEMENTATION).set(implementation);
+        }
+
+        String implementationConfiguration = service.getImplementationConfiguration();
+        if (implementationConfiguration == null) {
+            serviceNode.get(IMPLEMENTATION_CONFIGURATION);
+        } else {
+            serviceNode.get(IMPLEMENTATION_CONFIGURATION).set(implementationConfiguration);
         }
 
         ModelNode referencesNode = new ModelNode();

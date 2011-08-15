@@ -87,6 +87,10 @@ public final class SwitchYardModelConstants {
      */
     public static final String IMPLEMENTATION = "implementation";
     /**
+     * Constant for model key: implementationConfiguration.
+     */
+    public static final String IMPLEMENTATION_CONFIGURATION = "implementationConfiguration";
+    /**
      * Constant for model key: gateway.
      */
     public static final String GATEWAY = "gateway";
