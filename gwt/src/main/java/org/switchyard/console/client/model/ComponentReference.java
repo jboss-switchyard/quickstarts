@@ -18,23 +18,22 @@
  */
 package org.switchyard.console.client.model;
 
-import java.util.List;
 
 /**
- * ComponentService
+ * ComponentReference
  * 
- * Represents a SwitchYard component service.
+ * Represents a SwitchYard component reference.
  * 
  * @author Rob Cernich
  */
-public interface ComponentService {
+public interface ComponentReference {
     /**
-     * @return the service's name.
+     * @return the reference's name.
      */
     public String getName();
 
     /**
-     * @param name the service's name
+     * @param name the reference's name
      */
     public void setName(String name);
 
@@ -47,45 +46,5 @@ public interface ComponentService {
      * @param interfaceName the interface name
      */
     public void setInterface(String interfaceName);
-
-    /**
-     * @return the implementation name
-     */
-    public String getImplementation();
-
-    /**
-     * @param implementation the implementation name
-     */
-    public void setImplementation(String implementation);
-    
-    /**
-     * @return the references required by this component
-     */
-    public List<ComponentReference> getReferences();
-    
-    /**
-     * @param references the references required by this component
-     */
-    public void setReferences(List<ComponentReference> references);
-
-    /**
-     * @return the application name
-     */
-    public String getApplication();
-
-    /**
-     * @param application the application name
-     */
-    public void setApplication(String application);
-
-    /**
-     * @return the raw configuration of the service component's implementation
-     */
-    public String getImplementationConfiguration();
-    
-    /**
-     * @param configuration the raw configuration of the service component's implementation
-     */
-    public void setImplementationConfiguration(String configuration);
 
 }

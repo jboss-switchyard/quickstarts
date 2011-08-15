@@ -21,6 +21,7 @@ package org.switchyard.console.client.ui.application;
 import java.util.Collections;
 import java.util.List;
 
+import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.model.Application;
@@ -28,6 +29,9 @@ import org.switchyard.console.client.model.ComponentService;
 import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.ui.common.AlwaysFireSingleSelectionModel;
 
+import com.google.gwt.cell.client.ClickableTextCell;
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -53,6 +57,8 @@ public class ComponentServicesList {
     private DefaultCellTable<ComponentService> _servicesTable;
     private ListDataProvider<ComponentService> _servicesDataProvider;
     private AlwaysFireSingleSelectionModel<ComponentService> _selectionModel;
+    private DefaultWindow _implementationDetailsWindow;
+    private ImplementationDetailsWidget _implementationDetailsWidget;
 
     ComponentServicesList() {
         _servicesTable = new DefaultCellTable<ComponentService>(5);
@@ -73,13 +79,19 @@ public class ComponentServicesList {
         };
         interfaceColumn.setSortable(true);
 
-        TextColumn<ComponentService> implementationColumn = new TextColumn<ComponentService>() {
+        Column<ComponentService, String> implementationColumn = new Column<ComponentService, String>(new ClickableTextCell()) {
             @Override
-            public String getValue(ComponentService service) {
-                return service.getImplementation();
+            public String getValue(ComponentService dummy) {
+                return "View Details...";
             }
         };
-        implementationColumn.setSortable(true);
+        implementationColumn.setFieldUpdater(new FieldUpdater<ComponentService, String>() {
+            @Override
+            public void update(int index, ComponentService service, String value) {
+                showDetails(service);
+            }
+        });
+        implementationColumn.setSortable(false);
 
         _servicesTable.addColumn(nameColumn, "Name");
         _servicesTable.addColumn(interfaceColumn, "Interface");
@@ -90,6 +102,8 @@ public class ComponentServicesList {
 
         _servicesDataProvider = new ListDataProvider<ComponentService>(KEY_PROVIDER);
         _servicesDataProvider.addDataDisplay(_servicesTable);
+
+        createImplementationsDetailsWindow();
     }
 
     /**
@@ -137,4 +151,22 @@ public class ComponentServicesList {
         }
         _servicesDataProvider.setList(services);
     }
+
+    private void showDetails(ComponentService service) {
+        _implementationDetailsWidget.setService(service);
+        _implementationDetailsWindow.center();
+    }
+
+    private void createImplementationsDetailsWindow() {
+        _implementationDetailsWindow = new DefaultWindow("Implementation Details");
+        _implementationDetailsWindow.setGlassEnabled(true);
+        _implementationDetailsWindow.setAutoHideEnabled(true);
+        _implementationDetailsWindow.setAutoHideOnHistoryEventsEnabled(true);
+        _implementationDetailsWindow.setWidth(600);
+        _implementationDetailsWindow.setHeight(360);
+
+        _implementationDetailsWidget = new ImplementationDetailsWidget();
+        _implementationDetailsWindow.setWidget(_implementationDetailsWidget.asWidget());
+    }
+
 }

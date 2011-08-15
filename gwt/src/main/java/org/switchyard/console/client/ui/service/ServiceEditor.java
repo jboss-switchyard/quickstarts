@@ -90,6 +90,11 @@ public class ServiceEditor {
     public void setService(Service service) {
         this._service = service;
 
+        if (service.getInterface() == null) {
+            // XXX: workaround to ensure interface field in the form gets set.
+            service.setInterface("");
+        }
+
         String[] tnsLocal = NameTokens.parseQName(service.getName());
         _serviceHeaderLabel
                 .setText(Singleton.MESSAGES.header_editor_service_name(tnsLocal[1]));
@@ -111,8 +116,15 @@ public class ServiceEditor {
                         return NameTokens.createApplicationLink(value);
                     }
                 });
-        // TODO: add item for target namespace
-        TextItem interfaceItem = new TextItem("interface", "Interface");
+        TextItem interfaceItem = new TextItem("interface", "Interface") {
+            @Override
+            public void setValue(String value) {
+                if (value == null || value.length() == 0) {
+                    value = "<inherited>";
+                }
+                super.setValue(value);
+            }
+        };
         ClickableTextItem<String> implementationItem = new ClickableTextItem<String>("promotedService",
                 "Promoted Service", new ValueAdapter<String>() {
                     @Override

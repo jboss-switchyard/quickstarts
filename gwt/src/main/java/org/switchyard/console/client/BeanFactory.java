@@ -21,6 +21,7 @@ package org.switchyard.console.client;
 import org.switchyard.console.client.model.Application;
 import org.switchyard.console.client.model.Binding;
 import org.switchyard.console.client.model.Component;
+import org.switchyard.console.client.model.ComponentReference;
 import org.switchyard.console.client.model.ComponentService;
 import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.model.SystemDetails;
@@ -72,5 +73,10 @@ public interface BeanFactory extends AutoBeanFactory {
      * @return a new AutoBean<Transformer>
      */
     AutoBean<Transformer> transformer();
+
+    /**
+     * @return a new AutoBean<ComponentReference>
+     */
+    AutoBean<ComponentReference> componentReference();
 
 }
