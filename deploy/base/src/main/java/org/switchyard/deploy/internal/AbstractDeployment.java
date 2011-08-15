@@ -278,11 +278,13 @@ public abstract class AbstractDeployment {
 
     protected void undeployAutoRegisteredTransformers() {
         TransformerRegistry transformerReg = getDomain().getTransformerRegistry();
-
-        for (Transformer dynamicallyAddedTransformer : _autoRegisteredTransformers) {
-            transformerReg.removeTransformer(dynamicallyAddedTransformer);
+        try {
+            for (Transformer dynamicallyAddedTransformer : _autoRegisteredTransformers) {
+                transformerReg.removeTransformer(dynamicallyAddedTransformer);
+            }
+        } finally {
+            _autoRegisteredTransformers.clear();
         }
-        _autoRegisteredTransformers.clear();
     }
 
     protected final void fireServiceDeployed(CompositeServiceModel serviceModel) {

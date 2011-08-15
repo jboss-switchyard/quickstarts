@@ -387,10 +387,14 @@ public class Deployment extends AbstractDeployment {
     private void undeployServiceBindings() {
        _log.debug("Undeploying reference bindings ...");
        Set<QName> undeployedServiceNames = new LinkedHashSet<QName>();
-       for (Activation activation : _serviceBindings) {
-           activation.stop();
-           activation.destroy();
-           undeployedServiceNames.add(activation.getService().getName());
+       try {
+           for (Activation activation : _serviceBindings) {
+               activation.stop();
+               activation.destroy();
+               undeployedServiceNames.add(activation.getService().getName());
+           }
+       } finally {
+           _serviceBindings.clear();
        }
        // notify listeners
        for (QName serviceName : undeployedServiceNames) {
@@ -401,9 +405,13 @@ public class Deployment extends AbstractDeployment {
     private void undeployServices() {
         _log.debug("Undeploying services ...");
         Set<QName> undeployedServiceNames = new LinkedHashSet<QName>();
-        for (Activation activation : _services) {
-            activation.stop();
-            activation.destroy();
+        try {
+            for (Activation activation : _services) {
+                activation.stop();
+                activation.destroy();
+            }
+        } finally {
+            _services.clear();
         }
         // notify listeners
         for (QName serviceName : undeployedServiceNames) {
@@ -413,17 +421,25 @@ public class Deployment extends AbstractDeployment {
 
     private void undeployReferences() {
         _log.debug("Undeploying references ...");
-        for (Activation activation : _references) {
-            activation.stop();
-            activation.destroy();
+        try {
+            for (Activation activation : _references) {
+                activation.stop();
+                activation.destroy();
+            }
+        } finally {
+            _references.clear();
         }
     }
 
     private void undeployReferenceBindings() {
         _log.debug("Undeploying reference bindings ...");
-        for (Activation activation : _referenceBindings) {
-            activation.stop();
-            activation.destroy();
+        try {
+            for (Activation activation : _referenceBindings) {
+                activation.stop();
+                activation.destroy();
+            }
+        } finally {
+            _referenceBindings.clear();
         }
     }
 
