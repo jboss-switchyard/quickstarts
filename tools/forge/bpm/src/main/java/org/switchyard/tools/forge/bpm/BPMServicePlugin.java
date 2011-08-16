@@ -67,8 +67,6 @@ public class BPMServicePlugin implements Plugin {
     // process definition directory
     private static final String PROCESS_DIR = "META-INF";
     // VAR_* constants reference substitution tokens in the process definition template 
-    private static final String VAR_SERVICE_NAME = "${service.name}";
-    private static final String VAR_PACKAGE_NAME = "${package.name}";
     private static final String VAR_PROCESS_ID   = "${process.id}";
     
     @Inject
@@ -140,10 +138,10 @@ public class BPMServicePlugin implements Plugin {
             // Create an empty process definition
             processDefinitionPath = PROCESS_DIR + File.separator + argServiceName + PROCESS_EXTENSION;
             TemplateResource template = new TemplateResource(PROCESS_TEMPLATE)
-                .replaceToken(VAR_SERVICE_NAME, argServiceName)
+                .serviceName(argServiceName)
                 .replaceToken(VAR_PROCESS_ID, processId)
-                .replaceToken(VAR_PACKAGE_NAME, pkgName);
-            template.writeTo(_project.getFacet(ResourceFacet.class).getResource(processDefinitionPath));
+                .packageName(pkgName);
+            template.writeResource(_project.getFacet(ResourceFacet.class).getResource(processDefinitionPath));
             
             out.println("Created process definition [" + processDefinitionPath + "]");
         }

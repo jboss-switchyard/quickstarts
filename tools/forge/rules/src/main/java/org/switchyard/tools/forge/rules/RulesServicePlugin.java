@@ -71,9 +71,6 @@ public class RulesServicePlugin implements Plugin {
     private static final String RULES_EXTENSION = ".drl";
     // process definition directory
     private static final String RULES_DIR = "META-INF";
-    // VAR_* constants reference substitution tokens in the rules definition template 
-    private static final String VAR_SERVICE_NAME = "${service.name}";
-    private static final String VAR_PACKAGE_NAME = "${package.name}";
     
     @Inject
     private Project _project;
@@ -149,9 +146,9 @@ public class RulesServicePlugin implements Plugin {
             // Create an empty rule definition
             ruleDefinitionPath = RULES_DIR + File.separator + argServiceName + RULES_EXTENSION;
             TemplateResource template = new TemplateResource(RULES_TEMPLATE)
-                .replaceToken(VAR_SERVICE_NAME, argServiceName)
-                .replaceToken(VAR_PACKAGE_NAME, pkgName);
-            template.writeTo(_project.getFacet(ResourceFacet.class).getResource(ruleDefinitionPath));
+                .serviceName(argServiceName)
+                .packageName(pkgName);
+            template.writeResource(_project.getFacet(ResourceFacet.class).getResource(ruleDefinitionPath));
             
             out.println("Created rule definition [" + ruleDefinitionPath + "]");
         }

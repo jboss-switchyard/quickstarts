@@ -19,17 +19,11 @@
 
 package org.switchyard.tools.forge.bean;
 
-import java.io.FileNotFoundException;
-
 import javax.inject.Inject;
 
-import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.Annotation;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaInterface;
 import org.jboss.forge.project.Project;
-import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.MetadataFacet;
+import org.jboss.forge.project.facets.ResourceFacet;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellColor;
@@ -42,7 +36,7 @@ import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
-import org.switchyard.component.bean.Service;
+import org.switchyard.tools.forge.plugin.TemplateResource;
 
 /**
  * Forge plugin for Bean component commands.
@@ -54,6 +48,10 @@ import org.switchyard.component.bean.Service;
 @Help("Provides commands to create, edit, and remove CDI-based services in SwitchYard.")
 public class BeanServicePlugin implements Plugin {
     
+    // Template files used for bean services
+    private static final String BEAN_INTERFACE_TEMPLATE = "java/BeanInterfaceTemplate.java";
+    private static final String BEAN_IMPLEMENTATION_TEMPLATE = "java/BeanImplementationTemplate.java";
+    
     @Inject
     private Project _project;
     
@@ -64,7 +62,7 @@ public class BeanServicePlugin implements Plugin {
      * Create a new Bean service interface and implementation.
      * @param serviceName service name
      * @param out shell output
-     * @throws FileNotFoundException trouble reading/writing SwitchYard config
+     * @throws java.io.IOException trouble reading/writing SwitchYard config
      */
     @Command(value = "create", help = "Created a new service backed by a CDI bean.")
     public void newBean(
@@ -73,10 +71,8 @@ public class BeanServicePlugin implements Plugin {
                      description = "The service name") 
              final String serviceName,
              final PipeOut out)
-    throws FileNotFoundException {
+    throws java.io.IOException {
       
-        JavaSourceFacet java = _shell.getCurrentProject().getFacet(JavaSourceFacet.class);
-        
         String pkgName = _project.getFacet(MetadataFacet.class).getTopLevelPackage();
         
         if (pkgName == null) {
@@ -85,26 +81,20 @@ public class BeanServicePlugin implements Plugin {
                 PromptType.JAVA_PACKAGE);
         }
         
-        // Create the service interface
-        JavaInterface beanInterface = JavaParser.create(JavaInterface.class)
-            .setPackage(pkgName)
-            .setName(serviceName)
-            .setPublic();
-        java.saveJavaSource(beanInterface);
+        // Create the service interface and implementation
+        TemplateResource beanIntf = new TemplateResource(BEAN_INTERFACE_TEMPLATE);
+        beanIntf.serviceName(serviceName);
+        String interfaceFile = beanIntf.writeJavaSource(
+                _project.getFacet(ResourceFacet.class), pkgName, serviceName, false);
+        out.println("Created service interface [" + interfaceFile + "]");
         
-        // Now create the service implementation
-        JavaClass beanClass = JavaParser.create(JavaClass.class)
-            .setPackage(pkgName)
-            .setName(serviceName + "Bean")
-            .addInterface(beanInterface)
-            .setPublic();
-        Annotation<JavaClass> serviceAnnotation = beanClass.addAnnotation(Service.class);
-        serviceAnnotation.setLiteralValue(beanInterface.getName() + ".class");
-        java.saveJavaSource(beanClass);
+        TemplateResource beanImpl = new TemplateResource(BEAN_IMPLEMENTATION_TEMPLATE);
+        beanImpl.serviceName(serviceName);
+        String implementationFile = beanImpl.writeJavaSource(
+                _project.getFacet(ResourceFacet.class), pkgName, serviceName + "Bean", false);
+        out.println("Created service implementation [" + implementationFile + "]");
           
         // Notify user of success
-        out.println("Created service interface [" + beanInterface.getName() + "]");
-        out.println("Created service implementation [" + beanClass.getName() + "]");
         out.println(out.renderColor(ShellColor.BLUE, 
                 "NOTE: Run 'mvn package' to make " + serviceName + " visible to SwitchYard shell."));
     }

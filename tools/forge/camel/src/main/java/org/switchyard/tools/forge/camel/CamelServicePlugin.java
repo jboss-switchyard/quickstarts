@@ -21,14 +21,9 @@ package org.switchyard.tools.forge.camel;
 
 import javax.inject.Inject;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.Annotation;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaInterface;
 import org.jboss.forge.project.Project;
-import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.MetadataFacet;
+import org.jboss.forge.project.facets.ResourceFacet;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellColor;
@@ -41,12 +36,12 @@ import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
-import org.switchyard.component.camel.Route;
 import org.switchyard.component.camel.config.model.v1.V1CamelImplementationModel;
 import org.switchyard.config.model.composite.v1.V1ComponentModel;
 import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
+import org.switchyard.tools.forge.plugin.TemplateResource;
 
 /**
  * Commands related to Camel services.
@@ -58,11 +53,10 @@ import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 @Help("Provides commands to create and edit Camel routes in SwitchYard.")
 public class CamelServicePlugin implements Plugin {
     
-    private static final String SERVICE_TOKEN = "${service.name}";
-    private static final String ROUTE_TEMPLATE = 
-        "public void configure() {\n"
-        + "from(\"switchyard://" + SERVICE_TOKEN + "\")"
-        +"}";
+
+    // Template files used for camel route services
+    private static final String ROUTE_INTERFACE_TEMPLATE = "java/RouteInterfaceTemplate.java";
+    private static final String ROUTE_IMPLEMENTATION_TEMPLATE = "java/RouteImplementationTemplate.java";
     
     private enum RouteType {
         JAVA, XML;
@@ -90,7 +84,7 @@ public class CamelServicePlugin implements Plugin {
      * @param serviceName service name
      * @param out shell output
      * @param routeType type of the route (Java, XML)
-     * @throws java.io.FileNotFoundException error locating class 
+     * @throws java.io.IOException error locating class 
      */
     @Command(value = "create", help = "Created a new Camel service.")
     public void newRoute(
@@ -102,7 +96,7 @@ public class CamelServicePlugin implements Plugin {
                     name = "type",
                     description = "Route type") 
             final String routeType,
-            final PipeOut out) throws java.io.FileNotFoundException {
+            final PipeOut out) throws java.io.IOException {
 
         RouteType type = RouteType.fromString(routeType);
         if (type == null || type == RouteType.JAVA) {
@@ -141,8 +135,7 @@ public class CamelServicePlugin implements Plugin {
      * create a bean component, then add a route definition to it).
      */
     private void createJavaRoute(String routeName, PipeOut out) 
-    throws java.io.FileNotFoundException {
-        JavaSourceFacet java = _shell.getCurrentProject().getFacet(JavaSourceFacet.class);
+    throws java.io.IOException {
         
         String pkgName = _project.getFacet(MetadataFacet.class).getTopLevelPackage();
         
@@ -152,29 +145,19 @@ public class CamelServicePlugin implements Plugin {
                 PromptType.JAVA_PACKAGE);
         }
         
-        // Create the route interface
-        JavaInterface routeInterface = JavaParser.create(JavaInterface.class)
-            .setPackage(pkgName)
-            .setName(routeName)
-            .setPublic();
-        java.saveJavaSource(routeInterface);
+        // Create the camel interface and implementation
+        TemplateResource camelIntf = new TemplateResource(ROUTE_INTERFACE_TEMPLATE);
+        camelIntf.serviceName(routeName);
+        String interfaceFile = camelIntf.writeJavaSource(
+                _project.getFacet(ResourceFacet.class), pkgName, routeName, false);
+        out.println("Created route service interface [" + interfaceFile + "]");
         
-        // Now create the service implementation
-        JavaClass routeClass = JavaParser.create(JavaClass.class)
-            .setPackage(pkgName)
-            .setName(routeName + "Builder")
-            .setSuperType(RouteBuilder.class)
-            .setPublic();
+        TemplateResource camelImpl = new TemplateResource(ROUTE_IMPLEMENTATION_TEMPLATE);
+        camelImpl.serviceName(routeName);
+        String implementationFile = camelImpl.writeJavaSource(
+                _project.getFacet(ResourceFacet.class), pkgName, routeName + "Builder", false);
+        out.println("Created route service implementation [" + implementationFile + "]");
         
-        Annotation<JavaClass> routeAnnotation = routeClass.addAnnotation(Route.class);
-        routeAnnotation.setLiteralValue(routeInterface.getName() + ".class");
-        
-        routeClass.addMethod(ROUTE_TEMPLATE.replace(SERVICE_TOKEN, routeInterface.getName()));
-        java.saveJavaSource(routeClass);
-          
-        // Notify user of success
-        out.println("Created route interface [" + routeInterface.getName() + "]");
-        out.println("Created route implementation [" + routeClass.getName() + "]");
         out.println(out.renderColor(ShellColor.BLUE, 
                 "NOTE: Run 'mvn package' to make " + routeName + " visible to SwitchYard shell."));
     }
