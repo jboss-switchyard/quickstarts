@@ -13,6 +13,11 @@
       <filtered>true</filtered>
     </file>
     <file>
+      <source>target/jbpm-bpmn2-xsds-${jbpm.version}.jar</source>
+      <outputDirectory>/modules/org/switchyard/component/bpm/main</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
       <source>src/build/resources/drools/drools-compiler/module.xml</source>
       <outputDirectory>/modules/org/drools/drools-compiler/main</outputDirectory>
       <filtered>true</filtered>

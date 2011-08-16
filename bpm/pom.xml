@@ -39,9 +39,46 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-jbpm-xsds</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-bpmn2</artifactId>
+                                    <version>${jbpm.version}</version>
+                                    <type>jar</type>
+                                </artifactItem>
+                            </artifactItems>
+                            <includes>META-INF/*.xsd</includes>
+                            <outputDirectory>${build.directory}/jbpm-xsds</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
+                    <execution>
+                        <id>make-jbpm-xsds-assembly</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>jbpm-bpmn2</finalName>
+                            <descriptors>
+                                <descriptor>${basedir}/jbpm-xsds-assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>make-assembly</id>
                         <phase>package</phase>

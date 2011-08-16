@@ -26,6 +26,7 @@
 
     <resources>
         <resource-root path="switchyard-component-bpm-${project.version}.jar"/>
+        <resource-root path="jbpm-bpmn2-xsds-${jbpm.version}.jar"/>
     </resources>
 
     <dependencies>
