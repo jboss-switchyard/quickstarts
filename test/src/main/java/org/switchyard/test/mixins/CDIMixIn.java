@@ -165,8 +165,13 @@ public class CDIMixIn extends AbstractTestMixIn {
     }
 
     @Override
-    public void uninitialize() {
-        _weld.shutdown();
+    public synchronized void uninitialize() {
+        if (_weld != null) {
+            _weld.shutdown();
+            _weld = null;
+        } else {
+            Thread.dumpStack();
+        }
     }
 
     private Object createBeanInstance(Bean<?> bean) {

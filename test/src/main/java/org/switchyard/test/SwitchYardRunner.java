@@ -71,8 +71,14 @@ public class SwitchYardRunner extends BlockJUnit4ClassRunner {
 
     @Override
     public void run(RunNotifier notifier) {
-        notifier.addListener(new TestLifecycleListener());
-        super.run(notifier);
+        TestLifecycleListener listener = new TestLifecycleListener();
+
+        notifier.addListener(listener);
+        try {
+            super.run(notifier);
+        } finally {
+            notifier.removeListener(listener);
+        }
     }
 
     private class TestLifecycleListener extends RunListener {
