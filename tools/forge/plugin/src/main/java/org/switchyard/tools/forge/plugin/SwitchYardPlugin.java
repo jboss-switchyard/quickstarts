@@ -18,8 +18,6 @@
  */
 package org.switchyard.tools.forge.plugin;
 
-import java.io.File;
-
 import javax.inject.Inject;
 
 import org.jboss.forge.project.Project;
@@ -65,9 +63,6 @@ public class SwitchYardPlugin implements Plugin {
     
     // Template file used for unit testing services
     private static final String TEST_SERVICE_TEMPLATE = "java/TestTemplate.java";
-    // VAR_* constants reference substitution tokens in the process definition template 
-    private static final String VAR_SERVICE_NAME = "${service.name}";
-    private static final String VAR_PACKAGE_NAME = "${package.name}";
     // MessageTrace handler name and class
     private static final String TRACE_CLASS = "org.switchyard.handlers.MessageTrace";
     private static final String TRACE_NAME = "MessageTrace";
@@ -249,23 +244,13 @@ public class SwitchYardPlugin implements Plugin {
                 PromptType.JAVA_PACKAGE);
         }
         
-        TemplateResource template = new TemplateResource(TEST_SERVICE_TEMPLATE)
-            .replaceToken(VAR_SERVICE_NAME, serviceName)
-            .replaceToken(VAR_PACKAGE_NAME, pkgName);
+        TemplateResource template = new TemplateResource(TEST_SERVICE_TEMPLATE);
+        template.serviceName(serviceName);
+        String testFile = template.writeJavaSource(_project.getFacet(ResourceFacet.class), 
+                pkgName, serviceName + "Test", true);
         
-        String destDir = ".." + File.separator + ".." + File.separator
-                + File.separator + "test"
-                + File.separator + "java";
-        if (pkgName != null && pkgName.length() > 0) {
-            for (String pkgDir : pkgName.split("\\.")) {
-                destDir += File.separator + pkgDir;
-            }
-        }
-        String destFile = serviceName + "Test.java";
-        template.writeTo(_project.getFacet(ResourceFacet.class).getResource(
-                destDir + File.separator + destFile));
         
-        out.println("Created unit test " + destFile);
+        out.println("Created unit test " + testFile);
     }
     
     /**
