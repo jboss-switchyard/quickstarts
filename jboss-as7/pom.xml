@@ -139,6 +139,25 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>install-switchyard-console</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.switchyard</groupId>
+                                    <artifactId>switchyard-console-gwt</artifactId>
+                                    <type>war</type>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${staging.jboss.dir}/deployments</outputDirectory>
+                            <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>install-switchyard-component-bean</id>
                         <phase>generate-sources</phase>
                         <goals>

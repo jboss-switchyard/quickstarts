@@ -53,6 +53,13 @@
     <fileSet>
       <directory>${staging.jboss.dir}/welcome-content</directory>
       <outputDirectory>${distro.root.dir}welcome-content</outputDirectory>
+      <excludes>
+         <exclude>index.html</exclude>
+      </excludes>
+    </fileSet>
+    <fileSet>
+      <directory>${project.build.outputDirectory}/welcome-content</directory>
+      <outputDirectory>${distro.root.dir}welcome-content</outputDirectory>
     </fileSet>
     <fileSet>
       <directory>${staging.jboss.dir}/standalone</directory>
@@ -86,6 +93,10 @@
     <fileSet>
       <directory>${staging.jboss.dir}/forge</directory>
       <outputDirectory>${distro.root.dir}forge</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>${staging.jboss.dir}/deployments</directory>
+      <outputDirectory>${distro.root.dir}standalone/deployments</outputDirectory>
     </fileSet>
   </fileSets>
 </assembly>
