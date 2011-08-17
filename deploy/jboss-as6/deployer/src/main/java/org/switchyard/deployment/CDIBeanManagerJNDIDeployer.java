@@ -82,6 +82,7 @@ public class CDIBeanManagerJNDIDeployer extends AbstractRealDeployer {
                     Reference reference = new Reference("javax.enterprise.inject.spi.BeanManager", "org.jboss.weld.integration.deployer.jndi.JBossBeanManagerObjectFactory", null);
                     reference.add(new StringRefAddr("id", IdFactory.getIdFromClassLoader(unit.getClassLoader())));
                     javaComp.bind("BeanManager", reference);
+                    _logger.debug("CDI BeanManager successfully bound into JNDI (java:comp) for SwitchYard deployment '" + unit.getName() + "'.");
                 } catch (NamingException e) {
                     throw new DeploymentException("Error binding BeanManager.", e);
                 }
@@ -103,6 +104,7 @@ public class CDIBeanManagerJNDIDeployer extends AbstractRealDeployer {
                 try {
                     Context javaComp = getJavaComp(unit);
                     javaComp.unbind("BeanManager");
+                    _logger.debug("CDI BeanManager successfully unbound from JNDI (java:comp) for SwitchYard deployment '" + unit.getName() + "'.");
                 } catch (NamingException e) {
                     throw new DeploymentException("Error unbinding BeanManager.", e);
                 }

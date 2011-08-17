@@ -130,6 +130,9 @@ public final class TransformSequence implements Serializable {
                 // We can now remove the 1st element in the sequence.  2nd element will become the
                 // "from" for the next transformation in the sequence, if one is required...
                 _sequence.remove(0);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Transformed Message (" + System.identityHashCode(message) + ") from '" + transformer.getFrom() + "' to '" + transformer.getTo() + "' using transformer type '" + transformer.getClass().getName() + "'.");
+                }
             } else {
                 LOGGER.warn("Transformer '" + transformer.getClass().getName() + "' returned a null transformation result.  Check input payload matches requirements of the Transformer implementation.");
                 break;

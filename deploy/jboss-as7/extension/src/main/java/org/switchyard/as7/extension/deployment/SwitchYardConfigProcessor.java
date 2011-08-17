@@ -45,7 +45,9 @@ public class SwitchYardConfigProcessor implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         final DeploymentUnit deploymentUnit = phaseContext.getDeploymentUnit();
+
         if (!SwitchYardDeploymentMarker.isSwitchYardDeployment(deploymentUnit)) {
+            LOG.debug("Ignoring deployment unit '" + deploymentUnit.getName() + "' as it is not recognized as being a SwitchYard Application.");
             return;
         }
         SwitchYardMetaData switchYardMetaData = deploymentUnit.getAttachment(SwitchYardMetaData.ATTACHMENT_KEY);
@@ -58,6 +60,7 @@ public class SwitchYardConfigProcessor implements DeploymentUnitProcessor {
             is = switchYardMetaData.getSwitchYardFile().openStream();
             SwitchYardModel switchyardModel = new ModelPuller<SwitchYardModel>().pull(is);
             switchYardMetaData.setSwitchYardModel(switchyardModel);
+            LOG.debug("Successfully parsed SwitchYard configuration for deployment unit '" + deploymentUnit.getName() + "'.");
         } catch (IOException ioe) {
             throw new DeploymentUnitProcessingException(ioe);
         } finally {

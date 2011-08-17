@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.enterprise.inject.spi.Extension;
 
+import org.apache.log4j.Logger;
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
@@ -41,6 +42,8 @@ import org.switchyard.as7.extension.SwitchYardDeploymentMarker;
 public class SwitchYardCdiIntegrationProcessor implements DeploymentUnitProcessor {
 
     private static final String SWITCHYARD_CDI_EXTENSION = "org.switchyard.component.bean.SwitchYardCDIServiceDiscovery";
+
+    private static Logger _logger = Logger.getLogger(SwitchYardCdiIntegrationProcessor.class);
 
     /* (non-Javadoc)
      * @see org.jboss.as.server.deployment.DeploymentUnitProcessor#deploy(org.jboss.as.server.deployment.DeploymentPhaseContext)
@@ -65,6 +68,9 @@ public class SwitchYardCdiIntegrationProcessor implements DeploymentUnitProcesso
                     }
                 }
                 if (!found) {
+                    _logger.debug("SwitchYard Application for deployment unit '" + deploymentUnit.getName() + "' contains CDI Beans.  "
+                            + "Attaching SwitchYard CDI Discovery Extension to deployment.");
+
                     try {
                         final Module module = deploymentUnit.getAttachment(Attachments.MODULE);
                         Class<? extends Extension> clazz = (Class<? extends Extension>) module.getClassLoader().loadClass(SWITCHYARD_CDI_EXTENSION);
@@ -90,6 +96,9 @@ public class SwitchYardCdiIntegrationProcessor implements DeploymentUnitProcesso
                     }
                 }
             }
+        } else {
+            _logger.debug("SwitchYard Application for deployment unit '" + deploymentUnit.getName() + "' does not appear to contain CDI Beans "
+                    + "(no META-INF/beans.xml file in unit).  Not attaching SwitchYard CDI Discovery Extension to deployment.");
         }
     }
 

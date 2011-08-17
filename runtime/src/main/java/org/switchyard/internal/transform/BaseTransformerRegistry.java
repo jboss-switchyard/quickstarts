@@ -96,9 +96,13 @@ public class BaseTransformerRegistry implements TransformerRegistry {
             if (transformer == null && QNameUtil.isJavaMessageType(from)) {
                 transformer = getJavaFallbackTransformer(from, to);
                 if (transformer != null && _log.isDebugEnabled()) {
-                    _log.debug("Selecting fallback transformer: from '" + transformer.getFrom() + "' to '" + transformer.getTo() + "'.");
+                    _log.debug("Selecting fallback transformer: from '" + transformer.getFrom() + "' to '" + transformer.getTo() + "'. Type: " + transformer.getClass().getName());
+                } else if (_log.isDebugEnabled()) {
+                    _log.debug("No compatible transformer registered: from '" + from + "' to '" + to + "'");
                 }
             }
+        } else if (_log.isDebugEnabled()) {
+            _log.debug("Selecting transformer: from '" + transformer.getFrom() + "' to '" + transformer.getTo() + "'. Type: " + transformer.getClass().getName());
         }
 
         return transformer;

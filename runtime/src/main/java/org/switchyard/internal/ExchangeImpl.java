@@ -41,6 +41,7 @@ import org.switchyard.io.Serialization.Factory;
 import org.switchyard.io.Serialization.Include;
 import org.switchyard.io.Serialization.Strategy;
 import org.switchyard.metadata.ExchangeContract;
+import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.transform.TransformSequence;
 import org.switchyard.transform.TransformerRegistry;
@@ -88,6 +89,11 @@ public class ExchangeImpl implements Exchange {
      */
     public ExchangeImpl(QName serviceName, ExchangeContract contract, Dispatcher dispatch, TransformerRegistry transformerRegistry) {
         this(serviceName, contract, dispatch, transformerRegistry, null);
+
+        if (_log.isDebugEnabled()) {
+            ServiceOperation serviceOperation = contract.getServiceOperation();
+            _log.debug("Created " + serviceOperation.getExchangePattern() + " Exchange instance (" + instanceHash() + ") for Service '" + serviceName + "', operation '" + serviceOperation.getName() + "'.  No response handler.");
+        }
     }
     
     /**
@@ -121,6 +127,11 @@ public class ExchangeImpl implements Exchange {
         _transformerRegistry = transformerRegistry;
         _replyChain = replyChain;
         _context = new DefaultContext();
+
+        if (_log.isDebugEnabled()) {
+            ServiceOperation serviceOperation = contract.getServiceOperation();
+            _log.debug("Created " + serviceOperation.getExchangePattern() + " Exchange instance (" + instanceHash() + ") for Service '" + serviceName + "', operation '" + serviceOperation.getName() + "'.  Response HandlerChain: " + _replyChain);
+        }
     }
 
     @Override
@@ -234,7 +245,16 @@ public class ExchangeImpl implements Exchange {
             return;
         }
 
+        if (_log.isDebugEnabled()) {
+            ServiceOperation serviceOperation = _contract.getServiceOperation();
+            _log.debug("Sending " + _phase + " Message (" + System.identityHashCode(message) + ") on " + serviceOperation.getExchangePattern() +  " Exchange (" + instanceHash() + ") for Service '" + _serviceName + "', operation '" + serviceOperation.getName() + "'.  Exchange state: " + _state);
+        }
+
         _dispatch.dispatch(this);
+    }
+
+    private int instanceHash() {
+        return System.identityHashCode(this);
     }
 
     private void assertMessageOK(Message message) {

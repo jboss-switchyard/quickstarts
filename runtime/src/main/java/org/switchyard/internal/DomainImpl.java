@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerChain;
@@ -42,6 +43,8 @@ import org.switchyard.transform.TransformerRegistry;
  * Implementation of ServiceDomain.
  */
 public class DomainImpl implements ServiceDomain {
+
+    private static Logger _logger = Logger.getLogger(DomainImpl.class);
 
     private final QName _name;
     private final DefaultHandlerChain _defaultHandlers;
@@ -70,14 +73,16 @@ public class DomainImpl implements ServiceDomain {
         // handled this via config.
         _defaultHandlers = new DefaultHandlerChain();
         _defaultHandlers.addFirst("transformation", new TransformHandler(_transformerRegistry));
+
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Created SwitchYard ServiceDomain instance '" + name + "'.");
+        }
     }
 
     @Override
     public Exchange createExchange(ServiceReference service, ExchangeContract contract) {
         return createExchange(service, contract, null);
     }
-
-
 
     @Override
     public Exchange createExchange(

@@ -22,6 +22,7 @@ package org.switchyard.deployment;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.log4j.Logger;
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
@@ -37,7 +38,9 @@ import org.switchyard.deploy.ServiceDomainManager;
  * AS6 Deployer for SwitchYard.
  */
 public class SwitchYardDeployer extends AbstractSimpleVFSRealDeployer<SwitchYardMetaData> {
-    
+
+    private Logger _log = Logger.getLogger(SwitchYardConfigParser.class);
+
     private static final String BEAN_PREFIX = "switchyard";
 
     private ServiceDomainManager _domainManager;
@@ -64,6 +67,7 @@ public class SwitchYardDeployer extends AbstractSimpleVFSRealDeployer<SwitchYard
         throws DeploymentException {
         try {
             parseSwitchYardConfig(metaData);
+            _log.debug("Successfully parsed SwitchYard configuration for deployment unit '" + unit.getName() + "'.");
         } catch (IOException ioe) {
             throw new DeploymentException(ioe);
         }
@@ -107,6 +111,9 @@ public class SwitchYardDeployer extends AbstractSimpleVFSRealDeployer<SwitchYard
 
         bmdBuilder.addDependency(deploymentUnit.getName());
         bmdBuilder.addDependency(deploymentUnit.getName() + "_WeldBootstrapBean");
+
+        _log.debug("Successfully created AS6 BeanMetaData instance for deployment unit '" + deploymentUnit.getName() + "'.");
+
         return bmdBuilder.getBeanMetaData();
     }
 

@@ -90,7 +90,7 @@ public class SwitchYardConfigParser extends AbstractVFSParsingDeployer<SwitchYar
         }
 
         final SwitchYardMetaData switchYardMetaData = new SwitchYardMetaData(archiveName, deploymentName);
-        _log.debug("Parsed SwitchYard configuration'" + switchYardMetaData + "'");
+        _log.debug("Located configuration for deployment unit '" + deploymentUnit.getName() + "' and attached to deployment metadata instance.");
         switchYardMetaData.setSwitchYardFile(configFile);
         
         return switchYardMetaData;

@@ -28,6 +28,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.log4j.Logger;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.spi.Dispatcher;
@@ -38,6 +39,8 @@ import org.switchyard.spi.ServiceRegistry;
  * Standalone implementation of ServiceRegistry.
  */
 public class DefaultServiceRegistry implements ServiceRegistry {
+
+    private static Logger _logger = Logger.getLogger(DefaultServiceRegistry.class);
 
     private final Map<QName, List<Service>> _services =
         new HashMap<QName, List<Service>>();
@@ -91,6 +94,11 @@ public class DefaultServiceRegistry implements ServiceRegistry {
         }
 
         serviceList.add(sr);
+
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Registered Service '" + reference.getName() + "' to ServiceDomain '" + domain.getName() + "'.");
+        }
+
         return sr;
     }
 
@@ -99,6 +107,10 @@ public class DefaultServiceRegistry implements ServiceRegistry {
         List<Service> serviceList =_services.get(service.getReference().getName());
         if (serviceList != null) {
             serviceList.remove(service);
+
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("Unregistered Service '" + service.getReference().getName() + "' from ServiceDomain '" + service.getDomain().getName() + "'.");
+            }
         }
     }
 

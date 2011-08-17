@@ -48,9 +48,11 @@ public class DefaultHandlerChain implements HandlerChain {
      * Create a new handler chain with no handlers in it.
      */
     public DefaultHandlerChain() {
-        
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Created empty DefaultHandlerChain.");
+        }
     }
-    
+
     /**
      * Create a new handler chain with the specified handlers.  This ctor
      * is not intended for external use - it's used by the clone() method.
@@ -63,13 +65,23 @@ public class DefaultHandlerChain implements HandlerChain {
     @Override
     public synchronized void addFirst(String handlerName,
             ExchangeHandler handler) {
-        _chain.addFirst(new HandlerRef(handlerName, handler));
+        HandlerRef handlerRef = new HandlerRef(handlerName, handler);
+
+        _chain.addFirst(handlerRef);
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Added ExchangeHandler instance at start of Handler Chain: " + handlerRef);
+        }
     }
 
     @Override
     public synchronized void addLast(String handlerName,
             ExchangeHandler handler) {
-        _chain.addLast(new HandlerRef(handlerName, handler));
+        HandlerRef handlerRef = new HandlerRef(handlerName, handler);
+
+        _chain.addLast(handlerRef);
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Added ExchangeHandler instance at end of Handler Chain: " + handlerRef);
+        }
     }
 
     @Override
@@ -100,6 +112,9 @@ public class DefaultHandlerChain implements HandlerChain {
     public void handleFault(Exchange exchange) {
         for (HandlerRef ref : listHandlers()) {
             try {
+                if (_logger.isDebugEnabled()) {
+                    _logger.debug("Executing Fault ExchangeHandler (" + ref + ") on message Exchange instance (" + System.identityHashCode(exchange) + ").");
+                }
                 ref.getHandler().handleFault(exchange);
             } catch (Exception e) {
                 _logger.warn("Handler '" + ref.getName() + "' failed to handle fault.", e);
@@ -111,6 +126,9 @@ public class DefaultHandlerChain implements HandlerChain {
     public void handleMessage(Exchange exchange) {
         try {
             for (HandlerRef ref : listHandlers()) {
+                if (_logger.isDebugEnabled()) {
+                    _logger.debug("Executing ExchangeHandler (" + ref + ") on message Exchange instance (" + System.identityHashCode(exchange) + ").");
+                }
                 ref.getHandler().handleMessage(exchange);
 
                 if (exchange.getState() == ExchangeState.FAULT) {
@@ -161,7 +179,15 @@ public class DefaultHandlerChain implements HandlerChain {
      * @return copy of the default chain.
      */
     public DefaultHandlerChain copy() {
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Cloning DefaultHandlerChain from a its list of Handlers: " + listHandlers());
+        }
         return new DefaultHandlerChain(listHandlers());
+    }
+
+    @Override
+    public String toString() {
+        return _chain.toString();
     }
 
     private synchronized List<HandlerRef> listHandlers() {
@@ -181,6 +207,11 @@ public class DefaultHandlerChain implements HandlerChain {
 
         public ExchangeHandler getHandler() {
             return _handler;
+        }
+
+        @Override
+        public String toString() {
+            return "Name '" + _name + "',  Class '" + _handler.getClass().getName() + "'";
         }
 
         private final ExchangeHandler _handler;
