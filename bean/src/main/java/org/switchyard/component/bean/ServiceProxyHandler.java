@@ -21,6 +21,7 @@ package org.switchyard.component.bean;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
@@ -41,6 +42,8 @@ import org.switchyard.exception.SwitchYardException;
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public class ServiceProxyHandler implements ExchangeHandler {
+
+    private static Logger _logger = Logger.getLogger(ServiceProxyHandler.class);
 
     /**
      * The Service bean instance being proxied to.
@@ -97,7 +100,15 @@ public class ServiceProxyHandler implements ExchangeHandler {
 
         if (invocation != null) {
             try {
-                if (exchange.getContract().getServiceOperation().getExchangePattern() == ExchangePattern.IN_OUT) {
+                ExchangePattern exchangePattern = exchange.getContract().getServiceOperation().getExchangePattern();
+
+                if (_logger.isDebugEnabled()) {
+                    _logger.debug("CDI Bean Service ExchangeHandler proxy class received " + exchangePattern + " Exchange ("
+                            + System.identityHashCode(exchange) + ") for Bean Service '"
+                            + exchange.getServiceName() + "'.  Invoking bean method '" + invocation.getMethod().getName() + "'.");
+                }
+
+                if (exchangePattern == ExchangePattern.IN_OUT) {
                     Object responseObject;
 
                     ContextProxy.setContext(exchange.getContext());

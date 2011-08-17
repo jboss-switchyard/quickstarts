@@ -222,6 +222,10 @@ public class InboundHandler extends BaseHandler {
                 operationName = operation.getName();
                 oneWay = WSDLUtil.isOneWay(operation);
                 exchangeContract = _contracts.get(operationName);
+
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Received SOAP message targeted at Webservice operation '" + operationName + "' on port '" + _wsdlPort.getName() + "'.");
+                }
             }
         } catch (SOAPException e) {
             LOGGER.error(e);

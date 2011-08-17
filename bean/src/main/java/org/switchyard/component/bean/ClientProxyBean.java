@@ -277,7 +277,7 @@ public class ClientProxyBean implements Bean {
                 throw new BeanComponentException("A service reference to service '" + _serviceName + "' is not bound into "
                         + "this client proxy instance.  A reference configuration to the service may be required in the application configuration.");
             }
-            
+
             if (method.getReturnType() != null && !Void.TYPE.isAssignableFrom(method.getReturnType())) {
                 SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
 

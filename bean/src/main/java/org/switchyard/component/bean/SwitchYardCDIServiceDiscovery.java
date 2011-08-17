@@ -73,6 +73,8 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
      * @param beanManager CDI Bean Manager instance.
      */
     public void beforeBeanDiscovery(@Observes BeforeBeanDiscovery beforeEvent, BeanManager beanManager) {
+        _logger.debug("CDI Bean discovery process started.");
+
         _beanDeploymentMetaData = new BeanDeploymentMetaData();
         _beanDeploymentMetaData.setBeanManager(beanManager);
         _beanDeploymentMetaData.setDeploymentClassLoader(Classes.getTCCL());
@@ -129,6 +131,8 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
 
         afterEvent.addBean(new BeanDeploymentMetaDataCDIBean(_beanDeploymentMetaData));
         afterEvent.addBean(new ContextBean());
+
+        _logger.debug("CDI Bean discovery process completed.");
     }
 
     private void addInjectableClientProxyBean(Field injectionPointField, Reference serviceReference, Set<Annotation> qualifiers, BeanManager beanManager) {

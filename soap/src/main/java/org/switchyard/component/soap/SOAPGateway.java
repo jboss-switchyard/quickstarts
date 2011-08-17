@@ -19,7 +19,6 @@
 
 package org.switchyard.component.soap;
 
-import org.apache.log4j.Logger;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.exception.SwitchYardException;
@@ -32,7 +31,6 @@ import org.switchyard.exception.SwitchYardException;
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
 public class SOAPGateway {
-    private static final Logger LOGGER = Logger.getLogger(SOAPGateway.class);
 
     private InboundHandler _wsProvider;
     private OutboundHandler _wsConsumer;
@@ -71,16 +69,14 @@ public class SOAPGateway {
             try {
                 _wsProvider.start(_domain.getService(_config.getServiceName()));
             } catch (Exception e) {
-                LOGGER.error(e);
-                throw new SwitchYardException("WebService could not be published!");
+                throw new SwitchYardException("WebService Provider for service '" + _config.getServiceName() + "'. could not be started.", e);
             }
         }
         if (_wsConsumer != null) {
             try {
                 _wsConsumer.start();
             } catch (Exception e) {
-                LOGGER.error(e);
-                throw new SwitchYardException("WebService could not be consumed!");
+                throw new SwitchYardException("WebService Consumer for service '" + _config.getServiceName() + "'. could not be started.", e);
             }
         }
     }
