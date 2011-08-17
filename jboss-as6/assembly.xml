@@ -29,29 +29,45 @@
 
     <fileSets>
         <fileSet>
-            <directory>${staging.dir}</directory>
-            <includes>
-                <include>*.txt</include>
-            </includes>
-            <outputDirectory>/${switchyard.root.dir}</outputDirectory>
-        </fileSet>
-        <fileSet>
             <directory>${staging.dir}/${as.root.dir}</directory>
             <excludes>
-                <exclude>bin/*</exclude>
+                <exclude>bin/**</exclude>
             </excludes>
+            <fileMode>644</fileMode>
+            <directoryMode>755</directoryMode>
             <outputDirectory>/${switchyard.root.dir}</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>${staging.dir}/${as.root.dir}/bin</directory>
+            <excludes>
+                <exclude>*.sh</exclude>
+            </excludes>
+            <fileMode>644</fileMode>
+            <directoryMode>755</directoryMode>
+            <lineEnding>keep</lineEnding>
+            <outputDirectory>/${switchyard.root.dir}/bin</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${staging.dir}/${as.root.dir}/bin</directory>
+            <includes>
+                <include>*.sh</include>
+            </includes>
             <fileMode>755</fileMode>
             <lineEnding>keep</lineEnding>
             <outputDirectory>/${switchyard.root.dir}/bin</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>${staging.dir}</directory>
+            <includes>
+                <include>*.txt</include>
+            </includes>
+            <fileMode>644</fileMode>
+            <outputDirectory>/${switchyard.root.dir}</outputDirectory>
+        </fileSet>
+        <fileSet>
           <directory>../../quickstarts</directory>
           <outputDirectory>${switchyard.root.dir}/quickstarts</outputDirectory>
-            <excludes>
+          <excludes>
             <exclude>**/.git</exclude>
             <exclude>**/.gitignore</exclude>
             <exclude>**/.DS_Store</exclude>
@@ -62,6 +78,8 @@
             <exclude>**/target</exclude>
             <exclude>**/target/**/*</exclude>
           </excludes>
+          <fileMode>644</fileMode>
+          <directoryMode>755</directoryMode>
         </fileSet>
     </fileSets>
 </assembly>

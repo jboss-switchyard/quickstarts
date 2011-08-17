@@ -10,23 +10,16 @@
   <fileSets>
     <fileSet>
       <directory>${staging.jboss.dir}</directory>
-      <includes>
-        <include>*.jar</include>
-        <include>*.txt</include>
-      </includes>
-      <outputDirectory>${distro.root.dir}</outputDirectory>
-    </fileSet>
-    <fileSet>
-      <directory>${staging.jboss.dir}/bin</directory>
       <excludes>
-        <exclude>domain.*</exclude>
+        <exclude>bin/**</exclude>
+        <exclude>welcome-content/index.html</exclude>
+        <exclude>standalone/**/standalone*.xml</exclude>
+        <exclude>domain/</exclude>
+        <exclude>META-INF/</exclude>
       </excludes>
-      <includes>
-        <include>*.sh</include>
-      </includes>
-      <fileMode>755</fileMode>
-      <lineEnding>keep</lineEnding>
-      <outputDirectory>${distro.root.dir}bin</outputDirectory>
+      <fileMode>644</fileMode>
+      <directoryMode>755</directoryMode>
+      <outputDirectory>${distro.root.dir}</outputDirectory>
     </fileSet>
     <fileSet>
       <directory>${staging.jboss.dir}/bin</directory>
@@ -35,38 +28,27 @@
         <exclude>*.sh</exclude>
       </excludes>
       <fileMode>644</fileMode>
+      <directoryMode>755</directoryMode>
       <lineEnding>keep</lineEnding>
       <outputDirectory>${distro.root.dir}bin</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>${staging.jboss.dir}/bundles</directory>
-      <outputDirectory>${distro.root.dir}bundles</outputDirectory>
-    </fileSet>
-    <fileSet>
-      <directory>${staging.jboss.dir}/docs</directory>
-      <outputDirectory>${distro.root.dir}docs</outputDirectory>
-    </fileSet>
-    <fileSet>
-      <directory>${staging.jboss.dir}/modules</directory>
-      <outputDirectory>${distro.root.dir}modules</outputDirectory>
-    </fileSet>
-    <fileSet>
-      <directory>${staging.jboss.dir}/welcome-content</directory>
-      <outputDirectory>${distro.root.dir}welcome-content</outputDirectory>
+      <directory>${staging.jboss.dir}/bin</directory>
+      <includes>
+        <include>*.sh</include>
+      </includes>
       <excludes>
-         <exclude>index.html</exclude>
+        <exclude>domain.*</exclude>
       </excludes>
+      <fileMode>755</fileMode>
+      <lineEnding>keep</lineEnding>
+      <outputDirectory>${distro.root.dir}bin</outputDirectory>
     </fileSet>
     <fileSet>
       <directory>${project.build.outputDirectory}/welcome-content</directory>
       <outputDirectory>${distro.root.dir}welcome-content</outputDirectory>
-    </fileSet>
-    <fileSet>
-      <directory>${staging.jboss.dir}/standalone</directory>
-      <outputDirectory>${distro.root.dir}standalone</outputDirectory>
-      <excludes>
-         <exclude>**/standalone*.xml</exclude>
-      </excludes>
+      <fileMode>644</fileMode>
+      <directoryMode>755</directoryMode>
     </fileSet>
     <fileSet>
       <directory>${staging.dir}</directory>
@@ -74,6 +56,13 @@
       <includes>
          <include>standalone*.xml</include>
       </includes>
+      <fileMode>644</fileMode>
+    </fileSet>
+    <fileSet>
+      <directory>${staging.dir}/deployments</directory>
+      <outputDirectory>${distro.root.dir}standalone/deployments</outputDirectory>
+      <fileMode>644</fileMode>
+      <directoryMode>755</directoryMode>
     </fileSet>
     <fileSet>
       <directory>../../quickstarts</directory>
@@ -89,14 +78,8 @@
          <exclude>**/target</exclude>
          <exclude>**/target/**/*</exclude>
       </excludes>
-    </fileSet>
-    <fileSet>
-      <directory>${staging.jboss.dir}/forge</directory>
-      <outputDirectory>${distro.root.dir}forge</outputDirectory>
-    </fileSet>
-    <fileSet>
-      <directory>${staging.jboss.dir}/deployments</directory>
-      <outputDirectory>${distro.root.dir}standalone/deployments</outputDirectory>
+      <fileMode>644</fileMode>
+      <directoryMode>755</directoryMode>
     </fileSet>
   </fileSets>
 </assembly>

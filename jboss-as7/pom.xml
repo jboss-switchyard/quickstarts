@@ -186,7 +186,7 @@
                                     <version>${project.version}</version>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${staging.jboss.dir}/deployments</outputDirectory>
+                            <outputDirectory>${staging.dir}/deployments</outputDirectory>
                             <stripVersion>true</stripVersion>
                         </configuration>
                     </execution>
