@@ -42,6 +42,8 @@ import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
 import org.switchyard.common.io.resource.SimpleResource;
 import org.switchyard.component.bpm.config.model.v1.V1BpmComponentImplementationModel;
+import org.switchyard.component.bpm.config.model.v1.V1TaskHandlerModel;
+import org.switchyard.component.bpm.task.SwitchYardServiceTaskHandler;
 import org.switchyard.config.model.composite.JavaComponentServiceInterfaceModel;
 import org.switchyard.config.model.composite.v1.V1ComponentModel;
 import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
@@ -68,6 +70,8 @@ public class BPMServicePlugin implements Plugin {
     private static final String PROCESS_DIR = "META-INF";
     // VAR_* constants reference substitution tokens in the process definition template 
     private static final String VAR_PROCESS_ID   = "${process.id}";
+    // SwitchYard task handler name
+    private static final String SWITCHAYRD_TASK_HANDLER = "SwitchYard Service";
     
     @Inject
     private Project _project;
@@ -173,6 +177,10 @@ public class BPMServicePlugin implements Plugin {
         V1BpmComponentImplementationModel bpm = new V1BpmComponentImplementationModel();
         bpm.setProcessDefinition(new SimpleResource(processDefinition));
         bpm.setProcessId(processId);
+        V1TaskHandlerModel switchyardHandler = new V1TaskHandlerModel();
+        switchyardHandler.setName(SWITCHAYRD_TASK_HANDLER);
+        switchyardHandler.setClazz(SwitchYardServiceTaskHandler.class);
+        bpm.addTaskHandler(switchyardHandler);
         component.setImplementation(bpm);
         
         // Add the new component service to the application config
