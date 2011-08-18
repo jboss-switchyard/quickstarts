@@ -59,6 +59,13 @@ MA  02110-1301, USA.
                             </documentation>
                         </annotation>
                     </element>
+                    <element name="contextPath" type="string" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>
+                                The context path used in the HTTP URL
+                            </documentation>
+                        </annotation>
+                    </element>
                     <element name="composer" minOccurs="0" maxOccurs="1">
                         <annotation>
                             <documentation>
