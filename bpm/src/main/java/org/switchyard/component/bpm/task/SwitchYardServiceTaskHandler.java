@@ -32,6 +32,7 @@ import org.switchyard.Property;
 import org.switchyard.Scope;
 import org.switchyard.ServiceReference;
 import org.switchyard.SynchronousInOutHandler;
+import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.exception.DeliveryException;
 import org.switchyard.metadata.BaseExchangeContract;
@@ -88,7 +89,6 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
                 ExchangeContract exchangeContract = getExchangeContract(serviceRef, parameters);
                 ExchangePattern exchangePattern = exchangeContract.getServiceOperation().getExchangePattern();
                 SynchronousInOutHandler inOutHandler = null;
-
                 final Exchange exchangeIn;
                 if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
                     inOutHandler = new SynchronousInOutHandler();
@@ -107,13 +107,10 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
                 }
                 if (inOutHandler != null && ExchangePattern.IN_OUT.equals(exchangePattern)) {
                     exchangeIn.send(message);
-
                     try {
                         Exchange exchangeOut = inOutHandler.waitForOut();
-
                         context = exchangeOut.getContext();
                         message = exchangeOut.getMessage();
-
                         content = message.getContent();
                         task.setProcessInstanceVariable(getOutputContentName(task), content);
                         results = new HashMap<String,Object>();
@@ -141,32 +138,37 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
     }
 
     private QName getServiceName(Map<String, Object> parameters) {
+        QName serviceName = null;
         Object p = parameters.get(SERVICE_NAME);
         if (p instanceof QName) {
-            return (QName)p;
+            serviceName = (QName)p;
         } else if (p instanceof String) {
-            return XMLHelper.createQName((String)p);
+            serviceName = XMLHelper.createQName((String)p);
         }
-        return null;
+        if (serviceName != null && Strings.trimToNull(serviceName.getNamespaceURI()) == null) {
+            String tns = getTargetNamespace();
+            if (tns != null) {
+                serviceName = XMLHelper.createQName(tns, serviceName.getLocalPart());
+            }
+        }
+        return serviceName;
     }
-    
+
     private String getInputContentName(Task task) {
         // check for a task-level specification of input name
         String contentName = (String)task.getParameter(INPUT_MESSAGE_VAR);
         if (contentName == null) {
             contentName = getMessageContentName();
         }
-        
         return contentName;
     }
-    
+
     private String getOutputContentName(Task task) {
         // check for a task-level specification of output name
         String contentName = (String)task.getParameter(OUTPUT_MESSAGE_VAR);
         if (contentName == null) {
             contentName = getMessageContentName();
         }
-        
         return contentName;
     }
 
@@ -185,4 +187,5 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
         }
         return exchangeContract;
     }
+
 }

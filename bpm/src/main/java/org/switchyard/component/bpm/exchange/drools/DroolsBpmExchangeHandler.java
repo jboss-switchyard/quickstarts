@@ -56,6 +56,7 @@ import org.switchyard.component.bpm.config.model.TaskHandlerModel;
 import org.switchyard.component.bpm.exchange.BaseBpmExchangeHandler;
 import org.switchyard.component.bpm.task.TaskHandler;
 import org.switchyard.component.bpm.task.drools.DroolsWorkItemHandler;
+import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.metadata.ServiceOperation;
 
 /**
@@ -91,6 +92,8 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
         if (_messageContentName == null) {
             _messageContentName = MESSAGE_CONTENT_VAR;
         }
+        ComponentModel cm = model.getComponent();
+        String tns = cm != null ? cm.getTargetNamespace() : null;
         for (TaskHandlerModel tihm : model.getTaskHandlers()) {
             TaskHandler tih = Construction.construct(tihm.getClazz());
             String name = tihm.getName();
@@ -98,6 +101,7 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
                 tih.setName(name);
             }
             tih.setMessageContentName(_messageContentName);
+            tih.setTargetNamespace(tns);
             tih.setServiceDomain(_serviceDomain);
             _taskHandlers.add(tih);
         }

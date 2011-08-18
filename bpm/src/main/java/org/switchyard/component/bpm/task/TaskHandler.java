@@ -54,6 +54,19 @@ public interface TaskHandler {
     public TaskHandler setMessageContentName(String messageContentName);
 
     /**
+     * Gets the target namespace.
+     * @return the target namespace
+     */
+    public String getTargetNamespace();
+
+    /**
+     * Sets the target namespace.
+     * @param targetNamespace the target namespace
+     * @return this TaskHandler (useful for chaining)
+     */
+    public TaskHandler setTargetNamespace(String targetNamespace);
+
+    /**
      * Gets the ServiceDomain.
      * @return the ServiceDomain
      */

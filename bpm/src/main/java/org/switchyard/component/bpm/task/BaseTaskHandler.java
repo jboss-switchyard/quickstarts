@@ -29,6 +29,7 @@ public abstract class BaseTaskHandler implements TaskHandler {
 
     private String _name;
     private String _messageContentName;
+    private String _targetNamespace;
     private ServiceDomain _serviceDomain;
 
     /**
@@ -77,6 +78,23 @@ public abstract class BaseTaskHandler implements TaskHandler {
     @Override
     public TaskHandler setMessageContentName(String messageContentName) {
         _messageContentName = messageContentName;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getTargetNamespace() {
+        return _targetNamespace;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TaskHandler setTargetNamespace(String targetNamespace) {
+        _targetNamespace = targetNamespace;
         return this;
     }
 
