@@ -36,22 +36,21 @@ public abstract class BaseResource implements Resource {
      */
     @Override
     public URL getLocationURL() {
-        return getURL(getLocation(), getClass());
+        return getLocationURL(getClass());
     }
 
     /**
-     * Gets a URL with the specified location.
-     * @param location the specified location
-     * @return the URL
+     * {@inheritDoc}
      */
-    public static URL getURL(String location) {
-        return getURL(location, BaseResource.class);
+    @Override
+    public URL getLocationURL(Class<?> caller) {
+        return getURL(getLocation(), caller);
     }
 
     /**
      * Gets a URL with the specified location and calling class.
      * @param location the specified location
-     * @param caller the calling class
+     * @param caller the calling class to use it's classloader
      * @return the URL
      */
     public static URL getURL(String location, Class<?> caller) {

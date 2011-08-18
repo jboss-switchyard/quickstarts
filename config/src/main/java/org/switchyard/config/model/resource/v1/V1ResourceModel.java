@@ -67,7 +67,15 @@ public class V1ResourceModel extends BaseModel implements ResourceModel {
      */
     @Override
     public URL getLocationURL() {
-        return BaseResource.getURL(getLocation(), getClass());
+        return getLocationURL(getClass());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URL getLocationURL(Class<?> caller) {
+        return BaseResource.getURL(getLocation(), caller);
     }
 
     /**
