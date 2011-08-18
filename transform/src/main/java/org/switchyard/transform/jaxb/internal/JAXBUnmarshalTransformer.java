@@ -73,8 +73,13 @@ public class JAXBUnmarshalTransformer<F, T> extends BaseTransformer<Message, Mes
         }
 
         try {
-            JAXBElement unmarshalledObjectElement = (JAXBElement) unmarshaller.unmarshal(message.getContent(Source.class));
-            message.setContent(unmarshalledObjectElement.getValue());
+            Object unmarshalledObject = unmarshaller.unmarshal(message.getContent(Source.class));
+
+            if (unmarshalledObject instanceof JAXBElement) {
+                message.setContent(((JAXBElement)unmarshalledObject).getValue());
+            } else {
+                message.setContent(unmarshalledObject);
+            }
         } catch (JAXBException e) {
             throw new SwitchYardException("Failed to unmarshall for contextPath '" + _contextPath + "'.", e);
         }
