@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="osdemo" targetNamespace="urn:switchyard-quickstart:bpm-service:1.0">
+        <service name="ProcessOrder" promote="ProcessOrder">
+            <interface.wsdl interface="wsdl/ProcessOrder.wsdl#wsdl.porttype(ProcessOrder)"/>
+            <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
+                <wsdl>wsdl/ProcessOrder.wsdl</wsdl>
+                <serverHost>localhost</serverHost>
+                <serverPort>18001</serverPort>
+                <contextPath>swydws</contextPath>
+            </binding.soap>
+        </service>
+        <component name="ProcessOrder">
+            <implementation.bpm xmlns="urn:switchyard-component-bpm:config:1.0" processDefinition="META-INF/ProcessOrder.bpmn" processId="ProcessOrder">
+                <taskHandler class="org.switchyard.component.bpm.task.SwitchYardServiceTaskHandler" name="SwitchYard Service"/>
+            </implementation.bpm>
+            <service name="ProcessOrder">
+                <interface.java interface="org.switchyard.quickstarts.bpm.service.ProcessOrder"/>
+            </service>
+        </component>
+    </composite>
+</switchyard>

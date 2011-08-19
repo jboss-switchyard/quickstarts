@@ -48,6 +48,7 @@
     <modules>
         <module>camel-service</module>
         <module>camel-binding</module>
+        <module>bpm-service</module>
         <module>hornetq-binding</module>
         <module>transform-jaxb</module>
         <module>transform-json</module>

@@ -1,0 +1,10 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:switchyard-quickstart:bpm-service:1.0">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <urn:submitOrder>
+         <orderId>test1</orderId>
+         <itemId>cowbell</itemId>
+         <quantity>30</quantity>
+      </urn:submitOrder>
+   </soapenv:Body>
+</soapenv:Envelope>
