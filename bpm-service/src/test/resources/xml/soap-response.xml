@@ -1,0 +1,9 @@
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP-ENV:Body>
+      <ns2:submitOrderResponse xmlns:ns2="urn:switchyard-quickstart:bpm-service:1.0">
+         <orderId>test1</orderId>
+         <accepted>true</accepted>
+         <status>Thanks for your order, it has been shipped!</status>
+      </ns2:submitOrderResponse>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
