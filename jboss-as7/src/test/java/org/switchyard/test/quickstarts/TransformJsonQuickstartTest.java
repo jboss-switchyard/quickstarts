@@ -35,7 +35,7 @@ public class TransformJsonQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createQSDeployment("switchyard-quickstart-transform-json");
+        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-transform-json");
     }
 
     @Test

@@ -20,7 +20,7 @@ package org.switchyard.test.ordersdemo;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.test.ArquillianUtil;
@@ -37,8 +37,8 @@ import java.io.IOException;
 public class OrdersDemoQuickstartTest {
 
     @Deployment(testable = false)
-    public static JavaArchive createDeployment() {
-        return ArquillianUtil.createDemoDeployment("switchyard-quickstart-demo-orders");
+    public static WebArchive createDeployment() {
+        return ArquillianUtil.createWarDemoDeployment("switchyard-quickstart-demo-orders");
     }
 
     @Test

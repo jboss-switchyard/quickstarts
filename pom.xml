@@ -25,7 +25,7 @@
         <module>distribution</module>
         <module>jboss-as6</module>
         <module>jboss-as7</module>
-        <module>test</module>
+        <!--<module>test</module>-->
         <module>docs</module>
     </modules>
     
