@@ -20,6 +20,7 @@ package org.switchyard.test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -115,15 +116,25 @@ public class SwitchYardTestKit {
         if (testCaseConfig != null) {
             String config = testCaseConfig.config();
             if (config != null && !config.equals(NULL_CONFIG)) {
-                InputStream is = null;
+                InputStream is = getResourceAsStream(config);
+
+                if (is == null) {
+                    // Try the file system...
+                    File file = new File(config);
+                    if (file.isFile()) {
+                        is = new FileInputStream(file);
+                    }
+                }
+
+                if (is == null) {
+                    Assert.fail("Failed to locate test configuration '" + config + "' on the classpath or project sub-directory. See the @" + SwitchYardTestCaseConfig.class.getSimpleName() + " annotation on test class '" + _testInstance.getClass().getName() + "'.");
+                }
+
                 try {
-                    is = getResourceAsStream(config);
                     _configModel = createSwitchYardModel(is, createScanners(testCaseConfig));
                 } finally {
                     try {
-                        if (is != null) {
-                            is.close();
-                        }
+                        is.close();
                     } catch (Throwable t) {
                         // just to keep checkstyle happy
                         t.getMessage();

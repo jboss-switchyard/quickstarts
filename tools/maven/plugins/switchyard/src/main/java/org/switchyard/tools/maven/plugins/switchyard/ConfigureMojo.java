@@ -67,6 +67,11 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
     private String[] scannerClassNames = new String[]{};
 
     /**
+     * @parameter
+     */
+    private File[] scanDirectories = new File[]{};
+
+    /**
      * @parameter expression="${project.compileClasspathElements}"
      */
     private List<String> compileClasspathElements;
@@ -98,9 +103,14 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
             for (String compileClasspaths : compileClasspathElements) {
                 mojoURLs.add(new File(compileClasspaths).toURI().toURL());
             }
-            Resource defaultResource = new Resource();
-            defaultResource.setTargetPath(outputDirectory.getAbsolutePath());
-            resources.add(defaultResource);
+
+            addDirectoryResource(outputDirectory);
+            for (File scanDir : scanDirectories) {
+                if (scanDir != null) {
+                    addDirectoryResource(scanDir);
+                }
+            }
+
             for (Resource resource : resources) {
                 String path = resource.getTargetPath();
                 if (path != null) {
@@ -138,7 +148,18 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
             Class<M> modelClass = (Class<M>)Classes.forName(modelClassName, loader);
             MergeScanner<M> merge_scanner = new MergeScanner<M>(modelClass, true, scanners);
             List<URL> scannerURLs = new ArrayList<URL>();
-            scannerURLs.add(outputDirectory.toURI().toURL());
+
+            if (scanDirectories.length == 0) {
+                scannerURLs.add(outputDirectory.toURI().toURL());
+            } else {
+                for (File scanDir : scanDirectories) {
+                    if (scanDir != null) {
+                        scannerURLs.add(scanDir.toURI().toURL());
+                    }
+                }
+            }
+
+            getLog().info("SwitchYard plugin scanning: " + scannerURLs);
             ScannerInput<M> scanner_input = new ScannerInput<M>().setName(artifactId).setURLs(scannerURLs);
             M model = merge_scanner.scan(scanner_input).getModel();
             if (outputFile == null) {
@@ -150,6 +171,7 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
                 }
                 outputFile = new File(od, "switchyard.xml");
             }
+            getLog().info("Outputting SwitchYard configuration model to " + outputFile.getAbsolutePath());
             writer = new BufferedWriter(new FileWriter(outputFile));
             model.write(writer);
         } catch (Throwable t) {
@@ -164,6 +186,12 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
                 }
             }
         }
+    }
+
+    private void addDirectoryResource(File dir) {
+        Resource defaultResource = new Resource();
+        defaultResource.setTargetPath(dir.getAbsolutePath());
+        resources.add(defaultResource);
     }
 
 }

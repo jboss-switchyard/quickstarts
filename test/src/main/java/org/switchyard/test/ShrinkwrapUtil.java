@@ -19,9 +19,11 @@
 
 package org.switchyard.test;
 
+import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.importer.ZipImporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.ResolutionException;
 import org.jboss.shrinkwrap.resolver.impl.maven.MavenRepositorySettings;
 import org.junit.Assert;
@@ -48,7 +50,7 @@ public final class ShrinkwrapUtil {
     }
 
     /**
-     * Get a SwitchYard maven Artifact Archive.
+     * Get a SwitchYard maven Java Artifact Archive.
      * <p/>
      * Gets the SwitchYard version from the mandatory {@link #SWITCHYARD_VERSION} env property.
      *
@@ -61,7 +63,7 @@ public final class ShrinkwrapUtil {
     }
 
     /**
-     * Get a maven Artifact Archive.
+     * Get a maven Java Artifact Archive.
      *
      * @param groupId    Maven groupId
      * @param artifactId Maven artifactId.
@@ -69,6 +71,47 @@ public final class ShrinkwrapUtil {
      * @return The Maven artifact archive.
      */
     public static JavaArchive getJavaArchive(String groupId, String artifactId, String version) {
+        return getArchive(groupId, artifactId, version, JavaArchive.class, "jar");
+    }
+
+    /**
+     * Get a SwitchYard maven Web Artifact Archive.
+     * <p/>
+     * Gets the SwitchYard version from the mandatory {@link #SWITCHYARD_VERSION} env property.
+     *
+     * @param groupId    Maven groupId
+     * @param artifactId Maven artifactId.
+     * @return The Maven artifact archive.
+     */
+    public static WebArchive getSwitchYardWebArchive(String groupId, String artifactId) {
+        return getWebArchive(groupId, artifactId, getSwitchYardVersion());
+    }
+
+    /**
+     * Get a maven Web Artifact Archive.
+     *
+     * @param groupId    Maven groupId
+     * @param artifactId Maven artifactId.
+     * @param version    Artifact version.
+     * @return The Maven artifact archive.
+     */
+    public static WebArchive getWebArchive(String groupId, String artifactId, String version) {
+        return getArchive(groupId, artifactId, version, WebArchive.class, "war");
+    }
+
+    /**
+     * Get a maven Artifact Archive.
+     *
+     * @param groupId    Maven groupId
+     * @param artifactId Maven artifactId.
+     * @param version    Artifact version.
+     * @param archiveType The artifact type.
+     * @param fileExtension The artifact file extension.
+     * @return The Maven artifact archive.
+     *
+     * @param <A> Archive type.
+     */
+    public static <A extends Archive> A getArchive(String groupId, String artifactId, String version, Class<A> archiveType, String fileExtension) {
         Assert.assertNotNull("'groupId' argument is null.", groupId);
         Assert.assertNotNull("'artifactId' argument is null.", artifactId);
         Assert.assertNotNull("'version' argument is null.", version);
@@ -79,17 +122,19 @@ public final class ShrinkwrapUtil {
                 groupId.replace(".", "/")
                         + "/" + artifactId
                         + "/" + version
-                        + "/" + artifactId + "-" + version + ".jar");
+                        + "/" + artifactId + "-" + version + "." + fileExtension);
 
         if (!artifactFile.isFile()) {
             String artifact = groupId + ":" + artifactId + ":" + version;
             Assert.fail("Failed to resolve artifact '" + artifact + "'.  The artifact must be declared as a dependency in your POM, thereby making it available in your local repository.");
         }
 
-        JavaArchive archive = ShrinkWrap.create(ZipImporter.class, artifactFile.getName()).importFrom(convert(artifactFile)).as(JavaArchive.class);
+        A archive = ShrinkWrap.create(ZipImporter.class, artifactFile.getName()).importFrom(convert(artifactFile)).as(archiveType);
 
         return archive;
     }
+
+
 
     /**
      * Get the SwitchYard version being tested.
