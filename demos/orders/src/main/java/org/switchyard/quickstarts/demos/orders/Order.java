@@ -19,36 +19,53 @@
 
 package org.switchyard.quickstarts.demos.orders;
 
-public class Order {
+import org.switchyard.component.bean.Reference;
 
-    private String _orderId;
-    private String _itemId;
-    private int _quantity;
-    
-    public Order setItemId(String itemId) {
-        _itemId = itemId;
-        return this;
-    }
-    
-    public Order setOrderId(String orderId) {
-        _orderId = orderId;
-        return this;
-    }
+import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.Serializable;
 
-    public Order setQuantity(int quantity) {
-        _quantity = quantity;
-        return this;
-    }
+@Named
+@RequestScoped
+public class Order implements Serializable {
+
+    @Inject
+    @Reference
+    private OrderService orderService;
+
+    private String orderId;
+    private String itemId;
+    private int quantity = 1;
 
     public String getOrderId() {
-        return _orderId;
+        return orderId;
     }
-    
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
     public String getItemId() {
-        return _itemId;
+        return itemId;
     }
-    
+
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
+    }
+
     public int getQuantity() {
-        return _quantity;
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public void create() {
+        OrderAck serviceAck = orderService.submitOrder(this);
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(serviceAck.toString()));
     }
 }

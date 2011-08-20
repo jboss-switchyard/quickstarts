@@ -46,10 +46,18 @@ public class OrderAck {
         _status = status;
         return this;
     }
-    
+
     public OrderAck setAccepted(boolean accepted) {
         _accepted = accepted;
         return this;
     }
-    
+
+    @Override
+    public String toString() {
+        if (_accepted) {
+            return "Order " + _orderId + " Accepted.";
+        } else {
+            return "Order " + _orderId + " Not Accepted: " + _status;
+        }
+    }
 }
