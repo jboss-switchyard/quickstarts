@@ -29,7 +29,6 @@ import java.util.Set;
 
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.type.classpath.IsAnnotationPresentFilter;
-import org.switchyard.common.type.classpath.ResourceExistsFilter;
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
 import org.switchyard.component.bean.config.model.v1.V1BeanComponentImplementationModel;
@@ -130,10 +129,7 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
         ClasspathScanner serviceScanner = new ClasspathScanner(filter);
 
         for (URL url : urls) {
-            // Only scan the url for @Services if the target contains a CDI beans.xml resource...
-            if (ifBeansXMLOnPath(url)) {
-                serviceScanner.scan(url);
-            }
+            serviceScanner.scan(url);
         }
 
         return filter.getMatchedTypes();
@@ -150,13 +146,5 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             }
         }
         return references;
-    }
-
-    private boolean ifBeansXMLOnPath(URL url) throws IOException {
-        ResourceExistsFilter beansXmlFilter = new ResourceExistsFilter("META-INF/beans.xml");
-        ClasspathScanner beansXmlScanner = new ClasspathScanner(beansXmlFilter);
-
-        beansXmlScanner.scan(url);
-        return beansXmlFilter.resourceExists();
     }
 }
