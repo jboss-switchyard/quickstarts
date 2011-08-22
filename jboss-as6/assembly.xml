@@ -29,7 +29,7 @@
 
     <fileSets>
         <fileSet>
-            <directory>${staging.dir}/${as.root.dir}</directory>
+            <directory>${staging.jboss.home}</directory>
             <excludes>
                 <exclude>bin/**</exclude>
             </excludes>
@@ -38,7 +38,7 @@
             <outputDirectory>/${switchyard.root.dir}</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>${staging.dir}/${as.root.dir}/bin</directory>
+            <directory>${staging.jboss.home}/bin</directory>
             <excludes>
                 <exclude>*.sh</exclude>
             </excludes>
@@ -48,7 +48,7 @@
             <outputDirectory>/${switchyard.root.dir}/bin</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>${staging.dir}/${as.root.dir}/bin</directory>
+            <directory>${staging.jboss.home}/bin</directory>
             <includes>
                 <include>*.sh</include>
             </includes>

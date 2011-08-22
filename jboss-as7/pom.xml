@@ -30,20 +30,6 @@
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-release-distribution</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-release-testutil</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>xmlunit</groupId>
-            <artifactId>xmlunit</artifactId>
-            <version>1.3</version>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-dist</artifactId>
@@ -51,6 +37,13 @@
             <version>${version.jbossas}</version>
         </dependency>
 
+
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-release-testutil</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
             <artifactId>arquillian-junit-container</artifactId>
@@ -63,11 +56,16 @@
             <version>${version.arquillian}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-arquillian-container-managed</artifactId>
             <version>${version.jbossas}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>1.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -112,6 +110,11 @@
           <version>${project.version}</version>
         </dependency>
         <dependency>
+          <groupId>org.switchyard.quickstarts</groupId>
+          <artifactId>switchyard-quickstart-rules-interview</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
           <groupId>org.switchyard.quickstarts.demos</groupId>
           <artifactId>switchyard-quickstart-demo-orders</artifactId>
           <version>${project.version}</version>
@@ -147,7 +150,7 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>install-switchyard-core</id>
+                        <id>install-switchyard</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>unpack</goal>
@@ -157,6 +160,36 @@
                                 <artifactItem>
                                     <groupId>org.switchyard</groupId>
                                     <artifactId>switchyard-as7-build</artifactId>
+                                    <type>zip</type>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.switchyard.components</groupId>
+                                    <artifactId>switchyard-component-bean</artifactId>
+                                    <type>zip</type>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.switchyard.components</groupId>
+                                    <artifactId>switchyard-component-camel</artifactId>
+                                    <type>zip</type>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.switchyard.components</groupId>
+                                    <artifactId>switchyard-component-soap</artifactId>
+                                    <type>zip</type>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.switchyard.components</groupId>
+                                    <artifactId>switchyard-component-rules</artifactId>
+                                    <type>zip</type>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.switchyard.components</groupId>
+                                    <artifactId>switchyard-component-bpm</artifactId>
                                     <type>zip</type>
                                     <version>${project.version}</version>
                                 </artifactItem>
@@ -181,96 +214,6 @@
                             </artifactItems>
                             <outputDirectory>${staging.dir}/deployments</outputDirectory>
                             <stripVersion>true</stripVersion>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>install-switchyard-component-bean</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.switchyard.components</groupId>
-                                    <artifactId>switchyard-component-bean</artifactId>
-                                    <type>zip</type>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${staging.jboss.dir}</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>install-switchyard-component-camel</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.switchyard.components</groupId>
-                                    <artifactId>switchyard-component-camel</artifactId>
-                                    <type>zip</type>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${staging.jboss.dir}</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>install-switchyard-component-soap</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.switchyard.components</groupId>
-                                    <artifactId>switchyard-component-soap</artifactId>
-                                    <type>zip</type>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${staging.jboss.dir}</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>install-switchyard-component-rules</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.switchyard.components</groupId>
-                                    <artifactId>switchyard-component-rules</artifactId>
-                                    <type>zip</type>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${staging.jboss.dir}</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>install-switchyard-component-bpm</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.switchyard.components</groupId>
-                                    <artifactId>switchyard-component-bpm</artifactId>
-                                    <type>zip</type>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${staging.jboss.dir}</outputDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -344,6 +287,24 @@
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>${project.build.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-tests</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.switchyard</groupId>
+                                    <artifactId>switchyard-release-tests-as7</artifactId>
+                                    <type>test-jar</type>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

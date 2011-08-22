@@ -32,7 +32,7 @@
     <groupId>org.switchyard</groupId>
     <artifactId>switchyard-release-as6</artifactId>
     <version>0.2.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <name>SwitchYard: AS6 Distribution</name>
     <description>SwitchYard AS6 Distribution</description>
 
@@ -42,6 +42,10 @@
         <assembly.dir>${project.build.directory}/assembly</assembly.dir>
         <as.root.dir>jboss-${version.jbossas}</as.root.dir>
         <switchyard.root.dir>switchyard-as6-${distro.version}</switchyard.root.dir>
+        <staging.jboss.home>${staging.dir}/${as.root.dir}</staging.jboss.home>
+        <switchyard.jboss.home>${project.build.directory}/${switchyard.root.dir}</switchyard.jboss.home>
+        <arquillian.version>1.0.0.Alpha5</arquillian.version>
+        <shrinkwrap.version>1.0.0-alpha-12</shrinkwrap.version>
         <camel.version>2.8.0</camel.version>
         <commonman.version>1.0</commonman.version>
         <drools.version>5.2.0.Final</drools.version>
@@ -51,6 +55,107 @@
         <jbpm.version>5.1.0.Final</jbpm.version>
         <mina.version>2.0.1</mina.version>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-release-testutil</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian</groupId>
+            <artifactId>arquillian-junit</artifactId>
+            <version>${arquillian.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-jbossas-managed-6</artifactId>
+            <version>${arquillian.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.shrinkwrap</groupId>
+                    <artifactId>shrinkwrap-impl-base</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap</groupId>
+            <artifactId>shrinkwrap-impl-base</artifactId>
+            <version>${shrinkwrap.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.shrinkwrap</groupId>
+                    <artifactId>shrinkwrap-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.shrinkwrap</groupId>
+                    <artifactId>shrinkwrap-spi</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap</groupId>
+            <artifactId>shrinkwrap-api</artifactId>
+            <version>${shrinkwrap.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap</groupId>
+            <artifactId>shrinkwrap-spi</artifactId>
+            <version>${shrinkwrap.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+            <version>${shrinkwrap.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian</groupId>
+            <artifactId>arquillian-junit</artifactId>
+            <version>${arquillian.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-jbossas-managed-6</artifactId>
+            <version>${arquillian.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.shrinkwrap</groupId>
+                    <artifactId>shrinkwrap-impl-base</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.jbossas</groupId>
+            <artifactId>jboss-as-depchain</artifactId>
+            <version>${version.jbossas}</version>
+            <type>pom</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.shrinkwrap</groupId>
+                    <artifactId>shrinkwrap-extension-vdf</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.shrinkwrap</groupId>
+                    <artifactId>shrinkwrap-extension-vfs3</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-http4</artifactId>
+            <version>${camel.version}</version>
+            <scope>test</scope>
+         </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -62,7 +167,7 @@
                         <id>stage-jboss</id>
                         <phase>generate-sources</phase>
                         <goals>
-                            <goal>copy</goal>
+                            <goal>unpack</goal>
                         </goals>
                         <configuration>
                             <artifactItems>
@@ -72,12 +177,36 @@
                                     <version>${version.jbossas}</version>
                                     <type>zip</type>
                                 </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${staging.dir}</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stage-switchyard-core</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
                                 <artifactItem>
                                     <groupId>org.switchyard</groupId>
                                     <artifactId>switchyard-as6-build</artifactId>
                                     <version>${project.version}</version>
                                     <type>zip</type>
                                 </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${staging.jboss.home}/server/default/deployers</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stage-switchyard-components</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
                                 <artifactItem>
                                     <groupId>org.switchyard.components</groupId>
                                     <artifactId>switchyard-component-bean</artifactId>
@@ -95,17 +224,29 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.switchyard.components</groupId>
-                                    <artifactId>switchyard-component-camel-as6</artifactId>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.switchyard.components</groupId>
                                     <artifactId>switchyard-component-rules</artifactId>
                                     <version>${project.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.switchyard.components</groupId>
                                     <artifactId>switchyard-component-bpm</artifactId>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${staging.jboss.home}/server/default/deploy</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stage-switchyard-dependencies</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.switchyard.components</groupId>
+                                    <artifactId>switchyard-component-camel-as6</artifactId>
                                     <version>${project.version}</version>
                                 </artifactItem>
                                 <artifactItem>
@@ -194,6 +335,7 @@
                                     <version>${mina.version}</version>
                                 </artifactItem>
                             </artifactItems>
+                            <outputDirectory>${staging.jboss.home}/server/default/deployers/switchyard.deployer</outputDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -234,8 +376,8 @@
                       </configuration>
                     </execution>
                     <execution>
-                        <id>install-distribution-files</id>
-                        <phase>generate-sources</phase>
+                        <id>unzip-distro</id>
+                        <phase>process-test-classes</phase>
                         <goals>
                             <goal>unpack</goal>
                         </goals>
@@ -243,78 +385,35 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-release-distribution</artifactId>
-                                    <type>jar</type>
+                                    <artifactId>switchyard-release-as6</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>zip</type>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-tests</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.switchyard</groupId>
+                                    <artifactId>switchyard-release-tests-as6</artifactId>
+                                    <type>test-jar</type>
                                     <version>${project.version}</version>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${staging.dir}</outputDirectory>
+                            <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
 
-            <!-- Build the Server from the dependencies... -->
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.1</version>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <tasks>
-
-                                <property name="dependencies.dir" value="target/dependency" />
-
-                                <!-- Create the staging and assembly dirs... -->
-                                <mkdir dir="${staging.dir}" />
-
-                                <!-- Unzip the AS distribution... -->
-                                <unzip src="${dependencies.dir}/jboss-as-distribution-${version.jbossas}.zip" dest="${staging.dir}" />
-
-                                <property name="default.server" value="${staging.dir}/${as.root.dir}/server/default" />
-
-                                <!-- Unzip the SwitchYard distribution on top of the AS... -->
-                                <unzip src="${dependencies.dir}/switchyard-as6-build-${project.version}.zip" dest="${default.server}/deployers" />
-
-                                <!-- Copy switchyard components to default server deploy folder... -->
-                                <copy todir="${default.server}/deploy">
-                                    <fileset dir="${dependencies.dir}">
-                                        <include name="switchyard-component-*.jar" />
-                                        <exclude name="switchyard-component-camel-as6-*.jar" /> <!-- Will be copied to switchyard.deployer folder. See below. -->
-                                    </fileset>
-                                </copy>
-
-                                <!-- Copy Camel dependencies to default server switchyard.deployer folder... -->
-                                <copy todir="${default.server}/deployers/switchyard.deployer">
-                                    <fileset dir="${dependencies.dir}">
-                                        <include name="camel-*.jar" />
-                                        <include name="commons-management-*.jar" />
-                                        <include name="switchyard-component-camel-as6-*.jar" />
-                                    </fileset>
-                                </copy>
-
-                                <!-- Copy Drools & JBPM dependencies to default server switchyard.deployer folder... -->
-                                <copy todir="${default.server}/deployers/switchyard.deployer">
-                                    <fileset dir="${dependencies.dir}">
-                                        <include name="knowledge*.jar" />
-                                        <include name="drools-*.jar" />
-                                        <include name="antlr*.jar" />
-                                        <include name="ecj*.jar" />
-                                        <include name="mvel2*.jar" />
-                                        <include name="jbpm-*.jar" />
-                                        <include name="mina*.jar" />
-                                    </fileset>
-                                </copy>
-
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>  
-                </executions>
-            </plugin>
             <!-- Assemble the Server... -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -322,7 +421,7 @@
                 <executions>
                     <execution>
                         <id>make-assembly</id>
-                        <phase>package</phase>
+                        <phase>generate-test-resources</phase>
                         <goals>
                             <goal>attached</goal>
                         </goals>
@@ -334,6 +433,36 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <!-- Configure the Surefire plugin for running the tests.  Be sure to make these same setting if running in your IDE... -->
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <environmentVariables>
+                        <JBOSS_HOME>${switchyard.jboss.home}</JBOSS_HOME>
+                        <SWITCHYARD_VERSION>${project.version}</SWITCHYARD_VERSION>
+                    </environmentVariables>
+                    <additionalClasspathElements>
+                        <additionalClasspathElement>${switchyard.jboss.home}/client/jbossws-native-client.jar</additionalClasspathElement>
+                        <!--
+                            Because jbossweb.sar contains shared web.xml, which must be
+                            visible from same CL as TomcatDeployer.class.getClassLoader
+                        -->
+                        <additionalClasspathElement>${switchyard.jboss.home}/server/default/deploy/jbossweb.sar</additionalClasspathElement>
+                    </additionalClasspathElements>
+
+                    <trimStackTrace>false</trimStackTrace>
+                    <printSummary>true</printSummary>
+                    <forkMode>once</forkMode>
+
+                    <!--
+                        MaxPermSize Required to bump the space for relective data like
+                        classes, methods, etc. EMB-41. Endorsed required for things like
+                        WS support (EMB-61)
+                    -->
+                    <argLine>-Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Djava.util.logging.manager=org.jboss.logmanager.LogManager -Djava.endorsed.dirs=${switchyard.jboss.home}/lib/endorsed -Djboss.home=${switchyard.jboss.home}/ -Djboss.boot.server.log.dir=${switchyard.jboss.home}/</argLine>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

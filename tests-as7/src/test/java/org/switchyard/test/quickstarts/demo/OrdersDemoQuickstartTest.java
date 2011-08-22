@@ -23,6 +23,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.custommonkey.xmlunit.XMLAssert;
 import org.switchyard.test.ArquillianUtil;
 import org.switchyard.test.mixins.HTTPMixIn;
 import org.xml.sax.SAXException;
@@ -43,12 +44,15 @@ public class OrdersDemoQuickstartTest {
     }
 
     @Test
-    public void testOrders() throws IOException, SAXException {
+    public void testOrders() throws Exception {
         HTTPMixIn httpMixIn = new HTTPMixIn();
 
         httpMixIn.initialize();
         try {
-            httpMixIn.postStringAndTestXML("http://localhost:18001/OrderService", SOAP_REQUEST, EXPECTED_SOAP_RESPONSE);
+            String response = httpMixIn.postString("http://localhost:18001/OrderService", SOAP_REQUEST);
+            XMLAssert.assertXpathEvaluatesTo("PO-19838-XYZ", "//orderAck/orderId", response);
+            XMLAssert.assertXpathEvaluatesTo("true", "//orderAck/accepted", response);
+            XMLAssert.assertXpathEvaluatesTo("Order Accepted", "//orderAck/status", response);
         } finally {
             httpMixIn.uninitialize();
         }
@@ -65,17 +69,4 @@ public class OrdersDemoQuickstartTest {
             "        </orders:submitOrder>\n" +
             "    </soap:Body>\n" +
             "</soap:Envelope>";
-
-    private static final String EXPECTED_SOAP_RESPONSE = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
-            "    <SOAP-ENV:Header/>\n" +
-            "    <SOAP-ENV:Body>\n" +
-            "        <orders:submitOrderResponse xmlns:orders=\"urn:switchyard-quickstart-demo:orders:1.0\">\n" +
-            "            <orderAck>\n" +
-            "                <orderId>PO-19838-XYZ</orderId>\n" +
-            "                <accepted>true</accepted>\n" +
-            "                <status>Order Accepted</status>\n" +
-            "            </orderAck>\n" +
-            "        </orders:submitOrderResponse>\n" +
-            "    </SOAP-ENV:Body>\n" +
-            "</SOAP-ENV:Envelope>";
 }

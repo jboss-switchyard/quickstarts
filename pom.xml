@@ -23,9 +23,12 @@
     <modules>
         <module>testutil</module>
         <module>distribution</module>
+        <module>tests-as6</module>
+        <module>tests-as7</module>
         <module>jboss-as6</module>
         <module>jboss-as7</module>
-        <module>test</module>
+        <module>openshift/express/cartridge</module>
+        <module>openshift/express/dist</module>
         <module>docs</module>
     </modules>
     
