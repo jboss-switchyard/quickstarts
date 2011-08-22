@@ -120,6 +120,11 @@
           <version>${project.version}</version>
         </dependency>
         <dependency>
+          <groupId>org.switchyard.quickstarts</groupId>
+          <artifactId>switchyard-quickstart-bpm-service</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
           <groupId>org.switchyard.quickstarts.demos</groupId>
           <artifactId>switchyard-quickstart-demo-orders</artifactId>
           <version>${project.version}</version>
