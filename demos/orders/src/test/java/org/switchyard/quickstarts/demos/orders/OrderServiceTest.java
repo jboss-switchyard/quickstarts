@@ -22,14 +22,16 @@ package org.switchyard.quickstarts.demos.orders;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
+import org.switchyard.transform.config.model.TransformSwitchYardScanner;
 
 @RunWith(SwitchYardRunner.class)
-@SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
+@SwitchYardTestCaseConfig(mixins = CDIMixIn.class, scanners = {BeanSwitchYardScanner.class, TransformSwitchYardScanner.class})
 public class OrderServiceTest {
 
     @ServiceOperation("OrderService.submitOrder")
@@ -37,11 +39,12 @@ public class OrderServiceTest {
 
     @Test
     public void testOrderAccepted() throws Exception {
-        Order testOrder = new Order()
-            .setOrderId("ORDER01")
-            .setItemId("BUTTER")
-            .setQuantity(100);
-        
+        Order testOrder = new Order();
+
+        testOrder.setOrderId("ORDER01");
+        testOrder.setItemId("BUTTER");
+        testOrder.setQuantity(100);
+
         OrderAck testAck = submitOrder
             .sendInOut(testOrder)
             .getContent(OrderAck.class);

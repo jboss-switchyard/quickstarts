@@ -46,10 +46,13 @@ public class Transformers {
      */
     @Transformer(from = "{urn:switchyard-quickstart-demo:orders:1.0}submitOrder")
     public Order transform(Element from) {
-       return new Order()
-           .setOrderId(getElementValue(from, ORDER_ID))
-           .setItemId(getElementValue(from, ITEM_ID))
-           .setQuantity(Integer.valueOf(getElementValue(from, QUANTITY)));
+        Order order = new Order();
+
+        order.setOrderId(getElementValue(from, ORDER_ID));
+        order.setItemId(getElementValue(from, ITEM_ID));
+        order.setQuantity(Integer.valueOf(getElementValue(from, QUANTITY)));
+
+        return order;
     }
 
     /**
