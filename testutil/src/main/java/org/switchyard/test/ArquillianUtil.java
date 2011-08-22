@@ -20,6 +20,7 @@
 package org.switchyard.test;
 
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
  * Arquillian Test utilities.
@@ -41,8 +42,8 @@ public abstract class ArquillianUtil {
      * @param artifactId Maven artifactId.
      * @return The Maven artifact archive.
      */
-    public static JavaArchive createDemoDeployment(String artifactId) {
-        return createDeployment(QS_DEMO_GID, artifactId);
+    public static JavaArchive createJarDemoDeployment(String artifactId) {
+        return ShrinkwrapUtil.getSwitchYardJavaArchive(QS_DEMO_GID, artifactId);
     }
 
     /**
@@ -54,20 +55,33 @@ public abstract class ArquillianUtil {
      * @param artifactId Maven artifactId.
      * @return The Maven artifact archive.
      */
-    public static JavaArchive createQSDeployment(String artifactId) {
-        return createDeployment(QS_GID, artifactId);
+    public static JavaArchive createJarQSDeployment(String artifactId) {
+        return ShrinkwrapUtil.getSwitchYardJavaArchive(QS_GID, artifactId);
     }
 
     /**
-     * Create a SwitchYard Deployment.
+     * Create a SwitchYard Quickstart Demo Deployment.
      * <p/>
-     * Gets the SwitchYard version from the mandatory SWITCHYARD_VERSION env property.
+     * Uses "org.switchyard.quickstarts.demos" as the groupId and gets the SwitchYard
+     * version from the mandatory SWITCHYARD_VERSION env property.
      *
-     * @param groupId Maven groupId
      * @param artifactId Maven artifactId.
      * @return The Maven artifact archive.
      */
-    public static JavaArchive createDeployment(String groupId, String artifactId) {
-        return ShrinkwrapUtil.getSwitchYardJavaArchive(groupId, artifactId);
+    public static WebArchive createWarDemoDeployment(String artifactId) {
+        return ShrinkwrapUtil.getSwitchYardWebArchive(QS_DEMO_GID, artifactId);
+    }
+
+    /**
+     * Create a SwitchYard Quickstart Deployment.
+     * <p/>
+     * Uses "org.switchyard.quickstarts" as the groupId and gets the SwitchYard
+     * version from the mandatory SWITCHYARD_VERSION env property.
+     *
+     * @param artifactId Maven artifactId.
+     * @return The Maven artifact archive.
+     */
+    public static WebArchive createWarQSDeployment(String artifactId) {
+        return ShrinkwrapUtil.getSwitchYardWebArchive(QS_GID, artifactId);
     }
 }

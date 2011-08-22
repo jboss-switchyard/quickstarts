@@ -16,38 +16,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.test.ordersdemo;
+package org.switchyard.test.quickstarts;
 
-import org.jboss.arquillian.api.Deployment;
+import org.custommonkey.xmlunit.XMLAssert;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.test.ArquillianUtil;
 import org.switchyard.test.mixins.HTTPMixIn;
-import org.xml.sax.SAXException;
 
-import java.io.IOException;
-
-/**
- *
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
- */
 @RunWith(Arquillian.class)
-public class OrdersDemoQuickstartTest {
+public class BeanServiceQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createDemoDeployment("switchyard-quickstart-demo-orders");
+        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-bean-service");
     }
 
     @Test
-    public void test() throws IOException, SAXException {
+    public void testOrders() throws Exception {
         HTTPMixIn httpMixIn = new HTTPMixIn();
 
         httpMixIn.initialize();
         try {
-            httpMixIn.postStringAndTestXML("http://localhost:18001/OrderService", SOAP_REQUEST, EXPECTED_SOAP_RESPONSE);
+            String response = httpMixIn.postString("http://localhost:18001/OrderService", SOAP_REQUEST);
+            XMLAssert.assertXpathEvaluatesTo("PO-19838-XYZ", "//orderAck/orderId", response);
+            XMLAssert.assertXpathEvaluatesTo("true", "//orderAck/accepted", response);
+            XMLAssert.assertXpathEvaluatesTo("Order Accepted", "//orderAck/status", response);
         } finally {
             httpMixIn.uninitialize();
         }
@@ -55,7 +52,7 @@ public class OrdersDemoQuickstartTest {
 
     private static final String SOAP_REQUEST = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
             "    <soap:Body>\n" +
-            "        <orders:submitOrder xmlns:orders=\"urn:switchyard-quickstart-demo:orders:1.0\">\n" +
+            "        <orders:submitOrder xmlns:orders=\"urn:switchyard-quickstart:bean-service:1.0\">\n" +
             "            <order>\n" +
             "                <orderId>PO-19838-XYZ</orderId>\n" +
             "                <itemId>BUTTER</itemId>\n" +
@@ -64,17 +61,4 @@ public class OrdersDemoQuickstartTest {
             "        </orders:submitOrder>\n" +
             "    </soap:Body>\n" +
             "</soap:Envelope>";
-
-    private static final String EXPECTED_SOAP_RESPONSE = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
-            "    <SOAP-ENV:Header/>\n" +
-            "    <SOAP-ENV:Body>\n" +
-            "        <orders:submitOrderResponse xmlns:orders=\"urn:switchyard-quickstart-demo:orders:1.0\">\n" +
-            "            <orderAck>\n" +
-            "                <orderId>PO-19838-XYZ</orderId>\n" +
-            "                <accepted>true</accepted>\n" +
-            "                <status>Order Accepted</status>\n" +
-            "            </orderAck>\n" +
-            "        </orders:submitOrderResponse>\n" +
-            "    </SOAP-ENV:Body>\n" +
-            "</SOAP-ENV:Envelope>";
 }

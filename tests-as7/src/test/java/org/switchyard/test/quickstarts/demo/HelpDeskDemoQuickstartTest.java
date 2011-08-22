@@ -35,7 +35,7 @@ public class HelpDeskDemoQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createDemoDeployment("switchyard-quickstart-demo-helpdesk");
+        return ArquillianUtil.createJarDemoDeployment("switchyard-quickstart-demo-helpdesk");
     }
 
     @Test
