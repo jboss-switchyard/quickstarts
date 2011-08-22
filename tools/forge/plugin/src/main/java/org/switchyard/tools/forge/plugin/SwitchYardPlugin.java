@@ -75,11 +75,25 @@ public class SwitchYardPlugin implements Plugin {
 
     /**
      * List SwitchYard services available in the project.
+     * @param verbose true to enable XML dump of config
      * @param out shell output
      */
     @Command(value = "show-config", help = "Show the current configuration state of the application.")
-    public void listServices(final PipeOut out) {
+    public void listServices(
+            @Option(required = false,
+                     name = "verbose",
+                     description = "Print the full application configuration as XML") 
+            final Boolean verbose,
+            final PipeOut out) {
+        
         SwitchYardModel config = _project.getFacet(SwitchYardFacet.class).getMergedSwitchYardConfig();
+        
+        // 'verbose' option with no value or value=true counts
+        if (verbose == null || verbose) {
+            out.println(config.toString());
+            return;
+        }
+        
         out.println();
         out.println("[Public]");
         // Print promoted service info

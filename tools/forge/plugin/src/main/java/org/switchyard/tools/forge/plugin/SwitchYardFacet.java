@@ -27,6 +27,7 @@ import javax.inject.Inject;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.PluginExecution;
+import org.apache.maven.model.Repository;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.jboss.forge.maven.MavenCoreFacet;
@@ -63,7 +64,8 @@ import org.switchyard.tools.forge.AbstractFacet;
 @RequiresFacet({ DependencyFacet.class, MavenPluginFacet.class, PackagingFacet.class })
 @RequiresPackagingType(PackagingType.JAR)
 public class SwitchYardFacet extends AbstractFacet {
-    
+    // repository id of JBoss Nexus repository
+    private static final String JBOSS_NEXUS = "JBOSS_NEXUS";
     private static final String CONFIG_ATTR = "switchyard.config";
     
     private static final String SWITCHYARD_PLUGIN = 
@@ -97,6 +99,7 @@ public class SwitchYardFacet extends AbstractFacet {
         // Update the project with version and dependency info
         setVersion(dep.getVersion());
         installDependencies();
+        addPluginRepository();
         
         String appName = _shell.prompt("Application name (e.g. myApp)");
         
@@ -257,6 +260,24 @@ public class SwitchYardFacet extends AbstractFacet {
                     return;
                 }
             }
+        }
+    }
+    
+    private void addPluginRepository() {
+        MavenCoreFacet mvn = project.getFacet(MavenCoreFacet.class);
+        Model pom = mvn.getPOM();
+        Repository jbossRepo = null;
+        for (Repository repo : pom.getRepositories()) {
+            if (repo.getId() != null && JBOSS_NEXUS.equals(repo.getId())) {
+                jbossRepo = repo;
+                break;
+            }
+        }
+        
+        // If we found the nexus repository, then add it as the plugin repository as well
+        if (jbossRepo != null) {
+            pom.addPluginRepository(jbossRepo);
+            mvn.setPOM(pom);
         }
     }
     
