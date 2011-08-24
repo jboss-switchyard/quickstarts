@@ -26,12 +26,13 @@ import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresPackagingType;
 import org.switchyard.tools.forge.AbstractFacet;
+import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 
 /**
  * Forge facet for SOAP binding functionality.
  */
 @Alias("switchyard.soap")
-@RequiresFacet({ DependencyFacet.class, PackagingFacet.class })
+@RequiresFacet({ DependencyFacet.class, PackagingFacet.class, SwitchYardFacet.class })
 @RequiresPackagingType(PackagingType.JAR)
 public class SOAPFacet extends AbstractFacet {
     
