@@ -662,13 +662,13 @@ public class DOMConfiguration extends BaseConfiguration {
             String xsl = new StringPuller().pull("/org/switchyard/config/pretty-print.xsl", getClass());
             Transformer t = tf.newTransformer(new StreamSource(new StringReader(xsl)));
             List<OutputKey> key_list = Arrays.asList(keys);
-            if (!key_list.contains(OutputKey.OMIT_NORMALIZATION)) {
+            if (!key_list.contains(OutputKey.EXCLUDE_NORMALIZATION)) {
                 normalize();
             }
-            if (!key_list.contains(OutputKey.OMIT_ORDERING)) {
+            if (key_list.contains(OutputKey.INCLUDE_ORDERING)) {
                 orderChildren();
             }
-            if (key_list.contains(OutputKey.OMIT_XML_DECLARATION)) {
+            if (key_list.contains(OutputKey.EXCLUDE_XML_DECLARATION)) {
                 t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             }
             t.transform(getSource(), new StreamResult(writer));

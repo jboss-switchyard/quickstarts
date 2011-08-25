@@ -54,6 +54,7 @@ public class V1CompositeReferenceModel extends BaseNamedModel implements Composi
      */
     public V1CompositeReferenceModel() {
         super(new QName(CompositeModel.DEFAULT_NAMESPACE, CompositeReferenceModel.REFERENCE));
+        setMultiplicity(CompositeReferenceModel.DEFAULT_MULTIPLICITY);
     }
 
     /**
@@ -151,6 +152,23 @@ public class V1CompositeReferenceModel extends BaseNamedModel implements Composi
     @Override
     public CompositeReferenceModel setPromote(String promote) {
         setModelAttribute(CompositeReferenceModel.PROMOTE, promote);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getMultiplicity() {
+        return getModelAttribute(CompositeReferenceModel.MULTIPLICITY);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CompositeReferenceModel setMultiplicity(String multiplicity) {
+        setModelAttribute(CompositeReferenceModel.MULTIPLICITY, multiplicity);
         return this;
     }
 

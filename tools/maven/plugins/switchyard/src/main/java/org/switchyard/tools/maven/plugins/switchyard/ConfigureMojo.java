@@ -96,6 +96,11 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
      */
     private File outputFile;
 
+    /**
+     * @parameter
+     */
+    private boolean validate = true;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         final List<URL> mojoURLs = new ArrayList<URL>();
@@ -103,14 +108,12 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
             for (String compileClasspaths : compileClasspathElements) {
                 mojoURLs.add(new File(compileClasspaths).toURI().toURL());
             }
-
             addDirectoryResource(outputDirectory);
             for (File scanDir : scanDirectories) {
                 if (scanDir != null) {
                     addDirectoryResource(scanDir);
                 }
             }
-
             for (Resource resource : resources) {
                 String path = resource.getTargetPath();
                 if (path != null) {
@@ -148,7 +151,6 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
             Class<M> modelClass = (Class<M>)Classes.forName(modelClassName, loader);
             MergeScanner<M> merge_scanner = new MergeScanner<M>(modelClass, true, scanners);
             List<URL> scannerURLs = new ArrayList<URL>();
-
             if (scanDirectories.length == 0) {
                 scannerURLs.add(outputDirectory.toURI().toURL());
             } else {
@@ -158,7 +160,6 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
                     }
                 }
             }
-
             getLog().info("SwitchYard plugin scanning: " + scannerURLs);
             ScannerInput<M> scanner_input = new ScannerInput<M>().setName(artifactId).setURLs(scannerURLs);
             M model = merge_scanner.scan(scanner_input).getModel();
@@ -174,6 +175,14 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
             getLog().info("Outputting SwitchYard configuration model to " + outputFile.getAbsolutePath());
             writer = new BufferedWriter(new FileWriter(outputFile));
             model.write(writer);
+            writer.flush();
+            // we write the output before we assert validity so that the user can compare the written XML to the validation error
+            if (validate) {
+                getLog().info("Validating SwitchYard configuration model...");
+                model.assertModelValid();
+            } else {
+                getLog().warn("Skipping validation of SwitchYard configuration model. (Enable with <validate>true</validate>.)");
+            }
         } catch (Throwable t) {
             throw new MojoExecutionException(t.getMessage(), t);
         } finally {

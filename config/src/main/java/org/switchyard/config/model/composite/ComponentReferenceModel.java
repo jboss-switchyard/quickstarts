@@ -31,11 +31,27 @@ public interface ComponentReferenceModel extends NamedModel {
     /** The "reference" name. */
     public static final String REFERENCE = "reference";
 
+    /** The "multiplicity" name. */
+    public static final String MULTIPLICITY = "multiplicity";
+
     /**
      * Gets the parent component model.
      * @return the parent component model
      */
     public ComponentModel getComponent();
+
+    /**
+     * Gets the multiplicity attribute.
+     * @return the multiplicity attribute
+     */
+    public String getMultiplicity();
+
+    /**
+     * Sets the multiplicity attribute.
+     * @param multiplicity the multiplicity attribute
+     * @return this ComponentReferenceModel (useful for chaining)
+     */
+    public ComponentReferenceModel setMultiplicity(String multiplicity);
 
     /**
      * Gets the child component reference interface model.

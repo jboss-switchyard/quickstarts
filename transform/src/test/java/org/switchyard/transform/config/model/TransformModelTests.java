@@ -131,8 +131,7 @@ public class TransformModelTests {
     @Test
     public void testValidation() throws Exception {
         SwitchYardModel switchyard = _puller.pull(XML, getClass());
-        Assert.assertTrue(switchyard.isModelValid());
+        switchyard.assertModelValid();
     }
-
 
 }

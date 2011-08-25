@@ -25,10 +25,10 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.ComponentReferenceInterfaceModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.InterfaceModel;
-import org.switchyard.config.model.composite.ComponentReferenceInterfaceModel;
 
 /**
  * A version 1 ComponentReferenceModel.
@@ -61,6 +61,23 @@ public class V1ComponentReferenceModel extends BaseNamedModel implements Compone
     @Override
     public ComponentModel getComponent() {
         return (ComponentModel)getModelParent();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getMultiplicity() {
+        return getModelAttribute(ComponentReferenceModel.MULTIPLICITY);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ComponentReferenceModel setMultiplicity(String multiplicity) {
+        setModelAttribute(ComponentReferenceModel.MULTIPLICITY, multiplicity);
+        return this;
     }
 
     /**

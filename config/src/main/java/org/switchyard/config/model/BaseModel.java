@@ -23,8 +23,6 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
@@ -43,7 +41,6 @@ public abstract class BaseModel implements Model {
 
     private final Configuration _config;
     private final Descriptor _desc;
-    private final Map<Configuration,Model> _config_model_map;
     private Model _parent;
 
     protected BaseModel(QName qname) {
@@ -57,7 +54,6 @@ public abstract class BaseModel implements Model {
     protected BaseModel(Configuration config, Descriptor desc) {
         _config = config;
         _desc = desc != null ? desc : new Descriptor();
-        _config_model_map = new WeakHashMap<Configuration,Model>();
     }
 
     /**
@@ -167,12 +163,21 @@ public abstract class BaseModel implements Model {
             try {
                 validator.validate(source);
             } catch (Throwable t) {
-                return new Validation(t);
+                return new Validation(getClass(), t);
             }
         } else {
-            return new Validation(false, "validator == null");
+            return new Validation(getClass(), false, "validator == null");
         }
-        return new Validation(true);
+        return new Validation(getClass(), true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Model assertModelValid() {
+        validateModel().assertValid();
+        return this;
     }
 
     /**
@@ -236,16 +241,9 @@ public abstract class BaseModel implements Model {
      */
     protected final synchronized Model readModel(Configuration config) {
         if (config != null) {
-            Model model = _config_model_map.get(config);
-            if (model == null) {
-                Marshaller marsh = _desc.getMarshaller(config);
-                if (marsh != null) {
-                    model = marsh.read(config);
-                    if (model != null) {
-                        _config_model_map.put(config, model);
-                    }
-                    return model;
-                }
+            Marshaller marsh = _desc.getMarshaller(config);
+            if (marsh != null) {
+                return marsh.read(config);
             }
         }
         return null;

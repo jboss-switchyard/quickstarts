@@ -197,7 +197,7 @@ public class CompositeModelTests {
     @Test
     public void testValidation() throws Exception {
         CompositeModel composite = _puller.pull(COMPLETE_XML, getClass());
-        Assert.assertTrue(composite.isModelValid());
+        composite.assertModelValid();
     }
 
     @Test

@@ -145,7 +145,7 @@ public class ConfigurationTests {
         one.setChildrenOrder("a", "b", "c");
         Configuration three = root.getFirstChild("three");
         three.setChildrenOrder("c", "b", "a");
-        String actual_xml = root.toString(); // toString() orders the children by default (but can be overridden by OutputKey.OMIT_ORDERING)
+        String actual_xml = root.orderChildren().toString();
         String expected_xml = _str_puller.pull(ORDER_CHILDREN_ORDERED_XML, getClass());
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(expected_xml, actual_xml);

@@ -23,37 +23,61 @@ package org.switchyard.config.model;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class Validation {
+public final class Validation {
 
+    private Class<? extends Model> _modelClass;
     private boolean _valid;
     private String _message;
     private Throwable _cause;
 
     /**
      * Constructs a new Validation.
+     * @param modelClass the model class
      * @param valid whether or not the validation was a success
      */
-    public Validation(boolean valid) {
-        this(valid, null);
+    public Validation(Class<? extends Model> modelClass, boolean valid) {
+        this(modelClass, valid, null);
     }
 
     /**
      * Constructs a new Validation.
+     * @param modelClass the model class
      * @param valid whether or not the validation was a success
      * @param message the message to report
      */
-    public Validation(boolean valid, String message) {
+    public Validation(Class<? extends Model> modelClass, boolean valid, String message) {
+        _modelClass = modelClass;
         _valid = valid;
         _message = message;
     }
 
     /**
      * Constructs a new, unsuccessful Validation.
+     * @param modelClass the model class
      * @param cause the cause of the failed validation
      */
-    public Validation(Throwable cause) {
-        this(false, cause.getMessage());
+    public Validation(Class<? extends Model> modelClass, Throwable cause) {
+        this(modelClass, false, cause.getMessage());
         _cause = cause;
+    }
+
+    /**
+     * Gets the class of the model which underwent validation.
+     * @return the class of the model which underwent validation
+     */
+    public Class<? extends Model> getModelClass() {
+        return _modelClass;
+    }
+
+    /**
+     * Asserts this validation was successful.
+     * @return this Validation (useful for chaining)
+     */
+    public Validation assertValid() {
+        if (!isValid()) {
+            throw new RuntimeException("Model [" + getModelClass().getName() + "] is invalid: " + getMessage(), getCause());
+        }
+        return this;
     }
 
     /**

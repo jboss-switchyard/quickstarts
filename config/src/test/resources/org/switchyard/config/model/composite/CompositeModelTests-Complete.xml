@@ -38,7 +38,7 @@ MA  02110-1301, USA.
        <service name="SimpleService">
            <interface.java interface="org.switchyard.example.m1app.SimpleService"/>
        </service>
-       <reference name="anotherService" multiplicity="1..1">
+       <reference name="anotherService">
            <interface.java interface="org.switchyard.example.m1app.AnotherService"/>
        </reference>
     </component>

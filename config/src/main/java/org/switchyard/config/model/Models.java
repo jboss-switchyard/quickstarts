@@ -52,6 +52,20 @@ public final class Models {
      * @return the newly merged model
      */
     public static <M extends Model> M merge(M fromModel, M toModel, boolean fromOverridesTo) {
+        return merge(fromModel, toModel, fromOverridesTo, false);
+    }
+
+    /**
+     * Merges two models into a new model.
+     * Note: The act of merging results in fromModel and toModel to have their configurations normalized and children ordered!
+     * @param <M> the type of Model being merged
+     * @param fromModel merge from this model, optionally overriding anything in toModel
+     * @param toModel merge into a copy of this model
+     * @param fromOverridesTo whether fromModel attributes/values should override those in toModel
+     * @param validate whether the newly merged model should be validated before it is returned
+     * @return the newly merged model
+     */
+    public static <M extends Model> M merge(M fromModel, M toModel, boolean fromOverridesTo, boolean validate) {
         String from_model_cn = fromModel.getClass().getName();
         String to_model_cn = toModel.getClass().getName();
         if (!from_model_cn.equals(to_model_cn)) {
@@ -62,6 +76,10 @@ public final class Models {
         Configuration merged_model_config = Configurations.merge(from_model_config, to_model_config, fromOverridesTo);
         @SuppressWarnings("unchecked")
         M merged_model = (M)Descriptor.getMarshaller(toModel).read(merged_model_config);
+        merged_model.orderModelChildren();
+        if (validate) {
+            merged_model.assertModelValid();
+        }
         return merged_model;
     }
 

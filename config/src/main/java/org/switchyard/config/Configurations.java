@@ -73,6 +73,7 @@ public final class Configurations {
         toConfig.normalize().orderChildren();
         Configuration mergedConfig = toConfig.copy();
         recursiveMerge(fromConfig.copy(), mergedConfig, fromOverridesTo);
+        mergedConfig.orderChildren();
         return mergedConfig;
     }
 

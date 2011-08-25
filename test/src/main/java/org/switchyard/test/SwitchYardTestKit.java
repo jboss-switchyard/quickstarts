@@ -52,7 +52,6 @@ import org.switchyard.config.model.Scannable;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.ScannerOutput;
-import org.switchyard.config.model.Validation;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
@@ -543,10 +542,7 @@ public class SwitchYardTestKit {
         try {
             M pulledModel = new ModelPuller<M>().pull(configModel);
             if (validate) {
-                Validation v = pulledModel.validateModel();
-                if (!v.isValid()) {
-                    Assert.fail("Error validating " + modelType.getSimpleName() + ": " + v.getMessage());
-                }
+                pulledModel.assertModelValid();
             }
             return pulledModel;
         } catch (IOException e) {
@@ -658,10 +654,7 @@ public class SwitchYardTestKit {
             } else {
                 returnModel = model;
             }
-            Validation v = returnModel.validateModel();
-            if (!v.isValid()) {
-                Assert.fail("Error validating " + SwitchYardModel.class.getSimpleName() + ": " + v.getMessage());
-            }
+            returnModel.assertModelValid();
             return returnModel;
         } catch (java.io.IOException ioEx) {
             throw new SwitchYardException("Failed to read switchyard config.", ioEx);

@@ -35,6 +35,12 @@ public interface CompositeReferenceModel extends NamedModel {
     /** The "promote" name. */
     public static final String PROMOTE = "promote";
 
+    /** The "multiplicity" name. */
+    public static final String MULTIPLICITY = "multiplicity";
+
+    /** The default multiplicity (1..1). */
+    public static final String DEFAULT_MULTIPLICITY = "1..1";
+
     /**
      * Gets the parent composite model.
      * @return the parent composite model
@@ -65,6 +71,19 @@ public interface CompositeReferenceModel extends NamedModel {
      * @return this CompositeReferenceModel (useful for chaining)
      */
     public CompositeReferenceModel setPromote(String promote);
+
+    /**
+     * Gets the multiplicity attribute.
+     * @return the multiplicity attribute
+     */
+    public String getMultiplicity();
+
+    /**
+     * Sets the multiplicity attribute.
+     * @param multiplicity the multiplicity attribute
+     * @return this CompositeReferenceModel (useful for chaining)
+     */
+    public CompositeReferenceModel setMultiplicity(String multiplicity);
 
     /**
      * Gets the child binding models.

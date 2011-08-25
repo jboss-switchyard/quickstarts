@@ -69,7 +69,7 @@ public abstract class Puller<R> {
     /**
      * Safely pulls a resource from a path using {@link org.switchyard.common.type.Classes#getResourceAsStream(String, ClassLoader)}.
      * @param resource the path to the resource
-     * @param loader classloader we can also try to find the resource
+     * @param loader the classloader we can also try to find the resource
      * @return the resource, or null if not found
      * @throws IOException if a problem occurred
      */
@@ -119,7 +119,29 @@ public abstract class Puller<R> {
      * @throws IOException if a problem occurred
      */
     public R pull(Resource resource) throws IOException {
-        return pull(resource.getLocationURL());
+        return pull(resource, getClass());
+    }
+
+    /**
+     * Safely pulls a resource from a Resource, using the specified caller class.
+     * @param resource the Resource
+     * @param caller the class calling this method
+     * @return the resource, or null if not found
+     * @throws IOException if a problem occurred
+     */
+    public R pull(Resource resource, Class<?> caller) throws IOException {
+        return pull(resource.getLocationURL(caller));
+    }
+
+    /**
+     * Safely pulls a resource from a Resource, using the specified classloader.
+     * @param resource the Resource
+     * @param loader the classloader to check with
+     * @return the resource, or null if not found
+     * @throws IOException if a problem occurred
+     */
+    public R pull(Resource resource, ClassLoader loader) throws IOException {
+        return pull(resource.getLocationURL(loader));
     }
 
     /**

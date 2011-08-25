@@ -47,6 +47,13 @@ public interface Resource {
     public URL getLocationURL(Class<?> caller);
 
     /**
+     * Gets the URL form of the resource's location.
+     * @param loader the classloader to check with
+     * @return the URL form of the resource's location
+     */
+    public URL getLocationURL(ClassLoader loader);
+
+    /**
      * Gets the type of the resource.
      * @return the type of the resource
      */

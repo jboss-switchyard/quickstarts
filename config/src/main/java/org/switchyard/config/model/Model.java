@@ -70,6 +70,12 @@ public interface Model {
     public Validation validateModel();
 
     /**
+     * Asserts that this model is valid, according to the schema(s) defined in this model's descriptor.
+     * @return this model (useful for chaining)
+     */
+    public Model assertModelValid();
+
+    /**
      * Whether or not this model is valid, according to the schema(s) defined in this model's descriptor.
      * @return true if the model is valid
      */

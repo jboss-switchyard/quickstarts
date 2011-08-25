@@ -184,7 +184,7 @@ public class SwitchYardBuilder implements DeploymentListener {
             String bindingConfiguration = null;
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try {
-                bindingModel.getModelConfiguration().write(baos, OutputKey.OMIT_XML_DECLARATION);
+                bindingModel.getModelConfiguration().write(baos, OutputKey.EXCLUDE_XML_DECLARATION);
                 bindingConfiguration = baos.toString();
             } catch (IOException e) {
                 // FIXME: do we need to log this?
@@ -277,7 +277,7 @@ public class SwitchYardBuilder implements DeploymentListener {
         String configuration = null;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
-            implementationModel.getModelConfiguration().write(baos, OutputKey.OMIT_XML_DECLARATION);
+            implementationModel.getModelConfiguration().write(baos, OutputKey.EXCLUDE_XML_DECLARATION);
             configuration = baos.toString();
         } catch (IOException e) {
             // FIXME: do we need to log this?

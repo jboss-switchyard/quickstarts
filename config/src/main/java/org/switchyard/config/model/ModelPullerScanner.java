@@ -43,9 +43,11 @@ public class ModelPullerScanner<M extends Model> implements Scanner<M> {
 
     private Type _type;
     private String _classpath;
+    private Resource _resource;
+    private Class<?> _caller;
+    private ClassLoader _loader;
     private URI _uri;
     private URL _url;
-    private Resource _resource;
     private File _file;
     private InputStream _inputStream;
     private Reader _reader;
@@ -66,8 +68,60 @@ public class ModelPullerScanner<M extends Model> implements Scanner<M> {
      * @param classpath the classpath resource
      */
     public ModelPullerScanner(String classpath) {
+        this(classpath, ModelPullerScanner.class);
+    }
+
+    /**
+     * Constructs a ModelPullerScanner that scans for the specified classpath resource.
+     * @param classpath the classpath resource
+     * @param caller class calling this method, so we can also try it's classloader
+     */
+    public ModelPullerScanner(String classpath, Class<?> caller) {
         _type = Type.CLASSPATH;
         _classpath = classpath;
+        _caller = caller;
+    }
+
+    /**
+     * Constructs a ModelPullerScanner that scans for the specified classpath resource.
+     * @param classpath the classpath resource
+     * @param loader the classloader we can also try to find the resource
+     */
+    public ModelPullerScanner(String classpath, ClassLoader loader) {
+        _type = Type.CLASSPATH;
+        _classpath = classpath;
+        _loader = loader;
+    }
+
+    /**
+     * Constructs a ModelPullerScanner that scans for the specified Resource.
+     * @param resource the Resource
+     */
+    public ModelPullerScanner(Resource resource) {
+        _type = Type.RESOURCE;
+        _resource = resource;
+    }
+
+    /**
+     * Constructs a ModelPullerScanner that scans for the specified Resource using the specified caller class.
+     * @param resource the Resource
+     * @param caller the class calling this method
+     */
+    public ModelPullerScanner(Resource resource, Class<?> caller) {
+        _type = Type.RESOURCE;
+        _resource = resource;
+        _caller = caller;
+    }
+
+    /**
+     * Constructs a ModelPullerScanner that scans for the specified Resource using the specified classloader.
+     * @param resource the Resource
+     * @param loader the classloader to try
+     */
+    public ModelPullerScanner(Resource resource, ClassLoader loader) {
+        _type = Type.RESOURCE;
+        _resource = resource;
+        _loader = loader;
     }
 
     /**
@@ -86,15 +140,6 @@ public class ModelPullerScanner<M extends Model> implements Scanner<M> {
     public ModelPullerScanner(URL url) {
         _type = Type.URL;
         _url = url;
-    }
-
-    /**
-     * Constructs a ModelPullerScanner that scans for the specified Resource.
-     * @param resource the Resource
-     */
-    public ModelPullerScanner(Resource resource) {
-        _type = Type.RESOURCE;
-        _resource = resource;
     }
 
     /**
@@ -168,16 +213,28 @@ public class ModelPullerScanner<M extends Model> implements Scanner<M> {
         M model;
         switch (_type) {
             case CLASSPATH:
-                model = new ModelPuller<M>().pull(_classpath, getClass());
+                if (_caller != null) {
+                    model = new ModelPuller<M>().pull(_classpath, _caller);
+                } else if (_loader != null) {
+                    model = new ModelPuller<M>().pull(_classpath, _loader);
+                } else {
+                    model = new ModelPuller<M>().pull(_classpath, getClass());
+                }
+                break;
+            case RESOURCE:
+                if (_caller != null) {
+                    model = new ModelPuller<M>().pull(_resource, _caller);
+                } else if (_loader != null) {
+                    model = new ModelPuller<M>().pull(_resource, _loader);
+                } else {
+                    model = new ModelPuller<M>().pull(_resource, getClass());
+                }
                 break;
             case URI:
                 model = new ModelPuller<M>().pull(_uri);
                 break;
             case URL:
                 model = new ModelPuller<M>().pull(_url);
-                break;
-            case RESOURCE:
-                model = new ModelPuller<M>().pull(_resource);
                 break;
             case FILE:
                 model = new ModelPuller<M>().pull(_file);
@@ -207,7 +264,7 @@ public class ModelPullerScanner<M extends Model> implements Scanner<M> {
     }
 
     private static enum Type {
-        CLASSPATH, URI, URL, RESOURCE, FILE, INPUT_STREAM, READER, INPUT_SOURCE, DOCUMENT, ELEMENT, QNAME;
+        CLASSPATH, RESOURCE, URI, URL, FILE, INPUT_STREAM, READER, INPUT_SOURCE, DOCUMENT, ELEMENT, QNAME;
     }
 
 }

@@ -48,12 +48,34 @@ public abstract class BaseResource implements Resource {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URL getLocationURL(ClassLoader loader) {
+        return getURL(getLocation(), loader);
+    }
+
+    /**
      * Gets a URL with the specified location and calling class.
      * @param location the specified location
      * @param caller the calling class to use it's classloader
      * @return the URL
      */
-    public static URL getURL(String location, Class<?> caller) {
+    public static final URL getURL(String location, Class<?> caller) {
+        return getURL(location, caller, null);
+    }
+
+    /**
+     * Gets a URL with the specified location and calling class.
+     * @param location the specified location
+     * @param loader the classloader to check with
+     * @return the URL
+     */
+    public static final URL getURL(String location, ClassLoader loader) {
+        return getURL(location, null, loader);
+    }
+
+    private static final URL getURL(String location, Class<?> caller, ClassLoader loader) {
         if (location != null) {
             try {
                 if (location.startsWith("http:") || location.startsWith("https:")) {
@@ -62,11 +84,17 @@ public abstract class BaseResource implements Resource {
                 if (location.startsWith("file:")) {
                     return new File(location.substring(5)).toURI().toURL();
                 }
-                return Classes.getResource(location, caller);
+                if (caller != null) {
+                    return Classes.getResource(location, caller);
+                }
+                if (loader != null) {
+                    return Classes.getResource(location, loader);
+                }
             } catch (IOException ioe) {
                 return null;
             }
         }
         return null;
     }
+
 }
