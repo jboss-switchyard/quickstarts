@@ -101,19 +101,6 @@ public interface BpmComponentImplementationModel extends ComponentImplementation
     public BpmComponentImplementationModel addProcessAction(ProcessActionModel processAction);
 
     /**
-     * Gets the child resource models.
-     * @return the child resource models
-     */
-    public List<ResourceModel> getResources();
-
-    /**
-     * Adds a child resource model.
-     * @param resource the child resource model
-     * @return this BpmComponentImplementationModel (useful for chaining)
-     */
-    public BpmComponentImplementationModel addResource(ResourceModel resource);
-
-    /**
      * Gets the child task handler models.
      * @return the child task handler models
      */
@@ -125,5 +112,18 @@ public interface BpmComponentImplementationModel extends ComponentImplementation
      * @return this BpmComponentImplementationModel (useful for chaining)
      */
     public BpmComponentImplementationModel addTaskHandler(TaskHandlerModel taskHandler);
+
+    /**
+     * Gets the child resource models.
+     * @return the child resource models
+     */
+    public List<ResourceModel> getResources();
+
+    /**
+     * Adds a child resource model.
+     * @param resource the child resource model
+     * @return this BpmComponentImplementationModel (useful for chaining)
+     */
+    public BpmComponentImplementationModel addResource(ResourceModel resource);
 
 }

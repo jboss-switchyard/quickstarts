@@ -99,7 +99,7 @@ public class RulesModelTests {
     @Test
     public void testValidation() throws Exception {
         SwitchYardModel switchyard = _puller.pull(COMPLETE_XML, getClass());
-        Assert.assertTrue(switchyard.isModelValid());
+        switchyard.assertModelValid();
     }
 
     @Test

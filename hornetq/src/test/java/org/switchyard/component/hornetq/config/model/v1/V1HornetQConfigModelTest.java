@@ -303,16 +303,16 @@ public class V1HornetQConfigModelTest {
     public void validateModel() throws IOException {
         final HornetQConfigModel bindingModel = pull("hornetq-valid-binding.xml");
         final Validation validation = bindingModel.validateModel();
-        assertThat(validation.getMessage(), is(nullValue()));
+        assertThat(validation.isValid(), is(true));
     }
     
     @Test
     public void programmaticCreation() throws Exception {
         final V1HornetQConfigModel model = new V1HornetQConfigModel();
         model.setCompressLargeMessage(true).setAutoGroup(true).setUseHA(true).setQueue("someQueue");
-        model.toString(); // force the model to be ordered
+        model.orderModelChildren(); // force the model to be ordered
         final Validation validation = model.validateModel();
-        assertThat(validation.getMessage(), is(nullValue()));
+        assertThat(validation.isValid(), is(true));
     }
         
     @Test
@@ -322,7 +322,7 @@ public class V1HornetQConfigModelTest {
         final String xml = model.toString();
         final File savedModel = folder.newFile("hornetq-model.xml");
         final FileWriter fileWriter = new FileWriter(savedModel);
-        model.write(fileWriter, OutputKey.OMIT_XML_DECLARATION);
+        model.write(fileWriter, OutputKey.EXCLUDE_XML_DECLARATION);
         
         final String xmlFromFile = new StringPuller().pull(savedModel);
         XMLUnit.setIgnoreWhitespace(true);

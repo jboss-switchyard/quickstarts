@@ -54,7 +54,6 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.config.model.ModelPuller;
-import org.switchyard.config.model.Validation;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.metadata.BaseService;
@@ -145,10 +144,7 @@ public class SOAPGatewayTest {
         SOAPProvider provider = new SOAPProvider();
 
         CompositeModel composite = _puller.pull("/HelloSwitchYard.xml", getClass());
-        Validation v = composite.validateModel();
-        if (!v.isValid()) {
-            throw new Exception("CompositeModel not valid: " + v.getMessage(), v.getCause());
-        }
+        composite.assertModelValid();
 
         CompositeServiceModel compositeService = composite.getServices().get(0);
         _config = (SOAPBindingModel)compositeService.getBindings().get(0);

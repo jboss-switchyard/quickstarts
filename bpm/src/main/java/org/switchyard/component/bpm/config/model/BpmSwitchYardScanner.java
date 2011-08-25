@@ -147,6 +147,14 @@ public class BpmSwitchYardScanner implements Scanner<SwitchYardModel> {
                     }
                 }
             }
+            bciModel.addTaskHandler(new V1TaskHandlerModel().setClazz(SwitchYardServiceTaskHandler.class).setName(SwitchYardServiceTaskHandler.SWITCHYARD_SERVICE));
+            for (Class<? extends TaskHandler> taskHandlerClass : process.taskHandlers()) {
+                if (Process.UndefinedTaskHandler.class.equals(taskHandlerClass) || SwitchYardServiceTaskHandler.class.equals(taskHandlerClass)) {
+                    continue;
+                }
+                TaskHandler taskHandler = Construction.construct(taskHandlerClass);
+                bciModel.addTaskHandler(new V1TaskHandlerModel().setClazz(taskHandlerClass).setName(taskHandler.getName()));
+            }
             for (Class<? extends Resource> resourceClass : process.resources()) {
                 if (Process.UndefinedResource.class.equals(resourceClass)) {
                     continue;
@@ -155,14 +163,6 @@ public class BpmSwitchYardScanner implements Scanner<SwitchYardModel> {
                 String location = resource.getLocation();
                 ResourceType type = resource.getType();
                 bciModel.addResource(new V1ResourceModel().setLocation(location).setType(type));
-            }
-            bciModel.addTaskHandler(new V1TaskHandlerModel().setClazz(SwitchYardServiceTaskHandler.class).setName(SwitchYardServiceTaskHandler.SWITCHYARD_SERVICE));
-            for (Class<? extends TaskHandler> taskHandlerClass : process.taskHandlers()) {
-                if (Process.UndefinedTaskHandler.class.equals(taskHandlerClass) || SwitchYardServiceTaskHandler.class.equals(taskHandlerClass)) {
-                    continue;
-                }
-                TaskHandler taskHandler = Construction.construct(taskHandlerClass);
-                bciModel.addTaskHandler(new V1TaskHandlerModel().setClazz(taskHandlerClass).setName(taskHandler.getName()));
             }
             componentModel.setImplementation(bciModel);
         }

@@ -29,7 +29,7 @@
             <sca:service name="OrderService">
                 <sca:interface.java interface="org.switchyard.component.camel.deploy.support.OrderService"/>
             </sca:service>
-            <sca:reference name="WarehouseService" multiplicity="1..1">
+            <sca:reference name="WarehouseService">
                 <sca:interface.java interface="org.switchyard.component.camel.deploy.support.WarehouseService"/>
             </sca:reference>
         </sca:component>

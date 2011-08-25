@@ -72,19 +72,6 @@ public interface RulesComponentImplementationModel extends ComponentImplementati
     public RulesComponentImplementationModel setMessageContentName(String messageContentName);
 
     /**
-     * Gets the "rulesAudit" child model.
-     * @return the "rulesAudit" child model
-     */
-    public RulesAuditModel getRulesAudit();
-
-    /**
-     * Sets the "rulesAudit" child model.
-     * @param rulesAudit the "rulesAudit" child model
-     * @return this RulesComponentImplementationModel (useful for chaining)
-     */
-    public RulesComponentImplementationModel setRulesAudit(RulesAuditModel rulesAudit);
-
-    /**
      * Gets the child rules action models.
      * @return the child rules action models
      */
@@ -96,6 +83,19 @@ public interface RulesComponentImplementationModel extends ComponentImplementati
      * @return this RulesComponentImplementationModel (useful for chaining)
      */
     public RulesComponentImplementationModel addRulesAction(RulesActionModel rulesAction);
+
+    /**
+     * Gets the "rulesAudit" child model.
+     * @return the "rulesAudit" child model
+     */
+    public RulesAuditModel getRulesAudit();
+
+    /**
+     * Sets the "rulesAudit" child model.
+     * @param rulesAudit the "rulesAudit" child model
+     * @return this RulesComponentImplementationModel (useful for chaining)
+     */
+    public RulesComponentImplementationModel setRulesAudit(RulesAuditModel rulesAudit);
 
     /**
      * Gets the child resource models.

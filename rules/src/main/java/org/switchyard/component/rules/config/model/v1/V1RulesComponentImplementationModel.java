@@ -39,8 +39,8 @@ import org.switchyard.config.model.resource.ResourceModel;
  */
 public class V1RulesComponentImplementationModel extends V1ComponentImplementationModel implements RulesComponentImplementationModel {
 
-    private RulesAuditModel _rulesAudit;
     private List<RulesActionModel> _rulesActions = new ArrayList<RulesActionModel>();
+    private RulesAuditModel _rulesAudit;
     private List<ResourceModel> _resources = new ArrayList<ResourceModel>();
 
     /**
@@ -48,7 +48,7 @@ public class V1RulesComponentImplementationModel extends V1ComponentImplementati
      */
     public V1RulesComponentImplementationModel() {
         super(RULES, DEFAULT_NAMESPACE);
-        setModelChildrenOrder(ResourceModel.RESOURCE, RulesActionModel.RULES_ACTION, RulesAuditModel.RULES_AUDIT);
+        setModelChildrenOrder(RulesActionModel.RULES_ACTION, RulesAuditModel.RULES_AUDIT, ResourceModel.RESOURCE);
     }
 
     /**
@@ -71,7 +71,7 @@ public class V1RulesComponentImplementationModel extends V1ComponentImplementati
                 _resources.add(resource);
             }
         }
-        setModelChildrenOrder(ResourceModel.RESOURCE, RulesActionModel.RULES_ACTION, RulesAuditModel.RULES_AUDIT);
+        setModelChildrenOrder(RulesActionModel.RULES_ACTION, RulesAuditModel.RULES_AUDIT, ResourceModel.RESOURCE);
     }
 
     /**
@@ -113,6 +113,24 @@ public class V1RulesComponentImplementationModel extends V1ComponentImplementati
      * {@inheritDoc}
      */
     @Override
+    public List<RulesActionModel> getRulesActions() {
+        return Collections.unmodifiableList(_rulesActions);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public RulesComponentImplementationModel addRulesAction(RulesActionModel rulesAction) {
+        addChildModel(rulesAction);
+        _rulesActions.add(rulesAction);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public RulesAuditModel getRulesAudit() {
         if (_rulesAudit == null) {
             _rulesAudit = (RulesAuditModel)getFirstChildModelStartsWith(RulesAuditModel.RULES_AUDIT);
@@ -127,24 +145,6 @@ public class V1RulesComponentImplementationModel extends V1ComponentImplementati
     public RulesComponentImplementationModel setRulesAudit(RulesAuditModel rulesAudit) {
         setChildModel(rulesAudit);
         _rulesAudit = rulesAudit;
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<RulesActionModel> getRulesActions() {
-        return Collections.unmodifiableList(_rulesActions);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public RulesComponentImplementationModel addRulesAction(RulesActionModel rulesAction) {
-        addChildModel(rulesAction);
-        _rulesActions.add(rulesAction);
         return this;
     }
 
