@@ -9,8 +9,8 @@
     <sca:composite name="orders" targetNamespace="urn:switchyard-quickstart-demo:webapp-deploy:0.1.0">
         <sca:service name="OrderService" promote="OrderService">
             <soap:binding.soap>
-                <soap:serverPort>18001</soap:serverPort>
                 <soap:wsdl>wsdl/OrderService.wsdl</soap:wsdl>
+                <soap:serverPort>18001</soap:serverPort>
             </soap:binding.soap>
         </sca:service>
     </sca:composite>
