@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.switchyard.quickstarts</groupId>
     <artifactId>switchyard-quickstarts-parent</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.2.0</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   
@@ -14,7 +14,7 @@
   <name>Quickstart : HornetQ Binding</name>
   
   <properties>
-    <switchyard.version>0.2.0-SNAPSHOT</switchyard.version>
+    <switchyard.version>0.2.0</switchyard.version>
     <hornetq.version>2.2.5.Final</hornetq.version>
     <netty.version>3.2.1.Final</netty.version>
   </properties>

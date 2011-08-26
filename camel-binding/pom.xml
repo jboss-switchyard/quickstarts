@@ -6,17 +6,17 @@
   <parent>
     <groupId>org.switchyard.quickstarts</groupId>
     <artifactId>switchyard-quickstarts-parent</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.2.0</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   
   <groupId>org.switchyard.quickstarts</groupId>
   <artifactId>switchyard-quickstarts-camel-binding</artifactId>
   <name>Quickstart : Camel Binding</name>
-  <version>0.2.0-SNAPSHOT</version>
+  <version>0.2.0</version>
   
   <properties>
-    <switchyard.version>0.2.0-SNAPSHOT</switchyard.version>
+    <switchyard.version>0.2.0</switchyard.version>
   </properties>
   <dependencies>
     <dependency>
