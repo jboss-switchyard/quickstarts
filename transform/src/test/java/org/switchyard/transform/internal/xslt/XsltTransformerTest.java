@@ -25,6 +25,7 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.common.type.Classes;
+import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.exception.SwitchYardException;
@@ -78,6 +79,17 @@ public class XsltTransformerTest extends AbstractTransformerTestCase {
             getTransformer("xslt-config-01.xml");
         } catch (RuntimeException e) {
             Assert.fail("failed to load configuration file xslt-config-01.xml");
+        }
+    }
+    
+    @Test
+    public void test_validation() throws Exception {
+        InputStream swConfigStream = Classes.getResourceAsStream("xslt-config-01.xml", getClass());
+        try {
+            SwitchYardModel switchyardConfig = new ModelPuller<SwitchYardModel>().pull(swConfigStream);
+            switchyardConfig.assertModelValid();
+        } finally {
+            swConfigStream.close();
         }
     }
 

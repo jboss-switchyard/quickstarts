@@ -38,6 +38,26 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
     
+    <element name="transform.xslt" type="trfm:XsltTransformType" substitutionGroup="swyd:transform" />
+    <complexType name="XsltTransformType">
+        <annotation>
+            <documentation xml:lang="en">
+                XSLT Transformer Configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="swyd:TransformType">
+                <attribute name="xsltFile" type="string" use="required">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            Path to a file containing the XSL definition.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <element name="transform.java" type="trfm:JavaTransformType" substitutionGroup="swyd:transform" />
     <complexType name="JavaTransformType">
         <annotation>
