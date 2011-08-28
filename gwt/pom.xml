@@ -6,13 +6,13 @@
   <parent>
     <artifactId>switchyard-console-parent</artifactId>
     <groupId>org.switchyard</groupId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.3.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.switchyard</groupId>
   <artifactId>switchyard-console-gwt</artifactId>
   <packaging>war</packaging>
-  <version>0.2.0-SNAPSHOT</version>
+  <version>0.3.0-SNAPSHOT</version>
   <name>SwitchYard: Management Console Application</name>
   <description>Management console application for SwitchYard</description>
 
