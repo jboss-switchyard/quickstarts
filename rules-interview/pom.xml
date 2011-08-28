@@ -6,18 +6,18 @@
   <parent>
     <groupId>org.switchyard.quickstarts</groupId>
     <artifactId>switchyard-quickstarts-parent</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.3.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   
   <groupId>org.switchyard.quickstarts</groupId>
   <artifactId>switchyard-quickstart-rules-interview</artifactId>
   <name>Quickstart : Rules Interview</name>
-  <version>0.2.0-SNAPSHOT</version>
+  <version>0.3.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   
   <properties>
-    <switchyard.version>0.2.0-SNAPSHOT</switchyard.version>
+    <switchyard.version>0.3.0-SNAPSHOT</switchyard.version>
   </properties>
   
   <dependencies>
