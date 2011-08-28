@@ -4,20 +4,20 @@
     <parent>
         <groupId>org.switchyard</groupId>
         <artifactId>switchyard-parent</artifactId>
-        <version>0.2.0-SNAPSHOT</version>
+        <version>0.3.0-SNAPSHOT</version>
         <relativePath />
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.switchyard</groupId>
     <artifactId>switchyard-release</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.3.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>SwitchYard: Distribution</name>
     <description>SwitchYard Distribution</description>
 
     <properties>
-        <distro.version>0.2</distro.version>
+        <distro.version>0.3</distro.version>
     </properties>
 
     <modules>

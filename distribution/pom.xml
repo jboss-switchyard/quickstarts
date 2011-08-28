@@ -24,14 +24,14 @@
     <parent>
         <groupId>org.switchyard</groupId>
         <artifactId>switchyard-release</artifactId>
-        <version>0.2.0-SNAPSHOT</version>
+        <version>0.3.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.switchyard</groupId>
     <artifactId>switchyard-release-distribution</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.3.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>SwitchYard: Distribution Artifacts</name>
     <description>Module containing extra distribution artifacts (e.g. license, readme)</description>
