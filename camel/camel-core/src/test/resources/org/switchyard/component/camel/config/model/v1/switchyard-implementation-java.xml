@@ -21,13 +21,13 @@
     <sca:composite name="camelTest" targetNamespace="urn:camel-core:test:1.0">
     
         <sca:component name="SingleRouteService">
-            <sca:service name="ServiceInterface" >
-                <sca:interface.java interface="org.switchyard.component.camel.config.model.ServiceInterface"/>
-            </sca:service>
-            
             <implementation.camel>
                 <java class="org.switchyard.component.camel.config.model.SingleRouteService"/>
             </implementation.camel>
+
+            <sca:service name="ServiceInterface" >
+                <sca:interface.java interface="org.switchyard.component.camel.config.model.ServiceInterface"/>
+            </sca:service>
         </sca:component>
         
         

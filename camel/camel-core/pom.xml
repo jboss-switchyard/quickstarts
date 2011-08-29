@@ -21,6 +21,7 @@
         <version.commonman>1.0</version.commonman>
         <version.hornetq>2.2.2.Final</version.hornetq>
         <version.spring>3.0.5.RELEASE</version.spring>
+        <directory.camel.resources>${project.build.directory}/dependency/camel/resources</directory.camel.resources>
     </properties>
 
     <build>
@@ -55,6 +56,52 @@
                     </execution>
                 </executions>
             </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>include-camel-spring-schema</id>
+                <phase>generate-sources</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.apache.camel</groupId>
+                      <artifactId>camel-spring</artifactId>
+                      <version>${version.camel}</version>
+                      <classifier>sources</classifier>
+                      <type>jar</type>
+                      <includes>camel-spring.xsd</includes>
+                      <outputDirectory>${directory.camel.resources}/org/apache/camel/schema/spring</outputDirectory>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>add-resource</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>add-resource</goal>
+                </goals>
+                <configuration>
+                  <resources>
+                    <resource>
+                      <directory>${directory.camel.resources}</directory>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
     </build>
 

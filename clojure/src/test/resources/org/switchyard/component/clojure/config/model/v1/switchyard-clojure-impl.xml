@@ -17,17 +17,15 @@
     xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
     xmlns:sd="urn:switchyard-config:switchyard:1.0">
 
-    <sca:composite targetNamespace="urn:clojure:test:1.0">
+    <sca:composite name="switchyard-clojure-impl" targetNamespace="urn:clojure:test:1.0">
         <sca:component name="ClojureComponent">
-            <sca:service name="SimpleClojureService">
-              <interface></interface>
-            </sca:service>
-            <sca:reference name="OtherService">
-              <interface></interface>
-            </sca:reference>
             <implementation.clojure>
                 <script>(ns printer)(defn print-string [arg] (println arg))</script>
             </implementation.clojure>
+            <sca:service name="SimpleClojureService">
+            </sca:service>
+            <sca:reference name="OtherService">
+            </sca:reference>
         </sca:component>
     </sca:composite>
 

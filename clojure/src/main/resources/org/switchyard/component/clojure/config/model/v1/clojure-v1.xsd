@@ -23,7 +23,7 @@ MA  02110-1301, USA.
         xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
         elementFormDefault="qualified">
 
-    <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912" schemaLocation="sca-1.1-cd06.xsd"/>
+    <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
     
     <!--  clojure:implementation.clojure -->
     <element name="implementation.clojure" type="clojure:ClojureImplementationType" substitutionGroup="sca:implementation"/>

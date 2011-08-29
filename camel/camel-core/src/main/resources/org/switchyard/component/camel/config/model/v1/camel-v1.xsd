@@ -25,9 +25,9 @@ MA  02110-1301, USA.
         xmlns:camelSpring="http://camel.apache.org/schema/spring"
         elementFormDefault="qualified">
 
-    <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912" schemaLocation="sca-1.1-cd06.xsd"/>
-    <import namespace="http://www.springframework.org/schema/beans" schemaLocation="spring-beans-2.0.xsd"/>
-    <import namespace="http://camel.apache.org/schema/spring" schemaLocation="camel-spring.xsd"/>
+    <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
+    <import namespace="http://www.springframework.org/schema/beans"/>
+    <import namespace="http://camel.apache.org/schema/spring"/>
     
     <!-- camel:binding.xxx -->
     <element name="binding.camel" type="camel:CamelBindingType" substitutionGroup="sca:binding"/>

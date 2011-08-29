@@ -21,49 +21,49 @@
     <sca:composite name="hornetQTest" targetNamespace="urn:hornetq:test:1.0">
     
         <sca:component name="HornetQComponent">
+            <hornetq:implementation.hornetq>
+                <hornetq:config>
+                  <hornetq:ackBatchSize>200</hornetq:ackBatchSize>
+                  <hornetq:autoGroup>true</hornetq:autoGroup>
+                  <hornetq:blockOnAcknowledge>true</hornetq:blockOnAcknowledge>
+                  <hornetq:blockOnDurableSend>false</hornetq:blockOnDurableSend>
+                  <hornetq:blockOnNonDurableSend>true</hornetq:blockOnNonDurableSend>
+                  <hornetq:cacheLargeMessagesOnConsumer>true</hornetq:cacheLargeMessagesOnConsumer>
+                  <hornetq:callTimeout>3000</hornetq:callTimeout>
+                  <hornetq:clientFailureCheckPeriod>2050</hornetq:clientFailureCheckPeriod>
+                  <hornetq:compressLargeMessages>true</hornetq:compressLargeMessages>
+                  <hornetq:connectionLoadBalancingPolicyClassName>Mock</hornetq:connectionLoadBalancingPolicyClassName>
+                  <hornetq:connectionTTL>1000</hornetq:connectionTTL>
+                  <hornetq:confirmationWindowSize>2</hornetq:confirmationWindowSize>
+                  <hornetq:connector>
+                     <hornetq:factoryClass>org.test.Connector</hornetq:factoryClass>
+                  </hornetq:connector>
+                  <hornetq:consumerMaxRate>10</hornetq:consumerMaxRate>
+                  <hornetq:consumerWindowSize>2000</hornetq:consumerWindowSize>
+                  <hornetq:disableFinalizeCheck>true</hornetq:disableFinalizeCheck>
+                  <hornetq:failoverOnInitialConnection>false</hornetq:failoverOnInitialConnection>
+                  <hornetq:groupID>testGroup</hornetq:groupID>
+                  <hornetq:initialMessagePacketSize>2500</hornetq:initialMessagePacketSize>
+                  <hornetq:initialReconnectAttempts>3</hornetq:initialReconnectAttempts>
+                  <hornetq:maxRetryInterval>500</hornetq:maxRetryInterval>
+                  <hornetq:minLargeMessageSize>5000</hornetq:minLargeMessageSize>
+                  <hornetq:preAcknowledge>true</hornetq:preAcknowledge>
+                  <hornetq:producerMaxRate>20</hornetq:producerMaxRate>
+                  <hornetq:producerWindowSize>100</hornetq:producerWindowSize>
+                  <hornetq:queue>testQueue</hornetq:queue>
+                  <hornetq:reconnectAttempts>2</hornetq:reconnectAttempts>
+                  <hornetq:retryInterval>5000</hornetq:retryInterval>
+                  <hornetq:retryIntervalMultiplier>500.0</hornetq:retryIntervalMultiplier>
+                  <hornetq:scheduledThreadPoolMaxSize>10</hornetq:scheduledThreadPoolMaxSize>
+                  <hornetq:threadPoolMaxSize>5</hornetq:threadPoolMaxSize>
+                  <hornetq:useGlobalPools>true</hornetq:useGlobalPools>
+                  <hornetq:useHA>true</hornetq:useHA>
+                </hornetq:config>
+            </hornetq:implementation.hornetq>
+
             <sca:service name="OrderService" >
                 <sca:interface.java interface="org.switchyard.component.hornetq.support.HornetQService"/>
             </sca:service>
-            
-            <hornetq:implementation.hornetq>
-                <hornetq:config>
-	                <hornetq:ackBatchSize>200</hornetq:ackBatchSize>
-	                <hornetq:autoGroup>true</hornetq:autoGroup>
-	                <hornetq:blockOnAcknowledge>true</hornetq:blockOnAcknowledge>
-	                <hornetq:blockOnDurableSend>false</hornetq:blockOnDurableSend>
-	                <hornetq:blockOnNonDurableSend>true</hornetq:blockOnNonDurableSend>
-	                <hornetq:cacheLargeMessagesOnConsumer>true</hornetq:cacheLargeMessagesOnConsumer>
-	                <hornetq:callTimeout>3000</hornetq:callTimeout>
-	                <hornetq:clientFailureCheckPeriod>2050</hornetq:clientFailureCheckPeriod>
-	                <hornetq:compressLargeMessages>true</hornetq:compressLargeMessages>
-	                <hornetq:connectionLoadBalancingPolicyClassName>Mock</hornetq:connectionLoadBalancingPolicyClassName>
-	                <hornetq:connectionTTL>1000</hornetq:connectionTTL>
-	                <hornetq:confirmationWindowSize>2</hornetq:confirmationWindowSize>
-	                <hornetq:connector>
-	                   <hornetq:factoryClass>org.test.Connector</hornetq:factoryClass>
-	                </hornetq:connector>
-	                <hornetq:consumerMaxRate>10</hornetq:consumerMaxRate>
-	                <hornetq:consumerWindowSize>2000</hornetq:consumerWindowSize>
-	                <hornetq:disableFinalizeCheck>true</hornetq:disableFinalizeCheck>
-	                <hornetq:failoverOnInitialConnection>false</hornetq:failoverOnInitialConnection>
-	                <hornetq:groupID>testGroup</hornetq:groupID>
-	                <hornetq:initialMessagePacketSize>2500</hornetq:initialMessagePacketSize>
-	                <hornetq:initialReconnectAttempts>3</hornetq:initialReconnectAttempts>
-	                <hornetq:maxRetryInterval>500</hornetq:maxRetryInterval>
-	                <hornetq:minLargeMessageSize>5000</hornetq:minLargeMessageSize>
-	                <hornetq:preAcknowledge>true</hornetq:preAcknowledge>
-	                <hornetq:producerMaxRate>20</hornetq:producerMaxRate>
-	                <hornetq:producerWindowSize>100</hornetq:producerWindowSize>
-	                <hornetq:queue>testQueue</hornetq:queue>
-	                <hornetq:reconnectAttempts>2</hornetq:reconnectAttempts>
-	                <hornetq:retryInterval>5000</hornetq:retryInterval>
-	                <hornetq:retryIntervalMultiplier>500.0</hornetq:retryIntervalMultiplier>
-	                <hornetq:scheduledThreadPoolMaxSize>10</hornetq:scheduledThreadPoolMaxSize>
-	                <hornetq:threadPoolMaxSize>5</hornetq:threadPoolMaxSize>
-	                <hornetq:useGlobalPools>true</hornetq:useGlobalPools>
-	                <hornetq:useHA>true</hornetq:useHA>
-                </hornetq:config>
-            </hornetq:implementation.hornetq>
         </sca:component>
     </sca:composite>
 

@@ -20,7 +20,7 @@
     
     <sca:composite name="orders" targetNamespace="urn:camel-core:test:1.0">
     
-        <sca:reference name="WarehouseService" promote="OrderComponent/WarehouseService">
+        <sca:reference name="WarehouseService" promote="OrderComponent/WarehouseService" multiplicity="1..1">
             <camel:binding.camel configURI="vm://warehouseStatusService"/>
         </sca:reference>
         

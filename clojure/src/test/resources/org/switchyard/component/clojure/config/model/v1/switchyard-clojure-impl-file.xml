@@ -17,15 +17,13 @@
     xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
     xmlns:sd="urn:switchyard-config:switchyard:1.0">
 
-    <sca:composite targetNamespace="urn:clojure:test:1.0">
+    <sca:composite name="switchyard-clojure-impl-file" targetNamespace="urn:clojure:test:1.0">
         <sca:component name="ClojureComponent">
+            <implementation.clojure injectExchange="true" scriptFile="sample.clj"/>
             <sca:service name="SimpleClojureService">
-              <interface></interface>
             </sca:service>
             <sca:reference name="OtherService">
-              <interface></interface>
             </sca:reference>
-            <implementation.clojure injectExchange="true" scriptFile="sample.clj"/>
         </sca:component>
     </sca:composite>
 

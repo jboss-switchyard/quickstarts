@@ -24,11 +24,9 @@ MA  02110-1301, USA.
         targetNamespace="urn:switchyard-component-rules:config:1.0"
         elementFormDefault="qualified">
 
-    <import namespace="urn:switchyard-config:switchyard:1.0"
-            schemaLocation="switchyard-v1.xsd"/>
+    <import namespace="urn:switchyard-config:switchyard:1.0"/>
 
-    <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-            schemaLocation="sca-1.1-cd06.xsd"/>
+    <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
 
     <element name="implementation.rules" type="rules:RulesImplementationType" substitutionGroup="sca:implementation"/>
     <complexType name="RulesImplementationType">

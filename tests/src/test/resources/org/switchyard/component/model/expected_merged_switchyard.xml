@@ -22,8 +22,8 @@
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="m1app" targetNamespace="urn:tests:order:1.0">
         <sca:service xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="OrderService" promote="OrderService">
             <soap:binding.soap xmlns:soap="urn:switchyard-component-soap:config:1.0">
-                <soap:serverPort>18001</soap:serverPort>
                 <soap:wsdl>wsdl/OrderService.wsdl</soap:wsdl>
+                <soap:serverPort>18001</soap:serverPort>
             </soap:binding.soap>
         </sca:service>
         <component name="InventoryService">
