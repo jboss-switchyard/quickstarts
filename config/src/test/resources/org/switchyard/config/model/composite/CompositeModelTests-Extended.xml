@@ -19,8 +19,11 @@ MA  02110-1301, USA.
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
            targetNamespace="urn:bogus:example:1.0"
-           xmlns:bogus="urn:switchyard-config:test-bogus:1.0">
-    <component>
+           xmlns:bogus="urn:switchyard-config:test-bogus:1.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="urn:switchyard-config:test-bogus:1.0 test/bogus/bogus.xsd"
+           name="m1app">
+    <component name="component">
        <bogus:implementation.test foo="bar"/>
        <service name="SimpleService">
               <!-- no interface -->

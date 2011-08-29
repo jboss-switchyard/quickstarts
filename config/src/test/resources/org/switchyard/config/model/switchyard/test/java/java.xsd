@@ -23,8 +23,7 @@ MA  02110-1301, USA.
         xmlns:swyd="urn:switchyard-config:switchyard:1.0"
         elementFormDefault="qualified">
 
-    <import namespace="urn:switchyard-config:switchyard:1.0"
-            schemaLocation="switchyard-v1.xsd"/>
+    <import namespace="urn:switchyard-config:switchyard:1.0"/>
 
     <element name="transform.java" type="java:JavaTransformType" substitutionGroup="swyd:transform"/>
     <complexType name="JavaTransformType">

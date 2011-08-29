@@ -23,14 +23,21 @@ MA  02110-1301, USA.
         xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
         elementFormDefault="qualified">
 
-    <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-            schemaLocation="sca-1.1-cd06.xsd"/>
+    <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
 
     <!-- Mock Implementation -->
     <element name="implementation.mock" type="mock:MockImplementationType" substitutionGroup="sca:implementation"/>
     <complexType name="MockImplementationType">
         <complexContent>
             <extension base="sca:Implementation"/>
+        </complexContent>
+    </complexType>
+    
+    <!-- Mock Interface -->
+    <element name="interface.mock" type="mock:MockInterfaceType" substitutionGroup="sca:interface"/>
+    <complexType name="MockInterfaceType">
+        <complexContent>
+            <extension base="sca:Interface"/>
         </complexContent>
     </complexType>
     
@@ -41,5 +48,7 @@ MA  02110-1301, USA.
             <extension base="sca:Binding"/>
         </complexContent>
     </complexType>
+
+    <element name="binding.no_activator" type="mock:MockBindingType" substitutionGroup="sca:binding"/>
 
 </schema>

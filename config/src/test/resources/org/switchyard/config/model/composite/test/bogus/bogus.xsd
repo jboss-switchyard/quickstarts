@@ -23,13 +23,12 @@ MA  02110-1301, USA.
         xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
         elementFormDefault="qualified">
 
-    <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-            schemaLocation="sca-1.1-cd06.xsd"/>
+    <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
 
-    <element name="implementation.test" type="bogus:TestImplementationType"/>
+    <element name="implementation.test" type="bogus:TestImplementationType" substitutionGroup="sca:implementation"/>
     <complexType name="TestImplementationType">
         <complexContent>
-            <extension base="sca:Binding">
+            <extension base="sca:Implementation">
                 <attribute name="foo" type="string" use="optional"/>
             </extension>
         </complexContent>

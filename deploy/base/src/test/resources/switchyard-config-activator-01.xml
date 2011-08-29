@@ -19,15 +19,17 @@ MA  02110-1301, USA.
 -->
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0"
             xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-            xmlns:mock="urn:switchyard-component-mock:config:1.0">
+            xmlns:mock="urn:switchyard-component-mock:config:1.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="urn:switchyard-component-mock:config:1.0 org/switchyard/component/mock/config/model/v1/mock-v1.xsd">
     <sca:composite name="mockBinding" targetNamespace="urn:test:config-mock-binding:1.0">
-        <sca:service name="TestService">
-            <sca:binding.foo/>
+        <sca:service name="TestService" promote="TestService">
+            <mock:binding.no_activator/>
         </sca:service>
         <sca:component name="TestService">
             <mock:implementation.mock/>
             <sca:service name="TestService">
-                <sca:interface.mock/>
+                <mock:interface.mock/>
             </sca:service>
         </sca:component>
     </sca:composite>

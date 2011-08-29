@@ -1,6 +1,4 @@
- <configuration xmlns="urn:hornetq"
-               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="urn:hornetq http://schema/hornetq-configuration.xsd">
+ <configuration xmlns="urn:hornetq">
                
 	<paging-directory>target/data/paging</paging-directory>
 	<bindings-directory>target/data/bindings</bindings-directory>

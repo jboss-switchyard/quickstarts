@@ -20,6 +20,8 @@ MA  02110-1301, USA.
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
            targetNamespace="urn:m1app:example:1.0"
            xmlns:bean="urn:switchyard-config:test-bean:1.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="urn:switchyard-config:test-bean:1.0 test/bean/bean.xsd"
            name="m1app">
     <component name="SimpleService">
        <bean:implementation.bean class="org.switchyard.example.m1app.SimpleBean"/>

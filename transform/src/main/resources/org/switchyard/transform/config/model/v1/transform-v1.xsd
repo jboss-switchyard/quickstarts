@@ -23,7 +23,7 @@ MA  02110-1301, USA.
         xmlns:trfm="urn:switchyard-config:transform:1.0"
         elementFormDefault="qualified">
 
-    <import namespace="urn:switchyard-config:switchyard:1.0" schemaLocation="http://www.smooks.org/switchyard-v1.xsd"/>
+    <import namespace="urn:switchyard-config:switchyard:1.0"/>
 
 	<element name="transform.json" type="trfm:JsonTransformType" substitutionGroup="swyd:transform" />
 	<complexType name="JsonTransformType">

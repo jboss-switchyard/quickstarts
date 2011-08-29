@@ -296,37 +296,38 @@ public final class Descriptor {
 
     private String getSchemaLocation(String namespace, String schema) {
         String schemaLocation = null;
-        if (schema != null) {
-            if (namespace != null) {
-                String location = getLocation(namespace);
-                if (location != null) {
-                    schemaLocation = location + "/" + schema;
-                    schemaLocation = schemaLocation.replaceAll("\\\\", "/").replaceAll("//", "/");
-                }
+        if (namespace != null) {
+            if (schema == null) {
+                schema = getProperty(SCHEMA, namespace);
             }
-            if (schemaLocation == null && schema.startsWith("http://")) {
-                schema = schema.substring(7);
-                int pos = schema.indexOf('/');
-                if (pos != -1) {
-                    String domain = schema.substring(0, pos);
-                    StringTokenizer st = new StringTokenizer(domain, ".");
-                    int len = st.countTokens();
-                    String[] parts = new String[len];
-                    for (int i=0; i < len; i++) {
-                        parts[(len-1)-i] = st.nextToken();
-                    }
-                    StringBuilder sb = new StringBuilder();
-                    sb.append('/');
-                    for (int i=0; i < len; i++) {
-                        sb.append(parts[i]);
-                        if (i != len-1) {
-                            sb.append('/');
-                        }
-                    }
-                    domain = sb.toString();
-                    String path = schema.substring(pos, schema.length());
-                    schemaLocation = domain + path;
+            String location = getLocation(namespace);
+            if (location != null) {
+                schemaLocation = location + "/" + schema;
+                schemaLocation = schemaLocation.replaceAll("\\\\", "/").replaceAll("//", "/");
+            }
+        }
+        if (schemaLocation == null && schema != null && schema.startsWith("http://")) {
+            schema = schema.substring(7);
+            int pos = schema.indexOf('/');
+            if (pos != -1) {
+                String domain = schema.substring(0, pos);
+                StringTokenizer st = new StringTokenizer(domain, ".");
+                int len = st.countTokens();
+                String[] parts = new String[len];
+                for (int i=0; i < len; i++) {
+                    parts[(len-1)-i] = st.nextToken();
                 }
+                StringBuilder sb = new StringBuilder();
+                sb.append('/');
+                for (int i=0; i < len; i++) {
+                    sb.append(parts[i]);
+                    if (i != len-1) {
+                        sb.append('/');
+                    }
+                }
+                domain = sb.toString();
+                String path = schema.substring(pos, schema.length());
+                schemaLocation = domain + path;
             }
         }
         return schemaLocation;
