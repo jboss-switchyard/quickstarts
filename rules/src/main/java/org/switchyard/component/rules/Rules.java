@@ -25,9 +25,6 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.switchyard.common.io.resource.Resource;
-import org.switchyard.common.io.resource.SimpleResource;
-
 /**
  * Rules annotation.
  *
@@ -51,11 +48,11 @@ public @interface Rules {
     /**
      * Additional resources the rules require.
      */
-    public Class<? extends Resource>[] resources() default UndefinedResource.class;
+    public String[] resources() default UNDEFINED_RESOURCE;
 
     /** An undefined rules interface. */
     public static interface UndefinedRulesInterface {};
     /** An undefined rules resource. */
-    public static final class UndefinedResource extends SimpleResource {};
+    public static final String UNDEFINED_RESOURCE = "";
 
 }

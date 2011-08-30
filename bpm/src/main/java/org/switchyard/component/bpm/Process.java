@@ -25,8 +25,6 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.switchyard.common.io.resource.Resource;
-import org.switchyard.common.io.resource.SimpleResource;
 import org.switchyard.component.bpm.task.BaseTaskHandler;
 import org.switchyard.component.bpm.task.TaskHandler;
 
@@ -63,7 +61,7 @@ public @interface Process {
     /**
      * Additional resources the process requires.
      */
-    public Class<? extends Resource>[] resources() default UndefinedResource.class;
+    public String[] resources() default UNDEFINED_RESOURCE;
 
     /**
      * Specified task handlers for the process.
@@ -79,7 +77,7 @@ public @interface Process {
     /** An undefined process id. */
     public static final String UNDEFINED_PROCESS_ID = "";
     /** An undefined process resource. */
-    public static final class UndefinedResource extends SimpleResource {};
+    public static final String UNDEFINED_RESOURCE = "";
     /** An undefined task handler. */
     public static final class UndefinedTaskHandler extends BaseTaskHandler {};
 

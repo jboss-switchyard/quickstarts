@@ -23,11 +23,8 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.List;
 
-import org.switchyard.common.io.resource.Resource;
-import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.type.classpath.IsAnnotationPresentFilter;
-import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.component.rules.ExecuteRules;
 import org.switchyard.component.rules.Rules;
 import org.switchyard.component.rules.common.RulesActionType;
@@ -104,14 +101,12 @@ public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
                     }
                 }
             }
-            for (Class<? extends Resource> resourceClass : rules.resources()) {
-                if (Rules.UndefinedResource.class.equals(resourceClass)) {
+            for (String location : rules.resources()) {
+                if (Rules.UNDEFINED_RESOURCE.equals(location)) {
                     continue;
                 }
-                Resource resource = Construction.construct(resourceClass);
-                String location = resource.getLocation();
-                ResourceType type = resource.getType();
-                rciModel.addResource(new V1ResourceModel().setLocation(location).setType(type));
+                // setting the location will trigger deducing and setting the type
+                rciModel.addResource(new V1ResourceModel().setLocation(location));
             }
             componentModel.setImplementation(rciModel);
             ComponentServiceModel serviceModel = new V1ComponentServiceModel();

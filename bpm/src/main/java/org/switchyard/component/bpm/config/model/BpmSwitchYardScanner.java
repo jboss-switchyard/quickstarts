@@ -23,8 +23,6 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.List;
 
-import org.switchyard.common.io.resource.Resource;
-import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.io.resource.SimpleResource;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.type.classpath.IsAnnotationPresentFilter;
@@ -155,14 +153,12 @@ public class BpmSwitchYardScanner implements Scanner<SwitchYardModel> {
                 TaskHandler taskHandler = Construction.construct(taskHandlerClass);
                 bciModel.addTaskHandler(new V1TaskHandlerModel().setClazz(taskHandlerClass).setName(taskHandler.getName()));
             }
-            for (Class<? extends Resource> resourceClass : process.resources()) {
-                if (Process.UndefinedResource.class.equals(resourceClass)) {
+            for (String location : process.resources()) {
+                if (Process.UNDEFINED_RESOURCE.equals(location)) {
                     continue;
                 }
-                Resource resource = Construction.construct(resourceClass);
-                String location = resource.getLocation();
-                ResourceType type = resource.getType();
-                bciModel.addResource(new V1ResourceModel().setLocation(location).setType(type));
+                // setting the location will trigger deducing and setting the type
+                bciModel.addResource(new V1ResourceModel().setLocation(location));
             }
             componentModel.setImplementation(bciModel);
         }

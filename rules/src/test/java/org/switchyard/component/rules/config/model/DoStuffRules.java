@@ -18,25 +18,17 @@
  */
 package org.switchyard.component.rules.config.model;
 
-import org.switchyard.common.io.resource.SimpleResource;
 import org.switchyard.component.rules.ExecuteRules;
 import org.switchyard.component.rules.Rules;
-import org.switchyard.component.rules.config.model.DoStuffRules.MyDrl;
 
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-@Rules(stateful=false, resources={MyDrl.class})
+@Rules(stateful=false, resources={"path/to/my.drl"})
 public interface DoStuffRules extends DoStuff {
 
     @Override
     @ExecuteRules
     public void doStuff(Object stuff);
-
-    public static final class MyDrl extends SimpleResource {
-        public MyDrl() {
-            super("path/to/my.drl", "DRL");
-        }
-    }
 
 }

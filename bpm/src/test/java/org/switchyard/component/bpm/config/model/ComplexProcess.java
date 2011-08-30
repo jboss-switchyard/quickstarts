@@ -18,12 +18,9 @@
  */
 package org.switchyard.component.bpm.config.model;
 
-import org.switchyard.common.io.resource.SimpleResource;
 import org.switchyard.component.bpm.Process;
 import org.switchyard.component.bpm.config.model.ComplexProcess.My1stHandler;
 import org.switchyard.component.bpm.config.model.ComplexProcess.My2ndHandler;
-import org.switchyard.component.bpm.config.model.ComplexProcess.MyDsl;
-import org.switchyard.component.bpm.config.model.ComplexProcess.MyDslr;
 import org.switchyard.component.bpm.config.model.ComplexProcess.ProcessIface;
 import org.switchyard.component.bpm.task.BaseTaskHandler;
 import org.switchyard.component.bpm.task.Task;
@@ -39,23 +36,11 @@ import org.switchyard.component.bpm.task.TaskManager;
     definition="path/to/my.bpmn",
     definitionType="BPMN2",
     id="ComplexProcess",
-    resources={MyDsl.class, MyDslr.class},
+    resources={"path/to/my.dsl", "path/to/my.dslr"},
     taskHandlers={My1stHandler.class, My2ndHandler.class})
 public interface ComplexProcess {
 
     public static interface ProcessIface {}
-
-    public static final class MyDsl extends SimpleResource {
-        public MyDsl() {
-            super("path/to/my.dsl", "DSL");
-        }
-    }
-
-    public static final class MyDslr extends SimpleResource {
-        public MyDslr() {
-            super("path/to/my.dslr", "DSLR");
-        }
-    }
 
     public static final class My1stHandler extends BaseTaskHandler {
         public void executeTask(Task task, TaskManager taskManager) {
