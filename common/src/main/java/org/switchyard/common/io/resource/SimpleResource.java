@@ -71,10 +71,14 @@ public class SimpleResource extends BaseResource {
 
     /**
      * Sets the resource location.
+     * <p><i>If not already set, the resource type will be deduced from the extension of the location, and set.</i></p>
      * @param location the resource location
      * @return this BaseResource (useful for chaining)
      */
     public SimpleResource setLocation(String location) {
+        if (location != null && getType() == null) {
+            setType(ResourceType.forLocation(location));
+        }
         _location = location;
         return this;
     }

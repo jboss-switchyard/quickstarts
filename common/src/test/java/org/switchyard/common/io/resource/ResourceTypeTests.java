@@ -18,6 +18,8 @@
  */
 package org.switchyard.common.io.resource;
 
+import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -29,11 +31,39 @@ import org.junit.Test;
 public class ResourceTypeTests {
 
     @Test
-    public void testPreinstalledTypes() throws Exception {
-        ResourceType bpmn2 = ResourceType.valueOf("BPMN2");
-        Assert.assertEquals(".bpmn", bpmn2.getExtensions().iterator().next());
+    public void testBasicType() throws Exception {
+        ResourceType txt1 = ResourceType.valueOf("TXT");
+        Assert.assertEquals("Text" , txt1.getDescription());
+        Set<String> exts = txt1.getExtensions();
+        Assert.assertEquals(1, exts.size());
+        Assert.assertEquals(".txt", exts.iterator().next());
+        ResourceType txt2 = ResourceType.forName("TXT");
+        Assert.assertSame(txt1, txt2);
+        ResourceType txt3 = ResourceType.forExtension(".txt");
+        Assert.assertSame(txt1, txt3);
+        ResourceType txt4 = ResourceType.forLocation("foo/bar.txt");
+        Assert.assertSame(txt1, txt4);
+    }
+
+    @Test
+    public void testOOTBInheritance() throws Exception {
         ResourceType dtable = ResourceType.valueOf("DTABLE");
         Assert.assertEquals(2, dtable.getExtensions().size());
+        Assert.assertEquals(2, dtable.getExtensions(true).size());
+        Assert.assertEquals(0, dtable.getExtensions(false).size());
+    }
+
+    @Test
+    @SuppressWarnings("unused")
+    public void testCustomInheritance() throws Exception {
+        ResourceType a = ResourceType.install("A", null, ".a");
+        ResourceType b = ResourceType.install("B", null, ".b");
+        ResourceType ab = ResourceType.install("AB", null, "{A}", "{B}");
+        ResourceType c = ResourceType.install("C", null, ".c");
+        ResourceType abcd = ResourceType.install("ABCD", null, "{AB}", "{C}", ".d");
+        Assert.assertEquals(4, abcd.getExtensions().size());
+        Assert.assertEquals(4, abcd.getExtensions(true).size());
+        Assert.assertEquals(1, abcd.getExtensions(false).size());
     }
 
 }

@@ -91,6 +91,9 @@ public class V1ResourceModel extends BaseModel implements ResourceModel {
      */
     @Override
     public ResourceModel setLocation(String location) {
+        if (location != null && getType() == null) {
+            setType(ResourceType.forLocation(location));
+        }
         setModelAttribute("location", location);
         return this;
     }

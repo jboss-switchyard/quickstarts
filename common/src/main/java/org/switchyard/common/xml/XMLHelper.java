@@ -673,7 +673,7 @@ public final class XMLHelper {
     /**
      * Splits a String into multiple QNames per the specified delimiter.
      * @param str the String to split
-     * @param delim the specified delimiter; will default to "/" if null
+     * @param delim the specified delimiter
      * @return the multiple QNames
      */
     public static QName[] splitQNames(String str, char delim) {
