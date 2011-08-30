@@ -18,25 +18,17 @@
  */
 package org.switchyard.quickstarts.rules.interview;
 
-import org.switchyard.common.io.resource.SimpleResource;
 import org.switchyard.component.rules.ExecuteRules;
 import org.switchyard.component.rules.Rules;
-import org.switchyard.quickstarts.rules.interview.InterviewRules.InterviewDrl;
 
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-@Rules(value=Interview.class, resources={InterviewDrl.class})
+@Rules(value=Interview.class, resources={"/org/switchyard/quickstarts/rules/interview/Interview.drl"})
 public interface InterviewRules extends Interview {
 
     @Override
     @ExecuteRules
     public void verify(Applicant applicant);
-
-    public static final class InterviewDrl extends SimpleResource {
-        public InterviewDrl() {
-            super("/org/switchyard/quickstarts/rules/interview/Interview.drl", "DRL");
-        }
-    }
 
 }
