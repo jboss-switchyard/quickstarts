@@ -20,13 +20,13 @@
     <sca:composite name="hornetQTest" targetNamespace="urn:hornetq:test:1.0">
         <sca:service name="hornetQTest" promote="HornetQTestService">
             <hornetq:binding.hornetq>
+                <hornetq:operationSelector operationName="printIt"/>
                 <hornetq:config>
                     <hornetq:ackBatchSize>200</hornetq:ackBatchSize>
                     <hornetq:autoGroup>true</hornetq:autoGroup>
                     <hornetq:blockOnAcknowledge>true</hornetq:blockOnAcknowledge>
                     <hornetq:blockOnDurableSend>false</hornetq:blockOnDurableSend>
                     <hornetq:blockOnNonDurableSend>true</hornetq:blockOnNonDurableSend>
-	                <hornetq:browseOnly>true</hornetq:browseOnly>
                     <hornetq:cacheLargeMessagesOnConsumer>true</hornetq:cacheLargeMessagesOnConsumer>
                     <hornetq:callTimeout>3000</hornetq:callTimeout>
                     <hornetq:clientFailureCheckPeriod>2050</hornetq:clientFailureCheckPeriod>

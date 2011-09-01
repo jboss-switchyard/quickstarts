@@ -301,7 +301,7 @@ public class V1HornetQConfigModelTest {
     
     @Test
     public void validateModel() throws IOException {
-        final HornetQConfigModel bindingModel = pull("hornetq-valid-binding.xml");
+        final HornetQConfigModel bindingModel = pull("hornetq-all-binding.xml");
         final Validation validation = bindingModel.validateModel();
         assertThat(validation.isValid(), is(true));
     }

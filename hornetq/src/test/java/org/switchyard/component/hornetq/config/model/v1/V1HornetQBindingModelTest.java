@@ -48,7 +48,7 @@ public class V1HornetQBindingModelTest {
     @Before
     public void parseHornetQBindingModel() throws IOException {
         final ModelPuller<SwitchYardModel> modelPuller = new ModelPuller<SwitchYardModel>();
-        final URL xml = V1HornetQConfigModelTest.class.getResource("hornetq-valid-binding.xml");
+        final URL xml = V1HornetQConfigModelTest.class.getResource("hornetq-all-binding.xml");
         final SwitchYardModel switchYardModel = modelPuller.pull(xml);
         hbm = (HornetQBindingModel) switchYardModel.getComposite().getServices().get(0).getBindings().get(0);
     }
