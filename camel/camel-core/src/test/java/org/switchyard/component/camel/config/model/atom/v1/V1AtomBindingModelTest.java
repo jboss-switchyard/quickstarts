@@ -34,7 +34,9 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.common.io.pull.StringPuller;
+import org.switchyard.component.camel.config.model.OperationSelector;
 import org.switchyard.component.camel.config.model.atom.AtomBindingModel;
+import org.switchyard.component.camel.config.model.v1.V1OperationSelector;
 import org.switchyard.config.model.ModelPuller;
 
 public class V1AtomBindingModelTest {
@@ -77,6 +79,7 @@ public class V1AtomBindingModelTest {
     @Test
     public void testReadConfig() throws Exception {
         AtomBindingModel atomModel = new ModelPuller<AtomBindingModel>().pull(ATOM_XML, getClass());
+        atomModel.assertModelValid();
         Assert.assertEquals(atomModel.getFeedURI(), FEED_URI);
         Assert.assertEquals(atomModel.getDelay(), DELAY);
         Assert.assertEquals(atomModel.isFiltered(), Boolean.TRUE);
@@ -129,7 +132,8 @@ public class V1AtomBindingModelTest {
     }
     
     private AtomBindingModel createAtomModel() {
-        return new V1AtomBindingModel().setDelay(5)
+        AtomBindingModel abm = new V1AtomBindingModel()
+            .setDelay(5)
             .setFeedHeader(true)
             .setFeedURI(FEED_URI)
             .setFixedDelay(true)
@@ -140,5 +144,9 @@ public class V1AtomBindingModelTest {
             .setSorted(true)
             .setSplit(true)
             .setThrottled(true);
+        OperationSelector os = new V1OperationSelector();
+        os.setOperationName("print");
+        abm.setOperationSelector(os);
+        return abm;
     }
 }

@@ -21,8 +21,6 @@
 
 package org.switchyard.component.camel.config.model.direct.v1;
 
-import java.io.File;
-import java.io.InputStream;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -35,7 +33,6 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.component.camel.config.model.direct.CamelDirectBindingModel;
-import org.switchyard.component.camel.config.model.file.v1.V1CamelFileConsumerBindingModel;
 import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Validation;
@@ -52,7 +49,8 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
 public class V1CamelDirectBindingModelTest {
 
 
-    private static final String CAMEL_XML = "switchyard-direct-binding-beans.xml";
+    private static final String CAMEL_XML =
+        "/org/switchyard/component/camel/config/model/direct/v1/switchyard-direct-binding-beans.xml";
 
     private static final String NAME = "fooDirectName";
 
@@ -121,8 +119,7 @@ public class V1CamelDirectBindingModelTest {
 
 
     private CamelDirectBindingModel getCamelBinding(final String config) throws Exception {
-        final InputStream in = getClass().getResourceAsStream(config);
-        final SwitchYardModel model = (SwitchYardModel) new ModelPuller<SwitchYardModel>().pull(in);
+        final SwitchYardModel model = new ModelPuller<SwitchYardModel>().pull(config, getClass());
         final List<CompositeServiceModel> services = model.getComposite().getServices();
         final CompositeServiceModel compositeServiceModel = services.get(0);
         final List<BindingModel> bindings = compositeServiceModel.getBindings();
