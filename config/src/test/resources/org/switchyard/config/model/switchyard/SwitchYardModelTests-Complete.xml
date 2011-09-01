@@ -19,12 +19,16 @@ MA  02110-1301, USA.
 -->
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0"
             xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-            xmlns:soap="urn:switchyard-config:test-soap:1.0"
             xmlns:bean="urn:switchyard-config:test-bean:1.0"
             xmlns:java="urn:switchyard-config:test-java:1.0"
             xmlns:smooks="urn:switchyard-config:test-smooks:1.0"
+            xmlns:soap="urn:switchyard-config:test-soap:1.0"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="urn:switchyard-config:test-soap:1.0 ../composite/test/soap/soap.xsd"
+            xsi:schemaLocation="
+                   urn:switchyard-config:test-bean:1.0 ../composite/test/bean/bean.xsd
+                   urn:switchyard-config:test-java:1.0 test/java/java.xsd
+                   urn:switchyard-config:test-smooks:1.0 test/smooks/smooks.xsd
+                   urn:switchyard-config:test-soap:1.0 ../composite/test/soap/soap.xsd"
             name="m1app">
     <sca:composite name="m1app" targetNamespace="urn:m1app:example:1.0">
         <sca:service name="M1AppService" promote="SimpleService">

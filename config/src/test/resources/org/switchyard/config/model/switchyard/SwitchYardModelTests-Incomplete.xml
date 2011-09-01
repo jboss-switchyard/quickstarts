@@ -23,7 +23,10 @@ MA  02110-1301, USA.
             xmlns:java="urn:switchyard-config:test-java:1.0"
             xmlns:smooks="urn:switchyard-config:test-smooks:1.0"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="urn:switchyard-config:test-bean:1.0 ../composite/test/bean/bean.xsd urn:switchyard-config:test-java:1.0 test/java/java.xsd urn:switchyard-config:test-smooks:1.0 test/smooks/smooks.xsd"
+            xsi:schemaLocation="
+                   urn:switchyard-config:test-bean:1.0 ../composite/test/bean/bean.xsd
+                   urn:switchyard-config:test-java:1.0 test/java/java.xsd
+                   urn:switchyard-config:test-smooks:1.0 test/smooks/smooks.xsd"
             name="m1app">
     <sca:composite name="m1app"  targetNamespace="urn:m1app:example:1.0">
         <sca:component name="SimpleService">

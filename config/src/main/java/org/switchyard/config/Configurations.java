@@ -24,8 +24,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 
+import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import org.switchyard.common.lang.Strings;
@@ -41,6 +43,8 @@ public final class Configurations {
 
     // HACK: SWITCHYARD-145
     private static final QName COMPOSITE_QNAME = XMLHelper.createQName(CompositeModel.DEFAULT_NAMESPACE, CompositeModel.COMPOSITE);
+
+    private static final QName SCHEMA_LOCATION_QNAME = XMLHelper.createQName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation");
 
     private Configurations() {}
 
@@ -80,7 +84,42 @@ public final class Configurations {
     private static void recursiveMerge(Configuration from_config, Configuration merged_config, boolean from_overrides_merged) {
         List<QName> merged_attr_qnames = new ArrayList<QName>();
         for (QName merged_config_attr_qname : merged_config.getAttributeQNames()) {
-            if (from_overrides_merged) {
+            if (SCHEMA_LOCATION_QNAME.equals(merged_config_attr_qname)) {
+                Map<String,String> schema_location_map = new LinkedHashMap<String,String>();
+                String merged_config_schema_loc_value = merged_config.getAttribute(merged_config_attr_qname);
+                StringTokenizer st = new StringTokenizer(merged_config_schema_loc_value);
+                while (st.hasMoreTokens()) {
+                    String name = st.nextToken();
+                    if (st.hasMoreTokens()) {
+                        String value = st.nextToken();
+                        schema_location_map.put(name, value);
+                    }
+                }
+                String from_config_schema_loc_value = from_config.getAttribute(merged_config_attr_qname);
+                if (from_config_schema_loc_value != null) {
+                    st = new StringTokenizer(from_config_schema_loc_value);
+                    while (st.hasMoreTokens()) {
+                        String name = st.nextToken();
+                        if (st.hasMoreTokens()) {
+                            String value = st.nextToken();
+                            if (!schema_location_map.containsKey(name) || from_overrides_merged) {
+                                schema_location_map.put(name, value);
+                            }
+                        }
+                    }
+                }
+                StringBuilder sb = new StringBuilder();
+                for (Map.Entry<String,String> entry : schema_location_map.entrySet()) {
+                    if (sb.length() != 0) {
+                        sb.append(' ');
+                    }
+                    sb.append(entry.getKey());
+                    sb.append(' ');
+                    sb.append(entry.getValue());
+                }
+                merged_config.setAttribute(merged_config_attr_qname, sb.toString());
+                merged_attr_qnames.add(merged_config_attr_qname);
+            } else if (from_overrides_merged) {
                 String from_config_attr_value = from_config.getAttribute(merged_config_attr_qname);
                 if (from_config_attr_value != null) {
                     merged_config.setAttribute(merged_config_attr_qname, from_config_attr_value);

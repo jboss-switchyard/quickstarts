@@ -22,7 +22,9 @@ MA  02110-1301, USA.
            xmlns:bean="urn:switchyard-config:test-bean:1.0"
            xmlns:soap="urn:switchyard-config:test-soap:1.0"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:schemaLocation="urn:switchyard-config:test-soap:1.0 test/soap/soap.xsd"
+           xsi:schemaLocation="
+               urn:switchyard-config:test-bean:1.0 test/bean/bean.xsd
+               urn:switchyard-config:test-soap:1.0 test/soap/soap.xsd"
            name="m1app">
     <service name="M1AppService" promote="SimpleService">
        <soap:binding.soap>

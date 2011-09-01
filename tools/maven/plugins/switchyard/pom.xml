@@ -65,7 +65,6 @@
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
-            <version>1.1</version>
         </dependency>
 		<dependency>
 			<groupId>org.switchyard</groupId>
