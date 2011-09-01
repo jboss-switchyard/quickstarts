@@ -64,6 +64,10 @@ public class ResourceTypeTests {
         Assert.assertEquals(4, abcd.getExtensions().size());
         Assert.assertEquals(4, abcd.getExtensions(true).size());
         Assert.assertEquals(1, abcd.getExtensions(false).size());
+        Assert.assertArrayEquals(new ResourceType[]{a}, ResourceType.forExtension(".a", false));
+        Assert.assertArrayEquals(new ResourceType[]{a, ab, abcd}, ResourceType.forExtension(".a", true));
+        Assert.assertArrayEquals(new ResourceType[]{a}, ResourceType.forLocation("path/to/foo.a", false));
+        Assert.assertArrayEquals(new ResourceType[]{a, ab, abcd}, ResourceType.forLocation("path/to/foo.a", true));
     }
 
 }

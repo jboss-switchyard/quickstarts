@@ -327,7 +327,7 @@ public final class ResourceType implements Comparable<ResourceType> {
         if (extension != null) {
             extension = extension.toLowerCase();
             for (ResourceType type : TYPES.values()) {
-                if (type.getExtensions(false).contains(extension)) {
+                if (type.getExtensions(includeInherited).contains(extension)) {
                     types.add(type);
                 }
             }
