@@ -3,3 +3,6 @@
 .settings/
 target/
 .checkstyle
+*.iml
+*.ipr
+*.iws
