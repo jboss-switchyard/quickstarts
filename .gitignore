@@ -4,3 +4,6 @@ target
 .settings
 .checkstyle
 *.sw?
+*.iml
+*.ipr
+*.iws
