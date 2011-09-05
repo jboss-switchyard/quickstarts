@@ -41,24 +41,18 @@ public class HelpDeskDemoQuickstartTest {
     @Test
     public void test() throws Exception {
         BPMMixIn bpmMixIn = new BPMMixIn();
-        if (bpmMixIn.startTaskServer("Developer", "User")) {
+        bpmMixIn.initialize();
+        try {
+            HTTPMixIn httpMixIn = new HTTPMixIn();
+
+            httpMixIn.initialize();
             try {
-                HTTPMixIn httpMixIn = new HTTPMixIn();
-
-                httpMixIn.initialize();
-                try {
-                    httpMixIn.postStringAndTestXML("http://localhost:18001/HelpDeskService", SOAP_REQUEST, EXPECTED_SOAP_RESPONSE);
-                } finally {
-                    httpMixIn.uninitialize();
-                }
-
-                boolean keepWorking = true;
-                while (keepWorking) {
-                    keepWorking = bpmMixIn.completeTasksForUsers("Developer", "User");
-                }
+                httpMixIn.postStringAndTestXML("http://localhost:18001/HelpDeskService", SOAP_REQUEST, EXPECTED_SOAP_RESPONSE);
             } finally {
-                bpmMixIn.stopTaskServer();
+                httpMixIn.uninitialize();
             }
+        } finally {
+            bpmMixIn.uninitialize();
         }
     }
     private static final String SOAP_REQUEST = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:helpdesk=\"urn:switchyard-quickstart-demo:helpdesk:1.0\">\n"
