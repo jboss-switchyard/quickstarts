@@ -24,6 +24,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -625,13 +627,47 @@ public class SwitchYardTestKit {
 
         for (Class<? extends TestMixIn> mixInType : _testMixIns) {
             try {
-                TestMixIn testMixIn = mixInType.newInstance();
+                TestMixIn testMixIn = newMixInInstance(mixInType, _testInstance);
                 testMixIn.setTestKit(this);
                 _testMixInInstances.add(testMixIn);
             } catch (Exception e) {
                 e.printStackTrace();
                 Assert.fail("Failed to create instance of TestMixIn type " + mixInType.getName() + ".  Make sure it defines a public default constructor.");
             }
+        }
+    }
+
+    protected static <T extends TestMixIn> T newMixInInstance(Class<T> mixInType, Object testInstance) {
+        Class<? extends Object> testClass = testInstance.getClass();
+        Method[] methods = testClass.getDeclaredMethods();
+
+        // Check for a factory method for the MixIn type...
+        for (Method method : methods) {
+            int modifiers = method.getModifiers();
+
+            if (Modifier.isPublic(modifiers)) {
+                if (method.getReturnType() == mixInType && method.getParameterTypes().length == 0) {
+                    try {
+                        if (Modifier.isStatic(modifiers)) {
+                            return mixInType.cast(method.invoke(null));
+                        } else {
+                            return mixInType.cast(method.invoke(testInstance));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Assert.fail("Failed to create instance of TestMixIn type " + mixInType.getName() + ".  Error invoking the MixIn factory method '" + method.getName() + "': " + e.getMessage());
+                        return null;
+                    }
+                }
+            }
+        }
+
+        try {
+            return mixInType.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail("Failed to create instance of TestMixIn type " + mixInType.getName() + " via public default constructor: " + e.getMessage());
+            return null;
         }
     }
 

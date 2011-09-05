@@ -39,6 +39,7 @@ import org.jbpm.task.service.mina.MinaTaskClientHandler;
 import org.jbpm.task.service.mina.MinaTaskServer;
 import org.jbpm.task.service.responsehandlers.BlockingTaskOperationResponseHandler;
 import org.jbpm.task.service.responsehandlers.BlockingTaskSummaryResponseHandler;
+import org.junit.Assert;
 
 /**
  * BPM Test Mix In.
@@ -56,9 +57,77 @@ public class BPMMixIn extends AbstractTestMixIn {
     /** The Administrator user id. */
     public static final String ADMINISTRATOR = "Administrator";
 
+    private String _host = DEFAULT_HOST;
+    private int _port = DEFAULT_PORT;
     private TaskServer _server = null;
     private TaskClient _client = null;
     private boolean _clientConnected = false;
+    private boolean _managedLifeCycle;
+
+    /**
+     * Public default constructor.
+     * <p/>
+     * Manages the TaskServer start/stop lifecycle.
+     */
+    public BPMMixIn() {
+        this(true);
+    }
+
+    /**
+     * Public constructor.
+     * @param managedLifeCycle Do you want the SwitchYard test kit to manage the
+     * start/stop lifecycle of the BPM TaskServer.
+     */
+    public BPMMixIn(boolean managedLifeCycle) {
+        this._managedLifeCycle = managedLifeCycle;
+    }
+
+    /**
+     * Set the TaskServer host name.
+     * @param host TaskServer host name.
+     * @return {@code this} instance.
+     */
+    public BPMMixIn setHost(String host) {
+        this._host = host;
+        return this;
+    }
+
+    /**
+     * Set the TaskServer port number.
+     * @param port TaskServer port number.
+     * @return {@code this} instance.
+     */
+    public BPMMixIn setPort(int port) {
+        this._port = port;
+        return this;
+    }
+
+    @Override
+    public void initialize() {
+        if (_managedLifeCycle) {
+            if (!startTaskServer("Developer", "User")) {
+                Assert.fail("Failed to autostart BPM TaskServer instance.");
+            }
+        }
+    }
+
+    @Override
+    public void uninitialize() {
+        if (_managedLifeCycle) {
+            try {
+                boolean keepWorking = true;
+                while (keepWorking) {
+                    try {
+                        keepWorking = completeTasksForUsers("Developer", "User");
+                    } catch (Exception e) {
+                        Assert.fail("Failed to auto complete tasks on BPM TaskServer instance.");
+                    }
+                }
+            } finally {
+                stopTaskServer();
+            }
+        }
+    }
 
     /**
      * Starts the task server with the default host and port, and the specified user ids to pre-populate the database with.
@@ -66,23 +135,12 @@ public class BPMMixIn extends AbstractTestMixIn {
      * @return whether the task server started successfully
      */
     public boolean startTaskServer(String... userIds) {
-        return startTaskServer(DEFAULT_HOST, DEFAULT_PORT, userIds);
-    }
-
-    /**
-     * Starts the task server with the specified host and port, and the specified user ids to pre-populate the database with.
-     * @param host the task server host
-     * @param port the task server port
-     * @param userIds the user ids to pre-populate the database with
-     * @return whether the task server started successfully
-     */
-    public boolean startTaskServer(String host, int port, String... userIds) {
         try {
             boolean ready = false;
             while (!ready) {
                 Socket socket = null;
                 try {
-                    socket = new Socket(host, port);
+                    socket = new Socket(_host, _port);
                     if (socket.isConnected()) {
                         Thread.sleep(1000);
                     } else {
@@ -107,7 +165,7 @@ public class BPMMixIn extends AbstractTestMixIn {
                 }
             }
             taskServiceSession.dispose();
-            _server = new MinaTaskServer(taskService, port, host);
+            _server = new MinaTaskServer(taskService, _port, _host);
             new Thread(_server).start();
             //_server.start();
             return true;
@@ -137,21 +195,11 @@ public class BPMMixIn extends AbstractTestMixIn {
      * @throws Exception if a problem occurred
      */
     public void startTaskClient() throws Exception {
-        startTaskClient(DEFAULT_HOST, DEFAULT_PORT);
-    }
-
-    /**
-     * Starts the task client with the specified host and port of the task server to connect to.
-     * @param host the task server host
-     * @param port the task server port
-     * @throws Exception if a problem occurred
-     */
-    public void startTaskClient(String host, int port) throws Exception {
         if (_client == null) {
             _client = new TaskClient(new MinaTaskClientConnector(BPMMixIn.class.getSimpleName(), new MinaTaskClientHandler(new DoNothingSystemEventListener())));
         }
         if (!_clientConnected) {
-            _client.connect(host, port);
+            _client.connect(_host, _port);
             _clientConnected = true;
         }
     }
@@ -181,20 +229,8 @@ public class BPMMixIn extends AbstractTestMixIn {
      * @throws Exception if a problem occurred
      */
     public boolean completeTasksForUsers(String... userIds) throws Exception {
-        return completeTasksForUsers(DEFAULT_HOST, DEFAULT_PORT, userIds);
-    }
-
-    /**
-     * Completes all tasks for the specified user ids, connecting to the task server with the specified host and port.
-     * @param host the task server host
-     * @param port the task server port
-     * @param userIds the user ids to complete the tasks for
-     * @return if there might be more user tasks to complete
-     * @throws Exception if a problem occurred
-     */
-    public boolean completeTasksForUsers(String host, int port, String... userIds) throws Exception {
         boolean keepWorking = false;
-        startTaskClient(host, port);
+        startTaskClient();
         for (String userId : userIds) {
             BlockingTaskSummaryResponseHandler btsrh =  new BlockingTaskSummaryResponseHandler();
             _client.getTasksOwned(userId, Locale.getDefault().toString().replaceAll("_", "-"), btsrh);
