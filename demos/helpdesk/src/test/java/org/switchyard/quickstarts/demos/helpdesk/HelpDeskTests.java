@@ -40,22 +40,11 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
 )
 public class HelpDeskTests {
 
-    private BPMMixIn bpm;
     private HTTPMixIn http;
 
     @Test
     public void testHelpDesk() throws Exception {
-        if (bpm.startTaskServer("Developer", "User")) {
-            try {
-                http.postResourceAndTestXML("http://localhost:18001/HelpDeskService", "/xml/soap-request.xml", "/xml/soap-response.xml");
-                boolean keepWorking = true;
-                while (keepWorking) {
-                    keepWorking = bpm.completeTasksForUsers("Developer", "User");
-                }
-            } finally {
-                bpm.stopTaskServer();
-            }
-        }
+        http.postResourceAndTestXML("http://localhost:18001/HelpDeskService", "/xml/soap-request.xml", "/xml/soap-response.xml");
     }
 
 }
