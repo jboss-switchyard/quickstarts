@@ -1,0 +1,10 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Header/>
+   <soapenv:Body>
+		<ns1:request xmlns:ns1="http://example.com/loan-approval/loanService/">
+		   <firstName>Fred</firstName>
+		   <name>Bloggs</name>
+		   <amount>100</amount>
+		</ns1:request>
+   </soapenv:Body>
+</soapenv:Envelope>

@@ -59,6 +59,7 @@
         <module>rules</module>
         <module>bpm</module>
         <module>soap</module>
+        <module>bpel</module>
         <module>tests</module>
         <module>camel/camel-as7</module>
         <module>camel/camel-core</module>
