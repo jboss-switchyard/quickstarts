@@ -47,6 +47,7 @@ import org.switchyard.config.model.switchyard.test.java.JavaTransformModel;
 import org.switchyard.config.model.switchyard.test.smooks.SmooksConfigModel;
 import org.switchyard.config.model.switchyard.test.smooks.SmooksTransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
+import org.switchyard.config.test.xmlunit.SchemaLocationDifferenceListener;
 
 /**
  * SwitchYardModelTests.
@@ -84,6 +85,7 @@ public class SwitchYardModelTests {
         XMLUnit.setIgnoreWhitespace(true);
         SwitchYardModel complete_switchyard = _puller.pull(COMPLETE_XML, getClass());
         Diff diff = XMLUnit.compareXML(complete_switchyard.toString(), merged_switchyard.toString());
+        diff.overrideDifferenceListener(new SchemaLocationDifferenceListener());
         Assert.assertTrue(diff.toString(), diff.identical());
     }
 

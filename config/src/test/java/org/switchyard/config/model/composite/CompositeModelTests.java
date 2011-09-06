@@ -39,6 +39,7 @@ import org.switchyard.config.model.composite.test.soap.PortModel;
 import org.switchyard.config.model.composite.test.soap.SOAPBindingModel;
 import org.switchyard.config.model.composite.test.soap.WSDLModel;
 import org.switchyard.config.model.composite.v1.V1ComponentImplementationModel;
+import org.switchyard.config.test.xmlunit.SchemaLocationDifferenceListener;
 
 /**
  * CompositeModelTests.
@@ -77,6 +78,7 @@ public class CompositeModelTests {
         CompositeModel complete_composite = _puller.pull(COMPLETE_XML, getClass());
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(complete_composite.toString(), merged_composite.toString());
+        diff.overrideDifferenceListener(new SchemaLocationDifferenceListener());
         Assert.assertTrue(diff.toString(), diff.identical());
     }
 
