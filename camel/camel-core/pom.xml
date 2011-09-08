@@ -9,7 +9,6 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.switchyard.components</groupId>
     <artifactId>switchyard-component-camel</artifactId>
     <version>${project.parent.version}</version>
     <packaging>jar</packaging>
