@@ -188,7 +188,10 @@ public class SOAPGatewayTest {
     public void tearDown() throws Exception {
         _soapOutbound.stop();
         _soapOutbound2.stop();
-        _soapInbound.stop();
+        // There is an issue when running under JUnit that at shutdown,
+        // the port isn't completely released. When the next service
+        // is published up on that same port, it goes into a strange state.
+        // _soapInbound.stop();
         _soapInbound.destroy();
         _soapOutbound.destroy();
         _soapOutbound2.destroy();
