@@ -7,7 +7,7 @@ public class WarehouseServiceImpl implements WarehouseService
 {
     
     @Override
-    public String hasItem(String id)
+    public String hasItem(Integer id)
     {
         return "Fletch";
     }

@@ -35,7 +35,6 @@ import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
-import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.metadata.java.JavaService;
 
@@ -80,9 +79,8 @@ public class SwitchYardProducer extends DefaultProducer {
         }
         
         final Exchange switchyardExchange = createSwitchyardExchange(camelExchange, serviceRef);
-        final Object camelPayload = camelExchange.getIn().getBody();
-        final org.switchyard.Message switchyardMsg = switchyardExchange.createMessage().setContent(camelPayload);
-        switchyardExchange.send(switchyardMsg);
+        final Object camelPayload = camelExchange.getIn().getBody(getInputType(serviceRef));
+        switchyardExchange.send(switchyardExchange.createMessage().setContent(camelPayload));
     }
     
     private ServiceReference lookupServiceReference(final String targetUri) {
@@ -106,7 +104,7 @@ public class SwitchYardProducer extends DefaultProducer {
         final QName operationInputType = getOperationInputType(serviceReference);
         final InOnlyOperation inOnlyOperation = new InOnlyOperation(_operationName, operationInputType);
         final BaseExchangeContract contract = new BaseExchangeContract(inOnlyOperation);
-        setInputMessageType(contract, getCamelBodyType(ex));
+        setInputMessageType(contract, operationInputType);
         
         return serviceReference.createExchange(contract);
     }
@@ -129,13 +127,13 @@ public class SwitchYardProducer extends DefaultProducer {
         final QName operationOutputType = getOperationOutputType(ref);
         final InOutOperation inOutOperation = new InOutOperation(_operationName, operationInputType, operationOutputType);
         final BaseExchangeContract exchangeContract = new BaseExchangeContract(inOutOperation);
-        setInputMessageType(exchangeContract, getCamelBodyType(camelExchange));
+        setInputMessageType(exchangeContract, operationInputType);
         
         return ref.createExchange(exchangeContract, new CamelResponseHandler(camelExchange, ref));
     }
     
     private QName getOperationInputType(final ServiceReference ref) {
-        final ServiceOperation operation = ref.getInterface().getOperation(_operationName);
+        final ServiceOperation operation = getOperation(ref);
         if (operation != null) {
             return operation.getInputType();
         }
@@ -143,25 +141,27 @@ public class SwitchYardProducer extends DefaultProducer {
     }
     
     private QName getOperationOutputType(final ServiceReference ref) {
-        final ServiceInterface serviceInterface = ref.getInterface();
-        final ServiceOperation operation = serviceInterface.getOperation(_operationName);
+        final ServiceOperation operation = getOperation(ref);
         if (operation != null) {
             return operation.getOutputType();
         }
         return null;
     }
     
-    private void setInputMessageType(final BaseExchangeContract exchangeContract, final Class<?> type) {
-        exchangeContract.getInvokerInvocationMetaData().setInputType(JavaService.toMessageType(type));
+    private ServiceOperation getOperation(final ServiceReference ref) {
+        return ref.getInterface().getOperation(_operationName);
     }
     
-    private Class<?> getCamelBodyType(final org.apache.camel.Exchange exchange) {
-        final Object camelPayload = exchange.getIn().getBody();
-        if (camelPayload == null) {
-            return null;
+    private void setInputMessageType(final BaseExchangeContract exchangeContract, final QName type) {
+        exchangeContract.getInvokerInvocationMetaData().setInputType(type);
+    }
+
+    private Class<?> getInputType(final ServiceReference serviceRef) {
+        final QName inputType = getOperationInputType(serviceRef);
+        if (inputType != null) {
+            return JavaService.parseType(inputType);
         }
-        
-        return camelPayload.getClass();
+        return Object.class;
     }
     
 }

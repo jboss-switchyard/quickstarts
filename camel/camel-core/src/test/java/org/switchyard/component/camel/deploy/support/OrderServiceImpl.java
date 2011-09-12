@@ -35,7 +35,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public String getTitleForItem(String itemId)
     {
-        return _warehouseService.hasItem(itemId);
+        return _warehouseService.hasItem(Integer.parseInt(itemId));
     }
     
 

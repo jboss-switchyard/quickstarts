@@ -22,6 +22,6 @@ package org.switchyard.component.camel.deploy.support;
 
 public interface WarehouseService
 {
-    String hasItem(String id);
+    String hasItem(Integer id);
     
 }
