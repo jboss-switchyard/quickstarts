@@ -21,11 +21,13 @@ import org.hornetq.jms.server.impl.JMSServerManagerImpl;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.switchyard.Exchange;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.MockInitialContextFactory;
-import org.switchyard.test.SwitchYardTestCase;
+import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
+import org.switchyard.test.SwitchYardTestKit;
 import org.switchyard.test.mixins.CDIMixIn;
 
 /* 
@@ -48,10 +50,12 @@ import org.switchyard.test.mixins.CDIMixIn;
  */
 
 @SwitchYardTestCaseConfig(config = SwitchYardTestCaseConfig.SWITCHYARD_XML, mixins = CDIMixIn.class)
-public class CamelJMSBindingTest extends SwitchYardTestCase  {
+@RunWith(SwitchYardRunner.class)
+public class CamelJMSBindingTest {
     
     private static final String QUEUE_NAME = "GreetingServiceQueue";
     private static JMSServerManagerImpl jmsServer;
+    private SwitchYardTestKit _testKit;
     
     @BeforeClass
     public static void setupHornetQServer() throws Exception {
@@ -78,7 +82,7 @@ public class CamelJMSBindingTest extends SwitchYardTestCase  {
     @Test
     public void sendTextMessageToJMSQueue() throws Exception {
         final String payload = "dummy payload";
-        final MockHandler greetingService = registerInOnlyService("GreetingService");
+        final MockHandler greetingService = _testKit.registerInOnlyService("GreetingService");
         
         sendTextToQueue(payload, QUEUE_NAME);
         // Allow for the JMS Message to be processed.
