@@ -34,7 +34,6 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
-	<groupId>org.switchyard</groupId>
 	<artifactId>switchyard-api</artifactId>
 	
 	<packaging>jar</packaging>
@@ -45,6 +44,10 @@
 	
 	<dependencies>
 		<!-- internal dependencies -->
+		<dependency>
+			<groupId>org.switchyard</groupId>
+			<artifactId>switchyard-common</artifactId>
+		</dependency>
 		<!-- N/A -->
 		<!-- external dependencies -->
 		<dependency>

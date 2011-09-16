@@ -108,6 +108,26 @@ public class JavaServiceTest {
         testOperationTypes("op3", service, QName.valueOf("java:java.lang.String"), QName.valueOf("java:java.lang.String"), QName.valueOf("C"));
         testOperationTypes("op4", service, QName.valueOf("java:java.lang.String"), QName.valueOf("java:java.lang.String"), null);
     }
+    
+    @Test
+    public void testParseType() {
+        final QName intType = new QName("java:java.lang.Integer");
+        final Class<?> intClass = JavaService.parseType(intType);
+        Assert.assertEquals(Integer.class, intClass);
+    }
+    
+    @Test
+    public void testParseTypeNull() {
+        final Class<?> intClass = JavaService.parseType(null);
+        Assert.assertEquals(null, intClass);
+    }
+    
+    @Test
+    public void testParseTypeMissingJavaPrefix() {
+        final QName missingPrefix = new QName("java.lang.Integer");
+        final Class<?> intClass = JavaService.parseType(missingPrefix);
+        Assert.assertEquals(null, intClass);
+    }
 
     private void testOperationTypes(String opName, JavaService service, QName in, QName out, QName fault) {
         ServiceOperation operation = service.getOperation(opName);

@@ -28,6 +28,7 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.annotations.DefaultType;
 import org.switchyard.annotations.OperationTypes;
+import org.switchyard.common.type.Classes;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.BaseService;
 import org.switchyard.metadata.InOnlyOperation;
@@ -152,7 +153,29 @@ public final class JavaService extends BaseService {
             }
         }
     }
-
+    
+    /**
+     * Tries to parse the passed in {@link QName} and load the class of that
+     * type.
+     * 
+     * @param type The {@link QName} of the Java type to parse 
+     * @return Class<?> The Java class type or null if the {@link QName} passed in was null,
+     * or if the passed in type {@link QName} does not have the {@value #TYPE_PREFIX}
+     */
+    public static Class<?> parseType(final QName type) {
+        if (type == null) {
+            return null;
+        }
+        
+        final String localPart = type.getLocalPart();
+        int indexOf = localPart.indexOf(':');
+        if (indexOf != -1) {
+            return Classes.forName(localPart.substring(indexOf + 1));
+        } else {
+            return null;
+        }
+    }
+    
     private final static class OperationTypeQNames {
 
         private Method _operationMethod;
