@@ -66,7 +66,7 @@ public final class HornetQClient {
         Session session = null;
         
         try {
-            hornetQConnectionFactory = new HornetQConnectionFactory(new TransportConfiguration(NettyConnectorFactory.class.getName()));
+            hornetQConnectionFactory = new HornetQConnectionFactory(false, new TransportConfiguration(NettyConnectorFactory.class.getName()));
             connection = hornetQConnectionFactory.createConnection();
             connection.start();
             

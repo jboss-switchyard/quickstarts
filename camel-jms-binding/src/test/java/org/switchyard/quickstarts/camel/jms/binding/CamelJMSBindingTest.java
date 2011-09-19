@@ -5,7 +5,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import java.net.URL;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.jms.Connection;
@@ -15,20 +14,16 @@ import javax.jms.Queue;
 import javax.jms.Session;
 import javax.naming.InitialContext;
 
-import org.hornetq.core.config.impl.FileConfiguration;
-import org.hornetq.core.server.impl.HornetQServerImpl;
-import org.hornetq.jms.server.impl.JMSServerManagerImpl;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Exchange;
+import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.test.MockHandler;
-import org.switchyard.test.MockInitialContextFactory;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.SwitchYardTestKit;
 import org.switchyard.test.mixins.CDIMixIn;
+import org.switchyard.test.mixins.HornetQMixIn;
 
 /* 
  * JBoss, Home of Professional Open Source 
@@ -49,35 +44,15 @@ import org.switchyard.test.mixins.CDIMixIn;
  * MA  02110-1301, USA.
  */
 
-@SwitchYardTestCaseConfig(config = SwitchYardTestCaseConfig.SWITCHYARD_XML, mixins = CDIMixIn.class)
+@SwitchYardTestCaseConfig(
+        config = SwitchYardTestCaseConfig.SWITCHYARD_XML, 
+        mixins = {CDIMixIn.class, HornetQMixIn.class},
+        scanners = BeanSwitchYardScanner.class)
 @RunWith(SwitchYardRunner.class)
 public class CamelJMSBindingTest {
     
     private static final String QUEUE_NAME = "GreetingServiceQueue";
-    private static JMSServerManagerImpl jmsServer;
     private SwitchYardTestKit _testKit;
-    
-    @BeforeClass
-    public static void setupHornetQServer() throws Exception {
-        MockInitialContextFactory.install();
-        
-        final FileConfiguration fileConfiguration = new FileConfiguration();
-        final URL hornetqBeans = CamelJMSBindingTest.class.getResource("hornetq-configuration.xml");
-        fileConfiguration.setConfigurationUrl(hornetqBeans.toURI().toString());
-        fileConfiguration.start();
-        
-        jmsServer = new JMSServerManagerImpl(new HornetQServerImpl(fileConfiguration), 
-                "org/switchyard/quickstarts/camel/jms/binding/hornetq-jms.xml");
-        jmsServer.start();
-        jmsServer.activated();
-    }
-    
-    @AfterClass
-    public static void stopHornetQServer() throws Exception {
-        if (jmsServer != null) {
-	        jmsServer.stop();
-        }
-    }
     
     @Test
     public void sendTextMessageToJMSQueue() throws Exception {
