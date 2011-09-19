@@ -3,7 +3,6 @@
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-jms-binding" targetNamespace="urn:switchyard-quickstart:camel-jms-binding:0.1.0">
     
         <service name="GreetingService" promote="GreetingService">
-            <!--camel:binding.camel configURI="jms://GreetingServiceQueue?connectionFactory=#RemoteConnectionFactory"/-->
             <camel:binding.camel configURI="jms://GreetingServiceQueue?connectionFactory=#ConnectionFactory"/>
         </service>
         
