@@ -55,11 +55,11 @@
         <xsl:apply-templates select="@*|node()"/>
         <subsystem xmlns="urn:jboss:domain:switchyard:1.0">
             <modules>
-                <module identifier="org.switchyard.component.bean"/>
-                <module identifier="org.switchyard.component.soap"/>
-                <module identifier="org.switchyard.component.camel"/>
-                <module identifier="org.switchyard.component.rules"/>
-                <module identifier="org.switchyard.component.bpm"/>
+                <module identifier="org.switchyard.component.bean" implClass="org.switchyard.component.bean.deploy.BeanComponent"/>
+                <module identifier="org.switchyard.component.soap" implClass="org.switchyard.component.soap.deploy.SOAPComponent"/>
+                <module identifier="org.switchyard.component.camel" implClass="org.switchyard.component.camel.deploy.CamelComponent"/>
+                <module identifier="org.switchyard.component.rules" implClass="org.switchyard.component.rules.deploy.RulesComponent"/>
+                <module identifier="org.switchyard.component.bpm" implClass="org.switchyard.component.bpm.deploy.BPMComponent"/>
             </modules>
         </subsystem>
     </xsl:copy>

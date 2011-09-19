@@ -238,7 +238,7 @@
                                     <version>${project.version}</version>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${staging.jboss.home}/server/default/deploy</outputDirectory>
+                            <outputDirectory>${staging.jboss.home}/server/default/deployers/switchyard.deployer</outputDirectory>
                         </configuration>
                     </execution>
                     <execution>
