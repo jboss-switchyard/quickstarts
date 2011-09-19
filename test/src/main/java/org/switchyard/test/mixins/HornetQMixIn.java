@@ -35,7 +35,7 @@ import org.hornetq.api.core.client.ClientSessionFactory;
 import org.hornetq.api.core.client.HornetQClient;
 import org.hornetq.api.core.client.ServerLocator;
 import org.hornetq.core.config.Configuration;
-import org.hornetq.core.registry.MapBindingRegistry;
+import org.hornetq.core.registry.JndiBindingRegistry;
 import org.hornetq.jms.server.embedded.EmbeddedJMS;
 
 /**
@@ -56,10 +56,10 @@ public class HornetQMixIn extends AbstractTestMixIn {
     @Override
     public void initialize() {
         _embeddedJMS = new EmbeddedJMS();
-        _embeddedJMS.setRegistry(new MapBindingRegistry());
         _embeddedJMS.setConfigResourcePath(HORNETQ_CONF_FILE);
         _embeddedJMS.setJmsConfigResourcePath(HORNETQ_JMS_CONF_FILE);
         try {
+            _embeddedJMS.setRegistry(new JndiBindingRegistry());
             _embeddedJMS.start();
             _serverLocator = HornetQClient.createServerLocatorWithoutHA(getTransports(getConfiguration()));
             _clientSessionFactory =  _serverLocator.createSessionFactory();
