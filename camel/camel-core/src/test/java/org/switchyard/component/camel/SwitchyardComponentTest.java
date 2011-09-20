@@ -40,6 +40,8 @@ import org.switchyard.component.camel.deploy.ServiceReferences;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardRunner;
+import org.switchyard.test.SwitchYardTestCaseConfig;
+import org.switchyard.test.mixins.CDIMixIn;
 
 /**
  * Test for {@link SwitchyardComponent}.
@@ -48,6 +50,7 @@ import org.switchyard.test.SwitchYardRunner;
  *
  */
 @RunWith(SwitchYardRunner.class)
+@SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
 public class SwitchyardComponentTest extends CamelTestSupport {
     private String _serviceName = "testServiceName";
 

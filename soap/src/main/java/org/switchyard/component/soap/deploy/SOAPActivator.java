@@ -31,6 +31,7 @@ import org.switchyard.component.soap.OutboundHandler;
 import org.switchyard.component.soap.WebServiceConsumeException;
 import org.switchyard.component.soap.WebServicePublishException;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
+import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
@@ -50,6 +51,7 @@ public class SOAPActivator extends BaseActivator {
         new HashMap<QName, InboundHandler>();
     private Map<QName, OutboundHandler> _outboundGateways = 
         new HashMap<QName, OutboundHandler>();
+    private Configuration _environment;
     
     /**
      * Creates a new activator for SOAP endpoints.
@@ -64,7 +66,9 @@ public class SOAPActivator extends BaseActivator {
         if (config instanceof CompositeServiceModel) {
             for (BindingModel binding : ((CompositeServiceModel)config).getBindings()) {
                 if (binding instanceof SOAPBindingModel) {
-                    InboundHandler handler = new InboundHandler((SOAPBindingModel)binding);
+                    SOAPBindingModel soapModel = (SOAPBindingModel)binding;
+                    soapModel.setEnvironment(_environment);
+                    InboundHandler handler = new InboundHandler(soapModel);
                     _inboundGateways.put(name, handler);
                     return handler;
                 }
@@ -74,7 +78,9 @@ public class SOAPActivator extends BaseActivator {
         if (config instanceof CompositeReferenceModel) {
             for (BindingModel binding : ((CompositeReferenceModel)config).getBindings()) {
                 if (binding instanceof SOAPBindingModel) {
-                    OutboundHandler handler = new OutboundHandler((SOAPBindingModel)binding);
+                    SOAPBindingModel soapModel = (SOAPBindingModel)binding;
+                    soapModel.setEnvironment(_environment);
+                    OutboundHandler handler = new OutboundHandler(soapModel);
                     _outboundGateways.put(name, handler);
                     return handler;
                 }
@@ -119,5 +125,13 @@ public class SOAPActivator extends BaseActivator {
     public void destroy(ServiceReference service) {
         _inboundGateways.remove(service.getName());
         _outboundGateways.remove(service.getName());
+    }
+
+    /**
+     * Set the Environment configuration for the activator.
+     * @param config The global environment configuration.
+     */
+    public void setEnvironment(Configuration config) {
+        _environment = config;
     }
 }

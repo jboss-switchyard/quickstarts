@@ -31,6 +31,7 @@ import org.switchyard.component.bean.deploy.BeanComponentActivator;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
 import org.switchyard.component.bean.deploy.CDIBean;
 import org.switchyard.component.bean.deploy.ServiceDescriptor;
+import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceInterface;
@@ -55,7 +56,7 @@ public class SimpleCDIDeployment extends AbstractDeployment {
     }
 
     @Override
-    protected void doInit() {
+    protected void doInit(List<Activator> activators) {
     }
 
     @Override

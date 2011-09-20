@@ -46,9 +46,11 @@ import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InOnlyOperation;
+import org.switchyard.test.mixins.CDIMixIn;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
+import org.switchyard.test.SwitchYardTestCaseConfig;
 
 /**
  * Functional test for {@link OutboundHandler}.
@@ -57,6 +59,7 @@ import org.switchyard.test.SwitchYardRunner;
  * 
  */
 @RunWith(SwitchYardRunner.class)
+@SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
 public class OutboundHandlerTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:result")
