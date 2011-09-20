@@ -41,19 +41,19 @@ public abstract class BaseActivator implements Activator {
             _activationTypes.addAll(Arrays.asList(types));
         }
     }
-
+    
     /**
-     * {@inheritDoc}
+     * Sets the service domain instance of this activator.
+     * @param serviceDomain the service domain
      */
-    @Override
     public void setServiceDomain(ServiceDomain serviceDomain) {
         _serviceDomain = serviceDomain;
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the service domain instance of this activator.
+     * @return the service domain
      */
-    @Override
     public ServiceDomain getServiceDomain() {
         return _serviceDomain;
     }
@@ -73,5 +73,4 @@ public abstract class BaseActivator implements Activator {
     public Collection<String> getActivationTypes() {
         return Collections.unmodifiableList(_activationTypes);
     }
-    
 }

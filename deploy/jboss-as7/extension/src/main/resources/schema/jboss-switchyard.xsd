@@ -40,6 +40,7 @@
         </xs:annotation>
         <xs:all>
             <xs:element name="modules" type="modulesType" minOccurs="0"/>
+            <xs:element name="properties" type="propertiesType" use="optional"/>
         </xs:all>
     </xs:complexType>
 
@@ -50,7 +51,28 @@
     </xs:complexType>
 
     <xs:complexType name="moduleType">
+        <xs:documentation>
+        <![CDATA[
+            The SwitchYard subsystem component's module identifier.
+        ]]>
+        </xs:documentation>
         <xs:attribute name="identifier" type="xs:string" use="required"/>
+        <xs:documentation>
+        <![CDATA[
+            The SwitchYard subsystem component's implementation class.
+        ]]>
+        </xs:documentation>
+        <xs:attribute name="implClass" type="xs:string" use="required"/>
+        <xs:documentation>
+        <![CDATA[
+            The SwitchYard subsystem component's global properties.
+        ]]>
+        </xs:documentation>
+        <xs:element name="properties" type="propertiesType" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="propertiesType">
+        <xs:any></xs:any>
     </xs:complexType>
 
 </xs:schema>

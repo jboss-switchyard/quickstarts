@@ -27,14 +27,12 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
 import org.switchyard.ExchangeHandler;
-import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelPuller;
@@ -99,12 +97,25 @@ public class Deployment extends AbstractDeployment {
     
     /**
      * Initialize the deployment.
+     * 
+     * @param activators The list of component activators.
      */
-    protected void doInit() {
+    protected void doInit(List<Activator> activators) {
         _log.debug("Initializing deployment " + getName());
         // create a new domain and load transformer and activator instances for lifecycle
         registerTransformers();
-        createActivators();
+        if (activators != null) {
+            for (Activator activator : activators) {
+                Collection<String> activationTypes = activator.getActivationTypes();
+                if (activationTypes != null) {
+                    for (String type : activationTypes) {
+                        _log.debug("Registered activation type " + type
+                                + " for activator " + activator.getClass() + " on deployment " + getName());
+                        _activators.put(type, activator);
+                    }
+                }
+            }
+        }
     }
     
     /**
@@ -191,22 +202,6 @@ public class Deployment extends AbstractDeployment {
                     + " does not included an implementation definition.");
         }
         return findActivator(component.getImplementation().getType());
-    }
-    
-    private void createActivators() {
-        ServiceDomain serviceDomain = getDomain();
-        ServiceLoader<Activator> activatorLoader = ServiceLoader.load(Activator.class);
-        for (Activator activator : activatorLoader) {
-            activator.setServiceDomain(serviceDomain);
-            Collection<String> activationTypes = activator.getActivationTypes();
-            if (activationTypes != null) {
-                for (String type : activationTypes) {
-                    _log.debug("Registered activation type " + type
-                            + " for activator " + activator.getClass() + " on deployment " + getName());
-                    _activators.put(type, activator);
-                }
-            }
-        }
     }
 
     private void registerTransformers() {

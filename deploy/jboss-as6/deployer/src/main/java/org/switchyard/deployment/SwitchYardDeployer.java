@@ -21,6 +21,11 @@ package org.switchyard.deployment;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jboss.beans.metadata.spi.BeanMetaData;
@@ -30,12 +35,54 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.switchyard.common.type.Classes;
+import org.switchyard.config.Configuration;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.deploy.Component;
 import org.switchyard.deploy.ServiceDomainManager;
 
 /**
  * AS6 Deployer for SwitchYard.
+ * 
+ * The list of available components are provided as Map<String, Configuration>,
+ * where the key is the implementation Class Name of that component.
+ * 
+ * <pre>
+ * &lt;property name="modules"&gt;
+ * &nbsp;&nbsp;&lt;map class="java.util.Hashtable" keyClass="java.lang.String" valueClass="org.switchyard.config.Configuration"&gt;
+ * &nbsp;&nbsp;&nbsp;&nbsp;&lt;entry&gt;&lt;key&gt;org.switchyard.component.bean.deploy.BeanComponent&lt;/key&gt;&lt;value&gt;&lt;inject bean="BeanConfiguration"/&gt;&lt;/value&gt;&lt;/entry&gt;
+ * &nbsp;&nbsp;&nbsp;&nbsp;&lt;entry&gt;&lt;key&gt;org.switchyard.component.bean.deploy.SOAPComponent&lt;/key&gt;&lt;value&gt;&lt;inject bean="SOAPConfiguration"/&gt;&lt;/value&gt;&lt;/entry&gt;
+ * &nbsp;&nbsp;&lt;/map&gt;
+ * &lt;/property&gt;
+ * </pre>
+ * 
+ * The configuration is read from a file.
+ * 
+ * <pre>
+ * &lt;bean name="ConfigPuller" class="org.switchyard.config.ConfigurationPuller"/&gt;
+ * 
+ * &lt;bean name="SOAPConfiguration" class="org.switchyard.config.Configuration"&gt;
+ * &nbsp;&nbsp;&lt;constructor factoryMethod="pull"&gt;
+ * &nbsp;&nbsp;&nbsp;&nbsp;&lt;factory bean="ConfigPuller"/&gt;
+ * &nbsp;&nbsp;&nbsp;&nbsp;&lt;parameter class="java.io.Reader"&gt;
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;inject bean="soap"/&gt;
+ * &nbsp;&nbsp;&nbsp;&nbsp;&lt;/parameter&gt;
+ * &nbsp;&nbsp;&lt;/constructor&gt;
+ * &lt;/bean&gt;
+ * 
+ * &lt;bean name="soap" class="java.io.FileReader"&gt;
+ * &nbsp;&nbsp;&lt;constructor&gt;&lt;parameter class="java.io.File"&gt;${jboss.server.home.dir}/deployers/switchyard.deployer/META-INF/soapconfig.xml&lt;/parameter>&lt;/constructor&gt;
+ * &lt;/bean&gt;
+ * </pre>
+ * 
+ * The contents of the configuration file should start with properties. For example:
+ * <pre>
+ * &lt;properties&gt;
+ * &nbsp;&nbsp;&lt;serverHost&gt;localhost&lt;/serverHost&gt;
+ * &nbsp;&nbsp;&lt;serverPort&gt;18001&lt;/serverPort&gt;
+ * &lt;/properties&gt;
+ * </pre>
  */
 public class SwitchYardDeployer extends AbstractSimpleVFSRealDeployer<SwitchYardMetaData> {
 
@@ -44,6 +91,8 @@ public class SwitchYardDeployer extends AbstractSimpleVFSRealDeployer<SwitchYard
     private static final String BEAN_PREFIX = "switchyard";
 
     private ServiceDomainManager _domainManager;
+
+    private List<Component> _components;
 
     /**
      * No args constructor.
@@ -62,6 +111,34 @@ public class SwitchYardDeployer extends AbstractSimpleVFSRealDeployer<SwitchYard
         this._domainManager = domainManager;
     }
 
+    /**
+     * Set the list of configured components.
+     *
+     * @param modules The list of modules with its configuration.
+     */
+    public void setModules(Map<String, Configuration> modules) {
+        List<Component> components = new ArrayList<Component>();
+        Set<Entry<String,Configuration>> entries = modules.entrySet();
+        for (Entry<String,Configuration> entry : entries) {
+            String className = entry.getKey();
+            try {
+                Class<?> componentClass = Classes.forName(className);
+                if (componentClass != null) {
+                    Component component = (Component) componentClass.newInstance();
+                    component.init(entry.getValue());
+                    components.add(component);
+                } else {
+                    _log.error("Unable to load class " + className);
+                }
+            } catch (InstantiationException e2) {
+                _log.error("Unable to instantiate class " + className);
+            } catch (IllegalAccessException e3) {
+                _log.error("Unable to access constructor for " + className);
+            }
+        }
+        this._components = components;
+    }
+
     @Override
     public void deploy(VFSDeploymentUnit unit, SwitchYardMetaData metaData)
         throws DeploymentException {
@@ -73,6 +150,7 @@ public class SwitchYardDeployer extends AbstractSimpleVFSRealDeployer<SwitchYard
         }
         BeanMetaData beanMetaData = createBeanMetaData(unit, metaData);
         unit.addAttachment(BeanMetaData.class, beanMetaData);
+        unit.addAttachment("components", _components);
     }
     
     /**

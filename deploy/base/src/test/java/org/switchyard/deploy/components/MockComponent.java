@@ -16,26 +16,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.as7.extension;
+package org.switchyard.deploy.components;
+
+import org.switchyard.ServiceDomain;
+import org.switchyard.deploy.Activator;
+import org.switchyard.deploy.BaseComponent;
 
 /**
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
- *
  */
-public interface CommonAttributes {
+public class MockComponent extends BaseComponent {
 
-    /**
-     * The component modules attribute.
-     */
-    String MODULES = "modules";
+    public MockComponent() {
+        setName("Mockcomponent");
+    }
 
-    /**
-     * The component implementation class name attribute.
-     */
-    String IMPLCLASS = "implClass";
+    @Override
+    public Activator getActivator(ServiceDomain domain) {
+        return new MockActivator();
+    }
 
-    /**
-     * The environment properties attribute.
-     */
-    String PROPERTIES = "properties";
 }

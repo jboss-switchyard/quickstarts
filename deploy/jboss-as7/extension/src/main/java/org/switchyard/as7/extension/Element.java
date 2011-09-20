@@ -40,7 +40,12 @@ public enum Element {
     /**
      * module element.
      */
-    MODULE("module");
+    MODULE("module"),
+
+    /**
+     * properties element.
+     */
+    PROPERTIES("properties");
 
     private final String _name;
 

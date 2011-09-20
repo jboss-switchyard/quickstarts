@@ -18,6 +18,8 @@
  */
 package org.switchyard.as7.extension.deployment;
 
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
 import org.jboss.as.controller.PathElement;
@@ -35,6 +37,8 @@ import org.switchyard.as7.extension.SwitchYardModelConstants;
 import org.switchyard.as7.extension.admin.ModelNodeCreationUtil;
 import org.switchyard.as7.extension.services.SwitchYardAdminService;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.deploy.ActivatorLoader;
+import org.switchyard.deploy.Component;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.Deployment;
 import org.switchyard.deploy.internal.DeploymentListener;
@@ -55,17 +59,21 @@ public class SwitchYardDeployment {
     private Deployment _deployment;
     private ServiceDomainManager _domainManager;
     private ServiceDomain _appServiceDomain;
+    private List<Component> _components;
 
     /**
      * Creates a new SwitchYard deployment.
      *
      * @param deploymentUnit deployment reference
      * @param config switchyard configuration
+     * @param components The list of components configured.
      * @param domainManager Service Domain Manager instance.
      */
-    public SwitchYardDeployment(final DeploymentUnit deploymentUnit, final SwitchYardModel config, ServiceDomainManager domainManager) {
+    public SwitchYardDeployment(final DeploymentUnit deploymentUnit, final SwitchYardModel config,
+            final List<Component> components, ServiceDomainManager domainManager) {
         _deployUnit = deploymentUnit;
         _deployment = new Deployment(config);
+        _components = components;
         _domainManager = domainManager;
     }
 
@@ -94,7 +102,7 @@ public class SwitchYardDeployment {
             // Use the ROOT_DOMAIN name for now.  Getting an exception SwitchYardModel.getQName().
             _appServiceDomain = _domainManager.addApplicationServiceDomain(ServiceDomainManager.ROOT_DOMAIN, _deployment.getConfig());
 
-            _deployment.init(_appServiceDomain);
+            _deployment.init(_appServiceDomain, ActivatorLoader.createActivators(_appServiceDomain, _components));
             setDeploymentState(SwitchYardDeploymentState.STARTING);
             _deployment.start();
             setDeploymentState(SwitchYardDeploymentState.STARTED);

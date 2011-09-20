@@ -34,7 +34,12 @@ public enum Attribute {
     /**
      * identifier attribute.
      */
-    IDENTIFIER("identifier");
+    IDENTIFIER("identifier"),
+
+    /**
+     * implClass attribute.
+     */
+    IMPLCLASS("implClass");
 
     private final String _name;
 

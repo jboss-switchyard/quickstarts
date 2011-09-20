@@ -19,6 +19,9 @@
 
 package org.switchyard.test;
 
+import java.util.List;
+
+import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.internal.AbstractDeployment;
 
 /**
@@ -44,7 +47,7 @@ public class SimpleTestDeployment extends AbstractDeployment {
      * 
      * @param serviceDomain The ServiceDomain that the deployment is a member of.
      */
-    protected void doInit() {
+    protected void doInit(List<Activator> activators) {
     }
 
     @Override

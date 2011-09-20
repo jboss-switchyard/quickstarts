@@ -28,7 +28,9 @@ import javax.enterprise.inject.spi.AfterDeploymentValidation;
 import javax.enterprise.inject.spi.BeforeShutdown;
 import javax.enterprise.inject.spi.Extension;
 
+import org.switchyard.ServiceDomain;
 import org.switchyard.common.type.Classes;
+import org.switchyard.deploy.ActivatorLoader;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.deploy.internal.Deployment;
@@ -70,7 +72,8 @@ public class SwitchYardCDIDeployer implements Extension {
                     ioEx.getMessage(); // keeps checkstyle happy
                 }
             }
-            _deployment.init(ServiceDomainManager.createDomain());
+            ServiceDomain domain = ServiceDomainManager.createDomain();
+            _deployment.init(domain, ActivatorLoader.createActivators(domain));
             _deployment.start();
         }
     }

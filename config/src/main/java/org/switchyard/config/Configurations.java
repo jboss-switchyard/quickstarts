@@ -81,6 +81,14 @@ public final class Configurations {
         return mergedConfig;
     }
 
+    /**
+     * Create an empty properties config.
+     * @return the newly created config
+     */
+    public static Configuration emptyConfig() {
+        return new ConfigurationPuller().pull(new QName("properties"));
+    }
+
     private static void recursiveMerge(Configuration from_config, Configuration merged_config, boolean from_overrides_merged) {
         List<QName> merged_attr_qnames = new ArrayList<QName>();
         for (QName merged_config_attr_qname : merged_config.getAttributeQNames()) {

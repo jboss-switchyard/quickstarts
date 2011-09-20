@@ -24,7 +24,6 @@ import java.util.Collection;
 import javax.xml.namespace.QName;
 
 import org.switchyard.ExchangeHandler;
-import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.config.model.Model;
 
@@ -38,16 +37,6 @@ import org.switchyard.config.model.Model;
  * in the appropriate order.
  */
 public interface Activator {
-    /**
-     * Sets the service domain instance of this activator.
-     * @param serviceDomain the service domain
-     */
-    void setServiceDomain(ServiceDomain serviceDomain);
-    /**
-     * Gets the service domain instance of this activator.
-     * @return the service domain
-     */
-    ServiceDomain getServiceDomain();
     /**
      * Initialize a service or service reference based on the supplied
      * configuration.  Activator instances should attempt to validate 

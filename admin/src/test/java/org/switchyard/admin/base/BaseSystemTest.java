@@ -38,6 +38,7 @@ import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.InterfaceModel;
+import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.internal.AbstractDeployment;
 
 public class BaseSystemTest {
@@ -179,7 +180,7 @@ public class BaseSystemTest {
         }
 
         @Override
-        protected void doInit() {
+        protected void doInit(List<Activator> activators) {
         }
 
         @Override

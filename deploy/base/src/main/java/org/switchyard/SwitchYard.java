@@ -20,6 +20,7 @@
 package org.switchyard;
 
 import org.apache.log4j.Logger;
+import org.switchyard.deploy.ActivatorLoader;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.deploy.internal.Deployment;
@@ -56,7 +57,8 @@ public class SwitchYard {
      */
     public void start() {
         _logger.debug("Starting SwitchYard application '" + _deployment.getConfig().getQName() + "'.");
-        _deployment.init(ServiceDomainManager.createDomain(_deployment.getConfig().getQName(), _deployment.getConfig()));
+        ServiceDomain serviceDomain = ServiceDomainManager.createDomain(_deployment.getConfig().getQName(), _deployment.getConfig());
+        _deployment.init(serviceDomain, ActivatorLoader.createActivators(serviceDomain));
         _deployment.start();
         _logger.debug("SwitchYard application '" + _deployment.getConfig().getQName() + "' started.");
     }
