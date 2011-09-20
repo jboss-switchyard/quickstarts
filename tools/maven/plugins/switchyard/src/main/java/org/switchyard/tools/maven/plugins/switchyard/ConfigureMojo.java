@@ -108,18 +108,23 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
             for (String compileClasspaths : compileClasspathElements) {
                 mojoURLs.add(new File(compileClasspaths).toURI().toURL());
             }
-            addDirectoryResource(outputDirectory);
-            for (File scanDir : scanDirectories) {
-                if (scanDir != null) {
-                    addDirectoryResource(scanDir);
-                }
-            }
             for (Resource resource : resources) {
                 String path = resource.getTargetPath();
                 if (path != null) {
                     File file = new File(path);
                     if (file.exists()) {
                         mojoURLs.add(file.toURI().toURL());
+                    }
+                }
+            }
+            if (outputDirectory.getAbsoluteFile().exists()) {
+                mojoURLs.add(outputDirectory.getAbsoluteFile().toURI().toURL());
+            }
+            for (File scanDir : scanDirectories) {
+                if (scanDir != null) {
+                    scanDir = scanDir.getAbsoluteFile();
+                    if (scanDir.exists()) {
+                        mojoURLs.add(scanDir.toURI().toURL());
                     }
                 }
             }
@@ -195,12 +200,6 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
                 }
             }
         }
-    }
-
-    private void addDirectoryResource(File dir) {
-        Resource defaultResource = new Resource();
-        defaultResource.setTargetPath(dir.getAbsolutePath());
-        resources.add(defaultResource);
     }
 
 }
