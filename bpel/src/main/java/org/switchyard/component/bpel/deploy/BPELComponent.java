@@ -21,9 +21,7 @@ package org.switchyard.component.bpel.deploy;
 import org.switchyard.deploy.BaseComponent;
 
 /**
- * An implementation of Bean component.
- *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
+ * An implementation of BPEL component.
  */
 public class BPELComponent extends BaseComponent {
 
@@ -31,7 +29,7 @@ public class BPELComponent extends BaseComponent {
      * Default constructor.
      */
     public BPELComponent() {
-        setName("BeanComponent");
+        setName("BPELComponent");
         setActivator(new BPELActivator());
     }
 
