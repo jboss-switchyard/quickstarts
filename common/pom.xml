@@ -31,7 +31,6 @@
     <artifactId>switchyard-common</artifactId>
     <packaging>jar</packaging>
     <name>SwitchYard: Common</name>
-    <version>${project.parent.version}</version>
     <description>The SwitchYard Common Library.</description>
     <url>http://switchyard/</url>
 

@@ -31,7 +31,6 @@
     <artifactId>switchyard-extensions-wsdl</artifactId>
     <packaging>jar</packaging>
     <name>SwitchYard: Extensions WSDL</name>
-    <version>${project.parent.version}</version>
     <description>The SwitchYard WSDL Interface Extension.</description>
     <url>http://switchyard/</url>
 

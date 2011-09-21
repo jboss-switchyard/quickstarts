@@ -39,16 +39,19 @@
 	
 	<packaging>jar</packaging>
 	<name>SwitchYard: CDI Deployer</name>
-	<version>${project.parent.version}</version>
 	<description>CDI-Based Deployer</description>
 	<url>http://switchyard/</url>
-	
-	<dependencies>
+
+    <properties>
+        <version.cdi>1.0-SP3</version.cdi>
+    </properties>
+
+    <dependencies>
         <!-- internal dependencies -->
         <dependency>
            <groupId>javax.enterprise</groupId>
            <artifactId>cdi-api</artifactId>
-            <version>1.0-SP3</version>
+            <version>${version.cdi}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>

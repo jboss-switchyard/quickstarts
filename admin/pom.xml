@@ -31,7 +31,6 @@
     <artifactId>switchyard-admin</artifactId>
     <packaging>jar</packaging>
     <name>SwitchYard: Admin</name>
-    <version>${project.parent.version}</version>
     <description>SwitchYard Administration</description>
     <url>http://jboss.org/switchyard/</url>
 
