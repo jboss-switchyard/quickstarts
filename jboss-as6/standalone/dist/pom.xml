@@ -29,7 +29,6 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.switchyard</groupId>
     <artifactId>switchyard-as6-standalone-dist</artifactId>
     <packaging>jar</packaging>
     <name>SwitchYard: AS6 Distribution</name>

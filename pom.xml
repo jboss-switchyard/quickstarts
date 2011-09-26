@@ -9,7 +9,6 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.switchyard</groupId>
     <artifactId>switchyard-release</artifactId>
     <packaging>pom</packaging>
     <name>SwitchYard: Distribution</name>
@@ -22,6 +21,7 @@
     <modules>
         <module>testutil</module>
         <module>distribution</module>
+        <module>plugins/mergeassembly</module>
         <module>jboss-as6</module>
         <module>jboss-as7</module>
     </modules>

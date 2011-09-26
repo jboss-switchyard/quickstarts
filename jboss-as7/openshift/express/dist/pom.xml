@@ -9,7 +9,6 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.switchyard</groupId>
     <artifactId>switchyard-as7-openshift-express-dist</artifactId>
     <packaging>jar</packaging>
     <name>SwitchYard: AS7 OpenShift Express Distribution</name>

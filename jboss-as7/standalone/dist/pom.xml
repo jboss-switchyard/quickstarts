@@ -10,7 +10,6 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.switchyard</groupId>
     <artifactId>switchyard-as7-standalone-dist</artifactId>
     <packaging>jar</packaging>
     <name>SwitchYard: AS7 Distribution</name>
@@ -22,6 +21,19 @@
         <distro.root.dir>/switchyard-as7-${version.distro}/</distro.root.dir>
         <switchyard.jboss.home>${project.build.directory}${distro.root.dir}</switchyard.jboss.home>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-release-distribution</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-dist</artifactId>
+            <type>zip</type>
+            <version>${version.jbossas}</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -56,37 +68,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-as7-standalone-build</artifactId>
-                                    <type>zip</type>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.switchyard.components</groupId>
-                                    <artifactId>switchyard-component-bean</artifactId>
-                                    <type>zip</type>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.switchyard.components</groupId>
-                                    <artifactId>switchyard-component-camel</artifactId>
-                                    <type>zip</type>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.switchyard.components</groupId>
-                                    <artifactId>switchyard-component-soap</artifactId>
-                                    <type>zip</type>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.switchyard.components</groupId>
-                                    <artifactId>switchyard-component-rules</artifactId>
-                                    <type>zip</type>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.switchyard.components</groupId>
-                                    <artifactId>switchyard-component-bpm</artifactId>
+                                    <artifactId>switchyard-as7-modules</artifactId>
                                     <type>zip</type>
                                     <version>${project.version}</version>
                                 </artifactItem>
@@ -269,7 +251,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <!-- Configure the Surefire plugin for running the tests.  Be sure to make these same setting if running in your IDE... -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

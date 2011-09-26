@@ -9,7 +9,6 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.switchyard</groupId>
     <artifactId>switchyard-deploy-jboss-as7</artifactId>
     <packaging>jar</packaging>
     <name>SwitchYard: AS7 Extension</name>

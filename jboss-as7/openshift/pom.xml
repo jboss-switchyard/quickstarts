@@ -9,7 +9,6 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.switchyard</groupId>
     <artifactId>switchyard-as7-openshift-parent</artifactId>
     <packaging>pom</packaging>
     <name>SwitchYard: AS7 OpenShift Parent</name>

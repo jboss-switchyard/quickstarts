@@ -1,0 +1,26 @@
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+    <files>
+        <file>
+            <source>src/main/resources/switchyard/components/bpm/resources/module.xml</source>
+            <outputDirectory>/modules/org/switchyard/component/bpm/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
+            <source>target/jbpm-bpmn2-xsds-${jbpm.version}.jar</source>
+            <outputDirectory>/modules/org/switchyard/component/bpm/main</outputDirectory>
+        </file>
+    </files>
+    <dependencySets>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.switchyard.components:switchyard-component-bpm</include>
+            </includes>
+            <outputDirectory>/modules/org/switchyard/component/bpm/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
+    </dependencySets>
+</assembly>

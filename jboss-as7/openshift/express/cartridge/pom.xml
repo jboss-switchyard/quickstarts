@@ -9,7 +9,6 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.switchyard</groupId>
     <artifactId>switchyard-as7-openshift-express-cartridge</artifactId>
     <packaging>jar</packaging>
     <name>SwitchYard: AS7 OpenShift Express Cartridge Modules</name>
@@ -34,37 +33,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-as7-standalone-build</artifactId>
-                                    <type>zip</type>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.switchyard.components</groupId>
-                                    <artifactId>switchyard-component-bean</artifactId>
-                                    <type>zip</type>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.switchyard.components</groupId>
-                                    <artifactId>switchyard-component-camel</artifactId>
-                                    <type>zip</type>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.switchyard.components</groupId>
-                                    <artifactId>switchyard-component-soap</artifactId>
-                                    <type>zip</type>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.switchyard.components</groupId>
-                                    <artifactId>switchyard-component-rules</artifactId>
-                                    <type>zip</type>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.switchyard.components</groupId>
-                                    <artifactId>switchyard-component-bpm</artifactId>
+                                    <artifactId>switchyard-as7-modules</artifactId>
                                     <type>zip</type>
                                     <version>${project.version}</version>
                                 </artifactItem>
