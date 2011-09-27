@@ -32,7 +32,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.switchyard.components</groupId>
     <artifactId>switchyard-component-soap</artifactId>
     <name>SwitchYard: SOAP Component</name>
 
@@ -54,25 +53,6 @@
                     </delimiters>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>attached</goal>
-                        </goals>
-                        <configuration>
-                            <finalName>switchyard.deployer</finalName>
-                            <descriptors>
-                                <descriptor>${basedir}/assembly.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
@@ -80,12 +60,12 @@
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-config</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-common</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>wsdl4j</groupId>

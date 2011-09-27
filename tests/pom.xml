@@ -31,7 +31,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.switchyard.components</groupId>
     <artifactId>switchyard-component-tests</artifactId>
     <packaging>jar</packaging>
 

@@ -31,7 +31,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.switchyard.components</groupId>
     <artifactId>switchyard-component-torquebox-int</artifactId>
     <name>Switchyard: TorqueBox JBoss AS6 Integration</name>
     <description>The TorqueBox JBoss AS6 Integration Implementation</description>

@@ -13,8 +13,6 @@
   <name>SwitchYard: SOAP Gateway Forge Plugin</name>
   <description>SOAP Gateway Forge Support</description>
   <url>http://switchyard.org/</url>
-  <properties>
-  </properties>
   <dependencies>
     <dependency>
       <groupId>org.switchyard.components</groupId>

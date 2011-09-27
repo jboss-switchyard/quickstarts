@@ -34,7 +34,6 @@
 
     <groupId>org.switchyard.components</groupId>
     <artifactId>switchyard-components-parent</artifactId>
-    
     <packaging>pom</packaging>
     
     <name>SwitchYard: Components</name>

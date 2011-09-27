@@ -9,7 +9,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.switchyard.components</groupId>
     <artifactId>switchyard-component-bpm</artifactId>
     <packaging>jar</packaging>
 
@@ -28,6 +27,7 @@
         <version.hibernate.ejb3-persistence>1.0.1.GA</version.hibernate.ejb3-persistence>
         <version.hibernate.jpa>1.0</version.hibernate.jpa>
         <version.mina>2.0.1</version.mina>
+        <jbpm.version>5.1.0.Final</jbpm.version>
     </properties>
 
     <build>
@@ -43,62 +43,6 @@
                     </delimiters>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>unpack-jbpm-xsds</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.jbpm</groupId>
-                                    <artifactId>jbpm-bpmn2</artifactId>
-                                    <version>${version.jbpm}</version>
-                                    <type>jar</type>
-                                </artifactItem>
-                            </artifactItems>
-                            <includes>META-INF/*.xsd</includes>
-                            <outputDirectory>${project.build.directory}/jbpm-xsds</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>make-jbpm-xsds-assembly</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>attached</goal>
-                        </goals>
-                        <configuration>
-                            <finalName>jbpm-bpmn2</finalName>
-                            <descriptors>
-                                <descriptor>${basedir}/jbpm-xsds-assembly.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>attached</goal>
-                        </goals>
-                        <configuration>
-                            <finalName>switchyard.deployer</finalName>
-                            <descriptors>
-                                <descriptor>${basedir}/assembly.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
@@ -106,66 +50,6 @@
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-config</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>knowledge-api</artifactId>
-            <version>${version.drools}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-core</artifactId>
-            <version>${version.drools}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-compiler</artifactId>
-            <version>${version.drools}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-persistence-jpa</artifactId>
-            <version>${version.drools}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr-runtime</artifactId>
-            <version>${version.antlr}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jdt.core.compiler</groupId>
-            <artifactId>ecj</artifactId>
-            <version>${version.ecj}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mvel</groupId>
-            <artifactId>mvel2</artifactId>
-            <version>${version.mvel}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-flow</artifactId>
-            <version>${version.jbpm}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-flow-builder</artifactId>
-            <version>${version.jbpm}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-persistence-jpa</artifactId>
-            <version>${version.jbpm}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-bpmn2</artifactId>
-            <version>${version.jbpm}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-workitems</artifactId>
-            <version>${version.jbpm}</version>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
@@ -185,41 +69,6 @@
                     <artifactId>xmlParserAPIs</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.mina</groupId>
-            <artifactId>mina-core</artifactId>
-            <version>${version.mina}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>${version.hibernate.core}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-            <version>${version.hibernate.entitymanager}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-annotations</artifactId>
-            <version>${version.hibernate.annotations}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-commons-annotations</artifactId>
-            <version>${version.hibernate.commons-annotations}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>ejb3-persistence</artifactId>
-            <version>${version.hibernate.ejb3-persistence}</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>persistence-api</artifactId>
-            <version>${version.hibernate.jpa}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>

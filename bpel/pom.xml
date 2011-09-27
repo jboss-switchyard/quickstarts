@@ -9,9 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.switchyard.components</groupId>
     <artifactId>switchyard-component-bpel</artifactId>
-    <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <name>SwitchYard: BPEL Component</name>
@@ -20,11 +18,6 @@
     <properties>
 		<riftsaw.ode.version>3.0.0-SNAPSHOT</riftsaw.ode.version>
 		<riftsaw.engine.version>3.0.0-SNAPSHOT</riftsaw.engine.version>
-		<activity.monitor.model.version>1.0.0.Final</activity.monitor.model.version>
-    	<hibernate.entitymanager.version>4.0.0.Beta1</hibernate.entitymanager.version>
-    	<spring.version>3.0.6.RELEASE</spring.version>
-    	<xmlbeans.version>2.2.0</xmlbeans.version>
-    	<saxon.version>9.2.1.5</saxon.version>
     </properties>
 
     <build>
@@ -40,34 +33,10 @@
                     </delimiters>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>attached</goal>
-                        </goals>
-                        <configuration>
-                            <finalName>switchyard.deployer</finalName>
-                            <descriptors>
-                                <descriptor>${basedir}/assembly.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-            <version>${hibernate.entitymanager.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-config</artifactId>
@@ -80,12 +49,6 @@
 			<groupId>org.riftsaw</groupId>
 			<artifactId>engine</artifactId>
 			<version>${riftsaw.engine.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${version.junit}</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.switchyard.components</groupId>
@@ -110,60 +73,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient</artifactId>
-			<version>3.1</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-agents</artifactId>
-			<version>${riftsaw.ode.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-bpel-api</artifactId>
-			<version>${riftsaw.ode.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.jboss.soa.bpel</groupId>
 			<artifactId>riftsaw-bpel-compiler</artifactId>
-			<version>${riftsaw.ode.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-bpel-dao</artifactId>
-			<version>${riftsaw.ode.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-bpel-epr</artifactId>
-			<version>${riftsaw.ode.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-bpel-obj</artifactId>
-			<version>${riftsaw.ode.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-bpel-ql</artifactId>
-			<version>${riftsaw.ode.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-bpel-runtime</artifactId>
-			<version>${riftsaw.ode.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-bpel-schemas</artifactId>
-			<version>${riftsaw.ode.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-bpel-store</artifactId>
 			<version>${riftsaw.ode.version}</version>
 		</dependency>
 		<dependency>
@@ -171,97 +82,7 @@
 			<artifactId>riftsaw-dao-jpa</artifactId>
 			<version>${riftsaw.ode.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-dao-jpa-hibernate</artifactId>
-			<version>${riftsaw.ode.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-jacob</artifactId>
-			<version>${riftsaw.ode.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-scheduler-simple</artifactId>
-			<version>${riftsaw.ode.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-utils</artifactId>
-			<version>${riftsaw.ode.version}</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.jboss.bpm</groupId>
-			<artifactId>activity-monitor-model</artifactId>
-			<version>${activity.monitor.model.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate-annotations</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 
-		<dependency>
-			<groupId>jaxen</groupId>
-			<artifactId>jaxen</artifactId>
-			<version>1.1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sourceforge.saxon</groupId>
-			<artifactId>saxonhe</artifactId>
-			<version>${saxon.version}</version>
-		</dependency>
-
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-asm</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.apache.xmlbeans</groupId>
-			<artifactId>xmlbeans</artifactId>
-			<version>${xmlbeans.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.geronimo.components</groupId>
-			<artifactId>geronimo-transaction</artifactId>
-			<version>2.0.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.geronimo.components</groupId>
-			<artifactId>geronimo-connector</artifactId>
-			<version>2.0.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.geronimo.specs</groupId>
-			<artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
-			<version>1.1.1</version>
-			<scope>test</scope>
-		</dependency>
-		
     </dependencies>
 
 </project>

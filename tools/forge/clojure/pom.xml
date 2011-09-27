@@ -17,7 +17,7 @@
     <dependency>
       <groupId>org.switchyard.components</groupId>
       <artifactId>switchyard-component-clojure</artifactId>
-      <version>${project.parent.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
         <groupId>org.hamcrest</groupId>
