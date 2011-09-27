@@ -35,6 +35,10 @@ import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.log4j.Logger;
@@ -50,7 +54,8 @@ import org.w3c.dom.Node;
  */
 public final class SOAPUtil {
     private static final Logger LOGGER = Logger.getLogger(SOAPUtil.class);
-    private static final QName SERVER_FAULT_QN = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Server");
+    /** */
+    public static final QName SERVER_FAULT_QN = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Server");
     private static final boolean RETURN_STACK_TRACES = false;
 
     /** SOAP Message Factory holder. */
@@ -102,9 +107,8 @@ public final class SOAPUtil {
                 Detail exDetail = exFault.getDetail();
                 Detail detail = fault.addDetail();
                 for (Iterator<DetailEntry> entries = exDetail.getDetailEntries(); entries.hasNext();) {
-                    DetailEntry exEntry = entries.next();
-                    DetailEntry entry = detail.addDetailEntry(exEntry.getElementName());
-                    entry.setValue(exEntry.getValue());
+                    Node entryImport = detail.getOwnerDocument().importNode(entries.next(), true);
+                    detail.appendChild(entryImport);
                 }
             }
         } else {
@@ -138,6 +142,26 @@ public final class SOAPUtil {
         return XMLHelper.createDocument(reader);
     }
 
+    /**
+     * Generate String representation of SOAP message from javax.xml.soap.SOAPMessage.
+     * @param msg SOAPMessage to parse
+     * @return String representation of SOAP message
+     */
+    public static String soapMessageToString(SOAPMessage msg) {
+        try {
+            TransformerFactory transFactory = TransformerFactory.newInstance();
+            Transformer transformer = transFactory.newTransformer();
+            StringWriter sw = new StringWriter();
+            DOMSource source = new DOMSource(msg.getSOAPPart().getDocumentElement());
+            StreamResult result = new StreamResult(sw);
+            transformer.transform(source, result);
+            return sw.toString();
+        } catch (Exception e) {
+            LOGGER.error("Could not parse SOAP Message", e);
+            return null;
+        }
+    }
+    
     static {
         MessageFactory soapMessageFactory = null;
         try {

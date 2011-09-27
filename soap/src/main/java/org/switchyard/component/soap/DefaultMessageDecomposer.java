@@ -28,6 +28,7 @@ import javax.xml.soap.SOAPMessage;
 
 import org.switchyard.Context;
 import org.switchyard.Exchange;
+import org.switchyard.ExchangeState;
 import org.switchyard.Message;
 import org.switchyard.Property;
 import org.switchyard.Scope;
@@ -52,7 +53,7 @@ public class DefaultMessageDecomposer implements MessageDecomposer {
         if (SOAPUtil.SOAP_MESSAGE_FACTORY == null) {
             throw new SOAPException("Failed to instantiate SOAP Message Factory");
         }
-        final SOAPMessage response = SOAPUtil.SOAP_MESSAGE_FACTORY.createMessage();
+        SOAPMessage response;
         if (message != null) {
             // check to see if the payload is null or it's a full SOAP Message
             if (message.getContent() == null) {
@@ -66,11 +67,22 @@ public class DefaultMessageDecomposer implements MessageDecomposer {
             Node input = message.getContent(Node.class);
             
             try {
-                Node node = response.getSOAPBody().getOwnerDocument().importNode(input, true);
-                response.getSOAPBody().appendChild(node);
+                response = SOAPUtil.SOAP_MESSAGE_FACTORY.createMessage();
+
+                Node messageNodeImport = response.getSOAPBody().getOwnerDocument().importNode(input, true);
+                if (exchange.getState() != ExchangeState.FAULT || isSOAPFaultPayload(input)) {
+                    response.getSOAPBody().appendChild(messageNodeImport);
+                } else {
+                    // convert to SOAP Fault since ExchangeState is FAULT but the message is not SOAP Fault
+                    response.getSOAPBody().addFault(SOAPUtil.SERVER_FAULT_QN, "Send failed")
+                                          .addDetail()
+                                          .appendChild(messageNodeImport);
+                }
             } catch (Exception e) {
                 throw new SOAPException("Unable to parse SOAP Message", e);
             }
+        } else {
+            response = SOAPUtil.SOAP_MESSAGE_FACTORY.createMessage();
         }
 
         final Context context = exchange.getContext();
@@ -86,5 +98,19 @@ public class DefaultMessageDecomposer implements MessageDecomposer {
         }
 
         return response;
+    }
+
+    private boolean isSOAPFaultPayload(Node messageNode) {
+        String rootName = messageNode.getLocalName().toLowerCase();
+
+        if (rootName.equals("fault")) {
+            String nsURI = messageNode.getNamespaceURI();
+
+            if ("http://schemas.xmlsoap.org/soap/envelope/".equals(nsURI)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

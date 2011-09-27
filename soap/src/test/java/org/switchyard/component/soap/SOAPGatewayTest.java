@@ -49,6 +49,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.ExchangeHandler;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
@@ -273,14 +274,39 @@ public class SOAPGatewayTest {
                      + "   <arg0></arg0>"
                      + "</test:sayHello>";
 
-        String output = "<soap:Fault xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-                        + "   <faultcode>soap:Server.AppError</faultcode>"
+        String output = "<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                        + "   <faultcode>SOAP-ENV:Server.AppError</faultcode>"
                         + "   <faultstring>Invalid name</faultstring>"
                         + "   <detail>"
                         + "      <message>Looks like you did not specify a name!</message>"
                         + "      <errorcode>1000</errorcode>"
                         + "   </detail>"
-                        + "</soap:Fault>";
+                        + "</SOAP-ENV:Fault>";
+
+        Message responseMsg = consumerService.sendInOut(input);
+        String response = toString(responseMsg.getContent(Node.class));
+        XMLAssert.assertXMLEqual(output, response);
+    }
+
+    @Test
+    public void invokeRequestResponseCustomFault() throws Exception {
+        String faultString =  "<CustomFaultMessage>"
+        		                + "errorcode=1000;"
+                              + "Invalid name: Looks like you did not specify a name!"
+           	                + "</CustomFaultMessage>";
+        
+        String input = "<test:sayHello xmlns:test=\"urn:switchyard-component-soap:test-ws:1.0\">"
+                       + "   <arg0></arg0>"
+                       +    faultString
+                       + "</test:sayHello>";
+
+        String output = "<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                        +    "<faultcode>SOAP-ENV:Server</faultcode>"
+                        +    "<faultstring>Send failed</faultstring>"
+                        +    "<detail>"
+                        +    faultString
+                        +    "</detail>"
+                        + "</SOAP-ENV:Fault>";
 
         Message responseMsg = consumerService.sendInOut(input);
         String response = toString(responseMsg.getContent(Node.class));

@@ -43,6 +43,8 @@ public class SOAPProvider extends BaseHandler {
             Message message;
             Node request = exchange.getMessage().getContent(Node.class);
             Element name = XMLHelper.getFirstChildElementByName(request, "arg0");
+            Element fault = XMLHelper.getFirstChildElementByName(request, "CustomFaultMessage");
+            
             String toWhom = "";
             if (name != null) {
                 toWhom = name.getTextContent();
@@ -50,15 +52,20 @@ public class SOAPProvider extends BaseHandler {
             String response = null;
             if (toWhom.length() == 0) {
                 message = exchange.createMessage();
-                response = "<soap:fault xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-                            + "   <faultcode>soap:Server.AppError</faultcode>"
-                            + "   <faultstring>Invalid name</faultstring>"
-                            + "   <detail>"
-                            + "      <message>Looks like you did not specify a name!</message>"
-                            + "      <errorcode>1000</errorcode>"
-                            + "   </detail>"
-                            + "</soap:fault>";
-                setContent(message, response);
+                if (fault != null) {
+                    // for testing sendFault() with the message which is not SOAP/Fault format
+                    message.setContent(fault);
+                } else {
+                    response = "<SOAP-ENV:fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                                + "   <faultcode>SOAP-ENV:Server.AppError</faultcode>"
+                                + "   <faultstring>Invalid name</faultstring>"
+                                + "   <detail>"
+                                + "      <message>Looks like you did not specify a name!</message>"
+                                + "      <errorcode>1000</errorcode>"
+                                + "   </detail>"
+                                + "</SOAP-ENV:fault>";
+                    setContent(message, response);
+                }
                 exchange.sendFault(message);
             } else {
                 message = exchange.createMessage();

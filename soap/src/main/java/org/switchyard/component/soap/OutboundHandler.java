@@ -147,11 +147,21 @@ public class OutboundHandler extends BaseHandler {
     public void handleMessage(final Exchange exchange) throws HandlerException {
         try {
             SOAPMessage request = _decomposer.decompose(exchange, _decomposerMappedVariableNames);
+            
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Request:[" + SOAPUtil.soapMessageToString(request) + "]");
+            }
+            
             SOAPMessage response = invokeService(request);
             if (response != null) {
                 Message message = _composer.compose(response, exchange, _composerMappedHeaderNames);
                 exchange.send(message);
             }
+            
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Response:[" + SOAPUtil.soapMessageToString(response) + "]");
+            }
+            
         } catch (SOAPException se) {
             throw new HandlerException("Unexpected exception handling SOAP Message", se);
         }
