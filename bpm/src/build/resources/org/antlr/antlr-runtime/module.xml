@@ -25,7 +25,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.antlr.antlr-runtime">
 
     <resources>
-        <resource-root path="antlr-runtime-${antlr.version}.jar"/>
+        <resource-root path="antlr-runtime-${version.antlr}.jar"/>
     </resources>
 
     <dependencies>

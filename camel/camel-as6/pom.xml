@@ -30,18 +30,21 @@
 
     <groupId>org.switchyard.components</groupId>
     <artifactId>switchyard-component-camel-as6</artifactId>
-    <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <name>SwitchYard: Camel AS6 Component</name>
     <url>http://www.switchyard.org</url>
+
+    <properties>
+        <version.jboss.vfs>3.0.0.GA</version.jboss.vfs>
+    </properties>
 
     <dependencies>
 
         <dependency>
             <groupId>org.jboss</groupId>
             <artifactId>jboss-vfs</artifactId>
-            <version>3.0.0.GA</version>
+            <version>${version.jboss.vfs}</version>
             <scope>provided</scope>
         </dependency>
 

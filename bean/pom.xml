@@ -32,11 +32,14 @@
 
     <groupId>org.switchyard.components</groupId>
     <artifactId>switchyard-component-bean</artifactId>
-    <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <name>SwitchYard: Bean Component</name>
     <url>http://www.switchyard.org</url>
+
+    <properties>
+        <version.slf4j>1.6.1</version.slf4j>
+    </properties>
 
     <build>
         <plugins>
@@ -84,7 +87,7 @@
         <dependency>
         	<groupId>org.slf4j</groupId>
         	<artifactId>slf4j-simple</artifactId>
-        	<version>1.6.1</version>
+        	<version>${version.slf4j}</version>
         	<scope>runtime</scope>
         </dependency>
 

@@ -25,7 +25,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.eclipse.jdt.core.compiler.ecj">
 
     <resources>
-        <resource-root path="ecj-${ecj.version}.jar"/>
+        <resource-root path="ecj-${version.ecj}.jar"/>
     </resources>
 
     <dependencies>

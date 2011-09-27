@@ -25,7 +25,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.drools.knowledge-api">
 
     <resources>
-        <resource-root path="knowledge-api-${drools.version}.jar"/>
+        <resource-root path="knowledge-api-${version.drools}.jar"/>
     </resources>
 
     <dependencies>

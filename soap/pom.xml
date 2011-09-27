@@ -35,7 +35,6 @@
     <groupId>org.switchyard.components</groupId>
     <artifactId>switchyard-component-soap</artifactId>
     <name>SwitchYard: SOAP Component</name>
-    <version>${project.parent.version}</version>
 
     <!-- Properties -->
     <properties>

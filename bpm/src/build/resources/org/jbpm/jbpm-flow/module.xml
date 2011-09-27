@@ -25,12 +25,12 @@
 <module xmlns="urn:jboss:module:1.0" name="org.jbpm.jbpm-flow">
 
     <resources>
-        <resource-root path="jbpm-flow-${jbpm.version}.jar"/>
+        <resource-root path="jbpm-flow-${version.jbpm}.jar"/>
     </resources>
 
     <dependencies>
         <module name="org.mvel.mvel2"/>
-        <module name="org.drools.knowledge-api" slot="jbpm-${jbpm.version}"/>
-        <module name="org.drools.drools-core" slot="jbpm-${jbpm.version}"/>
+        <module name="org.drools.knowledge-api" slot="jbpm-${version.jbpm}"/>
+        <module name="org.drools.drools-core" slot="jbpm-${version.jbpm}"/>
     </dependencies>
 </module>

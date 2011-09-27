@@ -25,7 +25,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.mvel.mvel2">
 
     <resources>
-        <resource-root path="mvel2-${mvel.version}.jar"/>
+        <resource-root path="mvel2-${version.mvel}.jar"/>
     </resources>
 
     <dependencies>

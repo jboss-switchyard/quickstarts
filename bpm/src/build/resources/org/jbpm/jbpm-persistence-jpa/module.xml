@@ -25,12 +25,12 @@
 <module xmlns="urn:jboss:module:1.0" name="org.jbpm.jbpm-persistence-jpa">
 
     <resources>
-        <resource-root path="jbpm-persistence-jpa-${jbpm.version}.jar"/>
+        <resource-root path="jbpm-persistence-jpa-${version.jbpm}.jar"/>
     </resources>
 
     <dependencies>
         <module name="org.jbpm.jbpm-flow-builder"/>
-        <module name="org.drools.drools-persistence-jpa" slot="jbpm-${jbpm.version}"/>
-        <module name="org.hibernate" slot="jbpm-${jbpm.version}"/>
+        <module name="org.drools.drools-persistence-jpa" slot="jbpm-${version.jbpm}"/>
+        <module name="org.hibernate" slot="jbpm-${version.jbpm}"/>
     </dependencies>
 </module>

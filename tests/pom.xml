@@ -33,7 +33,6 @@
 
     <groupId>org.switchyard.components</groupId>
     <artifactId>switchyard-component-tests</artifactId>
-    <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <name>SwitchYard: Component Tests</name>
@@ -76,7 +75,7 @@
         <dependency>
             <groupId>org.milyn</groupId>
             <artifactId>milyn-smooks-javabean</artifactId>
-            <version>1.5-SNAPSHOT</version>
+            <version>${version.milyn}</version>
             <scope>test</scope>
 		    <exclusions>
                 <exclusion>

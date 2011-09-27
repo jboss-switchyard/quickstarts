@@ -11,17 +11,15 @@
 
     <groupId>org.switchyard.components</groupId>
     <artifactId>switchyard-component-rules</artifactId>
-    <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <name>SwitchYard: Rules Component</name>
     <url>http://www.switchyard.org</url>
 
     <properties>
-        <drools.version>5.2.0.Final</drools.version>
-        <antlr.version>3.3</antlr.version>
-        <ecj.version>3.5.1</ecj.version>
-        <mvel.version>2.1.0.drools2</mvel.version>
+        <version.drools>5.2.0.Final</version.drools>
+        <version.antlr>3.3</version.antlr>
+        <version.ecj>3.5.1</version.ecj>
     </properties>
 
     <build>
@@ -67,37 +65,37 @@
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>knowledge-api</artifactId>
-            <version>${drools.version}</version>
+            <version>${version.drools}</version>
         </dependency>
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-core</artifactId>
-            <version>${drools.version}</version>
+            <version>${version.drools}</version>
         </dependency>
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-compiler</artifactId>
-            <version>${drools.version}</version>
+            <version>${version.drools}</version>
         </dependency>
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-persistence-jpa</artifactId>
-            <version>${drools.version}</version>
+            <version>${version.drools}</version>
         </dependency>
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr-runtime</artifactId>
-            <version>${antlr.version}</version>
+            <version>${version.antlr}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jdt.core.compiler</groupId>
             <artifactId>ecj</artifactId>
-            <version>${ecj.version}</version>
+            <version>${version.ecj}</version>
         </dependency>
         <dependency>
             <groupId>org.mvel</groupId>
             <artifactId>mvel2</artifactId>
-            <version>${mvel.version}</version>
+            <version>${version.mvel}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>

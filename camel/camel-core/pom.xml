@@ -10,7 +10,6 @@
     </parent>
 
     <artifactId>switchyard-component-camel</artifactId>
-    <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <name>SwitchYard: Camel Component</name>
@@ -20,6 +19,9 @@
         <version.commonman>1.0</version.commonman>
         <version.hornetq>2.2.2.Final</version.hornetq>
         <version.spring>3.0.5.RELEASE</version.spring>
+        <version.build-helper-maven-plugin>1.7</version.build-helper-maven-plugin>
+        <version.javax.jms>1.1</version.javax.jms>
+        <version.netty>3.2.1.Final</version.netty>
         <directory.camel.resources>${project.build.directory}/dependency/camel/resources</directory.camel.resources>
     </properties>
 
@@ -84,6 +86,7 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>build-helper-maven-plugin</artifactId>
+            <version>${version.build-helper-maven-plugin}</version>
             <executions>
               <execution>
                 <id>add-resource</id>
@@ -120,7 +123,6 @@
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-camel-as7</artifactId>
             <version>${project.version}</version>
-            <scope>package</scope>
         </dependency>
 
         <dependency>
@@ -235,7 +237,7 @@
         <dependency>
             <groupId>javax.jms</groupId>
             <artifactId>jms</artifactId>
-            <version>1.1</version>
+            <version>${version.javax.jms}</version>
             <scope>test</scope>
         </dependency>
         
@@ -263,7 +265,7 @@
         <dependency>
             <groupId>org.jboss.netty</groupId>
             <artifactId>netty</artifactId>
-            <version>3.2.1.Final</version>
+            <version>${version.netty}</version>
             <scope>test</scope>
         </dependency>
 

@@ -25,7 +25,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.drools.drools-persistence-jpa">
 
     <resources>
-        <resource-root path="drools-persistence-jpa-${drools.version}.jar"/>
+        <resource-root path="drools-persistence-jpa-${version.drools}.jar"/>
     </resources>
 
     <dependencies>

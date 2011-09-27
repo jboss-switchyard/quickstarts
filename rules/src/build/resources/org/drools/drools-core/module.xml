@@ -25,7 +25,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.drools.drools-core">
 
     <resources>
-        <resource-root path="drools-core-${drools.version}.jar"/>
+        <resource-root path="drools-core-${version.drools}.jar"/>
     </resources>
 
     <dependencies>
