@@ -30,7 +30,6 @@
 
   <groupId>org.switchyard.quickstarts.demos</groupId>
   <artifactId>switchyard-quickstart-demo-helpdesk</artifactId>
-  <version>0.3.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Quickstart Demo : Help Desk</name>
