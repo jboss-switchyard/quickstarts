@@ -18,6 +18,8 @@
  */
 package org.switchyard.test.mixins;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.List;
@@ -170,7 +172,12 @@ public class BPMMixIn extends AbstractTestMixIn {
             //_server.start();
             return true;
         } catch (Throwable t) {
-            System.err.println("*** Could not start task server: " + t.getMessage() + " ***");
+            StringWriter tsWriter = new StringWriter();
+            PrintWriter tpWriter = new PrintWriter(tsWriter);
+
+            t.printStackTrace(tpWriter);
+            Assert.fail(tsWriter.toString());
+
             return false;
         }
     }

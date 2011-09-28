@@ -34,7 +34,6 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
-	<groupId>org.switchyard</groupId>
 	<artifactId>switchyard-config</artifactId>
 	
 	<packaging>jar</packaging>

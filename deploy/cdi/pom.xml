@@ -34,24 +34,19 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	
-	<groupId>org.switchyard</groupId>
 	<artifactId>switchyard-deploy-cdi</artifactId>
 	
 	<packaging>jar</packaging>
 	<name>SwitchYard: CDI Deployer</name>
 	<description>CDI-Based Deployer</description>
 	<url>http://switchyard/</url>
-
-    <properties>
-        <version.cdi>1.0-SP3</version.cdi>
-    </properties>
-
-    <dependencies>
+	
+	<dependencies>
         <!-- internal dependencies -->
         <dependency>
            <groupId>javax.enterprise</groupId>
            <artifactId>cdi-api</artifactId>
-            <version>${version.cdi}</version>
+            <version>1.0-SP3</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>

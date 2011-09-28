@@ -34,7 +34,6 @@
 		<relativePath>../../../../pom.xml</relativePath>
 	</parent>
 	
-	<groupId>org.switchyard</groupId>
 	<artifactId>switchyard-plugin</artifactId>
 	
 	<packaging>maven-plugin</packaging>
@@ -47,7 +46,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-plugin-plugin</artifactId>
-				<version>${version.maven.plugin.plugin}</version>
+                <version>${version.maven.plugin.plugin}</version>
 				<configuration>
 					<goalPrefix>switchyard</goalPrefix>
 				</configuration>

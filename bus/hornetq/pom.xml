@@ -29,18 +29,12 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
     
-    <groupId>org.switchyard</groupId>
     <artifactId>switchyard-bus-hornetq</artifactId>
     <packaging>jar</packaging>
     <name>SwitchYard: HornetQ Bus</name>
     <description>Bus provider using HornetQ Core</description>
     <url>http://switchyard.org/</url>
-
-    <properties>
-        <version.hornetq>2.1.1.Final</version.hornetq>
-        <version.netty>3.2.1.Final</version.netty>
-    </properties>
-
+    
     <dependencies>
         <!-- internal dependencies -->
         <dependency>
@@ -59,18 +53,18 @@
         <dependency>
             <groupId>org.hornetq</groupId>
             <artifactId>hornetq-core</artifactId>
-            <version>${version.hornetq}</version>
+            <version>2.1.1.Final</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.netty</groupId>
             <artifactId>netty</artifactId>
-            <version>${version.netty}</version>
+            <version>3.2.1.Final</version>
         </dependency>
         <dependency>
             <groupId>org.hornetq</groupId>
             <artifactId>hornetq-core-client</artifactId>
-            <version>${version.hornetq}</version>
+            <version>2.1.1.Final</version>
             <scope>compile</scope>
         </dependency>
         <!-- N/A -->

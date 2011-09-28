@@ -9,7 +9,6 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.switchyard</groupId>
   <artifactId>switchyard-core-parent</artifactId>
   <packaging>pom</packaging>
   <name>SwitchYard: Core</name>
@@ -50,6 +49,12 @@
     </repository>
   </repositories>
   <properties>
+    <version.freemarker>2.3.15</version.freemarker>
+    <version.jaxen>1.1.1</version.jaxen>
+    <version.milyn>1.5-SNAPSHOT</version.milyn>
+    <version.mvel>2.1.0.drools2</version.mvel>
+    <version.project>${project.version}</version.project>
+    <version.xstream>1.2.2</version.xstream>
   </properties>
   <dependencies>
     <dependency>

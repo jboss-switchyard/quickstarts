@@ -38,7 +38,9 @@
     <url>http://switchyard.org/</url>
 
     <properties>
-        <version.servlet>2.5</version.servlet>
+        <version.arquillian>1.0.0.Alpha5</version.arquillian>
+        <version.tomcat>6.0.29</version.tomcat>
+        <weld.version>1.1.0.Final</weld.version>
     </properties>
 
     <dependencies>
@@ -49,7 +51,7 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
-            <version>${version.servlet}</version>
+            <version>2.5</version>
             <scope>provided</scope>
         </dependency>
 

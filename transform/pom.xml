@@ -34,18 +34,13 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
-	<groupId>org.switchyard</groupId>
 	<artifactId>switchyard-transform</artifactId>
 	
 	<packaging>jar</packaging>
 	<name>SwitchYard: Transform</name>
 	<description>The SwitchYard Transform library.</description>
 	<url>http://switchyard/</url>
-
-    <properties>
-        <version.jackson>1.8.0</version.jackson>
-    </properties>
-
+	
 	<dependencies>
 		<!-- internal dependencies -->
         <dependency>
@@ -84,12 +79,12 @@
      	<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
-			<version>${version.jackson}</version>
+			<version>1.8.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-core-asl</artifactId>
-			<version>${version.jackson}</version>
+			<version>1.8.0</version>
 		</dependency>
 	</dependencies>
 </project>
