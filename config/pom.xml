@@ -39,7 +39,6 @@
 	
 	<packaging>jar</packaging>
 	<name>SwitchYard: Configuration</name>
-	<version>${project.parent.version}</version>
 	<description>The SwitchYard Configuration library.</description>
 	<url>http://switchyard/</url>
 	

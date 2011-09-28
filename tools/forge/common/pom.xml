@@ -11,19 +11,18 @@
   <groupId>org.switchyard</groupId>
   <artifactId>switchyard-forge-common</artifactId>
     <name>SwitchYard: Forge Common</name>
-    <version>${project.parent.version}</version>
     <description>Common Classes for Forge Support</description>
     <url>http://switchyard.org/</url>
   <dependencies>
     <dependency>
       <groupId>org.jboss.forge</groupId>
       <artifactId>forge-shell-api</artifactId>
-      <version>${forge.version}</version>
+      <version>${version.forge}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.forge</groupId>
       <artifactId>forge-project-model-maven</artifactId>
-      <version>${forge.version}</version>
+      <version>${version.forge}</version>
     </dependency>
     <dependency>
       <groupId>org.switchyard</groupId>

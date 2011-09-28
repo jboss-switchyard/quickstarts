@@ -39,7 +39,6 @@
     <groupId>org.switchyard</groupId>
     <artifactId>switchyard-build</artifactId>
     <name>SwitchYard: Build</name>
-    <version>0.3.0-SNAPSHOT</version>
 
     <description>The parent for SwitchYard modules</description>
     <url>http://switchyard.org</url>

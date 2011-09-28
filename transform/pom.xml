@@ -39,10 +39,13 @@
 	
 	<packaging>jar</packaging>
 	<name>SwitchYard: Transform</name>
-	<version>${project.parent.version}</version>
 	<description>The SwitchYard Transform library.</description>
 	<url>http://switchyard/</url>
-	
+
+    <properties>
+        <version.jackson>1.8.0</version.jackson>
+    </properties>
+
 	<dependencies>
 		<!-- internal dependencies -->
         <dependency>
@@ -81,12 +84,12 @@
      	<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
-			<version>1.8.0</version>
+			<version>${version.jackson}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-core-asl</artifactId>
-			<version>1.8.0</version>
+			<version>${version.jackson}</version>
 		</dependency>
 	</dependencies>
 </project>

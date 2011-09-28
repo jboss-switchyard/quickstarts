@@ -39,7 +39,6 @@
 	
 	<packaging>maven-plugin</packaging>
 	<name>SwitchYard: "switchyard" Plugin</name>
-	<version>${project.parent.version}</version>
 	<description>The SwitchYard Plugin.</description>
 	<url>http://switchyard/</url>
 
@@ -48,6 +47,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-plugin-plugin</artifactId>
+				<version>${version.maven.plugin.plugin}</version>
 				<configuration>
 					<goalPrefix>switchyard</goalPrefix>
 				</configuration>
