@@ -51,19 +51,4 @@ public interface BPELComponentImplementationModel extends ComponentImplementatio
      */
     public BPELComponentImplementationModel setProcess(String process);
 
-    /**
-     * Gets the "version" attribute.
-     *
-     * @return the "version" attribute
-     */
-    public String getVersion();
-
-    /**
-     * Sets the "version" attribute.
-     *
-     * @param version the "version" attribute
-     * @return this instance (useful for chaining)
-     */
-    public BPELComponentImplementationModel setVersion(String version);
-
 }

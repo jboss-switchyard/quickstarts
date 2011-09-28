@@ -18,15 +18,13 @@
  */
 package org.switchyard.component.bpel.riftsaw;
 
-import java.util.jar.JarEntry;
-
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
 import javax.xml.soap.SOAPFault;
 
 import org.apache.log4j.Logger;
 import org.riftsaw.engine.BPELEngine;
-import org.riftsaw.engine.DeploymentUnit;
+import org.riftsaw.engine.DeploymentRef;
 import org.riftsaw.engine.Fault;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
@@ -60,11 +58,10 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
     private QName _serviceName=null;
     private javax.wsdl.Definition _wsdl=null;
     private javax.wsdl.PortType _portType=null;
-    private String _version=null;
     private static java.util.Map<QName, QName> _serviceRefToCompositeMap=
                 new java.util.HashMap<QName, QName>();
-    private static java.util.Map<QName, DeploymentUnit> _deployed=
-                        new java.util.HashMap<QName, DeploymentUnit>();
+    private static java.util.Map<QName, DeploymentRef> _deployed=
+                        new java.util.HashMap<QName, DeploymentRef>();
 
     /**
      * Constructs a new RiftSaw BPEL ExchangeHandler within the specified ServiceDomain.
@@ -80,7 +77,6 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
                  String intf, BPELEngine engine) {
 
         _engine = engine;
-        _version = model.getVersion();
 
         _wsdl = WSDLHelper.getWSDLDefinition(intf);
 
@@ -97,16 +93,11 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
         if (!_serviceRefToCompositeMap.containsValue(compositeName)) {
 
             try {
-                java.io.File deployFile =
-                            getDeploymentDescriptor();
+                java.io.File deployFile=getDeployment();
 
-                DeploymentUnit bdu = new DeploymentUnit(qname.getLocalPart(),
-                        _version, deployFile.lastModified(), deployFile);
+                DeploymentRef ref=engine.deploy(deployFile);
 
-                // Deploy the process
-                engine.deploy(bdu);
-
-                _deployed.put(qname, bdu);
+                _deployed.put(qname, ref);
             } catch (Exception e) {
                 throw new SwitchYardException(e);
             }
@@ -117,12 +108,12 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
 
     /**
      * This method returns the file associated with the BPEL deployment
-     * descriptor.
+     * archive or root folder.
      *
-     * @return The deployment descriptor
-     * @throws Exception Failed
+     * @return The deployment
+     * @throws Exception Failed to obtain deployment folder/archive
      */
-    private java.io.File getDeploymentDescriptor() throws Exception {
+    private java.io.File getDeployment() throws Exception {
         java.io.File ret = null;
 
         java.net.URL url = Thread.currentThread().
@@ -145,90 +136,21 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
                    System.getProperty("jboss.server.deploy.dir")
                               + "/../../deployments/" + jarName;
 
-                String destPath =
-                    System.getProperty("jboss.server.temp.dir")
-                       + java.io.File.separatorChar
-                       + "riftsaw"
-                       + java.io.File.separatorChar
-                       + jarName;
-                java.io.File tmpdir =
-                            new java.io.File(destPath);
-
-                // Recursive delete in case already exists
-                delete(tmpdir);
-
-                tmpdir.mkdirs();
-
-                java.util.jar.JarFile jarFile =
-                        new java.util.jar.JarFile(jarFilePath);
-                java.util.Enumeration<JarEntry> iter =
-                        jarFile.entries();
-
-                while (iter.hasMoreElements()) {
-                    JarEntry entry = iter.nextElement();
-
-                    String entryPath = destPath
-                            + java.io.File.separatorChar;
-                    entryPath += entry.getName();
-                    java.io.File entryFile =
-                            new java.io.File(entryPath);
-
-                    if (entry.isDirectory()) {
-                        entryFile.mkdirs();
-                    } else {
-                        java.io.InputStream is =
-                          jarFile.getInputStream(entry);
-
-                        java.io.FileOutputStream fos =
-                            new java.io.FileOutputStream(entryFile);
-
-                        byte[] b =
-                            new byte[is.available()];
-                        is.read(b);
-
-                        fos.write(b);
-
-                        fos.flush();
-                        fos.close();
-                        is.close();
-
-                        if (entry.getName().equals(
-                                "deploy.xml")) {
-                            ret = entryFile;
-                        }
-                    }
-                }
-
-                jarFile.close();
+                ret = new java.io.File(jarFilePath);
             } else {
                 throw new SwitchYardException(
                         "Unknown deployment environment");
             }
         } else {
-            ret = new java.io.File(url.toURI());
+            // Retrieve parent folder of deployment descriptor
+            ret = new java.io.File(url.toURI()).getParentFile();
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Deployment descriptor=" + ret);
+            LOG.debug("Deployment=" + ret);
         }
 
         return (ret);
-    }
-
-    /**
-     * This method deletes the supplied file. If it
-     * represents a directory, then the operation will
-     * be performed recursively.
-     *
-     * @param file The file or directory to be deleted
-     */
-    private void delete(final java.io.File file) {
-        if (file.isDirectory()) {
-            for (java.io.File f : file.listFiles()) {
-                delete(f);
-            }
-        }
-        file.delete();
     }
 
     /**
@@ -307,10 +229,10 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
             LOG.debug("STOP: "+serviceRef);
         }
         
-        DeploymentUnit bdu=_deployed.get(serviceRef.getName());
+        DeploymentRef ref=_deployed.get(serviceRef.getName());
         
-        if (bdu != null) {            
-            _engine.undeploy(bdu);
+        if (ref != null) {            
+            _engine.undeploy(ref);
         }
         
         _serviceRefToCompositeMap.remove(serviceRef.getName());

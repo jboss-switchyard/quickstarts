@@ -40,10 +40,4 @@ public final class ProcessConstants {
     /** {http://docs.oasis-open.org/ns/opencsa/sca/200903}process . */
     public static final String PROCESS_VAR = new QName(PROCESS_NAMESPACE, PROCESS).toString();
 
-    /** version . */
-    public static final String VERSION = "version";
-    
-    /** {http://docs.oasis-open.org/ns/opencsa/sca/200903}version . */
-    public static final String VERSION_VAR = new QName(PROCESS_NAMESPACE, VERSION).toString();
-
 }

@@ -19,7 +19,6 @@
 package org.switchyard.component.bpel.config.model.v1;
 
 import static org.switchyard.component.bpel.process.ProcessConstants.PROCESS;
-import static org.switchyard.component.bpel.process.ProcessConstants.VERSION;
 
 import org.switchyard.component.bpel.config.model.BPELComponentImplementationModel;
 import org.switchyard.config.Configuration;
@@ -64,24 +63,4 @@ public class V1BPELComponentImplementationModel extends V1ComponentImplementatio
         return this;
     }
     
-    /**
-     * Gets the "version" attribute.
-     *
-     * @return the "version" attribute
-     */
-    public String getVersion() {
-        return getModelAttribute(VERSION);
-    }
-
-    /**
-     * Sets the "version" attribute.
-     *
-     * @param version the "version" attribute
-     * @return this instance (useful for chaining)
-     */
-    public BPELComponentImplementationModel setVersion(String version) {
-        setModelAttribute(VERSION, version);
-        return this;
-    }
-
 }
