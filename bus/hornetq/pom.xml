@@ -34,6 +34,11 @@
     <name>SwitchYard: HornetQ Bus</name>
     <description>Bus provider using HornetQ Core</description>
     <url>http://switchyard.org/</url>
+
+	<!-- overriding hornetq version as the newer version is incompatible -->
+	<properties>
+		<version.hornetq>2.1.1.Final</version.hornetq>
+	</properties>
     
     <dependencies>
         <!-- internal dependencies -->
@@ -53,18 +58,17 @@
         <dependency>
             <groupId>org.hornetq</groupId>
             <artifactId>hornetq-core</artifactId>
-            <version>2.1.1.Final</version>
+			<version>${version.hornetq}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.netty</groupId>
             <artifactId>netty</artifactId>
-            <version>3.2.1.Final</version>
         </dependency>
         <dependency>
             <groupId>org.hornetq</groupId>
             <artifactId>hornetq-core-client</artifactId>
-            <version>2.1.1.Final</version>
+			<version>${version.hornetq}</version>
             <scope>compile</scope>
         </dependency>
         <!-- N/A -->

@@ -51,9 +51,24 @@
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-api</artifactId>
         </dependency>
+		<!-- TODO: Maybe scope this as "provided" ? -->
         <dependency>
             <groupId>org.milyn</groupId>
-            <artifactId>milyn-smooks-all</artifactId> <!-- TODO: Maybe scope this as "provided" ? -->
+            <artifactId>milyn-smooks-all</artifactId> 
+	        <exclusions>
+	            <exclusion>
+	              <groupId>xml-apis</groupId>
+	              <artifactId>xml-apis</artifactId>
+	            </exclusion>
+	            <exclusion>
+	              <groupId>xerces</groupId>
+	              <artifactId>xercesImpl</artifactId>
+	            </exclusion>
+	            <exclusion>
+	              <groupId>xerces</groupId>
+	              <artifactId>xmlParserAPIs</artifactId>
+	            </exclusion>
+	        </exclusions>
         </dependency>
 		<!-- external dependencies -->
 		<dependency>
@@ -79,12 +94,10 @@
      	<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
-			<version>1.8.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-core-asl</artifactId>
-			<version>1.8.0</version>
 		</dependency>
 	</dependencies>
 </project>
