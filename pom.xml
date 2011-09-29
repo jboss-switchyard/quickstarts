@@ -48,8 +48,25 @@
     <properties>
         <org.switchyard.test.soap.host>localhost</org.switchyard.test.soap.host>
         <org.switchyard.test.soap.port>48080</org.switchyard.test.soap.port>
-        <version.project>${project.version}</version.project>
+
+		<!-- Dependency versions - please keep these in alphabetical order -->
+	    <version.antlr>3.3</version.antlr>
         <version.camel>2.8.0</version.camel>
+	    <version.clojure>1.3.0-alpha5</version.clojure>
+        <version.commonman>1.0</version.commonman>
+	    <version.drools>5.2.0.Final</version.drools>
+	    <version.ecj>3.5.1</version.ecj>
+        <version.hornetq>2.2.2.Final</version.hornetq>
+        <version.javax.jms>1.1</version.javax.jms>
+	    <version.jboss.vfs>3.0.0.GA</version.jboss.vfs>
+	    <version.maven-shade-plugin>1.4</version.maven-shade-plugin>
+        <version.netty>3.2.1.Final</version.netty>
+        <version.riftsaw.ode>3.0.0-SNAPSHOT</version.riftsaw.ode>
+		<version.riftsaw.engine>3.0.0-SNAPSHOT</version.riftsaw.engine>
+	    <version.slf4j>1.6.1</version.slf4j>
+        <version.spring>3.0.5.RELEASE</version.spring>
+        <version.weld>1.1.0.Final</version.weld>
+	    <version.wsdl4j>1.6.2</version.wsdl4j>
     </properties>
 
     <modules>
@@ -162,16 +179,149 @@
               <version>${project.version}</version>
             </dependency>
             <dependency>
-              <groupId>org.jboss.weld.se</groupId>
-              <artifactId>weld-se-core</artifactId>
-              <version>1.1.0.Final</version>
-            </dependency>
-            <dependency>
                 <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-test</artifactId>
                 <version>${project.version}</version>
                 <scope>test</scope>
             </dependency>
+
+            <!-- External dependencies - please keep these in alphabetical order by groupId-->
+	        <dependency>
+	            <groupId>javax.jms</groupId>
+	            <artifactId>jms</artifactId>
+	            <version>${version.javax.jms}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>org.antlr</groupId>
+	            <artifactId>antlr-runtime</artifactId>
+	            <version>${version.antlr}</version>
+	        </dependency>
+			<dependency>
+	            <groupId>org.apache.camel</groupId>
+	            <artifactId>camel-atom</artifactId>
+	            <version>${version.camel}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>org.apache.camel</groupId>
+	            <artifactId>camel-core</artifactId>
+	            <version>${version.camel}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>org.apache.camel</groupId>
+	            <artifactId>camel-jms</artifactId>
+	            <version>${version.camel}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>org.apache.camel</groupId>
+	            <artifactId>camel-spring</artifactId>
+	            <version>${version.camel}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>org.apache.camel</groupId>
+	            <artifactId>camel-test</artifactId>
+	            <version>${version.camel}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>org.clojure</groupId>
+	            <artifactId>clojure</artifactId>
+	            <version>${version.clojure}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>org.drools</groupId>
+	            <artifactId>knowledge-api</artifactId>
+	            <version>${version.drools}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>org.drools</groupId>
+	            <artifactId>drools-core</artifactId>
+	            <version>${version.drools}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>org.drools</groupId>
+	            <artifactId>drools-compiler</artifactId>
+	            <version>${version.drools}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>org.drools</groupId>
+	            <artifactId>drools-persistence-jpa</artifactId>
+	            <version>${version.drools}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>org.eclipse.jdt.core.compiler</groupId>
+	            <artifactId>ecj</artifactId>
+	            <version>${version.ecj}</version>
+	        </dependency>
+			<dependency>
+	            <groupId>org.fusesource.commonman</groupId>
+	            <artifactId>commons-management</artifactId>
+	            <version>${version.commonman}</version>
+	        </dependency>
+		    <dependency>
+		        <groupId>org.hornetq</groupId>
+		        <artifactId>hornetq-core</artifactId>
+		        <version>${version.hornetq}</version>
+		    </dependency>
+		    <dependency>
+		        <groupId>org.hornetq</groupId>
+		        <artifactId>hornetq-jms</artifactId>
+		        <version>${version.hornetq}</version>
+		    </dependency>
+	        <dependency>
+	            <groupId>org.hornetq</groupId>
+	            <artifactId>hornetq-jms-client</artifactId>
+	            <version>${version.hornetq}</version>
+	        </dependency>
+		    <dependency>
+		        <groupId>org.jboss.forge</groupId>
+		        <artifactId>forge-shell-api</artifactId>
+		        <version>${version.forge}</version>
+		    </dependency>
+		    <dependency>
+		        <groupId>org.jboss.netty</groupId>
+		        <artifactId>netty</artifactId>
+		        <version>${version.netty}</version>
+		    </dependency>
+			<dependency>
+				<groupId>org.jboss.soa.bpel</groupId>
+				<artifactId>riftsaw-bpel-compiler</artifactId>
+				<version>${version.riftsaw.ode}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.soa.bpel</groupId>
+				<artifactId>riftsaw-dao-jpa</artifactId>
+				<version>${version.riftsaw.ode}</version>
+			</dependency>
+		    <dependency>
+		        <groupId>org.jboss</groupId>
+		        <artifactId>jboss-vfs</artifactId>
+		        <version>${version.jboss.vfs}</version>
+		    </dependency>
+            <dependency>
+                <groupId>org.jboss.weld.se</groupId>
+                <artifactId>weld-se-core</artifactId>
+                <version>${version.weld}</version>
+            </dependency>
+	        <dependency>
+	            <groupId>org.mvel</groupId>
+	            <artifactId>mvel2</artifactId>
+	            <version>${version.mvel}</version>
+	        </dependency>
+			<dependency>
+				<groupId>org.riftsaw</groupId>
+				<artifactId>engine</artifactId>
+				<version>${version.riftsaw.engine}</version>
+			</dependency>
+	        <dependency>
+	        	<groupId>org.slf4j</groupId>
+	        	<artifactId>slf4j-simple</artifactId>
+	        	<version>${version.slf4j}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>wsdl4j</groupId>
+	            <artifactId>wsdl4j</artifactId>
+	            <version>${version.wsdl4j}</version>
+	        </dependency>
+			
         </dependencies>
     </dependencyManagement>
 

@@ -48,7 +48,6 @@
 		<dependency>
 			<groupId>org.riftsaw</groupId>
 			<artifactId>engine</artifactId>
-			<version>${riftsaw.engine.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.switchyard.components</groupId>
@@ -71,16 +70,13 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
 		<dependency>
 			<groupId>org.jboss.soa.bpel</groupId>
 			<artifactId>riftsaw-bpel-compiler</artifactId>
-			<version>${riftsaw.ode.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.soa.bpel</groupId>
 			<artifactId>riftsaw-dao-jpa</artifactId>
-			<version>${riftsaw.ode.version}</version>
 		</dependency>
 
     </dependencies>

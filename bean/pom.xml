@@ -37,7 +37,6 @@
     <url>http://www.switchyard.org</url>
 
     <properties>
-        <version.slf4j>1.6.1</version.slf4j>
     </properties>
 
     <build>
@@ -57,20 +56,16 @@
     </build>
 
     <dependencies>
-
         <dependency>
            <groupId>org.jboss.weld.se</groupId>
            <artifactId>weld-se-core</artifactId>
            <scope>provided</scope>
         </dependency>
-
         <dependency>
         	<groupId>org.slf4j</groupId>
         	<artifactId>slf4j-simple</artifactId>
-        	<version>${version.slf4j}</version>
         	<scope>runtime</scope>
         </dependency>
-
     </dependencies>
 
 </project>

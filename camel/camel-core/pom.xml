@@ -16,12 +16,7 @@
     <url>http://www.switchyard.org</url>
 
     <properties>
-        <version.commonman>1.0</version.commonman>
-        <version.hornetq>2.2.2.Final</version.hornetq>
-        <version.spring>3.0.5.RELEASE</version.spring>
         <version.build-helper-maven-plugin>1.7</version.build-helper-maven-plugin>
-        <version.javax.jms>1.1</version.javax.jms>
-        <version.netty>3.2.1.Final</version.netty>
         <directory.camel.resources>${project.build.directory}/dependency/camel/resources</directory.camel.resources>
     </properties>
 
@@ -115,14 +110,12 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
-            <version>${version.camel}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
-            <version>${version.camel}</version>
             <scope>test</scope>
             <exclusions>
                  <exclusion>
@@ -135,21 +128,18 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring</artifactId>
-            <version>${version.camel}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jms</artifactId>
-            <version>${version.camel}</version>
             <scope>compile</scope>
         </dependency>
 
 		<dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-atom</artifactId>
-            <version>${version.camel}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -170,57 +160,43 @@
         <dependency>
             <groupId>org.fusesource.commonman</groupId>
             <artifactId>commons-management</artifactId>
-            <version>${version.commonman}</version>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-test</artifactId>
             <scope>test</scope>
         </dependency>
-        
         <dependency>
             <groupId>javax.jms</groupId>
             <artifactId>jms</artifactId>
-            <version>${version.javax.jms}</version>
             <scope>test</scope>
         </dependency>
-        
         <dependency>
             <groupId>org.hornetq</groupId>
             <artifactId>hornetq-core</artifactId>
-            <version>${version.hornetq}</version>
             <scope>test</scope>
         </dependency>
-        
         <dependency>
             <groupId>org.hornetq</groupId>
             <artifactId>hornetq-jms-client</artifactId>
-            <version>${version.hornetq}</version>
             <scope>test</scope>
         </dependency>
-        
         <dependency>
             <groupId>org.hornetq</groupId>
             <artifactId>hornetq-jms</artifactId>
-            <version>${version.hornetq}</version>
             <scope>test</scope>
         </dependency>
-        
         <dependency>
             <groupId>org.jboss.netty</groupId>
             <artifactId>netty</artifactId>
-            <version>${version.netty}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
             <scope>test</scope>
          </dependency>
-
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>

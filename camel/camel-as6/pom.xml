@@ -34,27 +34,17 @@
     <name>SwitchYard: Camel AS6 Component</name>
     <url>http://www.switchyard.org</url>
 
-    <properties>
-        <version.jboss.vfs>3.0.0.GA</version.jboss.vfs>
-    </properties>
-
     <dependencies>
-
         <dependency>
             <groupId>org.jboss</groupId>
             <artifactId>jboss-vfs</artifactId>
-            <version>${version.jboss.vfs}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
-            <version>${version.camel}</version>
             <scope>compile</scope>
         </dependency>
-
-
     </dependencies>
 
 </project>
