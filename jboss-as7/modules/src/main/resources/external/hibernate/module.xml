@@ -22,20 +22,20 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 
-<module xmlns="urn:jboss:module:1.0" name="org.hibernate" slot="jbpm-${jbpm.version}">
+<module xmlns="urn:jboss:module:1.0" name="org.hibernate" slot="jbpm-${version.jbpm}">
 
     <resources>
-        <resource-root path="hibernate-core-${hibernate.core.version}.jar"/>
-        <resource-root path="hibernate-entitymanager-${hibernate.entitymanager.version}.jar"/>
-        <resource-root path="hibernate-annotations-${hibernate.annotations.version}.jar"/>
-        <resource-root path="hibernate-commons-annotations-${hibernate.commons-annotations.version}.jar"/>
-        <resource-root path="ejb3-persistence-${hibernate.ejb3-persistence.version}.jar"/>
+        <resource-root path="hibernate-core-${version.hibernate.core}.jar"/>
+        <resource-root path="hibernate-entitymanager-${version.hibernate.entitymanager}.jar"/>
+        <resource-root path="hibernate-annotations-${version.hibernate.annotations}.jar"/>
+        <resource-root path="hibernate-commons-annotations-${version.hibernate.commons-annotations}.jar"/>
+        <resource-root path="ejb3-persistence-${version.hibernate.ejb3-persistence}.jar"/>
     </resources>
 
     <dependencies>
         <module name="asm.asm"/>
         <module name="javax.api"/>
-        <module name="javax.persistence.api" slot="jbpm-${jbpm.version}"/>
+        <module name="javax.persistence.api" slot="jbpm-${version.jbpm}"/>
         <module name="javax.transaction.api"/>
         <module name="javax.validation.api"/>
         <module name="org.antlr"/>

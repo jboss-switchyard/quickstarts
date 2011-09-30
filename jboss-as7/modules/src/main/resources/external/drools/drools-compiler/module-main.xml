@@ -25,7 +25,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.drools.drools-compiler">
 
     <resources>
-        <resource-root path="drools-compiler-${drools.version}.jar"/>
+        <resource-root path="drools-compiler-${version.drools}.jar"/>
     </resources>
 
     <dependencies>

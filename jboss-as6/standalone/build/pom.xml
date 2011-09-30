@@ -41,11 +41,6 @@
         <description>SwitchYard AS6 Packager</description>
 	<url>http://switchyard.org/</url>
 
-    <properties>
-        <version.commons.lang>2.4</version.commons.lang>
-        <version.commons.logging>1.1</version.commons.logging>
-    </properties>
-
     <build>
         <plugins> 
             <plugin>
@@ -141,7 +136,6 @@
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
-            <version>${version.commons.logging}</version>
         </dependency>
     </dependencies>
 </project>

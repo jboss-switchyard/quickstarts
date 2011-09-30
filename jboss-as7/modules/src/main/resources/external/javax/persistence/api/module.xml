@@ -22,10 +22,10 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 
-<module xmlns="urn:jboss:module:1.0" name="javax.persistence.api" slot="jbpm-${jbpm.version}">
+<module xmlns="urn:jboss:module:1.0" name="javax.persistence.api" slot="jbpm-${version.jbpm}">
 
     <resources>
-        <resource-root path="persistence-api-${hibernate.jpa.version}.jar"/>
+        <resource-root path="persistence-api-${version.hibernate.jpa}.jar"/>
     </resources>
 
     <dependencies>

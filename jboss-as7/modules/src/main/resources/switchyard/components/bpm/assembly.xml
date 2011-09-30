@@ -8,7 +8,7 @@
             <filtered>true</filtered>
         </file>
         <file>
-            <source>target/jbpm-bpmn2-xsds-${jbpm.version}.jar</source>
+            <source>target/jbpm-bpmn2-xsds-${version.jbpm}.jar</source>
             <outputDirectory>/modules/org/switchyard/component/bpm/main</outputDirectory>
         </file>
     </files>

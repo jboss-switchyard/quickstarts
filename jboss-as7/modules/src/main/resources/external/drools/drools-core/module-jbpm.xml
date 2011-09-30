@@ -22,16 +22,16 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 
-<module xmlns="urn:jboss:module:1.0" name="org.drools.drools-core" slot="jbpm-${jbpm.version}">
+<module xmlns="urn:jboss:module:1.0" name="org.drools.drools-core" slot="jbpm-${version.jbpm}">
 
     <resources>
-        <resource-root path="drools-core-${drools.version}.jar"/>
+        <resource-root path="drools-core-${version.drools}.jar"/>
     </resources>
 
     <dependencies>
         <module name="javax.api"/>
         <module name="org.mvel.mvel2"/>
-        <module name="org.drools.knowledge-api" slot="jbpm-${jbpm.version}"/>
+        <module name="org.drools.knowledge-api" slot="jbpm-${version.jbpm}"/>
         <module name="org.jbpm.jbpm-flow"/>
     </dependencies>
 </module>

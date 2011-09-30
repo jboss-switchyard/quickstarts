@@ -25,7 +25,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.jbpm.jbpm-workitems">
 
     <resources>
-        <resource-root path="jbpm-workitems-${jbpm.version}.jar"/>
+        <resource-root path="jbpm-workitems-${version.jbpm}.jar"/>
     </resources>
 
     <dependencies>

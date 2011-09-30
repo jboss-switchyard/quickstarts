@@ -23,26 +23,26 @@
 
     <resources>
         <resource-root path="switchyard-component-bpel-${project.version}.jar"/>
-        <resource-root path="engine-${riftsaw.engine.version}.jar"/>
-        <resource-root path="riftsaw-agents-${riftsaw.ode.version}.jar"/>
-        <resource-root path="riftsaw-bpel-api-${riftsaw.ode.version}.jar"/>
-        <resource-root path="riftsaw-bpel-compiler-${riftsaw.ode.version}.jar"/>
-        <resource-root path="riftsaw-bpel-dao-${riftsaw.ode.version}.jar"/>
-        <resource-root path="riftsaw-bpel-epr-${riftsaw.ode.version}.jar"/>
-        <resource-root path="riftsaw-bpel-obj-${riftsaw.ode.version}.jar"/>
-        <resource-root path="riftsaw-bpel-ql-${riftsaw.ode.version}.jar"/>
-        <resource-root path="riftsaw-bpel-runtime-${riftsaw.ode.version}.jar"/>
-        <resource-root path="riftsaw-bpel-schemas-${riftsaw.ode.version}.jar"/>
-        <resource-root path="riftsaw-bpel-store-${riftsaw.ode.version}.jar"/>
-        <resource-root path="riftsaw-dao-jpa-${riftsaw.ode.version}.jar"/>
-        <resource-root path="riftsaw-dao-jpa-hibernate-${riftsaw.ode.version}.jar"/>
-        <resource-root path="riftsaw-jacob-${riftsaw.ode.version}.jar"/>
-        <resource-root path="riftsaw-scheduler-simple-${riftsaw.ode.version}.jar"/>
-        <resource-root path="riftsaw-utils-${riftsaw.ode.version}.jar"/>
-        <resource-root path="activity-monitor-model-${activity.monitor.model.version}.jar"/>
+        <resource-root path="engine-${version.riftsaw.engine}.jar"/>
+        <resource-root path="riftsaw-agents-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-bpel-api-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-bpel-compiler-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-bpel-dao-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-bpel-epr-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-bpel-obj-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-bpel-ql-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-bpel-runtime-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-bpel-schemas-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-bpel-store-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-dao-jpa-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-dao-jpa-hibernate-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-jacob-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-scheduler-simple-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-utils-${version.riftsaw.ode}.jar"/>
+        <resource-root path="activity-monitor-model-${version.activity.monitor.model}.jar"/>
         
 		<!-- Keep this as a local dependency, as it is an older version that ODE requires -->        
-        <resource-root path="xmlbeans-${xmlbeans.version}.jar"/>
+        <resource-root path="xmlbeans-${version.xmlbeans}.jar"/>
        
         <!-- TODO: Tried to use 'org.jaxen' module, but got:
         java.lang.ClassNotFoundException: org.w3c.dom.Node from [Module "org.jaxen:main" from local module loader
@@ -62,10 +62,10 @@
 				[Module "org.springframework:main" ......
 			also would need to add 'spring-asm' to camel build of spring module
  		-->
-        <resource-root path="spring-asm-${spring.version}.jar"/>
-        <resource-root path="spring-beans-${spring.version}.jar"/>
-        <resource-root path="spring-context-${spring.version}.jar"/>
-        <resource-root path="spring-core-${spring.version}.jar"/>
+        <resource-root path="spring-asm-${version.spring}.jar"/>
+        <resource-root path="spring-beans-${version.spring}.jar"/>
+        <resource-root path="spring-context-${version.spring}.jar"/>
+        <resource-root path="spring-core-${version.spring}.jar"/>
 
     </resources>
 

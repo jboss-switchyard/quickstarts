@@ -74,25 +74,25 @@
         <file>
             <source>src/main/resources/external/drools/knowledge-api/module-jbpm.xml</source>
             <destName>module.xml</destName>
-            <outputDirectory>/modules/org/drools/knowledge-api/jbpm-${jbpm.version}</outputDirectory>
+            <outputDirectory>/modules/org/drools/knowledge-api/jbpm-${version.jbpm}</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/external/drools/drools-core/module-jbpm.xml</source>
             <destName>module.xml</destName>
-            <outputDirectory>/modules/org/drools/drools-core/jbpm-${jbpm.version}</outputDirectory>
+            <outputDirectory>/modules/org/drools/drools-core/jbpm-${version.jbpm}</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/external/drools/drools-compiler/module-jbpm.xml</source>
             <destName>module.xml</destName>
-            <outputDirectory>/modules/org/drools/drools-compiler/jbpm-${jbpm.version}</outputDirectory>
+            <outputDirectory>/modules/org/drools/drools-compiler/jbpm-${version.jbpm}</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/external/drools/drools-persistence-jpa/module-jbpm.xml</source>
             <destName>module.xml</destName>
-            <outputDirectory>/modules/org/drools/drools-persistence-jpa/jbpm-${jbpm.version}</outputDirectory>
+            <outputDirectory>/modules/org/drools/drools-persistence-jpa/jbpm-${version.jbpm}</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
@@ -142,12 +142,12 @@
         </file>
         <file>
             <source>src/main/resources/external/hibernate/module.xml</source>
-            <outputDirectory>/modules/org/hibernate/jbpm-${jbpm.version}</outputDirectory>
+            <outputDirectory>/modules/org/hibernate/jbpm-${version.jbpm}</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/external/javax/persistence/api/module.xml</source>
-            <outputDirectory>/modules/javax/persistence/api/jbpm-${jbpm.version}</outputDirectory>
+            <outputDirectory>/modules/javax/persistence/api/jbpm-${version.jbpm}</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
@@ -245,7 +245,7 @@
                 <include>org.drools:knowledge-api</include>
             </includes>
             <outputDirectory>/modules/org/drools/knowledge-api/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${drools.version}.${artifact.extension}
+            <outputFileNameMapping>${artifact.artifactId}-${version.drools}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
         <dependencySet>
@@ -254,7 +254,7 @@
                 <include>org.drools:drools-core</include>
             </includes>
             <outputDirectory>/modules/org/drools/drools-core/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${drools.version}.${artifact.extension}
+            <outputFileNameMapping>${artifact.artifactId}-${version.drools}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
         <dependencySet>
@@ -263,7 +263,7 @@
                 <include>org.drools:drools-compiler</include>
             </includes>
             <outputDirectory>/modules/org/drools/drools-compiler/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${drools.version}.${artifact.extension}
+            <outputFileNameMapping>${artifact.artifactId}-${version.drools}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
         <dependencySet>
@@ -272,7 +272,7 @@
                 <include>org.drools:drools-persistence-jpa</include>
             </includes>
             <outputDirectory>/modules/org/drools/drools-persistence-jpa/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${drools.version}.${artifact.extension}
+            <outputFileNameMapping>${artifact.artifactId}-${version.drools}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
         <dependencySet>
@@ -280,8 +280,8 @@
             <includes>
                 <include>org.drools:knowledge-api</include>
             </includes>
-            <outputDirectory>/modules/org/drools/knowledge-api/jbpm-${jbpm.version}</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${drools.version}.${artifact.extension}
+            <outputDirectory>/modules/org/drools/knowledge-api/jbpm-${version.jbpm}</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.drools}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
         <dependencySet>
@@ -289,8 +289,8 @@
             <includes>
                 <include>org.drools:drools-core</include>
             </includes>
-            <outputDirectory>/modules/org/drools/drools-core/jbpm-${jbpm.version}</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${drools.version}.${artifact.extension}
+            <outputDirectory>/modules/org/drools/drools-core/jbpm-${version.jbpm}</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.drools}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
         <dependencySet>
@@ -298,8 +298,8 @@
             <includes>
                 <include>org.drools:drools-compiler</include>
             </includes>
-            <outputDirectory>/modules/org/drools/drools-compiler/jbpm-${jbpm.version}</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${drools.version}.${artifact.extension}
+            <outputDirectory>/modules/org/drools/drools-compiler/jbpm-${version.jbpm}</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.drools}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
         <dependencySet>
@@ -307,8 +307,8 @@
             <includes>
                 <include>org.drools:drools-persistence-jpa</include>
             </includes>
-            <outputDirectory>/modules/org/drools/drools-persistence-jpa/jbpm-${jbpm.version}</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${drools.version}.${artifact.extension}
+            <outputDirectory>/modules/org/drools/drools-persistence-jpa/jbpm-${version.jbpm}</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.drools}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
         <dependencySet>
@@ -317,7 +317,7 @@
                 <include>org.antlr:antlr-runtime</include>
             </includes>
             <outputDirectory>/modules/org/antlr/antlr-runtime/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${antlr.version}.${artifact.extension}</outputFileNameMapping>
+            <outputFileNameMapping>${artifact.artifactId}-${version.antlr}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
@@ -325,7 +325,7 @@
                 <include>org.eclipse.jdt.core.compiler:ecj</include>
             </includes>
             <outputDirectory>/modules/org/eclipse/jdt/core/compiler/ecj/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${ecj.version}.${artifact.extension}</outputFileNameMapping>
+            <outputFileNameMapping>${artifact.artifactId}-${version.ecj}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
@@ -333,7 +333,7 @@
                 <include>org.mvel:mvel2</include>
             </includes>
             <outputDirectory>/modules/org/mvel/mvel2/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${mvel.version}.${artifact.extension}</outputFileNameMapping>
+            <outputFileNameMapping>${artifact.artifactId}-${version.mvel}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
@@ -341,7 +341,7 @@
                 <include>org.jbpm:jbpm-flow</include>
             </includes>
             <outputDirectory>/modules/org/jbpm/jbpm-flow/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${jbpm.version}.${artifact.extension}</outputFileNameMapping>
+            <outputFileNameMapping>${artifact.artifactId}-${version.jbpm}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
@@ -349,7 +349,7 @@
                 <include>org.jbpm:jbpm-flow-builder</include>
             </includes>
             <outputDirectory>/modules/org/jbpm/jbpm-flow-builder/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${jbpm.version}.${artifact.extension}</outputFileNameMapping>
+            <outputFileNameMapping>${artifact.artifactId}-${version.jbpm}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
@@ -357,7 +357,7 @@
                 <include>org.jbpm:jbpm-persistence-jpa</include>
             </includes>
             <outputDirectory>/modules/org/jbpm/jbpm-persistence-jpa/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${jbpm.version}.${artifact.extension}</outputFileNameMapping>
+            <outputFileNameMapping>${artifact.artifactId}-${version.jbpm}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
@@ -365,7 +365,7 @@
                 <include>org.jbpm:jbpm-bpmn2</include>
             </includes>
             <outputDirectory>/modules/org/jbpm/jbpm-bpmn2/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${jbpm.version}.${artifact.extension}</outputFileNameMapping>
+            <outputFileNameMapping>${artifact.artifactId}-${version.jbpm}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
@@ -373,7 +373,7 @@
                 <include>org.jbpm:jbpm-workitems</include>
             </includes>
             <outputDirectory>/modules/org/jbpm/jbpm-workitems/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${jbpm.version}.${artifact.extension}</outputFileNameMapping>
+            <outputFileNameMapping>${artifact.artifactId}-${version.jbpm}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
@@ -381,15 +381,15 @@
                 <include>org.jbpm:jbpm-human-task</include>
             </includes>
             <outputDirectory>/modules/org/jbpm/jbpm-human-task/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${jbpm.version}.${artifact.extension}</outputFileNameMapping>
+            <outputFileNameMapping>${artifact.artifactId}-${version.jbpm}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
                 <include>org.hibernate:hibernate-core</include>
             </includes>
-            <outputDirectory>/modules/org/hibernate/jbpm-${jbpm.version}</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${hibernate.core.version}.${artifact.extension}
+            <outputDirectory>/modules/org/hibernate/jbpm-${version.jbpm}</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.hibernate.core}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
         <dependencySet>
@@ -397,8 +397,8 @@
             <includes>
                 <include>org.hibernate:hibernate-entitymanager</include>
             </includes>
-            <outputDirectory>/modules/org/hibernate/jbpm-${jbpm.version}</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${hibernate.entitymanager.version}.${artifact.extension}
+            <outputDirectory>/modules/org/hibernate/jbpm-${version.jbpm}</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.hibernate.entitymanager}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
         <dependencySet>
@@ -406,8 +406,8 @@
             <includes>
                 <include>org.hibernate:hibernate-annotations</include>
             </includes>
-            <outputDirectory>/modules/org/hibernate/jbpm-${jbpm.version}</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${hibernate.annotations.version}.${artifact.extension}
+            <outputDirectory>/modules/org/hibernate/jbpm-${version.jbpm}</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.hibernate.annotations}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
         <dependencySet>
@@ -415,8 +415,8 @@
             <includes>
                 <include>org.hibernate:hibernate-commons-annotations</include>
             </includes>
-            <outputDirectory>/modules/org/hibernate/jbpm-${jbpm.version}</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${hibernate.commons-annotations.version}.${artifact.extension}
+            <outputDirectory>/modules/org/hibernate/jbpm-${version.jbpm}</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.hibernate.commons-annotations}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
         <dependencySet>
@@ -424,8 +424,8 @@
             <includes>
                 <include>org.hibernate:ejb3-persistence</include>
             </includes>
-            <outputDirectory>/modules/org/hibernate/jbpm-${jbpm.version}</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${hibernate.ejb3-persistence.version}.${artifact.extension}
+            <outputDirectory>/modules/org/hibernate/jbpm-${version.jbpm}</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.hibernate.ejb3-persistence}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
         <dependencySet>
@@ -433,8 +433,8 @@
             <includes>
                 <include>javax.persistence:persistence-api</include>
             </includes>
-            <outputDirectory>/modules/javax/persistence/api/jbpm-${jbpm.version}</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${hibernate.jpa.version}.${artifact.extension}
+            <outputDirectory>/modules/javax/persistence/api/jbpm-${version.jbpm}</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.hibernate.jpa}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
         <dependencySet>
@@ -443,7 +443,7 @@
                 <include>org.apache.mina:mina-core</include>
             </includes>
             <outputDirectory>/modules/org/apache/mina/mina-core/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${mina.version}.${artifact.extension}</outputFileNameMapping>
+            <outputFileNameMapping>${artifact.artifactId}-${version.mina}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
@@ -488,7 +488,7 @@
                 <include>org.springframework:spring-tx</include>
             </includes>
             <outputDirectory>/modules/org/springframework/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${spring.version}.${artifact.extension}
+            <outputFileNameMapping>${artifact.artifactId}-${version.spring}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
         <!--<dependencySet>-->

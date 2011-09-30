@@ -52,32 +52,26 @@
             <dependency>
                 <groupId>org.jboss.deployers</groupId>
                 <artifactId>jboss-deployers-impl</artifactId>
-                <version>${version.jboss.deployers}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.deployers</groupId>
                 <artifactId>jboss-deployers-core-spi</artifactId>
-                <version>${version.jboss.deployers}</version>
             </dependency>
-	    <dependency>
+	        <dependency>
                 <groupId>org.jboss.deployers</groupId>
                 <artifactId>jboss-deployers-vfs</artifactId>
-                <version>${version.jboss.deployers}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss</groupId>
                 <artifactId>jboss-vfs</artifactId>
-                <version>${version.jboss.vfs}</version>
             </dependency>
             <dependency> 
                 <groupId>org.jboss.deployers</groupId>
                 <artifactId>jboss-deployers-vfs-spi</artifactId>
-                <version>${version.jboss.deployers}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.jbossas</groupId>
                 <artifactId>weld-int-deployer</artifactId>
-                <version>${version.jbossas}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.jboss.jbossas</groupId>
