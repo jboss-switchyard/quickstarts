@@ -29,6 +29,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import org.drools.agent.impl.DoNothingSystemEventListener;
+import org.jbpm.task.Group;
 import org.jbpm.task.Status;
 import org.jbpm.task.User;
 import org.jbpm.task.query.TaskSummary;
@@ -107,7 +108,7 @@ public class BPMMixIn extends AbstractTestMixIn {
     @Override
     public void initialize() {
         if (_managedLifeCycle) {
-            if (!startTaskServer("Developer", "User")) {
+            if (!startTaskServer("krisv", "johnd")) {
                 Assert.fail("Failed to autostart BPM TaskServer instance.");
             }
         }
@@ -120,7 +121,7 @@ public class BPMMixIn extends AbstractTestMixIn {
                 boolean keepWorking = true;
                 while (keepWorking) {
                     try {
-                        keepWorking = completeTasksForUsers("Developer", "User");
+                        keepWorking = completeTasksForUsers("krisv", "johnd");
                     } catch (Exception e) {
                         Assert.fail("Failed to auto complete tasks on BPM TaskServer instance.");
                     }
@@ -166,6 +167,10 @@ public class BPMMixIn extends AbstractTestMixIn {
                     taskServiceSession.addUser(new User(userId));
                 }
             }
+            // TODO: externalize this somehow
+            for (String groupId : new String[]{"admin", "user", "developer"}) {
+                taskServiceSession.addGroup(new Group(groupId));
+            }
             taskServiceSession.dispose();
             _server = new MinaTaskServer(taskService, _port, _host);
             new Thread(_server).start();
@@ -173,11 +178,8 @@ public class BPMMixIn extends AbstractTestMixIn {
             return true;
         } catch (Throwable t) {
             StringWriter tsWriter = new StringWriter();
-            PrintWriter tpWriter = new PrintWriter(tsWriter);
-
-            t.printStackTrace(tpWriter);
+            t.printStackTrace(new PrintWriter(tsWriter));
             Assert.fail(tsWriter.toString());
-
             return false;
         }
     }

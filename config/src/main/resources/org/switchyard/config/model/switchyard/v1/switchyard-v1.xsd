@@ -74,7 +74,7 @@ MA  02110-1301, USA.
 
    <!--
         A reusable element; currently used as:
-            a child of the BPM component's BpmImplementationType, defined in bpm-v1.xsd, and
+            a child of the BPM component's BPMImplementationType, defined in bpm-v1.xsd, and
             a child of the Rules component's RulesImplementationType defined in rules-v1.xsd.
     -->
     <element name="resource" type="swyd:ResourceType"/>
