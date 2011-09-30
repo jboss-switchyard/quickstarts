@@ -28,8 +28,8 @@ MA  02110-1301, USA.
 
     <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
 
-    <element name="implementation.bpm" type="bpm:BpmImplementationType" substitutionGroup="sca:implementation"/>
-    <complexType name="BpmImplementationType">
+    <element name="implementation.bpm" type="bpm:BPMImplementationType" substitutionGroup="sca:implementation"/>
+    <complexType name="BPMImplementationType">
         <complexContent>
             <extension base="sca:Implementation">
                 <sequence>
@@ -40,7 +40,8 @@ MA  02110-1301, USA.
                 <attribute name="processDefinition" type="string" use="required"/>
                 <attribute name="processDefinitionType" type="NCName" use="optional" default="BPMN2"/>
                 <attribute name="processId" type="string" use="required"/>
-                <attribute name="messageContentName" type="string" use="optional"/>
+                <attribute name="messageContentInName" type="string" use="optional"/>
+                <attribute name="messageContentOutName" type="string" use="optional"/>
             </extension>
         </complexContent>
     </complexType>

@@ -54,10 +54,6 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
     public static final String SERVICE_NAME = "ServiceName";
     /** ServiceOperationName . */
     public static final String SERVICE_OPERATION_NAME = "ServiceOperationName";
-    /** Process variable name used for the input message content on a service invocation. */
-    public static final String INPUT_MESSAGE_VAR = "InputMessageVariable";
-    /** Process variable name used for the output message content on a service invocation. */
-    public static final String OUTPUT_MESSAGE_VAR = "OutputMessageVariable";
 
     /**
      * Constructs a new SwitchYardServiceTaskHandler with the default name ("SwitchYard Service").
@@ -80,13 +76,13 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
     @Override
     public void executeTask(Task task, TaskManager taskManager) {
         String problem = null;
-        Map<String,Object> parameters = task.getParameters();
-        Map<String,Object> results = null;
-        QName serviceName = getServiceName(parameters);
+        Map<String,Object> taskParameters = task.getParameters();
+        Map<String,Object> taskResults = null;
+        QName serviceName = getServiceName(taskParameters);
         if (serviceName != null) {
             ServiceReference serviceRef = getServiceDomain().getService(serviceName);
             if (serviceRef != null) {
-                ExchangeContract exchangeContract = getExchangeContract(serviceRef, parameters);
+                ExchangeContract exchangeContract = getExchangeContract(serviceRef, taskParameters);
                 ExchangePattern exchangePattern = exchangeContract.getServiceOperation().getExchangePattern();
                 SynchronousInOutHandler inOutHandler = null;
                 final Exchange exchangeIn;
@@ -96,32 +92,37 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
                 } else {
                     exchangeIn = serviceRef.createExchange(exchangeContract);
                 }
-                Context context = exchangeIn.getContext();
-                for (Map.Entry<String,Object> entry : parameters.entrySet()) {
-                    context.setProperty(entry.getKey(), entry.getValue(), Scope.IN);
+                Context contextIn = exchangeIn.getContext();
+                for (Map.Entry<String,Object> entry : taskParameters.entrySet()) {
+                    contextIn.setProperty(entry.getKey(), entry.getValue(), Scope.IN);
                 }
-                Message message = exchangeIn.createMessage();
-                Object content = task.getProcessInstanceVariable(getInputContentName(task));
-                if (content != null) {
-                    message.setContent(content);
+                Message messageIn = exchangeIn.createMessage();
+                String messageContentInName = getMessageContentInName();
+                Object messageContentIn = taskParameters.get(messageContentInName);
+                if (messageContentIn != null) {
+                    messageIn.setContent(messageContentIn);
                 }
                 if (inOutHandler != null && ExchangePattern.IN_OUT.equals(exchangePattern)) {
-                    exchangeIn.send(message);
+                    exchangeIn.send(messageIn);
                     try {
                         Exchange exchangeOut = inOutHandler.waitForOut();
-                        context = exchangeOut.getContext();
-                        message = exchangeOut.getMessage();
-                        content = message.getContent();
-                        task.setProcessInstanceVariable(getOutputContentName(task), content);
-                        results = new HashMap<String,Object>();
-                        for (Property property : context.getProperties(Scope.OUT)) {
-                            results.put(property.getName(), property.getValue());
+                        Message messageOut = exchangeOut.getMessage();
+                        Object messageContentOut = messageOut.getContent();
+                        taskResults = task.getResults();
+                        if (taskResults == null) {
+                            taskResults = new HashMap<String,Object>();
+                        }
+                        String messageContentOutName = getMessageContentOutName();
+                        taskResults.put(messageContentOutName, messageContentOut);
+                        Context contextOut = exchangeOut.getContext();
+                        for (Property property : contextOut.getProperties(Scope.OUT)) {
+                            taskResults.put(property.getName(), property.getValue());
                         }
                     } catch (DeliveryException e) {
                         problem = e.getMessage();
                     }
                 } else {
-                    exchangeIn.send(message);
+                    exchangeIn.send(messageIn);
                 }
             } else {
                 problem = "serviceRef (" + serviceName + ") == null";
@@ -130,16 +131,16 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
             problem = SERVICE_NAME + " == null";
         }
         if (problem == null) {
-            taskManager.completeTask(task.getId(), results);
+            taskManager.completeTask(task.getId(), taskResults);
         } else {
             LOGGER.error(problem);
             taskManager.abortTask(task.getId());
         }
     }
 
-    private QName getServiceName(Map<String, Object> parameters) {
+    private QName getServiceName(Map<String, Object> taskParameters) {
         QName serviceName = null;
-        Object p = parameters.get(SERVICE_NAME);
+        Object p = taskParameters.get(SERVICE_NAME);
         if (p instanceof QName) {
             serviceName = (QName)p;
         } else if (p instanceof String) {
@@ -154,27 +155,9 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
         return serviceName;
     }
 
-    private String getInputContentName(Task task) {
-        // check for a task-level specification of input name
-        String contentName = (String)task.getParameter(INPUT_MESSAGE_VAR);
-        if (contentName == null) {
-            contentName = getMessageContentName();
-        }
-        return contentName;
-    }
-
-    private String getOutputContentName(Task task) {
-        // check for a task-level specification of output name
-        String contentName = (String)task.getParameter(OUTPUT_MESSAGE_VAR);
-        if (contentName == null) {
-            contentName = getMessageContentName();
-        }
-        return contentName;
-    }
-
-    private ExchangeContract getExchangeContract(ServiceReference serviceRef, Map<String, Object> parameters) {
+    private ExchangeContract getExchangeContract(ServiceReference serviceRef, Map<String, Object> taskParameters) {
         final ExchangeContract exchangeContract;
-        Object on = parameters.get(SERVICE_OPERATION_NAME);
+        Object on = taskParameters.get(SERVICE_OPERATION_NAME);
         if (on instanceof String) {
             String operationName = (String)on;
             ServiceOperation operation = serviceRef.getInterface().getOperation(operationName);

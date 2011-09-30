@@ -41,7 +41,7 @@ import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
 import org.switchyard.common.io.resource.SimpleResource;
-import org.switchyard.component.bpm.config.model.v1.V1BpmComponentImplementationModel;
+import org.switchyard.component.bpm.config.model.v1.V1BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.v1.V1TaskHandlerModel;
 import org.switchyard.component.bpm.task.SwitchYardServiceTaskHandler;
 import org.switchyard.config.model.composite.JavaComponentServiceInterfaceModel;
@@ -174,7 +174,7 @@ public class BPMServicePlugin implements Plugin {
         component.addService(service);
         
         // Create the BPM implementation model and add it to the component model
-        V1BpmComponentImplementationModel bpm = new V1BpmComponentImplementationModel();
+        V1BPMComponentImplementationModel bpm = new V1BPMComponentImplementationModel();
         bpm.setProcessDefinition(new SimpleResource(processDefinition));
         bpm.setProcessId(processId);
         V1TaskHandlerModel switchyardHandler = new V1TaskHandlerModel();

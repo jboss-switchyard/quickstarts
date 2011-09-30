@@ -32,7 +32,7 @@ import org.switchyard.component.bpm.Process;
 import org.switchyard.component.bpm.SignalEvent;
 import org.switchyard.component.bpm.StartProcess;
 import org.switchyard.component.bpm.common.ProcessActionType;
-import org.switchyard.component.bpm.config.model.v1.V1BpmComponentImplementationModel;
+import org.switchyard.component.bpm.config.model.v1.V1BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.v1.V1ProcessActionModel;
 import org.switchyard.component.bpm.config.model.v1.V1TaskHandlerModel;
 import org.switchyard.component.bpm.task.SwitchYardServiceTaskHandler;
@@ -59,7 +59,7 @@ import org.switchyard.metadata.java.JavaService;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class BpmSwitchYardScanner implements Scanner<SwitchYardModel> {
+public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
 
     private static final IsAnnotationPresentFilter PROCESS_FILTER = new IsAnnotationPresentFilter(Process.class);
     private static final IsAnnotationPresentFilter START_PROCESS_FILTER = new IsAnnotationPresentFilter(StartProcess.class);
@@ -102,7 +102,7 @@ public class BpmSwitchYardScanner implements Scanner<SwitchYardModel> {
             componentModel.setName(processName);
             componentModel.addService(serviceModel);
             compositeModel.addComponent(componentModel);
-            BpmComponentImplementationModel bciModel = new V1BpmComponentImplementationModel();
+            BPMComponentImplementationModel bciModel = new V1BPMComponentImplementationModel();
             String processDefinition = process.definition();
             if (Process.UNDEFINED_PROCESS_DEFINITION.equals(processDefinition)) {
                 processDefinition = "META-INF/" + processName + ".bpmn";
@@ -113,6 +113,14 @@ public class BpmSwitchYardScanner implements Scanner<SwitchYardModel> {
                 processId = processName;
             }
             bciModel.setProcessId(processId);
+            String messageContentInName = process.messageContentInName();
+            if (!Process.UNDEFINED_MESSAGE_CONTENT_NAME.equals(messageContentInName)) {
+                bciModel.setMessageContentInName(messageContentInName);
+            }
+            String messageContentOutName = process.messageContentOutName();
+            if (!Process.UNDEFINED_MESSAGE_CONTENT_NAME.equals(messageContentOutName)) {
+                bciModel.setMessageContentOutName(messageContentOutName);
+            }
             JavaService javaService = JavaService.fromClass(processInterface);
             for (Method method : processClass.getDeclaredMethods()) {
                 ProcessActionType pat = null;

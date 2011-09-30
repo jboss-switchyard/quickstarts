@@ -18,36 +18,42 @@
  */
 package org.switchyard.component.bpm.exchange;
 
-import java.util.ServiceLoader;
+import javax.xml.namespace.QName;
 
-import org.switchyard.ServiceDomain;
+import org.switchyard.ExchangeHandler;
+import org.switchyard.ServiceReference;
+import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 
 /**
- * Creates BpmExchangeHandlers via the JDK ServiceLoader mechanism.
+ * The ExchangeHandler for the BPM component.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public abstract class BpmExchangeHandlerFactory {
-
-    private static final BpmExchangeHandlerFactory INSTANCE;
-    static {
-        ServiceLoader<BpmExchangeHandlerFactory> loader = ServiceLoader.load(BpmExchangeHandlerFactory.class);
-        INSTANCE = loader.iterator().next();
-    }
+public interface BPMExchangeHandler extends ExchangeHandler {
 
     /**
-     * Creates a new BpmExchangeHandler in the specified ServiceDomain.
-     * @param serviceDomain the specified ServiceDomain
-     * @return the BpmExchangeHandler
+     * Initializes the BPMExchangeHandler.
+     * @param qname the qualified name
+     * @param model the configuration
      */
-    public abstract BpmExchangeHandler newBpmExchangeHandler(ServiceDomain serviceDomain);
+    public void init(QName qname, BPMComponentImplementationModel model);
 
     /**
-     * Returns the singleton instance of the BpmExchangeHandlerFactory.
-     * @return the singleton instance
+     * Starts the BPMExchangeHandler.
+     * @param serviceRef the service reference
      */
-    public static BpmExchangeHandlerFactory instance() {
-        return INSTANCE;
-    }
+    public void start(ServiceReference serviceRef);
+
+    /**
+     * Stops the BPMExchangeHandler.
+     * @param serviceRef the service reference
+     */
+    public void stop(ServiceReference serviceRef);
+
+    /**
+     * Destroys the BPMExchangeHandler.
+     * @param serviceRef the service reference
+     */
+    public void destroy(ServiceReference serviceRef);
 
 }

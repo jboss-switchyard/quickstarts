@@ -22,7 +22,7 @@ import static org.switchyard.component.bpm.config.model.ProcessActionModel.PROCE
 import static org.switchyard.component.bpm.config.model.TaskHandlerModel.TASK_HANDLER;
 import static org.switchyard.config.model.resource.ResourceModel.RESOURCE;
 
-import org.switchyard.component.bpm.config.model.BpmComponentImplementationModel;
+import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
@@ -31,23 +31,23 @@ import org.switchyard.config.model.composite.v1.V1CompositeMarshaller;
 import org.switchyard.config.model.resource.v1.V1ResourceModel;
 
 /**
- * A CompositeMarshaller which can also create BpmComponentImplementationModels, ResourceModels and TaskHandlerModels.
+ * A CompositeMarshaller which can also create BPMComponentImplementationModels, ResourceModels and TaskHandlerModels.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1BpmMarshaller extends V1CompositeMarshaller {
+public class V1BPMMarshaller extends V1CompositeMarshaller {
 
     /**
      * The complete local name ("implementation.bpm").
      */
-    private static final String IMPLEMENTATION_BPM = ComponentImplementationModel.IMPLEMENTATION + "." + BpmComponentImplementationModel.BPM;
+    private static final String IMPLEMENTATION_BPM = ComponentImplementationModel.IMPLEMENTATION + "." + BPMComponentImplementationModel.BPM;
 
     /**
      * Required constructor called via reflection.
      *
      * @param desc the Descriptor
      */
-    public V1BpmMarshaller(Descriptor desc) {
+    public V1BPMMarshaller(Descriptor desc) {
         super(desc);
     }
 
@@ -62,7 +62,7 @@ public class V1BpmMarshaller extends V1CompositeMarshaller {
     public Model read(Configuration config) {
         String name = config.getName();
         if (IMPLEMENTATION_BPM.equals(name)) {
-            return new V1BpmComponentImplementationModel(config, getDescriptor());
+            return new V1BPMComponentImplementationModel(config, getDescriptor());
         } else if (PROCESS_ACTION.equals(name)) {
             return new V1ProcessActionModel(config, getDescriptor());
         } else if (RESOURCE.equals(name)) {

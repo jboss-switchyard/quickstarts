@@ -16,25 +16,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.exchange.drools;
+package org.switchyard.component.bpm.exchange;
+
+import java.util.ServiceLoader;
 
 import org.switchyard.ServiceDomain;
-import org.switchyard.component.bpm.exchange.BpmExchangeHandler;
-import org.switchyard.component.bpm.exchange.BpmExchangeHandlerFactory;
 
 /**
- * The factory for DroolsBpmExchangeHandler.
+ * Creates BPMExchangeHandlers via the JDK ServiceLoader mechanism.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class DroolsBpmExchangeHandlerFactory extends BpmExchangeHandlerFactory {
+public abstract class BPMExchangeHandlerFactory {
+
+    private static final BPMExchangeHandlerFactory INSTANCE;
+    static {
+        ServiceLoader<BPMExchangeHandlerFactory> loader = ServiceLoader.load(BPMExchangeHandlerFactory.class);
+        INSTANCE = loader.iterator().next();
+    }
 
     /**
-     * {@inheritDoc}
+     * Creates a new BPMExchangeHandler in the specified ServiceDomain.
+     * @param serviceDomain the specified ServiceDomain
+     * @return the BPMExchangeHandler
      */
-    @Override
-    public BpmExchangeHandler newBpmExchangeHandler(ServiceDomain serviceDomain) {
-        return new DroolsBpmExchangeHandler(serviceDomain);
+    public abstract BPMExchangeHandler newBPMExchangeHandler(ServiceDomain serviceDomain);
+
+    /**
+     * Returns the singleton instance of the BPMExchangeHandlerFactory.
+     * @return the singleton instance
+     */
+    public static BPMExchangeHandlerFactory instance() {
+        return INSTANCE;
     }
 
 }

@@ -58,7 +58,8 @@ public class WSHumanTaskHandler extends DroolsTaskHandler {
     public void executeTask(Task task, TaskManager taskManager) {
         connect();
         super.executeTask(task, taskManager);
-        taskManager.completeTask(task.getId(), task.getResults());
+        // tasks get completed by humans!
+        //taskManager.completeTask(task.getId(), task.getResults());
         disconnect();
     }
 

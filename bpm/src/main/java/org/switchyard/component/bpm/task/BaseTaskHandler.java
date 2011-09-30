@@ -28,7 +28,8 @@ import org.switchyard.ServiceDomain;
 public abstract class BaseTaskHandler implements TaskHandler {
 
     private String _name;
-    private String _messageContentName;
+    private String _messageContentInName;
+    private String _messageContentOutName;
     private String _targetNamespace;
     private ServiceDomain _serviceDomain;
 
@@ -68,16 +69,33 @@ public abstract class BaseTaskHandler implements TaskHandler {
      * {@inheritDoc}
      */
     @Override
-    public String getMessageContentName() {
-        return _messageContentName;
+    public String getMessageContentInName() {
+        return _messageContentInName;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public TaskHandler setMessageContentName(String messageContentName) {
-        _messageContentName = messageContentName;
+    public TaskHandler setMessageContentInName(String messageContentInName) {
+        _messageContentInName = messageContentInName;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getMessageContentOutName() {
+        return _messageContentOutName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TaskHandler setMessageContentOutName(String messageContentOutName) {
+        _messageContentOutName = messageContentOutName;
         return this;
     }
 

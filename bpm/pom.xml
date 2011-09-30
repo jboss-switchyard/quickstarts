@@ -16,7 +16,7 @@
     <url>http://www.switchyard.org</url>
 
     <properties>
-        <version.drools>5.2.0.Final</version.drools>
+        <version.drools>5.2.1.Final</version.drools>
         <version.antlr>3.3</version.antlr>
         <version.ecj>3.5.1</version.ecj>
         <version.hibernate.core>3.3.2.GA</version.hibernate.core>
@@ -57,6 +57,11 @@
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

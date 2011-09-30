@@ -53,9 +53,9 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class BpmModelTests {
+public class BPMModelTests {
 
-    private static final String COMPLETE_XML = "/org/switchyard/component/bpm/config/model/BpmModelTests-Complete.xml";
+    private static final String COMPLETE_XML = "/org/switchyard/component/bpm/config/model/BPMModelTests-Complete.xml";
 
     private ModelPuller<SwitchYardModel> _puller;
 
@@ -70,8 +70,8 @@ public class BpmModelTests {
         CompositeModel composite = switchyard.getComposite();
         ComponentModel component = composite.getComponents().get(0);
         ComponentImplementationModel implementation = component.getImplementation();
-        Assert.assertTrue(implementation instanceof BpmComponentImplementationModel);
-        BpmComponentImplementationModel bci = (BpmComponentImplementationModel)implementation;
+        Assert.assertTrue(implementation instanceof BPMComponentImplementationModel);
+        BPMComponentImplementationModel bci = (BPMComponentImplementationModel)implementation;
         Assert.assertEquals("bpm", bci.getType());
         Assert.assertEquals("foobar.bpmn", bci.getProcessDefinition().getLocation());
         Assert.assertSame(ResourceType.valueOf("BPMN2"), bci.getProcessDefinition().getType());
@@ -107,7 +107,7 @@ public class BpmModelTests {
 
     @Test
     public void testScanForProcesses() throws Exception {
-        Scanner<SwitchYardModel> scanner = new BpmSwitchYardScanner();
+        Scanner<SwitchYardModel> scanner = new BPMSwitchYardScanner();
         ScannerInput<SwitchYardModel> input = new ScannerInput<SwitchYardModel>().setName(getClass().getSimpleName());
         List<URL> urls = new ArrayList<URL>();
         String resPath = getClass().getName().replaceAll("\\.", "/") + ".class";
@@ -121,7 +121,7 @@ public class BpmModelTests {
         List<ComponentModel> cm_list = composite.getComponents();
         Assert.assertEquals(2, cm_list.size());
         for (ComponentModel c : cm_list) {
-            BpmComponentImplementationModel bci = (BpmComponentImplementationModel)c.getImplementation();
+            BPMComponentImplementationModel bci = (BPMComponentImplementationModel)c.getImplementation();
             String processId = bci.getProcessId();
             if ("SimpleProcess".equals(processId)) {
                 Assert.assertEquals("META-INF/SimpleProcess.bpmn", bci.getProcessDefinition().getLocation());

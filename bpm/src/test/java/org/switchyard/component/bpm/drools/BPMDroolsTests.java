@@ -46,11 +46,11 @@ import org.switchyard.Property;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.io.resource.SimpleResource;
-import org.switchyard.component.bpm.config.model.BpmComponentImplementationModel;
-import org.switchyard.component.bpm.config.model.v1.V1BpmComponentImplementationModel;
+import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
+import org.switchyard.component.bpm.config.model.v1.V1BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.v1.V1TaskHandlerModel;
-import org.switchyard.component.bpm.exchange.BpmExchangeHandler;
-import org.switchyard.component.bpm.exchange.BpmExchangeHandlerFactory;
+import org.switchyard.component.bpm.exchange.BPMExchangeHandler;
+import org.switchyard.component.bpm.exchange.BPMExchangeHandlerFactory;
 import org.switchyard.component.bpm.task.SwitchYardServiceTaskHandler;
 import org.switchyard.component.bpm.task.drools.DroolsWorkItemHandler;
 import org.switchyard.test.SwitchYardRunner;
@@ -61,11 +61,11 @@ import org.switchyard.test.SwitchYardRunner;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 @RunWith(SwitchYardRunner.class)
-public class BpmDroolsTests {
+public class BPMDroolsTests {
 
-    private static final String TEST_CALL_SERVICE = "org/switchyard/component/bpm/drools/BpmDroolsTests-CallService.bpmn";
-    private static final String TEST_CONTROL_PROCESS = "org/switchyard/component/bpm/drools/BpmDroolsTests-ControlProcess.bpmn";
-    private static final String TEST_REUSE_HANDLER = "org/switchyard/component/bpm/drools/BpmDroolsTests-ReuseHandler.bpmn";
+    private static final String TEST_CALL_SERVICE = "org/switchyard/component/bpm/drools/BPMDroolsTests-CallService.bpmn";
+    private static final String TEST_CONTROL_PROCESS = "org/switchyard/component/bpm/drools/BPMDroolsTests-ControlProcess.bpmn";
+    private static final String TEST_REUSE_HANDLER = "org/switchyard/component/bpm/drools/BPMDroolsTests-ReuseHandler.bpmn";
 
     private ServiceDomain serviceDomain;
 
@@ -99,9 +99,9 @@ public class BpmDroolsTests {
             }
         });
         QName qname = new QName("ControlProcess");
-        BpmExchangeHandler handler = BpmExchangeHandlerFactory.instance().newBpmExchangeHandler(serviceDomain);
+        BPMExchangeHandler handler = BPMExchangeHandlerFactory.instance().newBPMExchangeHandler(serviceDomain);
         ServiceReference serviceRef = serviceDomain.registerService(qname, handler);
-        BpmComponentImplementationModel bci_model = new V1BpmComponentImplementationModel();
+        BPMComponentImplementationModel bci_model = new V1BPMComponentImplementationModel();
         bci_model.setProcessDefinition(new SimpleResource(TEST_CONTROL_PROCESS, "BPMN2"));
         bci_model.setProcessId(qname.getLocalPart());
         bci_model.addTaskHandler(new V1TaskHandlerModel().setClazz(SwitchYardServiceTaskHandler.class).setName(SwitchYardServiceTaskHandler.SWITCHYARD_SERVICE));
@@ -127,9 +127,9 @@ public class BpmDroolsTests {
     @Test
     public void testReuseHandler() throws Exception {
         QName qname = new QName("ReuseHandler");
-        BpmExchangeHandler handler = BpmExchangeHandlerFactory.instance().newBpmExchangeHandler(serviceDomain);
+        BPMExchangeHandler handler = BPMExchangeHandlerFactory.instance().newBPMExchangeHandler(serviceDomain);
         ServiceReference serviceRef = serviceDomain.registerService(qname, handler);
-        BpmComponentImplementationModel bci_model = new V1BpmComponentImplementationModel();
+        BPMComponentImplementationModel bci_model = new V1BPMComponentImplementationModel();
         bci_model.setProcessDefinition(new SimpleResource(TEST_REUSE_HANDLER, "BPMN2"));
         bci_model.setProcessId(qname.getLocalPart());
         bci_model.addTaskHandler(new V1TaskHandlerModel().setClazz(ReuseHandler.class).setName(qname.getLocalPart()));

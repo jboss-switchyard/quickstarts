@@ -18,8 +18,6 @@
  */
 package org.switchyard.component.bpm.common;
 
-import javax.xml.namespace.QName;
-
 /**
  * Represents available process actions.
  *
@@ -27,39 +25,39 @@ import javax.xml.namespace.QName;
  */
 public enum ProcessActionType {
 
-    /** {urn:switchyard-component-bpm:process:1.0}startProcess . */
-    START_PROCESS(QName.valueOf(ProcessConstants.START_PROCESS_VAR)),
-    /** {urn:switchyard-component-bpm:process:1.0}signalEvent . */
-    SIGNAL_EVENT(QName.valueOf(ProcessConstants.SIGNAL_EVENT_VAR)),
-    /** {urn:switchyard-component-bpm:process:1.0}abortProcessInstance . */
-    ABORT_PROCESS_INSTANCE(QName.valueOf(ProcessConstants.ABORT_PROCESS_INSTANCE_VAR));
+    /** startProcess . */
+    START_PROCESS(ProcessConstants.START_PROCESS),
+    /** signalEvent . */
+    SIGNAL_EVENT(ProcessConstants.SIGNAL_EVENT),
+    /** abortProcessInstance . */
+    ABORT_PROCESS_INSTANCE(ProcessConstants.ABORT_PROCESS_INSTANCE);
 
-    private final QName _qname;
+    private final String _action;
 
     /**
-     * Constructs a new ProcessActionType with the specified qualified name.
-     * @param qname the qualified name
+     * Constructs a new ProcessActionType with the specified action.
+     * @param action the action
      */
-    ProcessActionType(QName qname) {
-        _qname = qname;
+    ProcessActionType(String action) {
+        _action = action;
     }
 
     /**
-     * Gets the qualified name.
-     * @return the qualified name
+     * Gets the action.
+     * @return the action
      */
-    public QName qname() {
-        return _qname;
+    public String action() {
+        return _action;
     }
 
     /**
-     * Gets the ProcessActionType matching the specified qualified name.
-     * @param qname the qualified name
+     * Gets the ProcessActionType matching the specified action.
+     * @param action the action
      * @return the matching ProcessActionType
      */
-    public static ProcessActionType valueOf(QName qname) {
+    public static ProcessActionType fromAction(String action) {
         for (ProcessActionType pat : values()) {
-            if (pat.qname().equals(qname)) {
+            if (pat.action().equals(action)) {
                 return pat;
             }
         }

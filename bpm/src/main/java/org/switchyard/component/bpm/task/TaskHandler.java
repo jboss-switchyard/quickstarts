@@ -41,17 +41,30 @@ public interface TaskHandler {
     public TaskHandler setName(String name);
 
     /**
-     * Gets the message content name.
-     * @return the name of the message content
+     * Gets the message content in name.
+     * @return the name of the message content in
      */
-    public String getMessageContentName();
+    public String getMessageContentInName();
 
     /**
-     * Sets the message content name.
-     * @param messageContentName the message content name
+     * Sets the message content in name.
+     * @param messageContentInName the message content in name
      * @return this TaskHandler (useful for chaining)
      */
-    public TaskHandler setMessageContentName(String messageContentName);
+    public TaskHandler setMessageContentInName(String messageContentInName);
+
+    /**
+     * Gets the message content out name.
+     * @return the name of the message content out
+     */
+    public String getMessageContentOutName();
+
+    /**
+     * Sets the message content out name.
+     * @param messageContentOutName the message content out name
+     * @return this TaskHandler (useful for chaining)
+     */
+    public TaskHandler setMessageContentOutName(String messageContentOutName);
 
     /**
      * Gets the target namespace.

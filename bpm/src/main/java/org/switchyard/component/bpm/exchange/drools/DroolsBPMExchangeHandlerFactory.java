@@ -16,44 +16,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.exchange;
+package org.switchyard.component.bpm.exchange.drools;
 
-import javax.xml.namespace.QName;
-
-import org.switchyard.ExchangeHandler;
-import org.switchyard.ServiceReference;
-import org.switchyard.component.bpm.config.model.BpmComponentImplementationModel;
+import org.switchyard.ServiceDomain;
+import org.switchyard.component.bpm.exchange.BPMExchangeHandler;
+import org.switchyard.component.bpm.exchange.BPMExchangeHandlerFactory;
 
 /**
- * The ExchangeHandler for the BPM component.
+ * The factory for DroolsBPMExchangeHandler.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface BpmExchangeHandler extends ExchangeHandler {
+public class DroolsBPMExchangeHandlerFactory extends BPMExchangeHandlerFactory {
 
     /**
-     * Initializes the BpmExchangeHandler.
-     * @param qname the qualified name
-     * @param model the configuration
+     * {@inheritDoc}
      */
-    public void init(QName qname, BpmComponentImplementationModel model);
-
-    /**
-     * Starts the BpmExchangeHandler.
-     * @param serviceRef the service reference
-     */
-    public void start(ServiceReference serviceRef);
-
-    /**
-     * Stops the BpmExchangeHandler.
-     * @param serviceRef the service reference
-     */
-    public void stop(ServiceReference serviceRef);
-
-    /**
-     * Destroys the BpmExchangeHandler.
-     * @param serviceRef the service reference
-     */
-    public void destroy(ServiceReference serviceRef);
+    @Override
+    public BPMExchangeHandler newBPMExchangeHandler(ServiceDomain serviceDomain) {
+        return new DroolsBPMExchangeHandler(serviceDomain);
+    }
 
 }

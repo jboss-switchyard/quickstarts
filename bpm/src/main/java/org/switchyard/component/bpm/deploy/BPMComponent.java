@@ -32,7 +32,7 @@ public class BPMComponent extends BaseComponent {
      */
     public BPMComponent() {
         setName("BPMComponent");
-        setActivator(new BpmActivator());
+        setActivator(new BPMActivator());
     }
 
 }

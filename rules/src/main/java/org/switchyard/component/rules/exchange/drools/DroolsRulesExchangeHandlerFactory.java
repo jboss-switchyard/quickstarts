@@ -22,7 +22,7 @@ import org.switchyard.component.rules.exchange.RulesExchangeHandler;
 import org.switchyard.component.rules.exchange.RulesExchangeHandlerFactory;
 
 /**
- * The factory for DroolsBpmExchangeHandler.
+ * The factory for DroolsRulesExchangeHandler.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */

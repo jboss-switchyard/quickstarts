@@ -18,7 +18,7 @@
  */
 package org.switchyard.component.bpm.config.model.v1;
 
-import static org.switchyard.component.bpm.config.model.BpmComponentImplementationModel.DEFAULT_NAMESPACE;
+import static org.switchyard.component.bpm.config.model.BPMComponentImplementationModel.DEFAULT_NAMESPACE;
 
 import javax.xml.namespace.QName;
 

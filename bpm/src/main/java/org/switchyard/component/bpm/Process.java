@@ -59,6 +59,16 @@ public @interface Process {
     public String id() default UNDEFINED_PROCESS_ID;
 
     /**
+     * Specified message content in name.
+     */
+    public String messageContentInName() default UNDEFINED_MESSAGE_CONTENT_NAME;
+
+    /**
+     * Specified message content out name.
+     */
+    public String messageContentOutName() default UNDEFINED_MESSAGE_CONTENT_NAME;
+
+    /**
      * Additional resources the process requires.
      */
     public String[] resources() default UNDEFINED_RESOURCE;
@@ -76,6 +86,8 @@ public @interface Process {
     public static final String BPMN2 = "BPMN2";
     /** An undefined process id. */
     public static final String UNDEFINED_PROCESS_ID = "";
+    /** An undefined message content name. */
+    public static final String UNDEFINED_MESSAGE_CONTENT_NAME = "";
     /** An undefined process resource. */
     public static final String UNDEFINED_RESOURCE = "";
     /** An undefined task handler. */

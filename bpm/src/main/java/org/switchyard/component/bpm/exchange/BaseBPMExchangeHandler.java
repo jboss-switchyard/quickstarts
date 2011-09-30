@@ -23,9 +23,6 @@ import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_ACTIO
 import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_EVENT_TYPE_VAR;
 import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_EVENT_VAR;
 import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_INSTANCE_ID_VAR;
-import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_NAMESPACE;
-
-import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
 import org.switchyard.BaseHandler;
@@ -33,18 +30,17 @@ import org.switchyard.Context;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Property;
-import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.bpm.common.ProcessActionType;
 import org.switchyard.component.bpm.config.model.ProcessActionModel;
 
 /**
- * Contains base BpmExchangeHandler functionality and/or utility methods.
+ * Contains base BPMExchangeHandler functionality and/or utility methods.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public abstract class BaseBpmExchangeHandler extends BaseHandler implements BpmExchangeHandler {
+public abstract class BaseBPMExchangeHandler extends BaseHandler implements BPMExchangeHandler {
 
-    private static final Logger LOGGER = Logger.getLogger(BaseBpmExchangeHandler.class);
+    private static final Logger LOGGER = Logger.getLogger(BaseBPMExchangeHandler.class);
 
     /**
      * Gets the ProcessActionType from the Exchange Context.
@@ -64,17 +60,15 @@ public abstract class BaseBpmExchangeHandler extends BaseHandler implements BpmE
             Object value = property.getValue();
             if (value instanceof ProcessActionType) {
                 return (ProcessActionType)value;
-            } else if (value instanceof QName) {
-                return ProcessActionType.valueOf((QName)value);
             } else if (value instanceof String) {
-                return ProcessActionType.valueOf(XMLHelper.createQName(PROCESS_NAMESPACE, (String)value));
+                return ProcessActionType.fromAction((String)value);
             }
         }
         if (LOGGER.isDebugEnabled()) {
             String msg = new StringBuilder()
                 .append(getNullParameterMessage(null, PROCESS_ACTION_TYPE_VAR))
                 .append("; defaulting to: ")
-                .append(ProcessActionType.START_PROCESS.qname())
+                .append(ProcessActionType.START_PROCESS.action())
                 .toString();
             LOGGER.debug(msg);
         }
@@ -155,7 +149,7 @@ public abstract class BaseBpmExchangeHandler extends BaseHandler implements BpmE
         StringBuilder sb = new StringBuilder("implementation.bpm: ");
         if (processActionType != null) {
             sb.append("[");
-            sb.append(processActionType.qname());
+            sb.append(processActionType.action());
             sb.append("] ");
         }
         sb.append(parameterName);

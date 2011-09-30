@@ -30,7 +30,7 @@ import org.switchyard.config.model.resource.ResourceModel;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface BpmComponentImplementationModel extends ComponentImplementationModel {
+public interface BPMComponentImplementationModel extends ComponentImplementationModel {
 
     /**
      * The "bpm" namespace.
@@ -55,7 +55,7 @@ public interface BpmComponentImplementationModel extends ComponentImplementation
      * @param processDefinition the "processDefinition" resource
      * @return this instance (useful for chaining)
      */
-    public BpmComponentImplementationModel setProcessDefinition(Resource processDefinition);
+    public BPMComponentImplementationModel setProcessDefinition(Resource processDefinition);
 
     /**
      * Gets the "processId" attribute.
@@ -70,22 +70,37 @@ public interface BpmComponentImplementationModel extends ComponentImplementation
      * @param processId the "processId" attribute
      * @return this instance (useful for chaining)
      */
-    public BpmComponentImplementationModel setProcessId(String processId);
+    public BPMComponentImplementationModel setProcessId(String processId);
 
     /**
-     * Gets the "messageContentName" attribute.
+     * Gets the "messageContentInName" attribute.
      *
-     * @return the "messageContentName" attribute
+     * @return the "messageContentInName" attribute
      */
-    public String getMessageContentName();
+    public String getMessageContentInName();
 
     /**
-     * Sets the "messageContentName" attribute.
+     * Sets the "messageContentInName" attribute.
      *
-     * @param messageContentName the "messageContentName" attribute
+     * @param messageContentInName the "messageContentInName" attribute
      * @return this instance (useful for chaining)
      */
-    public BpmComponentImplementationModel setMessageContentName(String messageContentName);
+    public BPMComponentImplementationModel setMessageContentInName(String messageContentInName);
+
+    /**
+     * Gets the "messageContentOutName" attribute.
+     *
+     * @return the "messageContentOutName" attribute
+     */
+    public String getMessageContentOutName();
+
+    /**
+     * Sets the "messageContentOutName" attribute.
+     *
+     * @param messageContentOutName the "messageContentOutName" attribute
+     * @return this instance (useful for chaining)
+     */
+    public BPMComponentImplementationModel setMessageContentOutName(String messageContentOutName);
 
     /**
      * Gets the child process action models.
@@ -96,9 +111,9 @@ public interface BpmComponentImplementationModel extends ComponentImplementation
     /**
      * Adds a child process action model.
      * @param processAction the child process action model
-     * @return this BpmComponentImplementationModel (useful for chaining)
+     * @return this BPMComponentImplementationModel (useful for chaining)
      */
-    public BpmComponentImplementationModel addProcessAction(ProcessActionModel processAction);
+    public BPMComponentImplementationModel addProcessAction(ProcessActionModel processAction);
 
     /**
      * Gets the child task handler models.
@@ -109,9 +124,9 @@ public interface BpmComponentImplementationModel extends ComponentImplementation
     /**
      * Adds a child task item handler model.
      * @param taskHandler the child task handler model
-     * @return this BpmComponentImplementationModel (useful for chaining)
+     * @return this BPMComponentImplementationModel (useful for chaining)
      */
-    public BpmComponentImplementationModel addTaskHandler(TaskHandlerModel taskHandler);
+    public BPMComponentImplementationModel addTaskHandler(TaskHandlerModel taskHandler);
 
     /**
      * Gets the child resource models.
@@ -122,8 +137,8 @@ public interface BpmComponentImplementationModel extends ComponentImplementation
     /**
      * Adds a child resource model.
      * @param resource the child resource model
-     * @return this BpmComponentImplementationModel (useful for chaining)
+     * @return this BPMComponentImplementationModel (useful for chaining)
      */
-    public BpmComponentImplementationModel addResource(ResourceModel resource);
+    public BPMComponentImplementationModel addResource(ResourceModel resource);
 
 }

@@ -18,7 +18,8 @@
  */
 package org.switchyard.component.bpm.exchange.drools;
 
-import static org.switchyard.component.bpm.common.ProcessConstants.MESSAGE_CONTENT_VAR;
+import static org.switchyard.component.bpm.common.ProcessConstants.MESSAGE_CONTENT_IN;
+import static org.switchyard.component.bpm.common.ProcessConstants.MESSAGE_CONTENT_OUT;
 import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_ID_VAR;
 import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_INSTANCE_ID_VAR;
 
@@ -50,10 +51,10 @@ import org.switchyard.common.io.resource.Resource;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.component.bpm.common.ProcessActionType;
-import org.switchyard.component.bpm.config.model.BpmComponentImplementationModel;
+import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.ProcessActionModel;
 import org.switchyard.component.bpm.config.model.TaskHandlerModel;
-import org.switchyard.component.bpm.exchange.BaseBpmExchangeHandler;
+import org.switchyard.component.bpm.exchange.BaseBPMExchangeHandler;
 import org.switchyard.component.bpm.task.TaskHandler;
 import org.switchyard.component.bpm.task.drools.DroolsWorkItemHandler;
 import org.switchyard.config.model.composite.ComponentModel;
@@ -64,21 +65,22 @@ import org.switchyard.metadata.ServiceOperation;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
+public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
 
     private final ServiceDomain _serviceDomain;
     private String _processId;
-    private String _messageContentName;
+    private String _messageContentInName;
+    private String _messageContentOutName;
     private List<TaskHandler> _taskHandlers = new ArrayList<TaskHandler>();
     private Map<String,ProcessActionModel> _actions = new HashMap<String,ProcessActionModel>();
     private KnowledgeBase _kbase;
     private StatefulKnowledgeSession _ksession;
 
     /**
-     * Constructs a new DroolsBpmExchangeHandler within the specified ServiceDomain.
+     * Constructs a new DroolsBPMExchangeHandler within the specified ServiceDomain.
      * @param serviceDomain the specified ServiceDomain
      */
-    public DroolsBpmExchangeHandler(ServiceDomain serviceDomain) {
+    public DroolsBPMExchangeHandler(ServiceDomain serviceDomain) {
         _serviceDomain = serviceDomain;
     }
 
@@ -86,11 +88,15 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
      * {@inheritDoc}
      */
     @Override
-    public void init(QName qname, BpmComponentImplementationModel model) {
+    public void init(QName qname, BPMComponentImplementationModel model) {
         _processId = model.getProcessId();
-        _messageContentName = model.getMessageContentName();
-        if (_messageContentName == null) {
-            _messageContentName = MESSAGE_CONTENT_VAR;
+        _messageContentInName = model.getMessageContentInName();
+        if (_messageContentInName == null) {
+            _messageContentInName = MESSAGE_CONTENT_IN;
+        }
+        _messageContentOutName = model.getMessageContentOutName();
+        if (_messageContentOutName == null) {
+            _messageContentOutName = MESSAGE_CONTENT_OUT;
         }
         ComponentModel cm = model.getComponent();
         String tns = cm != null ? cm.getTargetNamespace() : null;
@@ -100,7 +106,8 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
             if (name != null) {
                 tih.setName(name);
             }
-            tih.setMessageContentName(_messageContentName);
+            tih.setMessageContentInName(_messageContentInName);
+            tih.setMessageContentOutName(_messageContentOutName);
             tih.setTargetNamespace(tns);
             tih.setServiceDomain(_serviceDomain);
             _taskHandlers.add(tih);
@@ -152,16 +159,16 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
         ServiceOperation serviceOperation = exchange.getContract().getServiceOperation();
         ProcessActionModel processActionModel = _actions.get(serviceOperation.getName());
         ProcessActionType processActionType = getProcessActionType(context, processActionModel);
-        Message message = exchange.getMessage();
+        Message messageIn = exchange.getMessage();
         Long processInstanceId = null;
         ProcessInstance processInstance = null;
         switch (processActionType) {
             case START_PROCESS:
                 if (_processId != null) {
-                    Object content = message.getContent();
-                    if (content != null) {
+                    Object messageContentIn = messageIn.getContent();
+                    if (messageContentIn != null) {
                         Map<String,Object> parameters = new HashMap<String,Object>();
-                        parameters.put(_messageContentName, content);
+                        parameters.put(_messageContentInName, messageContentIn);
                         processInstance = _ksession.startProcess(_processId, parameters);
                     } else {
                         processInstance = _ksession.startProcess(_processId);
@@ -173,7 +180,7 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
                 break;
             case SIGNAL_EVENT:
                 String processEventType = getProcessEventType(context, processActionModel);
-                Object processEvent = getProcessEvent(context, message);
+                Object processEvent = getProcessEvent(context, messageIn);
                 processInstanceId = getProcessInstanceId(context);
                 if (processInstanceId != null) {
                     _ksession.signalEvent(processEventType, processEvent, processInstanceId.longValue());
@@ -197,15 +204,15 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
                 if (processInstance == null) {
                     processInstance = _ksession.getProcessInstance(processInstanceId.longValue());
                 }
-                message = exchange.createMessage();
-                Object content = null;
+                Message messageOut = exchange.createMessage();
+                Object messageContentOut = null;
                 if (processInstance != null) {
-                    content = ((WorkflowProcessInstance)processInstance).getVariable(_messageContentName);
+                    messageContentOut = ((WorkflowProcessInstance)processInstance).getVariable(_messageContentOutName);
                 }
-                if (content != null) {
-                    message.setContent(content);
+                if (messageContentOut != null) {
+                    messageOut.setContent(messageContentOut);
                 }
-                exchange.send(message);
+                exchange.send(messageOut);
             }
         }
     }
@@ -236,7 +243,7 @@ public class DroolsBpmExchangeHandler extends BaseBpmExchangeHandler {
         _kbase = null;
         _taskHandlers.clear();
         _actions.clear();
-        _messageContentName = null;
+        _messageContentInName = null;
         _processId = null;
     }
 
