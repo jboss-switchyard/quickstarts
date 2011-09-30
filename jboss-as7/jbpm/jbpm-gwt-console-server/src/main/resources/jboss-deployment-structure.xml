@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
   ~ JBoss, Home of Professional Open Source
   ~ Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
@@ -18,16 +17,11 @@
   ~ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   ~ MA  02110-1301, USA.
   -->
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.0">
+    <deployment>
+        <exclusions>
+            <module name="org.hibernate"/>
+        </exclusions>
+    </deployment>
+</jboss-deployment-structure>
 
-<module xmlns="urn:jboss:module:1.0" name="org.drools.drools-persistence-jpa">
-
-    <resources>
-        <resource-root path="drools-persistence-jpa-${version.drools}.jar"/>
-    </resources>
-
-    <dependencies>
-        <module name="org.drools.knowledge-api"/>
-        <module name="org.drools.drools-core"/>
-        <module name="org.drools.drools-compiler"/>
-    </dependencies>
-</module>

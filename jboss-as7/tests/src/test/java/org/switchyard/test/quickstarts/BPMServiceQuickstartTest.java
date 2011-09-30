@@ -33,7 +33,7 @@ import org.switchyard.test.mixins.HTTPMixIn;
  * @author Tomohisa Igarashi <tm.igarashi@gmail.com> (C) 2011 Red Hat Inc.
  */
 @RunWith(Arquillian.class)
-public class BpmServiceQuickstartTest {
+public class BPMServiceQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {

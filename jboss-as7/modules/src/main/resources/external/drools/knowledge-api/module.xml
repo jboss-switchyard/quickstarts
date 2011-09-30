@@ -17,27 +17,15 @@
   ~ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   ~ MA  02110-1301, USA.
   -->
-<module xmlns="urn:jboss:module:1.0" name="org.switchyard.component.bpm">
+<module xmlns="urn:jboss:module:1.0" name="org.drools.knowledge-api">
     <resources>
-        <resource-root path="switchyard-component-bpm-${project.version}.jar"/>
-        <resource-root path="jbpm-bpmn2-xsds-${version.jbpm}.jar"/>
+        <resource-root path="knowledge-api-${version.drools}.jar"/>
     </resources>
     <dependencies>
-        <module name="javax.api"/>
-        <module name="org.apache.log4j"/>
-        <module name="org.switchyard.api"/>
-        <module name="org.switchyard.common"/>
-        <module name="org.switchyard.config"/>
-        <module name="org.switchyard.deploy"/>
         <module name="org.drools.drools-compiler"/>
         <module name="org.drools.drools-core"/>
-        <module name="org.drools.drools-persistence-jpa"/>
-        <module name="org.drools.knowledge-api"/>
         <module name="org.jbpm.jbpm-bpmn2"/>
         <module name="org.jbpm.jbpm-flow"/>
         <module name="org.jbpm.jbpm-flow-builder"/>
-        <module name="org.jbpm.jbpm-human-task"/>
-        <module name="org.jbpm.jbpm-persistence-jpa"/>
-        <module name="org.jbpm.jbpm-workitems"/>
     </dependencies>
 </module>

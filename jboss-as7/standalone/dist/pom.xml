@@ -142,7 +142,7 @@
                                 <include>standalone*.xml</include>
                             </includes>
                             <outputDir>${staging.dir}</outputDir>
-                            <stylesheet>${staging.jboss.dir}/xsl/switchyard.xsl</stylesheet>
+                            <stylesheet>${staging.jboss.dir}/xsl/standalone.xsl</stylesheet>
                         </transformationSet>
                     </transformationSets>
                 </configuration>

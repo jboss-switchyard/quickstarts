@@ -64,7 +64,7 @@
                                 </artifactItem>
                             </artifactItems>
                             <includes>META-INF/*.xsd</includes>
-                            <outputDirectory>${build.directory}/jbpm-xsds</outputDirectory>
+                            <outputDirectory>${project.build.directory}/jbpm-xsds</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -219,6 +219,15 @@
         </dependency>
 
         <!--
+        H2Database...
+        -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${version.h2database}</version>
+        </dependency>
+
+        <!--
         Hibernate...
         -->
         <dependency>
@@ -233,11 +242,6 @@
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-annotations</artifactId>
-            <version>${version.hibernate.annotations}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
             <artifactId>hibernate-commons-annotations</artifactId>
             <version>${version.hibernate.commons-annotations}</version>
         </dependency>
@@ -245,11 +249,6 @@
             <groupId>org.hibernate</groupId>
             <artifactId>ejb3-persistence</artifactId>
             <version>${version.hibernate.ejb3-persistence}</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>persistence-api</artifactId>
-            <version>${version.hibernate.jpa}</version>
         </dependency>
 
         <!--
@@ -395,7 +394,7 @@
         </dependency>
 
         <!--
-        Drools/BPM...
+        Drools/jBPM...
         -->
         <dependency>
             <groupId>org.drools</groupId>
@@ -443,23 +442,14 @@
             <version>${version.jbpm}</version>
         </dependency>
         <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-human-task</artifactId>
-            <version>${version.jbpm}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>xml-apis</groupId>
-                    <artifactId>xml-apis</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>xerces</groupId>
-                    <artifactId>xercesImpl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>xerces</groupId>
-                    <artifactId>xmlParserAPIs</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-jbpm-human-task</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-jbpm-persistence-jpa</artifactId>
+            <version>${project.version}</version>
         </dependency>
 		<dependency>
 			<groupId>org.jboss.bpm</groupId>

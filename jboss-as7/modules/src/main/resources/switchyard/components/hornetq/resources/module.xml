@@ -19,7 +19,7 @@
   ~ MA  02110-1301, USA.
   -->
 
-<module xmlns="urn:jboss:module:1.0" name="org.switchyard.component.hornetq" slot="main">
+<module xmlns="urn:jboss:module:1.0" name="org.switchyard.component.hornetq">
 
     <resources>
         <resource-root path="switchyard-component-hornetq-${project.version}.jar"/>

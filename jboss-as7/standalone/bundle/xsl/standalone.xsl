@@ -26,6 +26,7 @@
     xmlns:fn="http://www.w3.org/2005/xpath-functions"
     xmlns:xdt="http://www.w3.org/2005/xpath-datatypes"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:jpa="urn:jboss:domain:jpa:1.0"
     exclude-result-prefixes="xs xsl xsi fn xdt">
 
 <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
@@ -50,6 +51,14 @@
     </xsl:copy>
 </xsl:template>
 
+<!-- http://kverlaen.blogspot.com/2011/07/jbpm5-on-as7-lightning.html -->
+<xsl:template match="node()[name(.)='extension' and @module='org.jboss.as.jpa']">
+</xsl:template>
+
+<!-- http://kverlaen.blogspot.com/2011/07/jbpm5-on-as7-lightning.html -->
+<xsl:template match="jpa:subsystem">
+</xsl:template>
+
 <xsl:template match="node()[name(.)='profile']">
     <xsl:copy>
         <xsl:apply-templates select="@*|node()"/>
@@ -68,6 +77,41 @@
                 <module identifier="org.switchyard.component.hornetq" implClass="org.switchyard.component.hornetq.deploy.HornetQComponent"/>
             </modules>
         </subsystem>
+    </xsl:copy>
+</xsl:template>
+
+<!-- http://kverlaen.blogspot.com/2011/07/jbpm5-on-as7-lightning.html -->
+<xsl:template match="node()[name(.)='datasources']">
+    <xsl:copy>
+        <datasource jndi-name="java:jboss/datasources/jbpmDS" pool-name="jbpmPool" enabled="true" jta="false" use-java-context="true" use-ccm="false">
+            <connection-url>jdbc:h2:tcp://localhost/~/test;DB_CLOSE_DELAY=-1</connection-url>
+            <driver>h2</driver>
+            <pool>
+                <prefill>false</prefill>
+                <use-strict-min>false</use-strict-min>
+                <flush-strategy>FailingConnectionOnly</flush-strategy>
+            </pool>
+            <security>
+                <user-name>sa</user-name>
+                <password>sa</password>
+            </security>
+            <validation></validation>
+            <timeout></timeout>
+            <statement></statement>
+        </datasource>
+        <xsl:apply-templates select="@*|node()"/>
+    </xsl:copy>
+</xsl:template>
+
+<!-- http://kverlaen.blogspot.com/2011/07/jbpm5-on-as7-lightning.html -->
+<xsl:template match="node()[name(.)='security-domains']">
+    <xsl:copy>
+        <xsl:apply-templates select="@*|node()"/>
+        <security-domain name="jbpm-console" cache-type="default">
+            <authentication>
+                <login-module code="UsersRoles" flag="required"/>
+            </authentication>
+        </security-domain>
     </xsl:copy>
 </xsl:template>
 

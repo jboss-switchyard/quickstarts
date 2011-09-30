@@ -23,23 +23,24 @@
         <version.classfilewriter>1.0.0.Final</version.classfilewriter>
         <version.clojure>1.3.0-alpha5</version.clojure>
         <version.commons.codec>1.4</version.commons.codec>
-        <version.drools>5.2.0.Final</version.drools>
+        <version.dom4j>1.6.1</version.dom4j>
+        <version.drools>5.2.1.Final</version.drools>
         <version.ecj>3.5.1</version.ecj>
         <version.freemarker>2.3.15</version.freemarker>
         <version.fusesource.commonman>1.0</version.fusesource.commonman>
-        <version.hibernate.core>4.0.0.Beta1</version.hibernate.core>
-        <version.hibernate.annotations>3.4.0.GA</version.hibernate.annotations>
+        <version.hibernate.core>3.6.7.Final</version.hibernate.core>
         <version.hibernate.commons-annotations>3.2.0.Final</version.hibernate.commons-annotations>
         <version.hibernate.ejb3-persistence>1.0.1.GA</version.hibernate.ejb3-persistence>
-        <version.hibernate.jpa>1.0</version.hibernate.jpa>
-        <version.h2database>1.3.154</version.h2database>
+        <version.hibernate.entitymanager>3.4.0.GA</version.hibernate.entitymanager>
+        <version.h2database>1.3.160</version.h2database>
+        <version.javassist>3.6.0.GA</version.javassist>
         <version.jaxen>1.1.1</version.jaxen>
         <version.jbossas>7.0.2.Final</version.jbossas>
-        <version.jbpm>5.1.0.Final</version.jbpm>
+        <version.jbpm>5.1.1.Final</version.jbpm>
+        <version.jpa>1.0.2</version.jpa>
         <version.mina>2.0.1</version.mina>
         <version.riftsaw.ode>3.0.0.20111024-M1</version.riftsaw.ode>
         <version.riftsaw.engine>3.0.0.20111024-M1</version.riftsaw.engine>
-        <version.hibernate.entitymanager>4.0.0.Beta1</version.hibernate.entitymanager>
         <version.saxon>9.2.1.5</version.saxon>
         <version.spring>3.0.6.RELEASE</version.spring>
         <version.xmlbeans>2.2.0</version.xmlbeans>
@@ -47,6 +48,7 @@
     </properties>
 
     <modules>
+        <module>jbpm</module>
         <module>modules</module>
         <module>tests</module>
         <module>extension</module>
@@ -97,7 +99,7 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${version.h2database}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
@@ -189,14 +191,14 @@
     </dependencies>
     
     <dependencyManagement>
-		<dependencies>
+        <dependencies>
             <!-- External dependencies - keep these in alphabetical order -->
             <dependency>
                 <groupId>org.jboss.arquillian.junit</groupId>
                 <artifactId>arquillian-junit-container</artifactId>
                 <version>${version.arquillian}</version>
             </dependency>
-		</dependencies>
-	</dependencyManagement>
+        </dependencies>
+    </dependencyManagement>
 
 </project>

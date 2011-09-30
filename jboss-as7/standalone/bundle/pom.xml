@@ -103,6 +103,18 @@
                                     <type>war</type>
                                     <version>${project.version}</version>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.switchyard</groupId>
+                                    <artifactId>switchyard-jbpm-gwt-console-server</artifactId>
+                                    <type>war</type>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-gwt-console</artifactId>
+                                    <type>war</type>
+                                    <version>${version.jbpm}</version>
+                                </artifactItem>
                             </artifactItems>
                             <outputDirectory>${staging.jboss.dir}/standalone/deployments</outputDirectory>
                             <stripVersion>true</stripVersion>

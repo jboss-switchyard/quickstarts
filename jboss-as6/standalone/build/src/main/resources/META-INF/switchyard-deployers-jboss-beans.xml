@@ -33,7 +33,7 @@
                 <entry><key>org.switchyard.component.bean.deploy.BeanComponent</key><value><inject bean="BeanConfiguration"/></value></entry>
                 <entry><key>org.switchyard.component.soap.deploy.SOAPComponent</key><value><inject bean="SOAPConfiguration"/></value></entry>
                 <entry><key>org.switchyard.component.camel.deploy.CamelComponent</key><value><inject bean="CamelConfiguration"/></value></entry>
-                <entry><key>org.switchyard.component.bpm.deploy.BPMComponent</key><value><inject bean="BpmConfiguration"/></value></entry>
+                <entry><key>org.switchyard.component.bpm.deploy.BPMComponent</key><value><inject bean="BPMConfiguration"/></value></entry>
                 <entry><key>org.switchyard.component.rules.deploy.RulesComponent</key><value><inject bean="RulesConfiguration"/></value></entry>
             </map>
         </property>
@@ -65,7 +65,7 @@
             </parameter>
         </constructor>
     </bean>
-    <bean name="BpmConfiguration" class="org.switchyard.config.Configuration">
+    <bean name="BPMConfiguration" class="org.switchyard.config.Configuration">
         <constructor factoryMethod="pull">
             <factory bean="ConfigPuller"/>
             <parameter class="javax.xml.namespace.QName">

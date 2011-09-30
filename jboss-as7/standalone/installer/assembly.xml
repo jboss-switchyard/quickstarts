@@ -33,7 +33,7 @@
             <outputDirectory>${installer.root.dir}/</outputDirectory>
         </file>
         <file>
-            <source>${bundle.dir}/xsl/switchyard.xsl</source>
+            <source>${bundle.dir}/xsl/standalone.xsl</source>
             <outputDirectory>${installer.root.dir}/res</outputDirectory>
         </file>
     </files>

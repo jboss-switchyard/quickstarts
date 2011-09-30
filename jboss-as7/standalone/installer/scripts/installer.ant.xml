@@ -48,7 +48,7 @@
     </target>
 
     <target name="transform-standalone.xml">
-        <xslt style="res/switchyard.xsl" in="${AS7_PATH}/standalone/configuration/standalone.xml" out="${AS7_PATH}/standalone/configuration/standalone.xml.transformed" />
+        <xslt style="res/standalone.xsl" in="${AS7_PATH}/standalone/configuration/standalone.xml" out="${AS7_PATH}/standalone/configuration/standalone.xml.transformed" />
         <delete file="${AS7_PATH}/standalone/configuration/standalone.xml" failonerror="false" />
         <move file="${AS7_PATH}/standalone/configuration/standalone.xml.transformed" tofile="${AS7_PATH}/standalone/configuration/standalone.xml" />
     </target>

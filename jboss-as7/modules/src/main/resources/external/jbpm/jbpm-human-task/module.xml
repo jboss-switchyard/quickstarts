@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
   ~ JBoss, Home of Professional Open Source.
   ~ Copyright 2010, Red Hat, Inc., and individual contributors
@@ -21,16 +20,13 @@
   ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
-
 <module xmlns="urn:jboss:module:1.0" name="org.jbpm.jbpm-human-task">
-
     <resources>
-        <resource-root path="jbpm-human-task-${version.jbpm}.jar"/>
+        <resource-root path="switchyard-jbpm-human-task-${project.version}.jar"/>
     </resources>
-
     <dependencies>
         <module name="org.apache.mina.mina-core"/>
-        <module name="org.drools.knowledge-api" slot="jbpm-${version.jbpm}"/>
+        <module name="org.drools.knowledge-api"/>
         <module name="org.jbpm.jbpm-workitems"/>
     </dependencies>
 </module>
