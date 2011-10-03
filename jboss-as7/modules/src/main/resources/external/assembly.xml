@@ -157,22 +157,22 @@
         </file>
         <file>
             <source>src/main/resources/external/camel/core/module.xml</source>
-            <outputDirectory>/modules/org/apache/camel/core/${version.camel}</outputDirectory>
+            <outputDirectory>/modules/org/apache/camel/core/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/external/camel/spring/module.xml</source>
-            <outputDirectory>/modules/org/apache/camel/spring/${version.camel}</outputDirectory>
+            <outputDirectory>/modules/org/apache/camel/spring/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/external/camel/jms/module.xml</source>
-            <outputDirectory>/modules/org/apache/camel/jms/${version.camel}</outputDirectory>
+            <outputDirectory>/modules/org/apache/camel/jms/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/external/fusesource/commonman/module.xml</source>
-            <outputDirectory>/modules/org/fusesource/commonman/${version.fusesource.commonman}</outputDirectory>
+            <outputDirectory>/modules/org/fusesource/commonman/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
@@ -450,7 +450,7 @@
             <includes>
                 <include>org.apache.camel:camel-core</include>
             </includes>
-            <outputDirectory>/modules/org/apache/camel/core/${version.camel}</outputDirectory>
+            <outputDirectory>/modules/org/apache/camel/core/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${version.camel}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
@@ -458,7 +458,7 @@
             <includes>
                 <include>org.apache.camel:camel-spring</include>
             </includes>
-            <outputDirectory>/modules/org/apache/camel/spring/${version.camel}</outputDirectory>
+            <outputDirectory>/modules/org/apache/camel/spring/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${version.camel}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
@@ -466,7 +466,7 @@
             <includes>
                 <include>org.fusesource.commonman:commons-management</include>
             </includes>
-            <outputDirectory>/modules/org/fusesource/commonman/${version.fusesource.commonman}</outputDirectory>
+            <outputDirectory>/modules/org/fusesource/commonman/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${version.fusesource.commonman}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -475,7 +475,7 @@
             <includes>
                 <include>org.apache.camel:camel-jms</include>
             </includes>
-            <outputDirectory>/modules/org/apache/camel/jms/${version.camel}</outputDirectory>
+            <outputDirectory>/modules/org/apache/camel/jms/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${version.camel}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
