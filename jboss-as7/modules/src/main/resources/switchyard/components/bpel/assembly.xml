@@ -212,43 +212,6 @@
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
-                <include>org.springframework:spring-asm</include>
-            </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${version.spring}.${artifact.extension}
-            </outputFileNameMapping>
-        </dependencySet>
-        <dependencySet>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <includes>
-                <include>org.springframework:spring-beans</include>
-            </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${version.spring}.${artifact.extension}
-            </outputFileNameMapping>
-        </dependencySet>
-        <dependencySet>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <includes>
-                <include>org.springframework:spring-context</include>
-            </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${version.spring}.${artifact.extension}
-            </outputFileNameMapping>
-        </dependencySet>
-        <dependencySet>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <includes>
-                <include>org.springframework:spring-core</include>
-            </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${version.spring}.${artifact.extension}
-            </outputFileNameMapping>
-        </dependencySet>
-
-        <dependencySet>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <includes>
                 <include>org.apache.xmlbeans:xmlbeans</include>
             </includes>
             <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>

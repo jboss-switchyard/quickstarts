@@ -56,22 +56,13 @@
         -->
         <resource-root path="saxonhe-9.2.1.5.jar"/>
         
-        <!-- TODO: Use org.springframework module installed by camel component, but
-        	currently complains about:
-				Caused by: java.lang.ClassNotFoundException: org.xml.sax.EntityResolver from
-				[Module "org.springframework:main" ......
-			also would need to add 'spring-asm' to camel build of spring module
- 		-->
-        <resource-root path="spring-asm-${version.spring}.jar"/>
-        <resource-root path="spring-beans-${version.spring}.jar"/>
-        <resource-root path="spring-context-${version.spring}.jar"/>
-        <resource-root path="spring-core-${version.spring}.jar"/>
-
     </resources>
 
     <dependencies>
-        <module name="org.hibernate"/>
         <module name="org.jboss.as.jpa"/>
+        <module name="org.hibernate"/>
+        <module name="org.hibernate.validator" services="import" />
+        <module name="org.hibernate.envers" services="import" />
         
         <module name="javax.api"/>
         <module name="javax.transaction.api"/>
@@ -97,7 +88,6 @@
         <module name="com.h2database.h2"/>
         
         <!--
-        <module name="org.springframework"/>
         <module name="org.jaxen"/>
         <module name="net.sourceforge.saxon"/>
         -->
