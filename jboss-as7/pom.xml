@@ -27,8 +27,6 @@
         <version.ecj>3.5.1</version.ecj>
         <version.freemarker>2.3.15</version.freemarker>
         <version.fusesource.commonman>1.0</version.fusesource.commonman>
-        <version.geronimo>2.0.1</version.geronimo>
-        <version.geronimo.jca>1.1.1</version.geronimo.jca>
         <version.hibernate.core>4.0.0.Beta1</version.hibernate.core>
         <version.hibernate.annotations>3.4.0.GA</version.hibernate.annotations>
         <version.hibernate.commons-annotations>3.2.0.Final</version.hibernate.commons-annotations>

@@ -491,24 +491,6 @@
             <artifactId>antlr-runtime</artifactId>
             <version>${version.antlr}</version>
         </dependency>
-		<dependency>
-			<groupId>org.apache.geronimo.components</groupId>
-			<artifactId>geronimo-transaction</artifactId>
-			<version>${version.geronimo}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.geronimo.components</groupId>
-			<artifactId>geronimo-connector</artifactId>
-			<version>${version.geronimo}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.geronimo.specs</groupId>
-			<artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
-			<version>${version.geronimo.jca}</version>
-			<scope>test</scope>
-		</dependency>
         <dependency>
             <groupId>org.apache.mina</groupId>
             <artifactId>mina-core</artifactId>
