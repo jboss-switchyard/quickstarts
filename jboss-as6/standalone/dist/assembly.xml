@@ -65,7 +65,7 @@
             <outputDirectory>/${switchyard.root.dir}</outputDirectory>
         </fileSet>
         <fileSet>
-          <directory>../../quickstarts</directory>
+          <directory>${quickstarts.dir}</directory>
           <outputDirectory>${switchyard.root.dir}/quickstarts</outputDirectory>
           <excludes>
             <exclude>**/.git</exclude>
