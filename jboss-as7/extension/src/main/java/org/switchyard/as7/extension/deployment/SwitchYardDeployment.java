@@ -59,21 +59,17 @@ public class SwitchYardDeployment {
     private Deployment _deployment;
     private ServiceDomainManager _domainManager;
     private ServiceDomain _appServiceDomain;
-    private List<Component> _components;
 
     /**
      * Creates a new SwitchYard deployment.
      *
      * @param deploymentUnit deployment reference
      * @param config switchyard configuration
-     * @param components The list of components configured.
      * @param domainManager Service Domain Manager instance.
      */
-    public SwitchYardDeployment(final DeploymentUnit deploymentUnit, final SwitchYardModel config,
-            final List<Component> components, ServiceDomainManager domainManager) {
+    public SwitchYardDeployment(final DeploymentUnit deploymentUnit, final SwitchYardModel config, ServiceDomainManager domainManager) {
         _deployUnit = deploymentUnit;
         _deployment = new Deployment(config);
-        _components = components;
         _domainManager = domainManager;
     }
 
@@ -91,8 +87,10 @@ public class SwitchYardDeployment {
 
     /**
      * Start the application.
+     * 
+     * @param components The list of components configured.
      */
-    public void start() {
+    public void start(final List<Component> components) {
         final Module module = _deployUnit.getAttachment(Attachments.MODULE);
         ClassLoader origCL = Thread.currentThread().getContextClassLoader();
         try {
@@ -102,7 +100,7 @@ public class SwitchYardDeployment {
             // Use the ROOT_DOMAIN name for now.  Getting an exception SwitchYardModel.getQName().
             _appServiceDomain = _domainManager.addApplicationServiceDomain(ServiceDomainManager.ROOT_DOMAIN, _deployment.getConfig());
 
-            _deployment.init(_appServiceDomain, ActivatorLoader.createActivators(_appServiceDomain, _components));
+            _deployment.init(_appServiceDomain, ActivatorLoader.createActivators(_appServiceDomain, components));
             setDeploymentState(SwitchYardDeploymentState.STARTING);
             _deployment.start();
             setDeploymentState(SwitchYardDeploymentState.STARTED);

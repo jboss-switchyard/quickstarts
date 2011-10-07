@@ -18,39 +18,39 @@
  */
 package org.switchyard.as7.extension;
 
-import static org.switchyard.as7.extension.CommonAttributes.IMPLCLASS;
 import static org.switchyard.as7.extension.CommonAttributes.MODULES;
 import static org.switchyard.as7.extension.CommonAttributes.PROPERTIES;
+import static org.switchyard.as7.extension.CommonAttributes.SOCKET_BINDING;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-
-import javax.xml.namespace.QName;
+import java.util.StringTokenizer;
 
 import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.ServiceVerificationHandler;
+import org.jboss.as.network.SocketBinding;
 import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
-import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
-import org.jboss.modules.ModuleLoadException;
+import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController;
+import org.jboss.msc.service.ServiceController.Mode;
 import org.switchyard.as7.extension.deployment.SwitchYardCdiIntegrationProcessor;
 import org.switchyard.as7.extension.deployment.SwitchYardConfigDeploymentProcessor;
 import org.switchyard.as7.extension.deployment.SwitchYardConfigProcessor;
 import org.switchyard.as7.extension.deployment.SwitchYardDependencyProcessor;
 import org.switchyard.as7.extension.deployment.SwitchYardDeploymentProcessor;
 import org.switchyard.as7.extension.services.SwitchYardAdminService;
+import org.switchyard.as7.extension.services.SwitchYardComponentService;
+import org.switchyard.as7.extension.services.SwitchYardInjectorService;
 import org.switchyard.as7.extension.services.SwitchYardServiceDomainManagerService;
-import org.switchyard.config.Configuration;
-import org.switchyard.config.ConfigurationPuller;
-import org.switchyard.config.Configurations;
 import org.switchyard.deploy.Component;
 
 /**
@@ -70,6 +70,9 @@ public final class SwitchYardSubsystemAdd extends AbstractBoottimeAddStepHandler
 
     @Override
     protected void populateModel(final ModelNode operation, final ModelNode submodel) throws OperationFailedException {
+        if (operation.has(SOCKET_BINDING)) {
+            submodel.get(SOCKET_BINDING).set(operation.get(SOCKET_BINDING));
+        }
         if (operation.has(MODULES)) {
             submodel.get(MODULES).set(operation.get(MODULES));
         }
@@ -81,9 +84,6 @@ public final class SwitchYardSubsystemAdd extends AbstractBoottimeAddStepHandler
     @Override
     protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler, List<ServiceController<?>> newControllers) {
         final List<ModuleIdentifier> modules = new ArrayList<ModuleIdentifier>();
-        final List<Component> components = new ArrayList<Component>();
-        configureComponents(operation, modules, components);
-
         if (operation.has(CommonAttributes.MODULES)) {
             ModelNode opmodules = operation.get(CommonAttributes.MODULES);
             Set<String> keys = opmodules.keys();
@@ -100,10 +100,28 @@ public final class SwitchYardSubsystemAdd extends AbstractBoottimeAddStepHandler
                 processorTarget.addDeploymentProcessor(Phase.DEPENDENCIES, priority++, new SwitchYardDependencyProcessor(modules));
                 processorTarget.addDeploymentProcessor(Phase.POST_MODULE, priority++, new SwitchYardCdiIntegrationProcessor());
                 processorTarget.addDeploymentProcessor(Phase.POST_MODULE, priority++, new SwitchYardConfigProcessor());
-                processorTarget.addDeploymentProcessor(Phase.INSTALL, priority++, new SwitchYardDeploymentProcessor(components));
+                processorTarget.addDeploymentProcessor(Phase.INSTALL, priority++, new SwitchYardDeploymentProcessor());
             }
         }, OperationContext.Stage.RUNTIME);
         LOG.info("Activating SwitchYard Extension");
+
+        final SwitchYardInjectorService injectorService = new SwitchYardInjectorService();
+        final ServiceBuilder<Map<String, String>> injectorServiceBuilder = context.getServiceTarget().addService(SwitchYardInjectorService.SERVICE_NAME, injectorService);
+        if (operation.has(SOCKET_BINDING)) {
+            StringTokenizer sockets = new StringTokenizer(operation.get(SOCKET_BINDING).asString(), ",");
+            while (sockets.hasMoreTokens()) {
+                String socketName = sockets.nextToken();
+                injectorServiceBuilder.addDependency(SocketBinding.JBOSS_BINDING_NAME.append(socketName), SocketBinding.class, injectorService.getSocketBinding(socketName));
+            }
+        }
+        injectorServiceBuilder.setInitialMode(Mode.ACTIVE);
+        newControllers.add(injectorServiceBuilder.install());
+
+        final SwitchYardComponentService componentService = new SwitchYardComponentService(operation);
+        final ServiceBuilder<List<Component>> componentServiceBuilder = context.getServiceTarget().addService(SwitchYardComponentService.SERVICE_NAME, componentService);
+        componentServiceBuilder.addDependency(SwitchYardInjectorService.SERVICE_NAME, Map.class, componentService.getInjectedValues());
+        componentServiceBuilder.setInitialMode(Mode.ACTIVE);
+        newControllers.add(componentServiceBuilder.install());
 
         // TODO: introspect switchyard version
         final String version = "0.2.0";
@@ -114,54 +132,4 @@ public final class SwitchYardSubsystemAdd extends AbstractBoottimeAddStepHandler
         // Add the AS7 Service for the ServiceDomainManager...
         newControllers.add(context.getServiceTarget().addService(SwitchYardServiceDomainManagerService.SERVICE_NAME, new SwitchYardServiceDomainManagerService()).install());
     }
-
-    private void configureComponents(ModelNode operation, List<ModuleIdentifier> modules, List<Component> components) {
-        if (operation.has(MODULES)) {
-            ModelNode opmodules = operation.get(MODULES);
-            Set<String> keys = opmodules.keys();
-            if (keys != null) {
-                for (String current : keys) {
-                    ModuleIdentifier moduleIdentifier = ModuleIdentifier.fromString(current);
-                    modules.add(moduleIdentifier);
-                    Class<?> componentClass;
-                    String className = opmodules.get(current).get(IMPLCLASS).asString();
-                    try {
-                        componentClass = Module.loadClassFromCallerModuleLoader(moduleIdentifier, className);
-                        Component component;
-                        try {
-                            component = (Component) componentClass.newInstance();
-                            ModelNode opmodule = opmodules.get(current);
-                            if (opmodule.has(PROPERTIES)) {
-                                ModelNode properties = opmodule.get(PROPERTIES);
-                                component.init(createEnvironmentConfig(properties));
-                            }
-                            components.add(component);
-                        } catch (InstantiationException ie) {
-                            LOG.error("Unable to instantiate class " + className);
-                        } catch (IllegalAccessException iae) {
-                            LOG.error("Unable to access constructor for " + className);
-                        }
-                    } catch (ClassNotFoundException cnfe) {
-                        LOG.error("Unable to load class " + className);
-                    } catch (ModuleLoadException mle) {
-                        LOG.error("Unable to load module " + moduleIdentifier);
-                    }
-                }
-            }
-        }
-    }
-
-    private Configuration createEnvironmentConfig(ModelNode properties) {
-        Configuration envConfig = Configurations.emptyConfig();
-        Set<String> propertyNames = properties.keys();
-        if (propertyNames != null) {
-            for (String propertyName : propertyNames) {
-                Configuration propConfig = new ConfigurationPuller().pull(new QName(propertyName));
-                propConfig.setValue(properties.get(propertyName).asString());
-                envConfig.addChild(propConfig);
-            }
-        }
-        return envConfig;
-    }
-
 }

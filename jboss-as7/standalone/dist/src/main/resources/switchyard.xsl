@@ -56,7 +56,11 @@
         <subsystem xmlns="urn:jboss:domain:switchyard:1.0">
             <modules>
                 <module identifier="org.switchyard.component.bean" implClass="org.switchyard.component.bean.deploy.BeanComponent"/>
-                <module identifier="org.switchyard.component.soap" implClass="org.switchyard.component.soap.deploy.SOAPComponent"/>
+                <module identifier="org.switchyard.component.soap" implClass="org.switchyard.component.soap.deploy.SOAPComponent">
+                    <properties>
+                        <socketAddr>:18001</socketAddr>
+                    </properties>
+                </module>
                 <module identifier="org.switchyard.component.camel" implClass="org.switchyard.component.camel.deploy.CamelComponent"/>
                 <module identifier="org.switchyard.component.rules" implClass="org.switchyard.component.rules.deploy.RulesComponent"/>
                 <module identifier="org.switchyard.component.bpm" implClass="org.switchyard.component.bpm.deploy.BPMComponent"/>

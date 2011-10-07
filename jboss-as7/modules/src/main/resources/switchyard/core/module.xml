@@ -38,6 +38,7 @@
         <module name="org.jboss.vfs"/>
         <module name="org.jboss.as.ee"/>
         <module name="org.jboss.as.naming"/>
+        <module name="org.jboss.as.network"/>
         <module name="org.jboss.as.server"/>
         <module name="org.jboss.as.weld"/>
         <module name="org.jboss.weld.spi"/>

@@ -18,6 +18,8 @@
  */
 package org.switchyard.as7.extension.services;
 
+import java.util.List;
+
 import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.Service;
@@ -32,7 +34,7 @@ import org.switchyard.admin.base.SwitchYardBuilder;
 import org.switchyard.as7.extension.deployment.SwitchYardDeployment;
 
 /**
- * The SwitchYard service.
+ * The SwitchYard service associated with deployments.
  * 
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
@@ -46,6 +48,8 @@ public class SwitchYardService implements Service<SwitchYardDeployment> {
     public static final ServiceName SERVICE_NAME = ServiceName.of("SwitchYardService");
 
     private final InjectedValue<NamespaceContextSelector> _namespaceSelector = new InjectedValue<NamespaceContextSelector>();
+    @SuppressWarnings("rawtypes")
+    private final InjectedValue<List> _components = new InjectedValue<List>();
     private SwitchYardDeployment _switchyardDeployment;
     private SwitchYardBuilder _switchYardBuilder;
 
@@ -61,7 +65,7 @@ public class SwitchYardService implements Service<SwitchYardDeployment> {
     @Override
     public SwitchYardDeployment getValue() throws IllegalStateException,
             IllegalArgumentException {
-        return null;
+        return _switchyardDeployment;
     }
 
     @Override
@@ -80,7 +84,7 @@ public class SwitchYardService implements Service<SwitchYardDeployment> {
                 }
             }
 
-            _switchyardDeployment.start();
+            _switchyardDeployment.start(_components.getValue());
         } catch (Exception e) {
             try {
                 _switchyardDeployment.stop();
@@ -109,6 +113,15 @@ public class SwitchYardService implements Service<SwitchYardDeployment> {
      */
     public InjectedValue<NamespaceContextSelector> getNamespaceSelector() {
         return _namespaceSelector;
+    }
+
+    /**
+     * Injection point for Component List.
+     * 
+     * @return the list of components
+     */
+    public InjectedValue<List> getComponents() {
+        return _components;
     }
 
 }

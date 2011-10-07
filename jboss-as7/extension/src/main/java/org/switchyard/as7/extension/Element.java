@@ -33,6 +33,11 @@ public enum Element {
     UNKNOWN(null),
 
     /**
+     * socket-binding element.
+     */
+    SOCKET_BINDING("socket-binding"),
+
+    /**
      * modules element.
      */
     MODULES("modules"),

@@ -39,7 +39,12 @@ public enum Attribute {
     /**
      * implClass attribute.
      */
-    IMPLCLASS("implClass");
+    IMPLCLASS("implClass"),
+
+    /**
+     * names attribute.
+     */
+    NAMES("names");
 
     private final String _name;
 

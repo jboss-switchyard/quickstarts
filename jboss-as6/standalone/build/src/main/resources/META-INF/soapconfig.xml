@@ -1,4 +1,3 @@
 <properties>
-    <serverHost>localhost</serverHost>
-    <serverPort>18001</serverPort>
+    <socketAddr>localhost:18001</socketAddr>
 </properties>

@@ -39,6 +39,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:all>
+            <xs:element name="socket-binding" type="socketBindingsType" use="optional"/>
             <xs:element name="modules" type="modulesType" minOccurs="0"/>
             <xs:element name="properties" type="propertiesType" use="optional"/>
         </xs:all>
@@ -69,6 +70,17 @@
         ]]>
         </xs:documentation>
         <xs:element name="properties" type="propertiesType" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="socketBindingsType">
+        <xs:annotation>
+            <xs:documentation>
+            <![CDATA[
+                The list of comma seperated socket-binding names to be used by SwitchYard subsystem.
+            ]]>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="names" type="xs:string" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="propertiesType">

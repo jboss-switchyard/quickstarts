@@ -23,6 +23,7 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.DES
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
 import static org.jboss.as.controller.parsing.ParseUtils.missingRequired;
+import static org.jboss.as.controller.parsing.ParseUtils.requireNoContent;
 import static org.jboss.as.controller.parsing.ParseUtils.requireNoAttributes;
 import static org.jboss.as.controller.parsing.ParseUtils.requireNoNamespaceAttribute;
 import static org.jboss.as.controller.parsing.ParseUtils.unexpectedAttribute;
@@ -30,6 +31,7 @@ import static org.jboss.as.controller.parsing.ParseUtils.unexpectedElement;
 import static org.switchyard.as7.extension.CommonAttributes.IMPLCLASS;
 import static org.switchyard.as7.extension.CommonAttributes.MODULES;
 import static org.switchyard.as7.extension.CommonAttributes.PROPERTIES;
+import static org.switchyard.as7.extension.CommonAttributes.SOCKET_BINDING;
 
 import java.util.Collections;
 import java.util.List;
@@ -132,6 +134,25 @@ public class SwitchYardExtension implements Extension {
                 if (reader.getNamespaceURI().equals(SwitchYardExtension.NAMESPACE)) {
                     final Element element = Element.forName(reader.getLocalName());
                     switch (element) {
+                        case SOCKET_BINDING: 
+                            String sockets = null;
+                            final int count = reader.getAttributeCount();
+                            for (int i = 0; i < count; i++) {
+                                requireNoNamespaceAttribute(reader, i);
+                                final Attribute attribute = Attribute.forName(reader.getAttributeLocalName(i));
+                                switch (attribute) {
+                                    case NAMES:
+                                        sockets = reader.getAttributeValue(i);
+                                        break;
+                                    default:
+                                        throw unexpectedAttribute(reader, i);
+                                }
+                            }
+                            if (sockets != null) {
+                                subsytem.get(SOCKET_BINDING).set(sockets);
+                            }
+                            requireNoContent(reader);
+                            break;
                         case MODULES: 
                             ModelNode modules = parseModulesElement(reader);
                             if (modules != null) {
@@ -158,6 +179,11 @@ public class SwitchYardExtension implements Extension {
         public void writeContent(final XMLExtendedStreamWriter writer, final SubsystemMarshallingContext context) throws XMLStreamException {
             context.startSubsystemElement(SwitchYardExtension.NAMESPACE, false);
             ModelNode node = context.getModelNode();
+            if (has(node, SOCKET_BINDING)) {
+                ModelNode socketNames = node.get(SOCKET_BINDING);
+                writer.writeEmptyElement(Element.SOCKET_BINDING.getLocalName());
+                writer.writeAttribute(Attribute.NAMES.getLocalName(), socketNames.asString());
+            }
             if (has(node, MODULES)) {
                 ModelNode modules = node.get(MODULES);
                 writer.writeStartElement(Element.MODULES.getLocalName());

@@ -38,4 +38,14 @@ public interface CommonAttributes {
      * The environment properties attribute.
      */
     String PROPERTIES = "properties";
+
+    /**
+     * The socket-binding property value.
+     */
+    String SOCKET_BINDING = "socket-binding";
+
+    /**
+     * The replaceable properties.
+     */
+    String DOLLAR = "$";
 }

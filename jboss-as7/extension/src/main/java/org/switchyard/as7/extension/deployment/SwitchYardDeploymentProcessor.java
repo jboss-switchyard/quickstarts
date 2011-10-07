@@ -35,9 +35,9 @@ import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceTarget;
 import org.jboss.msc.value.ImmediateValue;
 import org.switchyard.as7.extension.SwitchYardDeploymentMarker;
+import org.switchyard.as7.extension.services.SwitchYardComponentService;
 import org.switchyard.as7.extension.services.SwitchYardService;
 import org.switchyard.as7.extension.services.SwitchYardServiceDomainManagerService;
-import org.switchyard.deploy.Component;
 import org.switchyard.deploy.ServiceDomainManager;
 
 /**
@@ -49,15 +49,10 @@ public class SwitchYardDeploymentProcessor implements DeploymentUnitProcessor {
 
     private static final Logger LOG = Logger.getLogger("org.switchyard");
 
-    private List<Component> _components;
-
     /**
      * Construct SwitchYard deployment processor with a list of component modules.
-     * 
-     * @param components a list of component modules
      */
-    public SwitchYardDeploymentProcessor(List<Component> components) {
-        _components = components;
+    public SwitchYardDeploymentProcessor() {
     }
 
     @Override
@@ -72,11 +67,12 @@ public class SwitchYardDeploymentProcessor implements DeploymentUnitProcessor {
                 (ServiceDomainManager) phaseContext.getServiceRegistry().getRequiredService(SwitchYardServiceDomainManagerService.SERVICE_NAME).getService().getValue();
 
         SwitchYardMetaData metaData = deploymentUnit.getAttachment(SwitchYardMetaData.ATTACHMENT_KEY);
-        SwitchYardDeployment deployment = new SwitchYardDeployment(deploymentUnit, metaData.geSwitchYardModel(), _components, domainManager);
+        SwitchYardDeployment deployment = new SwitchYardDeployment(deploymentUnit, metaData.geSwitchYardModel(), domainManager);
         SwitchYardService container = new SwitchYardService(deployment);
         final ServiceTarget serviceTarget = phaseContext.getServiceTarget();
         final ServiceName switchyardServiceName = deploymentUnit.getServiceName().append(SwitchYardService.SERVICE_NAME);
         final ServiceBuilder<SwitchYardDeployment> switchyardServiceBuilder = serviceTarget.addService(switchyardServiceName, container);
+        switchyardServiceBuilder.addDependency(SwitchYardComponentService.SERVICE_NAME, List.class, container.getComponents());
 
         final EEModuleDescription moduleDescription = deploymentUnit.getAttachment(org.jboss.as.ee.component.Attachments.EE_MODULE_DESCRIPTION);
         if (moduleDescription != null) {
