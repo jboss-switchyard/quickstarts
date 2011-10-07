@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.common.net.SocketAddr;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.StreamUtil;
 import org.switchyard.test.SwitchYardRunner;
@@ -56,8 +57,7 @@ public class JAXBGreetingServiceTest {
         config.setPublishAsWS(true);
         config.setWsdl("src/test/resources/GreetingServiceImplService.wsdl");
         config.setServiceName(GREETING_SERVICE_NAME);
-        config.setServerHost(host);
-        config.setServerPort(Integer.parseInt(port));
+        config.setSocketAddr(new SocketAddr(host, Integer.parseInt(port)));
     }
 
     @Test

@@ -44,17 +44,10 @@ MA  02110-1301, USA.
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="serverHost" type="string" minOccurs="0" maxOccurs="1">
+                    <element name="socketAddr" type="string" minOccurs="0" maxOccurs="1">
                         <annotation>
                             <documentation>
-                                Either a IP address in IPv6 or IPv4 dotted decimal notation, or a hostname that can be resolved to an IP address.
-                            </documentation>
-                        </annotation>
-                    </element>
-                    <element name="serverPort" type="unsignedShort" minOccurs="0" maxOccurs="1">
-                        <annotation>
-                            <documentation>
-                                Number of the port to which the socket should be bound.
+                                Specify the IP Socket Address to be used. The string can be in the form "hostName/ipAddress:portNumber", with the "hostName/ipAddress:" or ":portNumber" part being optional.
                             </documentation>
                         </annotation>
                     </element>

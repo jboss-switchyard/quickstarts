@@ -12,7 +12,7 @@
         <sca:service name="SayHelloService" promote="SayHelloService">
             <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
                 <wsdl>SayHelloArtifacts.wsdl</wsdl>
-                <serverPort>18001</serverPort>
+                <socketAddr>:18001</socketAddr>
             </binding.soap>
          </sca:service>
 

@@ -32,6 +32,7 @@ import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
+import org.switchyard.common.net.SocketAddr;
 import org.switchyard.component.soap.PortName;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
@@ -55,7 +56,7 @@ public class SOAPBindingPlugin implements Plugin {
      * Add a SOAP binding to a SwitchYard service.
      * @param serviceName name of the reference to bind
      * @param wsdlLocation location of the WSDL to configure the SOAP binding
-     * @param port optional value for the endpoint port
+     * @param socketAddr optional value for the ip+port
      * @param out shell output
      */
     @Command(value = "bind-service", help = "Add a SOAP binding to a service.")
@@ -69,9 +70,9 @@ public class SOAPBindingPlugin implements Plugin {
                     description = "URL or package-local path to the endpoint WSDL") 
             final String wsdlLocation,
             @Option(required = false,
-                    name = "serverPort",
-                    description = "Bind to this port for SOAP endpoints") 
-            final Integer port,
+                    name = "socketAddr",
+                    description = "Bind to this ip+port for SOAP endpoints") 
+            final String socketAddr,
             final PipeOut out) {
         
         SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
@@ -84,8 +85,8 @@ public class SOAPBindingPlugin implements Plugin {
         
         SOAPBindingModel binding = new SOAPBindingModel();
         binding.setWsdl(wsdlLocation);
-        if (port != null) {
-            binding.setServerPort(port);
+        if (socketAddr != null) {
+            binding.setSocketAddr(new SocketAddr(socketAddr));
         }
         service.addBinding(binding);
 

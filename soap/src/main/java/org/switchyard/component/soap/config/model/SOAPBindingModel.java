@@ -25,6 +25,7 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 import org.switchyard.common.lang.Strings;
+import org.switchyard.common.net.SocketAddr;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.soap.PortName;
 import org.switchyard.config.Configuration;
@@ -56,20 +57,15 @@ public class SOAPBindingModel extends V1BindingModel {
      */
     private static final String WSDL = "wsdl";
     private static final String PORT = "wsdlPort";
-    private static final String SERVER_HOST = "serverHost";
-    private static final String SERVER_PORT = "serverPort";
     private static final String CONTEXT_PATH = "contextPath";
     private static final String COMPOSER = "composer";
     private static final String DECOMPOSER = "decomposer";
-
-    private static final String DEFAULT_HOST = "127.0.0.1";
-    private static final int DEFAULT_PORT = 8080;
+    private static final String SOCKET_ADDRESS = "socketAddr";
 
     private PortName _port;
     private String _wsdl;
     private QName _serviceName;
-    private String _serverHost;
-    private int _serverPort = -1;
+    private SocketAddr _socketAddr;
     private String _contextPath;
     private String _composer;
     private String _decomposer;
@@ -81,7 +77,7 @@ public class SOAPBindingModel extends V1BindingModel {
      */
     public SOAPBindingModel() {
         super(SOAP, DEFAULT_NAMESPACE);
-        setModelChildrenOrder(WSDL, PORT, SERVER_HOST, SERVER_PORT, COMPOSER, DECOMPOSER);
+        setModelChildrenOrder(WSDL, PORT, SOCKET_ADDRESS, COMPOSER, DECOMPOSER);
     }
 
     /**
@@ -174,81 +170,38 @@ public class SOAPBindingModel extends V1BindingModel {
     }
 
     /**
-     * Returns the host where the WebService will be hosted.
+     * Returns the IP Socket Address where the WebService will be hosted.
      * 
      * This is applicable only if publishAsWS is true. 
      * 
-     * @return the serverHost
+     * @return the IP Socket Address
      */
-    public String getServerHost() {
-        if (_serverHost == null) {
-            Configuration childConfig = getModelConfiguration().getFirstChild(SERVER_HOST);
+    public SocketAddr getSocketAddr() {
+        if (_socketAddr == null) {
+            Configuration childConfig = getModelConfiguration().getFirstChild(SOCKET_ADDRESS);
             if (childConfig == null) {
-                Configuration hostConfig = _environment.getFirstChild(SERVER_HOST);
+                Configuration hostConfig = _environment.getFirstChild(SOCKET_ADDRESS);
                 if (hostConfig != null && hostConfig.getValue() != null) {
-                    _serverHost = hostConfig.getValue();
+                    _socketAddr = new SocketAddr(hostConfig.getValue());
                 } else {
-                    _serverHost = DEFAULT_HOST;
+                    _socketAddr = new SocketAddr();
                 }
             } else {
-                _serverHost = childConfig.getValue();
+                _socketAddr = new SocketAddr(childConfig.getValue());
             }
         }
-        return _serverHost;
+        return _socketAddr;
     }
 
     /**
-     * Sets the host where the WebService will be hosted.
+     * Sets the IP Socket Address where the WebService will be hosted.
      * 
      * This is applicable only if publishAsWS is true.
      * 
-     * @param serverhost the serverHost to set
+     * @param socketAddr the IP Socket Address to set
      */
-    public void setServerHost(String serverhost) {
-        this._serverHost = serverhost;
-    }
-
-    /**
-     * Returns the server port where the WebService will be hosted.
-     * 
-     * This is applicable only if publishAsWS is true.
-     * 
-     * @return the serverPort
-     */
-    public int getServerPort() {
-        if (_serverPort == -1) {
-            Configuration childConfig = getModelConfiguration().getFirstChild(SERVER_PORT);
-            if (childConfig == null) {
-                Configuration portConfig = _environment.getFirstChild(SERVER_PORT);
-                if (portConfig != null && portConfig.getValue() != null) {
-                    _serverPort = Integer.parseInt(portConfig.getValue());
-                } else {
-                    _serverPort = DEFAULT_PORT;
-                }
-            } else {
-                _serverPort = Integer.parseInt(childConfig.getValue());
-            }
-        }
-        return _serverPort;
-    }
-
-    /**
-     * Sets the server port where the WebService will be hosted.
-     * 
-     * This is applicable only if publishAsWS is true.
-     * 
-     * @param serverPort the serverPort to set
-     */
-    public void setServerPort(int serverPort) {
-        this._serverPort = serverPort;
-        Configuration childConfig = getModelConfiguration().getFirstChild(SERVER_PORT);
-        if (childConfig == null) {
-            ValueModel portConfig = new ValueModel(SERVER_PORT);
-            portConfig.setValue(String.valueOf(serverPort));
-            setChildModel(portConfig);
-        } else {
-            childConfig.setValue(String.valueOf(serverPort));
-        }
+    public void setSocketAddr(SocketAddr socketAddr) {
+        this._socketAddr = socketAddr;
     }
 
     /**

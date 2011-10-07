@@ -14,7 +14,7 @@
         <sca:service name="loanService" promote="loanService">
             <soap:binding.soap>
                 <soap:wsdl>loanServicePT.wsdl</soap:wsdl>
-                <soap:serverPort>18001</soap:serverPort>
+                <soap:socketAddr>localhost:18001</soap:socketAddr>
             </soap:binding.soap>
          </sca:service>
 

@@ -154,10 +154,10 @@ public class InboundHandler extends BaseHandler {
             if (_config.getContextPath() != null) {
                 path = "/" + _config.getContextPath() + "/" + portName.getServiceName();
             }
-            String publishUrl = _scheme + "://" + _config.getServerHost() + ":" + _config.getServerPort() + path;
+            String publishUrl = _scheme + "://" + _config.getSocketAddr().getHost() + ":" + _config.getSocketAddr().getPort() + path;
 
+            LOGGER.info("Publishing WebService at " + publishUrl);
             _endpoint.publish(publishUrl);
-            LOGGER.info("WebService published at " + publishUrl);
         } catch (WSDLException e) {
             throw new WebServicePublishException(e);
         }

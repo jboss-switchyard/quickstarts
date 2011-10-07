@@ -52,6 +52,7 @@ import org.junit.runner.RunWith;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
+import org.switchyard.common.net.SocketAddr;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.config.model.ModelPuller;
@@ -159,8 +160,7 @@ public class SOAPGatewayTest {
         _soapInbound = new SOAPGateway();
 
         _config.setPublishAsWS(true);
-        _config.setServerHost(host);
-        _config.setServerPort(Integer.parseInt(port));
+        _config.setSocketAddr(new SocketAddr(host, Integer.parseInt(port)));
         _soapInbound.init(_config, _domain);
 
         _soapInbound.start();

@@ -23,7 +23,7 @@
         <sca:service xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="OrderService" promote="OrderService">
             <soap:binding.soap xmlns:soap="urn:switchyard-component-soap:config:1.0">
                 <soap:wsdl>wsdl/OrderService.wsdl</soap:wsdl>
-                <soap:serverPort>18001</soap:serverPort>
+                <soap:socketAddr>:18001</soap:socketAddr>
             </soap:binding.soap>
         </sca:service>
         <component name="InventoryService">
