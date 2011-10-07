@@ -5,8 +5,7 @@
             <interface.wsdl interface="wsdl/ProcessOrder.wsdl#wsdl.porttype(ProcessOrder)"/>
             <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
                 <wsdl>wsdl/ProcessOrder.wsdl</wsdl>
-                <serverHost>localhost</serverHost>
-                <serverPort>18001</serverPort>
+                <socketAddr>localhost:18001</socketAddr>
                 <contextPath>swydws</contextPath>
             </binding.soap>
         </service>
