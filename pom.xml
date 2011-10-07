@@ -58,7 +58,7 @@
 	    <version.ecj>3.5.1</version.ecj>
         <version.hornetq>2.2.2.Final</version.hornetq>
         <version.javax.jms>1.1</version.javax.jms>
-	    <version.jboss.vfs>3.0.0.GA</version.jboss.vfs>
+	    <version.jboss.vfs>3.0.1.GA</version.jboss.vfs>
 	    <version.maven-shade-plugin>1.4</version.maven-shade-plugin>
         <version.netty>3.2.1.Final</version.netty>
         <version.riftsaw.ode>3.0.0-SNAPSHOT</version.riftsaw.ode>

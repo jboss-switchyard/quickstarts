@@ -15,11 +15,6 @@
     <name>SwitchYard: BPEL Component</name>
     <url>http://www.switchyard.org</url>
 
-    <properties>
-		<riftsaw.ode.version>3.0.0-SNAPSHOT</riftsaw.ode.version>
-		<riftsaw.engine.version>3.0.0-SNAPSHOT</riftsaw.engine.version>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -52,7 +47,6 @@
 		<dependency>
 			<groupId>org.switchyard.components</groupId>
 			<artifactId>switchyard-component-soap</artifactId>
-			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -77,6 +71,11 @@
 		<dependency>
 			<groupId>org.jboss.soa.bpel</groupId>
 			<artifactId>riftsaw-dao-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss</groupId>
+			<artifactId>jboss-vfs</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
     </dependencies>

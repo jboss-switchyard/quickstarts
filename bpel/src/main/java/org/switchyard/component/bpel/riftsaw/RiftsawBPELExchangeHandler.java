@@ -45,8 +45,6 @@ import org.w3c.dom.Node;
  */
 public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExchangeHandler {
 
-    private static final int JAR_SUFFIX_LEN = 4;
-
     private static final String VFS_CONTENT = "vfs:/content/";
 
     private static final String DEPLOY_XML = "deploy.xml";
@@ -95,7 +93,7 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
             try {
                 java.io.File deployFile=getDeployment();
 
-                DeploymentRef ref=engine.deploy(deployFile);
+                DeploymentRef ref=engine.deploy(getDeploymentName(), deployFile);
 
                 _deployed.put(qname, ref);
             } catch (Exception e) {
@@ -106,6 +104,50 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
         _serviceRefToCompositeMap.put(qname, compositeName);
     }
 
+    /**
+     * This method returns the deployment name associated with the
+     * deployed app.
+     * 
+     * @return The deployment name
+     * @throws Exception Failed to obtain the deployment name
+     */
+    private String getDeploymentName() throws Exception {
+        String ret=null;
+        
+        java.net.URL url = Thread.currentThread().
+                getContextClassLoader().getResource(DEPLOY_XML);
+        
+        if (url != null) {
+            String urlpath=url.toString();
+            
+            // Remove deploy.xml from end of path, removing an
+            // extra character for the path separator
+            urlpath = urlpath.substring(0, urlpath.length()-DEPLOY_XML.length()-1);
+            
+            int fileSeparatorIndex = urlpath.lastIndexOf('/');
+
+            if (fileSeparatorIndex != -1) {
+                ret = urlpath.substring(fileSeparatorIndex+1);
+                
+                int suffixIndex = ret.lastIndexOf('.');
+                
+                if (suffixIndex != -1) {
+                    ret = ret.substring(0, suffixIndex);
+                }
+            } else {
+                LOG.error("Failed to obtain deployment name from URL: "+urlpath);
+            }
+        } else {
+            LOG.error("Unable to locate deployment descriptor (deploy.xml) to derive deployment name");
+        }
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.info("Deployment name is: "+ret);
+        }
+        
+        return (ret);
+    }
+    
     /**
      * This method returns the file associated with the BPEL deployment
      * archive or root folder.
@@ -123,20 +165,27 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
         // Check if url contains a jar
         if (index != -1) {
 
-            // TO-DO: Hopefully short term hack to overcome problem
-            // that ODE needs jar unpacked to access artifacts -
-            // hopefully switchyard can be configurable to expand jar
-            // depending on the container. (RIFTSAW-435)
             if (url.toString().startsWith(VFS_CONTENT)) {
                 // AS7 deployment
-                String jarName = url.toString().substring(
-                            VFS_CONTENT.length(),
-                            index + JAR_SUFFIX_LEN);
-                String jarFilePath =
-                   System.getProperty("jboss.server.deploy.dir")
-                              + "/../../deployments/" + jarName;
-
-                ret = new java.io.File(jarFilePath);
+                try {
+                    org.jboss.vfs.VirtualFile vfile=org.jboss.vfs.VFS.getChild(url.toURI());
+                    
+                    // Recursively get all files
+                    java.util.List<org.jboss.vfs.VirtualFile> children=vfile.getParent().getChildrenRecursively();
+                    for (org.jboss.vfs.VirtualFile child : children) {
+                        // Need to request the physical file to have it expanded
+                        // on the file system
+                        child.getPhysicalFile();
+                    }                   
+                    
+                    // Virtual file is for the deployment descriptor, so we need
+                    // the parent file which represents the root of the deployment
+                    ret = vfile.getPhysicalFile().getParentFile();
+                    
+                } catch (java.lang.NoClassDefFoundError t) {
+                    LOG.error("Unable to resolve the deployment URL", t);
+                }
+                
             } else {
                 throw new SwitchYardException(
                         "Unknown deployment environment");
