@@ -60,6 +60,8 @@
 
     <dependencies>
         <module name="org.jboss.as.jpa"/>
+        <module name="org.jboss.vfs"/>
+
         <module name="org.hibernate"/>
         <module name="org.hibernate.validator" services="import" />
         <module name="org.hibernate.envers" services="import" />

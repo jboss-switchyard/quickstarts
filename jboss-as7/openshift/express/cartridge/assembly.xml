@@ -43,5 +43,13 @@
       </includes>
       <fileMode>755</fileMode>
     </fileSet>
+    <fileSet>
+      <directory>src/main/resources/hibernate-validator</directory>
+      <outputDirectory>modules/org/hibernate/validator/main</outputDirectory>
+      <includes>
+         <include>module.xml</include>
+      </includes>
+      <fileMode>755</fileMode>
+    </fileSet>
   </fileSets>
 </assembly>

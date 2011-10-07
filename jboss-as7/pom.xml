@@ -151,6 +151,18 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.switchyard.quickstarts</groupId>
+            <artifactId>switchyard-quickstart-bpel-service-say-hello</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.quickstarts</groupId>
+            <artifactId>switchyard-quickstart-bpel-service-loan-approval</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
             <artifactId>switchyard-quickstart-demo-orders</artifactId>
             <version>${project.version}</version>
