@@ -50,6 +50,7 @@
         <module>camel-binding</module>
         <module>camel-jms-binding</module>
         <module>bpm-service</module>
+        <module>bpel-service</module>
         <module>hornetq-binding</module>
         <module>transform-jaxb</module>
         <module>transform-json</module>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://example.com/loan-approval/loanService/"
+			xmlns:ens="http://example.com/loan-approval/xsd/error-messages/"
+			xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+			xmlns:tns="http://example.com/loan-approval/loanService/"
+			xmlns="http://schemas.xmlsoap.org/wsdl/"
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+			xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+			
+    <types>
+    
+		<xsd:schema targetNamespace="http://example.com/loan-approval/xsd/error-messages/">
+		  <xsd:element name="integer" type="xsd:integer" />
+		</xsd:schema>
+
+        <xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+                targetNamespace="http://example.com/loan-approval/loanService/" 
+                xmlns="http://www.w3.org/2001/XMLSchema">
+
+	        <element name="request">
+	            <complexType>
+	                <sequence>
+						<element name="firstName" type="xsd:string" />
+						<element name="name" type="xsd:string" />
+						<element name="amount" type="xsd:integer" />
+	                 </sequence>
+	            </complexType>
+	        </element>
+	         
+	        <element name="requestResponse">
+	            <complexType>
+	                <sequence>
+	                    <element name="accept" type="string"/>
+	                 </sequence>
+	            </complexType>
+	        </element>
+	         
+         </xsd:schema>
+	</types>
+	
+	<message name="requestMessage">
+		<part name="parameter" element="tns:request" />
+	</message>
+
+	<message name="requestResponseMessage">
+		<part name="parameter" element="tns:requestResponse" />
+	</message>
+	
+	<message name="errorMessage">
+		<part name="errorCode" element="ens:integer" />
+	</message>
+	
+	<portType name="loanServicePT">
+		<operation name="request">
+			<input message="tns:requestMessage" />
+			<output message="tns:requestResponseMessage" />
+			<fault name="unableToHandleRequest"
+					message="tns:errorMessage" />
+		</operation>
+	</portType>
+	
+	<plnk:partnerLinkType name="loanPartnerLT">
+		<plnk:role name="loanService" portType="tns:loanServicePT" />
+	</plnk:partnerLinkType>
+	
+    <binding name="loanService_Binding" type="tns:loanServicePT">
+    	<soap:binding style="document"
+    		transport="http://schemas.xmlsoap.org/soap/http" />
+    	<operation name="request">
+    		<soap:operation
+    			soapAction="http://example.com/loan-approval/loanService/request" />
+    		<input>
+    			<soap:body use="literal" />
+    		</input>
+    		<output>
+    			<soap:body use="literal" />
+    		</output>
+    		<fault name="unableToHandleRequest">
+    			<soap:fault use="literal" name="unableToHandleRequest" />
+    		</fault>
+    	</operation>
+    </binding>
+    
+    <service name="loanService">
+    	<port name="loanService_Port" binding="tns:loanService_Binding">
+    		<soap:address location="http://localhost:8080/Quickstart_bpel_loan_approvalWS" />
+    	</port>
+    </service>
+    
+</definitions>
