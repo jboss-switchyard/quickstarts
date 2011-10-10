@@ -61,13 +61,10 @@
     <version.jbpm>5.1.0.Final</version.jbpm>
     <version.maven.deploy.plugin>2.5</version.maven.deploy.plugin>
 	<version.netty>3.2.1.Final</version.netty>
-    <version.milyn>1.5-SNAPSHOT</version.milyn>
-    <version.mvel>2.1.0.drools2</version.mvel>
     <version.servlet>2.5</version.servlet>
     <version.shrinkwrap>1.0.0-alpha-12</version.shrinkwrap>
     <version.slf4j>1.6.1</version.slf4j>
     <version.tomcat>6.0.29</version.tomcat>
-    <version.xstream>1.2.2</version.xstream>
     <version.weld>1.1.0.Final</version.weld>
   </properties>
   <dependencies>
