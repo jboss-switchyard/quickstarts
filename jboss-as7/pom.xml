@@ -36,9 +36,7 @@
         <version.jaxen>1.1.1</version.jaxen>
         <version.jbossas>7.0.2.Final</version.jbossas>
         <version.jbpm>5.1.0.Final</version.jbpm>
-        <version.milyn>1.5-SNAPSHOT</version.milyn>
         <version.mina>2.0.1</version.mina>
-        <version.mvel>2.1.0.drools2</version.mvel>
         <version.riftsaw.ode>3.0.0-SNAPSHOT</version.riftsaw.ode>
         <version.riftsaw.engine>3.0.0-SNAPSHOT</version.riftsaw.engine>
         <version.hibernate.entitymanager>4.0.0.Beta1</version.hibernate.entitymanager>
@@ -46,7 +44,6 @@
         <version.slf4j>1.6.0</version.slf4j>
         <version.spring>3.0.6.RELEASE</version.spring>
         <version.xmlbeans>2.2.0</version.xmlbeans>
-        <version.xstream>1.2.2</version.xstream>
         <version.wsdl4j>1.6.2</version.wsdl4j>
     </properties>
 
