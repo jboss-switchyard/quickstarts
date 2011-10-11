@@ -79,6 +79,7 @@
         <module>camel/camel-as7</module>
         <module>camel/camel-core</module>
         <module>camel/camel-as6</module>
+        <module>camel/camel-cdi</module>
         <module>clojure</module>
         <module>hornetq</module>
         <module>tools/forge</module>
