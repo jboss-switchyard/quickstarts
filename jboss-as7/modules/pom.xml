@@ -192,6 +192,11 @@
             <artifactId>switchyard-component-camel-as7</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-camel-cdi</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!--<dependency>-->
             <!--<groupId>org.switchyard.components</groupId>-->
             <!--<artifactId>switchyard-component-clojure</artifactId>-->
