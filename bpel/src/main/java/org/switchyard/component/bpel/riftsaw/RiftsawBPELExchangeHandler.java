@@ -45,7 +45,7 @@ import org.w3c.dom.Node;
  */
 public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExchangeHandler {
 
-    private static final String VFS_CONTENT = "vfs:/content/";
+    private static final String VFS_SCHEME = "vfs";
 
     private static final String DEPLOY_XML = "deploy.xml";
 
@@ -165,7 +165,7 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
         // Check if url contains a jar
         if (index != -1) {
 
-            if (url.toString().startsWith(VFS_CONTENT)) {
+            if (url.getProtocol().equals(VFS_SCHEME)) {
                 // AS7 deployment
                 try {
                     org.jboss.vfs.VirtualFile vfile=org.jboss.vfs.VFS.getChild(url.toURI());
