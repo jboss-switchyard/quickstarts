@@ -25,7 +25,7 @@
     <include assembly="bpm/assembly.xml" />
     <include assembly="camel/assembly.xml" />
     <!--<include assembly="clojure/assembly.xml" />-->
-    <!--<include assembly="hornetq/assembly.xml" />-->
+    <include assembly="hornetq/assembly.xml" />
     <include assembly="rules/assembly.xml" />
     <include assembly="soap/assembly.xml" />
 
