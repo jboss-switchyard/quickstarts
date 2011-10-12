@@ -17,6 +17,7 @@
                 <exclude>standalone/**/standalone*.xml</exclude>
                 <exclude>domain/</exclude>
                 <exclude>META-INF/</exclude>
+                <exclude>xsl/</exclude>
             </excludes>
             <fileMode>644</fileMode>
             <directoryMode>755</directoryMode>
@@ -58,29 +59,6 @@
                 <include>standalone*.xml</include>
             </includes>
             <fileMode>644</fileMode>
-        </fileSet>
-        <fileSet>
-            <directory>${staging.dir}/deployments</directory>
-            <outputDirectory>${distro.root.dir}standalone/deployments</outputDirectory>
-            <fileMode>644</fileMode>
-            <directoryMode>755</directoryMode>
-        </fileSet>
-        <fileSet>
-            <directory>${quickstarts.dir}</directory>
-            <outputDirectory>${distro.root.dir}quickstarts</outputDirectory>
-            <excludes>
-                <exclude>**/.git</exclude>
-                <exclude>**/.gitignore</exclude>
-                <exclude>**/.DS_Store</exclude>
-                <exclude>**/.project</exclude>
-                <exclude>**/.classpath</exclude>
-                <exclude>**/.settings</exclude>
-                <exclude>**/.settings/**/*</exclude>
-                <exclude>**/target</exclude>
-                <exclude>**/target/**/*</exclude>
-            </excludes>
-            <fileMode>644</fileMode>
-            <directoryMode>755</directoryMode>
         </fileSet>
     </fileSets>
 </assembly>

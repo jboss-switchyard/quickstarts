@@ -19,13 +19,16 @@
         <staging.dir>${project.build.directory}/jboss-switchyard</staging.dir>
         <staging.jboss.dir>${staging.dir}/jboss-as-${version.jbossas}</staging.jboss.dir>
         <distro.root.dir>/switchyard-as7-${version.distro}/</distro.root.dir>
+        <installer.root.dir>/switchyard-as7-installer-${version.distro}</installer.root.dir>
         <switchyard.jboss.home>${project.build.directory}${distro.root.dir}</switchyard.jboss.home>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-release-distribution</artifactId>
+            <artifactId>switchyard-as7-standalone-bundle</artifactId>
+            <type>zip</type>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.as</groupId>
@@ -59,7 +62,7 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>install-switchyard</id>
+                        <id>unpack-bundle</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>unpack</goal>
@@ -68,86 +71,12 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-as7-modules</artifactId>
+                                    <artifactId>switchyard-as7-standalone-bundle</artifactId>
                                     <type>zip</type>
                                     <version>${project.version}</version>
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>${staging.jboss.dir}</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>install-switchyard-console</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-console-gwt</artifactId>
-                                    <type>war</type>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${staging.dir}/deployments</outputDirectory>
-                            <stripVersion>true</stripVersion>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>install-distribution-files</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-release-distribution</artifactId>
-                                    <type>jar</type>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${staging.jboss.dir}</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>install-forge-plugins</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-forge-plugin</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-forge-camel-plugin</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-forge-bean-plugin</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-forge-soap-plugin</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-forge-rules-plugin</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-forge-bpm-plugin</artifactId>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${staging.jboss.dir}/forge</outputDirectory>
-                            <stripVersion>true</stripVersion>
                         </configuration>
                     </execution>
                     <execution>
@@ -207,37 +136,17 @@
                                 <include>standalone*.xml</include>
                             </includes>
                             <outputDir>${staging.dir}</outputDir>
-                            <stylesheet>src/main/resources/switchyard.xsl</stylesheet>
+                            <stylesheet>${staging.jboss.dir}/xsl/switchyard.xsl</stylesheet>
                         </transformationSet>
-                        <!-- We are not ready for domain config yet -->
-                        <!--
-                        <transformationSet>
-                            <dir>${staging.jboss.dir}/domain/configuration</dir>
-                            <includes>
-                                <include>domain.xml</include>
-                            </includes>
-                            <outputDir>${staging.dir}</outputDir>
-                            <stylesheet>src/main/resources/switchyard.xsl</stylesheet>
-                        </transformationSet>
-                        -->
                     </transformationSets>
                 </configuration>
-                <!--
-                <dependencies>
-                    <dependency>
-                        <groupId>net.sf.saxon</groupId>
-                        <artifactId>saxon</artifactId>
-                        <version>8.7</version>
-                    </dependency>
-                </dependencies>
-                -->
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>make-assembly</id>
+                        <id>assembly-full-dist</id>
                         <phase>generate-test-resources</phase>
                         <goals>
                             <goal>attached</goal>

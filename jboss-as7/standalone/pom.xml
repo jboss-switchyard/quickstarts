@@ -15,7 +15,9 @@
     <description>SwitchYard AS7 Standalone Parent</description>
 
     <modules>
+        <module>bundle</module>
         <module>dist</module>
+        <module>installer</module>
     </modules>
 
 </project>
