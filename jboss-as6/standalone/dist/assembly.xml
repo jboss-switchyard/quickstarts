@@ -64,22 +64,5 @@
             <fileMode>644</fileMode>
             <outputDirectory>/${switchyard.root.dir}</outputDirectory>
         </fileSet>
-        <fileSet>
-          <directory>${quickstarts.dir}</directory>
-          <outputDirectory>${switchyard.root.dir}/quickstarts</outputDirectory>
-          <excludes>
-            <exclude>**/.git</exclude>
-            <exclude>**/.gitignore</exclude>
-            <exclude>**/.DS_Store</exclude>
-            <exclude>**/.project</exclude>
-            <exclude>**/.classpath</exclude>
-            <exclude>**/.settings</exclude>
-            <exclude>**/.settings/**/*</exclude>
-            <exclude>**/target</exclude>
-            <exclude>**/target/**/*</exclude>
-          </excludes>
-          <fileMode>644</fileMode>
-          <directoryMode>755</directoryMode>
-        </fileSet>
     </fileSets>
 </assembly>

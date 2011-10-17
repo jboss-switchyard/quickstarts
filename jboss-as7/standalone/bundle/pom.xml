@@ -72,6 +72,24 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>install-quickstarts</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.switchyard.quickstarts</groupId>
+                                    <artifactId>switchyard-quickstarts-distro</artifactId>
+                                    <type>zip</type>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${staging.jboss.dir}/quickstarts</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>install-switchyard-console</id>
                         <phase>generate-sources</phase>
                         <goals>

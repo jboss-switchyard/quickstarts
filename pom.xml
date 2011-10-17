@@ -16,8 +16,6 @@
 
     <properties>
         <version.distro>0.3</version.distro>
-        <!-- #note# relative path must be started from release/jboss-as7/standalone/dist -->
-        <quickstarts.dir>../../../../quickstarts</quickstarts.dir>
     </properties>
 
     <modules>
