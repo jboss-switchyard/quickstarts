@@ -54,6 +54,13 @@ MA  02110-1301, USA.
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="failOnWarning" type="string" use="optional">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            whether a warning should be reported as an SwitchYardException or just log. default is false
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

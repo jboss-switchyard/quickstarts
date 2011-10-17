@@ -70,4 +70,22 @@ public class V1XsltTransformModel extends V1BaseTransformModel implements
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean failOnWarning() {
+        String failOnWarn = getModelAttribute(FAIL_ON_WARNING);
+        return Boolean.parseBoolean(failOnWarn);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public XsltTransformModel setFailOnWarning(boolean failOnWarning) {
+        setModelAttribute(FAIL_ON_WARNING, Boolean.toString(failOnWarning));
+        return this;
+    }
+
 }

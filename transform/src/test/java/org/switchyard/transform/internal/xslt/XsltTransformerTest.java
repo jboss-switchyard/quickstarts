@@ -140,6 +140,29 @@ public class XsltTransformerTest extends AbstractTransformerTestCase {
         Assert.assertTrue(transformer instanceof XsltTransformer);
     }
 
+    @Test
+    public void test_failonwarn_false_warn() throws IOException, SAXException {
+        Transformer transformer = getTransformer("xslt-config-failonwarn-false-warn.xml");
+        DefaultMessage message = newMessage(INITIAL);
+        transformer.transform(message);
+        String result = message.getContent(String.class);
+
+        XMLUnit.setIgnoreWhitespace(true);
+        Diff diff = new Diff(EXPECTED, result);
+        Assert.assertTrue(diff.toString(), diff.identical());
+    }
+
+    @Test
+    public void test_failonwarn_true_warn() throws IOException, SAXException {
+        try {
+            Transformer transformer = getTransformer("xslt-config-failonwarn-true-warn.xml");
+
+            Assert.fail("No SwitchYardException has been thrown");
+        } catch (SwitchYardException e) {
+            Assert.assertEquals("An unexpected error ocurred while creating the xslt transformer", e.getMessage());
+        }
+    }
+
     private DefaultMessage newMessage(Object content) {
         DefaultMessage message = new DefaultMessage().setContent(content);
         message.setTransformerRegistry(xformReg);

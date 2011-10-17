@@ -23,9 +23,12 @@ package org.switchyard.transform.xslt;
 import java.io.Reader;
 import java.io.StringWriter;
 import javax.xml.namespace.QName;
+import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Templates;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import org.apache.log4j.Logger;
 import org.switchyard.Message;
 import org.switchyard.config.model.Scannable;
 import org.switchyard.exception.SwitchYardException;
@@ -41,18 +44,22 @@ import org.switchyard.transform.BaseTransformer;
 @Scannable(false)
 public class XsltTransformer<F, T> extends BaseTransformer<Message, Message> {
 
+    private static final Logger LOGGER = Logger.getLogger(XsltTransformer.class);
     private Templates _templates;
-
+    private boolean  _failOnWarning;
+    
     /**
      * Public constructor.
      * 
      * @param from From type.
      * @param to To type.
      * @param templates XSL Template instance
+     * @param failOnWarning whether a warning should be reported as an SwitchYardException or just log
      */
-    public XsltTransformer(QName from, QName to, Templates templates) {
+    public XsltTransformer(QName from, QName to, Templates templates, boolean failOnWarning) {
         super(from, to);
         this._templates = templates;
+        this._failOnWarning = failOnWarning;
     }
 
     @Override
@@ -63,6 +70,7 @@ public class XsltTransformer<F, T> extends BaseTransformer<Message, Message> {
             StringWriter resultWriter = new StringWriter();
             StreamResult result = new StreamResult(resultWriter);
             javax.xml.transform.Transformer transformer = _templates.newTransformer();
+            transformer.setErrorListener(new XsltTransformerErrorListener(_failOnWarning));
             transformer.transform(source, result);
             message.setContent(resultWriter.toString());
 
@@ -70,6 +78,33 @@ public class XsltTransformer<F, T> extends BaseTransformer<Message, Message> {
             throw new SwitchYardException("Error during xslt transformation", e);
         }
         return message;
+    }
+
+    private class XsltTransformerErrorListener implements ErrorListener {
+        private boolean _failOnWarning;
+
+        public XsltTransformerErrorListener(boolean failOnWarning) {
+             this._failOnWarning = failOnWarning;
+        }
+        
+        @Override
+        public void warning(TransformerException ex) throws TransformerException {
+            if (_failOnWarning) {
+                throw ex;
+           } else {
+                LOGGER.warn("Warning during xslt transformation", ex);
+             }
+        }
+
+        @Override
+        public void error(TransformerException ex) throws TransformerException {
+            throw ex;
+        }
+
+        @Override
+        public void fatalError(TransformerException ex) throws TransformerException {
+            throw ex;
+        }
     }
 }
 

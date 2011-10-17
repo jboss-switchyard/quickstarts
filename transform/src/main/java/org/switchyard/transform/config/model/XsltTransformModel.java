@@ -33,6 +33,9 @@ public interface XsltTransformModel extends TransformModel {
     /** The "xslt file" location. */
     String XSLT_FILE_URI = "xsltFile";
 
+    /**  whether a warning should be reported as an Exception.   */
+    String FAIL_ON_WARNING = "failOnWarning";
+    
     /**
      * @return xslt identifier
      */
@@ -43,4 +46,19 @@ public interface XsltTransformModel extends TransformModel {
      * @return model representation
      */
     XsltTransformModel setXsltFile(String xsltFile);
+
+    /** Return whether a warning should be reported as an SwitchYardException.
+     * If failOnWarning attribute is "true", then a warning should be reported
+     * as an SwitchYardException, otherwise just log.
+     * @return whether a warning should be reported as an SwitchYardException
+     */
+    boolean failOnWarning();
+    
+    /** Set whether a warning should be reported as an SwitchYardException.
+     * If failOnWarning attribute is "true", then a warning should be reported
+     * as an SwitchYardException, otherwise just log.
+     * @param failOnWarning whether a warning should be reported as an SwitchYardException
+     * @return model representation
+     */
+    XsltTransformModel setFailOnWarning(boolean failOnWarning);
 }
