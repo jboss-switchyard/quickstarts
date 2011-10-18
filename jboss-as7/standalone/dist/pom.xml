@@ -39,6 +39,12 @@
     </dependencies>
 
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -177,6 +183,10 @@
                         <property>
                             <name>module.path</name>
                             <value>${switchyard.jboss.home}/modules</value>
+                        </property>
+                        <property>
+                            <name>server-config</name>
+	                        <value>{switchyard.jboss.home}/standalone/configuration/standalone-preview.xml</value>
                         </property>
                     </systemProperties>
                     <trimStackTrace>false</trimStackTrace>
