@@ -59,9 +59,19 @@
         <module>demos/orders</module>
         <module>demos/helpdesk</module>
         <module>demos/webapp-deploy</module>
-
-        <module>assembly</module>
     </modules>
+
+    <!-- Conditionally include the assembly module.  It's not always present e.g. in the quickstarts distro. -->
+    <profiles>
+        <profile>
+            <activation>
+                <file><exists>assembly</exists></file>
+            </activation>
+            <modules>
+                <module>assembly</module>
+            </modules>
+        </profile>
+    </profiles>
     
     <repositories>
       <repository>
