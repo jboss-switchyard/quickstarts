@@ -24,7 +24,6 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -77,7 +76,6 @@ public class ClasspathScanner {
     public static File toClassPathFile(URL classPathURL) throws IOException {
         String urlPath = classPathURL.getFile();
 
-        urlPath = URLDecoder.decode(urlPath, "UTF-8");
         if (urlPath.startsWith("file:")) {
             urlPath = urlPath.substring(5);
         }

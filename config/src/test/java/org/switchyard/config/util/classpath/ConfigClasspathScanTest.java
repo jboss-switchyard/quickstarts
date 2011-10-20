@@ -23,6 +23,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.type.classpath.InstanceOfFilter;
+import org.switchyard.common.type.classpath.ResourceExistsFilter;
 import org.switchyard.config.BaseConfiguration;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.DOMConfiguration;
@@ -30,13 +31,14 @@ import org.switchyard.config.DOMConfiguration;
 import javax.activation.CommandMap;
 import javax.activation.MailcapCommandMap;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class ClasspathScannerTest {
+public class ConfigClasspathScanTest {
 
     @Test
     public void test_folder_scan() throws IOException {
@@ -51,19 +53,5 @@ public class ClasspathScannerTest {
         Assert.assertTrue(classes.contains(Configuration.class));
         Assert.assertTrue(classes.contains(BaseConfiguration.class));
         Assert.assertTrue(classes.contains(DOMConfiguration.class));
-    }
-
-    @Test
-    public void test_archive_scan() throws IOException {
-        InstanceOfFilter filter = new InstanceOfFilter(CommandMap.class);
-        ClasspathScanner scanner = new ClasspathScanner(filter);
-
-        // If running this test inside your IDE... you need to set the cwd to be the
-        // root of the config module !!
-        scanner.scan(new File("./src/test/resources/classpathscan-test.jar").toURI().toURL());
-        List<Class<?>> classes = filter.getMatchedTypes();
-
-        Assert.assertTrue(classes.contains(CommandMap.class));
-        Assert.assertTrue(classes.contains(MailcapCommandMap.class));
     }
 }
