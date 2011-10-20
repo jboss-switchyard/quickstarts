@@ -20,7 +20,6 @@
     <version.hibernate.commons-annotations>3.2.0.Final</version.hibernate.commons-annotations>
     <version.hibernate.ejb3-persistence>1.0.1.GA</version.hibernate.ejb3-persistence>
     <version.hibernate.jpa>1.0</version.hibernate.jpa>
-    <version.slf4j>1.5.10</version.slf4j>
   </properties>
 
   <modules>
@@ -82,6 +81,12 @@
       <artifactId>hibernate-commons-annotations</artifactId>
       <version>${version.hibernate.commons-annotations}</version>
       <scope>test</scope>
+        <exclusions>
+            <exclusion>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+            </exclusion>
+        </exclusions>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
@@ -95,16 +100,6 @@
       <version>${version.hibernate.jpa}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${version.slf4j}</version>
-     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>${version.slf4j}</version>
-     </dependency>
   </dependencies>
   
   <build>
