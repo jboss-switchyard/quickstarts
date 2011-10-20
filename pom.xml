@@ -63,7 +63,6 @@
 	<version.netty>3.2.1.Final</version.netty>
     <version.servlet>2.5</version.servlet>
     <version.shrinkwrap>1.0.0-alpha-12</version.shrinkwrap>
-    <version.slf4j>1.6.1</version.slf4j>
     <version.tomcat>6.0.29</version.tomcat>
     <version.weld>1.1.0.Final</version.weld>
   </properties>
@@ -270,15 +269,43 @@
           <artifactId>jbpm-flow-builder</artifactId>
           <version>${version.jbpm}</version>
       </dependency>
-	  <dependency>
-          <groupId>org.jbpm</groupId>
-          <artifactId>jbpm-human-task</artifactId>
-          <version>${version.jbpm}</version>
-      </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-human-task</artifactId>
+            <version>${version.jbpm}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xmlParserAPIs</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 	  <dependency>
           <groupId>org.jbpm</groupId>
           <artifactId>jbpm-persistence-jpa</artifactId>
           <version>${version.jbpm}</version>
+          <exclusions>
+              <exclusion>
+                  <artifactId>hibernate-annotations</artifactId>
+                  <groupId>org.hibernate</groupId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>slf4j-api</artifactId>
+              </exclusion>
+          </exclusions>
       </dependency>
 	  <dependency>
           <groupId>org.jbpm</groupId>
@@ -294,12 +321,31 @@
           <groupId>org.jboss.weld.se</groupId>
           <artifactId>weld-se-core</artifactId>
           <version>${version.weld}</version>
+          <exclusions>
+              <exclusion>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>slf4j-api</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>slf4j-ext</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>ch.qos.cal10n</groupId>
+                  <artifactId>cal10n-api</artifactId>
+              </exclusion>
+          </exclusions>
       </dependency>
-	  <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-simple</artifactId>
-          <version>${version.slf4j}</version>
-      </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${version.slf4j}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-ext</artifactId>
+            <version>${version.slf4j}</version>
+        </dependency>
       <dependency>
           <groupId>org.milyn</groupId>
           <artifactId>milyn-smooks-all</artifactId>

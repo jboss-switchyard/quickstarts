@@ -74,9 +74,16 @@
             <artifactId>commons-httpclient</artifactId>
         </dependency>
         <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+         </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <scope>runtime</scope>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-ext</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
@@ -89,12 +96,6 @@
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-persistence-jpa</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>hibernate-annotations</artifactId>
-                    <groupId>org.hibernate</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
@@ -107,24 +108,6 @@
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-human-task</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>xml-apis</groupId>
-                    <artifactId>xml-apis</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>xerces</groupId>
-                    <artifactId>xercesImpl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>xerces</groupId>
-                    <artifactId>xmlParserAPIs</artifactId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>hibernate-annotations</artifactId>
-                    <groupId>org.hibernate</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.hornetq</groupId>
