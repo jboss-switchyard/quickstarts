@@ -1,0 +1,16 @@
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="transform-xslt" targetNamespace="urn:switchyard-quickstart:transform-xslt:0.1.0">
+        <service name="OrderService" promote="OrderService">
+            <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
+                <wsdl>wsdl/OrderService.wsdl</wsdl>
+                <socketAddr>:18001</socketAddr>
+            </binding.soap>
+         </service>
+    </composite>
+    <transforms>
+        <transform.xslt xmlns="urn:switchyard-config:transform:1.0"
+                        from="{urn:switchyard-quickstart:transform-xslt:1.0}order"
+                        to="{urn:switchyard-quickstart:transform-xslt:1.0}orderAck"
+                        xsltFile="xslt/order.xslt" />
+    </transforms>
+</switchyard>
