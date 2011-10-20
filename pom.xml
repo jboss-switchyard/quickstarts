@@ -55,6 +55,7 @@
         <module>transform-jaxb</module>
         <module>transform-json</module>
         <module>transform-smooks</module>
+        <module>transform-xslt</module>
         <module>rules-interview</module>
         <module>demos/orders</module>
         <module>demos/helpdesk</module>
