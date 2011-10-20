@@ -70,6 +70,7 @@
     <version.milyn>1.5</version.milyn>
     <version.mvel>2.1.0.drools2</version.mvel>
     <version.project>${project.version}</version.project>
+    <version.slf4j>1.6.1</version.slf4j>
     <version.xstream>1.2.2</version.xstream>
   </properties>
 
@@ -624,6 +625,21 @@
         <artifactId>hamcrest-all</artifactId>
         <version>${version.hamcrest}</version>
      </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${version.slf4j}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${version.slf4j}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-ext</artifactId>
+            <version>${version.slf4j}</version>
+        </dependency>
     </dependencies>
   </dependencyManagement>
   <distributionManagement>
