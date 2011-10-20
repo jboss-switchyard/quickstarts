@@ -26,12 +26,16 @@ import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
 import javax.xml.namespace.QName;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.StringWriter;
 
 /**
  * Basic DOM transformations.
@@ -49,7 +53,8 @@ public class BasicDOMTransformer extends AbstractDOMTransformer {
     private static final QName TYPE_READER       = toMessageType(Reader.class);
     private static final QName TYPE_INPUTSTREAM  = toMessageType(InputStream.class);
     private static final QName TYPE_NODE         = toMessageType(Node.class);
-
+    private static final QName TYPE_DOMSOURCE    = toMessageType(DOMSource.class);
+    
     @Override
     public Object transform(Object from) {
         if (from instanceof Node) {
@@ -116,6 +121,8 @@ public class BasicDOMTransformer extends AbstractDOMTransformer {
             return document.getDocumentElement();
         } else if (getTo().equals(TYPE_NODE)) {
             return document.getDocumentElement();
+        } else if (getTo().equals(TYPE_DOMSOURCE)) {
+            return new DOMSource(document.getDocumentElement());
         }
 
         return null;
@@ -128,6 +135,15 @@ public class BasicDOMTransformer extends AbstractDOMTransformer {
             return source.getNode() instanceof Element
                 ? (Element)source.getNode()
                 : null;
+        } else if (getTo().equals(TYPE_STRING)) {
+            StringWriter writer = new StringWriter();
+            StreamResult result = new StreamResult(writer);
+            try {
+                TransformerFactory.newInstance().newTransformer().transform(source, result);
+            } catch (TransformerException e) {
+                return null;
+            }
+            return writer.toString();
         } else {
             return null;
         }

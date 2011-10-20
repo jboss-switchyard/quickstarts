@@ -34,6 +34,12 @@ import org.xml.sax.SAXException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
+
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
@@ -85,6 +91,17 @@ public class BasicDOMTransformerTest extends AbstractTransformerTest {
     }
 
     @Test
+    public void test_DOMSource2String() throws IOException, SAXException {
+        Document docIn = XMLUnit.buildTestDocument("<x><y/></x>");
+        DefaultMessage message = newMessage();
+
+        message.setContent(new DOMSource(docIn));
+        String stringOut = message.getContent(String.class);
+
+        XMLAssert.assertXMLEqual("<x><y/></x>", new String(stringOut));
+    }
+    
+    @Test
     public void test_String2Document() throws IOException, SAXException {
         testToDOM("<x><y/></x>", Document.class);
     }
@@ -94,6 +111,18 @@ public class BasicDOMTransformerTest extends AbstractTransformerTest {
         testToDOM("<x><y/></x>", Element.class);
     }
 
+    @Test
+    public void test_String2DOMSource() throws IOException, SAXException, TransformerException {
+        DefaultMessage message = newMessage();
+
+        message.setContent("<x><y/></x>");
+        DOMSource doms = message.getContent(DOMSource.class);
+        StringWriter writer = new StringWriter();
+        StreamResult result = new StreamResult(writer);
+        TransformerFactory.newInstance().newTransformer().transform(doms, result);
+        XMLAssert.assertXMLEqual("<x><y/></x>", writer.toString());
+    }
+    
     @Test
     public void test_Reader2Document() throws IOException, SAXException {
         testToDOM(new StringReader("<x><y/></x>"), Document.class);
