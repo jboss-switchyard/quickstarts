@@ -145,11 +145,11 @@
         <artifactId>switchyard-deploy-cdi</artifactId>
         <version>${project.version}</version>
       </dependency>
-      <dependency>
+<!--      <dependency>
         <groupId>org.switchyard</groupId>
         <artifactId>switchyard-deploy-jboss-as6</artifactId>
         <version>${project.version}</version>
-      </dependency>
+      </dependency> -->
       <dependency>
         <groupId>org.switchyard</groupId>
         <artifactId>switchyard-deploy-jboss-as7</artifactId>
