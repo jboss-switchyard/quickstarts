@@ -17,11 +17,13 @@
       <groupId>org.jboss.forge</groupId>
       <artifactId>forge-shell-api</artifactId>
       <version>${version.forge}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.forge</groupId>
-      <artifactId>forge-project-model-maven</artifactId>
+      <artifactId>forge-maven-api</artifactId>
       <version>${version.forge}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.switchyard</groupId>

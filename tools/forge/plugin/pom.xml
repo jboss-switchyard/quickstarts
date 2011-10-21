@@ -17,11 +17,13 @@
       <groupId>org.jboss.forge</groupId>
       <artifactId>forge-shell-api</artifactId>
       <version>${version.forge}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.forge</groupId>
-      <artifactId>forge-project-model-maven</artifactId>
+      <artifactId>forge-maven-api</artifactId>
       <version>${version.forge}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.switchyard</groupId>
@@ -30,6 +32,21 @@
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-forge-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <version>2.7.1-1.jbossorg</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xalan</groupId>
+      <artifactId>serializer</artifactId>
+      <version>2.7.1-1.jbossorg</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.activation</groupId>
+      <artifactId>activation</artifactId>
+      <version>1.1.1</version>
     </dependency>
   </dependencies>
   <build>
@@ -63,6 +80,17 @@
           </execution>
         </executions>
       </plugin>
+     <plugin>
+       <groupId>org.apache.maven.plugins</groupId>
+       <artifactId>maven-jar-plugin</artifactId>
+       <configuration>
+          <archive>
+             <manifestEntries>
+                <Dependencies>org.apache.xalan, log4j</Dependencies>
+             </manifestEntries>
+          </archive>
+       </configuration>
+     </plugin>
     </plugins>
   </build>
 </project>
