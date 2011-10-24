@@ -19,8 +19,8 @@
 
 package org.switchyard.console.client.ui.application;
 
-import org.jboss.as.console.client.widgets.ContentGroupLabel;
-import org.jboss.as.console.client.widgets.ContentHeaderLabel;
+import org.jboss.ballroom.client.widgets.ContentGroupLabel;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.model.Application;
 import org.switchyard.console.client.ui.common.TransformersList;

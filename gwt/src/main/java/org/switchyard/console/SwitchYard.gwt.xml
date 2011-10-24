@@ -14,24 +14,12 @@
 
 <module rename-to="SwitchYard">
 
-	<inherits name="org.jboss.dmr.DMR" />
 	<inherits name="org.jboss.as.console.Framework" />
-    <inherits name="com.google.gwt.http.HTTP"/>
 
 	<define-configuration-property name="gin.ginjector" is-multi-valued="false" />
 	<set-configuration-property name="gin.ginjector" value="org.switchyard.console.client.gin.SwitchYardGinjector" />
 
-	<set-property name="log_ConsoleLogger" value="ENABLED" />
-	<set-property name="log_GWTLogger" value="ENABLED" />
-	<set-property name="log_SystemLogger" value="ENABLED" />
-
-	<!-- Loggers Disabled by default -->
-	<set-property name="log_DivLogger" value="DISABLED" />
-	<set-property name="log_FirebugLogger" value="DISABLED" />
-	<set-property name="log_WindowLogger" value="DISABLED" />
-
-	<set-configuration-property name="log_pattern" value="%d [%-5p] %m%n" />
-
+    <stylesheet src="SwitchYard.css" />
 
 	<!-- Specify the app entry point class. -->
 	<entry-point class='org.switchyard.console.client.Console' />

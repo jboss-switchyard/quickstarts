@@ -20,7 +20,7 @@
 package org.switchyard.console.client.ui.component;
 
 import org.jboss.as.console.client.core.DisposableViewImpl;
-import org.jboss.as.console.client.widgets.RHSContentPanel;
+import org.jboss.ballroom.client.layout.RHSContentPanel;
 import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.Component;
 

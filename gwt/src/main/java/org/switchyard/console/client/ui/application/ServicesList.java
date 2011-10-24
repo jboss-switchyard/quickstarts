@@ -21,7 +21,7 @@ package org.switchyard.console.client.ui.application;
 import java.util.Collections;
 import java.util.List;
 
-import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.model.Application;
 import org.switchyard.console.client.model.Service;

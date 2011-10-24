@@ -21,7 +21,7 @@ package org.switchyard.console.client.ui.common;
 import java.util.Collections;
 import java.util.List;
 
-import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.switchyard.console.client.model.Transformer;
 
 import com.google.gwt.user.cellview.client.TextColumn;

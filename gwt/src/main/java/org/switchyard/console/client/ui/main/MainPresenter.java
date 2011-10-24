@@ -135,8 +135,8 @@ public class MainPresenter extends Presenter<MainPresenter.MyView, MainPresenter
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
+    protected void onReveal() {
+        super.onReveal();
 
         HTML headerContent = new HTML(new SafeHtmlBuilder().appendEscaped(
                 Singleton.MESSAGES.header_content_switchYardConfiguration()).toSafeHtml());

@@ -17,13 +17,23 @@
 
   <properties>
     <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
-    <gwt.plugin.version>${gwt.version}</gwt.plugin.version>
     <asConsoleIncludesDirectory>${project.build.directory}/dependency/as-console</asConsoleIncludesDirectory>
+    <version.as7>7.0.2.Final</version.as7>
+    <version.as7.console>1.0.0.Beta17</version.as7.console>
+    <version.ballroom>1.0.0.Beta8</version.ballroom>
+    <version.gwt.plugin>2.2.0</version.gwt.plugin>
   </properties>
 
   <dependencies>
     <!-- <dependency> <groupId>org.jboss.as</groupId> <artifactId>jboss-as-console</artifactId> <version>1.0.0.Beta9</version> 
       <type>java-source</type> <classifier>sources</classifier> </dependency> -->
+
+    <dependency>
+      <groupId>org.jboss.ballroom</groupId>
+      <artifactId>widgets</artifactId>
+      <version>${version.ballroom}</version>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>com.google.gwt</groupId>
@@ -94,15 +104,11 @@
     <dependency>
     	<groupId>org.jboss</groupId>
     	<artifactId>jboss-dmr</artifactId>
-    	<version>1.0.0.Final</version>
-    	<type>jar</type>
     	<scope>provided</scope>
     </dependency>
     <dependency>
     	<groupId>org.jboss.as</groupId>
     	<artifactId>jboss-as-controller-client</artifactId>
-    	<version>7.0.0.Final</version>
-    	<type>jar</type>
     	<scope>provided</scope>
     </dependency>
   </dependencies>
@@ -129,32 +135,12 @@
                 <artifactItem>
                   <groupId>org.jboss.as</groupId>
                   <artifactId>jboss-as-console</artifactId>
-                  <version>1.0.0.Beta13</version>
+                  <version>${version.as7.console}</version>
                   <classifier>sources</classifier>
                   <type>jar</type>
-                  <includes>org/jboss/dmr/**,org/jboss/as/console/client/widgets/**,org/jboss/as/console/client/auth/**,org/jboss/as/console/client/core/*.*,org/jboss/as/console/client/core/message/*.*,org/jboss/as/console/client/shared/*.*,org/jboss/as/console/client/shared/dispatch/**,org/jboss/as/console/client/Build.java,gwt-proxy.properties</includes>
+                  <includes>org/jboss/dmr/**,org/jboss/as/console/client/widgets/**,org/jboss/as/console/client/auth/**,org/jboss/as/console/client/core/*.*,org/jboss/as/console/client/core/message/*.*,org/jboss/as/console/client/shared/*.*,org/jboss/as/console/client/shared/dispatch/**,org/jboss/as/console/client/Build.java,org/jboss/as/console/client/ConsoleFramework.java,org/jboss/as/console/public/**,gwt-proxy.properties</includes>
                   <excludes>org/jboss/as/console/client/shared/BeanFactory.java</excludes>
                   <outputDirectory>${asConsoleIncludesDirectory}/java</outputDirectory>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-          <execution>
-            <id>unpack-jboss-as-resources</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.jboss.as</groupId>
-                  <artifactId>jboss-as-console</artifactId>
-                  <version>1.0.0.Beta13</version>
-                  <classifier>resources</classifier>
-                  <type>jar</type>
-                  <includes>images/**,*.css</includes>
-                  <outputDirectory>${webappDirectory}</outputDirectory>
                 </artifactItem>
               </artifactItems>
             </configuration>
@@ -196,7 +182,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
-        <version>${gwt.plugin.version}</version>
+        <version>${version.gwt.plugin}</version>
         <executions>
           <execution>
             <goals>
@@ -246,4 +232,22 @@
     </plugins>
   </build>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.as</groupId>
+        <artifactId>jboss-as-console-parent</artifactId>
+        <version>${version.as7.console}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.as</groupId>
+        <artifactId>jboss-as-parent</artifactId>
+        <version>${version.as7}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 </project>

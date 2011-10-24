@@ -19,10 +19,10 @@
 
 package org.switchyard.console.client.ui.service;
 
-import org.jboss.as.console.client.widgets.ContentGroupLabel;
-import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.forms.TextItem;
+import org.jboss.ballroom.client.widgets.ContentGroupLabel;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.Service;

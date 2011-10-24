@@ -16,3 +16,14 @@
 			launch the application from within Eclipse.
 		2.  Right-click module file (e.g. Application.gwt.xml) and select
 			Run as->GWT application.  This will launch an external GWT console.
+
+2.  Running in Eclipse (using Run as -> Web Application)
+	1.  In the run configuration, you will need to add the following jars to the
+		bootstrap entries on the classpath tab:
+			jboss-logging-<version>.jar
+			xnio-api-<version>.jar
+			xnio-nio-<version>.jar
+		These jars should come from your AS installation.  If you are
+		experiencing other ClassNotFoundExceptions, you will need to add those
+		jars to the bootstrap entries as well.  This is to workaround
+		classLoader issues in gwt-dev.

@@ -1,25 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.2.0//EN" "http://google-web-toolkit.googlecode.com/svn/tags/2.2.0/distro-source/core/src/gwt-module.dtd">
 <module rename-to="Framework">
-    <!-- Inherit the core Web Toolkit stuff.                  -->
-    <inherits name='com.google.gwt.user.User'/>
-    <inherits name='com.google.gwt.user.theme.chrome.ChromeResources'/>
-    <inherits name="com.google.gwt.editor.Editor"/>
-    <inherits name="org.jboss.dmr.DMR"/>
     <inherits name="com.google.gwt.i18n.I18N"/>
+    <inherits name="org.jboss.dmr.DMR"/>
 
-    <inherits name='com.gwtplatform.mvp.Mvp' />
 
-	<!--  
+    <inherits name="org.jboss.ballroom.Framework"/>
+
+    <inherits name="com.google.gwt.json.JSON"/>
+    <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
+
+    <!--  defined in Switchyard.gwt.xml
     <define-configuration-property name="gin.ginjector" is-multi-valued="false" />
     <set-configuration-property name="gin.ginjector"
                                 value="org.jboss.as.console.client.core.gin.CoreUI" />
     -->
-
-    <!-- Add gwt-log support, default level `DEBUG` -->
-    <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
-    <inherits name="com.google.gwt.autobean.AutoBean"/>
-    <inherits name="com.google.gwt.json.JSON"/>
 
     <set-property name="log_ConsoleLogger" value="ENABLED" />
     <set-property name="log_GWTLogger" value="ENABLED" />
@@ -29,18 +24,19 @@
     <set-property name="log_DivLogger" value="DISABLED" />
     <set-property name="log_FirebugLogger" value="DISABLED" />
     <set-property name="log_WindowLogger" value="DISABLED" />
-
     <set-configuration-property name="log_pattern" value="%d [%-5p] %m%n" />
 
-	<!--
+    <!-- not used by the SY console
     <generate-with class="org.jboss.as.console.rebind.forms.PropertyMetaDataGenerator">
         <when-type-assignable class="org.jboss.as.console.client.widgets.forms.PropertyMetaData" />
     </generate-with>
     -->
 
-    <!--define-property name="locale" values="default" /-->
+    <replace-with class="org.jboss.as.console.client.ConsoleFramework">
+        <when-type-is class="org.jboss.ballroom.client.spi.Framework"/>
+    </replace-with>
 
-	<property-provider name="locale">
+	<!--property-provider name="locale">
         var locale_value = "";
         var cookieName = "as7_ui_locale";
 
@@ -58,10 +54,12 @@
         }
 
         return locale_value;
-	</property-provider>
+	</property-provider-->
 
     <extend-property name="locale" values="en"/>
     <extend-property name="locale" values="de"/>
+
+    <stylesheet src="console.css" />
 
     <!-- Specify the app entry point class.                   
     <entry-point class='org.jboss.as.console.client.Console'/>

@@ -19,7 +19,7 @@
 
 package org.switchyard.console.client.ui.widgets;
 
-import org.jboss.as.console.client.widgets.forms.FormItem;
+import org.jboss.ballroom.client.widgets.forms.FormItem;
 
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Widget;
@@ -107,4 +107,8 @@ public class ClickableTextItem<T> extends FormItem<T> {
         return true;
     }
 
+    @Override
+    public void clearValue() {
+        setValue(null);
+    }
 }

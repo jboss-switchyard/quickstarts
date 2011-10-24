@@ -19,7 +19,7 @@
 
 package org.switchyard.console.client.ui.component;
 
-import org.jboss.as.console.client.widgets.ContentHeaderLabel;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.Component;
 

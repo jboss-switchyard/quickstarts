@@ -21,10 +21,9 @@ package org.switchyard.console.client.ui.main;
 
 import java.util.List;
 
-import org.jboss.as.console.client.widgets.DisclosureStackHeader;
-import org.jboss.as.console.client.widgets.LHSNavTree;
-import org.jboss.as.console.client.widgets.LHSNavTreeItem;
-import org.jboss.as.console.client.widgets.WidgetUtil;
+import org.jboss.ballroom.client.layout.LHSNavTree;
+import org.jboss.ballroom.client.layout.LHSNavTreeItem;
+import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.model.Application;
 import org.switchyard.console.client.model.Component;
@@ -32,6 +31,7 @@ import org.switchyard.console.client.model.Service;
 
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -60,7 +60,7 @@ public class MainNavigator {
         super();
 
         _layout = new LayoutPanel();
-        _layout.getElement().setAttribute("style", "width:99%;border-right:1px solid #E0E0E0");
+        //_layout.getElement().setAttribute("style", "width:99%;border-right:1px solid #E0E0E0");
         _layout.setStyleName("fill-_layout");
 
         _stack = new VerticalPanel();
@@ -70,14 +70,14 @@ public class MainNavigator {
         // ----------------------------------------------------
 
         _applicationsTree = new LHSNavTree("switchyard");
-        DisclosurePanel applicationsPanel = new DisclosureStackHeader("Applications").asWidget();
+        DisclosurePanel applicationsPanel = new DisclosureStackPanel("Applications").asWidget();
         applicationsPanel.setContent(_applicationsTree);
         _stack.add(applicationsPanel);
 
         // ----------------------------------------------------
 
         _servicesTree = new LHSNavTree("switchyard");
-        DisclosurePanel servicesPanel = new DisclosureStackHeader("Services").asWidget();
+        DisclosurePanel servicesPanel = new DisclosureStackPanel("Services").asWidget();
         servicesPanel.setContent(_servicesTree);
         _stack.add(servicesPanel);
 
@@ -93,7 +93,7 @@ public class MainNavigator {
         // ----------------------------------------------------
 
         Tree commonTree = new LHSNavTree("switchyard");
-        DisclosurePanel commonPanel = new DisclosureStackHeader("System").asWidget();
+        DisclosurePanel commonPanel = new DisclosureStackPanel("System").asWidget();
         commonPanel.setContent(commonTree);
 
         LHSNavTreeItem[] commonItems = new LHSNavTreeItem[] {new LHSNavTreeItem("Details", "switchyard/system") };
@@ -104,8 +104,7 @@ public class MainNavigator {
 
         _stack.add(commonPanel);
 
-        _layout.add(WidgetUtil.asScrollPanel(_stack));
-
+        _layout.add(new ScrollPanel(_stack));
     }
 
     /**
