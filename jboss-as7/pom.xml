@@ -37,8 +37,8 @@
         <version.jbossas>7.0.2.Final</version.jbossas>
         <version.jbpm>5.1.0.Final</version.jbpm>
         <version.mina>2.0.1</version.mina>
-        <version.riftsaw.ode>3.0.0-SNAPSHOT</version.riftsaw.ode>
-        <version.riftsaw.engine>3.0.0-SNAPSHOT</version.riftsaw.engine>
+        <version.riftsaw.ode>3.0.0.20111024-M1</version.riftsaw.ode>
+        <version.riftsaw.engine>3.0.0.20111024-M1</version.riftsaw.engine>
         <version.hibernate.entitymanager>4.0.0.Beta1</version.hibernate.entitymanager>
         <version.saxon>9.2.1.5</version.saxon>
         <version.spring>3.0.6.RELEASE</version.spring>
