@@ -16,39 +16,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
-package org.switchyard.config.model.composite;
-
-import org.switchyard.config.model.TypedModel;
-import org.switchyard.config.model.composer.ContextMapperModel;
-import org.switchyard.config.model.composer.MessageComposerModel;
+package org.switchyard.common.composer;
 
 /**
- * The "binding" configuration model.
+ * Exposes ContextMapper config info.  It is a common interface allowing us to use config from api.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface BindingModel extends TypedModel {
-
-    /** The "binding" name. */
-    public static final String BINDING = "binding";
+public interface ContextMapperInfo {
 
     /**
-     * Gets the parent composite model.
-     * @return the parent composite model
+     * @return the type of ContextMapper
      */
-    public CompositeServiceModel getService();
+    public Class<?> getClazz();
 
     /**
-     * Gets the child context mapper model.
-     * @return the child context mapper model
+     * @return a comma-separated list of regex property includes
      */
-    public ContextMapperModel getContextMapper();
+    public String getIncludes();
 
     /**
-     * Gets the child message composer model.
-     * @return the child message composer model
+     * @return a comma-separated list of regex property excludes
      */
-    public MessageComposerModel getMessageComposer();
+    public String getExcludes();
+
+    /**
+     * @return a comma-separated list of regex property include namespaces
+     */
+    public String getIncludeNamespaces();
+
+    /**
+     * @return a comma-separated list of regex property exclude namespace
+     */
+    public String getExcludeNamespaces();
 
 }

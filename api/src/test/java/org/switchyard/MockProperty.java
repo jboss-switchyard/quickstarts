@@ -16,39 +16,48 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
+package org.switchyard;
 
-package org.switchyard.config.model.composite;
-
-import org.switchyard.config.model.TypedModel;
-import org.switchyard.config.model.composer.ContextMapperModel;
-import org.switchyard.config.model.composer.MessageComposerModel;
 
 /**
- * The "binding" configuration model.
+ * MockProperty.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface BindingModel extends TypedModel {
+public class MockProperty implements Property {
 
-    /** The "binding" name. */
-    public static final String BINDING = "binding";
+    private final String _name;
+    private final Object _value;
+    private final Scope _scope;
 
-    /**
-     * Gets the parent composite model.
-     * @return the parent composite model
-     */
-    public CompositeServiceModel getService();
-
-    /**
-     * Gets the child context mapper model.
-     * @return the child context mapper model
-     */
-    public ContextMapperModel getContextMapper();
+    public MockProperty(String name, Object value, Scope scope) {
+        _name = name;
+        _value = value;
+        _scope = scope;
+    }
 
     /**
-     * Gets the child message composer model.
-     * @return the child message composer model
+     * {@inheritDoc}
      */
-    public MessageComposerModel getMessageComposer();
+    @Override
+    public String getName() {
+        return _name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object getValue() {
+        return _value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Scope getScope() {
+        return _scope;
+    }
 
 }

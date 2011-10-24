@@ -22,6 +22,6 @@ package org.switchyard.deploy.components.config;
 
 import org.switchyard.config.model.composite.BindingModel;
 
-public interface MockBindingModel extends BindingModel{
+public interface MockBindingModel extends BindingModel {
     public String TYPE = "mock";
 }

@@ -19,11 +19,18 @@
 
 package org.switchyard.config.model.composite.v1;
 
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import javax.xml.namespace.QName;
 
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseTypedModel;
 import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composer.ContextMapperModel;
+import org.switchyard.config.model.composer.MessageComposerModel;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
@@ -35,6 +42,9 @@ import org.switchyard.config.model.composite.CompositeServiceModel;
  */
 public class V1BindingModel extends BaseTypedModel implements BindingModel {
 
+    private ContextMapperModel _contextMapper;
+    private MessageComposerModel _messageComposer;
+
     /**
      * Constructs a new V1BindingModel of the specified "type".
      * @param type the "type" of BindingModel
@@ -44,8 +54,7 @@ public class V1BindingModel extends BaseTypedModel implements BindingModel {
     }
     
     /**
-     * Constructs a new V1BindingModel of the specified "type" with the specified
-     * namespace.
+     * Constructs a new V1BindingModel of the specified "type" with the specified namespace.
      * @param type the "type" of BindingModel
      * @param namespace binding namespace
      */
@@ -66,8 +75,45 @@ public class V1BindingModel extends BaseTypedModel implements BindingModel {
      * {@inheritDoc}
      */
     @Override
+    protected final Model setModelChildrenOrder(String... childrenOrder) {
+        Set<String> mco = new LinkedHashSet<String>();
+        mco.add(ContextMapperModel.CONTEXT_MAPPER);
+        mco.add(MessageComposerModel.MESSAGE_COMPOSER);
+        if (childrenOrder != null) {
+            mco.addAll(Arrays.asList(childrenOrder));
+        }
+        super.setModelChildrenOrder(mco.toArray(new String[mco.size()]));
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public CompositeServiceModel getService() {
         return (CompositeServiceModel)getModelParent();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ContextMapperModel getContextMapper() {
+        if (_contextMapper == null) {
+            _contextMapper = (ContextMapperModel)getFirstChildModel(ContextMapperModel.CONTEXT_MAPPER);
+        }
+        return _contextMapper;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MessageComposerModel getMessageComposer() {
+        if (_messageComposer == null) {
+            _messageComposer = (MessageComposerModel)getFirstChildModel(MessageComposerModel.MESSAGE_COMPOSER);
+        }
+        return _messageComposer;
     }
 
 }

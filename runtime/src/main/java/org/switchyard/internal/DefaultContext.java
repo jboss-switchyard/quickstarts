@@ -86,7 +86,12 @@ public class DefaultContext implements Context {
 
     @Override
     public Context setProperty(String name, Object val, Scope scope) {
-        _properties.put(new ContextProperty(name, scope, val));
+        Property p = new ContextProperty(name, scope, val);
+        if (val != null) {
+            _properties.put(p);
+        } else {
+            removeProperty(p);
+        }
         return this;
     }
 

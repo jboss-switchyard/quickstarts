@@ -36,6 +36,32 @@ MA  02110-1301, USA.
         <attribute name="targetNamespace" type="string" use="optional"/>
     </complexType>
 
+    <element name="binding.switchyard" type="swyd:SwitchYardBindingType" substitutionGroup="sca:binding" abstract="true"/>
+    <complexType name="SwitchYardBindingType" abstract="true">
+        <complexContent>
+            <extension base="sca:Binding">
+                <sequence>
+                    <element ref="swyd:contextMapper" minOccurs="0" maxOccurs="1"/>
+                    <element ref="swyd:messageComposer" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="contextMapper" type="swyd:ContextMapperType"/>
+    <complexType name="ContextMapperType">
+        <attribute name="class" type="string" use="optional"/>
+        <attribute name="includes" type="string" use="optional"/>
+        <attribute name="excludes" type="string" use="optional"/>
+        <attribute name="includeNamespaces" type="string" use="optional"/>
+        <attribute name="excludeNamespaces" type="string" use="optional"/>
+    </complexType>
+
+    <element name="messageComposer" type="swyd:MessageComposerType"/>
+    <complexType name="MessageComposerType">
+        <attribute name="class" type="string" use="optional"/>
+    </complexType>
+
     <element name="transforms" type="swyd:TransformsType"/>
     <complexType name="TransformsType">
         <sequence>
@@ -61,9 +87,9 @@ MA  02110-1301, USA.
     
     <element name="properties" type="swyd:PropertiesType"/>
     <complexType name="PropertiesType">
-	    <sequence>
-	        <element ref="swyd:property" minOccurs="0" maxOccurs="unbounded"/>
-	    </sequence>
+        <sequence>
+            <element ref="swyd:property" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
     </complexType>
     
     <element name="property" type="swyd:PropertyType"/>

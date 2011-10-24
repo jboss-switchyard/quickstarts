@@ -17,38 +17,51 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.config.model.composite;
+package org.switchyard.config.model.composer.v1;
 
-import org.switchyard.config.model.TypedModel;
-import org.switchyard.config.model.composer.ContextMapperModel;
+import javax.xml.namespace.QName;
+
+import org.switchyard.common.lang.Strings;
+import org.switchyard.common.type.Classes;
+import org.switchyard.config.Configuration;
+import org.switchyard.config.model.BaseModel;
+import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composer.MessageComposerModel;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
- * The "binding" configuration model.
+ * A version 1 MessageComposerModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface BindingModel extends TypedModel {
-
-    /** The "binding" name. */
-    public static final String BINDING = "binding";
+public class V1MessageComposerModel extends BaseModel implements MessageComposerModel {
 
     /**
-     * Gets the parent composite model.
-     * @return the parent composite model
+     * Constructs a new V1MessageComposerModel.
      */
-    public CompositeServiceModel getService();
+    public V1MessageComposerModel() {
+        super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, MESSAGE_COMPOSER));
+    }
 
     /**
-     * Gets the child context mapper model.
-     * @return the child context mapper model
+     * Constructs a new V1MessageComposerModel with the specified Configuration and Descriptor.
+     * @param config the Configuration
+     * @param desc the Descriptor
      */
-    public ContextMapperModel getContextMapper();
+    public V1MessageComposerModel(Configuration config, Descriptor desc) {
+        super(config, desc);
+    }
 
     /**
-     * Gets the child message composer model.
-     * @return the child message composer model
+     * {@inheritDoc}
      */
-    public MessageComposerModel getMessageComposer();
+    @Override
+    public Class<?> getClazz() {
+        String name = Strings.trimToNull(getModelAttribute("class"));
+        if (name != null) {
+            return Classes.forName(name, getClass());
+        }
+        return null;
+    }
 
 }

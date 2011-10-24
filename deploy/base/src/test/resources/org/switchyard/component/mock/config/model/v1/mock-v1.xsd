@@ -20,9 +20,11 @@ MA  02110-1301, USA.
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
         targetNamespace="urn:switchyard-component-mock:config:1.0"
         xmlns:mock="urn:switchyard-component-mock:config:1.0"
+        xmlns:swyd="urn:switchyard-config:switchyard:1.0"
         xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
         elementFormDefault="qualified">
 
+    <import namespace="urn:switchyard-config:switchyard:1.0"/>
     <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
 
     <!-- Mock Implementation -->
@@ -42,13 +44,13 @@ MA  02110-1301, USA.
     </complexType>
     
     <!--  Mock Gateway -->
-    <element name="binding.mock" type="mock:MockBindingType" substitutionGroup="sca:binding"/>
+    <element name="binding.mock" type="mock:MockBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="MockBindingType">
         <complexContent>
-            <extension base="sca:Binding"/>
+            <extension base="swyd:SwitchYardBindingType"/>
         </complexContent>
     </complexType>
 
-    <element name="binding.no_activator" type="mock:MockBindingType" substitutionGroup="sca:binding"/>
+    <element name="binding.no_activator" type="mock:MockBindingType" substitutionGroup="swyd:binding.switchyard"/>
 
 </schema>

@@ -16,39 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
-package org.switchyard.config.model.composite;
-
-import org.switchyard.config.model.TypedModel;
-import org.switchyard.config.model.composer.ContextMapperModel;
-import org.switchyard.config.model.composer.MessageComposerModel;
+package org.switchyard.composer;
 
 /**
- * The "binding" configuration model.
+ * Base class for MessageComposer.
+ *
+ * @param <T> the type of source/target object
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface BindingModel extends TypedModel {
+public abstract class BaseMessageComposer<T> implements MessageComposer<T> {
 
-    /** The "binding" name. */
-    public static final String BINDING = "binding";
-
-    /**
-     * Gets the parent composite model.
-     * @return the parent composite model
-     */
-    public CompositeServiceModel getService();
+    private ContextMapper<T> _contextMapper;
 
     /**
-     * Gets the child context mapper model.
-     * @return the child context mapper model
+     * {@inheritDoc}
      */
-    public ContextMapperModel getContextMapper();
+    @Override
+    public ContextMapper<T> getContextMapper() {
+        return _contextMapper;
+    }
 
     /**
-     * Gets the child message composer model.
-     * @return the child message composer model
+     * {@inheritDoc}
      */
-    public MessageComposerModel getMessageComposer();
+    @Override
+    public MessageComposer<T> setContextMapper(ContextMapper<T> contextMapper) {
+        _contextMapper = contextMapper;
+        return this;
+    }
 
 }

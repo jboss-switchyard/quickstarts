@@ -22,6 +22,10 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composer.ContextMapperModel;
+import org.switchyard.config.model.composer.MessageComposerModel;
+import org.switchyard.config.model.composer.v1.V1ContextMapperModel;
+import org.switchyard.config.model.composer.v1.V1MessageComposerModel;
 import org.switchyard.config.model.domain.DomainModel;
 import org.switchyard.config.model.domain.HandlerModel;
 import org.switchyard.config.model.domain.HandlersModel;
@@ -76,6 +80,10 @@ public class V1SwitchYardMarshaller extends BaseMarshaller {
             return new V1DomainModel(config, desc);
         } else if (name.equals(ResourceModel.RESOURCE)) {
             return new V1ResourceModel(config, desc);
+        } else if (name.equals(ContextMapperModel.CONTEXT_MAPPER)) {
+            return new V1ContextMapperModel(config, desc);
+        } else if (name.equals(MessageComposerModel.MESSAGE_COMPOSER)) {
+            return new V1MessageComposerModel(config, desc);
         }
         return null;
     }

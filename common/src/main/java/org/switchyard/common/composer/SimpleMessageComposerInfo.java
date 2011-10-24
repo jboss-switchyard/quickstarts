@@ -16,39 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
-package org.switchyard.config.model.composite;
-
-import org.switchyard.config.model.TypedModel;
-import org.switchyard.config.model.composer.ContextMapperModel;
-import org.switchyard.config.model.composer.MessageComposerModel;
+package org.switchyard.common.composer;
 
 /**
- * The "binding" configuration model.
+ * Simple MessageComposerInfo implementation.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface BindingModel extends TypedModel {
+public class SimpleMessageComposerInfo implements MessageComposerInfo {
 
-    /** The "binding" name. */
-    public static final String BINDING = "binding";
-
-    /**
-     * Gets the parent composite model.
-     * @return the parent composite model
-     */
-    public CompositeServiceModel getService();
+    private Class<?> _clazz;
 
     /**
-     * Gets the child context mapper model.
-     * @return the child context mapper model
+     * {@inheritDoc}
      */
-    public ContextMapperModel getContextMapper();
+    @Override
+    public Class<?> getClazz() {
+        return _clazz;
+    }
 
     /**
-     * Gets the child message composer model.
-     * @return the child message composer model
+     * Sets the class.
+     * @param clazz the class
+     * @return this instance (useful for chaining)
      */
-    public MessageComposerModel getMessageComposer();
+    public MessageComposerInfo setClazz(Class<?> clazz) {
+        _clazz = clazz;
+        return this;
+    }
 
 }

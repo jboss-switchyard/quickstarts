@@ -288,7 +288,7 @@ public abstract class BaseModel implements Model {
      * @param childrenOrder the child model names (based on their wrapped Configurations) used for ordering
      * @return this model (useful for chaining)
      */
-    protected final Model setModelChildrenOrder(String... childrenOrder) {
+    protected Model setModelChildrenOrder(String... childrenOrder) {
         _config.setChildrenOrder(childrenOrder);
         return this;
     }
