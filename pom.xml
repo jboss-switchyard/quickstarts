@@ -61,7 +61,7 @@
     <version.maven.plugin.api>3.0.2</version.maven.plugin.api>
     <version.maven.plugin.plugin>2.5.1</version.maven.plugin.plugin>
     <version.maven.plugin.deploy>2.6</version.maven.plugin.deploy>
-    <version.protostuff>1.0.0</version.protostuff>
+    <version.protostuff>1.0.4</version.protostuff>
     <version.mockito>1.8.5</version.mockito>
     <version.hamcrest>1.1</version.hamcrest>
     <version.forge>1.0.0.Alpha4</version.forge>
@@ -94,19 +94,6 @@
           <enabled>true</enabled>
         <updatePolicy>never</updatePolicy>
       </snapshots>
-    </repository>
-    <repository>
-      <id>protostuff-repo</id>
-      <name>protostuff-repo</name>
-      <url>http://protostuff.googlecode.com/svn/repos/maven2</url>
-      <releases>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-        <snapshots>
-          <enabled>false</enabled>
-          <updatePolicy>never</updatePolicy>
-        </snapshots>
     </repository>
       <repository>
       <id>codehaus.m2.snapshots</id>
