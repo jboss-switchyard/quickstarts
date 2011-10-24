@@ -21,8 +21,6 @@
  */
 package org.switchyard.component.camel;
 
-import java.util.Set;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Processor;
@@ -31,7 +29,7 @@ import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
-import org.switchyard.Property;
+import org.switchyard.composer.MessageComposer;
 
 /**
  * A handler that is capable of calling Apache Camel components and returning responses 
@@ -46,6 +44,7 @@ import org.switchyard.Property;
  */
 public class OutboundHandler extends BaseHandler {
     
+    private final MessageComposer<org.apache.camel.Message> _messageComposer;
     private final ProducerTemplate _producerTemplate;
     private final CamelContext _camelContext;
     private final String _uri;
@@ -54,9 +53,10 @@ public class OutboundHandler extends BaseHandler {
      * Sole constructor.
      * 
      * @param uri The Camel endpoint uri.
+     * @param messageComposer the MessageComposer this handler should use
      * @param context The {@link CamelContext}.
      */
-    public OutboundHandler(final String uri, final CamelContext context) {
+    public OutboundHandler(final String uri, final CamelContext context, MessageComposer<org.apache.camel.Message> messageComposer) {
         if (uri == null) {
             throw new IllegalArgumentException("uri argument must not be null");
         }
@@ -68,6 +68,8 @@ public class OutboundHandler extends BaseHandler {
         _camelContext = context;
         
         _producerTemplate = _camelContext.createProducerTemplate();
+        
+        _messageComposer = messageComposer;
     }
     
     /**
@@ -79,6 +81,9 @@ public class OutboundHandler extends BaseHandler {
         _producerTemplate.stop();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handleMessage(final Exchange exchange) throws HandlerException {
         if (isInOnly(exchange)) {
@@ -100,40 +105,38 @@ public class OutboundHandler extends BaseHandler {
         }
     }
     
-    private void handleInOut(final Exchange exchange) throws HandlerException {
+    private void handleInOut(final Exchange switchyardExchange) throws HandlerException {
         try {
-            final Object payload = sendToCamel(exchange);
-            sendResponseToSwitchyard(exchange, payload);
+            final Object payload = sendToCamel(switchyardExchange);
+            sendResponseToSwitchyard(switchyardExchange, payload);
         } catch (final CamelExecutionException e) {
             throw new HandlerException(e);
         }
     }
     
-    private Object sendToCamel(final Exchange exchange) {
-        final org.apache.camel.Exchange camelExchange = _producerTemplate.request(_uri, createProcessor(exchange));
+    private Object sendToCamel(final Exchange switchyardExchange) {
+        final org.apache.camel.Exchange camelExchange = _producerTemplate.request(_uri, createProcessor(switchyardExchange));
         return camelExchange.getOut().getBody();
     }
     
-    private void sendResponseToSwitchyard(final Exchange exchange, final Object payload)
+    private void sendResponseToSwitchyard(final Exchange switchyardExchange, final Object payload)
     {
-        exchange.getMessage().setContent(payload);
-        exchange.send(exchange.getMessage());
+        switchyardExchange.getMessage().setContent(payload);
+        switchyardExchange.send(switchyardExchange.getMessage());
     }
     
     private Processor createProcessor(final Exchange switchyardExchange) {
         return new Processor() {
             @Override
-            public void process(org.apache.camel.Exchange exchange) throws Exception {
-                final Set<Property> properties = switchyardExchange.getContext().getProperties();
-                for (Property property : properties) {
-                    exchange.setProperty(property.getName(), property.getValue());
-                }
-                exchange.getIn().setBody(switchyardExchange.getMessage().getContent());
+            public void process(org.apache.camel.Exchange camelExchange) throws Exception {
+                _messageComposer.decompose(switchyardExchange, camelExchange.getIn());
             }
         };
     }
     
-    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handleFault(Exchange exchange) {
         super.handleFault(exchange);

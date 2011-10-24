@@ -29,7 +29,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -37,6 +36,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -49,15 +49,18 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.ExchangeHandler;
+import org.switchyard.Context;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.net.SocketAddr;
+import org.switchyard.component.soap.composer.SOAPContextMapper;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
+import org.switchyard.composer.ContextMapper;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
+import org.switchyard.internal.DefaultContext;
 import org.switchyard.metadata.BaseService;
 import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
@@ -199,19 +202,23 @@ public class SOAPGatewayTest {
     }
 
     @Test
-    public void testMappedVariableNames() throws Exception {
-        Set<QName> expected = new LinkedHashSet<QName>();
-        expected.add(QName.valueOf("one"));
-        expected.add(QName.valueOf("two"));
-        expected.add(QName.valueOf("three"));
-        Set<QName> actual = _config.getComposerMappedVariableNames();
-        Assert.assertEquals(expected, actual);
-        expected.clear();
-        expected.add(QName.valueOf("{urn:foo-bar}four"));
-        expected.add(QName.valueOf("{urn:foo-bar}five"));
-        expected.add(QName.valueOf("{urn:foo-bar}six"));
-        actual = _config.getDecomposerMappedVariableNames();
-        Assert.assertEquals(expected, actual);
+    public void testContextMapping() throws Exception {
+        QName firstName = new QName("urn:names:1.0", "first");
+        QName lastName = new QName("urn:names:1.0", "last");
+        ContextMapper<SOAPMessage> mapper = new SOAPContextMapper();
+        Context context = new DefaultContext();
+        // test mapFrom
+        SOAPMessage source = SOAPUtil.SOAP_MESSAGE_FACTORY.createMessage();
+        source.getSOAPHeader().addChildElement(firstName).setValue("John");
+        source.getSOAPHeader().addChildElement(lastName).setValue("Doe");
+        mapper.mapFrom(source, context);
+        Assert.assertEquals("John", context.getPropertyValue(firstName.toString()));
+        Assert.assertEquals("Doe", context.getPropertyValue(lastName.toString()));
+        // test mapTo
+        SOAPMessage target = SOAPUtil.SOAP_MESSAGE_FACTORY.createMessage();
+        mapper.mapTo(context, target);
+        Assert.assertEquals("John", ((Element)target.getSOAPHeader().getChildElements(firstName).next()).getTextContent());
+        Assert.assertEquals("Doe", ((Element)target.getSOAPHeader().getChildElements(lastName).next()).getTextContent());
     }
 
     @Test

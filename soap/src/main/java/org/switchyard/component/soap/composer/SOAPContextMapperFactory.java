@@ -16,38 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.exchange;
+package org.switchyard.component.soap.composer;
 
-import java.util.ServiceLoader;
+import javax.xml.soap.SOAPMessage;
 
-import org.switchyard.ServiceDomain;
+import org.switchyard.composer.ContextMapper;
+import org.switchyard.composer.ContextMapperFactory;
 
 /**
- * Creates BPMExchangeHandlers via the JDK ServiceLoader mechanism.
+ * SOAPContextMapperFactory.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public abstract class BPMExchangeHandlerFactory {
+public class SOAPContextMapperFactory extends ContextMapperFactory<SOAPMessage> {
 
-    private static final BPMExchangeHandlerFactory INSTANCE;
-    static {
-        ServiceLoader<BPMExchangeHandlerFactory> services = ServiceLoader.load(BPMExchangeHandlerFactory.class);
-        INSTANCE = services.iterator().next();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<SOAPMessage> getTargetClass() {
+        return SOAPMessage.class;
     }
 
     /**
-     * Creates a new BPMExchangeHandler in the specified ServiceDomain.
-     * @param serviceDomain the specified ServiceDomain
-     * @return the BPMExchangeHandler
+     * {@inheritDoc}
      */
-    public abstract BPMExchangeHandler newBPMExchangeHandler(ServiceDomain serviceDomain);
-
-    /**
-     * Returns the singleton instance of the BPMExchangeHandlerFactory.
-     * @return the singleton instance
-     */
-    public static BPMExchangeHandlerFactory instance() {
-        return INSTANCE;
+    @Override
+    public ContextMapper<SOAPMessage> newContextMapperDefault() {
+        return new SOAPContextMapper();
     }
 
 }

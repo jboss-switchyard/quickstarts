@@ -41,8 +41,6 @@ import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.SwitchYardTestKit;
 import org.switchyard.test.mixins.CDIMixIn;
 
-import javax.xml.namespace.QName;
-
 /**
  * Test for {@link CamelActivator}.
  * 

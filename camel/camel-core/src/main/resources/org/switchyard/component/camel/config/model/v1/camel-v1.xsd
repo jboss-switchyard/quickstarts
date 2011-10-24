@@ -20,20 +20,22 @@ MA  02110-1301, USA.
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
         targetNamespace="urn:switchyard-component-camel:config:1.0"
         xmlns:camel="urn:switchyard-component-camel:config:1.0"
+        xmlns:swyd="urn:switchyard-config:switchyard:1.0"
         xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
         xmlns:spring="http://www.springframework.org/schema/beans"
         xmlns:camelSpring="http://camel.apache.org/schema/spring"
         elementFormDefault="qualified">
 
+    <import namespace="urn:switchyard-config:switchyard:1.0"/>
     <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
     <import namespace="http://www.springframework.org/schema/beans"/>
     <import namespace="http://camel.apache.org/schema/spring"/>
     
     <!-- camel:binding.xxx -->
-    <element name="binding.camel" type="camel:CamelBindingType" substitutionGroup="sca:binding"/>
+    <element name="binding.camel" type="camel:CamelBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelBindingType">
         <complexContent>
-            <extension base="sca:Binding">
+            <extension base="swyd:SwitchYardBindingType">
                 <sequence>
                     <element name="operationSelector" type="camel:CamelOperationSelectorType" minOccurs="0" maxOccurs="1"/>
                 </sequence>
@@ -42,10 +44,10 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
     
-    <element name="binding.file" type="camel:CamelFileBindingType" substitutionGroup="sca:binding"/>
+    <element name="binding.file" type="camel:CamelFileBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelFileBindingType" >
         <complexContent>
-            <extension base="sca:Binding">
+            <extension base="swyd:SwitchYardBindingType">
                 <sequence>
                 	<element name="operationSelector" type="camel:CamelOperationSelectorType"/>
                     <element name="targetDir" type="string"/>
@@ -62,10 +64,10 @@ MA  02110-1301, USA.
     </complexType>
     
     
-    <element name="binding.atom" type="camel:CamelAtomBindingType" substitutionGroup="sca:binding"/>
+    <element name="binding.atom" type="camel:CamelAtomBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelAtomBindingType" >
         <complexContent>
-            <extension base="sca:Binding">
+            <extension base="swyd:SwitchYardBindingType">
                 <sequence>
                     <element name="operationSelector" type="camel:CamelOperationSelectorType"/>
                     <element name="feedURI" type="anyURI"/>
@@ -83,10 +85,10 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
    
-    <element name="binding.direct" type="camel:CamelDirectBindingType" substitutionGroup="sca:binding"/>
+    <element name="binding.direct" type="camel:CamelDirectBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelDirectBindingType" >
         <complexContent>
-            <extension base="sca:Binding">
+            <extension base="swyd:SwitchYardBindingType">
                 <sequence>
                     <element name="name" type="string"/>
                 </sequence>
@@ -94,10 +96,10 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
     
-    <element name="binding.timer" type="camel:CamelTimerBindingType" substitutionGroup="sca:binding"/>
+    <element name="binding.timer" type="camel:CamelTimerBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelTimerBindingType" >
         <complexContent>
-            <extension base="sca:Binding">
+            <extension base="swyd:SwitchYardBindingType">
                 <sequence>
                     <element name="name" type="string"/>
                     <element name="time" type="dateTime" minOccurs="0" maxOccurs="1"/>
@@ -111,10 +113,10 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
     
-    <element name="binding.seda" type="camel:CamelSedaBindingType" substitutionGroup="sca:binding"/>
+    <element name="binding.seda" type="camel:CamelSedaBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelSedaBindingType" >
         <complexContent>
-            <extension base="sca:Binding">
+            <extension base="swyd:SwitchYardBindingType">
                 <sequence>
                     <element name="name" type="string"/>
                     <element name="size" type="integer"/>
@@ -128,10 +130,10 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
     
-    <element name="binding.mock" type="camel:CamelMockBindingType" substitutionGroup="sca:binding"/>
+    <element name="binding.mock" type="camel:CamelMockBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelMockBindingType" >
         <complexContent>
-            <extension base="sca:Binding">
+            <extension base="swyd:SwitchYardBindingType">
                 <sequence>
                     <element name="name" type="string"/>
                     <element name="reportGroup" type="integer"/>
@@ -158,10 +160,12 @@ MA  02110-1301, USA.
     <complexType name="CamelImplementationType">
         <complexContent>
             <extension base="sca:Implementation">
-                <choice>
-                    <element ref="camelSpring:route"/>
-                    <element name="java" type="camel:JavaDSLType"/>
-                </choice>
+                <sequence>
+                    <choice>
+                        <element ref="camelSpring:route"/>
+                        <element name="java" type="camel:JavaDSLType"/>
+                    </choice>
+                </sequence>
             </extension>
         </complexContent>
     </complexType>

@@ -21,10 +21,8 @@ package org.switchyard.component.soap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.wsdl.Operation;
@@ -47,10 +45,11 @@ import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.ServiceReference;
 import org.switchyard.SynchronousInOutHandler;
-import org.switchyard.common.type.Classes;
+import org.switchyard.component.soap.composer.SOAPComposition;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
+import org.switchyard.composer.MessageComposer;
 import org.switchyard.exception.DeliveryException;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.w3c.dom.Node;
@@ -69,52 +68,22 @@ public class InboundHandler extends BaseHandler {
 
     private final ConcurrentHashMap<String, BaseExchangeContract> _contracts = new ConcurrentHashMap<String, BaseExchangeContract>();
 
-    private MessageComposer _composer;
-    private Set<QName> _composerMappedHeaderNames = new LinkedHashSet<QName>();
-    private MessageDecomposer _decomposer;
-    private Set<QName> _decomposerMappedVariableNames = new LinkedHashSet<QName>();
+    private final SOAPBindingModel _config;
+    private final MessageComposer<SOAPMessage> _messageComposer;
+
     private ServiceReference _service;
     private long _waitTimeout = DEFAULT_TIMEOUT; // default of 15 seconds
     private Endpoint _endpoint;
     private Port _wsdlPort;
     private String _scheme = "http";
-    private SOAPBindingModel _config;
 
     /**
      * Constructor.
      * @param config the configuration settings
      */
-    public InboundHandler(SOAPBindingModel config) {
+    public InboundHandler(final SOAPBindingModel config) {
         _config = config;
-
-        _composerMappedHeaderNames.addAll(config.getComposerMappedVariableNames());
-        _decomposerMappedVariableNames.addAll(config.getDecomposerMappedVariableNames());
-
-        String composer = config.getComposer();
-        String decomposer = config.getDecomposer();
-
-        if (composer != null && composer.length() > 0) {
-            try {
-                Class<? extends MessageComposer> composerClass = Classes.forName(composer, getClass()).asSubclass(MessageComposer.class);
-                _composer = composerClass.newInstance();
-            } catch (Exception cnfe) {
-                LOGGER.error("Could not instantiate composer", cnfe);
-            }
-        }
-        if (_composer == null) {
-            _composer = new DefaultMessageComposer();
-        }
-        if (decomposer != null && decomposer.length() > 0) {
-            try {
-                Class<? extends MessageDecomposer> decomposerClass = Classes.forName(decomposer, getClass()).asSubclass(MessageDecomposer.class);
-                _decomposer = decomposerClass.newInstance();
-            } catch (Exception cnfe) {
-                LOGGER.error("Could not instantiate decomposer", cnfe);
-            }
-        }
-        if (_decomposer == null) {
-            _decomposer = new DefaultMessageDecomposer();
-        }
+        _messageComposer = SOAPComposition.getMessageComposer(config);
     }
 
     /**
@@ -167,8 +136,6 @@ public class InboundHandler extends BaseHandler {
      * Stop lifecycle.
      */
     public void stop() {
-        _composerMappedHeaderNames.clear();
-        _decomposerMappedVariableNames.clear();
         _endpoint.stop();
         LOGGER.info("WebService " + _config.getPort() + " stopped.");
     }
@@ -227,7 +194,12 @@ public class InboundHandler extends BaseHandler {
             Exchange exchange;
 
             exchange = _service.createExchange(exchangeContract, inOutHandler);
-            Message message = _composer.compose(soapMessage, exchange, _composerMappedHeaderNames);
+            Message message;
+            try {
+                message = _messageComposer.compose(soapMessage, exchange, true);
+            } catch (Exception e) {
+                throw e instanceof SOAPException ? (SOAPException)e : new SOAPException(e);
+            }
 
             assertComposedMessageOK(message, operation);
 
@@ -247,11 +219,19 @@ public class InboundHandler extends BaseHandler {
                     return handleException(oneWay, new SOAPException("Timed out after " + _waitTimeout + " ms waiting on synchronous response from target service '" + _service.getName() + "'."));
                 }
 
-                SOAPMessage soapResponse = _decomposer.decompose(exchange, _decomposerMappedVariableNames);
+                if (SOAPUtil.SOAP_MESSAGE_FACTORY == null) {
+                    throw new SOAPException("Failed to instantiate SOAP Message Factory");
+                }
+                SOAPMessage soapResponse;
+                try {
+                    soapResponse = _messageComposer.decompose(exchange, SOAPUtil.SOAP_MESSAGE_FACTORY.createMessage());
+                } catch (Exception e) {
+                    throw e instanceof SOAPException ? (SOAPException)e : new SOAPException(e);
+                }
                 if (exchange.getState() == ExchangeState.FAULT && soapResponse.getSOAPBody().getFault() == null) {
                     return handleException(oneWay, new SOAPException("Invalid response SOAPMessage construction.  The associated SwitchYard Exchange is in a FAULT state, "
-                                                                     + "but the SOAPMessage is not a Fault message.  The MessageDecomposer implementation in use ("
-                                                                     + _composer.getClass().getName()
+                                                                     + "but the SOAPMessage is not a Fault message.  The MessageComposer implementation in use ("
+                                                                     + _messageComposer.getClass().getName()
                                                                      + ") must generate the SOAPMessage instance properly as a Fault message."));
                 }
                 
@@ -275,6 +255,7 @@ public class InboundHandler extends BaseHandler {
         
         String actualNS = inputMessage.getNamespaceURI();
         String actualLN = inputMessage.getLocalName();
+        @SuppressWarnings("unchecked")
         List<Part> parts = operation.getInput().getMessage().getOrderedParts(null);
 
         if (parts.isEmpty()) {

@@ -16,31 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
+package org.switchyard.component.soap.composer;
 
-package org.switchyard.component.soap;
-
-import java.util.Set;
-
-import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
-import org.switchyard.Exchange;
+import org.switchyard.composer.MessageComposer;
+import org.switchyard.composer.MessageComposerFactory;
 
 /**
- * Message decomposer holds the logic for converting SwitchYard messages to SOAP/XML messages.
+ * SOAPMessageComposerFactory.
  *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface MessageDecomposer {
+public class SOAPMessageComposerFactory extends MessageComposerFactory<SOAPMessage> {
 
     /**
-     * Converts the Message to SOAPMessage.
-     * 
-     * @param exchange the exchange that the message will be a part of
-     * @param mappedVariableNames names of properties that should be taken out of the Exchange's Context and into the SOAPMessage
-     * @return the SOAP message as SOAPMessage
-     * @throws SOAPException If the SOAP message could not be created/formatted.
+     * {@inheritDoc}
      */
-    SOAPMessage decompose(Exchange exchange, Set<QName> mappedVariableNames) throws SOAPException;
+    @Override
+    public Class<SOAPMessage> getTargetClass() {
+        return SOAPMessage.class;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MessageComposer<SOAPMessage> newMessageComposerDefault() {
+        return new SOAPMessageComposer();
+    }
+
 }

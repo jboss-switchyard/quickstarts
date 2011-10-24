@@ -21,15 +21,17 @@ MA  02110-1301, USA.
          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
         targetNamespace="urn:switchyard-component-hornetq:config:1.0"
         xmlns:hornetq="urn:switchyard-component-hornetq:config:1.0"
+        xmlns:swyd="urn:switchyard-config:switchyard:1.0"
         xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
         elementFormDefault="qualified">
 
+    <xsd:import namespace="urn:switchyard-config:switchyard:1.0"/>
     <xsd:import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
     
-    <xsd:element name="binding.hornetq" type="hornetq:BindingType" substitutionGroup="sca:binding"/>
+    <xsd:element name="binding.hornetq" type="hornetq:BindingType" substitutionGroup="swyd:binding.switchyard"/>
     <xsd:complexType name="BindingType" >
         <xsd:complexContent>
-            <xsd:extension base="sca:Binding">
+            <xsd:extension base="swyd:SwitchYardBindingType">
                 <xsd:sequence>
                     <xsd:sequence>
                         <xsd:element name="operationSelector" type="hornetq:OperationSelectorType" minOccurs="0" maxOccurs="1"/>

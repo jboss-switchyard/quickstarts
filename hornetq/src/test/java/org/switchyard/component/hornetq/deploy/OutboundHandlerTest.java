@@ -35,6 +35,7 @@ import org.hornetq.core.remoting.impl.invm.InVMConnectorFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.component.hornetq.ServerLocatorBuilder;
@@ -97,8 +98,10 @@ public class OutboundHandlerTest {
     private Exchange createExchange(final String content) {
         final Exchange exchange = mock(Exchange.class);
         final Message message = mock(Message.class);
+        final Context context = mock(Context.class);
         when(message.getContent(byte[].class)).thenReturn(content.getBytes());
         when(exchange.getMessage()).thenReturn(message);
+        when(exchange.getContext()).thenReturn(context);
         return exchange;
     }
     

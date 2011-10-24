@@ -16,38 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.exchange;
+package org.switchyard.component.hornetq.composer;
 
-import java.util.ServiceLoader;
-
-import org.switchyard.ServiceDomain;
+import org.hornetq.api.core.client.ClientMessage;
+import org.switchyard.composer.MessageComposer;
+import org.switchyard.composer.MessageComposerFactory;
 
 /**
- * Creates BPMExchangeHandlers via the JDK ServiceLoader mechanism.
+ * HornetQMessageComposerFactory.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public abstract class BPMExchangeHandlerFactory {
+public class HornetQMessageComposerFactory extends MessageComposerFactory<ClientMessage> {
 
-    private static final BPMExchangeHandlerFactory INSTANCE;
-    static {
-        ServiceLoader<BPMExchangeHandlerFactory> services = ServiceLoader.load(BPMExchangeHandlerFactory.class);
-        INSTANCE = services.iterator().next();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<ClientMessage> getTargetClass() {
+        return ClientMessage.class;
     }
 
     /**
-     * Creates a new BPMExchangeHandler in the specified ServiceDomain.
-     * @param serviceDomain the specified ServiceDomain
-     * @return the BPMExchangeHandler
+     * {@inheritDoc}
      */
-    public abstract BPMExchangeHandler newBPMExchangeHandler(ServiceDomain serviceDomain);
-
-    /**
-     * Returns the singleton instance of the BPMExchangeHandlerFactory.
-     * @return the singleton instance
-     */
-    public static BPMExchangeHandlerFactory instance() {
-        return INSTANCE;
+    @Override
+    public MessageComposer<ClientMessage> newMessageComposerDefault() {
+        return new HornetQMessageComposer();
     }
 
 }

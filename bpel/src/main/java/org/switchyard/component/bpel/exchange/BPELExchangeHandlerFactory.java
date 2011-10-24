@@ -30,8 +30,8 @@ public abstract class BPELExchangeHandlerFactory {
 
     private static final BPELExchangeHandlerFactory INSTANCE;
     static {
-        ServiceLoader<BPELExchangeHandlerFactory> loader = ServiceLoader.load(BPELExchangeHandlerFactory.class);
-        INSTANCE = loader.iterator().next();
+        ServiceLoader<BPELExchangeHandlerFactory> services = ServiceLoader.load(BPELExchangeHandlerFactory.class);
+        INSTANCE = services.iterator().next();
     }
 
     /**

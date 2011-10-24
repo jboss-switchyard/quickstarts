@@ -16,33 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
+package org.switchyard.component.camel.composer;
 
-package org.switchyard.component.soap;
-
-import java.util.Set;
-
-import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-
-import org.switchyard.Exchange;
-import org.switchyard.Message;
+import org.apache.camel.Message;
+import org.switchyard.composer.ContextMapper;
+import org.switchyard.composer.ContextMapperFactory;
 
 /**
- * Message composer holds the logic for converting SOAP/XML messages to SwitchYard messages.
+ * CamelContextMapperFactory.
  *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface MessageComposer {
+public class CamelContextMapperFactory extends ContextMapperFactory<Message> {
 
     /**
-     * Converts the SOAPMessage to Message.
-     * 
-     * @param soapMessage the SOAPMessage to be converted
-     * @param exchange the exchange that the message will be a part of
-     * @param mappedVariableNames names of headers that should be taken out of the SOAPMessage and into the Exchange's Context
-     * @return the composed Message
-     * @throws SOAPException If the SOAP message is not correct.
+     * {@inheritDoc}
      */
-    Message compose(SOAPMessage soapMessage, Exchange exchange, Set<QName> mappedVariableNames) throws SOAPException;
+    @Override
+    public Class<Message> getTargetClass() {
+        return Message.class;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ContextMapper<Message> newContextMapperDefault() {
+        return new CamelContextMapper();
+    }
+
 }

@@ -17,43 +17,79 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.component.soap;
+package org.switchyard.component.soap.composer;
 
-import java.util.Set;
+import java.util.Iterator;
 
-import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.transform.dom.DOMSource;
 
-import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeState;
 import org.switchyard.Message;
-import org.switchyard.Property;
-import org.switchyard.Scope;
 import org.switchyard.component.soap.util.SOAPUtil;
-import org.w3c.dom.Node;
+import org.switchyard.composer.BaseMessageComposer;
 
 /**
- * The default implementation of MessageDecomposer simply copies the Message body onto SOAP
- * and adds SOAP headers from the Message's context.
+ * The SOAP implementation of MessageComposer simply copies the SOAP body into
+ * the Message and SOAP headers into the Message's context, and vice-versa.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
-public class DefaultMessageDecomposer implements MessageDecomposer {
+public class SOAPMessageComposer extends BaseMessageComposer<SOAPMessage> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SOAPMessage decompose(final Exchange exchange, final Set<QName> mappedVariableNames) throws SOAPException {
+    public Message compose(SOAPMessage source, Exchange exchange, boolean create) throws Exception {
+        final Message message = create ? exchange.createMessage() : exchange.getMessage();
+
+        getContextMapper().mapFrom(source, exchange.getContext());
+
+        final SOAPBody soapBody = source.getSOAPBody();
+        if (soapBody == null) {
+            throw new SOAPException("Missing SOAP body from request");
+        }
+        final Iterator<?> children = soapBody.getChildElements();
+        boolean found = false;
+
+        try {
+            while (children.hasNext()) {
+                final javax.xml.soap.Node node = (javax.xml.soap.Node) children.next();
+                if (node instanceof SOAPElement) {
+                    if (found) {
+                        throw new SOAPException("Found multiple SOAPElements in SOAPBody");
+                    }
+                    node.detachNode();
+                    message.setContent(new DOMSource(node));
+                    found = true;
+                }
+            }
+        } catch (Exception ex) {
+            if (ex instanceof SOAPException) {
+                throw (SOAPException) ex;
+            }
+            throw new SOAPException(ex);
+        }
+
+        if (!found) {
+            throw new SOAPException("Could not find SOAPElement in SOAPBody");
+        }
+
+        return message;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SOAPMessage decompose(Exchange exchange, SOAPMessage target) throws Exception {
         final Message message = exchange.getMessage();
 
-        if (SOAPUtil.SOAP_MESSAGE_FACTORY == null) {
-            throw new SOAPException("Failed to instantiate SOAP Message Factory");
-        }
-        SOAPMessage response;
         if (message != null) {
             // check to see if the payload is null or it's a full SOAP Message
             if (message.getContent() == null) {
@@ -64,43 +100,29 @@ public class DefaultMessageDecomposer implements MessageDecomposer {
             }
             
             // convert the message content to a form we can work with
-            Node input = message.getContent(Node.class);
+            org.w3c.dom.Node input = message.getContent(org.w3c.dom.Node.class);
             
             try {
-                response = SOAPUtil.SOAP_MESSAGE_FACTORY.createMessage();
-
-                Node messageNodeImport = response.getSOAPBody().getOwnerDocument().importNode(input, true);
+                org.w3c.dom.Node messageNodeImport = target.getSOAPBody().getOwnerDocument().importNode(input, true);
                 if (exchange.getState() != ExchangeState.FAULT || isSOAPFaultPayload(input)) {
-                    response.getSOAPBody().appendChild(messageNodeImport);
+                    target.getSOAPBody().appendChild(messageNodeImport);
                 } else {
                     // convert to SOAP Fault since ExchangeState is FAULT but the message is not SOAP Fault
-                    response.getSOAPBody().addFault(SOAPUtil.SERVER_FAULT_QN, "Send failed")
+                    target.getSOAPBody().addFault(SOAPUtil.SERVER_FAULT_QN, "Send failed")
                                           .addDetail()
                                           .appendChild(messageNodeImport);
                 }
             } catch (Exception e) {
                 throw new SOAPException("Unable to parse SOAP Message", e);
             }
-        } else {
-            response = SOAPUtil.SOAP_MESSAGE_FACTORY.createMessage();
         }
 
-        final Context context = exchange.getContext();
-        SOAPHeader soapHeader = response.getSOAPHeader();
-        for (QName name : mappedVariableNames) {
-            Property property = context.getProperty(name.toString(), Scope.OUT);
-            if (property != null) {
-                Object value = property.getValue();
-                if (value != null) {
-                    soapHeader.addChildElement(name).setValue(String.valueOf(value));
-                }
-            }
-        }
+        getContextMapper().mapTo(exchange.getContext(), target);
 
-        return response;
+        return target;
     }
 
-    private boolean isSOAPFaultPayload(Node messageNode) {
+    private boolean isSOAPFaultPayload(org.w3c.dom.Node messageNode) {
         String rootName = messageNode.getLocalName().toLowerCase();
 
         if (rootName.equals("fault")) {
@@ -113,4 +135,5 @@ public class DefaultMessageDecomposer implements MessageDecomposer {
 
         return false;
     }
+
 }

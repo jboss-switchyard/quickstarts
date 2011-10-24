@@ -19,14 +19,9 @@
 
 package org.switchyard.component.soap.config.model;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import javax.xml.namespace.QName;
-import org.switchyard.common.lang.Strings;
+
 import org.switchyard.common.net.SocketAddr;
-import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.soap.PortName;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Configurations;
@@ -58,8 +53,6 @@ public class SOAPBindingModel extends V1BindingModel {
     private static final String WSDL = "wsdl";
     private static final String PORT = "wsdlPort";
     private static final String CONTEXT_PATH = "contextPath";
-    private static final String COMPOSER = "composer";
-    private static final String DECOMPOSER = "decomposer";
     private static final String SOCKET_ADDRESS = "socketAddr";
 
     private PortName _port;
@@ -67,8 +60,6 @@ public class SOAPBindingModel extends V1BindingModel {
     private QName _serviceName;
     private SocketAddr _socketAddr;
     private String _contextPath;
-    private String _composer;
-    private String _decomposer;
     private Boolean _publishAsWS = false;
 
     private Configuration _environment = Configurations.emptyConfig();
@@ -77,7 +68,7 @@ public class SOAPBindingModel extends V1BindingModel {
      */
     public SOAPBindingModel() {
         super(SOAP, DEFAULT_NAMESPACE);
-        setModelChildrenOrder(WSDL, PORT, SOCKET_ADDRESS, COMPOSER, DECOMPOSER);
+        setModelChildrenOrder(WSDL, PORT, SOCKET_ADDRESS);
     }
 
     /**
@@ -235,97 +226,6 @@ public class SOAPBindingModel extends V1BindingModel {
      */
     public void setContextPath(String contextPath) {
         this._contextPath = contextPath;
-    }
-
-    /**
-     * Gets the MessageComposer class name.
-     * 
-     * @return the composer
-     */
-    public String getComposer() {
-        if (_composer == null) {
-            Configuration childConfig = getModelConfiguration().getFirstChild(COMPOSER);
-            if (childConfig != null) {
-                _composer = childConfig.getValue();
-            }
-        }
-        return _composer;
-    }
-
-    /**
-     * Gets the MessageComposer's mappedVariableNames.
-     * @return the mappedVariableNames
-     */
-    public Set<QName> getComposerMappedVariableNames() {
-        return getMappedVariableNames(COMPOSER);
-    }
-
-    /**
-     * Sets the MessageComposer class name.
-     * 
-     * @param composer the composer to set
-     */
-    public void setComposer(String composer) {
-        this._composer = composer;
-    }
-
-    /**
-     * Gets the MessageDecomposer class name.
-     * 
-     * @return the decomposer
-     */
-    public String getDecomposer() {
-        if (_decomposer == null) {
-            Configuration childConfig = getModelConfiguration().getFirstChild(DECOMPOSER);
-            if (childConfig != null) {
-                _decomposer = childConfig.getValue();
-            }
-        }
-        return _decomposer;
-    }
-
-    /**
-     * Gets the MessageDecomposer's mappedVariableNames.
-     * @return the mappedVariableNames
-     */
-    public Set<QName> getDecomposerMappedVariableNames() {
-        return getMappedVariableNames(DECOMPOSER);
-    }
-
-    /**
-     * Sets the MessageDecomposer class name.
-     * 
-     * @param decomposer the decomposer to set
-     */
-    public void setDecomposer(String decomposer) {
-        this._decomposer = decomposer;
-    }
-
-    /**
-     * Gets the specified Configuration's mappedVariableNames.
-     * @param childConfigName "composer" or "decomposer"
-     * @return the mappedVariableNames
-     */
-    private Set<QName> getMappedVariableNames(String childConfigName) {
-        Configuration childConfig = getModelConfiguration().getFirstChild(childConfigName);
-        if (childConfig != null) {
-            String names = Strings.trimToNull(childConfig.getAttribute("mappedVariableNames"));
-            if (names != null) {
-                String namespace = Strings.trimToNull(childConfig.getAttribute("mappedVariableNamespace"));
-                Set<QName> qnames = new LinkedHashSet<QName>();
-                for (String name : Strings.uniqueSplitTrimToNull(names, ",;| ")) {
-                    QName qname;
-                    if (namespace != null) {
-                        qname = XMLHelper.createQName(namespace, name);
-                    } else {
-                        qname = XMLHelper.createQName(name);
-                    }
-                    qnames.add(qname);
-                }
-                return qnames;
-            }
-        }
-        return Collections.emptySet();
     }
 
     /**

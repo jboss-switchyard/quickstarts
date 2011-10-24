@@ -21,12 +21,9 @@ package org.switchyard.component.soap;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 import javax.wsdl.Port;
 import javax.wsdl.WSDLException;
-import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.Dispatch;
@@ -39,10 +36,11 @@ import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
-import org.switchyard.common.type.Classes;
+import org.switchyard.component.soap.composer.SOAPComposition;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
+import org.switchyard.composer.MessageComposer;
 
 /**
  * Handles invoking external Webservice endpoints.
@@ -52,13 +50,12 @@ import org.switchyard.component.soap.util.WSDLUtil;
 public class OutboundHandler extends BaseHandler {
 
     private static final Logger LOGGER = Logger.getLogger(OutboundHandler.class);
-    private MessageComposer _composer;
-    private Set<QName> _composerMappedHeaderNames = new LinkedHashSet<QName>();
-    private MessageDecomposer _decomposer;
-    private Set<QName> _decomposerMappedVariableNames = new LinkedHashSet<QName>();
+
+    private final SOAPBindingModel _config;
+    private final MessageComposer<SOAPMessage> _messageComposer;
+
     private Dispatch<SOAPMessage> _dispatcher;
     private Port _port;
-    private SOAPBindingModel _config;
 
     /**
      * Constructor.
@@ -66,37 +63,7 @@ public class OutboundHandler extends BaseHandler {
      */
     public OutboundHandler(final SOAPBindingModel config) {
         _config = config;
-
-        _composerMappedHeaderNames.addAll(config.getComposerMappedVariableNames());
-        _decomposerMappedVariableNames.addAll(config.getDecomposerMappedVariableNames());
-
-        String composer = config.getComposer();
-        String decomposer = config.getDecomposer();
-
-        if (composer != null && composer.length() > 0) {
-            try {
-                Class<? extends MessageComposer> composerClass = Classes.forName(composer, getClass()).asSubclass(MessageComposer.class);
-                _composer = composerClass.newInstance();
-            } catch (Exception cnfe) {
-                LOGGER.error("Could not instantiate composer", cnfe);
-            }
-        }
-        if (_composer == null) {
-            _composer = new DefaultMessageComposer();
-        }
-        if (decomposer != null && decomposer.length() > 0) {
-            try {
-                Class<? extends MessageDecomposer> decomposerClass = Classes.forName(decomposer, getClass()).asSubclass(MessageDecomposer.class);
-                _decomposer = decomposerClass.newInstance();
-            } catch (Exception cnfe) {
-                LOGGER.error("Could not instantiate decomposer", cnfe);
-            }
-        }
-        if (_decomposer == null) {
-            _decomposer = new DefaultMessageDecomposer();
-        }
-
-        _decomposer = new DefaultMessageDecomposer();
+        _messageComposer = SOAPComposition.getMessageComposer(config);
     }
 
     /**
@@ -117,7 +84,7 @@ public class OutboundHandler extends BaseHandler {
                 LOGGER.info("Creating dispatch with WSDL " + wsdlUrl);
                 Service service = Service.create(wsdlUrl, portName.getServiceQName());
                 _dispatcher = service.createDispatch(portName.getPortQName(), SOAPMessage.class, Service.Mode.MESSAGE, new AddressingFeature(false, false));
-                // this does not return a proper qualified Fault element and has no Detail so defering for now
+                // this does not return a proper qualified Fault element and has no Detail so deferring for now
                 // BindingProvider bp = (BindingProvider) _dispatcher;
                 // bp.getRequestContext().put("jaxws.response.throwExceptionIfSOAPFault", Boolean.FALSE);
 
@@ -133,8 +100,6 @@ public class OutboundHandler extends BaseHandler {
      * Stop lifecycle.
      */
     public void stop() {
-        _composerMappedHeaderNames.clear();
-        _decomposerMappedVariableNames.clear();
     }
 
     /**
@@ -146,7 +111,16 @@ public class OutboundHandler extends BaseHandler {
     @Override
     public void handleMessage(final Exchange exchange) throws HandlerException {
         try {
-            SOAPMessage request = _decomposer.decompose(exchange, _decomposerMappedVariableNames);
+            if (SOAPUtil.SOAP_MESSAGE_FACTORY == null) {
+                throw new SOAPException("Failed to instantiate SOAP Message Factory");
+            }
+
+            SOAPMessage request;
+            try {
+                request = _messageComposer.decompose(exchange, SOAPUtil.SOAP_MESSAGE_FACTORY.createMessage());
+            } catch (Exception e) {
+                throw e instanceof SOAPException ? (SOAPException)e : new SOAPException(e);
+            }
             
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("Request:[" + SOAPUtil.soapMessageToString(request) + "]");
@@ -154,7 +128,12 @@ public class OutboundHandler extends BaseHandler {
             
             SOAPMessage response = invokeService(request);
             if (response != null) {
-                Message message = _composer.compose(response, exchange, _composerMappedHeaderNames);
+                Message message;
+                try {
+                    message = _messageComposer.compose(response, exchange, true);
+                } catch (Exception e) {
+                    throw e instanceof SOAPException ? (SOAPException)e : new SOAPException(e);
+                }
                 exchange.send(message);
             }
             

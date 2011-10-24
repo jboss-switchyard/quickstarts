@@ -27,7 +27,9 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.xml.QNameUtil;
+import org.switchyard.component.camel.composer.CamelMessageComposer;
 import org.switchyard.component.camel.deploy.ServiceReferences;
+import org.switchyard.composer.MessageComposer;
 import org.switchyard.exception.SwitchYardException;
 
 /**
@@ -44,14 +46,16 @@ public class CamelResponseHandler implements ExchangeHandler {
     
     private final org.apache.camel.Exchange _camelExchange;
     private final ServiceReference _reference;
+    private final MessageComposer<org.apache.camel.Message> _messageComposer;
 
     /**
      * Sole constructor.
      * 
-     * @param camelExchange The Camel {@link org.apache.camel.Exchange}
+     * @param camelExchange The Camel {@link org.apache.camel.Message}
      * @param reference The SwitchYard ServiceReference.
+     * @param messageComposer the MessageComposer to use
      */
-    public CamelResponseHandler(final org.apache.camel.Exchange camelExchange, final ServiceReference reference) {
+    public CamelResponseHandler(final org.apache.camel.Exchange camelExchange, final ServiceReference reference, final MessageComposer<org.apache.camel.Message> messageComposer) {
         if (camelExchange ==  null) {
             throw new SwitchYardException("[camelExchange] argument must not be null");
         }
@@ -60,6 +64,7 @@ public class CamelResponseHandler implements ExchangeHandler {
         }
         _camelExchange = camelExchange;
         _reference = reference;
+        _messageComposer = messageComposer;
     }
 
     /**
@@ -72,17 +77,23 @@ public class CamelResponseHandler implements ExchangeHandler {
      */
     @Override
     public void handleMessage(final Exchange switchYardExchange) throws HandlerException {
-        final Object payload = getPayloadFromSwitchYardExchange(switchYardExchange);
-        _camelExchange.getIn().setBody(payload);
-    }
-    
-    private Object getPayloadFromSwitchYardExchange(final Exchange switchYardExchange) {
-        final QName outputType = ServiceReferences.getOutputTypeForExchange(_reference, switchYardExchange);
-        if (outputType != null) {
-            return switchYardExchange.getMessage().getContent(QNameUtil.toJavaMessageType(outputType));
+        final CamelMessageComposer.ContentTypeProvider ctp = new CamelMessageComposer.ContentTypeProvider() {
+            public Class<?> getContentType() {
+                final QName outputType = ServiceReferences.getOutputTypeForExchange(_reference, switchYardExchange);
+                if (outputType != null) {
+                    return QNameUtil.toJavaMessageType(outputType);
+                }
+                return null;
+            }
+        };
+        try {
+            CamelMessageComposer.setContentTypeProvider(switchYardExchange, ctp);
+            _messageComposer.decompose(switchYardExchange, _camelExchange.getIn());
+        } catch (Exception e) {
+            throw new HandlerException(e);
+        } finally {
+            CamelMessageComposer.setContentTypeProvider(switchYardExchange, null);
         }
-        
-        return switchYardExchange.getMessage().getContent();
     }
 
     @Override

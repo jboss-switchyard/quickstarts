@@ -32,12 +32,13 @@ import org.hornetq.api.core.client.ServerLocator;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
-import org.switchyard.Message;
 import org.switchyard.ServiceReference;
+import org.switchyard.component.hornetq.composer.HornetQComposition;
 import org.switchyard.component.hornetq.config.model.HornetQBindingModel;
 import org.switchyard.component.hornetq.config.model.HornetQConfigModel;
 import org.switchyard.component.hornetq.config.model.OperationSelector;
 import org.switchyard.component.hornetq.internal.HornetQUtil;
+import org.switchyard.composer.MessageComposer;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.InOnlyOperation;
@@ -56,6 +57,7 @@ public class InboundHandler implements ExchangeHandler, MessageHandler {
 
     private final HornetQBindingModel _bindingModel;
     private final HornetQConfigModel _configModel;
+    private final MessageComposer<ClientMessage> _messageComposer;
     private ServiceReference _serviceRef;
     private ServerLocator _serverLocator;
     private ClientSessionFactory _factory;
@@ -71,6 +73,7 @@ public class InboundHandler implements ExchangeHandler, MessageHandler {
     public InboundHandler(final HornetQBindingModel hbm, final ServerLocator serverLocator) {
         _bindingModel = hbm;
         _configModel = hbm.getHornetQConfig();
+        _messageComposer = HornetQComposition.getMessageComposer(hbm);
         _serverLocator = serverLocator;
     }
 
@@ -109,17 +112,16 @@ public class InboundHandler implements ExchangeHandler, MessageHandler {
     
     @Override
     public void onMessage(final ClientMessage message) {
-        final Exchange exchange = createExchange(_serviceRef, message);
-        final Message switchYardMessage = exchange.createMessage();
+        final Exchange exchange = createExchange(_serviceRef);
         try {
             _logger.info("onMessage :" + message);
-            exchange.send(switchYardMessage.setContent(HornetQUtil.readBytes(message)));
+            exchange.send(_messageComposer.compose(message, exchange, true));
         } catch (final Exception e) {
             throw new SwitchYardException(e);
         }
     }
     
-    private Exchange createExchange(final ServiceReference serviceReference, final ClientMessage message) {
+    private Exchange createExchange(final ServiceReference serviceReference) {
         final String operationName = getOperationName();
         final QName inputType = getOperationInputType(serviceReference, operationName);
         final InOnlyOperation inOnlyOperation = new InOnlyOperation(operationName, inputType);

@@ -20,15 +20,17 @@ MA  02110-1301, USA.
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
         targetNamespace="urn:switchyard-component-soap:config:1.0"
         xmlns:soap="urn:switchyard-component-soap:config:1.0"
+        xmlns:swyd="urn:switchyard-config:switchyard:1.0"
         xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
         elementFormDefault="qualified">
 
+    <import namespace="urn:switchyard-config:switchyard:1.0"/>
     <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
 
-    <element name="binding.soap" type="soap:SOAPBindingType" substitutionGroup="sca:binding"/>
+    <element name="binding.soap" type="soap:SOAPBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="SOAPBindingType">
         <complexContent>
-            <extension base="sca:Binding">
+            <extension base="swyd:SwitchYardBindingType">
                 <sequence>
                     <element name="wsdl" type="anyURI" minOccurs="1" maxOccurs="1">
                         <annotation>
@@ -57,52 +59,6 @@ MA  02110-1301, USA.
                                 The context path used in the HTTP URL
                             </documentation>
                         </annotation>
-                    </element>
-                    <element name="composer" minOccurs="0" maxOccurs="1">
-                        <annotation>
-                            <documentation>
-                                The fully qualified JAVA Class name for custom composition of SwitchYard Message from SOAP.
-                            </documentation>
-                        </annotation>
-                        <complexType>
-                            <attribute name="mappedVariableNamespace" type="string" use="optional">
-                                <annotation>
-                                    <documentation>
-                                        Namespace shared by all mappedVariableNames.
-                                    </documentation>
-                                </annotation>
-                            </attribute>
-                            <attribute name="mappedVariableNames" type="string" use="optional">
-                                <annotation>
-                                    <documentation>
-                                        Headers that should be mapped from the request SOAPMessage to the SwitchYard Exchange Context (Scope.IN).
-                                    </documentation>
-                                </annotation>
-                            </attribute>
-                        </complexType>
-                    </element>
-                    <element name="decomposer" minOccurs="0" maxOccurs="1">
-                        <annotation>
-                            <documentation>
-                                The fully qualified JAVA Class name for custom conversion of SwitchYard Message to SOAP.
-                            </documentation>
-                        </annotation>
-                        <complexType>
-                            <attribute name="mappedVariableNamespace" type="string" use="optional">
-                                <annotation>
-                                    <documentation>
-                                        Namespace shared by all mappedVariableNames.
-                                    </documentation>
-                                </annotation>
-                            </attribute>
-                            <attribute name="mappedVariableNames" type="string" use="optional">
-                                <annotation>
-                                    <documentation>
-                                        Properties that should be mapped from the SwitchYard Exchange Context (Scope.OUT) to the response SOAPMessage.
-                                    </documentation>
-                                </annotation>
-                            </attribute>
-                        </complexType>
                     </element>
                 </sequence>
             </extension>

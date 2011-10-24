@@ -29,8 +29,8 @@ public abstract class RulesExchangeHandlerFactory {
 
     private static final RulesExchangeHandlerFactory INSTANCE;
     static {
-        ServiceLoader<RulesExchangeHandlerFactory> loader = ServiceLoader.load(RulesExchangeHandlerFactory.class);
-        INSTANCE = loader.iterator().next();
+        ServiceLoader<RulesExchangeHandlerFactory> services = ServiceLoader.load(RulesExchangeHandlerFactory.class);
+        INSTANCE = services.iterator().next();
     }
 
     /**

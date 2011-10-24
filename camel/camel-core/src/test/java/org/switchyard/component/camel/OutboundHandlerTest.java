@@ -42,15 +42,17 @@ import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.component.camel.composer.CamelComposition;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
+import org.switchyard.composer.MessageComposer;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InOnlyOperation;
-import org.switchyard.test.mixins.CDIMixIn;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
+import org.switchyard.test.mixins.CDIMixIn;
 
 /**
  * Functional test for {@link OutboundHandler}.
@@ -70,6 +72,7 @@ public class OutboundHandlerTest extends CamelTestSupport {
     @ServiceOperation("TargetService")
     private Invoker _targetService;
 
+    private MessageComposer<org.apache.camel.Message> _messageComposer;
     private ServiceReference _service;
 
     /**
@@ -82,7 +85,8 @@ public class OutboundHandlerTest extends CamelTestSupport {
     public void setupSwitchyardService() {
         final CamelBindingModel bindingModel = mock(CamelBindingModel.class);
         when(bindingModel.getComponentURI()).thenReturn(URI.create("direct:to"));
-        _serviceDomain.registerService(_targetService.getServiceName(), new OutboundHandler(bindingModel.getComponentURI().toString(), context));
+        _messageComposer = CamelComposition.getMessageComposer();
+        _serviceDomain.registerService(_targetService.getServiceName(), new OutboundHandler(bindingModel.getComponentURI().toString(), context, _messageComposer));
         _service = _serviceDomain.getService(_targetService.getServiceName());
     }
 
@@ -135,14 +139,14 @@ public class OutboundHandlerTest extends CamelTestSupport {
     public void throwsIllegalArgumentExceptionIfBindingModelIsNull() {
         exception.expect(IllegalArgumentException.class);
         exception.expectMessage("uri argument must not be null");
-        new OutboundHandler(null, mock(CamelContext.class));
+        new OutboundHandler(null, mock(CamelContext.class), _messageComposer);
     }
 
     @Test
     public void throwsIllegalArgumentExceptionIfCamelContextIsNull() {
         exception.expect(IllegalArgumentException.class);
         exception.expectMessage("camelContext argument must not be null");
-        new OutboundHandler("mockuri", null);
+        new OutboundHandler("mockuri", null, _messageComposer);
     }
 
     @Override

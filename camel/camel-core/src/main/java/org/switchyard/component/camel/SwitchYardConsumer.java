@@ -22,13 +22,15 @@
 package org.switchyard.component.camel;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
+import org.switchyard.Message;
+import org.switchyard.composer.MessageComposer;
+import org.switchyard.exception.SwitchYardException;
 
 /**
  * A SwitchYardConsumer is both a Camel Consumer and an SwitchYard ExchangeHandler.
@@ -41,14 +43,18 @@ import org.switchyard.HandlerException;
  */
 public class SwitchYardConsumer extends DefaultConsumer implements ExchangeHandler {
     
+    private final MessageComposer<org.apache.camel.Message> _messageComposer;
+    
     /**
      * Sole constructor.
      * 
      * @param endpoint The Camel endpoint that this consumer was created by.
      * @param processor The Camel processor that this consumer will delegate to.
+     * @param messageComposer the MessageComposer this consumer should use
      */
-    public SwitchYardConsumer(final Endpoint endpoint, final Processor processor) {
+    public SwitchYardConsumer(final Endpoint endpoint, final Processor processor, final MessageComposer<org.apache.camel.Message> messageComposer) {
         super(endpoint, processor);
+        _messageComposer = messageComposer;
     }
     
     @Override
@@ -77,7 +83,7 @@ public class SwitchYardConsumer extends DefaultConsumer implements ExchangeHandl
             throw new HandlerException(camelException);
         }
 
-        final Message message = camelExchange.getOut();
+        final org.apache.camel.Message message = camelExchange.getOut();
         if (message.isFault()) {
             throw new HandlerException(message.getBody(String.class));
         }
@@ -87,19 +93,28 @@ public class SwitchYardConsumer extends DefaultConsumer implements ExchangeHandl
         org.apache.camel.Exchange camelExchange = isInOut(switchyardExchange) 
                 ? getEndpoint().createExchange(org.apache.camel.ExchangePattern.InOut)
                 : getEndpoint().createExchange(org.apache.camel.ExchangePattern.InOnly);
-        
-        camelExchange.getIn().setBody(switchyardExchange.getMessage().getContent());
+         try {
+             _messageComposer.decompose(switchyardExchange, camelExchange.getIn());
+         } catch (Exception e) {
+             throw new SwitchYardException(e);
+         }
         return camelExchange;
-        
     }
 
     private void sendResponse(org.apache.camel.Exchange camelExchange, final Exchange switchyardExchange) {
-        Object payload = camelExchange.getOut().getBody();
-        if (payload == null) {
-            payload = camelExchange.getIn().getBody();
+        final org.apache.camel.Message camelMessage;
+        if (camelExchange.getOut().getBody() != null) {
+            camelMessage = camelExchange.getOut();
+        } else {
+            camelMessage = camelExchange.getIn();
         }
-        switchyardExchange.getMessage().setContent(payload);
-        switchyardExchange.send(switchyardExchange.getMessage());
+        Message switchyardMessage;
+        try {
+            switchyardMessage = _messageComposer.compose(camelMessage, switchyardExchange, false);
+        } catch (Exception e) {
+            throw new SwitchYardException(e);
+        }
+        switchyardExchange.send(switchyardMessage);
     }
 
     private boolean isInOut(final Exchange exchange) {

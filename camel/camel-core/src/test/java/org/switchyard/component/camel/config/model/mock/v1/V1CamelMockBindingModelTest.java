@@ -27,7 +27,6 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.processor.ThroughputLogger;

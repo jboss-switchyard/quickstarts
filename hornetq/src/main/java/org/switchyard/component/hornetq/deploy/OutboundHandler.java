@@ -20,7 +20,6 @@
  */
 package org.switchyard.component.hornetq.deploy;
 
-import org.hornetq.api.core.HornetQException;
 import org.hornetq.api.core.client.ClientMessage;
 import org.hornetq.api.core.client.ClientProducer;
 import org.hornetq.api.core.client.ClientSession;
@@ -29,9 +28,11 @@ import org.hornetq.api.core.client.ServerLocator;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
+import org.switchyard.component.hornetq.composer.HornetQComposition;
 import org.switchyard.component.hornetq.config.model.HornetQBindingModel;
 import org.switchyard.component.hornetq.config.model.HornetQConfigModel;
 import org.switchyard.component.hornetq.internal.HornetQUtil;
+import org.switchyard.composer.MessageComposer;
 import org.switchyard.exception.SwitchYardException;
 
 /**
@@ -43,25 +44,27 @@ import org.switchyard.exception.SwitchYardException;
 public class OutboundHandler extends BaseHandler {
 
     private final ServerLocator _serverLocator;
+    private final MessageComposer<ClientMessage> _messageComposer;
     private ClientSessionFactory _factory;
     private ClientSession _session;
     private ClientProducer _producer;
     private HornetQConfigModel _configModel;
 
     /**
-     * 
-     * @param model the {@link HornetQBindingModel}
+     * Constructs the OutboundHandler.
+     * @param hbm the {@link HornetQBindingModel}
      * @param serverLocator the HornetQ {@link ServerLocator}.
      */
-    public OutboundHandler(final HornetQBindingModel model, final ServerLocator serverLocator) {
-        _configModel = model.getHornetQConfig();
+    public OutboundHandler(final HornetQBindingModel hbm, final ServerLocator serverLocator) {
+        _configModel = hbm.getHornetQConfig();
+        _messageComposer = HornetQComposition.getMessageComposer(hbm);
         _serverLocator = serverLocator;
     }
     
     /**
      * Starts this InboundHandler which involves setting up this inbound handler as 
      * a HornetQ MessageHandler so that messgages that arrive on the configured destination
-     * will be passed to the SwitchYard {@link ServiceReference}.
+     * will be passed to the SwitchYard ServiceReference.
      * 
      */
     public void start() {
@@ -78,12 +81,10 @@ public class OutboundHandler extends BaseHandler {
     @Override
     public void handleMessage(final Exchange exchange) throws HandlerException {
         // send using producer.
-        final ClientMessage message = _session.createMessage(true);
-        final byte[] content = exchange.getMessage().getContent(byte[].class);
-        message.getBodyBuffer().writeBytes(content);
         try {
+            final ClientMessage message = _messageComposer.decompose(exchange, _session.createMessage(true));
             _producer.send(message);
-        } catch (final HornetQException e) {
+        } catch (final Exception e) {
             throw new HandlerException(e);
         }
     }

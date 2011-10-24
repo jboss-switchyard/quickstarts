@@ -28,10 +28,12 @@ import javax.xml.namespace.QName;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.switchyard.Exchange;
+import org.switchyard.Message;
 import org.switchyard.ServiceReference;
+import org.switchyard.component.camel.composer.CamelMessageComposer;
 import org.switchyard.component.camel.deploy.ServiceReferences;
+import org.switchyard.composer.MessageComposer;
 import org.switchyard.exception.SwitchYardException;
-
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
@@ -56,6 +58,7 @@ public class SwitchYardProducer extends DefaultProducer {
     
     private String _namespace;
     private String _operationName;
+    private final MessageComposer<org.apache.camel.Message> _messageComposer;
     
     /**
      * Sole constructor.
@@ -63,11 +66,13 @@ public class SwitchYardProducer extends DefaultProducer {
      * @param endpoint the Camel Endpoint that this Producer belongs to.
      * @param namespace the service namespace of the target SwitchYard service.
      * @param operationName the operation name of the target SwitchYard service.
+     * @param messageComposer the MessageComposer to use
      */
-    public SwitchYardProducer(final Endpoint endpoint, final String namespace, final String operationName) {
+    public SwitchYardProducer(final Endpoint endpoint, final String namespace, final String operationName, final MessageComposer<org.apache.camel.Message> messageComposer) {
         super(endpoint);
         _namespace = namespace;
         _operationName = operationName;
+        _messageComposer = messageComposer;
     }
     
     @Override
@@ -77,10 +82,20 @@ public class SwitchYardProducer extends DefaultProducer {
         if (_operationName == null) {
             _operationName = lookupOperationNameFor(serviceRef);
         }
-        
         final Exchange switchyardExchange = createSwitchyardExchange(camelExchange, serviceRef);
-        final Object camelPayload = camelExchange.getIn().getBody(getInputType(serviceRef));
-        switchyardExchange.send(switchyardExchange.createMessage().setContent(camelPayload));
+        final SwitchYardProducer producer = this;
+        final CamelMessageComposer.ContentTypeProvider ctp = new CamelMessageComposer.ContentTypeProvider() {
+            public Class<?> getContentType() {
+                return producer.getInputType(serviceRef);
+            }
+        };
+        try {
+            CamelMessageComposer.setContentTypeProvider(switchyardExchange, ctp);
+            Message switchyardMessage = _messageComposer.compose(camelExchange.getIn(), switchyardExchange, true);
+            switchyardExchange.send(switchyardMessage);
+        } finally {
+            CamelMessageComposer.setContentTypeProvider(switchyardExchange, null);
+        }
     }
     
     private ServiceReference lookupServiceReference(final String targetUri) {
@@ -129,7 +144,7 @@ public class SwitchYardProducer extends DefaultProducer {
         final BaseExchangeContract exchangeContract = new BaseExchangeContract(inOutOperation);
         setInputMessageType(exchangeContract, operationInputType);
         
-        return ref.createExchange(exchangeContract, new CamelResponseHandler(camelExchange, ref));
+        return ref.createExchange(exchangeContract, new CamelResponseHandler(camelExchange, ref, _messageComposer));
     }
     
     private QName getOperationInputType(final ServiceReference ref) {

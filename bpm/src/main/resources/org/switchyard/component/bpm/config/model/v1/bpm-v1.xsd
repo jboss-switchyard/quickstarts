@@ -25,7 +25,6 @@ MA  02110-1301, USA.
         elementFormDefault="qualified">
 
     <import namespace="urn:switchyard-config:switchyard:1.0"/>
-
     <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
 
     <element name="implementation.bpm" type="bpm:BPMImplementationType" substitutionGroup="sca:implementation"/>

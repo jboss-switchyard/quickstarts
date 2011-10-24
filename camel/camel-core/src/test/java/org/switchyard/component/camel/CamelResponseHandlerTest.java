@@ -29,10 +29,13 @@ import static org.mockito.Mockito.when;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.Exchange;
+import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.ServiceReference;
+import org.switchyard.component.camel.composer.CamelComposition;
+import org.switchyard.composer.MessageComposer;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InvocationContract;
 import org.switchyard.metadata.java.JavaService;
@@ -45,9 +48,17 @@ import org.switchyard.metadata.java.JavaService;
  */
 public class CamelResponseHandlerTest
 {
+
+    private MessageComposer<org.apache.camel.Message> _messageComposer;
+
+    @Before
+    public void before() {
+        _messageComposer = CamelComposition.getMessageComposer();
+    }
+
     @Test (expected = RuntimeException.class)
     public void constructor() throws Exception {
-        final CamelResponseHandler responseHandler = new CamelResponseHandler(null, null);
+        final CamelResponseHandler responseHandler = new CamelResponseHandler(null, null, _messageComposer);
         responseHandler.handleMessage(null);
     }
     
@@ -56,7 +67,7 @@ public class CamelResponseHandlerTest
         final Exchange camelExchange = createMockCamelExchange();
         final ServiceReference serviceReference = createMockServiceRef();
         final org.switchyard.Exchange switchYardExchange = createMockExchangeWithBody(10);
-        final CamelResponseHandler responseHandler = new CamelResponseHandler(camelExchange, serviceReference);
+        final CamelResponseHandler responseHandler = new CamelResponseHandler(camelExchange, serviceReference, _messageComposer);
         
         responseHandler.handleMessage(switchYardExchange);
         
@@ -79,10 +90,12 @@ public class CamelResponseHandlerTest
     private org.switchyard.Exchange createMockExchangeWithBody(final Integer payload) {
         
         final org.switchyard.Exchange switchYardExchange = mock(org.switchyard.Exchange.class);
+        final org.switchyard.Context switchYardContext = mock(org.switchyard.Context.class);
         final ExchangeContract exchangeContract = mock(ExchangeContract.class);
         final InvocationContract invocationContract = mock(InvocationContract.class);
         final Message message = mock(Message.class);
         when(message.getContent(Integer.class)).thenReturn(payload);
+        when(switchYardExchange.getContext()).thenReturn(switchYardContext);
         when(switchYardExchange.getMessage()).thenReturn(message);
         when(invocationContract.getOutputType()).thenReturn(new QName("java:java.lang.String"));
         when(exchangeContract.getInvokerInvocationMetaData()).thenReturn(invocationContract);

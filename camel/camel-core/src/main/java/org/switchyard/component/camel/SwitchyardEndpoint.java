@@ -19,12 +19,15 @@
 package org.switchyard.component.camel;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.switchyard.component.camel.composer.CamelComposition;
+import org.switchyard.composer.MessageComposer;
 
 /**
- * A Camel Endpoint that is a simple {@link ProcessorEndpoint}.
+ * A Camel Endpoint that is a simple ProcessorEndpoint.
  * 
  * @author Daniel Bevenius
  *
@@ -39,6 +42,11 @@ public class SwitchyardEndpoint extends DefaultEndpoint {
      * Producer property.
      */
     private String _operationName;
+    
+    /**
+     * Producer property.
+     */
+    private MessageComposer<Message> _messageComposer;
     
     /**
      * SwitchYard Consumer that handles events from SwitchYard and delegates
@@ -61,6 +69,27 @@ public class SwitchyardEndpoint extends DefaultEndpoint {
     }
 
     /**
+     * Sets the message composer this endpoint should pass along to producers and consumers.
+     * @param messageComposer the message composer
+     * @return this endpoint (useful for chaining)
+     */
+    public synchronized SwitchyardEndpoint setMessageComposer(MessageComposer<Message> messageComposer) {
+        _messageComposer = messageComposer;
+        return this;
+    }
+
+    /**
+     * Gets the message composer this endpoint should pass along to producers and consumers.
+     * @return the message composer
+     */
+    public synchronized MessageComposer<Message> getMessageComposer() {
+        if (_messageComposer == null) {
+            _messageComposer = CamelComposition.getMessageComposer();
+        }
+        return _messageComposer;
+    }
+
+    /**
      * Creates a event driven consumer as opposed to a polling consumer.
      * @param processor processor used by consumer
      * @return event-driven consumer
@@ -69,7 +98,7 @@ public class SwitchyardEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(final Processor processor) throws Exception {
         if (_operationName == null) {
-            _consumer = new SwitchYardConsumer(this, processor);
+            _consumer = new SwitchYardConsumer(this, processor, getMessageComposer());
             return _consumer;
         }
         return null;
@@ -78,17 +107,23 @@ public class SwitchyardEndpoint extends DefaultEndpoint {
     /**
      * Gets the consumer for this endpoint.
      * 
-     * @return {@link DefaultConsumer}
+     * @return {@link SwitchYardConsumer}
      */
     public SwitchYardConsumer getConsumer() {
         return _consumer;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Producer createProducer() throws Exception {
-        return new SwitchYardProducer(this, _namespace, _operationName);
+        return new SwitchYardProducer(this, _namespace, _operationName, getMessageComposer());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isSingleton() {
         return true;
