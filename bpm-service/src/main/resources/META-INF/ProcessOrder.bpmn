@@ -12,7 +12,14 @@
              xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
              xmlns:tns="http://www.jboss.org/drools">
 
+  <itemDefinition id="_messageContentInItem" />
+  <itemDefinition id="_messageContentOutItem" />
+
   <process processType="Private" isExecutable="true" id="ProcessOrder" name="ProcessOrder" tns:packageName="org.switchyard.demo.openshift" >
+
+    <!-- process variables -->
+    <property id="messageContentIn" itemSubjectRef="_messageContentInItem"/>
+    <property id="messageContentOut" itemSubjectRef="_messageContentOutItem"/>
 
     <!-- nodes -->
     <startEvent id="_1" name="Start" />
@@ -21,22 +28,41 @@
     </endEvent>
     <task id="_8" name="Inventory" tns:taskName="SwitchYard Service" >
       <ioSpecification>
+        <dataInput id="_8_messageContentInInput" name="messageContentIn" />
         <dataInput id="_8_ServiceNameInput" name="ServiceName" />
+        <dataInput id="_8_MessageContentOutNameInput" name="MessageContentOutName" />
         <dataInput id="_8_ServiceOperationNameInput" name="ServiceOperationName" />
         <dataInput id="_8_OutputMessageVariableInput" name="OutputMessageVariable" />
+        <dataInput id="_8_MessageContentInNameInput" name="MessageContentInName" />
+        <dataOutput id="_8_messageContentOutOutput" name="messageContentOut" />
         <inputSet>
+          <dataInputRefs>_8_messageContentInInput</dataInputRefs>
           <dataInputRefs>_8_ServiceNameInput</dataInputRefs>
+          <dataInputRefs>_8_MessageContentOutNameInput</dataInputRefs>
           <dataInputRefs>_8_ServiceOperationNameInput</dataInputRefs>
           <dataInputRefs>_8_OutputMessageVariableInput</dataInputRefs>
+          <dataInputRefs>_8_MessageContentInNameInput</dataInputRefs>
         </inputSet>
         <outputSet>
+          <dataOutputRefs>_8_messageContentOutOutput</dataOutputRefs>
         </outputSet>
       </ioSpecification>
+      <dataInputAssociation>
+        <sourceRef>messageContentIn</sourceRef>
+        <targetRef>_8_messageContentInInput</targetRef>
+      </dataInputAssociation>
       <dataInputAssociation>
         <targetRef>_8_ServiceNameInput</targetRef>
         <assignment>
           <from xsi:type="tFormalExpression">Inventory</from>
           <to xsi:type="tFormalExpression">_8_ServiceNameInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataInputAssociation>
+        <targetRef>_8_MessageContentOutNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression"></from>
+          <to xsi:type="tFormalExpression">_8_MessageContentOutNameInput</to>
         </assignment>
       </dataInputAssociation>
       <dataInputAssociation>
@@ -53,23 +79,53 @@
           <to xsi:type="tFormalExpression">_8_OutputMessageVariableInput</to>
         </assignment>
       </dataInputAssociation>
+      <dataInputAssociation>
+        <targetRef>_8_MessageContentInNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression"></from>
+          <to xsi:type="tFormalExpression">_8_MessageContentInNameInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataOutputAssociation>
+        <sourceRef>_8_messageContentOutOutput</sourceRef>
+        <targetRef>messageContentOut</targetRef>
+      </dataOutputAssociation>
     </task>
     <task id="_9" name="Shipping" tns:taskName="SwitchYard Service" >
       <ioSpecification>
+        <dataInput id="_9_messageContentInInput" name="messageContentIn" />
         <dataInput id="_9_ServiceNameInput" name="ServiceName" />
+        <dataInput id="_9_MessageContentOutNameInput" name="MessageContentOutName" />
         <dataInput id="_9_ServiceOperationNameInput" name="ServiceOperationName" />
+        <dataInput id="_9_MessageContentInNameInput" name="MessageContentInName" />
+        <dataOutput id="_9_messageContentOutOutput" name="messageContentOut" />
         <inputSet>
+          <dataInputRefs>_9_messageContentInInput</dataInputRefs>
           <dataInputRefs>_9_ServiceNameInput</dataInputRefs>
+          <dataInputRefs>_9_MessageContentOutNameInput</dataInputRefs>
           <dataInputRefs>_9_ServiceOperationNameInput</dataInputRefs>
+          <dataInputRefs>_9_MessageContentInNameInput</dataInputRefs>
         </inputSet>
         <outputSet>
+          <dataOutputRefs>_9_messageContentOutOutput</dataOutputRefs>
         </outputSet>
       </ioSpecification>
+      <dataInputAssociation>
+        <sourceRef>messageContentIn</sourceRef>
+        <targetRef>_9_messageContentInInput</targetRef>
+      </dataInputAssociation>
       <dataInputAssociation>
         <targetRef>_9_ServiceNameInput</targetRef>
         <assignment>
           <from xsi:type="tFormalExpression">Shipping</from>
           <to xsi:type="tFormalExpression">_9_ServiceNameInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataInputAssociation>
+        <targetRef>_9_MessageContentOutNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression"></from>
+          <to xsi:type="tFormalExpression">_9_MessageContentOutNameInput</to>
         </assignment>
       </dataInputAssociation>
       <dataInputAssociation>
@@ -79,23 +135,53 @@
           <to xsi:type="tFormalExpression">_9_ServiceOperationNameInput</to>
         </assignment>
       </dataInputAssociation>
+      <dataInputAssociation>
+        <targetRef>_9_MessageContentInNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression"></from>
+          <to xsi:type="tFormalExpression">_9_MessageContentInNameInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataOutputAssociation>
+        <sourceRef>_9_messageContentOutOutput</sourceRef>
+        <targetRef>messageContentOut</targetRef>
+      </dataOutputAssociation>
     </task>
     <task id="_10" name="BackOrder" tns:taskName="SwitchYard Service" >
       <ioSpecification>
+        <dataInput id="_10_messageContentInInput" name="messageContentIn" />
         <dataInput id="_10_ServiceNameInput" name="ServiceName" />
+        <dataInput id="_10_MessageContentOutNameInput" name="MessageContentOutName" />
         <dataInput id="_10_ServiceOperationNameInput" name="ServiceOperationName" />
+        <dataInput id="_10_MessageContentInNameInput" name="MessageContentInName" />
+        <dataOutput id="_10_messageContentOutOutput" name="messageContentOut" />
         <inputSet>
+          <dataInputRefs>_10_messageContentInInput</dataInputRefs>
           <dataInputRefs>_10_ServiceNameInput</dataInputRefs>
+          <dataInputRefs>_10_MessageContentOutNameInput</dataInputRefs>
           <dataInputRefs>_10_ServiceOperationNameInput</dataInputRefs>
+          <dataInputRefs>_10_MessageContentInNameInput</dataInputRefs>
         </inputSet>
         <outputSet>
+          <dataOutputRefs>_10_messageContentOutOutput</dataOutputRefs>
         </outputSet>
       </ioSpecification>
+      <dataInputAssociation>
+        <sourceRef>messageContentIn</sourceRef>
+        <targetRef>_10_messageContentInInput</targetRef>
+      </dataInputAssociation>
       <dataInputAssociation>
         <targetRef>_10_ServiceNameInput</targetRef>
         <assignment>
           <from xsi:type="tFormalExpression">BackOrder</from>
           <to xsi:type="tFormalExpression">_10_ServiceNameInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataInputAssociation>
+        <targetRef>_10_MessageContentOutNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression"></from>
+          <to xsi:type="tFormalExpression">_10_MessageContentOutNameInput</to>
         </assignment>
       </dataInputAssociation>
       <dataInputAssociation>
@@ -105,6 +191,17 @@
           <to xsi:type="tFormalExpression">_10_ServiceOperationNameInput</to>
         </assignment>
       </dataInputAssociation>
+      <dataInputAssociation>
+        <targetRef>_10_MessageContentInNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression"></from>
+          <to xsi:type="tFormalExpression">_10_MessageContentInNameInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataOutputAssociation>
+        <sourceRef>_10_messageContentOutOutput</sourceRef>
+        <targetRef>messageContentOut</targetRef>
+      </dataOutputAssociation>
     </task>
     <exclusiveGateway id="_11" name="Gateway" gatewayDirection="Diverging" />
     <endEvent id="_12" name="End" >
@@ -115,10 +212,10 @@
     <sequenceFlow id="_9-_7" sourceRef="_9" targetRef="_7" />
     <sequenceFlow id="_1-_8" sourceRef="_1" targetRef="_8" />
     <sequenceFlow id="_11-_9" sourceRef="_11" targetRef="_9" name="ship" tns:priority="1" >
-      <conditionExpression xsi:type="tFormalExpression" language="http://www.java.com/java" >return kcontext.getVariable("item-available").equals(true);</conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression" language="http://www.java.com/java" >return ((Boolean)messageContentOut).booleanValue();</conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="_11-_10" sourceRef="_11" targetRef="_10" name="hold" tns:priority="1" >
-      <conditionExpression xsi:type="tFormalExpression" language="http://www.java.com/java" >return kcontext.getVariable("item-available").equals(false);</conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression" language="http://www.java.com/java" >return !((Boolean)messageContentOut).booleanValue();</conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="_8-_11" sourceRef="_8" targetRef="_11" />
     <sequenceFlow id="_10-_12" sourceRef="_10" targetRef="_12" />
@@ -128,49 +225,49 @@
   <bpmndi:BPMNDiagram>
     <bpmndi:BPMNPlane bpmnElement="ProcessOrder" >
       <bpmndi:BPMNShape bpmnElement="_1" >
-        <dc:Bounds x="286" y="24" width="48" height="48" />
+        <dc:Bounds x="178" y="30" width="48" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_7" >
-        <dc:Bounds x="200" y="455" width="48" height="48" />
+        <dc:Bounds x="95" y="446" width="48" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_8" >
-        <dc:Bounds x="259" y="145" width="100" height="48" />
+        <dc:Bounds x="151" y="136" width="100" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_9" >
-        <dc:Bounds x="176" y="363" width="100" height="48" />
+        <dc:Bounds x="68" y="354" width="100" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_10" >
-        <dc:Bounds x="342" y="362" width="100" height="48" />
+        <dc:Bounds x="229" y="359" width="100" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_11" >
-        <dc:Bounds x="283" y="251" width="48" height="48" />
+        <dc:Bounds x="175" y="242" width="48" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_12" >
-        <dc:Bounds x="370" y="459" width="48" height="48" />
+        <dc:Bounds x="254" y="447" width="48" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="_9-_7" >
-        <di:waypoint x="226" y="387" />
-        <di:waypoint x="224" y="479" />
+        <di:waypoint x="118" y="378" />
+        <di:waypoint x="119" y="470" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_1-_8" >
-        <di:waypoint x="310" y="48" />
-        <di:waypoint x="309" y="169" />
+        <di:waypoint x="202" y="54" />
+        <di:waypoint x="201" y="160" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_11-_9" >
-        <di:waypoint x="307" y="275" />
-        <di:waypoint x="226" y="387" />
+        <di:waypoint x="199" y="266" />
+        <di:waypoint x="118" y="378" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_11-_10" >
-        <di:waypoint x="307" y="275" />
-        <di:waypoint x="392" y="386" />
+        <di:waypoint x="199" y="266" />
+        <di:waypoint x="279" y="383" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_8-_11" >
-        <di:waypoint x="309" y="169" />
-        <di:waypoint x="307" y="275" />
+        <di:waypoint x="201" y="160" />
+        <di:waypoint x="199" y="266" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_10-_12" >
-        <di:waypoint x="392" y="386" />
-        <di:waypoint x="394" y="483" />
+        <di:waypoint x="279" y="383" />
+        <di:waypoint x="278" y="471" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

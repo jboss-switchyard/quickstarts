@@ -26,5 +26,7 @@ import org.switchyard.component.bpm.task.jbpm.CommandBasedWSHumanTaskHandler;
  */
 @Process(
     value=HelpDeskService.class,
+    messageContentInName="ticket",
+    messageContentOutName="ticketAck",
     taskHandlers={CommandBasedWSHumanTaskHandler.class})
 public interface HelpDeskServiceProcess {}
