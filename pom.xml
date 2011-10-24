@@ -62,8 +62,8 @@
         <version.jbpm>5.1.0.Final</version.jbpm>
 	    <version.maven-shade-plugin>1.4</version.maven-shade-plugin>
         <version.netty>3.2.1.Final</version.netty>
-        <version.riftsaw.ode>3.0.0-SNAPSHOT</version.riftsaw.ode>
-		<version.riftsaw.engine>3.0.0-SNAPSHOT</version.riftsaw.engine>
+        <version.riftsaw.ode>3.0.0.20111024-M1</version.riftsaw.ode>
+		<version.riftsaw.engine>3.0.0.20111024-M1</version.riftsaw.engine>
         <version.spring>3.0.5.RELEASE</version.spring>
         <version.weld>1.1.0.Final</version.weld>
 	    <version.wsdl4j>1.6.2</version.wsdl4j>
