@@ -126,6 +126,10 @@ public class BPMServicePlugin implements Plugin {
                 .setPackage(pkgName)
                 .setName(argServiceName)
                 .setPublic();
+
+            // Add a default process method...
+            processInterface.addMethod("void process(String content);");
+
             java.saveJavaSource(processInterface);
             interfaceClass = processInterface.getQualifiedName();
 
