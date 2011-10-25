@@ -80,5 +80,5 @@ public interface CamelBindingModel extends BindingModel {
      * @return {@link CamelBindingModel} to support method chaining.
      */
     CamelBindingModel setOperationSelector(OperationSelector operationSelector);
-    
+
 }

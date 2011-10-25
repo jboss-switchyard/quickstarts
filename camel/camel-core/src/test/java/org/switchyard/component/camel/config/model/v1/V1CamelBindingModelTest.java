@@ -25,15 +25,16 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
-import java.util.List;
+import java.net.URI;
+import java.net.URISyntaxException;
 
+import org.custommonkey.xmlunit.XMLAssert;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.switchyard.config.model.ModelPuller;
-import org.switchyard.config.model.Validation;
 import org.switchyard.config.model.composite.BindingModel;
-import org.switchyard.config.model.composite.CompositeReferenceModel;
-import org.switchyard.config.model.composite.CompositeServiceModel;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * Test for {@link V1CamelBindingModel}.
@@ -42,38 +43,65 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
  */
 public class V1CamelBindingModelTest {
     
+    private static boolean oldIgnoreWhitespace;
+
+    @BeforeClass
+    public static void setup() {
+        oldIgnoreWhitespace = XMLUnit.getIgnoreWhitespace();
+        XMLUnit.setIgnoreWhitespace(true);
+    }
+    
+    @AfterClass
+    public static void cleanup() {
+        XMLUnit.setIgnoreWhitespace(oldIgnoreWhitespace);
+    }        
+    
     @Test
-    public void validateCamelBindingModelWithBeanElement() throws Exception {
-        final V1CamelBindingModel bindingModel = getCamelBindingFromCompositeService("switchyard-camel-binding-beans.xml");
-        final Validation validateModel = bindingModel.validateModel();
-        
-        assertThat(validateModel.isValid(), is(true));
-        assertThat(bindingModel.getType(), is("camel"));
-        assertThat(bindingModel.getConfigURI().getScheme(), is("direct"));
-        assertThat(bindingModel.getOperationSelector().getOperationName(), is("print"));
+    public void validateProgrammaticConfig() throws Exception {
+        final V1CamelBindingModel bindingModel = createModel();
+        validateDefaults(bindingModel);
     }
-    
-    private V1CamelBindingModel getCamelBindingFromCompositeService(final String config) throws Exception {
-        final List<CompositeServiceModel> services = getSwitchYardModel(config).getComposite().getServices();
-        final CompositeServiceModel compositeServiceModel = services.get(0);
-        return (V1CamelBindingModel) compositeServiceModel.getBindings().get(0);
-    }
-    
-    private SwitchYardModel getSwitchYardModel(final String config) throws IOException {
-        return new ModelPuller<SwitchYardModel>().pull(config, getClass());
+
+    @Test
+    public void validateXmlConfig() throws Exception {
+        final V1CamelBindingModel bindingModel = pull("switchyard-camel-binding-beans.xml");
+        validateDefaults(bindingModel);
     }
     
     @Test
     public void validateCamelBindingModelWithReference() throws Exception {
-        final BindingModel bindingModel = getCamelBindingFromCompositeReference("switchyard-camel-ref-beans.xml");
-        final Validation validateModel = bindingModel.validateModel();
-        
-        assertThat(validateModel.isValid(), is(true));
+        final V1CamelBindingModel bindingModel = pull("switchyard-camel-ref-beans.xml");
+        validateModel(bindingModel);
         assertThat(bindingModel, is(instanceOf(V1CamelBindingModel.class)));
     }
     
-    private BindingModel getCamelBindingFromCompositeReference(final String config) throws Exception {
-        final List<CompositeReferenceModel> references = getSwitchYardModel(config).getComposite().getReferences();
-        return references.get(0).getBindings().get(0);
+    @Test
+    public void readWriteConfig() throws Exception {
+        final String control = pull("switchyard-camel-binding-beans.xml").toString();
+        final String test = createModel().toString();
+        XMLAssert.assertXMLEqual(control, test);
     }
+    
+    private V1CamelBindingModel createModel() throws URISyntaxException {
+        final V1CamelBindingModel bindingModel = new V1CamelBindingModel()
+        .setConfigURI(new URI("direct://input"))
+        .setOperationSelector(new V1OperationSelector().setOperationName("print"));
+        return bindingModel;
+    }
+
+    private void validateDefaults(final V1CamelBindingModel model) {
+        validateModel(model);
+        assertThat(model.getType(), is("camel"));
+        assertThat(model.getConfigURI().getScheme(), is("direct"));
+        assertThat(model.getOperationSelector().getOperationName(), is("print"));
+    }
+
+    private V1CamelBindingModel pull(final String configFile) throws IOException {
+        return new ModelPuller<V1CamelBindingModel>().pull(configFile, getClass());
+    }
+    
+    private void validateModel(final BindingModel model) {
+        assertThat(model.validateModel().isValid(), is(true));
+    }
+
 }

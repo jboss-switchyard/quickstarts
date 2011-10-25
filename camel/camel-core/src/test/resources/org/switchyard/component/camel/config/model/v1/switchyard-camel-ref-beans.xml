@@ -12,28 +12,4 @@
 	Public License, v.2.1 along with this distribution; if not, write to the 
 	Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
 	MA 02110-1301, USA. -->
-<switchyard 
-    xmlns="urn:switchyard-config:switchyard:1.0"
-    xmlns:camel="urn:switchyard-component-camel:config:1.0" 
-    xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
-    xmlns:bean="urn:switchyard-component-bean:config:1.0">
-    
-    <sca:composite name="orders" targetNamespace="urn:camel-core:test:1.0">
-    
-        <sca:reference name="WarehouseService" promote="OrderComponent/WarehouseService" multiplicity="1..1">
-            <camel:binding.camel configURI="vm://warehouseStatusService"/>
-        </sca:reference>
-        
-        <sca:component name="OrderComponent">
-            <bean:implementation.bean class="org.switchyard.component.camel.deploy.support.OrderServiceImpl"/>
-            <sca:service name="OrderService">
-                <sca:interface.java interface="org.switchyard.component.camel.deploy.support.OrderService"/>
-            </sca:service>
-            <sca:reference name="WarehouseService">
-                <sca:interface.java interface="org.switchyard.component.camel.deploy.support.WarehouseService"/>
-            </sca:reference>
-        </sca:component>
-        
-    </sca:composite>
-    
-</switchyard>
+<camel:binding.camel xmlns:camel="urn:switchyard-component-camel:config:1.0" configURI="vm://warehouseStatusService"/>

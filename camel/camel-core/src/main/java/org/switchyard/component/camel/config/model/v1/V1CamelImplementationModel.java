@@ -98,7 +98,7 @@ public class V1CamelImplementationModel extends V1ComponentImplementationModel i
     }
 
     @Override
-    public CamelComponentImplementationModel setJavaClass(String className) {
+    public V1CamelImplementationModel setJavaClass(String className) {
         Configuration classConfig = getModelConfiguration().getFirstChild(JAVA);
         if (classConfig == null) {
             NameValueModel model = new NameValueModel(JAVA);

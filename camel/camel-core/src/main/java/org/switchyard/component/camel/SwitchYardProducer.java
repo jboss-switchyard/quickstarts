@@ -115,13 +115,13 @@ public class SwitchYardProducer extends DefaultProducer {
         return pattern == org.apache.camel.ExchangePattern.InOnly;
     }
     
-    private Exchange createInOnlyExchange(final ServiceReference serviceReference, final org.apache.camel.Exchange ex) {
-        final QName operationInputType = getOperationInputType(serviceReference);
+    private Exchange createInOnlyExchange(final ServiceReference ref, final org.apache.camel.Exchange ex) {
+        final QName operationInputType = getOperationInputType(ref);
         final InOnlyOperation inOnlyOperation = new InOnlyOperation(_operationName, operationInputType);
         final BaseExchangeContract contract = new BaseExchangeContract(inOnlyOperation);
         setInputMessageType(contract, operationInputType);
         
-        return serviceReference.createExchange(contract);
+        return ref.createExchange(contract, new CamelResponseHandler(ex, ref, _messageComposer));
     }
     
     private String lookupOperationNameFor(final ServiceReference serviceRef) {

@@ -20,6 +20,7 @@
  */
 package org.switchyard.component.camel;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -111,6 +112,15 @@ public class InboundHandlerTest {
     public void nullCheckForEqualsMethod() {
         final InboundHandler x = createInboundHandler("direct://hashcode");
         assertThat(x.equals(null), is(false));
+    }
+    
+    @Test
+    public void hasTransactionManagerConfigured() {
+        final InboundHandler handler = createInboundHandler("direct://dummy");
+        String transactedRef = handler.getTransactionManagerName(URI.create("jms://queue?transactionManager=%23jtaTransactionMgr"));
+        assertThat(transactedRef, is(equalTo("jtaTransactionMgr")));
+        transactedRef = handler.getTransactionManagerName(URI.create("jms://GreetingServiceQueue?connectionFactory=%23&JmsXA&transactionManager=%23jtaTransactionManager"));
+        assertThat(transactedRef, is(equalTo("jtaTransactionManager")));
     }
     
     private InboundHandler createInboundHandler(final String uri) {

@@ -20,17 +20,26 @@
  */
 package org.switchyard.component.camel;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
+
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
+import org.apache.camel.impl.CompositeRegistry;
+import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
+import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.util.URISupport;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.component.camel.config.model.OperationSelector;
+import org.switchyard.component.camel.transaction.TransactionManagerFactory;
 import org.switchyard.exception.SwitchYardException;
 
 /**
@@ -46,7 +55,7 @@ import org.switchyard.exception.SwitchYardException;
  *
  */
 public class InboundHandler implements ExchangeHandler {
-    
+    private static TransactionManagerFactory TM_FACTORY = TransactionManagerFactory.getInstance();
     private final CamelBindingModel _camelBindingModel;
     private final CamelContext _camelContext;
     private RouteDefinition _routeDefinition;
@@ -71,13 +80,59 @@ public class InboundHandler implements ExchangeHandler {
     }
     
     private RouteDefinition createRouteDefinition(final QName serviceName) {
-        final RouteDefinition rd = new SwitchYardRouteDefinition(serviceName.getNamespaceURI());
+        final RouteDefinition route = new SwitchYardRouteDefinition(serviceName.getNamespaceURI());
         final String routeId = serviceName.toString() + "-[" +_camelBindingModel.getComponentURI() + "]";
-        return rd.routeId(routeId).from(uriFromBindingModel()).to(composeSwitchYardComponentName(serviceName));
+        final URI componentURI = uriFromBindingModel();
+        
+        route.routeId(routeId).from(componentURI.toString());
+        
+        if (hasTransactionManager(componentURI.toString())) {
+            final String tmName = getTransactionManagerName(componentURI);
+            if (!isRegisteredInCamelRegistry(tmName) && isDefaultJtaTransactionName(tmName)) {
+                final PlatformTransactionManager tm = TM_FACTORY.create();
+                addToCamelRegistry(tm, tmName);
+            }
+        }
+        
+        return route.to(composeSwitchYardComponentName(serviceName));
     }
     
-    private String uriFromBindingModel() {
-        return _camelBindingModel.getComponentURI().toString();
+    private boolean isDefaultJtaTransactionName(final String tmName) {
+        return tmName.equals(TransactionManagerFactory.TM);
+    }
+    
+    private boolean isRegisteredInCamelRegistry(final String tmName) {
+        return _camelContext.getRegistry().lookup(tmName) != null;
+    }
+
+    private void addToCamelRegistry(final PlatformTransactionManager tm, final String tmName) {
+        final SimpleRegistry simpleRegistry = new SimpleRegistry();
+        simpleRegistry.put(tmName, tm);
+        final PropertyPlaceholderDelegateRegistry delegateReg = (PropertyPlaceholderDelegateRegistry) _camelContext.getRegistry();
+        final CompositeRegistry registry = (CompositeRegistry) delegateReg.getRegistry();
+        registry.addRegistry(simpleRegistry);
+    }
+
+
+    private boolean hasTransactionManager(final String componentURI) {
+        return componentURI.contains("transactionManager");
+    }
+    
+    String getTransactionManagerName(final URI componentURI) {
+        try {
+            final Map<String, Object> parseParameters = URISupport.parseParameters(componentURI);
+            String name = (String) parseParameters.get("transactionManager");
+            if (name != null) {
+                name = name.replace("#", "");
+            }
+            return name;
+        } catch (URISyntaxException e) {
+            throw new SwitchYardException(e);
+        }
+    }
+    
+    private URI uriFromBindingModel() {
+        return _camelBindingModel.getComponentURI();
     }
 
     private String composeSwitchYardComponentName(final QName serviceName) {
@@ -110,13 +165,8 @@ public class InboundHandler implements ExchangeHandler {
      */
     public void stop(final ServiceReference serviceRef) throws Exception {
         final String routeId = _routeDefinition.getId();
-        final Route route = _camelContext.getRoute(routeId);
-        if (route.supportsSuspension()) {
-            _camelContext.suspendRoute(routeId);
-        } else {
-            _camelContext.stopRoute(routeId);
-        }
-            
+        _camelContext.stopRoute(routeId);
+        _camelContext.removeRoute(routeId);
     }
 
     private String namespace(QName serviceName) {
@@ -153,6 +203,7 @@ public class InboundHandler implements ExchangeHandler {
 
     @Override
     public void handleFault(final Exchange exchange) {
+        System.out.println(exchange.getMessage().getContent());
     }
     
     @Override

@@ -86,8 +86,9 @@ public abstract class OperationSelector extends BaseModel {
      * Sets the namespace attribute on the underlying model.
      * 
      * @param namespace The operation name.
+     * @return {@link OperationSelector} this to support method chaining.
      */
-    public abstract void setNamespace(String namespace);
+    public abstract OperationSelector setNamespace(String namespace);
 
     /**
      * Gets the operationName attribute from the underlying model.
@@ -100,6 +101,7 @@ public abstract class OperationSelector extends BaseModel {
      * Sets the operation name attribute on the underlying model.
      * 
      * @param operationName The operation name.
+     * @return {@link OperationSelector} this to support method chaining.
      */
-    public abstract void setOperationName(String operationName);
+    public abstract OperationSelector setOperationName(String operationName);
 }

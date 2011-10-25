@@ -23,7 +23,7 @@ package org.switchyard.component.camel.config.model.v1;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.switchyard.component.camel.config.model.CamelBindingModel;
+import org.switchyard.component.camel.config.model.OperationSelector;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 
@@ -58,6 +58,16 @@ public class V1CamelBindingModel extends V1BaseCamelBindingModel {
      * This is the name of the uri attribute. 
      */
     public static final String CONFIG_URI = "configURI";
+    
+    /**
+     * This is the name of the transacted attribute. 
+     */
+    public static final String TRANSACTED = "transacted";
+
+    /**
+     * The name of the transacedRef attribute.
+     */
+    public static final String TRANSACTED_REF = "transactedRef";
     
     private URI _configURI;
     
@@ -97,7 +107,7 @@ public class V1CamelBindingModel extends V1BaseCamelBindingModel {
      * @param uri The Camel Component URI
      * @return {@link CamelBindingModel} to support method chaining.
      */
-    public CamelBindingModel setConfigURI(URI uri) {
+    public V1CamelBindingModel setConfigURI(URI uri) {
         if (_configURI == null) {
             setModelAttribute(CONFIG_URI, uri.toString());
             _configURI = uri;
@@ -116,6 +126,12 @@ public class V1CamelBindingModel extends V1BaseCamelBindingModel {
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("URI [" + uriString + "] was invalid. Please check the configuration.", e);
         }
+    }
+
+    @Override
+    public V1CamelBindingModel setOperationSelector(OperationSelector operationSelector) {
+        super.setOperationSelector(operationSelector);
+        return this;
     }
 
 }

@@ -20,17 +20,19 @@
  */
 package org.switchyard.component.camel.config.model.v1;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.apache.camel.model.RouteDefinition;
-import org.junit.Assert;
+import org.custommonkey.xmlunit.XMLAssert;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.switchyard.component.camel.config.model.CamelComponentImplementationModel;
 import org.switchyard.component.camel.config.model.SingleRouteService;
 import org.switchyard.config.model.ModelPuller;
-import org.switchyard.config.model.Validation;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
@@ -41,28 +43,56 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
  */
 public class V1CamelComponentImplementationModelTest {
     
-    @Test
-    public void validateCamelImplementationModelWithBeanElement() throws Exception {
-        final V1CamelImplementationModel implModel = getFirstCamelImplementation("switchyard-implementation-beans.xml");
-        final Validation validateModel = implModel.validateModel();
-        
-        assertThat(validateModel.isValid(), is(true));
-        
-        
-        final RouteDefinition route = implModel.getRoute();
-        assertThat(route, is(notNullValue()));
+    private static boolean oldIgnoreWhitespace;
+
+    @BeforeClass
+    public static void setup() {
+        oldIgnoreWhitespace = XMLUnit.getIgnoreWhitespace();
+        XMLUnit.setIgnoreWhitespace(true);
+    }
+    
+    @AfterClass
+    public static void cleanup() {
+        XMLUnit.setIgnoreWhitespace(oldIgnoreWhitespace);
     }
     
     @Test
-    public void validateCamelImplementationModelWithJavaDSLElement() throws Exception {
-        final V1CamelImplementationModel implModel = getFirstCamelImplementation("switchyard-implementation-java.xml");
-        final Validation validateModel = implModel.validateModel();
-        
-        assertThat(validateModel.isValid(), is(true));
-        Assert.assertEquals(SingleRouteService.class.getName(), implModel.getJavaClass());
+    public void programmaticConfig() {
+        assertThat(createModel().getJavaClass(), is(equalTo(SingleRouteService.class.getName())));
     }
     
-    private V1CamelImplementationModel getFirstCamelImplementation(final String config) throws Exception {
+    @Test
+    public void validateModelWithRouteElement() throws Exception {
+        final V1CamelImplementationModel implModel = getCamelImplementation("switchyard-implementation-beans.xml");
+        
+        validateModel(implModel);
+        assertThat(implModel.getRoute(), is(notNullValue()));
+    }
+    
+    @Test
+    public void validateModelWithJavaElement() throws Exception {
+        final V1CamelImplementationModel implModel = getCamelImplementation("switchyard-implementation-java.xml");
+        
+        validateModel(implModel);
+        assertThat(SingleRouteService.class.getName(), is(equalTo(implModel.getJavaClass())));
+    }
+    
+    @Test
+    public void writeConfig() throws Exception {
+        final String control = getCamelImplementation("switchyard-implementation-java.xml").toString();
+        final String test = createModel().toString();
+        XMLAssert.assertXMLEqual(control, test);
+    }
+    
+    private V1CamelImplementationModel createModel() {
+        return new V1CamelImplementationModel().setJavaClass(SingleRouteService.class.getName());
+    }
+    
+    private void validateModel(final CamelComponentImplementationModel model) {
+        assertThat(model.validateModel().isValid(), is(true));
+    }
+    
+    private V1CamelImplementationModel getCamelImplementation(final String config) throws Exception {
         V1CamelImplementationModel implementation = null;
         final SwitchYardModel model = new ModelPuller<SwitchYardModel>().pull(config, getClass());
         for (ComponentModel componentModel : model.getComposite().getComponents()) {

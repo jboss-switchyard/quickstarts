@@ -20,6 +20,7 @@
  */
 package org.switchyard.component.camel.deploy;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,12 +28,14 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
 
-import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
+import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -85,47 +88,8 @@ public class CamelActivator extends BaseActivator {
                 CAMEL_TYPE, 
                 DIRECT_TYPE, 
                 FILE_TYPE});
-        _camelContext = createCamelContext();
-        final PackageScanClassResolver packageScanClassResolver = getPackageScanClassResolver();
-        if (packageScanClassResolver != null) {
-            _camelContext.setPackageScanClassResolver(packageScanClassResolver);
-        }
     }
 
-    /**
-     * Get the first PackageScanClassResolver Service found on the classpath.
-     * @return The first PackageScanClassResolver Service found on the classpath.
-     */
-    public static PackageScanClassResolver getPackageScanClassResolver() {
-        final ServiceLoader<PackageScanClassResolver> resolverLoaders = ServiceLoader.load(PackageScanClassResolver.class);
-
-        for (PackageScanClassResolver packageScanClassResolver : resolverLoaders) {
-            return packageScanClassResolver;
-        }
-
-        return null;
-    }
-    
-    private CamelContext createCamelContext() {
-        DefaultCamelContext camelContext;
-
-        try {
-            //TODO: We are currently creating a DefaultCamelContext
-            // which is going to lead to issues when for example running
-            // in an OSGI container in which Camel requires a different CamelContext.
-            // Perhaps we could make the CamelContext injectable?
-            camelContext = new DefaultCamelContext(new InitialContext());
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        Registry registry = getRegistry();
-        if (registry != null) {
-            camelContext.setRegistry(registry);
-        }
-
-        return camelContext;
-    }
 
     /**
      * @param serviceName The service name
@@ -155,19 +119,49 @@ public class CamelActivator extends BaseActivator {
         throw new SwitchYardException("No Camel bindings, references or implementations found for [" + serviceName + "] in config [" + config + "]");
     }
 
-    private Registry getRegistry() {
-        final ServiceLoader<Registry> registries = ServiceLoader.load(Registry.class);
-
-        for (Registry registry : registries) {
-            return registry;
+    private void startCamelContext() {
+        try {
+            _camelContext =  new DefaultCamelContext(getRegistry());
+        
+            final PackageScanClassResolver packageScanClassResolver = getPackageScanClassResolver();
+            if (packageScanClassResolver != null) {
+                _camelContext.setPackageScanClassResolver(packageScanClassResolver);
+            }
+            _camelContext.start();
+        } catch (final Exception e) {
+            throw new SwitchYardException(e);
         }
-
+    }
+    
+    /**
+     * Get the first PackageScanClassResolver Service found on the classpath.
+     * @return The first PackageScanClassResolver Service found on the classpath.
+     */
+    public static PackageScanClassResolver getPackageScanClassResolver() {
+        final ServiceLoader<PackageScanClassResolver> resolverLoaders = ServiceLoader.load(PackageScanClassResolver.class, CamelActivator.class.getClassLoader());
+    
+        for (PackageScanClassResolver packageScanClassResolver : resolverLoaders) {
+            return packageScanClassResolver;
+        }
+    
         return null;
     }
 
     private ExchangeHandler handleComponentReference(final ComponentReferenceModel config, final QName serviceName) {
         final MessageComposer<Message> messageComposer = CamelComposition.getMessageComposer();
         return addOutboundHandler(serviceName, ComponentNameComposer.composeComponentUri(serviceName), messageComposer);
+    }
+    
+    private Registry getRegistry() throws NamingException {
+        final ServiceLoader<Registry> registriesLoaders = ServiceLoader.load(Registry.class, getClass().getClassLoader());
+        final List<Registry> registries = new ArrayList<Registry>();
+        registries.add(new JndiRegistry());
+
+        for (Registry registry : registriesLoaders) {
+            registries.add(registry);
+        }
+        
+        return new CompositeRegistry(registries);
     }
 
     private boolean isComponentReference(final Model config) {
@@ -260,14 +254,6 @@ public class CamelActivator extends BaseActivator {
         final Model modelParent = config.getModelParent();
         final ComponentModel componentModel = (ComponentModel) modelParent;
         return componentModel.getImplementation();
-    }
-
-    private void startCamelContext() {
-        try {
-            _camelContext.start();
-        } catch (final Exception e) {
-            throw new IllegalStateException(e);
-        }
     }
 
     private InboundHandler createInboundHandler(final List<BindingModel> bindings, final QName name) {

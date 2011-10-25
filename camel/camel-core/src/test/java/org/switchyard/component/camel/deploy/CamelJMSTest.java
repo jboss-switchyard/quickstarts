@@ -35,19 +35,16 @@ import javax.jms.Session;
 import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
 
-import org.hornetq.core.registry.JndiBindingRegistry;
-import org.hornetq.jms.server.embedded.EmbeddedJMS;
-import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Exchange;
 import org.switchyard.deploy.internal.Deployment;
 import org.switchyard.test.MockHandler;
-import org.switchyard.test.MockInitialContextFactory;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.SwitchYardTestKit;
 import org.switchyard.test.mixins.CDIMixIn;
+import org.switchyard.test.mixins.HornetQMixIn;
 
 /**
  * Test using Camel's JMS Component in SwitchYard.
@@ -55,24 +52,14 @@ import org.switchyard.test.mixins.CDIMixIn;
  * @author Daniel Bevenius
  *
  */
+@SwitchYardTestCaseConfig(config = "switchyard-jms-test.xml", mixins = {CDIMixIn.class, HornetQMixIn.class})
 @RunWith(SwitchYardRunner.class)
-@SwitchYardTestCaseConfig(config = "switchyard-jms-test.xml", mixins = CDIMixIn.class)
 public class CamelJMSTest {
 
     private static final QName SERVICE_NAME = new QName("urn:camel-core:test:1.0", "SimpleCamelService");
 
-    private EmbeddedJMS embeddedJMS;
     private SwitchYardTestKit _testKit;
-
-    public CamelJMSTest() throws Exception {
-        MockInitialContextFactory.install();
-        embeddedJMS = new EmbeddedJMS();
-        embeddedJMS.setRegistry(new JndiBindingRegistry());
-        embeddedJMS.setConfigResourcePath("hornetq-configuration.xml");
-        embeddedJMS.setJmsConfigResourcePath("hornetq-jms.xml");
-        embeddedJMS.start();
-    }
-
+    
     @Test
     public void sendOneWayTextMessageToJMSQueue() throws Exception {
         sendAndAssertOneMessage();
@@ -144,11 +131,6 @@ public class CamelJMSTest {
                 initialContext.close();
             }
         }
-    }
-    
-    @After
-    public void stopHornetQServer() throws Exception {
-        embeddedJMS.stop();
     }
     
 }

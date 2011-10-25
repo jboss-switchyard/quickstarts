@@ -49,8 +49,9 @@ public class V1OperationSelector extends OperationSelector {
      * {@inheritDoc}
      */
     @Override
-    public void setNamespace(String namespace) {
+    public OperationSelector setNamespace(String namespace) {
         setModelAttribute(NAMESPACE, namespace);
+        return this;
     }
 
     /**
@@ -65,8 +66,9 @@ public class V1OperationSelector extends OperationSelector {
      * {@inheritDoc}
      */
     @Override
-    public void setOperationName(String operationName) {
+    public OperationSelector setOperationName(String operationName) {
         setModelAttribute(OPERATION_NAME, operationName);
+        return this;
     }
 
     /**

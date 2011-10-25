@@ -83,7 +83,7 @@ public abstract class V1BaseCamelBindingModel extends V1BindingModel implements
     }
 
     @Override
-    public CamelBindingModel setOperationSelector(
+    public V1BaseCamelBindingModel setOperationSelector(
             OperationSelector operationSelector) {
         if (_operationSelector == null) {
             setChildModel(operationSelector);

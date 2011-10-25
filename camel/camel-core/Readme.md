@@ -89,6 +89,67 @@ a concreate implementation of *OrderServiceImpl*:
 Notice that *OrderServiceImpl* requires a *WarehouseService* instance. This is declared in the configuration using the
 reference element on the *OrderComponent* and SwitchYard will inject a proxy that will delegate to the Camel endpoint.
 
+---
+# Transactions with Camel Service Bindings
+Certain Camel Components support transactions, for example the JMS Component, and there are a few options that can be configured which
+will be described in this section. 
+
+## Local Transaction configuration
+A Service Binding for Camel using the JMS Component with a local transaction can look like this:
+
+    <camel:binding.camel configURI="jms://GreetingServiceQueue?connectionFactory=%23ConnectionFactory&amp;transacted=true"/>
+This configures a JMS Component to use a local transaction. This means that if the route, in our case this  is the 
+route that sends the JMS Message content to the target SwitchYard Service, completes successfully the transaction will
+be committed. If the route does not end successfully, for example an exception is thrown from the Service Implementation, 
+the transaction will be rolled back and the message will still be in the JMS Brokers queue. 
+
+**Note: The default transaction error handler will determine the policy for redelivery and this is currently not configurable. This is something that we going to attend to for the next 0.4 release.**
+
+## JTA Transaction configuration
+Using local transactions as described in the previous example is nice for cases where the service implementation does
+not need to take part of the same transaction. If for example your service implementation does require participation, for
+example if it persists data to a database, you will need to configure a JTA transaction manager that will coordinate the
+transaction.
+The following examples shows how to configure a JTA transaction manager:
+
+    <camel:binding.camel configURI="jms://GreetingServiceQueue?connectionFactory=%23JmsXA&amp;transactionManager=%23jtaTransactionManager&amp;transacted=true"/>
+    
+The _#jtaTransactionManager_ is a reference to a bean in the Camel Registry. This would normally be configured using Spring XML
+when outside of SwitchYard. Is is possible to specify a custom transaction manager by using a CDI bean which will be describe 
+later in this document. By default though, if you configure the _transactionManager_ to be _#jtaTransactionManager_, SwitchYard will 
+perform lookups in JNDI to try to determine which TransactionManager to use to drive the transactions. The order is as follows:
+
+1. java:jboss/UserTransaction 
+2. java:comp/UserTransaction 
+
+
+## Custom Transaction Manager
+If you are deploying SwitchYard in an environment that does not have the transaction managers available that were listed in
+ the previous section you can use CDI to have a JTA Transaction Manager injected into the Camel Registry. 
+Example of a custom JTA Transaction Manager using CDI:
+
+    import javax.enterprise.context.ApplicationScoped;
+    import javax.enterprise.inject.Produces;
+    import javax.inject.Named;
+    
+    import org.springframework.transaction.PlatformTransactionManager;
+    import org.springframework.transaction.jta.JtaTransactionManager;
+    
+    @ApplicationScoped
+    public class CustomTransactionManager {
+        
+        @Produces @Named ("myTransactionManager")
+        public PlatformTransactionManager create() {
+            final JtaTransactionManager transactionManager = new JtaTransactionManager();
+            transactionManager.setUserTransactionName("UserTransactionJndiName");
+            transactionManager.setTransactionManagerName("TransactionManagerJndiName");
+            transactionManager.setTransactionSynchronizationRegistryName("TransactionSynchronizationRegistryJndiName");
+            transactionManager.afterPropertiesSet();
+            return transactionManager;
+        }
+    
+    }
+    
 _ _ _
 ## Using SwitchYard implementation.camel with Apache Camel
 A Camel route can be used as the implementation for a service. This is done by using the *implementation.camel* element which can contain a Camel route.
