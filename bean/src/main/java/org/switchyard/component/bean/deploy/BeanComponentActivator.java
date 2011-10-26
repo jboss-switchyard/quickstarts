@@ -41,7 +41,10 @@ import org.switchyard.metadata.ServiceInterface;
  */
 public class BeanComponentActivator extends BaseActivator {
 
-    private static final String BEAN_TYPE = "bean";
+    /**
+     * Bean component activator type name.
+     */
+    public static final String BEAN_TYPE = "bean";
     
     private BeanDeploymentMetaData _beanDeploymentMetaData;
     private Map<QName, ComponentReferenceModel> _references = new HashMap<QName, ComponentReferenceModel>();

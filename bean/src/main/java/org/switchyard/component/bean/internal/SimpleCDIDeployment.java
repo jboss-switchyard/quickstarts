@@ -48,6 +48,8 @@ import org.switchyard.transform.TransformerUtil;
  */
 public class SimpleCDIDeployment extends AbstractDeployment {
 
+    private boolean _activateBeans = false;
+
     /**
      * Creates a new CDI deployment with no configuration.
      */
@@ -57,6 +59,12 @@ public class SimpleCDIDeployment extends AbstractDeployment {
 
     @Override
     protected void doInit(List<Activator> activators) {
+        for (Activator activator : activators) {
+            if (activator.getActivationTypes().contains(BeanComponentActivator.BEAN_TYPE)) {
+                _activateBeans = true;
+                return;
+            }
+        }
     }
 
     @Override
@@ -92,6 +100,10 @@ public class SimpleCDIDeployment extends AbstractDeployment {
     }
 
     private void deployServicesAndProxies(BeanDeploymentMetaData beanDeploymentMetaData, ServiceDomain domain) {
+        if (!_activateBeans) {
+            return;
+        }
+
         if (beanDeploymentMetaData == null) {
             throw new SwitchYardException("Failed to lookup BeanDeploymentMetaData from Naming Context.");
         }
