@@ -31,6 +31,9 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -57,6 +60,7 @@ import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
+import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.ActivatorLoader;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.AbstractDeployment;
@@ -103,6 +107,8 @@ public class SwitchYardTestKit {
     private List<Class<? extends TestMixIn>> _testMixIns;
 
     private List<TestMixIn> _testMixInInstances = new ArrayList<TestMixIn>();
+
+    private List<Activator> _activators;
 
     /**
      * Public default constructor.
@@ -195,6 +201,14 @@ public class SwitchYardTestKit {
     }
 
     /**
+     * Get the list of activators for the test.
+     * @return Activator list.
+     */
+    public List<Activator> getActivators() {
+        return _activators;
+    }
+
+    /**
      * Create and initialise the deployment.
      * @throws Exception creating the deployment.
      */
@@ -202,8 +216,44 @@ public class SwitchYardTestKit {
         _deployment = createDeployment();
         ServiceDomain domain = ServiceDomainManager.createDomain(
                 ServiceDomainManager.ROOT_DOMAIN, _deployment.getConfig());
-        _deployment.init(domain, ActivatorLoader.createActivators(domain));
+
+        _activators = ActivatorLoader.createActivators(domain);
+        SwitchYardTestCaseConfig testCaseConfig = _testInstance.getClass().getAnnotation(SwitchYardTestCaseConfig.class);
+
+        if (testCaseConfig != null) {
+            // Process includes...
+            Collection<String> includes = new HashSet<String>(Arrays.asList(testCaseConfig.include()));
+            if (!includes.isEmpty()) {
+                Iterator<Activator> activatorsIt = _activators.iterator();
+                while (activatorsIt.hasNext()) {
+                    Activator activator = activatorsIt.next();
+
+                    // If the activator does not specify one of the include types, then remove it...
+                    if (!intersection(includes, activator.getActivationTypes())) {
+                        activatorsIt.remove();
+                    }
+                }
+            }
+
+            // Process excludes...
+            Collection<String> excludes = new HashSet<String>(Arrays.asList(testCaseConfig.exclude()));
+            if (!excludes.isEmpty()) {
+                Iterator<Activator> activatorsIt = _activators.iterator();
+                while (activatorsIt.hasNext()) {
+                    Activator activator = activatorsIt.next();
+
+                    // If the activator specifies one of the exclude types, then remove it...
+                    if (intersection(excludes, activator.getActivationTypes())) {
+                        activatorsIt.remove();
+                    }
+                }
+            }
+        }
+
+        _deployment.init(domain, _activators);
         mixInBefore();
+
+        _deployment.setFailOnMissingActivator(false); // It's OK to have a "missing" activator for a test, so we don't want to fail.
         _deployment.start();
     }
 
@@ -758,6 +808,19 @@ public class SwitchYardTestKit {
         }
 
         return scanURLs;
+    }
+
+    private boolean intersection(Collection<String> set1, Collection<String> set2) {
+        if (set1.isEmpty() || set2.isEmpty()) {
+            return false;
+        }
+
+        Collection<String> set1Copy = new HashSet<String>(set1);
+
+        set1Copy.removeAll(set2);
+
+        // If entries were removed from the set then we have an intersect, otherwise we don't...
+        return (set1Copy.size() < set1.size());
     }
 
     @Scannable(false)

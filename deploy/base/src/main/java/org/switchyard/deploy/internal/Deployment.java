@@ -186,8 +186,10 @@ public class Deployment extends AbstractDeployment {
     public Activator findActivator(String type) throws SwitchYardException {
         if (_activators.containsKey(type)) {
             return _activators.get(type);
-        } else {
+        } else if (failOnMissingActivator()) {
             throw new SwitchYardException("Activator not found for type: " + type);
+        } else {
+            return null;
         }
     }
     
@@ -220,6 +222,11 @@ public class Deployment extends AbstractDeployment {
                 _log.debug("Deploying binding " + binding.getType() + " for reference " + reference.getQName() + " for deployment " + getName());
                 
                 Activator activator = findActivator(binding.getType());
+
+                if (activator == null) {
+                    continue;
+                }
+
                 ExchangeHandler handler = activator.init(refQName, reference);
                 
                 ServiceInterface si = getReferenceInterface(reference);
@@ -306,8 +313,7 @@ public class Deployment extends AbstractDeployment {
         for (ComponentModel component : getConfig().getComposite().getComponents()) {
             Activator activator = findActivator(component);
             if (activator == null) {
-                throw new SwitchYardException("Activator not found for "
-                        + component.getImplementation().getType());
+                continue;
             }
             // register a service for each one declared in the component
             for (ComponentServiceModel service : component.getServices()) {
@@ -340,6 +346,11 @@ public class Deployment extends AbstractDeployment {
         _log.debug("Deploying references for deployment " + getName());
         for (ComponentModel component : getConfig().getComposite().getComponents()) {
             Activator activator = findActivator(component);
+
+            if (activator == null) {
+                continue;
+            }
+
             // register a service for each one declared in the component
             for (ComponentReferenceModel reference : component.getReferences()) {
                 _log.debug("Registering reference " + reference.getQName()
@@ -364,6 +375,11 @@ public class Deployment extends AbstractDeployment {
             for (BindingModel binding : service.getBindings()) {
                 _log.debug("Deploying binding " + binding.getType() + " for service " + service.getQName() + " for deployment " + getName());
                 Activator activator = findActivator(binding.getType());
+
+                if (activator == null) {
+                    continue;
+                }
+
                 ServiceReference serviceRef = getDomain().getService(service.getQName());
                 if (serviceRef == null) {
                     throw new SwitchYardException("Unable to activate binding, service not found: "

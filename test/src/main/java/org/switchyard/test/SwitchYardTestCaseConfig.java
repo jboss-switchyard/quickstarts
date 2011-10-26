@@ -66,4 +66,14 @@ public @interface SwitchYardTestCaseConfig {
      * The Mix in types.
      */
     Class<? extends TestMixIn>[] mixins() default SwitchYardTestKit.NullMixIns.class;
+
+    /**
+     * Component types to include.
+     */
+    String[] include() default {};
+
+    /**
+     * Component types to exclude.
+     */
+    String[] exclude() default {};
 }

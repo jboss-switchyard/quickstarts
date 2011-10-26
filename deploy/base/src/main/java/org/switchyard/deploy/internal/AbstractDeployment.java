@@ -77,6 +77,11 @@ public abstract class AbstractDeployment {
     private Set<DeploymentListener> _listeners = new LinkedHashSet<DeploymentListener>();
 
     /**
+     * Flag to indicate whether or not deployment should fail if an activator is not available.
+     */
+    private boolean _failOnMissingActivator = true;
+
+    /**
      * Automatically registered transformers (e.g. JAXB type transformers).
      */
     private List<Transformer<?, ?>> _autoRegisteredTransformers = new ArrayList<Transformer<?, ?>>();
@@ -121,6 +126,22 @@ public abstract class AbstractDeployment {
      */
     public void setParentDeployment(AbstractDeployment parentDeployment) {
         this._parentDeployment = parentDeployment;
+    }
+
+    /**
+     * Should the deployment fail on a missing Activator.
+     * @return {@code true} if the deployment should fail, otherwise {@code false}.
+     */
+    public boolean failOnMissingActivator() {
+        return _failOnMissingActivator;
+    }
+
+    /**
+     * Set whether or not the deployment should fail on a missing Activator.
+     * @param failOnMissingActivator {@code true} if the deployment should fail, otherwise {@code false}.
+     */
+    public void setFailOnMissingActivator(boolean failOnMissingActivator) {
+        this._failOnMissingActivator = failOnMissingActivator;
     }
 
     /**
