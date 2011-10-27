@@ -32,6 +32,7 @@ import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
+import org.switchyard.config.model.validate.ValidatesModel;
 import org.switchyard.deploy.Activator;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceInterface;
@@ -40,6 +41,7 @@ import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 import org.switchyard.transform.TransformerRegistryLoader;
 import org.switchyard.transform.jaxb.internal.JAXBTransformerFactory;
+import org.switchyard.validate.ValidatorRegistryLoader;
 
 /**
  * Abstract SwitchYard application deployment.
@@ -63,6 +65,10 @@ public abstract class AbstractDeployment {
      * Transform registry loaded for the deployment.
      */
     private TransformerRegistryLoader _transformerRegistryLoader;
+    /**
+     * Validate registry loaded for the deployment.
+     */
+    private ValidatorRegistryLoader _validatorRegistryLoader;
     /**
      * SwitchYard configuration.
      */
@@ -172,6 +178,9 @@ public abstract class AbstractDeployment {
             _transformerRegistryLoader = new TransformerRegistryLoader(appServiceDomain.getTransformerRegistry());
             _transformerRegistryLoader.loadOOTBTransforms();
             
+            _validatorRegistryLoader = new ValidatorRegistryLoader(appServiceDomain.getValidatorRegistry());
+            _validatorRegistryLoader.loadOOTBValidates();
+            
             doInit(activators);
         } catch (RuntimeException e) {
             notifyListeners(new InitializationFailedNotifier(e));
@@ -257,6 +266,14 @@ public abstract class AbstractDeployment {
     }
 
     /**
+     * Get the {@link ValidatorRegistryLoader} associated with the deployment.
+     * @return The ValidatorRegistryLoader instance.
+     */
+    public ValidatorRegistryLoader getValidatorRegistryLoader() {
+        return _validatorRegistryLoader;
+    }
+
+    /**
      * Notify the implementation to initialize itself.
      * @param activators The list of SwitchYard component activators.
      */
@@ -329,6 +346,10 @@ public abstract class AbstractDeployment {
 
     protected final void fireTransformersRegistered(TransformsModel transforms) {
         notifyListeners(new TransformersRegisteredNotifier(transforms));
+    }
+
+    protected final void fireValidatorsRegistered(ValidatesModel validates) {
+        notifyListeners(new ValidatorsRegisteredNotifier(validates));
     }
 
     private void notifyListeners(DeploymentEventNotifier notifier) {
@@ -406,6 +427,18 @@ public abstract class AbstractDeployment {
 
         public void notify(DeploymentListener listener) {
             listener.transformersRegistered(AbstractDeployment.this, _transforms);
+        }
+    }
+
+    private class ValidatorsRegisteredNotifier implements DeploymentEventNotifier {
+        private ValidatesModel _validates;
+
+        protected ValidatorsRegisteredNotifier(ValidatesModel validates) {
+            _validates = validates;
+        }
+
+        public void notify(DeploymentListener listener) {
+            listener.validatorsRegistered(AbstractDeployment.this, _validates);
         }
     }
 

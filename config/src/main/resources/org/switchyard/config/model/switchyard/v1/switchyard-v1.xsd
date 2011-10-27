@@ -30,6 +30,7 @@ MA  02110-1301, USA.
         <sequence>
            <element ref="sca:composite" minOccurs="0" maxOccurs="1"/>
            <element ref="swyd:transforms" minOccurs="0" maxOccurs="1"/>
+           <element ref="swyd:validates" minOccurs="0" maxOccurs="1"/>
            <element ref="swyd:domain" minOccurs="0" maxOccurs="1"/>
         </sequence>
         <attribute name="name" type="string" use="optional"/>
@@ -74,11 +75,24 @@ MA  02110-1301, USA.
         <attribute name="from" type="string" use="required"/>
         <attribute name="to" type="string" use="required"/>
     </complexType>
+
+    <element name="validates" type="swyd:ValidatesType"/>
+    <complexType name="ValidatesType">
+        <sequence>
+            <element ref="swyd:validate" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+    <element name="validate" type="swyd:ValidateType" abstract="true"/>
+    <complexType name="ValidateType" abstract="true">
+        <attribute name="name" type="string" use="required"/>
+    </complexType>
     
     <element name="domain" type="swyd:DomainType"/>
     <complexType name="DomainType">
         <sequence>
             <element ref="swyd:transforms" minOccurs="0" maxOccurs="1"/>
+            <element ref="swyd:validates" minOccurs="0" maxOccurs="1"/>
             <element ref="swyd:properties" minOccurs="0" maxOccurs="1"/>
             <element ref="swyd:handlers" minOccurs="0" maxOccurs="1"/>
         </sequence>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+JBoss, Home of Professional Open Source
+Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+as indicated by the @authors tag. All rights reserved.
+See the copyright.txt in the distribution for a
+full listing of individual contributors.
+
+This copyrighted material is made available to anyone wishing to use,
+modify, copy, or redistribute it subject to the terms and conditions
+of the GNU Lesser General Public License, v. 2.1.
+This program is distributed in the hope that it will be useful, but WITHOUT A
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+You should have received a copy of the GNU Lesser General Public License,
+v.2.1 along with this distribution; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+MA  02110-1301, USA.
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="urn:switchyard-config:validate:1.0"
+        xmlns:swyd="urn:switchyard-config:switchyard:1.0"
+        xmlns:vldt="urn:switchyard-config:validate:1.0"
+        elementFormDefault="qualified">
+
+    <import namespace="urn:switchyard-config:switchyard:1.0"/>
+
+    <element name="validate.xml" type="vldt:XmlValidateType" substitutionGroup="swyd:validate" />
+    <complexType name="XmlValidateType">
+        <annotation>
+            <documentation xml:lang="en">
+                XML Validator Configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="swyd:ValidateType">
+                <attribute name="schemaType" type="vldt:xmlSchemaType" use="required">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            XML schema type.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="schemaFile" type="string" use="required">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            Path to a file containing the XSL schema definition.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="failOnWarning" type="string" use="optional">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            whether a warning should be reported as an SwitchYardException or just log. default is false
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <element name="validate.java" type="vldt:JavaValidateType" substitutionGroup="swyd:validate" />
+    <complexType name="JavaValidateType">
+        <annotation>
+            <documentation xml:lang="en">
+                Generic/Custom Java Validator Configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="swyd:ValidateType">
+                <attribute name="class" type="string" use="required">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            The name of the Java Validator implementation class.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <simpleType name="xmlSchemaType">
+        <restriction base="string">
+            <enumeration value="DTD">
+                <annotation>
+                    <documentation xml:lang="en">
+                        DTD.
+                    </documentation>
+                </annotation>
+            </enumeration>
+            <enumeration value="XML_SCHEMA">
+                <annotation>
+                    <documentation xml:lang="en">
+                        W3C XML Schema.
+                    </documentation>
+                </annotation>
+            </enumeration>
+            <enumeration value="RELAX_NG">
+                <annotation>
+                    <documentation xml:lang="en">
+                        RELAX NG.
+                    </documentation>
+                </annotation>
+            </enumeration>
+        </restriction>
+    </simpleType>
+
+</schema>

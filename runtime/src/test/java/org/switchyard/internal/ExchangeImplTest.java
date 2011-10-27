@@ -56,7 +56,7 @@ public class ExchangeImplTest {
     
     @Test
     public void testSendFaultOnNewExchange() {
-        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, null);
+        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, null, null);
         try {
             exchange.sendFault(exchange.createMessage());
             Assert.fail("Sending a fault on a new exchange is not allowed");
@@ -67,7 +67,7 @@ public class ExchangeImplTest {
     
     @Test
     public void testPhaseIsNullOnNewExchange() {
-        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, null);
+        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, null, null);
         Assert.assertNull(exchange.getPhase());
     }
     
@@ -134,7 +134,7 @@ public class ExchangeImplTest {
 
     @Test
     public void testNullSend() {
-        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, null);
+        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, null, null);
         try {
             exchange.send(null);
             Assert.fail("Expected IllegalArgumentException.");
@@ -145,7 +145,7 @@ public class ExchangeImplTest {
 
     @Test
     public void testNullSendFault() {
-        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, null);
+        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, null, null);
         try {
             exchange.sendFault(null);
             Assert.fail("Expected IllegalArgumentException.");

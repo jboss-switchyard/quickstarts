@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.transform.TransformsModel;
+import org.switchyard.config.model.validate.ValidatesModel;
 
 /**
  * DeploymentListener
@@ -181,5 +182,14 @@ public interface DeploymentListener extends EventListener {
      * @param transformers the transformers registered by the deployment.
      */
     public void transformersRegistered(AbstractDeployment deployment, TransformsModel transformers);
+
+    /**
+     * Notification that the deployment has registered the validators defined
+     * within it.
+     * 
+     * @param deployment the notifier
+     * @param validators the validators registered by the deployment.
+     */
+    public void validatorsRegistered(AbstractDeployment deployment, ValidatesModel validators);
 
 }

@@ -45,6 +45,7 @@ import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.InterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
+import org.switchyard.config.model.validate.ValidatesModel;
 import org.switchyard.deploy.Activator;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.extensions.wsdl.WSDLReaderException;
@@ -103,8 +104,9 @@ public class Deployment extends AbstractDeployment {
      */
     protected void doInit(List<Activator> activators) {
         _log.debug("Initializing deployment " + getName());
-        // create a new domain and load transformer and activator instances for lifecycle
+        // create a new domain and load transformer , validator and activator instances for lifecycle
         registerTransformers();
+        registerValidators();
         if (activators != null) {
             for (Activator activator : activators) {
                 Collection<String> activationTypes = activator.getActivationTypes();
@@ -173,6 +175,7 @@ public class Deployment extends AbstractDeployment {
         _references.clear();
         _referenceBindings.clear();
 
+        getValidatorRegistryLoader().unregisterValidators();
         getTransformerRegistryLoader().unregisterTransformers();
     }
     
@@ -212,6 +215,13 @@ public class Deployment extends AbstractDeployment {
         TransformsModel transforms = getConfig().getTransforms();
         getTransformerRegistryLoader().registerTransformers(transforms);
         fireTransformersRegistered(transforms);
+    }
+
+    private void registerValidators() {
+        _log.debug("Registering configured Validators for deployment " + getName());
+        ValidatesModel validates = getConfig().getValidates();
+        getValidatorRegistryLoader().registerValidators(validates);
+        fireValidatorsRegistered(validates);
     }
 
     private void deployReferenceBindings() {

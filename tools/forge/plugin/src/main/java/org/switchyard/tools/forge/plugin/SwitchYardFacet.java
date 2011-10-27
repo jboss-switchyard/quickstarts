@@ -302,6 +302,7 @@ public class SwitchYardFacet extends AbstractFacet {
             +   "<param>org.switchyard.component.bpm.config.model.BPMSwitchYardScanner</param>"
             +   "<param>org.switchyard.component.rules.config.model.RulesSwitchYardScanner</param>"
             +   "<param>org.switchyard.transform.config.model.TransformSwitchYardScanner</param>"
+            +   "<param>org.switchyard.transform.config.model.ValidateSwitchYardScanner</param>"
             + "</scannerClassNames>"
             + "</configuration>";
         Xpp3Dom dom = Xpp3DomBuilder.build(new ByteArrayInputStream(pluginConfig.getBytes()),

@@ -23,11 +23,15 @@ MA  02110-1301, USA.
             xmlns:java="urn:switchyard-config:test-java:1.0"
             xmlns:smooks="urn:switchyard-config:test-smooks:1.0"
             xmlns:soap="urn:switchyard-config:test-soap:1.0"
+            xmlns:vjava="urn:switchyard-config:test-validate-java:1.0"
+            xmlns:vxml="urn:switchyard-config:test-validate-xml:1.0"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:schemaLocation="
                    urn:switchyard-config:test-bean:1.0 ../composite/test/bean/bean.xsd
                    urn:switchyard-config:test-java:1.0 test/java/java.xsd
                    urn:switchyard-config:test-smooks:1.0 test/smooks/smooks.xsd
+                   urn:switchyard-config:test-validate-java:1.0 test/validate/java/java.xsd
+                   urn:switchyard-config:test-validate-xml:1.0 test/validate/xml/xml.xsd
                    urn:switchyard-config:test-soap:1.0 ../composite/test/soap/soap.xsd"
             name="m1app">
     <sca:composite name="m1app" targetNamespace="urn:m1app:example:1.0">
@@ -59,10 +63,17 @@ MA  02110-1301, USA.
             <smooks:config>stuff</smooks:config>
         </smooks:transform.smooks>
     </transforms>
+    <validates>
+        <vjava:validate.java name="urn:switchyard-config:test-validate-java-a:1.0" class="org.examples.validate.AValidate"/>
+        <vxml:validate.xml name="urn:switchyard-config:test-validate-xml-a:1.0" schemaType="XML_SCHEMA" schemaFile="schema.xsd"/>
+    </validates>
     <domain name="TestDomain">
         <transforms>
             <java:transform.java from="msgD" to="msgA" class="org.examples.transform.DtoATransform"/>
         </transforms>
+        <validates>
+            <vjava:validate.java name="urn:switchyard-config:test-validate-java-b:1.0" class="org.examples.validate.BValidate"/>
+        </validates>
         <properties>
             <property name="foo" value="bar"/>
             <property name="tuna" value="fish"/>

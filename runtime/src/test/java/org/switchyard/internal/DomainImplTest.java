@@ -49,6 +49,7 @@ public class DomainImplTest {
         _domain = new DomainImpl(new QName("test"),
                 new DefaultServiceRegistry(),
                 new LocalExchangeBus(),
+                null,
                 null);
         _service = _domain.registerService(SERVICE, new MockHandler());
     }

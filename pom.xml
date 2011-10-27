@@ -20,6 +20,7 @@
     <module>api</module>
     <module>extensions/wsdl</module>
     <module>transform</module>
+    <module>validate</module>
     <module>runtime</module>
     <module>admin</module>
     <module>bus/hornetq</module>
@@ -199,6 +200,11 @@
       <dependency>
         <groupId>org.switchyard</groupId>
         <artifactId>switchyard-transform</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.switchyard</groupId>
+        <artifactId>switchyard-validate</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

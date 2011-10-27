@@ -58,6 +58,11 @@ public interface Application {
     public List<Transformer> getTransformers();
 
     /**
+     * @return the validators provided by this application
+     */
+    public List<Validator> getValidators();
+
+    /**
      * Returns the name of the application. This will be the name specified
      * within the switchyard.xml file, if one exists. If a name is not specified
      * within the switchyard.xml file, the deployment archive name will be

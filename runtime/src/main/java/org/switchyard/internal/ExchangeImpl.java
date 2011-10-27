@@ -161,9 +161,11 @@ public class ExchangeImpl implements Exchange {
         // Set exchange phase
         if (_phase == null) {
             _phase = ExchangePhase.IN;
+            initInContentType();
             initInTransformSequence();
         } else if (_phase.equals(ExchangePhase.IN)) {
             _phase = ExchangePhase.OUT;
+            initOutContentType();
             initOutTransformSequence();
             // set relatesTo header on OUT context
             _context.setProperty(RELATES_TO, _context.getProperty(
@@ -297,6 +299,22 @@ public class ExchangeImpl implements Exchange {
                     from(serviceOperationOutputType).
                     to(exchangeOutputType).
                     associateWith(this, Scope.OUT);
+        }
+    }
+
+    private void initInContentType() {
+        QName exchangeInputType = _contract.getInvokerInvocationMetaData().getInputType();
+
+        if (exchangeInputType != null) {
+            _context.setProperty(Exchange.CONTENT_TYPE, exchangeInputType, Scope.IN);
+        }
+    }
+
+    private void initOutContentType() {
+        QName serviceOperationOutputType = _contract.getServiceOperation().getOutputType();
+
+        if (serviceOperationOutputType != null) {
+            _context.setProperty(Exchange.CONTENT_TYPE, serviceOperationOutputType, Scope.OUT);
         }
     }
 }

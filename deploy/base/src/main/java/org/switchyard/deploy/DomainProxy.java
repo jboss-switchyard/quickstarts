@@ -32,6 +32,7 @@ import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.policy.Policy;
 import org.switchyard.transform.TransformerRegistry;
+import org.switchyard.validate.ValidatorRegistry;
 
 /**
  * Domain Proxy class.
@@ -104,6 +105,11 @@ class DomainProxy implements ServiceDomain {
     @Override
     public TransformerRegistry getTransformerRegistry() {
         return _domain.getTransformerRegistry();
+    }
+
+    @Override
+    public ValidatorRegistry getValidatorRegistry() {
+        return _domain.getValidatorRegistry();
     }
 
     @Override

@@ -27,6 +27,7 @@ import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.domain.DomainModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
+import org.switchyard.config.model.validate.ValidatesModel;
 
 /**
  * A version 1 SwitchYardModel.
@@ -37,6 +38,7 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
 
     private CompositeModel _composite;
     private TransformsModel _transforms;
+    private ValidatesModel _validates;
     private DomainModel _domain;
 
     /**
@@ -44,7 +46,7 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
      */
     public V1SwitchYardModel() {
         super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, SwitchYardModel.SWITCHYARD));
-        setModelChildrenOrder(CompositeModel.COMPOSITE, TransformsModel.TRANSFORMS, DomainModel.DOMAIN);
+        setModelChildrenOrder(CompositeModel.COMPOSITE, TransformsModel.TRANSFORMS, ValidatesModel.VALIDATES, DomainModel.DOMAIN);
     }
 
     /**
@@ -54,7 +56,7 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
      */
     public V1SwitchYardModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setModelChildrenOrder(CompositeModel.COMPOSITE, TransformsModel.TRANSFORMS, DomainModel.DOMAIN);
+        setModelChildrenOrder(CompositeModel.COMPOSITE, TransformsModel.TRANSFORMS, ValidatesModel.VALIDATES, DomainModel.DOMAIN);
     }
 
     /**
@@ -99,6 +101,27 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
         return this;
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ValidatesModel getValidates() {
+        if (_validates == null) {
+            _validates = (ValidatesModel)getFirstChildModelStartsWith(ValidatesModel.VALIDATES);
+        }
+        return _validates;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SwitchYardModel setValidates(ValidatesModel validatesModel) {
+        setChildModel(validatesModel);
+        _validates = validatesModel;
+        return this;
+    }
+
     /**
      * {@inheritDoc}
      */

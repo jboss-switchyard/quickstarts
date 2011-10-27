@@ -30,6 +30,7 @@ import org.switchyard.admin.Binding;
 import org.switchyard.admin.ComponentReference;
 import org.switchyard.admin.ComponentService;
 import org.switchyard.admin.Transformer;
+import org.switchyard.admin.Validator;
 import org.switchyard.config.OutputKey;
 import org.switchyard.config.model.TypedModel;
 import org.switchyard.config.model.composite.BindingModel;
@@ -41,6 +42,8 @@ import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.InterfaceModel;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
+import org.switchyard.config.model.validate.ValidateModel;
+import org.switchyard.config.model.validate.ValidatesModel;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.deploy.internal.DeploymentListener;
 
@@ -244,6 +247,37 @@ public class SwitchYardBuilder implements DeploymentListener {
             transformers.add(new BaseTransformer(transformModel.getFrom(), transformModel.getTo(), type));
         }
         application.setTransformers(transformers);
+    }
+
+    @Override
+    public void validatorsRegistered(AbstractDeployment deployment, ValidatesModel validatesModel) {
+        if (validatesModel == null) {
+            return;
+        }
+
+        final QName applicationName = deployment.getName();
+        if (applicationName == null) {
+            _log.warn("serviceUndeployed() received deployment with null application name.");
+            return;
+        }
+
+        final List<ValidateModel> validateModels = validatesModel.getValidates();
+        if (validateModels == null) {
+            return;
+        }
+
+        final BaseApplication application = (BaseApplication) _switchYard.getApplication(applicationName);
+        final List<Validator> validators = new ArrayList<Validator>(validateModels.size());
+        for (ValidateModel validateModel : validateModels) {
+            String type;
+            if (validateModel instanceof TypedModel) {
+                type = ((TypedModel)validateModel).getType();
+            } else {
+                type = null;
+            }
+            validators.add(new BaseValidator(validateModel.getName(), type));
+        }
+        application.setValidators(validators);
     }
 
     private ComponentService getPromotedService(BaseApplication application, CompositeServiceModel compositeService) {

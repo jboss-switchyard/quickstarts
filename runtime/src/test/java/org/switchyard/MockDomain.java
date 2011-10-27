@@ -25,6 +25,7 @@ import org.switchyard.internal.LocalExchangeBus;
 import org.switchyard.internal.DefaultServiceRegistry;
 import org.switchyard.internal.DomainImpl;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
+import org.switchyard.internal.validate.BaseValidatorRegistry;
 
 public class MockDomain extends DomainImpl {
 
@@ -35,6 +36,7 @@ public class MockDomain extends DomainImpl {
         super(DEFAULT_DOMAIN, 
                 new DefaultServiceRegistry(), 
                 new LocalExchangeBus(), 
-                new BaseTransformerRegistry());
+                new BaseTransformerRegistry(),
+                new BaseValidatorRegistry());
     }
 }

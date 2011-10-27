@@ -38,11 +38,14 @@ import org.switchyard.deploy.components.MockActivator;
 import org.switchyard.deploy.components.config.MockBindingModel;
 import org.switchyard.deploy.internal.transformers.ABTransformer;
 import org.switchyard.deploy.internal.transformers.CDTransformer;
+import org.switchyard.deploy.internal.validators.AValidator;
+import org.switchyard.deploy.internal.validators.BValidator;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.extensions.wsdl.WSDLService;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.transform.Transformer;
+import org.switchyard.validate.Validator;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
@@ -103,6 +106,28 @@ public class DeploymentTest {
         deployment.destroy();
 
         // Check that the transformers are undeployed...
+    }
+
+    @Test
+    public void test_validate_registration() throws Exception {
+        InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-validate-01.xml", getClass());
+        Deployment deployment = new Deployment(swConfigStream);
+        swConfigStream.close();
+
+        ServiceDomain serviceDomain = ServiceDomainManager.createDomain();
+        deployment.init(serviceDomain, ActivatorLoader.createActivators(serviceDomain));
+
+        // Check that the validators are deployed...
+        ServiceDomain domain = deployment.getDomain();
+        Validator<?> aValidator = domain.getValidatorRegistry().getValidator(new QName("A"));
+        Validator<?> bValidator = domain.getValidatorRegistry().getValidator(new QName("B"));
+        
+        Assert.assertTrue(aValidator instanceof AValidator);
+        Assert.assertTrue(bValidator instanceof BValidator);
+        
+        deployment.destroy();
+
+        // Check that the validators are undeployed...
     }
 
     @Test

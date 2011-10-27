@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
+import org.switchyard.Scope;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.transform.TransformSequence;
 import org.switchyard.transform.Transformer;
@@ -86,6 +87,9 @@ public class TransformHandler extends BaseHandler {
 
             throw new HandlerException("Transformations not applied.  Required payload type of '" + expectedPayloadType + "'.  Actual payload type is '" + actualPayloadType + "'.  You must define and register a Transformer to transform between these types.");
         }
+
+        // Replace the CONTENT_TYPE property to indicate current content type after transform
+        exchange.getContext().setProperty(Exchange.CONTENT_TYPE, TransformSequence.getCurrentMessageType(exchange), Scope.activeScope(exchange));
     }
 
     @Override
@@ -100,6 +104,9 @@ public class TransformHandler extends BaseHandler {
                 _logger.debug("Transformations not applied.  Required payload type of '" + expectedPayloadType + "'.  Actual payload type is '" + actualPayloadType + "'.  You must define and register a Transformer to transform between these types.");
             }
         }
+
+        // Replace the CONTENT_TYPE property to indicate current content type after transform
+        exchange.getContext().setProperty(Exchange.CONTENT_TYPE, TransformSequence.getCurrentMessageType(exchange), Scope.activeScope(exchange));
     }
 }
 

@@ -28,6 +28,7 @@ import org.switchyard.config.model.domain.HandlersModel;
 import org.switchyard.config.model.domain.PropertiesModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
+import org.switchyard.config.model.validate.ValidatesModel;
 
 /**
  * Implementation of DomainModel : v1.
@@ -42,7 +43,7 @@ public class V1DomainModel extends BaseNamedModel implements DomainModel {
      */
     public V1DomainModel() {
         super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, DomainModel.DOMAIN));
-        setModelChildrenOrder(TransformsModel.TRANSFORMS, PropertiesModel.PROPERTIES, HandlersModel.HANDLERS);
+        setModelChildrenOrder(TransformsModel.TRANSFORMS, ValidatesModel.VALIDATES, PropertiesModel.PROPERTIES, HandlersModel.HANDLERS);
     }
 
     /**
@@ -52,7 +53,7 @@ public class V1DomainModel extends BaseNamedModel implements DomainModel {
      */
     public V1DomainModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setModelChildrenOrder(TransformsModel.TRANSFORMS, PropertiesModel.PROPERTIES, HandlersModel.HANDLERS);
+        setModelChildrenOrder(TransformsModel.TRANSFORMS, ValidatesModel.VALIDATES, PropertiesModel.PROPERTIES, HandlersModel.HANDLERS);
     }
     
     @Override

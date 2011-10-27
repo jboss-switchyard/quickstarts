@@ -32,6 +32,7 @@ import org.switchyard.admin.Application;
 import org.switchyard.admin.ComponentService;
 import org.switchyard.admin.Service;
 import org.switchyard.admin.Transformer;
+import org.switchyard.admin.Validator;
 
 /**
  * Base implementation of Application.
@@ -43,6 +44,7 @@ public class BaseApplication implements Application {
     private Map<QName, Service> _services;
     private Map<QName, ComponentService> _componentServices;
     private List<Transformer> _transformers;
+    private List<Validator> _validators;
     
     /**
      * Create a new BaseApplication with the specified services.
@@ -70,6 +72,7 @@ public class BaseApplication implements Application {
         _services = new LinkedHashMap<QName, Service>();
         _componentServices = new LinkedHashMap<QName, ComponentService>();
         _transformers = new LinkedList<Transformer>();
+        _validators = new LinkedList<Validator>();
     }
 
     @Override
@@ -165,6 +168,20 @@ public class BaseApplication implements Application {
 
     protected void addTransformer(Transformer transformer) {
         _transformers.add(transformer);
+    }
+
+    @Override
+    public List<Validator> getValidators() {
+        return Collections.unmodifiableList(_validators);
+    }
+
+    protected void setValidators(List<Validator> validators) {
+        _validators.clear();
+        _validators.addAll(validators);
+    }
+
+    protected void addValidators(Validator validator) {
+        _validators.add(validator);
     }
 
 }

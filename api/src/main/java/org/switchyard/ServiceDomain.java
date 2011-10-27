@@ -27,6 +27,7 @@ import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.policy.Policy;
 import org.switchyard.transform.TransformerRegistry;
+import org.switchyard.validate.ValidatorRegistry;
 
 /**
  * A ServiceDomain represents a collection of services with a shared set of
@@ -115,6 +116,12 @@ public interface ServiceDomain {
      */
     TransformerRegistry getTransformerRegistry();
     
+    /**
+     * Returns a references to the validator registry for this domain.
+     * @return validator registry instance
+     */
+    ValidatorRegistry getValidatorRegistry();
+
     /**
      * Returns the default handler chain for this service domain.  Handlers
      * present in this chain will execute for all message exchange activity

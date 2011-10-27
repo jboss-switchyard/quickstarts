@@ -22,6 +22,7 @@ import org.switchyard.config.model.NamedModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.domain.DomainModel;
 import org.switchyard.config.model.transform.TransformsModel;
+import org.switchyard.config.model.validate.ValidatesModel;
 
 /**
  * The root "switchyard" configuration model.
@@ -61,6 +62,19 @@ public interface SwitchYardModel extends NamedModel {
      * @return this SwitchYardModel (useful for chaining)
      */
     public SwitchYardModel setTransforms(TransformsModel transforms);
+
+    /**
+     * Gets the child validates model.
+     * @return the child validates model
+     */
+    public ValidatesModel getValidates();
+    
+    /**
+     * Sets the child validates model.
+     * @param validatesModel the child validates model.
+     * @return this SwitchYardModel (useful for chaining)
+     */
+    public SwitchYardModel setValidates(ValidatesModel validatesModel);
 
     /**
      * Gets the child domain model.

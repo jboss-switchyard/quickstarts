@@ -44,6 +44,11 @@ public interface Exchange {
     String RELATES_TO = "org.switchyard.relatesTo";
 
     /**
+     * Context property name used for Message Content Type.
+     */
+    String CONTENT_TYPE = "org.switchyard.contentType";
+    
+    /**
      * Retrieves the exchange context.
      * @return the exchange context
      */

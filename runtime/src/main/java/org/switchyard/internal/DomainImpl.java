@@ -34,6 +34,7 @@ import org.switchyard.ServiceReference;
 import org.switchyard.handlers.PolicyHandler;
 import org.switchyard.handlers.TransactionHandler;
 import org.switchyard.handlers.TransformHandler;
+import org.switchyard.handlers.ValidateHandler;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
@@ -43,6 +44,7 @@ import org.switchyard.spi.ExchangeBus;
 import org.switchyard.spi.Service;
 import org.switchyard.spi.ServiceRegistry;
 import org.switchyard.transform.TransformerRegistry;
+import org.switchyard.validate.ValidatorRegistry;
 
 /**
  * Implementation of ServiceDomain.
@@ -56,6 +58,7 @@ public class DomainImpl implements ServiceDomain {
     private final ServiceRegistry _registry;
     private final ExchangeBus _exchangeBus;
     private final TransformerRegistry _transformerRegistry;
+    private final ValidatorRegistry _validatorRegistry;
 
     /**
      * Constructor.
@@ -63,25 +66,31 @@ public class DomainImpl implements ServiceDomain {
      * @param registry registry
      * @param exchangeBus message exchange bus
      * @param transformerRegistry transformerRegistry
+     * @param validatorRegistry validatorRegistry
      */
     public DomainImpl(QName name,
             ServiceRegistry registry,
             ExchangeBus exchangeBus,
-            TransformerRegistry transformerRegistry) {
+            TransformerRegistry transformerRegistry,
+            ValidatorRegistry validatorRegistry) {
 
         _name = name;
         _registry = registry;
         _exchangeBus  = exchangeBus;
         _transformerRegistry = transformerRegistry;
+        _validatorRegistry = validatorRegistry;
 
         // Build out the system handlers chain.  A null "provider" handler
         // is inserted as a placeholder to establish the correct position of
         // the service provider within the chain.
         TransactionHandler transactionHandler = new TransactionHandler();
+        ValidateHandler validateHandler = new ValidateHandler(_validatorRegistry);
         _defaultHandlers = new DefaultHandlerChain();
         _defaultHandlers.addLast("transaction-pre-invoke", transactionHandler);
         _defaultHandlers.addLast("generic-policy", new PolicyHandler());
+        _defaultHandlers.addLast("validation-before-transform", validateHandler);
         _defaultHandlers.addLast("transformation", new TransformHandler(_transformerRegistry));
+        _defaultHandlers.addLast("validation-after-transform", validateHandler);
         _defaultHandlers.addLast(HandlerChain.PROVIDER_HANDLER, new BaseHandler());
         _defaultHandlers.addLast("transaction-post-invoke", transactionHandler);
 
@@ -150,6 +159,11 @@ public class DomainImpl implements ServiceDomain {
     @Override
     public TransformerRegistry getTransformerRegistry() {
         return _transformerRegistry;
+    }
+    
+    @Override
+    public ValidatorRegistry getValidatorRegistry() {
+        return _validatorRegistry;
     }
     
     @Override

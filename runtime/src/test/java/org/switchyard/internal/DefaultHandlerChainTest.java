@@ -53,7 +53,7 @@ public class DefaultHandlerChainTest {
         _chain.addFirst("first", badHandler);
         _chain.addLast("second", goodHandler);
         
-        _chain.handleFault(new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, null));
+        _chain.handleFault(new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, null, null));
         Assert.assertNotNull(goodHandler.waitForFaultMessage());
     }
     

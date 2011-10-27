@@ -37,6 +37,7 @@ import org.switchyard.internal.DefaultServiceRegistry;
 import org.switchyard.internal.DomainImpl;
 import org.switchyard.internal.LocalExchangeBus;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
+import org.switchyard.internal.validate.BaseValidatorRegistry;
 import org.switchyard.spi.ExchangeBus;
 import org.switchyard.spi.ServiceRegistry;
 
@@ -113,8 +114,9 @@ public class ServiceDomainManager {
         ServiceRegistry registry = getRegistry(DefaultServiceRegistry.class.getName());
         ExchangeBus endpointProvider = getEndpointProvider(LocalExchangeBus.class.getName());
         BaseTransformerRegistry transformerRegistry = new BaseTransformerRegistry();
+        BaseValidatorRegistry validatorRegistry = new BaseValidatorRegistry();
         
-        DomainImpl domain = new DomainImpl(domainName, registry, endpointProvider, transformerRegistry);
+        DomainImpl domain = new DomainImpl(domainName, registry, endpointProvider, transformerRegistry, validatorRegistry);
         // add appropriate domain config
         if (switchyardConfig != null) {
             addHandlersToDomain(domain, switchyardConfig);

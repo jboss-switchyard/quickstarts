@@ -41,6 +41,8 @@ import org.switchyard.config.model.resource.v1.V1ResourceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.config.model.transform.v1.V1TransformsModel;
+import org.switchyard.config.model.validate.ValidatesModel;
+import org.switchyard.config.model.validate.v1.V1ValidatesModel;
 
 /**
  * Marshalls switchyard Models.
@@ -68,6 +70,8 @@ public class V1SwitchYardMarshaller extends BaseMarshaller {
             return new V1SwitchYardModel(config, desc);
         } else if (name.equals(TransformsModel.TRANSFORMS)) {
             return new V1TransformsModel(config, desc);
+        } else if (name.equals(ValidatesModel.VALIDATES)) {
+            return new V1ValidatesModel(config, desc);
         } else if (name.equals(PropertiesModel.PROPERTIES)) {
             return new V1PropertiesModel(config, desc);
         } else if (name.equals(PropertyModel.PROPERTY)) {
