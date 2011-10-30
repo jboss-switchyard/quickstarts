@@ -25,10 +25,6 @@
     <dependencies>
         <module name="javax.api"/>
         <module name="org.apache.log4j"/>
-        <module name="org.switchyard.api"/>
-        <module name="org.switchyard.common"/>
-        <module name="org.switchyard.config"/>
-        <module name="org.switchyard.deploy"/>
         <module name="org.drools.drools-compiler"/>
         <module name="org.drools.drools-core"/>
         <module name="org.drools.drools-persistence-jpa"/>
@@ -39,5 +35,10 @@
         <module name="org.jbpm.jbpm-human-task"/>
         <module name="org.jbpm.jbpm-persistence-jpa"/>
         <module name="org.jbpm.jbpm-workitems"/>
+        <module name="org.switchyard.api"/>
+        <module name="org.switchyard.common"/>
+        <module name="org.switchyard.component.common.rules"/>
+        <module name="org.switchyard.config"/>
+        <module name="org.switchyard.deploy"/>
     </dependencies>
 </module>

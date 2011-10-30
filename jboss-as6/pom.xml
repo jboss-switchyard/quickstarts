@@ -15,18 +15,14 @@
     <description>SwitchYard AS6 Parent</description>
 
     <properties>
-        <version.antlr>3.3</version.antlr>
         <version.arquillian>1.0.0.Alpha5</version.arquillian>
         <version.camel>2.8.0</version.camel>
         <version.commonman>1.0</version.commonman>
         <version.commons.lang>2.4</version.commons.lang>
         <version.commons.logging>1.1</version.commons.logging>
-        <version.drools>5.2.1.Final</version.drools>
-        <version.ecj>3.5.1</version.ecj>
         <version.jboss.deployers>2.2.0.GA</version.jboss.deployers>
         <version.jboss.vfs>3.0.0.GA</version.jboss.vfs>
         <version.jbossas>6.0.0.Final</version.jbossas>
-        <version.jbpm>5.1.1.Final</version.jbpm>
         <version.mina>2.0.1</version.mina>
         <version.shrinkwrap>1.0.0-alpha-12</version.shrinkwrap>
     </properties>
