@@ -55,22 +55,26 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.junit>4.8.1</version.junit>
-    <version.xmlunit>1.1</version.xmlunit>
-    <version.log4j>1.2.14</version.log4j>
-    <version.maven.plugin.api>3.0.2</version.maven.plugin.api>
-    <version.maven.plugin.plugin>2.5.1</version.maven.plugin.plugin>
-    <version.maven.plugin.deploy>2.6</version.maven.plugin.deploy>
-    <version.protostuff>1.0.4</version.protostuff>
-    <version.mockito>1.8.5</version.mockito>
-    <version.hamcrest>1.1</version.hamcrest>
+    <version.antlr>3.3</version.antlr>
+    <version.drools>5.2.1.Final</version.drools>
+    <version.ecj>3.5.1</version.ecj>
     <version.forge>1.0.0.Alpha4</version.forge>
     <version.freemarker>2.3.15</version.freemarker>
+    <version.hamcrest>1.1</version.hamcrest>
     <version.jaxen>1.1.1</version.jaxen>
+    <version.jbpm>5.1.1.Final</version.jbpm>
+    <version.junit>4.8.1</version.junit>
+    <version.log4j>1.2.14</version.log4j>
+    <version.maven.plugin.api>3.0.2</version.maven.plugin.api>
+    <version.maven.plugin.deploy>2.6</version.maven.plugin.deploy>
+    <version.maven.plugin.plugin>2.5.1</version.maven.plugin.plugin>
     <version.milyn>1.5</version.milyn>
-    <version.mvel>2.1.0.drools2</version.mvel>
+    <version.mockito>1.8.5</version.mockito>
+    <version.mvel>2.1.Beta6</version.mvel>
     <version.project>${project.version}</version.project>
+    <version.protostuff>1.0.4</version.protostuff>
     <version.slf4j>1.6.1</version.slf4j>
+    <version.xmlunit>1.1</version.xmlunit>
     <version.xstream>1.2.2</version.xstream>
   </properties>
 
@@ -138,6 +142,15 @@
   </pluginRepositories>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>1.2.1</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -469,9 +482,9 @@
             <version>3.0-beta-3</version>
             <configuration>
               <siteDirectory>build/src/site</siteDirectory>
-	      <reportPlugins>
+          <reportPlugins>
                <!-- The Dependencies report takes an obscene amount of 
-		time to run. Leaving it out of the reportSet -->
+        time to run. Leaving it out of the reportSet -->
                <plugin>
                  <groupId>org.apache.maven.plugins</groupId>
                  <artifactId>maven-project-info-reports-plugin</artifactId>
@@ -499,7 +512,7 @@
                    </reportSet>
                  </reportSets>
                </plugin>
-	      </reportPlugins>
+          </reportPlugins>
             </configuration>
             <executions>
               <execution>
@@ -612,21 +625,114 @@
         <artifactId>hamcrest-all</artifactId>
         <version>${version.hamcrest}</version>
      </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${version.slf4j}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${version.slf4j}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-ext</artifactId>
-            <version>${version.slf4j}</version>
-        </dependency>
+     <dependency>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr-runtime</artifactId>
+        <version>${version.antlr}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.drools</groupId>
+          <artifactId>knowledge-api</artifactId>
+          <version>${version.drools}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.drools</groupId>
+          <artifactId>drools-core</artifactId>
+          <version>${version.drools}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.drools</groupId>
+          <artifactId>drools-compiler</artifactId>
+          <version>${version.drools}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.drools</groupId>
+          <artifactId>drools-persistence-jpa</artifactId>
+          <version>${version.drools}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.eclipse.jdt.core.compiler</groupId>
+          <artifactId>ecj</artifactId>
+          <version>${version.ecj}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.jbpm</groupId>
+          <artifactId>jbpm-bpmn2</artifactId>
+          <version>${version.jbpm}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.jbpm</groupId>
+          <artifactId>jbpm-flow</artifactId>
+          <version>${version.jbpm}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.jbpm</groupId>
+          <artifactId>jbpm-flow-builder</artifactId>
+          <version>${version.jbpm}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.jbpm</groupId>
+          <artifactId>jbpm-human-task</artifactId>
+          <version>${version.jbpm}</version>
+          <exclusions>
+              <exclusion>
+                  <groupId>xml-apis</groupId>
+                  <artifactId>xml-apis</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>xerces</groupId>
+                  <artifactId>xercesimpl</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>xerces</groupId>
+                  <artifactId>xmlparserapis</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>slf4j-api</artifactId>
+              </exclusion>
+          </exclusions>
+      </dependency>
+      <dependency>
+          <groupId>org.jbpm</groupId>
+          <artifactId>jbpm-persistence-jpa</artifactId>
+          <version>${version.jbpm}</version>
+          <exclusions>
+              <exclusion>
+                  <artifactId>hibernate-annotations</artifactId>
+                  <groupId>org.hibernate</groupId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>slf4j-api</artifactId>
+              </exclusion>
+          </exclusions>
+      </dependency>
+      <dependency>
+          <groupId>org.jbpm</groupId>
+          <artifactId>jbpm-workitems</artifactId>
+          <version>${version.jbpm}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.mvel</groupId>
+          <artifactId>mvel2</artifactId>
+          <version>${version.mvel}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${version.slf4j}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>${version.slf4j}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-ext</artifactId>
+        <version>${version.slf4j}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <distributionManagement>
