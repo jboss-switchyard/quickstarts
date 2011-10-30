@@ -90,6 +90,7 @@ public abstract class BaseResource implements Resource {
                 if (loader != null) {
                     return Classes.getResource(location, loader);
                 }
+                return Classes.getResource(location, BaseResource.class);
             } catch (IOException ioe) {
                 return null;
             }

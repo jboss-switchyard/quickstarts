@@ -45,31 +45,7 @@ public final class ResourceType implements Comparable<ResourceType> {
     private static final Map<String,ResourceType> TYPES = new ConcurrentHashMap<String,ResourceType>();
 
     static {
-        List<URL> urls;
-        try {
-            urls = Classes.getResources("/org/switchyard/common/io/resource/resourceType.properties", ResourceType.class);
-        } catch (Throwable t) {
-            LOGGER.fatal(t.getMessage());
-            urls = Collections.emptyList();
-        }
-        PropertiesPuller props_puller = new PropertiesPuller();
-        for (URL url : urls) {
-            try {
-                Properties props = props_puller.pull(url);
-                for (Object key : props.keySet()) {
-                    String name = (String)key;
-                    StringTokenizer st = new StringTokenizer(props.getProperty(name), "|");
-                    String description = st.hasMoreTokens() ? Strings.trimToNull(st.nextToken()) : null;
-                    Set<String> extensions = st.hasMoreTokens() ? Strings.uniqueSplitTrimToNull(st.nextToken(), ",") : null;
-                    // we only want to resolve inheritance once (thus false below)
-                    install(name, description, extensions, false);
-                }
-            } catch (Throwable t) {
-                LOGGER.error(t.getMessage());
-            }
-        }
-        // resolve inheritance once
-        resolveInheritance();
+        install();
     }
 
     private final String _name;
@@ -177,6 +153,59 @@ public final class ResourceType implements Comparable<ResourceType> {
     }
 
     /**
+     * Searches for any /org/switchyard/common/io/resource/resourceType.properties it can find on the classpath
+     * and installs the configured ResourceTypes. This method is safe to invoke multiple times, and might be
+     * necessary if new ClassLoaders become available.
+     */
+    public static synchronized void install() {
+        install(ResourceType.class);
+    }
+
+    /**
+     * Searches for any /org/switchyard/common/io/resource/resourceType.properties it can find on the classpath
+     * and installs the configured ResourceTypes. This method is safe to invoke multiple times, and might be
+     * necessary if new ClassLoaders become available.
+     * @param caller the calling Class so we can try it's ClassLoader
+     */
+    public static synchronized void install(Class<?> caller) {
+        install(caller != null ? caller.getClassLoader() : null);
+    }
+
+    /**
+     * Searches for any /org/switchyard/common/io/resource/resourceType.properties it can find on the classpath
+     * and installs the configured ResourceTypes. This method is safe to invoke multiple times, and might be
+     * necessary if new ClassLoaders become available.
+     * @param loader a ClassLoader to try
+     */
+    public static synchronized void install(ClassLoader loader) {
+        List<URL> urls;
+        try {
+            urls = Classes.getResources("/org/switchyard/common/io/resource/resourceType.properties", loader);
+        } catch (Throwable t) {
+            LOGGER.fatal(t.getMessage());
+            urls = Collections.emptyList();
+        }
+        PropertiesPuller props_puller = new PropertiesPuller();
+        for (URL url : urls) {
+            try {
+                Properties props = props_puller.pull(url);
+                for (Object key : props.keySet()) {
+                    String name = (String)key;
+                    StringTokenizer st = new StringTokenizer(props.getProperty(name), "|");
+                    String description = st.hasMoreTokens() ? Strings.trimToNull(st.nextToken()) : null;
+                    Set<String> extensions = st.hasMoreTokens() ? Strings.uniqueSplitTrimToNull(st.nextToken(), ",") : null;
+                    // we only want to resolve inheritance once (thus false below)
+                    install(name, description, extensions, false);
+                }
+            } catch (Throwable t) {
+                LOGGER.error(t.getMessage());
+            }
+        }
+        // resolve inheritance once
+        resolveInheritance();
+    }
+
+    /**
      * Installs a resource type with the specified name.
      * @param name the name of the resource type
      * @return the installed resource type
@@ -239,7 +268,9 @@ public final class ResourceType implements Comparable<ResourceType> {
                     if (preinstalled == null) {
                         ext_set.add(ext);
                     } else {
-                        LOGGER.warn("Extension [" + ext + "] already installed by [" + preinstalled._name + "], so will not be included in [" + name + "]. Use extension reference [{" + preinstalled._name + "}] instead.");
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Extension [" + ext + "] already installed by [" + preinstalled._name + "], so will not be included in [" + name + "]. Use extension reference [{" + preinstalled._name + "}] instead.");
+                        }
                     }
                 }
             }
@@ -284,6 +315,42 @@ public final class ResourceType implements Comparable<ResourceType> {
             }
             type._extensions = extensions;
         }
+    }
+
+    /**
+     * Returns all known ResourceType names as an array.
+     * @return the names
+     */
+    public static String[] names() {
+        Set<String> names = nameSet();
+        return names.toArray(new String[names.size()]);
+    }
+
+    /**
+     * Returns all known ResourceType names as a Set.
+     * @return the names
+     */
+    public static Set<String> nameSet() {
+        return Collections.unmodifiableSet(new TreeSet<String>(TYPES.keySet()));
+    }
+
+    /**
+     * Returns all known ResourceTypes as an array.
+     * @return the types
+     */
+    public static ResourceType[] values() {
+        Set<ResourceType> values = valueSet();
+        return values.toArray(new ResourceType[values.size()]);
+    }
+
+    /**
+     * Returns all known ResourceTypes as a Set.
+     * @return the types
+     */
+    public static Set<ResourceType> valueSet() {
+        Set<ResourceType> tmpSet = new TreeSet<ResourceType>();
+        tmpSet.addAll(TYPES.values());
+        return Collections.unmodifiableSet(tmpSet);
     }
 
     /**
@@ -360,6 +427,16 @@ public final class ResourceType implements Comparable<ResourceType> {
             }
         }
         return null;
+    }
+
+    /**
+     * Prints all known ResourceType values to STDOUT, one per line, in the format "NAME: Description [.ext, ...]".
+     * @param args not required
+     */
+    public static void main(String... args) {
+        for (ResourceType type : values()) {
+            System.out.printf("%s: %s %s\n", type.getName(), type.getDescription(), type.getExtensions());
+        }
     }
 
 }

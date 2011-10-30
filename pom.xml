@@ -48,8 +48,8 @@
       </snapshots>
     </repository>
   </repositories>
-  <properties>	
-	<!-- Dependency versions - please keep these in alphabetical order -->
+  <properties>
+    <!-- Dependency versions - please keep these in alphabetical order -->
     <version.arquillian>1.0.0.Alpha5</version.arquillian>
     <version.camel>2.6.0</version.camel>
     <version.cdi>1.0-SP3</version.cdi>
@@ -58,9 +58,8 @@
     <version.hornetq>2.2.5.Final</version.hornetq>
     <version.jackson>1.8.0</version.jackson>
     <version.jaxen>1.1.1</version.jaxen>
-    <version.jbpm>5.1.1.Final</version.jbpm>
     <version.maven.deploy.plugin>2.5</version.maven.deploy.plugin>
-	<version.netty>3.2.1.Final</version.netty>
+    <version.netty>3.2.1.Final</version.netty>
     <version.servlet>2.5</version.servlet>
     <version.shrinkwrap>1.0.0-alpha-12</version.shrinkwrap>
     <version.tomcat>6.0.29</version.tomcat>
@@ -166,13 +165,13 @@
         <version>${project.version}</version>
       </dependency>
 
-      <!-- External dependencies - please keep in alphabetical order by groupId -->	
+      <!-- External dependencies - please keep in alphabetical order by groupId -->
       <dependency>
           <groupId>com.thoughtworks.xstream</groupId>
           <artifactId>xstream</artifactId>
           <version>${version.xstream}</version>
       </dependency>
-	  <dependency>
+      <dependency>
           <groupId>commons-httpclient</groupId>
           <artifactId>commons-httpclient</artifactId>
           <version>${version.commons.httpclient}</version>
@@ -187,7 +186,7 @@
           <artifactId>servlet-api</artifactId>
           <version>${version.servlet}</version>
       </dependency>
-	  <dependency>
+      <dependency>
           <groupId>jaxen</groupId>
           <artifactId>jaxen</artifactId>
           <version>${version.jaxen}</version>
@@ -206,14 +205,13 @@
           <groupId>org.codehaus.jackson</groupId>
           <artifactId>jackson-core-asl</artifactId>
           <version>${version.jackson}</version>
-	  </dependency>
-
+      </dependency>
       <dependency>
           <groupId>org.freemarker</groupId>
           <artifactId>freemarker</artifactId>
           <version>${version.freemarker}</version>
       </dependency>
-	  <dependency>
+      <dependency>
           <groupId>org.hornetq</groupId>
           <artifactId>hornetq-core</artifactId>
           <version>${version.hornetq}</version>
@@ -229,7 +227,7 @@
           <version>${version.hornetq}</version>
           <scope>compile</scope>
       </dependency>
-	  <dependency>
+      <dependency>
           <groupId>org.hornetq</groupId>
           <artifactId>hornetq-jms-client</artifactId>
           <version>${version.hornetq}</version>
@@ -254,69 +252,11 @@
           <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
           <version>${version.shrinkwrap}</version>
       </dependency>
-	  <dependency>
-          <groupId>org.jbpm</groupId>
-          <artifactId>jbpm-bpmn2</artifactId>
-          <version>${version.jbpm}</version>
+      <dependency>
+          <groupId>org.jboss.netty</groupId>
+          <artifactId>netty</artifactId>
+          <version>${version.netty}</version>
       </dependency>
-	  <dependency>
-          <groupId>org.jbpm</groupId>
-          <artifactId>jbpm-flow</artifactId>
-          <version>${version.jbpm}</version>
-      </dependency>
-	  <dependency>
-          <groupId>org.jbpm</groupId>
-          <artifactId>jbpm-flow-builder</artifactId>
-          <version>${version.jbpm}</version>
-      </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-human-task</artifactId>
-            <version>${version.jbpm}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>xml-apis</groupId>
-                    <artifactId>xml-apis</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>xerces</groupId>
-                    <artifactId>xercesImpl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>xerces</groupId>
-                    <artifactId>xmlParserAPIs</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-	  <dependency>
-          <groupId>org.jbpm</groupId>
-          <artifactId>jbpm-persistence-jpa</artifactId>
-          <version>${version.jbpm}</version>
-          <exclusions>
-              <exclusion>
-                  <artifactId>hibernate-annotations</artifactId>
-                  <groupId>org.hibernate</groupId>
-              </exclusion>
-              <exclusion>
-                  <groupId>org.slf4j</groupId>
-                  <artifactId>slf4j-api</artifactId>
-              </exclusion>
-          </exclusions>
-      </dependency>
-	  <dependency>
-          <groupId>org.jbpm</groupId>
-          <artifactId>jbpm-workitems</artifactId>
-          <version>${version.jbpm}</version>
-      </dependency>
-	  <dependency>
-	      <groupId>org.jboss.netty</groupId>
-	      <artifactId>netty</artifactId>
-	      <version>${version.netty}</version>
-	  </dependency>
       <dependency>
           <groupId>org.jboss.weld.se</groupId>
           <artifactId>weld-se-core</artifactId>
@@ -336,26 +276,21 @@
               </exclusion>
           </exclusions>
       </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${version.slf4j}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-ext</artifactId>
-            <version>${version.slf4j}</version>
-        </dependency>
       <dependency>
-          <groupId>org.milyn</groupId>
-          <artifactId>milyn-smooks-all</artifactId>
-          <version>${version.milyn}</version>
+           <groupId>org.slf4j</groupId>
+           <artifactId>slf4j-log4j12</artifactId>
+           <version>${version.slf4j}</version>
        </dependency>
        <dependency>
-          <groupId>org.mvel</groupId>
-          <artifactId>mvel2</artifactId>
-          <version>${version.mvel}</version>
+           <groupId>org.slf4j</groupId>
+           <artifactId>slf4j-ext</artifactId>
+           <version>${version.slf4j}</version>
        </dependency>
+       <dependency>
+           <groupId>org.milyn</groupId>
+           <artifactId>milyn-smooks-all</artifactId>
+           <version>${version.milyn}</version>
+        </dependency>
     </dependencies>
   </dependencyManagement>
 </project>

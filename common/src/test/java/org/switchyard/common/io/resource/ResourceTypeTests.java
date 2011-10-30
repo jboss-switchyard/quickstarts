@@ -46,14 +46,6 @@ public class ResourceTypeTests {
     }
 
     @Test
-    public void testOOTBInheritance() throws Exception {
-        ResourceType dtable = ResourceType.valueOf("DTABLE");
-        Assert.assertEquals(2, dtable.getExtensions().size());
-        Assert.assertEquals(2, dtable.getExtensions(true).size());
-        Assert.assertEquals(0, dtable.getExtensions(false).size());
-    }
-
-    @Test
     @SuppressWarnings("unused")
     public void testCustomInheritance() throws Exception {
         ResourceType a = ResourceType.install("A", null, ".a");

@@ -213,6 +213,32 @@ public final class Classes {
     }
 
     /**
+     * Provides a CompoundClassLoader using a non-duplicate List of ClassLoaders in the most appropriate search order.
+     * @return the CompoundClassLoader
+     */
+    public static ClassLoader getClassLoader() {
+        return new CompoundClassLoader(getClassLoaders());
+    }
+
+    /**
+     * Provides a CompoundClassLoader using a non-duplicate List of ClassLoaders in the most appropriate search order.
+     * @param caller class calling this method, so we can also try it's classloader
+     * @return the CompoundClassLoader
+     */
+    public static ClassLoader getClassLoader(Class<?> caller) {
+        return new CompoundClassLoader(getClassLoaders(caller));
+    }
+
+    /**
+     * Provides a CompoundClassLoader using a non-duplicate List of ClassLoaders in the most appropriate search order.
+     * @param loader a user-specified ClassLoader
+     * @return the CompoundClassLoader
+     */
+    public static ClassLoader getClassLoader(ClassLoader loader) {
+        return new CompoundClassLoader(getClassLoaders(loader));
+    }
+
+    /**
      * Provides a non-duplicate List of ClassLoaders in the most appropriate search order.
      * @return the non-duplicate List
      */
@@ -263,32 +289,6 @@ public final class Classes {
             loaders.add(cl);
         }
         return new ArrayList<ClassLoader>(loaders);
-    }
-
-    /**
-     * Provides a CompoundClassLoader using a non-duplicate List of ClassLoaders in the most appropriate search order.
-     * @return the CompoundClassLoader
-     */
-    public static ClassLoader newCompoundClassLoader() {
-        return new CompoundClassLoader(getClassLoaders());
-    }
-
-    /**
-     * Provides a CompoundClassLoader using a non-duplicate List of ClassLoaders in the most appropriate search order.
-     * @param caller class calling this method, so we can also try it's classloader
-     * @return the CompoundClassLoader
-     */
-    public static ClassLoader newCompoundClassLoader(Class<?> caller) {
-        return new CompoundClassLoader(getClassLoaders(caller));
-    }
-
-    /**
-     * Provides a CompoundClassLoader using a non-duplicate List of ClassLoaders in the most appropriate search order.
-     * @param loader a user-specified ClassLoader
-     * @return the CompoundClassLoader
-     */
-    public static ClassLoader newCompoundClassLoader(ClassLoader loader) {
-        return new CompoundClassLoader(getClassLoaders(loader));
     }
 
     /**
