@@ -25,6 +25,9 @@ import java.util.List;
 
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.type.classpath.IsAnnotationPresentFilter;
+import org.switchyard.component.common.rules.audit.Audit;
+import org.switchyard.component.common.rules.config.model.AuditModel;
+import org.switchyard.component.common.rules.config.model.v1.V1AuditModel;
 import org.switchyard.component.rules.ExecuteRules;
 import org.switchyard.component.rules.Rules;
 import org.switchyard.component.rules.common.RulesActionType;
@@ -87,6 +90,7 @@ public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
             componentModel.setName(rulesName);
             RulesComponentImplementationModel rciModel = new V1RulesComponentImplementationModel();
             rciModel.setStateful(rules.stateful());
+            rciModel.setAgent(rules.agent());
             JavaService javaService = JavaService.fromClass(rulesInterface);
             for (Method method : rulesClass.getDeclaredMethods()) {
                 RulesActionType rat = null;
@@ -100,6 +104,17 @@ public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
                         rciModel.addRulesAction(ram);
                     }
                 }
+            }
+            Audit audit = rulesClass.getAnnotation(Audit.class);
+            if (audit != null) {
+                AuditModel aModel = new V1AuditModel(rciModel.getModelConfiguration().getQName().getNamespaceURI());
+                int interval = audit.interval();
+                if (interval != -1) {
+                    aModel.setInterval(Integer.valueOf(interval));
+                }
+                aModel.setLog(audit.log());
+                aModel.setType(audit.type());
+                rciModel.setAudit(aModel);
             }
             for (String location : rules.resources()) {
                 if (Rules.UNDEFINED_RESOURCE.equals(location)) {

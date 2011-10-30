@@ -19,7 +19,7 @@
 package org.switchyard.component.rules.exchange;
 
 import static org.switchyard.Scope.IN;
-import static org.switchyard.component.rules.common.RulesConstants.RULES_ACTION_TYPE_VAR;
+import static org.switchyard.component.rules.common.RulesConstants.ACTION_TYPE_VAR;
 import static org.switchyard.component.rules.common.RulesConstants.RULES_NAMESPACE;
 
 import javax.xml.namespace.QName;
@@ -56,7 +56,7 @@ public abstract class BaseRulesExchangeHandler extends BaseHandler implements Ru
                 return pat;
             }
         }
-        Property property = context.getProperty(RULES_ACTION_TYPE_VAR, IN);
+        Property property = context.getProperty(ACTION_TYPE_VAR, IN);
         if (property != null) {
             Object value = property.getValue();
             if (value instanceof RulesActionType) {
@@ -69,7 +69,7 @@ public abstract class BaseRulesExchangeHandler extends BaseHandler implements Ru
         }
         if (LOGGER.isDebugEnabled()) {
             String msg = new StringBuilder()
-                .append(getNullParameterMessage(null, RULES_ACTION_TYPE_VAR))
+                .append(getNullParameterMessage(null, ACTION_TYPE_VAR))
                 .append("; defaulting to: ")
                 .append(RulesActionType.EXECUTE_RULES.qname())
                 .toString();

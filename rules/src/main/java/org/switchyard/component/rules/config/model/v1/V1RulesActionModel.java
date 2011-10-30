@@ -39,7 +39,7 @@ public class V1RulesActionModel extends BaseModel implements RulesActionModel {
      * Creates a new RulesActionModel in the default namespace.
      */
     public V1RulesActionModel() {
-        super(new QName(DEFAULT_NAMESPACE, RULES_ACTION));
+        super(new QName(DEFAULT_NAMESPACE, ACTION));
     }
 
     /**

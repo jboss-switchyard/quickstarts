@@ -33,18 +33,19 @@ MA  02110-1301, USA.
         <complexContent>
             <extension base="sca:Implementation">
                 <sequence>
-                    <element ref="rules:rulesAction" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="rules:rulesAudit" minOccurs="0" maxOccurs="1"/>
+                    <element ref="rules:action" minOccurs="0" maxOccurs="unbounded"/>
+                    <element ref="rules:audit" minOccurs="0" maxOccurs="1"/>
                     <element ref="swyd:resource" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
                 <attribute name="stateful" type="boolean" use="optional" default="false"/>
+                <attribute name="agent" type="boolean" use="optional" default="false"/>
                 <attribute name="messageContentName" type="string" use="optional"/>
             </extension>
         </complexContent>
     </complexType>
 
-    <element name="rulesAction" type="rules:RulesActionType"/>
-    <complexType name="RulesActionType">
+    <element name="action" type="rules:ActionType"/>
+    <complexType name="ActionType">
         <complexContent>
             <extension base="sca:CommonExtensionBase">
                 <attribute name="name" type="string" use="required"/>
@@ -53,8 +54,8 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
 
-    <element name="rulesAudit" type="rules:RulesAuditType"/>
-    <complexType name="RulesAuditType">
+    <element name="audit" type="rules:AuditType"/>
+    <complexType name="AuditType">
         <complexContent>
             <extension base="sca:CommonExtensionBase">
                 <attribute name="interval" type="integer" use="optional" default="1000"/>

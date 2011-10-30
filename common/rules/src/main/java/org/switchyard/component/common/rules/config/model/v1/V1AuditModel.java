@@ -16,38 +16,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.rules.config.model.v1;
+package org.switchyard.component.common.rules.config.model.v1;
 
-import static org.switchyard.component.rules.config.model.RulesComponentImplementationModel.DEFAULT_NAMESPACE;
-
-import javax.xml.namespace.QName;
-
-import org.switchyard.component.rules.common.RulesAuditType;
-import org.switchyard.component.rules.config.model.RulesAuditModel;
+import org.switchyard.common.xml.XMLHelper;
+import org.switchyard.component.common.rules.audit.AuditType;
+import org.switchyard.component.common.rules.config.model.AuditModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
 
 /**
- * The 1st version RulesAuditModel.
+ * The 1st version AuditModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1RulesAuditModel extends BaseModel implements RulesAuditModel {
+public class V1AuditModel extends BaseModel implements AuditModel {
 
     /**
-     * Creates a new RulesAuditModel in the default namespace.
+     * Creates a new AuditModel in the specified namespace.
+     * @param namespace the namespace
      */
-    public V1RulesAuditModel() {
-        super(new QName(DEFAULT_NAMESPACE, RULES_AUDIT));
+    public V1AuditModel(String namespace) {
+        super(XMLHelper.createQName(namespace, AUDIT));
     }
 
     /**
-     * Creates a new RulesAuditModel with the specified configuration and descriptor.
+     * Creates a new AuditModel with the specified configuration and descriptor.
      * @param config the configuration
      * @param desc the descriptor
      */
-    public V1RulesAuditModel(Configuration config, Descriptor desc) {
+    public V1AuditModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
@@ -64,7 +62,7 @@ public class V1RulesAuditModel extends BaseModel implements RulesAuditModel {
      * {@inheritDoc}
      */
     @Override
-    public RulesAuditModel setInterval(Integer interval) {
+    public AuditModel setInterval(Integer interval) {
         setModelAttribute("interval", interval != null ? interval.toString() : null);
         return this;
     }
@@ -81,7 +79,7 @@ public class V1RulesAuditModel extends BaseModel implements RulesAuditModel {
      * {@inheritDoc}
      */
     @Override
-    public RulesAuditModel setLog(String log) {
+    public AuditModel setLog(String log) {
         setModelAttribute("log", log);
         return this;
     }
@@ -90,16 +88,16 @@ public class V1RulesAuditModel extends BaseModel implements RulesAuditModel {
      * {@inheritDoc}
      */
     @Override
-    public RulesAuditType getType() {
+    public AuditType getType() {
         String rat = getModelAttribute("type");
-        return rat != null ? RulesAuditType.valueOf(rat) : null;
+        return rat != null ? AuditType.valueOf(rat) : null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public RulesAuditModel setType(RulesAuditType type) {
+    public AuditModel setType(AuditType type) {
         String rat = type != null ? type.name() : null;
         setModelAttribute("type", rat);
         return this;

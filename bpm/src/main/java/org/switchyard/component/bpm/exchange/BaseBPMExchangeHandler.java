@@ -19,7 +19,7 @@
 package org.switchyard.component.bpm.exchange;
 
 import static org.switchyard.Scope.IN;
-import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_ACTION_TYPE_VAR;
+import static org.switchyard.component.bpm.common.ProcessConstants.ACTION_TYPE_VAR;
 import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_EVENT_TYPE_VAR;
 import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_EVENT_VAR;
 import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_INSTANCE_ID_VAR;
@@ -55,7 +55,7 @@ public abstract class BaseBPMExchangeHandler extends BaseHandler implements BPME
                 return pat;
             }
         }
-        Property property = context.getProperty(PROCESS_ACTION_TYPE_VAR, IN);
+        Property property = context.getProperty(ACTION_TYPE_VAR, IN);
         if (property != null) {
             Object value = property.getValue();
             if (value instanceof ProcessActionType) {
@@ -66,7 +66,7 @@ public abstract class BaseBPMExchangeHandler extends BaseHandler implements BPME
         }
         if (LOGGER.isDebugEnabled()) {
             String msg = new StringBuilder()
-                .append(getNullParameterMessage(null, PROCESS_ACTION_TYPE_VAR))
+                .append(getNullParameterMessage(null, ACTION_TYPE_VAR))
                 .append("; defaulting to: ")
                 .append(ProcessActionType.START_PROCESS.action())
                 .toString();

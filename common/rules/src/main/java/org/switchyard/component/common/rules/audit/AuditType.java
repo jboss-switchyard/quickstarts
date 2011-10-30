@@ -16,47 +16,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.rules.config.model;
-
-import org.switchyard.component.rules.common.RulesActionType;
-import org.switchyard.config.model.Model;
+package org.switchyard.component.common.rules.audit;
 
 /**
- * RulesActionModel.
+ * Represents available rules audit types.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface RulesActionModel extends Model {
+public enum AuditType {
 
-    /**
-     * The action XML element.
-     */
-    public static final String ACTION = "action";
-
-    /**
-     * Gets the name of the action.
-     * @return the name of the action
-     */
-    public String getName();
-
-    /**
-     * Sets the name of the action.
-     * @param name the name of the action
-     * @return this RulesActionModel (useful for chaining)
-     */
-    public RulesActionModel setName(String name);
-
-    /**
-     * Gets the type of the action.
-     * @return the type of the action
-     */
-    public RulesActionType getType();
- 
-    /**
-     * Sets the type of the action.
-     * @param type the type of the action
-     * @return this RulesActionModel (useful for chaining)
-     */
-    public RulesActionModel setType(RulesActionType type);
+    /** The console audit logger. */
+    CONSOLE,
+    /** The file audit logger. */
+    FILE,
+    /** The threaded file audit logger. */
+    THREADED_FILE;
 
 }

@@ -15,19 +15,6 @@
     <name>SwitchYard: BPM Component</name>
     <url>http://www.switchyard.org</url>
 
-    <properties>
-        <version.drools>5.2.1.Final</version.drools>
-        <version.antlr>3.3</version.antlr>
-        <version.ecj>3.5.1</version.ecj>
-        <version.hibernate.core>3.3.2.GA</version.hibernate.core>
-        <version.hibernate.entitymanager>3.3.2.GA</version.hibernate.entitymanager>
-        <version.hibernate.annotations>3.3.1.GA</version.hibernate.annotations>
-        <version.hibernate.commons-annotations>3.1.0.GA</version.hibernate.commons-annotations>
-        <version.hibernate.ejb3-persistence>1.0.1.GA</version.hibernate.ejb3-persistence>
-        <version.hibernate.jpa>1.0</version.hibernate.jpa>
-        <version.mina>2.0.1</version.mina>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -45,18 +32,36 @@
     </build>
 
     <dependencies>
+        <!-- internal dependencies -->
         <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-config</artifactId>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-common-rules</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- external dependencies -->
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-bpmn2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-flow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-flow-builder</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-human-task</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-test</artifactId>
-            <scope>test</scope>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-persistence-jpa</artifactId>
+        </dependency>
+        <dependency>
+        <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-workitems</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

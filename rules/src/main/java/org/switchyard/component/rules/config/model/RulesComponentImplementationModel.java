@@ -21,6 +21,7 @@ package org.switchyard.component.rules.config.model;
 
 import java.util.List;
 
+import org.switchyard.component.common.rules.config.model.AuditModel;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.resource.ResourceModel;
 
@@ -57,6 +58,21 @@ public interface RulesComponentImplementationModel extends ComponentImplementati
     public RulesComponentImplementationModel setStateful(boolean stateful);
 
     /**
+     * Gets the "agent" attribute.
+     *
+     * @return the "agent" attribute
+     */
+    public boolean isAgent();
+
+    /**
+     * Sets the "agent" attribute.
+     *
+     * @param agent the "agent" attribute
+     * @return this instance (useful for chaining)
+     */
+    public RulesComponentImplementationModel setAgent(boolean agent);
+
+    /**
      * Gets the "messageContentName" attribute.
      *
      * @return the "messageContentName" attribute
@@ -85,17 +101,17 @@ public interface RulesComponentImplementationModel extends ComponentImplementati
     public RulesComponentImplementationModel addRulesAction(RulesActionModel rulesAction);
 
     /**
-     * Gets the "rulesAudit" child model.
-     * @return the "rulesAudit" child model
+     * Gets the "audit" child model.
+     * @return the "audit" child model
      */
-    public RulesAuditModel getRulesAudit();
+    public AuditModel getAudit();
 
     /**
-     * Sets the "rulesAudit" child model.
-     * @param rulesAudit the "rulesAudit" child model
+     * Sets the "audit" child model.
+     * @param audit the "audit" child model
      * @return this RulesComponentImplementationModel (useful for chaining)
      */
-    public RulesComponentImplementationModel setRulesAudit(RulesAuditModel rulesAudit);
+    public RulesComponentImplementationModel setAudit(AuditModel audit);
 
     /**
      * Gets the child resource models.

@@ -16,9 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.rules.config.model;
+package org.switchyard.component.common.rules.config.model;
 
-import org.switchyard.component.rules.common.RulesAuditType;
+import org.switchyard.component.common.rules.audit.AuditType;
 import org.switchyard.config.model.Model;
 
 /**
@@ -26,12 +26,12 @@ import org.switchyard.config.model.Model;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface RulesAuditModel extends Model {
+public interface AuditModel extends Model {
 
     /**
-     * The rulesAudit XML element.
+     * The audit XML element.
      */
-    public static final String RULES_AUDIT = "rulesAudit";
+    public static final String AUDIT = "audit";
 
     /**
      * Gets the interval of the audit.
@@ -42,9 +42,9 @@ public interface RulesAuditModel extends Model {
     /**
      * Sets the interval of the audit.
      * @param interval the interval of the audit
-     * @return this RulesAuditModel (useful for chaining)
+     * @return this AuditModel (useful for chaining)
      */
-    public RulesAuditModel setInterval(Integer interval);
+    public AuditModel setInterval(Integer interval);
 
     /**
      * Gets the log of the audit.
@@ -55,21 +55,21 @@ public interface RulesAuditModel extends Model {
     /**
      * Sets the log of the audit.
      * @param log the log of the audit
-     * @return this RulesAuditModel (useful for chaining)
+     * @return this AuditModel (useful for chaining)
      */
-    public RulesAuditModel setLog(String log);
+    public AuditModel setLog(String log);
  
     /**
      * Gets the type of the audit.
      * @return the type of the audit
      */
-    public RulesAuditType getType();
+    public AuditType getType();
  
     /**
      * Sets the type of the audit.
      * @param type the type of the audit
-     * @return this RulesAuditModel (useful for chaining)
+     * @return this AuditModel (useful for chaining)
      */
-    public RulesAuditModel setType(RulesAuditType type);
+    public AuditModel setType(AuditType type);
 
 }

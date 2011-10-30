@@ -39,7 +39,7 @@ public class V1ProcessActionModel extends BaseModel implements ProcessActionMode
      * Creates a new ProcessActionModel in the default namespace.
      */
     public V1ProcessActionModel() {
-        super(new QName(DEFAULT_NAMESPACE, PROCESS_ACTION));
+        super(new QName(DEFAULT_NAMESPACE, ACTION));
     }
 
     /**

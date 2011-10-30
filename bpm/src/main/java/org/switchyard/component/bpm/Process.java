@@ -59,6 +59,11 @@ public @interface Process {
     public String id() default UNDEFINED_PROCESS_ID;
 
     /**
+     * Specified agent flag.
+     */
+    public boolean agent() default false;
+
+    /**
      * Specified message content in name.
      */
     public String messageContentInName() default UNDEFINED_MESSAGE_CONTENT_NAME;

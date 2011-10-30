@@ -31,9 +31,10 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.drools.KnowledgeBase;
+import org.drools.agent.KnowledgeAgent;
 import org.drools.builder.KnowledgeBuilder;
 import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.io.ResourceFactory;
+import org.drools.logger.KnowledgeRuntimeLogger;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.process.ProcessInstance;
 import org.drools.runtime.process.WorkItemManager;
@@ -49,6 +50,8 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.io.resource.Resource;
 import org.switchyard.common.io.resource.ResourceType;
+import org.switchyard.common.io.resource.SimpleResource;
+import org.switchyard.common.type.Classes;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.component.bpm.common.ProcessActionType;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
@@ -57,11 +60,15 @@ import org.switchyard.component.bpm.config.model.TaskHandlerModel;
 import org.switchyard.component.bpm.exchange.BaseBPMExchangeHandler;
 import org.switchyard.component.bpm.task.TaskHandler;
 import org.switchyard.component.bpm.task.drools.DroolsWorkItemHandler;
+import org.switchyard.component.common.rules.config.model.AuditModel;
+import org.switchyard.component.common.rules.util.drools.Agents;
+import org.switchyard.component.common.rules.util.drools.Audits;
+import org.switchyard.component.common.rules.util.drools.Resources;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.metadata.ServiceOperation;
 
 /**
- * A Drools implmentation of a BPM ExchangeHandler.
+ * A Drools implementation of a BPM ExchangeHandler.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
@@ -71,10 +78,13 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
     private String _processId;
     private String _messageContentInName;
     private String _messageContentOutName;
+    private KnowledgeAgent _kagent;
+    private AuditModel _audit;
     private List<TaskHandler> _taskHandlers = new ArrayList<TaskHandler>();
     private Map<String,ProcessActionModel> _actions = new HashMap<String,ProcessActionModel>();
     private KnowledgeBase _kbase;
     private StatefulKnowledgeSession _ksession;
+    private KnowledgeRuntimeLogger _klogger;
 
     /**
      * Constructs a new DroolsBPMExchangeHandler within the specified ServiceDomain.
@@ -112,26 +122,34 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
             tih.setServiceDomain(_serviceDomain);
             _taskHandlers.add(tih);
         }
-        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-        addResource(model.getProcessDefinition(), kbuilder);
-        for (Resource resource : model.getResources()) {
-            addResource(resource, kbuilder);
+        ClassLoader loader = Classes.getClassLoader(getClass());
+        ResourceType.install(loader);
+        List<Resource> resources = new ArrayList<Resource>();
+        resources.addAll(model.getResources());
+        Resource procDef = model.getProcessDefinition();
+        if (procDef.getType() == null) {
+            procDef = new SimpleResource(procDef.getLocation(), "BPMN2");
         }
-        _kbase = kbuilder.newKnowledgeBase();
+        resources.add(procDef);
+        if (model.isAgent()) {
+            String agentName;
+            try {
+                agentName = model.getComponent().getComposite().getName();
+            } catch (NullPointerException npe) {
+                agentName = null;
+            }
+            _kagent = Agents.newKnowledgeAgent(agentName, resources, loader);
+            _kbase = _kagent.getKnowledgeBase();
+        } else {
+            KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
+            for (Resource resource : resources) {
+                Resources.add(resource, kbuilder, loader);
+            }
+            _kbase = kbuilder.newKnowledgeBase();
+        }
+        _audit = model.getAudit();
         for (ProcessActionModel pam : model.getProcessActions()) {
             _actions.put(pam.getName(), pam);
-        }
-    }
-
-    private void addResource(Resource resource, KnowledgeBuilder kbuilder) {
-        if (resource != null) {
-            org.drools.io.Resource kres = ResourceFactory.newUrlResource(resource.getLocationURL(getClass()));
-            ResourceType resourceType = resource.getType();
-            if (resourceType == null) {
-                resourceType = ResourceType.valueOf("BPMN2");
-            }
-            org.drools.builder.ResourceType kresType = org.drools.builder.ResourceType.getResourceType(resourceType.getName());
-            kbuilder.add(kres, kresType);
         }
     }
 
@@ -141,6 +159,7 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
     @Override
     public void start(ServiceReference serviceRef) {
         _ksession = _kbase.newStatefulKnowledgeSession();
+        _klogger = Audits.getLogger(_audit, _ksession);
         WorkItemManager wim = _ksession.getWorkItemManager();
         for (TaskHandler th : _taskHandlers) {
             wim.registerWorkItemHandler(th.getName(), new DroolsWorkItemHandler(_ksession, th));
@@ -230,6 +249,13 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
                     _ksession.dispose();
                 } finally {
                     _ksession = null;
+                    if (_klogger != null) {
+                        try {
+                            _klogger.close();
+                        } finally {
+                            _klogger = null;
+                        }
+                    }
                 }
             }
         }
@@ -245,6 +271,13 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
         _actions.clear();
         _messageContentInName = null;
         _processId = null;
+        if (_kagent != null) {
+            try {
+                _kagent.dispose();
+            } finally {
+                _kagent = null;
+            }
+        }
     }
 
 }

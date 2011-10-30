@@ -32,43 +32,13 @@
     </build>
 
     <dependencies>
+        <!-- internal dependencies -->
         <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-config</artifactId>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-common-rules</artifactId>
+            <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>knowledge-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-compiler</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-persistence-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr-runtime</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jdt.core.compiler</groupId>
-            <artifactId>ecj</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mvel</groupId>
-            <artifactId>mvel2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-test</artifactId>
-            <scope>test</scope>
-        </dependency>
+        <!-- external dependencies -->
     </dependencies>
 
 </project>

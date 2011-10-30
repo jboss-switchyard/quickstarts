@@ -46,6 +46,11 @@ public @interface Rules {
     public boolean stateful() default false;
 
     /**
+     * Specified agent flag.
+     */
+    public boolean agent() default false;
+
+    /**
      * Additional resources the rules require.
      */
     public String[] resources() default UNDEFINED_RESOURCE;

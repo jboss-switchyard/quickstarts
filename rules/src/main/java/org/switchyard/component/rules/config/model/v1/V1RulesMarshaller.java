@@ -18,15 +18,18 @@
  */
 package org.switchyard.component.rules.config.model.v1;
 
-import static org.switchyard.component.rules.config.model.RulesActionModel.RULES_ACTION;
-import static org.switchyard.component.rules.config.model.RulesAuditModel.RULES_AUDIT;
+import static org.switchyard.component.common.rules.config.model.AuditModel.AUDIT;
+import static org.switchyard.component.rules.config.model.RulesActionModel.ACTION;
+import static org.switchyard.config.model.resource.ResourceModel.RESOURCE;
 
+import org.switchyard.component.common.rules.config.model.v1.V1AuditModel;
 import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.v1.V1CompositeMarshaller;
+import org.switchyard.config.model.resource.v1.V1ResourceModel;
 
 /**
  * A CompositeMarshaller which can also create RulesComponentImplementationModels.
@@ -61,10 +64,12 @@ public class V1RulesMarshaller extends V1CompositeMarshaller {
         String name = config.getName();
         if (IMPLEMENTATION_RULES.equals(name)) {
             return new V1RulesComponentImplementationModel(config, getDescriptor());
-        } else if (RULES_ACTION.equals(name)) {
+        } else if (ACTION.equals(name)) {
             return new V1RulesActionModel(config, getDescriptor());
-        } else if (RULES_AUDIT.equals(name)) {
-            return new V1RulesAuditModel(config, getDescriptor());
+        } else if (AUDIT.equals(name)) {
+            return new V1AuditModel(config, getDescriptor());
+        } else if (RESOURCE.equals(name)) {
+            return new V1ResourceModel(config, getDescriptor());
         }
         return super.read(config);
     }

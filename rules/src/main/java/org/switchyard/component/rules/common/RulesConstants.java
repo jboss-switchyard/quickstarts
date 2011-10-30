@@ -32,10 +32,10 @@ public final class RulesConstants {
      */
     public static final String RULES_NAMESPACE = "urn:switchyard-component-rules:rules:1.0";
 
-    /** rulesActionType . */
-    public static final String RULES_ACTION_TYPE = "rulesActionType";
-    /** {urn:switchyard-component-rules:rules:1.0}rulesActionType . */
-    public static final String RULES_ACTION_TYPE_VAR = new QName(RULES_NAMESPACE, RULES_ACTION_TYPE).toString();
+    /** actionType . */
+    public static final String ACTION_TYPE = "actionType";
+    /** {urn:switchyard-component-rules:rules:1.0}actionType . */
+    public static final String ACTION_TYPE_VAR = new QName(RULES_NAMESPACE, ACTION_TYPE).toString();
 
     /** continue . */
     public static final String CONTINUE = "continue";

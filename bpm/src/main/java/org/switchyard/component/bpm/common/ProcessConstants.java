@@ -32,10 +32,10 @@ public final class ProcessConstants {
      */
     public static final String PROCESS_NAMESPACE = "urn:switchyard-component-bpm:process:1.0";
 
-    /** processActionType . */
-    public static final String PROCESS_ACTION_TYPE = "processActionType";
-    /** {urn:switchyard-component-bpm:process:1.0}processActionType . */
-    public static final String PROCESS_ACTION_TYPE_VAR = new QName(PROCESS_NAMESPACE, PROCESS_ACTION_TYPE).toString();
+    /** actionType . */
+    public static final String ACTION_TYPE = "actionType";
+    /** {urn:switchyard-component-bpm:process:1.0}actionType . */
+    public static final String ACTION_TYPE_VAR = new QName(PROCESS_NAMESPACE, ACTION_TYPE).toString();
     /** startProcess . */
     public static final String START_PROCESS = "startProcess";
     /** signalEvent . */

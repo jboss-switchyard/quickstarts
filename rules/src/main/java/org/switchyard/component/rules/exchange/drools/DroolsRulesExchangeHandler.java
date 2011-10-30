@@ -27,12 +27,10 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.drools.KnowledgeBase;
+import org.drools.agent.KnowledgeAgent;
 import org.drools.builder.KnowledgeBuilder;
 import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.event.KnowledgeRuntimeEventManager;
-import org.drools.io.ResourceFactory;
 import org.drools.logger.KnowledgeRuntimeLogger;
-import org.drools.logger.KnowledgeRuntimeLoggerFactory;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.StatelessKnowledgeSession;
 import org.switchyard.Context;
@@ -44,24 +42,29 @@ import org.switchyard.Message;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.io.resource.Resource;
 import org.switchyard.common.io.resource.ResourceType;
+import org.switchyard.common.type.Classes;
+import org.switchyard.component.common.rules.config.model.AuditModel;
+import org.switchyard.component.common.rules.util.drools.Agents;
+import org.switchyard.component.common.rules.util.drools.Audits;
+import org.switchyard.component.common.rules.util.drools.Resources;
 import org.switchyard.component.rules.common.RulesActionType;
-import org.switchyard.component.rules.common.RulesAuditType;
 import org.switchyard.component.rules.config.model.RulesActionModel;
-import org.switchyard.component.rules.config.model.RulesAuditModel;
 import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
 import org.switchyard.component.rules.exchange.BaseRulesExchangeHandler;
 import org.switchyard.metadata.ServiceOperation;
 
 /**
- * A Drools implmentation of a Rules ExchangeHandler.
+ * A Drools implementation of a Rules ExchangeHandler.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
 
+    private final Object _statefulLock = new Object();
     private boolean _stateful;
     private String _messageContentName;
-    private RulesAuditModel _rulesAudit;
+    private KnowledgeAgent _kagent;
+    private AuditModel _audit;
     private Map<String,RulesActionModel> _actions = new HashMap<String,RulesActionModel>();
     private KnowledgeBase _kbase;
     private StatefulKnowledgeSession _ksession;
@@ -82,25 +85,27 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
         if (_messageContentName == null) {
             _messageContentName = MESSAGE_CONTENT;
         }
-        _rulesAudit = model.getRulesAudit();
-        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-        for (Resource resource : model.getResources()) {
-            addResource(resource, kbuilder);
+        ClassLoader loader = Classes.getClassLoader(getClass());
+        ResourceType.install(loader);
+        if (model.isAgent()) {
+            String agentName;
+            try {
+                agentName = model.getComponent().getComposite().getName();
+            } catch (NullPointerException npe) {
+                agentName = null;
+            }
+            _kagent = Agents.newKnowledgeAgent(agentName, model.getResources(), loader);
+            _kbase = _kagent.getKnowledgeBase();
+        } else {
+            KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
+            for (Resource resource : model.getResources()) {
+                Resources.add(resource, kbuilder, loader);
+            }
+            _kbase = kbuilder.newKnowledgeBase();
         }
-        _kbase = kbuilder.newKnowledgeBase();
+        _audit = model.getAudit();
         for (RulesActionModel ram : model.getRulesActions()) {
             _actions.put(ram.getName(), ram);
-        }
-    }
-
-    private void addResource(Resource resource, KnowledgeBuilder kbuilder) {
-        if (resource != null) {
-            ResourceType resourceType = resource.getType();
-            if (resourceType != null) {
-                org.drools.io.Resource kres = ResourceFactory.newUrlResource(resource.getLocationURL(getClass()));
-                org.drools.builder.ResourceType kresType = org.drools.builder.ResourceType.getResourceType(resourceType.getName());
-                kbuilder.add(kres, kresType);
-            }
         }
     }
 
@@ -129,23 +134,30 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
         switch (rulesActionType) {
             case EXECUTE_RULES:
                 if (_stateful) {
-                    if (!isContinue(context)) {
-                        disposeStateful();
-                    }
-                    StatefulKnowledgeSession ksession = ensureStateful();
-                    ksession.getGlobals().set(MESSAGE, message);
-                    //ksession.getGlobals().set(MESSAGE_CONTENT, content);
-                    ksession.insert(content);
-                    ksession.fireAllRules();
-                    message = (Message)ksession.getGlobals().get(MESSAGE);
-                    //content = ksession.getGlobals().get(MESSAGE_CONTENT);
-                    content = message.getContent();
-                    if (isDispose(context)) {
-                        disposeStateful();
+                    synchronized (_statefulLock) {
+                        if (!isContinue(context)) {
+                            disposeStateful();
+                        }
+                        StatefulKnowledgeSession ksession = ensureStateful();
+                        ksession.getGlobals().set(MESSAGE, message);
+                        //ksession.getGlobals().set(MESSAGE_CONTENT, content);
+                        ksession.insert(content);
+                        ksession.fireAllRules();
+                        message = (Message)ksession.getGlobals().get(MESSAGE);
+                        //content = ksession.getGlobals().get(MESSAGE_CONTENT);
+                        content = message.getContent();
+                        if (isDispose(context)) {
+                            disposeStateful();
+                        }
                     }
                 } else {
-                    StatelessKnowledgeSession ksession = _kbase.newStatelessKnowledgeSession();
-                    KnowledgeRuntimeLogger klogger = getLogger(ksession);
+                    StatelessKnowledgeSession ksession;
+                    if (_kagent != null) {
+                        ksession = _kagent.newStatelessKnowledgeSession();
+                    } else {
+                        ksession = _kbase.newStatelessKnowledgeSession();
+                    }
+                    KnowledgeRuntimeLogger klogger = Audits.getLogger(_audit, ksession);
                     try {
                         ksession.getGlobals().set(MESSAGE, message);
                         //ksession.getGlobals().set(MESSAGE_CONTENT, content);
@@ -186,15 +198,22 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
     public void destroy(ServiceReference serviceRef) {
         _kbase = null;
         _actions.clear();
-        _rulesAudit = null;
+        _audit = null;
         _messageContentName = null;
         _stateful = false;
+        if (_kagent != null) {
+            try {
+                _kagent.dispose();
+            } finally {
+                _kagent = null;
+            }
+        }
     }
 
     private StatefulKnowledgeSession ensureStateful() {
         if (_ksession == null) {
             _ksession = _kbase.newStatefulKnowledgeSession();
-            _klogger = getLogger(_ksession);
+            _klogger = Audits.getLogger(_audit, _ksession);
         }
         return _ksession;
     }
@@ -208,38 +227,16 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
                     _ksession.dispose();
                 } finally {
                     _ksession = null;
-                    try {
-                        _klogger.close();
-                    } finally {
-                        _klogger = null;
+                    if (_klogger != null) {
+                        try {
+                            _klogger.close();
+                        } finally {
+                            _klogger = null;
+                        }
                     }
                 }
             }
         }
-    }
-
-    private KnowledgeRuntimeLogger getLogger(KnowledgeRuntimeEventManager ksession) {
-        if (_rulesAudit != null) {
-            RulesAuditType type = _rulesAudit.getType();
-            if (type == null) {
-                type = RulesAuditType.THREADED_FILE;
-            }
-            String log = _rulesAudit.getLog();
-            String fileName = log != null ? log : "event";
-            Integer interval = _rulesAudit.getInterval();
-            if (interval == null) {
-                interval = Integer.valueOf(1000);
-            }
-            switch (type) {
-                case CONSOLE:
-                    return KnowledgeRuntimeLoggerFactory.newConsoleLogger(ksession);
-                case FILE:
-                    return KnowledgeRuntimeLoggerFactory.newFileLogger(ksession, fileName);
-                case THREADED_FILE:
-                    return KnowledgeRuntimeLoggerFactory.newThreadedFileLogger(ksession, fileName, interval.intValue());
-            }
-        }
-        return null;
     }
 
 }

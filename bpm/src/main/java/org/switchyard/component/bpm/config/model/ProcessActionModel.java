@@ -29,9 +29,9 @@ import org.switchyard.config.model.Model;
 public interface ProcessActionModel extends Model {
 
     /**
-     * The processAction XML element.
+     * The action XML element.
      */
-    public static final String PROCESS_ACTION = "processAction";
+    public static final String ACTION = "action";
 
     /**
      * Gets the name of the action.
