@@ -33,5 +33,6 @@
         <module name="org.apache.commons.logging"/>
         <module name="javax.jms.api"/>
         <module name="org.springframework"/>
+        <module name="org.slf4j"/>
     </dependencies>
 </module>

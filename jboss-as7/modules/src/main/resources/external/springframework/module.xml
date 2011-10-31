@@ -35,5 +35,6 @@
     <dependencies>
         <module name="org.apache.commons.logging"/>
         <module name="javax.jms.api"/>
+        <module name="javax.api"/>
     </dependencies>
 </module>
