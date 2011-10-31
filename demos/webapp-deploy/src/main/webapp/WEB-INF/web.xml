@@ -24,6 +24,8 @@
 
     <listener>
         <listener-class>org.jboss.weld.environment.servlet.Listener</listener-class>
+    </listener>
+    <listener>
         <listener-class>org.switchyard.deployment.WebApplicationDeployer</listener-class>
     </listener>
 

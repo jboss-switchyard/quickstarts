@@ -3,14 +3,9 @@
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="helpdesk" targetNamespace="urn:switchyard-quickstart-demo:helpdesk:0.1.0">
         <service name="HelpDeskService" promote="HelpDeskService">
             <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
+                <contextMapper includeNamespaces="urn:switchyard-component-bpm:process:1.0" xmlns="urn:switchyard-config:switchyard:1.0"/>
                 <wsdl>META-INF/HelpDeskService.wsdl</wsdl>
                 <socketAddr>:18001</socketAddr>
-                <composer
-                    mappedVariableNamespace="urn:switchyard-component-bpm:process:1.0"
-                    mappedVariableNames="processActionType,processInstanceId"/>
-                <decomposer
-                    mappedVariableNamespace="urn:switchyard-component-bpm:process:1.0"
-                    mappedVariableNames="processInstanceId"/>
             </binding.soap>
         </service>
     </composite>
