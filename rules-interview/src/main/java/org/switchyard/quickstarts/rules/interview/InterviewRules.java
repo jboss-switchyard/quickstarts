@@ -18,7 +18,7 @@
  */
 package org.switchyard.quickstarts.rules.interview;
 
-import org.switchyard.component.rules.ExecuteRules;
+import org.switchyard.component.rules.Execute;
 import org.switchyard.component.rules.Rules;
 
 /**
@@ -28,7 +28,7 @@ import org.switchyard.component.rules.Rules;
 public interface InterviewRules extends Interview {
 
     @Override
-    @ExecuteRules
+    @Execute
     public void verify(Applicant applicant);
 
 }
