@@ -49,8 +49,8 @@ import org.switchyard.tools.forge.plugin.TemplateResource;
 public class BeanServicePlugin implements Plugin {
     
     // Template files used for bean services
-    private static final String BEAN_INTERFACE_TEMPLATE = "java/BeanInterfaceTemplate.java";
-    private static final String BEAN_IMPLEMENTATION_TEMPLATE = "java/BeanImplementationTemplate.java";
+    private static final String BEAN_INTERFACE_TEMPLATE = "/org/switchyard/tools/forge/bean/BeanInterfaceTemplate.java";
+    private static final String BEAN_IMPLEMENTATION_TEMPLATE = "/org/switchyard/tools/forge/bean/BeanImplementationTemplate.java";
     
     @Inject
     private Project _project;
