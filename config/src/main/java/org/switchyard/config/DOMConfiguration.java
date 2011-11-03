@@ -606,6 +606,7 @@ public class DOMConfiguration extends BaseConfiguration {
         }
         return this;
     }
+
     /**
      * {@inheritDoc}
      */
@@ -624,6 +625,7 @@ public class DOMConfiguration extends BaseConfiguration {
         _element.setUserData(CHILDREN_ORDER_KEY, co, null);
         return this;
     }
+
     /**
      * {@inheritDoc}
      */

@@ -155,6 +155,11 @@ public abstract class BaseConfiguration implements Configuration {
                 addChild(config_remainder);
             }
         }
+        if (recursive) {
+            for (Configuration child_config : getChildren()) {
+                child_config.orderChildren(recursive);
+            }
+        }
         return this;
     }
 

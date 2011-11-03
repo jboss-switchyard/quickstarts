@@ -42,7 +42,15 @@ public class V1ResourceModel extends BaseModel implements ResourceModel {
      * Creates a new ResourceModel in the default namespace.
      */
     public V1ResourceModel() {
-        super(new QName(DEFAULT_NAMESPACE, RESOURCE));
+        this(DEFAULT_NAMESPACE);
+    }
+
+    /**
+     * Creates a new ResourceModel in the specified namespace.
+     * @param namespace the specified namespace
+     */
+    public V1ResourceModel(String namespace) {
+        super(new QName(namespace, RESOURCE));
     }
 
     /**

@@ -140,9 +140,9 @@ public final class Descriptor {
             String prop_value = props.getProperty(prop_name);
             if (prop_value != null) {
                 _all_properties_map.put(prop_name, prop_value);
-                StringTokenizer tokenizer = new StringTokenizer(prop_name, ".");
-                String prop_prefix = tokenizer.nextToken().trim();
-                String prop_suffix = tokenizer.nextToken().trim();
+                int pos = prop_name.lastIndexOf('.');
+                String prop_prefix = prop_name.substring(0, pos).trim();
+                String prop_suffix = prop_name.substring(pos+1, prop_name.length()).trim();
                 Map<String,String> config = _prefix_config_map.get(prop_prefix);
                 if (config == null) {
                     config = new HashMap<String,String>();
