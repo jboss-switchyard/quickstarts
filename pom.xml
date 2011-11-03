@@ -46,19 +46,20 @@
 
     <modules>
         <module>bean-service</module>
-        <module>camel-service</module>
+        <module>bpel-service</module>
+        <module>bpm-service</module>
         <module>camel-binding</module>
         <module>camel-jms-binding</module>
-        <module>bpm-service</module>
-        <module>bpel-service</module>
+        <module>camel-service</module>
         <module>hornetq-binding</module>
+        <module>rules-interview</module>
+        <module>rules-interview-agent</module>
         <module>transform-jaxb</module>
         <module>transform-json</module>
         <module>transform-smooks</module>
         <module>transform-xslt</module>
-        <module>rules-interview</module>
-        <module>demos/orders</module>
         <module>demos/helpdesk</module>
+        <module>demos/orders</module>
         <module>demos/webapp-deploy</module>
     </modules>
 
