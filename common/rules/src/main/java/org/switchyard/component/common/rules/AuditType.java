@@ -16,51 +16,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.rules;
-
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+package org.switchyard.component.common.rules;
 
 /**
- * Rules annotation.
+ * Represents available audit types.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-@Target(TYPE)
-@Retention(RUNTIME)
-@Documented
-public @interface Rules {
+public enum AuditType {
 
-    /**
-     * Specified rules interface.
-     */
-    public Class<?> value() default UndefinedRulesInterface.class;
-
-    /**
-     * Specified agent flag.
-     */
-    public boolean agent() default false;
-
-    /**
-     * Specified message content name.
-     */
-    public String messageContentName() default "";
-
-    /**
-     * CEP Channels for the rules.
-     */
-    public Channel[] channels() default {};
-
-    /**
-     * Additional resources the rules require.
-     */
-    public String[] resources() default "";
-
-    /** An undefined rules interface. */
-    public static interface UndefinedRulesInterface {};
+    /** The console audit logger. */
+    CONSOLE,
+    /** The file audit logger. */
+    FILE,
+    /** The threaded file audit logger. */
+    THREADED_FILE;
 
 }

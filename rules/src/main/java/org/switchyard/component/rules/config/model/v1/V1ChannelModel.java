@@ -16,36 +16,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.common.rules.config.model.v1;
+package org.switchyard.component.rules.config.model.v1;
+
+import javax.xml.namespace.QName;
 
 import org.switchyard.common.xml.XMLHelper;
-import org.switchyard.component.common.rules.AuditType;
-import org.switchyard.component.common.rules.config.model.AuditModel;
+import org.switchyard.component.rules.config.model.ChannelModel;
+import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
 import org.switchyard.config.Configuration;
-import org.switchyard.config.model.BaseModel;
+import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
 
 /**
- * The 1st version AuditModel.
+ * The 1st version ChannelModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1AuditModel extends BaseModel implements AuditModel {
+public class V1ChannelModel extends BaseNamedModel implements ChannelModel {
 
     /**
-     * Creates a new AuditModel in the specified namespace.
-     * @param namespace the namespace
+     * Creates a new V1ChannelModel.
      */
-    public V1AuditModel(String namespace) {
-        super(XMLHelper.createQName(namespace, AUDIT));
+    public V1ChannelModel() {
+        super(XMLHelper.createQName(RulesComponentImplementationModel.DEFAULT_NAMESPACE, CHANNEL));
     }
 
     /**
-     * Creates a new AuditModel with the specified configuration and descriptor.
+     * Creates a new V1ChannelModel.
      * @param config the configuration
      * @param desc the descriptor
      */
-    public V1AuditModel(Configuration config, Descriptor desc) {
+    public V1ChannelModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
@@ -53,17 +54,16 @@ public class V1AuditModel extends BaseModel implements AuditModel {
      * {@inheritDoc}
      */
     @Override
-    public Integer getInterval() {
-        String interval = getModelAttribute("interval");
-        return interval != null ? Integer.valueOf(interval) : null;
+    public String getClazz() {
+        return getModelAttribute("class");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public AuditModel setInterval(Integer interval) {
-        setModelAttribute("interval", interval != null ? interval.toString() : null);
+    public ChannelModel setClazz(String clazz) {
+        setModelAttribute("class", clazz);
         return this;
     }
 
@@ -71,16 +71,17 @@ public class V1AuditModel extends BaseModel implements AuditModel {
      * {@inheritDoc}
      */
     @Override
-    public String getLog() {
-        return getModelAttribute("log");
+    public QName getInput() {
+        String input = getModelAttribute("input");
+        return input != null ? XMLHelper.createQName(input) : null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public AuditModel setLog(String log) {
-        setModelAttribute("log", log);
+    public ChannelModel setInput(QName input) {
+        setModelAttribute("input", input != null ? input.toString() : null);
         return this;
     }
 
@@ -88,18 +89,33 @@ public class V1AuditModel extends BaseModel implements AuditModel {
      * {@inheritDoc}
      */
     @Override
-    public AuditType getType() {
-        String rat = getModelAttribute("type");
-        return rat != null ? AuditType.valueOf(rat) : null;
+    public String getOperation() {
+        return getModelAttribute("operation");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public AuditModel setType(AuditType type) {
-        String rat = type != null ? type.name() : null;
-        setModelAttribute("type", rat);
+    public ChannelModel setOperation(String operation) {
+        setModelAttribute("operation", operation);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getReference() {
+        return getModelAttribute("reference");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ChannelModel setReference(String reference) {
+        setModelAttribute("reference", reference);
         return this;
     }
 

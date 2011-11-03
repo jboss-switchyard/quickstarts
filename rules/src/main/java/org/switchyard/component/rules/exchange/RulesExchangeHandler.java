@@ -18,6 +18,8 @@
  */
 package org.switchyard.component.rules.exchange;
 
+import java.util.Map;
+
 import javax.xml.namespace.QName;
 
 import org.switchyard.ExchangeHandler;
@@ -35,8 +37,9 @@ public interface RulesExchangeHandler extends ExchangeHandler {
      * Initializes the RulesExchangeHandler.
      * @param qname the qualified name
      * @param model the configuration
+     * @param references the service references
      */
-    public void init(QName qname, RulesComponentImplementationModel model);
+    public void init(QName qname, RulesComponentImplementationModel model, Map<QName,ServiceReference> references);
 
     /**
      * Starts the RulesExchangeHandler.

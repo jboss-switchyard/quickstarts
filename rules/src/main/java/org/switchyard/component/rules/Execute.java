@@ -16,20 +16,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.common.rules.audit;
+package org.switchyard.component.rules;
+
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
- * Represents available rules audit types.
+ * Execute annotation.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public enum AuditType {
-
-    /** The console audit logger. */
-    CONSOLE,
-    /** The file audit logger. */
-    FILE,
-    /** The threaded file audit logger. */
-    THREADED_FILE;
-
-}
+@Target(METHOD)
+@Retention(RUNTIME)
+@Documented
+public @interface Execute {}

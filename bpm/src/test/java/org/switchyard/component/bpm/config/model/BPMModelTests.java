@@ -125,7 +125,7 @@ public class BPMModelTests {
             String processId = bci.getProcessId();
             if ("SimpleProcess".equals(processId)) {
                 Assert.assertEquals("META-INF/SimpleProcess.bpmn", bci.getProcessDefinition().getLocation());
-                Assert.assertSame(ResourceType.valueOf("BPMN2"), bci.getProcessDefinition().getType());
+                Assert.assertSame(ResourceType.valueOf("BPMN"), bci.getProcessDefinition().getType());
             } else if ("ComplexProcess".equals(processId)) {
                 Assert.assertEquals("path/to/my.bpmn", bci.getProcessDefinition().getLocation());
                 Assert.assertSame(ResourceType.valueOf("BPMN2"), bci.getProcessDefinition().getType());

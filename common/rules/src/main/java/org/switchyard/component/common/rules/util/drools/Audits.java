@@ -22,7 +22,7 @@ import org.drools.event.KnowledgeRuntimeEventManager;
 import org.drools.logger.KnowledgeRuntimeLogger;
 import org.drools.logger.KnowledgeRuntimeLoggerFactory;
 import org.switchyard.common.lang.Strings;
-import org.switchyard.component.common.rules.audit.AuditType;
+import org.switchyard.component.common.rules.AuditType;
 import org.switchyard.component.common.rules.config.model.AuditModel;
 
 /**

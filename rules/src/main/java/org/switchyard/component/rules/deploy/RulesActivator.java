@@ -31,7 +31,6 @@ import org.switchyard.component.rules.exchange.RulesExchangeHandlerFactory;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.deploy.BaseActivator;
-import org.switchyard.exception.SwitchYardException;
 
 /**
  * Activator for the Rules component.
@@ -41,6 +40,7 @@ import org.switchyard.exception.SwitchYardException;
 public class RulesActivator extends BaseActivator {
 
     private Map<QName,RulesExchangeHandler> _handlers = new HashMap<QName,RulesExchangeHandler>();
+    private Map<QName,ServiceReference> _references = new HashMap<QName,ServiceReference>();
 
     /**
      * Constructs a new Activator of type "rules".
@@ -57,11 +57,11 @@ public class RulesActivator extends BaseActivator {
         if (model instanceof ComponentServiceModel) {
             RulesExchangeHandler handler = RulesExchangeHandlerFactory.instance().newRulesExchangeHandler();
             RulesComponentImplementationModel rciModel = (RulesComponentImplementationModel)((ComponentServiceModel)model).getComponent().getImplementation();
-            handler.init(qname, rciModel);
+            handler.init(qname, rciModel, _references);
             _handlers.put(qname, handler);
             return handler;
         }
-        throw new SwitchYardException("No Rules component implementations found for service " + qname);
+        return null;
     }
 
     /**
@@ -73,6 +73,7 @@ public class RulesActivator extends BaseActivator {
         if (handler != null) {
             handler.start(serviceRef);
         }
+        _references.put(serviceRef.getName(), serviceRef);
     }
 
     /**
@@ -99,6 +100,7 @@ public class RulesActivator extends BaseActivator {
                 _handlers.remove(serviceRef.getName());
             }
         }
+        _references.remove(serviceRef.getName());
     }
 
 }

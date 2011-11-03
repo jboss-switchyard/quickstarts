@@ -86,6 +86,7 @@ public class BPMServicePlugin implements Plugin {
      * @param argInterfaceClass class name of Java service interface
      * @param argProcessFilePath path to the BPMN process definition
      * @param argProcessId business process id
+     * @param argAgent whether to use an agent
      * @throws java.io.IOException error with file resources
      */
     @Command(value = "create", help = "Created a new service backed by a BPM process.")
@@ -106,6 +107,11 @@ public class BPMServicePlugin implements Plugin {
                      name = "processId",
                      description = "The business process id") 
                      final String argProcessId,
+             @Option(required = false,
+                     name = "agent",
+                     description = "Whether you want to use an agent to watch resources for changes (true|false)",
+                     defaultValue = "false")
+             final Boolean argAgent,
              final PipeOut out)
     throws java.io.IOException {
       
@@ -154,8 +160,10 @@ public class BPMServicePlugin implements Plugin {
             out.println("Created process definition [" + processDefinitionPath + "]");
         }
         
+        boolean agent = argAgent != null ? argAgent.booleanValue() : false;
+        
         // Add the SwitchYard config
-        createImplementationConfig(argServiceName, interfaceClass, processId, processDefinitionPath);
+        createImplementationConfig(argServiceName, interfaceClass, processId, processDefinitionPath, agent);
           
         // Notify user of success
         out.println("Process service " + argServiceName + " has been created.");
@@ -164,7 +172,8 @@ public class BPMServicePlugin implements Plugin {
     private void createImplementationConfig(String serviceName,
             String interfaceName,
             String processId,
-            String processDefinition) {
+            String processDefinition,
+            boolean agent) {
         
         SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
         // Create the component service model
@@ -181,6 +190,9 @@ public class BPMServicePlugin implements Plugin {
         V1BPMComponentImplementationModel bpm = new V1BPMComponentImplementationModel();
         bpm.setProcessDefinition(new SimpleResource(processDefinition));
         bpm.setProcessId(processId);
+        if (agent) {
+            bpm.setAgent(true);
+        }
         V1TaskHandlerModel switchyardHandler = new V1TaskHandlerModel();
         switchyardHandler.setName(SWITCHAYRD_TASK_HANDLER);
         switchyardHandler.setClazz(SwitchYardServiceTaskHandler.class);

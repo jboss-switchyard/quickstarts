@@ -16,36 +16,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.rules.config.model.v1;
+package org.switchyard.component.common.rules.config.model.v1;
 
-import static org.switchyard.component.rules.config.model.ChannelModel.CHANNEL;
-import static org.switchyard.component.rules.config.model.RulesActionModel.ACTION;
+import static org.switchyard.component.common.rules.config.model.AuditModel.AUDIT;
+import static org.switchyard.config.model.resource.ResourceModel.RESOURCE;
 
-import org.switchyard.component.common.rules.config.model.v1.V1CommonRulesMarshaller;
-import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
-import org.switchyard.config.model.composite.ComponentImplementationModel;
+import org.switchyard.config.model.composite.v1.V1CompositeMarshaller;
+import org.switchyard.config.model.resource.v1.V1ResourceModel;
 
 /**
- * A CompositeMarshaller which can also create RulesComponentImplementationModels.
+ * A CompositeMarshaller which can also create common rules models.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1RulesMarshaller extends V1CommonRulesMarshaller {
-
-    /**
-     * The complete local name ("implementation.rules").
-     */
-    private static final String IMPLEMENTATION_RULES = ComponentImplementationModel.IMPLEMENTATION + "." + RulesComponentImplementationModel.RULES;
+public class V1CommonRulesMarshaller extends V1CompositeMarshaller {
 
     /**
      * Required constructor called via reflection.
      *
      * @param desc the Descriptor
      */
-    public V1RulesMarshaller(Descriptor desc) {
+    public V1CommonRulesMarshaller(Descriptor desc) {
         super(desc);
     }
 
@@ -59,12 +53,10 @@ public class V1RulesMarshaller extends V1CommonRulesMarshaller {
     @Override
     public Model read(Configuration config) {
         String name = config.getName();
-        if (IMPLEMENTATION_RULES.equals(name)) {
-            return new V1RulesComponentImplementationModel(config, getDescriptor());
-        } else if (ACTION.equals(name)) {
-            return new V1RulesActionModel(config, getDescriptor());
-        } else if (CHANNEL.equals(name)) {
-            return new V1ChannelModel(config, getDescriptor());
+        if (AUDIT.equals(name)) {
+            return new V1AuditModel(config, getDescriptor());
+        } else if (RESOURCE.equals(name)) {
+            return new V1ResourceModel(config, getDescriptor());
         }
         return super.read(config);
     }

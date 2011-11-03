@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.List;
 
+import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.io.resource.SimpleResource;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.type.classpath.IsAnnotationPresentFilter;
@@ -37,7 +38,7 @@ import org.switchyard.component.bpm.config.model.v1.V1ProcessActionModel;
 import org.switchyard.component.bpm.config.model.v1.V1TaskHandlerModel;
 import org.switchyard.component.bpm.task.SwitchYardServiceTaskHandler;
 import org.switchyard.component.bpm.task.TaskHandler;
-import org.switchyard.component.common.rules.audit.Audit;
+import org.switchyard.component.common.rules.Audit;
 import org.switchyard.component.common.rules.config.model.AuditModel;
 import org.switchyard.component.common.rules.config.model.v1.V1AuditModel;
 import org.switchyard.config.model.Scanner;
@@ -69,6 +70,7 @@ public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
     private static final IsAnnotationPresentFilter SIGNAL_EVENT_FILTER = new IsAnnotationPresentFilter(SignalEvent.class);
     private static final IsAnnotationPresentFilter ABORT_PROCESS_INSTANCE_FILTER = new IsAnnotationPresentFilter(AbortProcessInstance.class);
 
+    private static final String UNDEFINED = "";
     private static final String INTERFACE_ERR_MSG = " is a class. @Process only allowed on interfaces.";
     private static final String FILTER_ERR_MSG = " is in error. @StartProcess, @SignalEvent and @AbortProcessInstance cannot co-exist on the same method.";
 
@@ -107,22 +109,29 @@ public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
             compositeModel.addComponent(componentModel);
             BPMComponentImplementationModel bciModel = new V1BPMComponentImplementationModel();
             String processDefinition = process.definition();
-            if (Process.UNDEFINED_PROCESS_DEFINITION.equals(processDefinition)) {
+            if (UNDEFINED.equals(processDefinition)) {
                 processDefinition = "META-INF/" + processName + ".bpmn";
             }
-            bciModel.setProcessDefinition(new SimpleResource(processDefinition, process.definitionType()));
+            SimpleResource procDefRes = new SimpleResource(processDefinition);
+            String procDefResType = process.definitionType();
+            if (!"".equals(procDefResType)) {
+                procDefRes.setType(ResourceType.valueOf(procDefResType));
+            }
+            bciModel.setProcessDefinition(procDefRes);
             String processId = process.id();
-            if (Process.UNDEFINED_PROCESS_ID.equals(processId)) {
+            if (UNDEFINED.equals(processId)) {
                 processId = processName;
             }
             bciModel.setProcessId(processId);
-            bciModel.setAgent(process.agent());
+            if (process.agent()) {
+                bciModel.setAgent(true);
+            }
             String messageContentInName = process.messageContentInName();
-            if (!Process.UNDEFINED_MESSAGE_CONTENT_NAME.equals(messageContentInName)) {
+            if (!UNDEFINED.equals(messageContentInName)) {
                 bciModel.setMessageContentInName(messageContentInName);
             }
             String messageContentOutName = process.messageContentOutName();
-            if (!Process.UNDEFINED_MESSAGE_CONTENT_NAME.equals(messageContentOutName)) {
+            if (!UNDEFINED.equals(messageContentOutName)) {
                 bciModel.setMessageContentOutName(messageContentOutName);
             }
             JavaService javaService = JavaService.fromClass(processInterface);
@@ -160,12 +169,14 @@ public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
             Audit audit = processClass.getAnnotation(Audit.class);
             if (audit != null) {
                 AuditModel aModel = new V1AuditModel(bciModel.getModelConfiguration().getQName().getNamespaceURI());
+                aModel.setType(audit.type());
                 int interval = audit.interval();
                 if (interval != -1) {
                     aModel.setInterval(Integer.valueOf(interval));
                 }
-                aModel.setLog(audit.log());
-                aModel.setType(audit.type());
+                if (!UNDEFINED.equals(audit.log())) {
+                    aModel.setLog(audit.log());
+                }
                 bciModel.setAudit(aModel);
             }
             bciModel.addTaskHandler(new V1TaskHandlerModel().setClazz(SwitchYardServiceTaskHandler.class).setName(SwitchYardServiceTaskHandler.SWITCHYARD_SERVICE));
@@ -177,11 +188,11 @@ public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
                 bciModel.addTaskHandler(new V1TaskHandlerModel().setClazz(taskHandlerClass).setName(taskHandler.getName()));
             }
             for (String location : process.resources()) {
-                if (Process.UNDEFINED_RESOURCE.equals(location)) {
+                if (UNDEFINED.equals(location)) {
                     continue;
                 }
                 // setting the location will trigger deducing and setting the type
-                bciModel.addResource(new V1ResourceModel().setLocation(location));
+                bciModel.addResource(new V1ResourceModel(BPMComponentImplementationModel.DEFAULT_NAMESPACE).setLocation(location));
             }
             componentModel.setImplementation(bciModel);
         }

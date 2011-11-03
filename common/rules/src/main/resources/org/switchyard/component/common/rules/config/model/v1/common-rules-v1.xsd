@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+JBoss, Home of Professional Open Source
+Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+as indicated by the @authors tag. All rights reserved.
+See the copyright.txt in the distribution for a
+full listing of individual contributors.
+
+This copyrighted material is made available to anyone wishing to use,
+modify, copy, or redistribute it subject to the terms and conditions
+of the GNU Lesser General Public License, v. 2.1.
+This program is distributed in the hope that it will be useful, but WITHOUT A
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+You should have received a copy of the GNU Lesser General Public License,
+v.2.1 along with this distribution; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+MA  02110-1301, USA.
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+        xmlns:common.rules="urn:switchyard-component-common-rules:config:1.0"
+        targetNamespace="urn:switchyard-component-common-rules:config:1.0"
+        elementFormDefault="qualified">
+
+    <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
+
+    <element name="implementation.common.rules" type="common.rules:CommonImplementationType" substitutionGroup="sca:implementation" abstract="true"/>
+    <complexType name="CommonImplementationType" abstract="true">
+        <complexContent>
+            <extension base="sca:Implementation">
+                <attribute name="agent" type="boolean" use="optional" default="false"/>
+                <attribute name="clock" type="common.rules:clockType" use="optional" default="REALTIME"/>
+                <attribute name="eventProcessing" type="common.rules:eventProcessingType" use="optional" default="STREAM"/>
+                <attribute name="maxThreads" type="integer" use="optional"/>
+                <attribute name="multithreadEvaluation" type="boolean" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="audit" type="common.rules:AuditType" abstract="true"/>
+    <complexType name="AuditType" abstract="true">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="interval" type="integer" use="optional" default="1000"/>
+                <attribute name="log" type="string" use="optional" default="event"/>
+                <attribute name="type" type="common.rules:auditType" use="optional" default="THREADED_FILE"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <simpleType name="auditType">
+        <restriction base="string">
+            <enumeration value="CONSOLE"/>
+            <enumeration value="FILE"/>
+            <enumeration value="THREADED_FILE"/>
+        </restriction>
+    </simpleType>
+
+     <simpleType name="clockType">
+        <restriction base="string">
+            <enumeration value="REALTIME"/>
+            <enumeration value="PSEUDO"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="eventProcessingType">
+        <restriction base="string">
+            <enumeration value="STREAM"/>
+            <enumeration value="CLOUD"/>
+        </restriction>
+    </simpleType>
+
+</schema>

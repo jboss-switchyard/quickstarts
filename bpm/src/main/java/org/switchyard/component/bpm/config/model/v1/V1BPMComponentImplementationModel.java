@@ -35,9 +35,9 @@ import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel
 import org.switchyard.component.bpm.config.model.ProcessActionModel;
 import org.switchyard.component.bpm.config.model.TaskHandlerModel;
 import org.switchyard.component.common.rules.config.model.AuditModel;
+import org.switchyard.component.common.rules.config.model.v1.V1ComponentImplementationModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.composite.v1.V1ComponentImplementationModel;
 import org.switchyard.config.model.resource.ResourceModel;
 
 /**
@@ -48,9 +48,7 @@ import org.switchyard.config.model.resource.ResourceModel;
 public class V1BPMComponentImplementationModel extends V1ComponentImplementationModel implements BPMComponentImplementationModel {
 
     private List<ProcessActionModel> _processActions = new ArrayList<ProcessActionModel>();
-    private AuditModel _audit;
     private List<TaskHandlerModel> _taskHandlers = new ArrayList<TaskHandlerModel>();
-    private List<ResourceModel> _resources = new ArrayList<ResourceModel>();
 
     /**
      * Default constructor for application use.
@@ -78,12 +76,6 @@ public class V1BPMComponentImplementationModel extends V1ComponentImplementation
             TaskHandlerModel taskHandler = (TaskHandlerModel)readModel(taskHandler_config);
             if (taskHandler != null) {
                 _taskHandlers.add(taskHandler);
-            }
-        }
-        for (Configuration resource_config : config.getChildren(ResourceModel.RESOURCE)) {
-            ResourceModel resource = (ResourceModel)readModel(resource_config);
-            if (resource != null) {
-                _resources.add(resource);
             }
         }
         setModelChildrenOrder(ProcessActionModel.ACTION, AuditModel.AUDIT, TaskHandlerModel.TASK_HANDLER, ResourceModel.RESOURCE);
@@ -127,24 +119,6 @@ public class V1BPMComponentImplementationModel extends V1ComponentImplementation
     @Override
     public BPMComponentImplementationModel setProcessId(String processId) {
         setModelAttribute(PROCESS_ID, processId);
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isAgent() {
-        String agent = getModelAttribute("agent");
-        return agent != null ? Boolean.valueOf(agent) : false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public BPMComponentImplementationModel setAgent(boolean agent) {
-        setModelAttribute("agent", String.valueOf(agent));
         return this;
     }
 
@@ -204,27 +178,6 @@ public class V1BPMComponentImplementationModel extends V1ComponentImplementation
      * {@inheritDoc}
      */
     @Override
-    public AuditModel getAudit() {
-        if (_audit == null) {
-            _audit = (AuditModel)getFirstChildModelStartsWith(AuditModel.AUDIT);
-        }
-        return _audit;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public BPMComponentImplementationModel setAudit(AuditModel audit) {
-        setChildModel(audit);
-        _audit = audit;
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public List<TaskHandlerModel> getTaskHandlers() {
         return Collections.unmodifiableList(_taskHandlers);
     }
@@ -236,24 +189,6 @@ public class V1BPMComponentImplementationModel extends V1ComponentImplementation
     public BPMComponentImplementationModel addTaskHandler(TaskHandlerModel taskHandler) {
         addChildModel(taskHandler);
         _taskHandlers.add(taskHandler);
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<ResourceModel> getResources() {
-        return Collections.unmodifiableList(_resources);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public BPMComponentImplementationModel addResource(ResourceModel resource) {
-        addChildModel(resource);
-        _resources.add(resource);
         return this;
     }
 

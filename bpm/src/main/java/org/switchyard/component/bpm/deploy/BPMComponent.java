@@ -18,6 +18,8 @@
  */
 package org.switchyard.component.bpm.deploy;
 
+import org.switchyard.component.common.rules.util.drools.ResourceChangeService;
+import org.switchyard.config.Configuration;
 import org.switchyard.deploy.BaseComponent;
 
 /**
@@ -31,8 +33,27 @@ public class BPMComponent extends BaseComponent {
      * Default constructor.
      */
     public BPMComponent() {
+        super();
         setName("BPMComponent");
         setActivator(new BPMActivator());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void init(Configuration config) {
+        super.init(config);
+        ResourceChangeService.start(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void destroy() {
+        ResourceChangeService.stop(this);
+        super.destroy();
     }
 
 }

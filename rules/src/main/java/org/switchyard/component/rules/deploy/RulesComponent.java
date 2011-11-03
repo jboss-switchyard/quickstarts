@@ -18,6 +18,8 @@
  */
 package org.switchyard.component.rules.deploy;
 
+import org.switchyard.component.common.rules.util.drools.ResourceChangeService;
+import org.switchyard.config.Configuration;
 import org.switchyard.deploy.BaseComponent;
 
 /**
@@ -31,8 +33,27 @@ public class RulesComponent extends BaseComponent {
      * Default constructor.
      */
     public RulesComponent() {
+        super();
         setName("RulesComponent");
         setActivator(new RulesActivator());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void init(Configuration config) {
+        super.init(config);
+        ResourceChangeService.start(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void destroy() {
+        ResourceChangeService.stop(this);
+        super.destroy();
     }
 
 }

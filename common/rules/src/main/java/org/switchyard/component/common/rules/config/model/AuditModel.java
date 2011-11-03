@@ -18,7 +18,7 @@
  */
 package org.switchyard.component.common.rules.config.model;
 
-import org.switchyard.component.common.rules.audit.AuditType;
+import org.switchyard.component.common.rules.AuditType;
 import org.switchyard.config.model.Model;
 
 /**

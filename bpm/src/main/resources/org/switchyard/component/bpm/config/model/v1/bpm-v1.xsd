@@ -20,27 +20,28 @@ MA  02110-1301, USA.
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
         xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
         xmlns:swyd="urn:switchyard-config:switchyard:1.0"
+        xmlns:common.rules="urn:switchyard-component-common-rules:config:1.0"
         xmlns:bpm="urn:switchyard-component-bpm:config:1.0"
         targetNamespace="urn:switchyard-component-bpm:config:1.0"
         elementFormDefault="qualified">
 
     <import namespace="urn:switchyard-config:switchyard:1.0"/>
+    <import namespace="urn:switchyard-component-common-rules:config:1.0"/>
     <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
 
-    <element name="implementation.bpm" type="bpm:BPMImplementationType" substitutionGroup="sca:implementation"/>
+    <element name="implementation.bpm" type="bpm:BPMImplementationType" substitutionGroup="common.rules:implementation.common.rules"/>
     <complexType name="BPMImplementationType">
         <complexContent>
-            <extension base="sca:Implementation">
+            <extension base="common.rules:CommonImplementationType">
                 <sequence>
                     <element ref="bpm:action" minOccurs="0" maxOccurs="unbounded"/>
                     <element ref="bpm:audit" minOccurs="0" maxOccurs="1"/>
                     <element ref="bpm:taskHandler" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="swyd:resource" minOccurs="0" maxOccurs="unbounded"/>
+                    <element ref="bpm:resource" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
                 <attribute name="processDefinition" type="string" use="required"/>
                 <attribute name="processDefinitionType" type="NCName" use="optional" default="BPMN2"/>
                 <attribute name="processId" type="string" use="required"/>
-                <attribute name="agent" type="boolean" use="optional" default="false"/>
                 <attribute name="messageContentInName" type="string" use="optional"/>
                 <attribute name="messageContentOutName" type="string" use="optional"/>
             </extension>
@@ -51,21 +52,17 @@ MA  02110-1301, USA.
     <complexType name="ActionType">
         <complexContent>
             <extension base="sca:CommonExtensionBase">
-                <attribute name="name" type="string" use="required"/>
-                <attribute name="type" type="NCName" use="required"/>
+                <attribute name="name" type="NCName" use="required"/>
+                <attribute name="type" type="bpm:actionType" use="required"/>
                 <attribute name="eventType" type="string" use="optional"/>
             </extension>
         </complexContent>
     </complexType>
 
-    <element name="audit" type="bpm:AuditType"/>
+    <element name="audit" type="bpm:AuditType" substitutionGroup="common.rules:audit"/>
     <complexType name="AuditType">
         <complexContent>
-            <extension base="sca:CommonExtensionBase">
-                <attribute name="interval" type="integer" use="optional" default="1000"/>
-                <attribute name="log" type="string" use="optional" default="event"/>
-                <attribute name="type" type="NCName" use="optional" default="THREADED_FILE"/>
-            </extension>
+            <extension base="common.rules:AuditType"/>
         </complexContent>
     </complexType>
 
@@ -73,10 +70,25 @@ MA  02110-1301, USA.
     <complexType name="TaskHandlerType">
         <complexContent>
             <extension base="sca:CommonExtensionBase">
-                <attribute name="class" type="NCName" use="required"/>
+                <attribute name="class" type="string" use="required"/>
                 <attribute name="name" type="string" use="optional"/>
             </extension>
         </complexContent>
     </complexType>
+
+    <element name="resource" type="bpm:ResourceType" substitutionGroup="swyd:resource"/>
+    <complexType name="ResourceType">
+        <complexContent>
+            <extension base="swyd:ResourceType"/>
+        </complexContent>
+    </complexType>
+
+    <simpleType name="actionType">
+        <restriction base="string">
+            <enumeration value="START_PROCESS"/>
+            <enumeration value="SIGNAL_EVENT"/>
+            <enumeration value="ABORT_PROCESS_INSTANCE"/>
+        </restriction>
+    </simpleType>
 
 </schema>

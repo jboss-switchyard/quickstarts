@@ -18,7 +18,7 @@
  */
 package org.switchyard.component.rules;
 
-import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
@@ -26,41 +26,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Rules annotation.
+ * FireAllRules annotation.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-@Target(TYPE)
+@Target(METHOD)
 @Retention(RUNTIME)
 @Documented
-public @interface Rules {
-
-    /**
-     * Specified rules interface.
-     */
-    public Class<?> value() default UndefinedRulesInterface.class;
-
-    /**
-     * Specified agent flag.
-     */
-    public boolean agent() default false;
-
-    /**
-     * Specified message content name.
-     */
-    public String messageContentName() default "";
-
-    /**
-     * CEP Channels for the rules.
-     */
-    public Channel[] channels() default {};
-
-    /**
-     * Additional resources the rules require.
-     */
-    public String[] resources() default "";
-
-    /** An undefined rules interface. */
-    public static interface UndefinedRulesInterface {};
-
-}
+public @interface FireAllRules {}

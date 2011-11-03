@@ -16,38 +16,43 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.common.rules.audit;
+package org.switchyard.component.rules.event.drools;
 
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import org.drools.runtime.Channel;
+import org.switchyard.ServiceReference;
+import org.switchyard.component.rules.config.model.ChannelModel;
 
 /**
- * Audit annotation.
+ * A Drools Channel that is configurable via a ChannelModel and ServiceReference.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-@Target(TYPE)
-@Retention(RUNTIME)
-@Documented
-public @interface Audit {
+public interface SwitchYardChannel extends Channel {
 
     /**
-     * Specified interval.
+     * Gets the ChannelModel.
+     * @return the ChannelModel
      */
-    public int interval();
+    public ChannelModel getModel();
 
     /**
-     * Specified log.
+     * Sets the ChannelModel.
+     * @param model the ChannelModel
+     * @return this SwitchYardChannel (useful for chaining)
      */
-    public String log();
+    public SwitchYardChannel setModel(ChannelModel model);
 
     /**
-     * Specified type.
+     * Gets the ServiceReference.
+     * @return the ServiceReference
      */
-    public AuditType type();
+    public ServiceReference getReference();
+
+    /**
+     * Sets the ServiceReference.
+     * @param reference the ServiceReference
+     * @return this SwitchYardChannel (useful for chaining)
+     */
+    public SwitchYardChannel setReference(ServiceReference reference);
 
 }

@@ -19,14 +19,13 @@ MA  02110-1301, USA.
 -->
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0"
             xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-            xmlns:swyd="urn:switchyard-config:switchyard:1.0"
             xmlns:rules="urn:switchyard-component-rules:config:1.0">
     <sca:composite name="Foobar" targetNamespace="urn:rules:test:1.0">
         <sca:component name="FoobarService">
-            <rules:implementation.rules stateful="true">
+            <rules:implementation.rules>
                 <rules:audit interval="2000" log="foobar" type="CONSOLE"/>
-                <swyd:resource location="foo.dsl" type="DSL"/>
-                <swyd:resource location="bar.dslr" type="DSLR"/>
+                <rules:resource location="foo.dsl" type="DSL"/>
+                <rules:resource location="bar.dslr" type="DSLR"/>
             </rules:implementation.rules>
             <sca:service name="FoobarService">
                 <sca:interface.java interface="org.test.FoobarService"/>

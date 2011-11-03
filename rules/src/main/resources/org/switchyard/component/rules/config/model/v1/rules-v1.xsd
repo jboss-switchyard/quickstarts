@@ -20,25 +20,25 @@ MA  02110-1301, USA.
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
         xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
         xmlns:swyd="urn:switchyard-config:switchyard:1.0"
+        xmlns:common.rules="urn:switchyard-component-common-rules:config:1.0"
         xmlns:rules="urn:switchyard-component-rules:config:1.0"
         targetNamespace="urn:switchyard-component-rules:config:1.0"
         elementFormDefault="qualified">
 
     <import namespace="urn:switchyard-config:switchyard:1.0"/>
-
+    <import namespace="urn:switchyard-component-common-rules:config:1.0"/>
     <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
 
-    <element name="implementation.rules" type="rules:RulesImplementationType" substitutionGroup="sca:implementation"/>
+    <element name="implementation.rules" type="rules:RulesImplementationType" substitutionGroup="common.rules:implementation.common.rules"/>
     <complexType name="RulesImplementationType">
         <complexContent>
-            <extension base="sca:Implementation">
+            <extension base="common.rules:CommonImplementationType">
                 <sequence>
                     <element ref="rules:action" minOccurs="0" maxOccurs="unbounded"/>
                     <element ref="rules:audit" minOccurs="0" maxOccurs="1"/>
-                    <element ref="swyd:resource" minOccurs="0" maxOccurs="unbounded"/>
+                    <element ref="rules:channel" minOccurs="0" maxOccurs="unbounded"/>
+                    <element ref="rules:resource" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="stateful" type="boolean" use="optional" default="false"/>
-                <attribute name="agent" type="boolean" use="optional" default="false"/>
                 <attribute name="messageContentName" type="string" use="optional"/>
             </extension>
         </complexContent>
@@ -48,21 +48,45 @@ MA  02110-1301, USA.
     <complexType name="ActionType">
         <complexContent>
             <extension base="sca:CommonExtensionBase">
-                <attribute name="name" type="string" use="required"/>
-                <attribute name="type" type="NCName" use="required"/>
+                <attribute name="name" type="NCName" use="required"/>
+                <attribute name="type" type="rules:actionType" use="required"/>
             </extension>
         </complexContent>
     </complexType>
 
-    <element name="audit" type="rules:AuditType"/>
+    <element name="audit" type="rules:AuditType" substitutionGroup="common.rules:audit"/>
     <complexType name="AuditType">
         <complexContent>
+            <extension base="common.rules:AuditType"/>
+        </complexContent>
+    </complexType>
+
+   <element name="channel" type="rules:ChannelType"/>
+    <complexType name="ChannelType">
+        <complexContent>
             <extension base="sca:CommonExtensionBase">
-                <attribute name="interval" type="integer" use="optional" default="1000"/>
-                <attribute name="log" type="string" use="optional" default="event"/>
-                <attribute name="type" type="NCName" use="optional" default="THREADED_FILE"/>
+                <attribute name="class" type="string" use="required"/>
+                <attribute name="input" type="string" use="optional"/>
+                <attribute name="name" type="NCName" use="optional"/>
+                <attribute name="operation" type="NCName" use="optional"/>
+                <attribute name="reference" type="string" use="optional"/>
             </extension>
         </complexContent>
     </complexType>
+
+    <element name="resource" type="rules:ResourceType" substitutionGroup="swyd:resource"/>
+    <complexType name="ResourceType">
+        <complexContent>
+            <extension base="swyd:ResourceType"/>
+        </complexContent>
+    </complexType>
+
+    <simpleType name="actionType">
+        <restriction base="string">
+            <enumeration value="EXECUTE"/>
+            <enumeration value="FIRE_ALL_RULES"/>
+            <enumeration value="FIRE_UNTIL_HALT"/>
+        </restriction>
+    </simpleType>
 
 </schema>

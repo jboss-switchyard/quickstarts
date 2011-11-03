@@ -36,6 +36,12 @@ public final class RulesConstants {
     public static final String ACTION_TYPE = "actionType";
     /** {urn:switchyard-component-rules:rules:1.0}actionType . */
     public static final String ACTION_TYPE_VAR = new QName(RULES_NAMESPACE, ACTION_TYPE).toString();
+    /** execute . */
+    public static final String EXECUTE = "execute";
+    /** fireAllRules . */
+    public static final String FIRE_ALL_RULES = "fireAllRules";
+    /** fireUntilHalt . */
+    public static final String FIRE_UNTIL_HALT = "fireUntilHalt";
 
     /** continue . */
     public static final String CONTINUE = "continue";
@@ -56,11 +62,6 @@ public final class RulesConstants {
     public static final String MESSAGE_CONTENT_NAME = "messageContentName";
     /** {urn:switchyard-component-rules:rules:1.0}messageContentName . */
     public static final String MESSAGE_CONTENT_NAME_VAR = new QName(RULES_NAMESPACE, MESSAGE_CONTENT_NAME).toString();
-
-    /** executeRules . */
-    public static final String EXECUTE_RULES = "executeRules";
-    /** {urn:switchyard-component-rules:rules:1.0}executeRules . */
-    public static final String EXECUTE_RULES_VAR = new QName(RULES_NAMESPACE, EXECUTE_RULES).toString();
 
     /** message . */
     public static final String MESSAGE = "message";

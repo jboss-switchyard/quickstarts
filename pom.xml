@@ -124,6 +124,11 @@
         <dependencies>
             <dependency>
                 <groupId>org.switchyard.components</groupId>
+                <artifactId>switchyard-component-common-rules</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.components</groupId>
                 <artifactId>switchyard-component-bean</artifactId>
                 <version>${project.version}</version>
             </dependency>

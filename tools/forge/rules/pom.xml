@@ -33,6 +33,7 @@
             <configuration>
               <artifactSet>
                 <includes>
+                  <include>org.switchyard.components:switchyard-component-common-rules</include>
                   <include>org.switchyard.components:switchyard-component-rules</include>
                 </includes>
               </artifactSet>

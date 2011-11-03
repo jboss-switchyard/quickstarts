@@ -22,9 +22,7 @@ package org.switchyard.component.bpm.config.model;
 import java.util.List;
 
 import org.switchyard.common.io.resource.Resource;
-import org.switchyard.component.common.rules.config.model.AuditModel;
-import org.switchyard.config.model.composite.ComponentImplementationModel;
-import org.switchyard.config.model.resource.ResourceModel;
+import org.switchyard.component.common.rules.config.model.ComponentImplementationModel;
 
 /**
  * A "bpm" ComponentImplementationModel.
@@ -74,21 +72,6 @@ public interface BPMComponentImplementationModel extends ComponentImplementation
     public BPMComponentImplementationModel setProcessId(String processId);
 
     /**
-     * Gets the "agent" attribute.
-     *
-     * @return the "agent" attribute
-     */
-    public boolean isAgent();
-
-    /**
-     * Sets the "agent" attribute.
-     *
-     * @param agent the "agent" attribute
-     * @return this instance (useful for chaining)
-     */
-    public BPMComponentImplementationModel setAgent(boolean agent);
-
-    /**
      * Gets the "messageContentInName" attribute.
      *
      * @return the "messageContentInName" attribute
@@ -132,19 +115,6 @@ public interface BPMComponentImplementationModel extends ComponentImplementation
     public BPMComponentImplementationModel addProcessAction(ProcessActionModel processAction);
 
     /**
-     * Gets the "audit" child model.
-     * @return the "audit" child model
-     */
-    public AuditModel getAudit();
-
-    /**
-     * Sets the "audit" child model.
-     * @param audit the "audit" child model
-     * @return this RulesComponentImplementationModel (useful for chaining)
-     */
-    public BPMComponentImplementationModel setAudit(AuditModel audit);
-
-    /**
      * Gets the child task handler models.
      * @return the child task handler models
      */
@@ -156,18 +126,5 @@ public interface BPMComponentImplementationModel extends ComponentImplementation
      * @return this BPMComponentImplementationModel (useful for chaining)
      */
     public BPMComponentImplementationModel addTaskHandler(TaskHandlerModel taskHandler);
-
-    /**
-     * Gets the child resource models.
-     * @return the child resource models
-     */
-    public List<ResourceModel> getResources();
-
-    /**
-     * Adds a child resource model.
-     * @param resource the child resource model
-     * @return this BPMComponentImplementationModel (useful for chaining)
-     */
-    public BPMComponentImplementationModel addResource(ResourceModel resource);
 
 }

@@ -25,11 +25,12 @@ import java.util.Collections;
 import java.util.List;
 
 import org.switchyard.component.common.rules.config.model.AuditModel;
+import org.switchyard.component.common.rules.config.model.v1.V1ComponentImplementationModel;
+import org.switchyard.component.rules.config.model.ChannelModel;
 import org.switchyard.component.rules.config.model.RulesActionModel;
 import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.composite.v1.V1ComponentImplementationModel;
 import org.switchyard.config.model.resource.ResourceModel;
 
 /**
@@ -40,15 +41,14 @@ import org.switchyard.config.model.resource.ResourceModel;
 public class V1RulesComponentImplementationModel extends V1ComponentImplementationModel implements RulesComponentImplementationModel {
 
     private List<RulesActionModel> _rulesActions = new ArrayList<RulesActionModel>();
-    private AuditModel _audit;
-    private List<ResourceModel> _resources = new ArrayList<ResourceModel>();
+    private List<ChannelModel> _channels = new ArrayList<ChannelModel>();
 
     /**
      * Default constructor for application use.
      */
     public V1RulesComponentImplementationModel() {
         super(RULES, DEFAULT_NAMESPACE);
-        setModelChildrenOrder(RulesActionModel.ACTION, AuditModel.AUDIT, ResourceModel.RESOURCE);
+        setModelChildrenOrder(RulesActionModel.ACTION, AuditModel.AUDIT, ChannelModel.CHANNEL, ResourceModel.RESOURCE);
     }
 
     /**
@@ -65,49 +65,13 @@ public class V1RulesComponentImplementationModel extends V1ComponentImplementati
                 _rulesActions.add(rulesAction);
             }
         }
-        for (Configuration resource_config : config.getChildren(ResourceModel.RESOURCE)) {
-            ResourceModel resource = (ResourceModel)readModel(resource_config);
-            if (resource != null) {
-                _resources.add(resource);
+        for (Configuration channel_config : config.getChildren(ChannelModel.CHANNEL)) {
+            ChannelModel channel = (ChannelModel)readModel(channel_config);
+            if (channel != null) {
+                _channels.add(channel);
             }
         }
-        setModelChildrenOrder(RulesActionModel.ACTION, AuditModel.AUDIT, ResourceModel.RESOURCE);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isStateful() {
-        String stateful = getModelAttribute("stateful");
-        return stateful != null ? Boolean.valueOf(stateful) : false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public RulesComponentImplementationModel setStateful(boolean stateful) {
-        setModelAttribute("stateful", String.valueOf(stateful));
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isAgent() {
-        String agent = getModelAttribute("agent");
-        return agent != null ? Boolean.valueOf(agent) : false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public RulesComponentImplementationModel setAgent(boolean agent) {
-        setModelAttribute("agent", String.valueOf(agent));
-        return this;
+        setModelChildrenOrder(RulesActionModel.ACTION, AuditModel.AUDIT, ChannelModel.CHANNEL, ResourceModel.RESOURCE);
     }
 
     /**
@@ -149,38 +113,17 @@ public class V1RulesComponentImplementationModel extends V1ComponentImplementati
      * {@inheritDoc}
      */
     @Override
-    public AuditModel getAudit() {
-        if (_audit == null) {
-            _audit = (AuditModel)getFirstChildModelStartsWith(AuditModel.AUDIT);
-        }
-        return _audit;
+    public List<ChannelModel> getChannels() {
+        return Collections.unmodifiableList(_channels);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public RulesComponentImplementationModel setAudit(AuditModel audit) {
-        setChildModel(audit);
-        _audit = audit;
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<ResourceModel> getResources() {
-        return Collections.unmodifiableList(_resources);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public RulesComponentImplementationModel addResource(ResourceModel resource) {
-        addChildModel(resource);
-        _resources.add(resource);
+    public RulesComponentImplementationModel addChannel(ChannelModel channel) {
+        addChildModel(channel);
+        _channels.add(channel);
         return this;
     }
 

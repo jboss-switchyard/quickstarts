@@ -19,13 +19,12 @@ MA  02110-1301, USA.
 -->
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0"
             xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-            xmlns:swyd="urn:switchyard-config:switchyard:1.0"
             xmlns:bpm="urn:switchyard-component-bpm:config:1.0">
     <sca:composite name="Foobar" targetNamespace="urn:bpm:test:1.0">
         <sca:component name="FoobarService">
             <bpm:implementation.bpm processDefinition="foobar.bpmn" processDefinitionType="BPMN2" processId="foobar">
                 <bpm:taskHandler class="org.switchyard.component.bpm.task.SwitchYardServiceTaskHandler"/>
-                <swyd:resource location="foobar.drl" type="DRL"/>
+                <bpm:resource location="foobar.drl" type="DRL"/>
             </bpm:implementation.bpm>
             <sca:service name="FoobarService">
                 <sca:interface.java interface="org.test.FoobarService"/>

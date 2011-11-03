@@ -21,76 +21,59 @@ package org.switchyard.component.common.rules.util.drools;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import org.drools.ChangeSet;
 import org.drools.KnowledgeBase;
 import org.drools.KnowledgeBaseConfiguration;
 import org.drools.KnowledgeBaseFactory;
-import org.drools.agent.KnowledgeAgent;
-import org.drools.agent.KnowledgeAgentConfiguration;
-import org.drools.agent.KnowledgeAgentFactory;
+import org.drools.builder.KnowledgeBuilder;
 import org.drools.builder.KnowledgeBuilderConfiguration;
+import org.drools.builder.KnowledgeBuilderFactory;
 import org.switchyard.common.io.resource.Resource;
-import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.rules.config.model.ComponentImplementationModel;
 
 /**
- * Drools KnowledgeAgent Utilities.
+ * Drools KnowledgeBase Utilities.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public final class Agents {
-
-    private static AtomicInteger _nameCounter = new AtomicInteger();
+public final class Bases {
 
     /**
-     * Creates a new KnowledgeAgent given the specified component implementation model.
+     * Creates a new KnowledgeBase given the specified component implementation model.
      * @param model the model
-     * @return the agent
+     * @return the base
      */
-    public static KnowledgeAgent newAgent(ComponentImplementationModel model) {
-        return newAgent(model, null);
+    public static KnowledgeBase newBase(ComponentImplementationModel model) {
+        return newBase(model, null);
     }
 
     /**
-     * Creates a new KnowledgeAgent given the specified component implementation model and classloader.
+     * Creates a new KnowledgeBase given the specified component implementation model and classloader.
      * @param model the model
      * @param loader the classloader
      * @param additionalResources any extra resources to add
-     * @return the agent
+     * @return the base
      */
-    public static KnowledgeAgent newAgent(ComponentImplementationModel model, ClassLoader loader, Resource... additionalResources) {
-        String name;
-        try {
-            name = model.getComponent().getComposite().getName();
-        } catch (NullPointerException npe) {
-            name = null;
-        }
-        name = Strings.trimToNull(name);
-        if (name == null) {
-            name = Agents.class.getSimpleName();
-        }
-        name = name + "-" + _nameCounter.incrementAndGet();
+    public static KnowledgeBase newBase(ComponentImplementationModel model, ClassLoader loader, Resource... additionalResources) {
         if (loader == null) {
-            loader = Classes.getClassLoader(Agents.class);
+            loader = Classes.getClassLoader(Bases.class);
         }
         KnowledgeBaseConfiguration kbaseConfig = Configs.getBaseConfiguration(model, loader);
         KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase(kbaseConfig);
-        KnowledgeAgentConfiguration kagentConfig = Configs.getAgentConfiguration();
         KnowledgeBuilderConfiguration kbuilderConfig = Configs.getBuilderConfiguration(loader);
-        KnowledgeAgent kagent = KnowledgeAgentFactory.newKnowledgeAgent(name, kbase, kagentConfig, kbuilderConfig);
+        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(kbase, kbuilderConfig);
         List<Resource> resources = new ArrayList<Resource>();
         resources.addAll(model.getResources());
         if (additionalResources != null) {
             resources.addAll(Arrays.asList(additionalResources));
         }
-        ChangeSet changeSet = ChangeSets.newChangeSet(resources, loader);
-        kagent.applyChangeSet(changeSet);
-        return kagent;
+        for (Resource resource : resources) {
+            Resources.add(resource, kbuilder, loader);
+        }
+        return kbuilder.newKnowledgeBase();
     }
- 
-    private Agents() {}
+
+    private Bases() {}
 
 }

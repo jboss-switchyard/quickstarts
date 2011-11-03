@@ -32,9 +32,9 @@ import javax.xml.namespace.QName;
 
 import org.drools.KnowledgeBase;
 import org.drools.agent.KnowledgeAgent;
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderFactory;
 import org.drools.logger.KnowledgeRuntimeLogger;
+import org.drools.runtime.Environment;
+import org.drools.runtime.KnowledgeSessionConfiguration;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.process.ProcessInstance;
 import org.drools.runtime.process.WorkItemManager;
@@ -63,7 +63,8 @@ import org.switchyard.component.bpm.task.drools.DroolsWorkItemHandler;
 import org.switchyard.component.common.rules.config.model.AuditModel;
 import org.switchyard.component.common.rules.util.drools.Agents;
 import org.switchyard.component.common.rules.util.drools.Audits;
-import org.switchyard.component.common.rules.util.drools.Resources;
+import org.switchyard.component.common.rules.util.drools.Bases;
+import org.switchyard.component.common.rules.util.drools.Configs;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.metadata.ServiceOperation;
 
@@ -83,6 +84,8 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
     private List<TaskHandler> _taskHandlers = new ArrayList<TaskHandler>();
     private Map<String,ProcessActionModel> _actions = new HashMap<String,ProcessActionModel>();
     private KnowledgeBase _kbase;
+    private KnowledgeSessionConfiguration _ksessionConfig;
+    private Environment _environment;
     private StatefulKnowledgeSession _ksession;
     private KnowledgeRuntimeLogger _klogger;
 
@@ -124,29 +127,18 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
         }
         ClassLoader loader = Classes.getClassLoader(getClass());
         ResourceType.install(loader);
-        List<Resource> resources = new ArrayList<Resource>();
-        resources.addAll(model.getResources());
         Resource procDef = model.getProcessDefinition();
         if (procDef.getType() == null) {
             procDef = new SimpleResource(procDef.getLocation(), "BPMN2");
         }
-        resources.add(procDef);
         if (model.isAgent()) {
-            String agentName;
-            try {
-                agentName = model.getComponent().getComposite().getName();
-            } catch (NullPointerException npe) {
-                agentName = null;
-            }
-            _kagent = Agents.newKnowledgeAgent(agentName, resources, loader);
+            _kagent = Agents.newAgent(model, loader, procDef);
             _kbase = _kagent.getKnowledgeBase();
         } else {
-            KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-            for (Resource resource : resources) {
-                Resources.add(resource, kbuilder, loader);
-            }
-            _kbase = kbuilder.newKnowledgeBase();
+            _kbase = Bases.newBase(model, loader, procDef);
         }
+        _ksessionConfig = Configs.getSessionConfiguration(model);
+        _environment = Configs.getEnvironment();
         _audit = model.getAudit();
         for (ProcessActionModel pam : model.getProcessActions()) {
             _actions.put(pam.getName(), pam);
@@ -158,7 +150,7 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
      */
     @Override
     public void start(ServiceReference serviceRef) {
-        _ksession = _kbase.newStatefulKnowledgeSession();
+        _ksession = _kbase.newStatefulKnowledgeSession(_ksessionConfig, _environment);
         _klogger = Audits.getLogger(_audit, _ksession);
         WorkItemManager wim = _ksession.getWorkItemManager();
         for (TaskHandler th : _taskHandlers) {

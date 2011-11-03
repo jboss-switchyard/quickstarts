@@ -26,41 +26,34 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Rules annotation.
+ * Channel annotation.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 @Target(TYPE)
 @Retention(RUNTIME)
 @Documented
-public @interface Rules {
+public @interface Channel {
 
-    /**
-     * Specified rules interface.
-     */
-    public Class<?> value() default UndefinedRulesInterface.class;
+    /** The channel name. */
+    public String name() default "";
 
-    /**
-     * Specified agent flag.
-     */
-    public boolean agent() default false;
+    /** The channel class. */
+    public Class<?> value();
 
-    /**
-     * Specified message content name.
-     */
-    public String messageContentName() default "";
+    /** The service reference QName. */
+    public String reference() default "";
 
-    /**
-     * CEP Channels for the rules.
-     */
-    public Channel[] channels() default {};
+    /** The service reference operation name. */
+    public String operation() default "";
 
-    /**
-     * Additional resources the rules require.
-     */
-    public String[] resources() default "";
+    /** The service reference operation input name. */
+    public String input() default "";
 
-    /** An undefined rules interface. */
-    public static interface UndefinedRulesInterface {};
+    /** The service reference interface. */
+    public Class<?> interfaze() default UndefinedInterface.class;
+
+    /** An undefined service reference interface. */
+    public static interface UndefinedInterface {};
 
 }

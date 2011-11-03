@@ -35,7 +35,7 @@ import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.common.io.resource.Resource;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.type.Classes;
-import org.switchyard.component.common.rules.audit.AuditType;
+import org.switchyard.component.common.rules.AuditType;
 import org.switchyard.component.common.rules.config.model.AuditModel;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Scanner;
@@ -72,7 +72,6 @@ public class RulesModelTests {
         Assert.assertTrue(implementation instanceof RulesComponentImplementationModel);
         RulesComponentImplementationModel rci = (RulesComponentImplementationModel)implementation;
         Assert.assertEquals("rules", rci.getType());
-        Assert.assertEquals(true, rci.isStateful());
         Iterator<ResourceModel> resource_iter = rci.getResources().iterator();
         Resource dsl = resource_iter.next();
         Assert.assertEquals("foo.dsl", dsl.getLocation());

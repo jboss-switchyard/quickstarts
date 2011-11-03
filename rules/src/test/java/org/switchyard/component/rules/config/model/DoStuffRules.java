@@ -18,17 +18,17 @@
  */
 package org.switchyard.component.rules.config.model;
 
-import org.switchyard.component.rules.ExecuteRules;
+import org.switchyard.component.rules.Execute;
 import org.switchyard.component.rules.Rules;
 
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-@Rules(stateful=false, resources={"path/to/my.drl"})
+@Rules(resources={"path/to/my.drl"})
 public interface DoStuffRules extends DoStuff {
 
     @Override
-    @ExecuteRules
+    @Execute
     public void doStuff(Object stuff);
 
 }

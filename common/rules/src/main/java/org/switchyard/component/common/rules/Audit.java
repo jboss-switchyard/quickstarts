@@ -16,9 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.rules;
+package org.switchyard.component.common.rules;
 
-import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
@@ -26,11 +26,28 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * ExecuteRules annotation.
+ * Audit annotation.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-@Target(METHOD)
+@Target(TYPE)
 @Retention(RUNTIME)
 @Documented
-public @interface ExecuteRules {}
+public @interface Audit {
+
+    /**
+     * Specified interval.
+     */
+    public int interval() default -1;
+
+    /**
+     * Specified log.
+     */
+    public String log() default "";
+
+    /**
+     * Specified type.
+     */
+    public AuditType type() default AuditType.THREADED_FILE;
+
+}

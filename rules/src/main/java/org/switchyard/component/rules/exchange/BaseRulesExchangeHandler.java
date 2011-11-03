@@ -20,16 +20,12 @@ package org.switchyard.component.rules.exchange;
 
 import static org.switchyard.Scope.IN;
 import static org.switchyard.component.rules.common.RulesConstants.ACTION_TYPE_VAR;
-import static org.switchyard.component.rules.common.RulesConstants.RULES_NAMESPACE;
-
-import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
 import org.switchyard.BaseHandler;
 import org.switchyard.Context;
 import org.switchyard.HandlerException;
 import org.switchyard.Property;
-import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.rules.common.RulesActionType;
 import org.switchyard.component.rules.common.RulesConstants;
 import org.switchyard.component.rules.config.model.RulesActionModel;
@@ -51,9 +47,9 @@ public abstract class BaseRulesExchangeHandler extends BaseHandler implements Ru
      */
     protected RulesActionType getRulesActionType(Context context, RulesActionModel model) {
         if (model != null) {
-            RulesActionType pat = model.getType();
-            if (pat != null) {
-                return pat;
+            RulesActionType rat = model.getType();
+            if (rat != null) {
+                return rat;
             }
         }
         Property property = context.getProperty(ACTION_TYPE_VAR, IN);
@@ -61,21 +57,19 @@ public abstract class BaseRulesExchangeHandler extends BaseHandler implements Ru
             Object value = property.getValue();
             if (value instanceof RulesActionType) {
                 return (RulesActionType)value;
-            } else if (value instanceof QName) {
-                return RulesActionType.valueOf((QName)value);
             } else if (value instanceof String) {
-                return RulesActionType.valueOf(XMLHelper.createQName(RULES_NAMESPACE, (String)value));
+                return RulesActionType.fromAction((String)value);
             }
         }
         if (LOGGER.isDebugEnabled()) {
             String msg = new StringBuilder()
                 .append(getNullParameterMessage(null, ACTION_TYPE_VAR))
                 .append("; defaulting to: ")
-                .append(RulesActionType.EXECUTE_RULES.qname())
+                .append(RulesActionType.EXECUTE.action())
                 .toString();
             LOGGER.debug(msg);
         }
-        return RulesActionType.EXECUTE_RULES;
+        return RulesActionType.EXECUTE;
     }
 
     /**
@@ -126,7 +120,7 @@ public abstract class BaseRulesExchangeHandler extends BaseHandler implements Ru
         StringBuilder sb = new StringBuilder("implementation.rules: ");
         if (rulesActionType != null) {
             sb.append("[");
-            sb.append(rulesActionType.qname());
+            sb.append(rulesActionType.action());
             sb.append("] ");
         }
         sb.append(parameterName);

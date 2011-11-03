@@ -40,8 +40,8 @@ import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
-import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.component.rules.common.RulesActionType;
+import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
 import org.switchyard.component.rules.config.model.v1.V1RulesActionModel;
 import org.switchyard.component.rules.config.model.v1.V1RulesComponentImplementationModel;
 import org.switchyard.config.model.composite.JavaComponentServiceInterfaceModel;
@@ -63,13 +63,11 @@ import org.switchyard.tools.forge.plugin.TemplateResource;
 @Help("Provides commands related to rules services in SwitchYard.")
 public class RulesServicePlugin implements Plugin {
 
-    // default to DRL as the resource type
-    private static final String DEFAULT_RESOURCE_TYPE = "DRL";
-    // process definition template
+    // rule definition template
     private static final String RULES_TEMPLATE = "RulesTemplate.drl";
-    // process definition file extension
+    // rule definition file extension
     private static final String RULES_EXTENSION = ".drl";
-    // process definition directory
+    // rule definition directory
     private static final String RULES_DIR = "META-INF";
     
     @Inject
@@ -84,12 +82,11 @@ public class RulesServicePlugin implements Plugin {
      * @param out shell output
      * @param argInterfaceClass class name of Java service interface
      * @param argRuleFilePath path to the rule definition
-     * @param argRuleDefinitionType type of the rule definition
-     * @param argIsStateful set to true to make the rule session stateful; default is false
+     * @param argAgent whether to use an agent
      * @throws java.io.IOException error with file resources
      */
-    @Command(value = "create", help = "Created a new service backed by a business rule.")
-    public void newProcess(
+    @Command(value = "create", help = "Created a new service backed by business rules.")
+    public void newRules(
             @Option(required = true,
                      name = "serviceName",
                      description = "The service name") 
@@ -103,13 +100,10 @@ public class RulesServicePlugin implements Plugin {
                      description = "The business rule definition") 
              final String argRuleFilePath,
              @Option(required = false,
-                 name = "ruleType",
-                 description = "The type of rule definition (DRL, DSL, etc.") 
-             final String argRuleDefinitionType,
-             @Option(required = false,
-                 name = "isStateful",
-                 description = "Whether the rule session is stateful") 
-             final Boolean argIsStateful,
+                     name = "agent",
+                     description = "Whether you want to use an agent to watch resources for changes (true|false)",
+                     defaultValue = "false")
+             final Boolean argAgent,
              final PipeOut out)
     throws java.io.IOException {
       
@@ -136,11 +130,6 @@ public class RulesServicePlugin implements Plugin {
             out.println("Created service interface [" + interfaceClass + "]");
         }
         
-        String ruleDefinitionType = argRuleDefinitionType;
-        if (ruleDefinitionType == null) {
-            ruleDefinitionType = DEFAULT_RESOURCE_TYPE;
-        }
-        
         String ruleDefinitionPath = argRuleFilePath;
         if (ruleDefinitionPath == null) {
             // Create an empty rule definition
@@ -153,11 +142,10 @@ public class RulesServicePlugin implements Plugin {
             out.println("Created rule definition [" + ruleDefinitionPath + "]");
         }
         
-        // default is stateless
-        boolean isStateful = argIsStateful == null ? false : argIsStateful;
+        boolean agent = argAgent != null ? argAgent.booleanValue() : false;
         
         // Add the SwitchYard config
-        createImplementationConfig(argServiceName, interfaceClass, ruleDefinitionPath, ruleDefinitionType, isStateful);
+        createImplementationConfig(argServiceName, interfaceClass, ruleDefinitionPath, agent);
           
         // Notify user of success
         out.println("Rule service " + argServiceName + " has been created.");
@@ -166,8 +154,7 @@ public class RulesServicePlugin implements Plugin {
     private void createImplementationConfig(String serviceName,
             String interfaceName,
             String rulesDefinition,
-            String rulesDefinitionType,
-            boolean isStateful) {
+            boolean agent) {
         
         SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
         // Create the component service model
@@ -182,13 +169,14 @@ public class RulesServicePlugin implements Plugin {
         
         // Create the Rules implementation model and add it to the component model
         V1RulesComponentImplementationModel rules = new V1RulesComponentImplementationModel();
-        rules.addResource(new V1ResourceModel()
-                .setLocation(rulesDefinition)
-                .setType(ResourceType.valueOf(rulesDefinitionType)));
-        rules.setStateful(isStateful);
+        rules.addResource(new V1ResourceModel(RulesComponentImplementationModel.DEFAULT_NAMESPACE)
+                .setLocation(rulesDefinition));
         rules.addRulesAction(new V1RulesActionModel()
             .setName("operation")
-            .setType(RulesActionType.EXECUTE_RULES));
+            .setType(RulesActionType.EXECUTE));
+        if (agent) {
+            rules.setAgent(true);
+        }
         component.setImplementation(rules);
         
         // Add the new component service to the application config

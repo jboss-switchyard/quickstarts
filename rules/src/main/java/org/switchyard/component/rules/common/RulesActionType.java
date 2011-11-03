@@ -18,8 +18,6 @@
  */
 package org.switchyard.component.rules.common;
 
-import javax.xml.namespace.QName;
-
 /**
  * Represents available rules actions.
  *
@@ -27,35 +25,39 @@ import javax.xml.namespace.QName;
  */
 public enum RulesActionType {
 
-    /** {urn:switchyard-component-rules:rules:1.0}executeRules . */
-    EXECUTE_RULES(QName.valueOf(RulesConstants.EXECUTE_RULES_VAR));
+    /** startRules . */
+    EXECUTE(RulesConstants.EXECUTE),
+    /** signalEvent . */
+    FIRE_ALL_RULES(RulesConstants.FIRE_ALL_RULES),
+    /** abortRulesInstance . */
+    FIRE_UNTIL_HALT(RulesConstants.FIRE_UNTIL_HALT);
 
-    private final QName _qname;
+    private final String _action;
 
     /**
-     * Constructs a new RulesActionType with the specified qualified name.
-     * @param qname the qualified name
+     * Constructs a new RulesActionType with the specified action.
+     * @param action the action
      */
-    RulesActionType(QName qname) {
-        _qname = qname;
+    RulesActionType(String action) {
+        _action = action;
     }
 
     /**
-     * Gets the qualified name.
-     * @return the qualified name
+     * Gets the action.
+     * @return the action
      */
-    public QName qname() {
-        return _qname;
+    public String action() {
+        return _action;
     }
 
     /**
-     * Gets the RulesActionType matching the specified qualified name.
-     * @param qname the qualified name
+     * Gets the RulesActionType matching the specified action.
+     * @param action the action
      * @return the matching RulesActionType
      */
-    public static RulesActionType valueOf(QName qname) {
+    public static RulesActionType fromAction(String action) {
         for (RulesActionType pat : values()) {
-            if (pat.qname().equals(qname)) {
+            if (pat.action().equals(action)) {
                 return pat;
             }
         }

@@ -31,7 +31,6 @@ import org.switchyard.component.bpm.exchange.BPMExchangeHandlerFactory;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.deploy.BaseActivator;
-import org.switchyard.exception.SwitchYardException;
 
 /**
  * Activator for the BPM component.
@@ -61,7 +60,7 @@ public class BPMActivator extends BaseActivator {
             _handlers.put(qname, handler);
             return handler;
         }
-        throw new SwitchYardException("No BPM component implementations found for service " + qname);
+        return null;
     }
 
     /**

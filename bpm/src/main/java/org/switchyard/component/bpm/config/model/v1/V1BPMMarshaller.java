@@ -20,24 +20,20 @@ package org.switchyard.component.bpm.config.model.v1;
 
 import static org.switchyard.component.bpm.config.model.ProcessActionModel.ACTION;
 import static org.switchyard.component.bpm.config.model.TaskHandlerModel.TASK_HANDLER;
-import static org.switchyard.component.common.rules.config.model.AuditModel.AUDIT;
-import static org.switchyard.config.model.resource.ResourceModel.RESOURCE;
 
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
-import org.switchyard.component.common.rules.config.model.v1.V1AuditModel;
+import org.switchyard.component.common.rules.config.model.v1.V1CommonRulesMarshaller;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
-import org.switchyard.config.model.composite.v1.V1CompositeMarshaller;
-import org.switchyard.config.model.resource.v1.V1ResourceModel;
 
 /**
  * A CompositeMarshaller which can also create BPMComponentImplementationModels, ResourceModels and TaskHandlerModels.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class V1BPMMarshaller extends V1CompositeMarshaller {
+public class V1BPMMarshaller extends V1CommonRulesMarshaller {
 
     /**
      * The complete local name ("implementation.bpm").
@@ -67,12 +63,8 @@ public class V1BPMMarshaller extends V1CompositeMarshaller {
             return new V1BPMComponentImplementationModel(config, getDescriptor());
         } else if (ACTION.equals(name)) {
             return new V1ProcessActionModel(config, getDescriptor());
-        } else if (AUDIT.equals(name)) {
-            return new V1AuditModel(config, getDescriptor());
         } else if (TASK_HANDLER.equals(name)) {
             return new V1TaskHandlerModel(config, getDescriptor());
-        } else if (RESOURCE.equals(name)) {
-            return new V1ResourceModel(config, getDescriptor());
         }
         return super.read(config);
     }

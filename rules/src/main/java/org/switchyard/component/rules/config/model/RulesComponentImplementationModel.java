@@ -21,9 +21,7 @@ package org.switchyard.component.rules.config.model;
 
 import java.util.List;
 
-import org.switchyard.component.common.rules.config.model.AuditModel;
-import org.switchyard.config.model.composite.ComponentImplementationModel;
-import org.switchyard.config.model.resource.ResourceModel;
+import org.switchyard.component.common.rules.config.model.ComponentImplementationModel;
 
 /**
  * A "rules" ComponentImplementationModel.
@@ -41,36 +39,6 @@ public interface RulesComponentImplementationModel extends ComponentImplementati
      * The "rules" implementation type.
      */
     public static final String RULES = "rules";
-
-    /**
-     * Gets the "stateful" attribute.
-     *
-     * @return the "stateful" attribute
-     */
-    public boolean isStateful();
-
-    /**
-     * Sets the "stateful" attribute.
-     *
-     * @param stateful the "stateful" attribute
-     * @return this instance (useful for chaining)
-     */
-    public RulesComponentImplementationModel setStateful(boolean stateful);
-
-    /**
-     * Gets the "agent" attribute.
-     *
-     * @return the "agent" attribute
-     */
-    public boolean isAgent();
-
-    /**
-     * Sets the "agent" attribute.
-     *
-     * @param agent the "agent" attribute
-     * @return this instance (useful for chaining)
-     */
-    public RulesComponentImplementationModel setAgent(boolean agent);
 
     /**
      * Gets the "messageContentName" attribute.
@@ -101,29 +69,16 @@ public interface RulesComponentImplementationModel extends ComponentImplementati
     public RulesComponentImplementationModel addRulesAction(RulesActionModel rulesAction);
 
     /**
-     * Gets the "audit" child model.
-     * @return the "audit" child model
+     * Gets the child channel models.
+     * @return the child channel models
      */
-    public AuditModel getAudit();
+    public List<ChannelModel> getChannels();
 
     /**
-     * Sets the "audit" child model.
-     * @param audit the "audit" child model
+     * Adds a child channel model.
+     * @param channel the child rchannel model
      * @return this RulesComponentImplementationModel (useful for chaining)
      */
-    public RulesComponentImplementationModel setAudit(AuditModel audit);
-
-    /**
-     * Gets the child resource models.
-     * @return the child resource models
-     */
-    public List<ResourceModel> getResources();
-
-    /**
-     * Adds a child resource model.
-     * @param resource the child resource model
-     * @return this RulesComponentImplementationModel (useful for chaining)
-     */
-    public RulesComponentImplementationModel addResource(ResourceModel resource);
+    public RulesComponentImplementationModel addChannel(ChannelModel channel);
 
 }
