@@ -39,7 +39,7 @@
 <xsl:template match="node()[name(.)='filter']">
     <context-param>
         <param-name>db.url</param-name>
-        <param-value>jdbc:h2:tcp://localhost/~/test</param-value>
+        <param-value>jdbc:h2:~/jbpmDS</param-value>
     </context-param>
     <context-param>
         <param-name>db.user</param-name>
@@ -61,9 +61,9 @@
 </xsl:template>
 
 <xsl:template match="node()[name(.)='listener']">
-    <listener>
+    <!--<listener>
         <listener-class>org.h2.server.web.DbStarter</listener-class>
-    </listener>
+    </listener>-->
     <listener>
         <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
     </listener>

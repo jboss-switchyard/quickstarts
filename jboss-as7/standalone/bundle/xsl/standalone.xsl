@@ -84,7 +84,7 @@
 <xsl:template match="node()[name(.)='datasources']">
     <xsl:copy>
         <datasource jndi-name="java:jboss/datasources/jbpmDS" pool-name="jbpmPool" enabled="true" jta="false" use-java-context="true" use-ccm="false">
-            <connection-url>jdbc:h2:tcp://localhost/~/test;DB_CLOSE_DELAY=-1</connection-url>
+            <connection-url>jdbc:h2:~/jbpmDS;DB_CLOSE_DELAY=-1</connection-url>
             <driver>h2</driver>
             <pool>
                 <prefill>false</prefill>

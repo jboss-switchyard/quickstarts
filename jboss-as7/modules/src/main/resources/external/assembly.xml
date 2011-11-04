@@ -33,11 +33,6 @@
             <filtered>true</filtered>
         </file>
         <file>
-            <source>src/main/resources/external/mvel2/module.xml</source>
-            <outputDirectory>/modules/org/mvel2/main</outputDirectory>
-            <filtered>true</filtered>
-        </file>
-        <file>
             <source>src/main/resources/external/freemarker/module.xml</source>
             <outputDirectory>/modules/org/freemarker/main</outputDirectory>
             <filtered>true</filtered>
@@ -117,11 +112,6 @@
             <filtered>true</filtered>
         </file>
         <file>
-            <source>src/main/resources/external/h2database/h2/module.xml</source>
-            <outputDirectory>/modules/com/h2database/h2/main</outputDirectory>
-            <filtered>true</filtered>
-        </file>
-        <file>
             <source>src/main/resources/external/apache/mina/mina-core/module.xml</source>
             <outputDirectory>/modules/org/apache/mina/mina-core/main</outputDirectory>
             <filtered>true</filtered>
@@ -184,14 +174,6 @@
             <outputDirectory>/modules/com/thoughtworks/xstream/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${version.xstream}.${artifact.extension}
             </outputFileNameMapping>
-        </dependencySet>
-        <dependencySet>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <includes>
-                <include>org.mvel:mvel2</include>
-            </includes>
-            <outputDirectory>/modules/org/mvel2/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${version.mvel}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
@@ -317,14 +299,6 @@
             </includes>
             <outputDirectory>/modules/org/jbpm/jbpm-persistence-jpa/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}</outputFileNameMapping>
-        </dependencySet>
-        <dependencySet>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <includes>
-                <include>com.h2database:h2</include>
-            </includes>
-            <outputDirectory>/modules/com/h2database/h2/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${version.h2database}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>

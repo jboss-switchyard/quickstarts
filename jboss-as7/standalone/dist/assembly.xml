@@ -16,7 +16,6 @@
                 <exclude>welcome-content/index.html</exclude>
                 <exclude>standalone/**/standalone*.xml</exclude>
                 <exclude>domain/</exclude>
-                <exclude>modules/com/h2database/h2/main/h2-1.2.*.jar</exclude>
                 <exclude>META-INF/</exclude>
                 <exclude>xsl/</exclude>
             </excludes>

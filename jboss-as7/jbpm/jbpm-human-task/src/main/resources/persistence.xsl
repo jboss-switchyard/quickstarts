@@ -52,7 +52,7 @@
     <properties>
         <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
         <property name="hibernate.connection.driver_class" value="org.h2.Driver"/>
-        <property name="hibernate.connection.url" value="jdbc:h2:tcp://localhost/~/test"/>
+        <property name="hibernate.connection.url" value="jdbc:h2:~/jbpmDS"/>
         <property name="hibernate.connection.username" value="sa"/>
         <property name="hibernate.connection.password" value="sa"/>
         <property name="hibernate.connection.autocommit" value="false"/>

@@ -35,6 +35,6 @@
         <module name="org.apache.commons.logging" />
         <module name="org.freemarker" />
         <module name="org.jaxen" />
-        <module name="org.mvel2" />
+        <module name="org.mvel.mvel2" />
     </dependencies>
 </module>

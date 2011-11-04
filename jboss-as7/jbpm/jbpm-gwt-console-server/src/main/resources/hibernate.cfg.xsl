@@ -40,7 +40,7 @@
     <session-factory>
         <property name="dialect">org.hibernate.dialect.H2Dialect</property>
         <property name="connection.driver_class">org.h2.Driver</property>
-        <property name="connection.url">jdbc:h2:tcp://localhost/~/test</property>
+        <property name="connection.url">jdbc:h2:~/jbpmDS</property>
         <property name="connection.username">sa</property>
         <property name="connection.password">sa</property>
         <property name="connection.autocommit">false</property>
