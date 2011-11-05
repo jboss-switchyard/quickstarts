@@ -23,12 +23,12 @@ import java.util.List;
 import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.Service;
-import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
+import org.switchyard.admin.SwitchYard;
 import org.switchyard.admin.base.BaseSwitchYard;
 import org.switchyard.admin.base.SwitchYardBuilder;
 import org.switchyard.as7.extension.deployment.SwitchYardDeployment;
@@ -50,6 +50,7 @@ public class SwitchYardService implements Service<SwitchYardDeployment> {
     private final InjectedValue<NamespaceContextSelector> _namespaceSelector = new InjectedValue<NamespaceContextSelector>();
     @SuppressWarnings("rawtypes")
     private final InjectedValue<List> _components = new InjectedValue<List>();
+    private final InjectedValue<SwitchYard> _switchYard = new InjectedValue<SwitchYard>();
     private SwitchYardDeployment _switchyardDeployment;
     private SwitchYardBuilder _switchYardBuilder;
 
@@ -63,25 +64,23 @@ public class SwitchYardService implements Service<SwitchYardDeployment> {
     }
 
     @Override
-    public SwitchYardDeployment getValue() throws IllegalStateException,
-            IllegalArgumentException {
+    public SwitchYardDeployment getValue() throws IllegalStateException, IllegalArgumentException {
         return _switchyardDeployment;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void start(StartContext context) throws StartException {
         try {
             NamespaceContextSelector.pushCurrentSelector(_namespaceSelector.getValue());
             LOG.info("Starting SwitchYard service");
 
-            ServiceController<?> adminService = context.getController().getServiceContainer()
-                    .getService(SwitchYardAdminService.SERVICE_NAME);
-            if (adminService != null) {
-                BaseSwitchYard switchYard = BaseSwitchYard.class.cast(adminService.getValue());
-                if (switchYard != null) {
-                    _switchYardBuilder = new SwitchYardBuilder(switchYard);
-                    _switchyardDeployment.setDeploymentListener(_switchYardBuilder);
-                }
+            BaseSwitchYard switchYard = BaseSwitchYard.class.cast(_switchYard.getValue());
+            if (switchYard != null) {
+                _switchYardBuilder = new SwitchYardBuilder(switchYard);
+                _switchyardDeployment.setDeploymentListener(_switchYardBuilder);
+            } else {
+                LOG.warn("Could not create SwitchYardBuilder.  No administration functionality will be available for this application.");
             }
 
             _switchyardDeployment.start(_components.getValue());
@@ -120,8 +119,18 @@ public class SwitchYardService implements Service<SwitchYardDeployment> {
      * 
      * @return the list of components
      */
+    @SuppressWarnings("rawtypes")
     public InjectedValue<List> getComponents() {
         return _components;
+    }
+
+    /**
+     * Injection point for SwitchYard admin root.
+     * 
+     * @return the admin root.
+     */
+    public final InjectedValue<SwitchYard> getSwitchYard() {
+        return _switchYard;
     }
 
 }

@@ -59,6 +59,10 @@ public final class SwitchYardModelConstants {
     
     // nodes
     /**
+     * Constant for model key: activationTypes.
+     */
+    public static final String ACTIVATION_TYPES = "activationTypes";
+    /**
      * Constant for model key: application.
      */
     public static final String APPLICATION = "application";
@@ -70,10 +74,6 @@ public final class SwitchYardModelConstants {
      * Constant for model key: componentServices.
      */
     public static final String COMPONENT_SERVICES = "componentServices";
-    /**
-     * Constant for model key: config-schema.
-     */
-    public static final String CONFIG_SCHEMA = "configSchema";
     /**
      * Constant for model key: configuration.
      */

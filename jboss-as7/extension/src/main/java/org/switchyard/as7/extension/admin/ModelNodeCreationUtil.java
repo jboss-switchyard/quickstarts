@@ -20,11 +20,11 @@ package org.switchyard.as7.extension.admin;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.INTERFACE;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.NAME;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.PROPERTIES;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.TYPE;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.APPLICATION;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.COMPONENT_SERVICES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.CONFIGURATION;
-import static org.switchyard.as7.extension.SwitchYardModelConstants.CONFIG_SCHEMA;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.FROM;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.GATEWAYS;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.IMPLEMENTATION;
@@ -34,6 +34,10 @@ import static org.switchyard.as7.extension.SwitchYardModelConstants.REFERENCES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.SERVICES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.TO;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.TRANSFORMERS;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.ACTIVATION_TYPES;
+
+import java.util.Map;
+import java.util.Set;
 
 import org.jboss.dmr.ModelNode;
 import org.switchyard.admin.Application;
@@ -262,7 +266,7 @@ final public class ModelNodeCreationUtil {
      * has the form: <br>
      * <code><pre>
      *      "name" =&gt; "componentName"
-     *      "type" =&gt; "GATEWAY"
+     *      "activationTypes" =&gt; ["soap"]
      *      "configSchema" =&gt; "&lt;?xml ..."
      * </pre></code>
      * 
@@ -272,8 +276,24 @@ final public class ModelNodeCreationUtil {
     public static ModelNode createComponentNode(Component component) {
         ModelNode componentNode = new ModelNode();
         componentNode.get(NAME).set(component.getName());
-        componentNode.get(TYPE).set(component.getType().toString());
-        componentNode.get(CONFIG_SCHEMA).set(component.getConfigSchema());
+        
+        Set<String> types = component.getTypes();
+        if (types == null || types.isEmpty()) {
+            componentNode.get(ACTIVATION_TYPES).addEmptyList();
+        } else {
+            for (String type : types) {
+                componentNode.get(ACTIVATION_TYPES).add(type);
+            }
+        }
+        
+        Map<String,String> properties = component.getProperties();
+        if (properties == null || properties.isEmpty()) {
+            componentNode.get(PROPERTIES);
+        } else {
+            for (Map.Entry<String,String> property : properties.entrySet()) {
+                componentNode.get(PROPERTIES).get(property.getKey()).set(property.getValue());
+            }
+        }
         return componentNode;
     }
 

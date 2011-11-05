@@ -18,13 +18,21 @@
  */
 package org.switchyard.as7.extension.services;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
+import org.jboss.msc.value.InjectedValue;
 import org.switchyard.admin.SwitchYard;
+import org.switchyard.admin.base.BaseComponent;
 import org.switchyard.admin.base.BaseSwitchYard;
+import org.switchyard.config.Configuration;
+import org.switchyard.deploy.Component;
 
 /**
  * SwitchYardAdminService
@@ -34,14 +42,18 @@ import org.switchyard.admin.base.BaseSwitchYard;
  * @author Rob Cernich
  */
 public class SwitchYardAdminService implements Service<SwitchYard> {
-    
+
     /**
      * The name used to resolve the SwitchYard administration service.
      */
     public final static ServiceName SERVICE_NAME = ServiceName.of("SwitchYardAdminService");
-    
+
+    @SuppressWarnings("rawtypes")
+    private final InjectedValue<List> _components = new InjectedValue<List>();
+    @SuppressWarnings("rawtypes")
+    private final InjectedValue<Map> _socketBindings = new InjectedValue<Map>();
     private final String _version;
-    private SwitchYard _switchYard;
+    private BaseSwitchYard _switchYard;
 
     /**
      * Create a new SwitchYardAdminService.
@@ -60,6 +72,18 @@ public class SwitchYardAdminService implements Service<SwitchYard> {
     @Override
     public void start(StartContext context) throws StartException {
         _switchYard = new BaseSwitchYard(_version);
+
+        // add in the configured socket bindings
+        _switchYard.addSocketBindingNames(_socketBindings.getValue().keySet());
+
+        // TODO: add in configured properties
+        // _switchYard.addProperties(properties);
+
+        // add in the components and application settings
+        for (Component component : (List<Component>) _components.getValue()) {
+            _switchYard.addComponent(new BaseComponent(component.getName(), component.getActivator(null)
+                    .getActivationTypes(), convertConfiguration(component.getConfig())));
+        }
     }
 
     @Override
@@ -67,4 +91,33 @@ public class SwitchYardAdminService implements Service<SwitchYard> {
         _switchYard = null;
     }
 
+    /**
+     * Injection point for SwitchYard components.
+     * 
+     * @return injected components list.
+     * @see SwitchYardComponentService.
+     */
+    @SuppressWarnings("rawtypes")
+    public final InjectedValue<List> getComponents() {
+        return _components;
+    }
+
+    /**
+     * Injection point for SwitchYard socket bindings.
+     * 
+     * @return injected socket bindings map.
+     * @see SwitchYardInjectorService
+     */
+    @SuppressWarnings("rawtypes")
+    public final InjectedValue<Map> getSocketBindings() {
+        return _socketBindings;
+    }
+
+    private Map<String, String> convertConfiguration(Configuration config) {
+        Map<String, String> properties = new HashMap<String, String>();
+        for (Configuration property : config.getChildren()) {
+            properties.put(property.getName(), property.getValue());
+        }
+        return properties;
+    }
 }

@@ -19,10 +19,6 @@
 package org.switchyard.as7.extension.admin;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.NAME;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.TYPE;
-
-import java.util.EnumSet;
-import java.util.Set;
 
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
@@ -30,7 +26,6 @@ import org.jboss.as.controller.OperationStepHandler;
 import org.jboss.dmr.ModelNode;
 import org.jboss.msc.service.ServiceController;
 import org.switchyard.admin.Component;
-import org.switchyard.admin.ComponentType;
 import org.switchyard.admin.SwitchYard;
 import org.switchyard.as7.extension.services.SwitchYardAdminService;
 
@@ -79,17 +74,8 @@ public final class SwitchYardSubsystemReadComponent implements OperationStepHand
                         components.add(ModelNodeCreationUtil.createComponentNode(component));
                     }
                 } else {
-                    Set<ComponentType> desiredComponentTypes;
-                    if (operation.hasDefined(TYPE) && !"all".equalsIgnoreCase(operation.get(TYPE).asString())) {
-                        desiredComponentTypes = EnumSet.of(ComponentType.valueOf(operation.get(TYPE).asString()
-                                .toUpperCase()));
-                    } else {
-                        desiredComponentTypes = EnumSet.allOf(ComponentType.class);
-                    }
                     for (Component component : switchYard.getComponents()) {
-                        if (desiredComponentTypes.contains(component.getType())) {
-                            components.add(ModelNodeCreationUtil.createComponentNode(component));
-                        }
+                        components.add(ModelNodeCreationUtil.createComponentNode(component));
                     }
                 }
                 context.completeStep();
