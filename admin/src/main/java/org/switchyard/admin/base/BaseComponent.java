@@ -19,36 +19,47 @@
 
 package org.switchyard.admin.base;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.switchyard.admin.Component;
-import org.switchyard.admin.ComponentType;
 
 /**
  * BaseComponent
- *
+ * 
  * Basic implementation for Component.
  */
 public class BaseComponent implements Component {
-    
-    private String _configSchema;
+
+    private Map<String, String> _properties;
     private String _name;
-    private ComponentType _type;
-    
+    private Set<String> _types;
+
     /**
      * Create a new BaseComponent.
      * 
      * @param name the name of the component.
-     * @param type the type of the component.
-     * @param configSchema the configuration schema defined by this component.
+     * @param types the type of the component.
+     * @param properties the configuration properties of this component.
      */
-    public BaseComponent(String name, ComponentType type, String configSchema) {
+    public BaseComponent(String name, Collection<String> types, Map<String, String> properties) {
         _name = name;
-        _type = type;
-        _configSchema = configSchema;
+        _types = new HashSet<String>();
+        if (types != null) {
+            _types.addAll(types);
+        }
+        _properties = new HashMap<String, String>();
+        if (properties != null) {
+            _properties.putAll(properties);
+        }
     }
 
     @Override
-    public String getConfigSchema() {
-        return _configSchema;
+    public Map<String, String> getProperties() {
+        return _properties;
     }
 
     @Override
@@ -57,7 +68,7 @@ public class BaseComponent implements Component {
     }
 
     @Override
-    public ComponentType getType() {
-        return _type;
+    public Set<String> getTypes() {
+        return _types;
     }
 }

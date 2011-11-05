@@ -54,4 +54,10 @@ public interface Component {
      * use this lifecyle method to clean up any resources used by Activators.
      */
     void destroy();
+    
+    /**
+     * @return the configuration used by this component.
+     * @see #init(Configuration)
+     */
+    Configuration getConfig();
 }

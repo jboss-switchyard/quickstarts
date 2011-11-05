@@ -19,6 +19,7 @@
 
 package org.switchyard.admin.base;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -76,8 +77,8 @@ public class BaseSystemTest {
 
     @Test
     public void testComponent() {
-        Component c1 = new BaseComponent("c1", ComponentType.GATEWAY, null);
-        Component c2 = new BaseComponent("c2", ComponentType.IMPLEMENTATION, null);
+        Component c1 = new BaseComponent("c1", Collections.singleton("gatewayType"), null);
+        Component c2 = new BaseComponent("c2", Collections.singleton("implType"), null);
         
         _switchYard.addComponent(c1);
         _switchYard.addComponent(c2);

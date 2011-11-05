@@ -20,6 +20,8 @@
 package org.switchyard.admin;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 
@@ -77,5 +79,15 @@ public interface SwitchYard {
      *         system.
      */
     Application getApplication(QName name);
+    
+    /**
+     * @return the socket binding names configured for SwitchYard.
+     */
+    Set<String> getSocketBindingNames();
+    
+    /**
+     * @return the SwitchYard system configuration properties.
+     */
+    Map<String,String> getProperties();
 
 }

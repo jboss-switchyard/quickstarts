@@ -19,6 +19,9 @@
 
 package org.switchyard.admin;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Component
  * 
@@ -32,14 +35,13 @@ public interface Component {
     String getName();
 
     /**
-     * @return the type of this component.
-     * 
-     * @see ComponentType
+     * @return supported activation types, e.g. bean, soap, etc.
      */
-    ComponentType getType();
+    Set<String> getTypes();
 
     /**
-     * @return the configuration schema defined by this component.
+     * @return component properties.
      */
-    String getConfigSchema();
+    Map<String,String> getProperties();
+
 }
