@@ -35,6 +35,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.dmr.client.ModelNode;
 import org.switchyard.console.client.BeanFactory;
+import org.switchyard.console.components.client.model.Component;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.autobean.shared.AutoBeanCodex;
@@ -84,6 +85,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         this._isStandalone = bootstrap.getProperty(ApplicationProperties.STANDALONE).equals("true");
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public void loadSystemDetails(final AsyncCallback<SystemDetails> callback) {
         // /subsystem=switchyard:get-version()
@@ -111,6 +113,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         });
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public void loadApplications(final AsyncCallback<List<Application>> callback) {
         // /subsystem=switchyard:list-applications()
@@ -148,6 +151,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         });
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public void loadApplication(final String applicationName, final AsyncCallback<Application> callback) {
         // /subsystem=switchyard:read-application(name=applicationName)
@@ -179,6 +183,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         });
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public void loadComponents(final AsyncCallback<List<Component>> callback) {
         // /subsystem=switchyard:list-components
@@ -216,6 +221,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         });
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public void loadComponent(final String componentName, final AsyncCallback<Component> callback) {
         // /subsystem=switchyard:read-component(name=componentName)
@@ -247,6 +253,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         });
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public void loadServices(final AsyncCallback<List<Service>> callback) {
         // /subsystem=switchyard:list-services()
@@ -281,6 +288,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         });
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public void loadService(final String serviceName, final String applicationName,
             final AsyncCallback<Service> callback) {

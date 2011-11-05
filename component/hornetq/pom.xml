@@ -1,0 +1,22 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>switchyard-console-components</artifactId>
+    <groupId>org.switchyard</groupId>
+    <version>0.3.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <artifactId>switchyard-console-component-hornetq</artifactId>
+  <name>SwitchYard: HornetQ Component Console Extension</name>
+  <description>Provides customized UI for the SwitchYard HornetQ component.</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-console-component-core</artifactId>
+      <version>${version.project}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+</project>

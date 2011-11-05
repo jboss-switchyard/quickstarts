@@ -20,11 +20,14 @@
 package org.switchyard.console.client.ui.component;
 
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.core.message.Message;
 import org.jboss.ballroom.client.layout.RHSContentPanel;
+import org.switchyard.console.client.Console;
 import org.switchyard.console.client.Singleton;
-import org.switchyard.console.client.model.Component;
 
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -37,17 +40,15 @@ import com.google.gwt.user.client.ui.Widget;
 public class ComponentView extends DisposableViewImpl implements ComponentPresenter.MyView {
 
     private ComponentPresenter _presenter;
-    private ComponentEditor _componentEditor;
+    private Panel _mainContentPanel;
 
     @Override
     public Widget createWidget() {
+        LayoutPanel wrapper = new RHSContentPanel(Singleton.MESSAGES.header_content_componentConfiguration());
+        _mainContentPanel = new SimplePanel();
+        wrapper.add(_mainContentPanel);
 
-        LayoutPanel layout = new RHSContentPanel(Singleton.MESSAGES.header_content_componentConfiguration());
-
-        _componentEditor = new ComponentEditor(_presenter);
-        layout.add(_componentEditor.asWidget());
-
-        return layout;
+        return wrapper;
     }
 
     @Override
@@ -56,8 +57,21 @@ public class ComponentView extends DisposableViewImpl implements ComponentPresen
     }
 
     @Override
-    public void setComponent(Component component) {
-        _componentEditor.setComponent(component);
+    public void setInSlot(Object slot, Widget content) {
+        if (slot == ComponentPresenter.TYPE_MAIN_CONTENT) {
+            if (content != null) {
+                setMainContent(content);
+            }
+        } else {
+            Console.MODULES.getMessageCenter().notify(new Message("Unknown slot requested:" + slot));
+        }
     }
 
+    private void setMainContent(Widget content) {
+        _mainContentPanel.clear();
+
+        if (content != null) {
+            _mainContentPanel.add(content);
+        }
+    }
 }

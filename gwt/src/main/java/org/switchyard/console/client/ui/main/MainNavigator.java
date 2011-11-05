@@ -19,6 +19,8 @@
 
 package org.switchyard.console.client.ui.main;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.jboss.ballroom.client.layout.LHSNavTree;
@@ -26,13 +28,15 @@ import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.model.Application;
-import org.switchyard.console.client.model.Component;
 import org.switchyard.console.client.model.Service;
+import org.switchyard.console.components.client.extension.ComponentProviders;
+import org.switchyard.console.components.client.internal.ComponentExtensionManager.ComponentProviderProxy;
+import org.switchyard.console.components.client.model.Component;
 
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -44,23 +48,26 @@ import com.google.gwt.user.client.ui.Widget;
 public class MainNavigator {
 
     private VerticalPanel _stack;
-
     private LayoutPanel _layout;
-
     private LHSNavTree _applicationsTree;
-
     private LHSNavTree _servicesTree;
-
-    private LHSNavTree _componentsTree;
+    private LHSNavTree _commonTree;
+    private TreeItem _componentsTree;
+    private ComponentProviders _componentProviders;
 
     /**
      * Create a new MainNavigator.
+     * 
+     * @param componentProviders the ComponentProviders
      */
-    public MainNavigator() {
+    public MainNavigator(ComponentProviders componentProviders) {
         super();
 
+        _componentProviders = componentProviders;
+
         _layout = new LayoutPanel();
-        //_layout.getElement().setAttribute("style", "width:99%;border-right:1px solid #E0E0E0");
+        // _layout.getElement().setAttribute("style",
+        // "width:99%;border-right:1px solid #E0E0E0");
         _layout.setStyleName("fill-_layout");
 
         _stack = new VerticalPanel();
@@ -83,23 +90,18 @@ public class MainNavigator {
 
         // ----------------------------------------------------
 
-        // TODO: enable once components are supported in the admin model
-        // _componentsTree = new LHSNavTree("switchyard");
-        // DisclosurePanel componentsPanel = new
-        // DisclosureStackHeader("Components").asWidget();
-        // componentsPanel.setContent(_componentsTree);
-        // _stack.add(componentsPanel);
+        _componentsTree = new TreeItem("Components");
 
         // ----------------------------------------------------
 
-        Tree commonTree = new LHSNavTree("switchyard");
+        _commonTree = new LHSNavTree("switchyard");
         DisclosurePanel commonPanel = new DisclosureStackPanel("System").asWidget();
-        commonPanel.setContent(commonTree);
+        commonPanel.setContent(_commonTree);
 
-        LHSNavTreeItem[] commonItems = new LHSNavTreeItem[] {new LHSNavTreeItem("Details", "switchyard/system") };
+        TreeItem[] commonItems = new TreeItem[] {new LHSNavTreeItem("Details", "switchyard/system"), _componentsTree };
 
-        for (LHSNavTreeItem item : commonItems) {
-            commonTree.addItem(item);
+        for (TreeItem item : commonItems) {
+            _commonTree.addItem(item);
         }
 
         _stack.add(commonPanel);
@@ -119,6 +121,7 @@ public class MainNavigator {
      *            section.
      */
     public void updateApplications(List<Application> applications) {
+        LHSNavTreeItem item = (LHSNavTreeItem) _applicationsTree.getSelectedItem();
         _applicationsTree.removeItems();
 
         for (Application application : applications) {
@@ -127,6 +130,8 @@ public class MainNavigator {
             final LHSNavTreeItem link = new LHSNavTreeItem(NameTokens.parseQName(applicationName)[1], token);
             link.setKey(applicationName);
             _applicationsTree.addItem(link);
+
+            link.setSelected(item != null && link.getKey().equals(item.getKey()));
         }
     }
 
@@ -134,6 +139,7 @@ public class MainNavigator {
      * @param services the services to be set within the Services section.
      */
     public void updateServices(List<Service> services) {
+        LHSNavTreeItem item = (LHSNavTreeItem) _servicesTree.getSelectedItem();
         _servicesTree.removeItems();
 
         for (Service service : services) {
@@ -143,6 +149,8 @@ public class MainNavigator {
             final LHSNavTreeItem link = new LHSNavTreeItem(NameTokens.parseQName(serviceName)[1], token);
             link.setKey(applicationName + ":" + serviceName);
             _servicesTree.addItem(link);
+
+            link.setSelected(item != null && link.getKey().equals(item.getKey()));
         }
     }
 
@@ -150,15 +158,31 @@ public class MainNavigator {
      * @param components the components to be set within the Components section.
      */
     public void updateComponents(List<Component> components) {
-        // TODO: enable once components are being populated in admin model
-        // _componentsTree.removeItems();
-        //
-        // for (Component component : components) {
-        // final String componentName = component.getName();
-        // String token = NameTokens.createComponentLink(componentName);
-        // final LHSNavTreeItem link = new LHSNavTreeItem(componentName, token);
-        // link.setKey(componentName);
-        // _componentsTree.addItem(link);
-        // }
+        Collections.sort(components, new Comparator<Component>() {
+            @Override
+            public int compare(Component o1, Component o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        LHSNavTreeItem item = (LHSNavTreeItem) _commonTree.getSelectedItem();
+        _componentsTree.removeItems();
+
+        for (Component component : components) {
+            final String componentName = component.getName();
+            final String displayName;
+            final ComponentProviderProxy extension = _componentProviders
+                    .getExtensionProviderByComponentName(componentName);
+            if (extension == null) {
+                displayName = componentName;
+            } else {
+                displayName = extension.getDisplayName();
+            }
+            String token = NameTokens.createComponentLink(componentName);
+            final LHSNavTreeItem link = new LHSNavTreeItem(displayName, token);
+            link.setKey(componentName);
+            _componentsTree.addItem(link);
+
+            link.setSelected(item != null && link.getKey().equals(item.getKey()));
+        }
     }
 }

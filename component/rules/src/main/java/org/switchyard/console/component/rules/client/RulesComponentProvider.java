@@ -16,44 +16,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.console.client.model;
+package org.switchyard.console.component.rules.client;
+
+import org.switchyard.console.components.client.extension.BaseComponentProvider;
+import org.switchyard.console.components.client.extension.ComponentExtension;
+import org.switchyard.console.components.client.ui.BaseComponentConfigurationView;
+import org.switchyard.console.components.client.ui.ComponentConfigurationPresenter.ComponentConfigurationView;
 
 /**
- * Component
+ * RulesComponentProvider
  * 
- * Represents a SwitchYard component.
+ * ComponentProvider for the Rules component.
  * 
  * @author Rob Cernich
  */
-public interface Component {
+@ComponentExtension(displayName = "Rules", componentName = "RulesComponent", activationTypes = "rules")
+public class RulesComponentProvider extends BaseComponentProvider {
 
-    /**
-     * @return the name of the SwitchYard component.
-     */
-    public String getName();
+    @Override
+    public ComponentConfigurationView createConfigurationView() {
+        return new BaseComponentConfigurationView() {
+            @Override
+            protected String getComponentName() {
+                return "Rules";
+            }
+        };
+    }
 
-    /**
-     * @param name the name of the SwitchYard component.
-     */
-    public void setName(String name);
-
-    /**
-     * @return component type, e.g. GATEWAY.
-     */
-    public String getType();
-
-    /**
-     * @param type component type.
-     */
-    public void setType(String type);
-
-    /**
-     * @return the configuration schema defined by the component.
-     */
-    public String getConfigSchema();
-
-    /**
-     * @param configSchema the configuration schema defined by the component.
-     */
-    public void setConfigSchema(String configSchema);
 }

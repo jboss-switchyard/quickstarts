@@ -9,7 +9,6 @@
     <version>0.3.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.switchyard</groupId>
   <artifactId>switchyard-console-gwt</artifactId>
   <packaging>war</packaging>
   <name>SwitchYard: Management Console Application</name>
@@ -18,10 +17,6 @@
   <properties>
     <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
     <asConsoleIncludesDirectory>${project.build.directory}/dependency/as-console</asConsoleIncludesDirectory>
-    <version.as7>7.0.2.Final</version.as7>
-    <version.as7.console>1.0.0.Beta17</version.as7.console>
-    <version.ballroom>1.0.0.Beta8</version.ballroom>
-    <version.gwt.plugin>2.2.0</version.gwt.plugin>
   </properties>
 
   <dependencies>
@@ -29,9 +24,71 @@
       <type>java-source</type> <classifier>sources</classifier> </dependency> -->
 
     <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-console-component-core</artifactId>
+      <version>${version.project}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-console-component-bean</artifactId>
+      <version>${version.project}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-console-component-bpel</artifactId>
+      <version>${version.project}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-console-component-bpm</artifactId>
+      <version>${version.project}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-console-component-camel</artifactId>
+      <version>${version.project}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-console-component-clojure</artifactId>
+      <version>${version.project}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-console-component-hornetq</artifactId>
+      <version>${version.project}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-console-component-rules</artifactId>
+      <version>${version.project}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-console-component-soap</artifactId>
+      <version>${version.project}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.jboss.ballroom</groupId>
       <artifactId>widgets</artifactId>
-      <version>${version.ballroom}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -118,7 +175,6 @@
     <outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
 
     <plugins>
-
       <!-- Dependencies from JBoss AS 7 Console -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -169,20 +225,10 @@
         </executions>
       </plugin>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
-      </plugin>
-
       <!-- GWT Maven Plugin -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
-        <version>${version.gwt.plugin}</version>
         <executions>
           <execution>
             <goals>
@@ -209,7 +255,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>2.1.1</version>
         <executions>
           <execution>
             <phase>compile</phase>
@@ -232,22 +277,4 @@
     </plugins>
   </build>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.jboss.as</groupId>
-        <artifactId>jboss-as-console-parent</artifactId>
-        <version>${version.as7.console}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.as</groupId>
-        <artifactId>jboss-as-parent</artifactId>
-        <version>${version.as7}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 </project>

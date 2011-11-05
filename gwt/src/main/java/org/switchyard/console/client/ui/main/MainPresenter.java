@@ -27,9 +27,9 @@ import org.switchyard.console.client.Console;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.Application;
-import org.switchyard.console.client.model.Component;
 import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.model.SwitchYardStore;
+import org.switchyard.console.components.client.model.Component;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
@@ -135,8 +135,8 @@ public class MainPresenter extends Presenter<MainPresenter.MyView, MainPresenter
     }
 
     @Override
-    protected void onReveal() {
-        super.onReveal();
+    protected void onReset() {
+        super.onReset();
 
         HTML headerContent = new HTML(new SafeHtmlBuilder().appendEscaped(
                 Singleton.MESSAGES.header_content_switchYardConfiguration()).toSafeHtml());

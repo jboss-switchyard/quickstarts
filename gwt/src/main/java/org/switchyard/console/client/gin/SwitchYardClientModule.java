@@ -43,6 +43,8 @@ import org.switchyard.console.client.model.SwitchYardStore;
 import org.switchyard.console.client.model.SwitchYardStoreImpl;
 import org.switchyard.console.client.ui.application.ApplicationPresenter;
 import org.switchyard.console.client.ui.application.ApplicationView;
+import org.switchyard.console.client.ui.component.ComponentConfigurationPresenterFactory;
+import org.switchyard.console.client.ui.component.ComponentConfigurationViewFactory;
 import org.switchyard.console.client.ui.component.ComponentPresenter;
 import org.switchyard.console.client.ui.component.ComponentView;
 import org.switchyard.console.client.ui.config.ConfigPresenter;
@@ -51,6 +53,8 @@ import org.switchyard.console.client.ui.main.MainPresenter;
 import org.switchyard.console.client.ui.main.MainViewImpl;
 import org.switchyard.console.client.ui.service.ServicePresenter;
 import org.switchyard.console.client.ui.service.ServiceView;
+import org.switchyard.console.components.client.extension.DefaultComponentProvider;
+import org.switchyard.console.components.client.extension.DefaultComponentProviderImpl;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
@@ -118,16 +122,22 @@ public class SwitchYardClientModule extends AbstractPresenterModule {
         // switchyard application
 
         bind(SwitchYardStore.class).to(SwitchYardStoreImpl.class).in(Singleton.class);
-        bindPresenter(MainPresenter.class, MainPresenter.MyView.class,
-                MainViewImpl.class, MainPresenter.MyProxy.class);
+        bindPresenter(MainPresenter.class, MainPresenter.MyView.class, MainViewImpl.class, MainPresenter.MyProxy.class);
         bindPresenter(ConfigPresenter.class, ConfigPresenter.MyView.class, ConfigView.class,
                 ConfigPresenter.MyProxy.class);
-        bindPresenter(ComponentPresenter.class, ComponentPresenter.MyView.class, ComponentView.class,
-                ComponentPresenter.MyProxy.class);
         bindPresenter(ApplicationPresenter.class, ApplicationPresenter.MyView.class, ApplicationView.class,
                 ApplicationPresenter.MyProxy.class);
         bindPresenter(ServicePresenter.class, ServicePresenter.MyView.class, ServiceView.class,
                 ServicePresenter.MyProxy.class);
+
+        // components
+        bindPresenter(ComponentPresenter.class, ComponentPresenter.MyView.class, ComponentView.class,
+                ComponentPresenter.MyProxy.class);
+        bindPresenterWidgetFactory(ComponentPresenter.PresenterFactory.class,
+                ComponentConfigurationPresenterFactory.class, ComponentPresenter.ViewFactory.class,
+                ComponentConfigurationViewFactory.class);
+
+        bind(DefaultComponentProvider.class).to(DefaultComponentProviderImpl.class);
     }
 
 }

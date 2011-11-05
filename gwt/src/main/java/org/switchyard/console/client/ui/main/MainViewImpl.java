@@ -24,12 +24,14 @@ import java.util.List;
 import org.jboss.as.console.client.core.message.Message;
 import org.switchyard.console.client.Console;
 import org.switchyard.console.client.model.Application;
-import org.switchyard.console.client.model.Component;
 import org.switchyard.console.client.model.Service;
+import org.switchyard.console.components.client.extension.ComponentProviders;
+import org.switchyard.console.components.client.model.Component;
 
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
 
 /**
@@ -50,14 +52,17 @@ public class MainViewImpl extends ViewImpl implements MainPresenter.MyView {
 
     /**
      * Create a new MainViewImpl.
+     * 
+     * @param componentProviders the ComponentProviders
      */
-    public MainViewImpl() {
+    @Inject
+    public MainViewImpl(ComponentProviders componentProviders) {
         super();
 
         _layout = new SplitLayoutPanel(4);
 
         _contentCanvas = new LayoutPanel();
-        _lhsNavigation = new MainNavigator();
+        _lhsNavigation = new MainNavigator(componentProviders);
 
         _layout.addWest(_lhsNavigation.asWidget(), 240);
         _layout.add(_contentCanvas);

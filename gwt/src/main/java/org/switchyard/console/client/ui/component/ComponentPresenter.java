@@ -24,24 +24,29 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.switchyard.console.client.Console;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.Singleton;
-import org.switchyard.console.client.model.Component;
 import org.switchyard.console.client.model.SwitchYardStore;
 import org.switchyard.console.client.ui.main.MainPresenter;
+import org.switchyard.console.components.client.model.Component;
+import org.switchyard.console.components.client.ui.ComponentConfigurationPresenter;
+import org.switchyard.console.components.client.ui.ComponentConfigurationPresenter.ComponentConfigurationView;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
+import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
 /**
  * ComponentPresenter
@@ -51,12 +56,6 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
  * @author Rob Cernich
  */
 public class ComponentPresenter extends Presenter<ComponentPresenter.MyView, ComponentPresenter.MyProxy> {
-
-    private final PlaceManager _placeManager;
-
-    private DispatchAsync _dispatcher;
-
-    private SwitchYardStore _switchYardStore;
 
     /**
      * MyProxy
@@ -68,6 +67,10 @@ public class ComponentPresenter extends Presenter<ComponentPresenter.MyView, Com
     public interface MyProxy extends Proxy<ComponentPresenter>, Place {
     }
 
+    /** The main content slot for this presenter. */
+    @ContentSlot
+    public static final GwtEvent.Type<RevealContentHandler<?>> TYPE_MAIN_CONTENT = new GwtEvent.Type<RevealContentHandler<?>>();
+
     /**
      * MyView
      * 
@@ -78,12 +81,43 @@ public class ComponentPresenter extends Presenter<ComponentPresenter.MyView, Com
          * @param presenter the presenter associated with the view.
          */
         void setPresenter(ComponentPresenter presenter);
-
-        /**
-         * @param component set the component to be viewed/edited.
-         */
-        void setComponent(Component component);
     }
+
+    /**
+     * PresenterFactory
+     * 
+     * A factory for creating ComponentConfigurationPresenter objects.
+     * 
+     * @author Rob Cernich
+     */
+    public interface PresenterFactory {
+        /**
+         * @param componentName the component.
+         * @return a ComponentConfigurationPresenter specific to the component.
+         */
+        public ComponentConfigurationPresenter create(String componentName);
+    }
+
+    /**
+     * ViewFactory
+     * 
+     * A factory for creating ComponentConfigurationView objects.
+     * 
+     * @author Rob Cernich
+     */
+    public interface ViewFactory {
+        /**
+         * @param componentName the component.
+         * @return a ComponentConfigurationView specific to the component.
+         */
+        public ComponentConfigurationView create(String componentName);
+    }
+
+    private final PlaceManager _placeManager;
+    private final DispatchAsync _dispatcher;
+    private final SwitchYardStore _switchYardStore;
+    private final PresenterFactory _factory;
+    private ComponentConfigurationPresenter _presenterWidget;
 
     /**
      * Create a new ComponentPresenter.
@@ -94,15 +128,17 @@ public class ComponentPresenter extends Presenter<ComponentPresenter.MyView, Com
      * @param placeManager the injected PlaceManager.
      * @param dispatcher the injected DispatchAsync.
      * @param switchYardStore the injected SwitchYardStore.
+     * @param factory the PresenterFactory for specialized component presenters.
      */
     @Inject
     public ComponentPresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager placeManager,
-            DispatchAsync dispatcher, SwitchYardStore switchYardStore) {
+            DispatchAsync dispatcher, SwitchYardStore switchYardStore, PresenterFactory factory) {
         super(eventBus, view, proxy);
 
-        this._placeManager = placeManager;
-        this._dispatcher = dispatcher;
-        this._switchYardStore = switchYardStore;
+        _placeManager = placeManager;
+        _dispatcher = dispatcher;
+        _switchYardStore = switchYardStore;
+        _factory = factory;
     }
 
     @Override
@@ -121,6 +157,7 @@ public class ComponentPresenter extends Presenter<ComponentPresenter.MyView, Com
         Console.MODULES.getHeader().setContent(headerContent);
         Console.MODULES.getHeader().highlight(NameTokens.COMPONENT_CONFIG_PRESENTER);
 
+        releasePresenterWidget();
         loadComponent(_placeManager.getCurrentPlaceRequest().getParameter("component", null));
     }
 
@@ -134,7 +171,10 @@ public class ComponentPresenter extends Presenter<ComponentPresenter.MyView, Com
 
             @Override
             public void onSuccess(Component component) {
-                getView().setComponent(component);
+                _presenterWidget = _factory.create(component.getName());
+                _presenterWidget.bind();
+                ComponentPresenter.this.setInSlot(TYPE_MAIN_CONTENT, _presenterWidget, false);
+                _presenterWidget.setComponent(component);
             }
 
             @Override
@@ -144,6 +184,14 @@ public class ComponentPresenter extends Presenter<ComponentPresenter.MyView, Com
                         new Message("Unknown error", caught.getMessage(), Message.Severity.Error));
             }
         });
+    }
+
+    private void releasePresenterWidget() {
+        if (_presenterWidget == null) {
+            return;
+        }
+        _presenterWidget.unbind();
+        _presenterWidget = null;
     }
 
 }

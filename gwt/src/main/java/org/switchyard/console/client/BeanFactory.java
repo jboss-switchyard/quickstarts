@@ -20,12 +20,12 @@ package org.switchyard.console.client;
 
 import org.switchyard.console.client.model.Application;
 import org.switchyard.console.client.model.Binding;
-import org.switchyard.console.client.model.Component;
 import org.switchyard.console.client.model.ComponentReference;
 import org.switchyard.console.client.model.ComponentService;
 import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.model.SystemDetails;
 import org.switchyard.console.client.model.Transformer;
+import org.switchyard.console.components.client.model.Component;
 
 import com.google.gwt.autobean.shared.AutoBean;
 import com.google.gwt.autobean.shared.AutoBeanFactory;

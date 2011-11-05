@@ -21,6 +21,8 @@ package org.switchyard.console.client.model;
 
 import java.util.List;
 
+import org.switchyard.console.components.client.model.Component;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**

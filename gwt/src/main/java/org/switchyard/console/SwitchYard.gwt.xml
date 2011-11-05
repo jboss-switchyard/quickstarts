@@ -15,6 +15,7 @@
 <module rename-to="SwitchYard">
 
 	<inherits name="org.jboss.as.console.Framework" />
+    <inherits name="org.switchyard.console.Extensions" />
 
 	<define-configuration-property name="gin.ginjector" is-multi-valued="false" />
 	<set-configuration-property name="gin.ginjector" value="org.switchyard.console.client.gin.SwitchYardGinjector" />
