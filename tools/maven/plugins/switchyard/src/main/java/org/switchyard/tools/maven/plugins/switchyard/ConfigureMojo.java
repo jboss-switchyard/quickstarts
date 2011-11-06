@@ -35,6 +35,8 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.MergeScanner;
 import org.switchyard.config.model.Model;
@@ -45,16 +47,21 @@ import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 
 /**
  * Maven mojo for configuring SwitchYard.
- *
+ * 
  * @param <M> the Model type being configured
- *
+ * 
  * @goal configure
  * @phase process-classes
  * @requiresDependencyResolution compile
- *
+ * 
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class ConfigureMojo<M extends Model> extends AbstractMojo {
+
+    private static final String SWITCHARD_XML_FILE_NAME = "switchyard.xml";
+    private static final String SWITCHYARD_XML_DEFAULT_FOLDER = "META-INF";
+    private static final String DEFAULT_SWITCHYARD_XML_FILE_PATH = SWITCHYARD_XML_DEFAULT_FOLDER + File.separator
+            + SWITCHARD_XML_FILE_NAME;
 
     /**
      * @parameter
@@ -64,12 +71,12 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
     /**
      * @parameter
      */
-    private String[] scannerClassNames = new String[]{};
+    private String[] scannerClassNames = new String[] {};
 
     /**
      * @parameter
      */
-    private File[] scanDirectories = new File[]{};
+    private File[] scanDirectories = new File[] {};
 
     /**
      * @parameter expression="${project.compileClasspathElements}"
@@ -142,18 +149,18 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
             List<Scanner<M>> scanners = new ArrayList<Scanner<M>>();
             for (String scannerClassName : scannerClassNames) {
                 @SuppressWarnings("unchecked")
-                Class<Scanner<M>> scannerClass = (Class<Scanner<M>>)Classes.forName(scannerClassName, loader);
+                Class<Scanner<M>> scannerClass = (Class<Scanner<M>>) Classes.forName(scannerClassName, loader);
                 if (scannerClass != null) {
                     Scanner<M> scanner = scannerClass.newInstance();
                     scanners.add(scanner);
                 }
             }
-            scanners.add(new ModelPullerScanner<M>());
+            addModelPullerScanners(scanners);
             if (modelClassName == null) {
                 modelClassName = V1SwitchYardModel.class.getName();
             }
             @SuppressWarnings("unchecked")
-            Class<M> modelClass = (Class<M>)Classes.forName(modelClassName, loader);
+            Class<M> modelClass = (Class<M>) Classes.forName(modelClassName, loader);
             MergeScanner<M> merge_scanner = new MergeScanner<M>(modelClass, true, scanners);
             List<URL> scannerURLs = new ArrayList<URL>();
             if (scanDirectories.length == 0) {
@@ -169,13 +176,13 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
             ScannerInput<M> scanner_input = new ScannerInput<M>().setName(artifactId).setURLs(scannerURLs);
             M model = merge_scanner.scan(scanner_input).getModel();
             if (outputFile == null) {
-                File od = new File(outputDirectory, "META-INF");
+                File od = new File(outputDirectory, SWITCHYARD_XML_DEFAULT_FOLDER);
                 if (!od.exists()) {
                     if (!od.mkdirs()) {
                         throw new Exception("mkdirs() on " + od + " failed.");
                     }
                 }
-                outputFile = new File(od, "switchyard.xml");
+                outputFile = new File(od, SWITCHARD_XML_FILE_NAME);
             }
             getLog().info("Outputting SwitchYard configuration model to " + outputFile.getAbsolutePath());
             writer = new BufferedWriter(new FileWriter(outputFile));
@@ -200,6 +207,63 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
                 }
             }
         }
+    }
+
+    /**
+     * Add a ModelPullerScanner for each instance of META-INF/switchyard.xml
+     * that is found in a resource or scan folder. Any includes or excludes
+     * specified for the resource folder are respected (i.e. if a switchyard.xml
+     * file is in the resource folder, but excluded, a scanner will not be added
+     * for that file). No filtering is applied to scan folders.
+     * 
+     * @param scanners the scanners list
+     * @throws IOException if an error occurs scanning the resource folder(s)
+     *             for files.
+     */
+    private void addModelPullerScanners(final List<Scanner<M>> scanners) throws IOException {
+        for (Resource resource : resources) {
+            addModelPullerScanner(new File(resource.getDirectory()).getCanonicalFile(),
+                    convertInExcludes(resource.getIncludes()), convertInExcludes(resource.getExcludes()), scanners);
+        }
+        for (File file : scanDirectories) {
+            addModelPullerScanner(file.getCanonicalFile(), null, null, scanners);
+        }
+    }
+
+    /**
+     * Adds a scanner if a "META-INF/switchyard.xml" file is found in the folder
+     * specified by baseDir.
+     * 
+     * @param baseDir the directory to search.
+     * @param includes file includes.
+     * @param excludes file excludes.
+     * @param scanners the scanners list
+     * @throws IOException if an error occurs.
+     */
+    @SuppressWarnings("unchecked")
+    private void addModelPullerScanner(final File baseDir, final String includes, final String excludes,
+            final List<Scanner<M>> scanners) throws IOException {
+        final File switchYardFile = new File(baseDir, DEFAULT_SWITCHYARD_XML_FILE_PATH).getCanonicalFile();
+        for (File file : (List<File>) FileUtils.getFiles(baseDir, includes, excludes)) {
+            file = file.getCanonicalFile();
+            if (switchYardFile.equals(file)) {
+                // found a match, add a scanner
+                scanners.add(new ModelPullerScanner<M>(file));
+                // one file per folder
+                return;
+            }
+        }
+    }
+
+    private String convertInExcludes(List<String> cludes) {
+        if (cludes == null) {
+            return null;
+        }
+        final String converted = StringUtils.join(cludes.iterator(), ",");
+        if (converted.length() == 0) {
+            return null;
+        }
+        return converted;
     }
 
 }
