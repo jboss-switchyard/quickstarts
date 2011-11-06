@@ -58,6 +58,7 @@
     <version.hornetq>2.2.5.Final</version.hornetq>
     <version.jackson>1.8.0</version.jackson>
     <version.jaxen>1.1.1</version.jaxen>
+    <version.jta>1.1</version.jta>
     <version.maven.deploy.plugin>2.5</version.maven.deploy.plugin>
     <version.netty>3.2.1.Final</version.netty>
     <version.servlet>2.5</version.servlet>
@@ -185,6 +186,11 @@
           <groupId>javax.servlet</groupId>
           <artifactId>servlet-api</artifactId>
           <version>${version.servlet}</version>
+      </dependency>
+      <dependency>
+          <groupId>javax.transaction</groupId>
+          <artifactId>jta</artifactId>
+          <version>${version.jta}</version>
       </dependency>
       <dependency>
           <groupId>jaxen</groupId>

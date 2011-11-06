@@ -29,6 +29,8 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerChain;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.handlers.PolicyHandler;
+import org.switchyard.handlers.TransactionHandler;
 import org.switchyard.handlers.TransformHandler;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InOutService;
@@ -72,7 +74,9 @@ public class DomainImpl implements ServiceDomain {
         // Build out the system handlers chain.  It would be cleaner if we
         // handled this via config.
         _defaultHandlers = new DefaultHandlerChain();
-        _defaultHandlers.addFirst("transformation", new TransformHandler(_transformerRegistry));
+        _defaultHandlers.addLast("transaction-policy", new TransactionHandler());
+        _defaultHandlers.addLast("generic-policy", new PolicyHandler());
+        _defaultHandlers.addLast("transformation", new TransformHandler(_transformerRegistry));
 
         if (_logger.isDebugEnabled()) {
             _logger.debug("Created SwitchYard ServiceDomain instance '" + name + "'.");

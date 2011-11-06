@@ -55,6 +55,10 @@
 			<artifactId>log4j</artifactId>
 		</dependency>
 		<dependency>
+            <groupId>javax.transaction</groupId>
+            <artifactId>jta</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.dyuproject.protostuff</groupId>
 			<artifactId>protostuff-api</artifactId>
 		</dependency>

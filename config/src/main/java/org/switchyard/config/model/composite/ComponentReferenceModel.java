@@ -19,6 +19,8 @@
 
 package org.switchyard.config.model.composite;
 
+import java.util.Set;
+
 import org.switchyard.config.model.NamedModel;
 
 /**
@@ -65,5 +67,26 @@ public interface ComponentReferenceModel extends NamedModel {
      * @return this ComponentReferenceModel (useful for chaining)
      */
     public ComponentReferenceModel setInterface(ComponentReferenceInterfaceModel interfaze);
+    
+
+    /**
+     * Adds the specified policy identifier to the set of required policy 
+     * intents for the reference.
+     * @param policyName name of the required policy
+     */
+    public void addPolicyRequirement(String policyName);
+    
+    /**
+     * Returns the set of policy intents required for this reference.
+     * @return set of policy intents required for the reference.
+     */
+    public Set<String> getPolicyRequirements();
+    
+    /**
+     * Indicates whether a given policy is required for this reference.
+     * @param policyName name of the policy to check
+     * @return true if the policy is required, false otherwise
+     */
+    public boolean hasPolicyRequirement(String policyName);
 
 }

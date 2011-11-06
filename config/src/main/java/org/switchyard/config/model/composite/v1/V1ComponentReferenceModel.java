@@ -19,6 +19,8 @@
 
 package org.switchyard.config.model.composite.v1;
 
+import java.util.Set;
+
 import javax.xml.namespace.QName;
 
 import org.switchyard.config.Configuration;
@@ -99,6 +101,32 @@ public class V1ComponentReferenceModel extends BaseNamedModel implements Compone
         setChildModel(interfaze);
         _interface = interfaze;
         return this;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addPolicyRequirement(String policyName) {
+        Set<String> requires = PolicyConfig.getRequires(this);
+        requires.add(policyName);
+        PolicyConfig.setRequires(this, requires);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<String> getPolicyRequirements() {
+        return PolicyConfig.getRequires(this);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasPolicyRequirement(String policyName) {
+        return PolicyConfig.getRequires(this).contains(policyName);
     }
 
 }
