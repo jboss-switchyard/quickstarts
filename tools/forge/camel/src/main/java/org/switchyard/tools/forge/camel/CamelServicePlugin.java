@@ -55,8 +55,8 @@ public class CamelServicePlugin implements Plugin {
     
 
     // Template files used for camel route services
-    private static final String ROUTE_INTERFACE_TEMPLATE = "java/RouteInterfaceTemplate.java";
-    private static final String ROUTE_IMPLEMENTATION_TEMPLATE = "java/RouteImplementationTemplate.java";
+    private static final String ROUTE_INTERFACE_TEMPLATE = "/org/switchyard/tools/forge/camel/RouteInterfaceTemplate.java";
+    private static final String ROUTE_IMPLEMENTATION_TEMPLATE = "/org/switchyard/tools/forge/camel/RouteImplementationTemplate.java";
     
     private enum RouteType {
         JAVA, XML;
