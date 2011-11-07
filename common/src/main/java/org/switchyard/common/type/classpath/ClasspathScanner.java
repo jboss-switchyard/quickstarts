@@ -49,7 +49,18 @@ public class ClasspathScanner {
     /**
      * Scan the specified URL.
      * <p/>
-     * The URL can be a folder or an Archive file.
+     * The URL can be a folder or an Archive file. If a folder URL contains a
+     * ref value, the folder scanned will be equivalent to
+     * <code>new File(url.getPath(),url.getRef())</code>. This supports simple
+     * filtering of a specific subdirectory within a class folder and ensures
+     * class/file names are generated correctly based on folder structure. For
+     * example, 
+     * <p/>
+     * <code>scan(new URL(new File("./target/test-classes").toURI().toURL(), "#org/switchyard/special/scan"))</code>
+     * <p/>
+     * will scan the folder "org/switchyard/special/scan" within
+     * "target/test-classes".
+     * 
      * @param url URL to scan.
      * @throws IOException Error reading from URL target.
      */
@@ -58,7 +69,7 @@ public class ClasspathScanner {
 
         if (file.exists()) {
             if (file.isDirectory()) {
-                handleDirectory(file, null);
+                handleDirectory(file, url.getRef());
             } else {
                 handleArchive(file);
             }
@@ -75,6 +86,7 @@ public class ClasspathScanner {
      */
     public static File toClassPathFile(URL classPathURL) throws IOException {
         String urlPath = classPathURL.getFile();
+        String urlRef = classPathURL.getRef();
 
         if (urlPath.startsWith("file:")) {
             urlPath = urlPath.substring(5);
@@ -84,7 +96,7 @@ public class ClasspathScanner {
             urlPath = urlPath.substring(0, urlPath.indexOf('!'));
         }
 
-        return new File(urlPath);
+        return urlRef == null || urlRef.length() == 0 ? new File(urlPath) : new File(urlPath, urlRef);
     }
 
     private void handleArchive(File file) throws IOException {
@@ -116,7 +128,7 @@ public class ClasspathScanner {
                 break;
             }
 
-            String newPath = path == null ? child.getName() : path + '/' + child.getName();
+            String newPath = path == null || path.isEmpty() ? child.getName() : path + '/' + child.getName();
 
             if (child.isDirectory()) {
                 handleDirectory(child, newPath);
