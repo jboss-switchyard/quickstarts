@@ -54,7 +54,6 @@ public class RouteScanner implements Scanner<SwitchYardModel> {
         SwitchYardModel switchyardModel = new V1SwitchYardModel();
         CompositeModel compositeModel = new V1CompositeModel();
         compositeModel.setName(input.getName());
-        switchyardModel.setComposite(compositeModel);
 
         List<Class<?>> routeClasses = scanForRoutes(input.getURLs());
 
@@ -83,6 +82,10 @@ public class RouteScanner implements Scanner<SwitchYardModel> {
             // Need to add these!
         }
         
+        if (!compositeModel.getModelChildren().isEmpty()) {
+            switchyardModel.setComposite(compositeModel);
+        }
+
         return new ScannerOutput<SwitchYardModel>().setModel(switchyardModel);
     }
 

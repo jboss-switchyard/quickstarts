@@ -20,6 +20,7 @@
 package org.switchyard.component.camel.config.model;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ public class RouteScannerTest {
 
     @Test
     public void componentImplementationCreated() throws Exception {
-        scan(new File("./target/test-classes/org/switchyard/component/camel/config/model").toURI().toURL());
+        scan(new URL(new File("./target/test-classes").toURI().toURL(), "#org/switchyard/component/camel/config/model"));
         List<ComponentModel> components = _scannedModel.getComposite().getComponents();
         for(ComponentModel component : components) {
             System.out.println("RouteScanner found component: " + component.getName());
@@ -71,6 +72,14 @@ public class RouteScannerTest {
         }
     }
     
+    // verify an empty model is created
+    @Test
+    public void testEmptyScan() throws Exception {
+        scan();
+        Assert.assertNull("Composite element should not be created if no components were found.",
+                _scannedModel.getComposite());
+    }
+
     private void checkCamelImplementation(CamelComponentImplementationModel model) throws Exception {
         // Load the class
         Class<?> routeClass = Classes.forName(model.getJavaClass(), getClass());
@@ -82,8 +91,8 @@ public class RouteScannerTest {
     
     // Takes a list of URLs to scan *instead* of what's defined in @Before.
     private void scan(URL ... urls) throws Exception {
+        _scannedURLs.clear();
         if (urls != null && urls.length > 0) {
-            _scannedURLs.clear();
             _scannedURLs.addAll(Arrays.asList(urls));
         }
         ScannerInput<SwitchYardModel> input = new ScannerInput<SwitchYardModel>().setURLs(_scannedURLs);

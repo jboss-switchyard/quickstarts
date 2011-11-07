@@ -126,4 +126,13 @@ public class RulesModelTests {
         }
     }
 
+    @Test
+    public void testEmptyScan() throws Exception {
+        Scanner<SwitchYardModel> scanner = new RulesSwitchYardScanner();
+        ScannerInput<SwitchYardModel> input = new ScannerInput<SwitchYardModel>();
+        ScannerOutput<SwitchYardModel> output = scanner.scan(input);
+        Assert.assertNull("Composite element should not be created if no components were found.", output.getModel()
+                .getComposite());
+    }
+
 }

@@ -65,7 +65,6 @@ import org.switchyard.metadata.java.JavaService;
  */
 public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
 
-    private static final IsAnnotationPresentFilter PROCESS_FILTER = new IsAnnotationPresentFilter(Process.class);
     private static final IsAnnotationPresentFilter START_PROCESS_FILTER = new IsAnnotationPresentFilter(StartProcess.class);
     private static final IsAnnotationPresentFilter SIGNAL_EVENT_FILTER = new IsAnnotationPresentFilter(SignalEvent.class);
     private static final IsAnnotationPresentFilter ABORT_PROCESS_INSTANCE_FILTER = new IsAnnotationPresentFilter(AbortProcessInstance.class);
@@ -73,6 +72,8 @@ public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
     private static final String UNDEFINED = "";
     private static final String INTERFACE_ERR_MSG = " is a class. @Process only allowed on interfaces.";
     private static final String FILTER_ERR_MSG = " is in error. @StartProcess, @SignalEvent and @AbortProcessInstance cannot co-exist on the same method.";
+
+    private final IsAnnotationPresentFilter _processFilter = new IsAnnotationPresentFilter(Process.class);
 
     /**
      * {@inheritDoc}
@@ -82,12 +83,11 @@ public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
         SwitchYardModel switchyardModel = new V1SwitchYardModel();
         CompositeModel compositeModel = new V1CompositeModel();
         compositeModel.setName(input.getName());
-        switchyardModel.setComposite(compositeModel);
-        ClasspathScanner processScanner = new ClasspathScanner(PROCESS_FILTER);
+        ClasspathScanner processScanner = new ClasspathScanner(_processFilter);
         for (URL url : input.getURLs()) {
             processScanner.scan(url);
         }
-        List<Class<?>> processClasses = PROCESS_FILTER.getMatchedTypes();
+        List<Class<?>> processClasses = _processFilter.getMatchedTypes();
         for (Class<?> processClass : processClasses) {
             Process process = processClass.getAnnotation(Process.class);
             Class<?> processInterface = process.value();
@@ -196,6 +196,11 @@ public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
             }
             componentModel.setImplementation(bciModel);
         }
+
+        if (!compositeModel.getModelChildren().isEmpty()) {
+            switchyardModel.setComposite(compositeModel);
+        }
+
         return new ScannerOutput<SwitchYardModel>().setModel(switchyardModel);
     }
 

@@ -65,7 +65,6 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
         SwitchYardModel switchyardModel = new V1SwitchYardModel();
         CompositeModel compositeModel = new V1CompositeModel();
         compositeModel.setName(input.getName());
-        switchyardModel.setComposite(compositeModel);
 
         List<Class<?>> serviceClasses = scanForServiceBeans(input.getURLs());
 
@@ -119,6 +118,10 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             compositeModel.addComponent(componentModel);
             componentModel.setName(name);
             compositeModel.addComponent(componentModel);
+        }
+
+        if (!compositeModel.getModelChildren().isEmpty()) {
+            switchyardModel.setComposite(compositeModel);
         }
 
         return new ScannerOutput<SwitchYardModel>().setModel(switchyardModel);

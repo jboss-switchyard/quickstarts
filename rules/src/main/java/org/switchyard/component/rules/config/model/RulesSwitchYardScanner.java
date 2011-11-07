@@ -66,13 +66,14 @@ import org.switchyard.metadata.java.JavaService;
  */
 public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
 
-    private static final IsAnnotationPresentFilter RULES_FILTER = new IsAnnotationPresentFilter(Rules.class);
     private static final IsAnnotationPresentFilter EXECUTE_FILTER = new IsAnnotationPresentFilter(Execute.class);
     private static final IsAnnotationPresentFilter FIRE_ALL_RULES_FILTER = new IsAnnotationPresentFilter(FireAllRules.class);
     private static final IsAnnotationPresentFilter FIRE_UNTIL_HALT_FILTER = new IsAnnotationPresentFilter(FireUntilHalt.class);
 
     private static final String UNDEFINED = "";
     private static final String INTERFACE_ERR_MSG = " is a class. @Rules only allowed on interfaces.";
+
+    private final IsAnnotationPresentFilter _rulesFilter = new IsAnnotationPresentFilter(Rules.class);
 
     /**
      * {@inheritDoc}
@@ -82,12 +83,11 @@ public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
         SwitchYardModel switchyardModel = new V1SwitchYardModel();
         CompositeModel compositeModel = new V1CompositeModel();
         compositeModel.setName(input.getName());
-        switchyardModel.setComposite(compositeModel);
-        ClasspathScanner rulesScanner = new ClasspathScanner(RULES_FILTER);
+        ClasspathScanner rulesScanner = new ClasspathScanner(_rulesFilter);
         for (URL url : input.getURLs()) {
             rulesScanner.scan(url);
         }
-        List<Class<?>> rulesClasses = RULES_FILTER.getMatchedTypes();
+        List<Class<?>> rulesClasses = _rulesFilter.getMatchedTypes();
         for (Class<?> rulesClass : rulesClasses) {
             Rules rules = rulesClass.getAnnotation(Rules.class);
             Class<?> rulesInterface = rules.value();
@@ -183,6 +183,11 @@ public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
             componentModel.addService(serviceModel);
             compositeModel.addComponent(componentModel);
         }
+
+        if (!compositeModel.getModelChildren().isEmpty()) {
+            switchyardModel.setComposite(compositeModel);
+        }
+
         return new ScannerOutput<SwitchYardModel>().setModel(switchyardModel);
     }
 
