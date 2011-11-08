@@ -209,7 +209,7 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
                 break;
         }
         if (processInstanceId != null) {
-            context.setProperty(PROCESS_INSTANCE_ID_VAR, processInstanceId, Scope.OUT);
+            context.setProperty(PROCESS_INSTANCE_ID_VAR, processInstanceId, Scope.EXCHANGE);
             ExchangePattern exchangePattern = serviceOperation.getExchangePattern();
             if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
                 if (processInstance == null) {

@@ -18,8 +18,7 @@
  */
 package org.switchyard.component.bpm.drools;
 
-import static org.switchyard.Scope.IN;
-import static org.switchyard.Scope.OUT;
+import static org.switchyard.Scope.EXCHANGE;
 import static org.switchyard.component.bpm.common.ProcessActionType.SIGNAL_EVENT;
 import static org.switchyard.component.bpm.common.ProcessActionType.START_PROCESS;
 import static org.switchyard.component.bpm.common.ProcessConstants.ACTION_TYPE_VAR;
@@ -109,15 +108,15 @@ public class BPMDroolsTests {
         handler.start(serviceRef);
         Exchange exchange = serviceRef.createExchange(IN_ONLY);
         Context context = exchange.getContext();
-        context.setProperty(ACTION_TYPE_VAR, START_PROCESS, IN);
+        context.setProperty(ACTION_TYPE_VAR, START_PROCESS, EXCHANGE);
         exchange.send(exchange.createMessage());
-        Property property = context.getProperty(PROCESS_INSTANCE_ID_VAR, OUT);
+        Property property = context.getProperty(PROCESS_INSTANCE_ID_VAR, EXCHANGE);
         Long processInstanceId = property != null ? (Long)property.getValue() : null;
         exchange = serviceRef.createExchange(IN_ONLY);
         context = exchange.getContext();
-        context.setProperty(ACTION_TYPE_VAR, SIGNAL_EVENT, IN);
-        context.setProperty(PROCESS_EVENT_TYPE_VAR, "test", IN);
-        context.setProperty(PROCESS_INSTANCE_ID_VAR, processInstanceId, IN);
+        context.setProperty(ACTION_TYPE_VAR, SIGNAL_EVENT, EXCHANGE);
+        context.setProperty(PROCESS_EVENT_TYPE_VAR, "test", EXCHANGE);
+        context.setProperty(PROCESS_INSTANCE_ID_VAR, processInstanceId, EXCHANGE);
         exchange.send(exchange.createMessage());
         handler.stop(serviceRef);
         handler.destroy(serviceRef);
@@ -137,7 +136,7 @@ public class BPMDroolsTests {
         handler.start(serviceRef);
         Exchange exchange = serviceRef.createExchange(IN_ONLY);
         Context context = exchange.getContext();
-        context.setProperty(ACTION_TYPE_VAR, START_PROCESS, IN);
+        context.setProperty(ACTION_TYPE_VAR, START_PROCESS, EXCHANGE);
         exchange.send(exchange.createMessage());
         Assert.assertEquals("handler executed", ReuseHandler._holder.value);
         ReuseHandler._holder.value = null;

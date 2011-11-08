@@ -18,7 +18,7 @@
  */
 package org.switchyard.component.rules.exchange;
 
-import static org.switchyard.Scope.IN;
+import static org.switchyard.Scope.EXCHANGE;
 import static org.switchyard.component.rules.common.RulesConstants.ACTION_TYPE_VAR;
 
 import org.apache.log4j.Logger;
@@ -52,7 +52,7 @@ public abstract class BaseRulesExchangeHandler extends BaseHandler implements Ru
                 return rat;
             }
         }
-        Property property = context.getProperty(ACTION_TYPE_VAR, IN);
+        Property property = context.getProperty(ACTION_TYPE_VAR, EXCHANGE);
         if (property != null) {
             Object value = property.getValue();
             if (value instanceof RulesActionType) {
@@ -98,7 +98,7 @@ public abstract class BaseRulesExchangeHandler extends BaseHandler implements Ru
      * @return the property value
      */
     protected boolean getBoolean(Context context, String name, boolean fallback) {
-        Property property = context.getProperty(name, IN);
+        Property property = context.getProperty(name, EXCHANGE);
         if (property != null) {
             Object value = property.getValue();
             if (value instanceof Boolean) {

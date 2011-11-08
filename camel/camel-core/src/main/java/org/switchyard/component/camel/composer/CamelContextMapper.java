@@ -40,12 +40,23 @@ public class CamelContextMapper extends BaseContextMapper<Message> {
     @Override
     public void mapFrom(Message source, Context context) throws Exception {
         Exchange exchange = source.getExchange();
-        for (Map.Entry<String,Object> entry : exchange.getProperties().entrySet()) {
-            String name = entry.getKey();
+        for (Map.Entry<String,Object> header : source.getHeaders().entrySet()) {
+            String name = header.getKey();
             if (matches(name)) {
-                Object value = entry.getValue();
+                Object value = header.getValue();
                 if (value != null) {
-                    context.setProperty(name, value);
+                    // Camel Message headers -> Context IN properties
+                    context.setProperty(name, value, Scope.IN);
+                }
+            }
+        }
+        for (Map.Entry<String,Object> property : exchange.getProperties().entrySet()) {
+            String name = property.getKey();
+            if (matches(name)) {
+                Object value = property.getValue();
+                if (value != null) {
+                    // Camel Exchange properties -> Context EXCHANGE properties
+                    context.setProperty(name, value, Scope.EXCHANGE);
                 }
             }
         }
@@ -57,14 +68,23 @@ public class CamelContextMapper extends BaseContextMapper<Message> {
     @Override
     public void mapTo(Context context, Message target) throws Exception {
         Exchange exchange = target.getExchange();
-        for (Scope scope : Scope.values()) {
-            for (Property property : context.getProperties(scope)) {
-                String name = property.getName();
-                if (matches(name)) {
-                    Object value = property.getValue();
-                    if (value != null) {
-                        exchange.setProperty(name, value);
-                    }
+        for (Property property : context.getProperties(Scope.OUT)) {
+            String name = property.getName();
+            if (matches(name)) {
+                Object value = property.getValue();
+                if (value != null) {
+                    // Context OUT properties -> Camel Message headers
+                    target.setHeader(name, value);
+                }
+            }
+        }
+        for (Property property : context.getProperties(Scope.EXCHANGE)) {
+            String name = property.getName();
+            if (matches(name)) {
+                Object value = property.getValue();
+                if (value != null) {
+                    // Context EXCHANGE properties -> Camel Exchange properties
+                    exchange.setProperty(name, value);
                 }
             }
         }

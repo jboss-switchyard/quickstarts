@@ -18,8 +18,6 @@
  */
 package org.switchyard.component.hornetq.composer;
 
-import java.util.Iterator;
-
 import org.hornetq.api.core.PropertyConversionException;
 import org.hornetq.api.core.SimpleString;
 import org.hornetq.api.core.client.ClientMessage;
@@ -40,9 +38,7 @@ public class HornetQContextMapper extends BaseContextMapper<ClientMessage> {
      */
     @Override
     public void mapFrom(ClientMessage source, Context context) throws Exception {
-        Iterator<SimpleString> iter = source.getPropertyNames().iterator();
-        while (iter.hasNext()) {
-            SimpleString key = iter.next();
+        for (SimpleString key : source.getPropertyNames()) {
             String name = key.toString();
             if (matches(name)) {
                 String value = null;
@@ -53,7 +49,8 @@ public class HornetQContextMapper extends BaseContextMapper<ClientMessage> {
                     pce.getMessage();
                 }
                 if (value != null) {
-                    context.setProperty(name, value);
+                    // HornetQ ClientMessage properties -> Context EXCHANGE properties
+                    context.setProperty(name, value, Scope.EXCHANGE);
                 }
             }
         }
@@ -64,18 +61,17 @@ public class HornetQContextMapper extends BaseContextMapper<ClientMessage> {
      */
     @Override
     public void mapTo(Context context, ClientMessage target) throws Exception {
-        for (Scope scope : Scope.values()) {
-            for (Property property : context.getProperties(scope)) {
-                String name = property.getName();
-                if (matches(name)) {
-                    Object value = property.getValue();
-                    if (value != null) {
-                        try {
-                            target.putObjectProperty(name, value);
-                        } catch (PropertyConversionException pce) {
-                            // ignore and keep going (here just to keep checkstyle happy)
-                            pce.getMessage();
-                        }
+        for (Property property : context.getProperties(Scope.EXCHANGE)) {
+            String name = property.getName();
+            if (matches(name)) {
+                Object value = property.getValue();
+                if (value != null) {
+                    try {
+                        // Context EXCHANGE properties -> HornetQ ClientMessage properties
+                        target.putObjectProperty(name, value);
+                    } catch (PropertyConversionException pce) {
+                        // ignore and keep going (here just to keep checkstyle happy)
+                        pce.getMessage();
                     }
                 }
             }

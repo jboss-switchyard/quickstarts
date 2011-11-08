@@ -21,6 +21,8 @@ package org.switchyard.component.soap.composer;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;
+import javax.xml.soap.MimeHeader;
+import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
@@ -44,17 +46,29 @@ public class SOAPContextMapper extends BaseContextMapper<SOAPMessage> {
      */
     @Override
     public void mapFrom(SOAPMessage source, Context context) throws Exception {
-        SOAPHeader soapHeader = source.getSOAPHeader();
         @SuppressWarnings("unchecked")
-        Iterator<SOAPHeaderElement> iter = soapHeader.examineAllHeaderElements();
-        while (iter.hasNext()) {
-            SOAPHeaderElement elem = iter.next();
-            QName qname = elem.getElementQName();
-            if (matches(qname)) {
-                String value = elem.getValue();
+        Iterator<MimeHeader> mimeHeaders = source.getMimeHeaders().getAllHeaders();
+        while (mimeHeaders.hasNext()) {
+            MimeHeader mimeHeader = mimeHeaders.next();
+            String name = mimeHeader.getName();
+            if (matches(name)) {
+                String value = mimeHeader.getValue();
                 if (value != null) {
-                    String name = qname.toString();
-                    context.setProperty(name, value);
+                    // SOAPMessage MIME headers -> Context IN properties
+                    context.setProperty(name, value, Scope.IN);
+                }
+            }
+        }
+        @SuppressWarnings("unchecked")
+        Iterator<SOAPHeaderElement> soapHeaders = source.getSOAPHeader().examineAllHeaderElements();
+        while (soapHeaders.hasNext()) {
+            SOAPHeaderElement soapHeader = soapHeaders.next();
+            QName qname = soapHeader.getElementQName();
+            if (matches(qname)) {
+                String value = soapHeader.getValue();
+                if (value != null) {
+                    // SOAPMessage SOAP headers -> Context EXCHANGE properties
+                    context.setProperty(qname.toString(), value, Scope.EXCHANGE);
                 }
             }
         }
@@ -65,16 +79,27 @@ public class SOAPContextMapper extends BaseContextMapper<SOAPMessage> {
      */
     @Override
     public void mapTo(Context context, SOAPMessage target) throws Exception {
+        MimeHeaders mimeHeaders = target.getMimeHeaders();
+        for (Property property : context.getProperties(Scope.OUT)) {
+            String name = property.getName();
+            if (matches(name)) {
+                Object value = property.getValue();
+                if (value != null) {
+                    // Context OUT properties -> SOAPMessage MIME headers
+                    mimeHeaders.addHeader(name, String.valueOf(value));
+                }
+            }
+        }
         SOAPHeader soapHeader = target.getSOAPHeader();
-        for (Scope scope : Scope.values()) {
-            for (Property property : context.getProperties(scope)) {
-                QName name = XMLHelper.createQName(property.getName());
-                boolean qualifiedForSoapHeader = Strings.trimToNull(name.getNamespaceURI()) != null;
-                if (qualifiedForSoapHeader && matches(name)) {
-                    Object value = property.getValue();
-                    if (value != null) {
-                        soapHeader.addChildElement(name).setValue(String.valueOf(value));
-                    }
+        for (Property property : context.getProperties(Scope.EXCHANGE)) {
+            String name = property.getName();
+            QName qname = XMLHelper.createQName(name);
+            boolean qualifiedForSoapHeader = Strings.trimToNull(qname.getNamespaceURI()) != null;
+            if (qualifiedForSoapHeader && matches(qname)) {
+                Object value = property.getValue();
+                if (value != null) {
+                    // Context EXCHANGE properties -> SOAPMessage SOAP headers
+                    soapHeader.addChildElement(qname).setValue(String.valueOf(value));
                 }
             }
         }

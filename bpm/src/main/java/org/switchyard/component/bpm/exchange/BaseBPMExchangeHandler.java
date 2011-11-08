@@ -18,7 +18,7 @@
  */
 package org.switchyard.component.bpm.exchange;
 
-import static org.switchyard.Scope.IN;
+import static org.switchyard.Scope.EXCHANGE;
 import static org.switchyard.component.bpm.common.ProcessConstants.ACTION_TYPE_VAR;
 import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_EVENT_TYPE_VAR;
 import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_EVENT_VAR;
@@ -55,7 +55,7 @@ public abstract class BaseBPMExchangeHandler extends BaseHandler implements BPME
                 return pat;
             }
         }
-        Property property = context.getProperty(ACTION_TYPE_VAR, IN);
+        Property property = context.getProperty(ACTION_TYPE_VAR, EXCHANGE);
         if (property != null) {
             Object value = property.getValue();
             if (value instanceof ProcessActionType) {
@@ -81,7 +81,7 @@ public abstract class BaseBPMExchangeHandler extends BaseHandler implements BPME
      * @return the process instance id
      */
     protected Long getProcessInstanceId(Context context) {
-        Property property = context.getProperty(PROCESS_INSTANCE_ID_VAR, IN);
+        Property property = context.getProperty(PROCESS_INSTANCE_ID_VAR, EXCHANGE);
         if (property != null) {
             Object value = property.getValue();
             if (value instanceof Long) {
@@ -108,7 +108,7 @@ public abstract class BaseBPMExchangeHandler extends BaseHandler implements BPME
                 return pet;
             }
         }
-        Property property = context.getProperty(PROCESS_EVENT_TYPE_VAR, IN);
+        Property property = context.getProperty(PROCESS_EVENT_TYPE_VAR, EXCHANGE);
         if (property != null) {
             Object value = property.getValue();
             if (value instanceof String) {
@@ -127,7 +127,7 @@ public abstract class BaseBPMExchangeHandler extends BaseHandler implements BPME
      * @return the process event
      */
     protected Object getProcessEvent(Context context, Message message) {
-        Property property = context.getProperty(PROCESS_EVENT_VAR, IN);
+        Property property = context.getProperty(PROCESS_EVENT_VAR, EXCHANGE);
         if (property != null) {
             Object value = property.getValue();
             if (value != null) {
