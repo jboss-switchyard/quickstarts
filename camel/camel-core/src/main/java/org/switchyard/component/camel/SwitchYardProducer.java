@@ -39,6 +39,8 @@ import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.metadata.java.JavaService;
+import org.switchyard.policy.ExchangePolicy;
+import org.switchyard.policy.TransactionPolicy;
 
 /**
  * A Camel producer that is capable of calling SwitchYard services from a Camel route.
@@ -84,6 +86,12 @@ public class SwitchYardProducer extends DefaultProducer {
         }
         final Exchange switchyardExchange = createSwitchyardExchange(camelExchange, serviceRef);
         final SwitchYardProducer producer = this;
+        
+        // Set appropriate policy based on Camel exchange properties
+        if (camelExchange.isTransacted()) {
+            ExchangePolicy.provide(switchyardExchange, TransactionPolicy.PROPAGATE);
+        }
+        
         final CamelMessageComposer.ContentTypeProvider ctp = new CamelMessageComposer.ContentTypeProvider() {
             public Class<?> getContentType() {
                 return producer.getInputType(serviceRef);

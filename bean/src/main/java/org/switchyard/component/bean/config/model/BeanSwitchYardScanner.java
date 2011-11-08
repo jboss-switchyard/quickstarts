@@ -27,6 +27,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.switchyard.annotations.ManagedTransaction;
+import org.switchyard.annotations.ManagedTransactionType;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.type.classpath.IsAnnotationPresentFilter;
 import org.switchyard.component.bean.Reference;
@@ -49,6 +51,7 @@ import org.switchyard.config.model.composite.v1.V1JavaComponentReferenceInterfac
 import org.switchyard.config.model.composite.v1.V1JavaComponentServiceInterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
+import org.switchyard.policy.TransactionPolicy;
 
 /**
  * Bean Scanner.
@@ -102,6 +105,16 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             serviceModel.setName(name);
             serviceModel.setInterface(csiModel);
             csiModel.setInterface(iface.getName());
+            
+            // Check to see if a Transaction Policy has been defined
+            ManagedTransaction mta = serviceClass.getAnnotation(ManagedTransaction.class);
+            if (mta != null) {
+                if (ManagedTransactionType.LOCAL.equals(mta.value())) {
+                    serviceModel.addPolicyRequirement(TransactionPolicy.SUSPEND.toString());
+                } else if (ManagedTransactionType.SHARED.equals(mta.value())) {
+                    serviceModel.addPolicyRequirement(TransactionPolicy.PROPAGATE.toString());
+                }
+            }
             componentModel.addService(serviceModel);
 
             // Add any references
@@ -112,6 +125,15 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
                 referenceModel.setName(reference.getSimpleName());
                 referenceModel.setInterface(interfaceModel);
                 interfaceModel.setInterface(reference.getCanonicalName());
+                // Add policy requirement to reference if specified in bean class
+                if (mta != null) {
+                    if (ManagedTransactionType.LOCAL.equals(mta.value())) {
+                        referenceModel.addPolicyRequirement(TransactionPolicy.SUSPEND.toString());
+                     } else if (ManagedTransactionType.SHARED.equals(mta.value())) {
+                         referenceModel.addPolicyRequirement(TransactionPolicy.PROPAGATE.toString());
+                     }
+                }
+                
                 componentModel.addReference(referenceModel);
             }
 
