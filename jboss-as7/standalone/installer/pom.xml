@@ -30,7 +30,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>switchyard-as7-standalone-installer</artifactId>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
     <name>SwitchYard: AS7 Installer</name>
     <description>SwitchYard AS7 Installer</description>
 
@@ -46,6 +46,15 @@
             <type>zip</type>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency> 
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-forge-plugin</artifactId>
+            <type>zip</type> 
+            <version>${project.version}</version>
+            <scope>runtime</scope> 
+       </dependency>
+
     </dependencies>
 
     <build>
@@ -72,6 +81,24 @@
                             <outputDirectory>${bundle.dir}</outputDirectory>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>copy-forge</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.switchyard</groupId>
+                                    <artifactId>switchyard-forge-plugin</artifactId>
+                                    <type>zip</type>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${bundle.dir}</outputDirectory>
+                        </configuration>
+		    </execution>
                 </executions>
             </plugin>
             <plugin>

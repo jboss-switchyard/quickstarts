@@ -45,6 +45,7 @@
 
     <modules>
         <module>jbpm</module>
+        <module>forge-module</module>
         <module>modules</module>
         <module>tests</module>
         <module>extension</module>

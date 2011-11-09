@@ -58,13 +58,27 @@
         <unzip src="res/SwitchYard-AS7-Bundle.zip" dest="." overwrite="true">
             <patternset>
                 <include name="quickstarts/**" />
-                <include name="forge/**" />
             </patternset>
         </unzip>
     </target>
 
     <target name="notAS7" unless="isAS7">
         <fail message="Sorry, but the specified path '${AS7_PATH}' is not a path to a valid JBoss AS7 installation." />
+    </target>
+
+    <target name="install-forge">
+        <condition property="forge.plugindir.exists">
+            <available file="config" filepath="${user.home}/.forge" />
+        </condition>
+	
+	<fail unless="forge.plugindir.exists" message="Cannot find ${user.home}/forge/config.   Please run forge 1.0.0.beta3 before installing."/>
+
+	<echo>Creating switchyard directory...</echo>	
+	<mkdir dir="${user.home}/.forge/plugins/org/switchyard"/>
+	<echo>Unzipping switchyard forge plugin module...</echo>
+	<unzip dest="${user.home}/.forge/plugins/org/switchyard" 
+		src="switchyard-forge-plugin.zip"/>
+	<echo>Unzipped SwitchYard forge plugin.</echo> 
     </target>
 
 </project>

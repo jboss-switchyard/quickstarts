@@ -1,0 +1,95 @@
+<!--
+  ~ JBoss, Home of Professional Open Source
+  ~ Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+  ~ as indicated by the @author tags. All rights reserved.
+  ~ See the copyright.txt in the distribution for a
+  ~ full listing of individual contributors.
+  ~
+  ~ This copyrighted material is made available to anyone wishing to use,
+  ~ modify, copy, or redistribute it subject to the terms and conditions
+  ~ of the GNU Lesser General Public License, v. 2.1.
+  ~ This program is distributed in the hope that it will be useful, but WITHOUT A
+  ~ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  ~ PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  ~ You should have received a copy of the GNU Lesser General Public License,
+  ~ v.2.1 along with this distribution; if not, write to the Free Software
+  ~ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  ~ MA  02110-1301, USA.
+  -->
+
+<assembly>
+    <id></id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <files>
+        <file>
+            <source>src/main/resources/module.xml</source>
+            <outputDirectory>${project.version}</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
+            <source>src/main/resources/dependencies/module.xml</source>
+            <outputDirectory>dependencies/${project.version}</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+    </files>
+    <dependencySets>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <outputDirectory>${project.version}</outputDirectory>
+	    <includes>
+              <include>org.switchyard:switchyard-forge-bean-plugin</include>
+              <include>org.switchyard:switchyard-forge-bpm-plugin</include>
+              <include>org.switchyard:switchyard-forge-camel-plugin</include>
+              <include>org.switchyard:switchyard-forge-clojure-plugin</include>
+              <include>org.switchyard:switchyard-forge-plugin</include>
+              <include>org.switchyard:switchyard-forge-rules-plugin</include>
+              <include>org.switchyard:switchyard-forge-soap-plugin</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <outputDirectory>dependencies/${project.version}</outputDirectory>
+            <includes>
+              <include>javax.activation:activation</include>
+
+              <include>javax.mail:mail</include>
+
+              <include>log4j:log4j</include>
+
+	      <include>org.apache.mina:mina-core</include>
+
+              <include>org.drools:drools-core</include>
+              <include>org.drools:knowledge-api</include>
+              <include>org.codehaus.jackson:jackson-core-asl</include>
+              <include>org.codehaus.jackson:jackson-mapper-asl</include>
+              <include>org.codehaus.jackson:jackson-smile</include>           
+
+	      <include>org.hibernate:hibernate-core</include>
+
+              <include>org.jboss.spec.javax.jms:jboss-jms-api_1.1_spec</include>
+ 
+	      <include>org.jbpm:jbpm-flow</include>
+              <include>org.jbpm:jbpm-human-task</include>
+              <include>org.jbpm:jbpm-workitems</include>
+  
+              <include>org.switchyard:switchyard-api</include>
+              <include>org.switchyard:switchyard-build</include>
+              <include>org.switchyard:switchyard-common</include>
+              <include>org.switchyard:switchyard-config</include>
+              <include>org.switchyard:switchyard-deploy</include>
+              <include>org.switchyard:switchyard-forge-common</include>
+
+              <include>org.apache.xalan:xalan</include>
+              <include>org.apache.xalan:serializer</include>
+	      <include>javax.servlet:servlet-api</include>
+              <include>javax.xml.ws:jaxws-api</include>
+
+              <include>org.fusesource.commonman:commons-management</include>
+              <include>org.eclipse.osgi:org.eclipse.osgi</include>
+              <include>org.jboss.spec.javax.xml.bind:jboss-jaxb-api_2.2_spec</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
+</assembly>

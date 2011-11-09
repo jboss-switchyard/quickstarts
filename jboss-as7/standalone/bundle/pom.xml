@@ -30,7 +30,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>switchyard-as7-standalone-bundle</artifactId>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
     <name>SwitchYard: AS7 Bundle</name>
     <description>SwitchYard AS7 Bundle</description>
 
@@ -136,43 +136,6 @@
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>${staging.jboss.dir}</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>install-forge-plugins</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-forge-plugin</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-forge-camel-plugin</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-forge-bean-plugin</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-forge-soap-plugin</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-forge-rules-plugin</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-forge-bpm-plugin</artifactId>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${staging.jboss.dir}/forge</outputDirectory>
-                            <stripVersion>true</stripVersion>
                         </configuration>
                     </execution>
                 </executions>
