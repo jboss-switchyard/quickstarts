@@ -71,6 +71,8 @@ public class OutboundHandler extends BaseHandler {
      * @throws WebServiceConsumeException If unable to load the WSDL
      */
     public void start() throws WebServiceConsumeException {
+        //XXX: REMOVE THIS SYNCHRONIZED: once threading issues in AS7 WS are fixed
+        synchronized (BaseWebService.class) {
         if (_dispatcher == null) {
             try {
                 PortName portName = _config.getPort();
@@ -93,6 +95,7 @@ public class OutboundHandler extends BaseHandler {
             } catch (WSDLException wsdle) {
                 throw new WebServiceConsumeException(wsdle);
             }
+        }
         }
     }
 

@@ -92,6 +92,8 @@ public class InboundHandler extends BaseHandler {
      * @throws WebServicePublishException If unable to publish the endpoint
      */
     public void start(ServiceReference service) throws WebServicePublishException {
+        //XXX: REMOVE THIS SYNCHRONIZED: once threading issues in AS7 WS are fixed
+        synchronized (BaseWebService.class) {
         try {
             _service = service;
             PortName portName = _config.getPort();
@@ -130,13 +132,17 @@ public class InboundHandler extends BaseHandler {
         } catch (WSDLException e) {
             throw new WebServicePublishException(e);
         }
+        }
     }
 
     /**
      * Stop lifecycle.
      */
     public void stop() {
+        //XXX: REMOVE THIS SYNCHRONIZED: once threading issues in AS7 WS are fixed
+        synchronized (BaseWebService.class) {
         _endpoint.stop();
+        }
         LOGGER.info("WebService " + _config.getPort() + " stopped.");
     }
 
