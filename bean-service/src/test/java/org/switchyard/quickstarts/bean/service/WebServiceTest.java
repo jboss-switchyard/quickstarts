@@ -41,7 +41,7 @@ public class WebServiceTest {
     public void invokeOrderWebService() throws Exception {
         // Use the HttpMixIn to invoke the SOAP binding endpoint with a SOAP input (from the test classpath)
         // and compare the SOAP response to a SOAP response resource (from the test classpath)...
-        httpMixIn.postResourceAndTestXML("http://localhost:18001/OrderService", "/xml/soap-request.xml", "/xml/soap-response.xml");
+        httpMixIn.postResourceAndTestXML("http://localhost:18001/quickstart-bean/OrderService", "/xml/soap-request.xml", "/xml/soap-response.xml");
     }
 }
 
