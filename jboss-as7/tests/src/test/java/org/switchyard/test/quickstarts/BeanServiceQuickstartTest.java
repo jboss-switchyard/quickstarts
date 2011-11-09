@@ -41,7 +41,7 @@ public class BeanServiceQuickstartTest {
 
         httpMixIn.initialize();
         try {
-            String response = httpMixIn.postString("http://localhost:18001/OrderService", SOAP_REQUEST);
+            String response = httpMixIn.postString("http://localhost:18001/quickstart-bean/OrderService", SOAP_REQUEST);
             XMLAssert.assertXpathEvaluatesTo("PO-19838-XYZ", "//orderAck/orderId", response);
             XMLAssert.assertXpathEvaluatesTo("true", "//orderAck/accepted", response);
             XMLAssert.assertXpathEvaluatesTo("Order Accepted", "//orderAck/status", response);
