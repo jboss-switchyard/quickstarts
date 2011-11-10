@@ -62,7 +62,8 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
 public class SwitchYardPlugin implements Plugin {
     
     // Template file used for unit testing services
-    private static final String TEST_SERVICE_TEMPLATE = "java/TestTemplate.java";
+    //private static final String TEST_SERVICE_TEMPLATE = "java/TestTemplate.java";
+    private static final String TEST_SERVICE_TEMPLATE = "/org/switchyard/tools/forge/plugin/TestTemplate.java";
     // MessageTrace handler name and class
     private static final String TRACE_CLASS = "org.switchyard.handlers.MessageTrace";
     private static final String TRACE_NAME = "MessageTrace";
