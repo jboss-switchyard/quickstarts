@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.jboss.as.ee.component.EEModuleDescription;
 import org.jboss.as.naming.context.NamespaceContextSelector;
+import org.jboss.as.naming.deployment.JndiNamingDependencyProcessor;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
@@ -76,6 +77,8 @@ public class SwitchYardDeploymentProcessor implements DeploymentUnitProcessor {
         final ServiceBuilder<SwitchYardDeployment> switchyardServiceBuilder = serviceTarget.addService(switchyardServiceName, container);
         switchyardServiceBuilder.addDependency(SwitchYardComponentService.SERVICE_NAME, List.class, container.getComponents());
         switchyardServiceBuilder.addDependency(SwitchYardAdminService.SERVICE_NAME, SwitchYard.class, container.getSwitchYard());
+        // ensure naming context is fully initialized before we start
+        switchyardServiceBuilder.addDependency(JndiNamingDependencyProcessor.serviceName(deploymentUnit));
 
         final EEModuleDescription moduleDescription = deploymentUnit.getAttachment(org.jboss.as.ee.component.Attachments.EE_MODULE_DESCRIPTION);
         if (moduleDescription != null) {
