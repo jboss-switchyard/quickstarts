@@ -74,6 +74,7 @@ public class OutboundHandler extends BaseHandler {
         //XXX: REMOVE THIS SYNCHRONIZED: once threading issues in AS7 WS are fixed
         synchronized (BaseWebService.class) {
         if (_dispatcher == null) {
+            ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
             try {
                 PortName portName = _config.getPort();
                 javax.wsdl.Service wsdlService = WSDLUtil.getService(_config.getWsdl(), portName);
@@ -84,6 +85,8 @@ public class OutboundHandler extends BaseHandler {
 
                 URL wsdlUrl = WSDLUtil.getURL(_config.getWsdl());
                 LOGGER.info("Creating dispatch with WSDL " + wsdlUrl);
+                // make sure we don't pollute the class loader used by the WS subsystem
+                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
                 Service service = Service.create(wsdlUrl, portName.getServiceQName());
                 _dispatcher = service.createDispatch(portName.getPortQName(), SOAPMessage.class, Service.Mode.MESSAGE, new AddressingFeature(false, false));
                 // this does not return a proper qualified Fault element and has no Detail so deferring for now
@@ -94,6 +97,8 @@ public class OutboundHandler extends BaseHandler {
                 throw new WebServiceConsumeException(e);
             } catch (WSDLException wsdle) {
                 throw new WebServiceConsumeException(wsdle);
+            } finally {
+                Thread.currentThread().setContextClassLoader(origLoader);
             }
         }
         }
