@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<switchyard xmlns="urn:switchyard-config:switchyard:1.0" name="orders">
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" name="orders" targetNamespace="urn:switchyard-quickstart-demo:orders:0.1.0">
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="orders" targetNamespace="urn:switchyard-quickstart-demo:orders:0.1.0">
         <service name="OrderService" promote="OrderService">
             <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
                 <wsdl>wsdl/OrderService.wsdl</wsdl>
                 <socketAddr>:18001</socketAddr>
+                <contextPath>demo-orders</contextPath>
             </binding.soap>
         </service>
     </composite>
