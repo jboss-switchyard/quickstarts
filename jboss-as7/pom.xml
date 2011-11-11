@@ -144,6 +144,12 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
+            <artifactId>switchyard-quickstarts-camel-soap-proxy</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-quickstarts-hornetq-binding</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
