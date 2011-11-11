@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<swyd:switchyard name="camel-soap-proxy"
+        xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+        xmlns:swyd="urn:switchyard-config:switchyard:1.0"
+        xmlns:soap="urn:switchyard-component-soap:config:1.0"
+        xmlns:camel="urn:switchyard-component-camel:config:1.0"
+        xmlns:spring="http://camel.apache.org/schema/spring">
+    <sca:composite name="camel-soap-proxy" targetNamespace="urn:switchyard-quickstart:camel-soap-proxy:1.0">
+        <sca:service name="ProxyService" promote="ProxyService">
+            <soap:binding.soap>
+                <swyd:contextMapper/>
+                <soap:wsdl>META-INF/ReverseService.wsdl</soap:wsdl>
+                <soap:socketAddr>:18002</soap:socketAddr>
+            </soap:binding.soap>
+        </sca:service>
+        <sca:reference name="ReverseService" promote="ReverseService" multiplicity="0..1">
+            <soap:binding.soap>
+                <swyd:contextMapper/>
+                <soap:wsdl>META-INF/ReverseService.wsdl</soap:wsdl>
+            </soap:binding.soap>
+        </sca:reference>
+        <sca:component name="ProxyService">
+            <camel:implementation.camel>
+                <spring:route>
+                    <spring:to uri="switchyard://ReverseService"/>
+                </spring:route>
+            </camel:implementation.camel>
+            <sca:service name="ProxyService">
+                <sca:interface.java interface="org.switchyard.quickstarts.camel.soap.proxy.Reverse"/>
+            </sca:service>
+            <sca:reference name="ReverseService">
+                <sca:interface.java interface="org.switchyard.quickstarts.camel.soap.proxy.Reverse"/>
+            </sca:reference>
+        </sca:component>
+    </sca:composite>
+</swyd:switchyard>

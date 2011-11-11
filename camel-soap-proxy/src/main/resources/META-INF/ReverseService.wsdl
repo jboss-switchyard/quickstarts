@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions 
+    targetNamespace="urn:switchyard-quickstart:camel-soap-proxy:1.0" 
+    xmlns="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:tns="urn:switchyard-quickstart:camel-soap-proxy:1.0"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    
+  <types>
+    <xsd:schema 
+        targetNamespace="urn:switchyard-quickstart:camel-soap-proxy:1.0" 
+        xmlns:tns="urn:switchyard-quickstart:camel-soap-proxy:1.0" 
+        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xs:element name="reverse" type="tns:reverseType"/>
+        <xs:complexType name="reverseType">
+            <xs:sequence>
+                <xs:element name="text" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:element name="reverseResponse" type="tns:reverseResponseType"/>
+        <xs:complexType name="reverseResponseType">
+            <xs:sequence>
+                <xs:element name="text" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xsd:schema>
+  </types>
+  
+  <message name="reverse">
+    <part name="parameters" element="tns:reverse"/>
+  </message>
+  <message name="reverseResponse">
+    <part name="parameters" element="tns:reverseResponse"/>
+  </message>
+  
+  <portType name="ReverseService">
+    <operation name="reverse">
+      <input message="tns:reverse"/>
+      <output message="tns:reverseResponse"/>
+    </operation>
+  </portType>
+  
+  <binding name="ReverseServiceBinding" type="tns:ReverseService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="reverse">
+      <soap:operation soapAction="urn:switchyard-quickstart:camel-soap-proxy:1.0"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  
+  <service name="ReverseService">
+    <port name="ReverseServicePort" binding="tns:ReverseServiceBinding">
+      <soap:address location="http://localhost:18001/ReverseService"/>
+    </port>
+  </service>
+</definitions>
+
