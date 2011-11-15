@@ -173,6 +173,11 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-validate</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+         <dependency>
+            <groupId>org.switchyard</groupId>
             <artifactId>switchyard-deploy-jboss-as7</artifactId>
             <version>${project.version}</version>
         </dependency>
