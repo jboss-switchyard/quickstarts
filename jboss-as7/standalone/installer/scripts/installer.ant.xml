@@ -19,19 +19,33 @@
 
 <project name="SwitchYard AS7 Installer" default="install" basedir=".">
 
-    <target name="install">
-
+    <target name="get-jboss-path" unless="AS7_PATH">
         <input message="Please enter the path to the root folder of your JBoss AS7 installation: " addproperty="AS7_PATH_ENTERED" />
         <pathconvert targetos="unix" property="AS7_PATH">
             <path>
                 <pathelement location="${AS7_PATH_ENTERED}"/>
             </path>
         </pathconvert>
+    </target>
+
+    <target name="install" description="Install SwitchYard into JBoss (optionally specified by AS7_PATH)" depends="get-jboss-path">
+        <property name="QUICKSTART_PATH" value="${basedir}"/>
         <condition property="isAS7">
             <available file="${AS7_PATH}/jboss-modules.jar" />
         </condition>
         <antcall target="notAS7" />
 
+        <condition property="quickstartResourcesAlreadyInstalled">
+            <available file="quickstarts" filepath="${QUICKSTART_PATH}" />
+        </condition>
+        <condition property="switchyardResourcesAlreadyInstalled">
+            <available file="switchyard" filepath="${AS7_PATH}/modules/org" />
+        </condition>
+        <antcall target="unzipSwitchyardResources" />
+        <antcall target="unzipQuickstartResources" />
+    </target>
+
+    <target name="unzipSwitchyardResources" unless="switchyardResourcesAlreadyInstalled">
         <!-- Install into the AS7 install.... -->
         <unzip src="res/SwitchYard-AS7-Bundle.zip" dest="${AS7_PATH}" overwrite="true">
             <patternset>
@@ -39,23 +53,14 @@
                 <include name="modules/**" />
             </patternset>
         </unzip>
-        <antcall target="transform-standalone.xml" />
-
-        <condition property="switchyardResourcesAlreadyInstalled">
-            <available file="quickstarts" filepath="./" />
-        </condition>
-        <antcall target="unzipSwitchyardResources" />
-    </target>
-
-    <target name="transform-standalone.xml">
         <xslt style="res/standalone.xsl" in="${AS7_PATH}/standalone/configuration/standalone.xml" out="${AS7_PATH}/standalone/configuration/standalone.xml.transformed" />
         <delete file="${AS7_PATH}/standalone/configuration/standalone.xml" failonerror="false" />
         <move file="${AS7_PATH}/standalone/configuration/standalone.xml.transformed" tofile="${AS7_PATH}/standalone/configuration/standalone.xml" />
     </target>
 
-    <target name="unzipSwitchyardResources" unless="switchyardResourcesAlreadyInstalled">
+    <target name="unzipQuickstartResources" unless="quickstartResourcesAlreadyInstalled">
         <!-- Install SwitchYard stuff into this directory.... -->
-        <unzip src="res/SwitchYard-AS7-Bundle.zip" dest="." overwrite="true">
+        <unzip src="res/SwitchYard-AS7-Bundle.zip" dest="${QUICKSTART_PATH}" overwrite="true">
             <patternset>
                 <include name="quickstarts/**" />
             </patternset>
@@ -70,15 +75,15 @@
         <condition property="forge.plugindir.exists">
             <available file="config" filepath="${user.home}/.forge" />
         </condition>
-	
+
 	<fail unless="forge.plugindir.exists" message="Cannot find ${user.home}/forge/config.   Please run forge 1.0.0.beta3 before installing."/>
 
-	<echo>Creating switchyard directory...</echo>	
+	<echo>Creating switchyard directory...</echo>
 	<mkdir dir="${user.home}/.forge/plugins/org/switchyard"/>
 	<echo>Unzipping switchyard forge plugin module...</echo>
-	<unzip dest="${user.home}/.forge/plugins/org/switchyard" 
+	<unzip dest="${user.home}/.forge/plugins/org/switchyard"
 		src="switchyard-forge-plugin.zip"/>
-	<echo>Unzipped SwitchYard forge plugin.</echo> 
+	<echo>Unzipped SwitchYard forge plugin.</echo>
     </target>
 
 </project>
