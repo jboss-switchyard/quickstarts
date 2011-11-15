@@ -21,6 +21,8 @@
 package org.switchyard.component.camel.deploy;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -69,6 +71,33 @@ public final class ComponentNameComposer {
         final URI create = URI.create(uri);
         final String path = create.getAuthority();
         return XMLHelper.createQName(namespace, path);
+    }
+    
+    /**
+     * Parses the passed-in URI query parameters and returns the value of
+     * the param named 'namespace'.
+     * 
+     * @param uri the URI to parse.
+     * @return String the 'namespace' param or null if it does not exist
+     */
+    public static String getNamespaceFromURI(final URI uri) {
+        return getQueryParamMap(uri).get("namespace");
+    }
+    
+    /**
+     * Parses the passed-in URI's query for parameters and returns the as
+     * a Map.
+     * 
+     * @param uri The URI to parse
+     * @return Map Containing the query parameters or an empty map if there were no query parameters.
+     */
+    public static Map<String, String> getQueryParamMap(final URI uri) {
+        final Map<String, String> map = new HashMap<String, String>();
+        for (final String param : uri.getQuery().split("&")) {
+            final String[] nameValue = param.split("=");
+            map.put(nameValue[0],  nameValue[1]);
+        }
+        return map;
     }
     
 }

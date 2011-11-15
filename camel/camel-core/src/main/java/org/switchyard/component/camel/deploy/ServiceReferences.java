@@ -35,7 +35,7 @@ import org.switchyard.metadata.java.JavaService;
  * reference. 
  * </p>
  * Upon startup all SwitchYard services that are referenced from a Camel route are added so
- * that producers can to a "look-up" of a service name and get the ServiceReference which it
+ * that producers can do a "look-up" of a service name and get the ServiceReference which it
  * can then use to invoke the target service.
  * 
  * @author Daniel Bevenius

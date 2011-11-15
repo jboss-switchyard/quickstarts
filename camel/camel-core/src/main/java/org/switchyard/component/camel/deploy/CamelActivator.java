@@ -20,6 +20,7 @@
  */
 package org.switchyard.component.camel.deploy;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,7 +38,9 @@ import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.switchyard.ExchangeHandler;
@@ -175,6 +178,7 @@ public class CamelActivator extends BaseActivator {
             try {
                 final String endpointUri = ComponentNameComposer.composeComponentUri(serviceName);
                 final RouteDefinition routeDef = getRouteDefinition(ccim);
+                checkSwitchYardReferencedServiceExist(routeDef, ccim);
                 addFromEndpointToRouteDefinition(routeDef, endpointUri);
                 _camelContext.addRouteDefinition(routeDef);
                 final SwitchyardEndpoint endpoint = (SwitchyardEndpoint) _camelContext.getEndpoint(endpointUri);
@@ -189,6 +193,44 @@ public class CamelActivator extends BaseActivator {
         return null;
     }
 
+    @SuppressWarnings("rawtypes")
+    private void checkSwitchYardReferencedServiceExist(
+            final RouteDefinition routeDef, 
+            final CamelComponentImplementationModel ccim) {
+        
+        final List<ProcessorDefinition> outputs = routeDef.getOutputs();
+        for (ProcessorDefinition processorDef : outputs) {
+            if (processorDef instanceof ToDefinition) {
+                final ToDefinition to = (ToDefinition) processorDef;
+                final URI componentUri = URI.create(to.getUri());
+                if (componentUri.getScheme().equals(ComponentNameComposer.SWITCHYARD_COMPONENT_NAME)) {
+                    final String serviceName = componentUri.getHost();
+                    final String namespace = ComponentNameComposer.getNamespaceFromURI(componentUri);
+                    final QName refServiceName = new QName(namespace, serviceName);
+                    if (!containsServiceRef(ccim.getComponent().getReferences(), serviceName)) {
+                        throw new SwitchYardException("Could find the service reference for '" + serviceName + "'" 
+                        + " which is referenced in " + to);
+                    }
+                    
+                    final ServiceReference service = getServiceDomain().getService(refServiceName);
+                    if (service == null) {
+                        throw new SwitchYardException("Could find the service name '" + serviceName + "'" 
+                        + " which is referenced in " + to);
+                    }
+                }
+            }
+        }
+    }
+    
+    private boolean containsServiceRef(final List<ComponentReferenceModel> refs, final String serviceName) {
+        for (ComponentReferenceModel refModel : refs) {
+            if (refModel.getName().equals(serviceName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     private void addFromEndpointToRouteDefinition(final RouteDefinition rd, final String fromEndpointUri) throws Exception {
         final List<FromDefinition> inputs = rd.getInputs();
 
