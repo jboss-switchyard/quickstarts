@@ -9,7 +9,7 @@
    <resource-root path="switchyard-forge-camel-plugin-${project.version}.jar"/>
   </resources>
   <dependencies>
-    <module name="org.switchyard.switchyard-forge-plugin.dependencies" slot="${project.version}"/>
+    <module name="org.switchyard.switchyard-forge-plugin.dependencies" slot="${project.version}" services="export" export="true"/>
     <module name="org.jboss.forge.shell-api" services="import" optional="false">
 	<imports>
 	<include path="**" />

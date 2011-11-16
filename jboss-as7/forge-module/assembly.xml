@@ -89,6 +89,8 @@
               <include>org.fusesource.commonman:commons-management</include>
               <include>org.eclipse.osgi:org.eclipse.osgi</include>
               <include>org.jboss.spec.javax.xml.bind:jboss-jaxb-api_2.2_spec</include>
+			  <include>com.sun.xml.bind:jaxb-impl</include>
+			  <include>org.slf4j:slf4j-api</include>
             </includes>
         </dependencySet>
     </dependencySets>

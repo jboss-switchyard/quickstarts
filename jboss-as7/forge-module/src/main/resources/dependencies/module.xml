@@ -33,6 +33,8 @@
     <resource-root path="commons-management-${version.commons.management}.jar"/>
     <resource-root path="jboss-jaxb-api_2.2_spec-${version.jaxb.api}.jar"/>
     <resource-root path="org.eclipse.osgi-${version.osgi}.jar"/>
+	<resource-root path="jaxb-impl-${version.jaxb.impl}.jar"/>
+	<resource-root path="slf4j-api-${version.slf4j}.jar"/>
  
   </resources>
   <dependencies>

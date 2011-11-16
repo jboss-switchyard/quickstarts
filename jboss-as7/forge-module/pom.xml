@@ -45,6 +45,7 @@
         <version.osgi>3.6.0.v20100517</version.osgi>
         <version.commons.management>1.0</version.commons.management>
         <version.jaxb.api>1.0.0.Final</version.jaxb.api>
+		<version.jaxb.impl>2.2</version.jaxb.impl>
     </properties>
 
     <dependencies>
@@ -215,6 +216,16 @@
             <artifactId>jboss-jaxb-api_2.2_spec</artifactId>
             <version>${version.jaxb.api}</version>
         </dependency>
+				<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>${version.jaxb.impl}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${version.slf4j}</version>
+		</dependency>
      
     </dependencies>
     <build>
