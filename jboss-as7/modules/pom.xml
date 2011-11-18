@@ -245,14 +245,14 @@
         Hibernate...
         -->
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-            <version>${version.hibernate.entitymanager}</version>
+            <groupId>javax.persistence</groupId>
+            <artifactId>persistence-api</artifactId>
+            <version>${version.jpa}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>${version.hibernate.core}</version>
+            <artifactId>ejb3-persistence</artifactId>
+            <version>${version.hibernate.ejb3-persistence}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -261,8 +261,18 @@
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
-            <artifactId>ejb3-persistence</artifactId>
-            <version>${version.hibernate.ejb3-persistence}</version>
+            <artifactId>hibernate-core</artifactId>
+            <version>${version.hibernate.core}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${version.hibernate.entitymanager}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${version.hibernate.validator}</version>
         </dependency>
 
         <!--

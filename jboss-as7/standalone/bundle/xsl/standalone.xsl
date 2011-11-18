@@ -26,8 +26,11 @@
     xmlns:fn="http://www.w3.org/2005/xpath-functions"
     xmlns:xdt="http://www.w3.org/2005/xpath-datatypes"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:jpa="urn:jboss:domain:jpa:1.0"
     exclude-result-prefixes="xs xsl xsi fn xdt">
+    <!--
+    https://issues.jboss.org/browse/SWITCHYARD-548
+    xmlns:jpa="urn:jboss:domain:jpa:1.0"
+    -->
 
 <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
 
@@ -52,12 +55,13 @@
 </xsl:template>
 
 <!-- http://kverlaen.blogspot.com/2011/07/jbpm5-on-as7-lightning.html -->
+<!--
+https://issues.jboss.org/browse/SWITCHYARD-548
 <xsl:template match="node()[name(.)='extension' and @module='org.jboss.as.jpa']">
 </xsl:template>
-
-<!-- http://kverlaen.blogspot.com/2011/07/jbpm5-on-as7-lightning.html -->
 <xsl:template match="jpa:subsystem">
 </xsl:template>
+-->
 
 <xsl:template match="node()[name(.)='profile']">
     <xsl:copy>
@@ -80,7 +84,8 @@
     </xsl:copy>
 </xsl:template>
 
-<!-- http://kverlaen.blogspot.com/2011/07/jbpm5-on-as7-lightning.html -->
+<!-- http://kverlaen.blogspot.com/2011/07/jbpm5-on-as7-lightning.html
+https://issues.jboss.org/browse/SWITCHYARD-548
 <xsl:template match="node()[name(.)='datasources']">
     <xsl:copy>
         <datasource jndi-name="java:jboss/datasources/jbpmDS" pool-name="jbpmPool" enabled="true" jta="false" use-java-context="true" use-ccm="false">
@@ -102,8 +107,10 @@
         <xsl:apply-templates select="@*|node()"/>
     </xsl:copy>
 </xsl:template>
+-->
 
-<!-- http://kverlaen.blogspot.com/2011/07/jbpm5-on-as7-lightning.html -->
+<!-- http://kverlaen.blogspot.com/2011/07/jbpm5-on-as7-lightning.html 
+https://issues.jboss.org/browse/SWITCHYARD-548
 <xsl:template match="node()[name(.)='security-domains']">
     <xsl:copy>
         <xsl:apply-templates select="@*|node()"/>
@@ -114,5 +121,6 @@
         </security-domain>
     </xsl:copy>
 </xsl:template>
+-->
 
 </xsl:stylesheet>

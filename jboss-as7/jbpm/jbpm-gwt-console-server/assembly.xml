@@ -50,6 +50,14 @@
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
+                <include>javax.persistence:persistence-api</include>
+            </includes>
+            <outputDirectory>WEB-INF/lib</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.jpa}.${artifact.extension}</outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
                 <include>org.hibernate:hibernate-commons-annotations</include>
             </includes>
             <outputDirectory>WEB-INF/lib</outputDirectory>
@@ -70,6 +78,14 @@
             </includes>
             <outputDirectory>WEB-INF/lib</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${version.hibernate.entitymanager}.${artifact.extension}</outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.hibernate:hibernate-validator</include>
+            </includes>
+            <outputDirectory>WEB-INF/lib</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.hibernate.validator}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>

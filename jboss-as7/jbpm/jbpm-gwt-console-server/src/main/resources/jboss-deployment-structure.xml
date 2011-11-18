@@ -20,7 +20,10 @@
 <jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.0">
     <deployment>
         <exclusions>
+            <module name="javax.persistence.api"/>
             <module name="org.hibernate"/>
+            <module name="org.hibernate.envers"/>
+            <module name="org.hibernate.validator"/>
         </exclusions>
     </deployment>
 </jboss-deployment-structure>

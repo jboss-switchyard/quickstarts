@@ -37,14 +37,14 @@
 </xsl:template>
 
 <xsl:template match="node()[name(.)='persistence-unit']">
-    <persistence-unit name="org.jbpm.task" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="org.jbpm.task" transaction-type="JTA">
         <xsl:apply-templates select="@*|node()"/>
     </persistence-unit>
 </xsl:template>
 
 <xsl:template match="node()[name(.)='provider']">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
-    <non-jta-data-source>java:jboss/datasources/jbpmDS</non-jta-data-source>
+    <jta-data-source>java:jboss/datasources/jbpmDS</jta-data-source>
     <mapping-file>META-INF/jbpm-human-task-orm.xml</mapping-file>
 </xsl:template>
 
@@ -63,6 +63,7 @@
         <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
         <property name="hibernate.show_sql" value="false"/>
         <property name="hibernate.transaction.manager_lookup_class" value="org.switchyard.component.bpm.jta.hibernate.AS7TransactionManagerLookup"/>
+        <property name="jboss.as.jpa.providerModule" value="hibernate3-bundled"/>
     </properties>
 </xsl:template>
 

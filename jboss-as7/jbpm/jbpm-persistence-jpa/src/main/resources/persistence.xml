@@ -4,9 +4,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     version="1.0"
     xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd">
-  <persistence-unit name="org.jbpm.persistence.jpa" transaction-type="RESOURCE_LOCAL">
+  <persistence-unit name="org.jbpm.persistence.jpa" transaction-type="JTA">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
-    <non-jta-data-source>java:jboss/datasources/jbpmDS</non-jta-data-source>
+    <jta-data-source>java:jboss/datasources/jbpmDS</jta-data-source>
     <mapping-file>META-INF/jbpm-persistence-jpa-orm.xml</mapping-file>
     <class>org.jbpm.persistence.processinstance.ProcessInstanceEventInfo</class>
     <class>org.jbpm.persistence.processinstance.ProcessInstanceInfo</class>
@@ -26,6 +26,7 @@
         <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
         <property name="hibernate.show_sql" value="false"/>
         <property name="hibernate.transaction.manager_lookup_class" value="org.switchyard.component.bpm.jta.hibernate.AS7TransactionManagerLookup"/>
+        <property name="jboss.as.jpa.providerModule" value="hibernate3-bundled"/>
     </properties>
   </persistence-unit>
 </persistence>

@@ -51,6 +51,7 @@
         <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
         <property name="show_sql">false</property>
         <property name="transaction.manager_lookup_class">org.switchyard.component.bpm.jta.hibernate.AS7TransactionManagerLookup</property>
+        <property name="jboss.as.jpa.providerModule" value="hibernate3-bundled"/>
     </session-factory>
 </xsl:template>
 

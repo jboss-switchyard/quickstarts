@@ -61,9 +61,9 @@
 </xsl:template>
 
 <xsl:template match="node()[name(.)='listener']">
-    <!--<listener>
+    <listener>
         <listener-class>org.h2.server.web.DbStarter</listener-class>
-    </listener>-->
+    </listener>
     <listener>
         <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
     </listener>
