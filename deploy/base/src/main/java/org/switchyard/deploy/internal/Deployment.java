@@ -51,6 +51,7 @@ import org.switchyard.extensions.wsdl.WSDLReaderException;
 import org.switchyard.extensions.wsdl.WSDLService;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.java.JavaService;
+import org.switchyard.policy.Policy;
 
 /**
  * Deployment is a framework-independent representation of a deployed SwitchYard 
@@ -321,8 +322,9 @@ public class Deployment extends AbstractDeployment {
                        + " for component " + component.getImplementation().getType() + " for deployment " + getName());
                 ExchangeHandler handler = activator.init(service.getQName(), service);
                 ServiceInterface serviceIntf = getComponentServiceInterface(service);
+                List<Policy> requires = getPolicyRequirements(service);
                 ServiceReference serviceRef = serviceIntf != null
-                        ? getDomain().registerService(service.getQName(), handler, serviceIntf)
+                        ? getDomain().registerService(service.getQName(), handler, serviceIntf, requires)
                         : getDomain().registerService(service.getQName(), handler);
                 // register any service promotions, avoiding duplicate service names
                 CompositeServiceModel promotion = servicePromotions.get(service);
@@ -472,7 +474,31 @@ public class Deployment extends AbstractDeployment {
     private Class<?> loadClass(String className) {
         return Classes.forName(className, getClass());
     }
+    
+    private List<Policy> getPolicyRequirements(ComponentServiceModel model) {
+        LinkedList<Policy> requires = new LinkedList<Policy>();
+        for (final String policyName : model.getPolicyRequirements()) {
+            requires.add(new ServicePolicy(policyName));
+        }
+        return requires;
+    }
 
+}
+
+class ServicePolicy implements Policy {
+    private String _policyName;
+    
+    ServicePolicy(String policyName) {
+        _policyName = policyName;
+    }
+
+    public String getName() {
+        return _policyName;
+    }
+    public String toString() {
+        return _policyName;
+    }
+    
 }
 
 class Activation {

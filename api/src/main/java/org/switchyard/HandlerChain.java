@@ -29,6 +29,13 @@ import java.util.List;
  * handler to an exchange or service.
  */
 public interface HandlerChain extends ExchangeHandler {
+    
+    /**
+     * Reserved name for the service provider handler.  This name is used for
+     * handlers passed to ServiceDomain.createExchange() and 
+     * ServiceDomain.registerService().
+     */
+    final String PROVIDER_HANDLER = "provider";
 
     /**
      * Add a handler to the front of the chain.
@@ -43,6 +50,16 @@ public interface HandlerChain extends ExchangeHandler {
      * @param handler handler instance
      */
     void addLast(String handlerName, ExchangeHandler handler);
+    
+    /**
+     * Replaces a specified handler at it's current position in the chain. If 
+     * no handler is found in the chain with the specified name, the new handler
+     * is *not* added to the chain.
+     * @param handlerName name of the handler to replace
+     * @param handler handler instnace to replace
+     * @return true if the handler was added, false if it was not
+     */
+    boolean replace(String handlerName, ExchangeHandler handler);
 
     /**
      * Remove the named handler from this chain.

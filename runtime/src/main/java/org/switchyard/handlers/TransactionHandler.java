@@ -27,9 +27,9 @@ import javax.transaction.TransactionManager;
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
+import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
-import org.switchyard.Property;
 import org.switchyard.policy.ExchangePolicy;
 import org.switchyard.policy.TransactionPolicy;
 
@@ -78,7 +78,7 @@ public class TransactionHandler implements ExchangeHandler {
     
     @Override
     public void handleFault(Exchange exchange) {
-        
+        handleOut(exchange);
     }
     
     void setTransactionManager(TransactionManager transactionManager) {
@@ -96,14 +96,10 @@ public class TransactionHandler implements ExchangeHandler {
         }
         
         // need to resume the suspended transaction
-        Property prop = exchange.getContext().getProperty(TRANSACTION_PROPERTY);
-        
-        if (prop != null && prop.getValue() != null) {
-            try {
-                _transactionManager.resume((Transaction)prop.getValue());
-            } catch (Exception ex) {
-                _log.error("Failed to resume transaction on reply message.", ex);
-            }
+        Transaction transaction = (Transaction)
+                exchange.getContext().getPropertyValue(TRANSACTION_PROPERTY);
+        if (transaction != null) {
+            resumeTransaction(transaction);
         }
     }
     
@@ -120,16 +116,34 @@ public class TransactionHandler implements ExchangeHandler {
             throw new HandlerException(
                     "Transaction policy requires an active transaction, but no transaction is present.");
         }
-
-        // do we need to suspend the transaction?
+        
         if (suspendRequired(exchange)) {
-            try {
-                Transaction transaction = _transactionManager.suspend();
+            Transaction transaction = (Transaction)
+                    exchange.getContext().getPropertyValue(TRANSACTION_PROPERTY);
+            
+            if (transaction == null) {
+                // before invocation - check for active transaction
+                if (_log.isDebugEnabled()) {
+                    _log.debug("Suspending active transaction for exchange.");
+                }
+                try {
+                    transaction = _transactionManager.suspend();
+                } catch (SystemException sysEx) {
+                    throw new HandlerException("Failed to suspend transaction on exchange.", sysEx);
+                }
                 if (transaction != null) {
                     exchange.getContext().setProperty(TRANSACTION_PROPERTY, transaction);
                 }
-            } catch (SystemException sysEx) {
-                throw new HandlerException("Failed to susepend transaction on exchange.", sysEx);
+                // if an active transaction was present, it has been suspended -
+                // mark the policy requirement as provided.
+                ExchangePolicy.provide(exchange, TransactionPolicy.SUSPEND);
+            } else {
+                // after invocation - check to see if we need to resume transaction
+                if (isInOnly(exchange)) {
+                    // we need to resume transactions on InOnly exchanges as part
+                    // of the 'in' phase handlers because there is no out phase
+                    resumeTransaction(transaction);
+                }
             }
         }
     }
@@ -145,4 +159,20 @@ public class TransactionHandler implements ExchangeHandler {
     private boolean propagateRequired(Exchange exchange) {
         return ExchangePolicy.isRequired(exchange, TransactionPolicy.PROPAGATE);
     }
+    
+    private boolean isInOnly(Exchange exchange) {
+        return ExchangePattern.IN_ONLY.equals(
+                exchange.getContract().getServiceOperation().getExchangePattern());
+    }
+  
+    private void resumeTransaction(Transaction transaction) {
+        try {
+            if (_log.isDebugEnabled()) {
+                _log.debug("Resuming suspended transaction");
+            }
+            _transactionManager.resume(transaction);
+        } catch (Exception ex) {
+            _log.error("Failed to resume transaction after service invocation.", ex);
+        }
+    }   
 }

@@ -19,6 +19,9 @@
 
 package org.switchyard.internal;
 
+import java.util.Collections;
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
 import org.switchyard.Exchange;
@@ -27,6 +30,8 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceInterface;
+import org.switchyard.policy.ExchangePolicy;
+import org.switchyard.policy.Policy;
 
 /**
  * A reference to a service registered in a SwitchYard domain.  The reference
@@ -38,30 +43,48 @@ public class ServiceReferenceImpl implements ServiceReference {
     private QName _name;
     private ServiceInterface _interface;
     private ServiceDomain _domain;
+    private List<Policy> _requires;
 
     /**
      * Creates a new reference to a service.
      * @param name name of the service reference
      * @param serviceInterface the service interface
+     * @param requires list of policies required for this reference
      * @param domain domain in which the service is used 
      */
     public ServiceReferenceImpl(QName name, 
             ServiceInterface serviceInterface, 
+            List<Policy> requires,
             ServiceDomain domain) {
+        
         _name = name;
         _interface = serviceInterface;
         _domain = domain;
+        
+        if (requires != null) {
+            _requires = requires;
+        } else {
+            _requires = Collections.emptyList();
+        }
     }
     
     @Override
     public Exchange createExchange(ExchangeContract contract) {
-        return _domain.createExchange(this, contract);
+        Exchange ex = _domain.createExchange(this, contract);
+        for (Policy policy : _requires) {
+            ExchangePolicy.require(ex, policy);
+        }
+        return ex;
     }
 
     @Override
     public Exchange createExchange(ExchangeContract contract,
             ExchangeHandler handler) {
-        return _domain.createExchange(this, contract, handler);
+        Exchange ex = _domain.createExchange(this, contract, handler);
+        for (Policy policy : _requires) {
+            ExchangePolicy.require(ex, policy);
+        }
+        return ex;
     }
 
     @Override

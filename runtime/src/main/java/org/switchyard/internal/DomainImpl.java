@@ -19,11 +19,13 @@
 
 package org.switchyard.internal;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
+import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerChain;
@@ -35,6 +37,7 @@ import org.switchyard.handlers.TransformHandler;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
+import org.switchyard.policy.Policy;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.spi.ExchangeBus;
 import org.switchyard.spi.Service;
@@ -71,12 +74,16 @@ public class DomainImpl implements ServiceDomain {
         _exchangeBus  = exchangeBus;
         _transformerRegistry = transformerRegistry;
 
-        // Build out the system handlers chain.  It would be cleaner if we
-        // handled this via config.
+        // Build out the system handlers chain.  A null "provider" handler
+        // is inserted as a placeholder to establish the correct position of
+        // the service provider within the chain.
+        TransactionHandler transactionHandler = new TransactionHandler();
         _defaultHandlers = new DefaultHandlerChain();
-        _defaultHandlers.addLast("transaction-policy", new TransactionHandler());
+        _defaultHandlers.addLast("transaction-pre-invoke", transactionHandler);
         _defaultHandlers.addLast("generic-policy", new PolicyHandler());
         _defaultHandlers.addLast("transformation", new TransformHandler(_transformerRegistry));
+        _defaultHandlers.addLast(HandlerChain.PROVIDER_HANDLER, new BaseHandler());
+        _defaultHandlers.addLast("transaction-post-invoke", transactionHandler);
 
         if (_logger.isDebugEnabled()) {
             _logger.debug("Created SwitchYard ServiceDomain instance '" + name + "'.");
@@ -112,20 +119,27 @@ public class DomainImpl implements ServiceDomain {
 
     @Override
     public ServiceReference registerService(QName serviceName, ExchangeHandler handler,
-            ServiceInterface metadata) {
+            ServiceInterface metadata, List<Policy> requires) {
         // If no service interface is provided, we default to InOutService
         if (metadata == null) {
             metadata = new InOutService();
         }
         // Create the service reference
-        ServiceReference reference = new ServiceReferenceImpl(serviceName, metadata, this);
+        ServiceReference reference = new ServiceReferenceImpl(serviceName, metadata, requires, this);
         // Add a handler chain with the provider at the end
         HandlerChain handlers = _defaultHandlers.copy();
-        handlers.addLast("provider", handler);
+        handlers.replace(HandlerChain.PROVIDER_HANDLER, handler);
         Dispatcher ep = _exchangeBus.createDispatcher(reference, handlers, _transformerRegistry);
         
         // register the service
         return _registry.registerService(reference, ep, this).getReference();
+    }
+    
+    @Override
+    public ServiceReference registerService(QName serviceName, ExchangeHandler handler, 
+            ServiceInterface metadata) {
+        List<Policy> requires = Collections.emptyList();
+        return registerService(serviceName, handler, metadata, requires);
     }
 
     @Override
@@ -148,4 +162,5 @@ public class DomainImpl implements ServiceDomain {
     public HandlerChain getHandlerChain() {
         return _defaultHandlers;
     }
+
 }

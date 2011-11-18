@@ -56,6 +56,35 @@ public class DefaultHandlerChainTest {
         _chain.handleFault(new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, null));
         Assert.assertNotNull(goodHandler.waitForFaultMessage());
     }
+    
+    @Test
+    public void testReplace() {
+        MockHandler m1 = new MockHandler();
+        MockHandler m2 = new MockHandler();
+        MockHandler m3 = new MockHandler();
+        MockHandler m4 = new MockHandler();
+        
+        _chain.addFirst("1", m1);
+
+        Assert.assertFalse(_chain.replace("5", m2));
+        Assert.assertTrue(_chain.replace("1", m2));
+        
+        Assert.assertTrue(_chain.getHandlers().contains(m2));
+        Assert.assertFalse(_chain.getHandlers().contains(m1));
+        
+        // clean up
+        _chain.remove("1");
+        Assert.assertEquals(0, _chain.getHandlers().size());
+        
+        // test replace with multiple handlers
+        _chain.addFirst("1", m1);
+        _chain.addFirst("2", m2);
+        _chain.addFirst("3", m3);
+        _chain.replace("2", m4);
+        
+        Assert.assertEquals(m4, _chain.getHandlers().get(1));
+    }
 }
+
 
 

@@ -19,6 +19,10 @@
 
 package org.switchyard.deploy;
 
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerChain;
@@ -26,9 +30,8 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceInterface;
+import org.switchyard.policy.Policy;
 import org.switchyard.transform.TransformerRegistry;
-
-import javax.xml.namespace.QName;
 
 /**
  * Domain Proxy class.
@@ -91,6 +94,11 @@ class DomainProxy implements ServiceDomain {
     @Override
     public ServiceReference registerService(QName serviceName, ExchangeHandler handler, ServiceInterface metadata) {
         return _domain.registerService(serviceName, handler, metadata);
+    }
+    
+    @Override
+    public ServiceReference registerService(QName serviceName, ExchangeHandler handler, ServiceInterface metadata, List<Policy> requires) {
+        return _domain.registerService(serviceName, handler, metadata, requires);
     }
 
     @Override

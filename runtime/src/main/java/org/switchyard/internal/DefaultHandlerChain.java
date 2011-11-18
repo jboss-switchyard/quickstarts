@@ -83,6 +83,20 @@ public class DefaultHandlerChain implements HandlerChain {
             _logger.debug("Added ExchangeHandler instance at end of Handler Chain: " + handlerRef);
         }
     }
+    
+    @Override
+    public synchronized boolean replace(String handlerName, ExchangeHandler handler) {
+        for (int i = 0; i < _chain.size(); i++) {
+            if (_chain.get(i).getName().equals(handlerName)) {
+                _chain.remove(i);
+                _chain.add(i, new HandlerRef(handlerName, handler));
+                return true;
+            }
+        }
+        
+        // no handler with the specified name found
+        return false;
+    }
 
     @Override
     public synchronized ExchangeHandler remove(String handlerName) {
@@ -217,5 +231,4 @@ public class DefaultHandlerChain implements HandlerChain {
         private final ExchangeHandler _handler;
         private final String _name;
     }
-
 }
