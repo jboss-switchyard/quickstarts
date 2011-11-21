@@ -59,4 +59,17 @@ public interface RulesActionModel extends Model {
      */
     public RulesActionModel setType(RulesActionType type);
 
+    /**
+     * Gets the name of the optional entry point.
+     * @return the name of the optional entry point
+     */
+    public String getEntryPoint();
+
+    /**
+     * Sets the name of the optional entry point.
+     * @param entryPoint the name of the optional entry point
+     * @return this RulesActionModel (useful for chaining)
+     */
+    public RulesActionModel setEntryPoint(String entryPoint);
+
 }

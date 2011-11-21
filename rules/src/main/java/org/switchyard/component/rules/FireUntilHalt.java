@@ -33,4 +33,9 @@ import java.lang.annotation.Target;
 @Target(METHOD)
 @Retention(RUNTIME)
 @Documented
-public @interface FireUntilHalt {}
+public @interface FireUntilHalt {
+
+    /** The optional entry point name. */
+    public String entryPoint() default "";
+
+}

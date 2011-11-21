@@ -31,7 +31,7 @@ MA  02110-1301, USA.
             <extension base="sca:Implementation">
                 <attribute name="agent" type="boolean" use="optional" default="false"/>
                 <attribute name="clock" type="common.rules:clockType" use="optional" default="REALTIME"/>
-                <attribute name="eventProcessing" type="common.rules:eventProcessingType" use="optional" default="STREAM"/>
+                <attribute name="eventProcessing" type="common.rules:eventProcessingType" use="optional" default="CLOUD"/>
                 <attribute name="maxThreads" type="integer" use="optional"/>
                 <attribute name="multithreadEvaluation" type="boolean" use="optional"/>
             </extension>
@@ -66,8 +66,8 @@ MA  02110-1301, USA.
 
     <simpleType name="eventProcessingType">
         <restriction base="string">
-            <enumeration value="STREAM"/>
             <enumeration value="CLOUD"/>
+            <enumeration value="STREAM"/>
         </restriction>
     </simpleType>
 

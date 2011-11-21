@@ -25,9 +25,9 @@ package org.switchyard.component.common.rules;
  */
 public enum EventProcessingType {
 
-    /** The stream event processing type. */
-    STREAM,
     /** The cloud event processing type. */
-    CLOUD;
+    CLOUD,
+    /** The stream event processing type. */
+    STREAM;
 
 }

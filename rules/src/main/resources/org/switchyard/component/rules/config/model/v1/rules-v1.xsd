@@ -50,6 +50,7 @@ MA  02110-1301, USA.
             <extension base="sca:CommonExtensionBase">
                 <attribute name="name" type="NCName" use="required"/>
                 <attribute name="type" type="rules:actionType" use="required"/>
+                <attribute name="entryPoint" type="string" use="optional"/>
             </extension>
         </complexContent>
     </complexType>

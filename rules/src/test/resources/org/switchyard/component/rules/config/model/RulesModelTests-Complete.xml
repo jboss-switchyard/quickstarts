@@ -22,8 +22,12 @@ MA  02110-1301, USA.
             xmlns:rules="urn:switchyard-component-rules:config:1.0">
     <sca:composite name="Foobar" targetNamespace="urn:rules:test:1.0">
         <sca:component name="FoobarService">
-            <rules:implementation.rules>
+            <rules:implementation.rules agent="true" clock="PSEUDO" eventProcessing="STREAM" maxThreads="10" multithreadEvaluation="true">
+                <rules:action name="processFoo" type="EXECUTE"/>
+                <rules:action name="processMan" type="FIRE_ALL_RULES"/>
+                <rules:action name="processBar" type="FIRE_UNTIL_HALT" entryPoint="bars"/>
                 <rules:audit interval="2000" log="foobar" type="CONSOLE"/>
+                <rules:channel class="org.test.FoobarChannel" input="theInput" name="theName" operation="theOperation" reference="theReference"/>
                 <rules:resource location="foo.dsl" type="DSL"/>
                 <rules:resource location="bar.dslr" type="DSLR"/>
             </rules:implementation.rules>

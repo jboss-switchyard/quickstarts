@@ -37,6 +37,7 @@ import org.drools.runtime.Environment;
 import org.drools.runtime.KnowledgeSessionConfiguration;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.StatelessKnowledgeSession;
+import org.drools.runtime.rule.WorkingMemoryEntryPoint;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
@@ -209,7 +210,6 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
                     */
                     boolean ksessionNew = _ksession == null;
                     final StatefulKnowledgeSession ksessionStateful = getStatefulSession();
-                    ksessionStateful.insert(content);
                     content = null;
                     if (ksessionNew) {
                         final ClassLoader goodClassLoader = Classes.getClassLoader(getClass());
@@ -232,6 +232,17 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
                             .append(":fireUntilHalt(").append(System.identityHashCode(ksessionStateful)).append(")").toString());
                         _ksessionThread.setDaemon(true);
                         _ksessionThread.start();
+                    }
+                    String ep = getEntryPoint(rulesActionModel);
+                    if (ep != null) {
+                        WorkingMemoryEntryPoint wmep = ksessionStateful.getWorkingMemoryEntryPoint(ep);
+                        if (wmep != null) {
+                            wmep.insert(content);
+                        } else {
+                            throw new HandlerException("Unknown entry point: " + ep + "; please check your rules source.");
+                        }
+                    } else {
+                        ksessionStateful.insert(content);
                     }
                     if (isDispose(context)) {
                         disposeStatefulSession();

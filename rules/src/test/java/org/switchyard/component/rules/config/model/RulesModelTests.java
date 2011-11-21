@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import junit.framework.Assert;
 
 import org.custommonkey.xmlunit.Diff;
@@ -36,7 +38,10 @@ import org.switchyard.common.io.resource.Resource;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.rules.AuditType;
+import org.switchyard.component.common.rules.ClockType;
+import org.switchyard.component.common.rules.EventProcessingType;
 import org.switchyard.component.common.rules.config.model.AuditModel;
+import org.switchyard.component.rules.common.RulesActionType;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
@@ -72,18 +77,40 @@ public class RulesModelTests {
         Assert.assertTrue(implementation instanceof RulesComponentImplementationModel);
         RulesComponentImplementationModel rci = (RulesComponentImplementationModel)implementation;
         Assert.assertEquals("rules", rci.getType());
-        Iterator<ResourceModel> resource_iter = rci.getResources().iterator();
-        Resource dsl = resource_iter.next();
+        Assert.assertTrue(rci.isAgent());
+        Assert.assertEquals(ClockType.PSEUDO, rci.getClock());
+        Assert.assertEquals(EventProcessingType.STREAM, rci.getEventProcessing());
+        Assert.assertEquals(Integer.valueOf(10), rci.getMaxThreads());
+        Assert.assertEquals(Boolean.TRUE, rci.getMultithreadEvaluation());
+        Iterator<RulesActionModel> ram_iter = rci.getRulesActions().iterator();
+        RulesActionModel ram = ram_iter.next();
+        Assert.assertEquals("processFoo", ram.getName());
+        Assert.assertEquals(RulesActionType.EXECUTE, ram.getType());
+        ram = ram_iter.next();
+        Assert.assertEquals("processMan", ram.getName());
+        Assert.assertEquals(RulesActionType.FIRE_ALL_RULES, ram.getType());
+        ram = ram_iter.next();
+        Assert.assertEquals("processBar", ram.getName());
+        Assert.assertEquals(RulesActionType.FIRE_UNTIL_HALT, ram.getType());
+        Assert.assertEquals("bars", ram.getEntryPoint());
+        ChannelModel cm = rci.getChannels().iterator().next();
+        Assert.assertEquals("org.test.FoobarChannel", cm.getClazz());
+        Assert.assertEquals(QName.valueOf("theInput"), cm.getInput());
+        Assert.assertEquals("theName", cm.getName());
+        Assert.assertEquals("theOperation", cm.getOperation());
+        Assert.assertEquals("theReference", cm.getReference());
+        AuditModel am = rci.getAudit();
+        Assert.assertNotNull(am);
+        Assert.assertEquals(Integer.valueOf(2000), am.getInterval());
+        Assert.assertEquals("foobar", am.getLog());
+        Assert.assertEquals(AuditType.CONSOLE, am.getType());
+        Iterator<ResourceModel> res_iter = rci.getResources().iterator();
+        Resource dsl = res_iter.next();
         Assert.assertEquals("foo.dsl", dsl.getLocation());
         Assert.assertSame(ResourceType.valueOf("DSL"), dsl.getType());
-        Resource dslr = resource_iter.next();
+        Resource dslr = res_iter.next();
         Assert.assertEquals("bar.dslr", dslr.getLocation());
         Assert.assertSame(ResourceType.valueOf("DSLR"), dslr.getType());
-        AuditModel ram = rci.getAudit();
-        Assert.assertNotNull(ram);
-        Assert.assertEquals(Integer.valueOf(2000), ram.getInterval());
-        Assert.assertEquals("foobar", ram.getLog());
-        Assert.assertEquals(AuditType.CONSOLE, ram.getType());
     }
 
     @Test

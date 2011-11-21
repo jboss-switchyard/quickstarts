@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.List;
 
+import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.type.classpath.IsAnnotationPresentFilter;
 import org.switchyard.common.xml.XMLHelper;
@@ -104,6 +105,13 @@ public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
             if (rules.agent()) {
                 rciModel.setAgent(true);
             }
+            rciModel.setClock(rules.clock());
+            rciModel.setEventProcessing(rules.eventProcessing());
+            int maxThreads = rules.maxThreads();
+            if (maxThreads != -1) {
+                rciModel.setMaxThreads(Integer.valueOf(maxThreads));
+            }
+            rciModel.setMultithreadEvaluation(Boolean.valueOf(rules.multithreadEvaluation()));
             String messageContentName = rules.messageContentName();
             if (!UNDEFINED.equals(messageContentName)) {
                 rciModel.setMessageContentName(messageContentName);
@@ -111,17 +119,19 @@ public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
             JavaService javaService = JavaService.fromClass(rulesInterface);
             for (Method method : rulesClass.getDeclaredMethods()) {
                 RulesActionType rat = null;
+                String ep = null;
                 if (EXECUTE_FILTER.matches(method)) {
                     rat = RulesActionType.EXECUTE;
                 } else if (FIRE_ALL_RULES_FILTER.matches(method)) {
                     rat = RulesActionType.FIRE_ALL_RULES;
                 } else if (FIRE_UNTIL_HALT_FILTER.matches(method)) {
                     rat = RulesActionType.FIRE_UNTIL_HALT;
+                    ep = Strings.trimToNull(method.getAnnotation(FireUntilHalt.class).entryPoint());
                 }
                 if (rat != null) {
                     ServiceOperation srvOper = javaService.getOperation(method.getName());
                     if (srvOper != null) {
-                        RulesActionModel ram = new V1RulesActionModel().setName(srvOper.getName()).setType(rat);
+                        RulesActionModel ram = new V1RulesActionModel().setName(srvOper.getName()).setType(rat).setEntryPoint(ep);
                         rciModel.addRulesAction(ram);
                     }
                 }

@@ -26,6 +26,7 @@ import org.switchyard.BaseHandler;
 import org.switchyard.Context;
 import org.switchyard.HandlerException;
 import org.switchyard.Property;
+import org.switchyard.common.lang.Strings;
 import org.switchyard.component.rules.common.RulesActionType;
 import org.switchyard.component.rules.common.RulesConstants;
 import org.switchyard.component.rules.config.model.RulesActionModel;
@@ -70,6 +71,18 @@ public abstract class BaseRulesExchangeHandler extends BaseHandler implements Ru
             LOGGER.debug(msg);
         }
         return RulesActionType.EXECUTE;
+    }
+
+    /**
+     * Gets the optional entry point name from the rules action model.
+     * @param model the RulesActionModel
+     * @return the optional entry point name
+     */
+    protected String getEntryPoint(RulesActionModel model) {
+        if (model != null) {
+            return Strings.trimToNull(model.getEntryPoint());
+        }
+        return null;
     }
 
     /**

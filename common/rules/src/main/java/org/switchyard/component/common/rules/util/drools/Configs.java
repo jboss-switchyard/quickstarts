@@ -69,11 +69,11 @@ public final class Configs {
         EventProcessingType eventProcessing = model.getEventProcessing();
         if (eventProcessing != null) {
             switch (eventProcessing) {
-                case STREAM:
-                    kbaseConfig.setOption(EventProcessingOption.STREAM);
-                    break;
                 case CLOUD:
                     kbaseConfig.setOption(EventProcessingOption.CLOUD);
+                    break;
+                case STREAM:
+                    kbaseConfig.setOption(EventProcessingOption.STREAM);
                     break;
             }
         }

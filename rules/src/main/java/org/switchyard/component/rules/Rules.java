@@ -25,6 +25,9 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import org.switchyard.component.common.rules.ClockType;
+import org.switchyard.component.common.rules.EventProcessingType;
+
 /**
  * Rules annotation.
  *
@@ -44,6 +47,26 @@ public @interface Rules {
      * Specified agent flag.
      */
     public boolean agent() default false;
+
+    /**
+     * Specified clock type.
+     */
+    public ClockType clock() default ClockType.REALTIME;
+
+    /**
+     * Specified event processing type.
+     */
+    public EventProcessingType eventProcessing() default EventProcessingType.CLOUD;
+
+    /**
+     * Specified max threads.
+     */
+    public int maxThreads() default -1;
+
+    /**
+     * Specified multithread evaluation.
+     */
+    public boolean multithreadEvaluation() default false;
 
     /**
      * Specified message content name.

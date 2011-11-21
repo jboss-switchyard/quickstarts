@@ -87,4 +87,21 @@ public class V1RulesActionModel extends BaseModel implements RulesActionModel {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getEntryPoint() {
+        return getModelAttribute("entryPoint");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public RulesActionModel setEntryPoint(String entryPoint) {
+        setModelAttribute("entryPoint", entryPoint);
+        return this;
+    }
+
 }
