@@ -18,11 +18,18 @@
  */
 package org.switchyard.quickstarts.camel.soap.proxy;
 
+import javax.xml.transform.Source;
+
+import org.switchyard.annotations.OperationTypes;
+
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public interface Reverse {
 
-    public String reverse(String text);
+    @OperationTypes(
+            in = "{urn:switchyard-quickstart:camel-soap-proxy:1.0}reverse",
+            out = "{urn:switchyard-quickstart:camel-soap-proxy:1.0}reverseResponse")
+    Source reverse(Source text);
 
 }

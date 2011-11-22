@@ -32,18 +32,12 @@ import javax.jws.soap.SOAPBinding;
  */
 @WebService(name="ReverseService", serviceName="ReverseService", targetNamespace="urn:switchyard-quickstart:camel-soap-proxy:1.0")
 @SOAPBinding(style=DOCUMENT, use=LITERAL)
-public class ReverseService implements Reverse {
+public class ReverseService {
 
-    @Override
     @WebMethod
     @WebResult(name="text")
     public String reverse(@WebParam(name="text") String text) {
-        int len = text.length();
-        char[] rev = new char[len];
-        for (int i=0; i < len; i++) {
-            rev[(len-1)-i] = text.charAt(i);
-        }
-        return new String(rev);
+        return new StringBuilder(text).reverse().toString();
     }
 
 }
