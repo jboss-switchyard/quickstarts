@@ -9,8 +9,7 @@ Copyright (c) OASIS Open 2008. All Rights Reserved.
 		elementFormDefault="qualified">
 
 	<!-- SCA-Assembly XML Schema -->
-    <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-            schemaLocation="sca-1.1-cd06.xsd"/>
+    <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
 
 	<!-- SCA-BPEL Component Implementation Type -->
 	<element name="implementation.bpel"
