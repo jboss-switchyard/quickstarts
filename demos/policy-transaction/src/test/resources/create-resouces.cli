@@ -1,0 +1,8 @@
+## ./jboss-admin.sh file=/path/to/this/file.
+connect
+/subsystem=messaging/jms-queue=policyQSTransacted:add(entries=["queue/policyQSTransacted"],durable=false)
+/subsystem=messaging/jms-queue=policyQSNonTransacted:add(entries=["queue/policyQSNonTransacted"],durable=false)
+
+## Next version of JBoss A7 will have support for multiple messaging providers and we need then to specify one in this commend:
+#/subsystem=messaging/hornetq-server=default/jms-queue=policyQSTransacted:add(entries=["queue/policyQSTransacted"],durable=false)
+#/subsystem=messaging/hornetq-server=default/jms-queue=policyQSNonTransacted:add(entries=["queue/policyQSNonTransacted"],durable=false)
