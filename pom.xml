@@ -111,20 +111,6 @@
         <updatePolicy>never</updatePolicy>
       </snapshots>
     </repository>
-      <repository>
-        <id>smooks-staging-repository-group</id>
-        <name>Smooks Staging Maven Repository Group</name>
-        <url>https://nexus.codehaus.org/content/repositories/orgmilyn-009/</url>
-        <layout>default</layout>
-        <releases>
-          <enabled>true</enabled>
-          <updatePolicy>never</updatePolicy>
-        </releases>
-        <snapshots>
-          <enabled>false</enabled>
-          <updatePolicy>never</updatePolicy>
-        </snapshots>
-      </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
