@@ -31,6 +31,7 @@ import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.util.URISupport;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.switchyard.Exchange;
@@ -55,6 +56,7 @@ import org.switchyard.exception.SwitchYardException;
  *
  */
 public class InboundHandler implements ExchangeHandler {
+    private static final String TRANSACTED_REF = "transactionPolicy";
     private static TransactionManagerFactory TM_FACTORY = TransactionManagerFactory.getInstance();
     private final CamelBindingModel _camelBindingModel;
     private final CamelContext _camelContext;
@@ -92,9 +94,13 @@ public class InboundHandler implements ExchangeHandler {
                 final PlatformTransactionManager tm = TM_FACTORY.create();
                 addToCamelRegistry(tm, tmName);
             }
+            // Tell Camel the route is transacted
+            route.transacted(TRANSACTED_REF).to(composeSwitchYardComponentName(serviceName));
+        } else {
+            route.to(composeSwitchYardComponentName(serviceName));
         }
         
-        return route.to(composeSwitchYardComponentName(serviceName));
+        return route;
     }
     
     private boolean isDefaultJtaTransactionName(final String tmName) {
@@ -107,7 +113,11 @@ public class InboundHandler implements ExchangeHandler {
 
     private void addToCamelRegistry(final PlatformTransactionManager tm, final String tmName) {
         final SimpleRegistry simpleRegistry = new SimpleRegistry();
+        // Add the transaction manager
         simpleRegistry.put(tmName, tm);
+        // Add a policy ref bean pointing to the transaction manager
+        simpleRegistry.put(TRANSACTED_REF, new SpringTransactionPolicy(tm));
+        // Set the camel registry to delegate to our new simple registry
         final PropertyPlaceholderDelegateRegistry delegateReg = (PropertyPlaceholderDelegateRegistry) _camelContext.getRegistry();
         final CompositeRegistry registry = (CompositeRegistry) delegateReg.getRegistry();
         registry.addRegistry(simpleRegistry);
