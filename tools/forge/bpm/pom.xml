@@ -36,6 +36,17 @@
                   <include>org.switchyard.components:switchyard-component-bpm</include>
                 </includes>
               </artifactSet>
+              <filters>
+                <filter>
+                  <artifact>org.switchyard.components:switchyard-component-bpm</artifact>
+                  <includes>
+                    <include>org/switchyard/config/**</include>
+                    <include>org/switchyard/component/bpm/config/model/**</include>
+                    <include>org/switchyard/component/bpm/task/*</include>
+                    <include>org/switchyard/component/bpm/common/*</include>
+                  </includes>
+                </filter>
+              </filters>
             </configuration>
           </execution>
         </executions>

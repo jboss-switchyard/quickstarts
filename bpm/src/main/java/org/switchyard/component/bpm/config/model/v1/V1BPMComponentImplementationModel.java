@@ -18,12 +18,6 @@
  */
 package org.switchyard.component.bpm.config.model.v1;
 
-import static org.switchyard.component.bpm.common.ProcessConstants.MESSAGE_CONTENT_IN_NAME;
-import static org.switchyard.component.bpm.common.ProcessConstants.MESSAGE_CONTENT_OUT_NAME;
-import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_DEFINITION;
-import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_DEFINITION_TYPE;
-import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_ID;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +25,7 @@ import java.util.List;
 import org.switchyard.common.io.resource.Resource;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.io.resource.SimpleResource;
+import org.switchyard.component.bpm.common.ProcessConstants;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.ProcessActionModel;
 import org.switchyard.component.bpm.config.model.TaskHandlerModel;
@@ -86,9 +81,9 @@ public class V1BPMComponentImplementationModel extends V1ComponentImplementation
      */
     @Override
     public Resource getProcessDefinition() {
-        String pd = getModelAttribute(PROCESS_DEFINITION);
+        String pd = getModelAttribute(ProcessConstants.PROCESS_DEFINITION);
         if (pd != null) {
-            String pdt = getModelAttribute(PROCESS_DEFINITION_TYPE);
+            String pdt = getModelAttribute(ProcessConstants.PROCESS_DEFINITION_TYPE);
             return new SimpleResource(pd, pdt != null ? ResourceType.valueOf(pdt) : null);
         }
         return null;
@@ -99,9 +94,9 @@ public class V1BPMComponentImplementationModel extends V1ComponentImplementation
      */
     @Override
     public BPMComponentImplementationModel setProcessDefinition(Resource processDefinition) {
-        setModelAttribute(PROCESS_DEFINITION, processDefinition != null ? processDefinition.getLocation() : null);
+        setModelAttribute(ProcessConstants.PROCESS_DEFINITION, processDefinition != null ? processDefinition.getLocation() : null);
         ResourceType pdt = processDefinition != null ? processDefinition.getType() : null;
-        setModelAttribute(PROCESS_DEFINITION_TYPE, pdt != null ? pdt.getName() : null);
+        setModelAttribute(ProcessConstants.PROCESS_DEFINITION_TYPE, pdt != null ? pdt.getName() : null);
         return this;
     }
 
@@ -110,7 +105,7 @@ public class V1BPMComponentImplementationModel extends V1ComponentImplementation
      */
     @Override
     public String getProcessId() {
-        return getModelAttribute(PROCESS_ID);
+        return getModelAttribute(ProcessConstants.PROCESS_ID);
     }
 
     /**
@@ -118,7 +113,7 @@ public class V1BPMComponentImplementationModel extends V1ComponentImplementation
      */
     @Override
     public BPMComponentImplementationModel setProcessId(String processId) {
-        setModelAttribute(PROCESS_ID, processId);
+        setModelAttribute(ProcessConstants.PROCESS_ID, processId);
         return this;
     }
 
@@ -127,7 +122,7 @@ public class V1BPMComponentImplementationModel extends V1ComponentImplementation
      */
     @Override
     public String getMessageContentInName() {
-        return getModelAttribute(MESSAGE_CONTENT_IN_NAME);
+        return getModelAttribute(ProcessConstants.MESSAGE_CONTENT_IN_NAME);
     }
 
     /**
@@ -135,7 +130,7 @@ public class V1BPMComponentImplementationModel extends V1ComponentImplementation
      */
     @Override
     public BPMComponentImplementationModel setMessageContentInName(String messageContentInName) {
-        setModelAttribute(MESSAGE_CONTENT_IN_NAME, messageContentInName);
+        setModelAttribute(ProcessConstants.MESSAGE_CONTENT_IN_NAME, messageContentInName);
         return this;
     }
 
@@ -144,7 +139,7 @@ public class V1BPMComponentImplementationModel extends V1ComponentImplementation
      */
     @Override
     public String getMessageContentOutName() {
-        return getModelAttribute(MESSAGE_CONTENT_OUT_NAME);
+        return getModelAttribute(ProcessConstants.MESSAGE_CONTENT_OUT_NAME);
     }
 
     /**
@@ -152,7 +147,7 @@ public class V1BPMComponentImplementationModel extends V1ComponentImplementation
      */
     @Override
     public BPMComponentImplementationModel setMessageContentOutName(String messageContentOutName) {
-        setModelAttribute(MESSAGE_CONTENT_OUT_NAME, messageContentOutName);
+        setModelAttribute(ProcessConstants.MESSAGE_CONTENT_OUT_NAME, messageContentOutName);
         return this;
     }
 

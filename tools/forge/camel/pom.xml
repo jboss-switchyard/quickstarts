@@ -34,9 +34,17 @@
               <artifactSet>
                 <includes>
                   <include>org.switchyard.components:switchyard-component-camel</include>
-                  <include>org.apache.camel:camel-core</include>
                 </includes>
               </artifactSet>
+              <filters>
+                <filter>
+                  <artifact>org.switchyard.components:switchyard-component-camel</artifact>
+                  <includes>
+                    <include>org/switchyard/config/**</include>
+                    <include>org/switchyard/component/camel/config/model/**</include>
+                  </includes>
+                </filter>
+              </filters>
             </configuration>
           </execution>
         </executions>

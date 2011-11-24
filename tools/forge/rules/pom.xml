@@ -33,10 +33,19 @@
             <configuration>
               <artifactSet>
                 <includes>
-                  <include>org.switchyard.components:switchyard-component-common-rules</include>
                   <include>org.switchyard.components:switchyard-component-rules</include>
                 </includes>
               </artifactSet>
+              <filters>
+                <filter>
+                  <artifact>org.switchyard.components:switchyard-component-rules</artifact>
+                  <includes>
+                    <include>org/switchyard/config/**</include>
+                    <include>org/switchyard/component/rules/config/model/**</include>
+                    <include>org/switchyard/component/rules/common/RulesActionType.class</include>
+                  </includes>
+                </filter>
+              </filters>
             </configuration>
           </execution>
         </executions>
