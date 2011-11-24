@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <module xmlns="urn:jboss:module:1.0" name="org.switchyard.switchyard-forge-plugin" slot="${project.version}">
   <resources>
-   <resource-root path="switchyard-forge-plugin-${project.version}.jar"/>
-   <resource-root path="switchyard-forge-bpm-plugin-${project.version}.jar"/>
-   <resource-root path="switchyard-forge-rules-plugin-${project.version}.jar"/>
-   <resource-root path="switchyard-forge-soap-plugin-${project.version}.jar"/>
-   <resource-root path="switchyard-forge-bean-plugin-${project.version}.jar"/>
-   <resource-root path="switchyard-forge-camel-plugin-${project.version}.jar"/>
+    <!-- plugin dependencies that must be local to this module -->
+	<resource-root path="switchyard-forge-common-${project.version}.jar"/>
+	<resource-root path="switchyard-component-common-rules-${project.version}.jar"/>
+	<!-- core and component plugins -->
+	<resource-root path="switchyard-forge-plugin-${project.version}.jar"/>
+	<resource-root path="switchyard-forge-bean-plugin-${project.version}.jar"/>
+	<resource-root path="switchyard-forge-soap-plugin-${project.version}.jar"/>
+	<resource-root path="switchyard-forge-rules-plugin-${project.version}.jar"/>
+	<resource-root path="switchyard-forge-bpm-plugin-${project.version}.jar"/>
+	<resource-root path="switchyard-forge-camel-plugin-${project.version}.jar"/>
   </resources>
+  
   <dependencies>
-    <module name="org.switchyard.switchyard-forge-plugin.dependencies" slot="${project.version}" services="export" export="true"/>
-    <module name="org.jboss.forge.shell-api" services="import" optional="false">
-	<imports>
-	<include path="**" />
-	<include path="META-INF" /> 
-        </imports> 
-    </module>
     <module name="javax.api"/>
+    <module name="javax.enterprise.cdi-api"/>
+    <module name="org.jboss.forge.shell-api"/>
+    <module name="org.switchyard.switchyard-forge-plugin.dependencies" slot="0.3.0-SNAPSHOT" services="export" export="true"/>
   </dependencies>
+  
 </module>

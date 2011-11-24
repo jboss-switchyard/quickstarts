@@ -32,6 +32,8 @@
         <version.hibernate.validator>3.1.0.GA</version.hibernate.validator>
         <version.h2database>1.2.145</version.h2database>
         <version.javassist>3.12.0.GA</version.javassist>
+        <version.jaxb.api>1.0.0.Final</version.jaxb.api>
+        <version.jaxb.impl>2.2</version.jaxb.impl>
         <version.jaxen>1.1.1</version.jaxen>
         <version.jbossas>7.0.2.Final</version.jbossas>
         <version.jpa>1.0.2</version.jpa>
@@ -40,6 +42,7 @@
         <version.riftsaw.engine>3.0.0.20111024-M1</version.riftsaw.engine>
         <version.saxon>9.2.1.5</version.saxon>
         <version.spring>3.0.6.RELEASE</version.spring>
+        <version.xalan>2.7.1-1.jbossorg</version.xalan>
         <version.xmlbeans>2.2.0</version.xmlbeans>
         <version.wsdl4j>1.6.2</version.wsdl4j>
     </properties>

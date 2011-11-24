@@ -1,54 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <module xmlns="urn:jboss:module:1.0" name="org.switchyard.switchyard-forge-plugin.dependencies" slot="${project.version}">
   <resources>
-    <resource-root path="switchyard-api-${project.version}.jar"/>
-    <resource-root path="switchyard-common-${project.version}.jar"/>
-    <resource-root path="log4j-${version.log4j}.jar"/>
-    <resource-root path="switchyard-forge-common-${project.version}.jar"/>
-    <resource-root path="switchyard-config-${project.version}.jar"/>
+    <!-- external libs -->
     <resource-root path="xalan-${version.xalan}.jar"/>
     <resource-root path="serializer-${version.xalan}.jar"/>
-    <resource-root path="activation-${version.activation}.jar"/>
-    <resource-root path="switchyard-build-${project.version}.jar"/>
-
-    <resource-root path="jbpm-human-task-${version.jbpm}.jar"/>
-    <resource-root path="jbpm-flow-${version.jbpm}.jar"/>
-    <resource-root path="jbpm-workitems-${version.jbpm}.jar"/>
-    <resource-root path="hibernate-core-${version.hibernate.core}.jar"/>
-    <resource-root path="drools-core-${version.drools}.jar"/>
-    <resource-root path="knowledge-api-${version.drools}.jar"/>  
-    <resource-root path="mina-core-${version.mina}.jar"/>  
-    <resource-root path="switchyard-deploy-${project.version}.jar"/>
-
-    <resource-root path="jackson-core-asl-${version.jackson}.jar"/>
-    <resource-root path="jackson-mapper-asl-${version.jackson}.jar"/>
-
-    <resource-root path="mail-${version.mail}.jar"/>
-    <resource-root path="jackson-smile-${version.jackson-smile}.jar"/>
-    <resource-root path="jboss-jms-api_1.1_spec-${version.jms-api}.jar"/>
-
-    <resource-root path="servlet-api-${version.servlet}.jar"/>
-    <resource-root path="jaxws-api-${version.jaxws.api}.jar"/>
-
-    <resource-root path="commons-management-${version.commons.management}.jar"/>
+    <resource-root path="camel-core-${version.camel}.jar"/>
+    <resource-root path="commons-management-${version.fusesource.commonman}.jar"/>
     <resource-root path="jboss-jaxb-api_2.2_spec-${version.jaxb.api}.jar"/>
-    <resource-root path="org.eclipse.osgi-${version.osgi}.jar"/>
-	<resource-root path="jaxb-impl-${version.jaxb.impl}.jar"/>
-	<resource-root path="slf4j-api-${version.slf4j}.jar"/>
- 
+    <resource-root path="jaxb-impl-${version.jaxb.impl}.jar"/>
+      
+    <!-- switchyard libs -->
+    <resource-root path="switchyard-api-${project.version}.jar"/>
+    <resource-root path="switchyard-common-${project.version}.jar"/>
+    <resource-root path="switchyard-config-${project.version}.jar"/>
+    <resource-root path="switchyard-deploy-${project.version}.jar"/>
+    <resource-root path="switchyard-transform-${project.version}.jar"/>
   </resources>
+  
   <dependencies>
-   <module name="javax.api"/>
-   <module name="javax.enterprise.cdi-api" services="import" optional="false">
-        <imports>
-            <include path="**" />
-            <include path="META-INF" />
-        </imports>
-   </module>
-   <module name="org.jboss.forge.shell-api" services="import" optional="false"> 	<imports>
-	    <include path="**" />
-	    <include path="META-INF" />
-	</imports>
-   </module> 
+    <module name="javax.api"/>
+    <module name="org.jboss.forge" export="true">
+      <imports>
+        <include path="org/apache/log4j"/>
+      </imports>
+    </module>
   </dependencies>
+  
 </module>
