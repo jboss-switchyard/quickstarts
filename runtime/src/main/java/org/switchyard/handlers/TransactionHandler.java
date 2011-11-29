@@ -56,8 +56,8 @@ public class TransactionHandler implements ExchangeHandler {
             _transactionManager = (TransactionManager)
                 new InitialContext().lookup(JNDI_TRANSACTION_MANAGER);
         } catch (javax.naming.NamingException nmEx) {
-            _log.info("Unable to find TransactionManager in JNDI at " + JNDI_TRANSACTION_MANAGER 
-                    + " - Transaction Policy handling will not be avaialble.");
+            _log.debug("Unable to find TransactionManager in JNDI at " + JNDI_TRANSACTION_MANAGER 
+                    + " - Transaction Policy handling will not be available.");
         }
     }
     
