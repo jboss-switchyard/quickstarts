@@ -142,22 +142,16 @@ public abstract class BaseConfiguration implements Configuration {
             removeChildren();
             for (List<Configuration> config_list : config_map.values()) {
                 for (Configuration selected_config : config_list) {
-                    if (recursive) {
-                        selected_config.orderChildren(recursive);
-                    }
                     addChild(selected_config);
                 }
             }
             for (Configuration config_remainder : config_remainder_list) {
-                if (recursive) {
-                    config_remainder.orderChildren(recursive);
-                }
                 addChild(config_remainder);
             }
         }
         if (recursive) {
             for (Configuration child_config : getChildren()) {
-                child_config.orderChildren(recursive);
+                child_config.orderChildren(true);
             }
         }
         return this;
