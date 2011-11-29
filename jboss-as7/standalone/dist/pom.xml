@@ -11,7 +11,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>switchyard-as7-standalone-dist</artifactId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <name>SwitchYard: AS7 Distribution</name>
     <description>SwitchYard AS7 Distribution</description>
 
@@ -36,13 +36,6 @@
             <type>zip</type>
             <version>${version.jbossas}</version>
         </dependency>
-        <dependency> 
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-forge-plugin</artifactId>
-            <type>zip</type> 
-            <version>${project.version}</version>
-       </dependency>
-
     </dependencies>
 
     <build>
@@ -56,24 +49,6 @@
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
-                    <execution>
-                        <id>copy-forge</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-forge-plugin</artifactId>
-                                    <type>zip</type>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${staging.jboss.dir}</outputDirectory>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>stage-jboss</id>
                         <phase>generate-sources</phase>
@@ -183,7 +158,7 @@
                             <goal>attached</goal>
                         </goals>
                         <configuration>
-                            <finalName>SwitchYard-AS7-Standalone</finalName>
+                            <finalName>switchyard-as7</finalName>
                             <descriptors>
                                 <descriptor>${basedir}/assembly.xml</descriptor>
                             </descriptors>

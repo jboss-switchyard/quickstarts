@@ -54,15 +54,6 @@
             <outputDirectory>${installer.root.dir}/res</outputDirectory>
             <outputFileNameMapping>SwitchYard-AS7-Bundle.zip</outputFileNameMapping>
         </dependencySet>
-        <dependencySet>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <outputDirectory>${installer.root.dir}</outputDirectory>
-            <includes>
-              <include>org.switchyard:switchyard-forge-plugin</include>
-            </includes>
-            <outputFileNameMapping>switchyard-forge-plugin.zip</outputFileNameMapping>
-        </dependencySet>
-
     </dependencySets>
 
 </assembly>
