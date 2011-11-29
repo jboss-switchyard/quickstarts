@@ -28,6 +28,18 @@
 
     <files>
         <file>
+            <filtered>true</filtered>
+            <source>scripts/downloads.properties</source>
+            <destName>downloads.properties</destName>
+            <outputDirectory>${installer.root.dir}</outputDirectory>
+        </file>
+        <file>
+            <filtered>true</filtered>
+            <source>scripts/version.properties</source>
+            <destName>version.properties</destName>
+            <outputDirectory>${installer.root.dir}</outputDirectory>
+        </file>
+        <file>
             <source>scripts/installer.ant.xml</source>
             <destName>build.xml</destName>
             <outputDirectory>${installer.root.dir}/</outputDirectory>
@@ -53,6 +65,14 @@
             </includes>
             <outputDirectory>${installer.root.dir}/res</outputDirectory>
             <outputFileNameMapping>SwitchYard-AS7-Bundle.zip</outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <outputDirectory>${installer.root.dir}/lib</outputDirectory>
+            <includes>
+              <include>org.switchyard:switchyard-forge-installer</include>
+            </includes>
+            <outputFileNameMapping>switchyard-forge-installer.jar</outputFileNameMapping>
         </dependencySet>
     </dependencySets>
 
