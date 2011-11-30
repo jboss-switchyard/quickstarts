@@ -172,7 +172,7 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
                     ksessionStateless.getGlobals().set(MESSAGE, message);
                     ksessionStateless.execute(content);
                     message = (Message)ksessionStateless.getGlobals().get(MESSAGE);
-                    content = message.getContent();
+                    content = message != null ? message.getContent() : null;
                 } finally {
                     if (klogger != null) {
                         klogger.close();
@@ -192,7 +192,7 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
                     ksessionStateful.insert(content);
                     ksessionStateful.fireAllRules();
                     message = (Message)ksessionStateful.getGlobals().get(MESSAGE);
-                    content = message.getContent();
+                    content = message != null ? message.getContent() : null;
                     if (isDispose(context)) {
                         disposeStatefulSession();
                     }
@@ -210,21 +210,18 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
                     */
                     boolean ksessionNew = _ksession == null;
                     final StatefulKnowledgeSession ksessionStateful = getStatefulSession();
-                    content = null;
                     if (ksessionNew) {
-                        final ClassLoader goodClassLoader = Classes.getClassLoader(getClass());
+                        final ClassLoader properLoader = Classes.getClassLoader(getClass());
                         _ksessionThread = new Thread(new Runnable() {
                             public void run() {
-                                Thread thread = Thread.currentThread();
-                                ClassLoader origClassLoader = thread.getContextClassLoader();
-                                thread.setContextClassLoader(goodClassLoader);
+                                ClassLoader originalLoader = Classes.setTCCL(properLoader);
                                 try {
                                     ksessionStateful.fireUntilHalt();
                                 } catch (NullPointerException ne) {
                                     // keep checkstyle happy
                                     ne.getMessage();
                                 } finally {
-                                    thread.setContextClassLoader(origClassLoader);
+                                    Classes.setTCCL(originalLoader);
                                 }
                             }
                         });
@@ -244,6 +241,7 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
                     } else {
                         ksessionStateful.insert(content);
                     }
+                    content = null;
                     if (isDispose(context)) {
                         disposeStatefulSession();
                     }
