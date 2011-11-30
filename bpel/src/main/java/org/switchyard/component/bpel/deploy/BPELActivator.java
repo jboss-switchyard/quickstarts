@@ -34,6 +34,7 @@ import org.switchyard.component.bpel.config.model.BPELComponentImplementationMod
 import org.switchyard.component.bpel.exchange.BPELExchangeHandler;
 import org.switchyard.component.bpel.exchange.BPELExchangeHandlerFactory;
 import org.switchyard.component.bpel.riftsaw.RiftsawServiceLocator;
+import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
@@ -51,12 +52,25 @@ public class BPELActivator extends BaseActivator {
     private Map<QName, BPELExchangeHandler> _handlers = new HashMap<QName , BPELExchangeHandler>();
 
     private static BPELEngine _engine=null;
+    private static Configuration _configuration=null;
     
     /**
      * Constructs a new Activator of type "bpel".
      */
     public BPELActivator() {
         super("bpel");
+    }
+    
+    /**
+     * Associate the configuration with the activator.
+     * 
+     * @param config The configuration
+     */
+    protected void setConfiguration(Configuration config) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Setting configuration to: "+config);
+        }
+        _configuration = config;
     }
 
     protected void init() {
@@ -68,17 +82,32 @@ public class BPELActivator extends BaseActivator {
                     ServiceLocator locator=new RiftsawServiceLocator(getServiceDomain());
                     
                     java.util.Properties props=new java.util.Properties();
-        
-                    // Temporary approach until can get properties from environment
-                    // https://issues.jboss.org/browse/RIFTSAW-432
+
+                    // Load default properties
                     try {
                         java.io.InputStream is=BPELEngineImpl.class.getClassLoader().getResourceAsStream("bpel.properties");
                 
                         props.load(is);
                     } catch (Exception e) {
-                        throw new SwitchYardException("Failed to load properties: "+ e, e);
+                        throw new SwitchYardException("Failed to load default properties: "+ e, e);
                     }
-        
+
+                    if (_configuration != null) {
+                        // Overwrite default properties with values from configuration
+                        for (Configuration child : _configuration.getChildren()) {
+                            if (LOG.isDebugEnabled()) {
+                                if (props.containsKey(child.getName())) {
+                                    LOG.debug("Overriding BPEL property: "+child.getName()
+                                            +" = "+child.getValue());
+                                } else {
+                                    LOG.debug("Setting BPEL property: "+child.getName()
+                                            +" = "+child.getValue());
+                                }
+                            }
+                            props.put(child.getName(), child.getValue());
+                        }
+                    }
+                    
                     _engine.init(locator, props);
                 } catch (Exception e) {
                     throw new SwitchYardException("Failed to initialize the engine: "+ e, e);

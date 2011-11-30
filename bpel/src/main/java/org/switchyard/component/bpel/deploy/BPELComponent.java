@@ -18,6 +18,7 @@
  */
 package org.switchyard.component.bpel.deploy;
 
+import org.switchyard.config.Configuration;
 import org.switchyard.deploy.BaseComponent;
 
 /**
@@ -25,12 +26,23 @@ import org.switchyard.deploy.BaseComponent;
  */
 public class BPELComponent extends BaseComponent {
 
+    private BPELActivator _activator=new BPELActivator();
+    
     /**
      * Default constructor.
      */
     public BPELComponent() {
         setName("BPELComponent");
-        setActivator(new BPELActivator());
+        setActivator(_activator);
     }
 
+    /* (non-Javadoc)
+     * @see org.switchyard.deploy.Component#init(org.switchyard.config.Configuration)
+     */
+    @Override
+    public void init(Configuration config) {
+        super.init(config);
+        _activator.setConfiguration(config);
+    }
+    
 }
