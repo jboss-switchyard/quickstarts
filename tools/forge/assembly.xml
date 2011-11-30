@@ -38,6 +38,9 @@
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <outputDirectory>${project.version}</outputDirectory>
+            <outputFileNameMapping>
+                ${artifact.artifactId}-${project.version}.${artifact.extension}
+            </outputFileNameMapping>
 	    <includes>
               <include>org.switchyard:switchyard-forge-bean-plugin</include>
               <include>org.switchyard:switchyard-forge-bpm-plugin</include>
@@ -55,6 +58,20 @@
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <outputDirectory>dependencies/${project.version}</outputDirectory>
+            <outputFileNameMapping>
+                ${artifact.artifactId}-${project.version}.${artifact.extension}
+            </outputFileNameMapping>
+            <includes>
+              <include>org.switchyard:switchyard-api</include>
+              <include>org.switchyard:switchyard-common</include>
+              <include>org.switchyard:switchyard-config</include>
+              <include>org.switchyard:switchyard-deploy</include>
+              <include>org.switchyard:switchyard-transform</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <outputDirectory>dependencies/${project.version}</outputDirectory>
             <includes>
               <include>com.sun.xml.bind:jaxb-impl</include>
               <include>org.apache.camel:camel-core</include>
@@ -62,11 +79,6 @@
               <include>org.apache.xalan:serializer</include>
               <include>org.fusesource.commonman:commons-management</include>
               <include>org.jboss.spec.javax.xml.bind:jboss-jaxb-api_2.2_spec</include>
-              <include>org.switchyard:switchyard-api</include>
-              <include>org.switchyard:switchyard-common</include>
-              <include>org.switchyard:switchyard-config</include>
-              <include>org.switchyard:switchyard-deploy</include>
-              <include>org.switchyard:switchyard-transform</include>
             </includes>
         </dependencySet>
     </dependencySets>
