@@ -17,7 +17,7 @@
     <module name="javax.api"/>
     <module name="javax.enterprise.cdi-api"/>
     <module name="org.jboss.forge.shell-api"/>
-    <module name="org.switchyard.switchyard-forge-plugin.dependencies" slot="0.3.0-SNAPSHOT" services="export" export="true"/>
+    <module name="org.switchyard.switchyard-forge-plugin.dependencies" slot="0.4.0-SNAPSHOT" services="export" export="true"/>
   </dependencies>
   
 </module>
