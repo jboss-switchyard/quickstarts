@@ -15,7 +15,7 @@
     <description>SwitchYard Distribution</description>
 
     <properties>
-        <version.distro>0.3</version.distro>
+        <version.distro>0.4</version.distro>
         
         <!-- Dependency versions - keep these in alphabetical order -->
         <version.activity.monitor.model>1.0.0.Final</version.activity.monitor.model>
