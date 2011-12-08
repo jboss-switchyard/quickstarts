@@ -86,7 +86,65 @@
       <artifactId>switchyard-build</artifactId>
     </dependency>
   </dependencies>
-
+  <profiles>
+    <profile>
+      <id>javadoc</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+        <property>
+            <name>javadoc</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.8</version>
+            <executions>
+              <execution>
+                <id>aggregate</id>
+                <goals>
+                  <goal>aggregate</goal>
+                </goals>
+                <phase>install</phase>
+                <configuration>
+                  <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
+                  <docletArtifact>
+                    <groupId>org.umlgraph</groupId>
+                    <artifactId>doclet</artifactId>
+                    <version>5.1</version>
+                  </docletArtifact>
+                  <charset>${project.build.sourceEncoding}</charset>
+                  <encoding>${project.build.sourceEncoding}</encoding>
+                  <docencoding>${project.build.sourceEncoding}</docencoding>
+                  <breakiterator>true</breakiterator>
+                  <keywords>true</keywords>
+                  <linksource>true</linksource>
+                  <quiet>true</quiet>
+                  <doctitle>SwitchYard Core ${project.version}</doctitle>
+                  <groups>
+                    <group>
+                      <title>API</title>
+                      <packages>org.switchyard:org.switchyard.annotations*:org.switchyard.composer*:org.switchyard.exception*:org.switchyard.io*:org.switchyard.metadata*:org.switchyard.policy*:org.switchyard.transform*:</packages>
+                    </group>
+                    <group>
+                      <title>Common</title>
+                      <packages>org.switchyard.common*</packages>
+                    </group>
+                  </groups>
+                  <links>
+                    <link>http://docs.oracle.com/javase/6/docs/api/</link>
+                  </links>
+                  <excludePackageNames>*.admin.*:*.bus.*:*.config.*:*.deploy.*:*.deployment.*:*.extensions.*:*.handlers.*:*.internal.*:*.spi.*:*.test.*:*.tools.*</excludePackageNames>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
   <dependencyManagement>
     <dependencies>
       <!-- internal dependencies -->
