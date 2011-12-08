@@ -213,7 +213,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>2.6</version>
+          <version>2.8</version>
             <configuration>
               <configLocation>checkstyle/checkstyle.xml</configLocation>
               <consoleOutput>false</consoleOutput>
@@ -285,174 +285,6 @@
 
   <profiles>
     <profile>
-      <id>javadoc-uml</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-        <property>
-          <name>javadoc.uml</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.7</version>
-            <executions>
-              <execution>
-                <id>aggregate</id>
-                <goals>
-                  <goal>aggregate</goal>
-                </goals>
-                <phase>site</phase>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-      <reporting>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.7</version>
-            <configuration>
-              <doclet>org.jboss.apiviz.APIviz</doclet>
-              <docletArtifact>
-                <groupId>org.jboss.apiviz</groupId>
-                <artifactId>apiviz</artifactId>
-                <version>1.3.1.GA</version>
-              </docletArtifact>
-              <charset>${project.build.sourceEncoding}</charset>
-              <encoding>${project.build.sourceEncoding}</encoding>
-              <docencoding>${project.build.sourceEncoding}</docencoding>
-              <breakiterator>true</breakiterator>
-              <keywords>true</keywords>
-              <linksource>true</linksource>
-              <quiet>true</quiet>
-              <doctitle>SwitchYard ${project.version}</doctitle>
-              <groups>
-                <group>
-                  <title>Core API</title>
-                  <packages>org.switchyard*</packages>
-                </group>
-                <group>
-                  <title>Core Runtime</title>
-                  <packages>org.switchyard.internal*</packages>
-                </group>
-                <group>
-                  <title>Components</title>
-                  <packages>org.switchyard.component*</packages>
-                </group>
-                <group>
-                  <title>Configuration</title>
-                  <packages>org.switchyard.config*</packages>
-                </group>
-              </groups>
-              <links>
-                <link>http://download.oracle.com/javase/6/docs/api/</link>
-              </links>
-            </configuration>
-            <reportSets>
-              <reportSet>
-                <id>non-aggregate</id>
-                <reports>
-                  <report>javadoc</report>
-                </reports>
-              </reportSet>
-              <reportSet>
-                <id>aggregate</id>
-                <reports>
-                  <report>aggregate</report>
-                </reports>
-              </reportSet>
-            </reportSets>
-          </plugin>
-        </plugins>
-      </reporting>
-    </profile>
-    <profile>
-      <id>javadoc-nouml</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-        <property>
-          <name>!javadoc.uml</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.7</version>
-            <executions>
-              <execution>
-                <id>aggregate</id>
-                <goals>
-                  <goal>aggregate</goal>
-                </goals>
-                <phase>site</phase>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-      <reporting>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.7</version>
-            <configuration>
-              <charset>${project.build.sourceEncoding}</charset>
-              <encoding>${project.build.sourceEncoding}</encoding>
-              <docencoding>${project.build.sourceEncoding}</docencoding>
-              <breakiterator>true</breakiterator>
-              <keywords>true</keywords>
-              <linksource>true</linksource>
-              <quiet>true</quiet>
-              <doctitle>SwitchYard ${project.version}</doctitle>
-              <groups>
-                <group>
-                  <title>Core API</title>
-                  <packages>org.switchyard*</packages>
-                </group>
-                <group>
-                  <title>Core Runtime</title>
-                  <packages>org.switchyard.internal*</packages>
-                </group>
-                <group>
-                  <title>Components</title>
-                  <packages>org.switchyard.component*</packages>
-                </group>
-                <group>
-                  <title>Configuration</title>
-                  <packages>org.switchyard.config*</packages>
-                </group>
-              </groups>
-              <links>
-                <link>http://download.oracle.com/javase/6/docs/api/</link>
-              </links>
-            </configuration>
-            <reportSets>
-              <reportSet>
-                <id>non-aggregate</id>
-                <reports>
-                  <report>javadoc</report>
-                </reports>
-              </reportSet>
-              <reportSet>
-                <id>aggregate</id>
-                <reports>
-                  <report>aggregate</report>
-                </reports>
-              </reportSet>
-            </reportSets>
-          </plugin>
-        </plugins>
-      </reporting>
-    </profile>
-    <profile>
       <!-- https://cwiki.apache.org/confluence/display/MAVEN/Maven+3.x+and+site+plugin -->
       <id>maven-3</id>
       <activation>
@@ -518,7 +350,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.6</version>
+        <version>2.8</version>
         <configuration>
           <configLocation>checkstyle/checkstyle.xml</configLocation>
           <consoleOutput>false</consoleOutput>
