@@ -109,34 +109,37 @@
                 </goals>
                 <phase>install</phase>
                 <configuration>
+                  <bottom>JBoss by Red Hat</bottom>
+                  <breakiterator>true</breakiterator>
+                  <charset>${project.build.sourceEncoding}</charset>
+                  <docencoding>${project.build.sourceEncoding}</docencoding>
+                  <!--
                   <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
                   <docletArtifact>
                     <groupId>org.umlgraph</groupId>
                     <artifactId>doclet</artifactId>
                     <version>5.1</version>
                   </docletArtifact>
-                  <charset>${project.build.sourceEncoding}</charset>
-                  <encoding>${project.build.sourceEncoding}</encoding>
-                  <docencoding>${project.build.sourceEncoding}</docencoding>
-                  <breakiterator>true</breakiterator>
-                  <keywords>true</keywords>
-                  <linksource>true</linksource>
-                  <quiet>true</quiet>
+                  -->
                   <doctitle>SwitchYard Core ${project.version}</doctitle>
+                  <encoding>${project.build.sourceEncoding}</encoding>
+                  <excludePackageNames>*.admin.*:*.bus.*:*.config.*:*.deploy.*:*.deployment.*:*.extensions.*:*.handlers.*:*.internal.*:*.spi.*:*.test.*:*.tools.*:*.transform.ootb.**.transform.xslt.*</excludePackageNames>
                   <groups>
                     <group>
                       <title>API</title>
-                      <packages>org.switchyard:org.switchyard.annotations*:org.switchyard.composer*:org.switchyard.exception*:org.switchyard.metadata*:org.switchyard.policy*:org.switchyard.transform*:</packages>
+                      <packages>org.switchyard:org.switchyard.annotations*:org.switchyard.composer*:org.switchyard.exception*:org.switchyard.io*:org.switchyard.metadata*:org.switchyard.policy*:org.switchyard.transform*</packages>
                     </group>
                     <group>
                       <title>Common</title>
                       <packages>org.switchyard.common*</packages>
                     </group>
                   </groups>
+                  <keywords>true</keywords>
                   <links>
                     <link>http://docs.oracle.com/javase/6/docs/api/</link>
                   </links>
-                  <excludePackageNames>*.admin.*:*.bus.*:*.config.*:*.deploy.*:*.deployment.*:*.extensions.*:*.handlers.*:*.internal.*:*.spi.*:*.test.*:*.tools.*:*.transform.xslt.*:*.transform.ootb.*</excludePackageNames>
+                  <linksource>true</linksource>
+                  <quiet>true</quiet>
                 </configuration>
               </execution>
             </executions>
