@@ -126,7 +126,7 @@
                   <groups>
                     <group>
                       <title>API</title>
-                      <packages>org.switchyard:org.switchyard.annotations*:org.switchyard.composer*:org.switchyard.exception*:org.switchyard.io*:org.switchyard.metadata*:org.switchyard.policy*:org.switchyard.transform*:</packages>
+                      <packages>org.switchyard:org.switchyard.annotations*:org.switchyard.composer*:org.switchyard.exception*:org.switchyard.metadata*:org.switchyard.policy*:org.switchyard.transform*:</packages>
                     </group>
                     <group>
                       <title>Common</title>
@@ -136,7 +136,7 @@
                   <links>
                     <link>http://docs.oracle.com/javase/6/docs/api/</link>
                   </links>
-                  <excludePackageNames>*.admin.*:*.bus.*:*.config.*:*.deploy.*:*.deployment.*:*.extensions.*:*.handlers.*:*.internal.*:*.spi.*:*.test.*:*.tools.*</excludePackageNames>
+                  <excludePackageNames>*.admin.*:*.bus.*:*.config.*:*.deploy.*:*.deployment.*:*.extensions.*:*.handlers.*:*.internal.*:*.spi.*:*.test.*:*.tools.*:*.transform.xslt.*:*.transform.ootb.*</excludePackageNames>
                 </configuration>
               </execution>
             </executions>
