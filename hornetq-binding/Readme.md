@@ -18,3 +18,15 @@ JBoss AS 7
 6. Execute HornetQClient
     mvn exec:java 
 7. Check the server console for output from the service.
+
+Expected Results
+================
+`14:20:30,063 INFO  [org.jboss.as.server.controller] (DeploymentScanner-threads - 2) Deployed "switchyard-quickstarts-hornetq-binding-0.4.0-SNAPSHOT.jar"  
+14:20:46,268 INFO  [org.switchyard.component.hornetq.deploy.InboundHandler] (Thread-1 (group:HornetQ-client-global-threads-9176206)) onMessage :ClientMessage[messageID=9, durable=false, address=jms.queue.GreetingServiceQueue,properties=TypedProperties[null]]  
+14:20:46,280 INFO  [stdout] (Thread-1 (group:HornetQ-client-global-threads-9176206)) Hello there Captain Crunch :-)`  
+
+
+## Further Reading
+
+1. [HornetQ Bindings Documentation](https://docs.jboss.org/author/display/SWITCHYARD/HornetQ+Bindings)
+
