@@ -35,11 +35,6 @@
     <name>SwitchYard: AS7 Release Distribution Tests</name>
     <description>SwitchYard AS7 Release Distribution Tests</description>
 
-    <properties>
-        <version.jbossas>7.0.2.Final</version.jbossas>
-        <version.arquillian>1.0.0.CR1</version.arquillian>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.switchyard</groupId>
