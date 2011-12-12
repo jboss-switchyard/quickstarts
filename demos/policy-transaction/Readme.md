@@ -1,9 +1,6 @@
 Introduction
 ============
-This quickstart demonstrates how policy can be used to control the transactional
-characteristics of a service invocation.  The only service in the application 
-is a Bean service called "WorkService".  The service accepts commands and can
-be instructed to rollback by sending a message containing the string "rollback".
+This quickstart demonstrates how policy can be used to control the transactional characteristics of a service invocation.  The only service in the application is a Bean service called "WorkService".  The service accepts commands and can be instructed to rollback by sending a message containing the string "rollback".
 
 Running the quickstart
 ======================
@@ -22,14 +19,14 @@ Running the quickstart
    configuration of the quickstart, you should see the following in the 
    server log:
 
-:: WorkService :: Received command =>  rollback
-:: WorkService :: Marked transaction to rollback!
-:: WorkService :: Received command =>  rollback
-:: WorkService :: Marked transaction to rollback!
-:: WorkService :: Received command =>  rollback
-:: WorkService :: Marked transaction to rollback!
-:: WorkService :: Received command =>  rollback
-:: WorkService :: Rollbacks completed
+`:: WorkService :: Received command =>  rollback  
+:: WorkService :: Marked transaction to rollback!  
+:: WorkService :: Received command =>  rollback  
+:: WorkService :: Marked transaction to rollback!  
+:: WorkService :: Received command =>  rollback  
+:: WorkService :: Marked transaction to rollback!  
+:: WorkService :: Received command =>  rollback  
+:: WorkService :: Rollbacks completed`    
    
 
 Scenarios
