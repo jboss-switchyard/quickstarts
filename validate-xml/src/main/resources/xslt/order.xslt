@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	version="1.0">
 	<xsl:template match="/">
-		<orders:orderAck xmlns:orders="urn:switchyard-quickstart:transform-xslt:1.0">
+		<orders:orderAck xmlns:orders="urn:switchyard-quickstart:validate-xml:0.1.0">
 			<xsl:for-each select="orders:order">
 				<orderId>
 					<xsl:value-of select="orderId" />

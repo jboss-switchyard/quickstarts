@@ -59,6 +59,7 @@
         <module>transform-json</module>
         <module>transform-smooks</module>
         <module>transform-xslt</module>
+        <module>validate-xml</module>
         <module>demos/helpdesk</module>
         <module>demos/orders</module>
         <module>demos/webapp-deploy</module>
