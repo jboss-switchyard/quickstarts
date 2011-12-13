@@ -1,0 +1,23 @@
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="validate-xml" targetNamespace="urn:switchyard-quickstart:validate-xml:0.1.0">
+        <service name="OrderService" promote="OrderService">
+            <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
+                <wsdl>wsdl/OrderService.wsdl</wsdl>
+                <socketAddr>:18001</socketAddr>
+                <contextPath>quickstart-validate-xml</contextPath>
+            </binding.soap>
+         </service>
+    </composite>
+    <transforms>
+        <transform.xslt xmlns="urn:switchyard-config:transform:1.0"
+                        from="{urn:switchyard-quickstart:validate-xml:0.1.0}order"
+                        to="{urn:switchyard-quickstart:validate-xml:0.1.0}orderAck"
+                        xsltFile="xslt/order.xslt" />
+    </transforms>
+    <validates>
+        <validate.xml xmlns="urn:switchyard-config:validate:1.0"
+                      schemaType="XML_SCHEMA"
+                      name="{urn:switchyard-quickstart:validate-xml:0.1.0}order"
+                      schemaFile="/xsd/orders.xsd" />
+     </validates>
+</switchyard>

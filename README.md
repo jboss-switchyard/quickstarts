@@ -16,6 +16,7 @@ Quickstarts
 * __transform-json__ : transformation to/from JSON using the JSON transformer.
 * __transform-smooks__ : Smooks-based transformers to map between XML and Java.
 * __transform-xslt__ : transformation using XSLT.
+* __validate-xml__ : XML message contents validation.
 
 
 Quickstart Demos

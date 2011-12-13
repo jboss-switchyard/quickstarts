@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="urn:switchyard-quickstart:validate-xml:0.1.0" 
+        xmlns:orders="urn:switchyard-quickstart:validate-xml:0.1.0">
+        <element name="order" type="orders:order"/>
+        <complexType name="order">
+            <sequence>
+                <element name="orderId" type="string"/>
+                <element name="itemId" type="string"/>
+                <element name="quantity" type="int"/>
+            </sequence>
+        </complexType>
+        <element name="orderAck" type="orders:orderAck"/>
+        <complexType name="orderAck">
+            <sequence>
+                <element name="orderId" type="string"/>
+                <element name="accepted" type="boolean"/>
+                <element name="status" type="string"/>
+            </sequence>
+        </complexType>
+</schema>

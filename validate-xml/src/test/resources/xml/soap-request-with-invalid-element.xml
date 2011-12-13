@@ -1,0 +1,11 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <orders:order xmlns:orders="urn:switchyard-quickstart:validate-xml:0.1.0">
+         <orderId>PO-19838-XYZ</orderId>
+         <itemId>BUTTER</itemId>
+         <quantity>200</quantity>
+         <invalid-element>This element is not allowed by XML Schema.</invalid-element>
+      </orders:order>
+   </soapenv:Body>
+</soapenv:Envelope>
