@@ -23,16 +23,26 @@
 	         o AS7_PATH = path to AS7 install - prevents input prompt
 	         o SKIP_CONSOLE = do not install console
 	         o SKIP_FORGE = do not install forge
+                 o SKIP_AS7 = do not install SwitchYard to AS7 
 	 -->
 	
-    <property file="version.properties"/>
-    <property file="downloads.properties"/>
+    <property file="installer.properties"/>
 
     <target name="download-sy-as7-check">
  	<condition property="sy.as7.not.available">
           <not>
             <available file="res/SwitchYard-AS7-Bundle.zip"/>
           </not>
+        </condition>
+    </target>
+
+    <target name="download-as7-check">
+        <condition property="as7.not.available">
+          <and>
+            <not>
+              <available file="res/jboss-as-7.0.2.Final.zip"/>
+            </not>
+          </and>
         </condition>
     </target>
 	
@@ -62,6 +72,16 @@
         <unzip src="res/switchyard-tools.zip" dest="res/" overwrite="true">
             <mapper type="flatten"/>
         </unzip>
+    </target>
+
+    <target name="download-as7-zip" depends="download-as7-check" if="as7.not.available">
+        <echo>Downloading AS7 ...</echo>	
+        <get src="${as7.dist.url}" dest="res/jboss-as-7.0.2.Final.zip"/> 
+    </target>
+
+    <target name="download-as7" depends="download-as7-zip">
+	<echo>Installing AS7 ...</echo>
+        <unzip src="res/jboss-as-7.0.2.Final.zip" dest="${basedir}" overwrite="true"/>
     </target>
 
     <target name="download-sy-as7" depends="download-sy-as7-check" if="sy.as7.not.available">
@@ -116,34 +136,92 @@
         </condition>
     </target>
 
-    <target name="get-jboss-path" unless="AS7_PATH">
-        <input message="Please enter the path to the root folder of your JBoss AS7 installation: " addproperty="AS7_PATH_ENTERED" />
-        <pathconvert targetos="unix" property="AS7_PATH">
+    <target name="request-sy-install" unless="SKIP_AS7">
+        <input message="Would you like to install the SwitchYard distribution to your AS7 installation (y/n)?" addproperty="install.sy.dist.question" validargs="y,n" defaultvalue="y" />
+        <condition property="installSYDit">
+           <and>
+              <isset property="install.sy.dist.question" />
+              <equals arg1="${install.sy.dist.question}" arg2="y" />
+           </and>
+        </condition>
+
+        <condition property="SKIP_AS7">
+	   <and>
+              <isset property="install.sy.dist.question" />
+              <equals arg1="${install.sy.dist.question}" arg2="n" />
+           </and>
+        </condition>
+
+	<condition property="skip.as7.folder.question">
+          <and>
+            <not>
+              <isset property="AS7_PATH"/>
+            </not>   
+            <not>
+              <isset property="SKIP_AS7"/>
+            </not>
+          </and> 
+        </condition>
+    </target>
+
+    <target name="get-jboss-path-question" depends="request-sy-install" if="skip.as7.folder.question" unless="SKIP_AS7">
+        <input message="Please enter the path to the root folder of your JBoss AS7 installation (or press return if you would like the installer to download an AS7 distribution): " addproperty="AS7_PATH_ENTERED" />
+        <condition property="AS7_PATH_CHECK" value="${AS7_PATH_ENTERED}">
+            <and>
+            <isset property="AS7_PATH_ENTERED"/>
+            <not>
+              <matches string="${AS7_PATH_ENTERED}" pattern="^$"/>
+            </not>
+            </and>
+        </condition>
+    </target>
+
+    <target name="get-jboss-path" depends="get-jboss-path-question" if="AS7_PATH_CHECK">
+        <pathconvert targetos="unix" property="AS7_PATH" setonempty="false">
             <path>
-                <pathelement location="${AS7_PATH_ENTERED}"/>
+                <pathelement location="${AS7_PATH_CHECK}"/>
             </path>
         </pathconvert>
     </target>
 
-    <target name="install" description="Install SwitchYard into JBoss (optionally specified by AS7_PATH)" depends="download-sy-as7, get-jboss-path">
+    <target name="install" description="Install SwitchYard into JBoss (optionally specified by AS7_PATH)"
+        depends="download-sy-as7, get-jboss-path">
+        <property name="AS7_PATH" value="${basedir}/jboss-as-7.0.2.Final"/>
         <property name="QUICKSTART_PATH" value="${basedir}"/>
         <condition property="isAS7">
+           <or>
             <available file="${AS7_PATH}/jboss-modules.jar" />
+            <isset property="SKIP_AS7"/>
+           </or> 
         </condition>
-        <antcall target="notAS7" />
+        <antcall target="notAS7"/>
 
         <condition property="quickstartResourcesAlreadyInstalled">
+          <or>
             <available file="quickstarts" filepath="${QUICKSTART_PATH}" />
+	    <isset property="SKIP_AS7"/>
+          </or>  
         </condition>
         <condition property="switchyardResourcesAlreadyInstalled">
+          <or>
             <available file="switchyard" filepath="${AS7_PATH}/modules/org" />
+            <isset property="SKIP_AS7"/>
+          </or>
         </condition>
-        <antcall target="unzipSwitchyardResources" />
-        <antcall target="unzipQuickstartResources" />
 
-        <antcall target="install-forge"/>
-        <antcall target="install-sy-console"/>
-    </target>
+        <antcall target="unzipSwitchyardResources">
+            <param name="AS7_PATH" value="${AS7_PATH}"/>
+        </antcall>
+        <antcall target="unzipQuickstartResources">
+            <param name="AS7_PATH" value="${AS7_PATH}"/> 
+        </antcall>
+        <antcall target="install-forge">
+            <param name="AS7_PATH" value="${AS7_PATH}"/> 
+	</antcall>
+        <antcall target="install-sy-console">
+            <param name="AS7_PATH" value="${AS7_PATH}"/> 
+	</antcall>
+    </target>	
 
     <target name="unzipSwitchyardResources" unless="switchyardResourcesAlreadyInstalled">
         <!-- Install into the AS7 install.... -->
@@ -184,7 +262,27 @@
     </target>
 
     <target name="notAS7" unless="isAS7">
-        <fail message="Sorry, but the specified path '${AS7_PATH}' is not a path to a valid JBoss AS7 installation." />
+        <echo>The specified path '${AS7_PATH}' is not a path to a valid JBoss AS7 installation."</echo>
+
+        <input message="Would you like to download an AS7 distribution (y/n)?"          addproperty="install.sy.console.question" validargs="y,n" defaultvalue="y" />
+
+        <condition property="installSYConsole">
+           <and>
+              <isset property="install.sy.console.question" />
+              <equals arg1="${install.sy.console.question}" arg2="y" />
+           </and>
+        </condition>
+		
+        <fail message="Please install AS7 or run this installer again and download an AS7 distribution.">
+            <condition>
+                <and>
+                   <isset property="install.sy.console.question"/>
+                   <equals arg1="${install.sy.console.question}" arg2="n"/>
+                </and>
+	    </condition>
+        </fail>
+
+	<antcall target="download-as7"/>
     </target>
 
     <target name="check-forge-home">
@@ -203,6 +301,18 @@
         </pathconvert>
     </target>
 
+    <target name="validate-forge-home-version">
+        <!-- Check that a SNAPSHOT version isn't being used -->
+	<condition property="forge.home.check">
+           <and>
+             <available file="${FORGE_PATH}/modules/org/jboss/forge/main/forge-shell.jar"/>
+	     <available file="${FORGE_PATH}/jboss-modules.jar"/>
+           </and>
+        </condition>
+	
+	<fail unless="forge.home.check" message="${FORGE_PATH} does not seem to be a forge-1.0.0.Beta3 installation."/>
+    </target>
+
     <target name="set-forge-home" if="forge.home.set" depends="check-forge-home">
         <pathconvert targetos="unix" property="FORGE_PATH">
             <path>
@@ -215,7 +325,7 @@
     	<copy todir="${AS7_PATH}/standalone/deployments" overwrite="true" file="res/switchyard-console-gwt.war"/>
     </target>
 
-    <target name="install-forge" if="installForge" depends="request-forge-install, request-forge-home, set-forge-home, download-sy-forge-module" unless="SKIP_FORGE">
+    <target name="install-forge" if="installForge" depends="request-forge-install, request-forge-home, set-forge-home, validate-forge-home-version, download-sy-forge-module" unless="SKIP_FORGE">
     	
         <condition property="forge.plugindir.exists">
             <available file="config" filepath="${user.home}/.forge" />

@@ -29,14 +29,8 @@
     <files>
         <file>
             <filtered>true</filtered>
-            <source>scripts/downloads.properties</source>
-            <destName>downloads.properties</destName>
-            <outputDirectory>${installer.root.dir}</outputDirectory>
-        </file>
-        <file>
-            <filtered>true</filtered>
-            <source>scripts/version.properties</source>
-            <destName>version.properties</destName>
+            <source>scripts/installer.properties</source>
+            <destName>installer.properties</destName>
             <outputDirectory>${installer.root.dir}</outputDirectory>
         </file>
         <file>
