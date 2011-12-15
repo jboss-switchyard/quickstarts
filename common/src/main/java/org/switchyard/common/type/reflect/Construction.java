@@ -112,6 +112,42 @@ public final class Construction {
     }
 
     /**
+     * Constructs a new object of the specified type name using a multi-arg constructor.
+     * @param typeName the class type name of the object
+     * @param paramTypes the types of the params
+     * @param params the param objects
+     * @return the new object
+     */
+    public static Object construct(String typeName, Class<?>[] paramTypes, Object[] params) {
+        return construct(typeName, paramTypes, params, Construction.class);
+    }
+
+    /**
+     * Constructs a new object of the specified type name using a multi-arg constructor.
+     * @param typeName the class type name of the object
+     * @param paramTypes the types of the params
+     * @param params the param objects
+     * @param caller the class calling this method (for classloading purposes)
+     * @return the new object
+     */
+    public static Object construct(String typeName, Class<?>[] paramTypes, Object[] params, Class<?> caller) {
+        return construct(typeName, paramTypes, params, caller != null ? caller.getClassLoader() : null);
+    }
+
+    /**
+     * Constructs a new object of the specified type name using a multi-arg constructor.
+     * @param typeName the class type name of the object
+     * @param paramTypes the types of the params
+     * @param params the param objects
+     * @param loader the classloader to use for classloading
+     * @return the new object
+     */
+    public static Object construct(String typeName, Class<?>[] paramTypes, Object[] params, ClassLoader loader) {
+        Class<?> type = Classes.forName(typeName, loader);
+        return construct(type, paramTypes, params);
+    }
+
+    /**
      * Constructs a new object of the specified type using a multi-arg constructor.
      * @param <T> the type of object
      * @param type the class type of the object

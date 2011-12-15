@@ -115,6 +115,10 @@
             <artifactId>jbpm-human-task</artifactId>
         </dependency>
         <dependency>
+            <groupId>javax.jms</groupId>
+            <artifactId>jms</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.hornetq</groupId>
             <artifactId>hornetq-core</artifactId>
             <scope>compile</scope>

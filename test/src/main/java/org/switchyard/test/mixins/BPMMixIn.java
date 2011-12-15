@@ -18,59 +18,49 @@
  */
 package org.switchyard.test.mixins;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.Socket;
-import java.net.SocketException;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-
-import org.drools.agent.impl.DoNothingSystemEventListener;
-import org.jbpm.task.Group;
+import org.apache.log4j.Logger;
+import org.drools.SystemEventListenerFactory;
 import org.jbpm.task.Status;
-import org.jbpm.task.User;
 import org.jbpm.task.query.TaskSummary;
 import org.jbpm.task.service.TaskClient;
-import org.jbpm.task.service.TaskServer;
-import org.jbpm.task.service.TaskService;
-import org.jbpm.task.service.TaskServiceSession;
 import org.jbpm.task.service.mina.MinaTaskClientConnector;
 import org.jbpm.task.service.mina.MinaTaskClientHandler;
-import org.jbpm.task.service.mina.MinaTaskServer;
 import org.jbpm.task.service.responsehandlers.BlockingTaskOperationResponseHandler;
 import org.jbpm.task.service.responsehandlers.BlockingTaskSummaryResponseHandler;
-import org.junit.Assert;
+import org.switchyard.common.io.pull.PropertiesPuller;
+import org.switchyard.common.lang.Strings;
+import org.switchyard.common.type.Classes;
+import org.switchyard.common.type.reflect.Construction;
+import org.switchyard.exception.SwitchYardException;
 
 /**
  * BPM Test Mix In.
- * Helps with <a href="http://docs.jboss.org/jbpm/v5.0/userguide/ch.Human_Tasks.html">jBPM 5 Human Tasks</a>.
+ * Helps with <a href="http://docs.jboss.org/jbpm/v5.2/userguide/ch.Human_Tasks.html">jBPM 5 Human Tasks</a>.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class BPMMixIn extends AbstractTestMixIn {
 
-    /** The default host. */
-    public static final String DEFAULT_HOST = "127.0.0.1";
-    /** The default port. */
-    public static final int DEFAULT_PORT = 9123;
+    private static final Logger LOGGER = Logger.getLogger(BPMMixIn.class);
 
-    /** The Administrator user id. */
-    public static final String ADMINISTRATOR = "Administrator";
-
-    private String _host = DEFAULT_HOST;
-    private int _port = DEFAULT_PORT;
-    private TaskServer _server = null;
+    private final boolean _managedLifecycle;
+    private Object _serverController = null;
     private TaskClient _client = null;
-    private boolean _clientConnected = false;
-    private boolean _managedLifeCycle;
+    private boolean _connected = false;
+    private String _host = "127.0.0.1";
+    private int _port = 9123;
+    private String _rolesPath = "/roles.properties";
 
     /**
      * Public default constructor.
      * <p/>
-     * Manages the TaskServer start/stop lifecycle.
+     * Manages the TaskServer and TaskClient connection lifecycle.
      */
     public BPMMixIn() {
         this(true);
@@ -78,109 +68,106 @@ public class BPMMixIn extends AbstractTestMixIn {
 
     /**
      * Public constructor.
-     * @param managedLifeCycle Do you want the SwitchYard test kit to manage the
-     * start/stop lifecycle of the BPM TaskServer.
+     * @param managedLifecycle Do you want the SwitchYard test kit to manage the start/stop lifecycle of the BPM TaskServer and TaskClient.
      */
-    public BPMMixIn(boolean managedLifeCycle) {
-        this._managedLifeCycle = managedLifeCycle;
+    public BPMMixIn(boolean managedLifecycle) {
+        _managedLifecycle = managedLifecycle;
     }
 
     /**
-     * Set the TaskServer host name.
-     * @param host TaskServer host name.
-     * @return {@code this} instance.
+     * Gets the host.
+     * @return the host
+     */
+    public String getHost() {
+        return _host;
+    }
+
+    /**
+     * Sets the host.
+     * @param host the host
+     * @return this instance
      */
     public BPMMixIn setHost(String host) {
-        this._host = host;
+        _host = host;
         return this;
     }
 
     /**
-     * Set the TaskServer port number.
-     * @param port TaskServer port number.
-     * @return {@code this} instance.
+     * Gets the port.
+     * @return the port
+     */
+    public int getPort() {
+        return _port;
+    }
+
+    /**
+     * Sets the port.
+     * @param port the port
+     * @return this instance
      */
     public BPMMixIn setPort(int port) {
-        this._port = port;
+        _port = port;
         return this;
     }
 
-    @Override
-    public void initialize() {
-        if (_managedLifeCycle) {
-            if (!startTaskServer("krisv", "johnd")) {
-                Assert.fail("Failed to autostart BPM TaskServer instance.");
-            }
-        }
+    /**
+     * The connected status.
+     * @return true if connected
+     */
+    public boolean isConnected() {
+        return _connected;
     }
 
+    /**
+     * Gets the roles path.
+     * @return the roles path
+     */
+    public String getRolesPath() {
+        return _rolesPath;
+    }
+
+    /**
+     * Sets the roles path.
+     * @param rolesPath the roles path
+     * @return this instance
+     */
+    public BPMMixIn setRolesPath(String rolesPath) {
+        _rolesPath = rolesPath;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void uninitialize() {
-        if (_managedLifeCycle) {
-            try {
-                boolean keepWorking = true;
-                while (keepWorking) {
-                    try {
-                        keepWorking = completeTasksForUsers("krisv", "johnd");
-                    } catch (Exception e) {
-                        Assert.fail("Failed to auto complete tasks on BPM TaskServer instance.");
-                    }
-                }
-            } finally {
-                stopTaskServer();
-            }
+    public void initialize() {
+        if (_managedLifecycle) {
+            startTaskServer();
+            startTaskClient();
         }
     }
 
     /**
-     * Starts the task server with the default host and port, and the specified user ids to pre-populate the database with.
-     * @param userIds the user ids to pre-populate the database with
-     * @return whether the task server started successfully
+     * {@inheritDoc}
      */
-    public boolean startTaskServer(String... userIds) {
+    @Override
+    public void uninitialize() {
+        if (_managedLifecycle) {
+            stopTaskClient();
+            stopTaskServer();
+        }
+    }
+
+    /**
+     * Starts the task server.
+     */
+    public void startTaskServer() {
+        Class<?> type = Classes.forName("org.switchyard.component.bpm.task.jbpm.TaskServerController", BPMMixIn.class);
+        _serverController = Construction.construct(type, new Class<?>[] {String.class, int.class}, new Object[] {getHost(), getPort()});
         try {
-            boolean ready = false;
-            while (!ready) {
-                Socket socket = null;
-                try {
-                    socket = new Socket(_host, _port);
-                    if (socket.isConnected()) {
-                        Thread.sleep(1000);
-                    } else {
-                        ready = true;
-                    }
-                } catch (SocketException se) {
-                    ready = true;
-                } finally {
-                    if (socket != null) {
-                        socket.close();
-                        socket = null;
-                    }
-                }
-            }
-            EntityManagerFactory emf = Persistence.createEntityManagerFactory("org.jbpm.task");
-            TaskService taskService = new TaskService(emf, new DoNothingSystemEventListener());
-            TaskServiceSession taskServiceSession = taskService.createSession();
-            taskServiceSession.addUser(new User(ADMINISTRATOR));
-            for (String userId : userIds) {
-                if (!ADMINISTRATOR.equals(userId)) {
-                    taskServiceSession.addUser(new User(userId));
-                }
-            }
-            // TODO: externalize this somehow
-            for (String groupId : new String[]{"admin", "user", "developer"}) {
-                taskServiceSession.addGroup(new Group(groupId));
-            }
-            taskServiceSession.dispose();
-            _server = new MinaTaskServer(taskService, _port, _host);
-            new Thread(_server).start();
-            //_server.start();
-            return true;
+            type.getMethod("start").invoke(_serverController);
         } catch (Throwable t) {
-            StringWriter tsWriter = new StringWriter();
-            t.printStackTrace(new PrintWriter(tsWriter));
-            Assert.fail(tsWriter.toString());
-            return false;
+            throw new SwitchYardException(t);
         }
     }
 
@@ -188,28 +175,30 @@ public class BPMMixIn extends AbstractTestMixIn {
      * Stops the task server.
      */
     public void stopTaskServer() {
-        if (_server != null) {
+        if (_serverController != null) {
             try {
-                _server.stop();
+                _serverController.getClass().getMethod("stop").invoke(_serverController);
             } catch (Throwable t) {
-                // just to keep checkstyle happy ("Must have at least one statement.")
-                t.getMessage();
+                throw new SwitchYardException(t);
             }
-            _server = null;
         }
     }
 
     /**
-     * Starts the task client with the default host and port of the task server to connect to.
-     * @throws Exception if a problem occurred
+     * Starts the task client.
      */
-    public void startTaskClient() throws Exception {
+    public void startTaskClient() {
         if (_client == null) {
-            _client = new TaskClient(new MinaTaskClientConnector(BPMMixIn.class.getSimpleName(), new MinaTaskClientHandler(new DoNothingSystemEventListener())));
+            _client = new TaskClient(new MinaTaskClientConnector(BPMMixIn.class.getSimpleName(), new MinaTaskClientHandler(SystemEventListenerFactory.getSystemEventListener())));
         }
-        if (!_clientConnected) {
-            _client.connect(_host, _port);
-            _clientConnected = true;
+        if (!_connected) {
+            LOGGER.info(String.format("Connecting jBPM TaskClient to %s:%s...", getHost(), getPort()));
+            _connected = _client.connect(getHost(), getPort());
+            if (_connected) {
+                LOGGER.info(String.format("jBPM TaskClient connected to %s:%s.", getHost(), getPort()));
+            } else {
+                LOGGER.error(String.format("jBPM TaskClient could not connect to %s:%s!", getHost(), getPort()));
+            }
         }
     }
 
@@ -218,48 +207,111 @@ public class BPMMixIn extends AbstractTestMixIn {
      */
     public void stopTaskClient() {
         if (_client != null) {
-            if (_clientConnected) {
+            if (_connected) {
+                LOGGER.info(String.format("Disconnecting jBPM TaskClient from %s:%s...", getHost(), getPort()));
                 try {
                     _client.disconnect();
                 } catch (Throwable t) {
                     // just to keep checkstyle happy ("Must have at least one statement.")
                     t.getMessage();
                 }
-                _clientConnected = false;
+                _connected = false;
+                LOGGER.info(String.format("jBPM TaskClient disconnected from %s:%s.", getHost(), getPort()));
             }
             _client = null;
         }
     }
 
     /**
-     * Completes all tasks for the specified user ids, auto-connecting to the task server with the default host and port.
-     * @param userIds the user ids to complete the tasks for
-     * @return if there might be more user tasks to complete
-     * @throws Exception if a problem occurred
+     * Gets the users to roles mapping.
+     * @return the users to roles mapping.
      */
-    public boolean completeTasksForUsers(String... userIds) throws Exception {
+    public Map<String,List<String>> getUsersRoles() {
+        return getUsersRoles(getRolesPath());
+    }
+
+    /**
+     * Gets the users to roles mapping.
+     * @param rolesPath the roles path
+     * @return the users to roles mapping
+     */
+    public Map<String,List<String>> getUsersRoles(String rolesPath) {
+        Map<String,List<String>> usersRolesMap = new HashMap<String,List<String>>();
+        Properties usersRolesProps;
+        try {
+            usersRolesProps = new PropertiesPuller().pull(rolesPath, BPMMixIn.class);
+        } catch (IOException ioe) {
+            throw new SwitchYardException(ioe);
+        }
+        for (Object userKey : usersRolesProps.keySet()) {
+            String user = (String)userKey;
+            if (!"Administrator".equals(user)) {
+                List<String> roles = Strings.splitTrimToNull(usersRolesProps.getProperty(user), ",");
+                usersRolesMap.put(user, roles);
+            }
+        }
+        return usersRolesMap;
+    }
+
+    /**
+     * Complete all human tasks.
+     */
+    public void completeHumanTasks() {
+        completeHumanTasks(getUsersRoles());
+    }
+
+    /**
+     * Complete all human tasks.
+     * @param rolesPath the roles path
+     */
+    public void completeHumanTasks(String rolesPath) {
+        completeHumanTasks(getUsersRoles(rolesPath));
+    }
+
+    /**
+     * Complete all human tasks.
+     * @param usersRoles the roles mapping
+     */
+    public void completeHumanTasks(Map<String,List<String>> usersRoles) {
+        boolean keepWorking;
+        do {
+            keepWorking = doCompleteHumanTasks(usersRoles);
+        } while (keepWorking);
+    }
+
+    private boolean doCompleteHumanTasks(Map<String,List<String>> usersRoles) {
         boolean keepWorking = false;
-        startTaskClient();
-        for (String userId : userIds) {
+        for (String userId : usersRoles.keySet()) {
             BlockingTaskSummaryResponseHandler btsrh =  new BlockingTaskSummaryResponseHandler();
-            _client.getTasksOwned(userId, Locale.getDefault().toString().replaceAll("_", "-"), btsrh);
+            List<String> groupIds = usersRoles.get(userId);
+            _client.getTasksAssignedAsPotentialOwner(userId, groupIds, "en-UK", btsrh);
             List<TaskSummary> tasks = btsrh.getResults();
+            int size = tasks.size();
+            LOGGER.info("Found " + size + " task" + (size == 1 ? "" : "s") + " for " + userId + ".");
             for (TaskSummary task : tasks) {
                 if (Status.Completed.equals(task.getStatus())) {
                     continue;
                 }
-                User user = task.getActualOwner();
                 BlockingTaskOperationResponseHandler btorh = new BlockingTaskOperationResponseHandler();
-                _client.start(task.getId(), user.getId(), btorh);
+                _client.claim(task.getId(), userId, groupIds, btorh);
                 btorh.waitTillDone(10000);
+                LOGGER.info("Task \"" + task.getName() + "\" claimed by " + userId + ".");
                 btorh = new BlockingTaskOperationResponseHandler();
-                _client.complete(task.getId(), user.getId(), null, btorh);
+                _client.start(task.getId(), userId, btorh);
                 btorh.waitTillDone(10000);
+                LOGGER.info("Task \"" + task.getName() + "\" started by " + userId + ".");
+                btorh = new BlockingTaskOperationResponseHandler();
+                _client.complete(task.getId(), userId, null, btorh);
+                btorh.waitTillDone(10000);
+                LOGGER.info("Task \"" + task.getName() + "\" completed by " + userId + ".");
                 keepWorking = true;
             }
         }
-        stopTaskClient();
-        Thread.sleep(1000);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ie) {
+            throw new SwitchYardException(ie);
+        }
         return keepWorking;
     }
 

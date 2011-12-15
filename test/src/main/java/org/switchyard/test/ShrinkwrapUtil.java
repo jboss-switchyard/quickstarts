@@ -19,6 +19,11 @@
 
 package org.switchyard.test;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
+
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.importer.ZipImporter;
@@ -26,12 +31,6 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.ResolutionException;
 import org.junit.Assert;
-import org.sonatype.aether.repository.LocalRepository;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
 
 /**
  * Shrinkwrap utilities.
@@ -46,10 +45,9 @@ public final class ShrinkwrapUtil {
     public static final String SWITCHYARD_VERSION = "SWITCHYARD_VERSION";
 
     private static final String LOCAL_MAVEN_REPO =
-        System.getProperty("maven.repo.local") != null ?
-            System.getProperty("maven.repo.local") :
-               (System.getProperty("user.home") + File.separatorChar +
-               ".m2" + File.separatorChar + "repository");
+        System.getProperty("maven.repo.local") != null
+            ? System.getProperty("maven.repo.local")
+               : (System.getProperty("user.home") + File.separatorChar + ".m2" + File.separatorChar + "repository");
 
     private ShrinkwrapUtil() {
     }
