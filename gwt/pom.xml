@@ -20,69 +20,57 @@
   </properties>
 
   <dependencies>
-    <!-- <dependency> <groupId>org.jboss.as</groupId> <artifactId>jboss-as-console</artifactId> <version>1.0.0.Beta9</version> 
-      <type>java-source</type> <classifier>sources</classifier> </dependency> -->
-
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-console-component-core</artifactId>
-      <version>${version.project}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-console-component-bean</artifactId>
-      <version>${version.project}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-console-component-bpel</artifactId>
-      <version>${version.project}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-console-component-bpm</artifactId>
-      <version>${version.project}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-console-component-camel</artifactId>
-      <version>${version.project}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-console-component-clojure</artifactId>
-      <version>${version.project}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-console-component-hornetq</artifactId>
-      <version>${version.project}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-console-component-rules</artifactId>
-      <version>${version.project}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-console-component-soap</artifactId>
-      <version>${version.project}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -191,7 +179,6 @@
                 <artifactItem>
                   <groupId>org.jboss.as</groupId>
                   <artifactId>jboss-as-console</artifactId>
-                  <version>${version.as7.console}</version>
                   <classifier>sources</classifier>
                   <type>jar</type>
                   <includes>org/jboss/dmr/**,org/jboss/as/console/client/widgets/**,org/jboss/as/console/client/auth/**,org/jboss/as/console/client/core/*.*,org/jboss/as/console/client/core/message/*.*,org/jboss/as/console/client/shared/*.*,org/jboss/as/console/client/shared/dispatch/**,org/jboss/as/console/client/Build.java,org/jboss/as/console/client/ConsoleFramework.java,org/jboss/as/console/public/**,gwt-proxy.properties</includes>
@@ -208,7 +195,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.5</version>
         <executions>
           <execution>
             <id>add-source</id>

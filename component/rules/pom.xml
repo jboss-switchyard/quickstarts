@@ -14,7 +14,6 @@
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-console-component-core</artifactId>
-      <version>${version.project}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
