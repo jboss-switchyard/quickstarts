@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-/* 
- * JBoss, Home of Professional Open Source 
+/*
+ * JBoss, Home of Professional Open Source
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved. 
- * See the copyright.txt in the distribution for a 
+ * as indicated by the @author tags. All rights reserved.
+ * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
- * This copyrighted material is made available to anyone wishing to use, 
- * modify, copy, or redistribute it subject to the terms and conditions 
- * of the GNU Lesser General Public License, v. 2.1. 
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details. 
- * You should have received a copy of the GNU Lesser General Public License, 
- * v.2.1 along with this distribution; if not, write to the Free Software 
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
 -->
@@ -29,17 +29,17 @@
         <groupId>org.switchyard</groupId>
         <artifactId>switchyard-parent</artifactId>
         <version>0.4.0-SNAPSHOT</version>
-        <relativePath />
+        <relativePath>../parent</relativePath>
     </parent>
 
     <groupId>org.switchyard.components</groupId>
     <artifactId>switchyard-components-parent</artifactId>
-    <packaging>pom</packaging>
-    
     <name>SwitchYard: Components</name>
+    <version>0.4.0-SNAPSHOT</version>
     <description>SwitchYard: Components</description>
     <url>http://switchyard.org</url>
-    
+    <packaging>pom</packaging>
+
     <organization>
         <name>JBoss by Red Hat</name>
         <url>http://jboss.org</url>
@@ -48,22 +48,6 @@
     <properties>
         <org.switchyard.test.soap.host>localhost</org.switchyard.test.soap.host>
         <org.switchyard.test.soap.port>48080</org.switchyard.test.soap.port>
-
-        <!-- Dependency versions - please keep these in alphabetical order -->
-        <version.camel>2.8.0</version.camel>
-        <version.clojure>1.3.0-alpha5</version.clojure>
-        <version.commonman>1.0</version.commonman>
-        <version.hornetq>2.2.2.Final</version.hornetq>
-        <version.javax.jms>1.1</version.javax.jms>
-        <version.jboss.vfs>3.0.1.GA</version.jboss.vfs>
-        <version.maven-shade-plugin>1.4</version.maven-shade-plugin>
-        <version.netty>3.2.1.Final</version.netty>
-        <version.riftsaw.ode>3.0.0.20111024-M1</version.riftsaw.ode>
-		<version.riftsaw.engine>3.0.0.20111024-M1</version.riftsaw.engine>
-        <version.servlet>2.5</version.servlet>
-        <version.spring>3.0.5.RELEASE</version.spring>
-        <version.weld>1.1.0.Final</version.weld>
-        <version.wsdl4j>1.6.2</version.wsdl4j>
     </properties>
 
     <modules>
@@ -99,7 +83,7 @@
         </snapshots>
       </repository>
     </repositories>
-    
+
     <dependencies>
         <dependency>
             <groupId>org.switchyard</groupId>
@@ -112,206 +96,11 @@
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-deploy</artifactId>
-        </dependency> 
+        </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.switchyard.components</groupId>
-                <artifactId>switchyard-component-common-rules</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard.components</groupId>
-                <artifactId>switchyard-component-bean</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard.components</groupId>
-                <artifactId>switchyard-component-rules</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard.components</groupId>
-                <artifactId>switchyard-component-bpm</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard.components</groupId>
-                <artifactId>switchyard-component-soap</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard.components</groupId>
-                <artifactId>switchyard-component-camel</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard</groupId>
-                <artifactId>switchyard-runtime</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard</groupId>
-                <artifactId>switchyard-config</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard</groupId>
-                <artifactId>switchyard-deploy</artifactId>
-                <version>${project.version}</version>
-            </dependency> 
-            <dependency>
-                <groupId>org.switchyard</groupId>
-                <artifactId>switchyard-deploy-cdi</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-              <groupId>org.switchyard</groupId>
-              <artifactId>switchyard-forge-common</artifactId>
-              <version>${project.version}</version>
-            </dependency>
-            <dependency>
-              <groupId>org.switchyard</groupId>
-              <artifactId>switchyard-forge-plugin</artifactId>
-              <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard</groupId>
-                <artifactId>switchyard-test</artifactId>
-                <version>${project.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <!-- External dependencies - please keep these in alphabetical order by groupId-->
-            <dependency>
-                <groupId>javax.jms</groupId>
-                <artifactId>jms</artifactId>
-                <version>${version.javax.jms}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-atom</artifactId>
-                <version>${version.camel}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-core</artifactId>
-                <version>${version.camel}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-jms</artifactId>
-                <version>${version.camel}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-spring</artifactId>
-                <version>${version.camel}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-test</artifactId>
-                <version>${version.camel}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.clojure</groupId>
-                <artifactId>clojure</artifactId>
-                <version>${version.clojure}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.fusesource.commonman</groupId>
-                <artifactId>commons-management</artifactId>
-                <version>${version.commonman}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hornetq</groupId>
-                <artifactId>hornetq-core</artifactId>
-                <version>${version.hornetq}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hornetq</groupId>
-                <artifactId>hornetq-jms</artifactId>
-                <version>${version.hornetq}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hornetq</groupId>
-                <artifactId>hornetq-jms-client</artifactId>
-                <version>${version.hornetq}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.forge</groupId>
-                <artifactId>forge-shell-api</artifactId>
-                <version>${version.forge}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.netty</groupId>
-                <artifactId>netty</artifactId>
-                <version>${version.netty}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.soa.bpel</groupId>
-                <artifactId>riftsaw-bpel-compiler</artifactId>
-                <version>${version.riftsaw.ode}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.soa.bpel</groupId>
-                <artifactId>riftsaw-dao-jpa</artifactId>
-                <version>${version.riftsaw.ode}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss</groupId>
-                <artifactId>jboss-vfs</artifactId>
-                <version>${version.jboss.vfs}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.weld.se</groupId>
-                <artifactId>weld-se-core</artifactId>
-                <version>${version.weld}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-ext</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>ch.qos.cal10n</groupId>
-                        <artifactId>cal10n-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.riftsaw</groupId>
-                <artifactId>engine</artifactId>
-                <version>${version.riftsaw.engine}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>wsdl4j</groupId>
-                <artifactId>wsdl4j</artifactId>
-                <version>${version.wsdl4j}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
-                <version>${version.servlet}</version>
-                <scope>provided</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
 </project>

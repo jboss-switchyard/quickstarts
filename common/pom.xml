@@ -65,22 +65,18 @@
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-api</artifactId>
-			<version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-common</artifactId>
-			<version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-config</artifactId>
-			<version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-test</artifactId>
-			<version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- external dependencies -->
@@ -90,5 +86,4 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
 </project>

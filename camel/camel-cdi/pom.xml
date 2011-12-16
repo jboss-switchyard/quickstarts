@@ -35,18 +35,26 @@
     <url>http://www.switchyard.org</url>
 
     <dependencies>
+       <dependency>
+          <groupId>org.switchyard.components</groupId>
+          <artifactId>switchyard-component-camel</artifactId>
+       </dependency>
 
-        <dependency>
-            <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-camel</artifactId>
-        </dependency>
+       <dependency>
+          <groupId>org.switchyard.components</groupId>
+          <artifactId>switchyard-component-bean</artifactId>
+       </dependency>
 
-        <dependency>
-           <groupId>org.jboss.weld.se</groupId>
-           <artifactId>weld-se-core</artifactId>
-           <scope>provided</scope>
-        </dependency>
+      <dependency>
+         <groupId>org.apache.camel</groupId>
+         <artifactId>camel-core</artifactId>
+      </dependency>
 
+      <dependency>
+         <groupId>org.jboss.weld.se</groupId>
+         <artifactId>weld-se-core</artifactId>
+         <scope>provided</scope>
+      </dependency>
     </dependencies>
 
 </project>

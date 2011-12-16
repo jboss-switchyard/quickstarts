@@ -42,12 +42,6 @@
        <maven>3.0</maven>
     </prerequisites>
 
-    <properties>
-        <version.torquebox>1.0.0.CR2</version.torquebox>
-        <version.jboss.deployers>2.2.0.GA</version.jboss.deployers>
-        <version.jboss.vfs>3.0.0.GA</version.jboss.vfs>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.switchyard</groupId>
@@ -60,42 +54,34 @@
         <dependency>
             <groupId>org.jboss.deployers</groupId>
             <artifactId>jboss-deployers-impl</artifactId>
-            <version>${version.jboss.deployers}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.deployers</groupId>
             <artifactId>jboss-deployers-core-spi</artifactId>
-            <version>${version.jboss.deployers}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.deployers</groupId>
             <artifactId>jboss-deployers-vfs</artifactId>
-            <version>${version.jboss.deployers}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss</groupId>
             <artifactId>jboss-vfs</artifactId>
-            <version>${version.jboss.vfs}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.deployers</groupId>
             <artifactId>jboss-deployers-vfs-spi</artifactId>
-            <version>${version.jboss.deployers}</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>${version.log4j}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${version.junit}</version>
         </dependency>
         <dependency>
           <groupId>org.torquebox</groupId>
           <artifactId>torquebox-base-int</artifactId>
-          <version>${version.torquebox}</version>
           <scope>provided</scope>
         </dependency>
     </dependencies>

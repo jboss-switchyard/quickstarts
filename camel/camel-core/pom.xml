@@ -16,7 +16,6 @@
     <url>http://www.switchyard.org</url>
 
     <properties>
-        <version.build-helper-maven-plugin>1.7</version.build-helper-maven-plugin>
         <directory.camel.resources>${project.build.directory}/dependency/camel/resources</directory.camel.resources>
     </properties>
 
@@ -48,7 +47,6 @@
                     <artifactItem>
                       <groupId>org.apache.camel</groupId>
                       <artifactId>camel-spring</artifactId>
-                      <version>${version.camel}</version>
                       <classifier>sources</classifier>
                       <type>jar</type>
                       <includes>camel-spring.xsd</includes>
@@ -62,7 +60,6 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>build-helper-maven-plugin</artifactId>
-            <version>${version.build-helper-maven-plugin}</version>
             <executions>
               <execution>
                 <id>add-resource</id>
@@ -84,21 +81,20 @@
     </build>
 
     <dependencies>
-    
-		<dependency>
-	        <groupId>org.switchyard</groupId>
-	        <artifactId>switchyard-config</artifactId>
-	    </dependency>
-	    
-		<dependency>
-			<groupId>org.switchyard.components</groupId>
-			<artifactId>switchyard-component-bean</artifactId>
-		</dependency>
-		
+
+       <dependency>
+          <groupId>org.switchyard</groupId>
+          <artifactId>switchyard-config</artifactId>
+       </dependency>
+
+       <dependency>
+          <groupId>org.switchyard.components</groupId>
+          <artifactId>switchyard-component-bean</artifactId>
+       </dependency>
+
          <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-camel-as7</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -137,7 +133,7 @@
             <scope>compile</scope>
         </dependency>
 
-		<dependency>
+                <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-atom</artifactId>
             <scope>compile</scope>
@@ -202,7 +198,6 @@
             <artifactId>mockito-all</artifactId>
             <scope>test</scope>
          </dependency>
-
     </dependencies>
 
 </project>

@@ -36,7 +36,6 @@
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-common-rules</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <!-- external dependencies -->
         <dependency>
