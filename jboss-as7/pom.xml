@@ -32,7 +32,6 @@
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-dist</artifactId>
             <type>zip</type>
-            <version>${version.jbossas}</version>
         </dependency>
 
         <!--
@@ -51,25 +50,21 @@
         <dependency>
             <groupId>org.jboss.arquillian.container</groupId>
             <artifactId>arquillian-container-test-api</artifactId>
-            <version>${version.arquillian}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-arquillian-container-managed</artifactId>
-            <version>${version.jbossas}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>${version.h2database}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>${version.commons.codec}</version>
             <scope>test</scope>
         </dependency>
 
@@ -77,92 +72,77 @@
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-quickstart-transform-json</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-quickstart-transform-smooks</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-quickstarts-camel-service</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-quickstart-bean-service</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-quickstarts-camel-binding</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-quickstarts-camel-jms-binding</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-quickstarts-camel-soap-proxy</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-quickstarts-hornetq-binding</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-quickstart-rules-interview</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-quickstart-rules-interview-agent</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-quickstart-bpm-service</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-quickstart-bpel-service-say-hello</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-quickstart-bpel-service-loan-approval</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
             <artifactId>switchyard-quickstart-demo-orders</artifactId>
-            <version>${project.version}</version>
             <type>war</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
             <artifactId>switchyard-quickstart-demo-helpdesk</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

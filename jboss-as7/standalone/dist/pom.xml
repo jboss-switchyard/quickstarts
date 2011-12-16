@@ -34,7 +34,6 @@
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-dist</artifactId>
             <type>zip</type>
-            <version>${version.jbossas}</version>
         </dependency>
     </dependencies>
 
@@ -61,7 +60,6 @@
                                     <groupId>org.jboss.as</groupId>
                                     <artifactId>jboss-as-dist</artifactId>
                                     <type>zip</type>
-                                    <version>${version.jbossas}</version>
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>${staging.dir}</outputDirectory>

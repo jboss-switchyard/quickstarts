@@ -35,22 +35,15 @@
     <name>SwitchYard: Release Distribution Tests Utilities</name>
     <description>SwitchYard Release Distribution Test Utilities</description>
 
-    <properties>
-        <version.shrinkwrap>1.0.0-alpha-12</version.shrinkwrap>
-    </properties>
-
     <dependencies>
-
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-test</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-impl-base</artifactId>
-            <version>${version.shrinkwrap}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.jboss.shrinkwrap</groupId>
@@ -65,19 +58,15 @@
         <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-api</artifactId>
-            <version>${version.shrinkwrap}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-spi</artifactId>
-            <version>${version.shrinkwrap}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
             <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-            <version>${version.shrinkwrap}</version>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -92,5 +81,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

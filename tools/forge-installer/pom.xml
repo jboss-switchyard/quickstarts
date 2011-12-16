@@ -34,35 +34,26 @@
     <name>SwitchYard: Forge Installer</name>
     <description>SwitchYard Forge Installer</description>
 
-    <properties>
-      <forge.version>1.0.0.Beta3</forge.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>forge-shell</artifactId>
-            <version>${forge.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>forge-shell-api</artifactId>
-            <version>${forge.version}</version>
         </dependency>
 
-        <dependency> 
+        <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>forge-parser-xml</artifactId>
-            <version>${forge.version}</version>
        </dependency>
 
        <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>forge-parser-java-api</artifactId>
-            <version>${forge.version}</version>
        </dependency>
-
     </dependencies>
 
     <build>

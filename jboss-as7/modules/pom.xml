@@ -134,77 +134,62 @@
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-common</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-api</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-admin</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-extensions-wsdl</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-runtime</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-deploy</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-config</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-transform</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-validate</artifactId>
-            <version>${project.version}</version>
         </dependency>
          <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-deploy-jboss-as7</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-bpel</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-bean</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-bpm</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-camel</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-camel-as7</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
@@ -219,22 +204,18 @@
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-common-rules</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-rules</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-soap</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-hornetq</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!--
@@ -243,7 +224,6 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>${version.h2database}</version>
         </dependency>
 
         <!--
@@ -252,32 +232,26 @@
         <dependency>
             <groupId>javax.persistence</groupId>
             <artifactId>persistence-api</artifactId>
-            <version>${version.jpa}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>ejb3-persistence</artifactId>
-            <version>${version.hibernate.ejb3-persistence}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-commons-annotations</artifactId>
-            <version>${version.hibernate.commons-annotations}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>${version.hibernate.core}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>${version.hibernate.entitymanager}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>${version.hibernate.validator}</version>
         </dependency>
 
         <!--
@@ -286,82 +260,66 @@
 		<dependency>
 			<groupId>org.riftsaw</groupId>
 			<artifactId>engine</artifactId>
-			<version>${version.riftsaw.engine}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.soa.bpel</groupId>
 			<artifactId>riftsaw-agents</artifactId>
-			<version>${version.riftsaw.ode}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.soa.bpel</groupId>
 			<artifactId>riftsaw-bpel-api</artifactId>
-			<version>${version.riftsaw.ode}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.soa.bpel</groupId>
 			<artifactId>riftsaw-bpel-compiler</artifactId>
-			<version>${version.riftsaw.ode}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.soa.bpel</groupId>
 			<artifactId>riftsaw-bpel-dao</artifactId>
-			<version>${version.riftsaw.ode}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.soa.bpel</groupId>
 			<artifactId>riftsaw-bpel-epr</artifactId>
-			<version>${version.riftsaw.ode}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.soa.bpel</groupId>
 			<artifactId>riftsaw-bpel-obj</artifactId>
-			<version>${version.riftsaw.ode}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.soa.bpel</groupId>
 			<artifactId>riftsaw-bpel-ql</artifactId>
-			<version>${version.riftsaw.ode}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.soa.bpel</groupId>
 			<artifactId>riftsaw-bpel-runtime</artifactId>
-			<version>${version.riftsaw.ode}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.soa.bpel</groupId>
 			<artifactId>riftsaw-bpel-schemas</artifactId>
-			<version>${version.riftsaw.ode}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.soa.bpel</groupId>
 			<artifactId>riftsaw-bpel-store</artifactId>
-			<version>${version.riftsaw.ode}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.soa.bpel</groupId>
 			<artifactId>riftsaw-dao-jpa</artifactId>
-			<version>${version.riftsaw.ode}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.soa.bpel</groupId>
 			<artifactId>riftsaw-dao-jpa-hibernate</artifactId>
-			<version>${version.riftsaw.ode}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.soa.bpel</groupId>
 			<artifactId>riftsaw-jacob</artifactId>
-			<version>${version.riftsaw.ode}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.soa.bpel</groupId>
 			<artifactId>riftsaw-scheduler-simple</artifactId>
-			<version>${version.riftsaw.ode}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.soa.bpel</groupId>
 			<artifactId>riftsaw-utils</artifactId>
-			<version>${version.riftsaw.ode}</version>
 		</dependency>
 
         <!--
@@ -370,32 +328,26 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-asm</artifactId>
-			<version>${version.spring}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
-			<version>${version.spring}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>${version.spring}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-			<version>${version.spring}</version>
 		</dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
-            <version>${version.spring}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jms</artifactId>
-            <version>${version.spring}</version>
         </dependency>
 
         <!--
@@ -404,22 +356,18 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
-            <version>${version.camel}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring</artifactId>
-            <version>${version.camel}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jms</artifactId>
-            <version>${version.camel}</version>
         </dependency>
         <dependency>
             <groupId>org.fusesource.commonman</groupId>
             <artifactId>commons-management</artifactId>
-            <version>${version.fusesource.commonman}</version>
         </dependency>
 
         <!--
@@ -428,47 +376,38 @@
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>knowledge-api</artifactId>
-            <version>${version.drools}</version>
         </dependency>
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-core</artifactId>
-            <version>${version.drools}</version>
         </dependency>
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-compiler</artifactId>
-            <version>${version.drools}</version>
         </dependency>
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-persistence-jpa</artifactId>
-            <version>${version.drools}</version>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-flow</artifactId>
-            <version>${version.jbpm}</version>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-flow-builder</artifactId>
-            <version>${version.jbpm}</version>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-persistence-jpa</artifactId>
-            <version>${version.jbpm}</version>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-bpmn2</artifactId>
-            <version>${version.jbpm}</version>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-workitems</artifactId>
-            <version>${version.jbpm}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
@@ -483,8 +422,8 @@
 		<dependency>
 			<groupId>org.jboss.bpm</groupId>
 			<artifactId>activity-monitor-model</artifactId>
-			<version>${version.activity.monitor.model}</version>
-			<exclusions>
+                        <version>${version.activity.monitor.model}</version>
+                        <exclusions>
 				<exclusion>
 					<groupId>org.hibernate</groupId>
 					<artifactId>hibernate-annotations</artifactId>
@@ -498,7 +437,6 @@
         <dependency>
             <groupId>org.clojure</groupId>
             <artifactId>clojure</artifactId>
-            <version>${version.clojure}</version>
         </dependency>
 
         <!-- misc external dependencies -->
@@ -513,27 +451,22 @@
         <dependency>
             <groupId>net.sourceforge.saxon</groupId>
             <artifactId>saxonhe</artifactId>
-            <version>${version.saxon}</version>
         </dependency>
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr-runtime</artifactId>
-            <version>${version.antlr}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.mina</groupId>
             <artifactId>mina-core</artifactId>
-            <version>${version.mina}</version>
         </dependency>
-		<dependency>
-			<groupId>org.apache.xmlbeans</groupId>
-			<artifactId>xmlbeans</artifactId>
-			<version>${version.xmlbeans}</version>
-		</dependency>
+        <dependency>
+           <groupId>org.apache.xmlbeans</groupId>
+           <artifactId>xmlbeans</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.eclipse.jdt.core.compiler</groupId>
             <artifactId>ecj</artifactId>
-            <version>${version.ecj}</version>
         </dependency>
         <dependency>
             <groupId>org.freemarker</groupId>
@@ -546,12 +479,10 @@
         <dependency>
             <groupId>org.mvel</groupId>
             <artifactId>mvel2</artifactId>
-            <version>${version.mvel}</version>
         </dependency>
         <dependency>
             <groupId>wsdl4j</groupId>
             <artifactId>wsdl4j</artifactId>
-            <version>${version.wsdl4j}</version>
         </dependency>
 
     </dependencies>

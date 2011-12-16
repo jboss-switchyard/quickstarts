@@ -44,7 +44,6 @@
            <groupId>org.jboss.arquillian</groupId>
            <artifactId>arquillian-junit</artifactId>
         </dependency>
-
     </dependencies>
 
     <build>

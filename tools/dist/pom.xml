@@ -44,18 +44,16 @@
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-console-gwt</artifactId>
             <type>war</type>
-            <version>${project.version}</version>
         </dependency>
 
-        <dependency> 
+        <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-forge-plugin-dist</artifactId>
-            <type>zip</type> 
-            <version>${project.version}</version>
-            <scope>runtime</scope> 
+            <type>zip</type>
+            <scope>runtime</scope>
        </dependency>
     </dependencies>
-    
+
     <build>
         <plugins>
             <plugin>

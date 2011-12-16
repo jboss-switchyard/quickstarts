@@ -38,7 +38,6 @@
                                     <groupId>org.jboss.as</groupId>
                                     <artifactId>jboss-as-dist</artifactId>
                                     <type>zip</type>
-                                    <version>${version.jbossas}</version>
                                 </artifactItem>
                             </artifactItems>
                             <excludes>**/javax/xml/bind/api/**,**/javax/xml/soap/api/**,**/javax/xml/ws/api/**,**/com/sun/xml/bind/**,**/org/apache/cxf/**,**/org/apache/ws/**,**/org/jboss/as/messaging/**,**/org/jboss/as/webservices/**,**/org/jboss/ws/**,**/org/jboss/osgi/**</excludes>

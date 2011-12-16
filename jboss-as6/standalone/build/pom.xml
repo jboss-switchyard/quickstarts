@@ -26,14 +26,14 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
+
 	<parent>
 		<groupId>org.switchyard</groupId>
         <artifactId>switchyard-as6-standalone-parent</artifactId>
         <version>0.4.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
 	</parent>
-	
+
 	<groupId>org.switchyard</groupId>
     <artifactId>switchyard-as6-standalone-build</artifactId>
 	<packaging>pom</packaging>
@@ -42,7 +42,7 @@
 	<url>http://switchyard.org/</url>
 
     <build>
-        <plugins> 
+        <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -89,7 +89,7 @@
                 <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-deploy</artifactId>
             </dependency>
-            <dependency> 
+            <dependency>
                 <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-deploy-cdi</artifactId>
             </dependency>
@@ -131,7 +131,6 @@
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>${version.commons.lang}</version>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>

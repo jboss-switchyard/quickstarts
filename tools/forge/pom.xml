@@ -34,15 +34,15 @@
 
     <dependencies>
  	<!-- module resources -->
-        <dependency> 
+        <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-forge-bean-plugin</artifactId>
         </dependency>
-        <dependency> 
+        <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-forge-bpm-plugin</artifactId>
         </dependency>
-        <dependency> 
+        <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-forge-camel-plugin</artifactId>
         </dependency>
@@ -54,7 +54,7 @@
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-forge-rules-plugin</artifactId>
         </dependency>
-        <dependency> 
+        <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-forge-soap-plugin</artifactId>
         </dependency>
@@ -87,37 +87,30 @@
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-common-rules</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xalan</groupId>
             <artifactId>xalan</artifactId>
-            <version>${version.xalan}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
-            <version>${version.camel}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xalan</groupId>
             <artifactId>serializer</artifactId>
-            <version>${version.xalan}</version>
         </dependency>
-        <dependency> 
+        <dependency>
             <groupId>org.fusesource.commonman</groupId>
             <artifactId>commons-management</artifactId>
-            <version>${version.fusesource.commonman}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.spec.javax.xml.bind</groupId>
             <artifactId>jboss-jaxb-api_2.2_spec</artifactId>
-            <version>${version.jaxb.api}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
-            <version>${version.jaxb.impl}</version>
         </dependency>
     </dependencies>
     <build>

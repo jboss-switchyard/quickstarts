@@ -57,13 +57,11 @@
         <dependency>
             <groupId>org.jboss.arquillian</groupId>
             <artifactId>arquillian-junit</artifactId>
-            <version>${version.arquillian}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.container</groupId>
             <artifactId>arquillian-jbossas-managed-6</artifactId>
-            <version>${version.arquillian}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.jboss.shrinkwrap</groupId>
@@ -254,7 +252,6 @@
                                 <artifactItem>
                                     <groupId>org.fusesource.commonman</groupId>
                                     <artifactId>commons-management</artifactId>
-                                    <version>${version.commonman}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.drools</groupId>
@@ -323,7 +320,6 @@
                                 <artifactItem>
                                     <groupId>org.apache.mina</groupId>
                                     <artifactId>mina-core</artifactId>
-                                    <version>${version.mina}</version>
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>${staging.jboss.home}/server/default/deployers/switchyard.deployer</outputDirectory>

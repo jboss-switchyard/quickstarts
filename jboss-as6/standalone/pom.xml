@@ -18,5 +18,4 @@
         <module>build</module>
         <module>dist</module>
     </modules>
-
 </project>

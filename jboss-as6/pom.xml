@@ -14,19 +14,6 @@
     <name>SwitchYard: AS6 Parent</name>
     <description>SwitchYard AS6 Parent</description>
 
-    <properties>
-        <version.arquillian>1.0.0.Alpha5</version.arquillian>
-        <version.camel>2.8.0</version.camel>
-        <version.commonman>1.0</version.commonman>
-        <version.commons.lang>2.4</version.commons.lang>
-        <version.commons.logging>1.1</version.commons.logging>
-        <version.jboss.deployers>2.2.0.GA</version.jboss.deployers>
-        <version.jboss.vfs>3.0.0.GA</version.jboss.vfs>
-        <version.jbossas>6.0.0.Final</version.jbossas>
-        <version.mina>2.0.1</version.mina>
-        <version.shrinkwrap>1.0.0-alpha-12</version.shrinkwrap>
-    </properties>
-
     <modules>
         <module>tests</module>
         <module>deployer</module>
@@ -37,101 +24,6 @@
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-test</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
-
-    <dependencyManagement>
-		<dependencies>
-            <dependency>
-                <groupId>org.switchyard</groupId>
-                <artifactId>switchyard-release-testutil</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard.quickstarts</groupId>
-                <artifactId>switchyard-quickstart-bean-service</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            
-            <!-- External dependencies -->
-            <dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-                <version>${version.commons.logging}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-http4</artifactId>
-                <version>${version.camel}</version>
-             </dependency>
-	        <dependency>
-	            <groupId>org.jboss</groupId>
-	            <artifactId>jboss-vfs</artifactId>
-	            <version>${version.jboss.vfs}</version>
-	        </dependency>
-	        <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-junit</artifactId>
-                <version>${version.arquillian}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.container</groupId>
-                <artifactId>arquillian-jbossas-managed-6</artifactId>
-                <version>${version.arquillian}</version>
-            </dependency>
-	        <dependency>
-	            <groupId>org.jboss.deployers</groupId>
-	            <artifactId>jboss-deployers-impl</artifactId>
-                <version>${version.jboss.deployers}</version>
-	        </dependency>
-	        <dependency>
-	            <groupId>org.jboss.deployers</groupId>
-	            <artifactId>jboss-deployers-core-spi</artifactId>
-	            <version>${version.jboss.deployers}</version>
-	        </dependency>
-		    <dependency>
-	            <groupId>org.jboss.deployers</groupId>
-	            <artifactId>jboss-deployers-vfs</artifactId>
-	            <version>${version.jboss.deployers}</version>
-	        </dependency>
-	        <dependency> 
-	            <groupId>org.jboss.deployers</groupId>
-	            <artifactId>jboss-deployers-vfs-spi</artifactId>
-	            <version>${version.jboss.deployers}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.jbossas</groupId>
-                <artifactId>jboss-as-depchain</artifactId>
-                <version>${version.jbossas}</version>
-                <type>pom</type>
-            </dependency>
-	        <dependency>
-	            <groupId>org.jboss.jbossas</groupId>
-	            <artifactId>weld-int-deployer</artifactId>
-	            <version>${version.jbossas}</version>
-	        </dependency>
-            <dependency>
-                <groupId>org.jboss.shrinkwrap</groupId>
-                <artifactId>shrinkwrap-impl-base</artifactId>
-                <version>${version.shrinkwrap}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.shrinkwrap</groupId>
-                <artifactId>shrinkwrap-api</artifactId>
-                <version>${version.shrinkwrap}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.shrinkwrap</groupId>
-                <artifactId>shrinkwrap-spi</artifactId>
-                <version>${version.shrinkwrap}</version>
-            </dependency>        
-            <dependency>
-                <groupId>org.jboss.shrinkwrap.resolver</groupId>
-                <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-                <version>${version.shrinkwrap}</version>
-            </dependency>
-		</dependencies>
-	</dependencyManagement>
-
 </project>
