@@ -2,42 +2,34 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-  
+
   <parent>
     <groupId>org.switchyard.quickstarts</groupId>
     <artifactId>switchyard-quickstarts-parent</artifactId>
     <version>0.4.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  
+
   <artifactId>switchyard-quickstart-rules-interview</artifactId>
   <name>Quickstart : Rules Interview</name>
   <packaging>jar</packaging>
-  
-  <properties>
-    <switchyard.version>0.4.0-SNAPSHOT</switchyard.version>
-  </properties>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-api</artifactId>
-      <version>${switchyard.version}</version>
     </dependency>
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-plugin</artifactId>
-      <version>${switchyard.version}</version>
     </dependency>
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-test</artifactId>
-      <version>${switchyard.version}</version>
     </dependency>
     <dependency>
       <groupId>org.switchyard.components</groupId>
       <artifactId>switchyard-component-rules</artifactId>
-      <version>${switchyard.version}</version>
     </dependency>
   </dependencies>
   <build>
@@ -52,8 +44,7 @@
       <plugin>
         <groupId>org.switchyard</groupId>
         <artifactId>switchyard-plugin</artifactId>
-        <version>${switchyard.version}</version>
-        <executions>
+          <executions>
           <execution>
             <goals>
               <goal>configure</goal>

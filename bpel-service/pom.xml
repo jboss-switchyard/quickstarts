@@ -12,74 +12,54 @@
   <name>Quickstart : BPEL Service</name>
   <packaging>pom</packaging>
 
-  <properties>
-    <switchyard.version>0.4.0-SNAPSHOT</switchyard.version>
-    <version.hibernate.core>4.0.0.Beta1</version.hibernate.core>
-    <version.hibernate.entitymanager>4.0.0.Beta1</version.hibernate.entitymanager>
-    <version.hibernate.annotations>3.4.0.GA</version.hibernate.annotations>
-    <version.hibernate.commons-annotations>3.2.0.Final</version.hibernate.commons-annotations>
-    <version.hibernate.ejb3-persistence>1.0.1.GA</version.hibernate.ejb3-persistence>
-    <version.hibernate.jpa>1.0</version.hibernate.jpa>
-  </properties>
-
   <modules>
        <module>say_hello</module>
        <module>loan_approval</module>
   </modules>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-api</artifactId>
-      <version>${switchyard.version}</version>
     </dependency>
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-plugin</artifactId>
-      <version>${switchyard.version}</version>
     </dependency>
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-test</artifactId>
-      <version>${switchyard.version}</version>
     </dependency>
     <dependency>
       <groupId>org.switchyard.components</groupId>
       <artifactId>switchyard-component-bpel</artifactId>
-      <version>${switchyard.version}</version>
     </dependency>
     <dependency>
       <groupId>org.switchyard.components</groupId>
       <artifactId>switchyard-component-bean</artifactId>
-      <version>${switchyard.version}</version>
     </dependency>
     <dependency>
       <groupId>org.switchyard.components</groupId>
       <artifactId>switchyard-component-soap</artifactId>
-      <version>${switchyard.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-entitymanager</artifactId>
-      <version>${version.hibernate.entitymanager}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
-      <version>${version.hibernate.core}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-annotations</artifactId>
-      <version>${version.hibernate.annotations}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-commons-annotations</artifactId>
-      <version>${version.hibernate.commons-annotations}</version>
       <scope>test</scope>
         <exclusions>
             <exclusion>
@@ -91,17 +71,15 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>ejb3-persistence</artifactId>
-      <version>${version.hibernate.ejb3-persistence}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>javax.persistence</groupId>
       <artifactId>persistence-api</artifactId>
-      <version>${version.hibernate.jpa}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <build>
     <pluginManagement>
     <plugins>
@@ -115,7 +93,6 @@
       <plugin>
         <groupId>org.switchyard</groupId>
         <artifactId>switchyard-plugin</artifactId>
-        <version>${switchyard.version}</version>
         <executions>
           <execution>
             <goals>
