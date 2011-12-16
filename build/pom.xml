@@ -34,7 +34,7 @@
     <name>SwitchYard: Build</name>
     <version>0.4.0-SNAPSHOT</version>
 
-    <description>The parent for SwitchYard modules</description>
+    <description>The SwitchYard Build Module</description>
     <url>http://switchyard.org</url>
     <organization>
       <name>JBoss by Red Hat</name>

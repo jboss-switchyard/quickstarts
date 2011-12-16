@@ -8,21 +8,21 @@
     <version>0.4.0-SNAPSHOT</version>
     <relativePath>../../../pom.xml</relativePath>
   </parent>
+
   <artifactId>switchyard-forge-common</artifactId>
-    <name>SwitchYard: Forge Common</name>
-    <description>Common Classes for Forge Support</description>
-    <url>http://switchyard.org/</url>
+  <name>SwitchYard: Forge Common</name>
+  <description>Common Classes for Forge Support</description>
+  <url>http://switchyard.org/</url>
+
   <dependencies>
     <dependency>
       <groupId>org.jboss.forge</groupId>
       <artifactId>forge-shell-api</artifactId>
-      <version>${version.forge}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.forge</groupId>
       <artifactId>forge-maven-api</artifactId>
-      <version>${version.forge}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -30,6 +30,7 @@
       <artifactId>switchyard-config</artifactId>
     </dependency>
   </dependencies>
+
   <build>
     <plugins>
       <plugin>

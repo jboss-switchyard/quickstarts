@@ -26,16 +26,16 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
+
     <parent>
         <groupId>org.switchyard</groupId>
         <artifactId>switchyard-core-parent</artifactId>
         <version>0.4.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    
+
     <artifactId>switchyard-test</artifactId>
-    
+
     <packaging>jar</packaging>
     <name>SwitchYard: Test Utilities</name>
     <description>Test Utility classes.</description>
@@ -64,6 +64,11 @@
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
+        </dependency>
+        <dependency>
+           <groupId>org.jboss.interceptor</groupId>
+           <artifactId>jboss-interceptor-core</artifactId>
+           <scope>test</scope>
         </dependency>
         <dependency>
            <groupId>org.jboss.weld.se</groupId>
