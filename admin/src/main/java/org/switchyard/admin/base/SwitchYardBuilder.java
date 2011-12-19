@@ -215,6 +215,10 @@ public class SwitchYardBuilder implements DeploymentListener {
             return;
         }
         final BaseApplication application = (BaseApplication) _switchYard.getApplication(applicationName);
+        if (application == null) {
+            _log.warn("serviceUndeployed() could not resolve application named: " + applicationName);
+            return;
+        }
         application.removeService(serviceName);
     }
 
