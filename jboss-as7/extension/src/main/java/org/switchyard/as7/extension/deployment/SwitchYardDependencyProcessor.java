@@ -48,6 +48,7 @@ public class SwitchYardDependencyProcessor implements DeploymentUnitProcessor {
     private static final ModuleIdentifier SWITCHYARD_CONFIG_ID = ModuleIdentifier.create("org.switchyard.config");
     private static final ModuleIdentifier SWITCHYARD_RUNTIME_ID = ModuleIdentifier.create("org.switchyard.runtime");
     private static final ModuleIdentifier SWITCHYARD_TRANSFORM_ID = ModuleIdentifier.create("org.switchyard.transform");
+    private static final ModuleIdentifier SWITCHYARD_VALIDATE_ID = ModuleIdentifier.create("org.switchyard.validate");
 
     private List<ModuleIdentifier> _componentModules;
     /**
@@ -81,6 +82,10 @@ public class SwitchYardDependencyProcessor implements DeploymentUnitProcessor {
         dep = new ModuleDependency(moduleLoader, SWITCHYARD_TRANSFORM_ID, false, false, true);
         dep.addImportFilter(META_INF_FILTER, true);
         moduleSpecification.addSystemDependency(dep);
+        dep = new ModuleDependency(moduleLoader, SWITCHYARD_VALIDATE_ID, false, false, true);
+        dep.addImportFilter(META_INF_FILTER, true);
+        moduleSpecification.addSystemDependency(dep);
+        
         for (ModuleIdentifier moduleId : _componentModules) {
             dep = new ModuleDependency(moduleLoader, moduleId, false, false, true);
             dep.addImportFilter(META_INF_FILTER, true);
