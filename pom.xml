@@ -91,6 +91,14 @@
       </repository>
     </repositories>
 
+  <dependencies>
+    <dependency>
+       <groupId>org.jboss.interceptor</groupId>
+       <artifactId>jboss-interceptor-core</artifactId>
+       <scope>test</scope>
+    </dependency>
+  </dependencies>
+
     <build>
         <plugins>
             <plugin>

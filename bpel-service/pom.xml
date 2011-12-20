@@ -17,6 +17,26 @@
        <module>loan_approval</module>
   </modules>
 
+  <dependencyManagement>
+     <dependencies>
+        <dependency>
+           <groupId>org.hibernate</groupId>
+           <artifactId>hibernate-core</artifactId>
+           <version>${version.hibernate.bpel}</version>
+        </dependency>
+        <dependency>
+           <groupId>org.hibernate</groupId>
+           <artifactId>hibernate-entitymanager</artifactId>
+           <version>${version.hibernate.bpel}</version>
+        </dependency>
+        <dependency>
+           <groupId>org.hibernate</groupId>
+           <artifactId>hibernate-validator</artifactId>
+           <version>${version.hibernate.bpel}</version>
+        </dependency>
+     </dependencies>
+    </dependencyManagement>
+
   <dependencies>
     <dependency>
       <groupId>org.switchyard</groupId>
