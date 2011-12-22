@@ -1,6 +1,12 @@
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0">
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-service" targetNamespace="urn:switchyard-quickstart:camel-service:0.1.0">
-        <service name="JavaDSL" promote="JavaDSLBuilder/JavaDSL"/>
+        <service name="JavaDSL" promote="JavaDSLBuilder/JavaDSL">
+            <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
+                <wsdl>wsdl/JavaDSL.wsdl</wsdl>
+                <socketAddr>:18001</socketAddr>
+                <contextPath>quickstart-camel</contextPath>
+            </binding.soap>
+        </service>
         <component name="XMLComponent">
             <implementation.camel xmlns="urn:switchyard-component-camel:config:1.0">
                 <route xmlns="http://camel.apache.org/schema/spring">

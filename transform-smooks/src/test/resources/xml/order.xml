@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<orders:order xmlns:orders="urn:switchyard-quickstart:transform-smooks:1.0">
-    <orderId>PO-19838-XYZ</orderId>
-    <itemId>BUTTER</itemId>
-    <quantity>200</quantity>
-</orders:order>
+<orders:submitOrder xmlns:orders="urn:switchyard-quickstart:transform-smooks:1.0">
+    <order>
+        <orderId>PO-19838-XYZ</orderId>
+        <itemId>BUTTER</itemId>
+        <quantity>200</quantity>
+    </order>
+</orders:submitOrder>

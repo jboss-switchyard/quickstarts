@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions 
+    targetNamespace="urn:switchyard-quickstart:rules-interview-agent:0.1.0" 
+    xmlns="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:tns="urn:switchyard-quickstart:rules-interview-agent:0.1.0"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    
+  <types>
+    <xsd:schema 
+        targetNamespace="urn:switchyard-quickstart:rules-interview-agent:0.1.0" 
+        xmlns:tns="urn:switchyard-quickstart:rules-interview-agent:0.1.0" 
+        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xs:element name="applicant" type="tns:applicantType"/>
+        <xs:complexType name="applicantType">
+            <xs:sequence>
+                <xs:element name="name" type="xs:string"/>
+                <xs:element name="age" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xsd:schema>
+  </types>
+  
+  <message name="verify">
+    <part name="parameters" element="tns:applicant"/>
+  </message>
+  
+  <portType name="Interview">
+    <operation name="verify">
+      <input message="tns:verify"/>
+    </operation>
+  </portType>
+  
+  <binding name="InterviewBinding" type="tns:Interview">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="verify">
+      <soap:operation soapAction="urn:switchyard-quickstart:rules-interview-agent:0.1.0"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+    </operation>
+  </binding>
+  
+  <service name="Interview">
+    <port name="InterviewPort" binding="tns:InterviewBinding">
+      <soap:address location="http://localhost:18001/test"/>
+    </port>
+  </service>
+</definitions>
+

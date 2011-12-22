@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions 
+    targetNamespace="urn:switchyard-quickstart:camel-service:0.1.0" 
+    xmlns="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:tns="urn:switchyard-quickstart:camel-service:0.1.0"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    
+  <types>
+    <xsd:schema 
+        targetNamespace="urn:switchyard-quickstart:camel-service:0.1.0" 
+        xmlns:tns="urn:switchyard-quickstart:camel-service:0.1.0" 
+        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="input" type="xsd:string"/>
+    </xsd:schema>
+  </types>
+  
+  <message name="acceptMessage">
+      <part name="input" element="tns:input"/>
+  </message>
+  
+  <portType name="JavaDSL">
+    <operation name="acceptMessage">
+      <input message="tns:acceptMessage"/>
+    </operation>
+  </portType>
+  
+  <binding name="JavaDSLBinding" type="tns:JavaDSL">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="acceptMessage">
+      <soap:operation soapAction="urn:switchyard-quickstart:camel-service:0.1.0"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+    </operation>
+  </binding>
+  
+  <service name="JavaDSL">
+    <port name="JavaDSLPort" binding="tns:JavaDSLBinding">
+      <soap:address location="http://localhost:18001/camel-service"/>
+    </port>
+  </service>
+</definitions>
+

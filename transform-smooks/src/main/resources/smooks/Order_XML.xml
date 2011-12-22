@@ -25,10 +25,10 @@
         <core:namespace prefix="orders" uri="urn:switchyard-quickstart:transform-smooks:1.0"/>
     </core:namespaces>
 
-    <jb:bean beanId="order" class="org.switchyard.quickstarts.transform.smooks.Order" createOnElement="/orders:order">
-        <jb:value property="orderId" data="/orders:order/orderId" />
-        <jb:value property="itemId" data="/orders:order/itemId" />
-        <jb:value property="quantity" data="/orders:order/quantity" />
+    <jb:bean beanId="order" class="org.switchyard.quickstarts.transform.smooks.Order" createOnElement="/orders:submitOrder">
+        <jb:value property="orderId" data="/orders:submitOrder/order/orderId" />
+        <jb:value property="itemId" data="/orders:submitOrder/order/itemId" />
+        <jb:value property="quantity" data="/orders:submitOrder/order/quantity" />
     </jb:bean>
 
 </smooks-resource-list>

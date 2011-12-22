@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <camel:input xmlns:camel="urn:switchyard-quickstart:camel-service:0.1.0">bob: Hello there!&#xA;sally: I like cheese&#xA;fred: Math makes me sleepy&#xA;bob: E pluribus unum&#xA;sally: And milk too&#xA;bob: Four score and seven years&#xA;sally: Actually, any kind of dairy is OK in my book</camel:input>
+	</soap:Body>
+</soap:Envelope>

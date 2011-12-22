@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Body>
+		<interview:applicant xmlns:interview="urn:switchyard-quickstart:rules-interview:0.1.0">
+			<name>David</name>
+			<age>39</age>
+		</interview:applicant>
+	</soap:Body>
+</soap:Envelope>
