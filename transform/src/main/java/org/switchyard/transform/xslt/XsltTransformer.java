@@ -20,19 +20,18 @@
 
 package org.switchyard.transform.xslt;
 
-import java.io.Reader;
-import java.io.StringWriter;
 import javax.xml.namespace.QName;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.dom.DOMResult;
 import org.apache.log4j.Logger;
 import org.switchyard.Message;
 import org.switchyard.config.model.Scannable;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.transform.BaseTransformer;
+import org.w3c.dom.Document;
 
 /**
  * XSLT Transformer {@link org.switchyard.transform.Transformer}.
@@ -66,13 +65,12 @@ public class XsltTransformer<F, T> extends BaseTransformer<Message, Message> {
     public Message transform(Message message) {
 
         try {
-            StreamSource source = new StreamSource(message.getContent(Reader.class));
-            StringWriter resultWriter = new StringWriter();
-            StreamResult result = new StreamResult(resultWriter);
+            DOMSource source = message.getContent(DOMSource.class);
+            DOMResult result = new DOMResult();
             javax.xml.transform.Transformer transformer = _templates.newTransformer();
             transformer.setErrorListener(new XsltTransformerErrorListener(_failOnWarning));
             transformer.transform(source, result);
-            message.setContent(resultWriter.toString());
+            message.setContent(((Document)result.getNode()).getDocumentElement());
 
         } catch (Exception e) {
             throw new SwitchYardException("Error during xslt transformation", e);

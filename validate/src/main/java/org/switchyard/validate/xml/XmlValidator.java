@@ -1,11 +1,16 @@
 package org.switchyard.validate.xml;
 
 import java.io.IOException;
-import java.io.Reader;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
-import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.ErrorListener;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -19,7 +24,6 @@ import org.switchyard.exception.SwitchYardException;
 import org.switchyard.validate.BaseValidator;
 import org.switchyard.validate.config.model.XmlSchemaType;
 import org.switchyard.validate.config.model.XmlValidateModel;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -47,8 +51,9 @@ public class XmlValidator extends BaseValidator<Message> {
         super(name);
 
         _schemaType = model.getSchemaType();
-        if (_schemaType == null) {
-            throw new SwitchYardException("Could not instantiate XmlValidator: schemaType must be specified.");
+        _schemaFile = model.getSchemaFile();
+        if (_schemaType == null || _schemaFile == null) {
+            throw new SwitchYardException("Could not instantiate XmlValidator: both of schemaType and schemaFile must be specified.");
         }
         
         switch(_schemaType) {
@@ -66,7 +71,6 @@ public class XmlValidator extends BaseValidator<Message> {
                     + "It must be the one of " + XmlSchemaType.values() + ".");
         }
         
-        _schemaFile = model.getSchemaFile();
         _failOnWarning = model.failOnWarning();
         
     }
@@ -74,17 +78,14 @@ public class XmlValidator extends BaseValidator<Message> {
     @Override
     public boolean validate(Message msg) {
         if (XMLConstants.W3C_XML_SCHEMA_NS_URI.equals(_schemaTypeUri) || XMLConstants.RELAXNG_NS_URI.equals(_schemaTypeUri)) {
-            // XML Schema or RELAX NG Validation needs schemaFile
-            if (_schemaFile == null) {
-                throw new SwitchYardException("Error during validation: schemaFile must be specified for '" + _schemaType + "'.");
-            }
+            // XML Schema or RELAX NG Validation
 
             SchemaFactory schemaFactory = SchemaFactory.newInstance(_schemaTypeUri);
             try {
                 Schema schema = schemaFactory.newSchema(new StreamSource(Classes.getResourceAsStream(_schemaFile)));
                 Validator validator = schema.newValidator();
                 validator.setErrorHandler(new XmlValidationErrorHandler(_failOnWarning));
-                validator.validate(new StreamSource(msg.getContent(Reader.class)));
+                validator.validate(msg.getContent(DOMSource.class));
             } catch (SAXException e) {
                 throw new SwitchYardException("Error during validation with '" + _schemaFile + "' as '" + _schemaType + "'.", e);
             } catch (IOException ioe) {
@@ -92,11 +93,11 @@ public class XmlValidator extends BaseValidator<Message> {
             }
         } else if (XMLConstants.XML_DTD_NS_URI.equals(_schemaTypeUri)) {
             // DTD Validation
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setValidating(true);
             try {
-                factory.newSAXParser()
-                        .parse(new InputSource(msg.getContent(Reader.class)), new XmlValidationErrorHandler(_failOnWarning));
+                Transformer transformer = TransformerFactory.newInstance().newTransformer();
+                transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, _schemaFile);
+                transformer.setErrorListener(new XmlValidationErrorListener(_failOnWarning));
+                transformer.transform(msg.getContent(DOMSource.class), new StreamResult());
             } catch (Exception e) {
                 throw new SwitchYardException("Error during validation with '" + _schemaFile + "' as '" + _schemaType + "'.", e);
             }
@@ -127,6 +128,35 @@ public class XmlValidator extends BaseValidator<Message> {
             } else {
                 LOGGER.warn("Warning during validation with '" + _schemaFile + "' as '" + _schemaType + "'", e);
             }
+        }
+    }
+    
+    private class XmlValidationErrorListener implements ErrorListener {
+        private boolean _failOnWarning;
+        
+        public XmlValidationErrorListener(boolean failOnWarning) {
+            _failOnWarning = failOnWarning;
+        }
+        
+        @Override
+        public void fatalError(TransformerException e) throws TransformerException {
+            throw e;
+        }
+
+        @Override
+        public void error(TransformerException e) throws TransformerException {
+            throw e;
+            
+        }
+
+        @Override
+        public void warning(TransformerException e) throws TransformerException {
+            if (_failOnWarning) {
+                throw e;
+            } else {
+                LOGGER.warn("Warning during validation with '" + _schemaFile + "' as '" + _schemaType + "'", e);
+            }
+            
         }
     }
 }

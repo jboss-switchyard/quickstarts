@@ -22,35 +22,46 @@ package org.switchyard.validate.internal.xml;
 import java.io.IOException;
 import java.io.StringReader;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.dom.DOMSource;
+
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.internal.DefaultMessage;
 import org.switchyard.validate.Validator;
 import org.switchyard.validate.AbstractValidatorTestCase;
 import org.switchyard.validate.xml.XmlValidator;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  */
 public class XmlValidatorTest extends AbstractValidatorTestCase {
-
+   private DocumentBuilder builder;
+   
+    @Before
+    public void setup() throws Exception {
+        builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    }
+    
     @Test
     public void test_no_schematype() throws IOException {
         try {
             getValidator("sw-config-no-schematype.xml");
         } catch(RuntimeException e) {
-            Assert.assertEquals("Could not instantiate XmlValidator: schemaType must be specified.", e.getMessage());
+            Assert.assertEquals("Could not instantiate XmlValidator: both of schemaType and schemaFile must be specified.", e.getMessage());
         }
     }
 
     @Test
     public void test_no_schemafile() throws IOException, SAXException {
-        Validator validator = getValidator("sw-config-no-schemafile.xml");
         try {
-            validator.validate(new DefaultMessage().setContent(new StringReader("<order type='A' />")));
+            Validator validator = getValidator("sw-config-no-schemafile.xml");
         } catch(RuntimeException e) {
-            Assert.assertEquals("Error during validation: schemaFile must be specified for 'XML_SCHEMA'.", e.getMessage());
+            Assert.assertEquals("Could not instantiate XmlValidator: both of schemaType and schemaFile must be specified.", e.getMessage());
         }
     }
 
@@ -58,7 +69,12 @@ public class XmlValidatorTest extends AbstractValidatorTestCase {
     public void test_invalid_schemafile() throws IOException, SAXException {
         Validator validator = getValidator("sw-config-invalid-schemafile.xml");
         try {
-            validator.validate(new DefaultMessage().setContent(new StringReader("<order type='A' />")));
+            DOMSource source = new DOMSource(
+                    builder.parse(
+                            new InputSource(
+                                    new StringReader("<order type='A' />")))
+                    .getDocumentElement());
+            validator.validate(new DefaultMessage().setContent(source));
         } catch(RuntimeException e) {
             Assert.assertEquals("Error during validation with '/org/switchyard/validate/internal/xml/person-invalid.xsd' as 'XML_SCHEMA'.", e.getMessage());
         }
@@ -67,14 +83,24 @@ public class XmlValidatorTest extends AbstractValidatorTestCase {
     @Test
     public void test_valid_xml() throws IOException, SAXException {
         Validator validator = getValidator("sw-config-xmlv-01.xml");
-        Assert.assertTrue(validator.validate(new DefaultMessage().setContent(new StringReader("<person name='foo' age='50' />"))));
+        DOMSource source = new DOMSource(
+                builder.parse(
+                        new InputSource(
+                                new StringReader("<person name='foo' age='50' />")))
+                .getDocumentElement());
+        Assert.assertTrue(validator.validate(new DefaultMessage().setContent(source)));
     }
 
     @Test
     public void test_invalid_xml() throws IOException, SAXException {
         Validator validator = getValidator("sw-config-xmlv-01.xml");
         try {
-            validator.validate(new DefaultMessage().setContent(new StringReader("<person name='foo'/>")));
+            DOMSource source = new DOMSource(
+                    builder.parse(
+                            new InputSource(
+                                    new StringReader("<person name='foo'/>")))
+                    .getDocumentElement());
+            validator.validate(new DefaultMessage().setContent(source));
         } catch (RuntimeException e) {
             Assert.assertEquals("Error during validation with '/org/switchyard/validate/internal/xml/person.xsd' as 'XML_SCHEMA'.", e.getMessage());
         }
