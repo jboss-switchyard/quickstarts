@@ -16,52 +16,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.rules.common;
+package org.switchyard.component.bpm.task.jbpm;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 /**
- * Represents available rules actions.
+ * TaskServerControllerServletContextListener.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public enum RulesActionType {
+public class TaskServerControllerServletContextListener implements ServletContextListener {
 
-    /** startRules . */
-    EXECUTE(RulesConstants.EXECUTE),
-    /** signalEvent . */
-    FIRE_ALL_RULES(RulesConstants.FIRE_ALL_RULES),
-    /** abortRulesInstance . */
-    FIRE_UNTIL_HALT(RulesConstants.FIRE_UNTIL_HALT);
-
-    private final String _action;
+    private TaskServerController _controller = null;
 
     /**
-     * Constructs a new RulesActionType with the specified action.
-     * @param action the action
+     * {@inheritDoc}
      */
-    RulesActionType(String action) {
-        _action = action;
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        _controller = new TaskServerController();
+        _controller.start();
     }
 
     /**
-     * Gets the action.
-     * @return the action
+     * {@inheritDoc}
      */
-    public String action() {
-        return _action;
-    }
-
-    /**
-     * Gets the RulesActionType matching the specified action.
-     * @param action the action
-     * @return the matching RulesActionType
-     */
-    public static RulesActionType fromAction(String action) {
-        for (RulesActionType pat : values()) {
-            if (pat.action().equals(action)) {
-                return pat;
-            }
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        try {
+            _controller.stop();
+        } finally {
+            _controller = null;
         }
-        return null;
     }
 
 }

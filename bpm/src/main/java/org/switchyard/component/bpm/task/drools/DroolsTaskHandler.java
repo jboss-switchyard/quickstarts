@@ -18,7 +18,6 @@
  */
 package org.switchyard.component.bpm.task.drools;
 
-import org.drools.runtime.process.ProcessRuntime;
 import org.drools.runtime.process.WorkItem;
 import org.drools.runtime.process.WorkItemHandler;
 import org.drools.runtime.process.WorkItemManager;
@@ -33,7 +32,6 @@ import org.switchyard.component.bpm.task.TaskManager;
  */
 public class DroolsTaskHandler extends BaseTaskHandler {
 
-    private ProcessRuntime _processRuntime;
     private WorkItemHandler _workItemHandler;
 
     /**
@@ -49,24 +47,6 @@ public class DroolsTaskHandler extends BaseTaskHandler {
      */
     public DroolsTaskHandler(String name) {
         super(name);
-    }
-
-    /**
-     * Gets the ProcessRuntime.
-     * @return the ProcessRuntime
-     */
-    public ProcessRuntime getProcessRuntime() {
-        return _processRuntime;
-    }
-
-    /**
-     * Sets the ProcessRuntime.
-     * @param processRuntime the ProcessRuntime
-     * @return this DroolsTaskHandler (useful for chaining)
-     */
-    public DroolsTaskHandler setProcessRuntime(ProcessRuntime processRuntime) {
-        _processRuntime = processRuntime;
-        return this;
     }
 
     /**
@@ -93,7 +73,7 @@ public class DroolsTaskHandler extends BaseTaskHandler {
     @Override
     public void executeTask(Task task, TaskManager taskManager) {
         WorkItem workItem = ((DroolsTask)task).getWorkItem();
-        WorkItemManager workItemManager = ((DroolsTaskManager)taskManager).getWorkItemManager();
+        WorkItemManager workItemManager = ((DroolsTaskManager)taskManager).getProcessRuntime().getWorkItemManager();
         _workItemHandler.executeWorkItem(workItem, workItemManager);
     }
 
@@ -103,7 +83,7 @@ public class DroolsTaskHandler extends BaseTaskHandler {
     @Override
     public void abortTask(Task task, TaskManager taskManager) {
         WorkItem workItem = ((DroolsTask)task).getWorkItem();
-        WorkItemManager workItemManager = ((DroolsTaskManager)taskManager).getWorkItemManager();
+        WorkItemManager workItemManager = ((DroolsTaskManager)taskManager).getProcessRuntime().getWorkItemManager();
         _workItemHandler.abortWorkItem(workItem, workItemManager);
     }
 

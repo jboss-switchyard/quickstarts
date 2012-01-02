@@ -18,7 +18,7 @@
  */
 package org.switchyard.component.rules.config.model.v1;
 
-import static org.switchyard.component.rules.common.RulesConstants.MESSAGE_CONTENT_NAME;
+import static org.switchyard.component.rules.RulesConstants.MESSAGE_CONTENT_NAME;
 
 import java.util.ArrayList;
 import java.util.Collections;

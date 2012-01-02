@@ -18,7 +18,7 @@
  */
 package org.switchyard.component.bpm.config.model;
 
-import org.switchyard.component.bpm.common.ProcessActionType;
+import org.switchyard.component.bpm.ProcessActionType;
 import org.switchyard.config.model.Model;
 
 /**

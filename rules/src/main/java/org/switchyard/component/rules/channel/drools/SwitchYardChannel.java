@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.rules.event.drools;
+package org.switchyard.component.rules.channel.drools;
 
 import org.drools.runtime.Channel;
 import org.switchyard.ServiceReference;

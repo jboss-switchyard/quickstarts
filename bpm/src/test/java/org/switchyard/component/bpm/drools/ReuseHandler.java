@@ -39,7 +39,7 @@ public class ReuseHandler extends DroolsTaskHandler implements WorkItemHandler {
     }
 
     @Override
-    public void executeWorkItem(WorkItem workItem,  WorkItemManager workItemManager) {
+    public void executeWorkItem(WorkItem workItem, WorkItemManager workItemManager) {
         _holder.value = "handler executed";
         workItemManager.completeWorkItem(workItem.getId(), null);
     }

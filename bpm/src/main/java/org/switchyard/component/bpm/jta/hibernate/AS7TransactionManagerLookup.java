@@ -80,4 +80,16 @@ public class AS7TransactionManagerLookup implements TransactionManagerLookup {
         return null;
     }
 
+    /**
+     * Helper method to get the TransactionManager, if possible.
+     * @return the TransactionManager, or null if it couldn't be found
+     */
+    public static TransactionManager getTransactionManager() {
+        try {
+            return new AS7TransactionManagerLookup().getTransactionManager(null);
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
 }

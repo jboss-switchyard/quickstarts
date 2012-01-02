@@ -19,11 +19,11 @@
 package org.switchyard.component.bpm.drools;
 
 import static org.switchyard.Scope.EXCHANGE;
-import static org.switchyard.component.bpm.common.ProcessActionType.SIGNAL_EVENT;
-import static org.switchyard.component.bpm.common.ProcessActionType.START_PROCESS;
-import static org.switchyard.component.bpm.common.ProcessConstants.ACTION_TYPE_VAR;
-import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_EVENT_TYPE_VAR;
-import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_INSTANCE_ID_VAR;
+import static org.switchyard.component.bpm.ProcessActionType.SIGNAL_EVENT;
+import static org.switchyard.component.bpm.ProcessActionType.START_PROCESS;
+import static org.switchyard.component.bpm.ProcessConstants.ACTION_TYPE_VAR;
+import static org.switchyard.component.bpm.ProcessConstants.PROCESS_EVENT_TYPE_VAR;
+import static org.switchyard.component.bpm.ProcessConstants.PROCESS_INSTANCE_ID_VAR;
 import static org.switchyard.metadata.ExchangeContract.IN_ONLY;
 
 import javax.xml.namespace.QName;
@@ -51,6 +51,7 @@ import org.switchyard.component.bpm.config.model.v1.V1TaskHandlerModel;
 import org.switchyard.component.bpm.exchange.BPMExchangeHandler;
 import org.switchyard.component.bpm.exchange.BPMExchangeHandlerFactory;
 import org.switchyard.component.bpm.task.SwitchYardServiceTaskHandler;
+import org.switchyard.component.bpm.task.drools.DroolsTaskManager;
 import org.switchyard.component.bpm.task.drools.DroolsWorkItemHandler;
 import org.switchyard.test.SwitchYardRunner;
 
@@ -82,7 +83,7 @@ public class BPMDroolsTests {
         StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession();
         SwitchYardServiceTaskHandler stih = new SwitchYardServiceTaskHandler();
         stih.setServiceDomain(serviceDomain);
-        ksession.getWorkItemManager().registerWorkItemHandler(stih.getName(), new DroolsWorkItemHandler(ksession, stih));
+        ksession.getWorkItemManager().registerWorkItemHandler(stih.getName(), new DroolsWorkItemHandler(stih, new DroolsTaskManager(ksession)));
         ksession.startProcess("CallService");
         ksession.halt();
         ksession.dispose();

@@ -46,22 +46,13 @@ public final class Agents {
     private static AtomicInteger _nameCounter = new AtomicInteger();
 
     /**
-     * Creates a new KnowledgeAgent given the specified component implementation model.
-     * @param model the model
-     * @return the agent
-     */
-    public static KnowledgeAgent newAgent(ComponentImplementationModel model) {
-        return newAgent(model, null);
-    }
-
-    /**
-     * Creates a new KnowledgeAgent given the specified component implementation model and classloader.
-     * @param model the model
-     * @param loader the classloader
+     * Creates a new KnowledgeAgent given the specified component implementation config.
+     * @param cic the component implementation config
      * @param additionalResources any extra resources to add
      * @return the agent
      */
-    public static KnowledgeAgent newAgent(ComponentImplementationModel model, ClassLoader loader, Resource... additionalResources) {
+    public static KnowledgeAgent newAgent(ComponentImplementationConfig cic, Resource... additionalResources) {
+        ComponentImplementationModel model = cic.getModel();
         String name;
         try {
             name = model.getComponent().getComposite().getName();
@@ -73,18 +64,19 @@ public final class Agents {
             name = Agents.class.getSimpleName();
         }
         name = name + "-" + _nameCounter.incrementAndGet();
-        if (loader == null) {
-            loader = Classes.getClassLoader(Agents.class);
-        }
-        KnowledgeBaseConfiguration kbaseConfig = Configs.getBaseConfiguration(model, loader);
+        KnowledgeBaseConfiguration kbaseConfig = Configs.getBaseConfiguration(cic);
         KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase(kbaseConfig);
-        KnowledgeAgentConfiguration kagentConfig = Configs.getAgentConfiguration();
-        KnowledgeBuilderConfiguration kbuilderConfig = Configs.getBuilderConfiguration(loader);
+        KnowledgeAgentConfiguration kagentConfig = Configs.getAgentConfiguration(cic);
+        KnowledgeBuilderConfiguration kbuilderConfig = Configs.getBuilderConfiguration(cic);
         KnowledgeAgent kagent = KnowledgeAgentFactory.newKnowledgeAgent(name, kbase, kagentConfig, kbuilderConfig);
         List<Resource> resources = new ArrayList<Resource>();
         resources.addAll(model.getResources());
         if (additionalResources != null) {
             resources.addAll(Arrays.asList(additionalResources));
+        }
+        ClassLoader loader = cic.getLoader();
+        if (loader == null) {
+            loader = Classes.getClassLoader(Agents.class);
         }
         ChangeSet changeSet = ChangeSets.newChangeSet(resources, loader);
         kagent.applyChangeSet(changeSet);

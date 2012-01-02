@@ -16,34 +16,53 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.task;
+package org.switchyard.component.bpm;
 
-import java.util.Map;
 
 /**
- * Represents a mangager of a Task.
+ * Represents available process actions.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface TaskManager {
+public enum ProcessActionType {
+
+    /** startProcess . */
+    START_PROCESS(ProcessConstants.START_PROCESS),
+    /** signalEvent . */
+    SIGNAL_EVENT(ProcessConstants.SIGNAL_EVENT),
+    /** abortProcessInstance . */
+    ABORT_PROCESS_INSTANCE(ProcessConstants.ABORT_PROCESS_INSTANCE);
+
+    private final String _action;
 
     /**
-     * Registers a TaskHandler.
-     * @param taskHandler the task handler
+     * Constructs a new ProcessActionType with the specified action.
+     * @param action the action
      */
-    public void registerTaskHandler(TaskHandler taskHandler);
+    ProcessActionType(String action) {
+        _action = action;
+    }
 
     /**
-     * Marks the task as complete.
-     * @param id the task id
-     * @param results the task results
+     * Gets the action.
+     * @return the action
      */
-    public void completeTask(Long id, Map<String, Object> results);
+    public String action() {
+        return _action;
+    }
 
     /**
-     * Marks the task as aborted.
-     * @param id the task id
+     * Gets the ProcessActionType matching the specified action.
+     * @param action the action
+     * @return the matching ProcessActionType
      */
-    public void abortTask(Long id);
+    public static ProcessActionType fromAction(String action) {
+        for (ProcessActionType pat : values()) {
+            if (pat.action().equals(action)) {
+                return pat;
+            }
+        }
+        return null;
+    }
 
 }

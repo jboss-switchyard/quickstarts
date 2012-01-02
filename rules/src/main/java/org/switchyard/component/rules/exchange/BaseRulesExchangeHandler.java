@@ -19,7 +19,7 @@
 package org.switchyard.component.rules.exchange;
 
 import static org.switchyard.Scope.EXCHANGE;
-import static org.switchyard.component.rules.common.RulesConstants.ACTION_TYPE_VAR;
+import static org.switchyard.component.rules.RulesConstants.ACTION_TYPE_VAR;
 
 import org.apache.log4j.Logger;
 import org.switchyard.BaseHandler;
@@ -27,8 +27,8 @@ import org.switchyard.Context;
 import org.switchyard.HandlerException;
 import org.switchyard.Property;
 import org.switchyard.common.lang.Strings;
-import org.switchyard.component.rules.common.RulesActionType;
-import org.switchyard.component.rules.common.RulesConstants;
+import org.switchyard.component.rules.RulesActionType;
+import org.switchyard.component.rules.RulesConstants;
 import org.switchyard.component.rules.config.model.RulesActionModel;
 
 /**

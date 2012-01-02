@@ -16,29 +16,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.common;
+package org.switchyard.component.rules;
+
 
 /**
- * Represents available process actions.
+ * Represents available rules actions.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public enum ProcessActionType {
+public enum RulesActionType {
 
-    /** startProcess . */
-    START_PROCESS(ProcessConstants.START_PROCESS),
+    /** startRules . */
+    EXECUTE(RulesConstants.EXECUTE),
     /** signalEvent . */
-    SIGNAL_EVENT(ProcessConstants.SIGNAL_EVENT),
-    /** abortProcessInstance . */
-    ABORT_PROCESS_INSTANCE(ProcessConstants.ABORT_PROCESS_INSTANCE);
+    FIRE_ALL_RULES(RulesConstants.FIRE_ALL_RULES),
+    /** abortRulesInstance . */
+    FIRE_UNTIL_HALT(RulesConstants.FIRE_UNTIL_HALT);
 
     private final String _action;
 
     /**
-     * Constructs a new ProcessActionType with the specified action.
+     * Constructs a new RulesActionType with the specified action.
      * @param action the action
      */
-    ProcessActionType(String action) {
+    RulesActionType(String action) {
         _action = action;
     }
 
@@ -51,12 +52,12 @@ public enum ProcessActionType {
     }
 
     /**
-     * Gets the ProcessActionType matching the specified action.
+     * Gets the RulesActionType matching the specified action.
      * @param action the action
-     * @return the matching ProcessActionType
+     * @return the matching RulesActionType
      */
-    public static ProcessActionType fromAction(String action) {
-        for (ProcessActionType pat : values()) {
+    public static RulesActionType fromAction(String action) {
+        for (RulesActionType pat : values()) {
             if (pat.action().equals(action)) {
                 return pat;
             }

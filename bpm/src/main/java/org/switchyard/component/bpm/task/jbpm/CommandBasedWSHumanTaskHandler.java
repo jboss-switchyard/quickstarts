@@ -19,29 +19,19 @@
 package org.switchyard.component.bpm.task.jbpm;
 
 import org.drools.runtime.KnowledgeRuntime;
-import org.switchyard.component.bpm.task.Task;
-import org.switchyard.component.bpm.task.TaskManager;
-import org.switchyard.component.bpm.task.drools.DroolsTaskHandler;
 
 /**
  * Wraps a jBPM {@link org.jbpm.process.workitem.wsht.CommandBasedWSHumanTaskHandler CommandBasedWSHumanTaskHandler}.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class CommandBasedWSHumanTaskHandler extends DroolsTaskHandler {
-
-    /**
-     * The default name for this TaskHandler.
-     */
-    public static final String HUMAN_TASK = "Human Task";
-
-    private org.jbpm.process.workitem.wsht.CommandBasedWSHumanTaskHandler _cbwshth;
+public class CommandBasedWSHumanTaskHandler extends WSHumanTaskHandler {
 
     /**
      * Constructs a new CommandBasedWSHumanTaskHandler with the default name.
      */
     public CommandBasedWSHumanTaskHandler() {
-        super(HUMAN_TASK);
+        super();
     }
 
     /**
@@ -52,69 +42,19 @@ public class CommandBasedWSHumanTaskHandler extends DroolsTaskHandler {
         super(name);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void executeTask(Task task, TaskManager taskManager) {
-        connect();
-        super.executeTask(task, taskManager);
-        //  tasks get completed by humans!
-        //taskManager.completeTask(task.getId(), task.getResults());
-        disconnect();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void abortTask(Task task, TaskManager taskManager) {
-        connect();
-        super.abortTask(task, taskManager);
-        taskManager.abortTask(task.getId());
-        disconnect();
-    }
-
-    private void connect() {
-        KnowledgeRuntime kruntime = (KnowledgeRuntime)getProcessRuntime();
-        _cbwshth = new org.jbpm.process.workitem.wsht.CommandBasedWSHumanTaskHandler(kruntime) {
+    protected Connector newConnector(KnowledgeRuntime kruntime) {
+        final org.jbpm.process.workitem.wsht.CommandBasedWSHumanTaskHandler handler = new org.jbpm.process.workitem.wsht.CommandBasedWSHumanTaskHandler(kruntime);
+        return new Connector(handler) {
             @Override
-            public void connect() {
-                boolean ready = false;
-                int attempts = 0;
-                while (!ready) {
-                    try {
-                        setClient(null);
-                        super.connect();
-                        ready = true;
-                    } catch (Throwable t) {
-                        try {
-                            dispose();
-                            Thread.sleep(1000);
-                        } catch (Throwable ignore) {
-                            // here to keep checkstyle happy ("Must have at least one statement.")
-                            ignore.getMessage();
-                        }
-                        attempts++;
-                        ready = attempts > 9;
-                    }
-                }
+            public void doConnect() throws Exception {
+                handler.connect();
+            }
+            @Override
+            public void doDispose() throws Exception {
+                handler.dispose();
             }
         };
-        setWorkItemHandler(_cbwshth);
-    }
-
-    private void disconnect() {
-        if (_cbwshth != null) {
-            try {
-                _cbwshth.dispose();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            } finally {
-                _cbwshth = null;
-                setWorkItemHandler(null);
-            }
-        }
     }
 
 }

@@ -18,18 +18,20 @@
  */
 package org.switchyard.component.bpm.exchange.drools;
 
-import static org.switchyard.component.bpm.common.ProcessConstants.MESSAGE_CONTENT_IN;
-import static org.switchyard.component.bpm.common.ProcessConstants.MESSAGE_CONTENT_OUT;
-import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_ID_VAR;
-import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_INSTANCE_ID_VAR;
+import static org.switchyard.component.bpm.ProcessConstants.MESSAGE_CONTENT_IN;
+import static org.switchyard.component.bpm.ProcessConstants.MESSAGE_CONTENT_OUT;
+import static org.switchyard.component.bpm.ProcessConstants.PROCESS_ID_VAR;
+import static org.switchyard.component.bpm.ProcessConstants.PROCESS_INSTANCE_ID_VAR;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.xml.namespace.QName;
 
+import org.apache.log4j.Logger;
 import org.drools.KnowledgeBase;
 import org.drools.agent.KnowledgeAgent;
 import org.drools.logger.KnowledgeRuntimeLogger;
@@ -37,7 +39,6 @@ import org.drools.runtime.Environment;
 import org.drools.runtime.KnowledgeSessionConfiguration;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.process.ProcessInstance;
-import org.drools.runtime.process.WorkItemManager;
 import org.drools.runtime.process.WorkflowProcessInstance;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
@@ -53,18 +54,21 @@ import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.io.resource.SimpleResource;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.type.reflect.Construction;
-import org.switchyard.component.bpm.common.ProcessActionType;
+import org.switchyard.component.bpm.ProcessActionType;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.ProcessActionModel;
 import org.switchyard.component.bpm.config.model.TaskHandlerModel;
 import org.switchyard.component.bpm.exchange.BaseBPMExchangeHandler;
 import org.switchyard.component.bpm.task.TaskHandler;
-import org.switchyard.component.bpm.task.drools.DroolsWorkItemHandler;
+import org.switchyard.component.bpm.task.TaskManager;
+import org.switchyard.component.bpm.task.drools.DroolsTaskManager;
 import org.switchyard.component.common.rules.config.model.AuditModel;
 import org.switchyard.component.common.rules.util.drools.Agents;
 import org.switchyard.component.common.rules.util.drools.Audits;
 import org.switchyard.component.common.rules.util.drools.Bases;
+import org.switchyard.component.common.rules.util.drools.ComponentImplementationConfig;
 import org.switchyard.component.common.rules.util.drools.Configs;
+import org.switchyard.component.common.rules.util.drools.Environments;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.metadata.ServiceOperation;
 
@@ -75,14 +79,18 @@ import org.switchyard.metadata.ServiceOperation;
  */
 public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
 
+    private static final Logger LOGGER = Logger.getLogger(DroolsBPMExchangeHandler.class);
+
     private final ServiceDomain _serviceDomain;
     private String _processId;
     private String _messageContentInName;
     private String _messageContentOutName;
     private KnowledgeAgent _kagent;
     private AuditModel _audit;
+    private String _targetNamespace;
+    private List<TaskHandlerModel> _taskHandlerModels = new ArrayList<TaskHandlerModel>();
     private List<TaskHandler> _taskHandlers = new ArrayList<TaskHandler>();
-    private Map<String,ProcessActionModel> _actions = new HashMap<String,ProcessActionModel>();
+    private Map<String,ProcessActionModel> _actionModels = new HashMap<String,ProcessActionModel>();
     private KnowledgeBase _kbase;
     private KnowledgeSessionConfiguration _ksessionConfig;
     private Environment _environment;
@@ -112,36 +120,34 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
             _messageContentOutName = MESSAGE_CONTENT_OUT;
         }
         ComponentModel cm = model.getComponent();
-        String tns = cm != null ? cm.getTargetNamespace() : null;
-        for (TaskHandlerModel tihm : model.getTaskHandlers()) {
-            TaskHandler tih = Construction.construct(tihm.getClazz());
-            String name = tihm.getName();
-            if (name != null) {
-                tih.setName(name);
-            }
-            tih.setMessageContentInName(_messageContentInName);
-            tih.setMessageContentOutName(_messageContentOutName);
-            tih.setTargetNamespace(tns);
-            tih.setServiceDomain(_serviceDomain);
-            _taskHandlers.add(tih);
-        }
+        _targetNamespace = cm != null ? cm.getTargetNamespace() : null;
+        _taskHandlerModels.addAll(model.getTaskHandlers());
         ClassLoader loader = Classes.getClassLoader(getClass());
         ResourceType.install(loader);
+        ComponentImplementationConfig cic = new ComponentImplementationConfig(model, loader);
+        Map<String, Object> env = new HashMap<String, Object>();
+        //env.put(EnvironmentName.ENTITY_MANAGER_FACTORY, Persistence.createEntityManagerFactory("org.jbpm.persistence.jpa"));
+        //env.put(EnvironmentName.TRANSACTION_MANAGER, AS7TransactionManagerLookup.getTransactionManager());
+        cic.setEnvironmentOverrides(env);
+        Properties props = new Properties();
+        //props.setProperty("drools.processInstanceManagerFactory", JPAProcessInstanceManagerFactory.class.getName());
+        //props.setProperty("drools.processSignalManagerFactory", JPASignalManagerFactory.class.getName());
+        cic.setPropertiesOverrides(props);
         Resource procDef = model.getProcessDefinition();
         if (procDef.getType() == null) {
             procDef = new SimpleResource(procDef.getLocation(), "BPMN2");
         }
         if (model.isAgent()) {
-            _kagent = Agents.newAgent(model, loader, procDef);
+            _kagent = Agents.newAgent(cic, procDef);
             _kbase = _kagent.getKnowledgeBase();
         } else {
-            _kbase = Bases.newBase(model, loader, procDef);
+            _kbase = Bases.newBase(cic, procDef);
         }
-        _ksessionConfig = Configs.getSessionConfiguration(model);
-        _environment = Configs.getEnvironment();
+        _ksessionConfig = Configs.getSessionConfiguration(cic);
+        _environment = Environments.getEnvironment(cic);
         _audit = model.getAudit();
         for (ProcessActionModel pam : model.getProcessActions()) {
-            _actions.put(pam.getName(), pam);
+            _actionModels.put(pam.getName(), pam);
         }
     }
 
@@ -152,9 +158,20 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
     public void start(ServiceReference serviceRef) {
         _ksession = _kbase.newStatefulKnowledgeSession(_ksessionConfig, _environment);
         _klogger = Audits.getLogger(_audit, _ksession);
-        WorkItemManager wim = _ksession.getWorkItemManager();
-        for (TaskHandler th : _taskHandlers) {
-            wim.registerWorkItemHandler(th.getName(), new DroolsWorkItemHandler(_ksession, th));
+        TaskManager tm = new DroolsTaskManager(_ksession);
+        for (TaskHandlerModel thm : _taskHandlerModels) {
+            TaskHandler th = Construction.construct(thm.getClazz());
+            String name = thm.getName();
+            if (name != null) {
+                th.setName(name);
+            }
+            th.setMessageContentInName(_messageContentInName);
+            th.setMessageContentOutName(_messageContentOutName);
+            th.setTargetNamespace(_targetNamespace);
+            th.setServiceDomain(_serviceDomain);
+            tm.registerTaskHandler(th);
+            th.init();
+            _taskHandlers.add(th);
         }
     }
 
@@ -168,7 +185,7 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
         }
         Context context = exchange.getContext();
         ServiceOperation serviceOperation = exchange.getContract().getServiceOperation();
-        ProcessActionModel processActionModel = _actions.get(serviceOperation.getName());
+        ProcessActionModel processActionModel = _actionModels.get(serviceOperation.getName());
         ProcessActionType processActionType = getProcessActionType(context, processActionModel);
         Message messageIn = exchange.getMessage();
         Long processInstanceId = null;
@@ -233,6 +250,13 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
      */
     @Override
     public void stop(ServiceReference serviceRef) {
+        for (TaskHandler th : _taskHandlers) {
+            try {
+                th.destroy();
+            } catch (Throwable t) {
+                LOGGER.error("problem destroying TaskHandler: " + th.getName(), t);
+            }
+        }
         if (_ksession != null) {
             try {
                 _ksession.halt();
@@ -260,7 +284,8 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
     public void destroy(ServiceReference serviceRef) {
         _kbase = null;
         _taskHandlers.clear();
-        _actions.clear();
+        _taskHandlerModels.clear();
+        _actionModels.clear();
         _messageContentInName = null;
         _processId = null;
         if (_kagent != null) {

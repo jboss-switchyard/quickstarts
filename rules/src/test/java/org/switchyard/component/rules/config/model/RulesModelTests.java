@@ -41,7 +41,7 @@ import org.switchyard.component.common.rules.AuditType;
 import org.switchyard.component.common.rules.ClockType;
 import org.switchyard.component.common.rules.EventProcessingType;
 import org.switchyard.component.common.rules.config.model.AuditModel;
-import org.switchyard.component.rules.common.RulesActionType;
+import org.switchyard.component.rules.RulesActionType;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;

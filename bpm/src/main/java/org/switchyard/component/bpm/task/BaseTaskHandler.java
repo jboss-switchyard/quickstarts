@@ -137,6 +137,22 @@ public abstract class BaseTaskHandler implements TaskHandler {
      * {@inheritDoc}
      */
     @Override
+    public void init() {
+        // override if necessary
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void destroy() {
+        // override if necessary
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void executeTask(Task task, TaskManager taskManager) {
         // override if necessary
     }

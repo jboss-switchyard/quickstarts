@@ -18,7 +18,6 @@
  */
 package org.switchyard.component.bpm.task.drools;
 
-import org.drools.runtime.process.ProcessRuntime;
 import org.drools.runtime.process.WorkItem;
 import org.drools.runtime.process.WorkItemHandler;
 import org.drools.runtime.process.WorkItemManager;
@@ -31,20 +30,17 @@ import org.switchyard.component.bpm.task.TaskHandler;
  */
 public class DroolsWorkItemHandler implements WorkItemHandler {
 
-    private final ProcessRuntime _processRuntime;
     private final TaskHandler _taskHandler;
+    private final DroolsTaskManager _taskManager;
 
     /**
      * Constructs a new DroolsWorkItemHandler.
-     * @param processRuntime the ProcessRuntime
      * @param taskHandler the wrapped TaskHandler
+     * @param taskManager the wrapped TaskManager
      */
-    public DroolsWorkItemHandler(ProcessRuntime processRuntime, TaskHandler taskHandler) {
-        _processRuntime = processRuntime;
+    public DroolsWorkItemHandler(TaskHandler taskHandler, DroolsTaskManager taskManager) {
         _taskHandler = taskHandler;
-        if (_taskHandler instanceof DroolsTaskHandler) {
-            ((DroolsTaskHandler)_taskHandler).setProcessRuntime(processRuntime);
-        }
+        _taskManager = taskManager;
     }
 
     /**
@@ -52,7 +48,7 @@ public class DroolsWorkItemHandler implements WorkItemHandler {
      */
     @Override
     public void executeWorkItem(WorkItem workItem, WorkItemManager workItemManager) {
-        _taskHandler.executeTask(new DroolsTask(_processRuntime, workItem), new DroolsTaskManager(_processRuntime, workItemManager));
+        _taskHandler.executeTask(new DroolsTask(workItem, _taskManager), _taskManager);
     }
 
     /**
@@ -60,7 +56,7 @@ public class DroolsWorkItemHandler implements WorkItemHandler {
      */
     @Override
     public void abortWorkItem(WorkItem workItem, WorkItemManager workItemManager) {
-        _taskHandler.abortTask(new DroolsTask(_processRuntime, workItem), new DroolsTaskManager(_processRuntime, workItemManager));
+        _taskHandler.abortTask(new DroolsTask(workItem, _taskManager), _taskManager);
     }
 
 }

@@ -35,7 +35,7 @@ import org.switchyard.component.rules.Execute;
 import org.switchyard.component.rules.FireAllRules;
 import org.switchyard.component.rules.FireUntilHalt;
 import org.switchyard.component.rules.Rules;
-import org.switchyard.component.rules.common.RulesActionType;
+import org.switchyard.component.rules.RulesActionType;
 import org.switchyard.component.rules.config.model.v1.V1ChannelModel;
 import org.switchyard.component.rules.config.model.v1.V1RulesActionModel;
 import org.switchyard.component.rules.config.model.v1.V1RulesComponentImplementationModel;

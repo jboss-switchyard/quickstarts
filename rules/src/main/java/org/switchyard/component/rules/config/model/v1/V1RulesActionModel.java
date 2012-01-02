@@ -22,7 +22,7 @@ import static org.switchyard.component.rules.config.model.RulesComponentImplemen
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.component.rules.common.RulesActionType;
+import org.switchyard.component.rules.RulesActionType;
 import org.switchyard.component.rules.config.model.RulesActionModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;

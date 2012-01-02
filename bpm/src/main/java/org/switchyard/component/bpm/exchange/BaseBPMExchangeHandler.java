@@ -19,10 +19,10 @@
 package org.switchyard.component.bpm.exchange;
 
 import static org.switchyard.Scope.EXCHANGE;
-import static org.switchyard.component.bpm.common.ProcessConstants.ACTION_TYPE_VAR;
-import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_EVENT_TYPE_VAR;
-import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_EVENT_VAR;
-import static org.switchyard.component.bpm.common.ProcessConstants.PROCESS_INSTANCE_ID_VAR;
+import static org.switchyard.component.bpm.ProcessConstants.ACTION_TYPE_VAR;
+import static org.switchyard.component.bpm.ProcessConstants.PROCESS_EVENT_TYPE_VAR;
+import static org.switchyard.component.bpm.ProcessConstants.PROCESS_EVENT_VAR;
+import static org.switchyard.component.bpm.ProcessConstants.PROCESS_INSTANCE_ID_VAR;
 
 import org.apache.log4j.Logger;
 import org.switchyard.BaseHandler;
@@ -30,7 +30,7 @@ import org.switchyard.Context;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Property;
-import org.switchyard.component.bpm.common.ProcessActionType;
+import org.switchyard.component.bpm.ProcessActionType;
 import org.switchyard.component.bpm.config.model.ProcessActionModel;
 
 /**

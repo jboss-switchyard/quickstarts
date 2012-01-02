@@ -93,17 +93,27 @@ public interface TaskHandler {
     public TaskHandler setServiceDomain(ServiceDomain serviceDomain);
 
     /**
+     * Initializes this task handler.
+     */
+    public void init();
+
+    /**
+     * Destroys this task handler.
+     */
+    public void destroy();
+
+    /**
      * Executes the specified Task.
      * @param task the specified Task
      * @param taskManager the TaskManager
      */
-    public void executeTask(Task task,  TaskManager taskManager);
+    public void executeTask(Task task, TaskManager taskManager);
 
     /**
      * Aborts the specified Task.
      * @param task the specified Task
      * @param taskManager the TaskManager
      */
-    public void abortTask(Task task,  TaskManager taskManager);
+    public void abortTask(Task task, TaskManager taskManager);
 
 }

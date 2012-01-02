@@ -25,7 +25,7 @@ import java.util.List;
 import org.switchyard.common.io.resource.Resource;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.io.resource.SimpleResource;
-import org.switchyard.component.bpm.common.ProcessConstants;
+import org.switchyard.component.bpm.ProcessConstants;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.ProcessActionModel;
 import org.switchyard.component.bpm.config.model.TaskHandlerModel;

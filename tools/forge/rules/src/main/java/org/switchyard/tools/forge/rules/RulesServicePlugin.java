@@ -40,7 +40,7 @@ import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
-import org.switchyard.component.rules.common.RulesActionType;
+import org.switchyard.component.rules.RulesActionType;
 import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
 import org.switchyard.component.rules.config.model.v1.V1RulesActionModel;
 import org.switchyard.component.rules.config.model.v1.V1RulesComponentImplementationModel;

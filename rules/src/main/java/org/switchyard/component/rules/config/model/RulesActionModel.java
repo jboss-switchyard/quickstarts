@@ -18,7 +18,7 @@
  */
 package org.switchyard.component.rules.config.model;
 
-import org.switchyard.component.rules.common.RulesActionType;
+import org.switchyard.component.rules.RulesActionType;
 import org.switchyard.config.model.Model;
 
 /**

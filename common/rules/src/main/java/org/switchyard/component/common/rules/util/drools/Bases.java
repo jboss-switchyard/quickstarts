@@ -30,7 +30,6 @@ import org.drools.builder.KnowledgeBuilderConfiguration;
 import org.drools.builder.KnowledgeBuilderFactory;
 import org.switchyard.common.io.resource.Resource;
 import org.switchyard.common.type.Classes;
-import org.switchyard.component.common.rules.config.model.ComponentImplementationModel;
 
 /**
  * Drools KnowledgeBase Utilities.
@@ -40,33 +39,24 @@ import org.switchyard.component.common.rules.config.model.ComponentImplementatio
 public final class Bases {
 
     /**
-     * Creates a new KnowledgeBase given the specified component implementation model.
-     * @param model the model
-     * @return the base
-     */
-    public static KnowledgeBase newBase(ComponentImplementationModel model) {
-        return newBase(model, null);
-    }
-
-    /**
-     * Creates a new KnowledgeBase given the specified component implementation model and classloader.
-     * @param model the model
-     * @param loader the classloader
+     * Creates a new KnowledgeBase given the specified component implementation config.
+     * @param cic the component implementation config
      * @param additionalResources any extra resources to add
      * @return the base
      */
-    public static KnowledgeBase newBase(ComponentImplementationModel model, ClassLoader loader, Resource... additionalResources) {
-        if (loader == null) {
-            loader = Classes.getClassLoader(Bases.class);
-        }
-        KnowledgeBaseConfiguration kbaseConfig = Configs.getBaseConfiguration(model, loader);
+    public static KnowledgeBase newBase(ComponentImplementationConfig cic, Resource... additionalResources) {
+        KnowledgeBaseConfiguration kbaseConfig = Configs.getBaseConfiguration(cic);
         KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase(kbaseConfig);
-        KnowledgeBuilderConfiguration kbuilderConfig = Configs.getBuilderConfiguration(loader);
+        KnowledgeBuilderConfiguration kbuilderConfig = Configs.getBuilderConfiguration(cic);
         KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(kbase, kbuilderConfig);
         List<Resource> resources = new ArrayList<Resource>();
-        resources.addAll(model.getResources());
+        resources.addAll(cic.getModel().getResources());
         if (additionalResources != null) {
             resources.addAll(Arrays.asList(additionalResources));
+        }
+        ClassLoader loader = cic.getLoader();
+        if (loader == null) {
+            loader = Classes.getClassLoader(Bases.class);
         }
         for (Resource resource : resources) {
             Resources.add(resource, kbuilder, loader);

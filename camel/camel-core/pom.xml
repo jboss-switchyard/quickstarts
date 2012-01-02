@@ -166,7 +166,6 @@
         <dependency>
             <groupId>javax.jms</groupId>
             <artifactId>jms</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hornetq</groupId>

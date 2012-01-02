@@ -22,7 +22,7 @@ import static org.switchyard.component.bpm.config.model.BPMComponentImplementati
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.component.bpm.common.ProcessActionType;
+import org.switchyard.component.bpm.ProcessActionType;
 import org.switchyard.component.bpm.config.model.ProcessActionModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;

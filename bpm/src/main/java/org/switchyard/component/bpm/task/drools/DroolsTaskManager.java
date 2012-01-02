@@ -21,7 +21,6 @@ package org.switchyard.component.bpm.task.drools;
 import java.util.Map;
 
 import org.drools.runtime.process.ProcessRuntime;
-import org.drools.runtime.process.WorkItemManager;
 import org.switchyard.component.bpm.task.TaskHandler;
 import org.switchyard.component.bpm.task.TaskManager;
 
@@ -33,24 +32,29 @@ import org.switchyard.component.bpm.task.TaskManager;
 public class DroolsTaskManager implements TaskManager {
 
     private final ProcessRuntime _processRuntime;
-    private final WorkItemManager _workItemManager;
 
     /**
      * Constructs a new DroolsTaskManager.
      * @param processRuntime the ProcessRuntime
-     * @param workItemManager the wrapped WorkItemManager
      */
-    public DroolsTaskManager(ProcessRuntime processRuntime, WorkItemManager workItemManager) {
+    public DroolsTaskManager(ProcessRuntime processRuntime) {
         _processRuntime = processRuntime;
-        _workItemManager = workItemManager;
     }
 
-    ProcessRuntime getProcessRuntime() {
+    /**
+     * Gets the process runtime.
+     * @return the process runtime
+     */
+    public ProcessRuntime getProcessRuntime() {
         return _processRuntime;
     }
 
-    WorkItemManager getWorkItemManager() {
-        return _workItemManager;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void registerTaskHandler(TaskHandler taskHandler) {
+        _processRuntime.getWorkItemManager().registerWorkItemHandler(taskHandler.getName(), new DroolsWorkItemHandler(taskHandler, this));
     }
 
     /**
@@ -58,7 +62,7 @@ public class DroolsTaskManager implements TaskManager {
      */
     @Override
     public void completeTask(Long id, Map<String, Object> results) {
-        _workItemManager.completeWorkItem(id.longValue(), results);
+        _processRuntime.getWorkItemManager().completeWorkItem(id.longValue(), results);
     }
 
     /**
@@ -66,15 +70,7 @@ public class DroolsTaskManager implements TaskManager {
      */
     @Override
     public void abortTask(Long id) {
-        _workItemManager.abortWorkItem(id.longValue());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void registerTaskHandler(String taskName, TaskHandler taskHandler) {
-        _workItemManager.registerWorkItemHandler(taskName, new DroolsWorkItemHandler(_processRuntime, taskHandler));
+        _processRuntime.getWorkItemManager().abortWorkItem(id.longValue());
     }
 
 }

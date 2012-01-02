@@ -18,9 +18,12 @@
  */
 package org.switchyard.component.bpm.task.jbpm;
 
+import org.drools.runtime.KnowledgeRuntime;
+import org.drools.runtime.process.WorkItemHandler;
 import org.switchyard.component.bpm.task.Task;
 import org.switchyard.component.bpm.task.TaskManager;
 import org.switchyard.component.bpm.task.drools.DroolsTaskHandler;
+import org.switchyard.component.bpm.task.drools.DroolsTaskManager;
 
 /**
  * Wraps a jBPM {@link org.jbpm.process.workitem.wsht.WSHumanTaskHandler WSHumanTaskHandler}.
@@ -34,7 +37,7 @@ public class WSHumanTaskHandler extends DroolsTaskHandler {
      */
     public static final String HUMAN_TASK = "Human Task";
 
-    private org.jbpm.process.workitem.wsht.WSHumanTaskHandler _wshth;
+    private Connector _connector = null;
 
     /**
      * Constructs a new WSHumanTaskHandler with the default name.
@@ -55,64 +58,103 @@ public class WSHumanTaskHandler extends DroolsTaskHandler {
      * {@inheritDoc}
      */
     @Override
-    public void executeTask(Task task, TaskManager taskManager) {
-        connect();
-        super.executeTask(task, taskManager);
-        // tasks get completed by humans!
-        //taskManager.completeTask(task.getId(), task.getResults());
-        disconnect();
+    public void destroy() {
+        if (_connector != null) {
+            _connector.dispose();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void abortTask(Task task, TaskManager taskManager) {
-        connect();
-        super.abortTask(task, taskManager);
-        taskManager.abortTask(task.getId());
-        disconnect();
+    public final void executeTask(Task task, TaskManager taskManager) {
+        init(taskManager);
+        super.executeTask(task, taskManager);
     }
 
-    private void connect() {
-        _wshth = new org.jbpm.process.workitem.wsht.WSHumanTaskHandler() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void abortTask(Task task, TaskManager taskManager) {
+        init(taskManager);
+        super.abortTask(task, taskManager);
+    }
+
+    protected synchronized void init(TaskManager taskManager) {
+        if (_connector == null) {
+            KnowledgeRuntime kruntime = (KnowledgeRuntime)((DroolsTaskManager)taskManager).getProcessRuntime();
+            _connector = newConnector(kruntime);
+            _connector.connect();
+            setWorkItemHandler(_connector.getWorkItemHandler());
+        }
+    }
+
+    protected Connector newConnector(KnowledgeRuntime kruntime) {
+        final org.jbpm.process.workitem.wsht.WSHumanTaskHandler handler = new org.jbpm.process.workitem.wsht.WSHumanTaskHandler(kruntime);
+        return new Connector(handler) {
             @Override
-            public void connect() {
-                boolean ready = false;
-                int attempts = 0;
-                while (!ready) {
-                    try {
-                        setClient(null);
-                        super.connect();
-                        ready = true;
-                    } catch (Throwable t) {
-                        try {
-                            dispose();
-                            Thread.sleep(1000);
-                        } catch (Throwable ignore) {
-                            // here to keep checkstyle happy ("Must have at least one statement.")
-                            ignore.getMessage();
-                        }
-                        attempts++;
-                        ready = attempts > 9;
-                    }
-                }
+            public void doConnect() throws Exception {
+                handler.connect();
+            }
+            @Override
+            public void doDispose() throws Exception {
+                handler.dispose();
             }
         };
-        setWorkItemHandler(_wshth);
     }
 
-    private void disconnect() {
-        if (_wshth != null) {
-            try {
-                _wshth.dispose();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            } finally {
-                _wshth = null;
-                setWorkItemHandler(null);
+    protected static abstract class Connector {
+
+        private final WorkItemHandler _handler;
+
+        public Connector(WorkItemHandler handler) {
+            _handler = handler;
+        }
+
+        public final WorkItemHandler getWorkItemHandler() {
+            return _handler;
+        }
+
+        public final void connect() {
+            boolean ready = false;
+            int attempts = 0;
+            Exception exception = null;
+            while (!ready) {
+                try {
+                    doConnect();
+                    ready = true;
+                } catch (Throwable t) {
+                    try {
+                        dispose();
+                        Thread.sleep(1000);
+                    } catch (Exception e) {
+                        if (exception == null) {
+                            exception = e;
+                        }
+                    }
+                    attempts++;
+                    ready = attempts > 9;
+                }
+            }
+            if (exception != null) {
+                throw new RuntimeException(exception);
             }
         }
+
+        public abstract void doConnect() throws Exception;
+
+        public final void dispose() {
+            try {
+                doDispose();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        public abstract void doDispose() throws Exception;
+
     }
 
 }

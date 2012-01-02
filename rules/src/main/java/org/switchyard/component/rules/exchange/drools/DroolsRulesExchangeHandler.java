@@ -18,8 +18,8 @@
  */
 package org.switchyard.component.rules.exchange.drools;
 
-import static org.switchyard.component.rules.common.RulesConstants.MESSAGE;
-import static org.switchyard.component.rules.common.RulesConstants.MESSAGE_CONTENT;
+import static org.switchyard.component.rules.RulesConstants.MESSAGE;
+import static org.switchyard.component.rules.RulesConstants.MESSAGE_CONTENT;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,13 +52,15 @@ import org.switchyard.component.common.rules.config.model.AuditModel;
 import org.switchyard.component.common.rules.util.drools.Agents;
 import org.switchyard.component.common.rules.util.drools.Audits;
 import org.switchyard.component.common.rules.util.drools.Bases;
+import org.switchyard.component.common.rules.util.drools.ComponentImplementationConfig;
 import org.switchyard.component.common.rules.util.drools.Configs;
-import org.switchyard.component.rules.common.RulesActionType;
+import org.switchyard.component.common.rules.util.drools.Environments;
+import org.switchyard.component.rules.RulesActionType;
+import org.switchyard.component.rules.channel.drools.SwitchYardChannel;
+import org.switchyard.component.rules.channel.drools.SwitchYardServiceChannel;
 import org.switchyard.component.rules.config.model.ChannelModel;
 import org.switchyard.component.rules.config.model.RulesActionModel;
 import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
-import org.switchyard.component.rules.event.drools.SwitchYardChannel;
-import org.switchyard.component.rules.event.drools.SwitchYardServiceChannel;
 import org.switchyard.component.rules.exchange.BaseRulesExchangeHandler;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceOperation;
@@ -105,14 +107,15 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
         }
         ClassLoader loader = Classes.getClassLoader(getClass());
         ResourceType.install(loader);
+        ComponentImplementationConfig cic = new ComponentImplementationConfig(model, loader);
         if (model.isAgent()) {
-            _kagent = Agents.newAgent(model, loader);
+            _kagent = Agents.newAgent(cic);
             _kbase = _kagent.getKnowledgeBase();
         } else {
-            _kbase = Bases.newBase(model, loader);
+            _kbase = Bases.newBase(cic);
         }
-        _ksessionConfig = Configs.getSessionConfiguration(model);
-        _environment = Configs.getEnvironment();
+        _ksessionConfig = Configs.getSessionConfiguration(cic);
+        _environment = Environments.getEnvironment(cic);
         _audit = model.getAudit();
         for (RulesActionModel ram : model.getRulesActions()) {
             _actions.put(ram.getName(), ram);
