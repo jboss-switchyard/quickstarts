@@ -136,18 +136,21 @@
       <dataInputAssociation>
         <targetRef>_8_GroupIdInput</targetRef>
         <assignment>
-          <from xsi:type="tFormalExpression"></from>
+          <from xsi:type="tFormalExpression">users</from>
           <to xsi:type="tFormalExpression">_8_GroupIdInput</to>
         </assignment>
       </dataInputAssociation>
       <potentialOwner>
         <resourceAssignmentExpression>
-          <formalExpression>johnd</formalExpression>
+          <formalExpression></formalExpression>
         </resourceAssignmentExpression>
       </potentialOwner>
     </userTask>
     <userTask id="_10" name="Review Ticket" >
       <extensionElements>
+        <tns:onExit-script>
+          <script></script>
+        </tns:onExit-script>
         <tns:onExit-script scriptFormat="http://www.java.com/java">
           <script>String status;
 switch (new Random().nextInt(3)) {
@@ -155,10 +158,8 @@ switch (new Random().nextInt(3)) {
     case 1: status = "rejected"; break;
     default: status = "requested";
 }
-ticket.setStatus(status);</script>
-        </tns:onExit-script>
-        <tns:onExit-script>
-          <script></script>
+ticket.setStatus(status);
+System.out.println("********** after (random for test purpose) review, ticket status set to " + status + " **********");</script>
         </tns:onExit-script>
       </extensionElements>
       <ioSpecification>
@@ -196,13 +197,13 @@ ticket.setStatus(status);</script>
       <dataInputAssociation>
         <targetRef>_10_GroupIdInput</targetRef>
         <assignment>
-          <from xsi:type="tFormalExpression"></from>
+          <from xsi:type="tFormalExpression">developers</from>
           <to xsi:type="tFormalExpression">_10_GroupIdInput</to>
         </assignment>
       </dataInputAssociation>
       <potentialOwner>
         <resourceAssignmentExpression>
-          <formalExpression>krisv</formalExpression>
+          <formalExpression></formalExpression>
         </resourceAssignmentExpression>
       </potentialOwner>
     </userTask>
@@ -275,13 +276,13 @@ ticket.setStatus(status);</script>
       <dataInputAssociation>
         <targetRef>_13_GroupIdInput</targetRef>
         <assignment>
-          <from xsi:type="tFormalExpression"></from>
+          <from xsi:type="tFormalExpression">developers</from>
           <to xsi:type="tFormalExpression">_13_GroupIdInput</to>
         </assignment>
       </dataInputAssociation>
       <potentialOwner>
         <resourceAssignmentExpression>
-          <formalExpression>krisv</formalExpression>
+          <formalExpression></formalExpression>
         </resourceAssignmentExpression>
       </potentialOwner>
     </userTask>
