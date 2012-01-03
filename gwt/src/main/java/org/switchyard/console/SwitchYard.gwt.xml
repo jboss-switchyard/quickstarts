@@ -20,7 +20,7 @@
 	<define-configuration-property name="gin.ginjector" is-multi-valued="false" />
 	<set-configuration-property name="gin.ginjector" value="org.switchyard.console.client.gin.SwitchYardGinjector" />
 
-    <stylesheet src="SwitchYard.css" />
+    <stylesheet src="../SwitchYard.css" />
 
 	<!-- Specify the app entry point class. -->
 	<entry-point class='org.switchyard.console.client.Console' />
