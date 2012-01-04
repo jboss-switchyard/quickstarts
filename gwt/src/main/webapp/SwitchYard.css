@@ -1,6 +1,11 @@
+#switchyardContainer {
+    max-width: 920px;
+}
+
 /* overwrite header height */
-.header-panel {
+#switchyardContainer ._header {
     min-height:16px;
     height:200px;
     width:100%;
 }
+

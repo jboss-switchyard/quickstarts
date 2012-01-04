@@ -24,6 +24,7 @@ import org.jboss.as.console.client.core.message.Message;
 import org.switchyard.console.client.Console;
 
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -56,15 +57,18 @@ public class MainLayoutViewImpl extends ViewImpl implements MainLayoutPresenter.
     public MainLayoutViewImpl() {
 
         _mainContentPanel = new LayoutPanel();
-        _mainContentPanel.setStyleName("main-content-_panel");
+        _mainContentPanel.setStyleName("_mainContent _panel");
 
         _headerPanel = new LayoutPanel();
-        _headerPanel.setStyleName("_header-_panel");
+        _headerPanel.setStyleName("_header _panel");
 
         _footerPanel = new LayoutPanel();
-        _footerPanel.setStyleName("footer-_panel");
+        _footerPanel.setStyleName("_footer _panel");
 
         _panel = new DockLayoutPanel(Style.Unit.PX);
+        _panel.setStyleName("_panel");
+        DOM.setElementAttribute(_panel.getElement(), "id", "switchyardContainer");
+        
         // XXX: SwitchYard specialization
         _panel.addNorth(_headerPanel, 200);
         _panel.addSouth(_footerPanel, 30);
