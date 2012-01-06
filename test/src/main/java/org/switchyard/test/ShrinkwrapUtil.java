@@ -25,7 +25,6 @@ import org.jboss.shrinkwrap.api.importer.ZipImporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.ResolutionException;
-import org.jboss.shrinkwrap.resolver.impl.maven.MavenRepositorySettings;
 import org.junit.Assert;
 import org.sonatype.aether.repository.LocalRepository;
 
@@ -45,6 +44,12 @@ public final class ShrinkwrapUtil {
      * Current SwitchYard version test Environment variable.
      */
     public static final String SWITCHYARD_VERSION = "SWITCHYARD_VERSION";
+
+    private static final String LOCAL_MAVEN_REPO =
+        System.getProperty("maven.repo.local") != null ?
+            System.getProperty("maven.repo.local") :
+               (System.getProperty("user.home") + File.separatorChar +
+               ".m2" + File.separatorChar + "repository");
 
     private ShrinkwrapUtil() {
     }
@@ -116,9 +121,7 @@ public final class ShrinkwrapUtil {
         Assert.assertNotNull("'artifactId' argument is null.", artifactId);
         Assert.assertNotNull("'version' argument is null.", version);
 
-        MavenRepositorySettings repoSettings = new MavenRepositorySettings();
-        LocalRepository localRepo = repoSettings.getLocalRepository();
-        File artifactFile = new File(localRepo.getBasedir(),
+        File artifactFile = new File(LOCAL_MAVEN_REPO,
                 groupId.replace(".", "/")
                         + "/" + artifactId
                         + "/" + version
