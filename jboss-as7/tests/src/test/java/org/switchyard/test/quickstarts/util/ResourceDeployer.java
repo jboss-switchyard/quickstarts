@@ -31,6 +31,7 @@ import org.jboss.dmr.ModelNode;
  * ResouceDeployer is capable to deploy different types of resources
  * to a running JBoss AS7 server.
  * 
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  * @author Daniel Bevenius
  *
  */
@@ -45,16 +46,32 @@ public class ResourceDeployer {
     public static ModelNode addQueue(final String host, final int port, final String queueName) throws IOException {
         final ModelControllerClient client = createClient(host, port);
         final ModelNode op = new ModelNode();
-        op.get("address").add("subsystem", "messaging").add("jms-queue", queueName);
-        op.get("entries").add("queue/" + queueName);
         op.get("operation").set("add");
+        op.get("address").add("subsystem", "messaging");
+        op.get("address").add("hornetq-server", "default");
+        op.get("address").add("jms-queue", queueName);
+        op.get("entries").add(queueName);
         return client.execute(op);
     }
 
     public static ModelNode addQueue(final String queueName) throws IOException {
         return addQueue(DEFAULT_HOST, DEFAULT_PORT, queueName);
     }
-    
+
+    public static ModelNode removeQueue(final String host, final int port, final String queueName) throws IOException {
+        final ModelControllerClient client = createClient(host, port);
+        final ModelNode op = new ModelNode();
+        op.get("operation").set("remove");
+        op.get("address").add("subsystem", "messaging");
+        op.get("address").add("hornetq-server", "default");
+        op.get("address").add("jms-queue", queueName);
+        return client.execute(op);
+    }
+
+    public static ModelNode removeQueue(final String queueName) throws IOException {
+        return addQueue(DEFAULT_HOST, DEFAULT_PORT, queueName);
+    }
+
     private static ModelControllerClient createClient(final String host, final int port) throws UnknownHostException {
         return ModelControllerClient.Factory.create(InetAddress.getByName(host), port);
     }

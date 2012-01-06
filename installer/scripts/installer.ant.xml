@@ -40,7 +40,7 @@
         <condition property="as7.not.available">
           <and>
             <not>
-              <available file="res/jboss-as-7.0.2.Final.zip"/>
+              <available file="res/jboss-as-${as7.version}.zip"/>
             </not>
           </and>
         </condition>
@@ -76,12 +76,12 @@
 
     <target name="download-as7-zip" depends="download-as7-check" if="as7.not.available">
         <echo>Downloading AS7 ...</echo>	
-        <get src="${as7.dist.url}" dest="res/jboss-as-7.0.2.Final.zip"/> 
+        <get src="${as7.dist.url}" dest="res/jboss-as-${as7.version}.zip"/> 
     </target>
 
     <target name="download-as7" depends="download-as7-zip">
 	<echo>Installing AS7 ...</echo>
-        <unzip src="res/jboss-as-7.0.2.Final.zip" dest="${basedir}" overwrite="true"/>
+        <unzip src="res/jboss-as-${as7.version}.zip" dest="${basedir}" overwrite="true"/>
     </target>
 
     <target name="download-sy-as7" depends="download-sy-as7-check" if="sy.as7.not.available">
@@ -186,7 +186,7 @@
 
     <target name="install" description="Install SwitchYard into JBoss (optionally specified by AS7_PATH)"
         depends="download-sy-as7, get-jboss-path">
-        <property name="AS7_PATH" value="${basedir}/jboss-as-7.0.2.Final"/>
+        <property name="AS7_PATH" value="${basedir}/jboss-as-${as7.version}"/>
         <property name="QUICKSTART_PATH" value="${basedir}"/>
         <condition property="isAS7">
            <or>
@@ -234,7 +234,7 @@
         <xslt style="res/standalone.xsl"
               basedir="${AS7_PATH}/standalone/configuration"
               destdir="${AS7_PATH}/standalone/configuration"
-              includes="standalone.xml,standalone-preview.xml"/>
+              includes="standalone.xml,standalone-preview.xml,standalone-full.xml"/>
         <move overwrite="true" todir="${AS7_PATH}/standalone/configuration">
           <filelist dir="${AS7_PATH}/standalone/configuration">
             <file name="standalone.html"/>

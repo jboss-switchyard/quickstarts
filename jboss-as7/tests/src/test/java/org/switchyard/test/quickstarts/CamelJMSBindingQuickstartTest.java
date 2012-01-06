@@ -39,8 +39,9 @@ public class CamelJMSBindingQuickstartTest {
     }
 
     @Test
-    public void testDeployment() {
+    public void testDeployment() throws IOException {
         Assert.assertNotNull("Dummy not null", "");
+        ResourceDeployer.removeQueue("GreetingServiceQueue");
     }
 
 }

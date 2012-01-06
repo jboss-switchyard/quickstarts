@@ -17,5 +17,21 @@
     <modules>
         <module>express</module>
     </modules>
+    
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.as</groupId>
+                <artifactId>jboss-as-dist</artifactId>
+                <version>${version.jbossas.openshift}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.as</groupId>
+                <artifactId>jboss-as-arquillian-container-managed</artifactId>
+                <version>${version.jbossas.openshift}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>

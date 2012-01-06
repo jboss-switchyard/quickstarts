@@ -184,7 +184,7 @@
                         </property>
                         <property>
                             <name>server-config</name>
-	                        <value>{switchyard.jboss.home}/standalone/configuration/standalone-preview.xml</value>
+	                        <value>standalone-full.xml</value>
                         </property>
                     </systemProperties>
                     <trimStackTrace>false</trimStackTrace>

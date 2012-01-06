@@ -16,7 +16,7 @@
 
     <properties>
         <staging.dir>${project.build.directory}/jboss-switchyard</staging.dir>
-        <staging.jboss.dir>${staging.dir}/jboss-as-${version.jbossas}</staging.jboss.dir>
+        <staging.jboss.dir>${staging.dir}/jboss-as-${version.jbossas.openshift}</staging.jboss.dir>
         <distro.root.dir>/switchyard-as7-${version.distro}/</distro.root.dir>
         <switchyard.jboss.home>${project.build.directory}${distro.root.dir}</switchyard.jboss.home>
     </properties>
@@ -40,7 +40,10 @@
                                     <type>zip</type>
                                 </artifactItem>
                             </artifactItems>
+                            <!-- Comment when using JBossWS stack -->
                             <excludes>**/javax/xml/bind/api/**,**/javax/xml/soap/api/**,**/javax/xml/ws/api/**,**/com/sun/xml/bind/**,**/org/apache/cxf/**,**/org/apache/ws/**,**/org/jboss/as/messaging/**,**/org/jboss/as/webservices/**,**/org/jboss/ws/**,**/org/jboss/osgi/**</excludes>
+                            <!-- Uncomment when using JBossWS stack
+                            <excludes>**/org/jboss/as/messaging/**,**/org/jboss/osgi/**</excludes>-->
                             <outputDirectory>${staging.dir}</outputDirectory>
                         </configuration>
                     </execution>
