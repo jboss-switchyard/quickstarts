@@ -15,6 +15,7 @@
     <resource-root path="switchyard-config-${project.version}.jar"/>
     <resource-root path="switchyard-deploy-${project.version}.jar"/>
     <resource-root path="switchyard-transform-${project.version}.jar"/>
+    <resource-root path="switchyard-validate-${project.version}.jar"/>
   </resources>
   
   <dependencies>

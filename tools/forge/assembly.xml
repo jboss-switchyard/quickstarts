@@ -67,6 +67,7 @@
               <include>org.switchyard:switchyard-config</include>
               <include>org.switchyard:switchyard-deploy</include>
               <include>org.switchyard:switchyard-transform</include>
+              <include>org.switchyard:switchyard-validate</include>
             </includes>
         </dependencySet>
         <dependencySet>

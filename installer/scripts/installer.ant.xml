@@ -58,7 +58,7 @@
     </target>
 	
     <target name="download-sy-tools" depends="download-sy-tools-check" if="sy.tools.not.available">
-        <echo>Downloading SwitchYard Tools Bundle ..."</echo>
+        <echo>Downloading SwitchYard Tools Bundle ...</echo>
         <get src="${switchyard.tools.url}" dest="res/switchyard-tools.zip"/>
     </target>
 	
@@ -340,6 +340,18 @@
                 src="res/switchyard-forge-plugins.zip"/>
         <echo>Unzipped SwitchYard forge plugin.</echo>  
 
+	<condition property="java.share.dir" value="/usr/share/java">
+	    <available file="/usr/share/java"/>	
+        </condition>
+	<property name="java.share.dir" value="${basedir}"/>
+	<path id="usr.share.java">
+            <fileset dir="${java.share.dir}">
+                <include name="jaxp_transform_impl.jar"/>
+                <include name="xerces-j2.jar"/>
+                <include name="xalan-j2-serializer.jar"/>
+            </fileset>
+        </path>
+
 	<echo>Installing forge plugin to ${user.home}/.forge ... </echo>
 	<path id="forge.installer.classpath">
 		<fileset dir="${FORGE_PATH}/modules/org/jboss/forge/main">
@@ -352,7 +364,10 @@
 		
 		<fileset dir="${basedir}">
  			<include name="lib/switchyard-forge-installer.jar"/>
-		</fileset> 
+		</fileset>
+
+                <path refid="usr.share.java"/>
+
 	</path>	
 	<java classname="org.switchyard.forge.installer.Installer">
 		<arg value="org.switchyard.switchyard-forge-plugin"/>
