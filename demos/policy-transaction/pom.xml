@@ -41,10 +41,6 @@
         <scope>compile</scope>
     </dependency>
     <dependency>
-       <groupId>org.jboss.logging</groupId>
-       <artifactId>jboss-logging</artifactId>
-    </dependency>
-    <dependency>
        <groupId>org.hornetq</groupId>
        <artifactId>hornetq-core-client</artifactId>
     </dependency>
@@ -87,6 +83,7 @@
       <configuration>
          <archive>
             <manifestEntries>
+               <Dependencies>org.hornetq</Dependencies>
                <Dependencies>org.jboss.as.naming</Dependencies>
             </manifestEntries>
          </archive>
