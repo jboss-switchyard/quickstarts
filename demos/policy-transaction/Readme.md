@@ -15,12 +15,14 @@ Running the quickstart
 3. Create the queues for the JMS gateway bindings
     ./jboss-admin.sh file=src/test/resources/create-resources.cli
 5. Deploy the quickstart
-    cp target/switchyard-quickstarts-camel-jms-binding-{version}.jar ${AS7}/standalone/deployments
+    cp target/switchyard-quickstarts-policy-transaction-{version}.jar ${AS7}/standalone/deployments
 6. Execute HornetQClient
     mvn exec:java
 7. Check the server console for output from the service.  With the default
-   configuration of the quickstart, you should see the following in the 
-   server log:
+   configuration of the quickstart, you should see the output below in the
+   AS server.log.
+8. Undeploy the application
+    rm ${AS7}/standalone/deployments/switchyard-quickstarts-policy-transaction-{version}.jar.deployed
 
 ```
 :: WorkService :: Received command =>  rollback  
@@ -73,9 +75,8 @@ The value for 'queueName' should be "policyQSTransacted" or
 Notes
 =======
 
-o Deploying this quickstart on AS 7.0.2 appears to lead to shutdown delays due
-  to a RM issue between HornetQ and the AS transaction manager.  The root cause
-  of this is under investigation, but be advised that a server shutdown may take
-  > 2 minutes when this issue occurs.
+o Due to an issue with shutdown processing, server shutdown may take 
+  more than 2 minutes when this quickstart is deployed.  To avoid this
+  problem, undeploy the application before shutting down the server.
   
 

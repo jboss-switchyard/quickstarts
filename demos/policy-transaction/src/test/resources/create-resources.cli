@@ -1,0 +1,5 @@
+## ./jboss-admin.sh file=/path/to/this/file.
+connect
+
+/subsystem=messaging/hornetq-server=default/jms-queue=policyQSTransacted:add(entries=["queue/policyQSTransacted"],durable=false)
+/subsystem=messaging/hornetq-server=default/jms-queue=policyQSNonTransacted:add(entries=["queue/policyQSNonTransacted"],durable=false)
