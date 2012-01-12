@@ -15,8 +15,6 @@
     <description>SwitchYard AS7 jBPM Parent</description>
 
     <modules>
-        <module>jbpm-human-task</module>
-        <module>jbpm-persistence-jpa</module>
         <!--
         https://issues.jboss.org/browse/SWITCHYARD-548
         <module>jbpm-gwt-console-server</module>

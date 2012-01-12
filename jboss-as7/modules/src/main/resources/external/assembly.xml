@@ -287,18 +287,18 @@
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
-                <include>org.switchyard:switchyard-jbpm-human-task</include>
+                <include>org.jbpm:jbpm-human-task</include>
             </includes>
             <outputDirectory>/modules/org/jbpm/jbpm-human-task/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}</outputFileNameMapping>
+            <outputFileNameMapping>${artifact.artifactId}-${version.jbpm}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
-                <include>org.switchyard:switchyard-jbpm-persistence-jpa</include>
+                <include>org.jbpm:jbpm-persistence-jpa</include>
             </includes>
             <outputDirectory>/modules/org/jbpm/jbpm-persistence-jpa/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}</outputFileNameMapping>
+            <outputFileNameMapping>${artifact.artifactId}-${version.jbpm}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>

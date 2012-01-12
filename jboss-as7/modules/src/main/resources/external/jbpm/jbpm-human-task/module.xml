@@ -22,7 +22,7 @@
   -->
 <module xmlns="urn:jboss:module:1.0" name="org.jbpm.jbpm-human-task">
     <resources>
-        <resource-root path="switchyard-jbpm-human-task-${project.version}.jar"/>
+        <resource-root path="jbpm-human-task-${version.jbpm}.jar"/>
     </resources>
     <dependencies>
         <module name="org.apache.mina.mina-core"/>

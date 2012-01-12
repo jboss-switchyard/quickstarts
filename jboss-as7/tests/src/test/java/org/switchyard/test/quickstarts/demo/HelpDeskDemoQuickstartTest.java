@@ -18,17 +18,19 @@
  */
 package org.switchyard.test.quickstarts.demo;
 
+import junit.framework.Assert;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.test.ArquillianUtil;
-import org.switchyard.test.mixins.BPMMixIn;
-import org.switchyard.test.mixins.HTTPMixIn;
 
 /**
+ * The helpdesk demo quickstart test.
  *
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 @RunWith(Arquillian.class)
 public class HelpDeskDemoQuickstartTest {
@@ -40,44 +42,21 @@ public class HelpDeskDemoQuickstartTest {
 
     @Test
     public void test() throws Exception {
-        // TODO: dward - come back to this (soap response needs updating too)
+        // Have to do this until we reconcile the hibernate/jpa version in AS7.
+        Assert.assertTrue(true);
         /*
-        BPMMixIn bpmMixIn = new BPMMixIn();
-        bpmMixIn.initialize();
+        HTTPMixIn http = new HTTPMixIn();
+        BPMMixIn bpm = new BPMMixIn();
+        http.initialize();
+        bpm.initialize();
         try {
-            HTTPMixIn httpMixIn = new HTTPMixIn();
-
-            httpMixIn.initialize();
-            try {
-                httpMixIn.postStringAndTestXML("http://localhost:18001/HelpDeskService", SOAP_REQUEST, EXPECTED_SOAP_RESPONSE);
-            } finally {
-                httpMixIn.uninitialize();
-            }
+            http.postResourceAndTestXML("http://localhost:18001/HelpDeskService", "/xml/soap-request.xml", "/xml/soap-response.xml");
+            bpm.completeHumanTasks();
         } finally {
-            bpmMixIn.uninitialize();
+            bpm.uninitialize();
+            http.uninitialize();
         }
         */
     }
-    private static final String SOAP_REQUEST = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:helpdesk=\"urn:switchyard-quickstart-demo:helpdesk:1.0\">\n"
-            + "    <soap:Body>\n"
-            + "        <helpdesk:openTicket>\n"
-            + "            <ticket>\n"
-            + "                <id>TCKT-17761852</id>\n"
-            + "            </ticket>\n"
-            + "        </helpdesk:openTicket>\n"
-            + "    </soap:Body>\n"
-            + "</soap:Envelope>\n";
-    private static final String EXPECTED_SOAP_RESPONSE = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:bpm=\"urn:switchyard-component-bpm:process:1.0\" xmlns:helpdesk=\"urn:switchyard-quickstart-demo:helpdesk:1.0\">\n"
-            + "    <SOAP-ENV:Header>\n"
-            + "        <bpm:processInstanceId>1</bpm:processInstanceId>\n"
-            + "    </SOAP-ENV:Header>\n"
-            + "    <SOAP-ENV:Body>\n"
-            + "        <helpdesk:openTicketResponse>\n"
-            + "            <ticketAck>\n"
-            + "                <id>TCKT-17761852</id>\n"
-            + "                <received>true</received>\n"
-            + "            </ticketAck>\n"
-            + "        </helpdesk:openTicketResponse>\n"
-            + "    </SOAP-ENV:Body>\n"
-            + "</SOAP-ENV:Envelope>";
+
 }

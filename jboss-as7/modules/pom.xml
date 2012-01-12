@@ -410,14 +410,8 @@
             <artifactId>jbpm-workitems</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-jbpm-human-task</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-jbpm-persistence-jpa</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-human-task</artifactId>
         </dependency>
 		<dependency>
 			<groupId>org.jboss.bpm</groupId>
