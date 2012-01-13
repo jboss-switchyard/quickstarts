@@ -2,6 +2,8 @@
 		xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
 		xmlns:lns="http://example.com/loan-approval/loanService/"
 		xmlns:ans="http://example.com/loan-approval/riskAssessment/"
+		queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0"
+		expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0"
 		suppressJoinFailure="yes">
 
    <import importType="http://schemas.xmlsoap.org/wsdl/" location="loanServicePT.wsdl"
@@ -54,8 +56,16 @@
                 <to variable="check" part="parameter"></to>
             </copy>
             <copy>
-                <from variable="request" part="parameter" query="/request/amount" />
-                <to variable="check" part="parameter" query="/check/amount" />
+                <from variable="request" part="parameter">
+					<query>
+					   //lns:amount
+					</query>
+                </from>
+                <to variable="check" part="parameter">
+					<query>
+					   //ans:amount
+					</query>
+                </to>
             </copy>
         </assign>
         

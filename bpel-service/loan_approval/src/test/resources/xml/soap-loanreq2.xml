@@ -2,9 +2,9 @@
    <soapenv:Header/>
    <soapenv:Body>
 		<ns1:request xmlns:ns1="http://example.com/loan-approval/loanService/">
-		   <firstName>Fred</firstName>
-		   <name>Bloggs</name>
-		   <amount>11000</amount>
+		   <ns1:firstName>Fred</ns1:firstName>
+		   <ns1:name>Bloggs</ns1:name>
+		   <ns1:amount>11000</ns1:amount>
 		</ns1:request>
    </soapenv:Body>
 </soapenv:Envelope>
