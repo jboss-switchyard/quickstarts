@@ -83,6 +83,7 @@
   </dependencies>
 
   <build>
+    <finalName>${artifactId}</finalName>
     <pluginManagement>
     <plugins>
       <plugin>
