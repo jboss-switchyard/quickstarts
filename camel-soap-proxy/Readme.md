@@ -18,7 +18,7 @@ JBoss AS 7
 2. Start JBoss AS 7 with the standalone-preview.xml :
     ./standalone.sh --server-config=standalone-preview.xml
 3. Deploy the Quickstart :
-    cp target/switchyard-quickstarts-camel-soap-proxy-${version}-SNAPSHOT.jar ${AS7}/standalone/deployments
+    cp target/switchyard-quickstarts-camel-soap-proxy.jar ${AS7}/standalone/deployments
 4. Submit a request with your preferred SOAP client - src/test/resources/xml contains sample 
    requests and the responses that you should see
  

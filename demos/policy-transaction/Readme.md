@@ -15,7 +15,7 @@ Running the quickstart
 3. Create the queues for the JMS gateway bindings
     ./jboss-admin.sh file=src/test/resources/create-resources.cli
 5. Deploy the quickstart
-    cp target/switchyard-quickstarts-policy-transaction-{version}.jar ${AS7}/standalone/deployments
+    cp target/switchyard-quickstarts-policy-transaction.jar ${AS7}/standalone/deployments
 6. Execute HornetQClient
     mvn exec:java
 7. Check the server console for output from the service.  With the default

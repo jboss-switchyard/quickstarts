@@ -17,7 +17,7 @@ JBoss AS 7
 4. Create the JMS Queue using CLI:
     add-jms-queue --name=GreetingServiceQueue --entries=GreetingServiceQueue --durable=true                                                           
 5. Deploy the quickstart
-    cp target/switchyard-quickstarts-camel-jms-binding-{version}.jar ${AS7}/standalone/deployments
+    cp target/switchyard-quickstarts-camel-jms-binding.jar ${AS7}/standalone/deployments
 6. Execute HornetQClient
     mvn exec:java -Dexec.mainClass="org.switchyard.quickstarts.camel.jms.binding.HornetQClient"
 7. Check the server console for output from the service.
