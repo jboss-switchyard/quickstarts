@@ -27,6 +27,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.annotations.ManagedTransaction;
 import org.switchyard.annotations.ManagedTransactionType;
 import org.switchyard.common.type.classpath.ClasspathScanner;
@@ -116,11 +118,23 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             }
 
             // Add any references
-            for (Class<?> reference : getReferences(serviceClass)) {
+            for (Field field : getReferences(serviceClass)) {
+                Class<?> reference = field.getType(); 
                 ComponentReferenceModel referenceModel = new V1ComponentReferenceModel();
                 ComponentReferenceInterfaceModel interfaceModel = new V1JavaComponentReferenceInterfaceModel();
-
-                referenceModel.setName(reference.getSimpleName());
+                      
+                if (field.getAnnotation(Reference.class) != null) {
+                    Reference ref = field.getAnnotation(Reference.class);
+                    if (ref.value() == null || "".equals(ref.value())) {
+                        referenceModel.setName(reference.getSimpleName());
+                    } else {
+                        QName qname = QName.valueOf(ref.value());
+                        referenceModel.setName(qname.getLocalPart());
+                    }
+                } else {
+                    referenceModel.setName(reference.getSimpleName());
+                }
+                
                 referenceModel.setInterface(interfaceModel);
                 interfaceModel.setInterface(reference.getCanonicalName());
                 // Add policy requirement to reference if specified in bean class
@@ -162,11 +176,11 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
     /**
      * Pick up @Reference fields in the specified class
      */
-    private Set<Class<?>> getReferences(Class<?> serviceClass) {
-        HashSet<Class<?>> references = new HashSet<Class<?>>();
+    private Set<Field> getReferences(Class<?> serviceClass) {
+        HashSet<Field> references = new HashSet<Field>();
         for (Field field : serviceClass.getDeclaredFields()) {
             if (field.isAnnotationPresent(Reference.class)) {
-                references.add(field.getType());
+                references.add(field);
             }
         }
         return references;

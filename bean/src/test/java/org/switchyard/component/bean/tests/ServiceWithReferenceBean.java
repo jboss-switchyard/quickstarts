@@ -26,9 +26,14 @@ import org.switchyard.component.bean.Service;
 
 @Service(ServiceWithReference.class)
 public class ServiceWithReferenceBean implements ServiceWithReference {
+	
+	public static final String RENAMED_REFERENCE = "RenamedServiceReference";
 
     @Inject @Reference
     private OneWay _reference;
+    
+    @Inject @Reference(RENAMED_REFERENCE)
+    private OneWay _renamedReference;
     
     @Override
     public void noOp(String ignored) {
