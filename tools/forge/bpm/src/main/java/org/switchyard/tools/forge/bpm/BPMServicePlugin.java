@@ -19,6 +19,12 @@
 
 package org.switchyard.tools.forge.bpm;
 
+import static org.switchyard.component.bpm.ProcessConstants.MESSAGE_CONTENT_IN;
+import static org.switchyard.component.bpm.ProcessConstants.MESSAGE_CONTENT_IN_NAME;
+import static org.switchyard.component.bpm.ProcessConstants.MESSAGE_CONTENT_OUT;
+import static org.switchyard.component.bpm.ProcessConstants.MESSAGE_CONTENT_OUT_NAME;
+import static org.switchyard.component.bpm.task.SwitchYardServiceTaskHandler.SWITCHYARD_SERVICE;
+
 import java.io.File;
 
 import javax.inject.Inject;
@@ -70,8 +76,6 @@ public class BPMServicePlugin implements Plugin {
     private static final String PROCESS_DIR = "META-INF";
     // VAR_* constants reference substitution tokens in the process definition template 
     private static final String VAR_PROCESS_ID   = "${process.id}";
-    // SwitchYard task handler name
-    private static final String SWITCHAYRD_TASK_HANDLER = "SwitchYard Service";
     
     @Inject
     private Project _project;
@@ -82,37 +86,49 @@ public class BPMServicePlugin implements Plugin {
     /**
      * Create a new BPM service interface and implementation.
      * @param argServiceName service name
-     * @param out shell output
      * @param argInterfaceClass class name of Java service interface
      * @param argProcessFilePath path to the BPMN process definition
      * @param argProcessId business process id
+     * @param argMessageContentInName process variable name for the content of the incoming message
+     * @param argMessageContentOutName process variable name for the content of the outgoing message
      * @param argAgent whether to use an agent
+     * @param out shell output
      * @throws java.io.IOException error with file resources
      */
     @Command(value = "create", help = "Created a new service backed by a BPM process.")
     public void newProcess(
             @Option(required = true,
-                     name = "serviceName",
-                     description = "The service name") 
-             final String argServiceName,
-             @Option(required = false,
-                     name = "interfaceClass",
-                     description = "The Java service interface") 
-             final String argInterfaceClass,
-             @Option(required = false,
-                     name = "processDefinition",
-                     description = "The business process definition") 
-             final String argProcessFilePath,
-             @Option(required = false,
-                     name = "processId",
-                     description = "The business process id") 
-                     final String argProcessId,
-             @Option(required = false,
-                     name = "agent",
-                     description = "Whether you want to use an agent to watch resources for changes (true|false)",
-                     defaultValue = "false")
-             final Boolean argAgent,
-             final PipeOut out)
+                    name = "serviceName",
+                    description = "The service name")
+            final String argServiceName,
+            @Option(required = false,
+                    name = "interfaceClass",
+                    description = "The Java service interface")
+            final String argInterfaceClass,
+            @Option(required = false,
+                    name = "processDefinition",
+                    description = "The business process definition")
+            final String argProcessFilePath,
+            @Option(required = false,
+                    name = "processId",
+                    description = "The business process id")
+            final String argProcessId,
+            @Option(required = false,
+                    name = MESSAGE_CONTENT_IN_NAME,
+                    description="The process variable name for the content of the incoming message",
+                    defaultValue = MESSAGE_CONTENT_IN)
+            final String argMessageContentInName,
+            @Option(required = false,
+                    name = MESSAGE_CONTENT_OUT_NAME,
+                    description="The process variable name for the content of the outgoing message",
+                    defaultValue = MESSAGE_CONTENT_OUT)
+            final String argMessageContentOutName,
+            @Option(required = false,
+                    name = "agent",
+                    description = "Whether you want to use an agent to watch resources for changes (true|false)",
+                    defaultValue = "false")
+            final Boolean argAgent,
+            final PipeOut out)
     throws java.io.IOException {
       
         JavaSourceFacet java = _shell.getCurrentProject().getFacet(JavaSourceFacet.class);
@@ -163,7 +179,7 @@ public class BPMServicePlugin implements Plugin {
         boolean agent = argAgent != null ? argAgent.booleanValue() : false;
         
         // Add the SwitchYard config
-        createImplementationConfig(argServiceName, interfaceClass, processId, processDefinitionPath, agent);
+        createImplementationConfig(argServiceName, interfaceClass, processId, processDefinitionPath, argMessageContentInName, argMessageContentOutName, agent);
           
         // Notify user of success
         out.println("Process service " + argServiceName + " has been created.");
@@ -173,6 +189,8 @@ public class BPMServicePlugin implements Plugin {
             String interfaceName,
             String processId,
             String processDefinition,
+            String messageContentInName,
+            String messageContentOutName,
             boolean agent) {
         
         SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
@@ -190,11 +208,13 @@ public class BPMServicePlugin implements Plugin {
         V1BPMComponentImplementationModel bpm = new V1BPMComponentImplementationModel();
         bpm.setProcessDefinition(new SimpleResource(processDefinition));
         bpm.setProcessId(processId);
+        bpm.setMessageContentInName(messageContentInName);
+        bpm.setMessageContentOutName(messageContentOutName);
         if (agent) {
             bpm.setAgent(true);
         }
         V1TaskHandlerModel switchyardHandler = new V1TaskHandlerModel();
-        switchyardHandler.setName(SWITCHAYRD_TASK_HANDLER);
+        switchyardHandler.setName(SWITCHYARD_SERVICE);
         switchyardHandler.setClazz(SwitchYardServiceTaskHandler.class);
         bpm.addTaskHandler(switchyardHandler);
         component.setImplementation(bpm);

@@ -287,6 +287,7 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
         _taskHandlerModels.clear();
         _actionModels.clear();
         _messageContentInName = null;
+        _messageContentOutName = null;
         _processId = null;
         if (_kagent != null) {
             try {
