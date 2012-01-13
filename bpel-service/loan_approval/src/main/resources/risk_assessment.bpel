@@ -1,56 +1,34 @@
 <process name="riskAssessmentProcess"
-
-   targetNamespace="http://example.com/loan-approval/riskAssessment/"
-
-   xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
-
-   xmlns:lns="http://example.com/loan-approval/riskAssessment/"
-
-   suppressJoinFailure="yes">
-
- 
+		targetNamespace="http://example.com/loan-approval/riskAssessment/"
+		xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+		xmlns:lns="http://example.com/loan-approval/riskAssessment/"
+		queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0"
+		expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0"
+   		suppressJoinFailure="yes">
 
    <import importType="http://schemas.xmlsoap.org/wsdl/"
-
       location="riskAssessmentPT.wsdl"
-
       namespace="http://example.com/loan-approval/riskAssessment/" />
-
- 
-
+      
    <partnerLinks>
-
       <partnerLink name="assessor"
-
          partnerLinkType="lns:riskAssessmentLT"
-
          myRole="assessor" />
-
    </partnerLinks>
 
- 
-
    <variables>
-
       <variable name="check" messageType="lns:checkMessage" />
       <variable name="checkResponse" messageType="lns:checkResponseMessage" />
-
       <variable name="faultResponse" messageType="lns:errorMessage" />
-
    </variables>
 
    <sequence>
 
       <receive partnerLink="assessor" 
-
          portType="lns:riskAssessmentPT"
-
          operation="check" 
-
          variable="check"
-
          createInstance="yes">
-
       </receive>
 
 		<if>
@@ -59,7 +37,7 @@
 		$check.parameter/check/firstName != 'Fred'
 		-->
    			<condition>
-				<![CDATA[$check.parameter//amount >= 1000]]>
+				<![CDATA[$check.parameter//lns:amount >= 1000]]>
 			</condition>
 			<sequence>
 		        <assign validate="no" name="AssignFaultValue">
