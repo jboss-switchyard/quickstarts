@@ -30,8 +30,8 @@
 
   <artifactId>switchyard-quickstart-bean-service</artifactId>
   <packaging>jar</packaging>
-
   <name>Quickstart : Bean Service</name>
+
   <dependencies>
     <dependency>
       <groupId>org.switchyard</groupId>
@@ -59,6 +59,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <build>
      <finalName>${artifactId}</finalName>
      <plugins>
@@ -92,4 +93,5 @@
       </plugin>
      </plugins>
   </build>
+
 </project>

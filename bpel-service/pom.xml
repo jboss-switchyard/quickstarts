@@ -45,13 +45,11 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-entitymanager</artifactId>
-         <version>${version.hibernate.bpel}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
-         <version>${version.hibernate.bpel}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

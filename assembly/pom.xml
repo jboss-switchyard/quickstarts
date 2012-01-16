@@ -47,6 +47,7 @@
                             <goal>attached</goal>
                         </goals>
                         <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
                             <finalName>SwitchYard-Quickstarts</finalName>
                             <descriptors>
                                 <descriptor>${basedir}/assembly.xml</descriptor>
