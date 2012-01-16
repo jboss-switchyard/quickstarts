@@ -109,6 +109,7 @@
                             <goal>attached</goal>
                         </goals>
                         <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
                             <finalName>switchyard.deployer</finalName>
                             <descriptors>
                                 <descriptor>${basedir}/target/merged-assembly.xml</descriptor>
@@ -413,17 +414,10 @@
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-human-task</artifactId>
         </dependency>
-		<dependency>
-			<groupId>org.jboss.bpm</groupId>
-			<artifactId>activity-monitor-model</artifactId>
-                        <version>${version.activity.monitor.model}</version>
-                        <exclusions>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate-annotations</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <dependency>
+            <groupId>org.jboss.bpm</groupId>
+            <artifactId>activity-monitor-model</artifactId>
+        </dependency>
 
         <!--
         Clojure...
@@ -478,6 +472,5 @@
             <groupId>wsdl4j</groupId>
             <artifactId>wsdl4j</artifactId>
         </dependency>
-
     </dependencies>
 </project>

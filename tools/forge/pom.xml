@@ -130,6 +130,7 @@
                             <goal>attached</goal>
                         </goals>
                         <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
                             <finalName>switchyard-forge-plugin</finalName>
                             <descriptors>
                                 <descriptor>${basedir}/assembly.xml</descriptor>

@@ -18,7 +18,7 @@
   -->
 
 <assembly>
-    <id></id>
+    <id>SwitchyardForge</id>
     <formats>
         <format>zip</format>
     </formats>
@@ -45,7 +45,7 @@
               <include>org.switchyard:switchyard-forge-bean-plugin</include>
               <include>org.switchyard:switchyard-forge-bpm-plugin</include>
               <include>org.switchyard:switchyard-forge-camel-plugin</include>
-              <!-- 
+              <!--
               <include>org.switchyard:switchyard-forge-clojure-plugin</include>
               -->
               <include>org.switchyard:switchyard-forge-common</include>

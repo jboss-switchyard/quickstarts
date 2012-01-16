@@ -120,6 +120,7 @@
                             <goal>attached</goal>
                         </goals>
                         <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
                             <finalName>SwitchYard-AS7-Bundle</finalName>
                             <descriptors>
                                 <descriptor>${basedir}/assembly.xml</descriptor>

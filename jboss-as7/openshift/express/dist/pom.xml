@@ -133,6 +133,7 @@
                             <goal>attached</goal>
                         </goals>
                         <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
                             <finalName>SwitchYard-AS7-OpenShift-Express</finalName>
                             <descriptors>
                                 <descriptor>${basedir}/assembly.xml</descriptor>

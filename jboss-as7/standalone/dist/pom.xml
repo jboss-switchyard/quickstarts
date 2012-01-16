@@ -156,6 +156,7 @@
                             <goal>attached</goal>
                         </goals>
                         <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
                             <finalName>switchyard-as7</finalName>
                             <descriptors>
                                 <descriptor>${basedir}/assembly.xml</descriptor>

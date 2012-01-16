@@ -138,6 +138,7 @@
                             <goal>attached</goal>
                         </goals>
                         <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
                             <finalName>switchyard-installer</finalName>
                             <descriptors>
                                 <descriptor>${basedir}/assembly.xml</descriptor>
