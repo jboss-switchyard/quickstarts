@@ -101,9 +101,9 @@ public class BpelServiceLoanApprovalQuickstartTest {
         "   <soapenv:Header/>\n" +
         "   <soapenv:Body>\n" +
         "   <ns1:request xmlns:ns1=\"http://example.com/loan-approval/loanService/\">\n" +
-            "   <firstName>Fred</firstName>\n" +
-            "   <name>Bloggs</name>\n" +
-            "   <amount>100</amount>\n" +
+            "   <ns1:firstName>Fred</ns1:firstName>\n" +
+            "   <ns1:name>Bloggs</ns1:name>\n" +
+            "   <ns1:amount>100</ns1:amount>\n" +
             "   </ns1:request>\n" +
         "   </soapenv:Body>\n" +
         "</soapenv:Envelope>";
@@ -112,9 +112,9 @@ public class BpelServiceLoanApprovalQuickstartTest {
         "   <soapenv:Header/>\n" +
         "   <soapenv:Body>\n" +
         "   <ns1:request xmlns:ns1=\"http://example.com/loan-approval/loanService/\">\n" +
-            "   <firstName>Fred</firstName>\n" +
-            "   <name>Bloggs</name>\n" +
-            "   <amount>11000</amount>\n" +
+            "   <ns1:firstName>Fred</ns1:firstName>\n" +
+            "   <ns1:name>Bloggs</ns1:name>\n" +
+            "   <ns1:amount>11000</ns1:amount>\n" +
             "   </ns1:request>\n" +
         "   </soapenv:Body>\n" +
         "</soapenv:Envelope>";
