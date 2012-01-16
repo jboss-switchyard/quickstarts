@@ -12,4 +12,6 @@
         choking and throwing an Exception -->	
     <suppress checks="[a-zA-Z0-9]*"
 	files="org/switchyard/tools/maven/plugins/switchyard/ConfigureMojo.java"/>
+    <suppress checks="ParameterNumber"
+        files="org/switchyard/tools/forge/bpm/BPMServicePlugin.java"/>
 </suppressions>
