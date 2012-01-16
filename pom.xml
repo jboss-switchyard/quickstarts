@@ -33,15 +33,4 @@
     <module>gwt</module>
   </modules>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-         <groupId>org.jboss.as</groupId>
-         <artifactId>jboss-as-parent</artifactId>
-         <version>${version.jbossas}</version>
-         <type>pom</type>
-         <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 </project>

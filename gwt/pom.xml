@@ -180,6 +180,7 @@
                   <groupId>org.jboss.as</groupId>
                   <artifactId>jboss-as-console</artifactId>
                   <classifier>sources</classifier>
+                  <version>${version.jbossas.console}</version>
                   <type>jar</type>
                   <includes>org/jboss/dmr/**,org/jboss/as/console/client/widgets/**,org/jboss/as/console/client/auth/**,org/jboss/as/console/client/core/*.*,org/jboss/as/console/client/core/message/*.*,org/jboss/as/console/client/shared/*.*,org/jboss/as/console/client/shared/dispatch/**,org/jboss/as/console/client/Build.java,org/jboss/as/console/client/ConsoleFramework.java,org/jboss/as/console/public/**,gwt-proxy.properties</includes>
                   <excludes>org/jboss/as/console/client/shared/BeanFactory.java</excludes>
