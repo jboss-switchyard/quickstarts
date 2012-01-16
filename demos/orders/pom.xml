@@ -31,8 +31,8 @@
     <groupId>org.switchyard.quickstarts.demos</groupId>
     <artifactId>switchyard-quickstart-demo-orders</artifactId>
     <packaging>war</packaging>
-
     <name>Quickstart Demo : Orders</name>
+
     <dependencies>
         <dependency>
             <groupId>org.switchyard</groupId>
@@ -78,7 +78,7 @@
         <!-- Import the JSF API, we use provided scope as the API is included in JBoss AS 7 -->
         <dependency>
             <groupId>org.jboss.spec.javax.faces</groupId>
-            <artifactId>jboss-jsf-api_2.0_spec</artifactId>
+            <artifactId>jboss-jsf-api_2.1_spec</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -95,7 +95,7 @@
     </dependencies>
 
     <build>
-        <finalName>${artifactId}</finalName>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

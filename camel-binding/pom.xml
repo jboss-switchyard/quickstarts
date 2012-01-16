@@ -26,10 +26,6 @@
       <artifactId>switchyard-plugin</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.switchyard</groupId>
-      <artifactId>switchyard-test</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.switchyard.components</groupId>
       <artifactId>switchyard-component-camel</artifactId>
     </dependency>
@@ -37,9 +33,13 @@
       <groupId>org.switchyard.components</groupId>
       <artifactId>switchyard-component-bean</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-test</artifactId>
+    </dependency>
   </dependencies>
   <build>
-    <finalName>${artifactId}</finalName>
+    <finalName>${project.artifactId}</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>

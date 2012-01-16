@@ -27,8 +27,8 @@
       <artifactId>switchyard-plugin</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.switchyard</groupId>
-      <artifactId>switchyard-test</artifactId>
+      <groupId>org.switchyard.components</groupId>
+      <artifactId>switchyard-component-bean</artifactId>
     </dependency>
     <dependency>
       <groupId>org.switchyard.components</groupId>
@@ -36,22 +36,20 @@
     </dependency>
     <dependency>
       <groupId>org.switchyard.components</groupId>
-      <artifactId>switchyard-component-bean</artifactId>
+      <artifactId>switchyard-component-soap</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.switchyard.components</groupId>
-      <artifactId>switchyard-component-soap</artifactId>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-test</artifactId>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-entitymanager</artifactId>
-         <version>${version.hibernate.bpel}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
-         <version>${version.hibernate.bpel}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -83,7 +81,7 @@
   </dependencies>
 
   <build>
-    <finalName>${artifactId}</finalName>
+    <finalName>${project.artifactId}</finalName>
     <pluginManagement>
     <plugins>
       <plugin>
