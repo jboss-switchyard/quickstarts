@@ -1,0 +1,11 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsdl="http://www.jboss.org/bpel/examples/wsdl">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <wsdl:helloMessage>
+         <sessionId>
+            <id>1</id>
+         </sessionId>
+         <parameter>Test </parameter>
+      </wsdl:helloMessage>
+   </soapenv:Body>
+</soapenv:Envelope>
