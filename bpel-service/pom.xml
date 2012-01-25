@@ -15,6 +15,7 @@
   <modules>
        <module>say_hello</module>
        <module>loan_approval</module>
+       <module>simple_correlation</module>
   </modules>
 
   <dependencies>

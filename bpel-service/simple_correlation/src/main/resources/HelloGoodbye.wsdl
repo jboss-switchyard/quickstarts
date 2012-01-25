@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<wsdl:definitions
+    targetNamespace="http://www.jboss.org/bpel/examples/simple_correlation/"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:tns="http://www.jboss.org/bpel/examples/simple_correlation/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+
+  <wsdl:types>
+    <xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+            targetNamespace="http://www.jboss.org/bpel/examples/simple_correlation/" xmlns="http://www.w3.org/2001/XMLSchema">
+      
+	  <complexType name="sessionIdentity">
+        <sequence>
+          <element name="id" type="xsd:int" />
+        </sequence>
+      </complexType>
+      
+      <element name="helloMessage">
+       <complexType>
+        <sequence>
+         <element name="sessionId" type="tns:sessionIdentity" />
+         <element name="parameter" type="xsd:string" />
+        </sequence>
+       </complexType>
+      </element>
+
+      <element name="goodbyeMessage">
+       <complexType>
+        <sequence>
+         <element name="sessionId" type="tns:sessionIdentity" />
+         <element name="parameter" type="xsd:string" />
+        </sequence>
+       </complexType>
+      </element>
+     
+    </xsd:schema>
+
+  </wsdl:types>
+
+  <wsdl:message name="HelloMessage">
+    <wsdl:part name="parameters" element="tns:helloMessage" />
+  </wsdl:message>
+
+  <wsdl:message name="GoodbyeMessage">
+    <wsdl:part name="parameters" element="tns:goodbyeMessage"/>
+  </wsdl:message>
+
+  <wsdl:portType name="HelloGoodbyePortType">
+    <wsdl:operation name="hello">
+      <wsdl:input message="tns:HelloMessage" name="HelloIn"/>
+      <wsdl:output message="tns:HelloMessage" name="HelloOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="goodbye">
+      <wsdl:input message="tns:GoodbyeMessage" name="GoodbyeIn"/>
+      <wsdl:output message="tns:GoodbyeMessage" name="GoodbyeOut"/>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <wsdl:binding name="HelloGoodbyeSoapBinding" type="tns:HelloGoodbyePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="hello">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="goodbye">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="HelloGoodbyeService">
+    <wsdl:port name="HelloGoodbyePort" binding="tns:HelloGoodbyeSoapBinding">
+      <soap:address location="http://localhost:8080/Quickstart_bpel_simple_correlationWS"/>
+    </wsdl:port>
+  </wsdl:service>
+
+  <plnk:partnerLinkType name="HelloGoodbyePartnerLinkType">
+    <plnk:role name="me" portType="tns:HelloGoodbyePortType"/>
+    <plnk:role name="you" portType="tns:HelloGoodbyePortType"/>
+  </plnk:partnerLinkType>
+
+  <vprop:property name="SessionID" type="xsd:int" />
+
+  <vprop:propertyAlias propertyName="tns:SessionID"
+                       messageType="tns:HelloMessage" part="parameters">
+    <vprop:query>tns:sessionId/tns:id</vprop:query>
+  </vprop:propertyAlias>
+
+  <vprop:propertyAlias propertyName="tns:SessionID"
+                       messageType="tns:GoodbyeMessage" part="parameters">
+    <vprop:query>tns:sessionId/tns:id</vprop:query>
+  </vprop:propertyAlias>
+
+
+</wsdl:definitions>
+
