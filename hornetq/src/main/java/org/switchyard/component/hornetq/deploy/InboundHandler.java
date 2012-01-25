@@ -58,6 +58,7 @@ public class InboundHandler implements ExchangeHandler, MessageHandler {
     private final HornetQBindingModel _bindingModel;
     private final HornetQConfigModel _configModel;
     private final MessageComposer<ClientMessage> _messageComposer;
+    private ClassLoader _applicationClassLoader;
     private ServiceReference _serviceRef;
     private ServerLocator _serverLocator;
     private ClientSessionFactory _factory;
@@ -71,6 +72,7 @@ public class InboundHandler implements ExchangeHandler, MessageHandler {
      * @param serverLocator the HornetQServer locator used to interact with HornetQ. 
      */
     public InboundHandler(final HornetQBindingModel hbm, final ServerLocator serverLocator) {
+        _applicationClassLoader = Thread.currentThread().getContextClassLoader();
         _bindingModel = hbm;
         _configModel = hbm.getHornetQConfig();
         _messageComposer = HornetQComposition.getMessageComposer(hbm);
@@ -113,11 +115,15 @@ public class InboundHandler implements ExchangeHandler, MessageHandler {
     @Override
     public void onMessage(final ClientMessage message) {
         final Exchange exchange = createExchange(_serviceRef);
+        final ClassLoader origCl = Thread.currentThread().getContextClassLoader();
         try {
+            Thread.currentThread().setContextClassLoader(_applicationClassLoader);
             _logger.info("onMessage :" + message);
             exchange.send(_messageComposer.compose(message, exchange, true));
         } catch (final Exception e) {
             throw new SwitchYardException(e);
+        } finally {
+            Thread.currentThread().setContextClassLoader(origCl);
         }
     }
     
