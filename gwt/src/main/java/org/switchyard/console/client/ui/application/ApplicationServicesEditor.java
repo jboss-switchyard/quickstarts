@@ -19,12 +19,8 @@
 
 package org.switchyard.console.client.ui.application;
 
-import org.jboss.ballroom.client.widgets.ContentGroupLabel;
-import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
-import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.model.Application;
 
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -39,12 +35,8 @@ public class ApplicationServicesEditor {
 
     private ApplicationPresenter _presenter;
 
-    private ContentHeaderLabel _applicationHeaderLabel;
-    private ContentHeaderLabel _namespaceHeaderLabel;
-    private ServicesList _servicesList;
+    private ApplicationServicesList _applicationServicesList;
     private ComponentServicesList _componentServicesList;
-
-    private Application _application;
 
     /**
      * Create a new ApplicationServicesEditor.
@@ -52,52 +44,33 @@ public class ApplicationServicesEditor {
      * @param presenter the associated presenter.
      */
     public ApplicationServicesEditor(ApplicationPresenter presenter) {
-        this._presenter = presenter;
+        _presenter = presenter;
     }
 
     /**
      * @return this editor as a Widget.
      */
     public Widget asWidget() {
-
-        ScrollPanel scroll = new ScrollPanel();
-
         VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("rhs-content-panel");
+        layout.setStyleName("fill-layout-width");
 
-        scroll.add(layout);
-
-        _applicationHeaderLabel = new ContentHeaderLabel();
-        layout.add(_applicationHeaderLabel);
-
-        _namespaceHeaderLabel = new ContentHeaderLabel();
-        layout.add(_namespaceHeaderLabel);
-
-        _servicesList = new ServicesList();
+        _applicationServicesList = new ApplicationServicesList(_presenter);
         _componentServicesList = new ComponentServicesList();
 
-        layout.add(new ContentGroupLabel("Services"));
-        layout.add(_servicesList.asWidget());
-
-        layout.add(new ContentGroupLabel("Component Services"));
+        layout.add(_applicationServicesList.asWidget());
         layout.add(_componentServicesList.asWidget());
 
-        _componentServicesList.bind(_servicesList);
+        _componentServicesList.bind(_applicationServicesList);
 
-        return scroll;
+        return layout;
     }
 
     /**
      * @param application the application being edited by this editor.
      */
     public void setApplication(Application application) {
-        this._application = application;
-
-        String[] tnsLocal = NameTokens.parseQName(application.getName());
-        _applicationHeaderLabel.setText("Application: " + tnsLocal[1]);
-        _namespaceHeaderLabel.setText("Namespace: " + tnsLocal[0]);
-        _servicesList.setApplication(application);
-        _componentServicesList.setApplication(application);
+        _applicationServicesList.setApplication(application);
+        _componentServicesList.setData(application.getComponentServices());
     }
 
 }

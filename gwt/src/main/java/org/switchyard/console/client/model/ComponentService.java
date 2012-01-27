@@ -27,16 +27,7 @@ import java.util.List;
  * 
  * @author Rob Cernich
  */
-public interface ComponentService {
-    /**
-     * @return the service's name.
-     */
-    public String getName();
-
-    /**
-     * @param name the service's name
-     */
-    public void setName(String name);
+public interface ComponentService extends HasQName {
 
     /**
      * @return the interface name
@@ -57,12 +48,12 @@ public interface ComponentService {
      * @param implementation the implementation name
      */
     public void setImplementation(String implementation);
-    
+
     /**
      * @return the references required by this component
      */
     public List<ComponentReference> getReferences();
-    
+
     /**
      * @param references the references required by this component
      */
@@ -82,9 +73,10 @@ public interface ComponentService {
      * @return the raw configuration of the service component's implementation
      */
     public String getImplementationConfiguration();
-    
+
     /**
-     * @param configuration the raw configuration of the service component's implementation
+     * @param configuration the raw configuration of the service component's
+     *            implementation
      */
     public void setImplementationConfiguration(String configuration);
 

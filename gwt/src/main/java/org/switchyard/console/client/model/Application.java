@@ -27,16 +27,7 @@ import java.util.List;
  * 
  * @author Rob Cernich
  */
-public interface Application {
-    /**
-     * @return the name of this application.
-     */
-    public String getName();
-
-    /**
-     * @param name the name of this application.
-     */
-    public void setName(String name);
+public interface Application extends HasQName {
 
     /**
      * @return the services provided by this application.
@@ -67,5 +58,5 @@ public interface Application {
      * @param transformers the transforms defined within this application.
      */
     public void setTransformers(List<Transformer> transformers);
-
+    
 }

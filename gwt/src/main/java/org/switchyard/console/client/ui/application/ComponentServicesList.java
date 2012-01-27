@@ -18,22 +18,17 @@
  */
 package org.switchyard.console.client.ui.application;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
-import org.switchyard.console.client.NameTokens;
-import org.switchyard.console.client.model.Application;
 import org.switchyard.console.client.model.ComponentService;
 import org.switchyard.console.client.model.Service;
-import org.switchyard.console.client.ui.common.AlwaysFireSingleSelectionModel;
+import org.switchyard.console.client.ui.common.AbstractDataTable;
 
 import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -45,7 +40,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
  * 
  * @author Rob Cernich
  */
-public class ComponentServicesList {
+public class ComponentServicesList extends AbstractDataTable<ComponentService> {
 
     private static final ProvidesKey<ComponentService> KEY_PROVIDER = new ProvidesKey<ComponentService>() {
         @Override
@@ -54,19 +49,20 @@ public class ComponentServicesList {
         }
     };
 
-    private DefaultCellTable<ComponentService> _servicesTable;
-    private ListDataProvider<ComponentService> _servicesDataProvider;
-    private AlwaysFireSingleSelectionModel<ComponentService> _selectionModel;
     private DefaultWindow _implementationDetailsWindow;
     private ImplementationDetailsWidget _implementationDetailsWidget;
 
     ComponentServicesList() {
-        _servicesTable = new DefaultCellTable<ComponentService>(5);
+        super("Component Services");
+    }
 
+    @Override
+    protected void createColumns(DefaultCellTable<ComponentService> table,
+            ListDataProvider<ComponentService> dataProvider) {
         TextColumn<ComponentService> nameColumn = new TextColumn<ComponentService>() {
             @Override
             public String getValue(ComponentService service) {
-                return NameTokens.parseQName(service.getName())[1];
+                return service.localName();
             }
         };
         nameColumn.setSortable(true);
@@ -79,7 +75,8 @@ public class ComponentServicesList {
         };
         interfaceColumn.setSortable(true);
 
-        Column<ComponentService, String> implementationColumn = new Column<ComponentService, String>(new ClickableTextCell()) {
+        Column<ComponentService, String> implementationColumn = new Column<ComponentService, String>(
+                new ClickableTextCell()) {
             @Override
             public String getValue(ComponentService dummy) {
                 return "View Details...";
@@ -93,36 +90,32 @@ public class ComponentServicesList {
         });
         implementationColumn.setSortable(false);
 
-        _servicesTable.addColumn(nameColumn, "Name");
-        _servicesTable.addColumn(interfaceColumn, "Interface");
-        _servicesTable.addColumn(implementationColumn, "Implementation");
+        ColumnSortEvent.ListHandler<ComponentService> sortHandler = new ColumnSortEvent.ListHandler<ComponentService>(
+                dataProvider.getList());
+        sortHandler.setComparator(nameColumn, createColumnCommparator(nameColumn));
+        sortHandler.setComparator(interfaceColumn, createColumnCommparator(interfaceColumn));
+        sortHandler.setComparator(implementationColumn, createColumnCommparator(implementationColumn));
 
-        _selectionModel = new AlwaysFireSingleSelectionModel<ComponentService>(KEY_PROVIDER);
-        _servicesTable.setSelectionModel(_selectionModel);
+        table.addColumn(nameColumn, "Name");
+        table.addColumn(interfaceColumn, "Interface");
+        table.addColumn(implementationColumn, "Implementation");
 
-        _servicesDataProvider = new ListDataProvider<ComponentService>(KEY_PROVIDER);
-        _servicesDataProvider.addDataDisplay(_servicesTable);
+        table.addColumnSortHandler(sortHandler);
+        table.getColumnSortList().push(nameColumn);
 
         createImplementationsDetailsWindow();
     }
 
     /**
-     * @return this object's widget.
-     */
-    public Widget asWidget() {
-        return _servicesTable;
-    }
-
-    /**
-     * Bind this control to a {@link ServicesList}.
+     * Bind this control to a {@link ApplicationServicesList}.
      * 
-     * @param servicesList the {@link ServicesList} to listen to.
+     * @param applicationServicesList the {@link ApplicationServicesList} to listen to.
      */
-    public void bind(final ServicesList servicesList) {
-        servicesList.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+    public void bind(final ApplicationServicesList applicationServicesList) {
+        applicationServicesList.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
-                Service selected = servicesList.getSelection();
+                Service selected = applicationServicesList.getSelection();
                 if (selected == null) {
                     return;
                 }
@@ -130,26 +123,20 @@ public class ComponentServicesList {
                 if (promotedServiceName == null) {
                     return;
                 }
-                for (ComponentService service : _servicesDataProvider.getList()) {
-                    if (promotedServiceName.equals(_servicesDataProvider.getKey(service))) {
-                        _selectionModel.setSelected(service, true);
+                for (ComponentService service : getData()) {
+                    if (promotedServiceName.equals(KEY_PROVIDER.getKey(service))) {
+                        setSelection(service);
                         return;
                     }
                 }
-                _selectionModel.setSelected(null, true);
+                setSelection(null);
             }
         });
     }
 
-    /**
-     * @param application the application providing the data.
-     */
-    public void setApplication(Application application) {
-        List<ComponentService> services = application.getComponentServices();
-        if (services == null) {
-            services = Collections.emptyList();
-        }
-        _servicesDataProvider.setList(services);
+    @Override
+    protected ProvidesKey<ComponentService> createKeyProvider() {
+        return KEY_PROVIDER;
     }
 
     private void showDetails(ComponentService service) {

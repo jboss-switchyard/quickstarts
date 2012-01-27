@@ -20,7 +20,6 @@ package org.switchyard.console.client.ui.application;
 
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
-import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.model.ComponentService;
 
 import com.google.gwt.dom.client.Element;
@@ -65,7 +64,6 @@ public class ImplementationDetailsWidget {
         content.add(_implementationTypeHeaderLabel);
 
         _referencesList = new ComponentReferencesList();
-        content.add(new ContentGroupLabel("References"));
         content.add(_referencesList.asWidget());
 
         _implementationDetails = DOM.createElement("pre");
@@ -91,9 +89,9 @@ public class ImplementationDetailsWidget {
      * @param service the service
      */
     public void setService(ComponentService service) {
-        _serviceNameLabel.setText(NameTokens.parseQName(service.getName())[1]);
+        _serviceNameLabel.setText(service.localName());
         _implementationTypeHeaderLabel.setText(service.getImplementation() + " implementation");
-        _referencesList.setService(service);
+        _referencesList.setData(service.getReferences());
         _implementationDetails.setInnerText(service.getImplementationConfiguration());
     }
 

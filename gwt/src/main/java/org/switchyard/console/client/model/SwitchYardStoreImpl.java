@@ -85,6 +85,11 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         this._isStandalone = bootstrap.getProperty(ApplicationProperties.STANDALONE).equals("true");
     }
 
+    @Override
+    public BeanFactory getBeanFactory() {
+        return _factory;
+    }
+
     @SuppressWarnings("rawtypes")
     @Override
     public void loadSystemDetails(final AsyncCallback<SystemDetails> callback) {
@@ -102,7 +107,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                final ModelNode response = ModelNode.fromBase64(result.getResponseText()).get(RESULT);
+                final ModelNode response = result.get().get(RESULT);
                 SystemDetails systemDetails = null;
                 if (response.isDefined()) {
                     systemDetails = createSystemDetails(response);
@@ -132,7 +137,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                final ModelNode response = ModelNode.fromBase64(result.getResponseText()).get(RESULT);
+                final ModelNode response = result.get().get(RESULT);
                 if (response.isDefined()) {
                     for (final ModelNode applicationNode : response.asList()) {
                         try {
@@ -170,7 +175,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                final ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                final ModelNode response = result.get();
                 if (response.hasDefined(RESULT)) {
                     final Application application = createApplication(response.get(RESULT).asList().get(0));
                     if (application != null) {
@@ -202,7 +207,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                final ModelNode response = ModelNode.fromBase64(result.getResponseText()).get(RESULT);
+                final ModelNode response = result.get().get(RESULT);
                 if (response.isDefined()) {
                     for (final ModelNode componentNode : response.asList()) {
                         try {
@@ -240,7 +245,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                final ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                final ModelNode response = result.get();
                 if (response.hasDefined(RESULT)) {
                     final Component component = createComponent(response.get(RESULT).asList().get(0));
                     if (component != null) {
@@ -272,7 +277,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                final ModelNode response = ModelNode.fromBase64(result.getResponseText()).get(RESULT);
+                final ModelNode response = result.get().get(RESULT);
                 if (response.isDefined()) {
                     for (final ModelNode serviceNode : response.asList()) {
                         final Service service = createServiceStub(serviceNode);
@@ -310,7 +315,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                final ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                final ModelNode response = result.get();
                 if (response.hasDefined(RESULT)) {
                     final Service service = createService(response.get(RESULT).asList().get(0));
                     if (service != null) {

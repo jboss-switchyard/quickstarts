@@ -19,14 +19,9 @@
 
 package org.switchyard.console.client.ui.application;
 
-import org.jboss.ballroom.client.widgets.ContentGroupLabel;
-import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
-import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.model.Application;
 import org.switchyard.console.client.ui.common.TransformersList;
 
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -39,12 +34,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class ApplicationTransformationsEditor {
 
     private ApplicationPresenter _presenter;
-
-    private ContentHeaderLabel _applicationHeaderLabel;
-    private ContentHeaderLabel _namespaceHeaderLabel;
     private TransformersList _transformersList;
-
-    private Application _application;
 
     /**
      * Create a new ApplicationTransformationsEditor.
@@ -52,45 +42,23 @@ public class ApplicationTransformationsEditor {
      * @param presenter the associated presenter.
      */
     public ApplicationTransformationsEditor(ApplicationPresenter presenter) {
-        this._presenter = presenter;
+        _presenter = presenter;
     }
 
     /**
      * @return this editor as a Widget.
      */
     public Widget asWidget() {
-
-        ScrollPanel scroll = new ScrollPanel();
-
-        VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("rhs-content-panel");
-
-        scroll.add(layout);
-
-        _applicationHeaderLabel = new ContentHeaderLabel();
-        layout.add(_applicationHeaderLabel);
-
-        _namespaceHeaderLabel = new ContentHeaderLabel();
-        layout.add(_namespaceHeaderLabel);
-
         _transformersList = new TransformersList();
 
-        layout.add(new ContentGroupLabel("Transformers"));
-        layout.add(_transformersList.asWidget());
-
-        return scroll;
+        return _transformersList.asWidget();
     }
 
     /**
      * @param application the application being edited by this editor.
      */
     public void setApplication(Application application) {
-        this._application = application;
-
-        String[] tnsLocal = NameTokens.parseQName(application.getName());
-        _applicationHeaderLabel.setText("Application: " + tnsLocal[1]);
-        _namespaceHeaderLabel.setText("Namespace: " + tnsLocal[0]);
-        _transformersList.setTransformers(application.getTransformers());
+        _transformersList.setData(application.getTransformers());
     }
 
 }

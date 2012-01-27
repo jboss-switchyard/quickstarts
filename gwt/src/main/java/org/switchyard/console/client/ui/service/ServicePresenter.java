@@ -19,22 +19,19 @@
 
 package org.switchyard.console.client.ui.service;
 
-import org.jboss.as.console.client.core.message.Message;
-import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.switchyard.console.client.Console;
+import java.util.List;
+
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.switchyard.console.client.NameTokens;
-import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.model.SwitchYardStore;
-import org.switchyard.console.client.ui.main.MainPresenter;
 
-import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -42,8 +39,8 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 
 /**
  * ServicePresenter
@@ -54,19 +51,13 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
  */
 public class ServicePresenter extends Presenter<ServicePresenter.MyView, ServicePresenter.MyProxy> {
 
-    private final PlaceManager _placeManager;
-
-    private DispatchAsync _dispatcher;
-
-    private SwitchYardStore _switchYardStore;
-
     /**
      * MyProxy
      * 
      * The proxy type used by this presenter.
      */
     @ProxyCodeSplit
-    @NameToken(NameTokens.SERVICE_CONFIG_PRESENTER)
+    @NameToken(NameTokens.SERVICES_PRESENTER)
     public interface MyProxy extends Proxy<ServicePresenter>, Place {
     }
 
@@ -85,7 +76,18 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
          * @param service set the service to be viewed/edited.
          */
         void setService(Service service);
+
+        /**
+         * @param services the services deployed on the server.
+         */
+        void setServicesList(List<Service> services);
     }
+
+    private final PlaceManager _placeManager;
+    private final RevealStrategy _revealStrategy;
+    private final SwitchYardStore _switchYardStore;
+    private String _applicationName;
+    private String _serviceName;
 
     /**
      * Create a new ServicePresenter.
@@ -94,17 +96,35 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
      * @param view the injected MyView.
      * @param proxy the injected MyProxy.
      * @param placeManager the injected PlaceManager.
-     * @param dispatcher the injected DispatchAsync.
+     * @param revealStrategy the RevealStrategy
      * @param switchYardStore the injected SwitchYardStore.
      */
     @Inject
     public ServicePresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager placeManager,
-            DispatchAsync dispatcher, SwitchYardStore switchYardStore) {
+            RevealStrategy revealStrategy, SwitchYardStore switchYardStore) {
         super(eventBus, view, proxy);
 
-        this._placeManager = placeManager;
-        this._dispatcher = dispatcher;
-        this._switchYardStore = switchYardStore;
+        _placeManager = placeManager;
+        _revealStrategy = revealStrategy;
+        _switchYardStore = switchYardStore;
+    }
+
+    /**
+     * Notifies the presenter that the user has selected a service. The
+     * presenter will load the service details and pass them back to the view to
+     * be displayed.
+     * 
+     * @param service the selected service.
+     */
+    public void onServiceSelected(Service service) {
+        PlaceRequest request = new PlaceRequest(NameTokens.SERVICES_PRESENTER);
+        if (service != null && service.getName() != null) {
+            request = request.with(NameTokens.SERVICE_NAME_PARAM, URL.encode(service.getName()));
+            if (service.getApplication() != null) {
+                request = request.with(NameTokens.APPLICATION_NAME_PARAM, URL.encode(service.getApplication()));
+            }
+        }
+        _placeManager.revealRelativePlace(request, -1);
     }
 
     @Override
@@ -114,36 +134,64 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
     }
 
     @Override
+    public void prepareFromRequest(PlaceRequest request) {
+        super.prepareFromRequest(request);
+
+        _serviceName = _placeManager.getCurrentPlaceRequest().getParameter(NameTokens.SERVICE_NAME_PARAM, null);
+        _applicationName = _placeManager.getCurrentPlaceRequest().getParameter(NameTokens.APPLICATION_NAME_PARAM, null);
+
+        if (_serviceName != null) {
+            _serviceName = URL.decode(_serviceName);
+        }
+        if (_applicationName != null) {
+            _applicationName = URL.decode(_applicationName);
+        }
+    }
+
+    @Override
+    protected void onReveal() {
+        super.onReveal();
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                fireEvent(new LHSHighlightEvent("unused", NameTokens.SERVICES_TEXT, NameTokens.SUBSYSTEM_TREE_CATEGORY));
+            }
+        });
+    }
+
+    @Override
     protected void onReset() {
         super.onReset();
 
-        HTML headerContent = new HTML(new SafeHtmlBuilder().appendEscaped(
-                Singleton.MESSAGES.header_content_serviceDetails()).toSafeHtml());
-        headerContent.setStylePrimaryName("header-content");
-        Console.MODULES.getHeader().setContent(headerContent);
-        Console.MODULES.getHeader().highlight(NameTokens.SERVICE_CONFIG_PRESENTER);
-
-        String serviceName = _placeManager.getCurrentPlaceRequest().getParameter("service", null);
-        String applicationName = _placeManager.getCurrentPlaceRequest().getParameter("application", null);
-
-        if (serviceName != null) {
-            serviceName = URL.decode(serviceName);
-        }
-        if (applicationName != null) {
-            applicationName = URL.decode(applicationName);
-        }
-        Window.setTitle("SwitchYard: Service - " + NameTokens.parseQName(applicationName)[1] + ":" + NameTokens.parseQName(serviceName)[1]);
-
-        loadService(serviceName, applicationName);
+        loadServicesList();
+        loadService();
     }
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), MainPresenter.TYPE_MAIN_CONTENT, this);
+        _revealStrategy.revealInParent(this);
     }
 
-    private void loadService(String serviceName, String applicationName) {
-        _switchYardStore.loadService(serviceName, applicationName, new AsyncCallback<Service>() {
+    private void loadServicesList() {
+        _switchYardStore.loadServices(new AsyncCallback<List<Service>>() {
+            @Override
+            public void onSuccess(List<Service> services) {
+                getView().setServicesList(services);
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                Console.error("Unknown error", caught.getMessage());
+            }
+        });
+    }
+
+    private void loadService() {
+        if (_serviceName == null || _applicationName == null) {
+            getView().setService(_switchYardStore.getBeanFactory().service().as());
+            return;
+        }
+        _switchYardStore.loadService(_serviceName, _applicationName, new AsyncCallback<Service>() {
 
             @Override
             public void onSuccess(Service service) {
@@ -152,11 +200,13 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
 
             @Override
             public void onFailure(Throwable caught) {
-                Log.error("Unknown error", caught);
-                Console.MODULES.getMessageCenter().notify(
-                        new Message("Unknown error", caught.getMessage(), Message.Severity.Error));
+                Console.error("Unknown error", caught.getMessage());
             }
         });
+    }
+
+    protected PlaceManager getPlaceManager() {
+        return _placeManager;
     }
 
 }

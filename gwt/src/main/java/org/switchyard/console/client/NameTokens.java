@@ -19,8 +19,6 @@
 
 package org.switchyard.console.client;
 
-import com.google.gwt.http.client.URL;
-
 /**
  * NameTokens
  * 
@@ -28,50 +26,35 @@ import com.google.gwt.http.client.URL;
  * 
  * @author Rob Cernich
  */
-public class NameTokens extends org.jboss.as.console.client.core.NameTokens {
+public final class NameTokens {
 
-    /** The path for the main SwitchYard view. */
-    public static final String SWITCH_YARD_PRESENTER = "switchyard";
+    private NameTokens() {
+    }
+
     /** The subpath for the SwitchYard system configuration view. */
-    public static final String SYSTEM_CONFIG_PRESENTER = "system";
-    /** The subpath for the SwitchYard component configuration view. */
-    public static final String COMPONENT_CONFIG_PRESENTER = "component";
-    /** The subpath for the SwitchYard application configuration view. */
-    public static final String APPLICATION_CONFIG_PRESENTER = "application";
-    /** The subpath for the SwitchYard service view. */
-    public static final String SERVICE_CONFIG_PRESENTER = "service";
+    public static final String SYSTEM_CONFIG_PRESENTER = "switchyard";
+    /** The subpath for the SwitchYard applications view. */
+    public static final String APPLICATIONS_PRESENTER = "sy-apps";
+    /** The subpath for the SwitchYard services view. */
+    public static final String SERVICES_PRESENTER = "sy-services";
 
-    /**
-     * Helper method to create URL to a specific application page.
-     * 
-     * @param applicationName the name of the application page.
-     * @return a token URL for displaying the application's page.
-     */
-    public static String createApplicationLink(String applicationName) {
-        return "switchyard/application;application=" + URL.encode(applicationName);
-    }
+    /** The parameter name used for component name. */
+    public static final String COMPONENT_NAME_PARAM = "component";
+    /** The parameter name used for application name. */
+    public static final String APPLICATION_NAME_PARAM = "application";
+    /** The parameter name used for service name. */
+    public static final String SERVICE_NAME_PARAM = "service";
 
-    /**
-     * Helper method to create URL to a specific component page.
-     * 
-     * @param componentName the name of the component page.
-     * @return a token URL for displaying the component page.
-     */
-    public static String createComponentLink(String componentName) {
-        return "switchyard/component;component=" + URL.encode(componentName);
-    }
+    /** The display text for the SwitchYard system configuration navigator item. */
+    public static final String SYSTEM_CONFIG_TEXT = "Runtime Details";
+    /** The display text for the SwitchYard applications navigator item. */
+    public static final String APPLICATIONS_TEXT = "Applications";
+    /** The display text for the SwitchYard services navigator item. */
+    public static final String SERVICES_TEXT = "Services";
 
-    /**
-     * Helper method to create URL to a specific service page.
-     * 
-     * @param serviceName the name of the service.
-     * @param applicationName the name of the service's containing application.
-     * @return a token URL for displaying the service page.
-     */
-    public static String createServiceLink(String serviceName, String applicationName) {
-        return "switchyard/service;service=" + URL.encode(serviceName) + ";application=" + URL.encode(applicationName);
-    }
-
+    /** The "category" ID for the subsystems tree. */
+    public static final String SUBSYSTEM_TREE_CATEGORY = "profiles";
+    
     /**
      * @param name a string representation of a javax.xml.namespace.QName
      * @return the QName components, {namespace,local}

@@ -18,15 +18,14 @@
  */
 package org.switchyard.console.client.ui.common;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.switchyard.console.client.model.Transformer;
 
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 
 /**
  * TransformersList
@@ -35,16 +34,17 @@ import com.google.gwt.view.client.ListDataProvider;
  * 
  * @author Rob Cernich
  */
-public class TransformersList {
-    private DefaultCellTable<Transformer> _transformersTable;
-    private ListDataProvider<Transformer> _transformersDataProvider;
+public class TransformersList extends AbstractDataTable<Transformer> {
 
     /**
      * Create a new TransformersList.
      */
     public TransformersList() {
-        _transformersTable = new DefaultCellTable<Transformer>(5);
+        super("Transformers");
+    }
 
+    @Override
+    protected void createColumns(DefaultCellTable<Transformer> table, ListDataProvider<Transformer> dataProvider) {
         TextColumn<Transformer> fromColumn = new TextColumn<Transformer>() {
             @Override
             public String getValue(Transformer transform) {
@@ -69,29 +69,35 @@ public class TransformersList {
         };
         typeColumn.setSortable(true);
 
-        _transformersTable.addColumn(fromColumn, "From");
-        _transformersTable.addColumn(toColumn, "To");
-        _transformersTable.addColumn(typeColumn, "Type");
+        ColumnSortEvent.ListHandler<Transformer> sortHandler = new ColumnSortEvent.ListHandler<Transformer>(
+                dataProvider.getList());
+        sortHandler.setComparator(fromColumn, createColumnCommparator(fromColumn));
+        sortHandler.setComparator(toColumn, createColumnCommparator(toColumn));
+        sortHandler.setComparator(typeColumn, createColumnCommparator(typeColumn));
 
-        _transformersDataProvider = new ListDataProvider<Transformer>();
-        _transformersDataProvider.addDataDisplay(_transformersTable);
+        table.addColumn(fromColumn, "From");
+        table.addColumn(toColumn, "To");
+        table.addColumn(typeColumn, "Type");
+
+        table.addColumnSortHandler(sortHandler);
+        table.getColumnSortList().push(typeColumn);
+        table.getColumnSortList().push(toColumn);
+        table.getColumnSortList().push(fromColumn);
+
+        table.setWidth("100%", false);
+        table.setColumnWidth(fromColumn, 45, Style.Unit.PCT);
+        table.setColumnWidth(toColumn, 45, Style.Unit.PCT);
+        table.setColumnWidth(typeColumn, 10, Style.Unit.PCT);
     }
 
-    /**
-     * @return this object's widget.
-     */
-    public Widget asWidget() {
-        return _transformersTable;
-    }
-
-    /**
-     * @param transformers the transformers to display.
-     */
-    public void setTransformers(List<Transformer> transformers) {
-        if (transformers == null) {
-            transformers = Collections.emptyList();
-        }
-        _transformersDataProvider.setList(transformers);
+    @Override
+    protected ProvidesKey<Transformer> createKeyProvider() {
+        return new ProvidesKey<Transformer>() {
+            @Override
+            public Object getKey(Transformer item) {
+                return item.getType() + ":" + item.getFrom() + ":" + item.getTo();
+            }
+        };
     }
 
 }

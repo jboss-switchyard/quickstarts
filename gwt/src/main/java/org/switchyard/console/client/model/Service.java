@@ -27,16 +27,7 @@ import java.util.List;
  * 
  * @author Rob Cernich
  */
-public interface Service {
-    /**
-     * @return the service's name.
-     */
-    public String getName();
-
-    /**
-     * @param name the service's name
-     */
-    public void setName(String name);
+public interface Service extends HasQName {
 
     /**
      * @return the interface name

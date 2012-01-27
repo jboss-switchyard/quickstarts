@@ -19,13 +19,17 @@
 
 package org.switchyard.console.client.ui.config;
 
-import org.jboss.as.console.client.core.DisposableViewImpl;
-import org.jboss.ballroom.client.layout.RHSContentPanel;
-import org.switchyard.console.client.Singleton;
-import org.switchyard.console.client.model.SystemDetails;
+import java.util.List;
 
-import com.google.gwt.user.client.ui.LayoutPanel;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
+import org.switchyard.console.client.model.SystemDetails;
+import org.switchyard.console.components.client.extension.ComponentProviders;
+import org.switchyard.console.components.client.model.Component;
+
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 
 /**
  * ConfigView
@@ -38,26 +42,45 @@ public class ConfigView extends DisposableViewImpl implements ConfigPresenter.My
 
     private ConfigPresenter _presenter;
     private ConfigEditor _configEditor;
+    @Inject
+    private ComponentProviders _componentProviders;
 
     @Override
     public Widget createWidget() {
+        _configEditor = new ConfigEditor(_componentProviders);
+        _configEditor.setPresenter(_presenter);
 
-        LayoutPanel layout = new RHSContentPanel(Singleton.MESSAGES.header_content_switchYardConfiguration());
-
-        _configEditor = new ConfigEditor(_presenter);
-        layout.add(_configEditor.asWidget());
-
-        return layout;
+        SimpleLayout layout = new SimpleLayout().setTitle("SwitchYard Runtime Details")
+                .setHeadline("SwitchYard Runtime").setDescription("Displays details about the SwitchYard runtime.")
+                .addContent("Runtime Details", _configEditor.asWidget());
+        return layout.build();
     }
 
     @Override
     public void setPresenter(ConfigPresenter presenter) {
-        this._presenter = presenter;
+        _presenter = presenter;
+        if (_configEditor != null) {
+            _configEditor.setPresenter(presenter);
+        }
     }
 
     @Override
     public void setSystemDetails(SystemDetails systemDetails) {
         _configEditor.setSystemDetails(systemDetails);
+    }
+
+    @Override
+    public void setComponents(List<Component> components) {
+        _configEditor.setComponents(components);
+    }
+
+    @Override
+    public void setInSlot(Object slot, Widget content) {
+        if (slot == ConfigPresenter.TYPE_COMPONENT_CONTENT) {
+            _configEditor.setComponentContent(content);
+        } else {
+            Console.error("Unknown slot requested: " + slot);
+        }
     }
 
 }

@@ -20,18 +20,19 @@
 package org.switchyard.console.client.ui.service;
 
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
-import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.switchyard.console.client.NameTokens;
-import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.ui.widgets.ClickableTextItem;
 import org.switchyard.console.client.ui.widgets.ClickableTextItem.ValueAdapter;
+import org.switchyard.console.client.ui.widgets.LocalNameFormItem;
+import org.switchyard.console.client.ui.widgets.NamespaceFormItem;
 
-import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 
 /**
  * ServiceEditor
@@ -44,8 +45,6 @@ public class ServiceEditor {
 
     private ServicePresenter _presenter;
 
-    private ContentHeaderLabel _serviceHeaderLabel;
-    private ContentHeaderLabel _namespaceHeaderLabel;
     private Form<Service> _implementationDetailsForm;
     private GatewaysList _gatewaysList;
 
@@ -64,47 +63,35 @@ public class ServiceEditor {
      * @return this editor as a Widget.
      */
     public Widget asWidget() {
-
-        ScrollPanel scroll = new ScrollPanel();
-
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
-
-        scroll.add(layout);
-
-        _serviceHeaderLabel = new ContentHeaderLabel();
-        layout.add(_serviceHeaderLabel);
-
-        _namespaceHeaderLabel = new ContentHeaderLabel();
-        layout.add(_namespaceHeaderLabel);
 
         layout.add(createImplementationDetailsPanel());
         layout.add(createGatewayDetailsPanel());
 
-        return scroll;
+        return layout;
     }
 
     /**
      * @param service the service to be edited.
      */
     public void setService(Service service) {
-        this._service = service;
+        _service = service;
 
         if (service.getInterface() == null) {
             // XXX: workaround to ensure interface field in the form gets set.
             service.setInterface("");
         }
 
-        String[] tnsLocal = NameTokens.parseQName(service.getName());
-        _serviceHeaderLabel
-                .setText(Singleton.MESSAGES.header_editor_service_name(tnsLocal[1]));
-        _namespaceHeaderLabel.setText("Namespace: " + tnsLocal[0]);
+        _implementationDetailsForm.clearValues();
         _implementationDetailsForm.edit(service);
-        _gatewaysList.setService(service);
+        _gatewaysList.setData(service.getGateways());
     }
 
     private Widget createImplementationDetailsPanel() {
-        ClickableTextItem<String> nameItem = new ClickableTextItem<String>("application", "Application",
+        TextItem nameItem = new LocalNameFormItem("name_1", "Service Name");
+        TextItem namespaceItem = new NamespaceFormItem("name_2", "Service Namespace");
+        ClickableTextItem<String> applicationItem = new ClickableTextItem<String>("application", "Application",
                 new ValueAdapter<String>() {
                     @Override
                     public String getText(String value) {
@@ -113,7 +100,7 @@ public class ServiceEditor {
 
                     @Override
                     public String getTargetHistoryToken(String value) {
-                        return NameTokens.createApplicationLink(value);
+                        return createApplicationLink(value);
                     }
                 });
         TextItem interfaceItem = new TextItem("interface", "Interface") {
@@ -134,30 +121,37 @@ public class ServiceEditor {
 
                     @Override
                     public String getTargetHistoryToken(String value) {
-                        return NameTokens.createApplicationLink(_service.getApplication());
+                        if (_service == null || _service.getApplication() == null) {
+                            return createApplicationLink(null);
+                        }
+                        return createApplicationLink(_service.getApplication());
                     }
                 });
 
         _implementationDetailsForm = new Form<Service>(Service.class);
-        _implementationDetailsForm.setFields(nameItem, interfaceItem, implementationItem);
+        _implementationDetailsForm.setNumColumns(2);
+        _implementationDetailsForm.setFields(nameItem, applicationItem, namespaceItem);
+        _implementationDetailsForm.setFieldsInGroup("Implementation Details", implementationItem, interfaceItem);
 
         VerticalPanel implementationDetailsLayout = new VerticalPanel();
         implementationDetailsLayout.setStyleName("fill-layout-width");
-        implementationDetailsLayout.add(new ContentGroupLabel("Implementation Details"));
+        implementationDetailsLayout.add(new ContentGroupLabel("Service Details"));
         implementationDetailsLayout.add(_implementationDetailsForm.asWidget());
 
         return implementationDetailsLayout;
     }
 
+    private String createApplicationLink(String applicationName) {
+        PlaceRequest request = new PlaceRequest(NameTokens.APPLICATIONS_PRESENTER);
+        if (applicationName != null) {
+            request = request.with(NameTokens.APPLICATION_NAME_PARAM, URL.encode(applicationName));
+        }
+        return _presenter.getPlaceManager().buildRelativeHistoryToken(request, -1);
+    }
+
     private Widget createGatewayDetailsPanel() {
         _gatewaysList = new GatewaysList();
-
-        VerticalPanel gatewayDetailsLayout = new VerticalPanel();
-        gatewayDetailsLayout.setStyleName("fill-layout-width");
-        gatewayDetailsLayout.add(new ContentGroupLabel("Gateway Details"));
-        gatewayDetailsLayout.add(_gatewaysList.asWidget());
-
-        return gatewayDetailsLayout;
+        return _gatewaysList.asWidget();
     }
 
 }

@@ -18,7 +18,6 @@
  */
 package org.switchyard.console.client.model;
 
-
 /**
  * ComponentReference
  * 
@@ -26,16 +25,7 @@ package org.switchyard.console.client.model;
  * 
  * @author Rob Cernich
  */
-public interface ComponentReference {
-    /**
-     * @return the reference's name.
-     */
-    public String getName();
-
-    /**
-     * @param name the reference's name
-     */
-    public void setName(String name);
+public interface ComponentReference extends HasQName {
 
     /**
      * @return the interface name

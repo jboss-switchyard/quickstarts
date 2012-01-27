@@ -18,20 +18,18 @@
  */
 package org.switchyard.console.client.ui.service;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.switchyard.console.client.model.Binding;
-import org.switchyard.console.client.model.Service;
+import org.switchyard.console.client.ui.common.AbstractDataTable;
 
 import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 
 /**
  * GatewaysList
@@ -40,16 +38,17 @@ import com.google.gwt.view.client.ListDataProvider;
  * 
  * @author Rob Cernich
  */
-public class GatewaysList {
+public class GatewaysList extends AbstractDataTable<Binding> {
 
-    private DefaultCellTable<Binding> _gatewaysTable;
-    private ListDataProvider<Binding> _gatewaysDataProvider;
     private DefaultWindow _bindingDetailsWindow;
     private BindingDetailsWidget _bindingDetailsWidget;
 
     GatewaysList() {
-        _gatewaysTable = new DefaultCellTable<Binding>(5);
+        super("Gateways");
+    }
 
+    @Override
+    protected void createColumns(DefaultCellTable<Binding> table, ListDataProvider<Binding> dataProvider) {
         TextColumn<Binding> typeColumn = new TextColumn<Binding>() {
             @Override
             public String getValue(Binding binding) {
@@ -72,31 +71,26 @@ public class GatewaysList {
         });
         configColumn.setSortable(false);
 
-        _gatewaysTable.addColumn(typeColumn, "Type");
-        _gatewaysTable.addColumn(configColumn, "Configuration");
+        ColumnSortEvent.ListHandler<Binding> sortHandler = new ColumnSortEvent.ListHandler<Binding>(
+                dataProvider.getList());
+        sortHandler.setComparator(typeColumn, createColumnCommparator(typeColumn));
 
-        _gatewaysDataProvider = new ListDataProvider<Binding>();
-        _gatewaysDataProvider.addDataDisplay(_gatewaysTable);
+        table.addColumn(typeColumn, "Type");
+        table.addColumn(configColumn, "Configuration");
+
+        table.addColumnSortHandler(sortHandler);
 
         createBindingDetailsWindow();
     }
 
-    /**
-     * @return this object's widget.
-     */
-    public Widget asWidget() {
-        return _gatewaysTable;
-    }
-
-    /**
-     * @param service the service providing the data.
-     */
-    public void setService(Service service) {
-        List<Binding> gateways = service.getGateways();
-        if (gateways == null) {
-            gateways = Collections.emptyList();
-        }
-        _gatewaysDataProvider.setList(gateways);
+    @Override
+    protected ProvidesKey<Binding> createKeyProvider() {
+        return new ProvidesKey<Binding>() {
+            @Override
+            public Object getKey(Binding item) {
+                return item.getType() + ":" + item.getConfiguration();
+            }
+        };
     }
 
     private void showDetails(Binding binding) {

@@ -73,17 +73,12 @@ public class ClickableTextItem<T> extends FormItem<T> {
         _link = new Hyperlink();
         _valueAdapter = valueAdapter;
 
-        isModified = false;
+        resetMetaData();
     }
 
     @Override
     public T getValue() {
         return _value;
-    }
-
-    @Override
-    public void resetMetaData() {
-        isUndefined = true;
     }
 
     @Override

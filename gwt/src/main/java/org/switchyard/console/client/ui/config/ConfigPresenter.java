@@ -19,30 +19,34 @@
 
 package org.switchyard.console.client.ui.config;
 
-import org.jboss.as.console.client.core.message.Message;
-import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.switchyard.console.client.Console;
+import java.util.List;
+
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.switchyard.console.client.NameTokens;
-import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.SwitchYardStore;
 import org.switchyard.console.client.model.SystemDetails;
-import org.switchyard.console.client.ui.main.MainPresenter;
+import org.switchyard.console.client.ui.component.ComponentPresenter.PresenterFactory;
+import org.switchyard.console.components.client.model.Component;
+import org.switchyard.console.components.client.ui.ComponentConfigurationPresenter;
 
-import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
+import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
 /**
  * ConfigPresenter
@@ -53,12 +57,6 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
  */
 public class ConfigPresenter extends Presenter<ConfigPresenter.MyView, ConfigPresenter.MyProxy> {
 
-    private final PlaceManager _placeManager;
-
-    private DispatchAsync _dispatcher;
-
-    private SwitchYardStore _switchYardStore;
-
     /**
      * MyProxy
      * 
@@ -68,6 +66,10 @@ public class ConfigPresenter extends Presenter<ConfigPresenter.MyView, ConfigPre
     @NameToken(NameTokens.SYSTEM_CONFIG_PRESENTER)
     public interface MyProxy extends Proxy<ConfigPresenter>, Place {
     }
+
+    /** The slot where component specific details are displayed. */
+    @ContentSlot
+    public static final GwtEvent.Type<RevealContentHandler<?>> TYPE_COMPONENT_CONTENT = new GwtEvent.Type<RevealContentHandler<?>>();
 
     /**
      * MyView
@@ -84,7 +86,19 @@ public class ConfigPresenter extends Presenter<ConfigPresenter.MyView, ConfigPre
          * @param systemDetails details of the SwitchYard system.
          */
         void setSystemDetails(SystemDetails systemDetails);
+
+        /**
+         * @param components the installed components.
+         */
+        void setComponents(List<Component> components);
     }
+
+    private final PlaceManager _placeManager;
+    private final RevealStrategy _revealStrategy;
+    private final SwitchYardStore _switchYardStore;
+    private final PresenterFactory _factory;
+    private String _componentName;
+    private ComponentConfigurationPresenter _presenterWidget;
 
     /**
      * Create a new ConfigPresenter.
@@ -93,17 +107,36 @@ public class ConfigPresenter extends Presenter<ConfigPresenter.MyView, ConfigPre
      * @param view the injected MyView.
      * @param proxy the injected MyProxy.
      * @param placeManager the injected PlaceManager.
-     * @param dispatcher the injected DispatchAsync.
+     * @param revealStrategy the RevealStrategy
      * @param switchYardStore the injected SwitchYardStore.
+     * @param factory the PresenterFactory for specialized component presenters.
      */
     @Inject
     public ConfigPresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager placeManager,
-            DispatchAsync dispatcher, SwitchYardStore switchYardStore) {
+            RevealStrategy revealStrategy, SwitchYardStore switchYardStore, PresenterFactory factory) {
         super(eventBus, view, proxy);
 
-        this._placeManager = placeManager;
-        this._dispatcher = dispatcher;
-        this._switchYardStore = switchYardStore;
+        _placeManager = placeManager;
+        _revealStrategy = revealStrategy;
+        _switchYardStore = switchYardStore;
+        _factory = factory;
+    }
+
+    /**
+     * Notifies the presenter that the user wishes to view details about a
+     * specific component. The presenter will load the details and pass them
+     * back to the view to be displayed.
+     * 
+     * @param component the selected component.
+     */
+    public void onComponentSelected(Component component) {
+        clearComponentContent();
+
+        PlaceRequest request = new PlaceRequest(NameTokens.SYSTEM_CONFIG_PRESENTER);
+        if (component != null) {
+            request = request.with(NameTokens.COMPONENT_NAME_PARAM, URL.encode(component.getName()));
+        }
+        _placeManager.revealRelativePlace(request, -1);
     }
 
     @Override
@@ -113,23 +146,44 @@ public class ConfigPresenter extends Presenter<ConfigPresenter.MyView, ConfigPre
     }
 
     @Override
+    public void prepareFromRequest(PlaceRequest request) {
+        super.prepareFromRequest(request);
+        _componentName = request.getParameter(NameTokens.COMPONENT_NAME_PARAM, null);
+        if (_componentName != null) {
+            _componentName = URL.decode(_componentName);
+        }
+    }
+
+    @Override
+    protected void onReveal() {
+        super.onReveal();
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                fireEvent(new LHSHighlightEvent("unused", NameTokens.SYSTEM_CONFIG_TEXT,
+                        NameTokens.SUBSYSTEM_TREE_CATEGORY));
+            }
+        });
+    }
+
+    @Override
     protected void onReset() {
         super.onReset();
 
-        HTML headerContent = new HTML(new SafeHtmlBuilder().appendEscaped(
-                Singleton.MESSAGES.header_content_switchYardConfiguration()).toSafeHtml());
-        headerContent.setStylePrimaryName("header-content");
-        Console.MODULES.getHeader().setContent(headerContent);
-        Console.MODULES.getHeader().highlight(NameTokens.SYSTEM_CONFIG_PRESENTER);
-
-        Window.setTitle("SwitchYard: System");
-
         loadSystemDetails();
+        loadComponentsList();
+        loadComponent();
+    }
+
+    @Override
+    protected void onHide() {
+        super.onHide();
+        clearComponentContent();
     }
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), MainPresenter.TYPE_MAIN_CONTENT, this);
+        _revealStrategy.revealInParent(this);
     }
 
     private void loadSystemDetails() {
@@ -142,11 +196,57 @@ public class ConfigPresenter extends Presenter<ConfigPresenter.MyView, ConfigPre
 
             @Override
             public void onFailure(Throwable caught) {
-                Log.error("Unknown error", caught);
-                Console.MODULES.getMessageCenter().notify(
-                        new Message("Unknown error", caught.getMessage(), Message.Severity.Error));
+                Console.error("Unknown error", caught.getMessage());
             }
         });
+    }
+
+    private void loadComponentsList() {
+        _switchYardStore.loadComponents(new AsyncCallback<List<Component>>() {
+            @Override
+            public void onSuccess(List<Component> components) {
+                getView().setComponents(components);
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                Console.error("Unknown error", caught.getMessage());
+            }
+        });
+    }
+
+    private void loadComponent() {
+        if (_componentName == null) {
+            clearComponentContent();
+            return;
+        }
+        _switchYardStore.loadComponent(_componentName, new AsyncCallback<Component>() {
+            @Override
+            public void onSuccess(Component component) {
+                _presenterWidget = _factory.create(component.getName());
+                _presenterWidget.bind();
+                setInSlot(TYPE_COMPONENT_CONTENT, _presenterWidget, false);
+                _presenterWidget.setComponent(component);
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                Console.error("Unknown error", caught.getMessage());
+            }
+        });
+    }
+
+    private void clearComponentContent() {
+        clearSlot(TYPE_COMPONENT_CONTENT);
+        releasePresenterWidget();
+    }
+
+    private void releasePresenterWidget() {
+        if (_presenterWidget == null) {
+            return;
+        }
+        _presenterWidget.unbind();
+        _presenterWidget = null;
     }
 
 }

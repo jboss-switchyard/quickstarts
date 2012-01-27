@@ -18,16 +18,12 @@
  */
 package org.switchyard.console.client.ui.application;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.model.ComponentReference;
-import org.switchyard.console.client.model.ComponentService;
+import org.switchyard.console.client.ui.common.AbstractDataTable;
 
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 
@@ -38,7 +34,7 @@ import com.google.gwt.view.client.ProvidesKey;
  * 
  * @author Rob Cernich
  */
-public class ComponentReferencesList {
+public class ComponentReferencesList extends AbstractDataTable<ComponentReference> {
 
     private static final ProvidesKey<ComponentReference> KEY_PROVIDER = new ProvidesKey<ComponentReference>() {
         @Override
@@ -47,16 +43,16 @@ public class ComponentReferencesList {
         }
     };
 
-    private DefaultCellTable<ComponentReference> _referencesTable;
-    private ListDataProvider<ComponentReference> _referencesDataProvider;
-
     ComponentReferencesList() {
-        _referencesTable = new DefaultCellTable<ComponentReference>(5);
+        super("References");
+    }
 
+    protected void createColumns(DefaultCellTable<ComponentReference> table,
+            ListDataProvider<ComponentReference> dataProvider) {
         TextColumn<ComponentReference> nameColumn = new TextColumn<ComponentReference>() {
             @Override
             public String getValue(ComponentReference reference) {
-                return NameTokens.parseQName(reference.getName())[1];
+                return reference.localName();
             }
         };
         nameColumn.setSortable(true);
@@ -69,28 +65,21 @@ public class ComponentReferencesList {
         };
         interfaceColumn.setSortable(true);
 
-        _referencesTable.addColumn(nameColumn, "Name");
-        _referencesTable.addColumn(interfaceColumn, "Interface");
+        ColumnSortEvent.ListHandler<ComponentReference> sortHandler = new ColumnSortEvent.ListHandler<ComponentReference>(
+                dataProvider.getList());
+        sortHandler.setComparator(nameColumn, createColumnCommparator(nameColumn));
+        sortHandler.setComparator(interfaceColumn, createColumnCommparator(interfaceColumn));
 
-        _referencesDataProvider = new ListDataProvider<ComponentReference>(KEY_PROVIDER);
-        _referencesDataProvider.addDataDisplay(_referencesTable);
+        table.addColumn(nameColumn, "Name");
+        table.addColumn(interfaceColumn, "Interface");
+
+        table.addColumnSortHandler(sortHandler);
+        table.getColumnSortList().push(nameColumn);
     }
 
-    /**
-     * @return this object's widget.
-     */
-    public Widget asWidget() {
-        return _referencesTable;
+    @Override
+    protected ProvidesKey<ComponentReference> createKeyProvider() {
+        return KEY_PROVIDER;
     }
 
-    /**
-     * @param service the service providing the data.
-     */
-    public void setService(ComponentService service) {
-        List<ComponentReference> references = service.getReferences();
-        if (references == null) {
-            references = Collections.emptyList();
-        }
-        _referencesDataProvider.setList(references);
-    }
 }

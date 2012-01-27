@@ -19,7 +19,8 @@
 package org.switchyard.console.client.ui.common;
 
 import com.google.gwt.view.client.ProvidesKey;
-import com.google.gwt.view.client.SelectionModel.AbstractSelectionModel;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 /**
  * AlwaysFireSingleSelectionModel
@@ -31,7 +32,7 @@ import com.google.gwt.view.client.SelectionModel.AbstractSelectionModel;
  * 
  * @author Rob Cernich
  */
-public class AlwaysFireSingleSelectionModel<T> extends AbstractSelectionModel<T> {
+public class AlwaysFireSingleSelectionModel<T> extends SingleSelectionModel<T> {
 
     private T _selection;
     private boolean _selected;
@@ -62,7 +63,8 @@ public class AlwaysFireSingleSelectionModel<T> extends AbstractSelectionModel<T>
     /**
      * @return the current selection
      */
-    public T getSelected() {
+    @Override
+    public T getSelectedObject() {
         return _selected ? _selection : null;
     }
 
@@ -71,6 +73,14 @@ public class AlwaysFireSingleSelectionModel<T> extends AbstractSelectionModel<T>
         _selection = object;
         _selected = selected;
         scheduleSelectionChangeEvent();
+    }
+
+    @Override
+    protected void fireSelectionChangeEvent() {
+        if (isEventScheduled()) {
+            setEventCancelled(true);
+        }
+        SelectionChangeEvent.fire(this);
     }
 
 }

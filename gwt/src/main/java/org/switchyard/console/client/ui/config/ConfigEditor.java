@@ -19,15 +19,20 @@
 
 package org.switchyard.console.client.ui.config;
 
-import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import java.util.List;
+
+import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
-import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.SystemDetails;
+import org.switchyard.console.components.client.extension.ComponentProviders;
+import org.switchyard.console.components.client.model.Component;
 
-import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.SelectionChangeEvent;
 
 /**
  * ConfigEditor
@@ -41,14 +46,18 @@ public class ConfigEditor {
     private ConfigPresenter _presenter;
 
     private Form<SystemDetails> _systemDetailsForm;
+    private ComponentsList _componentsList;
+    private Panel _componentDetails;
+    private ComponentProviders _componentProviders;
 
     /**
      * Create a new ConfigEditor.
      * 
-     * @param presenter the associated presenter.
+     * @param componentProviders the instance providing component type specific
+     *            functionality.
      */
-    public ConfigEditor(ConfigPresenter presenter) {
-        this._presenter = presenter;
+    public ConfigEditor(ComponentProviders componentProviders) {
+        _componentProviders = componentProviders;
     }
 
     /**
@@ -56,21 +65,40 @@ public class ConfigEditor {
      */
     public Widget asWidget() {
 
-        ScrollPanel scroll = new ScrollPanel();
-
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
 
-        scroll.add(layout);
-
-        TextItem versionItem = new TextItem("version", "Runtime Version");
+        TextItem versionItem = new TextItem("version", "Version");
         _systemDetailsForm = new Form<SystemDetails>(SystemDetails.class);
         _systemDetailsForm.setFields(versionItem);
 
-        layout.add(new ContentHeaderLabel(Singleton.MESSAGES.header_editor_switchYardConfiguration()));
+        _componentsList = new ComponentsList(_componentProviders);
+        _componentsList.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                Component selected = _componentsList.getSelection();
+                _presenter.onComponentSelected(selected);
+            }
+        });
+
+        _componentDetails = new SimplePanel();
+
+        layout.add(new ContentGroupLabel("Core Runtime"));
         layout.add(_systemDetailsForm.asWidget());
 
-        return scroll;
+        layout.add(_componentsList.asWidget());
+
+        layout.add(new ContentGroupLabel("Component Details"));
+        layout.add(_componentDetails);
+
+        return layout;
+    }
+
+    /**
+     * @param presenter the presenter managing the view.
+     */
+    public void setPresenter(ConfigPresenter presenter) {
+        _presenter = presenter;
     }
 
     /**
@@ -80,4 +108,20 @@ public class ConfigEditor {
         _systemDetailsForm.edit(systemDetails);
     }
 
+    /**
+     * @param components the components installed in the runtime.
+     */
+    public void setComponents(List<Component> components) {
+        _componentsList.setData(components);
+    }
+
+    /**
+     * @param content component specific content.
+     */
+    public void setComponentContent(Widget content) {
+        _componentDetails.clear();
+        if (content != null) {
+            _componentDetails.add(content);
+        }
+    }
 }

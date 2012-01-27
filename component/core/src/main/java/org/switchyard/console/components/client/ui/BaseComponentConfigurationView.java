@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
-import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.switchyard.console.components.client.model.Component;
 import org.switchyard.console.components.client.ui.ComponentConfigurationPresenter.ComponentConfigurationView;
@@ -112,14 +111,14 @@ public class BaseComponentConfigurationView extends ViewImpl implements Componen
      * @return a control for viewing the component's name.
      */
     protected Label createComponentNameLabel() {
-        return new ContentHeaderLabel();
+        return new ContentGroupLabel("");
     }
 
     /**
      * @return a control for viewing the component's activation types.
      */
     protected Label createComponentTypeLabel() {
-        return new ContentHeaderLabel();
+        return new ContentGroupLabel("");
     }
 
     /**

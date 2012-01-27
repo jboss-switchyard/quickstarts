@@ -21,6 +21,7 @@ package org.switchyard.console.client.model;
 
 import java.util.List;
 
+import org.switchyard.console.client.BeanFactory;
 import org.switchyard.console.components.client.model.Component;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -33,6 +34,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * @author Rob Cernich
  */
 public interface SwitchYardStore {
+
+    /**
+     * @return the BeanFactory used by the store.
+     */
+    BeanFactory getBeanFactory();
 
     /**
      * Load details about the SwitchYard subsystem.

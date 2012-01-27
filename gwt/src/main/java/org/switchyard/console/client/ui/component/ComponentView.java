@@ -19,15 +19,12 @@
 
 package org.switchyard.console.client.ui.component;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
-import org.jboss.as.console.client.core.message.Message;
-import org.jboss.ballroom.client.layout.RHSContentPanel;
-import org.switchyard.console.client.Console;
-import org.switchyard.console.client.Singleton;
 
-import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -44,7 +41,8 @@ public class ComponentView extends DisposableViewImpl implements ComponentPresen
 
     @Override
     public Widget createWidget() {
-        LayoutPanel wrapper = new RHSContentPanel(Singleton.MESSAGES.header_content_componentConfiguration());
+        VerticalPanel wrapper = new VerticalPanel();
+        wrapper.setStyleName("fill-layout-width");
         _mainContentPanel = new SimplePanel();
         wrapper.add(_mainContentPanel);
 
@@ -59,11 +57,9 @@ public class ComponentView extends DisposableViewImpl implements ComponentPresen
     @Override
     public void setInSlot(Object slot, Widget content) {
         if (slot == ComponentPresenter.TYPE_MAIN_CONTENT) {
-            if (content != null) {
-                setMainContent(content);
-            }
+            setMainContent(content);
         } else {
-            Console.MODULES.getMessageCenter().notify(new Message("Unknown slot requested:" + slot));
+            Console.error("Unknown slot requested:" + slot);
         }
     }
 

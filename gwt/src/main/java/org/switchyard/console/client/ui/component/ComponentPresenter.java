@@ -19,28 +19,22 @@
 
 package org.switchyard.console.client.ui.component;
 
-import org.jboss.as.console.client.core.message.Message;
-import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.switchyard.console.client.Console;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.switchyard.console.client.NameTokens;
-import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.SwitchYardStore;
-import org.switchyard.console.client.ui.main.MainPresenter;
+import org.switchyard.console.client.ui.config.ConfigPresenter;
 import org.switchyard.console.components.client.model.Component;
 import org.switchyard.console.components.client.ui.ComponentConfigurationPresenter;
 import org.switchyard.console.components.client.ui.ComponentConfigurationPresenter.ComponentConfigurationView;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
-import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -63,7 +57,7 @@ public class ComponentPresenter extends Presenter<ComponentPresenter.MyView, Com
      * The proxy type used by this presenter.
      */
     @ProxyCodeSplit
-    @NameToken(NameTokens.COMPONENT_CONFIG_PRESENTER)
+//    @NameToken(NameTokens.COMPONENT_CONFIG_PRESENTER)
     public interface MyProxy extends Proxy<ComponentPresenter>, Place {
     }
 
@@ -114,7 +108,7 @@ public class ComponentPresenter extends Presenter<ComponentPresenter.MyView, Com
     }
 
     private final PlaceManager _placeManager;
-    private final DispatchAsync _dispatcher;
+    private final RevealStrategy _revealStrategy;
     private final SwitchYardStore _switchYardStore;
     private final PresenterFactory _factory;
     private ComponentConfigurationPresenter _presenterWidget;
@@ -126,17 +120,17 @@ public class ComponentPresenter extends Presenter<ComponentPresenter.MyView, Com
      * @param view the injected MyView.
      * @param proxy the injected MyProxy.
      * @param placeManager the injected PlaceManager.
-     * @param dispatcher the injected DispatchAsync.
+     * @param revealStrategy the RevealStrategy
      * @param switchYardStore the injected SwitchYardStore.
      * @param factory the PresenterFactory for specialized component presenters.
      */
     @Inject
     public ComponentPresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager placeManager,
-            DispatchAsync dispatcher, SwitchYardStore switchYardStore, PresenterFactory factory) {
+            RevealStrategy revealStrategy, SwitchYardStore switchYardStore, PresenterFactory factory) {
         super(eventBus, view, proxy);
 
         _placeManager = placeManager;
-        _dispatcher = dispatcher;
+        _revealStrategy = revealStrategy;
         _switchYardStore = switchYardStore;
         _factory = factory;
     }
@@ -151,22 +145,20 @@ public class ComponentPresenter extends Presenter<ComponentPresenter.MyView, Com
     protected void onReset() {
         super.onReset();
 
-        HTML headerContent = new HTML(new SafeHtmlBuilder().appendEscaped(
-                Singleton.MESSAGES.header_content_componentConfiguration()).toSafeHtml());
-        headerContent.setStylePrimaryName("header-content");
-        Console.MODULES.getHeader().setContent(headerContent);
-        Console.MODULES.getHeader().highlight(NameTokens.COMPONENT_CONFIG_PRESENTER);
-
         releasePresenterWidget();
-        loadComponent(_placeManager.getCurrentPlaceRequest().getParameter("component", null));
+
+        loadComponent(_placeManager.getCurrentPlaceRequest().getParameter(NameTokens.COMPONENT_NAME_PARAM, null));
     }
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), MainPresenter.TYPE_MAIN_CONTENT, this);
+        RevealContentEvent.fire(getEventBus(), ConfigPresenter.TYPE_COMPONENT_CONTENT, this);
     }
 
     private void loadComponent(String componentName) {
+        if (componentName == null) {
+            return;
+        }
         _switchYardStore.loadComponent(componentName, new AsyncCallback<Component>() {
 
             @Override
@@ -179,9 +171,7 @@ public class ComponentPresenter extends Presenter<ComponentPresenter.MyView, Com
 
             @Override
             public void onFailure(Throwable caught) {
-                Log.error("Unknown error", caught);
-                Console.MODULES.getMessageCenter().notify(
-                        new Message("Unknown error", caught.getMessage(), Message.Severity.Error));
+                Console.error("Unknown error", caught.getMessage());
             }
         });
     }
