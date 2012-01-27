@@ -72,7 +72,7 @@ public class SwitchYardCDIDeployer implements Extension {
                     ioEx.getMessage(); // keeps checkstyle happy
                 }
             }
-            ServiceDomain domain = ServiceDomainManager.createDomain();
+            ServiceDomain domain = new ServiceDomainManager().createDomain();
             _deployment.init(domain, ActivatorLoader.createActivators(domain));
             _deployment.start();
         }

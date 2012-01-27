@@ -25,7 +25,11 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.ServiceDomain;
+import org.switchyard.config.model.composite.BindingModel;
+import org.switchyard.config.model.composite.ComponentModel;
 
 /**
  * Base implementation of Activator which provides a convenience implementation
@@ -41,6 +45,32 @@ public abstract class BaseActivator implements Activator {
             _activationTypes.addAll(Arrays.asList(types));
         }
     }
+
+    @Override
+    public ServiceHandler activateBinding(QName name, BindingModel config) {
+        throw new UnsupportedOperationException(
+                "activateBinding() not supported by " + getClass());
+    }
+
+    @Override
+    public ServiceHandler activateService(QName name, ComponentModel config) {
+        throw new UnsupportedOperationException(
+                "deactivateService() not supported by " + getClass());
+    }
+    
+
+    @Override
+    public void deactivateBinding(QName name, ServiceHandler handler) {
+        throw new UnsupportedOperationException(
+                "deactivateBinding() not supported by " + getClass());
+    }
+
+    @Override
+    public void deactivateService(QName name, ServiceHandler handler) {
+        throw new UnsupportedOperationException(
+                "deactivateService() not supported by " + getClass());
+    }
+    
     
     /**
      * Sets the service domain instance of this activator.

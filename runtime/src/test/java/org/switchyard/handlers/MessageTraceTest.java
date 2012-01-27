@@ -26,13 +26,11 @@ import org.junit.Test;
 import org.switchyard.Exchange;
 import org.switchyard.MockDomain;
 import org.switchyard.MockHandler;
-import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
-import org.switchyard.metadata.ExchangeContract;
 
 public class MessageTraceTest {
 
-    private ServiceDomain _domain;
+    private MockDomain _domain;
     
     @Before
     public void setUp() throws Exception {
@@ -42,25 +40,24 @@ public class MessageTraceTest {
     
     @Test
     public void testInMessageTrace() {
-        ServiceReference service = _domain.registerService(
-                new QName("InTrace"), new MockHandler());
-        Exchange exchange = _domain.createExchange(service, ExchangeContract.IN_ONLY);
+        ServiceReference service = _domain.createInOnlyService(new QName("InTrace"));
+        Exchange exchange = service.createExchange();
         exchange.send(exchange.createMessage());
     }
     
     @Test
     public void testInOutMessageTrace() throws Exception {
-        ServiceReference service = _domain.registerService(
+        ServiceReference service = _domain.createInOutService(
                 new QName("InOutTrace"), new MockHandler().forwardInToOut());
-        Exchange exchange = _domain.createExchange(service, ExchangeContract.IN_OUT, new MockHandler());
+        Exchange exchange = service.createExchange(new MockHandler());
         exchange.send(exchange.createMessage());
     }
 
     @Test
     public void testInFaultMessageTrace() throws Exception {
-        ServiceReference service = _domain.registerService(
-                new QName("InFaultTrace"), new MockHandler().forwardInToFault());
-        Exchange exchange = _domain.createExchange(service, ExchangeContract.IN_OUT, new MockHandler());
+        ServiceReference service = _domain.createInOutService(
+                new QName("InFaultTrace"), new MockHandler().forwardInToOut());
+        Exchange exchange = service.createExchange(new MockHandler());
         exchange.send(exchange.createMessage());
     }
 }

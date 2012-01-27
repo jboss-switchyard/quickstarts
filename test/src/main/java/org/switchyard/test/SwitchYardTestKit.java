@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -214,7 +215,7 @@ public class SwitchYardTestKit {
      */
     private final void deploy() throws Exception {
         _deployment = createDeployment();
-        ServiceDomain domain = ServiceDomainManager.createDomain(
+        ServiceDomain domain = new ServiceDomainManager().createDomain(
                 ServiceDomainManager.ROOT_DOMAIN, _deployment.getConfig());
 
         _activators = ActivatorLoader.createActivators(domain);
@@ -323,7 +324,7 @@ public class SwitchYardTestKit {
      */
     public MockHandler registerInOutService(String serviceName) {
         MockHandler handler = new MockHandler();
-        getServiceDomain().registerService(createQName(serviceName), handler, new InOutService());
+        getServiceDomain().registerService(createQName(serviceName), new InOutService(), handler);
         return handler;
     }
 
@@ -334,7 +335,7 @@ public class SwitchYardTestKit {
      * @param serviceHandler The service handler.
      */
     public void registerInOutService(String serviceName, ExchangeHandler serviceHandler) {
-        getServiceDomain().registerService(createQName(serviceName), serviceHandler, new InOutService());
+        getServiceDomain().registerService(createQName(serviceName), new InOutService(), serviceHandler);
     }
 
     /**
@@ -345,7 +346,7 @@ public class SwitchYardTestKit {
      * @param metadata Service interface.
      */
     public void registerInOutService(String serviceName, ExchangeHandler serviceHandler, ServiceInterface metadata) {
-        getServiceDomain().registerService(createQName(serviceName), serviceHandler, metadata);
+        getServiceDomain().registerService(createQName(serviceName), metadata, serviceHandler);
     }
 
     /**
@@ -358,7 +359,7 @@ public class SwitchYardTestKit {
      */
     public MockHandler registerInOnlyService(String serviceName) {
         MockHandler handler = new MockHandler();
-        getServiceDomain().registerService(createQName(serviceName), handler, new InOnlyService());
+        getServiceDomain().registerService(createQName(serviceName), new InOnlyService(), handler);
         return handler;
     }
 
@@ -369,7 +370,7 @@ public class SwitchYardTestKit {
      * @param serviceHandler The service handler.
      */
     public void registerInOnlyService(String serviceName, ExchangeHandler serviceHandler) {
-        getServiceDomain().registerService(createQName(serviceName), serviceHandler, new InOnlyService());
+        getServiceDomain().registerService(createQName(serviceName), new InOnlyService(), serviceHandler);
     }
 
     /**

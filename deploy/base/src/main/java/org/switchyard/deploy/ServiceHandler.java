@@ -17,35 +17,24 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.spi;
+package org.switchyard.deploy;
 
-import org.switchyard.Exchange;
-import org.switchyard.Service;
+import org.switchyard.ExchangeHandler;
 
 /**
- * Dispatches messages to a given service.
+ * Lifecycle-aware version of ExchangeHandler.  The deployer will invoke
+ * start() and stop() in accordance with the deployment's lifecycle.
  */
-public interface Dispatcher {
-
-    /**
-     * The name of the service.
-     * @return service reference
-     */
-    Service getService();
+public interface ServiceHandler extends ExchangeHandler {
     
     /**
-     * Dispatch an exchange.
-     * @param exchange exchange
-     */
-    void dispatch(Exchange exchange);
-    
-    /**
-     * Starts delivery of exchanges via this dispatcher.
+     * Start processing.
      */
     void start();
     
     /**
-     * Stops deliver of exchanges vis this dispatcher.
+     * Stop processing.
      */
     void stop();
+    
 }

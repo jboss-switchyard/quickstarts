@@ -31,9 +31,7 @@ import org.switchyard.Message;
 import org.switchyard.MockDomain;
 import org.switchyard.MockHandler;
 import org.switchyard.Scope;
-import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
-import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.TransformSequence;
 import org.switchyard.transform.Transformer;
@@ -43,7 +41,7 @@ import org.switchyard.transform.Transformer;
  */
 public class TransformationTest {
     
-    private ServiceDomain _domain;
+    private MockDomain _domain;
 
     @Before
     public void setUp() throws Exception {
@@ -80,11 +78,10 @@ public class TransformationTest {
         try {
             // Provide the service
             MockHandler provider = new MockHandler();
-            ServiceReference service = _domain.registerService(serviceName, provider);
+            ServiceReference service = _domain.createInOnlyService(serviceName, provider);
 
             // Create the exchange and invoke the service
-            Exchange exchange = _domain.createExchange(
-                    service, ExchangeContract.IN_ONLY);
+            Exchange exchange = service.createExchange();
 
             // Set the from and to message names.  NOTE: setting to the to message
             // name will not be necessary once the service definition is available
@@ -120,12 +117,11 @@ public class TransformationTest {
 
         // Provide the service
         MockHandler provider = new MockHandler();
-        ServiceReference service = _domain.registerService(serviceName, provider);
+        ServiceReference service = _domain.createInOnlyService(serviceName, provider);
 
         // Create the exchange and invoke the service
         MockHandler invokerHandler = new MockHandler();
-        Exchange exchange = _domain.createExchange(
-                service, ExchangeContract.IN_ONLY, invokerHandler);
+        Exchange exchange = service.createExchange(invokerHandler);
 
         // Set the from and to message names.  NOTE: setting to the to message
         // name will not be necessary once the service definition is available

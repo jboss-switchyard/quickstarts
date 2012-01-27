@@ -27,13 +27,13 @@ import javax.xml.namespace.QName;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.switchyard.MockDomain;
+import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
-import org.switchyard.ServiceReference;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.ActivatorLoader;
-import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.components.MockActivator;
 import org.switchyard.deploy.components.config.MockBindingModel;
 import org.switchyard.deploy.internal.transformers.ABTransformer;
@@ -58,7 +58,7 @@ public class DeploymentTest {
         Deployment deployment = new Deployment(swConfigStream);
         swConfigStream.close();
 
-        ServiceDomain serviceDomain = ServiceDomainManager.createDomain();
+        MockDomain serviceDomain = new MockDomain();
         deployment.init(serviceDomain, ActivatorLoader.createActivators(serviceDomain));
         deployment.destroy();
     }
@@ -69,7 +69,7 @@ public class DeploymentTest {
         Deployment deployment = new Deployment(swConfigStream);
         swConfigStream.close();
 
-        ServiceDomain serviceDomain = ServiceDomainManager.createDomain();
+        MockDomain serviceDomain = new MockDomain();
         deployment.init(serviceDomain, ActivatorLoader.createActivators(serviceDomain));
         
         // Grab a reference to our activators
@@ -80,10 +80,12 @@ public class DeploymentTest {
         deployment.destroy();
 
         // Verify the activators were poked
-        Assert.assertTrue(activator.initCalled());
+        Assert.assertTrue(activator.activateServiceCalled());
+        Assert.assertTrue(activator.activateBindingCalled());
         Assert.assertTrue(activator.startCalled());
         Assert.assertTrue(activator.stopCalled());
-        Assert.assertTrue(activator.destroyCalled());
+        Assert.assertTrue(activator.deactivateServiceCalled());
+        Assert.assertTrue(activator.deactivateBindingCalled());
     }
     
     @Test
@@ -92,7 +94,7 @@ public class DeploymentTest {
         Deployment deployment = new Deployment(swConfigStream);
         swConfigStream.close();
 
-        ServiceDomain serviceDomain = ServiceDomainManager.createDomain();
+        MockDomain serviceDomain = new MockDomain();
         deployment.init(serviceDomain, ActivatorLoader.createActivators(serviceDomain));
 
         // Check that the transformers are deployed...
@@ -114,7 +116,7 @@ public class DeploymentTest {
         Deployment deployment = new Deployment(swConfigStream);
         swConfigStream.close();
 
-        ServiceDomain serviceDomain = ServiceDomainManager.createDomain();
+        MockDomain serviceDomain = new MockDomain();
         deployment.init(serviceDomain, ActivatorLoader.createActivators(serviceDomain));
 
         // Check that the validators are deployed...
@@ -135,11 +137,12 @@ public class DeploymentTest {
         InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-interface-wsdl-01.xml", getClass());
         Deployment deployment = new Deployment(swConfigStream);
         swConfigStream.close();
-        ServiceDomain serviceDomain = ServiceDomainManager.createDomain();
+        MockDomain serviceDomain = new MockDomain();
         deployment.init(serviceDomain, ActivatorLoader.createActivators(serviceDomain));
         deployment.start();
 
-        ServiceReference service = deployment.getDomain().getService(new QName("urn:switchyard-interface-wsdl", "HelloService"));
+        Service service = serviceDomain.getServiceRegistry().getServices(
+                new QName("urn:switchyard-interface-wsdl", "HelloService")).get(0);
         Assert.assertNotNull(service);
         ServiceInterface iface = service.getInterface();
         Assert.assertEquals(WSDLService.TYPE, iface.getType());
@@ -162,7 +165,7 @@ public class DeploymentTest {
         try {
             swConfigStream = Classes.getResourceAsStream("/switchyard-config-activator-01.xml", getClass());
             Deployment deployment = new Deployment(swConfigStream);
-            ServiceDomain serviceDomain = ServiceDomainManager.createDomain();
+            MockDomain serviceDomain = new MockDomain();
             deployment.init(serviceDomain, ActivatorLoader.createActivators(serviceDomain));
             deployment.start();
         } catch (SwitchYardException sye) {
@@ -183,7 +186,7 @@ public class DeploymentTest {
         Deployment deployment = new Deployment(swConfigStream);
         swConfigStream.close();
 
-        ServiceDomain serviceDomain = ServiceDomainManager.createDomain();
+        MockDomain serviceDomain = new MockDomain();
         deployment.init(serviceDomain, ActivatorLoader.createActivators(serviceDomain));
         try {
             deployment.start();
@@ -202,7 +205,7 @@ public class DeploymentTest {
         DeploymentListener listener = Mockito.mock(DeploymentListener.class);
         deployment.addDeploymentListener(listener);
 
-        ServiceDomain serviceDomain = ServiceDomainManager.createDomain();
+        MockDomain serviceDomain = new MockDomain();
         deployment.init(serviceDomain, ActivatorLoader.createActivators(serviceDomain));
         deployment.start();
         deployment.stop();
@@ -239,7 +242,7 @@ public class DeploymentTest {
         Mockito.doThrow(new RuntimeException("error")).when(listener).destroyed(deployment);
         deployment.addDeploymentListener(listener);
 
-        ServiceDomain serviceDomain = ServiceDomainManager.createDomain();
+        MockDomain serviceDomain = new MockDomain();
         deployment.init(serviceDomain, ActivatorLoader.createActivators(serviceDomain));
         deployment.start();
         deployment.stop();
@@ -278,7 +281,7 @@ public class DeploymentTest {
             }
         };
 
-        ServiceDomain serviceDomain = ServiceDomainManager.createDomain();
+        MockDomain serviceDomain = new MockDomain();
         mock.init(serviceDomain, ActivatorLoader.createActivators(serviceDomain));
         mock.start();
         mock.stop();

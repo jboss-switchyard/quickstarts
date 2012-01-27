@@ -33,6 +33,7 @@ import org.switchyard.config.model.composer.ContextMapperModel;
 import org.switchyard.config.model.composer.MessageComposerModel;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.CompositeModel;
+import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 
 /**
@@ -91,7 +92,12 @@ public class V1BindingModel extends BaseTypedModel implements BindingModel {
      */
     @Override
     public CompositeServiceModel getService() {
-        return (CompositeServiceModel)getModelParent();
+        return isServiceBinding() ? (CompositeServiceModel)getModelParent() : null;
+    }
+    
+    @Override
+    public CompositeReferenceModel getReference() {
+        return isReferenceBinding() ? (CompositeReferenceModel)getModelParent() : null;
     }
 
     /**
@@ -114,6 +120,16 @@ public class V1BindingModel extends BaseTypedModel implements BindingModel {
             _messageComposer = (MessageComposerModel)getFirstChildModel(MessageComposerModel.MESSAGE_COMPOSER);
         }
         return _messageComposer;
+    }
+
+    @Override
+    public boolean isServiceBinding() {
+        return (getModelParent() instanceof CompositeServiceModel);
+    }
+
+    @Override
+    public boolean isReferenceBinding() {
+        return (getModelParent() instanceof CompositeReferenceModel);
     }
 
 }

@@ -25,7 +25,7 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.Exchange;
 import org.switchyard.HandlerChain;
-import org.switchyard.ServiceReference;
+import org.switchyard.Service;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.spi.ExchangeBus;
 import org.switchyard.transform.TransformerRegistry;
@@ -40,27 +40,27 @@ public class LocalExchangeBus implements ExchangeBus {
 
     @Override
     public synchronized Dispatcher createDispatcher(
-            ServiceReference service, HandlerChain handlerChain, TransformerRegistry transformerRegistry) {
+            Service service, HandlerChain handlerChain, TransformerRegistry transformerRegistry) {
         Dispatcher dispatcher = new LocalDispatcher(service, handlerChain);
         _dispatchers.put(service.getName(), dispatcher);
         return dispatcher;
     }
 
     @Override
-    public Dispatcher getDispatcher(ServiceReference service) {
+    public Dispatcher getDispatcher(Service service) {
         return _dispatchers.get(service.getName());
     }
 }
 
 class LocalDispatcher implements Dispatcher {
     private HandlerChain _handlerChain;
-    private ServiceReference _service;
+    private Service _service;
 
     /**
      * Constructor.
      * @param handlerChain handler chain
      */
-    LocalDispatcher(final ServiceReference service, final HandlerChain handlerChain) {
+    LocalDispatcher(final Service service, final HandlerChain handlerChain) {
         _service = service;
         _handlerChain = handlerChain;
     }
@@ -80,7 +80,7 @@ class LocalDispatcher implements Dispatcher {
     }
 
     @Override
-    public ServiceReference getService() {
+    public Service getService() {
         return _service;
     }
 

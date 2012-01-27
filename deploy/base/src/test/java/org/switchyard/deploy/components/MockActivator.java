@@ -21,59 +21,85 @@ package org.switchyard.deploy.components;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.BaseHandler;
-import org.switchyard.ExchangeHandler;
-import org.switchyard.ServiceReference;
-import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composite.BindingModel;
+import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.deploy.BaseActivator;
+import org.switchyard.deploy.BaseServiceHandler;
+import org.switchyard.deploy.ServiceHandler;
 
 public class MockActivator extends BaseActivator {
 
     public static final String ACTIVATION_TYPE = "mock";
     
-    private boolean _destroyCalled;
-    private boolean _initCalled;
+    private boolean _activateBindingCalled;
+    private boolean _activateServiceCalled;
+    private boolean _deactivateBindingCalled;
+    private boolean _deactivateServiceCalled;
     private boolean _startCalled;
     private boolean _stopCalled;
+    
+    private ServiceHandler _handler = new MockServiceHandler();
     
     public MockActivator() {
         super(ACTIVATION_TYPE);
     }
     
     @Override
-    public void destroy(ServiceReference service) {
-        _destroyCalled = true;
-    }
-
-    @Override
-    public ExchangeHandler init(QName name, Model config) {
-        _initCalled = true;
-        return new BaseHandler();
-    }
-
-    @Override
-    public void start(ServiceReference service) {
-        _startCalled = true;
-    }
-
-    @Override
-    public void stop(ServiceReference service) {
-        _stopCalled = true;
+    public ServiceHandler activateBinding(QName serviceName, BindingModel config) {
+        _activateBindingCalled = true;
+        return _handler;
     }
     
-    public boolean destroyCalled() {
-        return _destroyCalled;
-    }
-
-    public boolean initCalled() {
-        return _initCalled;
+    @Override
+    public ServiceHandler activateService(QName serviceName, ComponentModel config) {
+        _activateServiceCalled = true;
+        return _handler;
     }
     
+    
+    @Override
+    public void deactivateBinding(QName name, ServiceHandler handler) {
+        _deactivateBindingCalled = true;
+    }
+
+    @Override
+    public void deactivateService(QName name, ServiceHandler handler) {
+        _deactivateServiceCalled = true;
+    }
+
     public boolean startCalled() {
         return _startCalled;
     }
     
     public boolean stopCalled() {
         return _stopCalled;
+    }
+    
+    public boolean activateBindingCalled() {
+        return _activateBindingCalled;
+    }
+    
+    public boolean activateServiceCalled() {
+        return _activateServiceCalled;
+    }
+    
+    public boolean deactivateBindingCalled() {
+        return _deactivateBindingCalled;
+    }
+    
+    public boolean deactivateServiceCalled() {
+        return _deactivateServiceCalled;
+    }
+    
+    class MockServiceHandler extends BaseServiceHandler {
+        @Override
+        public void start() {
+            _startCalled = true;
+        }
+        
+        @Override
+        public void stop() {
+            _stopCalled = true;
+        }
     }
 }

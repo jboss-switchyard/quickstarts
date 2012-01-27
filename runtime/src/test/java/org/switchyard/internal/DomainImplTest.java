@@ -29,9 +29,12 @@ import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
+import org.switchyard.MockDomain;
 import org.switchyard.MockHandler;
+import org.switchyard.Service;
 import org.switchyard.ServiceReference;
-import org.switchyard.metadata.ExchangeContract;
+import org.switchyard.metadata.InOnlyService;
+import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.java.JavaService;
 
@@ -40,8 +43,10 @@ import org.switchyard.metadata.java.JavaService;
  */
 public class DomainImplTest {
      
-    private static final QName SERVICE = new QName("Service");
-    private ServiceReference _service;
+    private static final QName IN_ONLY_SERVICE = new QName("InOnlyService");
+    private static final QName IN_OUT_SERVICE = new QName("InOutService");
+    private ServiceReference _inOnlyReference;
+    private ServiceReference _inOutReference;
     private DomainImpl _domain;
     
     @Before
@@ -51,21 +56,24 @@ public class DomainImplTest {
                 new LocalExchangeBus(),
                 null,
                 null);
-        _service = _domain.registerService(SERVICE, new MockHandler());
+        _domain.registerService(IN_ONLY_SERVICE, new InOnlyService(), new MockHandler());
+        _domain.registerService(IN_OUT_SERVICE, new InOutService(), new MockHandler());
+        _inOnlyReference = _domain.registerServiceReference(IN_ONLY_SERVICE, new InOnlyService());
+        _inOutReference = _domain.registerServiceReference(IN_OUT_SERVICE, new InOutService());
     }
     
     @Test
     public void testCreateExchange() {
-        Exchange inOnly = _domain.createExchange(_service, ExchangeContract.IN_ONLY);
+        Exchange inOnly = _inOnlyReference.createExchange();
         Assert.assertEquals(ExchangePattern.IN_ONLY, inOnly.getContract().getServiceOperation().getExchangePattern());
-        Exchange inOut = _domain.createExchange(_service, ExchangeContract.IN_OUT, new MockHandler());
+        Exchange inOut = _inOutReference.createExchange(new MockHandler());
         Assert.assertEquals(ExchangePattern.IN_OUT, inOut.getContract().getServiceOperation().getExchangePattern());
     }
     
     @Test
     public void testRegisterServiceWithoutInterface() {
-        ServiceReference service = _domain.registerService(
-                new QName("no-interface"), new MockHandler());
+        Service service = _domain.registerService(
+                new QName("no-interface"), null, new MockHandler());
         // default interface should be used, which has one operation - process()
         Assert.assertNotNull(service.getInterface());
         Assert.assertTrue(service.getInterface().getOperations().size() == 1);
@@ -75,8 +83,8 @@ public class DomainImplTest {
     
     @Test
     public void testRegisterServiceWithInterface() {
-        ServiceReference service = _domain.registerService(new QName("my-interface"), 
-                new MockHandler(), JavaService.fromClass(MyInterface.class));
+        Service service = _domain.registerService(new QName("my-interface"), 
+                JavaService.fromClass(MyInterface.class), new MockHandler());
         // default interface should be used, which has one operation - process()
         Assert.assertNotNull(service.getInterface());
         Assert.assertTrue(service.getInterface().getOperations().size() == 1);
@@ -84,34 +92,27 @@ public class DomainImplTest {
     }
     
     @Test
-    public void testGetService() {
-        ServiceReference service = _domain.getService(SERVICE);
-        Assert.assertNotNull(service);
-    }
-    
-    @Test
     public void testDomainHandler() throws Exception {
+        MockDomain testDomain = new MockDomain();
         // Add a domain-level handler
-        MockHandler provider = new MockHandler();
         CountingHandler counter = new CountingHandler();
-        _domain.getHandlerChain().addFirst("counter", counter);
-        ServiceReference service = _domain.registerService(
-                new QName("Counting"), provider);
+        testDomain.getHandlerChain().addFirst("counter", counter);
+        ServiceReference inOnly = testDomain.createInOnlyService(new QName("CountIn"));
+        ServiceReference inOut = testDomain.createInOutService(
+                new QName("CountInOut"), new MockHandler().forwardInToOut());
         
         // Verify counter is called once for in-only exchange
-        Exchange inOnly = _domain.createExchange(service, ExchangeContract.IN_ONLY);
-        inOnly.send(new DefaultMessage());
+        Exchange ex1 = inOnly.createExchange();
+        ex1.send(new DefaultMessage());
         Assert.assertEquals(1, counter.getCount());
         
         // clear the counter
         counter.clear();
-        provider.forwardInToOut();
         
         // Verify counter is called twice for in-out exchange
-        Exchange inOut = _domain.createExchange(service, ExchangeContract.IN_OUT, new MockHandler());
-        inOut.send(new DefaultMessage().setContent("hello"));
+        Exchange ex2 = inOut.createExchange(new MockHandler());
+        ex2.send(new DefaultMessage().setContent("hello"));
         Assert.assertEquals(2, counter.getCount());
-        
     }
     
 }

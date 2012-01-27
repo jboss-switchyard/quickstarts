@@ -40,7 +40,7 @@ import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerChain;
 import org.switchyard.Scope;
-import org.switchyard.ServiceReference;
+import org.switchyard.Service;
 import org.switchyard.common.type.reflect.FieldAccess;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.internal.DefaultMessage;
@@ -61,7 +61,7 @@ public class HornetQDispatcher implements Dispatcher, MessageHandler {
 
     private static final Serializer SERIALIZER = SerializerType.DEFAULT.instance();
 
-    private ServiceReference _service;
+    private Service _service;
     private DispatchQueue _inQueue;
     private DispatchQueue _outQueue;
     private ClientSessionFactory _sessionFactory;
@@ -76,7 +76,7 @@ public class HornetQDispatcher implements Dispatcher, MessageHandler {
      * @param inputHandler the exchange handler used to process exchanges for the service
      * @param transformerRegistry The {@link TransformerRegistry}.
      */
-    public HornetQDispatcher(ServiceReference service,
+    public HornetQDispatcher(Service service,
                              ClientSessionFactory sessionFactory,
                              HandlerChain inputHandler, TransformerRegistry transformerRegistry) {
         _service = service;
@@ -86,7 +86,7 @@ public class HornetQDispatcher implements Dispatcher, MessageHandler {
     }
     
     @Override
-    public ServiceReference getService() {
+    public Service getService() {
         return _service;
     }
 

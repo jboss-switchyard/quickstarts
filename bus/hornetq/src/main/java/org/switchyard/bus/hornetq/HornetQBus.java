@@ -40,7 +40,7 @@ import org.hornetq.core.server.HornetQServer;
 import org.hornetq.core.server.HornetQServers;
 import org.hornetq.core.server.JournalType;
 import org.switchyard.HandlerChain;
-import org.switchyard.ServiceReference;
+import org.switchyard.Service;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.spi.ExchangeBus;
@@ -126,13 +126,13 @@ public class HornetQBus implements ExchangeBus {
     }
 
     @Override
-    public Dispatcher getDispatcher(ServiceReference service) {
+    public Dispatcher getDispatcher(Service service) {
         return _dispatchers.get(service.getName());
     }
 
     @Override
     public synchronized Dispatcher createDispatcher(
-            ServiceReference service, HandlerChain handlerChain, TransformerRegistry transformerRegistry) {
+            Service service, HandlerChain handlerChain, TransformerRegistry transformerRegistry) {
         HornetQDispatcher endpoint = new HornetQDispatcher(service, _clientFactory, handlerChain, transformerRegistry);
         _dispatchers.put(service.getName(), endpoint);
         endpoint.start();

@@ -23,9 +23,8 @@ import java.util.Collection;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.ExchangeHandler;
-import org.switchyard.ServiceReference;
-import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composite.BindingModel;
+import org.switchyard.config.model.composite.ComponentModel;
 
 /**
  * Activators allow components to participate in the deployment lifecycle of
@@ -37,37 +36,52 @@ import org.switchyard.config.model.Model;
  * in the appropriate order.
  */
 public interface Activator {
+    
     /**
-     * Initialize a service or service reference based on the supplied
-     * configuration.  Activator instances should attempt to validate 
-     * configuration, policy, and any runtime constraints during init and fail
-     * fast if there is a problem.
+     * Activate a reference or service binding.  This is equivalent to a 
+     * create/init for the binding and it's configuration.  Validation errors
+     * with config should be reported from this method.
      * @param name name of the service or reference
-     * @param config switchyard configuration for the service or reference
-     * @return exchange handler to use for the service or reference.  In the case
-     * of a reference, the handler will be used as the default callback handler
-     * for all exchanges.
+     * @param config binding configuration
+     * @return a lifecycle-aware service handler used to process exchanges
      */
-    ExchangeHandler init(QName name, Model config);
+    ServiceHandler activateBinding(QName name, BindingModel config);
     /**
-     * Start the specified service or reference.
-     * @param service service to start
+     * Activate a service implementation.  This is equivalent to a 
+     * create/init for the service implementation and it's configuration.  
+     * Validation errors with config should be reported from this method.  Note
+     * that if a service component declares multiple services for a single 
+     * implementation, this method will be called once for each service on 
+     * that implementation.
+     * @param name name of the service
+     * @param config component configuration
+     * @return a lifecycle-aware service handler used to process exchanges
      */
-    void start(ServiceReference service);
+    ServiceHandler activateService(QName name, ComponentModel config);
+
     /**
-     * Stop the specified service or reference.
-     * @param service service to stop
+     * Deactivate a binding.  This is equivalent to remove/destroy for the 
+     * binding.  The handler that was returned from activateBinding() is 
+     * passed as a parameter in case it's needed for callback purposes.
+     * @param name name of the service or reference binding
+     * @param handler the handler returned from activateBinding
      */
-    void stop(ServiceReference service);
+    void deactivateBinding(QName name, ServiceHandler handler);
+    
     /**
-     * Destroy the specified service or reference.  Once destroyed, the activator
-     * should be capable of launching a clean instance of this service or 
-     * reference through an init() call (e.g. application redeployment).
-     * @param service service to destroy
+     * Deactivate a service.  This is equivalent to remove/destroy for the 
+     * service.  The handler that was returned from activateService() is 
+     * passed as a parameter in case it's needed for callback purposes.  Note
+     * that if a service component declares multiple services for a single 
+     * implementation, this method will be called once for each service on 
+     * that implementation.
+     * @param name name of the service
+     * @param handler the handler returned from activateService
      */
-    void destroy(ServiceReference service);
+    void deactivateService(QName name, ServiceHandler handler);
+    
     /**
-     * An Activator can handle activation of certain types.
+     * Whether the activator can handle a given .
      * @param type activation type
      * @return true If this Activator can activate the passed-in type.
      */

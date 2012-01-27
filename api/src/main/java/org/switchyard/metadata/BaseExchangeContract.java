@@ -31,22 +31,25 @@ import org.switchyard.io.Serialization.Strategy;
 public class BaseExchangeContract implements ExchangeContract {
 
     private ServiceOperation _operation;
-    private BaseInvocationContract _invokerInvocationMetadata = new BaseInvocationContract();
-
+    private InvocationContract _invoker;
+    
     /**
-     * Public constructor.
-     * @param operation The target service operation.
+     * Create a new BaseExchangeContract with the specified invocation contract.
+     * @param operation contract for the service provider
+     * @param invoker contract for the service consumer
      */
-    public BaseExchangeContract(ServiceOperation operation) {
-        if (operation == null) {
-            throw new IllegalArgumentException("null 'operation' arg.");
+    public BaseExchangeContract(ServiceOperation operation, ServiceOperation invoker) {
+        if (operation == null || invoker == null) {
+            throw new IllegalArgumentException(
+                    "BaseExchangeContract: operation and invoker parameters required");
         }
-        this._operation = operation;
+        _operation = operation;
+        _invoker = invoker;
     }
 
     @Override
-    public BaseInvocationContract getInvokerInvocationMetaData() {
-        return _invokerInvocationMetadata;
+    public InvocationContract getInvokerInvocationMetaData() {
+        return _invoker;
     }
 
     @Override

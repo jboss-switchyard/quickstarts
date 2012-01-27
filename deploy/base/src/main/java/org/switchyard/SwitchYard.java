@@ -57,7 +57,8 @@ public class SwitchYard {
      */
     public void start() {
         _logger.debug("Starting SwitchYard application '" + _deployment.getConfig().getQName() + "'.");
-        ServiceDomain serviceDomain = ServiceDomainManager.createDomain(_deployment.getConfig().getQName(), _deployment.getConfig());
+        ServiceDomain serviceDomain = new ServiceDomainManager().createDomain(
+                _deployment.getConfig().getQName(), _deployment.getConfig());
         _deployment.init(serviceDomain, ActivatorLoader.createActivators(serviceDomain));
         _deployment.start();
         _logger.debug("SwitchYard application '" + _deployment.getConfig().getQName() + "' started.");

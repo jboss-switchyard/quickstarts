@@ -36,7 +36,7 @@ import org.switchyard.Exchange;
 import org.switchyard.HandlerChain;
 import org.switchyard.HandlerException;
 import org.switchyard.Scope;
-import org.switchyard.ServiceReference;
+import org.switchyard.Service;
 import org.switchyard.internal.DefaultHandlerChain;
 import org.switchyard.internal.ExchangeImpl;
 import org.switchyard.metadata.ExchangeContract;
@@ -63,8 +63,8 @@ public class HornetQDispatcherTest {
     
     @Test
     public void testDispatchInOnly() throws Exception {
-        ServiceReference service = new MockServiceReference(
-                new QName("testDispatchInOnly"),new InOnlyService());
+        Service service = new MockService(
+                new QName("testDispatchInOnly"), new InOnlyService());
         HandlerChain inHandlers = new DefaultHandlerChain();
         ExchangeSink sink = new ExchangeSink();
         inHandlers.addLast("in", sink);
@@ -82,8 +82,8 @@ public class HornetQDispatcherTest {
 
     @Test
     public void testDispatchInOut() throws Exception {
-        ServiceReference service = new MockServiceReference(
-                new QName("testDispatchInOut"),new InOutService());
+        Service service = new MockService(
+                new QName("testDispatchInOut"), new InOutService());
         // provider handlers
         HandlerChain inHandlers = new DefaultHandlerChain();
         ExchangeSink inHandler = new ExchangeSink(true);

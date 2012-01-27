@@ -17,35 +17,45 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.spi;
+package org.switchyard;
 
-import org.switchyard.Exchange;
-import org.switchyard.Service;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
+import org.switchyard.metadata.ServiceInterface;
+import org.switchyard.policy.Policy;
 
 /**
- * Dispatches messages to a given service.
+ * A service registered with the SwitchYard runtime.
  */
-public interface Dispatcher {
+public interface Service {
+    /**
+     * Qualified name of the service.
+     * @return service name
+     */
+    QName getName();
+    /**
+    * Interface metadata for the registered service.
+    * @return the service interface
+    */
+    ServiceInterface getInterface();
+    
+    /**
+     * Unregisters this service from the domain it's registered in.
+     */
+    void unregister();
+    
 
     /**
-     * The name of the service.
-     * @return service reference
+     * The domain in which this service reference is registered.
+     * @return service domain which created this service reference
      */
-    Service getService();
-    
-    /**
-     * Dispatch an exchange.
-     * @param exchange exchange
-     */
-    void dispatch(Exchange exchange);
-    
-    /**
-     * Starts delivery of exchanges via this dispatcher.
-     */
-    void start();
-    
-    /**
-     * Stops deliver of exchanges vis this dispatcher.
-     */
-    void stop();
+     ServiceDomain getDomain();
+     
+     /**
+      * Returns a list of required policies for this service.
+      * @return list of required policy
+      */
+      List<Policy> getRequiredPolicy();
 }

@@ -31,15 +31,12 @@ import org.junit.Test;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
-import org.switchyard.ServiceReference;
-import org.switchyard.ServiceDomain;
 import org.switchyard.MockDomain;
-import org.switchyard.metadata.ExchangeContract;
+import org.switchyard.ServiceReference;
 
 public class InOnlyTest {
     
-    // where the magic happens
-    private ServiceDomain _domain;
+    private MockDomain _domain;
     // event counters used by tests
     private List<Exchange> inEvents = new LinkedList<Exchange>();
 
@@ -53,7 +50,6 @@ public class InOnlyTest {
         inEvents.clear();
     }
     
-    /** NEW WAY **/
     @Test
     public void testInOnlySuccess() throws Exception {
         final QName serviceName = new QName("inOnlySuccess");
@@ -64,10 +60,11 @@ public class InOnlyTest {
 			    inEvents.add(event);
 			}
         };
-        ServiceReference service = _domain.registerService(serviceName, provider);
+
+        ServiceReference service = _domain.createInOnlyService(serviceName, provider);
         
         // Consume the service
-        Exchange exchange = _domain.createExchange(service, ExchangeContract.IN_ONLY);
+        Exchange exchange = service.createExchange();
         exchange.send(exchange.createMessage());
         
         // wait a sec, since this is async

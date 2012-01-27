@@ -160,6 +160,23 @@ public class CompositeModelTests {
         Assert.assertEquals("java", interface3.getType());
         Assert.assertEquals("org.switchyard.example.m1app.AnotherService", interface3.getInterface());
     }
+    
+    @Test
+    public void testBindingModel() throws Exception {
+        CompositeModel composite = _puller.pull(COMPLETE_XML, getClass());
+        // Test service binding
+        BindingModel serviceBinding = composite.getServices().get(0).getBindings().get(0);
+        Assert.assertTrue(serviceBinding.isServiceBinding());
+        Assert.assertFalse(serviceBinding.isReferenceBinding());
+        Assert.assertNotNull(serviceBinding.getService());
+        Assert.assertNull(serviceBinding.getReference());
+        // Test reference binding
+        BindingModel referenceBinding = composite.getReferences().get(0).getBindings().get(0);
+        Assert.assertTrue(referenceBinding.isReferenceBinding());
+        Assert.assertFalse(referenceBinding.isServiceBinding());
+        Assert.assertNotNull(referenceBinding.getReference());
+        Assert.assertNull(referenceBinding.getService());
+    }
 
     @Test
     public void testWriteComplete() throws Exception {

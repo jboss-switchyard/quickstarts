@@ -20,7 +20,7 @@
 package org.switchyard.spi;
 
 import org.switchyard.HandlerChain;
-import org.switchyard.ServiceReference;
+import org.switchyard.Service;
 import org.switchyard.transform.TransformerRegistry;
 
 /**
@@ -30,12 +30,12 @@ import org.switchyard.transform.TransformerRegistry;
 public interface ExchangeBus {
     /**
      * Create an exchange dispatcher for the specified service and handler chain.
-     * @param service service metadata
+     * @param service service instance
      * @param handlerChain handlers invoked by dispatcher on delivery
      * @param transformerRegistry The {@link TransformerRegistry}.
      * @return Dispatcher service dispatch reference
      */
-    Dispatcher createDispatcher(ServiceReference service, HandlerChain handlerChain, TransformerRegistry transformerRegistry);
+    Dispatcher createDispatcher(Service service, HandlerChain handlerChain, TransformerRegistry transformerRegistry);
     
     /**
      * Retrieves a dispatcher for the specified service.
@@ -43,6 +43,6 @@ public interface ExchangeBus {
      * @return dispatcher for the specified service, or null if no dispatcher
      * has been created
      */
-    Dispatcher getDispatcher(ServiceReference service);
+    Dispatcher getDispatcher(Service service);
     
 }

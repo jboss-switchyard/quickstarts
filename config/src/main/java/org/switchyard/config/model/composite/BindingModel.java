@@ -34,10 +34,30 @@ public interface BindingModel extends TypedModel {
     public static final String BINDING = "binding";
 
     /**
-     * Gets the parent composite model.
+     * Gets the parent service model.  This method will return null if 
+     * the binding model is attached to a reference instead of a service.
      * @return the parent composite model
      */
     public CompositeServiceModel getService();
+    
+    /**
+     * Gets the parent reference model.  This method will return null if 
+     * the binding model is attached to a service instead of a reference.
+     * @return the parent composite model
+     */
+    public CompositeReferenceModel getReference();
+    
+    /**
+     * Is this binding attached to a service?
+     * @return true if this is a service binding, false if it's a reference binding.
+     */
+    public boolean isServiceBinding();
+    
+    /**
+     * Is this binding attached to a reference?
+     * @return true if this is a reference binding, false if it's a service binding.
+     */
+    public boolean isReferenceBinding();
 
     /**
      * Gets the child context mapper model.

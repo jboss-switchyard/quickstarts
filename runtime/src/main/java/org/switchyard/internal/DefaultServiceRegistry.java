@@ -29,10 +29,9 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
+import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
-import org.switchyard.ServiceReference;
 import org.switchyard.spi.Dispatcher;
-import org.switchyard.spi.Service;
 import org.switchyard.spi.ServiceRegistry;
 
 /**
@@ -50,7 +49,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
         List<Service> domainServices = getServices();
         // Using an explicit iterator because we are removing elements
         for (Iterator<Service> i = domainServices.iterator(); i.hasNext();) {
-            ServiceRegistration sr = (ServiceRegistration) i.next();
+            Service sr = (Service) i.next();
             // prune services that do not match the specified domain
             if (!sr.getDomain().getName().equals(domainName)) {
                 i.remove();
@@ -82,34 +81,31 @@ public class DefaultServiceRegistry implements ServiceRegistry {
 
     @Override
     public synchronized Service registerService(
-            ServiceReference reference, Dispatcher endpoint, ServiceDomain domain) {
+            Service service, Dispatcher endpoint, ServiceDomain domain) {
 
-        ServiceRegistration sr = new ServiceRegistration(
-                reference, endpoint, this, domain);
-
-        List<Service> serviceList = _services.get(reference.getName());
+        List<Service> serviceList = _services.get(service.getName());
         if (serviceList == null) {
             serviceList = new LinkedList<Service>();
-             _services.put(reference.getName(), serviceList);
+             _services.put(service.getName(), serviceList);
         }
 
-        serviceList.add(sr);
+        serviceList.add(service);
 
         if (_logger.isDebugEnabled()) {
-            _logger.debug("Registered Service '" + reference.getName() + "' to ServiceDomain '" + domain.getName() + "'.");
+            _logger.debug("Registered Service '" + service.getName() + "' to ServiceDomain '" + domain.getName() + "'.");
         }
 
-        return sr;
+        return service;
     }
 
     @Override
     public synchronized void unregisterService(Service service) {
-        List<Service> serviceList =_services.get(service.getReference().getName());
+        List<Service> serviceList =_services.get(service.getName());
         if (serviceList != null) {
             serviceList.remove(service);
 
             if (_logger.isDebugEnabled()) {
-                _logger.debug("Unregistered Service '" + service.getReference().getName() + "' from ServiceDomain '" + service.getDomain().getName() + "'.");
+                _logger.debug("Unregistered Service '" + service.getName() + "' from ServiceDomain '" + service.getDomain().getName() + "'.");
             }
         }
     }

@@ -21,6 +21,7 @@ package org.switchyard.internal;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 
@@ -28,8 +29,9 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
-import org.switchyard.metadata.ExchangeContract;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceInterface;
+import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.policy.ExchangePolicy;
 import org.switchyard.policy.Policy;
 
@@ -42,47 +44,69 @@ public class ServiceReferenceImpl implements ServiceReference {
 
     private QName _name;
     private ServiceInterface _interface;
-    private ServiceDomain _domain;
-    private List<Policy> _requires;
+    private DomainImpl _domain;
+    private List<Policy> _provides;
+    private ExchangeHandler _handler;
 
     /**
      * Creates a new reference to a service.
      * @param name name of the service reference
      * @param serviceInterface the service interface
-     * @param requires list of policies required for this reference
+     * @param provides list of policies provided by this reference
+     * @param handler handler used to process reply faults/messages
      * @param domain domain in which the service is used 
      */
     public ServiceReferenceImpl(QName name, 
             ServiceInterface serviceInterface, 
-            List<Policy> requires,
-            ServiceDomain domain) {
+            List<Policy> provides,
+            ExchangeHandler handler,
+            DomainImpl domain) {
         
         _name = name;
         _interface = serviceInterface;
+        _handler = handler;
         _domain = domain;
         
-        if (requires != null) {
-            _requires = requires;
+        if (provides != null) {
+            _provides = provides;
         } else {
-            _requires = Collections.emptyList();
+            _provides = Collections.emptyList();
         }
     }
     
     @Override
-    public Exchange createExchange(ExchangeContract contract) {
-        Exchange ex = _domain.createExchange(this, contract);
-        for (Policy policy : _requires) {
-            ExchangePolicy.require(ex, policy);
+    public Exchange createExchange() {
+        return createExchange(_handler);
+    }
+    @Override
+    public Exchange createExchange(ExchangeHandler handler) {
+        Set<ServiceOperation> operations = _interface.getOperations();
+        if (operations.size() == 0) {
+            throw new SwitchYardException(
+                    "No operations in interface for service: " + _name);
+        } else if (operations.size() > 1) {
+            throw new SwitchYardException("Operation name required - "
+                    + "multiple operations on service interface: " + _name);
         }
-        return ex;
+
+        return createExchange(operations.iterator().next().getName(), handler);
+    }
+    
+    @Override
+    public Exchange createExchange(String operation) {
+        return createExchange(operation, _handler);
     }
 
     @Override
-    public Exchange createExchange(ExchangeContract contract,
-            ExchangeHandler handler) {
-        Exchange ex = _domain.createExchange(this, contract, handler);
-        for (Policy policy : _requires) {
-            ExchangePolicy.require(ex, policy);
+    public Exchange createExchange(String operation, ExchangeHandler handler) {
+        if (_interface.getOperation(operation) == null) {
+            throw new SwitchYardException("Invalid operation " + operation 
+                    + " for service " + _name);
+        } 
+        
+        Exchange ex = _domain.createExchange(this, operation, handler);
+        for (Policy policy : _provides) {
+            ExchangePolicy.provide(ex, policy);
         }
         return ex;
     }
@@ -96,6 +120,17 @@ public class ServiceReferenceImpl implements ServiceReference {
     public QName getName() {
         return _name;
     }
+
+    @Override
+    public List<Policy> getProvidedPolicy() {
+        return Collections.unmodifiableList(_provides);
+    }
+    
+    @Override
+    public void unregister() {
+        _domain.unregisterServiceReference(this);
+    }
+
     
     /**
      * The domain in which this service reference is registered.

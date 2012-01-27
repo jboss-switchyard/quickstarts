@@ -24,16 +24,13 @@ import javax.xml.namespace.QName;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.Exchange;
+import org.switchyard.MockDomain;
 import org.switchyard.MockHandler;
 import org.switchyard.ServiceReference;
-import org.switchyard.ServiceDomain;
-import org.switchyard.MockDomain;
-import org.switchyard.metadata.ExchangeContract;
 
 public class InOutTest {
     
-    // where the magic happens
-    private ServiceDomain _domain;
+    private MockDomain _domain;
 
     @Before
     public void setUp() throws Exception {
@@ -48,12 +45,11 @@ public class InOutTest {
 
         // Provide the service
         MockHandler provider = new MockHandler().forwardInToOut();
-        ServiceReference service = _domain.registerService(serviceName, provider);
+        ServiceReference service = _domain.createInOutService(serviceName, provider);
         
         // Consume the service
         MockHandler consumer = new MockHandler();
-        Exchange exchange = _domain.createExchange(
-                service, ExchangeContract.IN_OUT, consumer);
+        Exchange exchange = service.createExchange(consumer);
         exchange.send(exchange.createMessage());
         
         // wait, since this is async
@@ -67,12 +63,11 @@ public class InOutTest {
         final QName serviceName = new QName("inOutFault");
         // Provide the service
         MockHandler provider = new MockHandler().forwardInToFault();
-        ServiceReference service = _domain.registerService(serviceName, provider);
+        ServiceReference service = _domain.createInOutService(serviceName, provider);
         
         // Consume the service
         MockHandler consumer = new MockHandler();
-        Exchange exchange = _domain.createExchange(
-                service, ExchangeContract.IN_OUT, consumer);
+        Exchange exchange = service.createExchange(consumer);
         exchange.send(exchange.createMessage());
         
         // wait, since this is async

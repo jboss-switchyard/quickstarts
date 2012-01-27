@@ -17,44 +17,40 @@
  * MA  02110-1301, USA.
  */
 
+package org.switchyard.internal;
 
-package org.switchyard.deploy;
+import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.switchyard.MockDomain;
+import org.switchyard.MockHandler;
+import org.switchyard.Service;
+import org.switchyard.metadata.InOnlyService;
 
-public class BaseActivatorTest {
-
-    @Test
-    public void testNullCtor() {
-        SimpleActivator activator = new SimpleActivator((String)null);
-        Assert.assertNotNull(activator.getActivationTypes());
-        Assert.assertFalse(activator.canActivate("foo"));
+/**
+ *  Unit tests for the ServiceImpl class.
+ */
+public class ServiceImplTest {
+     
+    private MockDomain _domain;
+    
+    @Before
+    public void setUp() throws Exception {
+        _domain = new MockDomain();
     }
     
     @Test
-    public void testSingleActivationType() {
-        SimpleActivator activator = new SimpleActivator("bar");
-        Assert.assertEquals(1, activator.getActivationTypes().size());
-        Assert.assertTrue(activator.canActivate("bar"));
-    }
-    
-
-    @Test
-    public void testMultipleActivationTypes() {
-        SimpleActivator activator = new SimpleActivator(
-                new String[] {"abc", "xyz"});
-        Assert.assertEquals(2, activator.getActivationTypes().size());
-        Assert.assertTrue(activator.canActivate("abc"));
-        Assert.assertTrue(activator.canActivate("xyz"));
-    }
-}
-
-class SimpleActivator extends BaseActivator {
-    
-    SimpleActivator(String ... types) {
-        super(types);
+    public void testUnregister() {
+        Service service = _domain.registerService(new QName("TestService"), 
+                new InOnlyService(), new MockHandler());
+        // test that it was added to the registry
+        Assert.assertEquals(1, _domain.getServiceRegistry().getServices().size());
+        service.unregister();
+        // confirm that it was removed
+        Assert.assertEquals(0, _domain.getServiceRegistry().getServices().size());
     }
     
 }

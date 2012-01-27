@@ -31,7 +31,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.ServiceReference;
+import org.switchyard.Service;
 import org.switchyard.internal.DefaultHandlerChain;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
@@ -58,18 +58,18 @@ public class HornetQBusTest {
     public void testCreateDispatcher() throws Exception {
         // verify that dispatchers can be created for an InOnly service
         _provider.createDispatcher(
-                new MockServiceReference(new QName("inOnly"), new InOnlyService()), 
+                new MockService(new QName("inOnly"), new InOnlyService()), 
                 new DefaultHandlerChain(), null);
 
         // verify that dispatchers can be created for an InOut service
         _provider.createDispatcher(
-                new MockServiceReference(new QName("inOut"), new InOutService()), 
+                new MockService(new QName("inOut"), new InOutService()), 
                 new DefaultHandlerChain(), null);
     }
     
     @Test
     public void testGetDispatcher() throws Exception {
-        ServiceReference service = new MockServiceReference(new QName("testGetDispatcher"));
+        Service service = new MockService(new QName("testGetDispatcher"));
         Dispatcher dispatch = _provider.createDispatcher(service, new DefaultHandlerChain(), null);
         
         Assert.assertEquals(dispatch, _provider.getDispatcher(service));

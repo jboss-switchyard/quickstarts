@@ -19,38 +19,28 @@
 
 package org.switchyard.bus.hornetq;
 
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
-import org.switchyard.Exchange;
-import org.switchyard.ExchangeHandler;
-import org.switchyard.ServiceReference;
-import org.switchyard.metadata.ExchangeContract;
+import org.switchyard.Service;
+import org.switchyard.ServiceDomain;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.ServiceInterface;
+import org.switchyard.policy.Policy;
 
-public class MockServiceReference implements ServiceReference {
+public class MockService implements Service {
     
     private QName _serviceName;
     private ServiceInterface _serviceInterface;
     
-    public MockServiceReference(QName serviceName) {
+    public MockService(QName serviceName) {
         this(serviceName, new InOnlyService());
     }
     
-    public MockServiceReference(QName serviceName, ServiceInterface serviceInterface) {
+    public MockService(QName serviceName, ServiceInterface serviceInterface) {
         _serviceName = serviceName;
         _serviceInterface = serviceInterface;
-    }
-
-    @Override
-    public Exchange createExchange(ExchangeContract contract) {
-        return null;
-    }
-
-    @Override
-    public Exchange createExchange(ExchangeContract contract,
-            ExchangeHandler handler) {
-        return null;
     }
 
     @Override
@@ -61,6 +51,21 @@ public class MockServiceReference implements ServiceReference {
     @Override
     public QName getName() {
         return _serviceName;
+    }
+
+    @Override
+    public void unregister() {
+        
+    }
+
+    @Override
+    public ServiceDomain getDomain() {
+        return null;
+    }
+
+    @Override
+    public List<Policy> getRequiredPolicy() {
+        return null;
     }
 
 }

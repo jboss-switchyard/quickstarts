@@ -21,11 +21,14 @@ package org.switchyard;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.internal.LocalExchangeBus;
 import org.switchyard.internal.DefaultServiceRegistry;
 import org.switchyard.internal.DomainImpl;
+import org.switchyard.internal.LocalExchangeBus;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.internal.validate.BaseValidatorRegistry;
+import org.switchyard.metadata.InOnlyService;
+import org.switchyard.metadata.InOutService;
+import org.switchyard.metadata.ServiceInterface;
 
 public class MockDomain extends DomainImpl {
 
@@ -38,5 +41,34 @@ public class MockDomain extends DomainImpl {
                 new LocalExchangeBus(), 
                 new BaseTransformerRegistry(),
                 new BaseValidatorRegistry());
+    }
+    
+    public ServiceReference createInOnlyService(QName serviceName) {
+        ServiceInterface inOnly = new InOnlyService();
+        registerService(serviceName, inOnly, new MockHandler());
+        ServiceReference reference = registerServiceReference(serviceName, inOnly);
+        return reference;
+    }
+    
+
+    public ServiceReference createInOnlyService(QName serviceName, ExchangeHandler handler) {
+        ServiceInterface inOnly = new InOnlyService();
+        registerService(serviceName, inOnly, handler);
+        ServiceReference reference = registerServiceReference(serviceName, inOnly);
+        return reference;
+    }
+
+    public ServiceReference createInOutService(QName serviceName) {
+        ServiceInterface inOut = new InOutService();
+        registerService(serviceName, inOut, new MockHandler());
+        ServiceReference reference = registerServiceReference(serviceName, inOut);
+        return reference;
+    }
+
+    public ServiceReference createInOutService(QName serviceName, ExchangeHandler handler) {
+        ServiceInterface inOut = new InOutService();
+        registerService(serviceName, inOut, handler);
+        ServiceReference reference = registerServiceReference(serviceName, inOut);
+        return reference;
     }
 }

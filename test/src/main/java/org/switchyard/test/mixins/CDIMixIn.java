@@ -19,6 +19,8 @@
 
 package org.switchyard.test.mixins;
 
+import java.util.Set;
+
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -34,8 +36,6 @@ import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.test.MockInitialContextFactory;
 import org.switchyard.test.SimpleTestDeployment;
-
-import java.util.Set;
 
 /**
  * CDI Test Mix-In for deploying the Weld CDI Standalone Edition container.
@@ -76,7 +76,7 @@ public class CDIMixIn extends AbstractTestMixIn {
             try {
                 _simpleCdiDeployment = simpleCdiDeploymentType.newInstance();
                 _simpleCdiDeployment.setParentDeployment(deployment);
-                ServiceDomain domain = ServiceDomainManager.createDomain();
+                ServiceDomain domain = new ServiceDomainManager().createDomain();
                 _simpleCdiDeployment.init(domain, getTestKit().getActivators());
                 _simpleCdiDeployment.start();
             } catch (Exception e) {

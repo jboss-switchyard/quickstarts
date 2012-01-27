@@ -17,35 +17,23 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.spi;
+package org.switchyard.deploy;
 
-import org.switchyard.Exchange;
-import org.switchyard.Service;
+import org.switchyard.BaseHandler;
 
 /**
- * Dispatches messages to a given service.
+ * NOP implementation of ServiceHandler.
  */
-public interface Dispatcher {
+public class BaseServiceHandler extends BaseHandler implements ServiceHandler {
 
-    /**
-     * The name of the service.
-     * @return service reference
-     */
-    Service getService();
+    @Override
+    public void start() {
+        // NOP
+    }
+
+    @Override
+    public void stop() {
+        // NOP
+    }
     
-    /**
-     * Dispatch an exchange.
-     * @param exchange exchange
-     */
-    void dispatch(Exchange exchange);
-    
-    /**
-     * Starts delivery of exchanges via this dispatcher.
-     */
-    void start();
-    
-    /**
-     * Stops deliver of exchanges vis this dispatcher.
-     */
-    void stop();
 }

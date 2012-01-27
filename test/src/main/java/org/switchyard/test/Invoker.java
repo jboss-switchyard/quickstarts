@@ -34,11 +34,9 @@ import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.xml.XMLHelper;
-import org.switchyard.metadata.BaseExchangeContract;
-import org.switchyard.metadata.ExchangeContract;
+import org.switchyard.metadata.BaseService;
 import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
-import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.ServiceOperation;
 
 /**
@@ -52,7 +50,6 @@ public class Invoker {
     private QName _serviceName;
     private String _operationName;
     private ServiceOperation _serviceOperation;
-    private ExchangeContract _exchangeContract;
     private ExchangeHandlerProxy _exchangeHandlerProxy;
     private long _timeoutMillis = 10000;
     private QName _inputType;
@@ -119,16 +116,6 @@ public class Invoker {
      */
     public Invoker operation(ServiceOperation serviceOperation) {
         _serviceOperation = serviceOperation;
-        return this;
-    }
-
-    /**
-     * Set the target exchange contract.
-     * @param exchangeContract The ExchangeContract.
-     * @return This invoker instance.
-     */
-    public Invoker contract(ExchangeContract exchangeContract) {
-        _exchangeContract = exchangeContract;
         return this;
     }
 
@@ -257,51 +244,20 @@ public class Invoker {
     }
 
     private Exchange createExchange(ExchangePattern pattern, ExchangeHandler handler) {
-        ServiceReference service;
-        ServiceOperation serviceOperation = _serviceOperation;
-        ExchangeContract exchangeContract;
-
-        service = _domain.getService(_serviceName);
-        if (service == null) {
-            Assert.fail("Unknown Service '" + _serviceName + "'.");
-        }
-
-        if (_exchangeContract ==  null) {
-            BaseExchangeContract baseExchangeContract;
-
-            if (serviceOperation == null) {
-                // service operation has not been specified, check the registered service
-                serviceOperation = service.getInterface().getOperation(_operationName != null ? _operationName : ServiceInterface.DEFAULT_OPERATION);
-                if (serviceOperation == null) {
-                    if (pattern == null) {
-                        Assert.fail("Operation '" + _operationName + "' is undefined.  You need to create the Exchange instance directly from the ServiceDomain, which you can get from the SwitchYardTestKit.");
-                    }
-
-                    // nothing on the registered service, need to create our own
-                    if (pattern == ExchangePattern.IN_ONLY) {
-                        serviceOperation = new InOnlyOperation(_operationName);
-                    } else if (pattern == ExchangePattern.IN_OUT) {
-                        serviceOperation = new InOutOperation(_operationName);
-                    }
-                }
+        
+        ServiceOperation operation = _serviceOperation;
+        ServiceReference reference;
+        
+        if (operation == null) {
+            if (ExchangePattern.IN_ONLY.equals(pattern)) {
+                operation = new InOnlyOperation(_operationName, _inputType);
+            } else {
+                operation = new InOutOperation(_operationName, _inputType, _expectedOutputType, _expectedFaultType);
             }
-
-            baseExchangeContract = new BaseExchangeContract(serviceOperation);
-            baseExchangeContract.getInvokerInvocationMetaData().
-                    setInputType(_inputType).
-                    setOutputType(_expectedOutputType).
-                    setFaultType(_expectedFaultType);
-
-            exchangeContract = baseExchangeContract;
-        } else {
-            exchangeContract = _exchangeContract;
         }
-
-        if (handler != null) {
-            return _domain.createExchange(service, exchangeContract, handler);
-        } else {
-            return _domain.createExchange(service, exchangeContract);
-        }
+        
+        reference = _domain.registerServiceReference(_serviceName, new BaseService(operation), handler);
+        return _operationName == null ? reference.createExchange() : reference.createExchange(_operationName);
     }
 
     private ExchangeHandlerProxy createHandlerProxy(ExchangeHandler handler) {

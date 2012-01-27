@@ -19,10 +19,12 @@
 
 package org.switchyard;
 
-import org.switchyard.metadata.ExchangeContract;
-import org.switchyard.metadata.ServiceInterface;
+import java.util.List;
 
 import javax.xml.namespace.QName;
+
+import org.switchyard.metadata.ServiceInterface;
+import org.switchyard.policy.Policy;
 
 /**
  * A service registered with the SwitchYard runtime.
@@ -33,25 +35,57 @@ public interface ServiceReference {
      * @return service name
      */
     QName getName();
+    
     /**
     * Interface metadata for the registered service.
     * @return the service interface
     */
     ServiceInterface getInterface();
+    
+    /**
+     * Creates a new Exchange to invoke this service.  Since this method does
+     * not accept an operation name, it should only be used when the service
+     * interface contains a single operation.
+     * @return a new Exchange instance
+     */
+    Exchange createExchange();
+    
+    /**
+     * Creates a new Exchange to invoke this service, with replies handled by 
+     * the specified ExchangeHandler.  Since this method does
+     * not accept an operation name, it should only be used when the service
+     * interface contains a single operation.
+     * @param handler used to process reply messages
+     * @return a new Exchange instance
+     */
+    Exchange createExchange(ExchangeHandler handler);
+    
     /**
      * Creates a new Exchange to invoke this service with the specified exchange
      * pattern.
-     * @param contract the exchange contract to use
+     * @param operation the operation to invoke
      * @return a new Exchange instance
      */
-    Exchange createExchange(ExchangeContract contract);
+    Exchange createExchange(String operation);
+    
     /**
      * Creates a new Exchange to invoke this service with the specified exchange
      * pattern.  The supplied ExchangeHandler is used to handle any faults or
      * reply messages that are generated as part of the message exchange.
-     * @param contract the exchange contract to use
+     * @param operation the operation to invoke
      * @param handler used to process response and fault messages
      * @return a new Exchange instance
      */
-    Exchange createExchange(ExchangeContract contract, ExchangeHandler handler);
+    Exchange createExchange(String operation, ExchangeHandler handler);
+    
+    /**
+     * Returns a list of policies provided by this service reference.
+     * @return list of provided policy
+     */
+     List<Policy> getProvidedPolicy();
+
+     /**
+      * Unregisters this service reference from the domain it's registered in.
+      */
+     void unregister();
 }

@@ -23,7 +23,6 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.policy.Policy;
 import org.switchyard.transform.TransformerRegistry;
@@ -32,7 +31,7 @@ import org.switchyard.validate.ValidatorRegistry;
 /**
  * A ServiceDomain represents a collection of services with a shared set of
  * resources, configuration, and policy definitions.  The ServiceDomain
- * interface is used by software components to  provide and/or consume
+ * interface is used by software components to provide and/or consume
  * services.  These software components include protocol gateways, service
  * containers, translation engines, adapters, orchestration and routing
  * engines.
@@ -46,54 +45,16 @@ public interface ServiceDomain {
     QName getName();
     
     /**
-    * Return a service instance bound to the specified name.
-    * @param serviceName name of the service
-    * @return service instance or null if no such service was found
-    */
-    ServiceReference getService(QName serviceName);
-
-    /**
-     * Creates a new Exchange to invoke service with the specified exchange
-     * pattern.
-     * @param service the service to invoke
-     * @param contract the exchange contract to use
-     * @return a new Exchange instance
-     */
-    Exchange createExchange(ServiceReference service, ExchangeContract contract);
-    /**
-     * Creates a new Exchange to invoke service with the specified exchange
-     * pattern.  The supplied ExchangeHandler is used to handle any faults or
-     * reply messages that are generated as part of the message exchange.
-     * @param service the service to invoke
-     * @param contract the exchange contract to use
-     * @param handler used to process response and fault messages
-     * @return a new Exchange instance
-     */
-    Exchange createExchange(ServiceReference service, ExchangeContract contract,
-            ExchangeHandler handler);
-
-    /**
-     * Register a service with the domain.
-     * @param serviceName the name of the service
-     * @param handler the handler to use to process exchanges directed at this
-     * service
-     * @return a reference to the registered service that can be used to
-     * unregister when required
-     */
-    ServiceReference registerService(QName serviceName, ExchangeHandler handler);
-
-    /**
      * Register a service with the domain.
      * @param serviceName the name of the service
      * @param handler the handler to use to process exchanges directed at this
      * service
      * @param metadata service interface details
-     * @return a reference to the registered service that can be used to
-     * unregister when required
+     * @return the registered service
      */
-    ServiceReference registerService(QName serviceName,
-            ExchangeHandler handler,
-            ServiceInterface metadata);
+    Service registerService(QName serviceName,
+            ServiceInterface metadata,
+            ExchangeHandler handler);
     
     /**
      * Register a service with the domain.
@@ -102,13 +63,64 @@ public interface ServiceDomain {
      * service
      * @param metadata service interface details
      * @param requires policy requirements for the service
+     * @return the registered service
+     */
+    Service registerService(QName serviceName,
+            ServiceInterface metadata,
+            ExchangeHandler handler,
+            List<Policy> requires);
+    
+    /**
+     * Register a service reference with the domain.
+     * @param serviceName the name of the reference
+     * @param metadata service consumer contract
      * @return a reference to the registered service that can be used to
      * unregister when required
      */
-    ServiceReference registerService(QName serviceName,
-            ExchangeHandler handler,
+    ServiceReference registerServiceReference(QName serviceName, ServiceInterface metadata);
+    
+    /**
+     * Register a service reference with the domain.
+     * @param serviceName the name of the reference
+     * @param metadata service consumer contract
+     * @param handler the handler to use to process replies from the service
+     * @return a reference to the registered service that can be used to
+     * unregister when required
+     */
+    ServiceReference registerServiceReference(QName serviceName,
             ServiceInterface metadata,
-            List<Policy> requires);
+            ExchangeHandler handler);
+    
+    /**
+     * Register a service reference with the domain.
+     * @param serviceName the name of the reference
+     * @param metadata service consumer contract
+     * @param handler the handler to use to process replies from the service
+     * @param provides policies provided by the reference
+     * @return a reference to the registered service that can be used to
+     * unregister when required
+     */
+    ServiceReference registerServiceReference(QName serviceName,
+            ServiceInterface metadata,
+            ExchangeHandler handler,
+            List<Policy> provides);
+    
+    /**
+     * Fetches a registered service reference for the specified name.
+     * @param serviceName name of the service reference
+     * @return registered service reference, or null if no references have
+     * been registered with the specified name.
+     */
+    ServiceReference getServiceReference(QName serviceName);
+    
+    /**
+     * Wire a service reference to a registered service.  The default wiring
+     * of a reference maps it to a service with the same name.  This method
+     * can be used to map references to services with a different name.
+     * @param reference service reference
+     * @param service service provider
+     */
+    void wireReference(ServiceReference reference, Service service);
 
     /**
      * Returns a references to the transformer registry for this domain.

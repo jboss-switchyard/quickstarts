@@ -82,7 +82,8 @@ public class BaseService implements ServiceInterface {
     public ServiceOperation getOperation(String name) {
         ServiceOperation operation = null;
         for (ServiceOperation op : _operations) {
-            if (op.getName().equals(name)) {
+            // the '==' covers null equality
+            if (op.getName() == name || op.getName().equals(name)) {
                 operation = op;
                 break;
             }
