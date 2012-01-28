@@ -41,8 +41,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-console-gwt</artifactId>
+            <groupId>org.switchyard.console</groupId>
+            <artifactId>switchyard-console-application</artifactId>
             <type>war</type>
         </dependency>
 

@@ -42,6 +42,10 @@
             <source>${bundle.dir}/xsl/standalone.xsl</source>
             <outputDirectory>${installer.root.dir}/res</outputDirectory>
         </file>
+        <file>
+            <source>${bundle.dir}/xsl/console_module.xsl</source>
+            <outputDirectory>${installer.root.dir}/res</outputDirectory>
+        </file>
     </files>
 
     <fileSets>

@@ -30,10 +30,10 @@
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
-                <include>org.switchyard:switchyard-console-gwt</include>
+                <include>org.switchyard.console:switchyard-console-application</include>
             </includes>
             <outputDirectory>${tools.root.dir}</outputDirectory>
-            <outputFileNameMapping>switchyard-console-gwt.war</outputFileNameMapping>
+            <outputFileNameMapping>switchyard-console-application.war</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>

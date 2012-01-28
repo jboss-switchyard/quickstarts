@@ -13,7 +13,6 @@
             <directory>${staging.jboss.dir}</directory>
             <excludes>
                 <exclude>bin/**</exclude>
-                <exclude>welcome-content/index.html</exclude>
                 <exclude>standalone/**/standalone*.xml</exclude>
                 <exclude>domain/</exclude>
                 <exclude>META-INF/</exclude>
@@ -45,12 +44,6 @@
             <fileMode>755</fileMode>
             <lineEnding>keep</lineEnding>
             <outputDirectory>${distro.root.dir}bin</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${project.build.outputDirectory}/welcome-content</directory>
-            <outputDirectory>${distro.root.dir}welcome-content</outputDirectory>
-            <fileMode>644</fileMode>
-            <directoryMode>755</directoryMode>
         </fileSet>
         <fileSet>
             <directory>${staging.dir}</directory>

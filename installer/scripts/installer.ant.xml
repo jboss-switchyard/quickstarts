@@ -104,7 +104,7 @@
         <condition property="sy.console.not.available">
            <and>
              <not>
-               <available file="res/switchyard-console-gwt.war"/>
+               <available file="res/switchyard-console-application.war"/>
              </not>
              <isset property="installSYConsole"/>
            </and>
@@ -125,7 +125,7 @@
         </condition>
     </target>
 
-    <target name="request-sy-console-install" unless="SKIP_CONSOLE">
+    <target name="request-sy-console-install" unless="switchyardConsoleAlreadyInstalled">
         <input message="Would you like to install the SwitchYard Console (y/n)?" addproperty="install.sy.console.question" validargs="y,n" defaultvalue="y" />
 
         <condition property="installSYConsole">
@@ -206,6 +206,12 @@
           <or>
             <available file="switchyard" filepath="${AS7_PATH}/modules/org" />
             <isset property="SKIP_AS7"/>
+          </or>
+        </condition>
+        <condition property="switchyardConsoleAlreadyInstalled">
+          <or>
+            <available file="switchyard-console-application.war" filepath="${AS7_PATH}/modules/org/jboss/as/console/main" />
+            <isset property="SKIP_CONSOLE"/>
           </or>
         </condition>
 
@@ -322,7 +328,17 @@
     </target>
 
     <target name="install-sy-console" if="installSYConsole" depends="request-sy-console-install, download-sy-console">
-    	<copy todir="${AS7_PATH}/standalone/deployments" overwrite="true" file="res/switchyard-console-gwt.war"/>
+    	<copy todir="${AS7_PATH}/modules/org/jboss/as/console/main" overwrite="true" file="res/switchyard-console-application.war"/>
+        <xslt style="res/console_module.xsl"
+              basedir="${AS7_PATH}/modules/org/jboss/as/console/main"
+              destdir="${AS7_PATH}/modules/org/jboss/as/console/main"
+              includes="module.xml"/>
+        <move overwrite="true" todir="${AS7_PATH}/modules/org/jboss/as/console/main">
+          <filelist dir="${AS7_PATH}/modules/org/jboss/as/console/main">
+            <file name="module.html"/>
+          </filelist>
+          <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
     </target>
 
     <target name="install-forge" if="installForge" depends="request-forge-install, request-forge-home, set-forge-home, validate-forge-home-version, download-sy-forge-module" unless="SKIP_FORGE">
