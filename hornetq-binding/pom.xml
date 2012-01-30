@@ -23,16 +23,16 @@
       <artifactId>switchyard-plugin</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.switchyard</groupId>
-      <artifactId>switchyard-test</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.switchyard.components</groupId>
       <artifactId>switchyard-component-hornetq</artifactId>
     </dependency>
     <dependency>
       <groupId>org.switchyard.components</groupId>
       <artifactId>switchyard-component-bean</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-test</artifactId>
     </dependency>
     <dependency>
         <groupId>javax.jms</groupId>
@@ -70,7 +70,7 @@
 	</dependency>
   </dependencies>
   <build>
-    <finalName>${artifactId}</finalName>
+    <finalName>${project.artifactId}</finalName>
     <plugins>
      <plugin>
       <groupId>org.apache.maven.plugins</groupId>

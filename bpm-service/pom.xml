@@ -26,10 +26,6 @@
       <artifactId>switchyard-plugin</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.switchyard</groupId>
-      <artifactId>switchyard-test</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.switchyard.components</groupId>
       <artifactId>switchyard-component-bpm</artifactId>
     </dependency>
@@ -41,9 +37,14 @@
       <groupId>org.switchyard.components</groupId>
       <artifactId>switchyard-component-soap</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-test</artifactId>
+    </dependency>
   </dependencies>
+
   <build>
-    <finalName>${artifactId}</finalName>
+    <finalName>${project.artifactId}</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
