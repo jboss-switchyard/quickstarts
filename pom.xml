@@ -70,9 +70,11 @@
     <!-- Override versions for OpenShift. Currently using same version as AS but -->
     <!-- maintaining this override for future flexibility -->
     <version.arquillian.openshift>1.0.0.CR7</version.arquillian.openshift>
-    <version.activity.monitor.model>1.0.0.Final</version.activity.monitor.model>
+    <version.activity.monitor.model>1.2.0-SNAPSHOT</version.activity.monitor.model>
     <version.antlr>3.3</version.antlr>
+    <version.axiom>1.2.8</version.axiom>
     <version.ballroom>1.0.1.Final</version.ballroom>
+    <version.batik>1.7</version.batik>
     <version.camel>2.8.0</version.camel>
     <version.clojure>1.3.0-alpha5</version.clojure>
     <version.commons.httpclient>3.1</version.commons.httpclient>
@@ -100,6 +102,7 @@
     <!-- Override versions for OpenShift. Currently using same version as AS but -->
     <!-- maintaining this override for future flexibility -->
     <version.jbossas.openshift>${version.jbossas}</version.jbossas.openshift>
+    <version.jettison>1.2</version.jettison>
     <version.jpa>1.0.2</version.jpa>
     <version.jta>1.1</version.jta>
     <version.maven.gwt.plugin>2.3.0</version.maven.gwt.plugin>
@@ -112,14 +115,16 @@
     <version.naming>5.0.5.Final</version.naming>
     <version.netty>3.2.1.Final</version.netty>
     <version.protostuff>1.0.4</version.protostuff>
-    <version.riftsaw.ode>3.0.0.20111024-M1</version.riftsaw.ode>
-    <version.riftsaw.engine>3.0.0.20111024-M1</version.riftsaw.engine>
+    <version.riftsaw.ode>3.0.0-SNAPSHOT</version.riftsaw.ode>
+    <version.riftsaw.engine>3.0.0-SNAPSHOT</version.riftsaw.engine>
+    <version.riftsaw.console>2.4.0-SNAPSHOT</version.riftsaw.console>
     <version.saxon>9.2.1.5</version.saxon>
     <version.servlet>2.5</version.servlet>
     <version.slf4j>1.6.1</version.slf4j>
     <version.spring>3.0.6.RELEASE</version.spring>
     <version.weld>1.1.0.Final</version.weld>
     <version.xalan>2.7.1-1.jbossorg</version.xalan>
+    <version.xml-apis>1.3.04</version.xml-apis>
     <version.xmlbeans>2.2.0</version.xmlbeans>
     <version.xmlunit>1.1</version.xmlunit>
     <version.xstream>1.2.2</version.xstream>
@@ -826,6 +831,82 @@
 
 
       <!-- External dependencies - please keep in alphabetical order by groupId -->
+	   <dependency>
+		  <groupId>batik</groupId>
+		  <artifactId>batik-dom</artifactId>
+		  <version>${version.batik}</version>
+	   </dependency>
+	   <dependency>
+		  <groupId>batik</groupId>
+		  <artifactId>batik-svg-dom</artifactId>
+		  <version>${version.batik}</version>
+	   </dependency>
+	   <dependency>
+		  <groupId>batik</groupId>
+		  <artifactId>batik-svggen</artifactId>
+	      <version>${version.batik}</version>
+	   </dependency>
+	   <dependency>
+		  <groupId>batik</groupId>
+		  <artifactId>batik-util</artifactId>
+		  <version>${version.batik}</version>
+	   </dependency>
+	   <dependency>
+		  <groupId>batik</groupId>
+		  <artifactId>batik-css</artifactId>
+	      <version>${version.batik}</version>
+	   </dependency>
+	   <dependency>
+		  <groupId>batik</groupId>
+		  <artifactId>batik-ext</artifactId>
+		  <version>${version.batik}</version>
+	   </dependency>
+	   <dependency>
+		  <groupId>batik</groupId>
+		  <artifactId>batik-xml</artifactId>
+	      <version>${version.batik}</version>
+	   </dependency>
+	   <dependency>
+		  <groupId>batik</groupId>
+		  <artifactId>batik-transcoder</artifactId>
+		  <version>${version.batik}</version>
+	   </dependency>
+	   <dependency>
+		  <groupId>batik</groupId>
+		  <artifactId>batik-bridge</artifactId>
+		  <version>${version.batik}</version>
+	   </dependency>
+	   <dependency>
+		  <groupId>batik</groupId>
+		  <artifactId>batik-gvt</artifactId>
+		  <version>${version.batik}</version>
+	   </dependency>
+	   <dependency>
+		  <groupId>batik</groupId>
+	      <artifactId>batik-script</artifactId>
+		  <version>${version.batik}</version>
+	  </dependency>
+	  <dependency>
+		  <groupId>batik</groupId>
+		  <artifactId>batik-awt-util</artifactId>
+		  <version>${version.batik}</version>
+	  </dependency>
+	  <dependency>
+		  <groupId>batik</groupId>
+		  <artifactId>batik-parser</artifactId>
+		  <version>${version.batik}</version>
+	  </dependency>
+	  <dependency>
+		  <groupId>batik</groupId>
+		  <artifactId>batik-anim</artifactId>
+		  <version>${version.batik}</version>
+	  </dependency>
+	  <dependency>
+		  <groupId>batik</groupId>
+		  <artifactId>batik-codec</artifactId>
+		  <version>${version.batik}</version>
+	  </dependency>
+		
       <dependency>
          <groupId>com.dyuproject.protostuff</groupId>
          <artifactId>protostuff-api</artifactId>
@@ -934,6 +1015,16 @@
          <scope>provided</scope>
       </dependency>
       <dependency>
+		 <groupId>org.apache.ws.commons.axiom</groupId>
+		 <artifactId>axiom-impl</artifactId>
+		 <version>${version.axiom}</version>
+	  </dependency>
+      <dependency>
+		 <groupId>org.apache.ws.commons.axiom</groupId>
+		 <artifactId>axiom-api</artifactId>
+		 <version>${version.axiom}</version>
+	  </dependency>
+      <dependency>
          <groupId>org.apache.xalan</groupId>
          <artifactId>serializer</artifactId>
          <version>${version.xalan}</version>
@@ -952,6 +1043,11 @@
          <groupId>org.clojure</groupId>
          <artifactId>clojure</artifactId>
          <version>${version.clojure}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.codehaus.jettison</groupId>
+         <artifactId>jettison</artifactId>
+         <version>${version.jettison}</version>
       </dependency>
       <dependency>
          <groupId>org.drools</groupId>
@@ -1025,6 +1121,16 @@
          <type>zip</type>
       </dependency>
       <dependency>
+         <groupId>org.jboss.as</groupId>
+         <artifactId>jboss-as-naming</artifactId>
+         <version>${version.jbossas}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.as</groupId>
+         <artifactId>jboss-as-server</artifactId>
+         <version>${version.jbossas}</version>
+      </dependency>
+      <dependency>
          <groupId>org.jboss.ballroom</groupId>
          <artifactId>widgets</artifactId>
          <version>${version.ballroom}</version>
@@ -1039,6 +1145,16 @@
                   <artifactId>hibernate-annotations</artifactId>
               </exclusion>
           </exclusions>
+       </dependency>
+       <dependency>
+         <groupId>org.jboss.bpm</groupId>
+         <artifactId>gwt-console-rpc</artifactId>
+		 <version>${version.riftsaw.console}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.bpm</groupId>
+         <artifactId>gwt-console-server-integration</artifactId>
+		 <version>${version.riftsaw.console}</version>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
@@ -1258,6 +1374,21 @@
          <artifactId>engine</artifactId>
          <version>${version.riftsaw.engine}</version>
       </dependency>
+	  <dependency>
+         <groupId>org.riftsaw.console</groupId>
+         <artifactId>riftsaw-bpel2svg</artifactId>
+         <version>${version.riftsaw.engine}</version>
+      </dependency>      
+      <dependency>
+         <groupId>org.riftsaw.console</groupId>
+         <artifactId>riftsaw-console-integration</artifactId>
+         <version>${version.riftsaw.engine}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.riftsaw.console</groupId>
+         <artifactId>riftsaw-bpaf</artifactId>
+         <version>${version.riftsaw.engine}</version>
+      </dependency>
       <dependency>
          <groupId>org.slf4j</groupId>
          <artifactId>slf4j-log4j12</artifactId>
@@ -1293,6 +1424,16 @@
          <artifactId>spring-jms</artifactId>
          <version>${version.spring}</version>
       </dependency>
+	  <dependency>
+		 <groupId>xml-apis</groupId>
+		 <artifactId>xml-apis-ext</artifactId>
+		 <version>${version.xml-apis}</version>
+	  </dependency>
+	  <dependency>
+		 <groupId>xml-apis</groupId>
+		 <artifactId>xml-apis</artifactId>
+		 <version>${version.xml-apis}</version>
+	  </dependency>
       <dependency>
          <groupId>xmlunit</groupId>
          <artifactId>xmlunit</artifactId>
