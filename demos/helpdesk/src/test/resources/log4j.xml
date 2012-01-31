@@ -27,18 +27,27 @@
 		</layout>
 	</appender>
 
-    <logger name="org.jboss.weld.Bootstrap">
+    <logger name="org.apache.commons">
         <level value="ERROR"/>
     </logger>
-    <logger name="org.apache.commons.httpclient.HttpMethodBase">
+    <logger name="org.apache.mina">
         <level value="ERROR"/>
     </logger>
-	<logger name="org.jboss.interceptor.util.InterceptionTypeRegistry">
+    <logger name="org.hibernate">
+        <level value="ERROR"/>
+    </logger>
+    <logger name="org.jboss.weld">
+        <level value="ERROR"/>
+    </logger>
+	<logger name="org.jboss.interceptor">
 		<level value="ERROR"/>
 	</logger>
-    <logger name="org.hibernate.ejb.Ejb3Configuration">
-        <level value="ERROR"/>
-    </logger>
+	<logger name="org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient">
+		<level value="DEBUG"/>
+	</logger>
+	<logger name="org.switchyard.component.bpm.task.service.jbpm.JBPMTaskServer">
+		<level value="DEBUG"/>
+	</logger>
 
 	<root>
 		<level value="INFO"/>
