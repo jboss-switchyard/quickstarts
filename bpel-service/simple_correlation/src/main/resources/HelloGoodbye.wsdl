@@ -18,10 +18,9 @@
   ~ under the License.
   -->
 <wsdl:definitions
-    targetNamespace="http://www.jboss.org/bpel/examples/wsdl"
+    targetNamespace="http://www.jboss.org/bpel/examples/simple_correlation/"
     xmlns="http://schemas.xmlsoap.org/wsdl/"
-    xmlns:tns="http://www.jboss.org/bpel/examples/wsdl"
-    xmlns:types="http://www.jboss.org/bpel/examples/xsd"
+    xmlns:tns="http://www.jboss.org/bpel/examples/simple_correlation/"
     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
@@ -29,7 +28,8 @@
     xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
 
   <wsdl:types>
-    <xsd:schema targetNamespace="http://www.jboss.org/bpel/examples/wsdl" xmlns="http://www.w3.org/2001/XMLSchema">
+    <xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+            targetNamespace="http://www.jboss.org/bpel/examples/simple_correlation/" xmlns="http://www.w3.org/2001/XMLSchema">
       
 	  <complexType name="sessionIdentity">
         <sequence>
@@ -83,27 +83,19 @@
     <wsdl:operation name="hello">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input>
-        <soap:body
-            namespace="http://www.jboss.org/bpel/examples/wsdl"
-            use="literal"/>
+        <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output>
-        <soap:body
-            namespace="http://www.jboss.org/bpel/examples/wsdl"
-            use="literal"/>
+        <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="goodbye">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input>
-        <soap:body
-            namespace="http://www.jboss.org/bpel/examples/wsdl"
-            use="literal"/>
+        <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output>
-        <soap:body
-            namespace="http://www.jboss.org/bpel/examples/wsdl"
-            use="literal"/>
+        <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
   </wsdl:binding>
@@ -122,12 +114,12 @@
 
   <vprop:propertyAlias propertyName="tns:SessionID"
                        messageType="tns:HelloMessage" part="parameters">
-    <vprop:query>sessionId/id</vprop:query>
+    <vprop:query>tns:sessionId/tns:id</vprop:query>
   </vprop:propertyAlias>
 
   <vprop:propertyAlias propertyName="tns:SessionID"
                        messageType="tns:GoodbyeMessage" part="parameters">
-    <vprop:query>sessionId/id</vprop:query>
+    <vprop:query>tns:sessionId/tns:id</vprop:query>
   </vprop:propertyAlias>
 
 

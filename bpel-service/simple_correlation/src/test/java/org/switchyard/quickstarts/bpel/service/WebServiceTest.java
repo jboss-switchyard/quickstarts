@@ -27,6 +27,6 @@ public class WebServiceTest {
 	 
         httpMixIn.postResourceAndTestXML(
         		"http://localhost:18001/HelloGoodbyeService",
-        		"/xml/goodbye_request1.xml", "/xml/goodbye_response1.xml");	   			
+        		"/xml/goodbye_request1.xml", "/xml/goodbye_response1.xml");
     }
 }

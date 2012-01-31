@@ -17,16 +17,16 @@
   ~ under the License.
   -->
 <process name="HelloGoodbye"
-    targetNamespace="http://www.jboss.org/bpel/examples" 
+    targetNamespace="http://www.jboss.org/bpel/examples/simple_correlation/"
     xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
-    xmlns:tns="http://www.jboss.org/bpel/examples"
+    xmlns:tns="http://www.jboss.org/bpel/examples/simple_correlation/"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    xmlns:intf="http://www.jboss.org/bpel/examples/wsdl"
+    xmlns:intf="http://www.jboss.org/bpel/examples/simple_correlation/"
     queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0"
     expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0">
 
   <import location="HelloGoodbye.wsdl"
-     namespace="http://www.jboss.org/bpel/examples/wsdl"
+     namespace="http://www.jboss.org/bpel/examples/simple_correlation/"
      importType="http://schemas.xmlsoap.org/wsdl/" />
 
    <partnerLinks>
@@ -62,19 +62,19 @@
 
       <assign name="assignHelloMesg">
           <copy>
-              <from><literal><tns:helloMessage xmlns:tns="http://www.jboss.org/bpel/examples/wsdl" >
-	<tns:sessionId>
-	  <tns:id></tns:id>
-	</tns:sessionId>
-	<tns:parameter></tns:parameter>
-	</tns:helloMessage>
+              <from><literal><helloMessage xmlns="http://www.jboss.org/bpel/examples/simple_correlation/" >
+	<sessionId>
+	  <id></id>
+	</sessionId>
+	<parameter></parameter>
+	</helloMessage>
 	</literal></from>
               <to variable="helloResponse" part="parameters" />
           </copy>
 
           <copy>
               <from part="parameters" variable="myHelloVar">
-                  <query>//id</query>
+                  <query>//intf:id</query>
               </from>
               <to part="parameters" variable="helloResponse">
                   <query>//intf:id</query>
@@ -83,7 +83,7 @@
 
           <copy>
               <from>
-                  <![CDATA[concat($myHelloVar.parameters/parameter, ' , Hello World')]]>
+                  <![CDATA[concat($myHelloVar.parameters/intf:parameter, ', Hello World!')]]>
               </from>
               <to part="parameters" variable="helloResponse">
 				  <query>//intf:parameter</query>
@@ -114,19 +114,19 @@
 
       <assign name="assignGoodbyeMesg">
           <copy>
-              <from><literal><tns:goodbyeMessage xmlns:tns="http://www.jboss.org/bpel/examples/wsdl" >
-	<tns:sessionId>
-	  <tns:id></tns:id>
-	</tns:sessionId>
-	<tns:parameter></tns:parameter>
-	</tns:goodbyeMessage>
+              <from><literal><goodbyeMessage xmlns="http://www.jboss.org/bpel/examples/simple_correlation/" >
+	<sessionId>
+	  <id></id>
+	</sessionId>
+	<parameter></parameter>
+	</goodbyeMessage>
 	</literal></from>
               <to variable="goodbyeResponse" part="parameters" />
           </copy>
 
           <copy>
               <from part="parameters" variable="myGoodbyeVar">
-                  <query>//id</query>
+                  <query>//intf:id</query>
               </from>
               <to part="parameters" variable="goodbyeResponse">
                   <query>//intf:id</query>
@@ -135,7 +135,7 @@
 
           <copy>
               <from>
-                  <![CDATA[concat($myGoodbyeVar.parameters/parameter, ' , Goodbye World')]]>
+                  <![CDATA[concat($myGoodbyeVar.parameters/intf:parameter, ', Goodbye World!')]]>
               </from>
               <to part="parameters" variable="goodbyeResponse">
 				  <query>//intf:parameter</query>

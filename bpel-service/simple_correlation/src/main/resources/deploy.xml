@@ -17,8 +17,8 @@
   ~ under the License.
   -->
 <deploy xmlns="http://www.apache.org/ode/schemas/dd/2007/03"
-	xmlns:bpl="http://www.jboss.org/bpel/examples" 
-	xmlns:intf="http://www.jboss.org/bpel/examples/wsdl">
+	xmlns:bpl="http://www.jboss.org/bpel/examples/simple_correlation/"
+	xmlns:intf="http://www.jboss.org/bpel/examples/simple_correlation/">
 
 	<process name="bpl:HelloGoodbye">
 		<active>true</active>
