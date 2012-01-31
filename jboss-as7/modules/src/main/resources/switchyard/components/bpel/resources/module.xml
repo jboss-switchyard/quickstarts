@@ -40,6 +40,14 @@
         <resource-root path="riftsaw-scheduler-simple-${version.riftsaw.ode}.jar"/>
         <resource-root path="riftsaw-utils-${version.riftsaw.ode}.jar"/>
         <resource-root path="activity-monitor-model-${version.activity.monitor.model}.jar"/>
+
+        <!--  RiftSaw console components -->
+        <resource-root path="gwt-console-rpc-${version.riftsaw.console}.jar"/>
+		<resource-root path="gwt-console-server-integration-${version.riftsaw.console}.jar"/>
+		<resource-root path="riftsaw-bpaf-${version.riftsaw.engine}.jar"/>
+		<resource-root path="riftsaw-bpel2svg-${version.riftsaw.engine}.jar"/>
+		<resource-root path="riftsaw-console-integration-${version.riftsaw.engine}.jar"/>
+        <!-- END of RiftSaw console components -->
         
 		<!-- Keep this as a local dependency, as it is an older version that ODE requires -->        
         <resource-root path="xmlbeans-${version.xmlbeans}.jar"/>
@@ -75,6 +83,15 @@
         <module name="org.dom4j"/>
         
         <module name="com.h2database.h2"/>
+
+        <!-- required for the jndi registration-->
+        <module name="org.jboss.as.naming" />
+        <module name="org.jboss.as.server" />
+        <module name="org.jboss.msc" />
+
+		<!-- Required by bpel2svg module -->
+        <module name="batik" />
+        <module name="org.codehaus.jettison" />
         
         <module name="org.jaxen"/>
         <module name="net.sourceforge.saxon" services="import" export="false"/>

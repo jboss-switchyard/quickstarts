@@ -156,6 +156,16 @@
             <outputDirectory>/modules/org/switchyard/component/soap/saaj-impl/main</outputDirectory>
             <filtered>true</filtered>
         </file>
+        <file>
+            <source>src/main/resources/external/batik/module.xml</source>
+            <outputDirectory>/modules/batik/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
+            <source>src/main/resources/external/jettison/module.xml</source>
+            <outputDirectory>/modules/org/codehaus/jettison/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
     </files>
     <dependencySets>
         <dependencySet>
@@ -354,6 +364,59 @@
             <outputFileNameMapping>${artifact.artifactId}-${version.spring}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>batik:batik-anim</include>
+                <include>batik:batik-awt-util</include>
+                <include>batik:batik-bridge</include>
+                <include>batik:batik-codec</include>
+                <include>batik:batik-css</include>
+                <include>batik:batik-dom</include>
+                <include>batik:batik-ext</include>
+                <include>batik:batik-gvt</include>
+                <include>batik:batik-parser</include>
+                <include>batik:batik-script</include>
+                <include>batik:batik-svg-dom</include>
+                <include>batik:batik-svggen</include>
+                <include>batik:batik-transcoder</include>
+                <include>batik:batik-util</include>
+                <include>batik:batik-xml</include>
+            </includes>
+            <outputDirectory>/modules/batik/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.batik}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.apache.ws.commons.axiom:axiom-api</include>
+                <include>org.apache.ws.commons.axiom:axiom-impl</include>
+            </includes>
+            <outputDirectory>/modules/batik/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.axiom}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>xml-apis:xml-apis</include>
+                <include>xml-apis:xml-apis-ext</include>
+            </includes>
+            <outputDirectory>/modules/batik/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.xml-apis}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.codehaus.jettison:jettison</include>
+            </includes>
+            <outputDirectory>/modules/org/codehaus/jettison/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.jettison}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
+
         <!--<dependencySet>-->
             <!--<useTransitiveDependencies>false</useTransitiveDependencies>-->
             <!--<includes>-->

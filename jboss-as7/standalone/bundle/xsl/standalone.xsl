@@ -123,4 +123,15 @@ https://issues.jboss.org/browse/SWITCHYARD-548
 </xsl:template>
 -->
 
+<xsl:template match="node()[name(.)='security-domains']">
+    <xsl:copy>
+        <xsl:apply-templates select="@*|node()"/>
+        <security-domain name="bpel-console" cache-type="default">
+            <authentication>
+                <login-module code="UsersRoles" flag="required"/>
+            </authentication>
+        </security-domain>
+    </xsl:copy>
+</xsl:template>
+
 </xsl:stylesheet>

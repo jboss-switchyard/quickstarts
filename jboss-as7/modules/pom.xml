@@ -324,6 +324,114 @@
 		</dependency>
 
         <!--
+        Batik ... (Required by BPEL console)
+         -->
+		<dependency>
+			<groupId>batik</groupId>
+			<artifactId>batik-dom</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>batik</groupId>
+			<artifactId>batik-svg-dom</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>batik</groupId>
+			<artifactId>batik-svggen</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>batik</groupId>
+			<artifactId>batik-util</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>batik</groupId>
+			<artifactId>batik-css</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>batik</groupId>
+			<artifactId>batik-ext</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>batik</groupId>
+			<artifactId>batik-xml</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>batik</groupId>
+			<artifactId>batik-transcoder</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>batik</groupId>
+			<artifactId>batik-bridge</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>batik</groupId>
+			<artifactId>batik-gvt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>batik</groupId>
+			<artifactId>batik-script</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>batik</groupId>
+			<artifactId>batik-awt-util</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>batik</groupId>
+			<artifactId>batik-parser</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>batik</groupId>
+			<artifactId>batik-anim</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>batik</groupId>
+			<artifactId>batik-codec</artifactId>
+		</dependency>
+        <dependency>
+			<groupId>org.apache.ws.commons.axiom</groupId>
+			<artifactId>axiom-impl</artifactId>
+		</dependency>
+        <dependency>
+			<groupId>org.apache.ws.commons.axiom</groupId>
+			<artifactId>axiom-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis-ext</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+		</dependency>
+
+		<!--
+		BPM Console...
+		-->
+		<dependency>
+            <groupId>org.riftsaw.console</groupId>
+            <artifactId>riftsaw-bpel2svg</artifactId>
+        </dependency>      
+        <dependency>
+            <groupId>org.riftsaw.console</groupId>
+            <artifactId>riftsaw-console-integration</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.riftsaw.console</groupId>
+            <artifactId>riftsaw-bpaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.bpm</groupId>
+            <artifactId>gwt-console-rpc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.bpm</groupId>
+            <artifactId>gwt-console-server-integration</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jettison</groupId>
+            <artifactId>jettison</artifactId>
+        </dependency>
+
+        <!--
         Spring...
         -->
 		<dependency>

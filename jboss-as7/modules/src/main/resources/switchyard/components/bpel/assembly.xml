@@ -191,6 +191,53 @@
             <outputFileNameMapping>${artifact.artifactId}-${version.activity.monitor.model}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
+
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.jboss.bpm:gwt-console-rpc</include>
+            </includes>
+            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.riftsaw.console}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.jboss.bpm:gwt-console-server-integration</include>
+            </includes>
+            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.riftsaw.console}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.riftsaw.console:riftsaw-bpel2svg</include>
+            </includes>
+            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.riftsaw.engine}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.riftsaw.console:riftsaw-console-integration</include>
+            </includes>
+            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.riftsaw.engine}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.riftsaw.console:riftsaw-bpaf</include>
+            </includes>
+            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.riftsaw.engine}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
+
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
