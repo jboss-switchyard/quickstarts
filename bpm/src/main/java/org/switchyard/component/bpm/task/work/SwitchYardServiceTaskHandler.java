@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.task;
+package org.switchyard.component.bpm.task.work;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -74,15 +74,15 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
      * {@inheritDoc}
      */
     @Override
-    public void executeTask(Task task, TaskManager taskManager) {
+    public void executeTask(Task task, TaskManager manager) {
         String problem = null;
-        Map<String,Object> taskParameters = task.getParameters();
-        Map<String,Object> taskResults = null;
-        QName serviceName = getServiceName(taskParameters);
+        Map<String,Object> parameters = task.getParameters();
+        Map<String,Object> results = null;
+        QName serviceName = getServiceName(parameters);
         if (serviceName != null) {
             ServiceReference serviceRef = getServiceDomain().getService(serviceName);
             if (serviceRef != null) {
-                ExchangeContract exchangeContract = getExchangeContract(serviceRef, taskParameters);
+                ExchangeContract exchangeContract = getExchangeContract(serviceRef, parameters);
                 ExchangePattern exchangePattern = exchangeContract.getServiceOperation().getExchangePattern();
                 SynchronousInOutHandler inOutHandler = null;
                 final Exchange exchangeIn;
@@ -93,12 +93,12 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
                     exchangeIn = serviceRef.createExchange(exchangeContract);
                 }
                 Context contextIn = exchangeIn.getContext();
-                for (Map.Entry<String,Object> entry : taskParameters.entrySet()) {
+                for (Map.Entry<String,Object> entry : parameters.entrySet()) {
                     contextIn.setProperty(entry.getKey(), entry.getValue(), Scope.IN);
                 }
                 Message messageIn = exchangeIn.createMessage();
                 String messageContentInName = getMessageContentInName();
-                Object messageContentIn = taskParameters.get(messageContentInName);
+                Object messageContentIn = parameters.get(messageContentInName);
                 if (messageContentIn != null) {
                     messageIn.setContent(messageContentIn);
                 }
@@ -108,15 +108,15 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
                         Exchange exchangeOut = inOutHandler.waitForOut();
                         Message messageOut = exchangeOut.getMessage();
                         Object messageContentOut = messageOut.getContent();
-                        taskResults = task.getResults();
-                        if (taskResults == null) {
-                            taskResults = new HashMap<String,Object>();
+                        results = task.getResults();
+                        if (results == null) {
+                            results = new HashMap<String,Object>();
                         }
                         String messageContentOutName = getMessageContentOutName();
-                        taskResults.put(messageContentOutName, messageContentOut);
+                        results.put(messageContentOutName, messageContentOut);
                         Context contextOut = exchangeOut.getContext();
                         for (Property property : contextOut.getProperties(Scope.OUT)) {
-                            taskResults.put(property.getName(), property.getValue());
+                            results.put(property.getName(), property.getValue());
                         }
                     } catch (DeliveryException e) {
                         problem = e.getMessage();
@@ -131,16 +131,16 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
             problem = SERVICE_NAME + " == null";
         }
         if (problem == null) {
-            taskManager.completeTask(task.getId(), taskResults);
+            manager.completeTask(task.getId(), results);
         } else {
             LOGGER.error(problem);
-            taskManager.abortTask(task.getId());
+            manager.abortTask(task.getId());
         }
     }
 
-    private QName getServiceName(Map<String, Object> taskParameters) {
+    private QName getServiceName(Map<String, Object> parameters) {
         QName serviceName = null;
-        Object p = taskParameters.get(SERVICE_NAME);
+        Object p = parameters.get(SERVICE_NAME);
         if (p instanceof QName) {
             serviceName = (QName)p;
         } else if (p instanceof String) {
@@ -155,9 +155,9 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
         return serviceName;
     }
 
-    private ExchangeContract getExchangeContract(ServiceReference serviceRef, Map<String, Object> taskParameters) {
+    private ExchangeContract getExchangeContract(ServiceReference serviceRef, Map<String, Object> parameters) {
         final ExchangeContract exchangeContract;
-        Object on = taskParameters.get(SERVICE_OPERATION_NAME);
+        Object on = parameters.get(SERVICE_OPERATION_NAME);
         if (on instanceof String) {
             String operationName = (String)on;
             ServiceOperation operation = serviceRef.getInterface().getOperation(operationName);

@@ -16,27 +16,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.task;
+package org.switchyard.component.bpm.task.work;
 
 import org.switchyard.ServiceDomain;
 
 /**
- * Represents a Task handler.
+ * Represents a task handler.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public interface TaskHandler {
 
     /**
-     * Gets the name of the task handler.
-     * @return the name of the task handler
+     * Gets the name of the handler.
+     * @return the name of the handler
      */
     public String getName();
 
     /**
-     * Sets the name of the task handler.
-     * @param name the name of the task handler
-     * @return this TaskHandler (useful for chaining)
+     * Sets the name of the handler.
+     * @param name the name of the handler
+     * @return this handler (useful for chaining)
      */
     public TaskHandler setName(String name);
 
@@ -49,7 +49,7 @@ public interface TaskHandler {
     /**
      * Sets the message content in name.
      * @param messageContentInName the message content in name
-     * @return this TaskHandler (useful for chaining)
+     * @return this handler (useful for chaining)
      */
     public TaskHandler setMessageContentInName(String messageContentInName);
 
@@ -62,7 +62,7 @@ public interface TaskHandler {
     /**
      * Sets the message content out name.
      * @param messageContentOutName the message content out name
-     * @return this TaskHandler (useful for chaining)
+     * @return this handler (useful for chaining)
      */
     public TaskHandler setMessageContentOutName(String messageContentOutName);
 
@@ -75,7 +75,7 @@ public interface TaskHandler {
     /**
      * Sets the target namespace.
      * @param targetNamespace the target namespace
-     * @return this TaskHandler (useful for chaining)
+     * @return this handler (useful for chaining)
      */
     public TaskHandler setTargetNamespace(String targetNamespace);
 
@@ -88,32 +88,32 @@ public interface TaskHandler {
     /**
      * Sets the ServiceDomain.
      * @param serviceDomain the ServiceDomain
-     * @return this TaskHandler (useful for chaining)
+     * @return this handler (useful for chaining)
      */
     public TaskHandler setServiceDomain(ServiceDomain serviceDomain);
 
     /**
-     * Initializes this task handler.
+     * Initializes this handler.
      */
     public void init();
 
     /**
-     * Destroys this task handler.
+     * Destroys this handler.
      */
     public void destroy();
 
     /**
-     * Executes the specified Task.
-     * @param task the specified Task
-     * @param taskManager the TaskManager
+     * Executes the specified task.
+     * @param task the specified task
+     * @param manager the manager
      */
-    public void executeTask(Task task, TaskManager taskManager);
+    public void executeTask(Task task, TaskManager manager);
 
     /**
-     * Aborts the specified Task.
-     * @param task the specified Task
-     * @param taskManager the TaskManager
+     * Aborts the specified task.
+     * @param task the specified task
+     * @param manager the manager
      */
-    public void abortTask(Task task, TaskManager taskManager);
+    public void abortTask(Task task, TaskManager manager);
 
 }

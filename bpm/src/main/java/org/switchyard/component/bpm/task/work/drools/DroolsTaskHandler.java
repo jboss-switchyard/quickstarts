@@ -16,14 +16,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.task.drools;
+package org.switchyard.component.bpm.task.work.drools;
 
 import org.drools.runtime.process.WorkItem;
 import org.drools.runtime.process.WorkItemHandler;
 import org.drools.runtime.process.WorkItemManager;
-import org.switchyard.component.bpm.task.BaseTaskHandler;
-import org.switchyard.component.bpm.task.Task;
-import org.switchyard.component.bpm.task.TaskManager;
+import org.switchyard.component.bpm.task.work.BaseTaskHandler;
+import org.switchyard.component.bpm.task.work.Task;
+import org.switchyard.component.bpm.task.work.TaskManager;
 
 /**
  * A Drools TaskHandler implementation.
@@ -60,7 +60,7 @@ public class DroolsTaskHandler extends BaseTaskHandler {
     /**
      * Sets the WorkItemHandler.
      * @param workItemHandler the WorkItemHandler
-     * @return this DroolsTaskHandler (useful for chaining)
+     * @return this handler (useful for chaining)
      */
     public DroolsTaskHandler setWorkItemHandler(WorkItemHandler workItemHandler) {
         _workItemHandler = workItemHandler;
@@ -71,9 +71,9 @@ public class DroolsTaskHandler extends BaseTaskHandler {
      * {@inheritDoc}
      */
     @Override
-    public void executeTask(Task task, TaskManager taskManager) {
+    public void executeTask(Task task, TaskManager manager) {
         WorkItem workItem = ((DroolsTask)task).getWorkItem();
-        WorkItemManager workItemManager = ((DroolsTaskManager)taskManager).getProcessRuntime().getWorkItemManager();
+        WorkItemManager workItemManager = ((DroolsTaskManager)manager).getProcessRuntime().getWorkItemManager();
         _workItemHandler.executeWorkItem(workItem, workItemManager);
     }
 
@@ -81,9 +81,9 @@ public class DroolsTaskHandler extends BaseTaskHandler {
      * {@inheritDoc}
      */
     @Override
-    public void abortTask(Task task, TaskManager taskManager) {
+    public void abortTask(Task task, TaskManager manager) {
         WorkItem workItem = ((DroolsTask)task).getWorkItem();
-        WorkItemManager workItemManager = ((DroolsTaskManager)taskManager).getProcessRuntime().getWorkItemManager();
+        WorkItemManager workItemManager = ((DroolsTaskManager)manager).getProcessRuntime().getWorkItemManager();
         _workItemHandler.abortWorkItem(workItem, workItemManager);
     }
 

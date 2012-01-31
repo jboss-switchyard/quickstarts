@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.drools;
+package org.switchyard.component.bpm.task.work.drools;
 
 import static org.switchyard.Scope.EXCHANGE;
 import static org.switchyard.component.bpm.ProcessActionType.SIGNAL_EVENT;
@@ -50,9 +50,7 @@ import org.switchyard.component.bpm.config.model.v1.V1BPMComponentImplementation
 import org.switchyard.component.bpm.config.model.v1.V1TaskHandlerModel;
 import org.switchyard.component.bpm.exchange.BPMExchangeHandler;
 import org.switchyard.component.bpm.exchange.BPMExchangeHandlerFactory;
-import org.switchyard.component.bpm.task.SwitchYardServiceTaskHandler;
-import org.switchyard.component.bpm.task.drools.DroolsTaskManager;
-import org.switchyard.component.bpm.task.drools.DroolsWorkItemHandler;
+import org.switchyard.component.bpm.task.work.SwitchYardServiceTaskHandler;
 import org.switchyard.test.SwitchYardRunner;
 
 /**
@@ -81,9 +79,9 @@ public class BPMDroolsTests {
         kbuilder.add(ResourceFactory.newClassPathResource(TEST_CALL_SERVICE), ResourceType.BPMN2);
         KnowledgeBase kbase = kbuilder.newKnowledgeBase();
         StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession();
-        SwitchYardServiceTaskHandler stih = new SwitchYardServiceTaskHandler();
-        stih.setServiceDomain(serviceDomain);
-        ksession.getWorkItemManager().registerWorkItemHandler(stih.getName(), new DroolsWorkItemHandler(stih, new DroolsTaskManager(ksession)));
+        SwitchYardServiceTaskHandler ssth = new SwitchYardServiceTaskHandler();
+        ssth.setServiceDomain(serviceDomain);
+        ksession.getWorkItemManager().registerWorkItemHandler(ssth.getName(), new DroolsWorkItemHandler(ssth, new DroolsTaskManager(ksession)));
         ksession.startProcess("CallService");
         ksession.halt();
         ksession.dispose();

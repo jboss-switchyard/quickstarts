@@ -23,7 +23,7 @@ import static org.switchyard.component.bpm.ProcessConstants.MESSAGE_CONTENT_IN;
 import static org.switchyard.component.bpm.ProcessConstants.MESSAGE_CONTENT_IN_NAME;
 import static org.switchyard.component.bpm.ProcessConstants.MESSAGE_CONTENT_OUT;
 import static org.switchyard.component.bpm.ProcessConstants.MESSAGE_CONTENT_OUT_NAME;
-import static org.switchyard.component.bpm.task.SwitchYardServiceTaskHandler.SWITCHYARD_SERVICE;
+import static org.switchyard.component.bpm.task.work.SwitchYardServiceTaskHandler.SWITCHYARD_SERVICE;
 
 import java.io.File;
 
@@ -49,7 +49,7 @@ import org.jboss.forge.shell.plugins.Topic;
 import org.switchyard.common.io.resource.SimpleResource;
 import org.switchyard.component.bpm.config.model.v1.V1BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.v1.V1TaskHandlerModel;
-import org.switchyard.component.bpm.task.SwitchYardServiceTaskHandler;
+import org.switchyard.component.bpm.task.work.SwitchYardServiceTaskHandler;
 import org.switchyard.config.model.composite.JavaComponentServiceInterfaceModel;
 import org.switchyard.config.model.composite.v1.V1ComponentModel;
 import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;

@@ -16,47 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.task.drools;
+package org.switchyard.component.bpm.task.work.drools;
 
 import org.drools.runtime.process.WorkItem;
 import org.drools.runtime.process.WorkItemHandler;
 import org.drools.runtime.process.WorkItemManager;
-import org.switchyard.component.bpm.task.TaskHandler;
+import org.switchyard.component.bpm.task.work.drools.BPMDroolsTests.Holder;
 
 /**
- * A Drools WorkItemHandler implementation.
+ * An example handler being reused.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class DroolsWorkItemHandler implements WorkItemHandler {
+public class ReuseHandler extends DroolsTaskHandler implements WorkItemHandler {
 
-    private final TaskHandler _taskHandler;
-    private final DroolsTaskManager _taskManager;
+    static Holder _holder = new Holder();
 
-    /**
-     * Constructs a new DroolsWorkItemHandler.
-     * @param taskHandler the wrapped TaskHandler
-     * @param taskManager the wrapped TaskManager
-     */
-    public DroolsWorkItemHandler(TaskHandler taskHandler, DroolsTaskManager taskManager) {
-        _taskHandler = taskHandler;
-        _taskManager = taskManager;
+    public ReuseHandler() {
+        super("Reuse");
+        setWorkItemHandler(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void executeWorkItem(WorkItem workItem, WorkItemManager workItemManager) {
-        _taskHandler.executeTask(new DroolsTask(workItem, _taskManager), _taskManager);
+        _holder.value = "handler executed";
+        workItemManager.completeWorkItem(workItem.getId(), null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void abortWorkItem(WorkItem workItem, WorkItemManager workItemManager) {
-        _taskHandler.abortTask(new DroolsTask(workItem, _taskManager), _taskManager);
-    }
+    public void abortWorkItem(WorkItem workItem, WorkItemManager workItemManager) {}
 
 }

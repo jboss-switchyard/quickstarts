@@ -16,39 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.task.jbpm;
+package org.switchyard.component.bpm.task.work;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import java.util.Map;
 
 /**
- * TaskServerControllerServletContextListener.
+ * Represents a manager of a Task.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class TaskServerControllerServletContextListener implements ServletContextListener {
-
-    private TaskServerController _controller = null;
+public interface TaskManager {
 
     /**
-     * {@inheritDoc}
+     * Registers a handler.
+     * @param handler the handler
      */
-    @Override
-    public void contextInitialized(ServletContextEvent sce) {
-        _controller = new TaskServerController();
-        _controller.start();
-    }
+    public void registerHandler(TaskHandler handler);
 
     /**
-     * {@inheritDoc}
+     * Marks the task as complete.
+     * @param id the task id
+     * @param results the task results
      */
-    @Override
-    public void contextDestroyed(ServletContextEvent sce) {
-        try {
-            _controller.stop();
-        } finally {
-            _controller = null;
-        }
-    }
+    public void completeTask(Long id, Map<String, Object> results);
+
+    /**
+     * Marks the task as aborted.
+     * @param id the task id
+     */
+    public void abortTask(Long id);
 
 }

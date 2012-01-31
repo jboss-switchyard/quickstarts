@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.task;
+package org.switchyard.component.bpm.task.work;
 
 /**
  * The state of a Task.
@@ -25,13 +25,13 @@ package org.switchyard.component.bpm.task;
  */
 public enum TaskState {
 
-    /** PENDING . */
+    /** PENDING. */
     PENDING,
-    /** ACTIVE . */
+    /** ACTIVE. */
     ACTIVE,
-    /** COMPLETED . */
+    /** COMPLETED. */
     COMPLETED,
-    /** ABORTED . */
+    /** ABORTED. */
     ABORTED
 
 }

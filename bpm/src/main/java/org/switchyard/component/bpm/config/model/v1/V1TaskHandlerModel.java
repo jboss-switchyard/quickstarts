@@ -24,7 +24,7 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.bpm.config.model.TaskHandlerModel;
-import org.switchyard.component.bpm.task.TaskHandler;
+import org.switchyard.component.bpm.task.work.TaskHandler;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;

@@ -36,7 +36,7 @@ import org.junit.Test;
 import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.type.Classes;
-import org.switchyard.component.bpm.task.SwitchYardServiceTaskHandler;
+import org.switchyard.component.bpm.task.work.SwitchYardServiceTaskHandler;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Scanner;
@@ -84,9 +84,9 @@ public class BPMModelTests {
         ResourceModel prm = bci.getResources().iterator().next();
         Assert.assertEquals("foobar.drl", prm.getLocation());
         Assert.assertSame(ResourceType.valueOf("DRL"), prm.getType());
-        TaskHandlerModel tih = bci.getTaskHandlers().iterator().next();
-        Assert.assertEquals(SwitchYardServiceTaskHandler.class, tih.getClazz());
-        Assert.assertNull(tih.getName());
+        TaskHandlerModel th = bci.getTaskHandlers().iterator().next();
+        Assert.assertEquals(SwitchYardServiceTaskHandler.class, th.getClazz());
+        Assert.assertNull(th.getName());
     }
 
     @Test
@@ -129,23 +129,23 @@ public class BPMModelTests {
             } else if ("ComplexProcess".equals(processId)) {
                 Assert.assertEquals("path/to/my.bpmn", bci.getProcessDefinition().getLocation());
                 Assert.assertSame(ResourceType.valueOf("BPMN2"), bci.getProcessDefinition().getType());
-                Iterator<ResourceModel> prm_iter = bci.getResources().iterator();
-                ResourceModel prm = prm_iter.next();
-                Assert.assertEquals("path/to/my.dsl", prm.getLocation());
-                Assert.assertSame(ResourceType.valueOf("DSL"), prm.getType());
-                prm = prm_iter.next();
-                Assert.assertEquals("path/to/my.dslr", prm.getLocation());
-                Assert.assertSame(ResourceType.valueOf("DSLR"), prm.getType());
-                Iterator<TaskHandlerModel> wih_iter = bci.getTaskHandlers().iterator();
-                TaskHandlerModel wih = wih_iter.next();
-                Assert.assertEquals(SwitchYardServiceTaskHandler.class, wih.getClazz());
-                Assert.assertEquals(SwitchYardServiceTaskHandler.SWITCHYARD_SERVICE, wih.getName());
-                wih = wih_iter.next();
-                Assert.assertEquals(ComplexProcess.My1stHandler.class, wih.getClazz());
-                Assert.assertEquals("My1stHandler", wih.getName());
-                wih = wih_iter.next();
-                Assert.assertEquals(ComplexProcess.My2ndHandler.class, wih.getClazz());
-                Assert.assertEquals("My2ndHandler", wih.getName());
+                Iterator<ResourceModel> rm_iter = bci.getResources().iterator();
+                ResourceModel rm = rm_iter.next();
+                Assert.assertEquals("path/to/my.dsl", rm.getLocation());
+                Assert.assertSame(ResourceType.valueOf("DSL"), rm.getType());
+                rm = rm_iter.next();
+                Assert.assertEquals("path/to/my.dslr", rm.getLocation());
+                Assert.assertSame(ResourceType.valueOf("DSLR"), rm.getType());
+                Iterator<TaskHandlerModel> th_iter = bci.getTaskHandlers().iterator();
+                TaskHandlerModel th = th_iter.next();
+                Assert.assertEquals(SwitchYardServiceTaskHandler.class, th.getClazz());
+                Assert.assertEquals(SwitchYardServiceTaskHandler.SWITCHYARD_SERVICE, th.getName());
+                th = th_iter.next();
+                Assert.assertEquals(ComplexProcess.My1stHandler.class, th.getClazz());
+                Assert.assertEquals("My1stHandler", th.getName());
+                th = th_iter.next();
+                Assert.assertEquals(ComplexProcess.My2ndHandler.class, th.getClazz());
+                Assert.assertEquals("My2ndHandler", th.getName());
             } else {
                 Assert.fail(processId);
             }
@@ -157,8 +157,7 @@ public class BPMModelTests {
         Scanner<SwitchYardModel> scanner = new BPMSwitchYardScanner();
         ScannerInput<SwitchYardModel> input = new ScannerInput<SwitchYardModel>();
         ScannerOutput<SwitchYardModel> output = scanner.scan(input);
-        Assert.assertNull("Composite element should not be created if no components were found.", output.getModel()
-                .getComposite());
+        Assert.assertNull("Composite element should not be created if no components were found.", output.getModel().getComposite());
     }
 
 }

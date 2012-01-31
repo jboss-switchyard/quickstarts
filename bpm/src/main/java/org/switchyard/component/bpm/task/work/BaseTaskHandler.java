@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.task;
+package org.switchyard.component.bpm.task.work;
 
 import org.switchyard.ServiceDomain;
 
@@ -153,7 +153,7 @@ public abstract class BaseTaskHandler implements TaskHandler {
      * {@inheritDoc}
      */
     @Override
-    public void executeTask(Task task, TaskManager taskManager) {
+    public void executeTask(Task task, TaskManager manager) {
         // override if necessary
     }
 
@@ -161,7 +161,7 @@ public abstract class BaseTaskHandler implements TaskHandler {
      * {@inheritDoc}
      */
     @Override
-    public void abortTask(Task task, TaskManager taskManager) {
+    public void abortTask(Task task, TaskManager manager) {
         // override if necessary
     }
 

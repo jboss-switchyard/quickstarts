@@ -16,14 +16,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.task.drools;
+package org.switchyard.component.bpm.task.work.drools;
 
 import java.util.Map;
 
 import org.drools.runtime.process.WorkItem;
 import org.drools.runtime.process.WorkflowProcessInstance;
-import org.switchyard.component.bpm.task.Task;
-import org.switchyard.component.bpm.task.TaskState;
+import org.switchyard.component.bpm.task.work.Task;
+import org.switchyard.component.bpm.task.work.TaskState;
 
 /**
  * A Drools Task implementation.
@@ -33,16 +33,16 @@ import org.switchyard.component.bpm.task.TaskState;
 public class DroolsTask implements Task {
 
     private final WorkItem _workItem;
-    private final DroolsTaskManager _taskManager;
+    private final DroolsTaskManager _manager;
 
     /**
      * Constructs a new DroolsTask.
      * @param workItem the wrapped WorkItem
-     * @param taskManager the wrapped TaskManager
+     * @param manager the wrapped TaskManager
      */
-    public DroolsTask(WorkItem workItem, DroolsTaskManager taskManager) {
+    public DroolsTask(WorkItem workItem, DroolsTaskManager manager) {
         _workItem = workItem;
-        _taskManager = taskManager;
+        _manager = manager;
     }
 
     /**
@@ -147,7 +147,7 @@ public class DroolsTask implements Task {
     }
 
     private WorkflowProcessInstance getProcessInstance() {
-        return (WorkflowProcessInstance)_taskManager.getProcessRuntime().getProcessInstance(_workItem.getProcessInstanceId());
+        return (WorkflowProcessInstance)_manager.getProcessRuntime().getProcessInstance(_workItem.getProcessInstanceId());
     }
 
 }

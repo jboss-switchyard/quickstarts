@@ -25,8 +25,8 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.switchyard.component.bpm.task.BaseTaskHandler;
-import org.switchyard.component.bpm.task.TaskHandler;
+import org.switchyard.component.bpm.task.work.BaseTaskHandler;
+import org.switchyard.component.bpm.task.work.TaskHandler;
 
 /**
  * Process annotation.

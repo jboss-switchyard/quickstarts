@@ -16,35 +16,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.drools;
-
-import org.drools.runtime.process.WorkItem;
-import org.drools.runtime.process.WorkItemHandler;
-import org.drools.runtime.process.WorkItemManager;
-import org.switchyard.component.bpm.drools.BPMDroolsTests.Holder;
-import org.switchyard.component.bpm.task.drools.DroolsTaskHandler;
+package org.switchyard.component.bpm.task.service;
 
 /**
- * An example handler being reused.
+ * Represents a task.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class ReuseHandler extends DroolsTaskHandler implements WorkItemHandler {
+public interface Task {
 
-    static Holder _holder = new Holder();
+    /**
+     * Gets the task id.
+     * @return the task id
+     */
+    public Long getId();
 
-    public ReuseHandler() {
-        super("Reuse");
-        setWorkItemHandler(this);
-    }
+    /**
+     * Gets the task name.
+     * @return the task name
+     */
+    public String getName();
 
-    @Override
-    public void executeWorkItem(WorkItem workItem, WorkItemManager workItemManager) {
-        _holder.value = "handler executed";
-        workItemManager.completeWorkItem(workItem.getId(), null);
-    }
-
-    @Override
-    public void abortWorkItem(WorkItem workItem, WorkItemManager workItemManager) {}
+    /**
+     * Gets the task status.
+     * @return the task status
+     */
+    public TaskStatus getStatus();
 
 }

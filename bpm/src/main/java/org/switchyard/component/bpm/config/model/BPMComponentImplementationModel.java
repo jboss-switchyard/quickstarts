@@ -121,7 +121,7 @@ public interface BPMComponentImplementationModel extends ComponentImplementation
     public List<TaskHandlerModel> getTaskHandlers();
 
     /**
-     * Adds a child task item handler model.
+     * Adds a child task handler model.
      * @param taskHandler the child task handler model
      * @return this BPMComponentImplementationModel (useful for chaining)
      */

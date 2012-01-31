@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.task.jbpm;
+package org.switchyard.component.bpm.task.work.jbpm;
 
 import org.drools.runtime.KnowledgeRuntime;
 

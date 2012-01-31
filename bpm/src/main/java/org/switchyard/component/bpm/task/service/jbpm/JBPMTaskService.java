@@ -16,47 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.config.model;
+package org.switchyard.component.bpm.task.service.jbpm;
 
-import org.switchyard.component.bpm.task.work.TaskHandler;
-import org.switchyard.config.model.Model;
+import org.switchyard.component.bpm.task.service.TaskClient;
+import org.switchyard.component.bpm.task.service.TaskServer;
+import org.switchyard.component.bpm.task.service.TaskService;
 
 /**
- * TaskHandlerModel.
+ * A jBPM task service.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface TaskHandlerModel extends Model {
+public class JBPMTaskService extends TaskService {
 
     /**
-     * The taskHandler XML element.
+     * {@inheritDoc}
      */
-    public static final String TASK_HANDLER = "taskHandler";
+    @Override
+    public TaskClient newTaskClient() {
+        return new JBPMTaskClient();
+    }
 
     /**
-     * Gets the TaskHandler class.
-     * @return the TaskHandler class
+     * {@inheritDoc}
      */
-    public Class<? extends TaskHandler> getClazz();
-
-    /**
-     * Sets the TaskHandler class.
-     * @param clazz the TaskHandler class
-     * @return this TaskHandlerModel (useful for chaining)
-     */
-    public TaskHandlerModel setClazz(Class<? extends TaskHandler> clazz);
-
-    /**
-     * Gets the TaskHandler name.
-     * @return the TaskHandler name
-     */
-    public String getName();
-
-    /**
-     * Sets the TaskHandler name.
-     * @param name the TaskHandler name
-     * @return this TaskHandlerModel (useful for chaining)
-     */
-    public TaskHandlerModel setName(String name);
+    @Override
+    public TaskServer newTaskServer() {
+        return new JBPMTaskServer();
+    }
 
 }

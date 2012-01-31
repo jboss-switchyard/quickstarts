@@ -59,9 +59,9 @@ import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel
 import org.switchyard.component.bpm.config.model.ProcessActionModel;
 import org.switchyard.component.bpm.config.model.TaskHandlerModel;
 import org.switchyard.component.bpm.exchange.BaseBPMExchangeHandler;
-import org.switchyard.component.bpm.task.TaskHandler;
-import org.switchyard.component.bpm.task.TaskManager;
-import org.switchyard.component.bpm.task.drools.DroolsTaskManager;
+import org.switchyard.component.bpm.task.work.TaskHandler;
+import org.switchyard.component.bpm.task.work.TaskManager;
+import org.switchyard.component.bpm.task.work.drools.DroolsTaskManager;
 import org.switchyard.component.common.rules.config.model.AuditModel;
 import org.switchyard.component.common.rules.util.drools.Agents;
 import org.switchyard.component.common.rules.util.drools.Audits;
@@ -169,7 +169,7 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
             th.setMessageContentOutName(_messageContentOutName);
             th.setTargetNamespace(_targetNamespace);
             th.setServiceDomain(_serviceDomain);
-            tm.registerTaskHandler(th);
+            tm.registerHandler(th);
             th.init();
             _taskHandlers.add(th);
         }

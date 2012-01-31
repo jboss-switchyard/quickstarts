@@ -16,47 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.config.model;
-
-import org.switchyard.component.bpm.task.work.TaskHandler;
-import org.switchyard.config.model.Model;
+package org.switchyard.component.bpm.task.service;
 
 /**
- * TaskHandlerModel.
+ * The status of a Task.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface TaskHandlerModel extends Model {
+public enum TaskStatus {
 
-    /**
-     * The taskHandler XML element.
-     */
-    public static final String TASK_HANDLER = "taskHandler";
-
-    /**
-     * Gets the TaskHandler class.
-     * @return the TaskHandler class
-     */
-    public Class<? extends TaskHandler> getClazz();
-
-    /**
-     * Sets the TaskHandler class.
-     * @param clazz the TaskHandler class
-     * @return this TaskHandlerModel (useful for chaining)
-     */
-    public TaskHandlerModel setClazz(Class<? extends TaskHandler> clazz);
-
-    /**
-     * Gets the TaskHandler name.
-     * @return the TaskHandler name
-     */
-    public String getName();
-
-    /**
-     * Sets the TaskHandler name.
-     * @param name the TaskHandler name
-     * @return this TaskHandlerModel (useful for chaining)
-     */
-    public TaskHandlerModel setName(String name);
+    /** CREATED. */
+    CREATED,
+    /** READY. */
+    READY,
+    /** RESERVED. */
+    RESERVED,
+    /** IN_PROGRESS. */
+    IN_PROGRESS,
+    /** SUSPENDED. */
+    SUSPENDED,
+    /** COMPLETED. */
+    COMPLETED,
+    /** FAILED. */
+    FAILED,
+    /** ERROR. */
+    ERROR,
+    /** EXITED. */
+    EXITED,
+    /** OBSOLETE. */
+    OBSOLETE
 
 }

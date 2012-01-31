@@ -16,34 +16,47 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.task;
+package org.switchyard.component.bpm.task.work.drools;
 
-import java.util.Map;
+import org.drools.runtime.process.WorkItem;
+import org.drools.runtime.process.WorkItemHandler;
+import org.drools.runtime.process.WorkItemManager;
+import org.switchyard.component.bpm.task.work.TaskHandler;
 
 /**
- * Represents a mangager of a Task.
+ * A Drools WorkItemHandler implementation.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface TaskManager {
+public class DroolsWorkItemHandler implements WorkItemHandler {
+
+    private final TaskHandler _handler;
+    private final DroolsTaskManager _manager;
 
     /**
-     * Registers a TaskHandler.
-     * @param taskHandler the task handler
+     * Constructs a new DroolsWorkItemHandler.
+     * @param handler the wrapped TaskHandler
+     * @param manager the wrapped TaskManager
      */
-    public void registerTaskHandler(TaskHandler taskHandler);
+    public DroolsWorkItemHandler(TaskHandler handler, DroolsTaskManager manager) {
+        _handler = handler;
+        _manager = manager;
+    }
 
     /**
-     * Marks the task as complete.
-     * @param id the task id
-     * @param results the task results
+     * {@inheritDoc}
      */
-    public void completeTask(Long id, Map<String, Object> results);
+    @Override
+    public void executeWorkItem(WorkItem workItem, WorkItemManager workItemManager) {
+        _handler.executeTask(new DroolsTask(workItem, _manager), _manager);
+    }
 
     /**
-     * Marks the task as aborted.
-     * @param id the task id
+     * {@inheritDoc}
      */
-    public void abortTask(Long id);
+    @Override
+    public void abortWorkItem(WorkItem workItem, WorkItemManager workItemManager) {
+        _handler.abortTask(new DroolsTask(workItem, _manager), _manager);
+    }
 
 }

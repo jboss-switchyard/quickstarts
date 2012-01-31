@@ -16,61 +16,82 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.task.drools;
+package org.switchyard.component.bpm.task.service;
 
-import java.util.Map;
-
-import org.drools.runtime.process.ProcessRuntime;
-import org.switchyard.component.bpm.task.TaskHandler;
-import org.switchyard.component.bpm.task.TaskManager;
+import java.util.List;
+import java.util.Locale;
 
 /**
- * A Drools TaskManager implementation.
+ * A base class for task clients.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class DroolsTaskManager implements TaskManager {
+public abstract class BaseTaskClient implements TaskClient {
 
-    private final ProcessRuntime _processRuntime;
+    private static final Locale EN_UK = new Locale("en", "UK");
 
-    /**
-     * Constructs a new DroolsTaskManager.
-     * @param processRuntime the ProcessRuntime
-     */
-    public DroolsTaskManager(ProcessRuntime processRuntime) {
-        _processRuntime = processRuntime;
-    }
+    private String _host = "127.0.0.1";
+    private int _port = 9123;
+    private boolean _connected = false;
 
     /**
-     * Gets the process runtime.
-     * @return the process runtime
+     * {@inheritDoc}
      */
-    public ProcessRuntime getProcessRuntime() {
-        return _processRuntime;
+    @Override
+    public String getHost() {
+        return _host;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void registerTaskHandler(TaskHandler taskHandler) {
-        _processRuntime.getWorkItemManager().registerWorkItemHandler(taskHandler.getName(), new DroolsWorkItemHandler(taskHandler, this));
+    public TaskClient setHost(String host) {
+        _host = host;
+        return this;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void completeTask(Long id, Map<String, Object> results) {
-        _processRuntime.getWorkItemManager().completeWorkItem(id.longValue(), results);
+    public int getPort() {
+        return _port;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void abortTask(Long id) {
-        _processRuntime.getWorkItemManager().abortWorkItem(id.longValue());
+    public TaskClient setPort(int port) {
+        _port = port;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isConnected() {
+        return _connected;
+    }
+
+    /**
+     * Sets the connected status.
+     * @param connected if connected
+     * @return this instance
+     */
+    protected TaskClient setConnected(boolean connected) {
+        _connected = connected;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Task> getTasksAssignedAsPotentialOwner(String userId, List<String> groupIds) {
+        return getTasksAssignedAsPotentialOwner(userId, groupIds, EN_UK);
     }
 
 }

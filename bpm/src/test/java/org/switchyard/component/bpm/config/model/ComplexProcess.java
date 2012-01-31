@@ -22,9 +22,9 @@ import org.switchyard.component.bpm.Process;
 import org.switchyard.component.bpm.config.model.ComplexProcess.My1stHandler;
 import org.switchyard.component.bpm.config.model.ComplexProcess.My2ndHandler;
 import org.switchyard.component.bpm.config.model.ComplexProcess.ProcessIface;
-import org.switchyard.component.bpm.task.BaseTaskHandler;
-import org.switchyard.component.bpm.task.Task;
-import org.switchyard.component.bpm.task.TaskManager;
+import org.switchyard.component.bpm.task.work.BaseTaskHandler;
+import org.switchyard.component.bpm.task.work.Task;
+import org.switchyard.component.bpm.task.work.TaskManager;
 
 /**
  * An complex process example.
@@ -43,7 +43,7 @@ public interface ComplexProcess {
     public static interface ProcessIface {}
 
     public static final class My1stHandler extends BaseTaskHandler {
-        public void executeTask(Task task, TaskManager taskManager) {
+        public void executeTask(Task task, TaskManager manager) {
             // do something
         }
     }
@@ -52,10 +52,10 @@ public interface ComplexProcess {
         public My2ndHandler() {
             super("My2ndHandler");
         }
-        public void executeTask(Task task, TaskManager taskManager) {
+        public void executeTask(Task task, TaskManager manager) {
             // do something
         }
-        public void abortTask(Task task, TaskManager taskManager) {
+        public void abortTask(Task task, TaskManager manager) {
             // do something
         }
     }

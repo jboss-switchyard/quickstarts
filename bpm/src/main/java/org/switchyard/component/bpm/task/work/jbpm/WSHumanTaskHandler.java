@@ -16,14 +16,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.task.jbpm;
+package org.switchyard.component.bpm.task.work.jbpm;
 
 import org.drools.runtime.KnowledgeRuntime;
 import org.drools.runtime.process.WorkItemHandler;
-import org.switchyard.component.bpm.task.Task;
-import org.switchyard.component.bpm.task.TaskManager;
-import org.switchyard.component.bpm.task.drools.DroolsTaskHandler;
-import org.switchyard.component.bpm.task.drools.DroolsTaskManager;
+import org.switchyard.component.bpm.task.work.Task;
+import org.switchyard.component.bpm.task.work.TaskManager;
+import org.switchyard.component.bpm.task.work.drools.DroolsTaskHandler;
+import org.switchyard.component.bpm.task.work.drools.DroolsTaskManager;
 
 /**
  * Wraps a jBPM {@link org.jbpm.process.workitem.wsht.WSHumanTaskHandler WSHumanTaskHandler}.
@@ -68,23 +68,23 @@ public class WSHumanTaskHandler extends DroolsTaskHandler {
      * {@inheritDoc}
      */
     @Override
-    public final void executeTask(Task task, TaskManager taskManager) {
-        init(taskManager);
-        super.executeTask(task, taskManager);
+    public final void executeTask(Task task, TaskManager manager) {
+        init(manager);
+        super.executeTask(task, manager);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final void abortTask(Task task, TaskManager taskManager) {
-        init(taskManager);
-        super.abortTask(task, taskManager);
+    public final void abortTask(Task task, TaskManager manager) {
+        init(manager);
+        super.abortTask(task, manager);
     }
 
-    protected synchronized void init(TaskManager taskManager) {
+    protected synchronized void init(TaskManager manager) {
         if (_connector == null) {
-            KnowledgeRuntime kruntime = (KnowledgeRuntime)((DroolsTaskManager)taskManager).getProcessRuntime();
+            KnowledgeRuntime kruntime = (KnowledgeRuntime)((DroolsTaskManager)manager).getProcessRuntime();
             _connector = newConnector(kruntime);
             _connector.connect();
             setWorkItemHandler(_connector.getWorkItemHandler());
