@@ -68,7 +68,7 @@
         <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
     </listener>
     <listener>
-        <listener-class>org.switchyard.component.bpm.task.jbpm.TaskServerServletContextListener</listener-class>
+        <listener-class>org.switchyard.component.bpm.task.service.TaskServerServletContextListener</listener-class>
     </listener>
 </xsl:template>
 
