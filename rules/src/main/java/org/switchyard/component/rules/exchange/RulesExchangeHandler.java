@@ -18,45 +18,30 @@
  */
 package org.switchyard.component.rules.exchange;
 
-import java.util.Map;
-
 import javax.xml.namespace.QName;
 
-import org.switchyard.ExchangeHandler;
-import org.switchyard.ServiceReference;
+import org.switchyard.ServiceDomain;
 import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
+import org.switchyard.deploy.ServiceHandler;
 
 /**
  * The ExchangeHandler for the Rules component.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface RulesExchangeHandler extends ExchangeHandler {
+public interface RulesExchangeHandler extends ServiceHandler {
 
     /**
      * Initializes the RulesExchangeHandler.
      * @param qname the qualified name
      * @param model the configuration
-     * @param references the service references
+     * @param domain the service domain
      */
-    public void init(QName qname, RulesComponentImplementationModel model, Map<QName,ServiceReference> references);
-
-    /**
-     * Starts the RulesExchangeHandler.
-     * @param serviceRef the service reference
-     */
-    public void start(ServiceReference serviceRef);
-
-    /**
-     * Stops the RulesExchangeHandler.
-     * @param serviceRef the service reference
-     */
-    public void stop(ServiceReference serviceRef);
+    public void init(QName qname, RulesComponentImplementationModel model, ServiceDomain domain);
 
     /**
      * Destroys the RulesExchangeHandler.
-     * @param serviceRef the service reference
      */
-    public void destroy(ServiceReference serviceRef);
+    public void destroy();
 
 }

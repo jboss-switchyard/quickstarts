@@ -17,6 +17,7 @@
  */
 package org.switchyard.component.bpel.riftsaw;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -37,8 +38,6 @@ import org.switchyard.component.bpel.config.model.BPELComponentImplementationMod
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.exception.DeliveryException;
 import org.switchyard.exception.SwitchYardException;
-import org.switchyard.metadata.BaseExchangeContract;
-import org.switchyard.metadata.ServiceOperation;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -54,37 +53,43 @@ public class RiftsawServiceLocator implements ServiceLocator {
     
     private static final long DEFAULT_TIMEOUT = 120000;
 
-    private ServiceDomain _serviceDomain=null;
+    private Map<QName, ServiceDomain> _serviceDomains = new HashMap<QName, ServiceDomain>();
     private java.util.Map<QName, RegistryEntry> _registry=new java.util.HashMap<QName, RegistryEntry>();
     private long _waitTimeout = DEFAULT_TIMEOUT;
     
     /**
      * This is the constructor for the riftsaw service locator.
      *
-     * @param serviceDomain The service domain
      */
-    public RiftsawServiceLocator(ServiceDomain serviceDomain) {
-        _serviceDomain = serviceDomain;
+    public RiftsawServiceLocator() {
     }
     
     /**
-     * This method can be used to set the service domain.
-     *
+     * Add a service -> service domain mapping.
+     * @param serviceName service name
      * @param serviceDomain The service domain
      */
-    public void setServiceDomain(ServiceDomain serviceDomain) {
-        _serviceDomain = serviceDomain;
+    public void addServiceDomain(QName serviceName, ServiceDomain serviceDomain) {
+        _serviceDomains.put(serviceName, serviceDomain);
+    }
+    
+    /**
+     * Remove a service -> service domain mapping.
+     * @param serviceName the service name
+     */
+    public void removeServiceDomain(QName serviceName) {
+        _serviceDomains.remove(serviceName);
     }
 
     /**
-     * This method returns the service domain.
-     *
+     * This method returns the service domain for a given service.
+     * @param serviceName service name
      * @return The service domain
      */
-    public ServiceDomain getServiceDomain() {
-        return (_serviceDomain);
+    public ServiceDomain getServiceDomain(QName serviceName) {
+        return _serviceDomains.get(serviceName);
     }
-
+    
     /**
      * This method returns the service associated with the supplied
      * process, service and port.
@@ -107,7 +112,7 @@ public class RiftsawServiceLocator implements ServiceLocator {
             return (null);
         }
         
-        Service ret=re.getService(serviceName, portName, _serviceDomain);
+        Service ret=re.getService(serviceName, portName, _serviceDomains.get(serviceName));
         
         if (ret == null) {
             LOG.error("No service found for '"+serviceName+"' (port "+portName+")");
@@ -213,7 +218,7 @@ public class RiftsawServiceLocator implements ServiceLocator {
                             && port.getBinding().getPortType().getQName().equals(_portTypes.get(i))) {
                         QName switchYardService=_services.get(i);
                         
-                        ServiceReference sref=serviceDomain.getService(switchYardService);
+                        ServiceReference sref = getServiceDomain(switchYardService).getServiceReference(switchYardService);
                         
                         if (sref == null) {
                             LOG.error("No service found for '"+serviceName+"' (port "+portName+")");
@@ -268,12 +273,7 @@ public class RiftsawServiceLocator implements ServiceLocator {
             
             // Need to create an exchange
             SynchronousInOutHandler rh = new SynchronousInOutHandler();
-
-            ServiceOperation op=_serviceReference.getInterface().getOperation(operationName);
-            
-            BaseExchangeContract exchangeContract = new BaseExchangeContract(op);
-                        
-            Exchange exchange=_serviceReference.createExchange(exchangeContract, rh);
+            Exchange exchange=_serviceReference.createExchange(operationName, rh);
             
             Message req=exchange.createMessage();            
             req.setContent(mesg);

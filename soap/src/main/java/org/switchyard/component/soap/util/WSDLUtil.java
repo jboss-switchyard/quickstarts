@@ -27,10 +27,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Operation;
@@ -50,10 +48,6 @@ import org.switchyard.ExchangePattern;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.soap.PortName;
-import org.switchyard.component.soap.WebServicePublishException;
-import org.switchyard.metadata.BaseExchangeContract;
-import org.switchyard.metadata.BaseInvocationContract;
-import org.switchyard.metadata.ServiceOperation;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -309,7 +303,7 @@ public final class WSDLUtil {
      * @param service The SwitchYard service.
      * @return A Map of exchange contracts.
      * @throws WebServicePublishException If the WSDL does not match the Service operations. 
-     */
+     
     public static Map<String, BaseExchangeContract> getContracts(final Port port, final org.switchyard.ServiceReference service) throws WebServicePublishException {
         Map<String, BaseExchangeContract> contracts = new HashMap<String, BaseExchangeContract>();
         List<Operation> operations = port.getBinding().getPortType().getOperations();
@@ -350,6 +344,7 @@ public final class WSDLUtil {
         }
         return contracts;
     }
+    */
 
     /**
      * Get the exchange pattern for the specified WS Operation.

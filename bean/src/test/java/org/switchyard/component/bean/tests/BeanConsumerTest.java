@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Message;
 import org.switchyard.component.bean.BeanComponentException;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.test.InvocationFaultException;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
@@ -58,17 +59,16 @@ public class BeanConsumerTest {
     }
 
     @Test
-    public void consumeInOnlyServiceFromBean_Fault_invalid_opertion() {
+    public void consumeInOnlyServiceFromBean_Fault_invalid_operation() {
         try {
             // this should result in a fault
             unknownXOp.sendInOut("hello");
             // if we got here, then our negative test failed
             Assert.fail("Invalid operation allowed!");
-        } catch (InvocationFaultException infEx) {
-            Message faultMsg = infEx.getFaultMessage();
-            BeanComponentException e = faultMsg.getContent(BeanComponentException.class);
-            Assert.assertEquals("Operation name 'unknownXOp' must resolve to exactly one bean method on bean type '" + 
-                    ConsumerService.class.getName() + "'.", e.getMessage());
+        } catch (SwitchYardException syEx) {
+            Assert.assertEquals(
+                    "Operation unknownXOp is not included in interface for service: ConsumerService", 
+                    syEx.getMessage());
         }
     }
 

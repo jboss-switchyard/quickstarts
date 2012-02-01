@@ -45,9 +45,8 @@ import org.switchyard.ServiceReference;
 import org.switchyard.component.camel.composer.CamelComposition;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.composer.MessageComposer;
-import org.switchyard.metadata.BaseExchangeContract;
-import org.switchyard.metadata.ExchangeContract;
-import org.switchyard.metadata.InOnlyOperation;
+import org.switchyard.metadata.InOnlyService;
+import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
@@ -86,15 +85,16 @@ public class OutboundHandlerTest extends CamelTestSupport {
         final CamelBindingModel bindingModel = mock(CamelBindingModel.class);
         when(bindingModel.getComponentURI()).thenReturn(URI.create("direct:to"));
         _messageComposer = CamelComposition.getMessageComposer();
-        _serviceDomain.registerService(_targetService.getServiceName(), new OutboundHandler(bindingModel.getComponentURI().toString(), context, _messageComposer));
-        _service = _serviceDomain.getService(_targetService.getServiceName());
+        _serviceDomain.registerService(_targetService.getServiceName(), new InOnlyService(), 
+                new OutboundHandler(bindingModel.getComponentURI().toString(), context, _messageComposer));
+        _service = _serviceDomain.registerServiceReference(
+                _targetService.getServiceName(), new InOnlyService());
     }
 
     @Test
     public void routeInOnlyToCamel() throws Exception {
         final String payload = "inOnly test string";
-        _targetService.contract(new BaseExchangeContract(new InOnlyOperation(_targetService.getServiceName().toString())));
-        _targetService.sendInOnly(payload);
+        _targetService.operation(ServiceInterface.DEFAULT_OPERATION).sendInOnly(payload);
 
         assertThat(camelEndpoint.getReceivedCounter(), is(1));
         final String received = (String) camelEndpoint.getReceivedExchanges().get(0).getIn().getBody();
@@ -105,8 +105,7 @@ public class OutboundHandlerTest extends CamelTestSupport {
     public void verifyThatEsbPropetiesArePassedToCamel() throws Exception {
         final String propertyKey = "testProp";
         final String propertyValue = "dummyValue";
-        final ExchangeContract contract = new BaseExchangeContract(new InOnlyOperation(_targetService.getServiceName().toString()));
-        final Exchange exchange = _serviceDomain.createExchange(_service, contract);
+        final Exchange exchange = _service.createExchange();
         exchange.getContext().setProperty(propertyKey, propertyValue);
 
         exchange.send(exchange.createMessage());
@@ -125,8 +124,7 @@ public class OutboundHandlerTest extends CamelTestSupport {
     @Test
     public void routeInOutToCamel() throws Exception {
         final String body = "inOut test string";
-        final ExchangeContract contract = new BaseExchangeContract(new InOnlyOperation(_targetService.getServiceName().toString()));
-        final Exchange exchange = _serviceDomain.createExchange(_service, contract);
+        final Exchange exchange = _service.createExchange();
         final Message message = createMessageWithBody(exchange, body);
 
         exchange.send(message);

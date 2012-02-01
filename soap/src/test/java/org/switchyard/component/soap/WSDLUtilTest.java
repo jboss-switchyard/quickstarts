@@ -113,6 +113,7 @@ public class WSDLUtilTest {
         WSDLUtil.getPort(service, new PortName("HelloWebServiceSpanishPort"));
     }
 
+    /*
     @Test
     public void contracts() throws Exception {
         Service service = WSDLUtil.getService("DoclitOrderService.wsdl", new PortName(null));
@@ -135,6 +136,7 @@ public class WSDLUtilTest {
         Assert.assertNotNull(soapMetaData.getOutputType());
         Assert.assertEquals(soapMetaData.getOutputType(), new QName("urn:switchyard-component-soap:test-ws:1.0", "orderAck"));
     }
+    */
 
     private static class OrderServiceInterface extends BaseService {
         private static Set<ServiceOperation> _operations = new HashSet<ServiceOperation>(2);
@@ -143,36 +145,6 @@ public class WSDLUtilTest {
         }
         public OrderServiceInterface() {
             super(_operations);
-        }
-    }
-
-    private static class MockServiceReference implements ServiceReference {
-        private ServiceInterface _interface;
-        private QName _name;
-
-        public MockServiceReference(ServiceInterface iface, String name) {
-            _interface = iface;
-            _name = new QName("urn:switchyard-component-soap:test-ws:1.0", name);
-        }
-
-        @Override
-        public ServiceInterface getInterface() {
-            return _interface;
-        }
-
-        @Override
-        public Exchange createExchange(ExchangeContract contract) {
-            return null;
-        }
-
-        @Override
-        public Exchange createExchange(ExchangeContract contract, ExchangeHandler handler) {
-            return null;
-        }
-
-        @Override
-        public QName getName() {
-            return _name;
         }
     }
 }

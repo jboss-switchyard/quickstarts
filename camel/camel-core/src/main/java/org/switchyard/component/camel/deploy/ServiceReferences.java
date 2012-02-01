@@ -20,15 +20,10 @@
  */
 package org.switchyard.component.camel.deploy;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 import javax.xml.namespace.QName;
 
-import org.switchyard.Exchange;
+import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
-import org.switchyard.metadata.ServiceInterface;
-import org.switchyard.metadata.ServiceOperation;
-import org.switchyard.metadata.java.JavaService;
 
 /**
  * ServiceReferences stores {@link ServiceReference} that the SwitchYard Camel components
@@ -43,21 +38,17 @@ import org.switchyard.metadata.java.JavaService;
  */
 public final class ServiceReferences {
     
-    private static final ConcurrentHashMap<QName, ServiceReference> REFS = new ConcurrentHashMap<QName, ServiceReference>();
+    private static ServiceDomain _domain;
     
     private ServiceReferences() {
     }
     
     /**
-     * Adds a {@link ServiceReference} to the Map of Services.
-     * 
-     * @param serviceName The service QName.
-     * @param ref The {@link ServiceReference}.
-     * @return ServiceReference the previous ServiceReference associated with the specified serviceName, or null
-     * if the service did not previously exist in the map.
+     * Set the domain instance to be used for this service reference.
+     * @param domain the service domain
      */
-    public static ServiceReference add(final QName serviceName, final ServiceReference ref) {
-        return REFS.putIfAbsent(serviceName, ref);
+    public static void setDomain(ServiceDomain domain) {
+        _domain = domain;
     }
     
     /**
@@ -67,53 +58,10 @@ public final class ServiceReferences {
      * @return {@link ServiceReference} the service reference matching the service name, or null if no match was found
      */
     public static ServiceReference get(final QName serviceName) {
-        return REFS.get(serviceName);
-    }
-    
-    /**
-     * Removes the {@link ServiceReference} associated with the passed-in serviceName.
-     * 
-     * @param serviceName the service name for which it's associated {@link ServiceReference} should be removed
-     * @return {@link ServiceReference} the service reference removed or null if no service ref was found
-     */
-    public static ServiceReference remove(final QName serviceName) {
-        return REFS.remove(serviceName);
-    }
-    
-    /**
-     * Removes all service mappings.
-     */
-    public static void clear() {
-        REFS.clear();
-    }
-    
-    /**
-     * Get the output type for the passed-in SwitchYard {@link Exchange}.
-     * 
-     * @param ref The SwitchYard {@link ServiceReference}.
-     * @param exchange The SwitchYard {@link Exchange}.
-     * @return {@link QName} Representation of the output type for the service ref associated with the current exchange.
-     */
-    public static QName getOutputTypeForExchange(final ServiceReference ref, final Exchange exchange) {
-        final ServiceInterface serviceInterface = ref.getInterface();
-        if (serviceInterface.getType().equals(JavaService.TYPE)) {
-            return exchange.getContract().getInvokerInvocationMetaData().getOutputType();
+        if (_domain == null) {
+            throw new IllegalStateException("ServiceDomain is not set!");
         }
-        return null;
-    }
-    
-    /**
-     * Get the output type for the specified operation name.
-     * 
-     * @param ref The SwitchYard {@link ServiceReference}.
-     * @param operationName The operation name for which the output type should be returned.
-     * @return {@link QName} Representation of the output type for the service ref associated with 
-     * the current exchange. Or null if the Service is an in only service as there is no output type.
-     */
-    public static QName getOutputTypeForOperation(final ServiceReference ref, final String operationName) { 
-        final ServiceInterface serviceInterface = ref.getInterface();
-        final ServiceOperation operation = serviceInterface.getOperation(operationName);
-        return operation.getOutputType();
+        return _domain.getServiceReference(serviceName);
     }
 
 }

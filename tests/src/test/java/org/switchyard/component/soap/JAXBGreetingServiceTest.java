@@ -19,24 +19,25 @@
 
 package org.switchyard.component.soap;
 
+import java.io.ByteArrayOutputStream;
+import java.net.MalformedURLException;
+
+import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPMessage;
+
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.ServiceDomain;
-import org.switchyard.ServiceReference;
 import org.switchyard.common.net.SocketAddr;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.StreamUtil;
+import org.switchyard.extensions.wsdl.WSDLService;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
-
-import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPMessage;
-import java.io.ByteArrayOutputStream;
-import java.net.MalformedURLException;
 
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
@@ -103,9 +104,10 @@ public class JAXBGreetingServiceTest {
     public void test(String request, String expectedResponse, boolean dumpResponse) throws Exception {
 
         // Launch the SOAP Handler...
-        ServiceReference service = _domain.getService(GREETING_SERVICE_NAME);
-        InboundHandler inboundHandler = new InboundHandler(config);
-        inboundHandler.start(service);
+        _domain.registerServiceReference(GREETING_SERVICE_NAME, WSDLService.fromWSDL(
+                "GreetingServiceImplService.wsdl#wsdl.porttype(GreetingServiceImpl)"));
+        InboundHandler inboundHandler = new InboundHandler(config, _domain);
+        inboundHandler.start();
 
         try {
             SOAPMessage soapRequest = StreamUtil.readSOAP(request);

@@ -59,7 +59,7 @@ public class HornetQServiceBindingTest  {
 
     @Test
     public void servicebinding() throws HornetQException {
-        final MockHandler mockHandler = _testKit.registerInOnlyService("HornetQService");
+        final MockHandler mockHandler = _testKit.registerInOutService("HornetQService");
         final ClientProducer hornetQProducer = _mixIn.getClientSession().createProducer(INPUT_QUEUE);
         hornetQProducer.send(_mixIn.createMessage("payload"));
         

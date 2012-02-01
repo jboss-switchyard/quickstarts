@@ -27,12 +27,11 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 
 import org.switchyard.Exchange;
-import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
-import org.switchyard.ServiceReference;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.clojure.config.model.ClojureComponentImplementationModel;
 import org.switchyard.component.clojure.config.model.ClojureScriptModel;
+import org.switchyard.deploy.ServiceHandler;
 import org.switchyard.exception.SwitchYardException;
 
 import clojure.lang.Var;
@@ -43,7 +42,7 @@ import clojure.lang.Var;
  * @author Daniel Bevenius
  *
  */
-public class ClojureHandler implements ExchangeHandler {
+public class ClojureHandler implements ServiceHandler {
     
     private final ClojureComponentImplementationModel _implModel;
     private Var _var;
@@ -59,11 +58,8 @@ public class ClojureHandler implements ExchangeHandler {
     
     /**
      * Loads the Clojure script.
-     * 
-     * @param serviceReference The service reference to start.
-     * @throws Exception If an exceptions occurs while trying to load the clojure script.
      */
-    public void start(final ServiceReference serviceReference) throws Exception {
+    public void start() {
         try {
             final ClojureScriptModel scriptModel = _implModel.getScriptModel();
             _var = scriptModel != null 
@@ -72,6 +68,11 @@ public class ClojureHandler implements ExchangeHandler {
         } catch (final Exception e) {
             throw new SwitchYardException(e);
         }
+    }
+    
+    @Override
+    public void stop() {
+        // Nothing to do here
     }
     
     private InputStreamReader loadInputStream(final String scriptFile) throws IOException {

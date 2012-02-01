@@ -21,16 +21,14 @@ package org.switchyard.component.bpel.exchange;
 import javax.xml.namespace.QName;
 
 import org.riftsaw.engine.BPELEngine;
-import org.switchyard.ExchangeHandler;
-import org.switchyard.ServiceReference;
-//import org.riftsaw.switchyard.component.bpel.config.model.BPELComponentImplementationModel;
 import org.switchyard.component.bpel.config.model.BPELComponentImplementationModel;
+import org.switchyard.deploy.ServiceHandler;
 
 /**
  * The ExchangeHandler for the BPEL component.
  *
  */
-public interface BPELExchangeHandler extends ExchangeHandler {
+public interface BPELExchangeHandler extends ServiceHandler {
 
     /**
      * Initializes the BPELExchangeHandler.
@@ -42,26 +40,5 @@ public interface BPELExchangeHandler extends ExchangeHandler {
      */
     public void init(QName qname, BPELComponentImplementationModel model,
                     String intf, BPELEngine engine);
-
-    /**
-     * Starts the BPELExchangeHandler.
-     *
-     * @param serviceRef the service reference
-     */
-    public void start(ServiceReference serviceRef);
-
-    /**
-     * Stops the BPELExchangeHandler.
-     *
-     * @param serviceRef the service reference
-     */
-    public void stop(ServiceReference serviceRef);
-
-    /**
-     * Destroys the BPELExchangeHandler.
-     * 
-     * @param serviceRef the service reference
-     */
-    public void destroy(ServiceReference serviceRef);
 
 }

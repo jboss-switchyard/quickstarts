@@ -25,7 +25,6 @@ import org.hornetq.api.core.client.ClientProducer;
 import org.hornetq.api.core.client.ClientSession;
 import org.hornetq.api.core.client.ClientSessionFactory;
 import org.hornetq.api.core.client.ServerLocator;
-import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.component.hornetq.composer.HornetQComposition;
@@ -33,6 +32,7 @@ import org.switchyard.component.hornetq.config.model.HornetQBindingModel;
 import org.switchyard.component.hornetq.config.model.HornetQConfigModel;
 import org.switchyard.component.hornetq.internal.HornetQUtil;
 import org.switchyard.composer.MessageComposer;
+import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.exception.SwitchYardException;
 
 /**
@@ -41,7 +41,7 @@ import org.switchyard.exception.SwitchYardException;
  * @author Daniel Bevenius
  *
  */
-public class OutboundHandler extends BaseHandler {
+public class OutboundHandler extends BaseServiceHandler {
 
     private final ServerLocator _serverLocator;
     private final MessageComposer<ClientMessage> _messageComposer;

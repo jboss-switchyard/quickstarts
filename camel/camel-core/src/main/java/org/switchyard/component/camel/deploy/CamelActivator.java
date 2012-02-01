@@ -22,12 +22,8 @@ package org.switchyard.component.camel.deploy;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.ServiceLoader;
-import java.util.Set;
 
 import javax.naming.NamingException;
 import javax.xml.namespace.QName;
@@ -43,7 +39,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
-import org.switchyard.ExchangeHandler;
+import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.camel.InboundHandler;
 import org.switchyard.component.camel.OutboundHandler;
@@ -54,15 +50,12 @@ import org.switchyard.component.camel.composer.CamelComposition;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.component.camel.config.model.CamelComponentImplementationModel;
 import org.switchyard.composer.MessageComposer;
-import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.BindingModel;
-import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
-import org.switchyard.config.model.composite.CompositeReferenceModel;
-import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.deploy.BaseActivator;
+import org.switchyard.deploy.ServiceHandler;
 import org.switchyard.exception.SwitchYardException;
 
 /**
@@ -77,10 +70,6 @@ public class CamelActivator extends BaseActivator {
     private static final String DIRECT_TYPE = "direct";
     private static final String FILE_TYPE = "file";
     
-    private Map<QName, Set<InboundHandler>> _bindings = new HashMap<QName, Set<InboundHandler>>();
-    private Map<QName, Set<OutboundHandler>> _references = new HashMap<QName, Set<OutboundHandler>>();
-    private Map<QName, SwitchYardConsumer> _implementations = new HashMap<QName, SwitchYardConsumer>();
-    
     private CamelContext _camelContext;
     
     /**
@@ -91,35 +80,67 @@ public class CamelActivator extends BaseActivator {
                 CAMEL_TYPE, 
                 DIRECT_TYPE, 
                 FILE_TYPE});
+        
+        start();
     }
 
-
-    /**
-     * @param serviceName The service name
-     * @param config The Java Object model representing a service configuration
-     * @return {@link ExchangeHandler} the exchange handler.
-     */
     @Override
-    public ExchangeHandler init(final QName serviceName, final Model config) {
+    public ServiceHandler activateBinding(QName serviceName, BindingModel config) {
+        if (config.isServiceBinding()) {
+            return new InboundHandler((CamelBindingModel)config, _camelContext, serviceName);
+        } else {
+            return createOutboundHandler((CamelBindingModel)config, config.getReference().getQName());
+        }
+    }
+    
+    @Override
+    public ServiceHandler activateService(QName serviceName, ComponentModel config) {
+        ServiceHandler handler = null;
+        
+        // process service
+        for (ComponentServiceModel service : config.getServices()) {
+            if (service.getQName().equals(serviceName)) {
+                handler = handleImplementation(service, serviceName);
+                break;
+            }
+        }
+        
+        return handler;
+    }
+    
+    
+    @Override
+    public void setServiceDomain(ServiceDomain serviceDomain) {
+        super.setServiceDomain(serviceDomain);
+        ServiceReferences.setDomain(serviceDomain);
+    }
+    
+    /**
+     * Starts the camel context for this activator instance.
+     */
+    public void start() {
         startCamelContext();
-
-        if (isServiceBinding(config)) {
-            return handleServiceBindings((CompositeServiceModel)config, serviceName);
+    }
+    
+    /**
+     * Stops the camel context for this activator instance.
+     */
+    public void stop() {
+        try {
+            _camelContext.stop();
+        } catch (Exception ex) {
+            throw new SwitchYardException("CamelActivator failed to stop CamelContext.", ex);
         }
+    }
 
-        if (isReferenceBinding(config)) {
-            return handleReferenceBindings((CompositeReferenceModel)config, serviceName);
-        }
+    @Override
+    public void deactivateBinding(QName name, ServiceHandler handler) {
+        // anything to do here?
+    }
 
-        if (isComponentService(config)) {
-            return handleImplementation((ComponentServiceModel)config, serviceName);
-        }
-
-        if (isComponentReference(config)) {
-            return handleComponentReference((ComponentReferenceModel)config, serviceName);
-        }
-
-        throw new SwitchYardException("No Camel bindings, references or implementations found for [" + serviceName + "] in config [" + config + "]");
+    @Override
+    public void deactivateService(QName name, ServiceHandler handler) {
+        // anything to do here?
     }
 
     private void startCamelContext() {
@@ -149,11 +170,6 @@ public class CamelActivator extends BaseActivator {
     
         return null;
     }
-
-    private ExchangeHandler handleComponentReference(final ComponentReferenceModel config, final QName serviceName) {
-        final MessageComposer<Message> messageComposer = CamelComposition.getMessageComposer();
-        return addOutboundHandler(serviceName, ComponentNameComposer.composeComponentUri(serviceName), messageComposer);
-    }
     
     private Registry getRegistry() throws NamingException {
         final ServiceLoader<Registry> registriesLoaders = ServiceLoader.load(Registry.class, getClass().getClassLoader());
@@ -167,30 +183,23 @@ public class CamelActivator extends BaseActivator {
         return new CompositeRegistry(registries);
     }
 
-    private boolean isComponentReference(final Model config) {
-        return config instanceof ComponentReferenceModel;
-    }
-
-    private ExchangeHandler handleImplementation(final ComponentServiceModel config, final QName serviceName) {
-        final ComponentImplementationModel implementation = getComponentImplementationModel(config);
-        if (implementation instanceof CamelComponentImplementationModel) {
-            final CamelComponentImplementationModel ccim = (CamelComponentImplementationModel) implementation;
-            try {
-                final String endpointUri = ComponentNameComposer.composeComponentUri(serviceName);
-                final RouteDefinition routeDef = getRouteDefinition(ccim);
-                checkSwitchYardReferencedServiceExist(routeDef, ccim);
-                addFromEndpointToRouteDefinition(routeDef, endpointUri);
-                _camelContext.addRouteDefinition(routeDef);
-                final SwitchyardEndpoint endpoint = (SwitchyardEndpoint) _camelContext.getEndpoint(endpointUri);
-                endpoint.setMessageComposer(CamelComposition.getMessageComposer());
-                final SwitchYardConsumer consumer = endpoint.getConsumer();
-                _implementations.put(serviceName, consumer);
-                return consumer;
-            } catch (final Exception e) {
-                throw new SwitchYardException(e.getMessage(), e);
-            }
+    private ServiceHandler handleImplementation(final ComponentServiceModel config, final QName serviceName) {
+        
+        final CamelComponentImplementationModel ccim = 
+                (CamelComponentImplementationModel)config.getComponent().getImplementation();
+        try {
+            final String endpointUri = ComponentNameComposer.composeComponentUri(serviceName);
+            final RouteDefinition routeDef = getRouteDefinition(ccim);
+            checkSwitchYardReferencedServiceExist(routeDef, ccim);
+            addFromEndpointToRouteDefinition(routeDef, endpointUri);
+            _camelContext.addRouteDefinition(routeDef);
+            final SwitchyardEndpoint endpoint = (SwitchyardEndpoint) _camelContext.getEndpoint(endpointUri);
+            endpoint.setMessageComposer(CamelComposition.getMessageComposer());
+            final SwitchYardConsumer consumer = endpoint.getConsumer();
+            return consumer;
+        } catch (final Exception e) {
+            throw new SwitchYardException(e.getMessage(), e);
         }
-        return null;
     }
 
     @SuppressWarnings("rawtypes")
@@ -212,7 +221,7 @@ public class CamelActivator extends BaseActivator {
                         + " which is referenced in " + to);
                     }
                     
-                    final ServiceReference service = getServiceDomain().getService(refServiceName);
+                    final ServiceReference service = getServiceDomain().getServiceReference(refServiceName);
                     if (service == null) {
                         throw new SwitchYardException("Could find the service name '" + serviceName + "'" 
                         + " which is referenced in " + to);
@@ -262,159 +271,10 @@ public class CamelActivator extends BaseActivator {
         return routeDef;
     }
 
-    private boolean isComponentService(final Model config) {
-        return config instanceof ComponentServiceModel;
-    }
-
-    private boolean isReferenceBinding(final Model config) {
-        return config instanceof CompositeReferenceModel;
-    }
-
-    private boolean isServiceBinding(final Model config) {
-        return config instanceof CompositeServiceModel;
-    }
-
-    private ExchangeHandler handleReferenceBindings(final CompositeReferenceModel config, final QName serviceName) {
-        final List<BindingModel> bindings = config.getBindings();
-        if (!bindings.isEmpty()) {
-            return createOutboundHandler(bindings, serviceName);
-        }
-
-        return null;
-    }
-
-    private ExchangeHandler handleServiceBindings(final CompositeServiceModel serviceModel, final QName serviceName) {
-        final List<BindingModel> bindings = serviceModel.getBindings();
-        if (!bindings.isEmpty()) {
-            return createInboundHandler(bindings, serviceName);
-        }
-
-        return null;
-    }
-
-    private ComponentImplementationModel getComponentImplementationModel(final Model config) {
-        final Model modelParent = config.getModelParent();
-        final ComponentModel componentModel = (ComponentModel) modelParent;
-        return componentModel.getImplementation();
-    }
-
-    private InboundHandler createInboundHandler(final List<BindingModel> bindings, final QName name) {
-        for (BindingModel bindingModel : bindings) {
-            if (isCamelBindingModel(bindingModel)) {
-                final CamelBindingModel camelBindingModel = (CamelBindingModel) bindingModel;
-                try {
-                    final Set<InboundHandler> handlers = getInboundHandlersForService(name);
-                    final InboundHandler inboundHandler = new InboundHandler(camelBindingModel, _camelContext, name);
-                    if (!handlers.contains(inboundHandler)) {
-                        handlers.add(inboundHandler);
-                        _bindings.put(name, handlers);
-                        return inboundHandler;
-                    }
-                } catch (Exception e) {
-                    throw new IllegalStateException(e);
-                }
-            }
-        }
-        return null;
-    }
-
-    private boolean isCamelBindingModel(final BindingModel bm) {
-        return bm instanceof CamelBindingModel;
-    }
-
-    private OutboundHandler createOutboundHandler(final List<BindingModel> bindings, final QName name) {
-        for (BindingModel bindingModel : bindings) {
-            if (isCamelBindingModel(bindingModel)) {
-                final CamelBindingModel camelBinding = (CamelBindingModel) bindingModel;
-                final String endpointUri = camelBinding.getComponentURI().toString();
-                final MessageComposer<Message> messageComposer = CamelComposition.getMessageComposer(bindingModel);
-                return addOutboundHandler(name, endpointUri, messageComposer);
-            }
-        }
-        return null;
-    }
-
-    private OutboundHandler addOutboundHandler(final QName name, final String uri, MessageComposer<Message> messageComposer) {
-        try {
-            final Set<OutboundHandler> handlers = getOutboundHandlersForService(name);
-            final OutboundHandler outboundHandler = new OutboundHandler(uri, _camelContext, messageComposer);
-            if (!handlers.contains(outboundHandler)) {
-                handlers.add(outboundHandler);
-                _references.put(name, handlers);
-                return outboundHandler;
-            }
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-        return null;
-    }
-
-    private Set<OutboundHandler> getOutboundHandlersForService(final QName serviceName) {
-        Set<OutboundHandler> handlers = _references.get(serviceName);
-        if (handlers == null) {
-            handlers = new HashSet<OutboundHandler>();
-        }
-        return handlers;
-    }
-    
-    private Set<InboundHandler> getInboundHandlersForService(final QName serviceName) {
-        Set<InboundHandler> handlers = _bindings.get(serviceName);
-        if (handlers == null) {
-            handlers = new HashSet<InboundHandler>();
-        }
-        return handlers;
-    }
-    
-    @Override
-    public void start(final ServiceReference serviceReference) {
-        ServiceReferences.add(serviceReference.getName(), serviceReference);
-        startInboundHandlers(serviceReference);
-    }
-
-    @Override
-    public void stop(ServiceReference serviceReference) {
-        stopInboundHandlers(serviceReference);
-        ServiceReferences.remove(serviceReference.getName());
-    }
-
-    private void startInboundHandlers(final ServiceReference serviceReference) {
-        final Set<InboundHandler> handlers = _bindings.get(serviceReference.getName());
-        if (handlers != null) {
-            for (InboundHandler inboundHandler : handlers) {
-                try {
-                    inboundHandler.start(serviceReference);
-                } catch (Exception e) {
-                    throw new SwitchYardException(e);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void destroy(final ServiceReference service) {
-        _bindings.remove(service.getName());
-        stopCamelContext();
-    }
-
-    private void stopInboundHandlers(ServiceReference serviceReference) {
-        final Set<InboundHandler> handlers = _bindings.get(serviceReference.getName());
-        if (handlers != null) {
-            for (InboundHandler inboundHandler : handlers) {
-                try {
-                    inboundHandler.stop(serviceReference);
-                } catch (Exception e) {
-                    throw new SwitchYardException(e);
-                }
-            }
-        }
-    }
-
-    private void stopCamelContext() {
-        try {
-            _camelContext.stop();
-        } catch (final Exception e) {
-            throw new SwitchYardException(e);
-        }
+    private ServiceHandler createOutboundHandler(final CamelBindingModel binding, final QName name) {
+        final String endpointUri = binding.getComponentURI().toString();
+        final MessageComposer<Message> messageComposer = CamelComposition.getMessageComposer(binding);
+        return new OutboundHandler(endpointUri, _camelContext, messageComposer);
     }
     
     /**

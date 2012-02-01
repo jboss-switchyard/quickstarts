@@ -20,17 +20,7 @@
 
     <sca:composite name="hornetQTest" targetNamespace="urn:hornetq:test:1.0">
     
-        <!-- Reference binding example -->
-        <sca:component name="OrderComponent">
-            <bean:implementation.bean class="org.switchyard.component.hornetq.support.OrderServiceImpl"/>
-            <sca:service name="OrderService">
-                <sca:interface.java interface="org.switchyard.component.hornetq.support.OrderService"/>
-            </sca:service>
-            <sca:reference name="WarehouseService"/>
-        </sca:component>
-        
-        <sca:reference name="WarehouseService" promote="WarehouseService" multiplicity="1..1">
-            <sca:interface.java interface="org.switchyard.component.hornetq.support.WarehouseService"/>
+        <sca:reference name="WarehouseService" promote="OrderComponent/WarehouseService" multiplicity="1..1">
             <hornetq:binding.hornetq>
 	            <hornetq:operationSelector operationName="processOrder"/>
                 <hornetq:config>
@@ -41,6 +31,17 @@
                 </hornetq:config>
             </hornetq:binding.hornetq>
         </sca:reference>
+        
+        <!-- Reference binding example -->
+        <sca:component name="OrderComponent">
+            <bean:implementation.bean class="org.switchyard.component.hornetq.support.OrderServiceImpl"/>
+            <sca:service name="OrderService">
+                <sca:interface.java interface="org.switchyard.component.hornetq.support.OrderService"/>
+            </sca:service>
+            <sca:reference name="WarehouseService">
+                <sca:interface.java interface="org.switchyard.component.hornetq.support.WarehouseService"/>
+            </sca:reference>
+        </sca:component>
         
     </sca:composite>
     

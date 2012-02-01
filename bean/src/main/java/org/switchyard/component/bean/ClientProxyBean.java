@@ -43,9 +43,6 @@ import org.switchyard.ExchangeState;
 import org.switchyard.ServiceReference;
 import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
-import org.switchyard.metadata.BaseExchangeContract;
-import org.switchyard.metadata.InvocationContract;
-import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.metadata.java.JavaService;
 
 /**
@@ -325,20 +322,11 @@ public class ClientProxyBean implements Bean {
 
         private Exchange createExchange(ServiceReference service, Method method, ExchangeHandler responseExchangeHandler) throws BeanComponentException {
             String operationName = method.getName();
-            InvocationContract clientInvocationContext = _invokerInterface.getOperation(operationName);
-            ServiceOperation serviceOperation = service.getInterface().getOperation(operationName);
-
-            if (serviceOperation == null) {
+            if (service.getInterface().getOperation(operationName) == null) {
                 throw new BeanComponentException("Bean Component invocation failure.  Operation '" + operationName + "' is not defined on Service '" + _serviceName + "'.");
             }
 
-            BaseExchangeContract exchangeContext = new BaseExchangeContract(serviceOperation);
-            exchangeContext.getInvokerInvocationMetaData()
-                    .setInputType(clientInvocationContext.getInputType())
-                    .setOutputType(clientInvocationContext.getOutputType())
-                    .setFaultType(clientInvocationContext.getFaultType());
-
-            return service.createExchange(exchangeContext, responseExchangeHandler);
+            return service.createExchange(operationName, responseExchangeHandler);
         }
 
     }

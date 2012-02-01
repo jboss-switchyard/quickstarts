@@ -19,18 +19,13 @@
 
 package org.switchyard.component.bean.deploy;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.xml.namespace.QName;
 
-import org.switchyard.ExchangeHandler;
-import org.switchyard.ServiceReference;
-import org.switchyard.component.bean.ClientProxyBean;
-import org.switchyard.config.model.Model;
+import org.switchyard.component.bean.ServiceProxyHandler;
+import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
-import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.deploy.BaseActivator;
+import org.switchyard.deploy.ServiceHandler;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceInterface;
 
@@ -47,7 +42,6 @@ public class BeanComponentActivator extends BaseActivator {
     public static final String BEAN_TYPE = "bean";
     
     private BeanDeploymentMetaData _beanDeploymentMetaData;
-    private Map<QName, ComponentReferenceModel> _references = new HashMap<QName, ComponentReferenceModel>();
 
     /**
      * Public constructor.
@@ -55,25 +49,27 @@ public class BeanComponentActivator extends BaseActivator {
     public BeanComponentActivator() {
         super(BEAN_TYPE);
     }
-
+    
+    
     @Override
-    public ExchangeHandler init(QName name, Model config) {
+    public ServiceHandler activateService(QName serviceName, ComponentModel config) {
         lookupBeanMetaData();
-        if (config instanceof ComponentReferenceModel) {
-            // policy and configuration validation can be performed here -
-            // nothing to do for now
-            _references.put(name, (ComponentReferenceModel)config);
-            return null;
-        } else if (config instanceof ComponentServiceModel) {
-            // lookup the handler for the initialized service
-            for (ServiceDescriptor descriptor : _beanDeploymentMetaData.getServiceDescriptors()) {
-                if (descriptor.getServiceName().equals(name.getLocalPart())) {
-                    return descriptor.getHandler();
+        for (ServiceDescriptor descriptor : _beanDeploymentMetaData.getServiceDescriptors()) {
+            if (descriptor.getServiceName().equals(serviceName.getLocalPart())) {
+                ServiceProxyHandler handler = descriptor.getHandler();
+                for (ComponentReferenceModel reference : config.getReferences()) {
+                    handler.addReference(getServiceDomain().getServiceReference(reference.getQName()));
                 }
+                return handler;
             }
         }
         // bean discovery did not find a bean providing this service
-        throw new SwitchYardException("Unknown Service name '" + name + "'.");
+        throw new SwitchYardException("Unknown Service name '" + serviceName + "'.");
+    }
+
+    @Override
+    public void deactivateService(QName name, ServiceHandler handler) {
+        // NOP - CDI subsystem will pull down the CDI bits and pieces
     }
 
     /**
@@ -98,32 +94,4 @@ public class BeanComponentActivator extends BaseActivator {
         throw new SwitchYardException("Unknown Service name '" + name + "'.");
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void start(ServiceReference service) {
-        // Initialise any client proxies to the started service...
-        for (ClientProxyBean proxyBean : _beanDeploymentMetaData.getClientProxies()) {
-            if (proxyBean.getServiceName().equals(service.getName().getLocalPart())) {
-                proxyBean.setService(service);
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void stop(ServiceReference service) {
-        // not sure this is significant for bean component
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void destroy(ServiceReference service) {
-        _references.remove(service.getName());
-    }
 }

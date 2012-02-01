@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.wsdl.Operation;
 import javax.wsdl.Part;
@@ -38,12 +37,12 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.Endpoint;
 
 import org.apache.log4j.Logger;
-import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Scope;
+import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.component.soap.composer.SOAPComposition;
@@ -51,8 +50,8 @@ import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
 import org.switchyard.composer.MessageComposer;
+import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.exception.DeliveryException;
-import org.switchyard.metadata.BaseExchangeContract;
 import org.w3c.dom.Node;
 
 /**
@@ -60,18 +59,17 @@ import org.w3c.dom.Node;
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
-public class InboundHandler extends BaseHandler {
+public class InboundHandler extends BaseServiceHandler {
 
     private static final Logger LOGGER = Logger.getLogger(InboundHandler.class);
     private static final long DEFAULT_TIMEOUT = 15000;
     private static final String MESSAGE_NAME = "MESSAGE_NAME";
     private static final String WSDL_LOCATION = "javax.xml.ws.wsdl.description";
 
-    private final ConcurrentHashMap<String, BaseExchangeContract> _contracts = new ConcurrentHashMap<String, BaseExchangeContract>();
-
     private final SOAPBindingModel _config;
     private final MessageComposer<SOAPMessage> _messageComposer;
 
+    private ServiceDomain _domain;
     private ServiceReference _service;
     private long _waitTimeout = DEFAULT_TIMEOUT; // default of 15 seconds
     private Endpoint _endpoint;
@@ -81,23 +79,24 @@ public class InboundHandler extends BaseHandler {
     /**
      * Constructor.
      * @param config the configuration settings
+     * @param domain the service domain
      */
-    public InboundHandler(final SOAPBindingModel config) {
+    public InboundHandler(final SOAPBindingModel config, ServiceDomain domain) {
         _config = config;
+        _domain = domain;
         _messageComposer = SOAPComposition.getMessageComposer(config);
     }
 
     /**
      * Start lifecycle.
-     * @param service The Service instance.
      * @throws WebServicePublishException If unable to publish the endpoint
      */
-    public void start(ServiceReference service) throws WebServicePublishException {
+    public void start() throws WebServicePublishException {
         ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
         //XXX: REMOVE THIS SYNCHRONIZED: once threading issues in AS7 WS are fixed
         synchronized (BaseWebService.class) {
         try {
-            _service = service;
+            _service = _domain.getServiceReference(_config.getServiceName());
             PortName portName = _config.getPort();
             javax.wsdl.Service wsdlService = WSDLUtil.getService(_config.getWsdl(), portName);
             _wsdlPort = WSDLUtil.getPort(wsdlService, portName);
@@ -110,8 +109,6 @@ public class InboundHandler extends BaseHandler {
             // Hook the handler
             wsProvider.setConsumer(this);
             
-            _contracts.putAll(WSDLUtil.getContracts(_wsdlPort, service));
-
             List<Source> metadata = new ArrayList<Source>();
             StreamSource source = WSDLUtil.getStream(_config.getWsdl());
             metadata.add(source);
@@ -149,7 +146,7 @@ public class InboundHandler extends BaseHandler {
     public void stop() {
         //XXX: REMOVE THIS SYNCHRONIZED: once threading issues in AS7 WS are fixed
         synchronized (BaseWebService.class) {
-        _endpoint.stop();
+            _endpoint.stop();
         }
         LOGGER.info("WebService " + _config.getPort() + " stopped.");
     }
@@ -173,7 +170,6 @@ public class InboundHandler extends BaseHandler {
      */
     public SOAPMessage invoke(final SOAPMessage soapMessage) {
         String operationName = null;
-        BaseExchangeContract exchangeContract = null;
         Operation operation;
         Boolean oneWay = false;
         String firstBodyElement = null;
@@ -188,8 +184,7 @@ public class InboundHandler extends BaseHandler {
             if (operation != null) {
                 operationName = operation.getName();
                 oneWay = WSDLUtil.isOneWay(operation);
-                exchangeContract = _contracts.get(operationName);
-
+                
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Received SOAP message targeted at Webservice operation '" + operationName + "' on port '" + _wsdlPort.getName() + "'.");
                 }
@@ -199,15 +194,13 @@ public class InboundHandler extends BaseHandler {
             return null;
         }
 
-        if (exchangeContract == null) {
+        if (operation == null) {
             return handleException(oneWay, new SOAPException("Operation for '" + firstBodyElement + "' not available on target Service '" + _service.getName() + "'."));
         }
 
         try {
             SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
-            Exchange exchange;
-
-            exchange = _service.createExchange(exchangeContract, inOutHandler);
+            Exchange exchange = _service.createExchange(operationName, inOutHandler);
             Message message;
             try {
                 message = _messageComposer.compose(soapMessage, exchange, true);

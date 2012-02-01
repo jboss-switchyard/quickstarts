@@ -146,7 +146,7 @@ public class SOAPBindingModel extends V1BindingModel {
      */
     public QName getServiceName() {
         if (_serviceName == null) {
-            _serviceName = getService().getQName();
+            _serviceName = isServiceBinding() ? getService().getQName() : getReference().getQName();
         }
         return _serviceName;
     }

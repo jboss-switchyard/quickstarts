@@ -23,14 +23,12 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.ExchangeHandler;
-import org.switchyard.ServiceReference;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.exchange.BPMExchangeHandler;
 import org.switchyard.component.bpm.exchange.BPMExchangeHandlerFactory;
-import org.switchyard.config.model.Model;
-import org.switchyard.config.model.composite.ComponentServiceModel;
+import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.deploy.BaseActivator;
+import org.switchyard.deploy.ServiceHandler;
 
 /**
  * Activator for the BPM component.
@@ -52,52 +50,23 @@ public class BPMActivator extends BaseActivator {
      * {@inheritDoc}
      */
     @Override
-    public ExchangeHandler init(QName qname, Model model) {
-        if (model instanceof ComponentServiceModel) {
-            BPMExchangeHandler handler = BPMExchangeHandlerFactory.instance().newBPMExchangeHandler(getServiceDomain());
-            BPMComponentImplementationModel bciModel = (BPMComponentImplementationModel)((ComponentServiceModel)model).getComponent().getImplementation();
-            handler.init(qname, bciModel);
-            _handlers.put(qname, handler);
-            return handler;
-        }
-        return null;
+    public ServiceHandler activateService(QName name, ComponentModel config) {
+        BPMExchangeHandler handler = BPMExchangeHandlerFactory.instance().newBPMExchangeHandler(getServiceDomain());
+        BPMComponentImplementationModel bciModel = (BPMComponentImplementationModel)config.getImplementation();
+        handler.init(name, bciModel);
+        _handlers.put(name, handler);
+        return handler;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void start(ServiceReference serviceRef) {
-        BPMExchangeHandler handler = _handlers.get(serviceRef.getName());
-        if (handler != null) {
-            handler.start(serviceRef);
+    public void deactivateService(QName name, ServiceHandler handler) {
+        try {
+            ((BPMExchangeHandler)handler).destroy();
+        } finally {
+            _handlers.remove(name);
         }
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void stop(ServiceReference serviceRef) {
-        BPMExchangeHandler handler = _handlers.get(serviceRef.getName());
-        if (handler != null) {
-            handler.stop(serviceRef);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void destroy(ServiceReference serviceRef) {
-        BPMExchangeHandler handler = _handlers.get(serviceRef.getName());
-        if (handler != null) {
-            try {
-                handler.destroy(serviceRef);
-            } finally {
-                _handlers.remove(serviceRef.getName());
-            }
-        }
-    }
-
 }

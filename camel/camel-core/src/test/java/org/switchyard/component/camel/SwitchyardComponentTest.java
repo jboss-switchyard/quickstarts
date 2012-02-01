@@ -35,9 +35,9 @@ import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
-import org.switchyard.ServiceReference;
 import org.switchyard.component.camel.deploy.ServiceReferences;
 import org.switchyard.metadata.InOnlyService;
+import org.switchyard.metadata.InOutService;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
@@ -58,17 +58,17 @@ public class SwitchyardComponentTest extends CamelTestSupport {
 
     @Before
     public void setup() throws Exception {
-        ServiceReferences.clear();
+        ServiceReferences.setDomain(_serviceDomain);
     }
     
     @Test
     public void sendToSwitchyardInOut() throws Exception {
         final String expectedResponse = "replacedContent";
         final String payload = "bajja";
-        final InOnlyService inService = new InOnlyService("testServiceName");
         
-        final ServiceReference serviceReference = _serviceDomain.registerService(new QName(_serviceName), new ResponseService(expectedResponse), inService);
-        ServiceReferences.add(serviceReference.getName(), serviceReference);
+        _serviceDomain.registerService(new QName(_serviceName), new InOutService(), 
+                new ResponseService(expectedResponse));
+        _serviceDomain.registerServiceReference(new QName(_serviceName), new InOutService());
         
         final String response = (String) template.requestBody("direct:input", payload);
         assertThat(response, is(equalTo(expectedResponse)));
@@ -78,9 +78,8 @@ public class SwitchyardComponentTest extends CamelTestSupport {
     public void sendToSwitchyardInOnly() throws Exception {
         final String payload = "bajja";
         final MockHandler mockService = new MockHandler();
-        final InOnlyService inService = new InOnlyService("testServiceName");
-        final ServiceReference serviceReference = _serviceDomain.registerService(new QName(_serviceName), mockService, inService);
-        ServiceReferences.add(serviceReference.getName(), serviceReference);
+        _serviceDomain.registerService(new QName(_serviceName), new InOnlyService(), mockService);
+        _serviceDomain.registerServiceReference(new QName(_serviceName), new InOnlyService());
         
         template.sendBody("direct:input", payload);
         
@@ -95,7 +94,7 @@ public class SwitchyardComponentTest extends CamelTestSupport {
         {
             public void configure() throws Exception {
                 from("direct:input")
-                .to("switchyard://" + _serviceName.toString() + "?operationName=" + _serviceName.toString())
+                .to("switchyard://" + _serviceName.toString() + "?operationName=process")
                 .to("mock:result");
             }
         };

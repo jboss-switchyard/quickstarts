@@ -48,7 +48,6 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
-import org.switchyard.ServiceReference;
 import org.switchyard.common.io.resource.Resource;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.io.resource.SimpleResource;
@@ -155,7 +154,7 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
      * {@inheritDoc}
      */
     @Override
-    public void start(ServiceReference serviceRef) {
+    public void start() {
         _ksession = _kbase.newStatefulKnowledgeSession(_ksessionConfig, _environment);
         _klogger = Audits.getLogger(_audit, _ksession);
         TaskManager tm = new DroolsTaskManager(_ksession);
@@ -249,7 +248,7 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
      * {@inheritDoc}
      */
     @Override
-    public void stop(ServiceReference serviceRef) {
+    public void stop() {
         for (TaskHandler th : _taskHandlers) {
             try {
                 th.destroy();
@@ -281,7 +280,7 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
      * {@inheritDoc}
      */
     @Override
-    public void destroy(ServiceReference serviceRef) {
+    public void destroy() {
         _kbase = null;
         _taskHandlers.clear();
         _taskHandlerModels.clear();

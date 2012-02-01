@@ -20,15 +20,10 @@
  */
 package org.switchyard.component.camel;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
 import org.switchyard.ServiceReference;
-import org.switchyard.common.xml.QNameUtil;
-import org.switchyard.component.camel.composer.CamelMessageComposer;
-import org.switchyard.component.camel.deploy.ServiceReferences;
 import org.switchyard.composer.MessageComposer;
 import org.switchyard.exception.SwitchYardException;
 
@@ -45,7 +40,6 @@ import org.switchyard.exception.SwitchYardException;
 public class CamelResponseHandler implements ExchangeHandler {
     
     private final org.apache.camel.Exchange _camelExchange;
-    private final ServiceReference _reference;
     private final MessageComposer<org.apache.camel.Message> _messageComposer;
 
     /**
@@ -63,7 +57,6 @@ public class CamelResponseHandler implements ExchangeHandler {
             throw new SwitchYardException("[reference] argument must not be null");
         }
         _camelExchange = camelExchange;
-        _reference = reference;
         _messageComposer = messageComposer;
     }
 
@@ -77,22 +70,10 @@ public class CamelResponseHandler implements ExchangeHandler {
      */
     @Override
     public void handleMessage(final Exchange switchYardExchange) throws HandlerException {
-        final CamelMessageComposer.ContentTypeProvider ctp = new CamelMessageComposer.ContentTypeProvider() {
-            public Class<?> getContentType() {
-                final QName outputType = ServiceReferences.getOutputTypeForExchange(_reference, switchYardExchange);
-                if (outputType != null) {
-                    return QNameUtil.toJavaMessageType(outputType);
-                }
-                return null;
-            }
-        };
         try {
-            CamelMessageComposer.setContentTypeProvider(switchYardExchange, ctp);
             _messageComposer.decompose(switchYardExchange, _camelExchange.getIn());
         } catch (Exception e) {
             throw new HandlerException(e);
-        } finally {
-            CamelMessageComposer.setContentTypeProvider(switchYardExchange, null);
         }
     }
 

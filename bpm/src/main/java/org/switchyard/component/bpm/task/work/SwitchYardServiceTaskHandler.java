@@ -35,9 +35,6 @@ import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.exception.DeliveryException;
-import org.switchyard.metadata.BaseExchangeContract;
-import org.switchyard.metadata.ExchangeContract;
-import org.switchyard.metadata.ServiceOperation;
 
 /**
  * Executes SwitchYard Services.
@@ -80,17 +77,16 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
         Map<String,Object> results = null;
         QName serviceName = getServiceName(parameters);
         if (serviceName != null) {
-            ServiceReference serviceRef = getServiceDomain().getService(serviceName);
+            ServiceReference serviceRef = getServiceDomain().getServiceReference(serviceName);
             if (serviceRef != null) {
-                ExchangeContract exchangeContract = getExchangeContract(serviceRef, parameters);
-                ExchangePattern exchangePattern = exchangeContract.getServiceOperation().getExchangePattern();
-                SynchronousInOutHandler inOutHandler = null;
+                String operation = (String)parameters.get(SERVICE_OPERATION_NAME);
                 final Exchange exchangeIn;
-                if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
-                    inOutHandler = new SynchronousInOutHandler();
-                    exchangeIn = serviceRef.createExchange(exchangeContract, inOutHandler);
+                SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
+                
+                if (operation != null) {
+                    exchangeIn = serviceRef.createExchange(operation, inOutHandler);
                 } else {
-                    exchangeIn = serviceRef.createExchange(exchangeContract);
+                    exchangeIn = serviceRef.createExchange(inOutHandler);
                 }
                 Context contextIn = exchangeIn.getContext();
                 for (Map.Entry<String,Object> entry : parameters.entrySet()) {
@@ -102,7 +98,8 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
                 if (messageContentIn != null) {
                     messageIn.setContent(messageContentIn);
                 }
-                if (inOutHandler != null && ExchangePattern.IN_OUT.equals(exchangePattern)) {
+                if (inOutHandler != null && ExchangePattern.IN_OUT.equals(
+                        exchangeIn.getContract().getServiceOperation().getExchangePattern())) {
                     exchangeIn.send(messageIn);
                     try {
                         Exchange exchangeOut = inOutHandler.waitForOut();
@@ -154,21 +151,4 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
         }
         return serviceName;
     }
-
-    private ExchangeContract getExchangeContract(ServiceReference serviceRef, Map<String, Object> parameters) {
-        final ExchangeContract exchangeContract;
-        Object on = parameters.get(SERVICE_OPERATION_NAME);
-        if (on instanceof String) {
-            String operationName = (String)on;
-            ServiceOperation operation = serviceRef.getInterface().getOperation(operationName);
-            if (operation == null) {
-                throw new RuntimeException("operationName [" + operationName + "] == null");
-            }
-            exchangeContract = new BaseExchangeContract(operation);
-        } else {
-            exchangeContract = ExchangeContract.IN_ONLY;
-        }
-        return exchangeContract;
-    }
-
 }

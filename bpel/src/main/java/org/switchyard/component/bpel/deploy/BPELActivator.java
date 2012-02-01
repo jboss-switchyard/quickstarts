@@ -26,19 +26,17 @@ import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
 import org.riftsaw.engine.BPELEngine;
 import org.riftsaw.engine.BPELEngineFactory;
-import org.riftsaw.engine.ServiceLocator;
 import org.riftsaw.engine.internal.BPELEngineImpl;
-import org.switchyard.ExchangeHandler;
-import org.switchyard.ServiceReference;
 import org.switchyard.component.bpel.config.model.BPELComponentImplementationModel;
 import org.switchyard.component.bpel.exchange.BPELExchangeHandler;
 import org.switchyard.component.bpel.exchange.BPELExchangeHandlerFactory;
 import org.switchyard.component.bpel.riftsaw.RiftsawServiceLocator;
 import org.switchyard.config.Configuration;
-import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.deploy.BaseActivator;
+import org.switchyard.deploy.ServiceHandler;
 import org.switchyard.exception.SwitchYardException;
 
 /**
@@ -53,6 +51,8 @@ public class BPELActivator extends BaseActivator {
 
     private static BPELEngine _engine=null;
     private static Configuration _configuration=null;
+    private static RiftsawServiceLocator locator = new RiftsawServiceLocator();
+    
     
     /**
      * Constructs a new Activator of type "bpel".
@@ -61,6 +61,55 @@ public class BPELActivator extends BaseActivator {
         super("bpel");
     }
     
+    
+    @Override
+    public ServiceHandler activateService(QName serviceName, ComponentModel config) {
+        init();
+        
+        BPELExchangeHandler handler = BPELExchangeHandlerFactory.instance().newBPELExchangeHandler(getServiceDomain());
+        BPELComponentImplementationModel bciModel = (BPELComponentImplementationModel)config.getImplementation();
+        ComponentServiceModel service = null;
+        for (ComponentServiceModel csm : config.getServices()) {
+            if (csm.getQName().equals(serviceName)) {
+                service = csm;
+                break;
+            }
+        }
+        
+        if (service.getInterface() == null) {
+            throw new SwitchYardException("Interface not defined for component with BPEL implementation");
+        }
+            
+        
+        // take care of references
+        for (ComponentReferenceModel crm : config.getReferences()) {
+            locator.addServiceDomain(crm.getQName(), getServiceDomain());
+            ((RiftsawServiceLocator)_engine.getServiceLocator()).initialiseReference(crm);
+        }
+        
+        handler.init(serviceName, bciModel, service.getInterface().getInterface(), _engine);
+        _handlers.put(serviceName, handler);
+            
+        return handler;
+    }
+    
+    @Override
+    public void deactivateService(QName name, ServiceHandler handler) {
+        _handlers.remove(name);
+        // Check if engine should be removed
+        synchronized (BPELActivator.class) {
+            if (_handlers.size() == 0 && _engine != null) {
+                try {
+                    _engine.close();
+                    _engine = null;
+                } catch (Exception e) {
+                    LOG.error("Failed to close BPEL engine", e);
+                }
+            }
+        }
+    }
+
+
     /**
      * Associate the configuration with the activator.
      * 
@@ -74,13 +123,12 @@ public class BPELActivator extends BaseActivator {
     }
 
     protected void init() {
-        synchronized (this) {
+        // _engine is a static member, so this synchronization needs to be on the class
+        synchronized (BPELActivator.class) {
             if (_engine == null) {
                 _engine = BPELEngineFactory.getEngine();
                 
                 try {
-                    ServiceLocator locator=new RiftsawServiceLocator(getServiceDomain());
-                    
                     java.util.Properties props=new java.util.Properties();
 
                     // Load default properties
@@ -111,93 +159,6 @@ public class BPELActivator extends BaseActivator {
                     _engine.init(locator, props);
                 } catch (Exception e) {
                     throw new SwitchYardException("Failed to initialize the engine: "+ e, e);
-                }
-            }
-        }
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public ExchangeHandler init(QName qname, Model model) {
-        
-        init();
-        
-        if (model instanceof ComponentServiceModel) {
-            BPELExchangeHandler handler = BPELExchangeHandlerFactory.instance().newBPELExchangeHandler(getServiceDomain());
-            
-            BPELComponentImplementationModel bciModel=null;
-            
-               if (((ComponentServiceModel)model).getComponent().getImplementation() instanceof BPELComponentImplementationModel) {
-                bciModel = (BPELComponentImplementationModel)((ComponentServiceModel)model).getComponent().getImplementation();
-            } else {
-                throw new SwitchYardException("Component is not BPEL");
-            }
-            
-            if (((ComponentServiceModel) model).getInterface() == null) {
-                throw new SwitchYardException("Interface not defined for component with BPEL implementation");
-            }
-            
-            handler.init(qname, bciModel,
-                    ((ComponentServiceModel) model).getInterface().getInterface(),
-                    _engine);
-            
-            _handlers.put(qname, handler);
-            return handler;
-        } else if (model instanceof ComponentReferenceModel) {
-            ComponentReferenceModel crm=(ComponentReferenceModel)model;
-            
-            // Initialize the reference, by setting up a mapping from the referenced
-            // wsdl to the referenced service
-            ((RiftsawServiceLocator)_engine.getServiceLocator()).initialiseReference(crm);
-            
-            return null;
-        }
-        
-        throw new SwitchYardException("No BPEL component implementations found for service " + qname);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public void start(ServiceReference serviceRef) {
-        BPELExchangeHandler handler = _handlers.get(serviceRef.getName());
-        if (handler != null) {
-            handler.start(serviceRef);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void stop(ServiceReference serviceRef) {
-        BPELExchangeHandler handler = _handlers.get(serviceRef.getName());
-        if (handler != null) {
-            handler.stop(serviceRef);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void destroy(ServiceReference serviceRef) {
-        BPELExchangeHandler handler = _handlers.get(serviceRef.getName());
-        if (handler != null) {
-            try {
-                handler.destroy(serviceRef);
-            } finally {
-                _handlers.remove(serviceRef.getName());
-            }
-        }
-        
-        // Check if engine should be removed
-        synchronized (this) {
-            if (_handlers.size() == 0 && _engine != null) {
-                try {
-                    _engine.close();
-                    _engine = null;
-                } catch (Exception e) {
-                    LOG.error("Failed to close BPEL engine", e);
                 }
             }
         }

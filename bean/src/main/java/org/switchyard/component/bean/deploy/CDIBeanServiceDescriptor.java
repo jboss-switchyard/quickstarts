@@ -21,7 +21,6 @@ package org.switchyard.component.bean.deploy;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.BeanManager;
 
-import org.switchyard.ExchangeHandler;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.component.bean.BeanServiceMetadata;
 import org.switchyard.component.bean.Service;
@@ -77,7 +76,7 @@ public class CDIBeanServiceDescriptor implements ServiceDescriptor {
     }
 
     @Override
-    public ExchangeHandler getHandler() {
+    public ServiceProxyHandler getHandler() {
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(_beanDeploymentMetaData.getDeploymentClassLoader());

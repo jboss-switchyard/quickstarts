@@ -20,8 +20,6 @@
  */
 package org.switchyard.component.hornetq.deploy;
 
-import javax.xml.namespace.QName;
-
 import org.apache.log4j.Logger;
 import org.hornetq.api.core.client.ClientConsumer;
 import org.hornetq.api.core.client.ClientMessage;
@@ -30,8 +28,7 @@ import org.hornetq.api.core.client.ClientSessionFactory;
 import org.hornetq.api.core.client.MessageHandler;
 import org.hornetq.api.core.client.ServerLocator;
 import org.switchyard.Exchange;
-import org.switchyard.ExchangeHandler;
-import org.switchyard.HandlerException;
+import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.hornetq.composer.HornetQComposition;
 import org.switchyard.component.hornetq.config.model.HornetQBindingModel;
@@ -39,10 +36,8 @@ import org.switchyard.component.hornetq.config.model.HornetQConfigModel;
 import org.switchyard.component.hornetq.config.model.OperationSelector;
 import org.switchyard.component.hornetq.internal.HornetQUtil;
 import org.switchyard.composer.MessageComposer;
+import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.exception.SwitchYardException;
-import org.switchyard.metadata.BaseExchangeContract;
-import org.switchyard.metadata.InOnlyOperation;
-import org.switchyard.metadata.ServiceOperation;
 
 /**
  * A HornetQ inbound handler is a HornetQ MessageHandler that handles messages from a HornetQ
@@ -51,7 +46,7 @@ import org.switchyard.metadata.ServiceOperation;
  * @author Daniel Bevenius
  *
  */
-public class InboundHandler implements ExchangeHandler, MessageHandler {
+public class InboundHandler extends BaseServiceHandler implements MessageHandler {
     
     private Logger _logger = Logger.getLogger(InboundHandler.class);
 
@@ -60,6 +55,7 @@ public class InboundHandler implements ExchangeHandler, MessageHandler {
     private final MessageComposer<ClientMessage> _messageComposer;
     private ClassLoader _applicationClassLoader;
     private ServiceReference _serviceRef;
+    private ServiceDomain _domain;
     private ServerLocator _serverLocator;
     private ClientSessionFactory _factory;
     private ClientSession _session;
@@ -69,13 +65,15 @@ public class InboundHandler implements ExchangeHandler, MessageHandler {
      * Sole constructor that takes a {@link HornetQBindingModel}.
      * 
      * @param hbm the {@link HornetQBindingModel} containing the configuration for this handler.
-     * @param serverLocator the HornetQServer locator used to interact with HornetQ. 
+     * @param serverLocator the HornetQServer locator used to interact with HornetQ.
+     * @param domain service domain
      */
-    public InboundHandler(final HornetQBindingModel hbm, final ServerLocator serverLocator) {
+    public InboundHandler(final HornetQBindingModel hbm, final ServerLocator serverLocator, ServiceDomain domain) {
         _applicationClassLoader = Thread.currentThread().getContextClassLoader();
         _bindingModel = hbm;
         _configModel = hbm.getHornetQConfig();
         _messageComposer = HornetQComposition.getMessageComposer(hbm);
+        _domain = domain;
         _serverLocator = serverLocator;
     }
 
@@ -83,11 +81,9 @@ public class InboundHandler implements ExchangeHandler, MessageHandler {
      * Starts this InboundHandler which involves setting up this inbound handler as 
      * a HornetQ MessageHandler so that messgages that arrive on the configured destination
      * will be passed to the SwitchYard {@link ServiceReference}.
-     * 
-     * @param serviceRef the SwitchYard service that the message contents should be sent to.
      */
-    public void start(final ServiceReference serviceRef) {
-        _serviceRef = serviceRef;
+    public void start() {
+        _serviceRef = _domain.getServiceReference(_bindingModel.getService().getQName());
         try {
             _factory =  _serverLocator.createSessionFactory();
             _session = _configModel.isXASession() ? _factory.createXASession() : _factory.createSession();
@@ -102,10 +98,8 @@ public class InboundHandler implements ExchangeHandler, MessageHandler {
     /**
      * Closes the resources opened by this instance. This includes the consumer, session, session factory, 
      * and the server locator.
-     * 
-     * @param serviceRef the service reference that is the target of this inbound handler.
      */
-    public void stop(final ServiceReference serviceRef) {
+    public void stop() {
         HornetQUtil.closeClientConsumer(_consumer);
         HornetQUtil.closeSession(_session);
         HornetQUtil.closeSessionFactory(_factory);
@@ -114,7 +108,7 @@ public class InboundHandler implements ExchangeHandler, MessageHandler {
     
     @Override
     public void onMessage(final ClientMessage message) {
-        final Exchange exchange = createExchange(_serviceRef);
+        final Exchange exchange = _serviceRef.createExchange(getOperationName(), this);
         final ClassLoader origCl = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(_applicationClassLoader);
@@ -127,14 +121,6 @@ public class InboundHandler implements ExchangeHandler, MessageHandler {
         }
     }
     
-    private Exchange createExchange(final ServiceReference serviceReference) {
-        final String operationName = getOperationName();
-        final QName inputType = getOperationInputType(serviceReference, operationName);
-        final InOnlyOperation inOnlyOperation = new InOnlyOperation(operationName, inputType);
-        final BaseExchangeContract contract = new BaseExchangeContract(inOnlyOperation);
-        return serviceReference.createExchange(contract);
-    }
-    
     private String getOperationName() {
         final OperationSelector operationSelector = _bindingModel.getOperationSelector();
         if (operationSelector != null) {
@@ -142,26 +128,4 @@ public class InboundHandler implements ExchangeHandler, MessageHandler {
         }
         return null;
     }
-    
-    private QName getOperationInputType(final ServiceReference ref, final String operationName) {
-        final ServiceOperation operation = ref.getInterface().getOperation(operationName);
-        if (operation != null) {
-            return operation.getInputType();
-        }
-        
-        throw new SwitchYardException("The operationName [" + operationName + "] was not found on the" 
-                + " in the set of operations of the interface " + ref.getInterface().getOperations() 
-                + ". Please check that the 'operationName' attribute specified in the HornetQ binding "
-                + " matches an operation on the interface.");
-    }
-
-    @Override
-    public void handleMessage(final Exchange exchange) throws HandlerException {
-        
-    }
-
-    @Override
-    public void handleFault(final Exchange exchange) {
-    }
-
 }

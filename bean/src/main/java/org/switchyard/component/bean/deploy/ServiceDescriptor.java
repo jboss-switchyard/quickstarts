@@ -21,7 +21,7 @@ package org.switchyard.component.bean.deploy;
 
 import java.io.Serializable;
 
-import org.switchyard.ExchangeHandler;
+import org.switchyard.component.bean.ServiceProxyHandler;
 import org.switchyard.metadata.ServiceInterface;
 
 /**
@@ -38,10 +38,10 @@ public interface ServiceDescriptor extends Serializable {
     String getServiceName();
 
     /**
-     * Get the ExchangeHandler.
-     * @return The ExchangeHandler.
+     * Get the ServiceHandler.
+     * @return The ServiceHandler.
      */
-    ExchangeHandler getHandler();
+    ServiceProxyHandler getHandler();
 
     /**
      * Get the ServiceInterface.

@@ -20,15 +20,18 @@
 package org.switchyard.component.bean;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
-import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.ServiceReference;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
 import org.switchyard.component.bean.internal.context.ContextProxy;
+import org.switchyard.deploy.ServiceHandler;
 import org.switchyard.exception.SwitchYardException;
 
 /**
@@ -41,7 +44,7 @@ import org.switchyard.exception.SwitchYardException;
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class ServiceProxyHandler implements ExchangeHandler {
+public class ServiceProxyHandler implements ServiceHandler {
 
     private static Logger _logger = Logger.getLogger(ServiceProxyHandler.class);
 
@@ -57,6 +60,9 @@ public class ServiceProxyHandler implements ExchangeHandler {
      * Deployment metadata.
      */
     private BeanDeploymentMetaData _beanDeploymentMetaData;
+    
+    private Map<String, ServiceReference> _references = 
+            new HashMap<String, ServiceReference>();
 
     /**
      * Public constructor.
@@ -65,10 +71,12 @@ public class ServiceProxyHandler implements ExchangeHandler {
      * @param serviceMetadata The Service bean metadata.
      * @param beanDeploymentMetaData Deployment metadata.
      */
-    public ServiceProxyHandler(Object serviceBean, BeanServiceMetadata serviceMetadata, BeanDeploymentMetaData beanDeploymentMetaData) {
-        this._serviceBean = serviceBean;
-        this._serviceMetadata = serviceMetadata;
-        this._beanDeploymentMetaData = beanDeploymentMetaData;
+    public ServiceProxyHandler(Object serviceBean,
+            BeanServiceMetadata serviceMetadata, 
+            BeanDeploymentMetaData beanDeploymentMetaData) {
+        _serviceBean = serviceBean;
+        _serviceMetadata = serviceMetadata;
+        _beanDeploymentMetaData = beanDeploymentMetaData;
     }
 
     /**
@@ -87,6 +95,14 @@ public class ServiceProxyHandler implements ExchangeHandler {
      * @param exchange an {@code Exchange} instance containing a message to be processed.
      */
     public void handleFault(Exchange exchange) {
+    }
+    
+    /**
+     * Add the specified reference to the handler.
+     * @param reference service reference
+     */
+    public void addReference(ServiceReference reference) {
+        _references.put(reference.getName().getLocalPart(), reference);
     }
 
     /**
@@ -128,10 +144,26 @@ public class ServiceProxyHandler implements ExchangeHandler {
             } catch (IllegalAccessException e) {
                 throw new BeanComponentException("Cannot invoke operation '" + invocation.getMethod().getName() + "' on bean component '" + _serviceBean.getClass().getName() + "'.", e);
             } catch (InvocationTargetException e) {
+                e.printStackTrace();
                 throw new BeanComponentException("Invocation of operation '" + invocation.getMethod().getName() + "' on bean component '" + _serviceBean.getClass().getName() + "' failed with exception.  See attached cause.", e);
             }
         } else {
             throw new SwitchYardException("Unexpected error.  BeanServiceMetadata should return an Invocation instance, or throw a BeanComponentException.");
         }
+    }
+
+    @Override
+    public void start() {
+        // Initialise any client proxies to the started service...
+        for (ClientProxyBean proxyBean : _beanDeploymentMetaData.getClientProxies()) {
+            if (_references.containsKey(proxyBean.getServiceName())) {
+                proxyBean.setService(_references.get(proxyBean.getServiceName()));
+            }
+        }
+    }
+
+    @Override
+    public void stop() {
+        // NOP
     }
 }

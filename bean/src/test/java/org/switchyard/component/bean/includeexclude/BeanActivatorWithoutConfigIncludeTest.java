@@ -19,17 +19,20 @@
 
 package org.switchyard.component.bean.includeexclude;
 
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
-import org.switchyard.ServiceReference;
 import org.switchyard.component.bean.deploy.BeanComponentActivator;
+import org.switchyard.internal.DomainImpl;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
-
-import javax.xml.namespace.QName;
 
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(mixins = CDIMixIn.class, include = BeanComponentActivator.BEAN_TYPE)
@@ -39,7 +42,8 @@ public class BeanActivatorWithoutConfigIncludeTest {
 
     @Test
     public void test() {
-        ServiceReference service = domain.getService(QName.valueOf("ConsumerService"));
-        Assert.assertNotNull(service);
+        List<Service> services = ((DomainImpl)domain).getServiceRegistry().getServices(
+                QName.valueOf("ConsumerService"));
+        Assert.assertEquals(1, services.size());
     }
 }

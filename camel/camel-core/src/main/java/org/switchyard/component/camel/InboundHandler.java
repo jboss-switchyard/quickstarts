@@ -35,16 +35,15 @@ import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.util.URISupport;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.switchyard.Exchange;
-import org.switchyard.ExchangeHandler;
-import org.switchyard.ServiceReference;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.component.camel.config.model.OperationSelector;
 import org.switchyard.component.camel.transaction.TransactionManagerFactory;
+import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.exception.SwitchYardException;
 
 /**
- * An {@link ExchangeHandler} that acts as a gateway/entrypoint for Camel Components.
+ * An ExchangeHandler that acts as a gateway/entrypoint for Camel Components.
  * 
  * This gives access to all component of Apache Camel and works by creating a
  * Camel route that looks something like this 
@@ -55,12 +54,13 @@ import org.switchyard.exception.SwitchYardException;
  * @author Daniel Bevenius
  *
  */
-public class InboundHandler implements ExchangeHandler {
+public class InboundHandler extends BaseServiceHandler {
     private static final String TRANSACTED_REF = "transactionPolicy";
     private static TransactionManagerFactory TM_FACTORY = TransactionManagerFactory.getInstance();
     private final CamelBindingModel _camelBindingModel;
     private final CamelContext _camelContext;
     private RouteDefinition _routeDefinition;
+    private QName _serviceName;
 
     /**
      * Sole constructor.
@@ -73,6 +73,7 @@ public class InboundHandler implements ExchangeHandler {
         _camelBindingModel = camelBindingModel;
         _camelContext = camelContext;
         _routeDefinition = createRouteDefinition(serviceName);
+        _serviceName = serviceName;
         
         try {
             _camelContext.addRouteDefinition(_routeDefinition);
@@ -157,26 +158,30 @@ public class InboundHandler implements ExchangeHandler {
 
     /**
      * Will create the Camel route and add it to the {@link CamelContext}.
-     * 
-     * @param serviceReference The target service reference.
-     * @throws Exception If an error occurs while creating the route definition.
      */
-    public void start(final ServiceReference serviceReference) throws Exception {
-        if (_routeDefinition.getStatus(_camelContext).isStartable()) {
-            _camelContext.startRoute(_routeDefinition);
+    @Override
+    public void start() {
+        try {
+            if (_routeDefinition.getStatus(_camelContext).isStartable()) {
+                _camelContext.startRoute(_routeDefinition);
+            }
+        } catch (Exception ex) {
+            throw new SwitchYardException("Failed to start route for service " + _serviceName, ex);
         }
     }
 
     /**
-     * Suspends the route associated with the {@link ServiceReference}.
-     *
-     * @param serviceRef The {@link ServiceReference} of the target service.
-     * @throws Exception If an error occurs while trying to suspend the route from the {@link CamelContext}.
+     * Suspends the route.
      */
-    public void stop(final ServiceReference serviceRef) throws Exception {
+    @Override
+    public void stop() {
         final String routeId = _routeDefinition.getId();
-        _camelContext.stopRoute(routeId);
-        _camelContext.removeRoute(routeId);
+        try {
+            _camelContext.stopRoute(routeId);
+            _camelContext.removeRoute(routeId);
+        } catch (Exception ex) {
+            throw new SwitchYardException("Failed to stop route for service " + _serviceName, ex);
+        }
     }
 
     private String namespace(QName serviceName) {

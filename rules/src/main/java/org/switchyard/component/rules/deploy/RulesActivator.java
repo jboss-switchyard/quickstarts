@@ -23,14 +23,12 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.ExchangeHandler;
-import org.switchyard.ServiceReference;
 import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
 import org.switchyard.component.rules.exchange.RulesExchangeHandler;
 import org.switchyard.component.rules.exchange.RulesExchangeHandlerFactory;
-import org.switchyard.config.model.Model;
-import org.switchyard.config.model.composite.ComponentServiceModel;
+import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.deploy.BaseActivator;
+import org.switchyard.deploy.ServiceHandler;
 
 /**
  * Activator for the Rules component.
@@ -40,7 +38,6 @@ import org.switchyard.deploy.BaseActivator;
 public class RulesActivator extends BaseActivator {
 
     private Map<QName,RulesExchangeHandler> _handlers = new HashMap<QName,RulesExchangeHandler>();
-    private Map<QName,ServiceReference> _references = new HashMap<QName,ServiceReference>();
 
     /**
      * Constructs a new Activator of type "rules".
@@ -48,59 +45,30 @@ public class RulesActivator extends BaseActivator {
     public RulesActivator() {
         super("rules");
     }
-
+   
     /**
-     * {@inheritDoc}
-     */
+    * {@inheritDoc}
+    */
     @Override
-    public ExchangeHandler init(QName qname, Model model) {
-        if (model instanceof ComponentServiceModel) {
-            RulesExchangeHandler handler = RulesExchangeHandlerFactory.instance().newRulesExchangeHandler();
-            RulesComponentImplementationModel rciModel = (RulesComponentImplementationModel)((ComponentServiceModel)model).getComponent().getImplementation();
-            handler.init(qname, rciModel, _references);
-            _handlers.put(qname, handler);
-            return handler;
-        }
-        return null;
+    public ServiceHandler activateService(QName name, ComponentModel config) {
+        RulesExchangeHandler handler = RulesExchangeHandlerFactory.instance().newRulesExchangeHandler();
+        RulesComponentImplementationModel rciModel = (RulesComponentImplementationModel)config.getImplementation();
+        handler.init(name, rciModel, getServiceDomain());
+        _handlers.put(name, handler);
+        return handler;
     }
-
+    
     /**
      * {@inheritDoc}
      */
     @Override
-    public void start(ServiceReference serviceRef) {
-        RulesExchangeHandler handler = _handlers.get(serviceRef.getName());
-        if (handler != null) {
-            handler.start(serviceRef);
+    public void deactivateService(QName name, ServiceHandler handler) {
+        
+        try {
+            ((RulesExchangeHandler)handler).destroy();
+        } finally {
+            _handlers.remove(name);
         }
-        _references.put(serviceRef.getName(), serviceRef);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void stop(ServiceReference serviceRef) {
-        RulesExchangeHandler handler = _handlers.get(serviceRef.getName());
-        if (handler != null) {
-            handler.stop(serviceRef);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void destroy(ServiceReference serviceRef) {
-        RulesExchangeHandler handler = _handlers.get(serviceRef.getName());
-        if (handler != null) {
-            try {
-                handler.destroy(serviceRef);
-            } finally {
-                _handlers.remove(serviceRef.getName());
-            }
-        }
-        _references.remove(serviceRef.getName());
     }
 
 }

@@ -20,21 +20,12 @@
  */
 package org.switchyard.component.clojure.deploy;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.xml.namespace.QName;
 
-import org.switchyard.ExchangeHandler;
-import org.switchyard.ServiceReference;
 import org.switchyard.component.clojure.config.model.ClojureComponentImplementationModel;
-import org.switchyard.config.model.Model;
-import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
-import org.switchyard.config.model.composite.ComponentServiceModel;
-import org.switchyard.exception.SwitchYardException;
-
 import org.switchyard.deploy.BaseActivator;
+import org.switchyard.deploy.ServiceHandler;
 
 /**
  * Activator for implemenations.clojure.
@@ -46,60 +37,20 @@ public class ClojureActivator extends BaseActivator {
     
     private static final String[] TYPES = new String[] {"clojure"};
     
-    private Map<QName, ClojureHandler> _handlers = new HashMap<QName, ClojureHandler>();
-    
     /**
      * Sole constructor .
      */
     public ClojureActivator() {
         super(TYPES);
     }
-
-    @Override
-    public ExchangeHandler init(final QName name, final Model config) {
-        if (isComponentService(config)) {
-            return handleImplemenation(config, name);
-        }
-        return null;
-    }
     
-    private ClojureHandler handleImplemenation(final Model model, final QName serviceName) {
-        final ComponentImplementationModel implModel = getComponentImplementationModel(model);
-        if (implModel instanceof ClojureComponentImplementationModel) {
-            final ClojureHandler clojureHandler = new ClojureHandler((ClojureComponentImplementationModel) implModel);
-            _handlers.put(serviceName, clojureHandler);
-            return clojureHandler;
-        }
-        return null;
-    }
-    
-    private boolean isComponentService(final Model config) {
-        return config instanceof ComponentServiceModel;
-    }
-    
-    private ComponentImplementationModel getComponentImplementationModel(final Model config) {
-        final Model modelParent = ((ComponentServiceModel)config).getModelParent();
-        final ComponentModel componentModel = (ComponentModel) modelParent;
-        return componentModel.getImplementation();
+    @Override
+    public ServiceHandler activateService(QName name, ComponentModel config) {
+        return new ClojureHandler((ClojureComponentImplementationModel)config.getImplementation());
     }
 
     @Override
-    public void start(final ServiceReference service) {
-        for (ClojureHandler handler : _handlers.values()) {
-            try {
-                handler.start(service);
-            } catch (Exception e) {
-                throw new SwitchYardException(e);
-            }
-        }
+    public void deactivateService(QName name, ServiceHandler handler) {
+        // Nothing to do here
     }
-
-    @Override
-    public void stop(final ServiceReference service) {
-    }
-
-    @Override
-    public void destroy(final ServiceReference service) {
-    }
-
 }

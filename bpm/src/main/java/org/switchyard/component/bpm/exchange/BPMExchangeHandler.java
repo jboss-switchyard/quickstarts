@@ -20,16 +20,15 @@ package org.switchyard.component.bpm.exchange;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.ExchangeHandler;
-import org.switchyard.ServiceReference;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
+import org.switchyard.deploy.ServiceHandler;
 
 /**
  * The ExchangeHandler for the BPM component.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface BPMExchangeHandler extends ExchangeHandler {
+public interface BPMExchangeHandler extends ServiceHandler {
 
     /**
      * Initializes the BPMExchangeHandler.
@@ -39,21 +38,8 @@ public interface BPMExchangeHandler extends ExchangeHandler {
     public void init(QName qname, BPMComponentImplementationModel model);
 
     /**
-     * Starts the BPMExchangeHandler.
-     * @param serviceRef the service reference
-     */
-    public void start(ServiceReference serviceRef);
-
-    /**
-     * Stops the BPMExchangeHandler.
-     * @param serviceRef the service reference
-     */
-    public void stop(ServiceReference serviceRef);
-
-    /**
      * Destroys the BPMExchangeHandler.
-     * @param serviceRef the service reference
      */
-    public void destroy(ServiceReference serviceRef);
+    public void destroy();
 
 }

@@ -25,11 +25,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.switchyard.Exchange;
-import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.composer.MessageComposer;
+import org.switchyard.deploy.ServiceHandler;
 import org.switchyard.exception.SwitchYardException;
 
 /**
@@ -41,7 +41,7 @@ import org.switchyard.exception.SwitchYardException;
  * @author Daniel Bevenius
  *
  */
-public class SwitchYardConsumer extends DefaultConsumer implements ExchangeHandler {
+public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandler {
     
     private final MessageComposer<org.apache.camel.Message> _messageComposer;
     
@@ -69,6 +69,24 @@ public class SwitchYardConsumer extends DefaultConsumer implements ExchangeHandl
         }
     }
     
+    @Override
+    public void start() {
+        try {
+            super.start();
+        } catch (Exception ex) {
+            throw new SwitchYardException(ex);
+        }
+    }
+
+    @Override
+    public void stop() {
+        try {
+            super.stop();
+        } catch (Exception ex) {
+            throw new SwitchYardException(ex);
+        }
+    }
+
     private void invokeCamelProcessor(final org.apache.camel.Exchange camelExchange) throws HandlerException {
         try {
             getProcessor().process(camelExchange);

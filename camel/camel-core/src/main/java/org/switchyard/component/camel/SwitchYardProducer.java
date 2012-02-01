@@ -34,9 +34,6 @@ import org.switchyard.component.camel.composer.CamelMessageComposer;
 import org.switchyard.component.camel.deploy.ServiceReferences;
 import org.switchyard.composer.MessageComposer;
 import org.switchyard.exception.SwitchYardException;
-import org.switchyard.metadata.BaseExchangeContract;
-import org.switchyard.metadata.InOnlyOperation;
-import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.policy.ExchangePolicy;
@@ -116,21 +113,10 @@ public class SwitchYardProducer extends DefaultProducer {
     }
     
     private Exchange createSwitchyardExchange(final org.apache.camel.Exchange camelExchange, final ServiceReference serviceRef) {
-        return isInOnly(camelExchange.getPattern()) ? createInOnlyExchange(serviceRef, camelExchange) : createInOutExchange(serviceRef, camelExchange);
+        return serviceRef.createExchange(_operationName, 
+                new CamelResponseHandler(camelExchange, serviceRef, _messageComposer));
     }
     
-    private boolean isInOnly(final org.apache.camel.ExchangePattern pattern) {
-        return pattern == org.apache.camel.ExchangePattern.InOnly;
-    }
-    
-    private Exchange createInOnlyExchange(final ServiceReference ref, final org.apache.camel.Exchange ex) {
-        final QName operationInputType = getOperationInputType(ref);
-        final InOnlyOperation inOnlyOperation = new InOnlyOperation(_operationName, operationInputType);
-        final BaseExchangeContract contract = new BaseExchangeContract(inOnlyOperation);
-        setInputMessageType(contract, operationInputType);
-        
-        return ref.createExchange(contract, new CamelResponseHandler(ex, ref, _messageComposer));
-    }
     
     private String lookupOperationNameFor(final ServiceReference serviceRef) {
         final Set<ServiceOperation> operations = serviceRef.getInterface().getOperations();
@@ -145,16 +131,6 @@ public class SwitchYardProducer extends DefaultProducer {
         return serviceOperation.getName();
     }
     
-    private Exchange createInOutExchange(final ServiceReference ref, final org.apache.camel.Exchange camelExchange) {
-        final QName operationInputType = getOperationInputType(ref);
-        final QName operationOutputType = getOperationOutputType(ref);
-        final InOutOperation inOutOperation = new InOutOperation(_operationName, operationInputType, operationOutputType);
-        final BaseExchangeContract exchangeContract = new BaseExchangeContract(inOutOperation);
-        setInputMessageType(exchangeContract, operationInputType);
-        
-        return ref.createExchange(exchangeContract, new CamelResponseHandler(camelExchange, ref, _messageComposer));
-    }
-    
     private QName getOperationInputType(final ServiceReference ref) {
         final ServiceOperation operation = getOperation(ref);
         if (operation != null) {
@@ -163,20 +139,8 @@ public class SwitchYardProducer extends DefaultProducer {
         return null;
     }
     
-    private QName getOperationOutputType(final ServiceReference ref) {
-        final ServiceOperation operation = getOperation(ref);
-        if (operation != null) {
-            return operation.getOutputType();
-        }
-        return null;
-    }
-    
     private ServiceOperation getOperation(final ServiceReference ref) {
         return ref.getInterface().getOperation(_operationName);
-    }
-    
-    private void setInputMessageType(final BaseExchangeContract exchangeContract, final QName type) {
-        exchangeContract.getInvokerInvocationMetaData().setInputType(type);
     }
 
     private Class<?> getInputType(final ServiceReference serviceRef) {

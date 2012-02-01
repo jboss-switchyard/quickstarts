@@ -18,12 +18,11 @@
  */
 package org.switchyard.component.bpel.riftsaw;
 
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
-import org.switchyard.test.SwitchYardTestKit;
-
-import static org.junit.Assert.*;
-
 import org.switchyard.test.SwitchYardTestCaseConfig;
+import org.switchyard.test.SwitchYardTestKit;
 import org.switchyard.test.mixins.CDIMixIn;
 import org.switchyard.test.mixins.HTTPMixIn;
 import org.switchyard.transform.config.model.TransformSwitchYardScanner;
@@ -64,6 +63,7 @@ public class BPELLoanApprovalTest {
                 postResourceAndTestXML("http://localhost:18001/loanService",
                 		"/loan_approval/soap-loanreq1.xml", "/loan_approval/soap-loanresp1.xml");
     }
+    
     
     @Test
     public void sendLoanRequest2() throws Exception {

@@ -25,11 +25,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.composer.MessageComposer;
+import org.switchyard.deploy.BaseServiceHandler;
+import org.switchyard.exception.SwitchYardException;
 
 /**
  * A handler that is capable of calling Apache Camel components and returning responses 
@@ -42,7 +43,7 @@ import org.switchyard.composer.MessageComposer;
  * @author Daniel Bevenius
  *
  */
-public class OutboundHandler extends BaseHandler {
+public class OutboundHandler extends BaseServiceHandler {
     
     private final MessageComposer<org.apache.camel.Message> _messageComposer;
     private final ProducerTemplate _producerTemplate;
@@ -74,11 +75,14 @@ public class OutboundHandler extends BaseHandler {
     
     /**
      * Stops the {@link ProducerTemplate}.
-     * 
-     * @throws Exception If an error occurs while trying to stop the {@link ProducerTemplate}.
      */
-    public void stop() throws Exception {
-        _producerTemplate.stop();
+    @Override
+    public void stop() {
+        try {
+            _producerTemplate.stop();
+        } catch (Exception ex) {
+            throw new SwitchYardException("Failed to stop Camel producer template for " + _uri, ex);
+        }
     }
 
     /**

@@ -44,6 +44,7 @@ import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.type.Classes;
@@ -78,11 +79,11 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
     private final Lock _stateLock = new ReentrantLock();
     private String _targetNamespace;
     private String _messageContentName;
+    private ServiceDomain _domain;
     private KnowledgeAgent _kagent;
     private AuditModel _audit;
     private Map<String,RulesActionModel> _actions = new HashMap<String,RulesActionModel>();
     private Map<String,Channel> _channels = new HashMap<String,Channel>();
-    private Map<QName,ServiceReference> _references;
     private KnowledgeBase _kbase;
     private KnowledgeSessionConfiguration _ksessionConfig;
     private Environment _environment;
@@ -99,8 +100,9 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
      * {@inheritDoc}
      */
     @Override
-    public void init(QName qname, RulesComponentImplementationModel model, Map<QName,ServiceReference> references) {
+    public void init(QName qname, RulesComponentImplementationModel model, ServiceDomain domain) {
         _targetNamespace = model.getComponent().getTargetNamespace();
+        _domain = domain;
         _messageContentName = model.getMessageContentName();
         if (_messageContentName == null) {
             _messageContentName = MESSAGE_CONTENT;
@@ -142,14 +144,13 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
                 LOGGER.warn(clazz.getName() + " does not implement " + Channel.class.getName());
             }
         }
-        _references = references;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void start(ServiceReference serviceRef) {
+    public void start() {
         // nothing necessary
     }
 
@@ -269,7 +270,7 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
      * {@inheritDoc}
      */
     @Override
-    public void stop(ServiceReference serviceRef) {
+    public void stop() {
         disposeStatefulSession();
     }
 
@@ -277,7 +278,7 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
      * {@inheritDoc}
      */
     @Override
-    public void destroy(ServiceReference serviceRef) {
+    public void destroy() {
         _kbase = null;
         _actions.clear();
         _channels.clear();
@@ -315,7 +316,7 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
                         if (channel instanceof SwitchYardChannel) {
                             SwitchYardChannel syc = (SwitchYardChannel)channel;
                             QName qname = XMLHelper.createQName(_targetNamespace, syc.getModel().getReference());
-                            ServiceReference reference = _references.get(qname);
+                            ServiceReference reference = _domain.getServiceReference(qname);
                             syc.setReference(reference);
                         }
                         _ksession.registerChannel(name, channel);

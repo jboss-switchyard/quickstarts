@@ -31,7 +31,6 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
-import org.switchyard.ServiceReference;
 import org.switchyard.component.bpel.BPELFault;
 import org.switchyard.component.bpel.config.model.BPELComponentImplementationModel;
 import org.switchyard.component.bpel.exchange.BPELExchangeHandler;
@@ -52,10 +51,11 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
     private static final Logger LOG =
             Logger.getLogger(RiftsawBPELExchangeHandler.class);
 
-    private BPELEngine _engine=null;
-    private QName _serviceName=null;
-    private javax.wsdl.Definition _wsdl=null;
-    private javax.wsdl.PortType _portType=null;
+    private BPELEngine _engine = null;
+    private QName _wsdlServiceName = null;
+    private QName _serviceName = null;
+    private javax.wsdl.Definition _wsdl = null;
+    private javax.wsdl.PortType _portType = null;
     private static java.util.Map<QName, QName> _serviceRefToCompositeMap=
                 new java.util.HashMap<QName, QName>();
     private static java.util.Map<QName, DeploymentRef> _deployed=
@@ -83,7 +83,8 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
         javax.wsdl.Service service =
                 WSDLHelper.getServiceForPortType(_portType, _wsdl);
 
-        _serviceName = service.getQName();
+        _wsdlServiceName = service.getQName();
+        _serviceName = qname;
 
         // Check if composite is already been initialized for BPEL processes
         QName compositeName = model.getComponent().getComposite().getQName();
@@ -205,9 +206,9 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
     /**
      * {@inheritDoc}
      */
-    public void start(ServiceReference serviceRef) {
+    public void start() {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("START: " + serviceRef);
+            LOG.debug("START: " + _serviceName);
         }
     }
 
@@ -232,7 +233,7 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
                                     operation);
 
             // Invoke the operation on the BPEL process
-            Element response = _engine.invoke(_serviceName, null,
+            Element response = _engine.invoke(_wsdlServiceName, null,
                     exchange.getContract().
                         getServiceOperation().getName(),
                             newreq, headers);
@@ -273,26 +274,26 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
      /**
      * {@inheritDoc}
      */
-    public void stop(ServiceReference serviceRef) {
+    public void stop() {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("STOP: "+serviceRef);
+            LOG.debug("STOP: " + _serviceName);
         }
         
-        DeploymentRef ref=_deployed.get(serviceRef.getName());
+        DeploymentRef ref=_deployed.get(_serviceName);
         
         if (ref != null) {            
             _engine.undeploy(ref);
         }
         
-        _serviceRefToCompositeMap.remove(serviceRef.getName());
+        _serviceRefToCompositeMap.remove(_serviceName);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void destroy(ServiceReference serviceRef) {
+    public void destroy() {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("DESTROY: "+serviceRef);
+            LOG.debug("DESTROY: " + _serviceName);
         }
     }
 

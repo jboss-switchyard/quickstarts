@@ -18,16 +18,10 @@
  */
 package org.switchyard.component.rules.channel.drools;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.rules.config.model.ChannelModel;
-import org.switchyard.metadata.BaseExchangeContract;
-import org.switchyard.metadata.ExchangeContract;
-import org.switchyard.metadata.InOnlyOperation;
-import org.switchyard.metadata.ServiceOperation;
 
 /**
  * A Drools Channel that can send to a SwitchYard Service (IN ONLY!).
@@ -37,7 +31,6 @@ import org.switchyard.metadata.ServiceOperation;
 public class SwitchYardServiceChannel implements SwitchYardChannel {
 
     private ChannelModel _model;
-    private ExchangeContract _contract;
     private ServiceReference _reference;
 
     /**
@@ -54,23 +47,6 @@ public class SwitchYardServiceChannel implements SwitchYardChannel {
     @Override
     public SwitchYardChannel setModel(ChannelModel model) {
         _model = model;
-        if (_model != null) {
-            String oper = _model.getOperation();
-            if (oper != null) {
-                ServiceOperation operation;
-                QName input = _model.getInput();
-                if (input != null) {
-                    operation = new InOnlyOperation(oper, input);
-                } else {
-                    operation = new InOnlyOperation(oper);
-                }
-                _contract = new BaseExchangeContract(operation);
-            } else {
-                _contract = ExchangeContract.IN_ONLY;
-            }
-        } else {
-            _contract = null;
-        }
         return this;
     }
 
@@ -96,7 +72,12 @@ public class SwitchYardServiceChannel implements SwitchYardChannel {
      */
     @Override
     public void send(Object object) {
-        Exchange exchange = _reference.createExchange(_contract);
+        Exchange exchange;
+        if (_model != null && _model.getOperation() != null) {
+            exchange = _reference.createExchange(_model.getOperation());
+        } else {
+            exchange = _reference.createExchange();
+        }
         Message message = exchange.createMessage();
         message.setContent(object);
         exchange.send(message);

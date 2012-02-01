@@ -19,25 +19,15 @@
 
 package org.switchyard.component.soap.deploy;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.xml.namespace.QName;
 
-import org.switchyard.ExchangeHandler;
-import org.switchyard.ServiceReference;
 import org.switchyard.component.soap.InboundHandler;
 import org.switchyard.component.soap.OutboundHandler;
-import org.switchyard.component.soap.WebServiceConsumeException;
-import org.switchyard.component.soap.WebServicePublishException;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.config.Configuration;
-import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.BindingModel;
-import org.switchyard.config.model.composite.CompositeReferenceModel;
-import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.deploy.BaseActivator;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.deploy.ServiceHandler;
 
 
 /**
@@ -46,11 +36,6 @@ import org.switchyard.exception.SwitchYardException;
 public class SOAPActivator extends BaseActivator {
 
     private static final String SOAP_TYPE = "soap";
-    
-    private Map<QName, InboundHandler> _inboundGateways = 
-        new HashMap<QName, InboundHandler>();
-    private Map<QName, OutboundHandler> _outboundGateways = 
-        new HashMap<QName, OutboundHandler>();
     private Configuration _environment;
     
     /**
@@ -60,71 +45,21 @@ public class SOAPActivator extends BaseActivator {
         super(SOAP_TYPE);
     }
 
-
     @Override
-    public ExchangeHandler init(QName name, Model config) {
-        if (config instanceof CompositeServiceModel) {
-            for (BindingModel binding : ((CompositeServiceModel)config).getBindings()) {
-                if (binding instanceof SOAPBindingModel) {
-                    SOAPBindingModel soapModel = (SOAPBindingModel)binding;
-                    soapModel.setEnvironment(_environment);
-                    InboundHandler handler = new InboundHandler(soapModel);
-                    _inboundGateways.put(name, handler);
-                    return handler;
-                }
-            }
-        }
-
-        if (config instanceof CompositeReferenceModel) {
-            for (BindingModel binding : ((CompositeReferenceModel)config).getBindings()) {
-                if (binding instanceof SOAPBindingModel) {
-                    SOAPBindingModel soapModel = (SOAPBindingModel)binding;
-                    soapModel.setEnvironment(_environment);
-                    OutboundHandler handler = new OutboundHandler(soapModel);
-                    _outboundGateways.put(name, handler);
-                    return handler;
-                }
-            }
-        }
-
-        // no bindings were found, raise a deployment error
-        throw new SwitchYardException("No SOAP bindings found for service " + name);
-    }
-
-    @Override
-    public void start(ServiceReference service) {
-        if (_inboundGateways.containsKey(service.getName())) {
-            try {
-                _inboundGateways.get(service.getName()).start(service);
-            } catch (WebServicePublishException ex) {
-                throw new SwitchYardException(
-                        "Failed to start inbound gateway for service " + service.getName(), ex);
-            }
-        }
-        if (_outboundGateways.containsKey(service.getName())) {
-            try {
-                _outboundGateways.get(service.getName()).start();
-            } catch (WebServiceConsumeException ex) {
-                throw new SwitchYardException(
-                        "Failed to start outbound gateway for service " + service.getName(), ex);
-            }
+    public ServiceHandler activateBinding(QName name, BindingModel config) {
+        SOAPBindingModel binding = (SOAPBindingModel)config;
+        binding.setEnvironment(_environment);
+        
+        if (binding.isServiceBinding()) {
+            return new InboundHandler(binding, getServiceDomain());
+        } else {
+            return new OutboundHandler(binding);
         }
     }
-
+    
     @Override
-    public void stop(ServiceReference service) {
-        if (_inboundGateways.containsKey(service.getName())) {
-                _inboundGateways.get(service.getName()).stop();
-        }
-        if (_outboundGateways.containsKey(service.getName())) {
-                _outboundGateways.get(service.getName()).stop();
-        }
-    }
-
-    @Override
-    public void destroy(ServiceReference service) {
-        _inboundGateways.remove(service.getName());
-        _outboundGateways.remove(service.getName());
+    public void deactivateBinding(QName name, ServiceHandler handler) {
+        // Nothing to do here
     }
 
     /**

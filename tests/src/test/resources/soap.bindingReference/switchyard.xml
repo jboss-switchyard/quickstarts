@@ -26,6 +26,7 @@ MA  02110-1301, USA.
             name="soap.bindingReference">
     <sca:composite name="soap.bindingReference" targetNamespace="urn:switchyard-quickstarts:soap.bindingReference:1.0">
         <sca:reference multiplicity="1..1" name="DummySOAPServiceService" promote="DummySOAPServiceService">
+            <sca:interface.wsdl interface="soap.bindingReference/dummyService.wsdl#wsdl.porttype(DummySOAPService)"/>
             <soap:binding.soap>
                 <soap:wsdl>soap.bindingReference/dummyService.wsdl</soap:wsdl>
             </soap:binding.soap>

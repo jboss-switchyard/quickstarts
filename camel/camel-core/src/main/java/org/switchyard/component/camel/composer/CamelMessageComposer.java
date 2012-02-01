@@ -38,12 +38,7 @@ public class CamelMessageComposer extends BaseMessageComposer<org.apache.camel.M
     public Message compose(org.apache.camel.Message source, Exchange exchange, boolean create) throws Exception {
         getContextMapper().mapFrom(source, exchange.getContext());
         Message message = create ? exchange.createMessage() : exchange.getMessage();
-        Class<?> contentType = getContentType(exchange);
-        if (contentType != null) {
-            message.setContent(source.getBody(contentType));
-        } else {
-            message.setContent(source.getBody());
-        }
+        message.setContent(source.getBody());
         return message;
     }
 
@@ -53,12 +48,7 @@ public class CamelMessageComposer extends BaseMessageComposer<org.apache.camel.M
     @Override
     public org.apache.camel.Message decompose(Exchange exchange, org.apache.camel.Message target) throws Exception {
         getContextMapper().mapTo(exchange.getContext(), target);
-        Class<?> contentType = getContentType(exchange);
-        if (contentType != null) {
-            target.setBody(exchange.getMessage().getContent(contentType));
-        } else {
-            target.setBody(exchange.getMessage().getContent());
-        }
+        target.setBody(exchange.getMessage().getContent());
         return target;
     }
 

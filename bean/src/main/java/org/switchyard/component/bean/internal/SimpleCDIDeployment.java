@@ -23,10 +23,10 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.xml.XMLHelper;
+import org.switchyard.component.bean.ServiceProxyHandler;
 import org.switchyard.component.bean.deploy.BeanComponentActivator;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
 import org.switchyard.component.bean.deploy.CDIBean;
@@ -112,15 +112,17 @@ public class SimpleCDIDeployment extends AbstractDeployment {
 
         for (ServiceDescriptor serviceDescriptor : beanDeploymentMetaData.getServiceDescriptors()) {
             String serviceName = serviceDescriptor.getServiceName();
-            ExchangeHandler handler = serviceDescriptor.getHandler();
+            ServiceProxyHandler handler = serviceDescriptor.getHandler();
             ServiceInterface serviceInterface;
             ServiceReference service;
 
             activator.lookupBeanMetaData();
             serviceInterface = activator.buildServiceInterface(serviceName);
             QName serviceQName = XMLHelper.createQName(domain.getName().getNamespaceURI(), serviceName);
-            service = domain.registerService(serviceQName, handler, serviceInterface);
-            activator.start(service);
+            domain.registerService(serviceQName, serviceInterface, handler);
+            service = domain.registerServiceReference(serviceQName, serviceInterface);
+            handler.addReference(service);
+            handler.start();
 
             deployAutoRegisteredTransformers(serviceInterface);
         }

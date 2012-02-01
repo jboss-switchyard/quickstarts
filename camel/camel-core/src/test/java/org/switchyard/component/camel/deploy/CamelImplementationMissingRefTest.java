@@ -21,7 +21,6 @@
 package org.switchyard.component.camel.deploy;
 
 import static org.switchyard.deploy.ServiceDomainManager.ROOT_DOMAIN;
-import static org.switchyard.deploy.ServiceDomainManager.createDomain;
 
 import java.util.List;
 
@@ -33,6 +32,7 @@ import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.ActivatorLoader;
+import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.Deployment;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.test.MockInitialContextFactory;
@@ -65,7 +65,7 @@ public class CamelImplementationMissingRefTest {
     public void should_throw_if_serviceReference_is_missing() throws Exception {
         final SwitchYardModel model = pullSwitchYardModel();
         final Deployment deployment = new Deployment(model);
-        final ServiceDomain domain = createDomain(ROOT_DOMAIN, deployment.getConfig());
+        final ServiceDomain domain = new ServiceDomainManager().createDomain(ROOT_DOMAIN, deployment.getConfig());
         final List<Activator> activators = ActivatorLoader.createActivators(domain);
         deployment.init(domain, activators);
         deployment.start();

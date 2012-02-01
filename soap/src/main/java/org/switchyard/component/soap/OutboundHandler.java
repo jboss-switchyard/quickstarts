@@ -32,7 +32,6 @@ import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.log4j.Logger;
-import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
@@ -41,13 +40,14 @@ import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
 import org.switchyard.composer.MessageComposer;
+import org.switchyard.deploy.BaseServiceHandler;
 
 /**
  * Handles invoking external Webservice endpoints.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
-public class OutboundHandler extends BaseHandler {
+public class OutboundHandler extends BaseServiceHandler {
 
     private static final Logger LOGGER = Logger.getLogger(OutboundHandler.class);
 

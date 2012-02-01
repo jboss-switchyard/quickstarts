@@ -22,6 +22,7 @@ package org.switchyard.component.soap;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.exception.SwitchYardException;
+import org.switchyard.metadata.InOutService;
 
 
 /**
@@ -53,11 +54,12 @@ public class SOAPGateway {
         _config = config;
         if (config.getPublishAsWS()) {
             // Consume the SwitchYard service
-            _wsProvider = new InboundHandler(config);
+            _wsProvider = new InboundHandler(config, domain);
+            _domain.registerServiceReference(config.getServiceName(), new InOutService());
         } else {
             // Create a WS Client for our service
             _wsConsumer = new OutboundHandler(config);
-            _domain.registerService(config.getServiceName(), _wsConsumer);
+            _domain.registerService(config.getServiceName(), new InOutService(), _wsConsumer);
         }
     }
 
@@ -67,7 +69,7 @@ public class SOAPGateway {
     public void start() {
         if (_wsProvider != null) {
             try {
-                _wsProvider.start(_domain.getService(_config.getServiceName()));
+                _wsProvider.start();
             } catch (Exception e) {
                 throw new SwitchYardException("WebService Provider for service '" + _config.getServiceName() + "'. could not be started.", e);
             }
