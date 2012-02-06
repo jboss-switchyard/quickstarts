@@ -18,10 +18,17 @@
  */
 package org.switchyard.quickstarts.demos.helpdesk;
 
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.component.bpm.config.model.BPMSwitchYardScanner;
+import org.switchyard.component.bpm.task.service.Task;
+import org.switchyard.component.bpm.task.service.TaskClient;
+import org.switchyard.component.bpm.task.service.TaskService;
+import org.switchyard.component.bpm.task.service.TaskStatus;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.BPMMixIn;
@@ -44,9 +51,50 @@ public class HelpDeskTests {
     private HTTPMixIn http;
 
     @Test
-    public void testHelpDesk() throws Exception {
+    public void testWithAutomaticHumanTaskCompletion() throws Exception {
         http.postResourceAndTestXML("http://localhost:18001/HelpDeskService", "/xml/soap-request.xml", "/xml/soap-response.xml");
-        bpm.completeHumanTasks();
+        bpm.connectTaskClient();
+        try {
+            bpm.completeHumanTasks();
+        } finally {
+            bpm.disconnectTaskClient();
+        }
+    }
+
+    @Test
+    public void testWithManualHumanTaskCompletion() throws Exception {
+        http.postResourceAndTestXML("http://localhost:18001/HelpDeskService", "/xml/soap-request.xml", "/xml/soap-response.xml");
+        TaskClient client = TaskService.instance().newTaskClient();
+        try {
+            client.connect();
+            Map<String,List<String>> usersGroups = bpm.getUsersGroups();
+            boolean keepWorking;
+            do {
+                keepWorking = completeHumanTasks(client, usersGroups);
+            } while (keepWorking);
+        } finally {
+            client.disconnect();
+        }
+    }
+
+    private boolean completeHumanTasks(TaskClient client, Map<String,List<String>> usersGroups) throws Exception {
+        boolean keepWorking = false;
+        for (String userId : usersGroups.keySet()) {
+            List<String> groupIds = usersGroups.get(userId);
+            List<Task> tasks = client.getTasksAssignedAsPotentialOwner(userId, groupIds);
+            for (Task task : tasks) {
+                if (TaskStatus.COMPLETED.equals(task.getStatus())) {
+                    continue;
+                }
+                Long taskId = task.getId();
+                client.claim(taskId, userId, groupIds);
+                client.start(taskId, userId);
+                client.complete(taskId, userId);
+                keepWorking = true;
+            }
+        }
+        Thread.sleep(1000);
+        return keepWorking;
     }
 
 }

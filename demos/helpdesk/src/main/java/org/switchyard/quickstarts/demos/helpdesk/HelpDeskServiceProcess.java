@@ -19,7 +19,7 @@
 package org.switchyard.quickstarts.demos.helpdesk;
 
 import org.switchyard.component.bpm.Process;
-import org.switchyard.component.bpm.task.jbpm.CommandBasedWSHumanTaskHandler;
+import org.switchyard.component.bpm.task.work.jbpm.CommandBasedWSHumanTaskHandler;
 
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
