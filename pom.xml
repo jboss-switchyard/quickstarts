@@ -95,7 +95,6 @@
     <version.jbossas.openshift>7.0.2.Final</version.jbossas.openshift>
     <version.jpa>1.0.2</version.jpa>
     <version.jta>1.1</version.jta>
-    <version.junit>4.8.1</version.junit>
     <version.maven.gwt.plugin>2.3.0</version.maven.gwt.plugin>
     <version.maven.exec.plugin>1.2</version.maven.exec.plugin>
     <version.maven.shade.plugin>1.4</version.maven.shade.plugin>
@@ -875,11 +874,6 @@
          <groupId>javax.transaction</groupId>
          <artifactId>jta</artifactId>
          <version>${version.jta}</version>
-      </dependency>
-      <dependency>
-         <groupId>junit</groupId>
-         <artifactId>junit</artifactId>
-         <version>${version.junit}</version>
       </dependency>
       <dependency>
          <groupId>net.sourceforge.saxon</groupId>
