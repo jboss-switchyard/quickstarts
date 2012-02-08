@@ -16,7 +16,7 @@ import org.switchyard.test.mixins.CDIMixIn;
 @SwitchYardTestCaseConfig(mixins=CDIMixIn.class, config=SwitchYardTestCaseConfig.SWITCHYARD_XML)
 public class ProcessOrderTest {
     
-    @ServiceOperation("ProcessOrder")
+    @ServiceOperation("ProcessOrder.submitOrder")
     private Invoker service;
     
     @Test

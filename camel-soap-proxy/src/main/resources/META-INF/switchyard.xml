@@ -13,7 +13,7 @@
                 <soap:socketAddr>:18002</soap:socketAddr>
             </soap:binding.soap>
         </sca:service>
-        <sca:reference name="ReverseService" promote="ReverseService" multiplicity="0..1">
+        <sca:reference name="ReverseService" promote="ProxyService/ReverseService" multiplicity="0..1">
             <soap:binding.soap>
                 <swyd:contextMapper/>
                 <soap:wsdl>META-INF/ReverseService.wsdl</soap:wsdl>
@@ -26,10 +26,10 @@
                 </spring:route>
             </camel:implementation.camel>
             <sca:service name="ProxyService">
-                <sca:interface.java interface="org.switchyard.quickstarts.camel.soap.proxy.Reverse"/>
+                <sca:interface.wsdl interface="META-INF/ReverseService.wsdl#wsdl.porttype(ReverseService)"/>
             </sca:service>
             <sca:reference name="ReverseService">
-                <sca:interface.java interface="org.switchyard.quickstarts.camel.soap.proxy.Reverse"/>
+                <sca:interface.wsdl interface="META-INF/ReverseService.wsdl#wsdl.porttype(ReverseService)"/>
             </sca:reference>
         </sca:component>
     </sca:composite>
