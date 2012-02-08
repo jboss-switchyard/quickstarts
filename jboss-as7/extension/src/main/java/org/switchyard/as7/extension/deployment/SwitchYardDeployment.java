@@ -98,7 +98,7 @@ public class SwitchYardDeployment {
             setDeploymentState(SwitchYardDeploymentState.INITIALIZING);
 
             // Use the ROOT_DOMAIN name for now.  Getting an exception SwitchYardModel.getQName().
-            _appServiceDomain = _domainManager.addApplicationServiceDomain(ServiceDomainManager.ROOT_DOMAIN, _deployment.getConfig());
+            _appServiceDomain = _domainManager.createDomain(ServiceDomainManager.ROOT_DOMAIN, _deployment.getConfig());
 
             _deployment.init(_appServiceDomain, ActivatorLoader.createActivators(_appServiceDomain, components));
             setDeploymentState(SwitchYardDeploymentState.STARTING);
@@ -116,23 +116,17 @@ public class SwitchYardDeployment {
     public void stop() {
         ClassLoader origCL = Thread.currentThread().getContextClassLoader();
         try {
-            try {
-                final Module module = _deployUnit.getAttachment(Attachments.MODULE);
-                Thread.currentThread().setContextClassLoader(module.getClassLoader());
-                if (_deploymentState == SwitchYardDeploymentState.STARTED) {
-                    _deployment.stop();
-                    setDeploymentState(SwitchYardDeploymentState.STOPPED);
-                    unregisterManagementNodes();
-                }
-                if (_deploymentState == SwitchYardDeploymentState.STARTING
-                        || _deploymentState == SwitchYardDeploymentState.STOPPED) {
-                    _deployment.destroy();
-                    setDeploymentState(SwitchYardDeploymentState.DESTROYED);
-                }
-            } finally {
-                if (_appServiceDomain != null) {
-                    _domainManager.removeApplicationServiceDomain(_appServiceDomain);
-                }
+            final Module module = _deployUnit.getAttachment(Attachments.MODULE);
+            Thread.currentThread().setContextClassLoader(module.getClassLoader());
+            if (_deploymentState == SwitchYardDeploymentState.STARTED) {
+                _deployment.stop();
+                setDeploymentState(SwitchYardDeploymentState.STOPPED);
+                unregisterManagementNodes();
+            }
+            if (_deploymentState == SwitchYardDeploymentState.STARTING
+                    || _deploymentState == SwitchYardDeploymentState.STOPPED) {
+                _deployment.destroy();
+                setDeploymentState(SwitchYardDeploymentState.DESTROYED);
             }
         } finally {
             Thread.currentThread().setContextClassLoader(origCL);
