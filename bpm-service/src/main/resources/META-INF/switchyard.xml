@@ -16,6 +16,15 @@
             <service name="ProcessOrder">
                 <interface.java interface="org.switchyard.quickstarts.bpm.service.ProcessOrder"/>
             </service>
+            <reference name="Inventory">
+                <interface.java interface="org.switchyard.quickstarts.bpm.service.InventoryBean"/>
+            </reference>
+            <reference name="Shipping">
+                <interface.java interface="org.switchyard.quickstarts.bpm.service.Shipping"/>
+            </reference>
+            <reference name="BackOrder">
+                <interface.java interface="org.switchyard.quickstarts.bpm.service.BackOrder"/>
+            </reference>
         </component>
     </composite>
 </switchyard>
