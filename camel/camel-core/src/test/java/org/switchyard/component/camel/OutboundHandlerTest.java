@@ -24,12 +24,15 @@ package org.switchyard.component.camel;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -80,9 +83,11 @@ public class OutboundHandlerTest extends CamelTestSupport {
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
+    private CamelBindingModel bindingModel;
+
     @Before
     public void setupSwitchyardService() {
-        final CamelBindingModel bindingModel = mock(CamelBindingModel.class);
+        bindingModel = mock(CamelBindingModel.class);
         when(bindingModel.getComponentURI()).thenReturn(URI.create("direct:to"));
         _messageComposer = CamelComposition.getMessageComposer();
         _serviceDomain.registerService(_targetService.getServiceName(), new InOnlyService(), 
@@ -146,7 +151,17 @@ public class OutboundHandlerTest extends CamelTestSupport {
         exception.expectMessage("camelContext argument must not be null");
         new OutboundHandler("mockuri", null, _messageComposer);
     }
-
+    
+    @Test
+    public void startStop() throws Exception {
+        final ProducerTemplate producerTemplate = mock(ProducerTemplate.class);
+        final OutboundHandler outboundHandler = new OutboundHandler(bindingModel.getComponentURI().toString(), context, _messageComposer, producerTemplate);
+        outboundHandler.start();
+        outboundHandler.stop();
+        verify(producerTemplate).start();
+        verify(producerTemplate).stop();
+    }
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder()

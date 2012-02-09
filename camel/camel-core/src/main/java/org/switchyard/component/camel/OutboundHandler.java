@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
@@ -45,32 +46,56 @@ import org.switchyard.exception.SwitchYardException;
  */
 public class OutboundHandler extends BaseServiceHandler {
     
+    private static Logger _logger = Logger.getLogger(OutboundHandler.class);
+
     private final MessageComposer<org.apache.camel.Message> _messageComposer;
     private final ProducerTemplate _producerTemplate;
     private final CamelContext _camelContext;
     private final String _uri;
-
+    
     /**
-     * Sole constructor.
+     * Constructor that will create a default {@link ProducerTemplate}.
      * 
      * @param uri The Camel endpoint uri.
-     * @param messageComposer the MessageComposer this handler should use
      * @param context The {@link CamelContext}.
+     * @param messageComposer the MessageComposer this handler should use
      */
     public OutboundHandler(final String uri, final CamelContext context, MessageComposer<org.apache.camel.Message> messageComposer) {
+        this(uri, context, messageComposer, null);
+    }
+
+    /**
+     * Constructor that allows for specifying a specific {@link ProducerTemplate}.
+     * 
+     * @param uri The Camel endpoint uri.
+     * @param context The {@link CamelContext}.
+     * @param messageComposer the MessageComposer this handler should use.
+     * @param producerTemplate The {@link ProducerTemplate} to be used by this handler.
+     */
+    public OutboundHandler(final String uri, final CamelContext context, MessageComposer<org.apache.camel.Message> messageComposer, ProducerTemplate producerTemplate) {
         if (uri == null) {
             throw new IllegalArgumentException("uri argument must not be null");
         }
-        _uri = uri;
-        
         if (context == null) {
             throw new IllegalArgumentException("camelContext argument must not be null");
         }
+        _uri = uri;
         _camelContext = context;
-        
-        _producerTemplate = _camelContext.createProducerTemplate();
-        
         _messageComposer = messageComposer;
+        _producerTemplate = producerTemplate == null ? _camelContext.createProducerTemplate() : producerTemplate;
+    }
+    
+    /**
+     * Starts the {@link ProducerTemplate}.
+     */
+    @Override
+    public void start() {
+        try {
+            _producerTemplate.start();
+            _logger.debug("Started producer template for " + _uri);
+        } catch (Exception e) {
+            throw new SwitchYardException("Failed to start Camel producer template for " + _uri, e);
+        }
     }
     
     /**
@@ -80,6 +105,7 @@ public class OutboundHandler extends BaseServiceHandler {
     public void stop() {
         try {
             _producerTemplate.stop();
+            _logger.debug("Stopped producer template for " + _uri);
         } catch (Exception ex) {
             throw new SwitchYardException("Failed to stop Camel producer template for " + _uri, ex);
         }
