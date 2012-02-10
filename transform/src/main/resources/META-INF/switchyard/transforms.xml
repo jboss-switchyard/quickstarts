@@ -53,6 +53,7 @@
     <trfm:transform.java from="java:java.io.Reader" to="java:org.w3c.dom.Document" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
     <trfm:transform.java from="java:java.io.Reader" to="java:org.w3c.dom.Element"  class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
 
+    <trfm:transform.java from="java:java.io.InputStream" to="java:org.w3c.dom.Node" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
     <trfm:transform.java from="java:java.io.InputStream" to="java:org.w3c.dom.Document" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
     <trfm:transform.java from="java:java.io.InputStream" to="java:org.w3c.dom.Element"  class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
 
