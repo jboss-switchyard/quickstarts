@@ -29,6 +29,7 @@ import static org.mockito.Mockito.when;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.HandlerException;
@@ -77,7 +78,9 @@ public class CamelResponseHandlerTest
     private Exchange createMockCamelExchange() {
         final Exchange camelExchange = mock(Exchange.class);
         final org.apache.camel.Message camelMessage = mock(org.apache.camel.Message.class);
+        when(camelExchange.getPattern()).thenReturn(ExchangePattern.InOut);
         when(camelExchange.getIn()).thenReturn(camelMessage);
+        when(camelExchange.getOut()).thenReturn(camelMessage);
         return camelExchange;
     }
     

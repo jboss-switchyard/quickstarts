@@ -30,12 +30,10 @@ import org.apache.camel.impl.DefaultProducer;
 import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.ServiceReference;
-import org.switchyard.component.camel.composer.CamelMessageComposer;
 import org.switchyard.component.camel.deploy.ServiceReferences;
 import org.switchyard.composer.MessageComposer;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceOperation;
-import org.switchyard.metadata.java.JavaService;
 import org.switchyard.policy.ExchangePolicy;
 import org.switchyard.policy.TransactionPolicy;
 
@@ -82,25 +80,14 @@ public class SwitchYardProducer extends DefaultProducer {
             _operationName = lookupOperationNameFor(serviceRef);
         }
         final Exchange switchyardExchange = createSwitchyardExchange(camelExchange, serviceRef);
-        final SwitchYardProducer producer = this;
         
         // Set appropriate policy based on Camel exchange properties
         if (camelExchange.isTransacted()) {
             ExchangePolicy.provide(switchyardExchange, TransactionPolicy.PROPAGATE);
         }
         
-        final CamelMessageComposer.ContentTypeProvider ctp = new CamelMessageComposer.ContentTypeProvider() {
-            public Class<?> getContentType() {
-                return producer.getInputType(serviceRef);
-            }
-        };
-        try {
-            CamelMessageComposer.setContentTypeProvider(switchyardExchange, ctp);
-            Message switchyardMessage = _messageComposer.compose(camelExchange.getIn(), switchyardExchange, true);
-            switchyardExchange.send(switchyardMessage);
-        } finally {
-            CamelMessageComposer.setContentTypeProvider(switchyardExchange, null);
-        }
+        Message switchyardMessage = _messageComposer.compose(camelExchange.getIn(), switchyardExchange, true);
+        switchyardExchange.send(switchyardMessage);
     }
     
     private ServiceReference lookupServiceReference(final String targetUri) {
@@ -130,25 +117,4 @@ public class SwitchYardProducer extends DefaultProducer {
         final ServiceOperation serviceOperation = operations.iterator().next();
         return serviceOperation.getName();
     }
-    
-    private QName getOperationInputType(final ServiceReference ref) {
-        final ServiceOperation operation = getOperation(ref);
-        if (operation != null) {
-            return operation.getInputType();
-        }
-        return null;
-    }
-    
-    private ServiceOperation getOperation(final ServiceReference ref) {
-        return ref.getInterface().getOperation(_operationName);
-    }
-
-    private Class<?> getInputType(final ServiceReference serviceRef) {
-        final QName inputType = getOperationInputType(serviceRef);
-        if (inputType != null) {
-            return JavaService.parseType(inputType);
-        }
-        return Object.class;
-    }
-    
 }

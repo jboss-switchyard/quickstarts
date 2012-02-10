@@ -18,10 +18,13 @@
  */
 package org.switchyard.component.camel.composer;
 
-import org.switchyard.Context;
+import java.io.InputStream;
+
+import javax.xml.namespace.QName;
+
 import org.switchyard.Exchange;
 import org.switchyard.Message;
-import org.switchyard.Scope;
+import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.composer.BaseMessageComposer;
 
 /**
@@ -36,9 +39,21 @@ public class CamelMessageComposer extends BaseMessageComposer<org.apache.camel.M
      */
     @Override
     public Message compose(org.apache.camel.Message source, Exchange exchange, boolean create) throws Exception {
+        // map context properties
         getContextMapper().mapFrom(source, exchange.getContext());
+        
+        // map content
         Message message = create ? exchange.createMessage() : exchange.getMessage();
-        message.setContent(source.getBody());
+        QName msgType = getMessageType(exchange);
+        Object content;
+        if (msgType == null) {
+            content = source.getBody();
+        } else if (QNameUtil.isJavaMessageType(msgType)) {
+            content = source.getBody(QNameUtil.toJavaMessageType(msgType));
+        } else {
+            content = source.getBody(InputStream.class);
+        }
+        message.setContent(content);
         return message;
     }
 
@@ -51,58 +66,20 @@ public class CamelMessageComposer extends BaseMessageComposer<org.apache.camel.M
         target.setBody(exchange.getMessage().getContent());
         return target;
     }
-
+    
     /**
-     * Gets the content type given the specified exchange.
-     * @param exchange the specified exchange
-     * @return the content type
+     * Returns the current message type based on the state of the exchange.
+     * @param exchange exchange to query
+     * @return the current message type based on the exchange contract
      */
-    public static final Class<?> getContentType(Exchange exchange) {
-        ContentTypeProvider contentTypeProvider = getContentTypeProvider(exchange);
-        return contentTypeProvider != null ? contentTypeProvider.getContentType() : null;
-    }
-
-    /**
-     * Gets the content type provider given the specified exchange.
-     * @param exchange the specified exchange
-     * @return the context type provider
-     */
-    public static final ContentTypeProvider getContentTypeProvider(Exchange exchange) {
-        return (ContentTypeProvider)exchange.getContext().getPropertyValue(ContentTypeProvider.KEY);
-    }
-
-    /**
-     * Sets the content type provider on the specified exchange.
-     * @param exchange the specified exchange
-     * @param contentTypeProvider the specified content type provider
-     */
-    public static final void setContentTypeProvider(Exchange exchange, ContentTypeProvider contentTypeProvider) {
-        Context context = exchange.getContext();
-        if (contentTypeProvider != null) {
-            context.setProperty(ContentTypeProvider.KEY, contentTypeProvider, Scope.EXCHANGE);
+    private QName getMessageType(Exchange exchange) {
+        QName msgType;
+        if (exchange.getPhase() == null) {
+            msgType = exchange.getContract().getInvokerInvocationMetaData().getInputType();
         } else {
-            context.setProperty(ContentTypeProvider.KEY, null, Scope.EXCHANGE);
+            msgType = exchange.getContract().getInvokerInvocationMetaData().getOutputType();
         }
+        
+        return msgType;
     }
-
-    /**
-     * A content type provider is necessary for certain camel code to provide visibility to what the body
-     * of a message should be converted to, when there is not any access to the required variables in that
-     * part of the code.  It is set in a try block before execution, and unset in a finally block.
-     */
-    public static interface ContentTypeProvider {
-
-        /**
-         * The key in which the content type provider will be stored in the exchange.
-         */
-        public static final String KEY = ContentTypeProvider.class.getName();
-
-        /**
-         * Provides the content type.
-         * @return the content type
-         */
-        public Class<?> getContentType();
-
-    }
-
 }

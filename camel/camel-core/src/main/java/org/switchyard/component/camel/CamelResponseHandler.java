@@ -20,6 +20,8 @@
  */
 package org.switchyard.component.camel;
 
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
@@ -71,7 +73,9 @@ public class CamelResponseHandler implements ExchangeHandler {
     @Override
     public void handleMessage(final Exchange switchYardExchange) throws HandlerException {
         try {
-            _messageComposer.decompose(switchYardExchange, _camelExchange.getIn());
+            Message camelMsg = _camelExchange.getPattern().equals(ExchangePattern.InOnly)
+                    ? _camelExchange.getIn() : _camelExchange.getOut();
+            _messageComposer.decompose(switchYardExchange, camelMsg);
         } catch (Exception e) {
             throw new HandlerException(e);
         }
