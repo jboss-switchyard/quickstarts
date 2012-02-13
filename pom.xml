@@ -73,7 +73,7 @@
     <version.camel>2.8.0</version.camel>
     <version.clojure>1.3.0-alpha5</version.clojure>
     <version.commons.httpclient>3.1</version.commons.httpclient>
-    <version.commonman>1.0</version.commonman>
+    <version.fusesource.commonman>1.0</version.fusesource.commonman>
     <version.drools>5.3.1.Final</version.drools>
     <version.ecj>3.5.1</version.ecj>
     <version.forge>1.0.0.Beta3</version.forge>
@@ -87,6 +87,9 @@
     <version.hibernate.core.helpdesk>3.3.2.GA</version.hibernate.core.helpdesk>
     <version.hibernate.entitymanager.helpdesk>3.4.0.GA</version.hibernate.entitymanager.helpdesk>
     <version.hornetq>2.2.7.Final</version.hornetq>
+    <!-- Jaxen is imported from parent POM but properties are NOT imported -->
+    <!-- and this property is required for release assembly. -->
+    <version.jaxen>1.1.3</version.jaxen>
     <version.javax.jms>1.1</version.javax.jms>
     <version.jbpm>5.2.0.Final</version.jbpm>
     <version.jbossas>7.1.0.CR1b</version.jbossas>
@@ -974,7 +977,7 @@
       <dependency>
          <groupId>org.fusesource.commonman</groupId>
          <artifactId>commons-management</artifactId>
-         <version>${version.commonman}</version>
+         <version>${version.fusesource.commonman}</version>
       </dependency>
       <dependency>
          <groupId>org.hamcrest</groupId>
