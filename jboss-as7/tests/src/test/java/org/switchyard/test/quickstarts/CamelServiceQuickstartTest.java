@@ -35,7 +35,7 @@ public class CamelServiceQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstarts-camel-service");
+        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-camel-service");
     }
 
     @Test

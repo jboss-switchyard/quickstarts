@@ -34,7 +34,7 @@ public class CamelSOAPProxyQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() throws IOException {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstarts-camel-soap-proxy");
+        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-camel-soap-proxy");
     }
 
     @Test

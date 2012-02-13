@@ -35,9 +35,9 @@ public class HornetqBindingQuickstartTest {
     @Deployment(testable = false)
     public static JavaArchive createDeployment() throws IOException {
         ResourceDeployer.addQueue("GreetingServiceQueue");
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstarts-hornetq-binding");
+        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-hornetq-binding");
     }
-    
+
     @Test
     public void testDeployment() throws IOException {
         Assert.assertNotNull("Dummy not null", "");

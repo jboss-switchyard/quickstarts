@@ -81,7 +81,7 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstarts-camel-service</artifactId>
+            <artifactId>switchyard-quickstart-camel-service</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -91,22 +91,22 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstarts-camel-binding</artifactId>
+            <artifactId>switchyard-quickstart-camel-binding</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstarts-camel-jms-binding</artifactId>
+            <artifactId>switchyard-quickstart-camel-jms-binding</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstarts-camel-soap-proxy</artifactId>
+            <artifactId>switchyard-quickstart-camel-soap-proxy</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstarts-hornetq-binding</artifactId>
+            <artifactId>switchyard-quickstart-hornetq-binding</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

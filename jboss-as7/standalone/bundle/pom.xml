@@ -81,7 +81,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>org.switchyard.quickstarts</groupId>
-                                    <artifactId>switchyard-quickstarts-distro</artifactId>
+                                    <artifactId>switchyard-quickstart-distro</artifactId>
                                     <type>zip</type>
                                     <version>${project.version}</version>
                                 </artifactItem>
