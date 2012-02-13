@@ -1090,6 +1090,12 @@
          <groupId>org.jboss.soa.bpel</groupId>
          <artifactId>riftsaw-bpel-epr</artifactId>
          <version>${version.riftsaw.ode}</version>
+         <exclusions>
+             <exclusion>
+                 <groupId>org.jboss.javaee</groupId>
+                 <artifactId>jboss-javaee</artifactId>
+             </exclusion>
+         </exclusions>
       </dependency>
       <dependency>
          <groupId>org.jboss.soa.bpel</groupId>
