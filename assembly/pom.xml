@@ -23,13 +23,13 @@
 
     <parent>
       <groupId>org.switchyard.quickstarts</groupId>
-      <artifactId>switchyard-quickstarts-parent</artifactId>
+      <artifactId>switchyard-quickstart-parent</artifactId>
       <version>0.4.0-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>switchyard-quickstarts-distro</artifactId>
+    <artifactId>switchyard-quickstart-distro</artifactId>
     <packaging>jar</packaging>
     <name>SwitchYard : Quickstarts Distribution Assembly</name>
     <description>SwitchYard Quickstarts Distribution Assembly</description>

@@ -5,12 +5,12 @@
 
   <parent>
     <groupId>org.switchyard.quickstarts</groupId>
-    <artifactId>switchyard-quickstarts-parent</artifactId>
+    <artifactId>switchyard-quickstart-parent</artifactId>
     <version>0.4.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>switchyard-quickstarts-hornetq-binding</artifactId>
+  <artifactId>switchyard-quickstart-hornetq-binding</artifactId>
   <name>Quickstart : HornetQ Binding</name>
 
   <dependencies>
