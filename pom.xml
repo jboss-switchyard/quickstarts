@@ -31,7 +31,7 @@
     </parent>
 
     <groupId>org.switchyard.quickstarts</groupId>
-    <artifactId>switchyard-quickstarts-parent</artifactId>
+    <artifactId>switchyard-quickstart-parent</artifactId>
 
     <packaging>pom</packaging>
 
