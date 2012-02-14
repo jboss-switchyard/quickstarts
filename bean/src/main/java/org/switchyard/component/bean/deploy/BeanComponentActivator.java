@@ -21,6 +21,7 @@ package org.switchyard.component.bean.deploy;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.component.bean.ClientProxyBean;
 import org.switchyard.component.bean.ServiceProxyHandler;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
@@ -54,6 +55,20 @@ public class BeanComponentActivator extends BaseActivator {
     @Override
     public ServiceHandler activateService(QName serviceName, ComponentModel config) {
         lookupBeanMetaData();
+        
+        // This is a bit of a kludge - catches cases where an implementation 
+        // does not provide a service, only a reference
+        if (serviceName == null) {
+            for (ComponentReferenceModel reference : config.getReferences()) {
+                for (ClientProxyBean proxyBean : _beanDeploymentMetaData.getClientProxies()) {
+                    if (reference.getQName().getLocalPart().equals(proxyBean.getServiceName())) {
+                        proxyBean.setService(getServiceDomain().getServiceReference(reference.getQName()));
+                    }
+                }
+            }
+            return null;
+        }
+        
         for (ServiceDescriptor descriptor : _beanDeploymentMetaData.getServiceDescriptors()) {
             if (descriptor.getServiceName().equals(serviceName.getLocalPart())) {
                 ServiceProxyHandler handler = descriptor.getHandler();

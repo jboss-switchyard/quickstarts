@@ -20,6 +20,7 @@
 package org.switchyard.component.bean.config.model;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.common.type.Classes;
+import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
 import org.switchyard.component.bean.tests.OneWay;
 import org.switchyard.component.bean.tests.ServiceWithReferenceBean;
@@ -109,7 +111,17 @@ public class BeanSwitchYardScannerTest {
 
         Assert.assertFalse(serviceClass.isInterface());
         Assert.assertFalse(Modifier.isAbstract(serviceClass.getModifiers()));
-        Assert.assertTrue(serviceClass.isAnnotationPresent(Service.class));
+        if (!serviceClass.isAnnotationPresent(Service.class)) {
+            boolean referencePresent = false;
+            for (Field f : serviceClass.getDeclaredFields()) {
+                if (f.isAnnotationPresent(Reference.class)) {
+                    referencePresent = true;
+                    break;
+                }
+            }
+            Assert.assertTrue("Bean classes without an @Service must have at least one @Reference", referencePresent);
+        }
+        
     }
     
     // Takes a list of URLs to scan *instead* of what's defined in @Before.

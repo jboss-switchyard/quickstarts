@@ -19,28 +19,24 @@
 
 package org.switchyard.component.bean.tests;
 
+import javax.xml.namespace.QName;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.Message;
-import org.switchyard.test.Invoker;
-import org.switchyard.test.ServiceOperation;
+import org.switchyard.ServiceDomain;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
 
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
-public class InputTypeMismatchTest {
+public class ReferenceTest {
 
-    @ServiceOperation("ConsumerService.domOperation")
-    private Invoker domOperation;
+    private ServiceDomain domain;
 
     @Test
-    public void test_invokeWithWrongInputParameterType() {
-        // A basic type conversion should happen automatically...
-        Message response = domOperation.sendInOut("<a><b/></a>");
-
-        Assert.assertEquals("<c/>", response.getContent());
+    public void verifyReferenceIsRegistered() {
+        Assert.assertNotNull(domain.getServiceReference(new QName("ConsumerService")));
     }
 }

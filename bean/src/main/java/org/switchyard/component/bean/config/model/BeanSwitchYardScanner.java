@@ -80,31 +80,30 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             }
 
             ComponentModel componentModel = new V1ComponentModel();
-            String name;
-            
-            // @Service annotation is required for generation
-            Service service = serviceClass.getAnnotation(Service.class);
-            if (service == null) {
-                continue;
-            }
+            ComponentServiceModel serviceModel = new V1ComponentServiceModel();
+            String name = serviceClass.getSimpleName();
             
             BeanComponentImplementationModel beanModel = new V1BeanComponentImplementationModel();
             beanModel.setClazz(serviceClass.getName());
             componentModel.setImplementation(beanModel);
-            
-            Class<?> iface = service.value();
-            ComponentServiceModel serviceModel = new V1ComponentServiceModel();
-            JavaComponentServiceInterfaceModel csiModel = new V1JavaComponentServiceInterfaceModel();
 
-            if (service.name().equals(Service.EMPTY)) {
-                name = iface.getSimpleName();
-            } else {
-                name = service.name();
+            Service service = serviceClass.getAnnotation(Service.class);
+            if (service != null) {
+                Class<?> iface = service.value();
+                JavaComponentServiceInterfaceModel csiModel = new V1JavaComponentServiceInterfaceModel();
+
+                if (service.name().equals(Service.EMPTY)) {
+                    name = iface.getSimpleName();
+                } else {
+                    name = service.name();
+                }
+                
+                serviceModel.setName(name);
+                serviceModel.setInterface(csiModel);
+                csiModel.setInterface(iface.getName());
+                
+                componentModel.addService(serviceModel);
             }
-
-            serviceModel.setName(name);
-            serviceModel.setInterface(csiModel);
-            csiModel.setInterface(iface.getName());
             
             // Check to see if a Transaction Policy has been defined
             ManagedTransaction mta = serviceClass.getAnnotation(ManagedTransaction.class);
@@ -115,7 +114,6 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
                     serviceModel.addPolicyRequirement(TransactionPolicy.PROPAGATE.toString());
                 }
             }
-            componentModel.addService(serviceModel);
 
             // Add any references
             for (Class<?> reference : getReferences(serviceClass)) {
@@ -151,6 +149,7 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
 
     private List<Class<?>> scanForServiceBeans(List<URL> urls) throws IOException {
         IsAnnotationPresentFilter filter = new IsAnnotationPresentFilter(Service.class);
+        filter.addType(Reference.class);
         ClasspathScanner serviceScanner = new ClasspathScanner(filter);
 
         for (URL url : urls) {
