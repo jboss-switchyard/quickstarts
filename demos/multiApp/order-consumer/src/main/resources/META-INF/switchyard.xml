@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="consumer-service" targetNamespace="urn:switchyard-quickstart-demo:multiapp:0.1.0">
+        <service name="OrderInput" promote="OrderInputComponent/OrderInput">
+            <binding.camel xmlns="urn:switchyard-component-camel:config:1.0" 
+                configURI="jms://OrderRequestQueue?connectionFactory=#ConnectionFactory&amp;replyTo=OrderReplyQueue"/>
+        </service>
+        <reference multiplicity="1..1" name="OrderWebService" promote="OrderInputComponent/OrderWebService">
+            <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
+                <wsdl>OrderService.wsdl</wsdl>
+            </binding.soap>
+        </reference>
+        <component name="OrderInputComponent">
+            <implementation.camel xmlns="urn:switchyard-component-camel:config:1.0">
+                <route xmlns="http://camel.apache.org/schema/spring">
+                    <to uri="switchyard://OrderWebService"/>
+                </route>
+            </implementation.camel>
+            <service name="OrderInput">
+                <interface.wsdl interface="OrderService.wsdl#wsdl.porttype(OrderService)"/>
+            </service>
+            <reference name="OrderWebService">
+                <interface.wsdl interface="OrderService.wsdl#wsdl.porttype(OrderService)"/>
+            </reference>
+        </component>
+    </composite>
+    <artifacts>
+        <artifact name="OrderService" url="http://localhost:8080/guvnorsoa/rest/packages/OrderService"/>
+    </artifacts>
+</switchyard>
