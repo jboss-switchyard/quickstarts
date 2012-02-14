@@ -379,6 +379,13 @@ public class Deployment extends AbstractDeployment {
                 handler.start();
             }
             
+            // we don't have a distinct call for activateReference right now,
+            // so this catches cases where an implementation has one or more
+            // references, but no services.  (this is pretty crappy)
+            if (component.getServices().isEmpty()) {
+                activator.activateService(null, component);
+            }
+            
             fireComponentDeployed(component);
         }
     }

@@ -20,7 +20,10 @@
 package org.switchyard.common.type.classpath;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Filter classpath classes based on presence of an annotation.
@@ -29,14 +32,25 @@ import java.lang.reflect.Method;
  */
 public class IsAnnotationPresentFilter extends AbstractTypeFilter {
 
-    private Class<? extends Annotation> _searchType;
+    private List<Class<? extends Annotation>> _searchTypes = 
+            new LinkedList<Class<? extends Annotation>>();
 
     /**
      * Public constructor.
      * @param searchType The Java type to search for.
      */
     public IsAnnotationPresentFilter(Class<? extends Annotation> searchType) {
-        this._searchType = searchType;
+        _searchTypes.add(searchType);
+    }
+    
+    /**
+     * Add a search type to this filter.
+     * @param type the annotation type to filter for
+     * @return a reference to this filter instance
+     */
+    public IsAnnotationPresentFilter addType(Class<? extends Annotation> type) {
+        _searchTypes.add(type);
+        return this;
     }
 
     /**
@@ -44,7 +58,24 @@ public class IsAnnotationPresentFilter extends AbstractTypeFilter {
      */
     @Override
     public boolean matches(Class<?> clazz) {
-        return clazz.isAnnotationPresent(_searchType);
+        // check for class-level annotation
+        for (Class<? extends Annotation> annotation : _searchTypes) {
+            if (clazz.isAnnotationPresent(annotation)) {
+                return true;
+            }
+        }
+        
+        // check the fields
+        for (Class<? extends Annotation> annotation : _searchTypes) {
+            for (Field field : clazz.getDeclaredFields()) {
+                if (field.isAnnotationPresent(annotation)) {
+                    return true;
+                }
+            }
+        }
+        
+        // not found
+        return false;
     }
 
     /**
@@ -53,7 +84,14 @@ public class IsAnnotationPresentFilter extends AbstractTypeFilter {
      * @return true if the Java method is a match, otherwise false.
      */
     public boolean matches(Method method) {
-        return method.isAnnotationPresent(_searchType);
+        for (Class<? extends Annotation> annotation : _searchTypes) {
+            if (method.isAnnotationPresent(annotation)) {
+                return true;
+            }
+        }
+        
+        // not found
+        return false;
     }
 
 }
