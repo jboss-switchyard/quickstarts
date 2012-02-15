@@ -42,7 +42,7 @@
                     <include>org/switchyard/config/**</include>
                     <include>org/switchyard/component/bpm/*</include>
                     <include>org/switchyard/component/bpm/config/model/**</include>
-                    <include>org/switchyard/component/bpm/task/*</include>
+                    <include>org/switchyard/component/bpm/task/work/*</include>
                   </includes>
                 </filter>
               </filters>
