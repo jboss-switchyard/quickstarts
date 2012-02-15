@@ -94,8 +94,7 @@
     <version.jbpm>5.2.0.Final</version.jbpm>
     <version.jbossas>7.1.0.CR1b</version.jbossas>
     <version.jbossas.console>1.0.0.RC1</version.jbossas.console>
-    <!-- Keep this property until OpenShift RPM upgrades to 7.1.0 -->
-    <version.jbossas.openshift>7.0.2.Final</version.jbossas.openshift>
+    <version.jbossas.openshift>${version.jbossas}</version.jbossas.openshift>
     <version.jpa>1.0.2</version.jpa>
     <version.jta>1.1</version.jta>
     <version.maven.gwt.plugin>2.3.0</version.maven.gwt.plugin>
