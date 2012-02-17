@@ -93,8 +93,6 @@ public class InboundHandler extends BaseServiceHandler {
      */
     public void start() throws WebServicePublishException {
         ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
-        //XXX: REMOVE THIS SYNCHRONIZED: once threading issues in AS7 WS are fixed
-        synchronized (BaseWebService.class) {
         try {
             _service = _domain.getServiceReference(_config.getServiceName());
             PortName portName = _config.getPort();
@@ -137,17 +135,13 @@ public class InboundHandler extends BaseServiceHandler {
         } finally {
             Thread.currentThread().setContextClassLoader(origLoader);
         }
-        }
     }
 
     /**
      * Stop lifecycle.
      */
     public void stop() {
-        //XXX: REMOVE THIS SYNCHRONIZED: once threading issues in AS7 WS are fixed
-        synchronized (BaseWebService.class) {
-            _endpoint.stop();
-        }
+        _endpoint.stop();
         LOGGER.info("WebService " + _config.getPort() + " stopped.");
     }
 
