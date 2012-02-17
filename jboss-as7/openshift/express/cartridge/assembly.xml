@@ -10,22 +10,23 @@
     <fileSet>
       <directory>${cartridge.dir}/modules</directory>
       <outputDirectory>modules</outputDirectory>
+      <excludes>
+         <exclude>org/switchyard/component/soap/ws-impl/main/module.xml</exclude>
+      </excludes>
       <fileMode>755</fileMode>
     </fileSet>
+	<!--
+	Comment when using JBossWS stack 
+	Uncomment when using Sun's impl
+	-->
+    <!-- Start -->
     <fileSet>
-      <directory>src/main/resources/jaxb</directory>
-      <outputDirectory>modules/javax/xml/bind/api/main</outputDirectory>
+      <directory>src/main/resources/ws-impl</directory>
+      <outputDirectory>modules/org/switchyard/component/soap/ws-impl/main</outputDirectory>
       <includes>
          <include>module.xml</include>
       </includes>
       <fileMode>755</fileMode>
-    </fileSet>
-    <fileSet>
-      <directory>src/main/resources/jaxb-impl</directory>
-      <outputDirectory>modules/com/sun/xml/bind/main</outputDirectory>
-      <includes>
-         <include>module.xml</include>
-      </includes>
     </fileSet>
     <fileSet>
       <directory>src/main/resources/soap</directory>
@@ -43,6 +44,7 @@
       </includes>
       <fileMode>755</fileMode>
     </fileSet>
+	<!-- End -->
     <fileSet>
       <directory>src/main/resources/hibernate-validator</directory>
       <outputDirectory>modules/org/hibernate/validator/main</outputDirectory>

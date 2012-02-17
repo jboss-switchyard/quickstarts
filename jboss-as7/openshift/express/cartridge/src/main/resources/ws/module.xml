@@ -24,13 +24,13 @@
 
 <module xmlns="urn:jboss:module:1.0" name="javax.xml.ws.api">
     <dependencies>
-        <module name="system" export="true">
-            <exports>
-                <include-set>
-                    <path name="com/sun/xml/internal/ws/spi"/>
-                </include-set>
-            </exports>
-         </module>
+        <system export="true">
+            <paths>
+                <path name="com/sun/xml/internal/ws/spi"/>
+                <path name="javax/xml/ws"/>
+                <path name="javax/xml/ws/soap"/>
+            </paths>
+         </system>
         <module name="javax.xml.bind.api" export="true"/>
         <module name="javax.xml.soap.api" export="true"/>
         <module name="javax.api"/>

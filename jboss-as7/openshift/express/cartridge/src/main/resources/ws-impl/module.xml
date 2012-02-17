@@ -22,18 +22,17 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 
-<module xmlns="urn:jboss:module:1.0" name="javax.xml.bind.api">
-
-
-    <dependencies>
-        <module name="javax.activation.api" export="true"/>
-        <module name="javax.xml.stream.api"/>
-        <module name="com.sun.xml.bind" services="import"/>
-        <module name="javax.api"/>
-    </dependencies>
+<module xmlns="urn:jboss:module:1.0" name="org.switchyard.component.soap.ws-impl">
 
     <resources>
-        <!-- Insert resources here -->
     </resources>
-</module>
 
+    <dependencies>
+        <module name="javax.xml.ws.api" export="true"/>	
+        <system export="true">
+            <paths>
+                <path name="com/sun/xml/internal/bind/v2"/>
+            </paths>
+        </system>
+    </dependencies>
+</module>
