@@ -82,4 +82,7 @@ MA  02110-1301, USA.
             <handler name="handler1" class="org.switchyard.handlers.TestHandler"/>
         </handlers>
     </domain>
+    <artifacts>
+        <artifact name="OrderService" url="http://localhost:8080/guvnorsoa/rest/packages/OrderService"/>
+    </artifacts>
 </switchyard>

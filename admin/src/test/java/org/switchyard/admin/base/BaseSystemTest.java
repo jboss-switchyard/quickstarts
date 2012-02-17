@@ -33,7 +33,6 @@ import org.switchyard.admin.Application;
 import org.switchyard.admin.Binding;
 import org.switchyard.admin.Component;
 import org.switchyard.admin.ComponentService;
-import org.switchyard.admin.ComponentType;
 import org.switchyard.admin.Service;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
@@ -55,7 +54,7 @@ public class BaseSystemTest {
     @Test
     public void testApplication() {
         BaseApplication app1 = new BaseApplication(_switchYard, new QName("app1"), null);
-        BaseApplication app2 = new BaseApplication(_switchYard, new QName("app2"));
+        BaseApplication app2 = new BaseApplication(_switchYard, new QName("app2"), null);
         
         _switchYard.addApplication(app1);
         app1.addService(new MockService(new QName("test1"), app1));

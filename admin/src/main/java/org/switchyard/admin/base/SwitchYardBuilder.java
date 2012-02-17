@@ -79,7 +79,7 @@ public class SwitchYardBuilder implements DeploymentListener {
             _log.warn("initializing() received deployment with null application name.");
             return;
         }
-        _switchYard.addApplication(new BaseApplication(_switchYard, applicationName));
+        _switchYard.addApplication(new BaseApplication(_switchYard, applicationName, deployment.getConfig()));
     }
 
     @Override

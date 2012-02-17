@@ -23,6 +23,8 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.config.model.switchyard.SwitchYardModel;
+
 /**
  * Application
  * 
@@ -71,4 +73,10 @@ public interface Application {
      * @return the name of this application.
      */
     public QName getName();
+    
+    /**
+     * Return the application descriptor.
+     * @return the config model for the application descriptor
+     */
+    public SwitchYardModel getConfig();
 }

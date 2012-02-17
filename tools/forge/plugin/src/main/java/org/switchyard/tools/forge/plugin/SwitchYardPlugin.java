@@ -18,6 +18,11 @@
  */
 package org.switchyard.tools.forge.plugin;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.URL;
+
 import javax.inject.Inject;
 
 import org.jboss.forge.project.Project;
@@ -49,7 +54,11 @@ import org.switchyard.config.model.domain.HandlersModel;
 import org.switchyard.config.model.domain.v1.V1DomainModel;
 import org.switchyard.config.model.domain.v1.V1HandlerModel;
 import org.switchyard.config.model.domain.v1.V1HandlersModel;
+import org.switchyard.config.model.switchyard.ArtifactModel;
+import org.switchyard.config.model.switchyard.ArtifactsModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.switchyard.v1.V1ArtifactModel;
+import org.switchyard.config.model.switchyard.v1.V1ArtifactsModel;
 
 /**
  * Project-level commands for SwitchYard applications.
@@ -61,6 +70,8 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
 @Help("Plugin for creating service-oriented applications with SwitchYard.")
 public class SwitchYardPlugin implements Plugin {
     
+    // Directory where artifacts are stored
+    private static final String ARTIFACT_DIR = "lib";
     // Template file used for unit testing services
     //private static final String TEST_SERVICE_TEMPLATE = "java/TestTemplate.java";
     private static final String TEST_SERVICE_TEMPLATE = "/org/switchyard/tools/forge/plugin/TestTemplate.java";
@@ -318,6 +329,99 @@ public class SwitchYardPlugin implements Plugin {
         // Save configuration changes
         switchYard.saveConfig();
         out.println(result);
+    }
+    
+    /**
+     * Import the specified artifact into the application project.
+     * @param urlStr url for the artifact module
+     * @param name name of the artifact module
+     * @param download true will attempt download of the artifact module
+     * @param out shell output
+     */
+    @Command(value = "import-artifacts", help = "Import service artifacts into project")
+    public void importArtifacts(
+            @Option(required = true,
+                     name = "URL",
+                     description = "URL of a repository containing artifacts") 
+            final String urlStr,
+            @Option(required = true,
+                    name = "name",
+                    description = "Name of the artifact module") 
+            final String name,
+            @Option(required = false,
+                     name = "download",
+                     description = "Set to true to download the artifact from the repository.") 
+            final Boolean download,
+            final PipeOut out) {
         
+
+        SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
+        
+        URL url;
+        try {
+            url = new URL(urlStr);
+        } catch (Exception ex) {
+            out.println(out.renderColor(ShellColor.RED, "Invalid Artifact URL: " + urlStr));
+            out.println(out.renderColor(ShellColor.RED, ex.toString()));
+            return;
+        }
+        
+        // Download the artifact if requested
+        if (download == null || download) {
+            try {
+                File artifactDir = new File(ARTIFACT_DIR);
+                if (!artifactDir.exists()) {
+                    artifactDir.mkdirs();
+                }
+                // detect if this is a Guvnor repository
+                if (url.getProtocol().contains("http") && url.getPath().contains("rest/packages")) {
+                    url = new URL(url.toString() + "/binary");
+                }
+                File artifactFile = new File(artifactDir, name + ".jar");
+                streamToFile(url.openStream(), artifactFile);
+                
+            } catch (Exception ex) {
+                out.println(out.renderColor(ShellColor.RED, "Invalid Artifact URL: " + urlStr));
+                out.println(out.renderColor(ShellColor.RED, ex.toString()));
+                return;
+            }
+        }
+        
+        // update config
+        ArtifactsModel artifacts = switchYard.getSwitchYardConfig().getArtifacts();
+        if (artifacts == null) {
+            artifacts = new V1ArtifactsModel();
+            switchYard.getSwitchYardConfig().setArtifacts(artifacts);
+        }
+        ArtifactModel artifact = new V1ArtifactModel();
+        artifact.setName(name);
+        artifact.setURL(urlStr);
+        artifacts.addArtifact(artifact);
+        switchYard.saveConfig();
+    }
+    
+    // This method reads from the source stream and writes to the specified path.
+    // Both the input and output streams are closed by this method.
+    private void streamToFile(InputStream stream, File filePath) throws Exception {
+        if (filePath.exists()) {
+            throw new Exception("File already exists: " + filePath);
+        }
+
+        FileOutputStream fos = null;
+        try { 
+            fos = new FileOutputStream(filePath);
+            int count;
+            byte[] buf = new byte[8192];
+            while ((count = stream.read(buf)) != -1) {
+                fos.write(buf, 0, count);
+            }
+        } finally {
+            if (fos != null) {
+                fos.close();
+            }
+            if (stream != null) {
+                stream.close();
+            }
+        }
     }
 }

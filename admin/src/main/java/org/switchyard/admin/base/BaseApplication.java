@@ -33,6 +33,7 @@ import org.switchyard.admin.ComponentService;
 import org.switchyard.admin.Service;
 import org.switchyard.admin.Transformer;
 import org.switchyard.admin.Validator;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * Base implementation of Application.
@@ -45,15 +46,17 @@ public class BaseApplication implements Application {
     private Map<QName, ComponentService> _componentServices;
     private List<Transformer> _transformers;
     private List<Validator> _validators;
+    private SwitchYardModel _config;
     
     /**
      * Create a new BaseApplication with the specified services.
      * @param switchYard SwitchYard object containing this application
      * @param name application name
      * @param services list of services
+     * @param config application descriptor model
      */
-    public BaseApplication(BaseSwitchYard switchYard, QName name, List<Service> services) {
-        this(switchYard, name);
+    public BaseApplication(BaseSwitchYard switchYard, QName name, List<Service> services, SwitchYardModel config) {
+        this(switchYard, name, config);
         if (services != null) {
             for (Service service : services) {
                 _services.put(service.getName(), service);
@@ -65,14 +68,16 @@ public class BaseApplication implements Application {
      * Create a new BaseApplication.
      * @param switchYard SwitchYard object containing this application
      * @param name application name
+     * @param config application descriptor model
      */
-    public BaseApplication(BaseSwitchYard switchYard, QName name) {
+    public BaseApplication(BaseSwitchYard switchYard, QName name, SwitchYardModel config) {
         _switchYard = switchYard;
         _name = name;
         _services = new LinkedHashMap<QName, Service>();
         _componentServices = new LinkedHashMap<QName, ComponentService>();
         _transformers = new LinkedList<Transformer>();
         _validators = new LinkedList<Validator>();
+        _config = config;
     }
 
     @Override
@@ -105,6 +110,11 @@ public class BaseApplication implements Application {
         for (Service service : services) {
             _services.put(service.getName(), service);
         }
+    }
+    
+    @Override
+    public SwitchYardModel getConfig() {
+        return _config;
     }
 
     protected void addService(Service service) {

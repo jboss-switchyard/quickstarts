@@ -46,6 +46,9 @@ import org.switchyard.config.model.domain.PropertiesModel;
 import org.switchyard.config.model.switchyard.test.java.JavaTransformModel;
 import org.switchyard.config.model.switchyard.test.smooks.SmooksConfigModel;
 import org.switchyard.config.model.switchyard.test.smooks.SmooksTransformModel;
+import org.switchyard.config.model.switchyard.v1.V1ArtifactModel;
+import org.switchyard.config.model.switchyard.v1.V1ArtifactsModel;
+import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.config.test.xmlunit.SchemaLocationDifferenceListener;
 
@@ -123,6 +126,30 @@ public class SwitchYardModelTests {
         HandlerModel handler = domain.getHandlers().getHandlers().get(0);
         Assert.assertEquals("handler1", handler.getName());
         Assert.assertEquals("org.switchyard.handlers.TestHandler", handler.getClassName());
+        
+        // Verify artifact config
+        ArtifactsModel artifacts = switchyard.getArtifacts();
+        Assert.assertEquals(1, artifacts.getArtifacts().size());
+        ArtifactModel artifact = artifacts.getArtifact("OrderService");
+        Assert.assertNotNull("ArtifactModel for OrderService was not read!", artifact);
+        Assert.assertEquals("OrderService", artifact.getName());
+        Assert.assertEquals("http://localhost:8080/guvnorsoa/rest/packages/OrderService", artifact.getURL());
+    }
+    
+    @Test
+    public void testArtifactCreate() throws Exception {
+        ArtifactsModel artifacts = new V1ArtifactsModel();
+        ArtifactModel artifact = new V1ArtifactModel();
+        artifact.setName("foo");
+        artifact.setURL("file://tmp/foo");
+        artifacts.addArtifact(artifact);
+
+        Assert.assertEquals("foo", artifact.getName());
+        Assert.assertEquals("file://tmp/foo", artifact.getURL());
+        
+        SwitchYardModel syModel = new V1SwitchYardModel();
+        syModel.setArtifacts(artifacts);
+        Assert.assertEquals(artifacts, syModel.getArtifacts());
     }
 
     @Test

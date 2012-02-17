@@ -25,6 +25,7 @@ import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.domain.DomainModel;
+import org.switchyard.config.model.switchyard.ArtifactsModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.config.model.validate.ValidatesModel;
@@ -37,6 +38,7 @@ import org.switchyard.config.model.validate.ValidatesModel;
 public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel {
 
     private CompositeModel _composite;
+    private ArtifactsModel _artifacts;
     private TransformsModel _transforms;
     private ValidatesModel _validates;
     private DomainModel _domain;
@@ -46,7 +48,7 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
      */
     public V1SwitchYardModel() {
         super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, SwitchYardModel.SWITCHYARD));
-        setModelChildrenOrder(CompositeModel.COMPOSITE, TransformsModel.TRANSFORMS, ValidatesModel.VALIDATES, DomainModel.DOMAIN);
+        setModelChildrenOrder(CompositeModel.COMPOSITE, TransformsModel.TRANSFORMS, ValidatesModel.VALIDATES, DomainModel.DOMAIN, ArtifactsModel.ARTIFACTS);
     }
 
     /**
@@ -56,7 +58,7 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
      */
     public V1SwitchYardModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setModelChildrenOrder(CompositeModel.COMPOSITE, TransformsModel.TRANSFORMS, ValidatesModel.VALIDATES, DomainModel.DOMAIN);
+        setModelChildrenOrder(CompositeModel.COMPOSITE, TransformsModel.TRANSFORMS, ValidatesModel.VALIDATES, DomainModel.DOMAIN, ArtifactsModel.ARTIFACTS);
     }
 
     /**
@@ -119,6 +121,27 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
     public SwitchYardModel setValidates(ValidatesModel validatesModel) {
         setChildModel(validatesModel);
         _validates = validatesModel;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ArtifactsModel getArtifacts() {
+        if (_artifacts == null) {
+            _artifacts = (ArtifactsModel)getFirstChildModelStartsWith(ArtifactsModel.ARTIFACTS);
+        }
+        return _artifacts;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SwitchYardModel setArtifacts(ArtifactsModel artifactsModel) {
+        setChildModel(artifactsModel);
+        _artifacts = artifactsModel;
         return this;
     }
 

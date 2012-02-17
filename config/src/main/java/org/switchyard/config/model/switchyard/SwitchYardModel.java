@@ -70,6 +70,19 @@ public interface SwitchYardModel extends NamedModel {
     public ValidatesModel getValidates();
     
     /**
+     * Sets the child artifacts model.
+     * @param artifacts the child artifacts model.
+     * @return this SwitchYardModel (useful for chaining)
+     */
+    public SwitchYardModel setArtifacts(ArtifactsModel artifacts);
+
+    /**
+     * Gets the child artifacts model.
+     * @return the child artifacts model
+     */
+    public ArtifactsModel getArtifacts();
+    
+    /**
      * Sets the child validates model.
      * @param validatesModel the child validates model.
      * @return this SwitchYardModel (useful for chaining)
@@ -88,4 +101,6 @@ public interface SwitchYardModel extends NamedModel {
      * @return this SwitchyardModel (useful for chaining)
      */
     public SwitchYardModel setDomain(DomainModel domain);
+    
+    
 }
