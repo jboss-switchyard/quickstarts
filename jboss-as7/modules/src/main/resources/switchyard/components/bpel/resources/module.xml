@@ -43,19 +43,6 @@
         
 		<!-- Keep this as a local dependency, as it is an older version that ODE requires -->        
         <resource-root path="xmlbeans-${version.xmlbeans}.jar"/>
-       
-        <!-- TODO: Tried to use 'org.jaxen' module, but got:
-        java.lang.ClassNotFoundException: org.w3c.dom.Node from [Module "org.jaxen:main" from local module loader
-        	when running an example. org.w3c.dom.Node is part of the jvm rt.jar, so not sure why
-        	it can't find this class.
-        -->
-        <resource-root path="jaxen-1.1.1.jar"/>
-         
-         <!-- TODO: Tried to create separate module, but got:
-         java.lang.ClassNotFoundException: javax.xml.transform.sax.SAXTransformerFactory from [Module "net.sourceforge.saxon:main" 
-        -->
-        <resource-root path="saxonhe-9.2.1.5.jar"/>
-        
     </resources>
 
     <dependencies>
@@ -89,10 +76,8 @@
         
         <module name="com.h2database.h2"/>
         
-        <!--
         <module name="org.jaxen"/>
-        <module name="net.sourceforge.saxon"/>
-        -->
+        <module name="net.sourceforge.saxon" services="import" export="false"/>
     </dependencies>
 
 </module>

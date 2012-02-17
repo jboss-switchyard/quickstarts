@@ -38,11 +38,6 @@
             <filtered>true</filtered>
         </file>
         <file>
-            <source>src/main/resources/external/jaxen/module.xml</source>
-            <outputDirectory>/modules/org/jaxen/main</outputDirectory>
-            <filtered>true</filtered>
-        </file>
-        <file>
             <source>src/main/resources/external/drools/knowledge-api/module.xml</source>
             <destName>module.xml</destName>
             <outputDirectory>/modules/org/drools/knowledge-api/main</outputDirectory>
@@ -135,6 +130,11 @@
             <source>src/main/resources/external/fusesource/commonman/module.xml</source>
             <outputDirectory>/modules/org/fusesource/commonman/main</outputDirectory>
             <filtered>true</filtered>
+        </file>	
+        <file>
+            <source>src/main/resources/external/saxon/module.xml</source>
+            <outputDirectory>/modules/net/sourceforge/saxon/main</outputDirectory>
+            <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/external/springframework/module.xml</source>
@@ -183,14 +183,6 @@
             <outputDirectory>/modules/org/freemarker/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${version.freemarker}.${artifact.extension}
             </outputFileNameMapping>
-        </dependencySet>
-        <dependencySet>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <includes>
-                <include>jaxen:jaxen</include>
-            </includes>
-            <outputDirectory>/modules/org/jaxen/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${version.jaxen}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
@@ -340,6 +332,14 @@
             </includes>
             <outputDirectory>/modules/org/apache/camel/jms/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${version.camel}.${artifact.extension}</outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+           <useTransitiveDependencies>false</useTransitiveDependencies>
+           <includes>
+              <include>net.sourceforge.saxon:saxonhe</include>
+           </includes>
+           <outputDirectory>/modules/net/sourceforge/saxon/main</outputDirectory>
+           <outputFileNameMapping>${artifact.artifactId}-${version.saxon}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>

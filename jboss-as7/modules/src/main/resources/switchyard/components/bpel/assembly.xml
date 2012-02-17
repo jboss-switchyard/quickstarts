@@ -27,14 +27,6 @@
             <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
             <filtered>true</filtered>
         </file>
-        <!-- (See module.xml)
-        <file>
-          <source>src/main/resources/switchyard/components/bpel/resources/net/sourceforge/saxon/module.xml</source>
-          <source>src/main/resources/switchyard/components/bpel/resources/net/sourceforge/saxon/module.xml</source>
-          <outputDirectory>/modules/net/sourceforge/saxon/main</outputDirectory>
-          <filtered>true</filtered>
-        </file>
-        -->
     </files>
     <dependencySets>
         <dependencySet>
@@ -199,16 +191,6 @@
             <outputFileNameMapping>${artifact.artifactId}-${version.activity.monitor.model}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
-
-        <dependencySet>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <includes>
-                <include>jaxen:jaxen</include>
-            </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-1.1.1.${artifact.extension}</outputFileNameMapping>
-        </dependencySet>
-
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
@@ -218,26 +200,6 @@
             <outputFileNameMapping>${artifact.artifactId}-${version.xmlbeans}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
-
-        <dependencySet>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <includes>
-                <include>net.sourceforge.saxon:saxonhe</include>
-            </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${version.saxon}.${artifact.extension}</outputFileNameMapping>
-        </dependencySet>
-
-        <!-- (See module.xml)
-        <dependencySet>
-           <useTransitiveDependencies>false</useTransitiveDependencies>
-           <includes>
-              <include>net.sourceforge.saxon:saxonhe</include>
-           </includes>
-           <outputDirectory>/modules/net/sourceforge/saxon/main</outputDirectory>
-           <outputFileNameMapping>${artifact.artifactId}-${version.saxon}.${artifact.extension}</outputFileNameMapping>
-        </dependencySet>
-        -->
 
     </dependencySets>
 
