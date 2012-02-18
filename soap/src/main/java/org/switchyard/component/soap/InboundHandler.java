@@ -168,10 +168,12 @@ public class InboundHandler extends BaseServiceHandler {
         Boolean oneWay = false;
         String firstBodyElement = null;
 
+        if ((soapMessage == null) || (soapMessage.getSOAPPart() == null)) {
+            return handleException(oneWay, new SOAPException("No such operation: " + _wsdlPort.getName() + "->null"));
+        }
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("Request:[" + SOAPUtil.soapMessageToString(soapMessage) + "]");
         }
-        
         try {
             firstBodyElement = SOAPUtil.getFirstBodyElement(soapMessage);
             operation = WSDLUtil.getOperation(_wsdlPort, firstBodyElement);
