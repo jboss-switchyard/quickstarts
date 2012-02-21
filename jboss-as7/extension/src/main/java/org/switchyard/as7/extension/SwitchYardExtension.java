@@ -111,7 +111,7 @@ public class SwitchYardExtension implements Extension {
     /** {@inheritDoc} */
     @Override
     public void initializeParsers(final ExtensionParsingContext context) {
-        context.setSubsystemXmlMapping(SwitchYardExtension.NAMESPACE, PARSER);
+        context.setSubsystemXmlMapping(SUBSYSTEM_NAME, SwitchYardExtension.NAMESPACE, PARSER);
     }
 
     private static ModelNode createAddSubSystemOperation() {

@@ -72,22 +72,22 @@ public class SwitchYardDependencyProcessor implements DeploymentUnitProcessor {
         }
 
         final ModuleLoader moduleLoader = Module.getBootModuleLoader();
-        moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_ID, false, false, true));
-        moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_API_ID, false, false, false));
-        moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_COMMON_ID, false, false, false));
-        moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_CONFIG_ID, false, false, false));
-        ModuleDependency dep = new ModuleDependency(moduleLoader, SWITCHYARD_RUNTIME_ID, false, false, true);
+        moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_ID, false, false, true, false));
+        moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_API_ID, false, false, false, false));
+        moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_COMMON_ID, false, false, false, false));
+        moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_CONFIG_ID, false, false, false, false));
+        ModuleDependency dep = new ModuleDependency(moduleLoader, SWITCHYARD_RUNTIME_ID, false, false, true, false);
         dep.addImportFilter(META_INF_FILTER, true);
         moduleSpecification.addSystemDependency(dep);
-        dep = new ModuleDependency(moduleLoader, SWITCHYARD_TRANSFORM_ID, false, false, true);
+        dep = new ModuleDependency(moduleLoader, SWITCHYARD_TRANSFORM_ID, false, false, true, false);
         dep.addImportFilter(META_INF_FILTER, true);
         moduleSpecification.addSystemDependency(dep);
-        dep = new ModuleDependency(moduleLoader, SWITCHYARD_VALIDATE_ID, false, false, true);
+        dep = new ModuleDependency(moduleLoader, SWITCHYARD_VALIDATE_ID, false, false, true, false);
         dep.addImportFilter(META_INF_FILTER, true);
         moduleSpecification.addSystemDependency(dep);
         
         for (ModuleIdentifier moduleId : _componentModules) {
-            dep = new ModuleDependency(moduleLoader, moduleId, false, false, true);
+            dep = new ModuleDependency(moduleLoader, moduleId, false, false, true, false);
             dep.addImportFilter(META_INF_FILTER, true);
             moduleSpecification.addSystemDependency(dep);
         }

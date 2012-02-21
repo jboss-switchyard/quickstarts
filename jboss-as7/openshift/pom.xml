@@ -18,10 +18,6 @@
         <module>express</module>
     </modules>
 
-    <properties>
-        <version.arquillian>1.0.0.CR7</version.arquillian>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -36,62 +32,62 @@
             <dependency>
                 <groupId>org.jboss.arquillian</groupId>
                 <artifactId>arquillian-junit</artifactId>
-                <version>${version.arquillian}</version>
+                <version>${version.arquillian.openshift}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.junit</groupId>
                 <artifactId>arquillian-junit-container</artifactId>
-                <version>${version.arquillian}</version>
+                <version>${version.arquillian.openshift}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.container</groupId>
                 <artifactId>arquillian-container-test-spi</artifactId>
-                <version>${version.arquillian}</version>
+                <version>${version.arquillian.openshift}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.container</groupId>
                 <artifactId>arquillian-container-spi</artifactId>
-                <version>${version.arquillian}</version>
+                <version>${version.arquillian.openshift}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.container</groupId>
                 <artifactId>arquillian-container-test-api</artifactId>
-                <version>${version.arquillian}</version>
+                <version>${version.arquillian.openshift}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.container</groupId>
                 <artifactId>arquillian-jbossas-managed-6</artifactId>
-                <version>${version.arquillian}</version>
+                <version>${version.arquillian.openshift}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.container</groupId>
                 <artifactId>arquillian-container-test-impl-base</artifactId>
-                <version>${version.arquillian}</version>
+                <version>${version.arquillian.openshift}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.core</groupId>
                 <artifactId>arquillian-core-api</artifactId>
-                <version>${version.arquillian}</version>
+                <version>${version.arquillian.openshift}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.core</groupId>
                 <artifactId>arquillian-core-impl-base</artifactId>
-                <version>${version.arquillian}</version>
+                <version>${version.arquillian.openshift}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.junit</groupId>
                 <artifactId>arquillian-junit-core</artifactId>
-                <version>${version.arquillian}</version>
+                <version>${version.arquillian.openshift}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.test</groupId>
                 <artifactId>arquillian-test-impl-base</artifactId>
-                <version>${version.arquillian}</version>
+                <version>${version.arquillian.openshift}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.test</groupId>
                 <artifactId>arquillian-test-spi</artifactId>
-                <version>${version.arquillian}</version>
+                <version>${version.arquillian.openshift}</version>
             </dependency>
 
             <dependency>
