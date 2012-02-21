@@ -22,7 +22,9 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.INT
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.NAME;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.PROPERTIES;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.TYPE;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.ACTIVATION_TYPES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.APPLICATION;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.ARTIFACTS;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.COMPONENT_SERVICES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.CONFIGURATION;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.FROM;
@@ -34,7 +36,7 @@ import static org.switchyard.as7.extension.SwitchYardModelConstants.REFERENCES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.SERVICES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.TO;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.TRANSFORMERS;
-import static org.switchyard.as7.extension.SwitchYardModelConstants.ACTIVATION_TYPES;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.URL;
 
 import java.util.Map;
 import java.util.Set;
@@ -47,6 +49,7 @@ import org.switchyard.admin.ComponentReference;
 import org.switchyard.admin.ComponentService;
 import org.switchyard.admin.Service;
 import org.switchyard.admin.Transformer;
+import org.switchyard.config.model.switchyard.ArtifactModel;
 
 /**
  * ModelNodeCreationUtil
@@ -103,6 +106,13 @@ final public class ModelNodeCreationUtil {
      *          },
      *          ...
      *      ]
+     *      "artifacts" =&gt; [
+     *          {
+     *              "name" =&gt; "nameType",
+     *              "url" =&gt; "urlType",
+     *          },
+     *          ...
+     *      ]
      * </pre></code>
      * 
      * @param application the {@link Application} used to populate the node.
@@ -124,11 +134,19 @@ final public class ModelNodeCreationUtil {
         for (Transformer transformer : application.getTransformers()) {
             transformersNode.add(createTransformerNode(transformer));
         }
+        
+        ModelNode artifactsNode = new ModelNode();
+        if (application.getConfig().getArtifacts() != null) {
+            for (ArtifactModel artifact : application.getConfig().getArtifacts().getArtifacts()) {
+                artifactsNode.add(createArtifactNode(artifact));
+            }
+        }
 
         applicationNode.get(NAME).set(application.getName().toString());
         applicationNode.get(SERVICES).set(servicesNode);
         applicationNode.get(COMPONENT_SERVICES).set(componentServicesNode);
         applicationNode.get(TRANSFORMERS).set(transformersNode);
+        applicationNode.get(ARTIFACTS).set(artifactsNode);
 
         return applicationNode;
     }
@@ -369,6 +387,61 @@ final public class ModelNodeCreationUtil {
      * @return a new {@link ModelNode}
      */
     public static ModelNode createTransformerNode(Transformer transformation) {
+        ModelNode transformationNode = new ModelNode();
+
+        if (transformation.getFrom() == null) {
+            transformationNode.get(FROM);
+        } else {
+            transformationNode.get(FROM).set(transformation.getFrom().toString());
+        }
+
+        if (transformation.getTo() == null) {
+            transformationNode.get(TO);
+        } else {
+            transformationNode.get(TO).set(transformation.getTo().toString());
+        }
+
+        if (transformation.getType() == null) {
+            transformationNode.get(TYPE);
+        } else {
+            transformationNode.get(TYPE).set(transformation.getType());
+        }
+
+        return transformationNode;
+    }
+    
+
+    /**
+     * Creates a new {@link ModelNode} tree from the {@link ArtifactModel}. The
+     * tree has the form: <br>
+     * <code><pre>
+     *      "name" =&gt; "nameType",
+     *      "url" =&gt; "urlType",
+     * </pre></code>
+     * 
+     * @param artifact the {@link ArtifactModel} used to populate the node.
+     * @return a new {@link ModelNode}
+     */
+    public static ModelNode createArtifactNode(ArtifactModel artifact) {
+        ModelNode artifactNode = new ModelNode();
+        artifactNode.get(NAME).set(artifact.getName());
+        artifactNode.get(URL).set(artifact.getURL());
+        return artifactNode;
+    }
+    
+    /**
+     * Creates a new {@link ModelNode} tree from the {@link Transformer}. The
+     * tree has the form: <br>
+     * <code><pre>
+     *      "from" =&gt; "fromType",
+     *      "to" =&gt; "toType",
+     *      "type" =&gt; "transformerType",
+     * </pre></code>
+     * 
+     * @param transformation the {@link Transformer} used to populate the node.
+     * @return a new {@link ModelNode}
+     */
+    public static ModelNode createArtifactNode(Transformer transformation) {
         ModelNode transformationNode = new ModelNode();
 
         if (transformation.getFrom() == null) {

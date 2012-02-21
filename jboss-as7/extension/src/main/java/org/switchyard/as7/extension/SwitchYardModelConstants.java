@@ -56,6 +56,10 @@ public final class SwitchYardModelConstants {
      * Constant for /subsystem=switchyard/:read-service operation.
      */
     public static final String READ_SERVICE = "read-service";
+    /**
+     * Constant for /subsystem=switchyard/:uses-artifact operation.
+     */
+    public static final String USES_ARTIFACT = "uses-artifact";
     
     // nodes
     /**
@@ -122,6 +126,14 @@ public final class SwitchYardModelConstants {
      * Constant for model key: transformations.
      */
     public static final String TRANSFORMERS = "transformers";
+    /**
+     * Constant for model key: artifacts.
+     */
+    public static final String ARTIFACTS = "artifacts";
+    /**
+     * Constant for model key: url.
+     */
+    public static final String URL = "url";
 
     private SwitchYardModelConstants() {
     }

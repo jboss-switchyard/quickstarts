@@ -23,8 +23,8 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.DES
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
 import static org.jboss.as.controller.parsing.ParseUtils.missingRequired;
-import static org.jboss.as.controller.parsing.ParseUtils.requireNoContent;
 import static org.jboss.as.controller.parsing.ParseUtils.requireNoAttributes;
+import static org.jboss.as.controller.parsing.ParseUtils.requireNoContent;
 import static org.jboss.as.controller.parsing.ParseUtils.requireNoNamespaceAttribute;
 import static org.jboss.as.controller.parsing.ParseUtils.unexpectedAttribute;
 import static org.jboss.as.controller.parsing.ParseUtils.unexpectedElement;
@@ -56,13 +56,14 @@ import org.jboss.staxmapper.XMLElementReader;
 import org.jboss.staxmapper.XMLElementWriter;
 import org.jboss.staxmapper.XMLExtendedStreamReader;
 import org.jboss.staxmapper.XMLExtendedStreamWriter;
+import org.switchyard.as7.extension.admin.SwitchYardSubsystemGetVersion;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemListApplications;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemListComponents;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemListServices;
-import org.switchyard.as7.extension.admin.SwitchYardSubsystemGetVersion;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemReadApplication;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemReadComponent;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemReadService;
+import org.switchyard.as7.extension.admin.SwitchYardSubsystemUsesArtifact;
 
 /**
  * Domain extension used to initialize the SwitchYard subsystem.
@@ -96,6 +97,7 @@ public class SwitchYardExtension implements Extension {
         registration.registerOperationHandler(SwitchYardModelConstants.READ_APPLICATION, SwitchYardSubsystemReadApplication.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_READ_APPLICATION, false);
         registration.registerOperationHandler(SwitchYardModelConstants.READ_COMPONENT, SwitchYardSubsystemReadComponent.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_READ_COMPONENT, false);
         registration.registerOperationHandler(SwitchYardModelConstants.READ_SERVICE, SwitchYardSubsystemReadService.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_READ_SERVICE, false);
+        registration.registerOperationHandler(SwitchYardModelConstants.USES_ARTIFACT, SwitchYardSubsystemUsesArtifact.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_USES_ARTIFACT, false);
 
         DescriptionProvider nullDescriptionProvider = new DescriptionProvider() {
             @Override

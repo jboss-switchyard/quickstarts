@@ -32,8 +32,10 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.REQ
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.TAIL_COMMENT_ALLOWED;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.TYPE;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.VALUE_TYPE;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.ACTIVATION_TYPES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.APPLICATION;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.APPLICATION_NAME;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.ARTIFACTS;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.COMPONENT_SERVICES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.CONFIGURATION;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.FROM;
@@ -53,7 +55,8 @@ import static org.switchyard.as7.extension.SwitchYardModelConstants.SERVICES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.SERVICE_NAME;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.TO;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.TRANSFORMERS;
-import static org.switchyard.as7.extension.SwitchYardModelConstants.ACTIVATION_TYPES;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.URL;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.USES_ARTIFACT;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -142,6 +145,13 @@ final class SwitchYardSubsystemProviders {
 
         public ModelNode getModelDescription(final Locale locale) {
             return Descriptions.getSubsystemReadService(locale);
+        }
+    };
+
+    static final DescriptionProvider SUBSYSTEM_USES_ARTIFACT = new DescriptionProvider() {
+
+        public ModelNode getModelDescription(final Locale locale) {
+            return Descriptions.getSubsystemUsesArtifact(locale);
         }
     };
 
@@ -287,6 +297,11 @@ final class SwitchYardSubsystemProviders {
                     bundle.getString("switchyard.read-application.reply.transformers"));
             populateTransformerValueTypeNode(op.get(REPLY_PROPERTIES, VALUE_TYPE, TRANSFORMERS), locale);
 
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, ARTIFACTS, TYPE).set(ModelType.LIST);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, ARTIFACTS, DESCRIPTION).set(
+                    bundle.getString("switchyard.read-application.reply.artifacts"));
+            populateArtifactValueTypeNode(op.get(REPLY_PROPERTIES, VALUE_TYPE, ARTIFACTS), locale);
+
             return op;
         }
 
@@ -340,6 +355,32 @@ final class SwitchYardSubsystemProviders {
             op.get(REPLY_PROPERTIES, DESCRIPTION).set(bundle.getString("switchyard.read-service.reply"));
 
             populateServiceValueTypeNode(op.get(REPLY_PROPERTIES), locale);
+
+            return op;
+        }
+
+        static ModelNode getSubsystemUsesArtifact(Locale locale) {
+            final ResourceBundle bundle = getResourceBundle(locale);
+
+            final ModelNode op = new ModelNode();
+
+            op.get(OPERATION_NAME).set(USES_ARTIFACT);
+            op.get(DESCRIPTION).set(bundle.getString("switchyard.uses-artifacts"));
+
+            op.get(REQUEST_PROPERTIES, NAME, TYPE).set(ModelType.STRING);
+            op.get(REQUEST_PROPERTIES, NAME, DESCRIPTION).set(
+                    bundle.getString("switchyard.uses-artifacts.param.name"));
+            op.get(REQUEST_PROPERTIES, NAME, NILLABLE).set(true);
+            op.get(REQUEST_PROPERTIES, URL, TYPE).set(ModelType.STRING);
+            op.get(REQUEST_PROPERTIES, URL, DESCRIPTION).set(
+                    bundle.getString("switchyard.uses-artifacts.param.url"));
+            op.get(REQUEST_PROPERTIES, URL, NILLABLE).set(true);
+
+            op.get(REPLY_PROPERTIES, TYPE).set(ModelType.LIST);
+            op.get(REPLY_PROPERTIES, DESCRIPTION).set(bundle.getString("switchyard.uses-artifacts.reply"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, NAME, TYPE).set(ModelType.STRING);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, NAME, DESCRIPTION).set(
+                    bundle.getString("switchyard.uses-artifacts.reply.name"));
 
             return op;
         }
@@ -403,6 +444,16 @@ final class SwitchYardSubsystemProviders {
             op.get(VALUE_TYPE, TO, DESCRIPTION).set(bundle.getString("switchyard.read-application.reply.transformer.to"));
             op.get(VALUE_TYPE, TYPE, TYPE).set(ModelType.STRING);
             op.get(VALUE_TYPE, TYPE, DESCRIPTION).set(bundle.getString("switchyard.read-application.reply.transformer.type"));
+        }
+
+        static void populateArtifactValueTypeNode(ModelNode op, Locale locale) {
+            final ResourceBundle bundle = getResourceBundle(locale);
+
+            op.get(VALUE_TYPE, NAME, TYPE).set(ModelType.STRING);
+            op.get(VALUE_TYPE, NAME, DESCRIPTION).set(
+                    bundle.getString("switchyard.read-application.reply.artifact.name"));
+            op.get(VALUE_TYPE, URL, TYPE).set(ModelType.STRING);
+            op.get(VALUE_TYPE, URL, DESCRIPTION).set(bundle.getString("switchyard.read-application.reply.artifact.url"));
         }
     }
 }
