@@ -76,6 +76,8 @@ public class BPMServicePlugin implements Plugin {
     private static final String PROCESS_DIR = "META-INF";
     // VAR_* constants reference substitution tokens in the process definition template 
     private static final String VAR_PROCESS_ID   = "${process.id}";
+    private static final String VAR_MESSAGE_CONTENT_IN_NAME = "${message.content.in.name}";
+    private static final String VAR_MESSAGE_CONTENT_OUT_NAME = "${message.content.out.name}";
     
     @Inject
     private Project _project;
@@ -115,12 +117,12 @@ public class BPMServicePlugin implements Plugin {
             final String argProcessId,
             @Option(required = false,
                     name = MESSAGE_CONTENT_IN_NAME,
-                    description="The process variable name for the content of the incoming message",
+                    description="The process variable name for the content of the incoming message (" + MESSAGE_CONTENT_IN + ")",
                     defaultValue = MESSAGE_CONTENT_IN)
             final String argMessageContentInName,
             @Option(required = false,
                     name = MESSAGE_CONTENT_OUT_NAME,
-                    description="The process variable name for the content of the outgoing message",
+                    description="The process variable name for the content of the outgoing message (" + MESSAGE_CONTENT_OUT + ")",
                     defaultValue = MESSAGE_CONTENT_OUT)
             final String argMessageContentOutName,
             @Option(required = false,
@@ -170,6 +172,8 @@ public class BPMServicePlugin implements Plugin {
             TemplateResource template = new TemplateResource(PROCESS_TEMPLATE)
                 .serviceName(argServiceName)
                 .replaceToken(VAR_PROCESS_ID, processId)
+                .replaceToken(VAR_MESSAGE_CONTENT_IN_NAME, argMessageContentInName)
+                .replaceToken(VAR_MESSAGE_CONTENT_OUT_NAME, argMessageContentOutName)
                 .packageName(pkgName);
             template.writeResource(_project.getFacet(ResourceFacet.class).getResource(processDefinitionPath));
             
