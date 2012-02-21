@@ -67,9 +67,12 @@
           resources, i.e. build is platform dependent! -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+    <!-- Override versions for OpenShift. Currently using same version as AS but -->
+    <!-- maintaining this override for future flexibility -->
+    <version.arquillian.openshift>1.0.0.CR7</version.arquillian.openshift>
     <version.activity.monitor.model>1.0.0.Final</version.activity.monitor.model>
     <version.antlr>3.3</version.antlr>
-    <version.ballroom>1.0.0.CR1</version.ballroom>
+    <version.ballroom>1.0.1.Final</version.ballroom>
     <version.camel>2.8.0</version.camel>
     <version.clojure>1.3.0-alpha5</version.clojure>
     <version.commons.httpclient>3.1</version.commons.httpclient>
@@ -86,14 +89,16 @@
     <!-- section to override hiberate version -->
     <version.hibernate.core.helpdesk>3.3.2.GA</version.hibernate.core.helpdesk>
     <version.hibernate.entitymanager.helpdesk>3.4.0.GA</version.hibernate.entitymanager.helpdesk>
-    <version.hornetq>2.2.7.Final</version.hornetq>
+    <version.hornetq>2.2.11.Final</version.hornetq>
     <!-- Jaxen is imported from parent POM but properties are NOT imported -->
     <!-- and this property is required for release assembly. -->
     <version.jaxen>1.1.3</version.jaxen>
     <version.javax.jms>1.1</version.javax.jms>
     <version.jbpm>5.2.0.Final</version.jbpm>
-    <version.jbossas>7.1.0.CR1b</version.jbossas>
-    <version.jbossas.console>1.0.0.RC1</version.jbossas.console>
+    <version.jbossas>7.1.0.Final</version.jbossas>
+    <version.jbossas.console>1.0.2.Final</version.jbossas.console>
+    <!-- Override versions for OpenShift. Currently using same version as AS but -->
+    <!-- maintaining this override for future flexibility -->
     <version.jbossas.openshift>${version.jbossas}</version.jbossas.openshift>
     <version.jpa>1.0.2</version.jpa>
     <version.jta>1.1</version.jta>
@@ -475,7 +480,7 @@
       <dependency>
          <groupId>org.jboss.as</groupId>
          <artifactId>jboss-as-parent</artifactId>
-         <version>7.1.0.CR1b</version>
+         <version>${version.jbossas}</version>
          <type>pom</type>
          <scope>import</scope>
       </dependency>
