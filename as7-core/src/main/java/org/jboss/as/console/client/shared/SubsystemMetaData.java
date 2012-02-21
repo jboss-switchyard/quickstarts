@@ -19,25 +19,22 @@
 
 package org.jboss.as.console.client.shared;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 
 import com.google.gwt.core.client.GWT;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
+ * @date 3/29/11
  */
-public final class SubsystemMetaData {
+public class SubsystemMetaData {
 
-    private SubsystemMetaData() {
-    }
-
-    private static Map<String, SubsystemGroup> groups = new LinkedHashMap<String, SubsystemGroup>();
+    static Map<String, SubsystemGroup> groups = new LinkedHashMap<String, SubsystemGroup>();
 
     private static final String CONNECTOR = "Connector";
 
@@ -83,7 +80,7 @@ public final class SubsystemMetaData {
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Web Services", "webservices"));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("JAXRS", "jaxrs", Boolean.TRUE));
 
-        groups.get(MESSAGING).getItems().add(new SubsystemGroupItem("JMS", "messaging"));
+        groups.get(MESSAGING).getItems().add(new SubsystemGroupItem("Messaging Provider", "messaging"));
 
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Threads", "threads", Boolean.TRUE));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Logging", "logging"));
@@ -91,9 +88,9 @@ public final class SubsystemMetaData {
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Remoting", "remoting", Boolean.TRUE));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Threads", NameTokens.BoundedQueueThreadPoolPresenter));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("JMX", "jmx"));
+        groups.get(CORE).getItems().add(new SubsystemGroupItem("Config Admin Service", "configadmin"));
 
-        groups.get(CONTAINER).getItems()
-                .add(new SubsystemGroupItem("Naming", "naming", !Console.MODULES.getBootstrapContext().isStandalone()));
+        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Naming", "naming", !Console.MODULES.getBootstrapContext().isStandalone()));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EJB 3", "ejb3"));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EE", "ee"));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Transactions", "transactions"));
@@ -101,33 +98,19 @@ public final class SubsystemMetaData {
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("JPA", "jpa"));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("JacORB", "jacorb"));
 
-        groups.get(SECURITY).getItems()
-                .add(new SubsystemGroupItem("Security Subsystem", "security", NameTokens.SecuritySubsystemPresenter));
-        groups.get(SECURITY).getItems()
-                .add(new SubsystemGroupItem("Security Domains", "security", NameTokens.SecurityDomainsPresenter));
+        groups.get(SECURITY).getItems().add(new SubsystemGroupItem("Security Subsystem", "security", NameTokens.SecuritySubsystemPresenter));
+        groups.get(SECURITY).getItems().add(new SubsystemGroupItem("Security Domains", "security", NameTokens.SecurityDomainsPresenter));
 
-        groups.get(OSGI).getItems()
-                .add(new SubsystemGroupItem("Framework Configuration", "osgi", NameTokens.OSGiConfigurationPresenter));
-        groups.get(OSGI).getItems().add(new SubsystemGroupItem("Config Admin Service", "configadmin"));
+        groups.get(OSGI).getItems().add(new SubsystemGroupItem("Framework", "osgi", NameTokens.OSGiConfigurationPresenter));
 
-        groups.get(INFINISPAN)
-                .getItems()
-                .add(new SubsystemGroupItem("Cache Containers", NameTokens.Infinispan,
-                        NameTokens.CacheContainerPresenter));
-        groups.get(INFINISPAN).getItems()
-                .add(new SubsystemGroupItem("Local Caches", NameTokens.Infinispan, NameTokens.LocalCachePresenter));
-        groups.get(INFINISPAN)
-                .getItems()
-                .add(new SubsystemGroupItem("Invalidation Caches", NameTokens.Infinispan,
-                        NameTokens.InvalidationCachePresenter));
-        groups.get(INFINISPAN)
-                .getItems()
-                .add(new SubsystemGroupItem("Replicated Caches", NameTokens.Infinispan,
-                        NameTokens.ReplicatedCachePresenter));
-        groups.get(INFINISPAN)
-                .getItems()
-                .add(new SubsystemGroupItem("Distributed Caches", NameTokens.Infinispan,
-                        NameTokens.DistributedCachePresenter));
+        /*
+        Infinispan is disabled for 1.0.2-SNAPSHOT
+
+        groups.get(INFINISPAN).getItems().add(new SubsystemGroupItem("Cache Containers", NameTokens.Infinispan, NameTokens.CacheContainerPresenter));
+        groups.get(INFINISPAN).getItems().add(new SubsystemGroupItem("Local Caches", NameTokens.Infinispan, NameTokens.LocalCachePresenter));
+        groups.get(INFINISPAN).getItems().add(new SubsystemGroupItem("Invalidation Caches", NameTokens.Infinispan, NameTokens.InvalidationCachePresenter));
+        groups.get(INFINISPAN).getItems().add(new SubsystemGroupItem("Replicated Caches", NameTokens.Infinispan, NameTokens.ReplicatedCachePresenter));
+        groups.get(INFINISPAN).getItems().add(new SubsystemGroupItem("Distributed Caches", NameTokens.Infinispan, NameTokens.DistributedCachePresenter));*/
 
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("SAR", "sar", Boolean.TRUE));
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("Arquillian", "arquillian", Boolean.TRUE));
@@ -147,27 +130,30 @@ public final class SubsystemMetaData {
      * @param subsysKey the subsystem key
      * @return the group
      */
-    public static SubsystemGroup getGroupForKey(String subsysKey) {
+    public static SubsystemGroup getGroupForKey(String subsysKey)
+    {
         SubsystemGroup matchingGroup = null;
 
-        for (String groupName : groups.keySet()) {
+        for(String groupName : groups.keySet())
+        {
             SubsystemGroup group = groups.get(groupName);
-            for (SubsystemGroupItem item : group.getItems()) {
-                if (item.getKey().equals(subsysKey) && !item.isDisabled()) {
+            for(SubsystemGroupItem item : group.getItems())
+            {
+                if(item.getKey().equals(subsysKey)
+                        && item.isDisabled() == false)
+                {
                     matchingGroup = group;
                     break;
                 }
             }
 
-            if (matchingGroup != null) {
+            if(matchingGroup!=null)
                 break;
             }
-        }
 
         // found one?
-        if (null == matchingGroup) {
+        if(null==matchingGroup)
             matchingGroup = groups.get(OTHER);
-        }
 
         return matchingGroup;
     }
@@ -177,22 +163,24 @@ public final class SubsystemMetaData {
      * @param existing the available subsystems
      * @return the name and presenter
      */
-    public static String[] getDefaultSubsystem(String preferred, List<SubsystemRecord> existing) {
-        if (existing.isEmpty()) {
+    public static String[] getDefaultSubsystem(String preferred, List<SubsystemRecord> existing)
+    {
+        if(existing.isEmpty())
             throw new RuntimeException("No subsystem provided!");
-        }
 
         SubsystemRecord chosen = null;
-        for (SubsystemRecord subsys : existing) {
-            if (subsys.getKey().equals(preferred)) {
+        for(SubsystemRecord subsys : existing)
+        {
+            if(subsys.getKey().equals(preferred))
+            {
                 chosen = subsys;
                 break;
             }
         }
 
-        if (null == chosen) {
+        if(null==chosen)
             chosen = existing.get(0);
-        }
+
 
         return resolveTokens(chosen.getKey());
     }
@@ -204,10 +192,14 @@ public final class SubsystemMetaData {
     public static String[] resolveTokens(String key) {
         String[] token = new String[2];
 
-        for (String groupName : groups.keySet()) {
+        for(String groupName : groups.keySet())
+        {
             SubsystemGroup group = groups.get(groupName);
-            for (SubsystemGroupItem item : group.getItems()) {
-                if (item.getKey().equals(key) && !item.isDisabled()) {
+            for(SubsystemGroupItem item : group.getItems())
+            {
+                if(item.getKey().equals(key)
+                        && item.isDisabled() == false)
+                {
                     token[0] = item.getName();
                     token[1] = item.getPresenter();
                     break;

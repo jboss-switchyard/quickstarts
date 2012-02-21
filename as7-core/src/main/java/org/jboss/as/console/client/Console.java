@@ -31,8 +31,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.DelayedBindRegistry;
 import org.jboss.as.console.client.core.LoadingPanel;
 import org.jboss.as.console.client.core.UIConstants;
+import org.jboss.as.console.client.core.UIDebugConstants;
 import org.jboss.as.console.client.core.UIMessages;
 import org.jboss.as.console.client.core.bootstrap.BootstrapProcess;
+import org.jboss.as.console.client.core.bootstrap.ChoseProcessor;
+import org.jboss.as.console.client.core.bootstrap.EagerLoadProfiles;
 import org.jboss.as.console.client.core.bootstrap.ExecutionMode;
 import org.jboss.as.console.client.core.bootstrap.LoadMainApp;
 import org.jboss.as.console.client.core.bootstrap.RemoveLoadingPanel;
@@ -59,6 +62,7 @@ public class Console implements EntryPoint {
     /** The CONSTANTS. */
     public final static UIConstants CONSTANTS = GWT.create(UIConstants.class);
     /** The MESSAGES. */
+    public final static UIDebugConstants DEBUG_CONSTANTS = GWT.create(UIDebugConstants.class);
     public final static UIMessages MESSAGES = GWT.create(UIMessages.class);
 
     @Override
@@ -95,15 +99,16 @@ public class Console implements EntryPoint {
                 BootstrapProcess bootstrap = new BootstrapProcess();
 
                 bootstrap.addHook(new ExecutionMode(MODULES.getBootstrapContext(), MODULES.getDispatchAsync()));
+                bootstrap.addHook(new ChoseProcessor(MODULES.getBootstrapContext()));
+                bootstrap.addHook(new EagerLoadProfiles());
                 bootstrap.addHook(new RemoveLoadingPanel(loadingPanel));
-                bootstrap.addHook(new LoadMainApp());
+                bootstrap.addHook(new LoadMainApp(MODULES.getBootstrapContext(), MODULES.getPlaceManager(), MODULES.getTokenFormatter()));
 
                 // viz can be loaded in background ...
                 //bootstrap.addHook(new LoadGoogleViz());
 
                 bootstrap.execute();
             }
-
 
         });
     }
@@ -150,9 +155,23 @@ public class Console implements EntryPoint {
      * @param sticky is it sticky
      */
     public static void warning(String message, boolean sticky) {
-        Message msg = sticky
-                ? new Message(message, Message.Severity.Warning, EnumSet.of(Message.Option.Sticky))
-                : new Message(message, Message.Severity.Warning);
+        Message msg = sticky ?
+                new Message(message, Message.Severity.Warning, EnumSet.of(Message.Option.Sticky)) :
+                new Message(message, Message.Severity.Warning);
+
+        MODULES.getMessageCenter().notify(msg);
+    }
+
+    /**
+     * @param message the message
+     * @param detail details
+     * @param sticky is it sticky
+     */
+    public static void warning(String message, String detail, boolean sticky) {
+        Message msg = sticky ?
+                new Message(message, detail, Message.Severity.Warning, EnumSet.of(Message.Option.Sticky)) :
+                new Message(message, detail, Message.Severity.Warning);
+
 
         MODULES.getMessageCenter().notify(msg);
     }
@@ -170,7 +189,8 @@ public class Console implements EntryPoint {
     /**
      * @param cmd the command
      */
-    public static void schedule(final Command cmd) {
+    public static void schedule(final Command cmd)
+    {
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
