@@ -213,6 +213,7 @@ public class SwitchYardFacet extends AbstractFacet {
                 _shell.println("Error while reading SwitchYard configuration: " + ioEx.getMessage());
             }
         }
+        config.orderModelChildren();
         return config;
     }
     
