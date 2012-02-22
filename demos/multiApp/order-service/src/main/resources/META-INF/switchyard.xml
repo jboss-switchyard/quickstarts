@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" name="orders" targetNamespace="urn:switchyard-quickstart-demo:multiapp:0.1.0">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="orders" targetNamespace="urn:switchyard-quickstart-demo:multiapp:0.1.0">
+        <service name="OrderService" promote="OrderService">
+            <interface.wsdl interface="OrderService.wsdl#wsdl.porttype(OrderService)"/>
+            <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
+                <wsdl>OrderService.wsdl</wsdl>
+                <socketAddr>:18001</socketAddr>
+                <contextPath>quickstart-demo-multiapp</contextPath>
+            </binding.soap>
+        </service>
+    </composite>
+    <artifacts>
+        <artifact name="OrderService" url="http://localhost:8080/guvnorsoa/rest/packages/OrderService"/>
+    </artifacts>
+</switchyard>

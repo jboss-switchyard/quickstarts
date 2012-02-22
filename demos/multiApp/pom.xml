@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+      <groupId>org.switchyard.quickstarts</groupId>
+      <artifactId>switchyard-quickstart-parent</artifactId>
+      <version>0.4.0-SNAPSHOT</version>
+      <relativePath>../../pom.xml</relativePath>
+  </parent>
+  
+  <groupId>org.switchyard.quickstarts.demos</groupId>
+  <artifactId>switchyard-quickstart-demo-multiapp</artifactId>
+  <name>Quickstart Demo: Multiple Applications</name>
+  <packaging>pom</packaging>
+
+  <modules>
+       <module>artifacts</module>
+       <module>order-service</module>
+       <module>order-consumer</module>
+       <module>web</module>
+  </modules>
+  
+</project>
