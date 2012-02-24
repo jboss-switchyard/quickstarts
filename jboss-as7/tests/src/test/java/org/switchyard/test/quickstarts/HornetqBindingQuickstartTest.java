@@ -20,28 +20,47 @@ package org.switchyard.test.quickstarts;
 
 import java.io.IOException;
 
+import org.hornetq.api.core.client.ClientMessage;
+import org.hornetq.api.core.client.ClientProducer;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.test.ArquillianUtil;
+import org.switchyard.test.mixins.HornetQMixIn;
 import org.switchyard.test.quickstarts.util.ResourceDeployer;
 
 @RunWith(Arquillian.class)
 public class HornetqBindingQuickstartTest {
 
+    private static final String JMS_PREFIX = "jms.queue.";
+    private static final String QUEUE = "GreetingServiceQueue";
+    private static final String USER = "guest";
+    private static final String PASSWD = "guestp";
+    
     @Deployment(testable = false)
     public static JavaArchive createDeployment() throws IOException {
-        ResourceDeployer.addQueue("GreetingServiceQueue");
+        ResourceDeployer.addQueue(QUEUE);
+        ResourceDeployer.addPropertiesUser(USER, PASSWD);
         return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-hornetq-binding");
     }
 
     @Test
-    public void testDeployment() throws IOException {
-        Assert.assertNotNull("Dummy not null", "");
-        ResourceDeployer.removeQueue("GreetingServiceQueue");
+    public void testDeployment() throws Exception {
+        HornetQMixIn hqMixIn = new HornetQMixIn(false)
+                                    .setUser(USER)
+                                    .setPassword(PASSWD);
+        hqMixIn.initialize();
+        
+        try {
+            ClientProducer producer = hqMixIn.getClientSession().createProducer(JMS_PREFIX+QUEUE);
+            ClientMessage message = hqMixIn.createMessage("Tomo");
+            producer.send(message);
+        } finally {
+            hqMixIn.uninitialize();
+            ResourceDeployer.removeQueue(QUEUE);
+        }
     }
 
 }
