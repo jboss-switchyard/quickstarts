@@ -77,5 +77,15 @@
 			<artifactId>jboss-vfs</artifactId>
 			<scope>provided</scope>
 		</dependency>
+                <dependency>
+                        <groupId>org.jboss.as</groupId>
+                        <artifactId>jboss-as-naming</artifactId>
+                        <scope>provided</scope> 
+                </dependency>
+                <dependency>
+                        <groupId>org.jboss.as</groupId>
+                        <artifactId>jboss-as-server</artifactId>
+                        <scope>provided</scope>
+                </dependency>
     </dependencies>
 </project>
