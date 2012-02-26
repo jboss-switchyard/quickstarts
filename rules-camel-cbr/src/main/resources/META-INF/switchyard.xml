@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0">
+
+    <composite name="rules-camel-cbr" targetNamespace="urn:switchyard-quickstart:rules-camel-cbr:0.1.0" xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912">
+
+        <service name="RoutingService" promote="RoutingService">
+            <interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.RoutingService"/>
+        </service>
+        <service name="DestinationService" promote="DestinationService">
+            <interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.DestinationService"/>
+        </service>
+        <service name="RedService" promote="RedService">
+            <interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.RedService"/>
+        </service>
+        <service name="GreenService" promote="GreenService">
+            <interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.GreenService"/>
+        </service>
+        <service name="BlueService" promote="BlueService">
+            <interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.BlueService"/>
+        </service>
+
+        <component name="RoutingService">
+            <implementation.camel xmlns="urn:switchyard-component-camel:config:1.0">
+                <route xmlns="http://camel.apache.org/schema/spring">
+                    <to uri="switchyard://DestinationService"/>
+                    <choice>
+                        <when>
+                            <simple>${body.destination} == 'Red'</simple>
+                            <to uri="switchyard://RedService"/>
+                        </when>
+                        <when>
+                            <simple>${body.destination} == 'Green'</simple>
+                            <to uri="switchyard://GreenService"/>
+                        </when>
+                        <when>
+                            <simple>${body.destination} == 'Blue'</simple>
+                            <to uri="switchyard://BlueService"/>
+                        </when>
+                        <otherwise>
+                            <log message="Unknown Destination!"/>
+                        </otherwise>
+                    </choice>
+                </route>
+            </implementation.camel>
+            <service name="RoutingService">
+                <interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.RoutingService"/>
+            </service>
+            <reference name="DestinationService">
+                <interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.DestinationService"/>
+            </reference>
+            <reference name="RedService">
+                <interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.RedService"/>
+            </reference>
+            <reference name="GreenService">
+                <interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.GreenService"/>
+            </reference>
+            <reference name="BlueService">
+                <interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.BlueService"/>
+            </reference>
+        </component>
+
+    </composite>
+
+</switchyard>
