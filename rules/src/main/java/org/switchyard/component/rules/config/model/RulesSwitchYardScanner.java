@@ -98,7 +98,10 @@ public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
             if (!rulesInterface.isInterface()) {
                 throw new IOException(rulesInterface.getName() + INTERFACE_ERR_MSG);
             }
-            String rulesName = rulesInterface.getSimpleName();
+            String rulesName = Strings.trimToNull(rules.name());
+            if (rulesName == null) {
+                rulesName = rulesInterface.getSimpleName();
+            }
             ComponentModel componentModel = new V1ComponentModel();
             componentModel.setName(rulesName);
             RulesComponentImplementationModel rciModel = new V1RulesComponentImplementationModel();

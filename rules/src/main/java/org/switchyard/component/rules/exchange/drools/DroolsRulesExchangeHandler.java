@@ -18,6 +18,7 @@
  */
 package org.switchyard.component.rules.exchange.drools;
 
+import static org.switchyard.component.rules.RulesConstants.EXCHANGE;
 import static org.switchyard.component.rules.RulesConstants.MESSAGE;
 import static org.switchyard.component.rules.RulesConstants.MESSAGE_CONTENT;
 
@@ -34,6 +35,7 @@ import org.drools.agent.KnowledgeAgent;
 import org.drools.logger.KnowledgeRuntimeLogger;
 import org.drools.runtime.Channel;
 import org.drools.runtime.Environment;
+import org.drools.runtime.Globals;
 import org.drools.runtime.KnowledgeSessionConfiguration;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.StatelessKnowledgeSession;
@@ -173,9 +175,11 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
                 StatelessKnowledgeSession ksessionStateless = getStatelessSession();
                 KnowledgeRuntimeLogger klogger = Audits.getLogger(_audit, ksessionStateless);
                 try {
-                    ksessionStateless.getGlobals().set(MESSAGE, message);
+                    Globals globals = ksessionStateless.getGlobals();
+                    globals.set(EXCHANGE, exchange);
+                    globals.set(MESSAGE, message);
                     ksessionStateless.execute(content);
-                    message = (Message)ksessionStateless.getGlobals().get(MESSAGE);
+                    message = (Message)globals.get(MESSAGE);
                     content = message != null ? message.getContent() : null;
                 } finally {
                     if (klogger != null) {
@@ -192,10 +196,12 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
                     }
                     */
                     StatefulKnowledgeSession ksessionStateful = getStatefulSession();
-                    ksessionStateful.getGlobals().set(MESSAGE, message);
+                    Globals globals = ksessionStateful.getGlobals();
+                    globals.set(EXCHANGE, exchange);
+                    globals.set(MESSAGE, message);
                     ksessionStateful.insert(content);
                     ksessionStateful.fireAllRules();
-                    message = (Message)ksessionStateful.getGlobals().get(MESSAGE);
+                    message = (Message)globals.get(MESSAGE);
                     content = message != null ? message.getContent() : null;
                     if (isDispose(context)) {
                         disposeStatefulSession();

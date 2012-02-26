@@ -39,6 +39,11 @@ import org.switchyard.component.bpm.task.work.TaskHandler;
 public @interface Process {
 
     /**
+     * Specified name.
+     */
+    public String name() default "";
+
+    /**
      * Specified process interface.
      */
     public Class<?> value() default UndefinedProcessInterface.class;

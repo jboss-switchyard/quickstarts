@@ -39,6 +39,11 @@ import org.switchyard.component.common.rules.EventProcessingType;
 public @interface Rules {
 
     /**
+     * Specified name.
+     */
+    public String name() default "";
+
+    /**
      * Specified rules interface.
      */
     public Class<?> value() default UndefinedRulesInterface.class;

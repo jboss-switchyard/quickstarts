@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.io.resource.SimpleResource;
+import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.type.classpath.IsAnnotationPresentFilter;
 import org.switchyard.common.type.reflect.Construction;
@@ -97,7 +98,10 @@ public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
             if (!processInterface.isInterface()) {
                 throw new IOException(processInterface.getName() + INTERFACE_ERR_MSG);
             }
-            String processName = processInterface.getSimpleName();
+            String processName = Strings.trimToNull(process.name());
+            if (processName == null) {
+                processName = processInterface.getSimpleName();
+            }
             JavaComponentServiceInterfaceModel csiModel = new V1JavaComponentServiceInterfaceModel();
             csiModel.setInterface(processInterface.getName());
             ComponentServiceModel serviceModel = new V1ComponentServiceModel();

@@ -68,6 +68,11 @@ public final class RulesConstants {
     /** {urn:switchyard-component-rules:rules:1.0}message . */
     public static final String MESSAGE_VAR = new QName(RULES_NAMESPACE, MESSAGE).toString();
 
+    /** exchange . */
+    public static final String EXCHANGE = "exchange";
+    /** {urn:switchyard-component-rules:rules:1.0}exchange . */
+    public static final String EXCHANGE_VAR = new QName(RULES_NAMESPACE, EXCHANGE).toString();
+
     private RulesConstants() {}
 
 }
