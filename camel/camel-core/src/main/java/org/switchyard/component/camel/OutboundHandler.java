@@ -136,16 +136,15 @@ public class OutboundHandler extends BaseServiceHandler {
     }
     
     private void handleInOut(final Exchange switchyardExchange) throws HandlerException {
-        try {
-            final Object payload = sendToCamel(switchyardExchange);
-            sendResponseToSwitchyard(switchyardExchange, payload);
-        } catch (final CamelExecutionException e) {
-            throw new HandlerException(e);
-        }
+        final Object payload = sendToCamel(switchyardExchange);
+        sendResponseToSwitchyard(switchyardExchange, payload);
     }
     
-    private Object sendToCamel(final Exchange switchyardExchange) {
+    private Object sendToCamel(final Exchange switchyardExchange) throws HandlerException {
         final org.apache.camel.Exchange camelExchange = _producerTemplate.request(_uri, createProcessor(switchyardExchange));
+        if (camelExchange.getException() != null) {
+            throw new HandlerException(camelExchange.getException());
+        }
         return camelExchange.getOut().getBody();
     }
     
