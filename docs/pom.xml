@@ -23,7 +23,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.switchyard</groupId>
     <artifactId>docbooks-parent</artifactId>
-    <version>0.4.0-SNAPSHOT</version>
+    <version>0.4.0.OS1</version>
     <packaging>pom</packaging>
     <name>SwitchYard: DocBooks Parent POM</name>
     <description>SwitchYard DocBooks Parent POM</description>
