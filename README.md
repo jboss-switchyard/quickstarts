@@ -10,6 +10,7 @@ Quickstarts
 * __camel-service__ : routing service example using the Java DSL and XML route definition languages.
 * __camel-soap-proxy__ : simple pass through between SOAP gateways to demonstrate proxy capabilities.
 * __hornetq-binding__ : service binding using the HornetQ gateway component.
+* __rules-camel-cbr__ : uses the combination of a rules service and a camel service to create a content-based router.
 * __rules-interview__ : demonstrates the use of simple business rules using drools drl.
 * __rules-interview-agent__ : same as rules-interview, but uses a compiled KnowledgePackage and a KnowledgeAgent.
 * __transform-jaxb__ : automatic transformation of JAXB-annotated message payloads.
