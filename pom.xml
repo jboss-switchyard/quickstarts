@@ -53,6 +53,7 @@
         <module>camel-service</module>
         <module>camel-soap-proxy</module>
         <module>hornetq-binding</module>
+        <module>hornetq-reference-binding</module>
         <module>rules-interview</module>
         <module>rules-interview-agent</module>
         <module>transform-jaxb</module>

@@ -35,18 +35,63 @@
       <artifactId>switchyard-component-bean</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.switchyard.components</groupId>
+      <artifactId>switchyard-component-hornetq</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-test</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>javax.jms</groupId>
+        <artifactId>jms</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.hornetq</groupId>
+        <artifactId>hornetq-core-client</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.hornetq</groupId>
+        <artifactId>hornetq-core</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.hornetq</groupId>
+        <artifactId>hornetq-jms</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.jboss.netty</groupId>
+        <artifactId>netty</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.jboss.naming</groupId>
+        <artifactId>jnpserver</artifactId>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+	<dependency>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>hamcrest-all</artifactId>
+        <scope>test</scope>
+	</dependency>
   </dependencies>
   <build>
      <finalName>${project.artifactId}</finalName>
      <plugins>
+     <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-jar-plugin</artifactId>
+      <configuration>
+         <archive>
+            <manifestEntries>
+               <Dependencies>org.jboss.as.naming</Dependencies>
+               <Dependencies>org.hornetq</Dependencies>
+            </manifestEntries>
+         </archive>
+	     </configuration>
+	   </plugin>
       <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -74,6 +119,15 @@
                 </goals>
             </execution>
           </executions>
+      </plugin>
+      <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <configuration>
+              <executable>java</executable>
+              <mainClass>org.switchyard.quickstarts.transform.json.HornetQClient</mainClass>
+              <classpathScope>test</classpathScope>
+          </configuration>
       </plugin>
      </plugins>
   </build>

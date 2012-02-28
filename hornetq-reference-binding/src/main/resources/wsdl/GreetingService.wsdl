@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions 
+    targetNamespace="urn:switchyard-quickstart:hornetq-reference-binding:1.0" 
+    xmlns="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:tns="urn:switchyard-quickstart:hornetq-reference-binding:1.0"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    
+  <types>
+    <xsd:schema 
+        targetNamespace="urn:switchyard-quickstart:hornetq-reference-binding:1.0" 
+        xmlns:tns="urn:switchyard-quickstart:hornetq-reference-binding:1.0" 
+        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xs:element name="greet" type="tns:greetType"/>
+        <xs:complexType name="greetType">
+            <xs:sequence>
+                <xs:element name="name" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xsd:schema>
+  </types>
+  
+  <message name="greet">
+    <part name="parameters" element="tns:greet"/>
+  </message>
+  
+  <portType name="GreetingService">
+    <operation name="greet">
+      <input message="tns:greet"/>
+    </operation>
+  </portType>
+  
+  <binding name="GreetingServiceBinding" type="tns:GreetingService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="greet">
+      <soap:operation soapAction="urn:switchyard-quickstart:hornetq-reference-binding:1.0"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+    </operation>
+  </binding>
+  
+  <service name="GreetingService">
+    <port name="GreetingServicePort" binding="tns:GreetingServiceBinding">
+      <soap:address location="http://localhost:18001/test"/>
+    </port>
+  </service>
+</definitions>
+

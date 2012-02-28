@@ -39,6 +39,16 @@
       <artifactId>switchyard-component-rules</artifactId>
       <version>${switchyard.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.switchyard.components</groupId>
+      <artifactId>switchyard-component-soap</artifactId>
+      <version>${switchyard.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.switchyard.components</groupId>
+      <artifactId>switchyard-component-bean</artifactId>
+      <version>${switchyard.version}</version>
+    </dependency>
   </dependencies>
   <build>
     <finalName>${project.artifactId}</finalName>
@@ -82,6 +92,7 @@
             <configuration>
               <scannerClassNames>
                 <param>org.switchyard.component.rules.config.model.RulesSwitchYardScanner</param>
+                <param>org.switchyard.transform.config.model.TransformSwitchYardScanner</param>
               </scannerClassNames>
             </configuration>
           </execution>

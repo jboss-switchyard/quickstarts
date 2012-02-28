@@ -1,11 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0"
             xmlns:trfm="urn:switchyard-config:transform:1.0"
+            xmlns:hornetq="urn:switchyard-component-hornetq:config:1.0"
             xmlns:soap="urn:switchyard-component-soap:config:1.0"
+            xmlns:bean="urn:switchyard-component-bean:config:1.0"
             xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
             name="transform-json">
 
-    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="transform-json" targetNamespace="urn:switchyard-quickstart:transform-json:0.1.0"/>
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="transform-json" targetNamespace="urn:switchyard-quickstart:transform-json:1.0">
+        <service name="ProcessOrderService" promote="ProcessOrderService">
+            <hornetq:binding.hornetq>
+                <hornetq:operationSelector operationName="processOrder"/>
+                <hornetq:config>
+                    <hornetq:connector>
+                        <hornetq:factoryClass>org.hornetq.core.remoting.impl.invm.InVMConnectorFactory</hornetq:factoryClass>
+                    </hornetq:connector>
+                    <hornetq:queue>jms.queue.OrderServiceQueue</hornetq:queue>
+                </hornetq:config>
+            </hornetq:binding.hornetq>
+        </service>
+
+        <reference name="StoreResponseService" promote="StoreResponseService" multiplicity="1..1">
+            <interface.java interface="org.switchyard.quickstarts.transform.json.StoreResponseService"/>
+            <hornetq:binding.hornetq>
+               <hornetq:config>
+                  <hornetq:connector>
+                     <hornetq:factoryClass>org.hornetq.core.remoting.impl.invm.InVMConnectorFactory</hornetq:factoryClass>
+                  </hornetq:connector>
+                  <hornetq:queue>jms.queue.StoreResponseQueue</hornetq:queue>
+               </hornetq:config>
+            </hornetq:binding.hornetq>
+        </reference>
+    </composite>
 
     <transforms>
         <trfm:transform.json 

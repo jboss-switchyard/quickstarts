@@ -31,6 +31,10 @@
       <artifactId>switchyard-component-bean</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.switchyard.components</groupId>
+      <artifactId>switchyard-component-soap</artifactId>
+    </dependency>
+     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-test</artifactId>
     </dependency>

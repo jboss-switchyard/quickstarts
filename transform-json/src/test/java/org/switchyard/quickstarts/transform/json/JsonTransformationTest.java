@@ -32,12 +32,13 @@ import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.SwitchYardTestKit;
 import org.switchyard.test.mixins.CDIMixIn;
+import org.switchyard.test.mixins.HornetQMixIn;
 
 /**
  * Test JSON transformations around a service.
  */
 @RunWith(SwitchYardRunner.class)
-@SwitchYardTestCaseConfig(config = SwitchYardTestCaseConfig.SWITCHYARD_XML, mixins = CDIMixIn.class)
+@SwitchYardTestCaseConfig(config = SwitchYardTestCaseConfig.SWITCHYARD_XML, mixins = {CDIMixIn.class, HornetQMixIn.class})
 public class JsonTransformationTest {
 
     @ServiceOperation("OrderService.submitOrder")

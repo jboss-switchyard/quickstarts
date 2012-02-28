@@ -7,6 +7,11 @@
     <sca:composite name="Interview" targetNamespace="urn:switchyard-quickstart:rules-interview:0.1.0">
         <sca:service name="Interview" promote="Interview">
             <sca:interface.java interface="org.switchyard.quickstarts.rules.interview.Interview"/>
+            <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
+                <wsdl>wsdl/Interview.wsdl</wsdl>
+                <socketAddr>:18001</socketAddr>
+                <contextPath>quickstart-rules-interview</contextPath>
+            </binding.soap>
         </sca:service>
     </sca:composite>
 </switchyard>

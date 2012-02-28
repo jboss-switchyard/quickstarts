@@ -4,6 +4,8 @@ This quickstart demonstrates the usage of the JAXB transformer.   No special con
 included here for the transformer configuration - because a CDI Bean Service is used here and 
 JAXB types are used in the Service interface, the transformation is automatic. 
 
+This example is invoked through a SOAP gateway binding.
+
 Preqrequisites 
 ==============
 Maven

@@ -114,6 +114,7 @@
             <configuration>
                 <executable>java</executable>
                 <mainClass>org.switchyard.quickstarts.hornetq.HornetQClient</mainClass>
+                <classpathScope>test</classpathScope>
             </configuration>
         </plugin>
     </plugins>
