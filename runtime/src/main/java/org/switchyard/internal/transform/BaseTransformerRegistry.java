@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EventObject;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +33,9 @@ import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
 import org.switchyard.common.xml.QNameUtil;
+import org.switchyard.event.EventPublisher;
+import org.switchyard.event.TransformerAddedEvent;
+import org.switchyard.event.TransformerRemovedEvent;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 
@@ -53,6 +57,7 @@ public class BaseTransformerRegistry implements TransformerRegistry {
     private final ConcurrentHashMap<NameKey, Transformer<?,?>> _fallbackTransformers =
         new ConcurrentHashMap<NameKey, Transformer<?,?>>();
 
+    private EventPublisher _eventPublisher;
 
     /**
      * Constructor.
@@ -76,6 +81,7 @@ public class BaseTransformerRegistry implements TransformerRegistry {
         _fallbackTransformers.clear();
         _transformers.put(new NameKey(transformer.getFrom(),
                 transformer.getTo()), transformer);
+        publishEvent(new TransformerAddedEvent(transformer));
         return this;
     }
 
@@ -83,7 +89,16 @@ public class BaseTransformerRegistry implements TransformerRegistry {
     public TransformerRegistry addTransformer(Transformer<?, ?> transformer, QName from, QName to) {
         _fallbackTransformers.clear();
         _transformers.put(new NameKey(from, to), transformer);
+        publishEvent(new TransformerAddedEvent(transformer));
         return null;
+    }
+    
+    /**
+     * Sets the EventPublisher instance to be used for transformer events.
+     * @param eventPublisher event publisher
+     */
+    public void setEventPublisher(EventPublisher eventPublisher) {
+        _eventPublisher = eventPublisher;
     }
 
     @Override
@@ -174,8 +189,21 @@ public class BaseTransformerRegistry implements TransformerRegistry {
     @Override
     public boolean removeTransformer(Transformer<?, ?> transformer) {
         _fallbackTransformers.clear();
-        return _transformers.remove(
+        boolean removed = _transformers.remove(
                 new NameKey(transformer.getFrom(), transformer.getTo())) != null;
+        if (removed) {
+            publishEvent(new TransformerRemovedEvent(transformer));
+        }
+        
+        return removed;
+    }
+    
+    // Convenience method to guard against cases when an event publisher has 
+    // not been set.
+    private void publishEvent(EventObject event) {
+        if (_eventPublisher != null) {
+            _eventPublisher.publish(event);
+        }
     }
 
     private class NameKey extends Key<QName, QName> {

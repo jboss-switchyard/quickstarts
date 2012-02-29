@@ -26,6 +26,7 @@ import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerChain;
+import org.switchyard.MockDomain;
 import org.switchyard.MockHandler;
 import org.switchyard.metadata.ExchangeContract;
 
@@ -53,7 +54,7 @@ public class DefaultHandlerChainTest {
         _chain.addFirst("first", badHandler);
         _chain.addLast("second", goodHandler);
         
-        _chain.handleFault(new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, null, null));
+        _chain.handleFault(new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, new MockDomain(), null));
         Assert.assertNotNull(goodHandler.waitForFaultMessage());
     }
     

@@ -21,6 +21,8 @@ package org.switchyard.admin.base;
 import javax.xml.namespace.QName;
 
 import org.switchyard.admin.Transformer;
+import org.switchyard.config.model.TypedModel;
+import org.switchyard.config.model.transform.TransformModel;
 
 /**
  * BaseTransformer
@@ -33,7 +35,7 @@ public class BaseTransformer implements Transformer {
 
     private final QName _from;
     private final QName _to;
-    private final String _type;
+    private String _type;
 
     /**
      * Create a new BaseTransformer.
@@ -46,6 +48,18 @@ public class BaseTransformer implements Transformer {
         _from = from;
         _to = to;
         _type = type;
+    }
+    
+    /**
+     * Create a new BaseTransformer from a config model.
+     * @param config the transformer confing model
+     */
+    public BaseTransformer(TransformModel config) {
+        _from = config.getFrom();
+        _to = config.getTo();
+        if (config instanceof TypedModel) {
+            _type = ((TypedModel)config).getType();
+        }
     }
 
     @Override

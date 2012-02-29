@@ -27,6 +27,11 @@ import javax.xml.namespace.QName;
 import org.switchyard.admin.Application;
 import org.switchyard.admin.ComponentReference;
 import org.switchyard.admin.ComponentService;
+import org.switchyard.config.model.composite.ComponentImplementationModel;
+import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.ComponentReferenceModel;
+import org.switchyard.config.model.composite.ComponentServiceModel;
+import org.switchyard.config.model.composite.InterfaceModel;
 
 /**
  * BaseComponentService
@@ -43,6 +48,7 @@ public class BaseComponentService implements ComponentService {
     private final Application _application;
     private List<ComponentReference> _references;
     private final String _implementationConfiguration;
+    private MessageMetricsSupport _messageMetrics = new MessageMetricsSupport();
 
     /**
      * Create a new BaseComponentService.
@@ -54,7 +60,12 @@ public class BaseComponentService implements ComponentService {
      * @param application the application providing this service
      * @param references the references required by this service
      */
-    public BaseComponentService(QName name, String implementation, String implementationConfiguration, String interfaceName, Application application, List<ComponentReference> references) {
+    public BaseComponentService(QName name, String implementation, 
+            String implementationConfiguration, 
+            String interfaceName, 
+            Application application, 
+            List<ComponentReference> references) {
+        
         _name = name;
         _implementation = implementation;
         _interface = interfaceName;
@@ -63,6 +74,28 @@ public class BaseComponentService implements ComponentService {
             _references = new LinkedList<ComponentReference>(references);
         }
         _implementationConfiguration = implementationConfiguration;
+    }
+    
+    /**
+     * Create a new BaseComponentService from a config model.
+     * 
+     * @param serviceConfig the component service configuration
+     * @param componentConfig the component configuration
+     * @param application the switchyard application
+     */
+    public BaseComponentService(ComponentServiceModel serviceConfig, ComponentModel componentConfig, Application application) {
+        
+        _name = serviceConfig.getQName();
+        _implementation = getComponentImplementationType(componentConfig);
+        _interface = getInterfaceName(serviceConfig.getInterface());
+        _application = application;
+        _references = new LinkedList<ComponentReference>();
+        _implementationConfiguration = getComponentImplementationConfiguration(componentConfig);
+        
+        for (ComponentReferenceModel referenceModel : componentConfig.getReferences()) {
+            _references.add(new BaseComponentReference(referenceModel.getQName(), 
+                    getInterfaceName(referenceModel.getInterface())));
+        }
     }
 
     @Override
@@ -96,6 +129,31 @@ public class BaseComponentService implements ComponentService {
     @Override
     public String getImplementationConfiguration() {
         return _implementationConfiguration;
+    }
+
+    @Override
+    public MessageMetricsSupport getMessageMetrics() {
+        return _messageMetrics;
+    }
+
+    private String getInterfaceName(InterfaceModel interfaceModel) {
+        if (interfaceModel == null) {
+            return null;
+        }
+        return interfaceModel.getInterface();
+    }
+    
+    private String getComponentImplementationType(ComponentModel componentModel) {
+        ComponentImplementationModel implementationModel = componentModel.getImplementation();
+        if (implementationModel == null) {
+            return null;
+        }
+        return implementationModel.getType();
+    }
+
+    private String getComponentImplementationConfiguration(ComponentModel componentModel) {
+        return componentModel.getImplementation() != null 
+                ? componentModel.getImplementation().toString() : null;
     }
 
 }

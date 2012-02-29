@@ -33,6 +33,7 @@ public class BaseComponentReference implements ComponentReference {
 
     private final QName _name;
     private final String _interface;
+    private final MessageMetricsSupport _messageMetrics = new MessageMetricsSupport();
 
     /**
      * Create a new BaseComponentReference.
@@ -55,4 +56,8 @@ public class BaseComponentReference implements ComponentReference {
         return _interface;
     }
 
+    @Override
+    public MessageMetricsSupport getMessageMetrics() {
+        return _messageMetrics;
+    }
 }

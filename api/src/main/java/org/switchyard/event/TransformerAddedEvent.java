@@ -16,31 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.admin;
 
-import javax.xml.namespace.QName;
+package org.switchyard.event;
+
+import java.util.EventObject;
+
+import org.switchyard.transform.Transformer;
 
 /**
- * ComponentReference
- * 
- * Represents a referenced service required by a component.
- * 
- * @author Rob Cernich
+ * Fired when a transformer is added to the domain.
  */
-public interface ComponentReference {
+public class TransformerAddedEvent extends EventObject {
+
+    private static final long serialVersionUID = -8936714042650010616L;
 
     /**
-     * @return the name of this reference.
+     * Creates a new TransformerAddedEvent.
+     * @param transformer the transformer that was added
      */
-    QName getName();
+    public TransformerAddedEvent(Transformer<?,?> transformer) {
+        super(transformer);
+    }
 
     /**
-     * @return the interface required for this reference.
+     * Get the added transformer.
+     * @return added transformer
      */
-    String getInterface();
-    
-    /** Returns message metrics for this service.
-     * @return message metrics for this service
-     */
-    MessageMetrics getMessageMetrics();
+    public Transformer<?,?> getTransformer() {
+        return (Transformer<?,?>)getSource();
+    }
 }

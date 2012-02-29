@@ -89,5 +89,11 @@ public interface SwitchYard {
      * @return the SwitchYard system configuration properties.
      */
     Map<String,String> getProperties();
+    
+    /**
+     * Returns aggregate message metrics for the SwitchYard runtime.
+     * @return aggregate metrics for all services
+     */
+    MessageMetrics getMessageMetrics();
 
 }

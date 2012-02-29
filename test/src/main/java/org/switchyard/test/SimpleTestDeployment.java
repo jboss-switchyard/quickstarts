@@ -51,14 +51,14 @@ public class SimpleTestDeployment extends AbstractDeployment {
     }
 
     @Override
-    protected void doStart() {
+    public void start() {
     }
 
     @Override
-    protected void doStop() {
+    public void stop() {
     }
 
     @Override
-    protected void doDestroy() {
+    public void destroy() {
     }
 }

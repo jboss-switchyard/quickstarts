@@ -23,11 +23,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.namespace.QName;
 
@@ -48,6 +46,8 @@ import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.config.model.validate.ValidatesModel;
 import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.ServiceHandler;
+import org.switchyard.deploy.event.ApplicationDeployedEvent;
+import org.switchyard.deploy.event.ApplicationUndeployedEvent;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.extensions.wsdl.WSDLReaderException;
 import org.switchyard.extensions.wsdl.WSDLService;
@@ -119,13 +119,15 @@ public class Deployment extends AbstractDeployment {
                 }
             }
         }
+
+        getDomain().getEventPublisher().publish(new ApplicationDeployedEvent(this));
     }
     
     /**
      * Starts the deployment.  All services are registered and the appropriate 
      * activators are triggered.
      */
-    protected void doStart() {
+    public void start() {
         _log.debug("Starting deployment " + getName());
         // ordered startup lifecycle
         try {
@@ -150,7 +152,7 @@ public class Deployment extends AbstractDeployment {
      * Stops the deployment.  All services are unregistered and the appropriate
      * activators are triggered.
      */
-    protected void doStop() {
+    public void stop() {
         _log.debug("Stopping deployment " + getName());
         undeployServiceBindings();
         undeployImplementations();
@@ -161,7 +163,7 @@ public class Deployment extends AbstractDeployment {
     /**
      * Tear everything down.
      */
-    protected void doDestroy() {
+    public void destroy() {
         _log.debug("Destroying deployment " + getName());
         
         // Clean up our list of activations, just in case something's left
@@ -171,6 +173,8 @@ public class Deployment extends AbstractDeployment {
 
         getValidatorRegistryLoader().unregisterValidators();
         getTransformerRegistryLoader().unregisterTransformers();
+
+        getDomain().getEventPublisher().publish(new ApplicationUndeployedEvent(this));
     }
     
     /**
@@ -208,14 +212,12 @@ public class Deployment extends AbstractDeployment {
         _log.debug("Registering configured Transformers for deployment " + getName());
         TransformsModel transforms = getConfig().getTransforms();
         getTransformerRegistryLoader().registerTransformers(transforms);
-        fireTransformersRegistered(transforms);
     }
 
     private void registerValidators() {
         _log.debug("Registering configured Validators for deployment " + getName());
         ValidatesModel validates = getConfig().getValidates();
         getValidatorRegistryLoader().registerValidators(validates);
-        fireValidatorsRegistered(validates);
     }
 
     private void deployReferenceBindings() {
@@ -385,8 +387,6 @@ public class Deployment extends AbstractDeployment {
             if (component.getServices().isEmpty()) {
                 activator.activateService(null, component);
             }
-            
-            fireComponentDeployed(component);
         }
     }
 
@@ -410,13 +410,11 @@ public class Deployment extends AbstractDeployment {
                 
                 handler.start();
             }
-            fireServiceDeployed(service);
         }
     }
 
     private void undeployServiceBindings() {
        _log.debug("Undeploying service bindings for deployment " + getName());
-       Set<QName> undeployedServiceNames = new LinkedHashSet<QName>();
        try {
            for (Activation activation : _serviceBindings) {
                activation.getHandler().stop();
@@ -430,15 +428,10 @@ public class Deployment extends AbstractDeployment {
        } finally {
            _serviceBindings.clear();
        }
-       // notify listeners
-       for (QName serviceName : undeployedServiceNames) {
-           fireServiceUndeployed(serviceName);
-       }
     }
 
     private void undeployImplementations() {
         _log.debug("Undeploying services for deployment " + getName());
-        Set<QName> undeployedServiceNames = new LinkedHashSet<QName>();
         try {
             for (Activation activation : _services) {
                 activation.getHandler().stop();
@@ -455,10 +448,6 @@ public class Deployment extends AbstractDeployment {
             }
         } finally {
             _services.clear();
-        }
-        // notify listeners
-        for (QName serviceName : undeployedServiceNames) {
-            fireComponentUndeployed(serviceName);
         }
     }
 

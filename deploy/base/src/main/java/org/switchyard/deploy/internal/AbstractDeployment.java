@@ -20,19 +20,13 @@
 package org.switchyard.deploy.internal;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
 import org.switchyard.ServiceDomain;
-import org.switchyard.config.model.composite.ComponentModel;
-import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
-import org.switchyard.config.model.transform.TransformsModel;
-import org.switchyard.config.model.validate.ValidatesModel;
 import org.switchyard.deploy.Activator;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceInterface;
@@ -77,10 +71,6 @@ public abstract class AbstractDeployment {
      * The name for this deployment.
      */
     private QName _name;
-    /**
-     * DeploymentListener objects registered with this deployment.
-     */
-    private Set<DeploymentListener> _listeners = new LinkedHashSet<DeploymentListener>();
 
     /**
      * Flag to indicate whether or not deployment should fail if an activator is not available.
@@ -100,28 +90,6 @@ public abstract class AbstractDeployment {
      */
     protected AbstractDeployment(SwitchYardModel configModel) {
         _switchyardConfig = configModel;
-    }
-
-    /**
-     * Add a listener to this deployment.
-     * 
-     * @param listener the listener to add.
-     */
-    public void addDeploymentListener(DeploymentListener listener) {
-        synchronized (_listeners) {
-            _listeners.add(listener);
-        }
-    }
-    
-    /**
-     * Remove a listener from this deployment.
-     * 
-     * @param listener the listener to remove.
-     */
-    public void removeDeploymentListener(DeploymentListener listener) {
-        synchronized (_listeners) {
-            _listeners.remove(listener);
-        }
     }
 
     /**
@@ -170,70 +138,17 @@ public abstract class AbstractDeployment {
                 }
             }
         }
-
-        notifyListeners(new InitializingNotifier());
-
-        try {
-            _serviceDomain = appServiceDomain;
-            _transformerRegistryLoader = new TransformerRegistryLoader(appServiceDomain.getTransformerRegistry());
-            _transformerRegistryLoader.loadOOTBTransforms();
-            
-            _validatorRegistryLoader = new ValidatorRegistryLoader(appServiceDomain.getValidatorRegistry());
-            _validatorRegistryLoader.loadOOTBValidates();
-            
-            doInit(activators);
-        } catch (RuntimeException e) {
-            notifyListeners(new InitializationFailedNotifier(e));
-            throw e;
-        }
-
-        notifyListeners(new InitializedNotifier());
-    }
-
-    /**
-     * Start/un-pause the deployment.
-     */
-    public final void start() {
-        notifyListeners(new StartingNotifier());
         
-        try {
-            doStart();
-        } catch (RuntimeException e) {
-            notifyListeners(new StartFailedNotifier(e));
-            throw e;
-        }
-
-        notifyListeners(new StartedNotifier());
-    }
-
-    /**
-     * Stop/pause the deployment.
-     */
-    public final void stop() {
-        notifyListeners(new StoppingNotifier());
+        _serviceDomain = appServiceDomain;
+        _transformerRegistryLoader = new TransformerRegistryLoader(appServiceDomain.getTransformerRegistry());
+        _transformerRegistryLoader.loadOOTBTransforms();
         
-        try {
-            doStop();
-        } catch (RuntimeException e) {
-            notifyListeners(new StopFailedNotifier(e));
-            throw e;
-        }
-
-        notifyListeners(new StoppedNotifier());
-    }
-
-    /**
-     * Destroy the deployment.
-     */
-    public final void destroy() {
-        notifyListeners(new DestroyingNotifier());
+        _validatorRegistryLoader = new ValidatorRegistryLoader(appServiceDomain.getValidatorRegistry());
+        _validatorRegistryLoader.loadOOTBValidates();
         
-        try {
-            doDestroy();
-        } finally {
-            notifyListeners(new DestroyedNotifier());
-        }
+        doInit(activators);
     }
+
 
     /**
      * This field is not available until after the deployment has been
@@ -272,27 +187,26 @@ public abstract class AbstractDeployment {
     public ValidatorRegistryLoader getValidatorRegistryLoader() {
         return _validatorRegistryLoader;
     }
-
+    
     /**
-     * Notify the implementation to initialize itself.
-     * @param activators The list of SwitchYard component activators.
+     * Initialize the deployment
      */
     protected abstract void doInit(List<Activator> activators);
 
     /**
-     * Notify the implementation to start itself.
+     * Start/un-pause the deployment.
      */
-    protected abstract void doStart();
+    public abstract void start();
 
     /**
-     * Notify the implementation to stop itself.
+     * Stop/pause the deployment.
      */
-    protected abstract void doStop();
+    public abstract void stop();
 
     /**
-     * Notify the implementation to destroy itself.
+     * Destroy the deployment.
      */
-    protected abstract void doDestroy();
+    public abstract void destroy();
 
     /**
      * @return the SwitchYard configuration for this deployment.
@@ -327,203 +241,4 @@ public abstract class AbstractDeployment {
             _autoRegisteredTransformers.clear();
         }
     }
-
-    protected final void fireServiceDeployed(CompositeServiceModel serviceModel) {
-        notifyListeners(new ServiceDeployedNotifier(serviceModel));
-    }
-
-    protected final void fireServiceUndeployed(QName serviceName) {
-        notifyListeners(new ServiceUndeployedNotifier(serviceName));
-    }
-
-    protected final void fireComponentDeployed(ComponentModel componentModel) {
-        notifyListeners(new ComponentServiceDeployedNotifier(componentModel));
-    }
-
-    protected final void fireComponentUndeployed(QName serviceName) {
-        notifyListeners(new ComponentServiceUndeployedNotifier(serviceName));
-    }
-
-    protected final void fireTransformersRegistered(TransformsModel transforms) {
-        notifyListeners(new TransformersRegisteredNotifier(transforms));
-    }
-
-    protected final void fireValidatorsRegistered(ValidatesModel validates) {
-        notifyListeners(new ValidatorsRegisteredNotifier(validates));
-    }
-
-    private void notifyListeners(DeploymentEventNotifier notifier) {
-        List<DeploymentListener> listeners;
-        synchronized (_listeners) {
-            listeners = new ArrayList<DeploymentListener>(_listeners);
-        }
-        for (DeploymentListener listener : listeners) {
-            try {
-                notifier.notify(listener);
-            } catch (Exception e) {
-                _log.warn("DeploymentListener threw exception during notify.", e);
-            }
-        }
-    }
-
-    private static interface DeploymentEventNotifier {
-        public void notify(DeploymentListener listener);
-    }
-
-    private class ServiceDeployedNotifier implements DeploymentEventNotifier {
-        private CompositeServiceModel _serviceModel;
-
-        protected ServiceDeployedNotifier(CompositeServiceModel serviceModel) {
-            _serviceModel = serviceModel;
-        }
-
-        public void notify(DeploymentListener listener) {
-            listener.serviceDeployed(AbstractDeployment.this, _serviceModel);
-        }
-    }
-
-    private class ServiceUndeployedNotifier implements DeploymentEventNotifier {
-        private QName _serviceName;
-
-        protected ServiceUndeployedNotifier(QName serviceName) {
-            _serviceName = serviceName;
-        }
-
-        public void notify(DeploymentListener listener) {
-            listener.serviceUndeployed(AbstractDeployment.this, _serviceName);
-        }
-    }
-
-    private class ComponentServiceDeployedNotifier implements DeploymentEventNotifier {
-        private ComponentModel _componentModel;
-
-        protected ComponentServiceDeployedNotifier(ComponentModel componentModel) {
-            _componentModel = componentModel;
-        }
-
-        public void notify(DeploymentListener listener) {
-            listener.componentServiceDeployed(AbstractDeployment.this, _componentModel);
-        }
-    }
-
-    private class ComponentServiceUndeployedNotifier implements DeploymentEventNotifier {
-        private QName _serviceName;
-
-        protected ComponentServiceUndeployedNotifier(QName serviceName) {
-            _serviceName = serviceName;
-        }
-
-        public void notify(DeploymentListener listener) {
-            listener.componentServiceUndeployed(AbstractDeployment.this, _serviceName);
-        }
-    }
-
-    private class TransformersRegisteredNotifier implements DeploymentEventNotifier {
-        private TransformsModel _transforms;
-
-        protected TransformersRegisteredNotifier(TransformsModel transforms) {
-            _transforms = transforms;
-        }
-
-        public void notify(DeploymentListener listener) {
-            listener.transformersRegistered(AbstractDeployment.this, _transforms);
-        }
-    }
-
-    private class ValidatorsRegisteredNotifier implements DeploymentEventNotifier {
-        private ValidatesModel _validates;
-
-        protected ValidatorsRegisteredNotifier(ValidatesModel validates) {
-            _validates = validates;
-        }
-
-        public void notify(DeploymentListener listener) {
-            listener.validatorsRegistered(AbstractDeployment.this, _validates);
-        }
-    }
-
-    private class InitializingNotifier implements DeploymentEventNotifier {
-        public void notify(DeploymentListener listener) {
-            listener.initializing(AbstractDeployment.this);
-        }
-    }
-
-    private class InitializedNotifier implements DeploymentEventNotifier {
-        public void notify(DeploymentListener listener) {
-            listener.initialized(AbstractDeployment.this);
-        }
-    }
-
-    private class InitializationFailedNotifier implements DeploymentEventNotifier {
-        private Throwable _exception;
-
-        protected InitializationFailedNotifier(Throwable exception) {
-            _exception = exception;
-        }
-
-        public void notify(DeploymentListener listener) {
-            listener.initializationFailed(AbstractDeployment.this, _exception);
-        }
-    }
-
-    private class StartingNotifier implements DeploymentEventNotifier {
-        public void notify(DeploymentListener listener) {
-            listener.starting(AbstractDeployment.this);
-        }
-    }
-
-    private class StartedNotifier implements DeploymentEventNotifier {
-        public void notify(DeploymentListener listener) {
-            listener.started(AbstractDeployment.this);
-        }
-    }
-
-    private class StartFailedNotifier implements DeploymentEventNotifier {
-        private Throwable _exception;
-
-        protected StartFailedNotifier(Throwable exception) {
-            _exception = exception;
-        }
-
-        public void notify(DeploymentListener listener) {
-            listener.startFailed(AbstractDeployment.this, _exception);
-        }
-    }
-
-    private class StoppingNotifier implements DeploymentEventNotifier {
-        public void notify(DeploymentListener listener) {
-            listener.stopping(AbstractDeployment.this);
-        }
-    }
-
-    private class StoppedNotifier implements DeploymentEventNotifier {
-        public void notify(DeploymentListener listener) {
-            listener.stopped(AbstractDeployment.this);
-        }
-    }
-
-    private class StopFailedNotifier implements DeploymentEventNotifier {
-        private Throwable _exception;
-
-        protected StopFailedNotifier(Throwable exception) {
-            _exception = exception;
-        }
-
-        public void notify(DeploymentListener listener) {
-            listener.stopFailed(AbstractDeployment.this, _exception);
-        }
-    }
-
-    private class DestroyingNotifier implements DeploymentEventNotifier {
-        public void notify(DeploymentListener listener) {
-            listener.destroying(AbstractDeployment.this);
-        }
-    }
-
-    private class DestroyedNotifier implements DeploymentEventNotifier {
-        public void notify(DeploymentListener listener) {
-            listener.destroyed(AbstractDeployment.this);
-        }
-    }
-
 }

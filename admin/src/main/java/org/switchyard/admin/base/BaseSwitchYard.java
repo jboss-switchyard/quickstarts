@@ -50,6 +50,7 @@ public class BaseSwitchYard implements SwitchYard {
     private List<Service> _services = Collections.synchronizedList(new LinkedList<Service>());
     private Set<String> _socketBindingNames = Collections.synchronizedSet(new HashSet<String>());
     private ConcurrentMap<String, String> _properties = new ConcurrentHashMap<String, String>();
+    private MessageMetricsSupport _messageMetrics = new MessageMetricsSupport();
 
     /**
      * Create a new BaseSwitchYard.
@@ -265,4 +266,8 @@ public class BaseSwitchYard implements SwitchYard {
         _properties.remove(name);
     }
 
+    @Override
+    public MessageMetricsSupport getMessageMetrics() {
+        return _messageMetrics;
+    }
 }

@@ -16,55 +16,40 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.admin;
 
-import java.util.List;
+package org.switchyard.runtime.event;
 
-import javax.xml.namespace.QName;
+import java.util.EventObject;
+
+import org.switchyard.Exchange;
 
 /**
- * ComponentService
- * 
- * Represents a component service (i.e. implementation).
- * 
- * @author Rob Cernich
+ * Fired when an exchange has completed.  For InOnly exchanges, this fires after
+ * the in message has been processed.  For InOut exchanges, this fires after the
+ * out message has been sent. 
  */
-public interface ComponentService {
+public class ExchangeCompletionEvent extends EventObject {
 
     /**
-     * @return the name of this service.
+     * Exchange property name used to record the duration of a completed exchange.
      */
-    QName getName();
-
-    /**
-     * @return the implementation type used to implement this service.
-     */
-    String getImplementation();
-
-    /**
-     * @return the raw configuration for the implementation defined for this
-     *         service.
-     */
-    String getImplementationConfiguration();
-
-    /**
-     * @return the interface implemented by this service.
-     */
-    String getInterface();
-
-    /**
-     * @return the references required by this service.
-     */
-    List<ComponentReference> getReferences();
-
-    /**
-     * @return the application which exports this service.
-     */
-    Application getApplication();
-
-    /** Returns message metrics for this service.
-     * @return message metrics for this service
-     */
-    MessageMetrics getMessageMetrics();
+    public static final String EXCHANGE_DURATION = "org.switchyard.exchangeDurationMS";
     
+    private static final long serialVersionUID = 1L;
+    
+    /**
+     * Create a new ExchangeCompletionEvent.
+     * @param exchange the exchange which has completed
+     */
+    public ExchangeCompletionEvent(Exchange exchange) {
+        super(exchange);
+    }
+
+    /**
+     * Gets the completed exchange.
+     * @return the completed exchange
+     */
+    public Exchange getExchange() {
+        return (Exchange)getSource();
+    }
 }

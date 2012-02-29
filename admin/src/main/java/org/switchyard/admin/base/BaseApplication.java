@@ -33,14 +33,18 @@ import org.switchyard.admin.ComponentService;
 import org.switchyard.admin.Service;
 import org.switchyard.admin.Transformer;
 import org.switchyard.admin.Validator;
+import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.ComponentServiceModel;
+import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.transform.TransformModel;
+import org.switchyard.config.model.validate.ValidateModel;
 
 /**
  * Base implementation of Application.
  */
 public class BaseApplication implements Application {
     
-    private BaseSwitchYard _switchYard;
     private QName _name;
     private Map<QName, Service> _services;
     private Map<QName, ComponentService> _componentServices;
@@ -49,35 +53,18 @@ public class BaseApplication implements Application {
     private SwitchYardModel _config;
     
     /**
-     * Create a new BaseApplication with the specified services.
-     * @param switchYard SwitchYard object containing this application
-     * @param name application name
-     * @param services list of services
-     * @param config application descriptor model
-     */
-    public BaseApplication(BaseSwitchYard switchYard, QName name, List<Service> services, SwitchYardModel config) {
-        this(switchYard, name, config);
-        if (services != null) {
-            for (Service service : services) {
-                _services.put(service.getName(), service);
-            }
-        }
-    }
-
-    /**
      * Create a new BaseApplication.
-     * @param switchYard SwitchYard object containing this application
      * @param name application name
      * @param config application descriptor model
      */
-    public BaseApplication(BaseSwitchYard switchYard, QName name, SwitchYardModel config) {
-        _switchYard = switchYard;
+    public BaseApplication(QName name, SwitchYardModel config) {
         _name = name;
-        _services = new LinkedHashMap<QName, Service>();
-        _componentServices = new LinkedHashMap<QName, ComponentService>();
-        _transformers = new LinkedList<Transformer>();
-        _validators = new LinkedList<Validator>();
         _config = config;
+        
+        addTransformers();
+        addValidators();
+        addComponents();
+        addServices();
     }
 
     @Override
@@ -100,34 +87,10 @@ public class BaseApplication implements Application {
         }
         return _services.get(serviceName);
     }
-
-    /**
-     * Set the list of services offered by this application.
-     * @param services list of services
-     */
-    public void setServices(List<Service> services) {
-        _services = new LinkedHashMap<QName, Service>();
-        for (Service service : services) {
-            _services.put(service.getName(), service);
-        }
-    }
     
     @Override
     public SwitchYardModel getConfig() {
         return _config;
-    }
-
-    protected void addService(Service service) {
-        _services.put(service.getName(), service);
-        _switchYard.addService(service);
-    }
-    
-    protected Service removeService(QName serviceName) {
-        Service service = _services.remove(serviceName);
-        if (service != null) {
-            _switchYard.removeService(service);
-        }
-        return service;
     }
 
     @Override
@@ -146,38 +109,9 @@ public class BaseApplication implements Application {
         return _componentServices.get(componentServiceName);
     }
 
-    /**
-     * Set the list of services offered by this application.
-     * @param services list of services
-     */
-    public void setComponentServices(List<ComponentService> services) {
-        _componentServices = new LinkedHashMap<QName, ComponentService>();
-        for (ComponentService service : services) {
-            _componentServices.put(service.getName(), service);
-        }
-    }
-
-    protected void addComponentService(ComponentService service) {
-        _componentServices.put(service.getName(), service);
-    }
-
-    protected ComponentService removeComponentService(QName serviceName) {
-        ComponentService service = _componentServices.remove(serviceName);
-        return service;
-    }
-
     @Override
     public List<Transformer> getTransformers() {
         return Collections.unmodifiableList(_transformers);
-    }
-
-    protected void setTransformers(List<Transformer> transformers) {
-        _transformers.clear();
-        _transformers.addAll(transformers);
-    }
-
-    protected void addTransformer(Transformer transformer) {
-        _transformers.add(transformer);
     }
 
     @Override
@@ -185,13 +119,46 @@ public class BaseApplication implements Application {
         return Collections.unmodifiableList(_validators);
     }
 
-    protected void setValidators(List<Validator> validators) {
-        _validators.clear();
-        _validators.addAll(validators);
+
+    private void addServices() {
+        _services = new LinkedHashMap<QName, Service>();
+        if (_config.getComposite().getServices() == null) {
+            return;
+        }
+        
+        for (CompositeServiceModel service : _config.getComposite().getServices()) {
+            _services.put(service.getQName(), new BaseService(service, this));
+        }
     }
 
-    protected void addValidators(Validator validator) {
-        _validators.add(validator);
+    private void addTransformers() {
+        _transformers = new LinkedList<Transformer>();
+        if (_config.getTransforms() == null) {
+            return;
+        }
+        for (TransformModel transformModel : _config.getTransforms().getTransforms()) {
+            _transformers.add(new BaseTransformer(transformModel));
+        }
+    }
+    
+    private void addValidators() {
+        _validators = new LinkedList<Validator>();
+        if (_config.getValidates() == null) {
+            return;
+        }
+        for (ValidateModel validateModel : _config.getValidates().getValidates()) {
+            _validators.add(new BaseValidator(validateModel));
+        }
     }
 
+    private void addComponents() {
+        _componentServices = new LinkedHashMap<QName, ComponentService>();
+        if (_config.getComposite().getComponents() == null) {
+            return;
+        }
+        for (ComponentModel component : _config.getComposite().getComponents()) {
+            ComponentServiceModel service = component.getServices().get(0);
+            _componentServices.put(service.getQName(), new BaseComponentService(service, component, this));
+        }
+    }
 }

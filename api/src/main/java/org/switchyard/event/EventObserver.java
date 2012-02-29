@@ -16,31 +16,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.admin;
 
-import javax.xml.namespace.QName;
+package org.switchyard.event;
+
+import java.util.EventObject;
 
 /**
- * ComponentReference
- * 
- * Represents a referenced service required by a component.
- * 
- * @author Rob Cernich
+ * Used to observe SwitchYard events.  An instance of EventObserver can be 
+ * registered to handle multiple event types through <code>ServiceDomain.addEventObserver() <code>.
+ * Event notification can be synchronous or asynchronous, so Observer implementations
+ * should not rely on specific behavior.
  */
-public interface ComponentReference {
-
-    /**
-     * @return the name of this reference.
-     */
-    QName getName();
-
-    /**
-     * @return the interface required for this reference.
-     */
-    String getInterface();
+public interface EventObserver {
     
-    /** Returns message metrics for this service.
-     * @return message metrics for this service
+    /**
+     * Notification that an event has occurred.
+     * @param event event notification
      */
-    MessageMetrics getMessageMetrics();
+    void notify(EventObject event);
 }

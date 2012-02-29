@@ -23,13 +23,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EventObject;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
 import javax.xml.namespace.QName;
+
 import org.apache.log4j.Logger;
 import org.switchyard.common.xml.QNameUtil;
+import org.switchyard.event.EventPublisher;
+import org.switchyard.event.ValidatorAddedEvent;
+import org.switchyard.event.ValidatorRemovedEvent;
 import org.switchyard.validate.Validator;
 import org.switchyard.validate.ValidatorRegistry;
 
@@ -41,16 +47,13 @@ public class BaseValidatorRegistry implements ValidatorRegistry {
 
     private static Logger _log = Logger.getLogger(BaseValidatorRegistry.class);
 
-    /**
-     * Default hash code.
-     */
-    private static final int DEFAULT_HASHCODE = 32;
-
     private final ConcurrentHashMap<QName, Validator<?>> _validators =
         new ConcurrentHashMap<QName, Validator<?>>();
     private final ConcurrentHashMap<QName, Validator<?>> _fallbackValidators =
             new ConcurrentHashMap<QName, Validator<?>>();
 
+    private EventPublisher _eventPublisher;
+    
     /**
      * Constructor.
      */
@@ -72,6 +75,7 @@ public class BaseValidatorRegistry implements ValidatorRegistry {
     public BaseValidatorRegistry addValidator(Validator<?> validator) {
         _fallbackValidators.clear();
         _validators.put(validator.getName(), validator);
+        publishEvent(new ValidatorAddedEvent(validator));
         return this;
     }
 
@@ -79,6 +83,7 @@ public class BaseValidatorRegistry implements ValidatorRegistry {
     public ValidatorRegistry addValidator(Validator<?> validator, QName name) {
         _fallbackValidators.clear();
         _validators.put(name, validator);
+        publishEvent(new ValidatorAddedEvent(validator));
         return null;
     }
 
@@ -111,7 +116,28 @@ public class BaseValidatorRegistry implements ValidatorRegistry {
     @Override
     public boolean removeValidator(Validator<?> validator) {
         _fallbackValidators.clear();
-        return _validators.remove(validator.getName()) != null;
+        boolean removed = _validators.remove(validator.getName()) != null;
+        if (removed) {
+            publishEvent(new ValidatorRemovedEvent(validator));
+        }
+        
+        return removed;
+    }
+    
+    /**
+     * Sets the EventPublisher instance to be used for validator events.
+     * @param eventPublisher event publisher
+     */
+    public void setEventPublisher(EventPublisher eventPublisher) {
+        _eventPublisher = eventPublisher;
+    }
+
+    // Convenience method to guard against cases when an event publisher has 
+    // not been set.
+    private void publishEvent(EventObject event) {
+        if (_eventPublisher != null) {
+            _eventPublisher.publish(event);
+        }
     }
 
     private Validator<?> getJavaFallbackValidator(QName name) {

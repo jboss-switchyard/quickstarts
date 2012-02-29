@@ -16,31 +16,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.admin;
 
-import javax.xml.namespace.QName;
+package org.switchyard.event;
+
+import java.util.EventObject;
+import org.switchyard.Service;
 
 /**
- * ComponentReference
- * 
- * Represents a referenced service required by a component.
- * 
- * @author Rob Cernich
+ * Fired when a Service has been registered in the domain.
  */
-public interface ComponentReference {
-
-    /**
-     * @return the name of this reference.
-     */
-    QName getName();
-
-    /**
-     * @return the interface required for this reference.
-     */
-    String getInterface();
+public class ServiceRegistrationEvent extends EventObject {
     
-    /** Returns message metrics for this service.
-     * @return message metrics for this service
+    private static final long serialVersionUID = -5100785646126159088L;
+    
+    /**
+     * Create a new ServiceRegistrationEvent.
+     * @param service the service that was registered
      */
-    MessageMetrics getMessageMetrics();
+    public ServiceRegistrationEvent(Service service) {
+        super(service);
+    }
+    
+    /**
+     * Get the registered service associated with this event.
+     * @return registered service
+     */
+    public Service getService() {
+        return (Service)getSource();
+    }
 }

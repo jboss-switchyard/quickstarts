@@ -19,6 +19,7 @@
 
 package org.switchyard.admin.base;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,6 +29,9 @@ import org.switchyard.admin.Application;
 import org.switchyard.admin.Binding;
 import org.switchyard.admin.ComponentService;
 import org.switchyard.admin.Service;
+import org.switchyard.config.model.composite.BindingModel;
+import org.switchyard.config.model.composite.ComponentServiceModel;
+import org.switchyard.config.model.composite.CompositeServiceModel;
 
 /**
  * Base implementation for Service.
@@ -61,7 +65,27 @@ public class BaseService implements Service {
         _promotedService = implementation;
         _gateways = gateways;
     }
+    
+    /**
+     * Create a new BaseService from the specified config model.
+     * 
+     * @param serviceConfig the composite service config.
+     * @param application the application containing the service.
+     */
+    public BaseService(CompositeServiceModel serviceConfig, Application application) {
+        _name = serviceConfig.getQName();
+        _application = application;
+        if (serviceConfig.getInterface() != null) {
+            _serviceInterface = serviceConfig.getInterface().getInterface();
+        }
+        _promotedService = getPromotedService(application, serviceConfig);
+        _gateways = new ArrayList<Binding>();
 
+        for (BindingModel bindingModel : serviceConfig.getBindings()) {
+            _gateways.add(new BaseBinding(bindingModel.getType(), bindingModel.toString()));
+        }
+    }
+    
     @Override
     public Application getApplication() {
         return _application;
@@ -86,5 +110,12 @@ public class BaseService implements Service {
     public QName getName() {
         return _name;
     }
-    
+
+    private ComponentService getPromotedService(Application application, CompositeServiceModel compositeService) {
+        ComponentServiceModel componentServiceModel = compositeService.getComponentService();
+        if (componentServiceModel == null) {
+            return null;
+        }
+        return application.getComponentService(componentServiceModel.getQName());
+    }
 }

@@ -19,6 +19,8 @@
 
 package org.switchyard.internal;
 
+import java.util.EventObject;
+
 import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
@@ -33,6 +35,8 @@ import org.switchyard.MockDomain;
 import org.switchyard.MockHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceReference;
+import org.switchyard.event.EventObserver;
+import org.switchyard.event.ReferenceRegistrationEvent;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
@@ -55,7 +59,8 @@ public class DomainImplTest {
                 new DefaultServiceRegistry(),
                 new LocalExchangeBus(),
                 null,
-                null);
+                null,
+                new EventManager());
         _domain.registerService(IN_ONLY_SERVICE, new InOnlyService(), new MockHandler());
         _domain.registerService(IN_OUT_SERVICE, new InOutService(), new MockHandler());
         _inOnlyReference = _domain.registerServiceReference(IN_ONLY_SERVICE, new InOnlyService());
@@ -115,6 +120,20 @@ public class DomainImplTest {
         Assert.assertEquals(2, counter.getCount());
     }
     
+    @Test
+    public void testGetEventPublisher() {
+        // Test to make sure event manager is initialized in domain
+        Assert.assertNotNull(_domain.getEventPublisher());
+    }
+    
+    @Test
+    public void testAddObserver() {
+        CountingEventObserver obs = new CountingEventObserver();
+        _domain.addEventObserver(obs, ReferenceRegistrationEvent.class);
+        _domain.getEventPublisher().publish(new ReferenceRegistrationEvent(_inOnlyReference));
+        Assert.assertEquals(1, obs.count);
+    }
+    
 }
 
 interface MyInterface {
@@ -135,5 +154,14 @@ class CountingHandler extends BaseHandler {
     
     public void clear() {
         count = 0;
+    }
+}
+
+class CountingEventObserver implements EventObserver {
+    
+    public int count;
+
+    public void notify(EventObject event) {
+        ++count;
     }
 }

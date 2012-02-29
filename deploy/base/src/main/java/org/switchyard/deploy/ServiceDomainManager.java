@@ -29,6 +29,7 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.internal.DefaultServiceRegistry;
 import org.switchyard.internal.DomainImpl;
+import org.switchyard.internal.EventManager;
 import org.switchyard.internal.LocalExchangeBus;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.internal.validate.BaseValidatorRegistry;
@@ -68,6 +69,7 @@ public class ServiceDomainManager {
     // to registered services across application domains
     private ServiceRegistry _registry = new DefaultServiceRegistry();
     private ExchangeBus _bus = new LocalExchangeBus();
+    private EventManager _eventManager = new EventManager();
 
     /**
      * Create a ServiceDomain instance.
@@ -90,13 +92,21 @@ public class ServiceDomainManager {
         BaseValidatorRegistry validatorRegistry = new BaseValidatorRegistry();
         
         DomainImpl domain = new DomainImpl(
-                domainName, _registry, _bus, transformerRegistry, validatorRegistry);
+                domainName, _registry, _bus, transformerRegistry, validatorRegistry, _eventManager);
         // add appropriate domain config
         if (switchyardConfig != null) {
             addHandlersToDomain(domain, switchyardConfig);
         }
 
         return domain;
+    }
+    
+    /**
+     * Return the shared EventManager used for all ServiceDomain instances.
+     * @return EventManager instance
+     */
+    public EventManager getEventManager() {
+        return _eventManager;
     }
     
     /**

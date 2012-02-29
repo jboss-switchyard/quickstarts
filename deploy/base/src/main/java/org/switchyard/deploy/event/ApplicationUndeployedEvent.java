@@ -16,31 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.admin;
 
-import javax.xml.namespace.QName;
+package org.switchyard.deploy.event;
+
+import java.util.EventObject;
+
+import org.switchyard.deploy.internal.AbstractDeployment;
 
 /**
- * ComponentReference
- * 
- * Represents a referenced service required by a component.
- * 
- * @author Rob Cernich
+ * Fired when a SwitchYard application is undeployed.
  */
-public interface ComponentReference {
+public class ApplicationUndeployedEvent extends EventObject {
+
+    private static final long serialVersionUID = 8389754361920353347L;
 
     /**
-     * @return the name of this reference.
+     * Creates a new ApplicationUndeployedEvent event.
+     * @param deployment the application deployment
      */
-    QName getName();
-
-    /**
-     * @return the interface required for this reference.
-     */
-    String getInterface();
+    public ApplicationUndeployedEvent(AbstractDeployment deployment) {
+        super(deployment);
+    }
     
-    /** Returns message metrics for this service.
-     * @return message metrics for this service
+    /**
+     * Gets the undeployed application.
+     * @return application deployment
      */
-    MessageMetrics getMessageMetrics();
+    public AbstractDeployment getDeployment() {
+        return (AbstractDeployment)getSource();
+    }
 }

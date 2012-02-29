@@ -21,6 +21,8 @@ package org.switchyard.admin.base;
 import javax.xml.namespace.QName;
 
 import org.switchyard.admin.Validator;
+import org.switchyard.config.model.TypedModel;
+import org.switchyard.config.model.validate.ValidateModel;
 
 /**
  * BaseValidator
@@ -32,7 +34,7 @@ import org.switchyard.admin.Validator;
 public class BaseValidator implements Validator {
 
     private final QName _name;
-    private final String _type;
+    private String _type;
 
     /**
      * Create a new BaseTransformer.
@@ -43,6 +45,17 @@ public class BaseValidator implements Validator {
     public BaseValidator(QName name, String type) {
         _name = name;
         _type = type;
+    }
+
+    /**
+     * Create a new BaseValidator from a config model.
+     * @param config the the validator config model
+     */
+    public BaseValidator(ValidateModel config) {
+        _name = config.getName();
+        if (config instanceof TypedModel) {
+            _type = ((TypedModel)config).getType();
+        }
     }
 
     @Override

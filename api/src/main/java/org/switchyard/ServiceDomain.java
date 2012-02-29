@@ -19,10 +19,13 @@
 
 package org.switchyard;
 
+import java.util.EventObject;
 import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.event.EventObserver;
+import org.switchyard.event.EventPublisher;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.policy.Policy;
 import org.switchyard.transform.TransformerRegistry;
@@ -141,4 +144,20 @@ public interface ServiceDomain {
      * @return default handler chain
      */
     HandlerChain getHandlerChain();
+    
+    /**
+     * Add an EventObserver for the specified event type.  A single instance
+     * of EventObserver can be registered to receive multiple event types.
+     * @param observer the event observer to add
+     * @param eventType the event type to receive notifications on
+     * @return a reference to this ServiceDomain for chaining multiple addEventObserver() calls
+     */
+    ServiceDomain addEventObserver(EventObserver observer, Class<? extends EventObject> eventType);
+    
+    /**
+     * Returns the EventPublisher for this domain, which can be used to notify
+     * event observers of activity.
+     * @return event publisher
+     */
+    EventPublisher getEventPublisher();
 }

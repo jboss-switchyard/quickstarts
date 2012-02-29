@@ -19,6 +19,8 @@
 
 package org.switchyard.internal;
 
+import java.util.EventObject;
+
 import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
@@ -36,7 +38,9 @@ import org.switchyard.MockDomain;
 import org.switchyard.MockHandler;
 import org.switchyard.Scope;
 import org.switchyard.ServiceReference;
+import org.switchyard.event.EventObserver;
 import org.switchyard.metadata.ExchangeContract;
+import org.switchyard.runtime.event.ExchangeCompletionEvent;
 
 /**
  *  Unit tests for the ExchangeImpl class.
@@ -52,7 +56,7 @@ public class ExchangeImplTest {
     
     @Test
     public void testSendFaultOnNewExchange() {
-        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, null, null);
+        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, _domain);
         try {
             exchange.sendFault(exchange.createMessage());
             Assert.fail("Sending a fault on a new exchange is not allowed");
@@ -63,7 +67,7 @@ public class ExchangeImplTest {
     
     @Test
     public void testPhaseIsNullOnNewExchange() {
-        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, null, null);
+        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, _domain, null);
         Assert.assertNull(exchange.getPhase());
     }
     
@@ -125,7 +129,7 @@ public class ExchangeImplTest {
 
     @Test
     public void testNullSend() {
-        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, null, null);
+        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, _domain, null);
         try {
             exchange.send(null);
             Assert.fail("Expected IllegalArgumentException.");
@@ -136,13 +140,43 @@ public class ExchangeImplTest {
 
     @Test
     public void testNullSendFault() {
-        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, null, null);
+        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, _domain, null);
         try {
             exchange.sendFault(null);
             Assert.fail("Expected IllegalArgumentException.");
         } catch (IllegalArgumentException e) {
             Assert.assertEquals("Invalid null 'message' argument in method call.", e.getMessage());
         }
+    }
+
+    @Test
+    public void testExchangeCompletedEvent() {
+        class CompletionCounter implements EventObserver {
+            int count;
+            public void notify(EventObject event) {
+                if (event instanceof ExchangeCompletionEvent) {
+                    ++count;
+                }
+            }
+        };
+        CompletionCounter counter = new CompletionCounter();
+        _domain.addEventObserver(counter, ExchangeCompletionEvent.class);
+        
+        // send in-only and check the count
+        ServiceReference inOnlyService = _domain.createInOnlyService(new QName("ExchangeCompleteEvent-1"));
+        Exchange inOnly = inOnlyService.createExchange();
+        inOnly.send(inOnly.createMessage());
+        Assert.assertEquals(1, counter.count);
+        
+        // reset count
+        counter.count = 0;
+        
+        // send in-out and check the count
+        ServiceReference inOutService = _domain.createInOutService(
+                new QName("ExchangeCompleteEvent-2"), new MockHandler().forwardInToOut());
+        Exchange inOut = inOutService.createExchange(new MockHandler());
+        inOut.send(inOut.createMessage());
+        Assert.assertEquals(1, counter.count);
     }
 
     /**

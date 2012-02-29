@@ -35,6 +35,7 @@ import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerChain;
 import org.switchyard.HandlerException;
+import org.switchyard.MockDomain;
 import org.switchyard.Scope;
 import org.switchyard.Service;
 import org.switchyard.internal.DefaultHandlerChain;
@@ -70,7 +71,7 @@ public class HornetQDispatcherTest {
         inHandlers.addLast("in", sink);
         Dispatcher dispatch = _provider.createDispatcher(service, inHandlers, null);
         
-        Exchange exchange = new ExchangeImpl(service.getName(), ExchangeContract.IN_ONLY, dispatch, null, null);
+        Exchange exchange = new ExchangeImpl(service.getName(), ExchangeContract.IN_ONLY, dispatch, new MockDomain(), null);
         exchange.send(exchange.createMessage());
         Thread.sleep(200);
         
@@ -94,7 +95,7 @@ public class HornetQDispatcherTest {
         ExchangeSink outHandler = new ExchangeSink();
         outHandlers.addLast("out", outHandler);
         
-        Exchange exchange = new ExchangeImpl(service.getName(), ExchangeContract.IN_OUT, dispatch, null, outHandlers);
+        Exchange exchange = new ExchangeImpl(service.getName(), ExchangeContract.IN_OUT, dispatch, new MockDomain(), outHandlers);
         exchange.send(exchange.createMessage());
         Thread.sleep(400);
         

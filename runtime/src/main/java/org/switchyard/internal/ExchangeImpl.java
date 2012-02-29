@@ -21,6 +21,7 @@ package org.switchyard.internal;
 
 import java.io.IOException;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.namespace.QName;
 
@@ -33,6 +34,7 @@ import org.switchyard.ExchangeState;
 import org.switchyard.HandlerChain;
 import org.switchyard.Message;
 import org.switchyard.Scope;
+import org.switchyard.ServiceDomain;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.internal.ExchangeImpl.ExchangeImplFactory;
 import org.switchyard.io.Serialization.AccessType;
@@ -42,6 +44,7 @@ import org.switchyard.io.Serialization.Include;
 import org.switchyard.io.Serialization.Strategy;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceOperation;
+import org.switchyard.runtime.event.ExchangeCompletionEvent;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.transform.TransformSequence;
 import org.switchyard.transform.TransformerRegistry;
@@ -62,6 +65,8 @@ public class ExchangeImpl implements Exchange {
     private Dispatcher                _dispatch;
     private TransformerRegistry       _transformerRegistry;
     private HandlerChain              _replyChain;
+    private ServiceDomain             _domain;
+    private Long                      _startTime;
     @Include private Context          _context;
 
     /**
@@ -85,10 +90,10 @@ public class ExchangeImpl implements Exchange {
      * @param serviceName name of the service being invoked
      * @param contract exchange contract
      * @param dispatch dispatcher to use for the exchange
-     * @param transformerRegistry The {@link TransformerRegistry}.
+     * @param domain service domain for this exchange
      */
-    public ExchangeImpl(QName serviceName, ExchangeContract contract, Dispatcher dispatch, TransformerRegistry transformerRegistry) {
-        this(serviceName, contract, dispatch, transformerRegistry, null);
+    public ExchangeImpl(QName serviceName, ExchangeContract contract, Dispatcher dispatch, ServiceDomain domain) {
+        this(serviceName, contract, dispatch, domain, null);
 
         if (_log.isDebugEnabled()) {
             ServiceOperation serviceOperation = contract.getServiceOperation();
@@ -101,10 +106,10 @@ public class ExchangeImpl implements Exchange {
      * @param serviceName name of the service being invoked
      * @param contract exchange contract
      * @param dispatch exchange dispatcher
-     * @param transformerRegistry The {@link TransformerRegistry}.
+     * @param domain service domain for this exchange
      * @param replyChain handler chain for replies
      */
-    public ExchangeImpl(QName serviceName, ExchangeContract contract, Dispatcher dispatch, TransformerRegistry transformerRegistry, HandlerChain replyChain) {
+    public ExchangeImpl(QName serviceName, ExchangeContract contract, Dispatcher dispatch, ServiceDomain domain, HandlerChain replyChain) {
 
         // Check that the ExchangeContract exists and has invoker metadata and a ServiceOperation defined on it...
         if (contract == null) {
@@ -121,10 +126,11 @@ public class ExchangeImpl implements Exchange {
             throw new SwitchYardException("Invalid Exchange construct.  Must supply an reply handler for an IN_OUT Exchange.");
         }
 
+        _domain = domain;
         _serviceName = serviceName;
         _contract = contract;
         _dispatch = dispatch;
-        _transformerRegistry = transformerRegistry;
+        _transformerRegistry = domain.getTransformerRegistry();
         _replyChain = replyChain;
         _context = new DefaultContext();
 
@@ -174,7 +180,7 @@ public class ExchangeImpl implements Exchange {
             throw new IllegalStateException(
                     "Send message not allowed for exchange in phase " + _phase);
         }
-        
+
         sendInternal(message);
     }
 
@@ -228,9 +234,22 @@ public class ExchangeImpl implements Exchange {
      * exchange's current state).
      */
     private void sendInternal(Message message) {
+        if (_startTime == null) {
+            _startTime = System.nanoTime();
+        }
+        ExchangePhase sendPhase = _phase;
+        
         _message = message;
         // assign messageId
         _context.setProperty(MESSAGE_ID, UUID.randomUUID().toString(), Scope.activeScope(this));
+
+        if (_log.isDebugEnabled()) {
+            ServiceOperation serviceOperation = _contract.getServiceOperation();
+            _log.debug("Sending " + _phase + " Message (" + System.identityHashCode(message) + ") on " + serviceOperation.getExchangePattern() 
+                    +  " Exchange (" + instanceHash() + ") for Service '" + _serviceName 
+                    + "', operation '" + serviceOperation.getName() + "'.  Exchange state: " + _state);
+        }
+        
         // if a fault was thrown by the handler chain and there's no reply chain
         // we need to log.
         // TODO : stick this in a central fault/error queue
@@ -244,15 +263,17 @@ public class ExchangeImpl implements Exchange {
                 faultContent = _message.getContent().toString();
             }
             _log.warn("Fault generated during exchange without a handler: " + faultContent);
-            return;
+        } else {
+            _dispatch.dispatch(this);
         }
-
-        if (_log.isDebugEnabled()) {
-            ServiceOperation serviceOperation = _contract.getServiceOperation();
-            _log.debug("Sending " + _phase + " Message (" + System.identityHashCode(message) + ") on " + serviceOperation.getExchangePattern() +  " Exchange (" + instanceHash() + ") for Service '" + _serviceName + "', operation '" + serviceOperation.getName() + "'.  Exchange state: " + _state);
+        
+        // Notify exchange completion
+        if (isDone(sendPhase)) {
+            long duration = System.nanoTime() - _startTime;
+            getContext().setProperty(ExchangeCompletionEvent.EXCHANGE_DURATION, 
+                    TimeUnit.MILLISECONDS.convert(duration, TimeUnit.NANOSECONDS));
+            _domain.getEventPublisher().publish(new ExchangeCompletionEvent(this));
         }
-
-        _dispatch.dispatch(this);
     }
 
     private int instanceHash() {
@@ -317,4 +338,11 @@ public class ExchangeImpl implements Exchange {
             _context.setProperty(Exchange.CONTENT_TYPE, serviceOperationOutputType, Scope.OUT);
         }
     }
+    
+    private boolean isDone(ExchangePhase phase) {
+        ExchangePattern mep = _contract.getServiceOperation().getExchangePattern();
+        return (ExchangePhase.IN.equals(phase) && ExchangePattern.IN_ONLY.equals(mep))
+                || (ExchangePhase.OUT.equals(phase) && ExchangePattern.IN_OUT.equals(mep));
+    }
+    
 }

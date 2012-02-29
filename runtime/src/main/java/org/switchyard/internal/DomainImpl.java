@@ -19,7 +19,9 @@
 
 package org.switchyard.internal;
 
+import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.EventObject;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,6 +36,11 @@ import org.switchyard.HandlerChain;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.event.EventObserver;
+import org.switchyard.event.EventPublisher;
+import org.switchyard.event.ReferenceRegistrationEvent;
+import org.switchyard.event.ReferenceUnregistrationEvent;
+import org.switchyard.event.ServiceRegistrationEvent;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.handlers.PolicyHandler;
 import org.switchyard.handlers.TransactionHandler;
@@ -61,6 +68,7 @@ public class DomainImpl implements ServiceDomain {
 
     private final QName _name;
     private final DefaultHandlerChain _defaultHandlers;
+    private final EventManager _eventManager;
     private final ServiceRegistry _registry;
     private final ExchangeBus _exchangeBus;
     private final TransformerRegistry _transformerRegistry;
@@ -74,20 +82,26 @@ public class DomainImpl implements ServiceDomain {
      * @param exchangeBus message exchange bus
      * @param transformerRegistry transformerRegistry
      * @param validatorRegistry validatorRegistry
+     * @param eventManager event manager
      */
     public DomainImpl(QName name,
             ServiceRegistry registry,
             ExchangeBus exchangeBus,
             TransformerRegistry transformerRegistry,
-            ValidatorRegistry validatorRegistry) {
+            ValidatorRegistry validatorRegistry,
+            EventManager eventManager) {
 
         _name = name;
         _registry = registry;
         _exchangeBus  = exchangeBus;
         _transformerRegistry = transformerRegistry;
         _validatorRegistry = validatorRegistry;
+        _eventManager = eventManager;
         _references = new ConcurrentHashMap<QName, ServiceReference>();
-
+        
+        setEventPublisher(_transformerRegistry);
+        setEventPublisher(_validatorRegistry);
+        
         // Build out the system handlers chain.  A null "provider" handler
         // is inserted as a placeholder to establish the correct position of
         // the service provider within the chain.
@@ -130,7 +144,9 @@ public class DomainImpl implements ServiceDomain {
         Dispatcher ep = _exchangeBus.createDispatcher(service, handlers, _transformerRegistry);
         
         // register the service
-        return _registry.registerService(service, ep, this);
+        _registry.registerService(service, ep, this);
+        _eventManager.publish(new ServiceRegistrationEvent(service));
+        return service;
     }
 
     @Override
@@ -150,6 +166,8 @@ public class DomainImpl implements ServiceDomain {
             ServiceInterface metadata, ExchangeHandler handler, List<Policy> provides) {
         ServiceReference reference = new ServiceReferenceImpl(serviceName, metadata, provides, handler, this);
         _references.put(serviceName, reference);
+        _eventManager.publish(new ReferenceRegistrationEvent(reference));
+        
         return reference;
     }
     
@@ -164,6 +182,7 @@ public class DomainImpl implements ServiceDomain {
      */
     public void unregisterServiceReference(ServiceReference reference) {
         _references.remove(reference.getName());
+        _eventManager.publish(new ReferenceUnregistrationEvent(reference));
     }
 
     @Override
@@ -224,8 +243,7 @@ public class DomainImpl implements ServiceDomain {
 
         ExchangeContract contract = new BaseExchangeContract(serviceOp, referenceOp);
         // create the exchange
-        ExchangeImpl exchange = new ExchangeImpl(service.getName(), contract,
-                dispatcher, _transformerRegistry, replyChain);
+        ExchangeImpl exchange = new ExchangeImpl(service.getName(), contract, dispatcher, this, replyChain);
         
         for (Policy policy : service.getRequiredPolicy()) {
             ExchangePolicy.require(exchange, policy);
@@ -267,6 +285,31 @@ public class DomainImpl implements ServiceDomain {
     @Override
     public HandlerChain getHandlerChain() {
         return _defaultHandlers;
+    }
+
+    @Override
+    public ServiceDomain addEventObserver(EventObserver observer, Class<? extends EventObject> eventType) {
+        _eventManager.addObserver(observer, eventType);
+        return this;
+    }
+
+    @Override
+    public EventPublisher getEventPublisher() {
+        return _eventManager;
+    }
+    
+    private void setEventPublisher(Object target) {
+        if (target == null) {
+            return;
+        }
+        
+        try {
+            Method setter = target.getClass().getMethod("setEventPublisher", EventPublisher.class);
+            setter.invoke(target, _eventManager);
+        } catch (Exception ex) {
+            _logger.debug("Attempt to set EventPublisher failed on " 
+                    + target.getClass().getCanonicalName(), ex);
+        }
     }
 
 }

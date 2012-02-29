@@ -26,6 +26,7 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.event.ServiceUnregistrationEvent;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.policy.Policy;
 
@@ -78,13 +79,11 @@ public class ServiceImpl implements Service {
     public ServiceDomain getDomain() {
         return _domain;
     }
-
-    /* (non-Javadoc)
-     * @see org.switchyard.Service#unregister()
-     */
+    
     @Override
     public void unregister() {
         _domain.getServiceRegistry().unregisterService(this);
+        _domain.getEventPublisher().publish(new ServiceUnregistrationEvent(this));
     }
     
     @Override

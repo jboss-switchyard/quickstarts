@@ -16,6 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
+
 package org.switchyard.admin;
 
 import java.util.List;
@@ -23,48 +24,34 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 /**
- * ComponentService
+ * Reference
  * 
- * Represents a component service (i.e. implementation).
- * 
- * @author Rob Cernich
+ * Represents an application dependency exported through the SwitchYard runtime.
  */
-public interface ComponentService {
+public interface Reference {
 
     /**
-     * @return the name of this service.
+     * @return the name of this reference.
      */
     QName getName();
 
     /**
-     * @return the implementation type used to implement this service.
+     * @return the component reference promoted by this service.
      */
-    String getImplementation();
+    ComponentReference getPromotedReference();
 
     /**
-     * @return the raw configuration for the implementation defined for this
-     *         service.
+     * @return the gateway bindings for this reference.
      */
-    String getImplementationConfiguration();
+    List<Binding> getGateways();
 
     /**
-     * @return the interface implemented by this service.
+     * @return the interface used by this reference.
      */
     String getInterface();
 
     /**
-     * @return the references required by this service.
-     */
-    List<ComponentReference> getReferences();
-
-    /**
-     * @return the application which exports this service.
+     * @return the application which exports this reference.
      */
     Application getApplication();
-
-    /** Returns message metrics for this service.
-     * @return message metrics for this service
-     */
-    MessageMetrics getMessageMetrics();
-    
 }
