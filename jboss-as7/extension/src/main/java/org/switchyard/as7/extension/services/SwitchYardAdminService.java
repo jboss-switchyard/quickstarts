@@ -31,8 +31,13 @@ import org.jboss.msc.value.InjectedValue;
 import org.switchyard.admin.SwitchYard;
 import org.switchyard.admin.base.BaseComponent;
 import org.switchyard.admin.base.BaseSwitchYard;
+import org.switchyard.admin.base.SwitchYardBuilder;
 import org.switchyard.config.Configuration;
 import org.switchyard.deploy.Component;
+import org.switchyard.deploy.ServiceDomainManager;
+import org.switchyard.deploy.event.ApplicationDeployedEvent;
+import org.switchyard.deploy.event.ApplicationUndeployedEvent;
+import org.switchyard.runtime.event.ExchangeCompletionEvent;
 
 /**
  * SwitchYardAdminService
@@ -52,8 +57,10 @@ public class SwitchYardAdminService implements Service<SwitchYard> {
     private final InjectedValue<List> _components = new InjectedValue<List>();
     @SuppressWarnings("rawtypes")
     private final InjectedValue<Map> _socketBindings = new InjectedValue<Map>();
+    private final InjectedValue<ServiceDomainManager> _serviceDomainManager = new InjectedValue<ServiceDomainManager>();
     private final String _version;
     private BaseSwitchYard _switchYard;
+    private SwitchYardBuilder _adminObserver;
 
     /**
      * Create a new SwitchYardAdminService.
@@ -72,6 +79,11 @@ public class SwitchYardAdminService implements Service<SwitchYard> {
     @Override
     public void start(StartContext context) throws StartException {
         _switchYard = new BaseSwitchYard(_version);
+        _adminObserver = new SwitchYardBuilder(_switchYard);
+        _serviceDomainManager.getValue().getEventManager()
+            .addObserver(_adminObserver, ExchangeCompletionEvent.class)
+            .addObserver(_adminObserver, ApplicationDeployedEvent.class)
+            .addObserver(_adminObserver, ApplicationUndeployedEvent.class);
 
         // add in the configured socket bindings
         _switchYard.addSocketBindingNames(_socketBindings.getValue().keySet());
@@ -88,6 +100,7 @@ public class SwitchYardAdminService implements Service<SwitchYard> {
 
     @Override
     public void stop(StopContext context) {
+        _serviceDomainManager.getValue().getEventManager().removeObserver(_adminObserver);
         _switchYard = null;
     }
 
@@ -111,6 +124,15 @@ public class SwitchYardAdminService implements Service<SwitchYard> {
     @SuppressWarnings("rawtypes")
     public final InjectedValue<Map> getSocketBindings() {
         return _socketBindings;
+    }
+    
+    /**
+     * Injection point for ServiceDomainManager.
+     * 
+     * @return the ServiceDomainManager
+     */
+    public InjectedValue<ServiceDomainManager> getServiceDomainManager() {
+        return _serviceDomainManager;
     }
 
     private Map<String, String> convertConfiguration(Configuration config) {

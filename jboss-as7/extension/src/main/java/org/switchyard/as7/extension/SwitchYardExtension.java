@@ -63,6 +63,7 @@ import org.switchyard.as7.extension.admin.SwitchYardSubsystemListServices;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemReadApplication;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemReadComponent;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemReadService;
+import org.switchyard.as7.extension.admin.SwitchYardSubsystemShowMetrics;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemUsesArtifact;
 
 /**
@@ -98,6 +99,7 @@ public class SwitchYardExtension implements Extension {
         registration.registerOperationHandler(SwitchYardModelConstants.READ_COMPONENT, SwitchYardSubsystemReadComponent.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_READ_COMPONENT, false);
         registration.registerOperationHandler(SwitchYardModelConstants.READ_SERVICE, SwitchYardSubsystemReadService.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_READ_SERVICE, false);
         registration.registerOperationHandler(SwitchYardModelConstants.USES_ARTIFACT, SwitchYardSubsystemUsesArtifact.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_USES_ARTIFACT, false);
+        registration.registerOperationHandler(SwitchYardModelConstants.SHOW_METRICS, SwitchYardSubsystemShowMetrics.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_SHOW_METRICS, false);
 
         DescriptionProvider nullDescriptionProvider = new DescriptionProvider() {
             @Override

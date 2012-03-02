@@ -25,16 +25,23 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.TYP
 import static org.switchyard.as7.extension.SwitchYardModelConstants.ACTIVATION_TYPES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.APPLICATION;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.ARTIFACTS;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.AVERAGE_TIME;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.COMPONENT_SERVICES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.CONFIGURATION;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.FAULT_COUNT;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.FROM;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.GATEWAYS;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.IMPLEMENTATION;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.IMPLEMENTATION_CONFIGURATION;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.MIN_TIME;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.MAX_TIME;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.PROMOTED_SERVICE;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.REFERENCES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.SERVICES;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.SUCCESS_COUNT;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.TO;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.TOTAL_COUNT;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.TOTAL_TIME;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.TRANSFORMERS;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.URL;
 
@@ -47,6 +54,7 @@ import org.switchyard.admin.Binding;
 import org.switchyard.admin.Component;
 import org.switchyard.admin.ComponentReference;
 import org.switchyard.admin.ComponentService;
+import org.switchyard.admin.MessageMetrics;
 import org.switchyard.admin.Service;
 import org.switchyard.admin.Transformer;
 import org.switchyard.config.model.switchyard.ArtifactModel;
@@ -430,39 +438,81 @@ final public class ModelNodeCreationUtil {
     }
     
     /**
-     * Creates a new {@link ModelNode} tree from the {@link Transformer}. The
-     * tree has the form: <br>
+     * Adds metrics to an existing node from the {@link MessageMetrics}. The tree
+     * has the form: <br>
      * <code><pre>
-     *      "from" =&gt; "fromType",
-     *      "to" =&gt; "toType",
-     *      "type" =&gt; "transformerType",
+     *      "successCount" =&gt; "successCount",
+     *      "faultCount" =&gt; "faultCount",
+     *      "totalCount" =&gt; "totalCount",
+     *      "averageTime" =&gt; "averageTime",
+     *      "minTime" =&gt; "minTime",
+     *      "maxTime" =&gt; "maxTime",
+     *      "totalTime" =&gt; "totalTime"
      * </pre></code>
      * 
-     * @param transformation the {@link Transformer} used to populate the node.
+     * @param service the {@link Service} used to populate the node.
+     * @param node the node to add metrics to
      * @return a new {@link ModelNode}
      */
-    public static ModelNode createArtifactNode(Transformer transformation) {
-        ModelNode transformationNode = new ModelNode();
+    public static ModelNode addMetricsToNode(ModelNode node, MessageMetrics metrics) {
+        
+        node.get(SUCCESS_COUNT).set(metrics.getSuccessCount());
+        node.get(FAULT_COUNT).set(metrics.getFaultCount());
+        node.get(TOTAL_COUNT).set(metrics.getTotalCount());
+        node.get(AVERAGE_TIME).set(metrics.getAverageProcessingTime());
+        node.get(MIN_TIME).set(metrics.getMinProcessingTime());
+        node.get(MAX_TIME).set(metrics.getMaxProcessingTime());
+        node.get(TOTAL_TIME).set(metrics.getTotalProcessingTime());
+        
+        return node;
+    }
+    
+    /**
+     * Creates a new {@link ModelNode} tree from the {@link Service} for metrics.
+     * The tree has the form: <br>
+     * <code><pre>
+     *      "name" =&gt; "serviceName",
+     *      "successCount" =&gt; "successCount",
+     *      "faultCount" =&gt; "faultCount",
+     *      "totalCount" =&gt; "totalCount",
+     *      "averageTime" =&gt; "averageTime",
+     *      "minTime" =&gt; "minTime",
+     *      "maxTime" =&gt; "maxTime",
+     *      "totalTime" =&gt; "totalTime",
+     *      "references" =&gt; [
+     *          {
+     *              "name" =&gt; "referenceName",
+     *               "successCount" =&gt; "successCount",
+     *               "faultCount" =&gt; "faultCount",
+     *               "totalCount" =&gt; "totalCount",
+     *               "averageTime" =&gt; "averageTime",
+     *               "minTime" =&gt; "minTime",
+     *               "maxTime" =&gt; "maxTime",
+     *               "totalTime" =&gt; "totalTime",
+     *          },
+     *          ...
+     *      ]
+     * </pre></code>
+     * 
+     * @param service the {@link Service} used to populate the node.
+     * @return a new {@link ModelNode}
+     */
+    public static ModelNode createServiceMetricsNode(Service service) {
+        ModelNode serviceNode = new ModelNode();
 
-        if (transformation.getFrom() == null) {
-            transformationNode.get(FROM);
-        } else {
-            transformationNode.get(FROM).set(transformation.getFrom().toString());
+        serviceNode.get(NAME).set(service.getName().toString());
+        addMetricsToNode(serviceNode, service.getPromotedService().getMessageMetrics());
+        
+        ModelNode referencesNode = new ModelNode();
+        for (ComponentReference reference : service.getPromotedService().getReferences()) {
+            ModelNode referenceNode = new ModelNode();
+            referenceNode.get(NAME).set(reference.getName().toString());
+            addMetricsToNode(referenceNode, reference.getMessageMetrics());
+            referencesNode.add(referenceNode);
         }
+        serviceNode.get(REFERENCES).set(referencesNode);
 
-        if (transformation.getTo() == null) {
-            transformationNode.get(TO);
-        } else {
-            transformationNode.get(TO).set(transformation.getTo().toString());
-        }
-
-        if (transformation.getType() == null) {
-            transformationNode.get(TYPE);
-        } else {
-            transformationNode.get(TYPE).set(transformation.getType());
-        }
-
-        return transformationNode;
+        return serviceNode;
     }
 
     private ModelNodeCreationUtil() {

@@ -52,6 +52,7 @@ import org.switchyard.as7.extension.services.SwitchYardComponentService;
 import org.switchyard.as7.extension.services.SwitchYardInjectorService;
 import org.switchyard.as7.extension.services.SwitchYardServiceDomainManagerService;
 import org.switchyard.deploy.Component;
+import org.switchyard.deploy.ServiceDomainManager;
 
 /**
  * The SwitchYard subsystem add update handler.
@@ -123,15 +124,17 @@ public final class SwitchYardSubsystemAdd extends AbstractBoottimeAddStepHandler
         componentServiceBuilder.setInitialMode(Mode.ACTIVE);
         newControllers.add(componentServiceBuilder.install());
 
+        // Add the AS7 Service for the ServiceDomainManager...
+        newControllers.add(context.getServiceTarget().addService(SwitchYardServiceDomainManagerService.SERVICE_NAME, new SwitchYardServiceDomainManagerService()).install());
+
         final String version = getSwitchYardVersion();
         final SwitchYardAdminService adminService = new SwitchYardAdminService(version);
         newControllers.add(context.getServiceTarget().addService(SwitchYardAdminService.SERVICE_NAME, adminService)
                 .addDependency(SwitchYardComponentService.SERVICE_NAME, List.class, adminService.getComponents())
                 .addDependency(SwitchYardInjectorService.SERVICE_NAME, Map.class, adminService.getSocketBindings())
+                .addDependency(SwitchYardServiceDomainManagerService.SERVICE_NAME, ServiceDomainManager.class, adminService.getServiceDomainManager())
                 .install());
 
-        // Add the AS7 Service for the ServiceDomainManager...
-        newControllers.add(context.getServiceTarget().addService(SwitchYardServiceDomainManagerService.SERVICE_NAME, new SwitchYardServiceDomainManagerService()).install());
     }
     
     private String getSwitchYardVersion() {

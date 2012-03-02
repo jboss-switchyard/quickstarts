@@ -60,6 +60,10 @@ public final class SwitchYardModelConstants {
      * Constant for /subsystem=switchyard/:uses-artifact operation.
      */
     public static final String USES_ARTIFACT = "uses-artifact";
+    /**
+     * Constant for /subsystem=switchyard/:show-metrics operation.
+     */
+    public static final String SHOW_METRICS = "show-metrics";
     
     // nodes
     /**
@@ -134,6 +138,42 @@ public final class SwitchYardModelConstants {
      * Constant for model key: url.
      */
     public static final String URL = "url";
+    
+    /**
+     * Constant for model key: successCount.
+     */
+    public static final String SUCCESS_COUNT = "successCount";
+
+    /**
+     * Constant for model key: faultCount.
+     */
+    public static final String FAULT_COUNT = "faultCount";
+    
+    /**
+     * Constant for model key: totalCount.
+     */
+    public static final String TOTAL_COUNT = "totalCount";
+    
+    /**
+     * Constant for model key: averageTime.
+     */
+    public static final String AVERAGE_TIME = "averageTime";
+    
+    /**
+     * Constant for model key: minTime.
+     */
+    public static final String MIN_TIME = "minTime";
+    
+    /**
+     * Constant for model key: maxTime.
+     */
+    public static final String MAX_TIME = "maxTime";
+    
+    /**
+     * Constant for model key: totalTime.
+     */
+    public static final String TOTAL_TIME = "totalTime";
+    
 
     private SwitchYardModelConstants() {
     }

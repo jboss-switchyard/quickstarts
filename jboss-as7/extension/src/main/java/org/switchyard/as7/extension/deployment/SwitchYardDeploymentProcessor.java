@@ -76,7 +76,6 @@ public class SwitchYardDeploymentProcessor implements DeploymentUnitProcessor {
         final ServiceName switchyardServiceName = deploymentUnit.getServiceName().append(SwitchYardService.SERVICE_NAME);
         final ServiceBuilder<SwitchYardDeployment> switchyardServiceBuilder = serviceTarget.addService(switchyardServiceName, container);
         switchyardServiceBuilder.addDependency(SwitchYardComponentService.SERVICE_NAME, List.class, container.getComponents());
-        switchyardServiceBuilder.addDependency(SwitchYardAdminService.SERVICE_NAME, SwitchYard.class, container.getSwitchYard());
         // ensure naming context is fully initialized before we start
         switchyardServiceBuilder.addDependency(JndiNamingDependencyProcessor.serviceName(deploymentUnit));
 

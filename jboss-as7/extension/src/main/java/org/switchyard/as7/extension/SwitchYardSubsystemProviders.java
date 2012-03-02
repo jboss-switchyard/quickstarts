@@ -36,8 +36,10 @@ import static org.switchyard.as7.extension.SwitchYardModelConstants.ACTIVATION_T
 import static org.switchyard.as7.extension.SwitchYardModelConstants.APPLICATION;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.APPLICATION_NAME;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.ARTIFACTS;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.AVERAGE_TIME;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.COMPONENT_SERVICES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.CONFIGURATION;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.FAULT_COUNT;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.FROM;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.GATEWAYS;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.GET_VERSION;
@@ -46,6 +48,8 @@ import static org.switchyard.as7.extension.SwitchYardModelConstants.IMPLEMENTATI
 import static org.switchyard.as7.extension.SwitchYardModelConstants.LIST_APPLICATIONS;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.LIST_COMPONENTS;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.LIST_SERVICES;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.MAX_TIME;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.MIN_TIME;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.PROMOTED_SERVICE;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.READ_APPLICATION;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.READ_COMPONENT;
@@ -53,7 +57,11 @@ import static org.switchyard.as7.extension.SwitchYardModelConstants.READ_SERVICE
 import static org.switchyard.as7.extension.SwitchYardModelConstants.REFERENCES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.SERVICES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.SERVICE_NAME;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.SHOW_METRICS;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.SUCCESS_COUNT;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.TO;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.TOTAL_COUNT;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.TOTAL_TIME;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.TRANSFORMERS;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.URL;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.USES_ARTIFACT;
@@ -152,6 +160,13 @@ final class SwitchYardSubsystemProviders {
 
         public ModelNode getModelDescription(final Locale locale) {
             return Descriptions.getSubsystemUsesArtifact(locale);
+        }
+    };
+    
+    static final DescriptionProvider SUBSYSTEM_SHOW_METRICS = new DescriptionProvider() {
+
+        public ModelNode getModelDescription(final Locale locale) {
+            return Descriptions.getSubsystemShowMetrics(locale);
         }
     };
 
@@ -381,6 +396,46 @@ final class SwitchYardSubsystemProviders {
             op.get(REPLY_PROPERTIES, VALUE_TYPE, NAME, TYPE).set(ModelType.STRING);
             op.get(REPLY_PROPERTIES, VALUE_TYPE, NAME, DESCRIPTION).set(
                     bundle.getString("switchyard.uses-artifacts.reply.name"));
+
+            return op;
+        }
+
+        static ModelNode getSubsystemShowMetrics(Locale locale) {
+            final ResourceBundle bundle = getResourceBundle(locale);
+
+            final ModelNode op = new ModelNode();
+
+            op.get(OPERATION_NAME).set(SHOW_METRICS);
+            op.get(DESCRIPTION).set(bundle.getString("switchyard.show-metrics"));
+
+            op.get(REQUEST_PROPERTIES, SERVICE_NAME, TYPE).set(ModelType.STRING);
+            op.get(REQUEST_PROPERTIES, SERVICE_NAME, DESCRIPTION).set(
+                    bundle.getString("switchyard.show-metrics.param.service-name"));
+            op.get(REQUEST_PROPERTIES, SERVICE_NAME, NILLABLE).set(true);
+
+            op.get(REPLY_PROPERTIES, TYPE).set(ModelType.LIST);
+            op.get(REPLY_PROPERTIES, DESCRIPTION).set(bundle.getString("switchyard.show-metrics.reply"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, SUCCESS_COUNT, TYPE).set(ModelType.INT);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, SUCCESS_COUNT, DESCRIPTION).set(
+                    bundle.getString("switchyard.show-metrics.reply.successCount"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, FAULT_COUNT, TYPE).set(ModelType.INT);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, FAULT_COUNT, DESCRIPTION).set(
+                    bundle.getString("switchyard.show-metrics.reply.faultCount"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, TOTAL_COUNT, TYPE).set(ModelType.INT);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, TOTAL_COUNT, DESCRIPTION).set(
+                    bundle.getString("switchyard.show-metrics.reply.totalCount"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, AVERAGE_TIME, TYPE).set(ModelType.DOUBLE);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, AVERAGE_TIME, DESCRIPTION).set(
+                    bundle.getString("switchyard.show-metrics.reply.averageTime"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, MIN_TIME, TYPE).set(ModelType.INT);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, MIN_TIME, DESCRIPTION).set(
+                    bundle.getString("switchyard.show-metrics.reply.minTime"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, MAX_TIME, TYPE).set(ModelType.INT);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, MAX_TIME, DESCRIPTION).set(
+                    bundle.getString("switchyard.show-metrics.reply.maxTime"));
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, TOTAL_TIME, TYPE).set(ModelType.LONG);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, MAX_TIME, DESCRIPTION).set(
+                    bundle.getString("switchyard.show-metrics.reply.totalTime"));
 
             return op;
         }

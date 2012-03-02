@@ -41,7 +41,6 @@ import org.switchyard.deploy.ActivatorLoader;
 import org.switchyard.deploy.Component;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.Deployment;
-import org.switchyard.deploy.internal.DeploymentListener;
 
 /**
  * Represents a single AS7 deployment containing a SwitchYard application.
@@ -149,26 +148,6 @@ public class SwitchYardDeployment {
      */
     public SwitchYardDeploymentState getDeploymentState() {
         return _deploymentState;
-    }
-
-    /**
-     * Pass through method for use by
-     * {@link org.switchyard.as7.extension.services.SwitchYardService}.
-     * 
-     * @param listener the deployment listener.
-     */
-    public void setDeploymentListener(DeploymentListener listener) {
-        _deployment.addDeploymentListener(listener);
-    }
-
-    /**
-     * Pass through method for use by
-     * {@link org.switchyard.as7.extension.services.SwitchYardService}.
-     * 
-     * @param listener the deployment listener.
-     */
-    public void removeDeploymentListener(DeploymentListener listener) {
-        _deployment.removeDeploymentListener(listener);
     }
 
     private void registerManagementNodes() {
