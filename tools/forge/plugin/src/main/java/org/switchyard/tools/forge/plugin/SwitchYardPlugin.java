@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Iterator;
 
 import javax.inject.Inject;
 
@@ -46,6 +47,8 @@ import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
+import org.switchyard.config.model.composite.v1.V1ComponentReferenceInterfaceModel;
+import org.switchyard.config.model.composite.v1.V1ComponentReferenceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeReferenceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeServiceModel;
 import org.switchyard.config.model.domain.DomainModel;
@@ -424,4 +427,100 @@ public class SwitchYardPlugin implements Plugin {
             }
         }
     }
+
+
+
+    /**
+     * Add a component-level reference to a given service.
+     * @param referenceName the name of the reference being created
+     * @param interfaceType possible values: wsdl, java
+     * @param interfaze The interface of the reference
+     * @param componentName the name of the component the reference will be applied to 
+     * @param out shell output
+     */
+    @Command(value = "add-reference", help = "Add a component-level reference to a given service.")
+    public void addReference(
+            @Option(required = true,
+                    name = "referenceName",
+                    description = "The name of the reference being created") final String referenceName,
+            @Option(required = true,
+                    name = "interfaceType",
+                    description = "Possible values: wsdl, java") final String interfaceType,
+            @Option(required = true,
+                    name = "interface",
+                    description = "The interface of the reference") final String interfaze,
+            @Option(required = true,
+                    name = "componentName",
+                    description = "The name of the component where the reference will be added") final String componentName,
+                    final PipeOut out) {
+
+        SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
+
+        // Make sure the source component service exists
+        ComponentServiceModel sourceComponent = switchYard.getComponentService(componentName);
+        if (sourceComponent == null) {
+            out.println(out.renderColor(ShellColor.RED, "Component not found: " + componentName));
+            return;
+        } else {
+            // Check the reference name is not already present in this component
+            Iterator<ComponentReferenceModel> references = sourceComponent.getComponent().getReferences().iterator();
+            while (references.hasNext()) {
+                ComponentReferenceModel reference = references.next();
+                if (reference.getName().equals(referenceName)) {
+                    out.println(out.renderColor(ShellColor.RED, "A reference named " + referenceName + " already exists in " + componentName));
+                    return;
+                }
+            }
+        }
+
+        // Make sure the interface type is valid
+        if (!interfaceType.equals("java") || interfaceType.equals("wsdl")) {
+            out.println(out.renderColor(ShellColor.RED, "Interface type " + interfaceType + " not valid. Possible values are: wsdl, java"));
+            return;
+        }
+        
+        addComponentReference(switchYard, componentName, referenceName, interfaceType, interfaze, out);
+        
+        //Notify user of success
+        out.println("Reference " + referenceName + " successfully added to component " + componentName);
+        
+    }
+
+    private void addComponentReference(SwitchYardFacet switchYard, String componentName, String referenceName, String interfaceType, String interfaze, PipeOut out) {
+
+        ComponentReferenceModel reference = new V1ComponentReferenceModel();
+        reference.setName(referenceName);
+        V1ComponentReferenceInterfaceModel referenceInterfaceModel = new V1ComponentReferenceInterfaceModel(interfaceType);
+        referenceInterfaceModel.setInterface(interfaze);
+        reference.setInterface(referenceInterfaceModel);
+        
+        SwitchYardModel userConfig = switchYard.getSwitchYardConfig();
+        boolean isComponentInUserConfig = false;
+        for (Iterator<ComponentModel> userConfigComponents = userConfig.getComposite().getComponents().iterator(); userConfigComponents.hasNext();) {
+            ComponentModel componentModel = userConfigComponents.next();
+            if (componentModel.getName().equals(componentName)) {
+                
+                //The component is already in the user config. Let's just add the reference to it
+                componentModel.addReference(reference);
+                isComponentInUserConfig = true;
+                break;
+            }
+        }
+        
+        if (!isComponentInUserConfig) {
+            //The component is not in the user config. Let's: 1) get it from the merged config, 2) add the reference into it, and 
+            //finally 3) save the component into the userConfig 
+            SwitchYardModel mergedConfig = switchYard.getMergedSwitchYardConfig();
+            for (ComponentModel componentModel : mergedConfig.getComposite().getComponents()) {
+                if (componentModel.getName().equals(componentName)) {
+                    componentModel.addReference(reference);
+                    userConfig.getComposite().addComponent(componentModel);
+                    break;
+                }
+            }
+        }
+
+        switchYard.saveConfig();
+    }
+    
 }
