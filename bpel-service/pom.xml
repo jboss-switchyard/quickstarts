@@ -14,6 +14,7 @@
 
   <modules>
        <module>say_hello</module>
+       <module>jms_binding</module>
        <module>loan_approval</module>
        <module>simple_correlation</module>
   </modules>
@@ -38,6 +39,10 @@
     <dependency>
       <groupId>org.switchyard.components</groupId>
       <artifactId>switchyard-component-soap</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.switchyard.components</groupId>
+      <artifactId>switchyard-component-camel</artifactId>
     </dependency>
     <dependency>
       <groupId>org.switchyard</groupId>
