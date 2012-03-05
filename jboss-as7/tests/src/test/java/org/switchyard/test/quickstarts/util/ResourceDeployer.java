@@ -57,7 +57,9 @@ public class ResourceDeployer {
         op.get("address").add("subsystem", "messaging");
         op.get("address").add("hornetq-server", "default");
         op.get("address").add("jms-queue", queueName);
-        op.get("entries").add(queueName);
+        op.get("entries").add(queueName)
+                         .add("java:jboss/exported/jms/" + queueName);
+
         return client.execute(op);
     }
 
