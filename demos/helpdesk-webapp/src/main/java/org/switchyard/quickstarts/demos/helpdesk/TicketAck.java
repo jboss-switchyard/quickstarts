@@ -24,25 +24,27 @@ import java.io.Serializable;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 @SuppressWarnings("serial")
-public class Ticket implements Serializable {
+public class TicketAck implements Serializable {
 
     private String _id;
-    private String _status;
+    private boolean _received;
 
     public String getId() {
         return _id;
     }
 
-    public void setId(String id) {
+    public TicketAck setId(String id) {
         _id = id;
+        return this;
     }
 
-    public String getStatus() {
-        return _status;
+    public boolean isReceived() {
+        return _received;
     }
 
-    public void setStatus(String status) {
-        _status = status;
+    public TicketAck setReceived(boolean received) {
+        _received = received;
+        return this;
     }
 
 }
