@@ -873,6 +873,12 @@
          <artifactId>switchyard-quickstart-demo-helpdesk</artifactId>
          <version>${project.version}</version>
       </dependency>
+      <dependency>
+         <groupId>org.switchyard.quickstarts.demos</groupId>
+         <artifactId>switchyard-quickstart-demo-helpdesk-webapp</artifactId>
+         <type>war</type>
+         <version>${project.version}</version>
+      </dependency>
 
 
       <!-- External dependencies - please keep in alphabetical order by groupId -->
