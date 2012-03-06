@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<definitions name="SayHello"
+        targetNamespace="http://www.jboss.org/bpel/examples"
+        xmlns:tns="http://www.jboss.org/bpel/examples"
+        xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+        xmlns="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     TYPE DEFINITION - List of types participating in this BPEL process 
+     The BPEL Designer will generate default request and response types
+     but you can define or import any XML Schema type and use them as part 
+     of the message types.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <types>
+        <schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+                targetNamespace="http://www.jboss.org/bpel/examples" 
+                xmlns="http://www.w3.org/2001/XMLSchema">
+
+        <element name="sayHello">
+            <complexType>
+                <sequence>
+                    <element name="input" type="string" />
+                 </sequence>
+            </complexType>
+        </element>
+         
+        <element name="sayHelloResponse">
+            <complexType>
+                <sequence>
+                    <element name="results" type="string"/>
+                 </sequence>
+            </complexType>
+        </element>
+         </schema>
+    </types>
+
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     MESSAGE TYPE DEFINITION - Definition of the message types used as 
+     part of the port type defintions
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <message name="SayHelloRequestMessage">
+        <part name="parameters" element="tns:sayHello"/>
+    </message>
+    <message name="SayHelloResponseMessage">
+        <part name="parameters" element="tns:sayHelloResponse"/>
+    </message>
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     PORT TYPE DEFINITION - A port type groups a set of operations into
+     a logical service unit.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+
+    <!-- portType implemented by the HelloWorld BPEL process -->
+    <portType name="SayHello">
+        <operation name="sayHello">
+            <input  message="tns:SayHelloRequestMessage" />
+            <output message="tns:SayHelloResponseMessage"/>
+        </operation>
+    </portType>
+  
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     PARTNER LINK TYPE DEFINITION
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <plnk:partnerLinkType name="SayHello">
+        <plnk:role name="SayHelloProvider" portType="tns:SayHello"/>
+    </plnk:partnerLinkType>
+    
+    <binding name="SayHelloBinding" type="tns:SayHello">
+    	<soap:binding style="document"
+    		transport="http://schemas.xmlsoap.org/soap/http" />
+    	<operation name="sayHello">
+    		<soap:operation
+    			soapAction="http://www.jboss.org/bpel/examples/sayHello" />
+    		<input>
+    			<soap:body use="literal" />
+    		</input>
+    		<output>
+    			<soap:body use="literal" />
+    		</output>
+    	</operation>
+    </binding>
+    <service name="SayHelloService">
+    	<port name="SayHelloPort" binding="tns:SayHelloBinding">
+    		<soap:address location="http://localhost:8080/SayHelloProcess" />
+    	</port>
+    </service>
+</definitions>
