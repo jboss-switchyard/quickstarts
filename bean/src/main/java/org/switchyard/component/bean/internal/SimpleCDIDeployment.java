@@ -68,19 +68,19 @@ public class SimpleCDIDeployment extends AbstractDeployment {
     }
 
     @Override
-    protected void doStart() {
+    public void start() {
         BeanDeploymentMetaData beanDeploymentMetaData = BeanDeploymentMetaData.lookupBeanDeploymentMetaData();
         deployTransformers(beanDeploymentMetaData, getDomain());
         deployServicesAndProxies(beanDeploymentMetaData, getDomain());
     }
 
     @Override
-    protected void doStop() {
+    public void stop() {
         undeployAutoRegisteredTransformers();
     }
 
     @Override
-    protected void doDestroy() {
+    public void destroy() {
     }
 
     private void deployTransformers(BeanDeploymentMetaData beanDeploymentMetaData, ServiceDomain domain) {
