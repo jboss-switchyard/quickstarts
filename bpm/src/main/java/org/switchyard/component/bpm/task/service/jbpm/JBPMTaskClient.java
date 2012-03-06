@@ -24,14 +24,18 @@ import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.drools.SystemEventListenerFactory;
+import org.jbpm.task.AccessType;
 import org.jbpm.task.query.TaskSummary;
 import org.jbpm.task.service.TaskClient;
 import org.jbpm.task.service.mina.MinaTaskClientConnector;
 import org.jbpm.task.service.mina.MinaTaskClientHandler;
+import org.jbpm.task.service.responsehandlers.BlockingGetContentResponseHandler;
+import org.jbpm.task.service.responsehandlers.BlockingGetTaskResponseHandler;
 import org.jbpm.task.service.responsehandlers.BlockingTaskOperationResponseHandler;
 import org.jbpm.task.service.responsehandlers.BlockingTaskSummaryResponseHandler;
 import org.switchyard.component.bpm.task.service.BaseTaskClient;
 import org.switchyard.component.bpm.task.service.Task;
+import org.switchyard.component.bpm.task.service.TaskContent;
 
 /**
  * A jBPM task client.
@@ -53,10 +57,14 @@ public class JBPMTaskClient extends BaseTaskClient {
             _wrapped = new TaskClient(new MinaTaskClientConnector(JBPMTaskClient.class.getSimpleName(), new MinaTaskClientHandler(SystemEventListenerFactory.getSystemEventListener())));
         }
         if (!isConnected()) {
-            LOGGER.info(String.format("Connecting jBPM TaskClient to %s:%s...", getHost(), getPort()));
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(String.format("Connecting jBPM TaskClient to %s:%s...", getHost(), getPort()));
+            }
             setConnected(_wrapped.connect(getHost(), getPort()));
             if (isConnected()) {
-                LOGGER.info(String.format("jBPM TaskClient connected to %s:%s.", getHost(), getPort()));
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(String.format("jBPM TaskClient connected to %s:%s.", getHost(), getPort()));
+                }
             } else {
                 LOGGER.error(String.format("jBPM TaskClient could not connect to %s:%s!", getHost(), getPort()));
             }
@@ -70,7 +78,9 @@ public class JBPMTaskClient extends BaseTaskClient {
     public void disconnect() {
         if (_wrapped != null) {
             if (isConnected()) {
-                LOGGER.info(String.format("Disconnecting jBPM TaskClient from %s:%s...", getHost(), getPort()));
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(String.format("Disconnecting jBPM TaskClient from %s:%s...", getHost(), getPort()));
+                }
                 try {
                     _wrapped.disconnect();
                 } catch (Throwable t) {
@@ -78,10 +88,30 @@ public class JBPMTaskClient extends BaseTaskClient {
                     t.getMessage();
                 }
                 setConnected(false);
-                LOGGER.info(String.format("jBPM TaskClient disconnected from %s:%s.", getHost(), getPort()));
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(String.format("jBPM TaskClient disconnected from %s:%s.", getHost(), getPort()));
+                }
             }
             _wrapped = null;
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TaskContent getTaskContent(Long taskContentId) {
+        BlockingGetContentResponseHandler bgcrh = new BlockingGetContentResponseHandler();
+        _wrapped.getContent(taskContentId.longValue(), bgcrh);
+        bgcrh.waitTillDone(10000);
+        org.jbpm.task.Content content = bgcrh.getContent();
+        if (content != null) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(String.format("Found content with id %s.", content.getId()));
+            }
+            return new JBPMTaskContent(content); 
+        }
+        return null;
     }
 
     /**
@@ -92,6 +122,7 @@ public class JBPMTaskClient extends BaseTaskClient {
         String language = locale != null ? locale.toString().replace('_', '-') : null;
         BlockingTaskSummaryResponseHandler btsrh =  new BlockingTaskSummaryResponseHandler();
         _wrapped.getTasksAssignedAsPotentialOwner(userId, groupIds, language, btsrh);
+        btsrh.waitTillDone(10000);
         List<TaskSummary> taskSummaries = btsrh.getResults();
         int size = taskSummaries.size();
         if (LOGGER.isDebugEnabled()) {
@@ -99,7 +130,9 @@ public class JBPMTaskClient extends BaseTaskClient {
         }
         List<Task> tasks = new ArrayList<Task>();
         for (TaskSummary taskSummary : taskSummaries) {
-            tasks.add(new JBPMTask(taskSummary));
+            BlockingGetTaskResponseHandler bgtrh = new BlockingGetTaskResponseHandler();
+             _wrapped.getTask(taskSummary.getId(), bgtrh);
+            tasks.add(new JBPMTask(taskSummary, bgtrh.getTask()));
         }
         return tasks;
     }
@@ -134,9 +167,20 @@ public class JBPMTaskClient extends BaseTaskClient {
      * {@inheritDoc}
      */
     @Override
-    public void complete(Long taskId, String userId) {
+    public void complete(Long taskId, String userId, TaskContent content) {
         BlockingTaskOperationResponseHandler btorh = new BlockingTaskOperationResponseHandler();
-        _wrapped.complete(taskId.longValue(), userId, null, btorh);
+        org.jbpm.task.service.ContentData contentData;
+        if (content instanceof JBPMTaskContent) {
+            contentData = ((JBPMTaskContent)content).getWrapped();
+        } else if (content != null) {
+            contentData = new org.jbpm.task.service.ContentData();
+            contentData.setType(content.getType());
+            contentData.setContent(content.getBytes());
+            contentData.setAccessType(AccessType.Inline);
+        } else {
+            contentData = null;
+        }
+        _wrapped.complete(taskId.longValue(), userId, contentData, btorh);
         btorh.waitTillDone(10000);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(String.format("Task %s completed by %s.", taskId, userId));

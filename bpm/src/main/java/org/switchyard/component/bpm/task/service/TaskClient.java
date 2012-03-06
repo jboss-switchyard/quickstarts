@@ -71,6 +71,13 @@ public interface TaskClient {
     public void disconnect();
 
     /**
+     * Gets the task content.
+     * @param taskContentId the task content id
+     * @return the task content
+     */
+    public TaskContent getTaskContent(Long taskContentId);
+
+    /**
      * Gets the tasks assigned as a potential owner.
      * @param userId the potential owner
      * @param groupIds the groups of the potential owner
@@ -106,7 +113,8 @@ public interface TaskClient {
      * Completes a task.
      * @param taskId the task id
      * @param userId the user id
+     * @param taskContent the task content
      */
-    public void complete(Long taskId, String userId);
+    public void complete(Long taskId, String userId, TaskContent taskContent);
 
 }

@@ -30,14 +30,17 @@ import org.switchyard.component.bpm.task.service.TaskStatus;
  */
 public class JBPMTask implements Task {
 
-    private TaskSummary _taskSummary;
+    private final TaskSummary _wrappedTaskSummary;
+    private final org.jbpm.task.Task _wrappedTask;
 
     /**
      * Creates a new jBPM task.
-     * @param taskSummary the wrapped jBPM task summary
+     * @param taskSummary the jBPM task summary to wrap
+     * @param task the jBPM task to wrap
      */
-    public JBPMTask(TaskSummary taskSummary) {
-        _taskSummary = taskSummary;
+    public JBPMTask(TaskSummary taskSummary, org.jbpm.task.Task task) {
+        _wrappedTaskSummary = taskSummary;
+        _wrappedTask = task;
     }
 
     /**
@@ -45,7 +48,7 @@ public class JBPMTask implements Task {
      */
     @Override
     public Long getId() {
-        return Long.valueOf(_taskSummary.getId());
+        return Long.valueOf(_wrappedTaskSummary.getId());
     }
 
     /**
@@ -53,7 +56,7 @@ public class JBPMTask implements Task {
      */
     @Override
     public String getName() {
-        return _taskSummary.getName();
+        return _wrappedTaskSummary.getName();
     }
 
     /**
@@ -61,7 +64,7 @@ public class JBPMTask implements Task {
      */
     @Override
     public TaskStatus getStatus() {
-        Status status = _taskSummary.getStatus();
+        Status status = _wrappedTaskSummary.getStatus();
         switch (status) {
             case Created:
                 return TaskStatus.CREATED;
@@ -86,6 +89,22 @@ public class JBPMTask implements Task {
             default:
                 return null;
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long getProcessInstanceId() {
+        return _wrappedTaskSummary.getProcessInstanceId();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long getTaskContentId() {
+        return _wrappedTask.getTaskData().getDocumentContentId();
     }
 
 }

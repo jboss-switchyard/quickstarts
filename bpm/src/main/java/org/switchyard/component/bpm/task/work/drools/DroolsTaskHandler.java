@@ -21,6 +21,7 @@ package org.switchyard.component.bpm.task.work.drools;
 import org.drools.runtime.process.WorkItem;
 import org.drools.runtime.process.WorkItemHandler;
 import org.drools.runtime.process.WorkItemManager;
+import org.switchyard.common.type.Classes;
 import org.switchyard.component.bpm.task.work.BaseTaskHandler;
 import org.switchyard.component.bpm.task.work.Task;
 import org.switchyard.component.bpm.task.work.TaskManager;
@@ -72,9 +73,14 @@ public class DroolsTaskHandler extends BaseTaskHandler {
      */
     @Override
     public void executeTask(Task task, TaskManager manager) {
-        WorkItem workItem = ((DroolsTask)task).getWorkItem();
-        WorkItemManager workItemManager = ((DroolsTaskManager)manager).getProcessRuntime().getWorkItemManager();
-        _workItemHandler.executeWorkItem(workItem, workItemManager);
+        final ClassLoader previousLoader = Classes.setTCCL(getLoader());
+        try {
+            WorkItem workItem = ((DroolsTask)task).getWorkItem();
+            WorkItemManager workItemManager = ((DroolsTaskManager)manager).getProcessRuntime().getWorkItemManager();
+            _workItemHandler.executeWorkItem(workItem, workItemManager);
+        } finally {
+            Classes.setTCCL(previousLoader);
+        }
     }
 
     /**
@@ -82,9 +88,14 @@ public class DroolsTaskHandler extends BaseTaskHandler {
      */
     @Override
     public void abortTask(Task task, TaskManager manager) {
-        WorkItem workItem = ((DroolsTask)task).getWorkItem();
-        WorkItemManager workItemManager = ((DroolsTaskManager)manager).getProcessRuntime().getWorkItemManager();
-        _workItemHandler.abortWorkItem(workItem, workItemManager);
+        final ClassLoader previousLoader = Classes.setTCCL(getLoader());
+        try {
+            WorkItem workItem = ((DroolsTask)task).getWorkItem();
+            WorkItemManager workItemManager = ((DroolsTaskManager)manager).getProcessRuntime().getWorkItemManager();
+            _workItemHandler.abortWorkItem(workItem, workItemManager);
+        } finally {
+            Classes.setTCCL(previousLoader);
+        }
     }
 
 }

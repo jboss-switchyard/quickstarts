@@ -33,6 +33,7 @@ import org.switchyard.Scope;
 import org.switchyard.ServiceReference;
 import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.common.lang.Strings;
+import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.exception.DeliveryException;
 
@@ -72,66 +73,70 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
      */
     @Override
     public void executeTask(Task task, TaskManager manager) {
-        String problem = null;
-        Map<String,Object> parameters = task.getParameters();
-        Map<String,Object> results = null;
-        QName serviceName = getServiceName(parameters);
-        if (serviceName != null) {
-            ServiceReference serviceRef = getServiceDomain().getServiceReference(serviceName);
-            if (serviceRef != null) {
-                String operation = (String)parameters.get(SERVICE_OPERATION_NAME);
-                final Exchange exchangeIn;
-                SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
-                
-                if (operation != null) {
-                    exchangeIn = serviceRef.createExchange(operation, inOutHandler);
-                } else {
-                    exchangeIn = serviceRef.createExchange(inOutHandler);
-                }
-                Context contextIn = exchangeIn.getContext();
-                for (Map.Entry<String,Object> entry : parameters.entrySet()) {
-                    contextIn.setProperty(entry.getKey(), entry.getValue(), Scope.IN);
-                }
-                Message messageIn = exchangeIn.createMessage();
-                String messageContentInName = getMessageContentInName();
-                Object messageContentIn = parameters.get(messageContentInName);
-                if (messageContentIn != null) {
-                    messageIn.setContent(messageContentIn);
-                }
-                if (inOutHandler != null && ExchangePattern.IN_OUT.equals(
-                        exchangeIn.getContract().getServiceOperation().getExchangePattern())) {
-                    exchangeIn.send(messageIn);
-                    try {
-                        Exchange exchangeOut = inOutHandler.waitForOut();
-                        Message messageOut = exchangeOut.getMessage();
-                        Object messageContentOut = messageOut.getContent();
-                        results = task.getResults();
-                        if (results == null) {
-                            results = new HashMap<String,Object>();
+        final ClassLoader previousLoader = Classes.setTCCL(getLoader());
+        try {
+            String problem = null;
+            Map<String,Object> parameters = task.getParameters();
+            Map<String,Object> results = null;
+            QName serviceName = getServiceName(parameters);
+            if (serviceName != null) {
+                ServiceReference serviceRef = getServiceDomain().getServiceReference(serviceName);
+                if (serviceRef != null) {
+                    String operation = (String)parameters.get(SERVICE_OPERATION_NAME);
+                    final Exchange exchangeIn;
+                    SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
+                    if (operation != null) {
+                        exchangeIn = serviceRef.createExchange(operation, inOutHandler);
+                    } else {
+                        exchangeIn = serviceRef.createExchange(inOutHandler);
+                    }
+                    Context contextIn = exchangeIn.getContext();
+                    for (Map.Entry<String,Object> entry : parameters.entrySet()) {
+                        contextIn.setProperty(entry.getKey(), entry.getValue(), Scope.IN);
+                    }
+                    Message messageIn = exchangeIn.createMessage();
+                    String messageContentInName = getMessageContentInName();
+                    Object messageContentIn = parameters.get(messageContentInName);
+                    if (messageContentIn != null) {
+                        messageIn.setContent(messageContentIn);
+                    }
+                    if (inOutHandler != null && ExchangePattern.IN_OUT.equals(
+                            exchangeIn.getContract().getServiceOperation().getExchangePattern())) {
+                        exchangeIn.send(messageIn);
+                        try {
+                            Exchange exchangeOut = inOutHandler.waitForOut();
+                            Message messageOut = exchangeOut.getMessage();
+                            Object messageContentOut = messageOut.getContent();
+                            results = task.getResults();
+                            if (results == null) {
+                                results = new HashMap<String,Object>();
+                            }
+                            String messageContentOutName = getMessageContentOutName();
+                            results.put(messageContentOutName, messageContentOut);
+                            Context contextOut = exchangeOut.getContext();
+                            for (Property property : contextOut.getProperties(Scope.OUT)) {
+                                results.put(property.getName(), property.getValue());
+                            }
+                        } catch (DeliveryException e) {
+                            problem = e.getMessage();
                         }
-                        String messageContentOutName = getMessageContentOutName();
-                        results.put(messageContentOutName, messageContentOut);
-                        Context contextOut = exchangeOut.getContext();
-                        for (Property property : contextOut.getProperties(Scope.OUT)) {
-                            results.put(property.getName(), property.getValue());
-                        }
-                    } catch (DeliveryException e) {
-                        problem = e.getMessage();
+                    } else {
+                        exchangeIn.send(messageIn);
                     }
                 } else {
-                    exchangeIn.send(messageIn);
+                    problem = "serviceRef (" + serviceName + ") == null";
                 }
             } else {
-                problem = "serviceRef (" + serviceName + ") == null";
+                problem = SERVICE_NAME + " == null";
             }
-        } else {
-            problem = SERVICE_NAME + " == null";
-        }
-        if (problem == null) {
-            manager.completeTask(task.getId(), results);
-        } else {
-            LOGGER.error(problem);
-            manager.abortTask(task.getId());
+            if (problem == null) {
+                manager.completeTask(task.getId(), results);
+            } else {
+                LOGGER.error(problem);
+                manager.abortTask(task.getId());
+            }
+        } finally {
+            Classes.setTCCL(previousLoader);
         }
     }
 

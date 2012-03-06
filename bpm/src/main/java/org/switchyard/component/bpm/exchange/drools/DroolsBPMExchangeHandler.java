@@ -81,6 +81,7 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
     private static final Logger LOGGER = Logger.getLogger(DroolsBPMExchangeHandler.class);
 
     private final ServiceDomain _serviceDomain;
+    private ClassLoader _loader;
     private String _processId;
     private String _messageContentInName;
     private String _messageContentOutName;
@@ -109,6 +110,7 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
      */
     @Override
     public void init(QName qname, BPMComponentImplementationModel model) {
+        _loader = Classes.getClassLoader(getClass());
         _processId = model.getProcessId();
         _messageContentInName = model.getMessageContentInName();
         if (_messageContentInName == null) {
@@ -121,9 +123,8 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
         ComponentModel cm = model.getComponent();
         _targetNamespace = cm != null ? cm.getTargetNamespace() : null;
         _taskHandlerModels.addAll(model.getTaskHandlers());
-        ClassLoader loader = Classes.getClassLoader(getClass());
-        ResourceType.install(loader);
-        ComponentImplementationConfig cic = new ComponentImplementationConfig(model, loader);
+        ResourceType.install(_loader);
+        ComponentImplementationConfig cic = new ComponentImplementationConfig(model, _loader);
         Map<String, Object> env = new HashMap<String, Object>();
         //env.put(EnvironmentName.ENTITY_MANAGER_FACTORY, Persistence.createEntityManagerFactory("org.jbpm.persistence.jpa"));
         //env.put(EnvironmentName.TRANSACTION_MANAGER, AS7TransactionManagerLookup.getTransactionManager());
@@ -168,6 +169,7 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
             th.setMessageContentOutName(_messageContentOutName);
             th.setTargetNamespace(_targetNamespace);
             th.setServiceDomain(_serviceDomain);
+            th.setLoader(_loader);
             tm.registerHandler(th);
             th.init();
             _taskHandlers.add(th);

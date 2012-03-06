@@ -43,4 +43,16 @@ public interface Task {
      */
     public TaskStatus getStatus();
 
+    /**
+     * Gets the associated process instance id of the task.
+     * @return the associated process instance id of the task
+     */
+    public Long getProcessInstanceId();
+
+    /**
+     * Gets the associated task content id of the task.
+     * @return the associated task content id of the task
+     */
+    public Long getTaskContentId();
+
 }
