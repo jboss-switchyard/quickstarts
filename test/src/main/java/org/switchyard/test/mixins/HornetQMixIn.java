@@ -20,11 +20,30 @@
  */
 package org.switchyard.test.mixins;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.jms.Connection;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.ObjectMessage;
+import javax.jms.Queue;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+
+import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
 import org.hornetq.api.core.HornetQBuffer;
@@ -41,6 +60,8 @@ import org.hornetq.core.config.Configuration;
 import org.hornetq.core.registry.JndiBindingRegistry;
 import org.hornetq.core.remoting.impl.netty.NettyConnectorFactory;
 import org.hornetq.core.remoting.impl.netty.TransportConstants;
+import org.hornetq.jms.client.HornetQConnectionFactory;
+import org.hornetq.jms.client.HornetQQueue;
 import org.hornetq.jms.server.embedded.EmbeddedJMS;
 
 /**
@@ -63,6 +84,10 @@ public class HornetQMixIn extends AbstractTestMixIn {
     private ServerLocator _serverLocator;
     private ClientSessionFactory _clientSessionFactory;
     private ClientSession _clientSession;
+
+    private HornetQConnectionFactory _jmsConnectionFactory;
+    private Connection _jmsConnection;
+    private Session _jmsSession;
 
     /**
      * Default constructor.
@@ -89,30 +114,9 @@ public class HornetQMixIn extends AbstractTestMixIn {
             try {
                 _embeddedJMS.setRegistry(new JndiBindingRegistry());
                 _embeddedJMS.start();
-                _serverLocator = HornetQClient.createServerLocatorWithoutHA(getTransports(getConfiguration()));
             } catch (final Exception e) {
                 throw new RuntimeException(e);
             }
-        } else {
-            Map<String, Object> params = new HashMap<String,Object>();
-            params.put(TransportConstants.HOST_PROP_NAME, _host);
-            params.put(TransportConstants.PORT_PROP_NAME, _port);
-            _serverLocator = HornetQClient.createServerLocatorWithoutHA(new TransportConfiguration(NettyConnectorFactory.class.getName(), params));
-        }
-        
-        try {
-            _clientSessionFactory = _serverLocator.createSessionFactory();
-            _clientSession = _clientSessionFactory.createSession(
-                    _user,
-                    _passwd,
-                    false,
-                    true,
-                    true,
-                    _serverLocator.isPreAcknowledge(),
-                    _serverLocator.getAckBatchSize());
-            _clientSession.start();
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -178,9 +182,13 @@ public class HornetQMixIn extends AbstractTestMixIn {
     @Override
     public void uninitialize() {
         try {
-            HornetQMixIn.closeSessionFactory(_clientSessionFactory);
             HornetQMixIn.closeSession(_clientSession);
+            HornetQMixIn.closeSessionFactory(_clientSessionFactory);
             HornetQMixIn.closeServerLocator(_serverLocator);
+            
+            HornetQMixIn.closeJMSSession(_jmsSession);
+            HornetQMixIn.closeJMSConnection(_jmsConnection);
+            HornetQMixIn.closeJMSConnectionFactory(_jmsConnectionFactory);
             
             if (_embeddedJMS != null) {
                 _embeddedJMS.stop();
@@ -200,7 +208,8 @@ public class HornetQMixIn extends AbstractTestMixIn {
         if (_clientSession != null) {
             return _clientSession;
         }
-        throw new IllegalStateException("The ClientSession has not been created. Please check the logs for errors.");
+        
+        return createClientSession();
     }
     
     /**
@@ -209,31 +218,35 @@ public class HornetQMixIn extends AbstractTestMixIn {
      */
     public ClientSession createClientSession() {
         closeSession(_clientSession);
+        
         try {
-            _clientSession = _clientSessionFactory.createSession(
-                    _user,
-                    _passwd,
-                    false,
-                    true,
-                    true,
-                    _serverLocator.isPreAcknowledge(),
-                    _serverLocator.getAckBatchSize());
+            if (_serverLocator == null || _clientSessionFactory == null) {
+                if (_startEmbedded) {
+                    _serverLocator = HornetQClient.createServerLocatorWithoutHA(getTransports(getConfiguration()));
+                    _clientSessionFactory = _serverLocator.createSessionFactory();
+                } else {
+                    Map<String, Object> params = new HashMap<String,Object>();
+                    params.put(TransportConstants.HOST_PROP_NAME, _host);
+                    params.put(TransportConstants.PORT_PROP_NAME, _port);
+                    _serverLocator = HornetQClient.createServerLocatorWithoutHA(new TransportConfiguration(NettyConnectorFactory.class.getName(), params));
+                    _clientSessionFactory = _serverLocator.createSessionFactory();
+                }
+            }
+            
+            _clientSession = _clientSessionFactory.createSession(_user,
+                                                                _passwd,
+                                                                false,
+                                                                true,
+                                                                true,
+                                                                _serverLocator.isPreAcknowledge(),
+                                                                _serverLocator.getAckBatchSize());
             _clientSession.start();
             return _clientSession;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
-    
-    /**
-     * Returns the {@link ServerLocator} used by this MixIn.
-     * 
-     * @return {@link ServerLocator} used by this MixIn.
-     */
-    public ServerLocator getServerLocator() {
-        return _serverLocator;
-    }
-    
+
     /**
      * Creates a HornetQ {@link ClientMessage} with the passed-in String as the body.
      * 
@@ -241,10 +254,23 @@ public class HornetQMixIn extends AbstractTestMixIn {
      * @return ClientMessage with the passed-in String as its payload.
      */
     public ClientMessage createMessage(final String body) {
-        final ClientMessage message = _clientSession.createMessage(true);
+        final ClientMessage message = getClientSession().createMessage(true);
         message.getBodyBuffer().writeBytes(body.getBytes());
         return message;
     }
+    
+    /**
+     * Load a resource from classpath with the passed-in String and create a HornetQ
+     * {@link ClientMessage} using the content of resource as its payload.
+     * 
+     * @param path resource path
+     * @return ClientMessage with the resource as its payload.
+     */
+    public ClientMessage createMessageFromResource(final String path) {
+        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
+        String payload = getStringFromInputStream(stream);
+        return createMessage(payload);        
+    }    
     
     /**
      * Reads the body of a HornetQ {@link ClientMessage} as an Object.
@@ -271,6 +297,128 @@ public class HornetQMixIn extends AbstractTestMixIn {
         return result;
     }
 
+    /**
+     * Reads the body of a HornetQ {@link ClientMessage} as an String and perform String compare between
+     * the message payload and specified expected String.
+     * @param msg the HornetQ {@link ClientMessage}
+     * @param expected expected String in the message body
+     * @return actual String in the message body
+     * @throws Exception if an error occurs while trying to read the body content.
+     */
+    public String readMessageAndTestString(final ClientMessage msg, final String expected) throws Exception {
+        Object payload = readObjectFromMessage(msg);
+        Assert.assertTrue(payload instanceof String);
+        Assert.assertEquals(expected, (String)payload);
+        return (String)payload;
+    }
+
+    
+    /**
+     * By giving tests access to the {@link Session} enables test to be able to
+     * create queues, consumers, and producers.
+     * 
+     * @return {@link Session} which can be used to create queues/topics, consumers/producers.
+     */
+    public Session getJMSSession() {
+        if (_jmsSession != null) {
+            return _jmsSession;
+        }
+        return createJMSSession();
+    }
+
+    /**
+    * Close the existing Session if exists and create new one.
+    * @return Session instance
+    */
+    public Session createJMSSession() {
+        closeJMSSession(_jmsSession);
+        
+        try {
+            if (_jmsConnectionFactory == null || _jmsConnection == null) {
+                if (_startEmbedded) {
+                    _jmsConnectionFactory = new HornetQConnectionFactory(false, getTransports(getConfiguration()));
+                } else {
+                    Map<String, Object> params = new HashMap<String,Object>();
+                    params.put(TransportConstants.HOST_PROP_NAME, _host);
+                    params.put(TransportConstants.PORT_PROP_NAME, _port);
+                    _jmsConnectionFactory = new HornetQConnectionFactory(false, new TransportConfiguration(NettyConnectorFactory.class.getName(), params));
+                }
+                _jmsConnection = _jmsConnectionFactory.createConnection(_user, _passwd);
+                _jmsConnection.start();
+            }
+            _jmsSession = _jmsConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            return _jmsSession;
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    /**
+     * Creates a JMS {@link ObjectMessage} with the passed-in String as the body.
+     * 
+     * @param body the String to be used as the messages payload(body)
+     * @return ObjectMessage with the passed-in String as its payload.
+     * @throws JMSException if an error occurs while creating the message.
+     */
+    public ObjectMessage createJMSMessage(final String body) throws JMSException {
+        return _jmsSession.createObjectMessage(body);
+    }
+    
+    /**
+     * Load a resource from classpath with the passed-in String and create a JMS
+     * {@link Message} using the content of resource as its payload.
+     * 
+     * @param path resource path
+     * @return ClientMessage with the resource as its payload.
+     * @throws JMSException if an error occurs while creating the message.
+     */
+    public Message createJMSMessageFromResource(final String path) throws JMSException {
+        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
+        String payload = getStringFromInputStream(stream);
+        return createJMSMessage(payload);        
+    }    
+    
+    /**
+     * Reads the body of a JMS {@link Message} as an Object.
+     * 
+     * @param msg the JMS {@link Message}.
+     * @return Object the object read.
+     * @throws JMSException if an error occurs while trying to read the body content.
+     */
+    public Object readObjectFromJMSMessage(final Message msg) throws JMSException {
+        Assert.assertTrue(msg instanceof ObjectMessage);
+        ObjectMessage objMsg = (ObjectMessage)msg;
+        return objMsg.getObject();
+    }
+    
+    /**
+     * Reads the body of a JMS {@link Message} as an String.
+     * @param msg the JMS {@link Message}.
+     * @return the string read.
+     * @throws JMSException if an error occurs while trying to read the body content.
+     */
+    public String readStringFromJMSMessage(final Message msg) throws JMSException {
+        if (msg instanceof TextMessage) {
+            TextMessage txt = (TextMessage)msg;
+            return txt.getText();
+        } else if (msg instanceof ObjectMessage) {
+            return (String)readObjectFromJMSMessage(msg);
+        }
+        throw new RuntimeException("The message body could not be extracted as String: " + msg);
+    }
+    /**
+     * Reads the body of a JMS {@link Message} as an String and perform String compare between
+     * the message payload and specified expected String.
+     * @param msg the JMS {@link Message}.
+     * @param expected expected String in the message body
+     * @return actual String in the message body
+     * @throws JMSException if an error occurs while trying to read the body content.
+     */
+    public String readJMSMessageAndTestString(final Message msg, final String expected) throws JMSException {
+        String payload = readStringFromJMSMessage(msg);
+        Assert.assertEquals(expected, (String)payload);
+        return payload;
+    }
     /**
      * Closes the passed-in {@link ServerLocator}.
      * 
@@ -338,4 +486,117 @@ public class HornetQMixIn extends AbstractTestMixIn {
         }
     }
 
+    /**
+     * Closes the passed-in {@link ConnectionFactory}.
+     * 
+     * @param cf the {@link HornetQConnectionFactory} instance to close.
+     */
+    public static void closeJMSConnectionFactory(final HornetQConnectionFactory cf) {
+        if (cf != null) {
+            cf.close();
+        }
+    }
+    
+    /**
+     * Closes the passed-in {@link Connection}.
+     * 
+     * @param conn the {@link Connection} instance to close.
+     */
+    public static void closeJMSConnection(final Connection conn) {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (JMSException ignore) {
+                ignore.printStackTrace();
+            }
+        }
+    }
+    
+    /**
+     * Closes the passed-in {@link Session}.
+     * 
+     * @param session the {@link Session} instance to close.
+     */
+    public static void closeJMSSession(final Session session) {
+        if (session != null) {
+            try {
+                session.close();
+            } catch (JMSException ignore) {
+                ignore.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Closes the passed-in {@link MessageConsumer}.
+     * 
+     * @param consumer the {@link MessageConsumer} instance to close.
+     */
+    public static void closeJMSConsumer(final MessageConsumer consumer) {
+        if (consumer != null) {
+            try {
+                consumer.close();
+            } catch (final JMSException ignore) {
+                ignore.printStackTrace();
+            }
+        }
+    }
+    
+    /**
+     * Closes the passed-in {@link MessageProducer}.
+     * 
+     * @param producer the {@link MessageProducer} to close.
+     */
+    public static void closeJMSProducer(final MessageProducer producer) {
+        if (producer != null) {
+            try {
+                producer.close();
+            } catch (final JMSException ignore) {
+                ignore.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Get {@link Queue} instance from core queue name.
+     * @param name core queue name
+     * @return {@link Queue} object
+     */
+    public static Queue getJMSQueue(final String name) {
+        return new HornetQQueue(name);
+    }
+    
+    /**
+     * Create String object from InputStream
+     * @param source source to read
+     * @return String object extracted from InputStream
+     */
+    private String getStringFromInputStream(InputStream source) {
+        Writer writer = new StringWriter();
+        Reader reader = null;
+        char[] buffer = new char[1024];
+        try {
+            
+            reader = new BufferedReader(
+                    new InputStreamReader(source, "UTF-8"));
+            int n;
+            while ((n = reader.read(buffer)) != -1) {
+                writer.write(buffer, 0, n);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+                if (source != null) {
+                    source.close();
+                }
+            } catch (IOException ignore) {
+                ignore.printStackTrace();
+            }
+        }
+        return writer.toString();
+    }
 }
