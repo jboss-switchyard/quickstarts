@@ -20,15 +20,11 @@
  */
 package org.switchyard.quickstarts.camel.jms.binding;
 
-import javax.jms.Connection;
-import javax.jms.DeliveryMode;
+import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 
-import org.hornetq.api.core.TransportConfiguration;
-import org.hornetq.core.remoting.impl.netty.NettyConnectorFactory;
-import org.hornetq.jms.client.HornetQConnectionFactory;
-import org.hornetq.jms.client.HornetQQueue;
+import org.switchyard.test.mixins.HornetQMixIn;
 
 /**
  * HornetQ client that uses HornetQ API to connect to a remote server and
@@ -47,7 +43,10 @@ public final class HornetQClient {
     /**
      * The name of the file containing the message content.
      */
-    private static final String MESSAGE_PAYLOAD = "/test.txt";
+    private static final String MESSAGE_PAYLOAD = "test.txt";
+    
+    private static final String USER = "guest";
+    private static final String PASSWD = "guestp";
     
     /**
      * Private no-args constructor.
@@ -61,23 +60,20 @@ public final class HornetQClient {
      * @throws Exception if something goes wrong.
      */
     public static void main(final String[] ignored) throws Exception {
-        HornetQConnectionFactory hornetQConnectionFactory = null;
-        Connection connection = null;
-        Session session = null;
+        HornetQMixIn hqMixIn = new HornetQMixIn(false)
+                                    .setUser(USER)
+                                    .setPassword(PASSWD);
+        hqMixIn.initialize();
         
+        Session session = null;
         try {
-            hornetQConnectionFactory = new HornetQConnectionFactory(false, new TransportConfiguration(NettyConnectorFactory.class.getName()));
-            connection = hornetQConnectionFactory.createConnection();
-            connection.start();
-            
-            session = connection.createSession(false, DeliveryMode.NON_PERSISTENT);
-            final MessageProducer producer = session.createProducer(new HornetQQueue(QUEUE_NAME));
-            producer.send(session.createTextMessage(ClientUtil.readFileContent(MESSAGE_PAYLOAD)));
+            session = hqMixIn.createJMSSession();
+            final MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(QUEUE_NAME));
+            Message message = hqMixIn.createJMSMessageFromResource(MESSAGE_PAYLOAD);
+            producer.send(message);
             System.out.println("Message sent. Please see server console output");
         } finally {
-            ClientUtil.closeSession(session);
-            ClientUtil.closeConnection(connection);
-            ClientUtil.closeConnectionFactory(hornetQConnectionFactory);
+            hqMixIn.uninitialize();
         }
     }
 }

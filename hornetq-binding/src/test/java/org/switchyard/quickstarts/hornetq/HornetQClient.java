@@ -20,14 +20,10 @@
  */
 package org.switchyard.quickstarts.hornetq;
 
-import org.hornetq.api.core.TransportConfiguration;
 import org.hornetq.api.core.client.ClientMessage;
 import org.hornetq.api.core.client.ClientProducer;
 import org.hornetq.api.core.client.ClientSession;
-import org.hornetq.api.core.client.ClientSessionFactory;
-import org.hornetq.api.core.client.ServerLocator;
-import org.hornetq.core.remoting.impl.netty.NettyConnectorFactory;
-import org.switchyard.component.hornetq.ServerLocatorBuilder;
+import org.switchyard.test.mixins.HornetQMixIn;
 
 
 /**
@@ -38,6 +34,11 @@ import org.switchyard.component.hornetq.ServerLocatorBuilder;
  *
  */
 public final class HornetQClient {
+    
+    private static final String QUEUE = "jms.queue.GreetingServiceQueue";
+    private static final String INPUT_FILE = "test.txt";
+    private static final String USER = "guest";
+    private static final String PASSWD = "guestp";
     
     /**
      * Private no-args constructor.
@@ -51,25 +52,21 @@ public final class HornetQClient {
      * @throws Exception if something goes wrong.
      */
     public static void main(final String[] ignored) throws Exception {
-        final ServerLocatorBuilder slb = new ServerLocatorBuilder();
-        final TransportConfiguration transportConfiguration = new TransportConfiguration(NettyConnectorFactory.class.getName());
-        transportConfiguration.getParams().put("port", 5445);
-        slb.transportConfigurations(transportConfiguration);
-        slb.blockOnNonDurableSend(true);
-        final ServerLocator serverLocator = slb.build();
-        final ClientSessionFactory sessionFactory = serverLocator.createSessionFactory();
-        final ClientSession session = sessionFactory.createSession();
-        session.start();
-        final ClientProducer producer = session.createProducer("jms.queue.GreetingServiceQueue");
-        final ClientMessage message = session.createMessage(false);
-        message.getBodyBuffer().writeBytes(ClientUtil.readFileContent("/test.txt").getBytes());
-        producer.send(message);
+        HornetQMixIn hqMixIn = new HornetQMixIn(false)
+                                    .setUser(USER)
+                                    .setPassword(PASSWD);
+        hqMixIn.initialize();
+
+        try {
+            final ClientSession session = hqMixIn.createClientSession();
+            final ClientProducer producer = session.createProducer(QUEUE);
+            final ClientMessage message = hqMixIn.createMessageFromResource(INPUT_FILE);
+            producer.send(message);
         
-        System.out.println("Sent message [" + message + "]");
-        Thread.sleep(2000);
-        
-        producer.close();
-        session.close();
-        sessionFactory.close();
+            System.out.println("Sent message [" + message + "]");
+            Thread.sleep(2000);
+        } finally {
+            hqMixIn.uninitialize();
+        }
     }
 }

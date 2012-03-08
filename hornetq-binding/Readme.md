@@ -7,17 +7,19 @@ JBoss AS 7
 ----------
 1. Build the quickstart:
     mvn clean install
-2. Start JBoss AS 7 in standalone mode:
-     ./standalone.sh -server-config standalone-preview.xml
-3. Start JBoss CLI and connect:
-    ./jboss-admin.sh --connect
-4. Create the JMS Queue using CLI:
-    add-jms-queue --name=GreetingServiceQueue
-5. Deploy the quickstart
-     deploy  /path/to/quickstarts/hornetq-binding/target/switchyard-quickstarts-hornetq-binding.jar
-6. Execute HornetQClient
+2. Start JBoss AS 7 in standalone-full mode:
+     ./standalone.sh -server-config standalone-full.xml
+3. Add JMS user using add-user.sh with username=guest, password=guestp, Realm=ApplicationRealm
+    ./add-user.sh
+4. Add a guest role to the user "guest"
+   echo "guest=guest" >> ${AS7}/standalone/configuration/application-roles.properties
+5. Deploy JMS Queue
+    cp src/test/resources/switchyard-quickstart-hornetq-binding-hornetq-jms.xml ${AS7}/standalone/deployments
+6. Deploy the quickstart
+    cp target/switchyard-quickstarts-hornetq-binding.jar ${AS7}/standalone/deployments
+7. Execute HornetQClient
     mvn exec:java
-7. Check the server console for output from the service.
+8. Check the server console for output from the service.
 
 Expected Results
 ================

@@ -11,4 +11,21 @@
   <artifactId>switchyard-quickstart-bpel-service-jms-binding</artifactId>
   <name>Quickstart : BPEL Service : JMS Binding</name>
   <packaging>jar</packaging>
+  <build>
+    <finalName>${project.artifactId}</finalName>
+      <plugins>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <configuration>
+                <executable>java</executable>
+                <classpathScope>test</classpathScope>
+                <mainClass>org.switchyard.quickstarts.bpel.service.hello.HornetQClient</mainClass>
+                <arguments>
+                  <argument>Skippy</argument>
+                </arguments>
+            </configuration>
+        </plugin>
+      </plugins>
+  </build>
 </project>

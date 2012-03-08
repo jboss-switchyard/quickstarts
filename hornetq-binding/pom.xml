@@ -113,6 +113,7 @@
             <artifactId>exec-maven-plugin</artifactId>
             <configuration>
                 <executable>java</executable>
+                <classpathScope>test</classpathScope>
                 <mainClass>org.switchyard.quickstarts.hornetq.HornetQClient</mainClass>
             </configuration>
         </plugin>

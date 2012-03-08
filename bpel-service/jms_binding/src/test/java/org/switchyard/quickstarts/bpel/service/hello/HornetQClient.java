@@ -20,17 +20,12 @@
  */
 package org.switchyard.quickstarts.bpel.service.hello;
 
-import javax.jms.Connection;
-import javax.jms.DeliveryMode;
+import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
-import javax.jms.TextMessage;
 
-import org.hornetq.api.core.TransportConfiguration;
-import org.hornetq.core.remoting.impl.netty.NettyConnectorFactory;
-import org.hornetq.jms.client.HornetQConnectionFactory;
-import org.hornetq.jms.client.HornetQQueue;
+import org.switchyard.test.mixins.HornetQMixIn;
 
 public final class HornetQClient {
     
@@ -46,36 +41,31 @@ public final class HornetQClient {
     }
     
     public static void main(final String[] args) throws Exception {
-        HornetQConnectionFactory hornetQConnectionFactory = null;
-        Connection connection = null;
-        Session session = null;
 
         if (args.length != 1) {
             System.err.println("ERROR: Use -Dexec.args to pass a name value, e.g. -Dexec.args=\"Skippy\"");
             return;
         }
         
+        HornetQMixIn hqMixIn = new HornetQMixIn(false)
+                                    .setUser(USER)
+                                    .setPassword(PASSWD);
+        hqMixIn.initialize();
+
         try {
-            hornetQConnectionFactory = new HornetQConnectionFactory(false, new TransportConfiguration(NettyConnectorFactory.class.getName()));
-            connection = hornetQConnectionFactory.createConnection(USER,PASSWD);
-            connection.start();
-            
-            HornetQQueue requestQueue = new HornetQQueue(REQUEST_NAME);
-            HornetQQueue replyQueue = new HornetQQueue(REPLY_NAME);
-            
-            session = connection.createSession(false, DeliveryMode.NON_PERSISTENT);
-            final MessageProducer producer = session.createProducer(requestQueue);
-            producer.send(session.createTextMessage(createPayload(args[0])));
+            Session session = hqMixIn.getJMSSession();
+            final MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(REQUEST_NAME));
+            producer.send(hqMixIn.createJMSMessage(createPayload(args[0])));
             System.out.println("Message sent. Waiting for reply ...");
-            
-            final MessageConsumer consumer = session.createConsumer(replyQueue);
-            TextMessage reply = (TextMessage)consumer.receive(3000);
-            System.out.println("REPLY: \n" + reply.getText());
+         
+            final MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(REPLY_NAME));
+            Message message = consumer.receive(3000);
+            String reply = hqMixIn.readStringFromJMSMessage(message);
+            System.out.println("REPLY: \n" + reply);
         } finally {
-            ClientUtil.closeSession(session);
-            ClientUtil.closeConnection(connection);
-            ClientUtil.closeConnectionFactory(hornetQConnectionFactory);
+            hqMixIn.uninitialize();
         }
+
     }
     
     private static String createPayload(String name) {
