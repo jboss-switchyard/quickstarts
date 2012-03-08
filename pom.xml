@@ -1434,6 +1434,18 @@
          <version>${version.riftsaw.engine}</version>
       </dependency>
       <dependency>
+         <groupId>org.riftsaw.console</groupId>
+         <artifactId>switchyard-bpel-console</artifactId>
+         <version>${version.riftsaw.engine}</version>
+         <type>war</type>
+      </dependency>
+      <dependency>
+         <groupId>org.riftsaw.console</groupId>
+         <artifactId>switchyard-bpel-console-server</artifactId>
+         <version>${version.riftsaw.engine}</version>
+         <type>war</type>
+      </dependency>
+      <dependency>
          <groupId>org.slf4j</groupId>
          <artifactId>slf4j-log4j12</artifactId>
          <version>${version.slf4j}</version>
