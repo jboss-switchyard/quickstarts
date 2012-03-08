@@ -156,11 +156,15 @@ public final class Construction {
      * @return the new object
      */
     public static <T> T construct(Class<T> type, Class<?>[] paramTypes, Object[] params) {
-        Constructor<T> cnst;
+        Constructor<T> cnst = null;
         try {
-            cnst = type.getConstructor(paramTypes);
-        } catch (NoSuchMethodException nsme) {
-            throw new RuntimeException(nsme);
+            cnst = type.getDeclaredConstructor(paramTypes);
+        } catch (NoSuchMethodException nsme1) {
+            try {
+                cnst = type.getConstructor(paramTypes);
+            } catch (NoSuchMethodException nsme2) {
+                throw new RuntimeException(nsme1);
+            }
         }
         if (!cnst.isAccessible()) {
             cnst.setAccessible(true);

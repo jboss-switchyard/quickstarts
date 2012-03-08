@@ -40,8 +40,42 @@ public final class MethodAccess<T> implements Access<T> {
      * @param readMethod the read Method to wrap
      * @param writeMethod the write Method to wrap
      */
-    @SuppressWarnings("unchecked")
     public MethodAccess(Method readMethod, Method writeMethod) {
+        setMethods(readMethod, writeMethod);
+    }
+
+    /**
+     * Constructs a new MethodAccess.
+     * @param clazz the declaring class
+     * @param readMethodName the read method name
+     * @param writeMethodName the write method name
+     */
+    public MethodAccess(Class<?> clazz, String readMethodName, String writeMethodName) {
+        Method readMethod;
+        try {
+            readMethod = clazz.getDeclaredMethod(readMethodName);
+        } catch (NoSuchMethodException nsfe1) {
+            try {
+                readMethod = clazz.getMethod(readMethodName);
+            } catch (NoSuchMethodException nsfe2) {
+                readMethod = null;
+            }
+        }
+        Method writeMethod;
+        try {
+            writeMethod = clazz.getDeclaredMethod(writeMethodName);
+        } catch (NoSuchMethodException nsfe1) {
+            try {
+                writeMethod = clazz.getMethod(writeMethodName);
+            } catch (NoSuchMethodException nsfe2) {
+                writeMethod = null;
+            }
+        }
+        setMethods(readMethod, writeMethod);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void setMethods(Method readMethod, Method writeMethod) {
         if (readMethod != null) {
             _readMethod = readMethod;
             if (!_readMethod.isAccessible()) {

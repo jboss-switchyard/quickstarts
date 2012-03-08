@@ -21,7 +21,6 @@ package org.switchyard.common.type.reflect;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-
 /**
  * Access via a wrapped Field.
  *
@@ -34,10 +33,33 @@ public final class FieldAccess<T> implements Access<T> {
     private Field _field;
 
     /**
-     * Consructs a new FieldAccess.
+     * Constructs a new FieldAccess.
      * @param field the Field to wrap
      */
     public FieldAccess(Field field) {
+        setField(field);
+    }
+
+    /**
+     * Constructs a new FieldAccess.
+     * @param clazz the declaring class
+     * @param fieldName the field name
+     */
+    public FieldAccess(Class<?> clazz, String fieldName) {
+        Field field;
+        try {
+            field = clazz.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException nsfe1) {
+            try {
+                field = clazz.getField(fieldName);
+            } catch (NoSuchFieldException nsfe2) {
+                throw new RuntimeException(nsfe1);
+            }
+        }
+        setField(field);
+    }
+
+    private void setField(Field field) {
         _field = field;
         if (!_field.isAccessible()) {
             _field.setAccessible(true);

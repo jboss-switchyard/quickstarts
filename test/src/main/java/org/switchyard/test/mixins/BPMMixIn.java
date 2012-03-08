@@ -275,21 +275,22 @@ public class BPMMixIn extends AbstractTestMixIn {
     private boolean doCompleteHumanTasks(Map<String,List<String>> usersGroups) {
         boolean keepWorking = false;
         try {
-            final Class<?> clientClass = _client.getClass();
+            final Class<?> taskClientClass = _client.getClass();
+            final Class<?> taskContentClass = Classes.forName("org.switchyard.component.bpm.task.service.TaskContent", BPMMixIn.class);
             final Class<?> taskStatusClass = Classes.forName("org.switchyard.component.bpm.task.service.TaskStatus", BPMMixIn.class);
             final Object completed = taskStatusClass.getDeclaredField("COMPLETED").get(null);
             for (String userId : usersGroups.keySet()) {
                 List<String> groupIds = usersGroups.get(userId);
-                List<?> tasks = (List<?>)clientClass.getMethod("getTasksAssignedAsPotentialOwner", String.class, List.class).invoke(_client, userId, groupIds);
+                List<?> tasks = (List<?>)taskClientClass.getMethod("getTasksAssignedAsPotentialOwner", String.class, List.class).invoke(_client, userId, groupIds);
                 for (Object task : tasks) {
                     Object status = task.getClass().getMethod("getStatus").invoke(task);
                     if (completed.equals(status)) {
                         continue;
                     }
                     Long taskId = (Long)task.getClass().getMethod("getId").invoke(task);
-                    clientClass.getMethod("claim", Long.class, String.class, List.class).invoke(_client, taskId, userId, groupIds);
-                    clientClass.getMethod("start", Long.class, String.class).invoke(_client, taskId, userId);
-                    clientClass.getMethod("complete", Long.class, String.class).invoke(_client, taskId, userId);
+                    taskClientClass.getMethod("claim", Long.class, String.class, List.class).invoke(_client, taskId, userId, groupIds);
+                    taskClientClass.getMethod("start", Long.class, String.class).invoke(_client, taskId, userId);
+                    taskClientClass.getMethod("complete", Long.class, String.class, taskContentClass).invoke(_client, taskId, userId, null);
                     keepWorking = true;
                 }
             }
