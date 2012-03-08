@@ -20,21 +20,18 @@
  */
 package org.switchyard.quickstarts.bpel.service.hello;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
+import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
-import javax.jms.Queue;
 import javax.jms.Session;
-import javax.jms.TextMessage;
-import javax.naming.InitialContext;
 
-import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
+import org.switchyard.test.SwitchYardTestKit;
 import org.switchyard.test.mixins.CDIMixIn;
 import org.switchyard.test.mixins.HornetQMixIn;
 
@@ -53,53 +50,30 @@ public class JmsBindingTest {
     
     private static final String REQUEST_NAME = "HelloRequestQueue";
     private static final String REPLY_NAME = "HelloReplyQueue";
+    private static final String NAME = "Tomo";
+    
+    private SwitchYardTestKit _testKit;
+    private HornetQMixIn _hqMixIn;
     
     /**
      * Send a message to HelloRequestQueue and receive from HelloResponseQueue.
      */
     @Test
     public void testHelloService() throws Exception {
-        InitialContext initialContext = null;
-        Connection connection = null;
-        Session session = null;
-        MessageProducer producer = null;
-        MessageConsumer consumer = null;
-        try {
-            initialContext = new InitialContext();
-            final Queue requestQueue = (Queue) initialContext.lookup(REQUEST_NAME);
-            final ConnectionFactory connectionFactory = (ConnectionFactory) initialContext.lookup("ConnectionFactory");
-            connection = connectionFactory.createConnection();
-            connection.start();
-            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            producer = session.createProducer(requestQueue);
-            producer.send(session.createTextMessage(createPayload("Tomo")));
-            session.close();
-            
-            final Queue replyQueue = (Queue) initialContext.lookup(REPLY_NAME);
-            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            consumer = session.createConsumer(replyQueue);
-            TextMessage message = (TextMessage)consumer.receive(3000);
-            
-            Assert.assertNotNull(message);
-            String response = message.getText();
-            Assert.assertEquals(createExpectedReply("Tomo"), response);
-        } finally {
-            if (producer != null) {
-                    producer.close();
-            }
-            if (consumer != null) {
-                consumer.close();
-            }
-            if (session != null) {
-                session.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
-            if (initialContext != null) {
-                initialContext.close();
-            }
-        }
+        Session session = _hqMixIn.getJMSSession();
+        MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(REQUEST_NAME));
+        Message message = _hqMixIn.createJMSMessage(createPayload(NAME));
+        producer.send(message);
+
+        MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(REPLY_NAME));
+        message = consumer.receive(3000);
+        String reply = _hqMixIn.readStringFromJMSMessage(message);
+        SwitchYardTestKit.compareXMLToString(reply, createExpectedReply(NAME));
+    }
+    
+    @Before
+    public void getHornetQMixIn() {
+        _hqMixIn = _testKit.getMixIn(HornetQMixIn.class);
     }
     
     private static String createPayload(String name) {
@@ -109,8 +83,8 @@ public class JmsBindingTest {
     }
 
     private static String createExpectedReply(String name) {
-        return "<sayHelloResponse xmlns=\"http://www.jboss.org/bpel/examples\">\n"
-                + "  <tns:result xmlns:tns=\"http://www.jboss.org/bpel/examples\">Hello " + name + "</tns:result>\n"
+        return "<sayHelloResponse xmlns=\"http://www.jboss.org/bpel/examples\">"
+                + "<tns:result xmlns:tns=\"http://www.jboss.org/bpel/examples\">Hello " + name + "</tns:result>"
                 + "</sayHelloResponse>";
     }
 }
