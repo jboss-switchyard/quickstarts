@@ -20,28 +20,49 @@ package org.switchyard.test.quickstarts;
 
 import java.io.IOException;
 
+import javax.jms.Message;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.test.ArquillianUtil;
+import org.switchyard.test.mixins.HornetQMixIn;
 import org.switchyard.test.quickstarts.util.ResourceDeployer;
 
 @RunWith(Arquillian.class)
 public class CamelJMSBindingQuickstartTest {
 
+    private static final String QUEUE = "GreetingServiceQueue";
+    private static final String USER = "guest";
+    private static final String PASSWD = "guestp";
+
     @Deployment(testable = false)
     public static JavaArchive createDeployment() throws IOException {
-        ResourceDeployer.addQueue("GreetingServiceQueue");
+        ResourceDeployer.addQueue(QUEUE);
+        ResourceDeployer.addPropertiesUser(USER, PASSWD);
         return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-camel-jms-binding");
     }
 
     @Test
-    public void testDeployment() throws IOException {
-        Assert.assertNotNull("Dummy not null", "");
-        ResourceDeployer.removeQueue("GreetingServiceQueue");
+    public void testDeployment() throws Exception {
+        HornetQMixIn hqMixIn = new HornetQMixIn(false)
+                                    .setUser(USER)
+                                    .setPassword(PASSWD);
+        hqMixIn.initialize();
+
+        try {
+            Session session = hqMixIn.getJMSSession();
+            MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(QUEUE));
+            Message message = hqMixIn.createJMSMessage("Tomo");
+            producer.send(message);
+        } finally {
+            hqMixIn.uninitialize();
+            ResourceDeployer.removeQueue(QUEUE);
+        }
     }
 
 }

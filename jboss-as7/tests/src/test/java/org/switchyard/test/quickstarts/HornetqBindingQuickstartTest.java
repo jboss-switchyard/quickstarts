@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import org.hornetq.api.core.client.ClientMessage;
 import org.hornetq.api.core.client.ClientProducer;
+import org.hornetq.api.core.client.ClientSession;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -54,7 +55,8 @@ public class HornetqBindingQuickstartTest {
         hqMixIn.initialize();
         
         try {
-            ClientProducer producer = hqMixIn.getClientSession().createProducer(JMS_PREFIX+QUEUE);
+            ClientSession session = hqMixIn.getClientSession();
+            ClientProducer producer = session.createProducer(JMS_PREFIX+QUEUE);
             ClientMessage message = hqMixIn.createMessage("Tomo");
             producer.send(message);
         } finally {
