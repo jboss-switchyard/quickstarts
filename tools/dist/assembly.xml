@@ -38,6 +38,22 @@
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
+                <include>org.riftsaw.console:switchyard-bpel-console-server</include>
+            </includes>
+            <outputDirectory>${tools.root.dir}</outputDirectory>
+            <outputFileNameMapping>switchyard-bpel-console-server.war</outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.riftsaw.console:switchyard-bpel-console</include>
+            </includes>
+            <outputDirectory>${tools.root.dir}</outputDirectory>
+            <outputFileNameMapping>switchyard-bpel-console.war</outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
                 <include>org.switchyard:switchyard-forge-plugin-dist</include>
             </includes>
             <outputDirectory>${tools.root.dir}</outputDirectory>

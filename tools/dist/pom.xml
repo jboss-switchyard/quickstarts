@@ -46,6 +46,18 @@
             <type>war</type>
         </dependency>
 
+		<dependency>
+            <groupId>org.riftsaw.console</groupId>
+            <artifactId>switchyard-bpel-console-server</artifactId>
+            <type>war</type>
+        </dependency>
+
+		<dependency>
+            <groupId>org.riftsaw.console</groupId>
+            <artifactId>switchyard-bpel-console</artifactId>
+            <type>war</type>
+        </dependency>
+
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-forge-plugin-dist</artifactId>
