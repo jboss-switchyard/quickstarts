@@ -100,6 +100,9 @@ public class MessageMetricsSupport implements MessageMetrics {
 
     @Override
     public synchronized double getAverageProcessingTime() {
+        if (getTotalCount() == 0) {
+            return 0.0;
+        }
         return (double)getTotalProcessingTime() / getTotalCount();
     }
 
