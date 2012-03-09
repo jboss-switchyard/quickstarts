@@ -59,14 +59,14 @@ public interface ComponentReferenceModel extends NamedModel {
      * Gets the child component reference interface model.
      * @return the child component reference interface model
      */
-    public ComponentReferenceInterfaceModel getInterface();
+    public InterfaceModel getInterface();
 
     /**
      * Sets the child component reference interface model.
      * @param interfaze the child component reference interface model
      * @return this ComponentReferenceModel (useful for chaining)
      */
-    public ComponentReferenceModel setInterface(ComponentReferenceInterfaceModel interfaze);
+    public ComponentReferenceModel setInterface(InterfaceModel interfaze);
     
 
     /**

@@ -41,6 +41,7 @@ import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.InterfaceModel;
+import org.switchyard.config.model.switchyard.EsbInterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.config.model.validate.ValidatesModel;
@@ -51,6 +52,10 @@ import org.switchyard.deploy.event.ApplicationUndeployedEvent;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.extensions.wsdl.WSDLReaderException;
 import org.switchyard.extensions.wsdl.WSDLService;
+import org.switchyard.metadata.InOnlyOperation;
+import org.switchyard.metadata.InOnlyService;
+import org.switchyard.metadata.InOutOperation;
+import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.policy.Policy;
@@ -312,7 +317,6 @@ public class Deployment extends AbstractDeployment {
                 if (serviceInterfaceType == null) {
                     throw new SwitchYardException("Failed to load Service interface class '" + interfaceClass + "'.");
                 }
-
                 serviceInterface = JavaService.fromClass(serviceInterfaceType);
             } else if (intfModel.getType().equals(WSDL_INTERFACE)) {
                 try {
@@ -320,10 +324,32 @@ public class Deployment extends AbstractDeployment {
                 } catch (WSDLReaderException wsdlre) {
                     throw new SwitchYardException(wsdlre);
                 }
+            } else if (intfModel.getType().equals(EsbInterfaceModel.ESB)) {
+                EsbInterfaceModel esbIntf = (EsbInterfaceModel)intfModel;
+                validateEsbInterface(esbIntf);
+                if (esbIntf.getOutputType() == null) {
+                    serviceInterface = new InOnlyService(new InOnlyOperation(
+                            ServiceInterface.DEFAULT_OPERATION, esbIntf.getInputType()));
+                } else {
+                    serviceInterface = new InOutService(new InOutOperation(
+                            ServiceInterface.DEFAULT_OPERATION, 
+                            esbIntf.getInputType(), esbIntf.getOutputType(), esbIntf.getFaultType()));
+                }
             }
         }
         
         return serviceInterface;
+    }
+    
+    // Checks for invalid input/output/fault combinations on ESB interfaces.
+    private void validateEsbInterface(EsbInterfaceModel esbIntf) throws SwitchYardException {
+        if (esbIntf.getInputType() == null) {
+            throw new SwitchYardException("inputType required on ESB interface definition: " + esbIntf);
+        }
+        
+        if (esbIntf.getFaultType() != null && esbIntf.getOutputType() == null) {
+            throw new SwitchYardException("faultType must be acommpanied by outputType in ESB interface: " + esbIntf);
+        }
     }
     
     private boolean isJavaInterface(final String type) {

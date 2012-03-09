@@ -27,7 +27,6 @@ import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
-import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.InterfaceModel;
@@ -74,12 +73,11 @@ public class V1CompositeMarshaller extends BaseMarshaller {
         } else if (name.startsWith(InterfaceModel.INTERFACE)) {
             Configuration config_parent = config.getParent();
             if (config_parent != null) {
-                if (config_parent.getName().equals(ComponentServiceModel.SERVICE)) {
-                    return new V1ComponentServiceInterfaceModel(config, desc);
-                } else if (config_parent.getName().equals(ComponentReferenceModel.REFERENCE)) {
-                    return new V1ComponentReferenceInterfaceModel(config, desc);
+                // only pick up standard SCA interface types
+                if (name.endsWith(InterfaceModel.JAVA) || name.endsWith(InterfaceModel.WSDL)) {
+                    return new V1InterfaceModel(config, desc);
                 }
-            }
+            } 
         } else if (name.equals(ComponentReferenceModel.REFERENCE)) {
             Configuration config_parent = config.getParent();
             if (config_parent != null) {

@@ -53,6 +53,7 @@ import org.switchyard.config.model.validate.v1.V1ValidatesModel;
  */
 public class V1SwitchYardMarshaller extends BaseMarshaller {
 
+    private static final String ESB_INTERFACE = "interface.esb";
     /**
      * Constructs a new V1SwitchYardMarshaller with the specified Descriptor.
      * @param desc the Descriptor
@@ -94,6 +95,8 @@ public class V1SwitchYardMarshaller extends BaseMarshaller {
             return new V1ContextMapperModel(config, desc);
         } else if (name.equals(MessageComposerModel.MESSAGE_COMPOSER)) {
             return new V1MessageComposerModel(config, desc);
+        } else if (name.equals(ESB_INTERFACE)) {
+            return new V1EsbInterfaceModel(config, desc);
         }
         return null;
     }

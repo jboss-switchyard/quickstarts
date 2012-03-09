@@ -47,10 +47,10 @@ import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
-import org.switchyard.config.model.composite.v1.V1ComponentReferenceInterfaceModel;
 import org.switchyard.config.model.composite.v1.V1ComponentReferenceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeReferenceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeServiceModel;
+import org.switchyard.config.model.composite.v1.V1InterfaceModel;
 import org.switchyard.config.model.domain.DomainModel;
 import org.switchyard.config.model.domain.HandlerModel;
 import org.switchyard.config.model.domain.HandlersModel;
@@ -490,7 +490,7 @@ public class SwitchYardPlugin implements Plugin {
 
         ComponentReferenceModel reference = new V1ComponentReferenceModel();
         reference.setName(referenceName);
-        V1ComponentReferenceInterfaceModel referenceInterfaceModel = new V1ComponentReferenceInterfaceModel(interfaceType);
+        V1InterfaceModel referenceInterfaceModel = new V1InterfaceModel(interfaceType);
         referenceInterfaceModel.setInterface(interfaze);
         reference.setInterface(referenceInterfaceModel);
         

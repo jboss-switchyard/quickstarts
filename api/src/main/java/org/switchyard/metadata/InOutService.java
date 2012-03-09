@@ -40,4 +40,12 @@ public class InOutService extends BaseService {
     public InOutService(String operationName) {
         super(new InOutOperation(operationName));
     }
+
+    /**
+     * Creates a new InOutService with the specified operation metadata.
+     * @param operation operation metadata
+     */
+    public InOutService(InOutOperation operation) {
+        super(operation);
+    } 
 }

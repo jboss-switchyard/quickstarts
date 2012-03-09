@@ -43,14 +43,14 @@ public interface ComponentServiceModel extends NamedModel {
      * Gets the child component service interface model.
      * @return the child component service interface model
      */
-    public ComponentServiceInterfaceModel getInterface();
+    public InterfaceModel getInterface();
 
     /**
      * Sets the child component service interface model.
      * @param interfaze child component service interface model
      * @return this ComponentServiceModel (useful for chaining)
      */
-    public ComponentServiceModel setInterface(ComponentServiceInterfaceModel interfaze);
+    public ComponentServiceModel setInterface(InterfaceModel interfaze);
     
     /**
      * Adds the specified policy identifier to the set of required policy 

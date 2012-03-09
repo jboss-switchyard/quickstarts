@@ -27,7 +27,6 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.ComponentModel;
-import org.switchyard.config.model.composite.ComponentReferenceInterfaceModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.InterfaceModel;
@@ -39,7 +38,7 @@ import org.switchyard.config.model.composite.InterfaceModel;
  */
 public class V1ComponentReferenceModel extends BaseNamedModel implements ComponentReferenceModel {
 
-    private ComponentReferenceInterfaceModel _interface;
+    private InterfaceModel _interface;
 
     /**
      * Constructs a new V1ComponentReferenceModel.
@@ -86,9 +85,9 @@ public class V1ComponentReferenceModel extends BaseNamedModel implements Compone
      * {@inheritDoc}
      */
     @Override
-    public ComponentReferenceInterfaceModel getInterface() {
+    public InterfaceModel getInterface() {
         if (_interface == null) {
-            _interface = (ComponentReferenceInterfaceModel)getFirstChildModelStartsWith(InterfaceModel.INTERFACE);
+            _interface = (InterfaceModel)getFirstChildModelStartsWith(InterfaceModel.INTERFACE);
         }
         return _interface;
     }
@@ -97,7 +96,7 @@ public class V1ComponentReferenceModel extends BaseNamedModel implements Compone
      * {@inheritDoc}
      */
     @Override
-    public ComponentReferenceModel setInterface(ComponentReferenceInterfaceModel interfaze) {
+    public ComponentReferenceModel setInterface(InterfaceModel interfaze) {
         setChildModel(interfaze);
         _interface = interfaze;
         return this;

@@ -27,7 +27,6 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.ComponentModel;
-import org.switchyard.config.model.composite.ComponentServiceInterfaceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.InterfaceModel;
@@ -39,7 +38,7 @@ import org.switchyard.config.model.composite.InterfaceModel;
  */
 public class V1ComponentServiceModel extends BaseNamedModel implements ComponentServiceModel {
 
-    private ComponentServiceInterfaceModel _interface;
+    private InterfaceModel _interface;
 
     /**
      * Constructs a new V1ComponentServiceModel.
@@ -69,9 +68,9 @@ public class V1ComponentServiceModel extends BaseNamedModel implements Component
      * {@inheritDoc}
      */
     @Override
-    public ComponentServiceInterfaceModel getInterface() {
+    public InterfaceModel getInterface() {
         if (_interface == null) {
-            _interface = (ComponentServiceInterfaceModel)getFirstChildModelStartsWith(InterfaceModel.INTERFACE);
+            _interface = (InterfaceModel)getFirstChildModelStartsWith(InterfaceModel.INTERFACE);
         }
         return _interface;
     }
@@ -80,7 +79,7 @@ public class V1ComponentServiceModel extends BaseNamedModel implements Component
      * {@inheritDoc}
      */
     @Override
-    public ComponentServiceModel setInterface(ComponentServiceInterfaceModel interfaze) {
+    public ComponentServiceModel setInterface(InterfaceModel interfaze) {
         setChildModel(interfaze);
         _interface = interfaze;
         return this;

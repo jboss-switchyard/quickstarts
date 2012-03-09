@@ -149,5 +149,15 @@ MA  02110-1301, USA.
         <attribute name="name" type="string" use="required"/>
         <attribute name="url" type="string" use="required"/>
     </complexType>
-
+    
+   <element name="interface.esb" type="swyd:EsbInterface" substitutionGroup="sca:interface"/>
+   <complexType name="EsbInterface">
+      <complexContent>
+         <extension base="sca:Interface">
+            <attribute name="inputType" type="string" use="optional"/>
+            <attribute name="outputType" type="string" use="optional"/>
+            <attribute name="faultType" type="string" use="optional"/>
+         </extension>
+      </complexContent>
+   </complexType>
 </schema>

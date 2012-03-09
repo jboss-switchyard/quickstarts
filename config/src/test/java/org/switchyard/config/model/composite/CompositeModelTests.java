@@ -142,12 +142,12 @@ public class CompositeModelTests {
         Assert.assertEquals("bean", implementation1.getType());
         ComponentServiceModel componentService1 = component1.getServices().get(0);
         Assert.assertEquals("SimpleService", componentService1.getName());
-        ComponentServiceInterfaceModel interface1 = componentService1.getInterface();
+        InterfaceModel interface1 = componentService1.getInterface();
         Assert.assertEquals("java", interface1.getType());
         Assert.assertEquals("org.switchyard.example.m1app.SimpleService", interface1.getInterface());
         ComponentReferenceModel reference = component1.getReferences().get(0);
         Assert.assertEquals("anotherService", reference.getName());
-        ComponentReferenceInterfaceModel interface2 = reference.getInterface();
+        InterfaceModel interface2 = reference.getInterface();
         Assert.assertEquals("java", interface2.getType());
         Assert.assertEquals("org.switchyard.example.m1app.AnotherService", interface2.getInterface());
         ComponentModel component2 = composite.getComponents().get(1);
@@ -156,7 +156,7 @@ public class CompositeModelTests {
         Assert.assertEquals("bean", implementation2.getType());
         ComponentServiceModel componentService2 = component2.getServices().get(0);
         Assert.assertEquals("AnotherService", componentService2.getName());
-        ComponentServiceInterfaceModel interface3 = componentService2.getInterface();
+        InterfaceModel interface3 = componentService2.getInterface();
         Assert.assertEquals("java", interface3.getType());
         Assert.assertEquals("org.switchyard.example.m1app.AnotherService", interface3.getInterface());
     }

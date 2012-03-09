@@ -41,4 +41,11 @@ public class InOnlyService extends BaseService {
         super(new InOnlyOperation(operationName));
     }
     
+    /**
+     * Creates a new InOnlyService with the specified operation metadata.
+     * @param operation operation metadata
+     */
+    public InOnlyService(InOnlyOperation operation) {
+        super(operation);
+    } 
 }

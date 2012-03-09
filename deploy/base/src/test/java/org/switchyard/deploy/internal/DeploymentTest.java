@@ -20,19 +20,18 @@
 package org.switchyard.deploy.internal;
 
 import java.io.InputStream;
-import java.util.List;
 
 import javax.xml.namespace.QName;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.switchyard.ExchangePattern;
 import org.switchyard.MockDomain;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.ServiceReference;
 import org.switchyard.common.type.Classes;
-import org.switchyard.config.model.composite.CompositeServiceModel;
-import org.switchyard.deploy.Activator;
+import org.switchyard.config.model.switchyard.EsbInterfaceModel;
 import org.switchyard.deploy.ActivatorLoader;
 import org.switchyard.deploy.components.MockActivator;
 import org.switchyard.deploy.components.config.MockBindingModel;
@@ -150,6 +149,40 @@ public class DeploymentTest {
         Assert.assertNotNull(op);
         Assert.assertEquals(new QName("urn:switchyard-interface-wsdl", "sayHello"), op.getInputType());
         Assert.assertEquals(new QName("urn:switchyard-interface-wsdl", "sayHelloResponse"), op.getOutputType());
+
+        deployment.stop();
+        deployment.destroy();
+
+    }
+    
+
+    @Test
+    public void interfaceESB() throws Exception {
+        InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-interface-esb-01.xml", getClass());
+        Deployment deployment = new Deployment(swConfigStream);
+        swConfigStream.close();
+        MockDomain serviceDomain = new MockDomain();
+        deployment.init(serviceDomain, ActivatorLoader.createActivators(serviceDomain));
+        deployment.start();
+
+        // Test the service
+        Service service = serviceDomain.getServiceRegistry().getServices(
+                new QName("urn:switchyard-interface-esb", "HelloService")).get(0);
+        Assert.assertNotNull(service);
+        ServiceInterface iface = service.getInterface();
+        Assert.assertEquals(EsbInterfaceModel.ESB, iface.getType());
+        ServiceOperation op = iface.getOperation(ServiceInterface.DEFAULT_OPERATION);
+        Assert.assertNotNull(op);
+        Assert.assertEquals(ExchangePattern.IN_ONLY, op.getExchangePattern());
+        
+        // Test the reference
+        ServiceReference reference = serviceDomain.getServiceReference(
+                new QName("urn:switchyard-interface-esb", "SomeOtherService"));
+        Assert.assertNotNull(reference);
+        Assert.assertEquals(EsbInterfaceModel.ESB, service.getInterface().getType());
+        ServiceOperation rop = reference.getInterface().getOperation(ServiceInterface.DEFAULT_OPERATION);
+        Assert.assertNotNull(rop);
+        Assert.assertEquals(ExchangePattern.IN_OUT, rop.getExchangePattern());
 
         deployment.stop();
         deployment.destroy();

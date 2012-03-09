@@ -19,8 +19,7 @@
                     maxOccurs="unbounded"/>
             </sequence>
             <attribute name="interface" type="anyURI" use="required"/>
-            <attribute name="callbackInterface" type="anyURI" 
-                       use="optional"/>
+            <attribute name="callbackInterface" type="anyURI" use="optional"/>
          </extension>
       </complexContent>
    </complexType>

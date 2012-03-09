@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+JBoss, Home of Professional Open Source
+Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+as indicated by the @authors tag. All rights reserved.
+See the copyright.txt in the distribution for a
+full listing of individual contributors.
+
+This copyrighted material is made available to anyone wishing to use,
+modify, copy, or redistribute it subject to the terms and conditions
+of the GNU Lesser General Public License, v. 2.1.
+This program is distributed in the hope that it will be useful, but WITHOUT A
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+You should have received a copy of the GNU Lesser General Public License,
+v.2.1 along with this distribution; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+MA  02110-1301, USA.
+-->
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+            xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+            xmlns:bean="urn:switchyard-config:test-bean:1.0"
+            xmlns:java="urn:switchyard-config:test-java:1.0"
+            xmlns:smooks="urn:switchyard-config:test-smooks:1.0"
+            xmlns:soap="urn:switchyard-config:test-soap:1.0"
+            xmlns:vjava="urn:switchyard-config:test-validate-java:1.0"
+            xmlns:vxml="urn:switchyard-config:test-validate-xml:1.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="
+                   urn:switchyard-config:test-bean:1.0 ../composite/test/bean/bean.xsd
+                   urn:switchyard-config:test-java:1.0 test/java/java.xsd
+                   urn:switchyard-config:test-smooks:1.0 test/smooks/smooks.xsd
+                   urn:switchyard-config:test-validate-java:1.0 test/validate/java/java.xsd
+                   urn:switchyard-config:test-validate-xml:1.0 test/validate/xml/xml.xsd
+                   urn:switchyard-config:test-soap:1.0 ../composite/test/soap/soap.xsd"
+            name="EsbInterfaceTest">
+	<sca:composite
+	           targetNamespace="urn:esb-interface-test:1.0"
+	           name="EsbInterfaceTest">
+	    <sca:component name="SimpleService">
+	       <bean:implementation.bean class="org.FooBean"/>
+	       <sca:service name="SimpleService">
+	           <interface.esb/>
+	       </sca:service>
+	       <sca:reference name="anotherService">
+	           <interface.esb inputType="{urn:123}abc" outputType="xyz" faultType="omg"/>
+	       </sca:reference>
+	    </sca:component>
+	</sca:composite>
+</switchyard>
