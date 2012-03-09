@@ -94,4 +94,19 @@ public interface SwitchYardStore {
      */
     void loadService(String serviceName, String applicationName, AsyncCallback<Service> callback);
 
+    /**
+     * Loads message metrics for the specified service.
+     * 
+     * @param serviceName the name of the service
+     * @param asyncCallback the callback
+     */
+    void loadServiceMetrics(String serviceName, AsyncCallback<ServiceMetrics> asyncCallback);
+
+    /**
+     * Loads message metrics for the entire system.
+     * 
+     * @param asyncCallback the callback
+     */
+    void loadSystemMetrics(AsyncCallback<MessageMetrics> asyncCallback);
+
 }

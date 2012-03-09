@@ -30,6 +30,8 @@ import org.jboss.as.console.client.shared.SubsystemExtension.SubsystemItemDefini
 import org.jboss.as.console.client.shared.SubsystemExtensionProcessor;
 import org.jboss.as.console.client.shared.SubsystemGroup;
 import org.jboss.as.console.client.shared.SubsystemGroupItem;
+import org.jboss.as.console.client.widgets.nav.Predicate;
+import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 
 import com.google.gwt.core.ext.Generator;
 import com.google.gwt.core.ext.GeneratorContext;
@@ -91,11 +93,15 @@ public class SubsystemExtensionProcessorGenerator extends Generator {
         ClassSourceFileComposerFactory composerFactory = new ClassSourceFileComposerFactory(packageName, className);
 
         // imports
+        composerFactory.addImport(ArrayList.class.getCanonicalName());
         composerFactory.addImport(LinkedHashMap.class.getCanonicalName());
+        composerFactory.addImport(List.class.getCanonicalName());
         composerFactory.addImport(Map.class.getCanonicalName());
         composerFactory.addImport(SubsystemExtensionProcessor.class.getCanonicalName());
         composerFactory.addImport(SubsystemGroup.class.getCanonicalName());
         composerFactory.addImport(SubsystemGroupItem.class.getCanonicalName());
+        composerFactory.addImport(Predicate.class.getCanonicalName());
+        composerFactory.addImport(LHSNavTreeItem.class.getCanonicalName());
 
         // interface
         composerFactory.addImplementedInterface(SubsystemExtensionProcessor.class.getCanonicalName());
@@ -107,12 +113,13 @@ public class SubsystemExtensionProcessorGenerator extends Generator {
 
         // fields
         sw.println("private final Map<String, SubsystemGroup> extensionGroups = new LinkedHashMap<String, SubsystemGroup>();");
+        sw.println("private final List<Predicate> _runtimeExtensions = new ArrayList<Predicate>();");
 
         // constructor
         sw.println("public " + className + "() {");
         sw.indent();
         for (SubsystemExtension extension : subsystemExtensions) {
-            for (SubsystemGroupDefinition groupDef : extension.value()) {
+            for (SubsystemGroupDefinition groupDef : extension.groups()) {
                 sw.println("SubsystemGroup group;");
                 sw.println("if (extensionGroups.containsKey(\"%s\")) {", groupDef.name());
                 sw.indentln("group = extensionGroups.get(\"%s\");", groupDef.name());
@@ -124,16 +131,20 @@ public class SubsystemExtensionProcessorGenerator extends Generator {
                 sw.println("}");
                 for (SubsystemItemDefinition itemDef : groupDef.items()) {
                     sw.println("group.getItems().add(new SubsystemGroupItem(\"%s\", \"%s\", \"%s\"));", itemDef.name(),
-                            groupDef.subsystem(), itemDef.presenter());
+                            extension.subsystem(), itemDef.presenter());
                 }
+            }
+            for (SubsystemItemDefinition runtimeItemDef : extension.runtime()) {
+                sw.println("_runtimeExtensions.add(new Predicate(\"%s\", new LHSNavTreeItem(\"%s\", \"%s\")));",
+                        extension.subsystem(), runtimeItemDef.name(), runtimeItemDef.presenter());
             }
         }
         sw.outdent();
         sw.println("}");
 
         // methods
-        // processExtensions
-        sw.println("public void processExtensions(Map<String, SubsystemGroup> groups) {");
+        // processProfileExtensions
+        sw.println("public void processProfileExtensions(Map<String, SubsystemGroup> groups) {");
         sw.indent();
         sw.println("for (Map.Entry<String, SubsystemGroup> entry : extensionGroups.entrySet()) {");
         sw.indent();
@@ -151,6 +162,11 @@ public class SubsystemExtensionProcessorGenerator extends Generator {
         sw.outdent();
         sw.println("}");
         sw.outdent();
+        sw.println("}");
+
+        // getRuntimeExtensions
+        sw.println("public List<Predicate> getRuntimeExtensions() {");
+        sw.indentln("return _runtimeExtensions;");
         sw.println("}");
 
         // close it out

@@ -60,6 +60,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
     private static final String READ_COMPONENT = "read-component";
     private static final String READ_SERVICE = "read-service";
     private static final String SERVICE_NAME = "service-name";
+    private static final String SHOW_METRICS = "show-metrics";
     private static final String SWITCHYARD = "switchyard";
 
     private final DispatchAsync _dispatcher;
@@ -329,6 +330,67 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         });
     }
 
+    @Override
+    public void loadServiceMetrics(final String serviceName, final AsyncCallback<ServiceMetrics> callback) {
+        // /subsystem=switchyard:show-metrics(service-name=serviceName)
+
+        final ModelNode operation = new ModelNode();
+        operation.get(OP).set(SHOW_METRICS);
+        operation.get(OP_ADDR, SUBSYSTEM).set(SWITCHYARD);
+        operation.get(SERVICE_NAME).set(serviceName);
+
+        _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                final ModelNode response = result.get();
+                if (response.hasDefined(RESULT)) {
+                    final ServiceMetrics metrics = createServiceMetrics(response.get(RESULT).asList().get(0));
+                    if (metrics != null) {
+                        callback.onSuccess(metrics);
+                        return;
+                    }
+                }
+                callback.onFailure(new Exception("Could not load metrics for service: " + serviceName));
+            }
+        });
+    }
+
+    @Override
+    public void loadSystemMetrics(final AsyncCallback<MessageMetrics> callback) {
+        // /subsystem=switchyard:show-metrics()
+
+        final ModelNode operation = new ModelNode();
+        operation.get(OP).set(SHOW_METRICS);
+        operation.get(OP_ADDR, SUBSYSTEM).set(SWITCHYARD);
+
+        _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                final ModelNode response = result.get();
+                if (response.hasDefined(RESULT)) {
+                    final MessageMetrics metrics = createMessageMetrics(response.get(RESULT).asList().get(0));
+                    if (metrics != null) {
+                        callback.onSuccess(metrics);
+                        return;
+                    }
+                }
+                callback.onFailure(new Exception("Could not load metrics for system"));
+            }
+        });
+    }
+
     private SystemDetails createSystemDetails(final ModelNode systemDetailsNode) {
         try {
             return AutoBeanCodex.decode(_factory, SystemDetails.class, systemDetailsNode.toJSONString(true)).as();
@@ -368,6 +430,24 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
     private Service createService(final ModelNode serviceNode) {
         try {
             return AutoBeanCodex.decode(_factory, Service.class, serviceNode.toJSONString(true)).as();
+        } catch (Exception e) {
+            Log.error("Failed to parse data source representation", e);
+            return null;
+        }
+    }
+
+    private ServiceMetrics createServiceMetrics(final ModelNode metricsNode) {
+        try {
+            return AutoBeanCodex.decode(_factory, ServiceMetrics.class, metricsNode.toJSONString(true)).as();
+        } catch (Exception e) {
+            Log.error("Failed to parse data source representation", e);
+            return null;
+        }
+    }
+
+    private MessageMetrics createMessageMetrics(final ModelNode metricsNode) {
+        try {
+            return AutoBeanCodex.decode(_factory, MessageMetrics.class, metricsNode.toJSONString(true)).as();
         } catch (Exception e) {
             Log.error("Failed to parse data source representation", e);
             return null;

@@ -46,12 +46,6 @@ public @interface SubsystemExtension {
         String name();
 
         /**
-         * The subsystem name for the item. Must match the name used to identify
-         * the subsystem within the server configuration.
-         */
-        String subsystem();
-
-        /**
          * The items within the group.
          */
         SubsystemItemDefinition[] items();
@@ -75,6 +69,17 @@ public @interface SubsystemExtension {
     /**
      * The subsystem groups supported by the extension.
      */
-    SubsystemGroupDefinition[] value();
+    SubsystemGroupDefinition[] groups();
+
+    /**
+     * A runtime item provided by the subsystem.
+     */
+    SubsystemItemDefinition[] runtime();
+
+    /**
+     * The subsystem name for the item. Must match the name used to identify the
+     * subsystem within the server configuration.
+     */
+    String subsystem();
 
 }

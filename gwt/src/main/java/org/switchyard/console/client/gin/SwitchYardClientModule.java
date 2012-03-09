@@ -28,6 +28,8 @@ import org.switchyard.console.client.ui.component.ComponentConfigurationViewFact
 import org.switchyard.console.client.ui.component.ComponentPresenter;
 import org.switchyard.console.client.ui.config.ConfigPresenter;
 import org.switchyard.console.client.ui.config.ConfigView;
+import org.switchyard.console.client.ui.runtime.RuntimePresenter;
+import org.switchyard.console.client.ui.runtime.RuntimeView;
 import org.switchyard.console.client.ui.service.ServicePresenter;
 import org.switchyard.console.client.ui.service.ServiceView;
 import org.switchyard.console.components.client.extension.ComponentProviders;
@@ -55,6 +57,8 @@ public class SwitchYardClientModule extends AbstractPresenterModule {
                 ApplicationPresenter.MyProxy.class);
         bindPresenter(ServicePresenter.class, ServicePresenter.MyView.class, ServiceView.class,
                 ServicePresenter.MyProxy.class);
+        bindPresenter(RuntimePresenter.class, RuntimePresenter.MyView.class, RuntimeView.class,
+                RuntimePresenter.MyProxy.class);
 
         // components
         bindPresenterWidgetFactory(ComponentPresenter.PresenterFactory.class,

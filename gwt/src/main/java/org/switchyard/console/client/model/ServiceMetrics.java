@@ -16,34 +16,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared;
+package org.switchyard.console.client.model;
 
 import java.util.List;
-import java.util.Map;
-
-import org.jboss.as.console.client.widgets.nav.Predicate;
 
 /**
- * SubsystemExtensionProcessor
+ * ServiceMetrics
  * 
- * Processes subsystem extensions and adds them to the groups list.
+ * <p/>
+ * Message metrics specific to a service.
  * 
  * @author Rob Cernich
  */
-public interface SubsystemExtensionProcessor {
+public interface ServiceMetrics extends MessageMetrics, HasQName {
 
     /**
-     * Adds entries corresponding to extended subsystems.
-     * 
-     * @param groups the container for the groups.
+     * @return metrics for referenced services
      */
-    public void processProfileExtensions(Map<String, SubsystemGroup> groups);
+    List<ServiceMetrics> getReferences();
 
     /**
-     * Retrieves runtime predicates registered by subsystem extensions.
-     * 
-     * @return predicates registered by subsystem extensions.
+     * @param value metrics for referenced services
      */
-    public List<Predicate> getRuntimeExtensions();
+    void setReferences(List<ServiceMetrics> value);
 
 }

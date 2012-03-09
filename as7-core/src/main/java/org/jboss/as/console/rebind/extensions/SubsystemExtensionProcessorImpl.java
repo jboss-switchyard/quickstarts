@@ -18,14 +18,19 @@
  */
 package org.jboss.as.console.rebind.extensions;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.jboss.as.console.client.shared.SubsystemExtension;
 import org.jboss.as.console.client.shared.SubsystemExtension.SubsystemGroupDefinition;
 import org.jboss.as.console.client.shared.SubsystemExtension.SubsystemItemDefinition;
 import org.jboss.as.console.client.shared.SubsystemExtensionProcessor;
 import org.jboss.as.console.client.shared.SubsystemGroup;
 import org.jboss.as.console.client.shared.SubsystemGroupItem;
+import org.jboss.as.console.client.widgets.nav.Predicate;
+import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 
 /**
  * SubsystemExtensionProcessorImpl
@@ -37,26 +42,36 @@ import org.jboss.as.console.client.shared.SubsystemGroupItem;
 public class SubsystemExtensionProcessorImpl implements SubsystemExtensionProcessor {
 
     private final Map<String, SubsystemGroup> _extensionGroups = new LinkedHashMap<String, SubsystemGroup>();
+    private final List<Predicate> _runtimeExtensions = new ArrayList<Predicate>();
 
     /**
      * Create a new SubsystemExtensionProcessorImpl.
      */
     public SubsystemExtensionProcessorImpl() {
-        SubsystemGroupDefinition groupDef = null;
-        SubsystemGroup group;
-        if (_extensionGroups.containsKey(groupDef.name())) {
-            group = _extensionGroups.get(groupDef.name());
-        } else {
-            group = new SubsystemGroup(groupDef.name());
-            _extensionGroups.put(group.getName(), group);
+        SubsystemExtension extension = null;
+        for (SubsystemGroupDefinition groupDef : extension.groups()) {
+            SubsystemGroup group;
+            if (_extensionGroups.containsKey(groupDef.name())) {
+                group = _extensionGroups.get(groupDef.name());
+            } else {
+                group = new SubsystemGroup(groupDef.name());
+                _extensionGroups.put(group.getName(), group);
+            }
+
+            for (SubsystemItemDefinition itemDef : groupDef.items()) {
+                group.getItems()
+                        .add(new SubsystemGroupItem(itemDef.name(), extension.subsystem(), itemDef.presenter()));
+            }
         }
 
-        SubsystemItemDefinition itemDef = null;
-        group.getItems().add(new SubsystemGroupItem(itemDef.name(), groupDef.subsystem(), itemDef.presenter()));
+        for (SubsystemItemDefinition runtimeItemDef : extension.runtime()) {
+            _runtimeExtensions.add(new Predicate(extension.subsystem(), new LHSNavTreeItem(runtimeItemDef.name(),
+                    runtimeItemDef.presenter())));
+        }
     }
 
     @Override
-    public void processExtensions(Map<String, SubsystemGroup> groups) {
+    public void processProfileExtensions(Map<String, SubsystemGroup> groups) {
         for (Map.Entry<String, SubsystemGroup> entry : _extensionGroups.entrySet()) {
             if (groups.containsKey(entry.getKey())) {
                 SubsystemGroup group = groups.get(entry.getKey());
@@ -66,6 +81,11 @@ public class SubsystemExtensionProcessorImpl implements SubsystemExtensionProces
                 groups.put(group.getName(), group);
             }
         }
+    }
+
+    @Override
+    public List<Predicate> getRuntimeExtensions() {
+        return _runtimeExtensions;
     }
 
 }

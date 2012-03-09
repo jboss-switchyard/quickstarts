@@ -37,6 +37,8 @@ public final class NameTokens {
     public static final String APPLICATIONS_PRESENTER = "sy-apps";
     /** The subpath for the SwitchYard services view. */
     public static final String SERVICES_PRESENTER = "sy-services";
+    /** The subpath for the SwitchYard runtime view. */
+    public static final String RUNTIME_PRESENTER = "sy-runtime";
 
     /** The parameter name used for component name. */
     public static final String COMPONENT_NAME_PARAM = "component";
@@ -51,9 +53,15 @@ public final class NameTokens {
     public static final String APPLICATIONS_TEXT = "Applications";
     /** The display text for the SwitchYard services navigator item. */
     public static final String SERVICES_TEXT = "Services";
+    /** The display text for the SwitchYard runtime navigator item. */
+    public static final String RUNTIME_TEXT = "SwitchYard";
 
     /** The "category" ID for the subsystems tree. */
     public static final String SUBSYSTEM_TREE_CATEGORY = "profiles";
+    /** The "category" ID for the domain runtime tree. */
+    public static final String SUBSYSTEM_DOMAIN_TREE_CATEGORY = "domain-runtime";
+    /** The "category" ID for the standalone runtime tree. */
+    public static final String SUBSYSTEM_STANDALONE_TREE_CATEGORY = "standalone-runtime";
     
     /**
      * @param name a string representation of a javax.xml.namespace.QName

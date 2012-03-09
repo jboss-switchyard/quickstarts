@@ -45,7 +45,10 @@ public class ServicesList extends AbstractDataTable<Service> {
         }
     };
 
-    ServicesList() {
+    /**
+     * Create a new ServicesList.
+     */
+    public ServicesList() {
         super("Services");
     }
 

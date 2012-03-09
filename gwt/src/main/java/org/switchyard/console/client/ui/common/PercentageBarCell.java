@@ -16,34 +16,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared;
+package org.switchyard.console.client.ui.common;
 
-import java.util.List;
-import java.util.Map;
+import org.jboss.as.console.client.shared.runtime.charts.StackedBar;
 
-import org.jboss.as.console.client.widgets.nav.Predicate;
+import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
- * SubsystemExtensionProcessor
+ * PercentageBarCell
  * 
- * Processes subsystem extensions and adds them to the groups list.
+ * <p/>
+ * A cell that displays a fractional value as a bar, whose fill corresponds to
+ * the fractional amount.
  * 
  * @author Rob Cernich
  */
-public interface SubsystemExtensionProcessor {
+public class PercentageBarCell extends AbstractCell<Double> {
+
+    private StackedBar _barControl;
+    private Widget _widget;
 
     /**
-     * Adds entries corresponding to extended subsystems.
-     * 
-     * @param groups the container for the groups.
+     * Create a new PercentageBarCell.
      */
-    public void processProfileExtensions(Map<String, SubsystemGroup> groups);
+    public PercentageBarCell() {
+        super((String[]) null);
+        _barControl = new StackedBar();
+        _widget = _barControl.asWidget();
+    }
 
-    /**
-     * Retrieves runtime predicates registered by subsystem extensions.
-     * 
-     * @return predicates registered by subsystem extensions.
-     */
-    public List<Predicate> getRuntimeExtensions();
+    @Override
+    public void render(com.google.gwt.cell.client.Cell.Context context, Double value, SafeHtmlBuilder sb) {
+        _barControl.setRatio(1.0, value);
+        sb.appendHtmlConstant(_widget.toString());
+    }
 
 }

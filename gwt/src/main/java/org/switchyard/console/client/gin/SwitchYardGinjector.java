@@ -25,6 +25,7 @@ import org.jboss.as.console.client.shared.SubsystemExtension.SubsystemItemDefini
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.ui.application.ApplicationPresenter;
 import org.switchyard.console.client.ui.config.ConfigPresenter;
+import org.switchyard.console.client.ui.runtime.RuntimePresenter;
 import org.switchyard.console.client.ui.service.ServicePresenter;
 
 import com.google.gwt.inject.client.AsyncProvider;
@@ -38,10 +39,10 @@ import com.google.gwt.inject.client.Ginjector;
  * 
  * @author Rob Cernich
  */
-@SubsystemExtension(@SubsystemGroupDefinition(name = "SwitchYard", subsystem = "switchyard", items = {
+@SubsystemExtension(subsystem = "switchyard", groups = @SubsystemGroupDefinition(name = "SwitchYard", items = {
         @SubsystemItemDefinition(presenter = NameTokens.SYSTEM_CONFIG_PRESENTER, name = NameTokens.SYSTEM_CONFIG_TEXT),
         @SubsystemItemDefinition(presenter = NameTokens.APPLICATIONS_PRESENTER, name = NameTokens.APPLICATIONS_TEXT),
-        @SubsystemItemDefinition(presenter = NameTokens.SERVICES_PRESENTER, name = NameTokens.SERVICES_TEXT) }))
+        @SubsystemItemDefinition(presenter = NameTokens.SERVICES_PRESENTER, name = NameTokens.SERVICES_TEXT) }), runtime = @SubsystemItemDefinition(presenter = NameTokens.RUNTIME_PRESENTER, name = NameTokens.RUNTIME_TEXT))
 @GinModules(SwitchYardClientModule.class)
 public interface SwitchYardGinjector extends Ginjector {
 
@@ -59,5 +60,10 @@ public interface SwitchYardGinjector extends Ginjector {
      * @return the ServicePresenter configured for the module.
      */
     AsyncProvider<ServicePresenter> getServicePresenter();
+
+    /**
+     * @return the RuntimePresenter configured for the module.
+     */
+    AsyncProvider<RuntimePresenter> getSwitchYardRuntimePresenter();
 
 }
