@@ -91,7 +91,19 @@ public class SwitchYardDeploymentProcessor implements DeploymentUnitProcessor {
         }
 
         switchyardServiceBuilder.setInitialMode(Mode.ACTIVE);
-        switchyardServiceBuilder.install();
+        // TODO: remove this sync code when WELD-1067 is moved to AS7
+        synchronized(this) {
+            switchyardServiceBuilder.install();
+            if (WeldDeploymentMarker.isPartOfWeldDeployment(deploymentUnit)) {
+                // Give some lead time to initialize Weld container
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    // ignore
+                    ex.getMessage();
+                }
+            }
+        }
     }
 
     @Override
