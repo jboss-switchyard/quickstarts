@@ -43,17 +43,15 @@ import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.ScannerOutput;
 import org.switchyard.config.model.composite.ComponentModel;
-import org.switchyard.config.model.composite.ComponentReferenceInterfaceModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeModel;
-import org.switchyard.config.model.composite.JavaComponentServiceInterfaceModel;
+import org.switchyard.config.model.composite.InterfaceModel;
 import org.switchyard.config.model.composite.v1.V1ComponentModel;
 import org.switchyard.config.model.composite.v1.V1ComponentReferenceModel;
 import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeModel;
-import org.switchyard.config.model.composite.v1.V1JavaComponentReferenceInterfaceModel;
-import org.switchyard.config.model.composite.v1.V1JavaComponentServiceInterfaceModel;
+import org.switchyard.config.model.composite.v1.V1InterfaceModel;
 import org.switchyard.config.model.resource.v1.V1ResourceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
@@ -172,7 +170,7 @@ public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
                     ComponentReferenceModel compRefModel = new V1ComponentReferenceModel();
                     compRefModel.setName(reference);
                     if (!Channel.UndefinedInterface.class.equals(channel.interfaze())) {
-                        ComponentReferenceInterfaceModel compRefIfaceModel = new V1JavaComponentReferenceInterfaceModel();
+                        InterfaceModel compRefIfaceModel = new V1InterfaceModel(InterfaceModel.JAVA);
                         compRefIfaceModel.setInterface(channel.interfaze().getName());
                         compRefModel.setInterface(compRefIfaceModel);
                         componentModel.addReference(compRefModel);
@@ -189,7 +187,7 @@ public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
             }
             componentModel.setImplementation(rciModel);
             ComponentServiceModel serviceModel = new V1ComponentServiceModel();
-            JavaComponentServiceInterfaceModel csiModel = new V1JavaComponentServiceInterfaceModel();
+            InterfaceModel csiModel = new V1InterfaceModel(InterfaceModel.JAVA);
             csiModel.setInterface(rulesInterface.getName());
             serviceModel.setInterface(csiModel);
             serviceModel.setName(rulesName);

@@ -40,17 +40,15 @@ import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.ScannerOutput;
 import org.switchyard.config.model.composite.ComponentModel;
-import org.switchyard.config.model.composite.ComponentReferenceInterfaceModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeModel;
-import org.switchyard.config.model.composite.JavaComponentServiceInterfaceModel;
+import org.switchyard.config.model.composite.InterfaceModel;
 import org.switchyard.config.model.composite.v1.V1ComponentModel;
 import org.switchyard.config.model.composite.v1.V1ComponentReferenceModel;
 import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeModel;
-import org.switchyard.config.model.composite.v1.V1JavaComponentReferenceInterfaceModel;
-import org.switchyard.config.model.composite.v1.V1JavaComponentServiceInterfaceModel;
+import org.switchyard.config.model.composite.v1.V1InterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.policy.TransactionPolicy;
@@ -92,7 +90,7 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             Service service = serviceClass.getAnnotation(Service.class);
             if (service != null) {
                 Class<?> iface = service.value();
-                JavaComponentServiceInterfaceModel csiModel = new V1JavaComponentServiceInterfaceModel();
+                InterfaceModel csiModel = new V1InterfaceModel(InterfaceModel.JAVA);
 
                 if (service.name().equals(Service.EMPTY)) {
                     name = iface.getSimpleName();
@@ -121,7 +119,7 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             for (Field field : getReferences(serviceClass)) {
                 Class<?> reference = field.getType(); 
                 ComponentReferenceModel referenceModel = new V1ComponentReferenceModel();
-                ComponentReferenceInterfaceModel interfaceModel = new V1JavaComponentReferenceInterfaceModel();
+                InterfaceModel interfaceModel = new V1InterfaceModel(InterfaceModel.JAVA);
                       
                 if (field.getAnnotation(Reference.class) != null) {
                     Reference ref = field.getAnnotation(Reference.class);

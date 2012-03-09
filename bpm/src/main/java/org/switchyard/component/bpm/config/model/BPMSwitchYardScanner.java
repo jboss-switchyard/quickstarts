@@ -48,11 +48,11 @@ import org.switchyard.config.model.ScannerOutput;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeModel;
-import org.switchyard.config.model.composite.JavaComponentServiceInterfaceModel;
+import org.switchyard.config.model.composite.InterfaceModel;
 import org.switchyard.config.model.composite.v1.V1ComponentModel;
 import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeModel;
-import org.switchyard.config.model.composite.v1.V1JavaComponentServiceInterfaceModel;
+import org.switchyard.config.model.composite.v1.V1InterfaceModel;
 import org.switchyard.config.model.resource.v1.V1ResourceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
@@ -102,7 +102,7 @@ public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
             if (processName == null) {
                 processName = processInterface.getSimpleName();
             }
-            JavaComponentServiceInterfaceModel csiModel = new V1JavaComponentServiceInterfaceModel();
+            InterfaceModel csiModel = new V1InterfaceModel(InterfaceModel.JAVA);
             csiModel.setInterface(processInterface.getName());
             ComponentServiceModel serviceModel = new V1ComponentServiceModel();
             serviceModel.setInterface(csiModel);

@@ -35,11 +35,11 @@ import org.switchyard.config.model.ScannerOutput;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeModel;
-import org.switchyard.config.model.composite.JavaComponentServiceInterfaceModel;
+import org.switchyard.config.model.composite.InterfaceModel;
 import org.switchyard.config.model.composite.v1.V1ComponentModel;
 import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeModel;
-import org.switchyard.config.model.composite.v1.V1JavaComponentServiceInterfaceModel;
+import org.switchyard.config.model.composite.v1.V1InterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 
@@ -71,7 +71,7 @@ public class RouteScanner implements Scanner<SwitchYardModel> {
             
             // Component service definition
             ComponentServiceModel serviceModel = new V1ComponentServiceModel();
-            JavaComponentServiceInterfaceModel csiModel = new V1JavaComponentServiceInterfaceModel();
+            InterfaceModel csiModel = new V1InterfaceModel(InterfaceModel.JAVA);
             Class<?> serviceInterface = routeClass.getAnnotation(Route.class).value();
             serviceModel.setName(serviceInterface.getSimpleName());
             csiModel.setInterface(serviceInterface.getName());
