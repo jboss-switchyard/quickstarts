@@ -80,12 +80,11 @@ public class CamelActivator extends BaseActivator {
                 CAMEL_TYPE, 
                 DIRECT_TYPE, 
                 FILE_TYPE});
-        
-        start();
     }
 
     @Override
     public ServiceHandler activateBinding(QName serviceName, BindingModel config) {
+        start();
         if (config.isServiceBinding()) {
             return new InboundHandler((CamelBindingModel)config, _camelContext, serviceName);
         } else {
@@ -95,6 +94,7 @@ public class CamelActivator extends BaseActivator {
     
     @Override
     public ServiceHandler activateService(QName serviceName, ComponentModel config) {
+        start();
         ServiceHandler handler = null;
         
         // process service
@@ -114,7 +114,7 @@ public class CamelActivator extends BaseActivator {
         super.setServiceDomain(serviceDomain);
         ServiceReferences.setDomain(serviceDomain);
     }
-    
+
     /**
      * Starts the camel context for this activator instance.
      */
@@ -126,11 +126,7 @@ public class CamelActivator extends BaseActivator {
      * Stops the camel context for this activator instance.
      */
     public void stop() {
-        try {
-            _camelContext.stop();
-        } catch (Exception ex) {
-            throw new SwitchYardException("CamelActivator failed to stop CamelContext.", ex);
-        }
+        stopCamelContext();
     }
 
     @Override
@@ -143,17 +139,30 @@ public class CamelActivator extends BaseActivator {
         // anything to do here?
     }
 
-    private void startCamelContext() {
-        try {
-            _camelContext =  new DefaultCamelContext(getRegistry());
-        
-            final PackageScanClassResolver packageScanClassResolver = getPackageScanClassResolver();
-            if (packageScanClassResolver != null) {
-                _camelContext.setPackageScanClassResolver(packageScanClassResolver);
+    private synchronized void startCamelContext() {
+        if (_camelContext == null) {
+            try {
+                _camelContext =  new DefaultCamelContext(getRegistry());
+            
+                final PackageScanClassResolver packageScanClassResolver = getPackageScanClassResolver();
+                if (packageScanClassResolver != null) {
+                    _camelContext.setPackageScanClassResolver(packageScanClassResolver);
+                }
+                _camelContext.start();
+            } catch (final Exception e) {
+                throw new SwitchYardException(e);
             }
-            _camelContext.start();
-        } catch (final Exception e) {
-            throw new SwitchYardException(e);
+        }
+    }
+
+    private synchronized void stopCamelContext() {
+        if (_camelContext != null) {
+            try {
+                _camelContext.stop();
+                _camelContext = null;
+            } catch (Exception ex) {
+                throw new SwitchYardException("CamelActivator failed to stop CamelContext.", ex);
+            }
         }
     }
     
