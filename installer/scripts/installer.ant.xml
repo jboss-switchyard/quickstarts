@@ -296,7 +296,7 @@
           </filelist>
           <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
         </move>
-
+		<antcall target="transform-console-module" />
     </target>
 
     <target name="unzipQuickstartResources" unless="quickstartResourcesAlreadyInstalled">
@@ -370,6 +370,10 @@
 
     <target name="install-sy-console" if="installSYConsole" depends="request-sy-console-install, download-sy-console">
     	<copy todir="${AS7_PATH}/modules/org/jboss/as/console/main" overwrite="true" file="res/switchyard-console-application.war"/>
+		<antcall target="transform-console-module" />
+	</target>
+
+	<target name="transform-console-module" depends="download-sy-tools">
         <xslt style="res/console_module.xsl"
               basedir="${AS7_PATH}/modules/org/jboss/as/console/main"
               destdir="${AS7_PATH}/modules/org/jboss/as/console/main"

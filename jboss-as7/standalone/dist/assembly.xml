@@ -17,6 +17,7 @@
                 <exclude>domain/</exclude>
                 <exclude>META-INF/</exclude>
                 <exclude>xsl/</exclude>
+                <exclude>modules/org/jboss/as/console/main/jboss-as-console*-resources.jar</exclude>
             </excludes>
             <fileMode>644</fileMode>
             <directoryMode>755</directoryMode>
