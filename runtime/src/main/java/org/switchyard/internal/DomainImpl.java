@@ -232,13 +232,23 @@ public class DomainImpl implements ServiceDomain {
         
         ServiceOperation referenceOp = reference.getInterface().getOperation(operation);
         if (referenceOp == null) {
-            throw new SwitchYardException("Operation " + operation 
+            // try for a default operation
+            if (reference.getInterface().getOperations().size() == 1) {
+                referenceOp = reference.getInterface().getOperations().iterator().next();
+            } else {
+                throw new SwitchYardException("Operation " + operation 
                     + " is not included in interface for reference: " + reference.getName());
+            }
         }
         ServiceOperation serviceOp = service.getInterface().getOperation(operation);
         if (serviceOp == null) {
-            throw new SwitchYardException("Operation " + operation 
+            // try for a default operation
+            if (service.getInterface().getOperations().size() == 1) {
+                serviceOp = service.getInterface().getOperations().iterator().next();
+            } else {
+                throw new SwitchYardException("Operation " + operation 
                     + " is not included in interface for service: " + service.getName());
+            }
         }
 
         ExchangeContract contract = new BaseExchangeContract(serviceOp, referenceOp);

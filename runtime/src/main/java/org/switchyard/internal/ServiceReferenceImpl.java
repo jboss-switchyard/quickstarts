@@ -99,11 +99,6 @@ public class ServiceReferenceImpl implements ServiceReference {
 
     @Override
     public Exchange createExchange(String operation, ExchangeHandler handler) {
-        if (_interface.getOperation(operation) == null) {
-            throw new SwitchYardException("Invalid operation " + operation 
-                    + " for service " + _name);
-        } 
-        
         Exchange ex = _domain.createExchange(this, operation, handler);
         for (Policy policy : _provides) {
             ExchangePolicy.provide(ex, policy);
