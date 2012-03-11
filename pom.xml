@@ -76,6 +76,7 @@
     <version.ballroom>1.0.1.Final</version.ballroom>
     <version.batik>1.7</version.batik>
     <version.camel>2.8.0</version.camel>
+    <version.cxf>2.4.6</version.cxf>
     <version.clojure>1.3.0-alpha5</version.clojure>
     <version.commons.httpclient>3.1</version.commons.httpclient>
     <version.fusesource.commonman>1.0</version.fusesource.commonman>
@@ -1034,6 +1035,11 @@
       </dependency>
       <dependency>
          <groupId>org.apache.camel</groupId>
+         <artifactId>camel-cxf</artifactId>
+         <version>${version.camel}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.camel</groupId>
          <artifactId>camel-jms</artifactId>
          <version>${version.camel}</version>
       </dependency>
@@ -1046,6 +1052,11 @@
          <groupId>org.apache.camel</groupId>
          <artifactId>camel-test</artifactId>
          <version>${version.camel}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.cxf</groupId>
+         <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+         <version>${version.cxf}</version>
       </dependency>
       <dependency>
          <groupId>org.apache.mina</groupId>
