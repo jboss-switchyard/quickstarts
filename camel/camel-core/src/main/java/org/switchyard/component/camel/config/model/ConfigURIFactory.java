@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,34 +16,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.camel.deploy;
 
-import org.switchyard.ServiceDomain;
-import org.switchyard.deploy.Activator;
-import org.switchyard.deploy.BaseComponent;
+package org.switchyard.component.camel.config.model;
+
+import org.switchyard.common.net.SocketAddr;
+import org.switchyard.component.camel.CamelConstants;
 
 /**
- * An implementation of Camel component.
+ * Creates Camel ConfigURI objects based on uri string.
  *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public class CamelComponent extends BaseComponent {
+public final class ConfigURIFactory {
 
-    /**
-     * Default constructor.
+    /** 
+     * No need to directly instantiate.
      */
-    public CamelComponent() {
-        setName("CamelComponent");
-        setActivator(new CamelActivator());
+    private ConfigURIFactory() {
     }
 
     /**
-     * {@inheritDoc}
+     * Construct a ConfigURI based on URI.
+     *
+     * @param uri the URI string
+     * @param socketAddr the SocketAddr
+     * @return a ConfigURI object
      */
-    @Override
-    public Activator getActivator(ServiceDomain domain) {
-        Activator activator = super.getActivator(domain);
-        ((CamelActivator) activator).setEnvironment(getConfig());
-        return activator;
+    public static ConfigURI newConfigURI(String uri, SocketAddr socketAddr) {
+        if ((uri != null) && uri.startsWith(CamelConstants.CXFRS_SCHEME)) {
+            return new CxfRsConfigURI(uri, socketAddr);
+        }
+        return new DefaultConfigURI(uri);
     }
 }

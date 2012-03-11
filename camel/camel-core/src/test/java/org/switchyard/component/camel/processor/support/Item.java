@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,34 +16,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.camel.deploy;
 
-import org.switchyard.ServiceDomain;
-import org.switchyard.deploy.Activator;
-import org.switchyard.deploy.BaseComponent;
+package org.switchyard.component.camel.processor.support;
 
 /**
- * An implementation of Camel component.
+ * Item for WarehouseService.
  *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public class CamelComponent extends BaseComponent {
+public class Item {
+    private Integer _itemId;
+    private String _name;
 
-    /**
-     * Default constructor.
-     */
-    public CamelComponent() {
-        setName("CamelComponent");
-        setActivator(new CamelActivator());
+    public Item(Integer itemId, String name) {
+        _itemId = itemId;
+        _name = name;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Activator getActivator(ServiceDomain domain) {
-        Activator activator = super.getActivator(domain);
-        ((CamelActivator) activator).setEnvironment(getConfig());
-        return activator;
+    public Integer getItemId() {
+        return _itemId;
+    }
+
+    public void setItemId(Integer itemId) {
+        _itemId = itemId;
+    }
+
+    public String getName() {
+        return _name;
+    }
+
+    public void setName(String name) {
+        _name = name;
     }
 }

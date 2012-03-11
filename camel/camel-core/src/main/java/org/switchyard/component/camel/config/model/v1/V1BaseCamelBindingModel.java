@@ -23,6 +23,7 @@ package org.switchyard.component.camel.config.model.v1;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.component.camel.config.model.OperationSelector;
 import org.switchyard.config.Configuration;
+import org.switchyard.config.Configurations;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.v1.V1BindingModel;
 
@@ -40,6 +41,7 @@ public abstract class V1BaseCamelBindingModel extends V1BindingModel implements
     public static final String CAMEL = "camel";
 
     private OperationSelector _operationSelector;
+    private Configuration _environment = Configurations.emptyConfig();
 
     /**
      * Constructor.
@@ -89,5 +91,23 @@ public abstract class V1BaseCamelBindingModel extends V1BindingModel implements
             setChildModel(operationSelector);
         }
         return this;
+    }
+
+    /**
+     * Returns the global configuration.
+     * 
+     * @return the environment/global config
+     */
+    public Configuration getEnvironment() {
+        return _environment;
+    }
+
+    /**
+     * Sets the global configuration.
+     * 
+     * @param config the environment/global config
+     */
+    public void setEnvironment(Configuration config) {
+        _environment = config;
     }
 }

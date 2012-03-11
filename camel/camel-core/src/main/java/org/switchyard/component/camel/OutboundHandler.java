@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
+import org.switchyard.component.camel.processor.ProcessorFactory;
 import org.switchyard.composer.MessageComposer;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.exception.SwitchYardException;
@@ -155,12 +156,7 @@ public class OutboundHandler extends BaseServiceHandler {
     }
     
     private Processor createProcessor(final Exchange switchyardExchange) {
-        return new Processor() {
-            @Override
-            public void process(org.apache.camel.Exchange camelExchange) throws Exception {
-                _messageComposer.decompose(switchyardExchange, camelExchange.getIn());
-            }
-        };
+        return ProcessorFactory.newProcessor(_messageComposer, switchyardExchange, _uri);
     }
     
     /**

@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,34 +16,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.camel.deploy;
 
-import org.switchyard.ServiceDomain;
-import org.switchyard.deploy.Activator;
-import org.switchyard.deploy.BaseComponent;
+package org.switchyard.component.camel.config.model;
+
+import org.switchyard.common.net.SocketAddr;
+import org.switchyard.component.camel.CamelConstants;
 
 /**
- * An implementation of Camel component.
+ * A cxfrs Camel configuration URI.
  *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public class CamelComponent extends BaseComponent {
+public class CxfRsConfigURI extends DefaultConfigURI {
 
     /**
-     * Default constructor.
+     * Creates a CxfRs configuration uri.
+     *
+     * @param uri the URI as string
+     * @param socketAddr the SocketAddr
      */
-    public CamelComponent() {
-        setName("CamelComponent");
-        setActivator(new CamelActivator());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Activator getActivator(ServiceDomain domain) {
-        Activator activator = super.getActivator(domain);
-        ((CamelActivator) activator).setEnvironment(getConfig());
-        return activator;
+    public CxfRsConfigURI(String uri, SocketAddr socketAddr) {
+        if (uri.startsWith(CamelConstants.CXFRS_HTTP_NO_HOST_SCHEME)) {
+            setURIString(CamelConstants.CXFRS_HTTP_SCHEME + socketAddr + uri.substring(CamelConstants.CXFRS_HTTP_SCHEME.length()));
+        } else {
+            setURIString(uri);
+        }
     }
 }

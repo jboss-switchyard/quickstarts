@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,34 +16,47 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.camel.deploy;
 
-import org.switchyard.ServiceDomain;
-import org.switchyard.deploy.Activator;
-import org.switchyard.deploy.BaseComponent;
+package org.switchyard.component.camel.processor.support;
+
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 
 /**
- * An implementation of Camel component.
+ * REST interface for WarehouseService.
  *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public class CamelComponent extends BaseComponent {
+@Path("/")
+public class WarehouseResource {
 
-    /**
-     * Default constructor.
-     */
-    public CamelComponent() {
-        setName("CamelComponent");
-        setActivator(new CamelActivator());
+    @GET
+    @Path("{itemId}")
+    public Item getItem(@PathParam("itemId") Integer itemId) {
+        return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Activator getActivator(ServiceDomain domain) {
-        Activator activator = super.getActivator(domain);
-        ((CamelActivator) activator).setEnvironment(getConfig());
-        return activator;
+    @PUT
+    @Path("/")
+    public void addItem(Item item) {
     }
+
+    @POST
+    @Path("/")
+    public void updateItem(Item item) {
+    }
+
+    @DELETE
+    public void removeItem(Integer itemId) {
+    }
+
+    @HEAD
+    public void whoIs() {
+    }
+
 }

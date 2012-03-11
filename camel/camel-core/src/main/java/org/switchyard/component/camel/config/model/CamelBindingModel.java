@@ -22,6 +22,7 @@ package org.switchyard.component.camel.config.model;
 
 import java.net.URI;
 
+import org.switchyard.config.Configuration;
 import org.switchyard.config.model.composite.BindingModel;
 
 /**
@@ -80,5 +81,12 @@ public interface CamelBindingModel extends BindingModel {
      * @return {@link CamelBindingModel} to support method chaining.
      */
     CamelBindingModel setOperationSelector(OperationSelector operationSelector);
+
+    /**
+     * Sets the global configuration.
+     * 
+     * @param config the environment/global config
+     */
+    public void setEnvironment(Configuration config);
 
 }

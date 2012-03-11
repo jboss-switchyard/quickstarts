@@ -50,6 +50,7 @@ import org.switchyard.component.camel.composer.CamelComposition;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.component.camel.config.model.CamelComponentImplementationModel;
 import org.switchyard.composer.MessageComposer;
+import org.switchyard.config.Configuration;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
@@ -71,6 +72,7 @@ public class CamelActivator extends BaseActivator {
     private static final String FILE_TYPE = "file";
     
     private CamelContext _camelContext;
+    private Configuration _environment;
     
     /**
      * Creates a new activator for Camel endpoint types.
@@ -85,10 +87,13 @@ public class CamelActivator extends BaseActivator {
     @Override
     public ServiceHandler activateBinding(QName serviceName, BindingModel config) {
         start();
-        if (config.isServiceBinding()) {
-            return new InboundHandler((CamelBindingModel)config, _camelContext, serviceName);
+        CamelBindingModel binding = (CamelBindingModel)config;
+        binding.setEnvironment(_environment);
+
+        if (binding.isServiceBinding()) {
+            return new InboundHandler(binding, _camelContext, serviceName);
         } else {
-            return createOutboundHandler((CamelBindingModel)config, config.getReference().getQName());
+            return createOutboundHandler(binding, binding.getReference().getQName());
         }
     }
     
@@ -302,6 +307,14 @@ public class CamelActivator extends BaseActivator {
      */
     public CamelContext getCamelContext() {
         return _camelContext;
+    }
+
+    /**
+     * Set the Environment configuration for the activator.
+     * @param config The global environment configuration.
+     */
+    public void setEnvironment(Configuration config) {
+        _environment = config;
     }
 
 }

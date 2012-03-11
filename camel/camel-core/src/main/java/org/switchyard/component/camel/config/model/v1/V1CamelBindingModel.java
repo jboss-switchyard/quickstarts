@@ -21,8 +21,10 @@
 package org.switchyard.component.camel.config.model.v1;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
+import org.switchyard.common.net.SocketAddr;
+import org.switchyard.component.camel.config.model.ConfigURI;
+import org.switchyard.component.camel.config.model.ConfigURIFactory;
 import org.switchyard.component.camel.config.model.OperationSelector;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
@@ -68,8 +70,10 @@ public class V1CamelBindingModel extends V1BaseCamelBindingModel {
      * The name of the transacedRef attribute.
      */
     public static final String TRANSACTED_REF = "transactedRef";
+
+    private static final String SOCKET_ADDRESS = "socketAddr";
     
-    private URI _configURI;
+    private ConfigURI _configURI;
     
     /**
      * Create a new CamelBindingModel.
@@ -94,11 +98,25 @@ public class V1CamelBindingModel extends V1BaseCamelBindingModel {
      * 
      * @return URI The binding uri attribute.
      */
-    public URI getConfigURI() {
+    public ConfigURI getConfigURI() {
         if (_configURI == null) {
-            _configURI = parseStringAsURI(getModelAttribute(CONFIG_URI));
+            _configURI = ConfigURIFactory.newConfigURI(getModelAttribute(CONFIG_URI), getSocketAddr());
         }
         return _configURI;
+    }
+
+    /**
+     * Sets the "uri" element on the underlying model.
+     * 
+     * @param uri The Camel config URI
+     * @return {@link CamelBindingModel} to support method chaining.
+     */
+    public V1CamelBindingModel setConfigURI(ConfigURI uri) {
+        if (_configURI == null) {
+            setModelAttribute(CONFIG_URI, uri.toString());
+            _configURI = uri;
+        }
+        return this;
     }
 
     /**
@@ -110,22 +128,25 @@ public class V1CamelBindingModel extends V1BaseCamelBindingModel {
     public V1CamelBindingModel setConfigURI(URI uri) {
         if (_configURI == null) {
             setModelAttribute(CONFIG_URI, uri.toString());
-            _configURI = uri;
+            _configURI = ConfigURIFactory.newConfigURI(uri.toString(), getSocketAddr());
         }
         return this;
+    }
+
+    private SocketAddr getSocketAddr() {
+        Configuration hostConfig = getEnvironment().getFirstChild(SOCKET_ADDRESS);
+        SocketAddr socketAddr = null;
+        if (hostConfig != null && hostConfig.getValue() != null) {
+            socketAddr = new SocketAddr(hostConfig.getValue());
+        } else {
+            socketAddr = new SocketAddr();
+        }
+        return socketAddr;
     }
     
     @Override
     public URI getComponentURI() {
-        return getConfigURI();
-    }
-
-    private URI parseStringAsURI(String uriString) {
-        try {
-            return new URI(uriString);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("URI [" + uriString + "] was invalid. Please check the configuration.", e);
-        }
+        return getConfigURI().getURI();
     }
 
     @Override
