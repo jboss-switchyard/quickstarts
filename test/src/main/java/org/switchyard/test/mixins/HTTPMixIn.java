@@ -275,6 +275,7 @@ public class HTTPMixIn extends AbstractTestMixIn {
                 final MultiThreadedHttpConnectionManager multiThreadedHttpConnectionManager = (MultiThreadedHttpConnectionManager)connectionManager;
                 multiThreadedHttpConnectionManager.shutdown();
             }
+            connectionManager.closeIdleConnections(0);
         }
     }
 }
