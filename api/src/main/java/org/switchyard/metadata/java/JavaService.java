@@ -176,26 +176,48 @@ public final class JavaService extends BaseService {
         }
     }
     
-    private final static class OperationTypeQNames {
+    /**
+     * Constructs QNames for method parameter and return types.
+     */
+    public final static class OperationTypeQNames {
 
         private Method _operationMethod;
         private OperationTypes _methodTypeNames;
 
-        private OperationTypeQNames(Method operationMethod) {
+        /**
+         * Construct am OperationTypeQNames.
+         *
+         * @param operationMethod the method that needs to pruned
+         */
+        public OperationTypeQNames(Method operationMethod) {
             this._operationMethod = operationMethod;
             this._methodTypeNames = operationMethod.getAnnotation(OperationTypes.class);
         }
 
+        /**
+         * Construct QName for method parameter.
+         *
+         * @return the QName
+         */
         public QName in() {
-            Class<?> inputType = _operationMethod.getParameterTypes()[0];
+            if (_operationMethod.getParameterTypes().length > 0) {
+                Class<?> inputType = _operationMethod.getParameterTypes()[0];
 
-            if (_methodTypeNames != null && _methodTypeNames.in().length() != 0) {
-                return QName.valueOf(_methodTypeNames.in());
+                if (_methodTypeNames != null && _methodTypeNames.in().length() != 0) {
+                    return QName.valueOf(_methodTypeNames.in());
+                }
+
+                return toMessageType(inputType);
+            } else {
+                return null;
             }
-
-            return toMessageType(inputType);
         }
 
+        /**
+         * Construct QName for method return type.
+         *
+         * @return the QName
+         */
         public QName out() {
             if (_methodTypeNames != null && _methodTypeNames.out().length() != 0) {
                 return QName.valueOf(_methodTypeNames.out());
@@ -204,6 +226,11 @@ public final class JavaService extends BaseService {
             return toMessageType(_operationMethod.getReturnType());
         }
 
+        /**
+         * Construct QName for exception thrown from method.
+         *
+         * @return the QName
+         */
         public QName fault() {
             Class<?>[] exceptions = _operationMethod.getExceptionTypes();
 
