@@ -64,6 +64,8 @@
         <module>demos/helpdesk</module>
         <module>demos/orders</module>
         <module>demos/webapp-deploy</module>
+        <module>demos/multiApp</module>
+        <module>demos/policy-transaction</module>
     </modules>
 
     <!-- Conditionally include the assembly module.  It's not always present e.g. in the quickstarts distro. -->
