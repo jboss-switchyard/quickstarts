@@ -29,13 +29,13 @@ import org.switchyard.config.Configuration;
  */
 public interface Component {
     /**
-     * Creates or configures an Activator associated with this Component.
+     * Creates and configures an Activator associated with this Component.
      * Component instances should attempt to use the domain passed
      * to configure the Activator associated with them.
      * @param domain The SwitchYard Service Domain.
      * @return An Activator instance that will be used by deployments.
      */
-    Activator getActivator(ServiceDomain domain);
+    Activator createActivator(ServiceDomain domain);
     /**
      * Returns the name of the Component instance.
      * @return The name.

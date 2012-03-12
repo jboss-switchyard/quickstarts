@@ -47,7 +47,7 @@ public final class ActivatorLoader {
         List<Activator> activators = new ArrayList<Activator>();
         ServiceLoader<Component> componentLoader = ServiceLoader.load(Component.class);
         for (Component component : componentLoader) {
-            Activator activator = component.getActivator(serviceDomain);
+            Activator activator = component.createActivator(serviceDomain);
             _log.debug("Registered activator " + activator.getClass());
             activators.add(activator);
         }
@@ -64,7 +64,7 @@ public final class ActivatorLoader {
     public static List<Activator> createActivators(ServiceDomain serviceDomain, List<Component> components) {
         List<Activator> activators = new ArrayList<Activator>();
         for (Component component : components) {
-            Activator activator = component.getActivator(serviceDomain);
+            Activator activator = component.createActivator(serviceDomain);
             _log.debug("Registered activator " + activator.getClass());
             activators.add(activator);
         }

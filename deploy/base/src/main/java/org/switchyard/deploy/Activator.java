@@ -91,4 +91,10 @@ public interface Activator {
      * @return Collection<String> The activation types that this Activator supports.
      */
     Collection<String> getActivationTypes();
+    
+    /**
+     * Destroys an Activator instance. Called during undeploy and allows the 
+     * activator to perform cleanup of any lingering resources.
+     */
+    void destroy();
 }

@@ -18,7 +18,6 @@
  */
 package org.switchyard.deploy;
 
-import org.switchyard.ServiceDomain;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Configurations;
 
@@ -28,34 +27,12 @@ import org.switchyard.config.Configurations;
 public abstract class BaseComponent implements Component {
 
     private String _name;
-    private Activator _activator;
     private Configuration _config = Configurations.emptyConfig();
 
     /**
      * Default constructor.
      */
     public BaseComponent() {
-    }
-
-    /* (non-Javadoc)
-     * @see org.switchyard.deploy.Component#getActivator(org.switchyard.ServiceDomain)
-     */
-    @Override
-    public Activator getActivator(ServiceDomain domain) {
-        if (_activator != null) {
-            ((BaseActivator) _activator).setServiceDomain(domain);
-        }
-        return _activator;
-    }
-
-    /**
-     * Sets the {@link Activator} for this component.
-     *
-     * @param activator the Activator to set
-     * @see org.switchyard.deploy.Component#getActivator(org.switchyard.ServiceDomain)
-     */
-    public void setActivator(Activator activator) {
-        _activator = activator;
     }
 
     /* (non-Javadoc)

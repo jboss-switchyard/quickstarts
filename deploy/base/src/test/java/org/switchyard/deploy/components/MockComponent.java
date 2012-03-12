@@ -32,7 +32,7 @@ public class MockComponent extends BaseComponent {
     }
 
     @Override
-    public Activator getActivator(ServiceDomain domain) {
+    public Activator createActivator(ServiceDomain domain) {
         return new MockActivator();
     }
 

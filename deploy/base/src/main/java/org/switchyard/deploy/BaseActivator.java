@@ -103,4 +103,10 @@ public abstract class BaseActivator implements Activator {
     public Collection<String> getActivationTypes() {
         return Collections.unmodifiableList(_activationTypes);
     }
+
+    @Override
+    public void destroy() {
+        // NOP so that Activator impls don't have to bother with this method
+        // if they don't have anything to do in destroy().
+    }
 }
