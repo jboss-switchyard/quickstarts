@@ -30,7 +30,7 @@
     <groupId>rubygems</groupId>
     <artifactId>switchyard</artifactId>
     <packaging>java-gem</packaging>
-    <version>0.4.0-SNAPSHOT</version>
+    <version>0.4.0.CR1</version>
     <name>Switchyard: Ruby Gem</name>
     <description>Ruby Gem for running on Torquebox</description>
 
