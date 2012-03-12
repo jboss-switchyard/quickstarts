@@ -10,19 +10,24 @@ Running the quickstart
 
 1. Build the quickstart:
     mvn clean install
-2. Start JBoss AS 7 in standalone mode:
-    ./standalone --server-config=standalone-preview.xml
-3. Create the queues for the JMS gateway bindings
-    ./jboss-admin.sh file=src/test/resources/create-resources.cli
-5. Deploy the quickstart
+2. Start JBoss AS 7 in standalone-full mode:
+    ./standalone --server-config=standalone-full.xml
+3. Add JMS user using add-user.sh with username=guest, password=guestp, Realm=ApplicationRealm
+    ./add-user.sh
+4. Add a guest role to the user "guest"
+   echo "guest=guest" >> ${AS7}/standalone/configuration/application-roles.properties
+5. Deploy JMS Queue
+    cp src/test/resources/switchyard-quickstart-demo-policy-transaction-hornetq-jms.xml ${AS7}/standalone/deployments
+6. Deploy the quickstart
     cp target/switchyard-quickstarts-policy-transaction.jar ${AS7}/standalone/deployments
-6. Execute HornetQClient
+7. Execute HornetQClient
     mvn exec:java
-7. Check the server console for output from the service.  With the default
+8. Check the server console for output from the service.  With the default
    configuration of the quickstart, you should see the output below in the
    AS server.log.
-8. Undeploy the application
+9. Undeploy the application
     rm ${AS7}/standalone/deployments/switchyard-quickstart-policy-transaction-{version}.jar.deployed
+    rm ${AS7}/standalone/deployments/switchyard-quickstart-demos-policy-transaction-hornetq-jms.xml
 
 ```
 :: WorkService :: Received command =>  rollback

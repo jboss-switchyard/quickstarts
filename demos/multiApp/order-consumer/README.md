@@ -10,14 +10,15 @@ JBoss AS 7
     mvn clean install
 2. Start JBoss AS 7 in standalone-full mode:
     ${AS}/bin/standalone.sh --server-config=standalone-full.xml
-3. Start JBoss CLI and connect: 
-    ./jboss-admin.sh --connect
-4. Create the JMS Queue using CLI:
-    add-jms-queue --name=OrderRequestQueue --entries=OrderRequestQueue  
-    add-jms-queue --name=OrderReplyQueue --entries=OrderReplyQueue                                                         
-5. Deploy the quickstart
+3. Add JMS user using add-user.sh with username=guest, password=guestp, Realm=ApplicationRealm
+    ./add-user.sh
+4. Add a guest role to the user "guest"
+   echo "guest=guest" >> ${AS7}/standalone/configuration/application-roles.properties
+5. Deploy JMS Queue
+    cp src/test/resources/switchyard-quickstart-demo-multi-order-consumer-hornetq-jms.xml ${AS7}/standalone/deployments
+6. Deploy the quickstart
     cp target/switchyard-quickstart-demo-multi-order-consumer.jar ${AS7}/standalone/deployments
-6. Execute the test client
+7. Execute the test client
     mvn exec:java
-7. Check the server console for output from the service.
+8. Check the server console for output from the service.
 
