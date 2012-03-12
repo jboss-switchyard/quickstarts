@@ -89,6 +89,7 @@
     <target name="download-as7" depends="download-as7-zip">
 	<echo>Installing AS7 ...</echo>
         <unzip src="res/jboss-as-${as7.version}.zip" dest="${basedir}" overwrite="true"/>
+    	<chmod dir="${basedir}/jboss-as-${as7.version}/bin" perm="ugo+rx" includes="**/*.sh"/>
     </target>
 
     <target name="download-sy-as7" depends="download-sy-as7-check" if="sy.as7.not.available">
