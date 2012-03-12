@@ -25,20 +25,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.jms.BytesMessage;
-import javax.jms.Connection;
-import javax.jms.DeliveryMode;
-import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
-import javax.naming.Context;
-import javax.naming.NamingException;
 
-import org.hornetq.api.core.TransportConfiguration;
-import org.hornetq.core.remoting.impl.netty.NettyConnectorFactory;
-import org.hornetq.jms.client.HornetQConnectionFactory;
-import org.hornetq.jms.client.HornetQQueue;
 import org.milyn.io.StreamUtils;
+import org.switchyard.test.mixins.HornetQMixIn;
 
 /**
  * JMS-based client for submitting orders to the OrderService.
@@ -48,6 +40,8 @@ public final class OrderIntakeClient {
     
     private static final String ORDER_QUEUE_NAME = "OrderRequestQueue";
     private static final String ORDERACK_QUEUE_NAME = "OrderReplyQueue";
+    private static final String USER = "guest";
+    private static final String PASSWD = "guestp";
    
     /**
      * Main routing for OrderIntakeClient
@@ -55,29 +49,26 @@ public final class OrderIntakeClient {
      * @throws Exception if something goes wrong.
      */
     public static void main(final String[] args) throws Exception {
-        HornetQConnectionFactory hornetQConnectionFactory = null;
-        Connection connection = null;
-        Session session = null;
+        HornetQMixIn hqMixIn = new HornetQMixIn(false)
+                                    .setUser(USER)
+                                    .setPassword(PASSWD);
+        hqMixIn.initialize();
         
         try {
-            hornetQConnectionFactory = new HornetQConnectionFactory(false, 
-                    new TransportConfiguration(NettyConnectorFactory.class.getName()));
-            connection = hornetQConnectionFactory.createConnection();
-            connection.start();
+            Session session = hqMixIn.getJMSSession();
+            MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(ORDER_QUEUE_NAME));
             
-            session = connection.createSession(false, DeliveryMode.NON_PERSISTENT);
-            MessageProducer producer = session.createProducer(new HornetQQueue(ORDER_QUEUE_NAME));
             String orderTxt = readFileContent(args[0]);
             System.out.println("Submitting Order" + "\n"
                     + "----------------------------\n"
                     + orderTxt
                     + "\n----------------------------");
-            producer.send(session.createTextMessage(orderTxt));
-            MessageConsumer consumer = session.createConsumer(new HornetQQueue(ORDERACK_QUEUE_NAME));
+            producer.send(hqMixIn.createJMSMessage(orderTxt));
+            MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(ORDERACK_QUEUE_NAME));
             System.out.println("Order submitted ... waiting for reply.");
             BytesMessage reply = (BytesMessage)consumer.receive(3000);
             if (reply == null) {
-                System.out.println("No repy received.");
+                System.out.println("No reply received.");
             } else {
                 byte[] buf = new byte[1024];
                 int count = reply.readBytes(buf);
@@ -88,9 +79,7 @@ public final class OrderIntakeClient {
                         + "\n----------------------------");
             }
         } finally {
-            closeSession(session);
-            closeConnection(connection);
-            closeConnectionFactory(hornetQConnectionFactory);
+            hqMixIn.uninitialize();
         }
     }
     
@@ -114,59 +103,4 @@ public final class OrderIntakeClient {
             }
         }
     }
-    
-    /**
-     * Closes the session.
-     * @param session the session to close.
-     */
-    public static void closeSession(final Session session) {
-        try {
-            if (session != null) {
-                session.close();
-            }
-        } catch (JMSException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    /**
-     * Closes the connection.
-     * @param connection the connection to close.
-     */
-    public static void closeConnection(final Connection connection) {
-        try {
-            if (connection != null) {
-                connection.close();
-            }
-        } catch (JMSException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    /**
-     * Closes the HornetQConnectionFactory.
-     * @param factory the HornetQConnectionFactory to close.
-     */
-    public static void closeConnectionFactory(final HornetQConnectionFactory factory) {
-        if (factory != null) {
-            factory.close();
-        }
-    }
-    
-    /**
-     * Closes the passed-in Context.
-     * @param context the context to close.
-     */
-    public static void closeContext(final Context context) {
-        if (context == null) {
-            return;
-        }
-            
-        try {
-            context.close();
-        } catch (NamingException e) {
-            e.printStackTrace();
-        }
-    }
-    
 }
