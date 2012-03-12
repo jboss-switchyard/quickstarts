@@ -29,8 +29,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.switchyard.Exchange;
 import org.switchyard.Message;
+import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
-import org.switchyard.component.camel.deploy.ServiceReferences;
+import org.switchyard.component.camel.deploy.CamelActivator;
 import org.switchyard.composer.MessageComposer;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceOperation;
@@ -75,7 +76,8 @@ public class SwitchYardProducer extends DefaultProducer {
     @Override
     public void process(final org.apache.camel.Exchange camelExchange) throws Exception {
         final String targetUri = (String) camelExchange.getProperty("CamelToEndpoint");
-        final ServiceReference serviceRef = lookupServiceReference(targetUri);
+        ServiceDomain domain = (ServiceDomain)camelExchange.getContext().getRegistry().lookup(CamelActivator.SERVICE_DOMAIN);
+        final ServiceReference serviceRef = lookupServiceReference(targetUri, domain);
         if (_operationName == null) {
             _operationName = lookupOperationNameFor(serviceRef);
         }
@@ -90,9 +92,9 @@ public class SwitchYardProducer extends DefaultProducer {
         switchyardExchange.send(switchyardMessage);
     }
     
-    private ServiceReference lookupServiceReference(final String targetUri) {
+    private ServiceReference lookupServiceReference(final String targetUri, ServiceDomain domain) {
         final QName serviceName = composeSwitchYardServiceName(_namespace, targetUri);
-        final ServiceReference serviceRef = ServiceReferences.get(serviceName);
+        final ServiceReference serviceRef = domain.getServiceReference(serviceName);
         if (serviceRef == null) {
             throw new NullPointerException("No ServiceReference was found for uri [" + targetUri + "]");
         }

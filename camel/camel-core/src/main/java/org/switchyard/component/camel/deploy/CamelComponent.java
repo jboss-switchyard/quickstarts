@@ -34,16 +34,16 @@ public class CamelComponent extends BaseComponent {
      */
     public CamelComponent() {
         setName("CamelComponent");
-        setActivator(new CamelActivator());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Activator getActivator(ServiceDomain domain) {
-        Activator activator = super.getActivator(domain);
-        ((CamelActivator) activator).setEnvironment(getConfig());
+    public Activator createActivator(ServiceDomain domain) {
+        CamelActivator activator = new CamelActivator();
+        activator.setServiceDomain(domain);
+        activator.setEnvironment(getConfig());
         return activator;
     }
 }

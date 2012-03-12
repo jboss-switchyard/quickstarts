@@ -33,13 +33,13 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
-import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.camel.InboundHandler;
 import org.switchyard.component.camel.OutboundHandler;
@@ -66,6 +66,12 @@ import org.switchyard.exception.SwitchYardException;
  *
  */
 public class CamelActivator extends BaseActivator {
+
+    /**
+     * Property added to each Camel Context so that code initialized inside 
+     * Camel can access the SY service domain.
+     */
+    public static final String SERVICE_DOMAIN = "org.switchyard.camel.serviceDomain";
     
     private static final String CAMEL_TYPE = "camel";
     private static final String DIRECT_TYPE = "direct";
@@ -112,13 +118,6 @@ public class CamelActivator extends BaseActivator {
         
         return handler;
     }
-    
-    
-    @Override
-    public void setServiceDomain(ServiceDomain serviceDomain) {
-        super.setServiceDomain(serviceDomain);
-        ServiceReferences.setDomain(serviceDomain);
-    }
 
     /**
      * Starts the camel context for this activator instance.
@@ -132,6 +131,11 @@ public class CamelActivator extends BaseActivator {
      */
     public void stop() {
         stopCamelContext();
+    }
+    
+    @Override
+    public void destroy() {
+        stop();
     }
 
     @Override
@@ -193,6 +197,11 @@ public class CamelActivator extends BaseActivator {
         for (Registry registry : registriesLoaders) {
             registries.add(registry);
         }
+        
+        // Simple registry to hold SY props in camel context
+        SimpleRegistry syProps = new SimpleRegistry();
+        syProps.put(SERVICE_DOMAIN, getServiceDomain());
+        registries.add(syProps);
         
         return new CompositeRegistry(registries);
     }

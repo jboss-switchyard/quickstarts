@@ -18,6 +18,8 @@
  */
 package org.switchyard.component.clojure.deploy;
 
+import org.switchyard.ServiceDomain;
+import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.BaseComponent;
 
 /**
@@ -32,7 +34,16 @@ public class ClojureComponent extends BaseComponent {
      */
     public ClojureComponent() {
         setName("ClojureComponent");
-        setActivator(new ClojureActivator());
+    }
+
+    /* (non-Javadoc)
+     * @see org.switchyard.deploy.Component#createActivator(org.switchyard.ServiceDomain)
+     */
+    @Override
+    public Activator createActivator(ServiceDomain domain) {
+        ClojureActivator activator = new ClojureActivator();
+        activator.setServiceDomain(domain);
+        return activator;
     }
 
 }

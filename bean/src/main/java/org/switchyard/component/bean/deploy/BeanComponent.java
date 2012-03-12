@@ -18,6 +18,8 @@
  */
 package org.switchyard.component.bean.deploy;
 
+import org.switchyard.ServiceDomain;
+import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.BaseComponent;
 
 /**
@@ -32,7 +34,16 @@ public class BeanComponent extends BaseComponent {
      */
     public BeanComponent() {
         setName("BeanComponent");
-        setActivator(new BeanComponentActivator());
+    }
+
+    /* (non-Javadoc)
+     * @see org.switchyard.deploy.Component#createActivator(org.switchyard.ServiceDomain)
+     */
+    @Override
+    public Activator createActivator(ServiceDomain domain) {
+        BeanComponentActivator activator = new BeanComponentActivator();
+        activator.setServiceDomain(domain);
+        return activator;
     }
 
 }

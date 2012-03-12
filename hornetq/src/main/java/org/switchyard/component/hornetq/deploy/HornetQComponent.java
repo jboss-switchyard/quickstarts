@@ -18,6 +18,8 @@
  */
 package org.switchyard.component.hornetq.deploy;
 
+import org.switchyard.ServiceDomain;
+import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.BaseComponent;
 
 /**
@@ -32,7 +34,13 @@ public class HornetQComponent extends BaseComponent {
      */
     public HornetQComponent() {
         setName("HornetQComponent");
-        setActivator(new HornetQActivator());
+    }
+
+    @Override
+    public Activator createActivator(ServiceDomain domain) {
+        HornetQActivator activator = new HornetQActivator();
+        activator.setServiceDomain(domain);
+        return activator;
     }
 
 }

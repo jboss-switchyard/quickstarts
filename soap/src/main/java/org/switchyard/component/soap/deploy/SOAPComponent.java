@@ -35,16 +35,16 @@ public class SOAPComponent extends BaseComponent {
     public SOAPComponent() {
         super();
         setName("SOAPComponent");
-        setActivator(new SOAPActivator());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Activator getActivator(ServiceDomain domain) {
-        Activator activator = super.getActivator(domain);
-        ((SOAPActivator) activator).setEnvironment(getConfig());
+    public Activator createActivator(ServiceDomain domain) {
+        SOAPActivator activator = new SOAPActivator();
+        activator.setServiceDomain(domain);
+        activator.setEnvironment(getConfig());
         return activator;
     }
 }

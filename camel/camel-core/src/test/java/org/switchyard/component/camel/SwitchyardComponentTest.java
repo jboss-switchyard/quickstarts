@@ -26,8 +26,8 @@ import static org.hamcrest.CoreMatchers.is;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.BaseHandler;
@@ -35,7 +35,7 @@ import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
-import org.switchyard.component.camel.deploy.ServiceReferences;
+import org.switchyard.component.camel.deploy.CamelActivator;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.test.MockHandler;
@@ -56,10 +56,6 @@ public class SwitchyardComponentTest extends CamelTestSupport {
 
     private ServiceDomain _serviceDomain;
 
-    @Before
-    public void setup() throws Exception {
-        ServiceReferences.setDomain(_serviceDomain);
-    }
     
     @Test
     public void sendToSwitchyardInOut() throws Exception {
@@ -98,6 +94,13 @@ public class SwitchyardComponentTest extends CamelTestSupport {
                 .to("mock:result");
             }
         };
+    }
+    
+    @Override 
+    protected JndiRegistry createRegistry() {
+        JndiRegistry reg = new JndiRegistry();
+        reg.bind(CamelActivator.SERVICE_DOMAIN, _serviceDomain);
+        return reg;
     }
 
     private static class ResponseService extends BaseHandler {
