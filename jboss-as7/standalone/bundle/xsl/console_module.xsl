@@ -26,6 +26,7 @@
     xmlns:fn="http://www.w3.org/2005/xpath-functions"
     xmlns:xdt="http://www.w3.org/2005/xpath-datatypes"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="urn:jboss:module:1.1"
     exclude-result-prefixes="xs xsl xsi fn xdt">
     <!--
     https://issues.jboss.org/browse/SWITCHYARD-548
