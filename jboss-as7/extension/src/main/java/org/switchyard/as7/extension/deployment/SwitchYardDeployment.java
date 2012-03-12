@@ -96,10 +96,9 @@ public class SwitchYardDeployment {
             Thread.currentThread().setContextClassLoader(module.getClassLoader());
             setDeploymentState(SwitchYardDeploymentState.INITIALIZING);
 
-            // Use the ROOT_DOMAIN name for now.  Getting an exception SwitchYardModel.getQName().
-            _appServiceDomain = _domainManager.createDomain(ServiceDomainManager.ROOT_DOMAIN, _deployment.getConfig());
-
+            _appServiceDomain = _domainManager.createDomain(_deployment.getName(), _deployment.getConfig());
             _deployment.init(_appServiceDomain, ActivatorLoader.createActivators(_appServiceDomain, components));
+            
             setDeploymentState(SwitchYardDeploymentState.STARTING);
             _deployment.start();
             setDeploymentState(SwitchYardDeploymentState.STARTED);
