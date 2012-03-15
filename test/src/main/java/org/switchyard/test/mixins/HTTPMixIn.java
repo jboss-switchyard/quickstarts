@@ -26,7 +26,12 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
+import org.apache.commons.httpclient.methods.DeleteMethod;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.HeadMethod;
+import org.apache.commons.httpclient.methods.OptionsMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
@@ -45,6 +50,36 @@ import java.util.HashMap;
  */
 public class HTTPMixIn extends AbstractTestMixIn {
     private static Logger _logger = Logger.getLogger(HTTPMixIn.class);
+
+    /**
+     * Constant representing HTTP DELETE method.
+     */
+    public static final String HTTP_DELETE = "DELETE";
+
+    /**
+     * Constant representing HTTP GET method.
+     */
+    public static final String HTTP_GET = "GET";
+
+    /**
+     * Constant representing HTTP HEAD method.
+     */
+    public static final String HTTP_HEAD = "HEAD";
+
+    /**
+     * Constant representing HTTP POST method.
+     */
+    public static final String HTTP_POST = "POST";
+
+    /**
+     * Constant representing HTTP PUT method.
+     */
+    public static final String HTTP_PUT = "PUT";
+
+    /**
+     * Constant representing HTTP OPTIONS method.
+     */
+    public static final String HTTP_OPTIONS = "OPTIONS";
 
     private HttpClient _httpClient;
     private String _contentType = "text/xml";
@@ -68,6 +103,46 @@ public class HTTPMixIn extends AbstractTestMixIn {
     @Override
     public void initialize() {
         _httpClient = new HttpClient();
+    }
+
+    /**
+     * Send the specified request payload to the specified HTTP endpoint using the method specified.
+     * @param endpointURL The HTTP endpoint URL.
+     * @param request The request payload.
+     * @param method The request method.
+     * @return The HTTP response payload.
+     */
+    public String sendString(String endpointURL, String request, String method) {
+        if (_dumpMessages) {
+            _logger.info("Sending a " + method + " request to [" + endpointURL + "]");
+            _logger.info("Request body:[" + request + "]");
+        }
+        try {
+            if (method.equals(HTTP_PUT)) {
+                PutMethod httpMethod = new PutMethod(endpointURL);
+                httpMethod.setRequestEntity(new StringRequestEntity(request, _contentType, "UTF-8"));
+                return execute(httpMethod);
+            } else if (method.equals(HTTP_POST)) {
+                PostMethod httpMethod = new PostMethod(endpointURL);
+                httpMethod.setRequestEntity(new StringRequestEntity(request, _contentType, "UTF-8"));
+                return execute(httpMethod);
+            } else if (method.equals(HTTP_DELETE)) {
+                DeleteMethod httpMethod = new DeleteMethod(endpointURL);
+                return execute(httpMethod);
+            } else if (method.equals(HTTP_OPTIONS)) {
+                OptionsMethod httpMethod = new OptionsMethod(endpointURL);
+                return execute(httpMethod);
+            } else if (method.equals(HTTP_HEAD)) {
+                HeadMethod httpMethod = new HeadMethod(endpointURL);
+                return execute(httpMethod);
+            } else {
+                GetMethod httpMethod = new GetMethod(endpointURL);
+                return execute(httpMethod);
+            }
+        } catch (UnsupportedEncodingException e) {
+            _logger.error("Unable to set request entity", e);
+        }
+        return null;
     }
 
     /**

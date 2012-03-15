@@ -90,7 +90,7 @@ public final class JavaService extends BaseService {
                 // At this point, we only accept methods with a single 
                 // parameter which maps to the input message
                 Class<?>[] params = m.getParameterTypes();
-                if (params.length != 1) {
+                if (params.length > 1) {
                     throw new RuntimeException(
                             "Service operations on a Java interface must have exactly one parameter.");
                 }

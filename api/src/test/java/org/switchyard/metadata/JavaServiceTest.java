@@ -22,6 +22,7 @@ package org.switchyard.metadata;
 import javax.xml.namespace.QName;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.switchyard.ExchangePattern;
 import org.switchyard.annotations.OperationTypes;
@@ -160,7 +161,7 @@ interface JavaInterface {
 
 // Method with no parameter
 interface JavaInterfaceBadSig {
-    void method1();
+    void method1(Object foo, Object bar);
 }
 
 // This class has one method eligible for service operation
