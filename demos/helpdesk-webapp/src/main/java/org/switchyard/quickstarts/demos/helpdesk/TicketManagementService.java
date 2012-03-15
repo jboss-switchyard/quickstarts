@@ -18,31 +18,19 @@
  */
 package org.switchyard.quickstarts.demos.helpdesk;
 
-import java.io.Serializable;
-
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-@SuppressWarnings("serial")
-public class Ticket implements Serializable {
+public interface TicketManagementService {
 
-    private String _id;
-    private String _status;
+    public TicketAck openTicket(Ticket ticket);
 
-    public String getId() {
-        return _id;
-    }
+    public void approveTicket(Ticket ticket);
 
-    public void setId(String id) {
-        _id = id;
-    }
+    public void closeTicket(Ticket ticket);
 
-    public String getStatus() {
-        return _status;
-    }
+    public void requestDetails(Ticket ticket);
 
-    public void setStatus(String status) {
-        _status = status;
-    }
+    public void rejectTicket(Ticket ticket);
 
 }

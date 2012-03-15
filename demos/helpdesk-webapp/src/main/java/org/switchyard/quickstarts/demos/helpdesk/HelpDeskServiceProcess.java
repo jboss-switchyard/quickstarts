@@ -18,31 +18,15 @@
  */
 package org.switchyard.quickstarts.demos.helpdesk;
 
-import java.io.Serializable;
+import org.switchyard.component.bpm.Process;
+import org.switchyard.component.bpm.task.work.jbpm.CommandBasedWSHumanTaskHandler;
 
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-@SuppressWarnings("serial")
-public class Ticket implements Serializable {
-
-    private String _id;
-    private String _status;
-
-    public String getId() {
-        return _id;
-    }
-
-    public void setId(String id) {
-        _id = id;
-    }
-
-    public String getStatus() {
-        return _status;
-    }
-
-    public void setStatus(String status) {
-        _status = status;
-    }
-
-}
+@Process(
+    value=HelpDeskService.class,
+    messageContentInName="ticket",
+    messageContentOutName="ticketAck",
+    taskHandlers={CommandBasedWSHumanTaskHandler.class})
+public interface HelpDeskServiceProcess {}

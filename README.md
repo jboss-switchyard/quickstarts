@@ -23,7 +23,8 @@ Quickstarts
 Quickstart Demos
 ----------------
 * __helpdesk__ : an example application demonstrating features of BPM and SOAP.
+* __helpdesk-webapp__ : an example web application demonstrating features of BPM and SOAP.
 * __orders__ : includes a JSF front-end demonstrating injection of service references into webapps.
 * __policy-transaction__ : uses transaction policy to control transactional characteristics of a service.
 * __webapp-deploy__ : demonstrates deployment of SwitchYard embedded in a web application.
-  
+ 

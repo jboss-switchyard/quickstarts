@@ -89,7 +89,7 @@ public class HelpDeskTests {
                 Long taskId = task.getId();
                 client.claim(taskId, userId, groupIds);
                 client.start(taskId, userId);
-                client.complete(taskId, userId);
+                client.complete(taskId, userId, null);
                 keepWorking = true;
             }
         }
