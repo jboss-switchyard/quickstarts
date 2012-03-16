@@ -39,7 +39,7 @@
     <packaging>jar</packaging>
     <name>SwitchYard: Test Utilities</name>
     <description>Test Utility classes.</description>
-    <url>http://switchyard.org/</url>
+    <url>http://switchyard.org</url>
 
     <dependencies>
         <!-- internal dependencies -->

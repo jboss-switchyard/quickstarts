@@ -39,7 +39,7 @@
 	<packaging>jar</packaging>
 	<name>SwitchYard: Validate</name>
 	<description>The SwitchYard Validate library.</description>
-	<url>http://switchyard/</url>
+	<url>http://switchyard.org</url>
 	
 	<dependencies>
 		<!-- internal dependencies -->

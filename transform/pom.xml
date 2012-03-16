@@ -39,7 +39,7 @@
 	<packaging>jar</packaging>
 	<name>SwitchYard: Transform</name>
 	<description>The SwitchYard Transform library.</description>
-	<url>http://switchyard/</url>
+	<url>http://switchyard.org</url>
 	
 	<dependencies>
 		<!-- internal dependencies -->

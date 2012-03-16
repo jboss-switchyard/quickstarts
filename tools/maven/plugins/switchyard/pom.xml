@@ -39,7 +39,7 @@
 	<packaging>maven-plugin</packaging>
 	<name>SwitchYard: "switchyard" Plugin</name>
 	<description>The SwitchYard Plugin.</description>
-	<url>http://switchyard/</url>
+	<url>http://switchyard.org</url>
 
 	<build>
 		<plugins>

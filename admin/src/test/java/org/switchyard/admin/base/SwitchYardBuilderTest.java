@@ -44,7 +44,7 @@ public class SwitchYardBuilderTest {
     
     @Before
     public void setUp() {
-        _switchYard = new BaseSwitchYard("1.0");
+        _switchYard = new BaseSwitchYard();
         SwitchYardBuilder builder = new SwitchYardBuilder(_switchYard);
         builder.notify(new ApplicationDeployedEvent(_deployment));
     }
@@ -69,7 +69,7 @@ public class SwitchYardBuilderTest {
         Deployment testDeployment = new MockDeployment(
                 new ModelPuller<SwitchYardModel>().pull("switchyard_multiappweb.xml", getClass()), 
                 QName.valueOf("{urn:switchyard-quickstart-demo:multiapp:0.1.0}web"));
-        BaseSwitchYard switchYard = new BaseSwitchYard("1.0");
+        BaseSwitchYard switchYard = new BaseSwitchYard();
         SwitchYardBuilder builder = new SwitchYardBuilder(switchYard);
         builder.notify(new ApplicationDeployedEvent(testDeployment));
         

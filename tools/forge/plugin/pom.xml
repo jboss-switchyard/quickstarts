@@ -12,8 +12,7 @@
   <artifactId>switchyard-forge-plugin</artifactId>
   <name>SwitchYard: Forge Plugin</name>
   <description>SwitchYard Forge Support</description>
-  <url>http://switchyard.org/</url>
-
+  <url>http://switchyard.org</url>
 
   <dependencies>
     <dependency>
@@ -49,22 +48,6 @@
   </dependencies>
 
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-        <includes>
-          <include>**/*.properties</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>false</filtering>
-        <excludes>
-          <exclude>**/*.properties</exclude>
-        </excludes>
-      </resource>
-    </resources>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>

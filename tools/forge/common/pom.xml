@@ -12,7 +12,7 @@
   <artifactId>switchyard-forge-common</artifactId>
   <name>SwitchYard: Forge Common</name>
   <description>Common Classes for Forge Support</description>
-  <url>http://switchyard.org/</url>
+  <url>http://switchyard.org</url>
 
   <dependencies>
     <dependency>

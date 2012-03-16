@@ -39,7 +39,7 @@
 	<packaging>jar</packaging>
 	<name>SwitchYard: Runtime</name>
 	<description>The core runtime library.</description>
-	<url>http://switchyard/</url>
+	<url>http://switchyard.org</url>
 	
 	<build>
 	   <plugins>

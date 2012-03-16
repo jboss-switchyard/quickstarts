@@ -31,7 +31,7 @@
     <packaging>jar</packaging>
     <name>SwitchYard: Extensions WSDL</name>
     <description>The SwitchYard WSDL Interface Extension.</description>
-    <url>http://switchyard/</url>
+    <url>http://switchyard.org</url>
 
     <parent>
         <groupId>org.switchyard</groupId>

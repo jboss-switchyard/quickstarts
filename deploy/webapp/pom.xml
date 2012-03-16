@@ -35,7 +35,7 @@
     <packaging>jar</packaging>
     <name>SwitchYard: JEE Web Application Deployer</name>
     <description>JEE Web Application Deployer Implementation</description>
-    <url>http://switchyard.org/</url>
+    <url>http://switchyard.org</url>
 
     <dependencies>
         <dependency>

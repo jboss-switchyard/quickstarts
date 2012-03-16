@@ -39,7 +39,7 @@
 	<packaging>jar</packaging>
 	<name>SwitchYard: Configuration</name>
 	<description>The SwitchYard Configuration library.</description>
-	<url>http://switchyard/</url>
+	<url>http://switchyard.org</url>
 	
 	<dependencies>
 		<!-- internal dependencies -->

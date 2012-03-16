@@ -31,7 +31,7 @@
     <packaging>jar</packaging>
     <name>SwitchYard: Common</name>
     <description>The SwitchYard Common Library.</description>
-    <url>http://switchyard/</url>
+    <url>http://switchyard.org</url>
 
     <parent>
         <groupId>org.switchyard</groupId>

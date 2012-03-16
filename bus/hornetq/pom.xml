@@ -33,7 +33,7 @@
     <packaging>jar</packaging>
     <name>SwitchYard: HornetQ Bus</name>
     <description>Bus provider using HornetQ Core</description>
-    <url>http://switchyard.org/</url>
+    <url>http://switchyard.org</url>
 
     <!-- overriding hornetq version as the newer version is incompatible -->
     <properties>

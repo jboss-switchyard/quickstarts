@@ -31,7 +31,7 @@
     <packaging>jar</packaging>
     <name>SwitchYard: Admin</name>
     <description>SwitchYard Administration</description>
-    <url>http://jboss.org/switchyard/</url>
+    <url>http://switchyard.org</url>
 
     <parent>
         <groupId>org.switchyard</groupId>

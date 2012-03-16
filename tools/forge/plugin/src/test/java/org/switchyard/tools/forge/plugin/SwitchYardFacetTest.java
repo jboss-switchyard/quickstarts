@@ -33,17 +33,6 @@ public class SwitchYardFacetTest {
     private static final String BACKUP_CONFIG_PATH = ORIG_CONFIG_PATH + ".orig";
 
     @Test
-    public void testVersionCheck() throws Exception {
-        SwitchYardFacet facet = new SwitchYardFacet();
-        // test positive case
-        String version = facet.loadSwitchYardVersion(SwitchYardFacet.PROPS_PATH);
-        System.out.println(version);
-        Assert.assertNotNull(version);
-        // test negative case
-        Assert.assertNull(facet.loadSwitchYardVersion("foo/doesntexist.properties"));
-    }
-
-    @Test
     public void testSwitchYardTransform() throws Exception {
         SwitchYardFacet facet = new SwitchYardFacet();
         facet.addSwitchYardToASConfig(ORIG_CONFIG_PATH);

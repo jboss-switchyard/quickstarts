@@ -31,9 +31,9 @@ import javax.xml.namespace.QName;
 public interface SwitchYard {
 
     /**
-     * The version of the SwitchYard runtime.
+     * The SwitchYard version.
      * 
-     * @return SwitchYard version
+     * @return the SwitchYard version
      */
     String getVersion();
 

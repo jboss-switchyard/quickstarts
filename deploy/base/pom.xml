@@ -39,7 +39,7 @@
 	<packaging>jar</packaging>
 	<name>SwitchYard: Deploy </name>
 	<description>The Deploy SPI.</description>
-	<url>http://switchyard/</url>
+	<url>http://switchyard.org</url>
 	
 	<dependencies>
         <!-- internal dependencies -->

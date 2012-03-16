@@ -24,7 +24,6 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.switchyard.ServiceDomain;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.deploy.Activator;
@@ -81,8 +80,6 @@ public abstract class AbstractDeployment {
      * Automatically registered transformers (e.g. JAXB type transformers).
      */
     private List<Transformer<?, ?>> _autoRegisteredTransformers = new ArrayList<Transformer<?, ?>>();
-
-    private static Logger _log = Logger.getLogger(AbstractDeployment.class);
 
     /**
      * Create a new instance of a deployment from a configuration model.
