@@ -157,8 +157,13 @@ public class BaseApplication implements Application {
             return;
         }
         for (ComponentModel component : _config.getComposite().getComponents()) {
-            ComponentServiceModel service = component.getServices().get(0);
-            _componentServices.put(service.getQName(), new BaseComponentService(service, component, this));
+            // TODO: we need a separate node for components, to support cases
+            // where the component implements no services.  Should also consider
+            // multiple services per component.
+            if (component.getServices().size() > 0) {
+                ComponentServiceModel service = component.getServices().get(0);
+                _componentServices.put(service.getQName(), new BaseComponentService(service, component, this));
+            }
         }
     }
 }

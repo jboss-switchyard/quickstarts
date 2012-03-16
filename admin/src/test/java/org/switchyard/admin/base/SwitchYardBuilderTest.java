@@ -24,7 +24,6 @@ import javax.xml.namespace.QName;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.admin.Service;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.deploy.event.ApplicationDeployedEvent;
@@ -63,6 +62,18 @@ public class SwitchYardBuilderTest {
     @Test
     public void testComponent() {
         Assert.assertEquals(2, _switchYard.getApplication(TEST_APP).getComponentServices().size());
+    }
+
+    @Test
+    public void testNoComponentService() throws Exception{
+        Deployment testDeployment = new MockDeployment(
+                new ModelPuller<SwitchYardModel>().pull("switchyard_multiappweb.xml", getClass()), 
+                QName.valueOf("{urn:switchyard-quickstart-demo:multiapp:0.1.0}web"));
+        BaseSwitchYard switchYard = new BaseSwitchYard("1.0");
+        SwitchYardBuilder builder = new SwitchYardBuilder(switchYard);
+        builder.notify(new ApplicationDeployedEvent(testDeployment));
+        
+        Assert.assertEquals(1, switchYard.getApplications().size());
     }
 
 }
