@@ -70,7 +70,7 @@
     <!-- Override versions for OpenShift. Currently using same version as AS but -->
     <!-- maintaining this override for future flexibility -->
     <version.arquillian.openshift>1.0.0.CR7</version.arquillian.openshift>
-    <version.activity.monitor.model>1.2.0.Final</version.activity.monitor.model>
+    <version.activity.monitor.model>1.2.1.Final</version.activity.monitor.model>
     <version.antlr>3.3</version.antlr>
     <version.axiom>1.2.8</version.axiom>
     <version.ballroom>1.0.1.Final</version.ballroom>
@@ -116,9 +116,9 @@
     <version.naming>5.0.5.Final</version.naming>
     <version.netty>3.2.1.Final</version.netty>
     <version.protostuff>1.0.4</version.protostuff>
-    <version.riftsaw.ode>3.0.0.20120308-M2</version.riftsaw.ode>
-    <version.riftsaw.engine>3.0.0.20120308-M2</version.riftsaw.engine>
-    <version.riftsaw.console>2.4.0.Final</version.riftsaw.console>
+    <version.riftsaw.ode>3.0.0.20120316-M2</version.riftsaw.ode>
+    <version.riftsaw.engine>3.0.0.20120316-M2</version.riftsaw.engine>
+    <version.riftsaw.console>2.4.1.Final</version.riftsaw.console>
     <version.saxon>9.2.1.5</version.saxon>
     <version.servlet>2.5</version.servlet>
     <version.slf4j>1.6.1</version.slf4j>
