@@ -79,13 +79,12 @@ public class SwitchYardBuilder implements EventObserver {
     void exchangeCompleted(ExchangeCompletionEvent event) {
         // Recording metrics at multiple levels at this point instead of
         // aggregating them.
-        
-        // 1 - the aggregate switchyard stats
-        _switchYard.getMessageMetrics().recordMetrics(event.getExchange());
-        
         for (Service service : _switchYard.getServices()) {
-            // 2 - service stats
             if (service.getName().equals(event.getExchange().getServiceName())) {
+                // 1 - the aggregate switchyard stats
+                _switchYard.getMessageMetrics().recordMetrics(event.getExchange());
+                
+                // 2 - service stats
                 BaseComponentService cs = (BaseComponentService)service.getPromotedService();
                 cs.getMessageMetrics().recordMetrics(event.getExchange());
             }
