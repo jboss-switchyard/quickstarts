@@ -104,15 +104,15 @@ public class RuntimeView extends DisposableViewImpl implements MyView {
     public void setServiceMetrics(ServiceMetrics serviceMetrics) {
         if (serviceMetrics == null) {
             _serviceMetricsViewer.clear();
-            _serviceReferenceMetricsList.setData(null);
+            _serviceReferenceMetricsList.setServiceMetrics(null);
             return;
         }
         if (_systemMetrics == null) {
             _serviceMetricsViewer.setMessageMetrics(serviceMetrics);
         } else {
-            _serviceMetricsViewer.setMessageMetrics(serviceMetrics, _systemMetrics.getTotalProcessingTime());
+            _serviceMetricsViewer.setMessageMetrics(serviceMetrics, _systemMetrics.getTotalCount(), _systemMetrics.getTotalProcessingTime());
         }
-        _serviceReferenceMetricsList.setData(serviceMetrics.getReferences());
+        _serviceReferenceMetricsList.setServiceMetrics(serviceMetrics);
     }
 
     @Override

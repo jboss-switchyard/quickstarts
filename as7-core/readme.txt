@@ -25,5 +25,8 @@ The following files work around GWT compiler bugs that affect DMR deserializatio
 	org/jboss/dmr/client/DataInput.java		
 	org/jboss/dmr/client/IEEE754.java		
 
+The following uses the specified comparison column as the baseline:
+	org/jboss/as/console/client/shared/runtime/plain/PlainColumnView.java
+
 Added files for extension processing and integration.
 

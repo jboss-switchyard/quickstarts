@@ -56,10 +56,14 @@ public class MessageMetricsViewer {
      * @return the control.
      */
     public Widget asWidget() {
+        Column<?> containerTotalCountItem = new NumberColumn("ContainerTotalCount", "Total Count").setVisible(false);
         Column<?> totalCountItem = new NumberColumn("TotalCount", "Total Count").setBaseline(true);
         Column<?> successCountItem = new NumberColumn("SuccessCount", "Success Count")
                 .setComparisonColumn(totalCountItem);
         Column<?> faultCountItem = new NumberColumn("FaultCount", "Fault Count").setComparisonColumn(totalCountItem);
+        if (_displaysChildMetrics) {
+            totalCountItem.setComparisonColumn(containerTotalCountItem);
+        }
 
         // XXX: these should really be "LongColumn"
         Column<?> containerTotalProcessingTime = new NumberColumn("ContainerTotalProcessingTime",
@@ -75,7 +79,7 @@ public class MessageMetricsViewer {
         Column<?> maxProcessingTimeItem = new TextColumn("MaxProcessingTime", "Max. Processing Time");
 
         _messageCounts = new PlainColumnView("Message Counts");
-        _messageCounts.setColumns(totalCountItem, successCountItem, faultCountItem);
+        _messageCounts.setColumns(containerTotalCountItem, totalCountItem, successCountItem, faultCountItem);
 
         _processingTimes = new PlainColumnView("Processing Times");
         _processingTimes.setColumns(containerTotalProcessingTime, totalProcessingTimeItem, averageProcessingTimeItem,
@@ -93,7 +97,7 @@ public class MessageMetricsViewer {
      * @param metrics the metrics to be displayed.
      */
     public void setMessageMetrics(MessageMetrics metrics) {
-        Metric countMetric = new Metric("" + metrics.getTotalCount(), "" + metrics.getSuccessCount(), ""
+        Metric countMetric = new Metric("0", "" + metrics.getTotalCount(), "" + metrics.getSuccessCount(), ""
                 + metrics.getFaultCount());
         _messageCounts.addSample(countMetric);
 
@@ -105,10 +109,11 @@ public class MessageMetricsViewer {
 
     /**
      * @param metrics the metrics to be displayed.
+     * @param totalCount the parent's total count.
      * @param totalTime the parent's total time.
      */
-    public void setMessageMetrics(MessageMetrics metrics, long totalTime) {
-        Metric countMetric = new Metric("" + metrics.getTotalCount(), "" + metrics.getSuccessCount(), ""
+    public void setMessageMetrics(MessageMetrics metrics, int totalCount, long totalTime) {
+        Metric countMetric = new Metric(""+ totalCount, "" + metrics.getTotalCount(), "" + metrics.getSuccessCount(), ""
                 + metrics.getFaultCount());
         _messageCounts.addSample(countMetric);
 

@@ -46,6 +46,8 @@ public class ServiceReferenceMetricsList extends AbstractDataTable<ServiceMetric
         }
     };
 
+    private ServiceMetrics _serviceMetrics;
+
     /**
      * Create a new ServiceReferenceMetricsList.
      */
@@ -79,6 +81,18 @@ public class ServiceReferenceMetricsList extends AbstractDataTable<ServiceMetric
         };
         averageTimeColumn.setSortable(true);
 
+        final Column<ServiceMetrics, Double> totalTimePercentageColumn = new Column<ServiceMetrics, Double>(
+                new PercentageBarCell()) {
+            @Override
+            public Double getValue(ServiceMetrics metrics) {
+                if (_serviceMetrics == null || _serviceMetrics.getTotalProcessingTime() == 0) {
+                    return 0.0;
+                }
+                return metrics.getTotalProcessingTime() / (double) _serviceMetrics.getTotalProcessingTime();
+            }
+        };
+        totalTimePercentageColumn.setSortable(true);
+
         final Column<ServiceMetrics, Double> faultPercentageColumn = new Column<ServiceMetrics, Double>(
                 new PercentageBarCell()) {
             @Override
@@ -98,13 +112,28 @@ public class ServiceReferenceMetricsList extends AbstractDataTable<ServiceMetric
         table.addColumn(nameColumn, "Name");
         table.addColumn(countColumn, "Message Count");
         table.addColumn(averageTimeColumn, "Average Time");
+        table.addColumn(totalTimePercentageColumn, "Time %");
         table.addColumn(faultPercentageColumn, "Fault %");
 
         table.addColumnSortHandler(sortHandler);
         table.getColumnSortList().push(averageTimeColumn);
         table.getColumnSortList().push(countColumn);
+        table.getColumnSortList().push(totalTimePercentageColumn);
         table.getColumnSortList().push(faultPercentageColumn);
         table.getColumnSortList().push(nameColumn);
+    }
+
+    /**
+     * @param serviceMetrics the parent service's metrics, containing a list of
+     *            reference metrics.
+     */
+    public void setServiceMetrics(ServiceMetrics serviceMetrics) {
+        _serviceMetrics = serviceMetrics;
+        if (serviceMetrics == null) {
+            setData(null);
+        } else {
+            setData(serviceMetrics.getReferences());
+        }
     }
 
     @Override
