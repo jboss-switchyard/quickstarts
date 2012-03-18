@@ -19,6 +19,8 @@
 package org.switchyard.console.client;
 
 import org.switchyard.console.client.model.Application;
+import org.switchyard.console.client.model.ArtifactReference;
+import org.switchyard.console.client.model.ArtifactReferenceCategory;
 import org.switchyard.console.client.model.Binding;
 import org.switchyard.console.client.model.ComponentReference;
 import org.switchyard.console.client.model.ComponentService;
@@ -41,7 +43,7 @@ import com.google.gwt.autobean.shared.AutoBeanFactory.Category;
  * 
  * @author Rob Cernich
  */
-@Category(QNameCategory.class)
+@Category({QNameCategory.class, ArtifactReferenceCategory.class})
 public interface BeanFactory extends AutoBeanFactory {
 
     /**
@@ -93,5 +95,10 @@ public interface BeanFactory extends AutoBeanFactory {
      * @return a new AutoBean<ServiceMetrics>
      */
     AutoBean<ServiceMetrics> serviceMetrics();
+
+    /**
+     * @return a new AutoBean<ArtifactReference>
+     */
+    AutoBean<ArtifactReference> artifactReference();
 
 }

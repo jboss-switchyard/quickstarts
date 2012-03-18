@@ -120,7 +120,10 @@ public abstract class AbstractDataTable<T> {
         }
     }
 
-    protected List<T> getData() {
+    /**
+     * @return the data associated with the list.
+     */
+    public List<T> getData() {
         return _dataProvider.getList();
     }
 

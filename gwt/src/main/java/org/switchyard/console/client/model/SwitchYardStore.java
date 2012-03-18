@@ -109,4 +109,11 @@ public interface SwitchYardStore {
      */
     void loadSystemMetrics(AsyncCallback<MessageMetrics> asyncCallback);
 
+    /**
+     * Loads artifact references for the entire system.
+     * 
+     * @param asyncCallback the callback
+     */
+    void loadArtifactReferences(AsyncCallback<List<ArtifactReference>> asyncCallback);
+
 }

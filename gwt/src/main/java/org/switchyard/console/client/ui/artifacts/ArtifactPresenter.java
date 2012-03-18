@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.console.client.ui.application;
+package org.switchyard.console.client.ui.artifacts;
 
 import java.util.List;
 
@@ -27,7 +27,6 @@ import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.model.Application;
 import org.switchyard.console.client.model.ArtifactReference;
-import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.model.SwitchYardStore;
 
 import com.google.gwt.core.client.Scheduler;
@@ -45,13 +44,13 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 
 /**
- * ApplicationPresenter
+ * ArtifactPresenter
  * 
  * Presenter for SwitchYard application.
  * 
  * @author Rob Cernich
  */
-public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView, ApplicationPresenter.MyProxy> {
+public class ArtifactPresenter extends Presenter<ArtifactPresenter.MyView, ArtifactPresenter.MyProxy> {
 
     /**
      * MyProxy
@@ -59,8 +58,8 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
      * The proxy type associated with this presenter.
      */
     @ProxyCodeSplit
-    @NameToken(NameTokens.APPLICATIONS_PRESENTER)
-    public interface MyProxy extends Proxy<ApplicationPresenter>, Place {
+    @NameToken(NameTokens.ARTIFACTS_PRESENTER)
+    public interface MyProxy extends Proxy<ArtifactPresenter>, Place {
     }
 
     /**
@@ -72,26 +71,26 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
         /**
          * @param presenter the associated presenter.
          */
-        void setPresenter(ApplicationPresenter presenter);
+        void setPresenter(ArtifactPresenter presenter);
 
         /**
-         * @param applications the applications deployed on the server.
+         * @param artifacts referenced by applications.
          */
-        void setApplications(List<Application> applications);
+        void setArtifacts(List<ArtifactReference> artifacts);
 
         /**
-         * @param application the application being viewed/processed/edited.
+         * @param artifactKey the selected artifact.
          */
-        void setApplication(Application application);
+        void setSelectedArtifact(String artifactKey);
     }
 
     private final PlaceManager _placeManager;
     private final RevealStrategy _revealStrategy;
     private final SwitchYardStore _switchYardStore;
-    private String _applicationName;
+    private String _artifactKey;
 
     /**
-     * Create a new ApplicationPresenter.
+     * Create a new ArtifactPresenter.
      * 
      * @param eventBus the injected EventBus.
      * @param view the injected MyView.
@@ -101,7 +100,7 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
      * @param switchYardStore the injected SwitchYardStore.
      */
     @Inject
-    public ApplicationPresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager placeManager,
+    public ArtifactPresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager placeManager,
             RevealStrategy revealStrategy, SwitchYardStore switchYardStore) {
         super(eventBus, view, proxy);
 
@@ -111,49 +110,18 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
     }
 
     /**
-     * Notifies the presenter that the user has selected an application. The
-     * presenter will load the application details and pass them back to the
-     * view to be displayed.
+     * Navigates to the application page, displaying the details of the
+     * application.
      * 
-     * @param application the selected application.
+     * @param application the selected application
      */
     public void onApplicationSelected(Application application) {
-        PlaceRequest request = new PlaceRequest(NameTokens.APPLICATIONS_PRESENTER);
-        if (application != null) {
-            request = request.with(NameTokens.APPLICATION_NAME_PARAM, URL.encode(application.getName()));
-        }
-        _placeManager.revealRelativePlace(request, -1);
-    }
-
-    /**
-     * Notifies the presenter that the user has selected an artifact reference.
-     * The presenter will navigate to the artifacts page.
-     * 
-     * @param artifact the selected artifact.
-     */
-    public void onArtifactSelected(ArtifactReference artifact) {
-        PlaceRequest request = new PlaceRequest(NameTokens.ARTIFACTS_PRESENTER);
-        if (artifact != null) {
-            request = request.with(NameTokens.ARTIFACT_REFERENCE_KEY_PARAM, URL.encode(artifact.key()));
-        }
-        _placeManager.revealRelativePlace(request, -1);
-    }
-
-    /**
-     * Notifies the presenter that the user wishes to view details about a
-     * specific service.
-     * 
-     * @param service the service.
-     * @param application the application containing the service.
-     */
-    public void onNavigateToService(Service service, Application application) {
-        if (service == null || application == null) {
-            Console.error("Cannot reveal service details.  No service or application specified.");
+        if (application == null) {
+            Console.error("Cannot reveal application details.  No application specified.");
             return;
         }
         _placeManager.revealRelativePlace(
-                new PlaceRequest(NameTokens.SERVICES_PRESENTER).with(NameTokens.SERVICE_NAME_PARAM,
-                        URL.encode(service.getName())).with(NameTokens.APPLICATION_NAME_PARAM,
+                new PlaceRequest(NameTokens.APPLICATIONS_PRESENTER).with(NameTokens.APPLICATION_NAME_PARAM,
                         URL.encode(application.getName())), -1);
     }
 
@@ -166,9 +134,9 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
     @Override
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
-        _applicationName = request.getParameter(NameTokens.APPLICATION_NAME_PARAM, null);
-        if (_applicationName != null) {
-            _applicationName = URL.decode(_applicationName);
+        _artifactKey = request.getParameter(NameTokens.ARTIFACT_REFERENCE_KEY_PARAM, null);
+        if (_artifactKey != null) {
+            _artifactKey = URL.decode(_artifactKey);
         }
     }
 
@@ -178,7 +146,7 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
-                fireEvent(new LHSHighlightEvent("unused", NameTokens.APPLICATIONS_TEXT,
+                fireEvent(new LHSHighlightEvent("unused", NameTokens.ARTIFACT_REFERENCES_TEXT,
                         NameTokens.SUBSYSTEM_TREE_CATEGORY));
             }
         });
@@ -187,9 +155,7 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
     @Override
     protected void onReset() {
         super.onReset();
-
-        loadApplicationsList();
-        loadApplication();
+        loadArtifactReferences();
     }
 
     @Override
@@ -197,30 +163,12 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
         _revealStrategy.revealInParent(this);
     }
 
-    private void loadApplicationsList() {
-        _switchYardStore.loadApplications(new AsyncCallback<List<Application>>() {
+    private void loadArtifactReferences() {
+        _switchYardStore.loadArtifactReferences(new AsyncCallback<List<ArtifactReference>>() {
             @Override
-            public void onSuccess(List<Application> applications) {
-                getView().setApplications(applications);
-            }
-
-            @Override
-            public void onFailure(Throwable caught) {
-                Console.error("Unknown error", caught.getMessage());
-            }
-        });
-    }
-
-    private void loadApplication() {
-        if (_applicationName == null) {
-            getView().setApplication(_switchYardStore.getBeanFactory().application().as());
-            return;
-        }
-        _switchYardStore.loadApplication(_applicationName, new AsyncCallback<Application>() {
-
-            @Override
-            public void onSuccess(Application result) {
-                getView().setApplication(result);
+            public void onSuccess(List<ArtifactReference> artifacts) {
+                getView().setArtifacts(artifacts);
+                getView().setSelectedArtifact(_artifactKey);
             }
 
             @Override

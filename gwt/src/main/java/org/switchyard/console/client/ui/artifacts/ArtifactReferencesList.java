@@ -16,10 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.console.client.ui.application;
+package org.switchyard.console.client.ui.artifacts;
 
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-import org.switchyard.console.client.model.Application;
+import org.switchyard.console.client.model.ArtifactReference;
 import org.switchyard.console.client.ui.common.AbstractDataTable;
 
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
@@ -28,36 +28,27 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 
 /**
- * ApplicationsList
+ * ArtifactReferencesList
  * 
- * Wraps a table control for displaying applications.
+ * Wraps a table control for displaying artifact references.
  * 
  * @author Rob Cernich
  */
-public class ApplicationsList extends AbstractDataTable<Application> {
+public class ArtifactReferencesList extends AbstractDataTable<ArtifactReference> {
 
     /**
-     * Create a new ApplicationsList.
+     * Create a new ArtifactReferencesList.
      */
-    public ApplicationsList() {
-        this("Applications");
-    }
-
-    /**
-     * Create a new ApplicationsList.
-     * 
-     * @param title the title to display for the list
-     */
-    public ApplicationsList(String title) {
-        super(title);
+    public ArtifactReferencesList() {
+        super("Artifact References");
     }
 
     @Override
-    protected ProvidesKey<Application> createKeyProvider() {
-        return new ProvidesKey<Application>() {
+    protected ProvidesKey<ArtifactReference> createKeyProvider() {
+        return new ProvidesKey<ArtifactReference>() {
             @Override
-            public Object getKey(Application item) {
-                return item.getName();
+            public Object getKey(ArtifactReference item) {
+                return item.key();
             }
         };
 
@@ -65,34 +56,35 @@ public class ApplicationsList extends AbstractDataTable<Application> {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void createColumns(DefaultCellTable<Application> table, ListDataProvider<Application> dataProvider) {
-        final TextColumn<Application> nameColumn = new TextColumn<Application>() {
+    protected void createColumns(DefaultCellTable<ArtifactReference> table,
+            ListDataProvider<ArtifactReference> dataProvider) {
+        final TextColumn<ArtifactReference> nameColumn = new TextColumn<ArtifactReference>() {
             @Override
-            public String getValue(Application application) {
-                return application.localName();
+            public String getValue(ArtifactReference reference) {
+                return reference.getName();
             }
         };
         nameColumn.setSortable(true);
 
-        final TextColumn<Application> namespaceColumn = new TextColumn<Application>() {
+        final TextColumn<ArtifactReference> urlColumn = new TextColumn<ArtifactReference>() {
             @Override
-            public String getValue(Application application) {
-                return application.namespace();
+            public String getValue(ArtifactReference reference) {
+                return reference.getUrl();
             }
         };
-        namespaceColumn.setSortable(true);
+        urlColumn.setSortable(true);
 
-        ColumnSortEvent.ListHandler<Application> sortHandler = new ColumnSortEvent.ListHandler<Application>(
+        ColumnSortEvent.ListHandler<ArtifactReference> sortHandler = new ColumnSortEvent.ListHandler<ArtifactReference>(
                 dataProvider.getList());
         sortHandler.setComparator(nameColumn, createColumnCommparator(nameColumn));
-        sortHandler.setComparator(namespaceColumn, createColumnCommparator(namespaceColumn));
+        sortHandler.setComparator(urlColumn, createColumnCommparator(urlColumn));
 
         table.addColumn(nameColumn, "Name");
-        table.addColumn(namespaceColumn, "Target Namespace");
+        table.addColumn(urlColumn, "URL");
         table.addColumnSortHandler(sortHandler);
 
         table.addColumnSortHandler(sortHandler);
-        table.getColumnSortList().push(namespaceColumn);
+        table.getColumnSortList().push(urlColumn);
         table.getColumnSortList().push(nameColumn);
     }
 

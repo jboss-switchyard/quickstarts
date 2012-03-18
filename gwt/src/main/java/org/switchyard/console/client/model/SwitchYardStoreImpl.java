@@ -25,7 +25,9 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.RESULT;
 import static org.jboss.dmr.client.ModelDescriptionConstants.SUBSYSTEM;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -387,6 +389,57 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
                     }
                 }
                 callback.onFailure(new Exception("Could not load metrics for system"));
+            }
+        });
+    }
+
+    @Override
+    public void loadArtifactReferences(final AsyncCallback<List<ArtifactReference>> callback) {
+        // /subsystem=switchyard:read-application()
+
+        final ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_APPLICATION);
+        operation.get(OP_ADDR, SUBSYSTEM).set(SWITCHYARD);
+
+        _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                final ModelNode response = result.get();
+                if (response.hasDefined(RESULT)) {
+                    Map<String, ArtifactReference> references = new HashMap<String, ArtifactReference>();
+                    for (ModelNode node : response.get(RESULT).asList()) {
+                        Application application = createApplication(node);
+                        if (application == null) {
+                            continue;
+                        }
+                        List<ArtifactReference> artifacts = application.getArtifacts();
+                        if (artifacts == null) {
+                            continue;
+                        }
+                        for (ArtifactReference artifact : artifacts) {
+                            if (references.containsKey(artifact.key())) {
+                                artifact = references.get(artifact.key());
+                            } else {
+                                ArtifactReference copy = getBeanFactory().artifactReference().as();
+                                copy.setName(artifact.getName());
+                                copy.setUrl(artifact.getUrl());
+                                copy.setApplications(new ArrayList<Application>());
+                                artifact = copy;
+                                references.put(artifact.key(), artifact);
+                            }
+                            artifact.getApplications().add(application);
+                        }
+                    }
+                    callback.onSuccess(new ArrayList<ArtifactReference>(references.values()));
+                    return;
+                }
+                callback.onFailure(new Exception("Could not load artifact references."));
             }
         });
     }

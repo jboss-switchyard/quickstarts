@@ -35,6 +35,8 @@ public final class NameTokens {
     public static final String SYSTEM_CONFIG_PRESENTER = "switchyard";
     /** The subpath for the SwitchYard applications view. */
     public static final String APPLICATIONS_PRESENTER = "sy-apps";
+    /** The subpath for the SwitchYard artifacts view. */
+    public static final String ARTIFACTS_PRESENTER = "sy-artifacts";
     /** The subpath for the SwitchYard services view. */
     public static final String SERVICES_PRESENTER = "sy-services";
     /** The subpath for the SwitchYard runtime view. */
@@ -44,6 +46,8 @@ public final class NameTokens {
     public static final String COMPONENT_NAME_PARAM = "component";
     /** The parameter name used for application name. */
     public static final String APPLICATION_NAME_PARAM = "application";
+    /** The parameter name used for artifact reference key. */
+    public static final String ARTIFACT_REFERENCE_KEY_PARAM = "artifactKey";
     /** The parameter name used for service name. */
     public static final String SERVICE_NAME_PARAM = "service";
 
@@ -51,6 +55,8 @@ public final class NameTokens {
     public static final String SYSTEM_CONFIG_TEXT = "Runtime Details";
     /** The display text for the SwitchYard applications navigator item. */
     public static final String APPLICATIONS_TEXT = "Applications";
+    /** The display text for the SwitchYard artifact references navigator item. */
+    public static final String ARTIFACT_REFERENCES_TEXT = "Artifact References";
     /** The display text for the SwitchYard services navigator item. */
     public static final String SERVICES_TEXT = "Services";
     /** The display text for the SwitchYard runtime navigator item. */
@@ -62,7 +68,7 @@ public final class NameTokens {
     public static final String SUBSYSTEM_DOMAIN_TREE_CATEGORY = "domain-runtime";
     /** The "category" ID for the standalone runtime tree. */
     public static final String SUBSYSTEM_STANDALONE_TREE_CATEGORY = "standalone-runtime";
-    
+
     /**
      * @param name a string representation of a javax.xml.namespace.QName
      * @return the QName components, {namespace,local}

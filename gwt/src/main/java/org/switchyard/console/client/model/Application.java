@@ -59,4 +59,14 @@ public interface Application extends HasQName {
      */
     public void setTransformers(List<Transformer> transformers);
     
+    /**
+     * @return the artifacts referenced by this application.
+     */
+    public List<ArtifactReference> getArtifacts();
+
+    /**
+     * @param artifacts the artifacts referenced by this application.
+     */
+    public void setArtifacts(List<ArtifactReference> artifacts);
+    
 }
