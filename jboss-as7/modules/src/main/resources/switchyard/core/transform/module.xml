@@ -35,7 +35,7 @@
         <module name="org.codehaus.jackson.jackson-core-asl"/>
         <module name="org.codehaus.jackson.jackson-mapper-asl"/>
         <module name="org.switchyard.api"/>
-        <module name="org.switchyard.common"/>
+        <module name="org.switchyard.common" services="export"/>
         <module name="org.switchyard.config"/>
         <module name="org.switchyard.jaxb-impl"/>
         <module name="org.milyn" export="true">

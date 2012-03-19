@@ -29,7 +29,7 @@
         <module name="org.drools.drools-persistence-jpa" export="true"/>
         <module name="org.drools.knowledge-api" export="true"/>
         <module name="org.switchyard.api"/>
-        <module name="org.switchyard.common"/>
+        <module name="org.switchyard.common" services="export"/>
         <module name="org.switchyard.component.common.rules"/>
         <module name="org.switchyard.config"/>
         <module name="org.switchyard.deploy"/>

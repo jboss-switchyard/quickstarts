@@ -52,6 +52,7 @@ import org.jboss.as.controller.persistence.SubsystemMarshallingContext;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.as.controller.registry.OperationEntry;
 import org.jboss.dmr.ModelNode;
+import org.jboss.logging.Logger;
 import org.jboss.staxmapper.XMLElementReader;
 import org.jboss.staxmapper.XMLElementWriter;
 import org.jboss.staxmapper.XMLExtendedStreamReader;
@@ -65,6 +66,7 @@ import org.switchyard.as7.extension.admin.SwitchYardSubsystemReadComponent;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemReadService;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemShowMetrics;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemUsesArtifact;
+import org.switchyard.common.version.Versions;
 
 /**
  * Domain extension used to initialize the SwitchYard subsystem.
@@ -72,6 +74,8 @@ import org.switchyard.as7.extension.admin.SwitchYardSubsystemUsesArtifact;
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
 public class SwitchYardExtension implements Extension {
+
+    private static final Logger LOGGER = Logger.getLogger("org.switchyard");
 
     /** The subsystem name. */
     public static final String SUBSYSTEM_NAME = "switchyard";
@@ -84,6 +88,9 @@ public class SwitchYardExtension implements Extension {
     /** {@inheritDoc} */
     @Override
     public void initialize(final ExtensionContext context) {
+        // log SwitchYard notification message (includes version information)
+        LOGGER.info(Versions.getSwitchYardNotification());
+
         final SubsystemRegistration subsystem = context.registerSubsystem(SUBSYSTEM_NAME,1,0);
         //todo convert to ResourceDefinition
         final ManagementResourceRegistration registration = subsystem.registerSubsystemModel(SwitchYardSubsystemProviders.SUBSYSTEM_DESCRIBE);

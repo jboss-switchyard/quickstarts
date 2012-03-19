@@ -58,18 +58,13 @@ public class SwitchYardAdminService implements Service<SwitchYard> {
     @SuppressWarnings("rawtypes")
     private final InjectedValue<Map> _socketBindings = new InjectedValue<Map>();
     private final InjectedValue<ServiceDomainManager> _serviceDomainManager = new InjectedValue<ServiceDomainManager>();
-    private final String _version;
     private BaseSwitchYard _switchYard;
     private SwitchYardBuilder _adminObserver;
 
     /**
      * Create a new SwitchYardAdminService.
-     * 
-     * @param version the version of the SwitchYard runtime.
      */
-    public SwitchYardAdminService(String version) {
-        _version = version;
-    }
+    public SwitchYardAdminService() {}
 
     @Override
     public SwitchYard getValue() throws IllegalStateException, IllegalArgumentException {
@@ -78,7 +73,7 @@ public class SwitchYardAdminService implements Service<SwitchYard> {
 
     @Override
     public void start(StartContext context) throws StartException {
-        _switchYard = new BaseSwitchYard(_version);
+        _switchYard = new BaseSwitchYard();
         _adminObserver = new SwitchYardBuilder(_switchYard);
         _serviceDomainManager.getValue().getEventManager()
             .addObserver(_adminObserver, ExchangeCompletionEvent.class)

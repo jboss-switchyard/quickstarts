@@ -127,8 +127,7 @@ public final class SwitchYardSubsystemAdd extends AbstractBoottimeAddStepHandler
         // Add the AS7 Service for the ServiceDomainManager...
         newControllers.add(context.getServiceTarget().addService(SwitchYardServiceDomainManagerService.SERVICE_NAME, new SwitchYardServiceDomainManagerService()).install());
 
-        final String version = getSwitchYardVersion();
-        final SwitchYardAdminService adminService = new SwitchYardAdminService(version);
+        final SwitchYardAdminService adminService = new SwitchYardAdminService();
         newControllers.add(context.getServiceTarget().addService(SwitchYardAdminService.SERVICE_NAME, adminService)
                 .addDependency(SwitchYardComponentService.SERVICE_NAME, List.class, adminService.getComponents())
                 .addDependency(SwitchYardInjectorService.SERVICE_NAME, Map.class, adminService.getSocketBindings())
@@ -136,8 +135,5 @@ public final class SwitchYardSubsystemAdd extends AbstractBoottimeAddStepHandler
                 .install());
 
     }
-    
-    private String getSwitchYardVersion() {
-        return getClass().getPackage().getImplementationVersion();
-    }
+
 }

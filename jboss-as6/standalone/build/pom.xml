@@ -38,8 +38,8 @@
     <artifactId>switchyard-as6-standalone-build</artifactId>
 	<packaging>pom</packaging>
 	<name>SwitchYard: AS6 Packager</name>
-        <description>SwitchYard AS6 Packager</description>
-	<url>http://switchyard.org/</url>
+	<description>SwitchYard AS6 Packager</description>
+	<url>http://switchyard.org</url>
 
     <build>
         <plugins>

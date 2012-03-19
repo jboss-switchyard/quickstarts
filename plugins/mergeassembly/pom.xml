@@ -40,7 +40,7 @@
 	<packaging>maven-plugin</packaging>
 	<name>SwitchYard: Merge Assembly Plugin</name>
 	<description>The Merge Assembly Plugin.</description>
-	<url>http://switchyard/</url>
+	<url>http://switchyard.org</url>
 
     <dependencies>
         <dependency>

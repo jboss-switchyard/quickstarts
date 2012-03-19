@@ -32,7 +32,7 @@
         <module name="org.drools.drools-persistence-jpa"/>
         <module name="org.drools.knowledge-api"/>
         <module name="org.switchyard.api"/>
-        <module name="org.switchyard.common"/>
+        <module name="org.switchyard.common" services="export"/>
         <module name="org.switchyard.config"/>
     </dependencies>
 </module>
