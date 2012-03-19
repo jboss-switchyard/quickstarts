@@ -50,6 +50,7 @@
         <module>bpm-service</module>
         <module>camel-binding</module>
         <module>camel-jms-binding</module>
+        <module>camel-rest-binding</module>
         <module>camel-service</module>
         <module>camel-soap-proxy</module>
         <module>hornetq-binding</module>
