@@ -107,6 +107,11 @@
             <filtered>true</filtered>
         </file>
         <file>
+            <source>src/main/resources/external/apache/cxf/jaxrs/module.xml</source>
+            <outputDirectory>/modules/org/apache/cxf/jaxrs/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
             <source>src/main/resources/external/apache/mina/mina-core/module.xml</source>
             <outputDirectory>/modules/org/apache/mina/mina-core/main</outputDirectory>
             <filtered>true</filtered>
@@ -114,6 +119,11 @@
         <file>
             <source>src/main/resources/external/camel/core/module.xml</source>
             <outputDirectory>/modules/org/apache/camel/core/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
+            <source>src/main/resources/external/camel/cxf/module.xml</source>
+            <outputDirectory>/modules/org/apache/camel/cxf/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
@@ -305,6 +315,14 @@
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
+                <include>org.apache.cxf:cxf-rt-frontend-jaxrs</include>
+            </includes>
+            <outputDirectory>/modules/org/apache/cxf/jaxrs/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.cxf}.${artifact.extension}</outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
                 <include>org.apache.mina:mina-core</include>
             </includes>
             <outputDirectory>/modules/org/apache/mina/mina-core/main</outputDirectory>
@@ -316,6 +334,14 @@
                 <include>org.apache.camel:camel-core</include>
             </includes>
             <outputDirectory>/modules/org/apache/camel/core/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.camel}.${artifact.extension}</outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.apache.camel:camel-cxf</include>
+            </includes>
+            <outputDirectory>/modules/org/apache/camel/cxf/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${version.camel}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>

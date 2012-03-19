@@ -75,7 +75,11 @@ https://issues.jboss.org/browse/SWITCHYARD-548
                         <socketAddr>:18001</socketAddr>
                     </properties>
                 </module>
-                <module identifier="org.switchyard.component.camel" implClass="org.switchyard.component.camel.deploy.CamelComponent"/>
+                <module identifier="org.switchyard.component.camel" implClass="org.switchyard.component.camel.deploy.CamelComponent">
+                    <properties>
+                        <socketAddr>:18001</socketAddr>
+                    </properties>
+                </module>
                 <module identifier="org.switchyard.component.rules" implClass="org.switchyard.component.rules.deploy.RulesComponent"/>
                 <module identifier="org.switchyard.component.bpm" implClass="org.switchyard.component.bpm.deploy.BPMComponent"/>
                 <module identifier="org.switchyard.component.bpel" implClass="org.switchyard.component.bpel.deploy.BPELComponent"/>
