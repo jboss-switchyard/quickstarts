@@ -340,7 +340,7 @@
         </condition>	
     </target>
 
-    <target name="request-forge-home" unless="forge.home.set" depends="check-forge-home">
+    <target name="request-forge-home" if="installForge" unless="forge.home.set" depends="check-forge-home">
         <input message="Please enter the path to the root folder of your Forge installation: " addproperty="FORGE_PATH_ENTERED" />
         <pathconvert targetos="unix" property="FORGE_PATH">
             <path>
@@ -349,7 +349,7 @@
         </pathconvert>
     </target>
 
-    <target name="validate-forge-home-version">
+    <target name="validate-forge-home-version" if="installForge">
         <!-- Check that a SNAPSHOT version isn't being used -->
 	<condition property="forge.home.check">
            <and>
