@@ -178,7 +178,7 @@
           <mode>htmlunit</mode>
           <runTarget>App.html</runTarget>
           <module>org.switchyard.console.application.App</module>
-          <extraJvmArgs>-Xmx512m</extraJvmArgs>
+          <extraJvmArgs>-Xmx1024m</extraJvmArgs>
           <localWorkers>2</localWorkers>
         </configuration>
       </plugin>
