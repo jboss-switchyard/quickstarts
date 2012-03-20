@@ -19,11 +19,17 @@
 
 package org.switchyard.handlers;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
+
 import org.apache.log4j.Logger;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
+import org.switchyard.Message;
 import org.switchyard.Property;
 import org.switchyard.Scope;
 
@@ -50,7 +56,7 @@ public class MessageTrace implements ExchangeHandler {
         }
     }
 
-    private String createTrace(Exchange exchange) {
+    String createTrace(Exchange exchange) {
         StringBuilder summary = new StringBuilder()
             .append(indent(0) + "------- Begin Message Trace -------")
             .append(indent(0) + "Service -> " + exchange.getServiceName())
@@ -72,7 +78,16 @@ public class MessageTrace implements ExchangeHandler {
         String content = null;
         try {
             // try to convert the payload to a string
-            content = exchange.getMessage().getContent(String.class);
+            Message msg = exchange.getMessage();
+            content = msg.getContent(String.class);
+            
+            // check to see if we have to put content back into the message 
+            // after the conversion to string
+            if (InputStream.class.isAssignableFrom(msg.getContent().getClass())) {
+                msg.setContent(new ByteArrayInputStream(content.getBytes()));
+            } else if (Reader.class.isAssignableFrom(msg.getContent().getClass())) {
+                msg.setContent(new StringReader(content));
+            }
         } catch (Exception ex) {
             // conversion failed, fall back on toString()
             if (exchange.getMessage().getContent() != null) {
