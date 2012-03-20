@@ -102,14 +102,17 @@ public class CxfRsHttpDynamicProcessor extends DefaultProcessor {
                     String methodPath = classLevelPath;
                     String paramName = null;
                     path = m.getAnnotation(Path.class);
+                    Boolean foundPathParam = false;
                     if (path != null) {
-                        boolean foundPathParam = false;
                         Annotation[][] paramAnnotations= m.getParameterAnnotations();
-                        for (Annotation anno : paramAnnotations[0]) {
-                            if (anno instanceof PathParam) {
-                                paramName = ((PathParam)anno).value();
-                                foundPathParam = true;
-                                break;
+                        if (paramAnnotations.length > 0
+                            && paramAnnotations[0].length > 0) {
+                            for (Annotation anno : paramAnnotations[0]) {
+                                if (anno instanceof PathParam) {
+                                    paramName = ((PathParam)anno).value();
+                                    foundPathParam = true;
+                                    break;
+                                }
                             }
                         }
                         if (foundPathParam) {
@@ -119,17 +122,17 @@ public class CxfRsHttpDynamicProcessor extends DefaultProcessor {
                         }
                     }
                     if (m.getAnnotation(DELETE.class) != null) {
-                        _resourcePaths.put(op.toString(), new RsMethod(methodPath, CamelConstants.HTTP_DELETE_METHOD, paramName, m.getReturnType()));
+                        _resourcePaths.put(op.toString(), new RsMethod(methodPath, CamelConstants.HTTP_DELETE_METHOD, paramName, m.getReturnType(), foundPathParam));
                     } else if (m.getAnnotation(PUT.class) != null) {
-                        _resourcePaths.put(op.toString(), new RsMethod(methodPath, CamelConstants.HTTP_PUT_METHOD, paramName, m.getReturnType()));
+                        _resourcePaths.put(op.toString(), new RsMethod(methodPath, CamelConstants.HTTP_PUT_METHOD, paramName, m.getReturnType(), foundPathParam));
                     } else if (m.getAnnotation(POST.class) != null) {
-                        _resourcePaths.put(op.toString(), new RsMethod(methodPath, CamelConstants.HTTP_POST_METHOD, paramName, m.getReturnType()));
+                        _resourcePaths.put(op.toString(), new RsMethod(methodPath, CamelConstants.HTTP_POST_METHOD, paramName, m.getReturnType(), foundPathParam));
                     } else if (m.getAnnotation(OPTIONS.class) != null) {
-                        _resourcePaths.put(op.toString(), new RsMethod(methodPath, CamelConstants.HTTP_OPTIONS_METHOD, paramName, m.getReturnType()));
+                        _resourcePaths.put(op.toString(), new RsMethod(methodPath, CamelConstants.HTTP_OPTIONS_METHOD, paramName, m.getReturnType(), foundPathParam));
                     } else if (m.getAnnotation(HEAD.class) != null) {
-                        _resourcePaths.put(op.toString(), new RsMethod(methodPath, CamelConstants.HTTP_HEAD_METHOD, paramName, m.getReturnType()));
+                        _resourcePaths.put(op.toString(), new RsMethod(methodPath, CamelConstants.HTTP_HEAD_METHOD, paramName, m.getReturnType(), foundPathParam));
                     } else if (m.getAnnotation(GET.class) != null) {
-                        _resourcePaths.put(op.toString(), new RsMethod(methodPath, CamelConstants.HTTP_GET_METHOD, paramName, m.getReturnType()));
+                        _resourcePaths.put(op.toString(), new RsMethod(methodPath, CamelConstants.HTTP_GET_METHOD, paramName, m.getReturnType(), foundPathParam));
                     } else {
                         throw new RuntimeException("Encountered unknown REST method type.");
                     }
@@ -150,7 +153,7 @@ public class CxfRsHttpDynamicProcessor extends DefaultProcessor {
         camelExchange.getIn().setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.TRUE);
         camelExchange.getIn().setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, restMethod.getResponseType());
         camelExchange.getIn().setHeader(Exchange.HTTP_METHOD, restMethod.getMethod());
-        if (restMethod.getMethod() == CamelConstants.HTTP_GET_METHOD) {
+        if (restMethod.hasPathParam()) {
             camelExchange.getIn().setHeader(Exchange.HTTP_PATH, restMethod.getPath() + "/" + getExchange().getMessage().getContent());
         } else {
             camelExchange.getIn().setHeader(Exchange.HTTP_PATH, restMethod.getPath());
@@ -166,12 +169,14 @@ public class CxfRsHttpDynamicProcessor extends DefaultProcessor {
         private String _method;
         private String _paramName;
         private Class<?> _responseType;
+        private Boolean _pathParam;
 
-        public RsMethod(String path, String method, String paramName, Class<?> responseType) {
+        public RsMethod(String path, String method, String paramName, Class<?> responseType, Boolean hasPathParam) {
             _path = path;
             _method = method;
             _paramName = paramName;
             _responseType = responseType;
+            _pathParam = hasPathParam;
         }
 
         /**
@@ -190,7 +195,7 @@ public class CxfRsHttpDynamicProcessor extends DefaultProcessor {
          */
         public String getPath() {
             return _path;
-        } 
+        }
 
         /**
          * Return the method's parameter name.
@@ -208,6 +213,15 @@ public class CxfRsHttpDynamicProcessor extends DefaultProcessor {
          */
         public Class<?> getResponseType() {
             return _responseType;
+        }
+
+        /**
+         * Return true if this method has a path param.
+         *
+         * @return true if path param exists
+         */
+        public Boolean hasPathParam() {
+            return _pathParam;
         }
     }
 }

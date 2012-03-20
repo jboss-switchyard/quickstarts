@@ -78,9 +78,6 @@ public class SwitchYardProducer extends DefaultProducer {
         final String targetUri = (String) camelExchange.getProperty("CamelToEndpoint");
         ServiceDomain domain = (ServiceDomain)camelExchange.getContext().getRegistry().lookup(CamelActivator.SERVICE_DOMAIN);
         final ServiceReference serviceRef = lookupServiceReference(targetUri, domain);
-        if (_operationName == null) {
-            _operationName = lookupOperationNameFor(serviceRef);
-        }
         final Exchange switchyardExchange = createSwitchyardExchange(camelExchange, serviceRef);
         
         // Set appropriate policy based on Camel exchange properties
@@ -102,21 +99,34 @@ public class SwitchYardProducer extends DefaultProducer {
     }
     
     private Exchange createSwitchyardExchange(final org.apache.camel.Exchange camelExchange, final ServiceReference serviceRef) {
-        return serviceRef.createExchange(_operationName, 
+        return serviceRef.createExchange(lookupOperationNameFor(camelExchange, serviceRef), 
                 new CamelResponseHandler(camelExchange, serviceRef, _messageComposer));
     }
     
     
-    private String lookupOperationNameFor(final ServiceReference serviceRef) {
-        final Set<ServiceOperation> operations = serviceRef.getInterface().getOperations();
-        if (operations.size() != 1) {
-            final StringBuilder msg = new StringBuilder();
-            msg.append("No operationSelector was configured for the Camel Component and the Service Interface ");
-            msg.append("contains more than one operation: ").append(operations);
-            msg.append("Please add an operationSelector element with the target 'operationName' as an attribute.");
-            throw new SwitchYardException(msg.toString());
+    private String lookupOperationNameFor(final org.apache.camel.Exchange camelExchange, final ServiceReference serviceRef) {
+        // TODO: make this a factory
+        // For CXFRS exchanges
+        String operationName = (String) camelExchange.getIn().getHeader("operationName");
+
+        // From operationSelector
+        // Override header value with operationSelector, that's what user wants
+        if (_operationName != null) {
+            operationName = _operationName;
         }
-        final ServiceOperation serviceOperation = operations.iterator().next();
-        return serviceOperation.getName();
+        // From Service Interface
+        if (operationName == null) {
+            final Set<ServiceOperation> operations = serviceRef.getInterface().getOperations();
+            if (operations.size() != 1) {
+                final StringBuilder msg = new StringBuilder();
+                msg.append("No operationSelector was configured for the Camel Component and the Service Interface ");
+                msg.append("contains more than one operation: ").append(operations);
+                msg.append("Please add an operationSelector element with the target 'operationName' as an attribute.");
+                throw new SwitchYardException(msg.toString());
+            }
+            final ServiceOperation serviceOperation = operations.iterator().next();
+            operationName = serviceOperation.getName();
+        }
+        return operationName;
     }
 }
