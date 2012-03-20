@@ -21,7 +21,9 @@ package org.switchyard.tools.forge.plugin;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.URL;
 import java.util.List;
+import java.util.Properties;
 
 import javax.inject.Inject;
 
@@ -43,6 +45,7 @@ import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresPackagingType;
+import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Models;
 import org.switchyard.config.model.composite.ComponentModel;
@@ -77,6 +80,10 @@ public class SwitchYardFacet extends AbstractFacet {
             "org.switchyard:switchyard-plugin",
             "org.switchyard:switchyard-test"
     };
+    
+    static final String PROPS_PATH = "/org/switchyard/tools/forge/plugin/plugin.properties";
+    static final String PROP_VERSION = "default.version";
+
 
     @Inject
     private Shell _shell;
@@ -91,13 +98,17 @@ public class SwitchYardFacet extends AbstractFacet {
     @Override
     public boolean install() {
 
-        // Ask the user which version of SwitchYard they want to use
-        DependencyFacet deps = project.getFacet(DependencyFacet.class);
-        List<Dependency> versions = deps.resolveAvailableVersions(DEPENDENCIES[0] + ":[,]");
-        Dependency dep = _shell.promptChoiceTyped("Please select a version to install:", versions);
+        String version = loadSwitchYardVersion(PROPS_PATH);
+        if (version == null) {
+            // Ask the user which version of SwitchYard they want to use
+            DependencyFacet deps = project.getFacet(DependencyFacet.class);
+            List<Dependency> versions = deps.resolveAvailableVersions(DEPENDENCIES[0] + ":[,]");
+            Dependency dep = _shell.promptChoiceTyped("Please select a version to install:", versions);
+            version = dep.getVersion();
+        }
         
         // Update the project with version and dependency info
-        setVersion(dep.getVersion());
+        setVersion(version);
         installDependencies();
         addPluginRepository();
         
@@ -262,6 +273,23 @@ public class SwitchYardFacet extends AbstractFacet {
                 }
             }
         }
+    }
+
+    String loadSwitchYardVersion(String propsPath) {
+        String version = null;
+        
+        try {
+            URL urlPath = Classes.getResource(propsPath);
+            if (urlPath != null) {
+                Properties props = new Properties();
+                props.load(urlPath.openStream());
+                version = props.getProperty(PROP_VERSION);
+            }
+        } catch (java.io.IOException ioEx) {
+            ioEx.printStackTrace();
+        }
+        
+        return version;
     }
     
     private void addPluginRepository() {
