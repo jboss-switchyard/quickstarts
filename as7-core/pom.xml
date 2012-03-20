@@ -89,9 +89,10 @@
                 <artifactItem>
                   <groupId>org.jboss.as</groupId>
                   <artifactId>jboss-as-console</artifactId>
+                  <version>${version.jbossas.console}</version>
                   <classifier>sources</classifier>
                   <type>jar</type>
-                  <excludes>org/jboss/as/console/client/Console.java,org/jboss/as/console/client/shared/SubsystemMetaData.java,org/jboss/as/console/client/domain/runtime/DomainRuntimeNavigation.java,org/jboss/as/console/client/standalone/runtime/StandaloneRuntimeNavigation.java,org/jboss/dmr/client/DataInput.java,org/jboss/dmr/client/IEEE754.java,org/jboss/as/console/client/shared/runtime/plain/PlainColumnView.java</excludes>
+                  <excludes>org/jboss/as/console/client/Console.java,org/jboss/as/console/client/shared/SubsystemMetaData.java,org/jboss/as/console/client/domain/runtime/DomainRuntimeNavigation.java,org/jboss/as/console/client/standalone/runtime/StandaloneRuntimeNavigation.java,org/jboss/dmr/client/DataInput.java,org/jboss/dmr/client/IEEE754.java,org/jboss/as/console/client/shared/runtime/plain/PlainColumnView.java,META-INF/*.SF,META-INF/*.RSA,META-INF/*.DSA</excludes>
                   <outputDirectory>${asConsoleIncludesDirectory}/java</outputDirectory>
                 </artifactItem>
               </artifactItems>
@@ -108,6 +109,7 @@
                 <artifactItem>
                   <groupId>org.jboss.as</groupId>
                   <artifactId>jboss-as-console</artifactId>
+                  <version>${version.jbossas.console}</version>
                   <classifier>resources</classifier>
                   <type>jar</type>
                   <includes>images/**,App.html,index.html</includes>
