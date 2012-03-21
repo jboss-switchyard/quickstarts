@@ -71,8 +71,6 @@ public class OutboundHandler extends BaseServiceHandler {
      * @throws WebServiceConsumeException If unable to load the WSDL
      */
     public void start() throws WebServiceConsumeException {
-        //XXX: REMOVE THIS SYNCHRONIZED: once threading issues in AS7 WS are fixed
-        synchronized (BaseWebService.class) {
         if (_dispatcher == null) {
             ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
             try {
@@ -100,7 +98,6 @@ public class OutboundHandler extends BaseServiceHandler {
             } finally {
                 Thread.currentThread().setContextClassLoader(origLoader);
             }
-        }
         }
     }
 
