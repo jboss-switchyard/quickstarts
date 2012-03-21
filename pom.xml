@@ -67,13 +67,13 @@
           resources, i.e. build is platform dependent! -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <!-- Override versions for OpenShift. Currently using same version as AS but -->
+    <!-- Override versions for OpenShift. May use the same version as AS but -->
     <!-- maintaining this override for future flexibility -->
     <version.arquillian.openshift>1.0.0.CR7</version.arquillian.openshift>
     <version.activity.monitor.model>1.2.1.Final</version.activity.monitor.model>
     <version.antlr>3.3</version.antlr>
     <version.axiom>1.2.8</version.axiom>
-    <version.ballroom>1.0.1.Final</version.ballroom>
+    <version.ballroom>1.1.0.FINAL</version.ballroom>
     <version.batik>1.7</version.batik>
     <version.camel>2.8.0</version.camel>
     <version.cxf>2.4.6</version.cxf>
@@ -98,11 +98,11 @@
     <version.jaxen>1.1.3</version.jaxen>
     <version.javax.jms>1.1</version.javax.jms>
     <version.jbpm>5.2.0.Final</version.jbpm>
-    <version.jbossas>7.1.0.Final</version.jbossas>
-    <version.jbossas.console>1.0.2.Final</version.jbossas.console>
-    <!-- Override versions for OpenShift. Currently using same version as AS but -->
+    <version.jbossas>7.1.1.Final</version.jbossas>
+    <version.jbossas.console>1.1.0.FINAL</version.jbossas.console>
+    <!-- Override versions for OpenShift. May use the same version as AS but -->
     <!-- maintaining this override for future flexibility -->
-    <version.jbossas.openshift>${version.jbossas}</version.jbossas.openshift>
+    <version.jbossas.openshift>7.1.0.Final</version.jbossas.openshift>
     <version.jettison>1.2</version.jettison>
     <version.jpa>1.0.2</version.jpa>
     <version.jta>1.1</version.jta>
