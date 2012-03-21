@@ -47,7 +47,7 @@ public class BPELActivator extends BaseActivator {
 
     private static final Logger LOG = Logger.getLogger(BPELActivator.class);
     
-    private Map<QName, BPELExchangeHandler> _handlers = new HashMap<QName , BPELExchangeHandler>();
+    private static Map<QName, BPELExchangeHandler> _handlers = new HashMap<QName , BPELExchangeHandler>();
 
     private static BPELEngine _engine=null;
     private static Configuration _configuration=null;
