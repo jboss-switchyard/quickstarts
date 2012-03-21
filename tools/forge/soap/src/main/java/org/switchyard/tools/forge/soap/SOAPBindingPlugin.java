@@ -37,6 +37,8 @@ import org.switchyard.component.soap.PortName;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
+import org.switchyard.config.model.composite.InterfaceModel;
+import org.switchyard.config.model.composite.v1.V1InterfaceModel;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 
 /**
@@ -57,6 +59,7 @@ public class SOAPBindingPlugin implements Plugin {
      * @param serviceName name of the reference to bind
      * @param wsdlLocation location of the WSDL to configure the SOAP binding
      * @param socketAddr optional value for the ip+port
+     * @param portType optional value for interface portType
      * @param out shell output
      */
     @Command(value = "bind-service", help = "Add a SOAP binding to a service.")
@@ -73,6 +76,10 @@ public class SOAPBindingPlugin implements Plugin {
                     name = "socketAddr",
                     description = "Bind to this ip+port for SOAP endpoints") 
             final String socketAddr,
+            @Option(required = false,
+                    name = "portType",
+                    description = "portType to use for interface definition") 
+            final String portType,
             final PipeOut out) {
         
         SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
@@ -81,6 +88,12 @@ public class SOAPBindingPlugin implements Plugin {
         if (service == null) {
             out.println(out.renderColor(ShellColor.RED, "No public service named: " + serviceName));
             return;
+        }
+        
+        if (portType != null) {
+            InterfaceModel intf = new V1InterfaceModel(InterfaceModel.WSDL);
+            intf.setInterface(wsdlLocation + "#wsdl.porttype(" + portType + ")");
+            service.setInterface(intf);
         }
         
         SOAPBindingModel binding = new SOAPBindingModel();
@@ -100,6 +113,7 @@ public class SOAPBindingPlugin implements Plugin {
      * @param referenceName name of the reference to bind
      * @param wsdlLocation location of the WSDL to configure the SOAP binding
      * @param portName optional value for the endpoint port
+     * @param portType optional value for interface portType
      * @param out shell output
      */
     @Command(value = "bind-reference", help = "Add a SOAP binding to a reference.")
@@ -116,6 +130,10 @@ public class SOAPBindingPlugin implements Plugin {
                     name = "portName",
                     description = "Port name in WSDL") 
             final String portName,
+            @Option(required = false,
+                    name = "portType",
+                    description = "portType to use for interface definition") 
+            final String portType,
             final PipeOut out) {
         
         SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
@@ -124,6 +142,12 @@ public class SOAPBindingPlugin implements Plugin {
         if (reference == null) {
             out.println(out.renderColor(ShellColor.RED, "No public reference named: " + referenceName));
             return;
+        }
+
+        if (portType != null) {
+            InterfaceModel intf = new V1InterfaceModel(InterfaceModel.WSDL);
+            intf.setInterface(wsdlLocation + "#wsdl.porttype(" + portType + ")");
+            reference.setInterface(intf);
         }
         
         SOAPBindingModel binding = new SOAPBindingModel();

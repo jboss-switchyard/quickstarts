@@ -104,7 +104,15 @@ public class SOAPBindingModel extends V1BindingModel {
      * @param port the port to set
      */
     public void setPort(PortName port) {
-        this._port = port;
+        _port = port;
+        Configuration childConfig = getModelConfiguration().getFirstChild(PORT);
+        if (childConfig == null) {
+            ValueModel portConfig = new ValueModel(PORT);
+            portConfig.setValue(port.getName());
+            setChildModel(portConfig);
+        } else {
+            childConfig.setValue(port.getName());
+        }
     }
 
     /**
@@ -128,7 +136,7 @@ public class SOAPBindingModel extends V1BindingModel {
      * @param wsdl the wsdl to set
      */
     public void setWsdl(String wsdl) {
-        this._wsdl = wsdl;
+        _wsdl = wsdl;
         Configuration childConfig = getModelConfiguration().getFirstChild(WSDL);
         if (childConfig == null) {
             ValueModel portConfig = new ValueModel(WSDL);
@@ -157,7 +165,7 @@ public class SOAPBindingModel extends V1BindingModel {
      * @param serviceName the serviceName to set
      */
     public void setServiceName(QName serviceName) {
-        this._serviceName = serviceName;
+        _serviceName = serviceName;
     }
 
     /**
@@ -192,7 +200,15 @@ public class SOAPBindingModel extends V1BindingModel {
      * @param socketAddr the IP Socket Address to set
      */
     public void setSocketAddr(SocketAddr socketAddr) {
-        this._socketAddr = socketAddr;
+        _socketAddr = socketAddr;
+        Configuration childConfig = getModelConfiguration().getFirstChild(SOCKET_ADDRESS);
+        if (childConfig == null) {
+            ValueModel addrConfig = new ValueModel(SOCKET_ADDRESS);
+            addrConfig.setValue(socketAddr.toString());
+            setChildModel(addrConfig);
+        } else {
+            childConfig.setValue(socketAddr.toString());
+        }
     }
 
     /**
