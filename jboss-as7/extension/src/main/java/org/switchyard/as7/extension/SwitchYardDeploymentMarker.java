@@ -39,11 +39,7 @@ public final class SwitchYardDeploymentMarker {
      * @param unit the deployment unit.
      */
     public static void mark(DeploymentUnit unit) {
-        if (unit.getParent() == null) {
-            unit.putAttachment(MARKER, Boolean.TRUE);
-        } else {
-            unit.getParent().putAttachment(MARKER, Boolean.TRUE);
-        }
+        unit.putAttachment(MARKER, Boolean.TRUE);
     }
 
     /**
