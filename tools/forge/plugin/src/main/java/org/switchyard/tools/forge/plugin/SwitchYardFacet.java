@@ -21,15 +21,23 @@ package org.switchyard.tools.forge.plugin;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 import javax.inject.Inject;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
-import org.apache.maven.model.Repository;
+import org.apache.maven.model.Profile;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.jboss.forge.maven.MavenCoreFacet;
@@ -68,7 +76,6 @@ import org.switchyard.tools.forge.AbstractFacet;
 @RequiresPackagingType(PackagingType.JAR)
 public class SwitchYardFacet extends AbstractFacet {
     // repository id of JBoss Nexus repository
-    private static final String JBOSS_NEXUS = "JBOSS_NEXUS";
     private static final String CONFIG_ATTR = "switchyard.config";
     
     private static final String SWITCHYARD_PLUGIN = 
@@ -83,6 +90,11 @@ public class SwitchYardFacet extends AbstractFacet {
     
     static final String PROPS_PATH = "/org/switchyard/tools/forge/plugin/plugin.properties";
     static final String PROP_VERSION = "default.version";
+    
+    // Used if we are dealing with an OpenShift application
+    static final String OPEN_SHIFT_PROFILE = "openshift";
+    static final String OPEN_SHIFT_TRANSFORM = "/org/switchyard/tools/forge/plugin/openshift.xsl";
+    static final String OPEN_SHIFT_CONFIG = ".openshift/config/standalone.xml";
 
 
     @Inject
@@ -106,6 +118,12 @@ public class SwitchYardFacet extends AbstractFacet {
             Dependency dep = _shell.promptChoiceTyped("Please select a version to install:", versions);
             version = dep.getVersion();
         }
+        try {
+            tweakForOpenShift();
+        } catch (Exception ex) {
+            _shell.println("Unable to configure application for OpenShift: " + ex.getMessage());
+            return false;
+        }
         
         // Update the project with version and dependency info
         setVersion(version);
@@ -115,7 +133,11 @@ public class SwitchYardFacet extends AbstractFacet {
         String appName = _shell.prompt("Application name (e.g. myApp)");
         
         try {
-            addScannerPlugin();
+            MavenCoreFacet mvn = project.getFacet(MavenCoreFacet.class);
+            Model pom = mvn.getPOM();
+
+            addScannerPlugin(pom, null);
+            mvn.setPOM(pom);
             
             // Create the initial SwitchYard configuration
             V1SwitchYardModel syConfig = new V1SwitchYardModel();
@@ -292,35 +314,52 @@ public class SwitchYardFacet extends AbstractFacet {
         return version;
     }
     
-    private void addPluginRepository() {
-        MavenCoreFacet mvn = project.getFacet(MavenCoreFacet.class);
-        Model pom = mvn.getPOM();
-        Repository jbossRepo = null;
-        for (Repository repo : pom.getRepositories()) {
-            if (repo.getId() != null && JBOSS_NEXUS.equals(repo.getId())) {
-                jbossRepo = repo;
-                break;
-            }
-        }
-        
-        // If we found the nexus repository, then add it as the plugin repository as well
-        if (jbossRepo != null) {
-            pom.addPluginRepository(jbossRepo);
-            mvn.setPOM(pom);
-        }
+    private void addNexusRepository() {
+        DependencyFacet deps = project.getFacet(DependencyFacet.class);
+        deps.addRepository(DependencyFacet.KnownRepository.JBOSS_NEXUS);
     }
     
-    private void addScannerPlugin() throws Exception {
+    private void addPluginRepository() {
+        MavenPluginFacet plugins =  project.getFacet(MavenPluginFacet.class);
+        plugins.addPluginRepository(MavenPluginFacet.KnownRepository.JBOSS_NEXUS);
+    }
+    
+    private void tweakForOpenShift() throws Exception {
+        // Check to see if this is an openshift app
+        if (!(new File(OPEN_SHIFT_CONFIG).exists())) {
+            return;
+        }
+        
+        // NEXUS repository definition is missing for OS apps
+        addNexusRepository();
+        
+        // update standalone.xml to include switchyard bits
+        addSwitchYardToASConfig(OPEN_SHIFT_CONFIG);
+        
+        // add a build section with the scanner plugins
         MavenCoreFacet mvn = project.getFacet(MavenCoreFacet.class);
         Model pom = mvn.getPOM();
-
+        List<Profile> profiles = new ArrayList<Profile>();
+        profiles.add(buildOpenShiftProfile());
+        pom.setProfiles(profiles);
+        mvn.setPOM(pom);
+    }
+    
+    /**
+     * Adds SwitchYard scanners to the build section of a pom.
+     * @param pom the pom to update
+     * @param profile the profile to update; a null parameter will simply update
+     * the main <build> section.
+     * @throws Exception adding scanners failed
+     */
+    private void addScannerPlugin(Model pom, Profile profile) throws Exception {
         String version = project.getFacet(DependencyFacet.class).getProperty(VERSION);
         Dependency dep = DependencyBuilder.create(SWITCHYARD_PLUGIN + ":" + version);
         org.apache.maven.model.Plugin plugin = new org.apache.maven.model.Plugin();
 
         plugin.setArtifactId(dep.getArtifactId());
         plugin.setGroupId(dep.getGroupId());
-        plugin.setVersion(dep.getVersion());
+        plugin.setVersion("${" + VERSION + "}");
         
         // This is terrible - find a better way to set the config
         String pluginConfig = 
@@ -342,11 +381,75 @@ public class SwitchYardFacet extends AbstractFacet {
         execution.addGoal("configure");
         execution.setConfiguration(dom);
         executions.add(execution);
-
-        pom.getBuild().getPlugins().add(plugin);
-        mvn.setPOM(pom);
+        
+        // add to the build section
+        if (profile == null) {
+            if (pom.getBuild() == null) {
+                pom.setBuild(new org.apache.maven.model.Build());
+            }
+            pom.getBuild().getPlugins().add(plugin);
+        } else {
+            List<Plugin> plugins = profile.getBuild().getPlugins();
+            plugins.add(plugin);
+            profile.getBuild().setPlugins(plugins);
+        }
     }
-
+    
+    // Creates a new OpenShift profile with correct SwitchYard
+    Profile buildOpenShiftProfile() throws Exception {
+        Model pom = project.getFacet(MavenCoreFacet.class).getPOM();
+        Profile profile = new Profile();
+        profile.setId(OPEN_SHIFT_PROFILE);
+        
+        Build build = new Build();
+        build.setFinalName(pom.getArtifactId());
+        profile.setBuild(build);
+        addScannerPlugin(pom, profile);
+        Plugin jarPlugin = new Plugin();
+        jarPlugin.setGroupId("org.apache.maven.plugins");
+        jarPlugin.setArtifactId("maven-jar-plugin");
+        jarPlugin.setVersion("2.3.1");
+        String pluginConfig = 
+                "<configuration>"
+                + "<outputDirectory>deployments</outputDirectory>"
+                + "</configuration>";
+        Xpp3Dom dom = Xpp3DomBuilder.build(new ByteArrayInputStream(pluginConfig.getBytes()), "UTF-8");
+        jarPlugin.setConfiguration(dom);
+        build.addPlugin(jarPlugin);
+        
+        return profile;
+    }
+    
+    // This method updates the config @ asConfigPath with required switchyard
+    // subsystem details for OpenShift
+    void addSwitchYardToASConfig(String asConfigPath) throws Exception {
+        File orig = new File(asConfigPath);
+        // create a backup
+        if (!orig.exists()) {
+            throw new Exception("standalone.xml not available at " + orig.getAbsolutePath());
+        }
+        File backup = new File(asConfigPath + ".orig");
+        if (backup.exists()) {
+            throw new Exception("backup standalone.xml already exists " + backup.getAbsolutePath());
+        }
+        if (!orig.renameTo(backup)) {
+            throw new Exception("Failed to create backup standalone.xml " + backup.getAbsolutePath());
+        }
+        orig.createNewFile();
+        
+        // transform the original
+        InputStream xslStream = null;
+        try {
+            Transformer t = TransformerFactory.newInstance().newTransformer(
+                    new StreamSource(Classes.getResourceAsStream(OPEN_SHIFT_TRANSFORM)));
+            t.transform(new StreamSource(backup), new StreamResult(orig));   
+        } finally {
+            if (xslStream != null) {
+                xslStream.close();
+            }
+        }
+    }
+    
     private SwitchYardModel readSwitchYardConfig(FileResource<?> file) throws java.io.IOException {
         return new ModelPuller<SwitchYardModel>().pull(file.getUnderlyingResourceObject());
     }
@@ -364,6 +467,9 @@ public class SwitchYardFacet extends AbstractFacet {
                + File.separator + "main" 
                + File.separator + "resources"
                + File.separator + "META-INF");
+       if (!metaInf.exists()) {
+           metaInf.mkdirs();
+       }
        return (FileResource<?>) metaInf.getChild("switchyard.xml");
     }
     

@@ -19,6 +19,8 @@
 
 package org.switchyard.tools.forge.plugin;
 
+import java.io.File;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,6 +29,8 @@ import org.junit.Test;
  */
 public class SwitchYardFacetTest {
 
+    static final String ORIG_CONFIG_PATH = "target/test-classes/standalone.xml";
+    static final String BACKUP_CONFIG_PATH = ORIG_CONFIG_PATH + ".orig";
     
     @Test
     public void testVersionCheck() throws Exception {
@@ -38,5 +42,13 @@ public class SwitchYardFacetTest {
         
         // test negative case
         Assert.assertNull(facet.loadSwitchYardVersion("foo/doesntexist.properties"));
+    }
+    
+    @Test
+    public void testSwitchYardTransform() throws Exception {
+        SwitchYardFacet facet = new SwitchYardFacet();
+        facet.addSwitchYardToASConfig(ORIG_CONFIG_PATH);
+        Assert.assertTrue(new File(ORIG_CONFIG_PATH).exists());
+        Assert.assertTrue(new File(BACKUP_CONFIG_PATH).exists());
     }
 }
