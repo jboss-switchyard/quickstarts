@@ -176,6 +176,12 @@
             <outputDirectory>/modules/org/codehaus/jettison/main</outputDirectory>
             <filtered>true</filtered>
         </file>
+        <!-- Temporary fix, will be removed in next upgrade to AS7 -->
+        <file>
+            <source>src/main/resources/external/weld-core/module.xml</source>
+            <outputDirectory>/modules/org/jboss/weld/core/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
     </files>
     <dependencySets>
         <dependencySet>
@@ -440,6 +446,17 @@
             </includes>
             <outputDirectory>/modules/org/codehaus/jettison/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${version.jettison}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
+
+        <!-- Temporary fix, will be removed in next upgrade to AS7 -->
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.jboss.weld:weld-core</include>
+            </includes>
+            <outputDirectory>/modules/org/jboss/weld/core/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.weld.core}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
 

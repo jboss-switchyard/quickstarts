@@ -35,9 +35,7 @@ import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceTarget;
 import org.jboss.msc.value.ImmediateValue;
-import org.switchyard.admin.SwitchYard;
 import org.switchyard.as7.extension.SwitchYardDeploymentMarker;
-import org.switchyard.as7.extension.services.SwitchYardAdminService;
 import org.switchyard.as7.extension.services.SwitchYardComponentService;
 import org.switchyard.as7.extension.services.SwitchYardService;
 import org.switchyard.as7.extension.services.SwitchYardServiceDomainManagerService;
@@ -91,19 +89,7 @@ public class SwitchYardDeploymentProcessor implements DeploymentUnitProcessor {
         }
 
         switchyardServiceBuilder.setInitialMode(Mode.ACTIVE);
-        // TODO: remove this sync code when WELD-1067 is moved to AS7
-        synchronized(this) {
-            switchyardServiceBuilder.install();
-            if (WeldDeploymentMarker.isPartOfWeldDeployment(deploymentUnit)) {
-                // Give some lead time to initialize Weld container
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException ex) {
-                    // ignore
-                    ex.getMessage();
-                }
-            }
-        }
+        switchyardServiceBuilder.install();
     }
 
     @Override
