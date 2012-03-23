@@ -33,15 +33,15 @@ public class ConfigURIFactoryTest {
     @Test
     public void createConfigURIs() {
         SocketAddr addr = new SocketAddr();
-        ConfigURI uri = ConfigURIFactory.newConfigURI("cxfrs://http:///warehouse?resourceClasses=org.switchyard.component.camel.deploy.support.WarehouseResource", addr);
+        ConfigURI uri = ConfigURIFactory.newConfigURI("cxfrs://http:///warehouse?resourceClasses=org.switchyard.component.camel.deploy.support.WarehouseResource", addr, "");
         Assert.assertTrue(uri instanceof CxfRsConfigURI);
-        uri = ConfigURIFactory.newConfigURI("vm://blah/blah", addr);
+        uri = ConfigURIFactory.newConfigURI("vm://blah/blah", addr, "swdyws");
         Assert.assertTrue(uri instanceof DefaultConfigURI);
-        uri = ConfigURIFactory.newConfigURI("file://blah/blah", addr);
+        uri = ConfigURIFactory.newConfigURI("file://blah/blah", addr, "");
         Assert.assertTrue(uri instanceof DefaultConfigURI);
-        uri = ConfigURIFactory.newConfigURI("jms://blah/blah", addr);
+        uri = ConfigURIFactory.newConfigURI("jms://blah/blah", addr, "");
         Assert.assertTrue(uri instanceof DefaultConfigURI);
-        uri = ConfigURIFactory.newConfigURI("direct://blah/blah", addr);
+        uri = ConfigURIFactory.newConfigURI("direct://blah/blah", addr, "");
         Assert.assertTrue(uri instanceof DefaultConfigURI);
     }
 }

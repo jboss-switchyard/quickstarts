@@ -40,11 +40,12 @@ public final class ConfigURIFactory {
      *
      * @param uri the URI string
      * @param socketAddr the SocketAddr
+     * @param contextPath the default context path
      * @return a ConfigURI object
      */
-    public static ConfigURI newConfigURI(String uri, SocketAddr socketAddr) {
+    public static ConfigURI newConfigURI(String uri, SocketAddr socketAddr, String contextPath) {
         if ((uri != null) && uri.startsWith(CamelConstants.CXFRS_SCHEME)) {
-            return new CxfRsConfigURI(uri, socketAddr);
+            return new CxfRsConfigURI(uri, socketAddr, contextPath);
         }
         return new DefaultConfigURI(uri);
     }

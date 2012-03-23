@@ -72,6 +72,7 @@ public class V1CamelBindingModel extends V1BaseCamelBindingModel {
     public static final String TRANSACTED_REF = "transactedRef";
 
     private static final String SOCKET_ADDRESS = "socketAddr";
+    private static final String CONTEXT_PATH = "contextPath";
     
     private ConfigURI _configURI;
     
@@ -100,7 +101,7 @@ public class V1CamelBindingModel extends V1BaseCamelBindingModel {
      */
     public ConfigURI getConfigURI() {
         if (_configURI == null) {
-            _configURI = ConfigURIFactory.newConfigURI(getModelAttribute(CONFIG_URI), getSocketAddr());
+            _configURI = ConfigURIFactory.newConfigURI(getModelAttribute(CONFIG_URI), getSocketAddr(), getContextPath());
         }
         return _configURI;
     }
@@ -128,7 +129,7 @@ public class V1CamelBindingModel extends V1BaseCamelBindingModel {
     public V1CamelBindingModel setConfigURI(URI uri) {
         if (_configURI == null) {
             setModelAttribute(CONFIG_URI, uri.toString());
-            _configURI = ConfigURIFactory.newConfigURI(uri.toString(), getSocketAddr());
+            _configURI = ConfigURIFactory.newConfigURI(uri.toString(), getSocketAddr(), getContextPath());
         }
         return this;
     }
@@ -142,6 +143,15 @@ public class V1CamelBindingModel extends V1BaseCamelBindingModel {
             socketAddr = new SocketAddr();
         }
         return socketAddr;
+    }
+
+    private String getContextPath() {
+        Configuration hostConfig = getEnvironment().getFirstChild(CONTEXT_PATH);
+        String contextPath = "";
+        if (hostConfig != null && hostConfig.getValue() != null) {
+            contextPath = "/" + hostConfig.getValue();
+        }
+        return contextPath;
     }
     
     @Override

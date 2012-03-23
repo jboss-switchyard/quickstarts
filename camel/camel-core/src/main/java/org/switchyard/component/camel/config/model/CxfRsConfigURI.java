@@ -34,10 +34,15 @@ public class CxfRsConfigURI extends DefaultConfigURI {
      *
      * @param uri the URI as string
      * @param socketAddr the SocketAddr
+     * @param contextPath the default context path
      */
-    public CxfRsConfigURI(String uri, SocketAddr socketAddr) {
+    public CxfRsConfigURI(String uri, SocketAddr socketAddr, String contextPath) {
         if (uri.startsWith(CamelConstants.CXFRS_HTTP_NO_HOST_SCHEME)) {
-            setURIString(CamelConstants.CXFRS_HTTP_SCHEME + socketAddr + uri.substring(CamelConstants.CXFRS_HTTP_SCHEME.length()));
+            if (contextPath != null) {
+                setURIString(CamelConstants.CXFRS_HTTP_SCHEME + socketAddr + contextPath + uri.substring(CamelConstants.CXFRS_HTTP_SCHEME.length()));
+            } else {
+                setURIString(CamelConstants.CXFRS_HTTP_SCHEME + socketAddr + uri.substring(CamelConstants.CXFRS_HTTP_SCHEME.length()));
+            }
         } else {
             setURIString(uri);
         }
