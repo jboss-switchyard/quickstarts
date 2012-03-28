@@ -133,7 +133,6 @@ public class HelpDesk {
                         Map<String, Object> results = taskContent.getMap();
                         Ticket ticket = _userTickets.get(task.getProcessInstanceId());
                         results.put(TICKET, ticket);
-                        taskContent.setMap(results);
                         _taskClient.complete(task.getId(), _userId, taskContent);
                     }
                 }
