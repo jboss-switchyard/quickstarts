@@ -55,19 +55,6 @@ public interface TaskContent extends Serializable {
     public TaskContent setType(String type);
 
     /**
-     * Gets the bytes.
-     * @return the bytes
-     */
-    public byte[] getBytes();
-
-    /**
-     * Sets the bytes.
-     * @param bytes the bytes
-     * @return this Content (useful for chaining)
-     */
-    public TaskContent setBytes(byte[] bytes);
-
-    /**
      * Gets the object.
      * @return the object
      */
@@ -88,7 +75,6 @@ public interface TaskContent extends Serializable {
      */
     public TaskContent setObject(Object object);
 
-
     /**
      * Gets the map.
      * @return the map
@@ -101,5 +87,18 @@ public interface TaskContent extends Serializable {
      * @return this Content (useful for chaining)
      */
     public TaskContent setMap(Map<String, Object> map);
+
+    /**
+     * Gets the bytes.
+     * @return the bytes
+     */
+    public byte[] getBytes();
+
+    /**
+     * Sets the bytes.
+     * @param bytes the bytes
+     * @return this Content (useful for chaining)
+     */
+    public TaskContent setBytes(byte[] bytes);
 
 }

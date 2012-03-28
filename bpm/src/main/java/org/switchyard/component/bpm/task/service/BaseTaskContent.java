@@ -34,9 +34,11 @@ import org.switchyard.exception.SwitchYardException;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public abstract class BaseTaskContent implements TaskContent {
+public class BaseTaskContent implements TaskContent {
 
     private Long _id;
+    private String _type;
+    private Object _object;
 
     /**
      * {@inheritDoc}
@@ -59,9 +61,98 @@ public abstract class BaseTaskContent implements TaskContent {
      * {@inheritDoc}
      */
     @Override
+    public String getType() {
+        return _type;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TaskContent setType(String type) {
+        _type = type;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Object getObject() {
+        return _object;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T getObject(Class<T> clazz) {
+        return clazz.cast(getObject());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TaskContent setObject(Object object) {
+        _object = object;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getMap() {
+        return (Map<String, Object>)getObject(Map.class);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TaskContent setMap(Map<String, Object> map) {
+        setObject(map);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getBytes() {
+        byte[] bytes = null;
+        final Object object = getObject();
+        if (object != null) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = null;
+            try {
+                oos = new ObjectOutputStream(baos);
+                oos.writeObject(object);
+                oos.flush();
+            } catch (IOException ioe) {
+                throw new SwitchYardException(ioe);
+            } finally {
+                if (oos != null) {
+                    try {
+                        oos.close();
+                    } catch (IOException ioe) {
+                        throw new SwitchYardException(ioe);
+                    }
+                }
+            }
+            bytes = baos.toByteArray();
+        }
+        return bytes;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TaskContent setBytes(byte[] bytes) {
         Object object = null;
-        byte[] bytes = getBytes();
         if (bytes != null && bytes.length > 0) {
             ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
             ObjectInputStream ois = null;
@@ -88,62 +179,7 @@ public abstract class BaseTaskContent implements TaskContent {
                 }
             }
         }
-        return object;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <T> T getObject(Class<T> clazz) {
-        return clazz.cast(getObject());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TaskContent setObject(Object object) {
-        byte[] bytes = null;
-        if (object != null) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = null;
-            try {
-                oos = new ObjectOutputStream(baos);
-                oos.writeObject(object);
-                oos.flush();
-            } catch (IOException ioe) {
-                throw new SwitchYardException(ioe);
-            } finally {
-                if (oos != null) {
-                    try {
-                        oos.close();
-                    } catch (IOException ioe) {
-                        throw new SwitchYardException(ioe);
-                    }
-                }
-            }
-            bytes = baos.toByteArray();
-        }
-        setBytes(bytes);
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public Map<String, Object> getMap() {
-        return (Map<String, Object>)getObject(Map.class);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TaskContent setMap(Map<String, Object> map) {
-        setObject(map);
+        setObject(object);
         return this;
     }
 

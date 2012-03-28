@@ -19,8 +19,9 @@
 package org.switchyard.component.bpm.task.service.jbpm;
 
 import org.jbpm.task.AccessType;
+import org.jbpm.task.Content;
+import org.jbpm.task.service.ContentData;
 import org.switchyard.component.bpm.task.service.BaseTaskContent;
-import org.switchyard.component.bpm.task.service.TaskContent;
 
 /**
  * A jBPM TaskContent implementation.
@@ -29,67 +30,43 @@ import org.switchyard.component.bpm.task.service.TaskContent;
  */
 public class JBPMTaskContent extends BaseTaskContent {
 
-    private final org.jbpm.task.service.ContentData _wrapped;
-
-    /**
-     * Creates a new JBPMTaskContent with the specified ContentData.
-     * @param contentData the specified ContentData.
-     */
-    public JBPMTaskContent(org.jbpm.task.service.ContentData contentData) {
-        if (contentData != null) {
-            _wrapped = contentData;
-        } else {
-            _wrapped = new org.jbpm.task.service.ContentData();
-            _wrapped.setAccessType(AccessType.Inline);
-        }
-    }
+    private AccessType _accessType;
 
     /**
      * Creates a new JBPMTaskContent with the specified Content.
      * @param content the specified Content
      */
-    public JBPMTaskContent(org.jbpm.task.Content content) {
-        this((org.jbpm.task.service.ContentData)null);
-        _wrapped.setContent(content.getContent());
+    public JBPMTaskContent(Content content) {
         setId(content.getId());
-    }
-
-    org.jbpm.task.service.ContentData getWrapped() {
-        return _wrapped;
-    }
-
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getType() {
-        return _wrapped.getType();
+        setAccessType(AccessType.Inline);
+        setBytes(content.getContent());
     }
 
     /**
-     * {@inheritDoc}
+     * Creates a new JBPMTaskContent with the specified ContentData.
+     * @param contentData the specified ContentData.
      */
-    @Override
-    public TaskContent setType(String type) {
-        _wrapped.setType(type);
-        return this;
+    public JBPMTaskContent(ContentData contentData) {
+        setType(contentData.getType());
+        setAccessType(contentData.getAccessType());
+        setBytes(contentData.getContent());
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the access type.
+     * @return the access type
      */
-    @Override
-    public byte[] getBytes() {
-        return _wrapped.getContent();
+    public AccessType getAccessType() {
+        return _accessType;
     }
 
     /**
-     * {@inheritDoc}
+     * Sets the access type.
+     * @param accessType the access type
+     * @return this instance (useful for chaining)
      */
-    @Override
-    public TaskContent setBytes(byte[] bytes) {
-        _wrapped.setContent(bytes);
+    public JBPMTaskContent setAccessType(AccessType accessType) {
+        _accessType = accessType;
         return this;
     }
 
