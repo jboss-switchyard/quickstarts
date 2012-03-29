@@ -16,34 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
 package org.switchyard.tools.forge.plugin;
 
 import java.io.File;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Tests for SwitchYardPluginTest
+ * Tests for SwitchYardPluginTest.
  */
 public class SwitchYardFacetTest {
 
-    static final String ORIG_CONFIG_PATH = "target/test-classes/standalone.xml";
-    static final String BACKUP_CONFIG_PATH = ORIG_CONFIG_PATH + ".orig";
-    
+    private static final String ORIG_CONFIG_PATH = "target/test-classes/standalone.xml";
+    private static final String BACKUP_CONFIG_PATH = ORIG_CONFIG_PATH + ".orig";
+
     @Test
     public void testVersionCheck() throws Exception {
         SwitchYardFacet facet = new SwitchYardFacet();
-        // test postive case
+        // test positive case
         String version = facet.loadSwitchYardVersion(SwitchYardFacet.PROPS_PATH);
         System.out.println(version);
         Assert.assertNotNull(version);
-        
         // test negative case
         Assert.assertNull(facet.loadSwitchYardVersion("foo/doesntexist.properties"));
     }
-    
+
     @Test
     public void testSwitchYardTransform() throws Exception {
         SwitchYardFacet facet = new SwitchYardFacet();
@@ -51,4 +50,13 @@ public class SwitchYardFacetTest {
         Assert.assertTrue(new File(ORIG_CONFIG_PATH).exists());
         Assert.assertTrue(new File(BACKUP_CONFIG_PATH).exists());
     }
+
+    @After
+    public void after() throws Exception {
+        File backupConfigFile = new File(BACKUP_CONFIG_PATH);
+        if (backupConfigFile.exists()) {
+            backupConfigFile.delete();
+        }
+    }
+
 }
