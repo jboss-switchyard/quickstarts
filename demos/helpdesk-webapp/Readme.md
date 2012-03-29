@@ -20,32 +20,32 @@ JBoss AS 7
 3. Deploy the web application:
     cp target/switchyard-quickstart-demo-helpdesk-webapp.war <path-to>/switchyard-as7-0.4/standalone/deployments/
 4. Start the Human Task server:
-    mvn -Dtaskserver=start test
+    mvn exec:java -Dexec.args="start.taskserver"
 5. In a web browser window, use the web application:
     Browse to http://localhost:8080/helpdesk/
-	Select the User you want to act as.
-	Note that you can toggle back and forth between users. (This would normally be automatically chosen based on the logged on user.)
-	So far there are no processes started, so there are no tasks.
+    Select the User you want to act as.
+    Note that you can toggle back and forth between users. (This would normally be automatically chosen based on the logged on user.)
+    So far there are no processes started, so there are no tasks.
 6. In a different console window, start a process (this will use the SOAP gateway):
-    mvn -Dprocess=start test
+    mvn exec:java -Dexec.args="start.process"
    You can do this as many times as you wish, starting as many processes as you wish.
 7. Going back to your web browser window:
-	As krisv (a developer), click the Submit button to get the list of tasks.
-	As krisv, review the tasks you want to perform and click the Submit button again.
-	As david (a user), click the Submit button to get the list of tasks. He will only have tasks if more details were required.
-	If there were user tasks, check the tasks you want to complete and click the Submit button again.
-	Continue toggling back and forth as the users until all tasks are completed.
-	You can view the application server output in its console window to see the progression of the progress.
+    As krisv (a developer), click the Submit button to get the list of tasks.
+    As krisv, review the tasks you want to perform and click the Submit button again.
+    As david (a user), click the Submit button to get the list of tasks. He will only have tasks if more details were required.
+    If there were user tasks, check the tasks you want to complete and click the Submit button again.
+    Continue toggling back and forth as the users until all tasks are completed.
+    You can view the application server output in its console window to see the progression of the progress.
 8. In a different console window, CLEANLY stop the Human Task server. (Do not use Ctrl-C in the previous console window!):
-    mvn -Dtaskserver=stop test
+    mvn exec:java -Dexec.args="stop.taskserver"
    or
-    rm taskserver.rm2stop
+    rm target/taskserver.rm2stop
 
 Expected TaskServer Output:
 ===========================
 INFO  [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskServer] Starting jBPM TaskServer on 127.0.0.1:9123...
 INFO  [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskServer] jBPM TaskServer started on 127.0.0.1:9123.
-INFO  [org.switchyard.quickstarts.demos.helpdesk.HelpDeskTests] ********** IMPORTANT: To CLEANLY stop the TaskServer, in another window either run mvn test -Dtaskserver=stop or simply delete the .../switchyard-quickstarts/demos/helpdesk-webapp/taskserver.rm2stop file. Do not use Ctrl-C!  **********
+INFO  [org.switchyard.quickstarts.demos.helpdesk.HelpDeskTests] ********** IMPORTANT: To CLEANLY stop the TaskServer, in another window either run mvn exec:java -Dexec.args="stop.taskserver" or simply delete the .../switchyard-quickstarts/demos/helpdesk-webapp/target/taskserver.rm2stop file. Do not use Ctrl-C!  **********
 INFO  [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskServer] Stopping jBPM TaskServer on 127.0.0.1:9123...
 INFO  [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskServer] jBPM TaskServer on 127.0.0.1:9123 stopped.
 
