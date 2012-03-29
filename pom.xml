@@ -132,6 +132,11 @@
     <version.xmlbeans>2.2.0</version.xmlbeans>
     <version.xmlunit>1.1</version.xmlunit>
     <version.xstream>1.2.2</version.xstream>
+    <!-- <version.javax.resource>1.6</version.javax.resource> -->
+    <version.org.jboss.spec.javax.resource16>1.0.0.Final</version.org.jboss.spec.javax.resource16>
+    <version.ironjacamar>1.0.7.Final</version.ironjacamar>
+    <version.fungal>0.10.0.RC2</version.fungal>
+    <version.shrinkwrap.descriptors>1.1.0-beta-1</version.shrinkwrap.descriptors>
   </properties>
 
   <scm>
@@ -166,6 +171,10 @@
         <enabled>true</enabled>
         <updatePolicy>never</updatePolicy>
       </snapshots>
+    </repository>
+    <repository>
+      <id>fungal</id>
+      <url>http://jesperpedersen.github.com/fungal/maven2</url>
     </repository>
   </repositories>
 
@@ -341,6 +350,8 @@
         <configuration>
           <environmentVariables>
             <SWITCHYARD_VERSION>${project.version}</SWITCHYARD_VERSION>
+            <HORNETQ_VERSION>${version.hornetq}</HORNETQ_VERSION>
+            <NETTY_VERSION>${version.netty}</NETTY_VERSION>
           </environmentVariables>
           <includes>
             <include>**/*Test*.java</include>
@@ -800,6 +811,11 @@
          <version>${project.version}</version>
       </dependency>
       <dependency>
+         <groupId>org.switchyard.components</groupId>
+         <artifactId>switchyard-component-jca</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+      <dependency>
          <groupId>org.switchyard.quickstarts</groupId>
          <artifactId>switchyard-quickstart-transform-xslt</artifactId>
          <version>${project.version}</version>
@@ -909,7 +925,12 @@
          <artifactId>switchyard-quickstart-validate-xml</artifactId>
          <version>${project.version}</version>
       </dependency>
-       <dependency>
+      <dependency>
+         <groupId>org.switchyard.quickstarts</groupId>
+         <artifactId>switchyard-quickstart-jca-inflow-hornetq</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+      <dependency>
          <groupId>org.switchyard.quickstarts.demos</groupId>
          <artifactId>switchyard-quickstart-demo-orders</artifactId>
          <type>war</type>
@@ -1075,12 +1096,64 @@
          <artifactId>jta</artifactId>
          <version>${version.jta}</version>
       </dependency>
-      <dependency>
+     <dependency>
          <groupId>com.jcraft</groupId>
          <artifactId>jsch</artifactId>
          <version>${version.jsch}</version>
       </dependency>
-      <dependency>
+      <!-- No 1.6.Final on Maven central, so use the one in AS7 instead.
+       <dependency>
+         <groupId>javax.resource</groupId>
+         <artifactId>connector-api</artifactId>
+         <version>${version.javax.resource}</version>
+      </dependency>
+      -->
+       <dependency>
+          <groupId>org.jboss.spec.javax.resource</groupId>
+          <artifactId>jboss-connector-api_1.6_spec</artifactId>
+          <version>${version.org.jboss.spec.javax.resource16}</version>
+       </dependency>
+       <dependency>
+          <groupId>org.jboss.ironjacamar</groupId>
+          <artifactId>ironjacamar-core-api</artifactId>
+          <version>${version.ironjacamar}</version>
+       </dependency>
+       <dependency>
+          <groupId>org.jboss.ironjacamar</groupId>
+          <artifactId>ironjacamar-embedded</artifactId>
+          <version>${version.ironjacamar}</version>
+       </dependency>
+       <dependency>
+          <groupId>org.jboss.ironjacamar</groupId>
+          <artifactId>ironjacamar-deployers-fungal</artifactId>
+          <version>${version.ironjacamar}</version>
+       </dependency>
+       <dependency>
+          <groupId>org.jboss.ironjacamar</groupId>
+          <artifactId>ironjacamar-deployers-common</artifactId>
+          <version>${version.ironjacamar}</version>
+       </dependency>
+       <dependency>
+          <groupId>org.jboss.ironjacamar</groupId>
+          <artifactId>ironjacamar-common-impl-papaki</artifactId>
+          <version>${version.ironjacamar}</version>
+       </dependency>
+        <dependency>
+          <groupId>com.github.fungal</groupId>
+          <artifactId>fungal</artifactId>
+          <version>${version.fungal}</version>
+       </dependency>
+       <dependency>
+          <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+          <artifactId>shrinkwrap-descriptors-api</artifactId>
+          <version>${version.shrinkwrap.descriptors}</version>
+       </dependency>
+       <dependency>
+          <groupId>org.jboss.as</groupId>
+          <artifactId>jboss-as-connector</artifactId>
+          <version>${version.jbossas}</version>
+       </dependency>
+       <dependency>
          <groupId>net.sourceforge.saxon</groupId>
          <artifactId>saxonhe</artifactId>
          <version>${version.saxon}</version>
@@ -1255,6 +1328,11 @@
       <dependency>
          <groupId>org.hornetq</groupId>
          <artifactId>hornetq-jms-client</artifactId>
+         <version>${version.hornetq}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.hornetq</groupId>
+         <artifactId>hornetq-ra</artifactId>
          <version>${version.hornetq}</version>
       </dependency>
       <dependency>
