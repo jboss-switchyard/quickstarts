@@ -65,6 +65,7 @@
         <module>clojure</module>
         <module>hornetq</module>
         <module>tools/forge</module>
+        <module>jca</module>
     </modules>
 
     <repositories>

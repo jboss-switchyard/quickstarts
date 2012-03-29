@@ -35,7 +35,7 @@ import org.switchyard.deploy.ActivatorLoader;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.Deployment;
 import org.switchyard.exception.SwitchYardException;
-import org.switchyard.test.MockInitialContextFactory;
+import org.switchyard.test.JBossASNamingServiceInstaller;
 import org.switchyard.test.mixins.CDIMixIn;
 
 /**
@@ -52,13 +52,13 @@ public class CamelImplementationMissingRefTest {
     
     @BeforeClass
     public static void installContext() {
-        MockInitialContextFactory.install();
+        JBossASNamingServiceInstaller.install();
         new CDIMixIn().initialize();
     }
     
     @AfterClass
     public static void clearContext() {
-        MockInitialContextFactory.clear();
+        JBossASNamingServiceInstaller.clear();
     }
 
     @Test (expected = SwitchYardException.class)

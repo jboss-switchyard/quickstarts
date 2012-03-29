@@ -39,7 +39,7 @@ import org.junit.Test;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.switchyard.exception.SwitchYardException;
-import org.switchyard.test.MockInitialContextFactory;
+import org.switchyard.test.JBossASNamingServiceInstaller;
 
 /**
  * Unit test for {@link TransactionManagerFactory}.
@@ -52,18 +52,17 @@ public class TransactionManagerFactoryTest {
 
     @BeforeClass
     public static void installMockContextFactory() throws Exception {
-        MockInitialContextFactory.install();
+        JBossASNamingServiceInstaller.install();
     }
     
     @Before
     public void createContext() throws NamingException {
         initialContext = new InitialContext();
-        initialContext.createSubcontext("java:jboss");
     }
     
     @After
     public void clearContext() {
-        MockInitialContextFactory.clear();
+        JBossASNamingServiceInstaller.clear();
     }
 
     @Test
@@ -75,7 +74,8 @@ public class TransactionManagerFactoryTest {
     @Test
     public void createSpringTransactionManager() throws Exception {
         initialContext.bind("java:comp/UserTransaction", mock(UserTransaction.class));
-        initialContext.bind("java:comp/TransactionManager", mock(UserTransaction.class));
+        initialContext.bind("java:comp/TransactionManager", mock(TransactionManager.class));
+        initialContext.bind("java:comp/TransactionSynchronizationRegistry", mock(TransactionSynchronizationRegistry.class));
         final TransactionManagerFactory factory = TransactionManagerFactory.getInstance();
         final PlatformTransactionManager tm = factory.create();
         assertThat(tm, is(notNullValue()));

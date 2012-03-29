@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright(C) OASIS(R) 2005,2010. All Rights Reserved. 
+      OASIS trademark, IPR and other policies apply.  -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 	
+    targetNamespace="http://docs.oasis-open.org/ns/opencsa/sca/200912/binding-jca"
+    xmlns:swyd="urn:switchyard-config:switchyard:1.0"
+    xmlns:jca="http://docs.oasis-open.org/ns/opencsa/sca/200912/binding-jca"
+    xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 	elementFormDefault="qualified">
+
+   <import namespace="urn:switchyard-config:switchyard:1.0"/>
+   <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
+
+   <element name="binding.jca" type="jca:JCABinding" substitutionGroup="swyd:binding.switchyard" />
+   <complexType name="JCABinding">
+      <complexContent>
+         <extension base="swyd:SwitchYardBindingType">
+            <sequence>
+               <element name="contextMapper" type="swyd:ContextMapperType"  minOccurs="0" maxOccurs="1"/>
+               <element name="messageComposer" type="swyd:MessageComposerType" minOccurs="0" maxOccurs="1"/>
+               <element name="outboundConnection" 
+                        type="jca:JCAOutboundConnection" minOccurs="0" />
+               <element name="inboundConnection" 
+                        type="jca:JCAInboundConnection" minOccurs="0" />
+               <element name="outboundInteraction" 
+                        type="jca:JCAOutboundInteraction" minOccurs="0" />
+               <element name="inboundInteraction" 
+                        type="jca:JCAInboundInteraction" minOccurs="0" />
+               <element name="property" type="jca:Property" minOccurs="0"
+                        maxOccurs="unbounded"/>
+               <element ref="sca:extensions" minOccurs="0" maxOccurs="1"/>
+            </sequence>
+            <attribute name="initialContextFactory" type="anyURI" 
+                       use="optional"/>
+    	   <attribute name="jndiURL" type="anyURI" use="optional"/>
+         </extension>
+      </complexContent>
+   </complexType>
+
+   <simpleType name="JCACreateResource">
+      <restriction base="string">
+         <enumeration value="always" />
+         <enumeration value="never" />
+         <enumeration value="ifNotExist" />
+	    </restriction>
+   </simpleType>
+   <simpleType name="ResAuth">
+      <restriction base="string">
+         <enumeration value="container" />
+         <enumeration value="application" />
+      </restriction>
+   </simpleType>
+   <complexType name="JCAOutboundConnection">
+      <sequence>
+         <element name="resourceAdapter" type="jca:ResourceAdapter"
+                  minOccurs="0" />
+         <element name="connection" type="jca:Connection" />
+         <element name="resAuth" type="jca:ResAuth" minOccurs="0" />
+         <any namespace="##other" processContents="lax" minOccurs="0"
+              maxOccurs="unbounded" />
+      </sequence>
+      <attribute name="managed" type="boolean" use="optional"	
+                default="true" />
+      <anyAttribute namespace="##other" processContents="lax" />
+   </complexType>
+   <complexType name="JCAInboundConnection">
+      <sequence>
+         <element name="resourceAdapter" type="jca:ResourceAdapter" />
+         <element name="activationSpec" type="jca:ActivationSpec" />
+         <any namespace="##other" processContents="lax" minOccurs="0"
+              maxOccurs="unbounded" />
+      </sequence>
+      <anyAttribute namespace="##other" processContents="lax" />
+   </complexType>
+   <complexType name="JCAOutboundInteraction">
+      <sequence>
+         <element name="connectionSpec" type="jca:ConnectionSpec"
+                  minOccurs="0" />
+         <element name="interactionSpec" type="jca:InteractionSpec"
+                  minOccurs="0" />
+         <element name="operation" type="jca:Operation" minOccurs="0" />
+         <any namespace="##other" processContents="lax" minOccurs="0"
+              maxOccurs="unbounded" />
+      </sequence>
+      <anyAttribute namespace="##other" processContents="lax" />
+   </complexType>
+   <complexType name="JCAInboundInteraction">
+      <sequence>
+         <element name="listener" type="string" minOccurs="0" />
+         <element name="inboundOperation" type="jca:InboundOperation"
+                  minOccurs="0" maxOccurs="unbounded" />
+         <element name="endpointClass" type="string" minOccurs="0" />
+         <element name="transacted" type="boolean" minOccurs="0" />
+         <any namespace="##other" processContents="lax" minOccurs="0"
+              maxOccurs="unbounded" />
+      </sequence>
+      <anyAttribute namespace="##other" processContents="lax" />
+   </complexType>
+   <complexType name="ResourceAdapter">
+      <sequence>
+         <element name="property" type="jca:Property" minOccurs="0"
+                  maxOccurs="unbounded" />
+         <any namespace="##other" processContents="lax" minOccurs="0"
+              maxOccurs="unbounded" />
+      </sequence>
+      <attribute name="name" type="NMTOKEN" use="optional" />
+      <attribute name="type" type="NMTOKEN" use="required" />
+      <anyAttribute namespace="##other" processContents="lax" />
+   </complexType>
+   <complexType name="Connection">
+      <sequence>
+         <element name="property" type="jca:Property" minOccurs="0"
+                  maxOccurs="unbounded" />
+         <any namespace="##other" processContents="lax" minOccurs="0"
+              maxOccurs="unbounded" />
+      </sequence>
+      <attribute name="jndiName" type="anyURI" use="optional" />
+      <attribute name="type" type="NMTOKEN" use="required" />
+      <attribute name="create" type="jca:JCACreateResource" use="optional"
+                 default="ifNotExist" />
+      <anyAttribute namespace="##other" processContents="lax" />
+   </complexType>
+   <complexType name="ActivationSpec">
+      <sequence>
+         <element name="property" type="jca:Property" minOccurs="0"
+                  maxOccurs="unbounded" />
+         <any namespace="##other" processContents="lax" minOccurs="0"
+              maxOccurs="unbounded" />
+      </sequence>
+      <attribute name="jndiName" type="anyURI" use="optional" />
+      <attribute name="type" type="NMTOKEN" use="required" />
+      <attribute name="create" type="jca:JCACreateResource" use="optional"
+                 default="ifNotExist"/>
+      <anyAttribute namespace="##other" processContents="lax" />
+   </complexType>
+   <complexType name="Operation">
+      <sequence>
+         <element name="interactionSpec" type="jca:InteractionSpec"
+                  minOccurs="0" />
+         <any namespace="##other" processContents="lax" minOccurs="0"
+              maxOccurs="unbounded" />
+      </sequence>
+      <attribute name="name" type="NMTOKEN" use="required" />
+      <anyAttribute namespace="##other" processContents="lax" />
+   </complexType>
+   <complexType name="InboundOperation">
+      <sequence>
+         <any namespace="##other" processContents="lax" minOccurs="0"
+              maxOccurs="unbounded" />
+		</sequence>
+		<attribute name="name" type="NMTOKEN" use="required" />
+		<attribute name="selectedOperation" type="string" use="required" />
+		<anyAttribute namespace="##other" processContents="lax" />
+	</complexType>
+	<complexType name="ConnectionSpec">
+      <sequence>
+         <element name="property" type="jca:Property" minOccurs="0"
+                  maxOccurs="unbounded" />
+         <any namespace="##other" processContents="lax" minOccurs="0"
+              maxOccurs="unbounded" />
+      </sequence>
+      <attribute name="type" type="NMTOKEN" use="required" />
+      <anyAttribute namespace="##other" processContents="lax" />
+   </complexType>
+   <complexType name="InteractionSpec">
+      <sequence>
+         <element name="property" type="jca:Property" minOccurs="0"
+                  maxOccurs="unbounded" />
+         <any namespace="##other" processContents="lax" minOccurs="0"
+              maxOccurs="unbounded" />
+      </sequence>
+      <attribute name="type" type="NMTOKEN" use="required" />
+      <anyAttribute namespace="##other" processContents="lax" />
+   </complexType>
+
+    <complexType name="Property">
+      <attribute name="name" type="NCName" use="required"/>
+      <attribute name="value" type="anySimpleType" use="optional"/>
+    </complexType>
+    
+</schema>
