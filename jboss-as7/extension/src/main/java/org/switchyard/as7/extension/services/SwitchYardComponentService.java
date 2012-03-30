@@ -31,10 +31,12 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import org.jboss.dmr.ModelNode;
+import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
 import org.jboss.logging.Logger;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoadException;
+import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.StartContext;
@@ -61,7 +63,8 @@ public class SwitchYardComponentService implements Service<List<Component>> {
     public static final ServiceName SERVICE_NAME = ServiceName.of("SwitchYardComponentService");
 
     private final InjectedValue<Map> _injectedValues = new InjectedValue<Map>();
-
+    private final InjectedValue<ResourceAdapterRepository> _resourceAdapterRepository = new InjectedValue<ResourceAdapterRepository>();
+    
     private ModelNode _operation;
     private List<Component> _components = new ArrayList<Component>();
 
@@ -101,6 +104,7 @@ public class SwitchYardComponentService implements Service<List<Component>> {
                                 ModelNode properties = opmodule.get(PROPERTIES);
                                 component.init(createEnvironmentConfig(properties));
                             }
+                            component.addResourceDependency(_resourceAdapterRepository.getValue());
                             _components.add(component);
                         } catch (InstantiationException ie) {
                             LOG.error("Unable to instantiate class " + className);
@@ -152,6 +156,14 @@ public class SwitchYardComponentService implements Service<List<Component>> {
      */
     public InjectedValue<Map> getInjectedValues() {
         return _injectedValues;
+    }
+
+    /**
+     * Injection point for ResourceAdapterRepository.
+     * @return ResourceAdapterRepository
+     */
+    public Injector<ResourceAdapterRepository> getResourceAdapterRepository() {
+        return _resourceAdapterRepository;
     }
 
 }

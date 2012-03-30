@@ -70,6 +70,7 @@
                 <module identifier="org.switchyard.component.bpm" implClass="org.switchyard.component.bpm.deploy.BPMComponent"/>
                 <module identifier="org.switchyard.component.bpel" implClass="org.switchyard.component.bpel.deploy.BPELComponent"/>
                 <module identifier="org.switchyard.component.hornetq" implClass="org.switchyard.component.hornetq.deploy.HornetQComponent"/>
+                <module identifier="org.switchyard.component.jca" implClass="org.switchyard.component.jca.deploy.JCAComponent"/>
             </modules>
         </subsystem>
     </xsl:copy>

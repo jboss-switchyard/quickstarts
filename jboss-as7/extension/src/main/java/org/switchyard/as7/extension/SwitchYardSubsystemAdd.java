@@ -37,11 +37,13 @@ import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
+import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
 import org.jboss.logging.Logger;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
+import org.jboss.msc.service.ServiceName;
 import org.switchyard.as7.extension.deployment.SwitchYardCdiIntegrationProcessor;
 import org.switchyard.as7.extension.deployment.SwitchYardConfigDeploymentProcessor;
 import org.switchyard.as7.extension.deployment.SwitchYardConfigProcessor;
@@ -63,6 +65,10 @@ public final class SwitchYardSubsystemAdd extends AbstractBoottimeAddStepHandler
 
     private static final Logger LOG = Logger.getLogger("org.switchyard");
 
+    // TODO use ConnectorServices.RA_REPOSITORY_SERVICE instead once JBoss AS is updated to 7.1.1 or later
+    //private static final ServiceName RA_REPOSITORY_SERVICE_NAME = ConnectorServices.RA_REPOSITORY_SERVICE;
+    private static final ServiceName RA_REPOSITORY_SERVICE_NAME = ServiceName.JBOSS.append("rarepository");
+            
     static final SwitchYardSubsystemAdd INSTANCE = new SwitchYardSubsystemAdd();
 
     // Private to ensure a singleton.
@@ -120,7 +126,8 @@ public final class SwitchYardSubsystemAdd extends AbstractBoottimeAddStepHandler
 
         final SwitchYardComponentService componentService = new SwitchYardComponentService(operation);
         final ServiceBuilder<List<Component>> componentServiceBuilder = context.getServiceTarget().addService(SwitchYardComponentService.SERVICE_NAME, componentService);
-        componentServiceBuilder.addDependency(SwitchYardInjectorService.SERVICE_NAME, Map.class, componentService.getInjectedValues());
+        componentServiceBuilder.addDependency(SwitchYardInjectorService.SERVICE_NAME, Map.class, componentService.getInjectedValues())
+                .addDependency(RA_REPOSITORY_SERVICE_NAME, ResourceAdapterRepository.class, componentService.getResourceAdapterRepository());
         componentServiceBuilder.setInitialMode(Mode.ACTIVE);
         newControllers.add(componentServiceBuilder.install());
 

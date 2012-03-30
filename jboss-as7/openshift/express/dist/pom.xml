@@ -116,7 +116,7 @@
                                     <version>${project.version}</version>
                                 </artifactItem>
                             </artifactItems>
-                            <excludes>**/*/CamelJMSBindingQuickstartTest.class, **/*/HornetqBindingQuickstartTest.class, **/*/BpelServiceJmsBindingQuickstartTest.class</excludes>
+                            <excludes>**/*/CamelJMSBindingQuickstartTest.class, **/*/HornetqBindingQuickstartTest.class, **/*/BpelServiceJmsBindingQuickstartTest.class, **/*/JCAInflowHornetQQuickstartTest.class</excludes>
                             <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
                         </configuration>
                     </execution>

@@ -32,6 +32,10 @@
             <artifactId>jboss-as-dist</artifactId>
             <type>zip</type>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-connector</artifactId>
+        </dependency>
 
         <!--
         Test dependencies...
@@ -179,6 +183,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.switchyard.quickstarts</groupId>
+            <artifactId>switchyard-quickstart-jca-inflow-hornetq</artifactId>
+            <scope>test</scope>
+        </dependency>
+         <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
             <artifactId>switchyard-quickstart-demo-orders</artifactId>
             <type>war</type>

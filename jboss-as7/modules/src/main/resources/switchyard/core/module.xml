@@ -42,6 +42,8 @@
         <module name="org.jboss.as.server"/>
         <module name="org.jboss.as.weld"/>
         <module name="org.jboss.weld.spi"/>
+        <module name="org.jboss.as.connector"/>
+        <module name="org.jboss.ironjacamar.api"/>
         <module name="org.switchyard.api"/>
         <module name="org.switchyard.admin"/>
         <module name="org.switchyard.common"/>
