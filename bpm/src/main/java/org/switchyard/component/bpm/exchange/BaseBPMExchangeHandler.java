@@ -23,6 +23,7 @@ import static org.switchyard.component.bpm.ProcessConstants.ACTION_TYPE_VAR;
 import static org.switchyard.component.bpm.ProcessConstants.PROCESS_EVENT_TYPE_VAR;
 import static org.switchyard.component.bpm.ProcessConstants.PROCESS_EVENT_VAR;
 import static org.switchyard.component.bpm.ProcessConstants.PROCESS_INSTANCE_ID_VAR;
+import static org.switchyard.component.bpm.ProcessConstants.SESSION_ID_VAR;
 
 import org.apache.log4j.Logger;
 import org.switchyard.BaseHandler;
@@ -93,6 +94,31 @@ public abstract class BaseBPMExchangeHandler extends BaseHandler implements BPME
             }
         }
         return null;
+    }
+
+    /**
+     * Gets the session id from the Exchange Context.
+     * @param context the Exchange Context
+     * @param defaultSessionId the default session id
+     * @return the session id
+     */
+    protected Integer getSessionId(Context context, Integer defaultSessionId) {
+        Integer sessionId = null;
+        Property property = context.getProperty(SESSION_ID_VAR, EXCHANGE);
+        if (property != null) {
+            Object value = property.getValue();
+            if (value instanceof Integer) {
+                sessionId = (Integer)value;
+            } else if (value instanceof Number) {
+                sessionId = Integer.valueOf(((Number)value).intValue());
+            } else if (value instanceof String) {
+                sessionId = Integer.valueOf((String)value);
+            }
+        }
+        if (sessionId == null) {
+            sessionId = defaultSessionId;
+        }
+        return sessionId;
     }
 
     /**

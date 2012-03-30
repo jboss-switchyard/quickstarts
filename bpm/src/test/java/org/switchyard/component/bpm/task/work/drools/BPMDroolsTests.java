@@ -105,6 +105,7 @@ public class BPMDroolsTests {
         BPMComponentImplementationModel bci_model = new V1BPMComponentImplementationModel();
         bci_model.setProcessDefinition(new SimpleResource(TEST_CONTROL_PROCESS, "BPMN2"));
         bci_model.setProcessId(qname.getLocalPart());
+        bci_model.setPersistent(false);
         bci_model.addTaskHandler(new V1TaskHandlerModel().setClazz(SwitchYardServiceTaskHandler.class).setName(SwitchYardServiceTaskHandler.SWITCHYARD_SERVICE));
         handler.init(qname, bci_model);
         handler.start();

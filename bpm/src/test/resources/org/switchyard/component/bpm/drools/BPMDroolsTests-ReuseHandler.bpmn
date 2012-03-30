@@ -1,59 +1,43 @@
-<?xml version="1.0" encoding="UTF-8"?> 
-<definitions id="Definition"
-             targetNamespace="http://www.jboss.org/drools"
-             typeLanguage="http://www.java.com/javaTypes"
-             expressionLanguage="http://www.mvel.org/2.0"
-             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd"
-             xmlns:g="http://www.jboss.org/drools/flow/gpd"
-             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
-             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
-             xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
-             xmlns:tns="http://www.jboss.org/drools">
-
-  <process processType="Private" isExecutable="true" id="ReuseHandler" name="ReuseHandler" tns:packageName="org.switchyard.component.bpm" >
-
-    <!-- nodes -->
-    <startEvent id="_1" name="StartProcess" />
-    <endEvent id="_3" name="EndProcess" >
-        <terminateEventDefinition/>
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:g="http://www.jboss.org/drools/flow/gpd" xmlns:tns="http://www.jboss.org/drools" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="Definition" expressionLanguage="http://www.mvel.org/2.0" targetNamespace="http://www.jboss.org/drools" typeLanguage="http://www.java.com/javaTypes">
+  <process id="ReuseHandler" tns:packageName="org.switchyard.component.bpm" name="ReuseHandler" isExecutable="true" processType="Private">
+    <startEvent id="_1" name="StartProcess">
+      <outgoing>_1-_4</outgoing>
+    </startEvent>
+    <endEvent id="_3" name="EndProcess">
+      <incoming>_4-_3</incoming>
+      <terminateEventDefinition id="TerminateEventDefinition_1"/>
     </endEvent>
-    <task id="_4" name="ReuseHandler" tns:taskName="ReuseHandler" >
-      <ioSpecification>
-        <inputSet>
-        </inputSet>
-        <outputSet>
-        </outputSet>
+    <task id="_4" tns:taskName="ReuseHandler" name="ReuseHandler">
+      <incoming>_1-_4</incoming>
+      <outgoing>_4-_3</outgoing>
+      <ioSpecification id="InputOutputSpecification_1">
+        <inputSet id="InputSet_1"/>
+        <outputSet id="OutputSet_1"/>
       </ioSpecification>
     </task>
-
-    <!-- connections -->
-    <sequenceFlow id="_4-_3" sourceRef="_4" targetRef="_3" />
-    <sequenceFlow id="_1-_4" sourceRef="_1" targetRef="_4" />
-
+    <sequenceFlow id="_4-_3" sourceRef="_4" targetRef="_3"/>
+    <sequenceFlow id="_1-_4" sourceRef="_1" targetRef="_4"/>
   </process>
-
-  <bpmndi:BPMNDiagram>
-    <bpmndi:BPMNPlane bpmnElement="ReuseHandler" >
-      <bpmndi:BPMNShape bpmnElement="_1" >
-        <dc:Bounds x="16" y="16" width="48" height="48" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_Process_1" bpmnElement="ReuseHandler">
+      <bpmndi:BPMNShape id="BPMNShape_StartEvent_1" bpmnElement="_1">
+        <dc:Bounds height="48.0" width="48.0" x="16.0" y="16.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_3" >
-        <dc:Bounds x="265" y="16" width="48" height="48" />
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_1" bpmnElement="_3">
+        <dc:Bounds height="48.0" width="48.0" x="265.0" y="16.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_4" >
-        <dc:Bounds x="96" y="16" width="137" height="48" />
+      <bpmndi:BPMNShape id="BPMNShape_Task_1" bpmnElement="_4">
+        <dc:Bounds height="48.0" width="137.0" x="96.0" y="16.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge bpmnElement="_4-_3" >
-        <di:waypoint x="164" y="40" />
-        <di:waypoint x="289" y="40" />
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_1" bpmnElement="_4-_3" sourceElement="BPMNShape_Task_1" targetElement="BPMNShape_EndEvent_1">
+        <di:waypoint xsi:type="dc:Point" x="233.0" y="40.0"/>
+        <di:waypoint xsi:type="dc:Point" x="265.0" y="40.0"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_1-_4" >
-        <di:waypoint x="40" y="40" />
-        <di:waypoint x="164" y="40" />
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_2" bpmnElement="_1-_4" sourceElement="BPMNShape_StartEvent_1" targetElement="BPMNShape_Task_1">
+        <di:waypoint xsi:type="dc:Point" x="64.0" y="40.0"/>
+        <di:waypoint xsi:type="dc:Point" x="96.0" y="40.0"/>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
-
 </definitions>

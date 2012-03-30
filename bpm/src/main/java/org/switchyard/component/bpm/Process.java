@@ -65,6 +65,16 @@ public @interface Process {
     public String id() default "";
 
     /**
+     * Specified persistent flag.
+     */
+    public boolean persistent() default false;
+
+    /**
+     * Specified sessionId.
+     */
+    public int sessionId() default -1;
+
+    /**
      * Specified agent flag.
      */
     public boolean agent() default false;

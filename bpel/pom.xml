@@ -41,10 +41,6 @@
 			<artifactId>switchyard-deploy</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.riftsaw</groupId>
-			<artifactId>engine</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.switchyard.components</groupId>
 			<artifactId>switchyard-component-soap</artifactId>
 			<scope>test</scope>
@@ -56,7 +52,11 @@
 			<exclusions>
 				<exclusion>
 					<groupId>org.jbpm</groupId>
-					<artifactId>jbpm-human-tasks</artifactId>
+					<artifactId>jbpm-human-task-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.jbpm</groupId>
+					<artifactId>jbpm-human-task-mina</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>javax.persistence</groupId>
@@ -64,6 +64,22 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>org.riftsaw</groupId>
+			<artifactId>engine</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-commons-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.jboss.soa.bpel</groupId>
 			<artifactId>riftsaw-bpel-compiler</artifactId>
@@ -77,15 +93,15 @@
 			<artifactId>jboss-vfs</artifactId>
 			<scope>provided</scope>
 		</dependency>
-                <dependency>
-                        <groupId>org.jboss.as</groupId>
-                        <artifactId>jboss-as-naming</artifactId>
-                        <scope>provided</scope> 
-                </dependency>
-                <dependency>
-                        <groupId>org.jboss.as</groupId>
-                        <artifactId>jboss-as-server</artifactId>
-                        <scope>provided</scope>
-                </dependency>
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-naming</artifactId>
+            <scope>provided</scope> 
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-server</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>

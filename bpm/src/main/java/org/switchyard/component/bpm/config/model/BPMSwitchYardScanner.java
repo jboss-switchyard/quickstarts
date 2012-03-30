@@ -132,9 +132,12 @@ public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
                 processId = processName;
             }
             bciModel.setProcessId(processId);
-            if (process.agent()) {
-                bciModel.setAgent(true);
+            bciModel.setPersistent(process.persistent());
+            int sessionId = process.sessionId();
+            if (sessionId > -1) {
+                bciModel.setSessionId(Integer.valueOf(sessionId));
             }
+            bciModel.setAgent(process.agent());
             String messageContentInName = process.messageContentInName();
             if (!UNDEFINED.equals(messageContentInName)) {
                 bciModel.setMessageContentInName(messageContentInName);

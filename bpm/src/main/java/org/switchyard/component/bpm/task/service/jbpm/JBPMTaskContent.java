@@ -18,28 +18,37 @@
  */
 package org.switchyard.component.bpm.task.service.jbpm;
 
-import org.jbpm.task.AccessType;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.jbpm.task.Content;
 import org.jbpm.task.service.ContentData;
+import org.jbpm.task.utils.MarshalledContentWrapper;
+import org.switchyard.common.type.Classes;
 import org.switchyard.component.bpm.task.service.BaseTaskContent;
+import org.switchyard.exception.SwitchYardException;
 
 /**
  * A jBPM TaskContent implementation.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
+@SuppressWarnings("serial")
 public class JBPMTaskContent extends BaseTaskContent {
-
-    private AccessType _accessType;
 
     /**
      * Creates a new JBPMTaskContent with the specified Content.
      * @param content the specified Content
      */
     public JBPMTaskContent(Content content) {
-        setId(content.getId());
-        setAccessType(AccessType.Inline);
-        setBytes(content.getContent());
+        this(content.getContent());
     }
 
     /**
@@ -47,27 +56,85 @@ public class JBPMTaskContent extends BaseTaskContent {
      * @param contentData the specified ContentData.
      */
     public JBPMTaskContent(ContentData contentData) {
-        setType(contentData.getType());
-        setAccessType(contentData.getAccessType());
-        setBytes(contentData.getContent());
+        this(contentData.getContent());
     }
 
     /**
-     * Gets the access type.
-     * @return the access type
+     * Creates a new JBPMTaskContent with the specified bytes.
+     * @param bytes the specified bytes.
      */
-    public AccessType getAccessType() {
-        return _accessType;
+    public JBPMTaskContent(byte[] bytes) {
+        setObject(readObject(readBytes(bytes)));
     }
 
-    /**
-     * Sets the access type.
-     * @param accessType the access type
-     * @return this instance (useful for chaining)
-     */
-    public JBPMTaskContent setAccessType(AccessType accessType) {
-        _accessType = accessType;
-        return this;
+    private Object readObject(Object object) {
+        if (object != null) {
+            if (object instanceof Collection) {
+                object = readCollection((Collection<?>)object);
+            } else if (object instanceof Map) {
+                object = readMap((Map<?, ?>)object);
+            } else if (object.getClass().isArray()) {
+                object = readArray((Object[])object);
+            } else if (object instanceof MarshalledContentWrapper) {
+                object = readBytes(((MarshalledContentWrapper)object).getContent());
+            }
+        }
+        return object;
+    }
+
+    private Collection<?> readCollection(Collection<?> collection) {
+        Collection<Object> c = new ArrayList<Object>();
+        for (Object o : collection) {
+            c.add(readObject(o));
+        }
+        return collection;
+    }
+
+    private Map<Object, Object> readMap(Map<?, ?> map) {
+        Map<Object, Object> m = new LinkedHashMap<Object, Object>();
+        for (Entry<?, ?> entry : map.entrySet()) {
+            m.put(entry.getKey(), readObject(entry.getValue()));
+        }
+        return m;
+    }
+
+    private Object[] readArray(Object[] array) {
+        Object[] a = new Object[array.length];
+        for (int i=0; i < a.length; i++) {
+            a[i] = readObject(array[i]);
+        }
+        return a;
+    }
+
+    private Object readBytes(byte[] bytes) {
+        Object object = null;
+        if (bytes != null && bytes.length > 0) {
+            ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+            ObjectInputStream ois = null;
+            try {
+                ois = new ObjectInputStream(bais) {
+                    @Override
+                    protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+                        Class<?> clazz = Classes.forName(desc.getName(), getClass());
+                        return clazz != null ? clazz : super.resolveClass(desc);
+                    }
+                };
+                object = ois.readObject();
+            } catch (IOException ioe) {
+                throw new SwitchYardException(ioe);
+            } catch (ClassNotFoundException cnfe) {
+                throw new SwitchYardException(cnfe);
+            } finally {
+                if (ois != null) {
+                    try {
+                        ois.close();
+                    } catch (IOException ioe) {
+                        throw new SwitchYardException(ioe);
+                    }
+                }
+            }
+        }
+        return object;
     }
 
 }

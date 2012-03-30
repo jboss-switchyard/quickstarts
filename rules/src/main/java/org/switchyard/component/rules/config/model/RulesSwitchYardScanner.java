@@ -107,9 +107,7 @@ public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
             ComponentModel componentModel = new V1ComponentModel();
             componentModel.setName(rulesName);
             RulesComponentImplementationModel rciModel = new V1RulesComponentImplementationModel();
-            if (rules.agent()) {
-                rciModel.setAgent(true);
-            }
+            rciModel.setAgent(rules.agent());
             rciModel.setClock(rules.clock());
             rciModel.setEventProcessing(rules.eventProcessing());
             int maxThreads = rules.maxThreads();

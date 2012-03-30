@@ -55,9 +55,9 @@ public class JBPMTaskServer extends BaseTaskServer {
         TaskServiceSession taskServiceSession = taskService.createSession();
         Set<String> userIds = addUsers(taskServiceSession);
         addGroups(taskServiceSession, userIds);
+        taskServiceSession.dispose();
         _wrapped = new MinaTaskServer(taskService, getPort(), getHost());
         new Thread(_wrapped).start();
-        taskServiceSession.dispose();
         setStarted(waitForPort(false));
         if (isStarted()) {
          LOGGER.info(String.format("jBPM TaskServer started on %s:%s.", getHost(), getPort()));
@@ -105,6 +105,7 @@ public class JBPMTaskServer extends BaseTaskServer {
                 _wrapped = null;
             }
         }
+        waitForPort(true);
         setStarted(false);
         LOGGER.info(String.format("jBPM TaskServer on %s:%s stopped.", getHost(), getPort()));
     }

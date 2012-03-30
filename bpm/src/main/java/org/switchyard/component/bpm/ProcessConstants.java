@@ -64,10 +64,20 @@ public final class ProcessConstants {
     /** {urn:switchyard-component-bpm:process:1.0}processId . */
     public static final String PROCESS_ID_VAR = new QName(PROCESS_NAMESPACE, PROCESS_ID).toString();
 
+    /** persistent . */
+    public static final String PERSISTENT = "persistent";
+    /** {urn:switchyard-component-bpm:process:1.0}persistent . */
+    public static final String PPERSISTENT_VAR = new QName(PROCESS_NAMESPACE, PERSISTENT).toString();
+
     /** processInstanceId . */
     public static final String PROCESS_INSTANCE_ID = "processInstanceId";
     /** {urn:switchyard-component-bpm:process:1.0}processInstanceId . */
     public static final String PROCESS_INSTANCE_ID_VAR = new QName(PROCESS_NAMESPACE, PROCESS_INSTANCE_ID).toString();
+
+    /** sessionId . */
+    public static final String SESSION_ID = "sessionId";
+    /** {urn:switchyard-component-bpm:process:1.0}sessionId . */
+    public static final String SESSION_ID_VAR = new QName(PROCESS_NAMESPACE, SESSION_ID).toString();
 
     /** messageContentInName . */
     public static final String MESSAGE_CONTENT_IN_NAME = "messageContentInName";

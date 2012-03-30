@@ -80,6 +80,8 @@ public class BPMModelTests {
         Assert.assertEquals("foobar.bpmn", bci.getProcessDefinition().getLocation());
         Assert.assertSame(ResourceType.valueOf("BPMN2"), bci.getProcessDefinition().getType());
         Assert.assertEquals("foobar", bci.getProcessId());
+        Assert.assertTrue(bci.isPersistent());
+        Assert.assertEquals(Integer.valueOf(3), bci.getSessionId());
         Configuration config = bci.getModelConfiguration();
         Assert.assertEquals("implementation.bpm", config.getName());
         QName qname = config.getQName();

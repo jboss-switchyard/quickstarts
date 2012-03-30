@@ -44,6 +44,8 @@ MA  02110-1301, USA.
                 <attribute name="processDefinition" type="string" use="required"/>
                 <attribute name="processDefinitionType" type="NCName" use="optional" default="BPMN2"/>
                 <attribute name="processId" type="string" use="required"/>
+                <attribute name="persistent" type="boolean" use="optional" default="false"/>
+                <attribute name="sessionId" type="integer" use="optional"/>
                 <attribute name="messageContentInName" type="string" use="optional"/>
                 <attribute name="messageContentOutName" type="string" use="optional"/>
             </extension>

@@ -23,6 +23,10 @@ import static org.switchyard.component.bpm.ProcessConstants.MESSAGE_CONTENT_IN;
 import static org.switchyard.component.bpm.ProcessConstants.MESSAGE_CONTENT_IN_NAME;
 import static org.switchyard.component.bpm.ProcessConstants.MESSAGE_CONTENT_OUT;
 import static org.switchyard.component.bpm.ProcessConstants.MESSAGE_CONTENT_OUT_NAME;
+import static org.switchyard.component.bpm.ProcessConstants.PERSISTENT;
+import static org.switchyard.component.bpm.ProcessConstants.PROCESS_DEFINITION;
+import static org.switchyard.component.bpm.ProcessConstants.PROCESS_ID;
+import static org.switchyard.component.bpm.ProcessConstants.SESSION_ID;
 import static org.switchyard.component.bpm.task.work.SwitchYardServiceTaskHandler.SWITCHYARD_SERVICE;
 
 import java.io.File;
@@ -91,6 +95,8 @@ public class BPMServicePlugin implements Plugin {
      * @param argInterfaceClass class name of Java service interface
      * @param argProcessFilePath path to the BPMN process definition
      * @param argProcessId business process id
+     * @param argPersistent persistent flag
+     * @param argSessionId session id
      * @param argMessageContentInName process variable name for the content of the incoming message
      * @param argMessageContentOutName process variable name for the content of the outgoing message
      * @param argAgent whether to use an agent
@@ -108,13 +114,21 @@ public class BPMServicePlugin implements Plugin {
                     description = "The Java service interface")
             final String argInterfaceClass,
             @Option(required = false,
-                    name = "processDefinition",
+                    name = PROCESS_DEFINITION,
                     description = "The business process definition")
             final String argProcessFilePath,
             @Option(required = false,
-                    name = "processId",
+                    name = PROCESS_ID,
                     description = "The business process id")
             final String argProcessId,
+            @Option(required = false,
+            name = PERSISTENT,
+            description = "The persistent flag")
+            final boolean argPersistent,
+            @Option(required = false,
+            name = SESSION_ID,
+            description = "The session id")
+            final Integer argSessionId,
             @Option(required = false,
                     name = MESSAGE_CONTENT_IN_NAME,
                     description="The process variable name for the content of the incoming message (" + MESSAGE_CONTENT_IN + ")",
@@ -183,7 +197,7 @@ public class BPMServicePlugin implements Plugin {
         boolean agent = argAgent != null ? argAgent.booleanValue() : false;
         
         // Add the SwitchYard config
-        createImplementationConfig(argServiceName, interfaceClass, processId, processDefinitionPath, argMessageContentInName, argMessageContentOutName, agent);
+        createImplementationConfig(argServiceName, interfaceClass, processId, argPersistent, argSessionId, processDefinitionPath, argMessageContentInName, argMessageContentOutName, agent);
           
         // Notify user of success
         out.println("Process service " + argServiceName + " has been created.");
@@ -192,6 +206,8 @@ public class BPMServicePlugin implements Plugin {
     private void createImplementationConfig(String serviceName,
             String interfaceName,
             String processId,
+            boolean persistent,
+            Integer sessionId,
             String processDefinition,
             String messageContentInName,
             String messageContentOutName,
@@ -212,11 +228,13 @@ public class BPMServicePlugin implements Plugin {
         V1BPMComponentImplementationModel bpm = new V1BPMComponentImplementationModel();
         bpm.setProcessDefinition(new SimpleResource(processDefinition));
         bpm.setProcessId(processId);
+        bpm.setPersistent(persistent);
+        if (sessionId != null && sessionId.intValue() > -1) {
+            bpm.setSessionId(sessionId);
+        }
         bpm.setMessageContentInName(messageContentInName);
         bpm.setMessageContentOutName(messageContentOutName);
-        if (agent) {
-            bpm.setAgent(true);
-        }
+        bpm.setAgent(agent);
         V1TaskHandlerModel switchyardHandler = new V1TaskHandlerModel();
         switchyardHandler.setName(SWITCHYARD_SERVICE);
         switchyardHandler.setClazz(SwitchYardServiceTaskHandler.class);

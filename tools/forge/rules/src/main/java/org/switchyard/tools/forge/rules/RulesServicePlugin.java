@@ -174,9 +174,7 @@ public class RulesServicePlugin implements Plugin {
         rules.addRulesAction(new V1RulesActionModel()
             .setName("operation")
             .setType(RulesActionType.EXECUTE));
-        if (agent) {
-            rules.setAgent(true);
-        }
+        rules.setAgent(agent);
         component.setImplementation(rules);
         
         // Add the new component service to the application config

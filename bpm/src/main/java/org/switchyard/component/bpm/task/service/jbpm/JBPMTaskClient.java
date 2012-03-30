@@ -24,7 +24,6 @@ import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.drools.SystemEventListenerFactory;
-import org.jbpm.task.AccessType;
 import org.jbpm.task.Content;
 import org.jbpm.task.query.TaskSummary;
 import org.jbpm.task.service.ContentData;
@@ -35,6 +34,8 @@ import org.jbpm.task.service.responsehandlers.BlockingGetContentResponseHandler;
 import org.jbpm.task.service.responsehandlers.BlockingGetTaskResponseHandler;
 import org.jbpm.task.service.responsehandlers.BlockingTaskOperationResponseHandler;
 import org.jbpm.task.service.responsehandlers.BlockingTaskSummaryResponseHandler;
+import org.jbpm.task.utils.ContentMarshallerContext;
+import org.jbpm.task.utils.ContentMarshallerHelper;
 import org.switchyard.component.bpm.task.service.BaseTaskClient;
 import org.switchyard.component.bpm.task.service.Task;
 import org.switchyard.component.bpm.task.service.TaskContent;
@@ -173,14 +174,10 @@ public class JBPMTaskClient extends BaseTaskClient {
         BlockingTaskOperationResponseHandler btorh = new BlockingTaskOperationResponseHandler();
         ContentData contentData = null;
         if (content != null) {
-            contentData = new ContentData();
-            contentData.setType(content.getType());
-            contentData.setContent(content.getBytes());
-            AccessType accessType = null;
-            if (content instanceof JBPMTaskContent) {
-                accessType = ((JBPMTaskContent)content).getAccessType();
+            Object object = content.getObject();
+            if (object != null) {
+                contentData = ContentMarshallerHelper.marshal(object, new ContentMarshallerContext(), null);
             }
-            contentData.setAccessType(accessType != null ? accessType : AccessType.Inline);
         }
         _wrapped.complete(taskId.longValue(), userId, contentData, btorh);
         btorh.waitTillDone(10000);

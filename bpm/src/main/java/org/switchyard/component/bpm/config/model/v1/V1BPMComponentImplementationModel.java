@@ -25,6 +25,7 @@ import java.util.List;
 import org.switchyard.common.io.resource.Resource;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.io.resource.SimpleResource;
+import org.switchyard.common.lang.Strings;
 import org.switchyard.component.bpm.ProcessConstants;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.ParametersModel;
@@ -118,6 +119,45 @@ public class V1BPMComponentImplementationModel extends V1ComponentImplementation
     @Override
     public BPMComponentImplementationModel setProcessId(String processId) {
         setModelAttribute(ProcessConstants.PROCESS_ID, processId);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isPersistent() {
+        String persistent = Strings.trimToNull(getModelAttribute(ProcessConstants.PERSISTENT));
+        if (persistent != null) {
+            return Boolean.valueOf(persistent).booleanValue();
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BPMComponentImplementationModel setPersistent(boolean persistent) {
+        setModelAttribute(ProcessConstants.PERSISTENT, String.valueOf(persistent));
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Integer getSessionId() {
+        String sessionId = getModelAttribute(ProcessConstants.SESSION_ID);
+        return sessionId != null ? Integer.valueOf(sessionId) : null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BPMComponentImplementationModel setSessionId(Integer sessionId) {
+        setModelAttribute(ProcessConstants.SESSION_ID, sessionId != null ? sessionId.toString() : null);
         return this;
     }
 

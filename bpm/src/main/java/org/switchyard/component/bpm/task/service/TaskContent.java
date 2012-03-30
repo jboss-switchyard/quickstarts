@@ -29,32 +29,6 @@ import java.util.Map;
 public interface TaskContent extends Serializable {
 
     /**
-     * Gets the id.
-     * @return the id
-     */
-    public Long getId();
-
-    /**
-     * Sets the id.
-     * @param id the id
-     * @return this Content (useful for chaining)
-     */
-    public TaskContent setId(Long id);
-
-    /**
-     * Gets the type.
-     * @return the type
-     */
-    public String getType();
-
-    /**
-     * Sets the type.
-     * @param type the type
-     * @return this Content (useful for chaining)
-     */
-    public TaskContent setType(String type);
-
-    /**
      * Gets the object.
      * @return the object
      */
@@ -69,36 +43,16 @@ public interface TaskContent extends Serializable {
     public <T> T getObject(Class<T> clazz);
 
     /**
+     * Gets the object as a Map<String, Object>.
+     * @return the object as  a Map<String, Object>
+     */
+    public Map<String, Object> getMap();
+
+    /**
      * Sets the object.
      * @param object the object
      * @return this Content (useful for chaining)
      */
     public TaskContent setObject(Object object);
-
-    /**
-     * Gets the map.
-     * @return the map
-     */
-    public Map<String, Object> getMap();
-
-    /**
-     * Sets the map.
-     * @param map the map
-     * @return this Content (useful for chaining)
-     */
-    public TaskContent setMap(Map<String, Object> map);
-
-    /**
-     * Gets the bytes.
-     * @return the bytes
-     */
-    public byte[] getBytes();
-
-    /**
-     * Sets the bytes.
-     * @param bytes the bytes
-     * @return this Content (useful for chaining)
-     */
-    public TaskContent setBytes(byte[] bytes);
 
 }

@@ -206,7 +206,7 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
                         disposeStateful();
                     }
                     */
-                    StatefulKnowledgeSession ksessionStateful = getStatefulSession();
+                    final StatefulKnowledgeSession ksessionStateful = getStatefulSession();
                     Globals globals = ksessionStateful.getGlobals();
                     setGlobals(globals, exchange, true);
                     ksessionStateful.insert(content);

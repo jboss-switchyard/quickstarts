@@ -48,10 +48,6 @@
         </dependency>
         <dependency>
             <groupId>org.drools</groupId>
-            <artifactId>knowledge-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.drools</groupId>
             <artifactId>drools-core</artifactId>
         </dependency>
         <dependency>
@@ -61,6 +57,14 @@
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-persistence-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>knowledge-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>knowledge-internal-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jdt.core.compiler</groupId>
