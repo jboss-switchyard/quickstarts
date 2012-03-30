@@ -784,6 +784,11 @@
       </dependency>
       <dependency>
          <groupId>org.switchyard.quickstarts</groupId>
+         <artifactId>switchyard-quickstart-transform-jaxb</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.switchyard.quickstarts</groupId>
          <artifactId>switchyard-quickstart-transform-json</artifactId>
          <version>${project.version}</version>
       </dependency>
