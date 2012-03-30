@@ -78,4 +78,8 @@ public abstract class BaseComponent implements Component {
     public void destroy() {
     }
 
+    @Override
+    public void addResourceDependency(Object value) {
+        // ignore by default
+    }
 }

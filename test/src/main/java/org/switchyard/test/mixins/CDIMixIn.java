@@ -24,6 +24,8 @@ import java.util.Set;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.jboss.weld.environment.se.Weld;
@@ -34,7 +36,6 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.common.type.Classes;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.AbstractDeployment;
-import org.switchyard.test.MockInitialContextFactory;
 import org.switchyard.test.SimpleTestDeployment;
 
 /**
@@ -43,7 +44,9 @@ import org.switchyard.test.SimpleTestDeployment;
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public class CDIMixIn extends AbstractTestMixIn {
-
+    private static final String BINDING_CONTEXT = "java:comp";
+    private static final String BEAN_MANAGER_NAME = "BeanManager";
+    
     private Weld _weld;
     private WeldContainer _weldContainer;
     private AbstractDeployment _simpleCdiDeployment;
@@ -57,9 +60,11 @@ public class CDIMixIn extends AbstractTestMixIn {
 
         // And bind the BeanManager instance into java:comp...
         try {
-            MockInitialContextFactory.getJavaComp().bind("BeanManager", getBeanManager());
+            Context ctx = (Context) new InitialContext().lookup(BINDING_CONTEXT);
+            ctx.rebind(BEAN_MANAGER_NAME, getBeanManager());
         } catch (NamingException e) {
-            Assert.fail("Failed to bind BeanManager into 'java:comp'.");
+            e.printStackTrace();
+            Assert.fail("Failed to bind BeanManager into '" + BINDING_CONTEXT + "'.");
         }
     }
 
@@ -171,6 +176,13 @@ public class CDIMixIn extends AbstractTestMixIn {
         if (_weld != null) {
             _weld.shutdown();
             _weld = null;
+
+            try {
+                Context ctx = (Context) new InitialContext().lookup(BINDING_CONTEXT);
+                ctx.unbind(BEAN_MANAGER_NAME);
+            } catch (Exception e) {
+                throw new IllegalStateException("Failed to unbind BeanManager", e);
+            }
         } else {
             Thread.dumpStack();
         }

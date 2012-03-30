@@ -60,4 +60,14 @@ public interface Component {
      * @see #init(Configuration)
      */
     Configuration getConfig();
+    
+    /**
+     * Inject a resource dependency on Component.
+     * 
+     * TODO This API should be changed to more generic& configurable way
+     * https://issues.jboss.org/browse/SWITCHYARD-833
+     * 
+     * @param value resource instance
+     */
+    void addResourceDependency(Object value);
 }
