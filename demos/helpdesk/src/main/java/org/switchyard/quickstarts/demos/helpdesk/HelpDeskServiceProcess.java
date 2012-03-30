@@ -19,7 +19,7 @@
 package org.switchyard.quickstarts.demos.helpdesk;
 
 import org.switchyard.component.bpm.Process;
-import org.switchyard.component.bpm.task.work.jbpm.CommandBasedWSHumanTaskHandler;
+import org.switchyard.component.bpm.task.work.jbpm.JBPMHumanTaskHandler;
 
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
@@ -28,5 +28,5 @@ import org.switchyard.component.bpm.task.work.jbpm.CommandBasedWSHumanTaskHandle
     value=HelpDeskService.class,
     messageContentInName="ticket",
     messageContentOutName="ticketAck",
-    taskHandlers={CommandBasedWSHumanTaskHandler.class})
+    taskHandlers={JBPMHumanTaskHandler.class})
 public interface HelpDeskServiceProcess {}

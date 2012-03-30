@@ -90,9 +90,11 @@
         <url>https://repository.jboss.org/nexus/content/groups/public/</url>
         <layout>default</layout>
         <releases>
+          <enabled>true</enabled>
           <updatePolicy>never</updatePolicy>
         </releases>
         <snapshots>
+          <enabled>true</enabled>
           <updatePolicy>never</updatePolicy>
         </snapshots>
       </repository>
