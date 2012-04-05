@@ -15,7 +15,7 @@
     <description>SwitchYard Distribution</description>
 
     <properties>
-        <version.distro>0.4</version.distro>
+        <version.distro>0.5</version.distro>
     </properties>
 
     <modules>
