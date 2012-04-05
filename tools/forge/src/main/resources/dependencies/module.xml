@@ -6,25 +6,25 @@
     <resource-root path="serializer-${version.xalan}.jar"/>
     <resource-root path="camel-core-${version.camel}.jar"/>
     <resource-root path="commons-management-${version.fusesource.commonman}.jar"/>
-    <resource-root path="jboss-jaxb-api_2.2_spec-${version.jaxb.api}.jar"/>
-    <resource-root path="jaxb-impl-${version.jaxb.impl}.jar"/>
       
     <!-- switchyard libs -->
     <resource-root path="switchyard-api-${project.version}.jar"/>
     <resource-root path="switchyard-common-${project.version}.jar"/>
+	<resource-root path="switchyard-component-common-rules-${project.version}.jar"/>
     <resource-root path="switchyard-config-${project.version}.jar"/>
     <resource-root path="switchyard-deploy-${project.version}.jar"/>
+    <resource-root path="switchyard-forge-common-${project.version}.jar"/>
     <resource-root path="switchyard-transform-${project.version}.jar"/>
     <resource-root path="switchyard-validate-${project.version}.jar"/>
   </resources>
   
   <dependencies>
+    <module name="com.sun.xml.bind"/>
+    <module name="javax.xml.bind.api"/>
     <module name="javax.api"/>
-    <module name="org.jboss.forge" export="true">
-      <imports>
-        <include path="org/apache/log4j"/>
-      </imports>
-    </module>
+    <module name="org.jboss.forge.shell.api"/>
+    <module name="org.slf4j"/>
+    <module name="org.apache.log4j"/>
   </dependencies>
   
 </module>

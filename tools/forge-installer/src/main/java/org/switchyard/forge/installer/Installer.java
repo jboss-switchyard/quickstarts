@@ -28,6 +28,8 @@ import org.jboss.forge.shell.InstalledPluginRegistry;
  * @author Tom Cunningham
  */ 
 public class Installer {
+    
+    public static final String FORGE_VERSION = "1.0.2.Final";
 
     /**
      * Add an install entry to installed.xml.
@@ -36,7 +38,7 @@ public class Installer {
      * @param slot the module slot 
      */
      public void install (String plugin, String slot) {
-		InstalledPluginRegistry.installPlugin(plugin, slot);	
+		InstalledPluginRegistry.install(plugin, FORGE_VERSION, slot);	
      }
 
     /**

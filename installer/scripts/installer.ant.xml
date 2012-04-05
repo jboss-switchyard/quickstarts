@@ -351,14 +351,12 @@
 
     <target name="validate-forge-home-version" if="installForge">
         <!-- Check that a SNAPSHOT version isn't being used -->
-	<condition property="forge.home.check">
+    	<condition property="forge.home.check">
            <and>
              <available file="${FORGE_PATH}/modules/org/jboss/forge/main/forge-shell.jar"/>
 	     <available file="${FORGE_PATH}/jboss-modules.jar"/>
            </and>
         </condition>
-	
-	<fail unless="forge.home.check" message="${FORGE_PATH} does not seem to be a forge-1.0.0.Beta3 installation."/>
     </target>
 
     <target name="set-forge-home" if="forge.home.set" depends="check-forge-home">
@@ -398,8 +396,6 @@
             <available file="config" filepath="${user.home}/.forge" />
         </condition>
 
-        <fail unless="forge.plugindir.exists" message="Cannot find ${user.home}/.forge/config.   Please run forge 1.0.0.beta3 before installing."/>
-
         <echo>Creating switchyard directory...</echo>
         <mkdir dir="${user.home}/.forge/plugins/org/switchyard"/>
         <echo>Unzipping switchyard forge plugin module...</echo>
@@ -422,12 +418,21 @@
 	<echo>Installing forge plugin to ${user.home}/.forge ... </echo>
 	<path id="forge.installer.classpath">
 		<fileset dir="${FORGE_PATH}/modules/org/jboss/forge/main">
-		    <include name="forge-shell.jar"/>
-		    <include name="forge-parser-xml.jar"/>
-                    <include name="forge-parser-java.jar"/>
-		    <include name="forge-parser-java-api.jar"/>
-		    <include name="forge-shell-api.jar"/>	
+		    <include name="forge-shell-*.jar"/>
+            <include name="forge-parser-java.jar"/>
 		</fileset>
+
+        <fileset dir="${FORGE_PATH}/modules/org/jboss/forge/shell/api/main">
+            <include name="forge-shell-api-*"/>
+        </fileset>
+
+        <fileset dir="${FORGE_PATH}/modules/org/jboss/forge/parser/xml/main">
+            <include name="forge-parser-xml-*"/>
+        </fileset>  
+
+        <fileset dir="${FORGE_PATH}/modules/org/jboss/forge/parser/java/api/main">
+            <include name="forge-parser-java-api-*"/>
+        </fileset>
 		
 		<fileset dir="${basedir}">
  			<include name="lib/switchyard-forge-installer.jar"/>
