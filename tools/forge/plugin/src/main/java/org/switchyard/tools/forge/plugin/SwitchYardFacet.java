@@ -110,51 +110,14 @@ public class SwitchYardFacet extends AbstractFacet {
     @Override
     public boolean install() {
 
-        String version = loadSwitchYardVersion(PROPS_PATH);
-        if (version == null) {
-            // Ask the user which version of SwitchYard they want to use
-            DependencyFacet deps = project.getFacet(DependencyFacet.class);
-            List<Dependency> versions = deps.resolveAvailableVersions(DEPENDENCIES[0] + ":[,]");
-            Dependency dep = _shell.promptChoiceTyped("Please select a version to install:", versions);
-            version = dep.getVersion();
-        }
+        // Doing this in a try/finally to set and unset the context class loader
+        ClassLoader orig = Thread.currentThread().getContextClassLoader();
         try {
-            tweakForOpenShift();
-        } catch (Exception ex) {
-            _shell.println("Unable to configure application for OpenShift: " + ex.getMessage());
-            return false;
+            Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+            return performInstall();
+        } finally {
+            Thread.currentThread().setContextClassLoader(orig);
         }
-        
-        // Update the project with version and dependency info
-        setVersion(version);
-        installDependencies();
-        addPluginRepository();
-        
-        String appName = _shell.prompt("Application name (e.g. myApp)");
-        
-        try {
-            MavenCoreFacet mvn = project.getFacet(MavenCoreFacet.class);
-            Model pom = mvn.getPOM();
-
-            addScannerPlugin(pom, null);
-            mvn.setPOM(pom);
-            
-            // Create the initial SwitchYard configuration
-            V1SwitchYardModel syConfig = new V1SwitchYardModel();
-            V1CompositeModel composite = new V1CompositeModel();
-            composite.setName(appName);
-            composite.setTargetNamespace("urn:switchyard:application:" + appName);
-            syConfig.setComposite(composite);
-            
-            // Attach a reference to the current config to the current project
-            setSwitchYardConfig(syConfig);
-            // Save an initial version of the config
-            writeSwitchYardConfig();
-        } catch (Exception ex) {
-            _shell.println("Failed to install switchyard facet: " + ex.getMessage());
-            return false;
-        }
-        return true;
     }
     
     /**
@@ -393,6 +356,54 @@ public class SwitchYardFacet extends AbstractFacet {
             plugins.add(plugin);
             profile.getBuild().setPlugins(plugins);
         }
+    }
+    
+    private boolean performInstall() {        
+        String version = loadSwitchYardVersion(PROPS_PATH);
+        if (version == null) {
+            // Ask the user which version of SwitchYard they want to use
+            DependencyFacet deps = project.getFacet(DependencyFacet.class);
+            List<Dependency> versions = deps.resolveAvailableVersions(DEPENDENCIES[0] + ":[,]");
+            Dependency dep = _shell.promptChoiceTyped("Please select a version to install:", versions);
+            version = dep.getVersion();
+        }
+        try {
+            tweakForOpenShift();
+        } catch (Exception ex) {
+            _shell.println("Unable to configure application for OpenShift: " + ex.getMessage());
+            return false;
+        }
+        
+        // Update the project with version and dependency info
+        setVersion(version);
+        installDependencies();
+        addPluginRepository();
+        
+        String appName = _shell.prompt("Application name (e.g. myApp)");
+        
+        try {
+            MavenCoreFacet mvn = project.getFacet(MavenCoreFacet.class);
+            Model pom = mvn.getPOM();
+
+            addScannerPlugin(pom, null);
+            mvn.setPOM(pom);
+            
+            // Create the initial SwitchYard configuration
+            V1SwitchYardModel syConfig = new V1SwitchYardModel();
+            V1CompositeModel composite = new V1CompositeModel();
+            composite.setName(appName);
+            composite.setTargetNamespace("urn:switchyard:application:" + appName);
+            syConfig.setComposite(composite);
+            
+            // Attach a reference to the current config to the current project
+            setSwitchYardConfig(syConfig);
+            // Save an initial version of the config
+            writeSwitchYardConfig();
+        } catch (Exception ex) {
+            _shell.println("Failed to install switchyard facet: " + ex.getMessage());
+            return false;
+        }
+        return true;
     }
     
     // Creates a new OpenShift profile with correct SwitchYard

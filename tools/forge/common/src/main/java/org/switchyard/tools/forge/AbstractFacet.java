@@ -55,7 +55,7 @@ public abstract class AbstractFacet extends BaseFacet {
             // Add base required dependencies
             for (String artifact : _depends) {
                 DependencyBuilder dep = DependencyBuilder.create(artifact + ":${" + VERSION  + "}");
-                deps.addDependency(dep);
+                deps.addDirectDependency(dep);
             }
         }
     }
@@ -67,7 +67,7 @@ public abstract class AbstractFacet extends BaseFacet {
         if (!_depends.isEmpty()) {
             Dependency dep = DependencyBuilder.create(_depends.get(0));
             PackagingType packagingType = project.getFacet(PackagingFacet.class).getPackagingType();
-            installed = project.getFacet(DependencyFacet.class).hasDependency(dep)
+            installed = project.getFacet(DependencyFacet.class).hasDirectDependency(dep)
                     && PackagingType.JAR.equals(packagingType);
         }
         return installed;
