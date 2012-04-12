@@ -45,6 +45,7 @@ import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
+import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.v1.V1ComponentReferenceModel;
@@ -457,13 +458,24 @@ public class SwitchYardPlugin implements Plugin {
         SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
 
         // Make sure the source component service exists
-        ComponentServiceModel sourceComponent = switchYard.getComponentService(componentName);
+        ComponentModel sourceComponent = null;
+        CompositeModel composite = switchYard.getMergedSwitchYardConfig().getComposite();
+        if (composite != null) {
+            Iterator<ComponentModel> components = composite.getComponents().iterator();
+            while (components.hasNext()) {
+                ComponentModel auxComponent = components.next(); 
+                if (auxComponent.getName().equals(componentName)) {
+                    sourceComponent = auxComponent;
+                    break;
+                }
+            }
+        }
         if (sourceComponent == null) {
             out.println(out.renderColor(ShellColor.RED, "Component not found: " + componentName));
             return;
         } else {
             // Check the reference name is not already present in this component
-            Iterator<ComponentReferenceModel> references = sourceComponent.getComponent().getReferences().iterator();
+            Iterator<ComponentReferenceModel> references = sourceComponent.getReferences().iterator();
             while (references.hasNext()) {
                 ComponentReferenceModel reference = references.next();
                 if (reference.getName().equals(referenceName)) {
@@ -474,7 +486,7 @@ public class SwitchYardPlugin implements Plugin {
         }
 
         // Make sure the interface type is valid
-        if (!interfaceType.equals("java") || interfaceType.equals("wsdl")) {
+        if (!interfaceType.equals("java") && !interfaceType.equals("wsdl")) {
             out.println(out.renderColor(ShellColor.RED, "Interface type " + interfaceType + " not valid. Possible values are: wsdl, java"));
             return;
         }
