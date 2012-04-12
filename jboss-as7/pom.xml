@@ -15,7 +15,6 @@
     <description>SwitchYard AS7 Parent</description>
 
     <modules>
-        <module>jbpm</module>
         <module>modules</module>
         <module>tests</module>
         <module>extension</module>

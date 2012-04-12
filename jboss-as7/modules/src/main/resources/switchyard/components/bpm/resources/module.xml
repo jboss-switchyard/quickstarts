@@ -20,21 +20,14 @@
 <module xmlns="urn:jboss:module:1.0" name="org.switchyard.component.bpm">
     <resources>
         <resource-root path="switchyard-component-bpm-${project.version}.jar"/>
-        <resource-root path="jbpm-bpmn2-xsds-${version.jbpm}.jar"/>
     </resources>
     <dependencies>
-        <module name="javax.api" export="true"/>
-        <module name="org.apache.log4j" export="true"/>
-        <module name="org.drools.drools-compiler" export="true"/>
-        <module name="org.drools.drools-core" export="true"/>
-        <module name="org.drools.drools-persistence-jpa" export="true"/>
-        <module name="org.drools.knowledge-api" export="true"/>
-        <module name="org.jbpm.jbpm-bpmn2" export="true"/>
-        <module name="org.jbpm.jbpm-flow" export="true"/>
-        <module name="org.jbpm.jbpm-flow-builder" export="true"/>
-        <module name="org.jbpm.jbpm-human-task" export="true"/>
-        <module name="org.jbpm.jbpm-persistence-jpa" export="true"/>
-        <module name="org.jbpm.jbpm-workitems" export="true"/>
+        <module name="javax.persistence.api"/>
+        <module name="javax.transaction.api"/>
+        <module name="org.apache.log4j"/>
+        <module name="org.drools" export="true"/>
+        <module name="org.hibernate"/>
+        <module name="org.jbpm" export="true"/>
         <module name="org.switchyard.api"/>
         <module name="org.switchyard.common"/>
         <module name="org.switchyard.component.common.rules"/>

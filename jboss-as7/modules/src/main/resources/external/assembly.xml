@@ -38,27 +38,8 @@
             <filtered>true</filtered>
         </file>
         <file>
-            <source>src/main/resources/external/drools/knowledge-api/module.xml</source>
-            <destName>module.xml</destName>
-            <outputDirectory>/modules/org/drools/knowledge-api/main</outputDirectory>
-            <filtered>true</filtered>
-        </file>
-        <file>
-            <source>src/main/resources/external/drools/drools-core/module.xml</source>
-            <destName>module.xml</destName>
-            <outputDirectory>/modules/org/drools/drools-core/main</outputDirectory>
-            <filtered>true</filtered>
-        </file>
-        <file>
-            <source>src/main/resources/external/drools/drools-compiler/module.xml</source>
-            <destName>module.xml</destName>
-            <outputDirectory>/modules/org/drools/drools-compiler/main</outputDirectory>
-            <filtered>true</filtered>
-        </file>
-        <file>
-            <source>src/main/resources/external/drools/drools-persistence-jpa/module.xml</source>
-            <destName>module.xml</destName>
-            <outputDirectory>/modules/org/drools/drools-persistence-jpa/main</outputDirectory>
+            <source>src/main/resources/external/drools/module.xml</source>
+            <outputDirectory>/modules/org/drools/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
@@ -76,35 +57,22 @@
             <outputDirectory>/modules/org/mvel/mvel2/main</outputDirectory>
             <filtered>true</filtered>
         </file>
+        <!--
         <file>
-            <source>src/main/resources/external/jbpm/jbpm-flow/module.xml</source>
-            <outputDirectory>/modules/org/jbpm/jbpm-flow/main</outputDirectory>
+            <source>src/main/resources/external/mysql/module.xml</source>
+            <outputDirectory>/modules/com/mysql/jdbc/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        -->
+        <file>
+            <source>src/main/resources/external/jbpm/module.xml</source>
+            <outputDirectory>/modules/org/jbpm/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
-            <source>src/main/resources/external/jbpm/jbpm-flow-builder/module.xml</source>
-            <outputDirectory>/modules/org/jbpm/jbpm-flow-builder/main</outputDirectory>
-            <filtered>true</filtered>
-        </file>
-        <file>
-            <source>src/main/resources/external/jbpm/jbpm-persistence-jpa/module.xml</source>
-            <outputDirectory>/modules/org/jbpm/jbpm-persistence-jpa/main</outputDirectory>
-            <filtered>true</filtered>
-        </file>
-        <file>
-            <source>src/main/resources/external/jbpm/jbpm-bpmn2/module.xml</source>
-            <outputDirectory>/modules/org/jbpm/jbpm-bpmn2/main</outputDirectory>
-            <filtered>true</filtered>
-        </file>
-        <file>
-            <source>src/main/resources/external/jbpm/jbpm-workitems/module.xml</source>
-            <outputDirectory>/modules/org/jbpm/jbpm-workitems/main</outputDirectory>
-            <filtered>true</filtered>
-        </file>
-        <file>
-            <source>src/main/resources/external/jbpm/jbpm-human-task/module.xml</source>
-            <outputDirectory>/modules/org/jbpm/jbpm-human-task/main</outputDirectory>
-            <filtered>true</filtered>
+            <source>target/jbpm-switchyard-${version.jbpm}.jar</source>
+            <outputDirectory>/modules/org/jbpm/main</outputDirectory>
+            <filtered>false</filtered>
         </file>
         <file>
             <source>src/main/resources/external/apache/cxf/jaxrs/module.xml</source>
@@ -156,6 +124,11 @@
             <!--<outputDirectory>/modules/org/clojure/clojure/main</outputDirectory>-->
             <!--<filtered>true</filtered>-->
         <!--</file>-->
+        <file>
+            <source>src/main/resources/external/protobuf/module.xml</source>
+            <outputDirectory>/modules/com/google/protobuf/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
         <file>
             <source>src/main/resources/external/ws-impl/module.xml</source>
             <outputDirectory>/modules/org/switchyard/component/soap/ws-impl/main</outputDirectory>
@@ -223,36 +196,13 @@
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
-                <include>org.drools:knowledge-api</include>
-            </includes>
-            <outputDirectory>/modules/org/drools/knowledge-api/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${version.drools}.${artifact.extension}
-            </outputFileNameMapping>
-        </dependencySet>
-        <dependencySet>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <includes>
-                <include>org.drools:drools-core</include>
-            </includes>
-            <outputDirectory>/modules/org/drools/drools-core/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${version.drools}.${artifact.extension}
-            </outputFileNameMapping>
-        </dependencySet>
-        <dependencySet>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <includes>
                 <include>org.drools:drools-compiler</include>
-            </includes>
-            <outputDirectory>/modules/org/drools/drools-compiler/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${version.drools}.${artifact.extension}
-            </outputFileNameMapping>
-        </dependencySet>
-        <dependencySet>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <includes>
+                <include>org.drools:drools-core</include>
                 <include>org.drools:drools-persistence-jpa</include>
+                <include>org.drools:knowledge-api</include>
+                <include>org.drools:knowledge-internal-api</include>
             </includes>
-            <outputDirectory>/modules/org/drools/drools-persistence-jpa/main</outputDirectory>
+            <outputDirectory>/modules/org/drools/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${version.drools}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -280,52 +230,28 @@
             <outputDirectory>/modules/org/mvel/mvel2/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${version.mvel}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
+        <!--
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
-                <include>org.jbpm:jbpm-flow</include>
+                <include>mysql:mysql-connector-java</include>
             </includes>
-            <outputDirectory>/modules/org/jbpm/jbpm-flow/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${version.jbpm}.${artifact.extension}</outputFileNameMapping>
+            <outputDirectory>/modules/com/mysql/jdbc/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.mysql-connector-java}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
-        <dependencySet>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <includes>
-                <include>org.jbpm:jbpm-flow-builder</include>
-            </includes>
-            <outputDirectory>/modules/org/jbpm/jbpm-flow-builder/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${version.jbpm}.${artifact.extension}</outputFileNameMapping>
-        </dependencySet>
+        -->
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
                 <include>org.jbpm:jbpm-bpmn2</include>
-            </includes>
-            <outputDirectory>/modules/org/jbpm/jbpm-bpmn2/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${version.jbpm}.${artifact.extension}</outputFileNameMapping>
-        </dependencySet>
-        <dependencySet>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <includes>
+                <include>org.jbpm:jbpm-flow</include>
+                <include>org.jbpm:jbpm-flow-builder</include>
+                <include>org.jbpm:jbpm-human-task-core</include>
+                <include>org.jbpm:jbpm-human-task-mina</include>
+                <include>org.jbpm:jbpm-persistence-jpa</include>
                 <include>org.jbpm:jbpm-workitems</include>
             </includes>
-            <outputDirectory>/modules/org/jbpm/jbpm-workitems/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${version.jbpm}.${artifact.extension}</outputFileNameMapping>
-        </dependencySet>
-        <dependencySet>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <includes>
-                <include>org.jbpm:jbpm-human-task</include>
-            </includes>
-            <outputDirectory>/modules/org/jbpm/jbpm-human-task/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${version.jbpm}.${artifact.extension}</outputFileNameMapping>
-        </dependencySet>
-        <dependencySet>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <includes>
-                <include>org.jbpm:jbpm-persistence-jpa</include>
-            </includes>
-            <outputDirectory>/modules/org/jbpm/jbpm-persistence-jpa/main</outputDirectory>
+            <outputDirectory>/modules/org/jbpm/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${version.jbpm}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
@@ -496,5 +422,14 @@
             <!--<outputFileNameMapping>${artifact.artifactId}-${version.clojure}.${artifact.extension}-->
             <!--</outputFileNameMapping>-->
         <!--</dependencySet>-->
+
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>com.google.protobuf:protobuf-java</include>
+            </includes>
+            <outputDirectory>/modules/com/google/protobuf/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.protobuf}.${artifact.extension}</outputFileNameMapping>
+        </dependencySet>
     </dependencySets>
 </assembly>

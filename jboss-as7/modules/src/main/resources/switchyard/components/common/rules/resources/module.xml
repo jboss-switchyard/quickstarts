@@ -27,10 +27,7 @@
     <dependencies>
         <module name="javax.api"/>
         <module name="org.apache.log4j"/>
-        <module name="org.drools.drools-compiler"/>
-        <module name="org.drools.drools-core"/>
-        <module name="org.drools.drools-persistence-jpa"/>
-        <module name="org.drools.knowledge-api"/>
+        <module name="org.drools"/>
         <module name="org.mvel.mvel2"/>
         <module name="org.switchyard.api"/>
         <module name="org.switchyard.common"/>

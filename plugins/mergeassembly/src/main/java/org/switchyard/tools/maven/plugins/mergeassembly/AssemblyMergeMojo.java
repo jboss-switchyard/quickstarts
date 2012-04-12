@@ -257,6 +257,10 @@ public class AssemblyMergeMojo extends AbstractMojo {
 
         Writer writer;
         try {
+            File finalAssemblyDir = finalAssembly.getParentFile();
+            if (!finalAssemblyDir.exists()) {
+                finalAssemblyDir.mkdirs();
+            }
             writer = new FileWriter(finalAssembly);
         } catch (IOException e) {
             throw new MojoFailureException("Error creating Writer instance to final assembly file '" + finalAssembly.getAbsolutePath() + "'.", e);

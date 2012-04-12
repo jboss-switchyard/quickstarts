@@ -17,13 +17,23 @@
   ~ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   ~ MA  02110-1301, USA.
   -->
-<module xmlns="urn:jboss:module:1.0" name="org.drools.drools-persistence-jpa">
+<module xmlns="urn:jboss:module:1.0" name="org.drools">
     <resources>
+        <resource-root path="drools-compiler-${version.drools}.jar"/>
+        <resource-root path="drools-core-${version.drools}.jar"/>
         <resource-root path="drools-persistence-jpa-${version.drools}.jar"/>
+        <resource-root path="knowledge-api-${version.drools}.jar"/>
+        <resource-root path="knowledge-internal-api-${version.drools}.jar"/>
     </resources>
     <dependencies>
-        <module name="org.drools.drools-compiler"/>
-        <module name="org.drools.drools-core"/>
-        <module name="org.drools.knowledge-api"/>
+        <module name="com.google.protobuf"/>
+        <module name="javax.api"/>
+        <module name="org.antlr.antlr-runtime"/>
+        <module name="org.eclipse.jdt.core.compiler.ecj"/>
+        <module name="org.hibernate"/>
+        <module name="org.javassist"/>
+        <module name="org.jbpm"/>
+        <module name="org.mvel.mvel2"/>
+        <module name="org.slf4j"/>
     </dependencies>
 </module>

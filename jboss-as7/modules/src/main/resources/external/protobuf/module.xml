@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   ~ JBoss, Home of Professional Open Source
   ~ Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
@@ -17,14 +18,13 @@
   ~ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   ~ MA  02110-1301, USA.
   -->
-<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.0">
-    <deployment>
-        <exclusions>
-            <module name="javax.persistence.api"/>
-            <module name="org.hibernate"/>
-            <module name="org.hibernate.envers"/>
-            <module name="org.hibernate.validator"/>
-        </exclusions>
-    </deployment>
-</jboss-deployment-structure>
 
+<module xmlns="urn:jboss:module:1.0" name="com.google.protobuf">
+
+    <resources>
+        <resource-root path="protobuf-java-${version.protobuf}.jar"/>
+    </resources>
+
+    <dependencies>
+    </dependencies>
+</module>

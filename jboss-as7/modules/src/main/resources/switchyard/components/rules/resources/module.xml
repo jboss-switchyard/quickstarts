@@ -22,12 +22,9 @@
         <resource-root path="switchyard-component-rules-${project.version}.jar"/>
     </resources>
     <dependencies>
-        <module name="javax.api" export="true"/>
-        <module name="org.apache.log4j" export="true"/>
-        <module name="org.drools.drools-compiler" export="true"/>
-        <module name="org.drools.drools-core" export="true"/>
-        <module name="org.drools.drools-persistence-jpa" export="true"/>
-        <module name="org.drools.knowledge-api" export="true"/>
+        <module name="javax.api"/>
+        <module name="org.apache.log4j"/>
+        <module name="org.drools" export="true"/>
         <module name="org.switchyard.api"/>
         <module name="org.switchyard.common"/>
         <module name="org.switchyard.component.common.rules"/>

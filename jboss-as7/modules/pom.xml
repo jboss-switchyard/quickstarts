@@ -51,10 +51,11 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>unpack-jbpm-xsds</id>
+                        <id>unpack-jbpm-switchyard</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>unpack</goal>
@@ -67,9 +68,15 @@
                                     <version>${version.jbpm}</version>
                                     <type>jar</type>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.switchyard.components</groupId>
+                                    <artifactId>switchyard-component-bpm</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                </artifactItem>
                             </artifactItems>
-                            <includes>META-INF/*.xsd</includes>
-                            <outputDirectory>${project.build.directory}/jbpm-xsds</outputDirectory>
+                            <includes>META-INF/*.xsd,META-INF/*orm-JPA2.xml</includes>
+                            <outputDirectory>${project.build.directory}/jbpm-switchyard</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -82,7 +89,9 @@
                     <execution>
                         <id>merge-assemblies</id>
                         <phase>generate-sources</phase>
-                        <goals><goal>mergeassembly</goal></goals>
+                        <goals>
+                            <goal>mergeassembly</goal>
+                        </goals>
                         <configuration>
                             <baseAssembly>${basedir}/assembly.xml</baseAssembly>
                             <finalAssembly>${basedir}/target/merged-assembly.xml</finalAssembly>
@@ -95,15 +104,15 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>make-jbpm-xsds-assembly</id>
+                        <id>make-jbpm-switchyard-assembly</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>attached</goal>
                         </goals>
                         <configuration>
-                            <finalName>jbpm-bpmn2</finalName>
+                            <finalName>jbpm-switchyard</finalName>
                             <descriptors>
-                                <descriptor>${basedir}/src/main/resources/switchyard/components/bpm/jbpm-xsds-assembly.xml</descriptor>
+                                <descriptor>${basedir}/src/main/resources/external/jbpm/jbpm-switchyard-assembly.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
@@ -242,32 +251,12 @@
         </dependency>
 
         <!--
-        Hibernate...
+        MySQL...
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
         -->
-        <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>persistence-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>ejb3-persistence</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-commons-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-        </dependency>
 
         <!--
         Riftsaw...
@@ -506,10 +495,6 @@
         -->
         <dependency>
             <groupId>org.drools</groupId>
-            <artifactId>knowledge-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.drools</groupId>
             <artifactId>drools-core</artifactId>
         </dependency>
         <dependency>
@@ -521,6 +506,18 @@
             <artifactId>drools-persistence-jpa</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>knowledge-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>knowledge-internal-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-bpmn2</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-flow</artifactId>
         </dependency>
@@ -530,19 +527,19 @@
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-human-task-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-human-task-mina</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
             <artifactId>jbpm-persistence-jpa</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-bpmn2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
             <artifactId>jbpm-workitems</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-human-task</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.bpm</groupId>
@@ -558,6 +555,10 @@
         </dependency>
 
         <!-- misc external dependencies -->
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>

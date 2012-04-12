@@ -20,7 +20,7 @@
   ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
-<xsl:stylesheet version="2.0"
+<xsl:stylesheet version="2.0" 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:fn="http://www.w3.org/2005/xpath-functions"
@@ -36,23 +36,24 @@
     </xsl:copy>
 </xsl:template>
 
-<xsl:template match="node()[name(.)='session-factory']">
-    <session-factory>
-        <property name="dialect">org.hibernate.dialect.H2Dialect</property>
-        <property name="connection.driver_class">org.h2.Driver</property>
-        <property name="connection.url">jdbc:h2:~/jbpmDS</property>
-        <property name="connection.username">sa</property>
-        <property name="connection.password">sa</property>
-        <property name="connection.autocommit">false</property>
-        <property name="connection.pool_size">1</property>
-        <property name="max_fetch_depth">3</property>
-        <property name="hbm2ddl.auto">update</property>
-        <property name="current_session_context_class">thread</property>
-        <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
-        <property name="show_sql">false</property>
-        <property name="transaction.manager_lookup_class">org.switchyard.component.bpm.jta.hibernate.AS7TransactionManagerLookup</property>
-        <property name="jboss.as.jpa.providerModule" value="hibernate3-bundled"/>
-    </session-factory>
+<xsl:template match="node()[name(.)='module' and @name='javax.api']">
+    <module name="javax.api" export="true"/>
+</xsl:template>
+
+<xsl:template match="node()[name(.)='module' and @name='javax.persistence.api']">
+    <module name="javax.persistence.api" export="true"/>
+</xsl:template>
+
+<xsl:template match="node()[name(.)='module' and @name='javax.transaction.api']">
+    <module name="javax.transaction.api" export="true"/>
+</xsl:template>
+
+<xsl:template match="node()[name(.)='module' and @name='javax.validation.api']">
+    <module name="javax.validation.api" export="true"/>
+</xsl:template>
+
+<xsl:template match="node()[name(.)='module' and @name='org.javassist']">
+    <module name="org.javassist" export="true"/>
 </xsl:template>
 
 </xsl:stylesheet>

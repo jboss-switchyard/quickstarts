@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   ~ JBoss, Home of Professional Open Source.
   ~ Copyright 2010, Red Hat, Inc., and individual contributors
@@ -20,11 +21,15 @@
   ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
-<module xmlns="urn:jboss:module:1.0" name="org.jbpm.jbpm-workitems">
+
+<module xmlns="urn:jboss:module:1.1" name="com.mysql.jdbc">
+
     <resources>
-        <resource-root path="jbpm-workitems-${version.jbpm}.jar"/>
+        <resource-root path="mysql-connector-java-${version.mysql-connector-java}.jar"/>
+        <!-- Insert resources here -->
     </resources>
     <dependencies>
-        <module name="org.jbpm.jbpm-flow"/>
+        <module name="javax.api"/>
+        <module name="javax.transaction.api"/>
     </dependencies>
 </module>

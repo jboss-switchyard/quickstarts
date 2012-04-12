@@ -298,6 +298,7 @@
           <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
         </move>
 		<antcall target="transform-console-module" />
+		<antcall target="transform-hibernate-module" />
     </target>
 
     <target name="unzipQuickstartResources" unless="quickstartResourcesAlreadyInstalled">
@@ -370,6 +371,7 @@
     <target name="install-sy-console" if="installSYConsole" depends="request-sy-console-install, download-sy-console">
     	<copy todir="${AS7_PATH}/modules/org/jboss/as/console/main" overwrite="true" file="res/switchyard-console-application.war"/>
 		<antcall target="transform-console-module" />
+		<antcall target="transform-hibernate-module" />
 	</target>
 
 	<target name="transform-console-module" depends="download-sy-tools">
@@ -379,6 +381,19 @@
               includes="module.xml"/>
         <move overwrite="true" todir="${AS7_PATH}/modules/org/jboss/as/console/main">
           <filelist dir="${AS7_PATH}/modules/org/jboss/as/console/main">
+            <file name="module.html"/>
+          </filelist>
+          <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
+    </target>
+
+	<target name="transform-hibernate-module" depends="download-sy-tools">
+        <xslt style="res/hibernate_module.xsl"
+              basedir="${AS7_PATH}/modules/org/hibernate/main"
+              destdir="${AS7_PATH}/modules/org/hibernate/main"
+              includes="module.xml"/>
+        <move overwrite="true" todir="${AS7_PATH}/modules/org/hibernate/main">
+          <filelist dir="${AS7_PATH}/modules/org/hibernate/main">
             <file name="module.html"/>
           </filelist>
           <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>

@@ -150,6 +150,14 @@
                             <outputDir>${staging.jboss.dir}/modules/org/jboss/as/console/main</outputDir>
                             <stylesheet>${staging.jboss.dir}/xsl/console_module.xsl</stylesheet>
                         </transformationSet>
+                        <transformationSet>
+                            <dir>${staging.jboss.dir}/modules/org/hibernate/main</dir>
+                            <includes>
+                                <include>module.xml</include>
+                            </includes>
+                            <outputDir>${staging.jboss.dir}/modules/org/hibernate/main</outputDir>
+                            <stylesheet>${staging.jboss.dir}/xsl/hibernate_module.xsl</stylesheet>
+                        </transformationSet>
                     </transformationSets>
                 </configuration>
             </plugin>

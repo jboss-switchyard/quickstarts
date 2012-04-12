@@ -26,12 +26,7 @@
     xmlns:fn="http://www.w3.org/2005/xpath-functions"
     xmlns:xdt="http://www.w3.org/2005/xpath-datatypes"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="urn:jboss:domain:1.2"
     exclude-result-prefixes="xs xsl xsi fn xdt">
-    <!--
-    https://issues.jboss.org/browse/SWITCHYARD-548
-    xmlns:jpa="urn:jboss:domain:jpa:1.0"
-    -->
 
 <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
 
@@ -54,15 +49,6 @@
         <extension module="org.switchyard"/>
     </xsl:copy>
 </xsl:template>
-
-<!-- http://kverlaen.blogspot.com/2011/07/jbpm5-on-as7-lightning.html -->
-<!--
-https://issues.jboss.org/browse/SWITCHYARD-548
-<xsl:template match="node()[name(.)='extension' and @module='org.jboss.as.jpa']">
-</xsl:template>
-<xsl:template match="jpa:subsystem">
-</xsl:template>
--->
 
 <xsl:template match="node()[name(.)='profile']">
     <xsl:copy>
@@ -89,41 +75,35 @@ https://issues.jboss.org/browse/SWITCHYARD-548
     </xsl:copy>
 </xsl:template>
 
-<!-- http://kverlaen.blogspot.com/2011/07/jbpm5-on-as7-lightning.html
-https://issues.jboss.org/browse/SWITCHYARD-548
 <xsl:template match="node()[name(.)='datasources']">
     <xsl:copy>
-        <datasource jndi-name="java:jboss/datasources/jbpmDS" pool-name="jbpmPool" enabled="true" jta="false" use-java-context="true" use-ccm="false">
-            <connection-url>jdbc:h2:~/jbpmDS;DB_CLOSE_DELAY=-1</connection-url>
+        <datasource jndi-name="java:jboss/datasources/jbpmDS" pool-name="jbpmDS" enabled="true" use-java-context="true">
+            <connection-url>jdbc:h2:mem:jbpm;DB_CLOSE_DELAY=-1</connection-url>
             <driver>h2</driver>
-            <pool>
-                <prefill>false</prefill>
-                <use-strict-min>false</use-strict-min>
-                <flush-strategy>FailingConnectionOnly</flush-strategy>
-            </pool>
             <security>
                 <user-name>sa</user-name>
                 <password>sa</password>
             </security>
-            <validation></validation>
-            <timeout></timeout>
-            <statement></statement>
+            <!--
+            <connection-url>jdbc:mysql://localhost:3306/jbpm</connection-url>
+            <driver>mysql</driver>
+            <security>
+                <user-name>jbpm</user-name>
+                <password>jbpm</password>
+            </security>
+            -->
         </datasource>
         <xsl:apply-templates select="@*|node()"/>
     </xsl:copy>
 </xsl:template>
--->
 
-<!-- http://kverlaen.blogspot.com/2011/07/jbpm5-on-as7-lightning.html 
-https://issues.jboss.org/browse/SWITCHYARD-548
-<xsl:template match="node()[name(.)='security-domains']">
+<!--
+<xsl:template match="node()[name(.)='drivers']">
     <xsl:copy>
+        <driver name="mysql" module="com.mysql.jdbc">
+            <xa-datasource-class>com.mysql.jdbc.jdbc2.optional.MysqlXADataSource</xa-datasource-class>
+        </driver>
         <xsl:apply-templates select="@*|node()"/>
-        <security-domain name="jbpm-console" cache-type="default">
-            <authentication>
-                <login-module code="UsersRoles" flag="required"/>
-            </authentication>
-        </security-domain>
     </xsl:copy>
 </xsl:template>
 -->
