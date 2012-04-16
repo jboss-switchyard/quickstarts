@@ -84,7 +84,8 @@ public class SwitchYardExtension implements Extension {
     /** {@inheritDoc} */
     @Override
     public void initialize(final ExtensionContext context) {
-        final SubsystemRegistration subsystem = context.registerSubsystem(SUBSYSTEM_NAME);
+        final SubsystemRegistration subsystem = context.registerSubsystem(SUBSYSTEM_NAME,1,0);
+        //todo convert to ResourceDefinition
         final ManagementResourceRegistration registration = subsystem.registerSubsystemModel(SwitchYardSubsystemProviders.SUBSYSTEM_DESCRIBE);
         registration.registerOperationHandler(ADD, SwitchYardSubsystemAdd.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_ADD, false);
         registration.registerOperationHandler(DESCRIBE, SwitchYardSubsystemDescribe.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_DESCRIBE, false, OperationEntry.EntryType.PRIVATE);
