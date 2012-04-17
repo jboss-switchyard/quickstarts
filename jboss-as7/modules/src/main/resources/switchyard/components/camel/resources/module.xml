@@ -36,7 +36,14 @@
         <module name="javax.ws.rs.api"/>
         <module name="org.apache.log4j"/>
         <module name="org.apache.camel.core" services="export" export="true"/>
-        <module name="org.apache.camel.spring" services="export" export="true"/>
+        <module name="org.apache.camel.spring" services="export" export="true">
+            <imports>
+                <include path="META-INF/services/org/apache/camel/component"/>
+            </imports>
+            <exports>
+                <include path="META-INF/services/org/apache/camel/component"/>
+            </exports>
+        </module>
         <module name="org.apache.camel.jms" export="true" optional="true">
             <imports>
                 <include path="META-INF/services/org/apache/camel/component"/>
