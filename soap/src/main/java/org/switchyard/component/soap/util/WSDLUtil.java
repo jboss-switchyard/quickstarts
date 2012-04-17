@@ -37,11 +37,13 @@ import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.log4j.Logger;
 import org.switchyard.ExchangePattern;
@@ -61,10 +63,14 @@ public final class WSDLUtil {
     private static final Logger LOGGER = Logger.getLogger(WSDLUtil.class);
 
     /**
-     * SOAP Fault type QName.
+     * SOAP 1.1 QName namespace.
      */
-    public static final QName SOAP_FAULT_MESSAGE_TYPE = 
-        QName.valueOf("{http://schemas.xmlsoap.org/soap/envelope/}Fault");
+    public static final String WSDL_SOAP11_URI = "http://schemas.xmlsoap.org/wsdl/soap/";
+
+    /**
+     * SOAP 1.2 QName namespace.
+     */
+    public static final String WSDL_SOAP12_URI = "http://schemas.xmlsoap.org/wsdl/soap12/";
 
     private WSDLUtil() {
     }
@@ -233,6 +239,24 @@ public final class WSDLUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * Get the SOAP Binding Id for the specified {@link Port}.
+     *
+     * @param port The WSDL port.
+     * @return The SOAPBinding Id found on the port.
+     */
+    public static String getBindingId(Port port) {
+        String bindingId = SOAPBinding.SOAP11HTTP_BINDING;
+        List<ExtensibilityElement> extElements = port.getExtensibilityElements();
+        for (ExtensibilityElement extElement : extElements) {
+            if (extElement.getElementType().getNamespaceURI().equals(WSDL_SOAP12_URI)) {
+                bindingId = SOAPBinding.SOAP12HTTP_BINDING;
+                break;
+            }
+        }
+        return bindingId;
     }
 
     /**

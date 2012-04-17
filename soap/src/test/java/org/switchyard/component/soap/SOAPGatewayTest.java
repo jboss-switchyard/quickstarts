@@ -41,6 +41,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.ws.soap.SOAPBinding;
 
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -209,14 +210,14 @@ public class SOAPGatewayTest {
         ContextMapper<SOAPMessage> mapper = new SOAPContextMapper();
         Context context = new DefaultContext();
         // test mapFrom
-        SOAPMessage source = SOAPUtil.SOAP_MESSAGE_FACTORY.createMessage();
+        SOAPMessage source = SOAPUtil.createMessage(SOAPBinding.SOAP11HTTP_BINDING);
         source.getSOAPHeader().addChildElement(firstName).setValue("John");
         source.getSOAPHeader().addChildElement(lastName).setValue("Doe");
         mapper.mapFrom(source, context);
         Assert.assertEquals("John", context.getPropertyValue(firstName.toString()));
         Assert.assertEquals("Doe", context.getPropertyValue(lastName.toString()));
         // test mapTo
-        SOAPMessage target = SOAPUtil.SOAP_MESSAGE_FACTORY.createMessage();
+        SOAPMessage target = SOAPUtil.createMessage(SOAPBinding.SOAP11HTTP_BINDING);
         mapper.mapTo(context, target);
         Assert.assertEquals("John", ((Element)target.getSOAPHeader().getChildElements(firstName).next()).getTextContent());
         Assert.assertEquals("Doe", ((Element)target.getSOAPHeader().getChildElements(lastName).next()).getTextContent());

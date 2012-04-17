@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2011-2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -26,20 +26,20 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
 import org.switchyard.component.soap.util.SOAPUtil;
-import org.switchyard.component.soap.util.WSDLUtil;
 import org.switchyard.config.model.Scannable;
 import org.switchyard.transform.BaseTransformer;
 
 /**
- * Default {@link Exception} to SOAP fault transformer.
+ * Default {@link Exception} to SOAP 1.1 fault transformer.
  *
  * @param <F> From type.
  * @param <T> To type.
  *
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 @Scannable(false)
-public class DefaultExceptionTransformer<F extends Exception, T extends SOAPMessage> extends BaseTransformer<F, T> {
+public class DefaultSOAP11ExceptionTransformer<F extends Exception, T extends SOAPMessage> extends BaseTransformer<F, T> {
 
     @Override
     public QName getFrom() {
@@ -48,7 +48,7 @@ public class DefaultExceptionTransformer<F extends Exception, T extends SOAPMess
 
     @Override
     public QName getTo() {
-        return WSDLUtil.SOAP_FAULT_MESSAGE_TYPE;
+        return SOAPUtil.SOAP11_FAULT_MESSAGE_TYPE;
     }
 
     @Override
@@ -56,13 +56,13 @@ public class DefaultExceptionTransformer<F extends Exception, T extends SOAPMess
         try {
             Throwable cause = from.getCause();
             if (cause instanceof InvocationTargetException) {
-                return SOAPUtil.generateFault(cause.getCause());
+                return SOAPUtil.generateSOAP11Fault(cause.getCause());
             } else {
-                return SOAPUtil.generateFault(from);
+                return SOAPUtil.generateSOAP11Fault(from);
             }
         } catch (SOAPException e1) {
             // TODO: We're in a fault on a fault type situation now... should generateFault be throwing exceptions??
-            throw new IllegalStateException("Unexpected SOAPException when generating a SOAP Fault message.", from);
+            throw new IllegalStateException("Unexpected SOAPException when generating a SOAP 1.1 Fault message.", from);
         }
     }
 }

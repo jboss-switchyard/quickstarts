@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.soap.SOAPMessage;
+import javax.xml.ws.soap.SOAPBinding;
 
 import org.junit.Assert;
 
@@ -83,7 +84,7 @@ public class StreamUtil {
      */
     public static SOAPMessage readSOAP(String soapString) throws IOException {
         try {
-            SOAPMessage response = SOAPUtil.SOAP_MESSAGE_FACTORY.createMessage();
+            SOAPMessage response = SOAPUtil.createMessage(SOAPBinding.SOAP11HTTP_BINDING);
 
             org.w3c.dom.Node node = response.getSOAPBody().getOwnerDocument().importNode(SOAPUtil.parseAsDom(soapString).getDocumentElement(), true);
             response.getSOAPBody().appendChild(node);

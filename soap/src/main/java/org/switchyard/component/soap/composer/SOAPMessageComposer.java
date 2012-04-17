@@ -108,9 +108,7 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPMessage> {
                     target.getSOAPBody().appendChild(messageNodeImport);
                 } else {
                     // convert to SOAP Fault since ExchangeState is FAULT but the message is not SOAP Fault
-                    target.getSOAPBody().addFault(SOAPUtil.SERVER_FAULT_QN, "Send failed")
-                                          .addDetail()
-                                          .appendChild(messageNodeImport);
+                    SOAPUtil.addFault(target).addDetail().appendChild(messageNodeImport);
                 }
             } catch (Exception e) {
                 throw new SOAPException("Unable to parse SOAP Message", e);
@@ -128,7 +126,7 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPMessage> {
         if (rootName.equals("fault")) {
             String nsURI = messageNode.getNamespaceURI();
 
-            if ("http://schemas.xmlsoap.org/soap/envelope/".equals(nsURI)) {
+            if (nsURI.equals(SOAPUtil.SOAP12_URI) || nsURI.equals(SOAPUtil.SOAP11_URI)) {
                 return true;
             }
         }

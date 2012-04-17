@@ -22,9 +22,13 @@
 <transforms xmlns="urn:switchyard-config:switchyard:1.0"
             xmlns:trfm="urn:switchyard-config:transform:1.0">
 
-    <!-- Default Exception to SOAP Fault transformer... -->
+    <!-- Default Exception to SOAP 1.1 Fault transformer... -->
     <trfm:transform.java from="java:java.lang.Exception"
                          to="{http://schemas.xmlsoap.org/soap/envelope/}Fault"
-                         class="org.switchyard.component.soap.DefaultExceptionTransformer"/>
+                         class="org.switchyard.component.soap.DefaultSOAP11ExceptionTransformer"/>
+    <!-- Default Exception to SOAP 1.2 Fault transformer... -->
+    <trfm:transform.java from="java:java.lang.Exception"
+                         to="{http://www.w3.org/2003/05/soap-envelope}Fault"
+                         class="org.switchyard.component.soap.DefaultSOAP12ExceptionTransformer"/>
 
 </transforms>

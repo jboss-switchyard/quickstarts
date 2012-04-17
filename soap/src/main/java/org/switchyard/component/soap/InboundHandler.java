@@ -75,6 +75,7 @@ public class InboundHandler extends BaseServiceHandler {
     private Endpoint _endpoint;
     private Port _wsdlPort;
     private String _scheme = "http";
+    private String _bindingId;
 
     /**
      * Constructor.
@@ -124,7 +125,10 @@ public class InboundHandler extends BaseServiceHandler {
             LOGGER.info("Publishing WebService at " + publishUrl);
             // make sure we don't pollute the class loader used by the WS subsystem
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            _endpoint = Endpoint.create(wsProvider);
+
+            _bindingId = WSDLUtil.getBindingId(_wsdlPort);
+
+            _endpoint = Endpoint.create(_bindingId, wsProvider);
             _endpoint.setMetadata(metadata);
             _endpoint.setProperties(properties);
             _endpoint.publish(publishUrl);
@@ -222,12 +226,12 @@ public class InboundHandler extends BaseServiceHandler {
                     return handleException(oneWay, new SOAPException("Timed out after " + _waitTimeout + " ms waiting on synchronous response from target service '" + _service.getName() + "'."));
                 }
 
-                if (SOAPUtil.SOAP_MESSAGE_FACTORY == null) {
+                if (SOAPUtil.getFactory(_bindingId) == null) {
                     throw new SOAPException("Failed to instantiate SOAP Message Factory");
                 }
                 SOAPMessage soapResponse;
                 try {
-                    soapResponse = _messageComposer.decompose(exchange, SOAPUtil.SOAP_MESSAGE_FACTORY.createMessage());
+                    soapResponse = _messageComposer.decompose(exchange, SOAPUtil.createMessage(_bindingId));
                 } catch (Exception e) {
                     throw e instanceof SOAPException ? (SOAPException)e : new SOAPException(e);
                 }
@@ -285,7 +289,7 @@ public class InboundHandler extends BaseServiceHandler {
             LOGGER.error(se);
         } else {
             try {
-                return SOAPUtil.generateFault(se);
+                return SOAPUtil.generateFault(se, _bindingId);
             } catch (SOAPException e) {
                 LOGGER.error(e);
             }

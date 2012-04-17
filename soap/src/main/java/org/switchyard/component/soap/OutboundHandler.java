@@ -55,7 +55,8 @@ public class OutboundHandler extends BaseServiceHandler {
     private final MessageComposer<SOAPMessage> _messageComposer;
 
     private Dispatch<SOAPMessage> _dispatcher;
-    private Port _port;
+    private Port _wsdlPort;
+    private String _bindingId;
 
     /**
      * Constructor.
@@ -76,10 +77,12 @@ public class OutboundHandler extends BaseServiceHandler {
             try {
                 PortName portName = _config.getPort();
                 javax.wsdl.Service wsdlService = WSDLUtil.getService(_config.getWsdl(), portName);
-                _port = WSDLUtil.getPort(wsdlService, portName);
+                _wsdlPort = WSDLUtil.getPort(wsdlService, portName);
                 // Update the portName
                 portName.setServiceQName(wsdlService.getQName());
-                portName.setName(_port.getName());
+                portName.setName(_wsdlPort.getName());
+
+                _bindingId = WSDLUtil.getBindingId(_wsdlPort);
 
                 URL wsdlUrl = WSDLUtil.getURL(_config.getWsdl());
                 LOGGER.info("Creating dispatch with WSDL " + wsdlUrl);
@@ -116,13 +119,13 @@ public class OutboundHandler extends BaseServiceHandler {
     @Override
     public void handleMessage(final Exchange exchange) throws HandlerException {
         try {
-            if (SOAPUtil.SOAP_MESSAGE_FACTORY == null) {
+            if (SOAPUtil.getFactory(_bindingId) == null) {
                 throw new SOAPException("Failed to instantiate SOAP Message Factory");
             }
 
             SOAPMessage request;
             try {
-                request = _messageComposer.decompose(exchange, SOAPUtil.SOAP_MESSAGE_FACTORY.createMessage());
+                request = _messageComposer.decompose(exchange, SOAPUtil.createMessage(_bindingId));
             } catch (Exception e) {
                 throw e instanceof SOAPException ? (SOAPException)e : new SOAPException(e);
             }
@@ -162,14 +165,14 @@ public class OutboundHandler extends BaseServiceHandler {
         SOAPMessage response = null;
         try {
             String firstBodyElement = SOAPUtil.getFirstBodyElement(soapMessage);
-            if (WSDLUtil.isOneWay(_port, firstBodyElement)) {
+            if (WSDLUtil.isOneWay(_wsdlPort, firstBodyElement)) {
                 _dispatcher.invokeOneWay(soapMessage);
                 //return empty response
             } else {
                 response = _dispatcher.invoke(soapMessage);
             }
         } catch (SOAPFaultException sfex) {
-            response = SOAPUtil.generateFault(sfex);
+            response = SOAPUtil.generateFault(sfex, _bindingId);
         } catch (Exception ex) {
             throw new SOAPException("Cannot process SOAP request", ex);
         }

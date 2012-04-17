@@ -30,6 +30,7 @@ import javax.xml.soap.Detail;
 import javax.xml.soap.DetailEntry;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
@@ -39,6 +40,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.log4j.Logger;
@@ -54,12 +56,42 @@ import org.w3c.dom.Node;
  */
 public final class SOAPUtil {
     private static final Logger LOGGER = Logger.getLogger(SOAPUtil.class);
-    /** */
-    public static final QName SERVER_FAULT_QN = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Server");
+
+    /**
+     * SOAP 1.1 namespace.
+     */
+    public static final String SOAP11_URI = "http://schemas.xmlsoap.org/soap/envelope/";
+
+    /**
+     * SOAP 1.2 namespace.
+     */
+    public static final String SOAP12_URI = "http://www.w3.org/2003/05/soap-envelope";
+
+    /**
+     * SOAP 1.1 Server Fault Qname.
+     */
+    public static final QName SOAP11_SERVER_FAULT_TYPE = new QName(SOAP11_URI, "Server");
+
+    /**
+     * SOAP 1.1 Fault QName.
+     */
+    public static final QName SOAP11_FAULT_MESSAGE_TYPE = new QName(SOAP11_URI, "Fault");
+
+    /**
+     * SOAP 1.2 Server Fault Qname.
+     */
+    public static final QName SOAP12_SERVER_FAULT_TYPE = new QName(SOAP12_URI, "Server");
+
+    /**
+     * SOAP 1.2 Fault QName.
+     */
+    public static final QName SOAP12_FAULT_MESSAGE_TYPE = new QName(SOAP12_URI, "Fault");
+
     private static final boolean RETURN_STACK_TRACES = false;
 
     /** SOAP Message Factory holder. */
-    public static final MessageFactory SOAP_MESSAGE_FACTORY;
+    private static final MessageFactory SOAP11_MESSAGE_FACTORY;
+    private static final MessageFactory SOAP12_MESSAGE_FACTORY;
 
     private SOAPUtil() {
     }
@@ -88,20 +120,68 @@ public final class SOAPUtil {
         
         return operationName;
     }
-    
+
     /**
-     * Generates a SOAP Fault Message based on the Exception passed.
+     * Adds a SOAP 1.1 or 1.2 Fault element to the SOAPBody.
+     *
+     * @param soapMessage The SOAPMessage
+     * @return The SOAPFault that was added
+     * @throws SOAPException If the fault could not be generated
+     */
+    public static SOAPFault addFault(SOAPMessage soapMessage) throws SOAPException {
+        if (soapMessage.getSOAPPart().getEnvelope().getNamespaceURI().equals(SOAP12_URI)) {
+            return soapMessage.getSOAPBody().addFault(SOAP12_FAULT_MESSAGE_TYPE, "Send failed");
+        } else {
+            return soapMessage.getSOAPBody().addFault(SOAP12_FAULT_MESSAGE_TYPE, "Send failed");
+        }
+    }
+
+    /**
+     * Generates a SOAP 1.1 or 1.2 Fault Message based on binding id and Exception passed.
+     *
+     * @param th The Exception
+     * @param bindingId SOAPBinding type
+     * @return The SOAP Message containing the Fault
+     * @throws SOAPException If the message could not be generated
+     */
+    public static SOAPMessage generateFault(final Throwable th, final String bindingId) throws SOAPException {
+        if (bindingId.equals(SOAPBinding.SOAP12HTTP_BINDING) || bindingId.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
+            return generateSOAP12Fault(th);
+        } else {
+            return generateSOAP11Fault(th);
+        }
+    }
+
+    /**
+     * Generates a SOAP 1.1 Fault Message based on the Exception passed.
+     *
      * @param th The Exception.
      * @return The SOAP Message containing the Fault.
      * @throws SOAPException If the message could not be generated.
      */
-    public static SOAPMessage generateFault(final Throwable th) throws SOAPException {
-        final SOAPMessage faultMsg = SOAP_MESSAGE_FACTORY.createMessage();
+    public static SOAPMessage generateSOAP11Fault(final Throwable th) throws SOAPException {
+        SOAPMessage faultMsg = SOAP11_MESSAGE_FACTORY.createMessage();
+        return generateFault(th, faultMsg, SOAP11_SERVER_FAULT_TYPE);
+    }
+
+    /**
+     * Generates a SOAP 1.2 Fault Message based on the Exception passed.
+     *
+     * @param th The Exception.
+     * @return The SOAP Message containing the Fault.
+     * @throws SOAPException If the message could not be generated.
+     */
+    public static SOAPMessage generateSOAP12Fault(final Throwable th) throws SOAPException {
+        final SOAPMessage faultMsg = SOAP12_MESSAGE_FACTORY.createMessage();
+        return generateFault(th, faultMsg, SOAP12_SERVER_FAULT_TYPE);
+    }
+
+    private static SOAPMessage generateFault(final Throwable th, final SOAPMessage faultMsg, final QName faultQname) throws SOAPException {
         if (th instanceof SOAPFaultException) {
             // Copy the Fault from the exception
             SOAPFault exFault = ((SOAPFaultException) th).getFault();
             SOAPFault fault = faultMsg.getSOAPBody().addFault(exFault.getFaultCodeAsQName(), exFault.getFaultString());
-            fault.addNamespaceDeclaration(fault.getElementQName().getPrefix(), SERVER_FAULT_QN.getNamespaceURI());
+            fault.addNamespaceDeclaration(fault.getElementQName().getPrefix(), faultQname.getNamespaceURI());
             fault.setFaultActor(exFault.getFaultActor());
             if (exFault.hasDetail()) {
                 Detail exDetail = exFault.getDetail();
@@ -118,13 +198,13 @@ public final class SOAPUtil {
                 th.printStackTrace(pw);
                 pw.flush();
                 pw.close();
-                faultMsg.getSOAPBody().addFault(SERVER_FAULT_QN, sw.toString());
+                faultMsg.getSOAPBody().addFault(faultQname, sw.toString());
             } else {
                 String message = th.getMessage();
                 if (message == null) {
                     message = th.toString();
                 }
-                faultMsg.getSOAPBody().addFault(SERVER_FAULT_QN, message);
+                faultMsg.getSOAPBody().addFault(faultQname, message);
             }
         }
         return faultMsg;
@@ -161,14 +241,57 @@ public final class SOAPUtil {
             return null;
         }
     }
-    
+
+    /**
+     * Creates a SOAP Message of version 1.1 or 1.2 based on binding id. The binding Id 
+     * can be one of javax.xml.ws.soap.SOAPBinding ids.
+     * 
+     * @param bindingId SOAPBinding type
+     * @return javax.xml.soap.SOAPMessage
+     * @throws SOAPException If the message could not be generated.
+     */
+    public static SOAPMessage createMessage(String bindingId) throws SOAPException {
+        SOAPMessage message = null;
+        if (bindingId.equals(SOAPBinding.SOAP12HTTP_BINDING) || bindingId.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
+            message = SOAP12_MESSAGE_FACTORY.createMessage();
+        } else {
+            message = SOAP11_MESSAGE_FACTORY.createMessage();
+        }
+        return message;
+    }
+
+    /**
+     * Returns the SOAP Message factory of version 1.1 or 1.2 based on binding id. The binding Id 
+     * can be one of javax.xml.ws.soap.SOAPBinding ids.
+     * 
+     * @param bindingId SOAPBinding type
+     * @return javax.xml.soap.MessageFactory
+     */
+    public static MessageFactory getFactory(String bindingId) {
+        MessageFactory factory = null;
+        if (bindingId.equals(SOAPBinding.SOAP12HTTP_BINDING) || bindingId.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
+            factory = SOAP12_MESSAGE_FACTORY;
+        } else {
+            factory = SOAP11_MESSAGE_FACTORY;
+        }
+        return factory;
+    }
+
     static {
         MessageFactory soapMessageFactory = null;
         try {
             soapMessageFactory = MessageFactory.newInstance();
         } catch (final SOAPException soape) {
-            LOGGER.error("Could not instantiate SOAP Message Factory", soape);
+            LOGGER.error("Could not instantiate SOAP 1.1 Message Factory", soape);
         }
-        SOAP_MESSAGE_FACTORY = soapMessageFactory;
+        SOAP11_MESSAGE_FACTORY = soapMessageFactory;
+
+        soapMessageFactory = null;
+        try {
+            soapMessageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        } catch (final SOAPException soape) {
+            LOGGER.error("Could not instantiate SOAP 1.2 Message Factory", soape);
+        }
+        SOAP12_MESSAGE_FACTORY = soapMessageFactory;
     }
 }
