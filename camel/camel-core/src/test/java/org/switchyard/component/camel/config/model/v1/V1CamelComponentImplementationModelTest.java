@@ -24,6 +24,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import junit.framework.Assert;
 
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -34,6 +35,7 @@ import org.switchyard.component.camel.config.model.CamelComponentImplementationM
 import org.switchyard.component.camel.config.model.SingleRouteService;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.v1.V1ComponentModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
@@ -82,6 +84,23 @@ public class V1CamelComponentImplementationModelTest {
         final String control = getCamelImplementation("switchyard-implementation-java.xml").toString();
         final String test = createModel().toString();
         XMLAssert.assertXMLEqual(control, test);
+    }
+    
+    @Test
+    public void addRoute() throws Exception {
+        V1ComponentModel component = new V1ComponentModel();
+        V1CamelImplementationModel impl = new V1CamelImplementationModel();
+        component.setImplementation(impl);
+        Assert.assertNull(impl.getRoute());
+        Assert.assertNotNull(impl.addRoute());
+        System.out.println(impl);
+        Assert.assertNotNull(impl.getRoute());
+        
+        // adding a route again should fail
+        try {
+            impl.addRoute();
+            Assert.fail("Should not be able to add multiple routes!");
+        } catch (Exception ex) {}
     }
     
     private V1CamelImplementationModel createModel() {

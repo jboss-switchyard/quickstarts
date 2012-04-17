@@ -19,8 +19,12 @@
 
 package org.switchyard.tools.forge.camel;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.inject.Inject;
 
+import org.apache.camel.model.RouteDefinition;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.project.facets.ResourceFacet;
@@ -39,6 +43,7 @@ import org.jboss.forge.shell.plugins.Topic;
 import org.switchyard.component.camel.config.model.v1.V1CamelImplementationModel;
 import org.switchyard.config.model.composite.v1.V1ComponentModel;
 import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
+import org.switchyard.config.model.composite.v1.V1InterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 import org.switchyard.tools.forge.plugin.TemplateResource;
@@ -53,10 +58,11 @@ import org.switchyard.tools.forge.plugin.TemplateResource;
 @Help("Provides commands to create and edit Camel routes in SwitchYard.")
 public class CamelServicePlugin implements Plugin {
     
-
     // Template files used for camel route services
-    private static final String ROUTE_INTERFACE_TEMPLATE = "/org/switchyard/tools/forge/camel/RouteInterfaceTemplate.java";
-    private static final String ROUTE_IMPLEMENTATION_TEMPLATE = "/org/switchyard/tools/forge/camel/RouteImplementationTemplate.java";
+    private static final String ROUTE_INTERFACE_TEMPLATE = 
+            "/org/switchyard/tools/forge/camel/RouteInterfaceTemplate.java";
+    private static final String ROUTE_IMPLEMENTATION_TEMPLATE = 
+            "/org/switchyard/tools/forge/camel/RouteImplementationTemplate.java";
     
     private enum RouteType {
         JAVA, XML;
@@ -110,17 +116,34 @@ public class CamelServicePlugin implements Plugin {
     }
     
     private void createXMLRoute(String routeName) {
-        SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
+        // Gather interface details
+        List<String> typeList = Arrays.asList(new String[] {"wsdl", "java"});
+        int typeChoice = _shell.promptChoice("Interface type: ", typeList);
+        String intfValue;
+        if (typeList.get(typeChoice).equals("wsdl")) {
+            String wsdlPath = _shell.prompt("WSDL path (ex. wsdl/MyService.wsdl): ");
+            String wsdlPort = _shell.prompt("WSDL portType (ex. MyService): ");
+            intfValue = wsdlPath + "#wsdl.porttype(" + wsdlPort + ")";
+        } else {
+            intfValue = _shell.prompt("Interface class (ex. org.foo.MyService): ");
+        }
+        
         // Create the component service model
+        SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
         V1ComponentModel component = new V1ComponentModel();
         component.setName(routeName + "Component");
         V1ComponentServiceModel service = new V1ComponentServiceModel();
         service.setName(routeName);
         component.addService(service);
+        V1InterfaceModel intfModel = new V1InterfaceModel(typeList.get(typeChoice));
+        intfModel.setInterface(intfValue);
+        service.setInterface(intfModel);
         
         // Create the Camel implementation model and add it to the component model
         V1CamelImplementationModel impl = new V1CamelImplementationModel();
         component.setImplementation(impl);
+        RouteDefinition route = impl.addRoute();
+        route.log("Message received : ${body}");
         
         // Add the new component service to the application config
         SwitchYardModel syConfig = switchYard.getSwitchYardConfig();
@@ -135,7 +158,7 @@ public class CamelServicePlugin implements Plugin {
      * create a bean component, then add a route definition to it).
      */
     private void createJavaRoute(String routeName, PipeOut out) 
-    throws java.io.IOException {
+            throws java.io.IOException {
         
         String pkgName = _project.getFacet(MetadataFacet.class).getTopLevelPackage();
         
