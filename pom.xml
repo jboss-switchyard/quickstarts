@@ -75,11 +75,10 @@
     <version.axiom>1.2.8</version.axiom>
     <version.ballroom>1.1.0.FINAL</version.ballroom>
     <version.batik>1.7</version.batik>
-    <version.camel>2.8.0</version.camel>
+    <version.camel>2.9.2</version.camel>
     <version.cxf>2.4.6</version.cxf>
     <version.clojure>1.3.0-alpha5</version.clojure>
     <version.commons.httpclient>3.1</version.commons.httpclient>
-    <version.fusesource.commonman>1.0</version.fusesource.commonman>
     <version.drools>5.3.1.Final</version.drools>
     <version.ecj>3.5.1</version.ecj>
     <version.forge>1.0.2.Final</version.forge>
@@ -1154,11 +1153,6 @@
          <groupId>org.freemarker</groupId>
          <artifactId>freemarker</artifactId>
          <version>${version.freemarker}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.fusesource.commonman</groupId>
-         <artifactId>commons-management</artifactId>
-         <version>${version.fusesource.commonman}</version>
       </dependency>
       <dependency>
          <groupId>org.hamcrest</groupId>
