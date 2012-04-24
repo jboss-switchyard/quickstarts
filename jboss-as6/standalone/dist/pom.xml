@@ -250,10 +250,6 @@
                                     <version>${version.camel}</version>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>org.fusesource.commonman</groupId>
-                                    <artifactId>commons-management</artifactId>
-                                </artifactItem>
-                                <artifactItem>
                                     <groupId>org.drools</groupId>
                                     <artifactId>knowledge-api</artifactId>
                                     <version>${version.drools}</version>

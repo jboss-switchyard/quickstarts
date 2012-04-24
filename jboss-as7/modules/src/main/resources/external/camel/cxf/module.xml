@@ -33,6 +33,7 @@
         <module name="javax.ws.rs.api"/>
         <module name="javax.xml.soap.api"/>
         <module name="org.apache.camel.core"/>
+        <module name="org.apache.camel.spring"/>
         <module name="org.apache.cxf"/>
         <module name="org.apache.cxf.jaxrs"/>
         <module name="org.jboss.ws.cxf.jbossws-cxf-transports-httpserver" export="true">

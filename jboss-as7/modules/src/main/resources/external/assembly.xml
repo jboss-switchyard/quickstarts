@@ -137,11 +137,6 @@
             <filtered>true</filtered>
         </file>
         <file>
-            <source>src/main/resources/external/fusesource/commonman/module.xml</source>
-            <outputDirectory>/modules/org/fusesource/commonman/main</outputDirectory>
-            <filtered>true</filtered>
-        </file>	
-        <file>
             <source>src/main/resources/external/saxon/module.xml</source>
             <outputDirectory>/modules/net/sourceforge/saxon/main</outputDirectory>
             <filtered>true</filtered>
@@ -357,15 +352,6 @@
             </includes>
             <outputDirectory>/modules/org/apache/camel/spring/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${version.camel}.${artifact.extension}</outputFileNameMapping>
-        </dependencySet>
-        <dependencySet>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <includes>
-                <include>org.fusesource.commonman:commons-management</include>
-            </includes>
-            <outputDirectory>/modules/org/fusesource/commonman/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${version.fusesource.commonman}.${artifact.extension}
-            </outputFileNameMapping>
         </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
