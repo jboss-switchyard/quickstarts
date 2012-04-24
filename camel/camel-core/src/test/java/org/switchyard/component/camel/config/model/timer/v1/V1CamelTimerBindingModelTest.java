@@ -22,6 +22,8 @@
 package org.switchyard.component.camel.config.model.timer.v1;
 
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -66,8 +68,8 @@ public class V1CamelTimerBindingModelTest {
 		"period=555&delay=100&fixedRate=true&daemon=false";
 	
 	private static final String CAMEL_ENDPOINT_URI = "timer://fooTimer?" +
-			"daemon=false&delay=100&fixedRate=true&pattern=yyyy-MM-dd%27T%27HH%3Amm%3Ass&" +
-			"period=555&time=2011-01-01T12%3A00%3A00";
+			"daemon=false&delay=100&fixedRate=true&pattern=yyyy-MM-dd'T'HH:mm:ss&" +
+			"period=555&time=2011-01-01T12:00:00";
 	
     private Date referenceDate;
 	
@@ -140,7 +142,7 @@ public class V1CamelTimerBindingModelTest {
         Assert.assertEquals(endpoint.getDelay(), DELAY.longValue());
         Assert.assertEquals(endpoint.isFixedRate(), FIXED_RATE.booleanValue());
         Assert.assertEquals(endpoint.isDaemon(), DAEMON.booleanValue());
-        Assert.assertEquals(endpoint.getEndpointUri().toString(), CAMEL_ENDPOINT_URI);
+        Assert.assertEquals(endpoint.getEndpointUri(), CAMEL_ENDPOINT_URI);
     }
     
     private CamelTimerBindingModel createTimerModel() {

@@ -83,8 +83,7 @@ public class CamelTypeConverterExtractorTest
                 new QName("java:javax.xml.transform.dom.DOMSource"),
                 new QName("java:javax.xml.transform.sax.SAXSource"),
                 new QName("java:org.w3c.dom.Document"),
-                new QName("java:org.apache.camel.model.DescriptionDefinition"),
-                new QName("java:org.apache.camel.converter.jaxp.StringSource")));
+                new QName("java:org.apache.camel.StringSource")));
     }
     
     @Test

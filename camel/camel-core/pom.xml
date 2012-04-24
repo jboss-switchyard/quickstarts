@@ -173,11 +173,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.fusesource.commonman</groupId>
-            <artifactId>commons-management</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-test</artifactId>
             <scope>test</scope>
