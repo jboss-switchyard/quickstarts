@@ -13,7 +13,7 @@
     <packaging>jar</packaging>
 
     <name>SwitchYard: Camel Component</name>
-    <url>http://www.switchyard.org</url>
+    <url>http://switchyard.org</url>
 
     <properties>
         <directory.camel.resources>${project.build.directory}/dependency/camel/resources</directory.camel.resources>

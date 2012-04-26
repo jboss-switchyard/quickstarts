@@ -34,7 +34,7 @@
     <packaging>jar</packaging>
 
     <name>SwitchYard: Bean Component</name>
-    <url>http://www.switchyard.org</url>
+    <url>http://switchyard.org</url>
 
     <build>
         <plugins>

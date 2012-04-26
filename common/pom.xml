@@ -31,7 +31,7 @@
     <packaging>pom</packaging>
     <name>SwitchYard: Common Component Libraries</name>
     <description>The SwitchYard Common Component Libraries.</description>
-    <url>http://switchyard/</url>
+    <url>http://switchyard.org</url>
 
     <parent>
         <groupId>org.switchyard.components</groupId>

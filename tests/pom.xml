@@ -35,7 +35,7 @@
     <packaging>jar</packaging>
 
     <name>SwitchYard: Component Tests</name>
-    <url>http://www.switchyard.org</url>
+    <url>http://switchyard.org</url>
 
     <build>
         <plugins>

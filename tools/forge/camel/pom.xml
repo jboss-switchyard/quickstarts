@@ -12,7 +12,7 @@
   <artifactId>switchyard-forge-camel-plugin</artifactId>
   <name>SwitchYard: Camel Component Forge Plugin</name>
   <description>Camel Component Forge Support</description>
-  <url>http://switchyard.org/</url>
+  <url>http://switchyard.org</url>
   <dependencies>
     <dependency>
       <groupId>org.switchyard.components</groupId>

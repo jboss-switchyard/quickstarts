@@ -31,7 +31,7 @@
     <packaging>jar</packaging>
     <name>SwitchYard: Rules Common Component Library</name>
     <description>The SwitchYard Rules Common Component Library.</description>
-    <url>http://switchyard/</url>
+    <url>http://switchyard.org</url>
 
     <parent>
         <groupId>org.switchyard.components</groupId>
