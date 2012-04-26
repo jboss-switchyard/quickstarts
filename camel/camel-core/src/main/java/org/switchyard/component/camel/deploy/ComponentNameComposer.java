@@ -95,7 +95,9 @@ public final class ComponentNameComposer {
         final Map<String, String> map = new HashMap<String, String>();
         for (final String param : uri.getQuery().split("&")) {
             final String[] nameValue = param.split("=");
-            map.put(nameValue[0],  nameValue[1]);
+            if (nameValue.length == 2) {
+                map.put(nameValue[0],  nameValue[1]);
+            }
         }
         return map;
     }
