@@ -22,10 +22,13 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 
-<module xmlns="urn:jboss:module:1.0" name="org.apache.commons.commons-net">
+<module xmlns="urn:jboss:module:1.0" name="org.apache.commons.net">
 
     <resources>
         <resource-root path="commons-net-${version.commons.net}.jar"/>
     </resources>
 
+    <dependencies>
+        <module name="javax.api"/>
+    </dependencies>
 </module>

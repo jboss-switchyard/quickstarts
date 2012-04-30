@@ -28,4 +28,8 @@
         <resource-root path="jsch-${version.jsch}.jar"/>
     </resources>
 
+    <dependencies>
+        <module name="javax.api"/>
+    </dependencies>
+
 </module>
