@@ -137,6 +137,11 @@
             <filtered>true</filtered>
         </file>
         <file>
+            <source>src/main/resources/external/camel/ftp/module.xml</source>
+            <outputDirectory>/modules/org/apache/camel/ftp/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
             <source>src/main/resources/external/saxon/module.xml</source>
             <outputDirectory>/modules/net/sourceforge/saxon/main</outputDirectory>
             <filtered>true</filtered>
@@ -175,6 +180,16 @@
         <file>
             <source>src/main/resources/external/weld-core/module.xml</source>
             <outputDirectory>/modules/org/jboss/weld/core/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
+            <source>src/main/resources/external/apache/commons/net/module.xml</source>
+            <outputDirectory>/modules/org/apache/commons/net/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
+            <source>src/main/resources/external/jcraft/jsch/module.xml</source>
+            <outputDirectory>/modules/com/jcraft/jsch/main</outputDirectory>
             <filtered>true</filtered>
         </file>
     </files>
@@ -362,6 +377,14 @@
             <outputFileNameMapping>${artifact.artifactId}-${version.camel}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.apache.camel:camel-ftp</include>
+            </includes>
+            <outputDirectory>/modules/org/apache/camel/ftp/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.camel}.${artifact.extension}</outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
            <useTransitiveDependencies>false</useTransitiveDependencies>
            <includes>
               <include>net.sourceforge.saxon:saxonhe</include>
@@ -446,6 +469,24 @@
             </outputFileNameMapping>
         </dependencySet>
 
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>com.jcraft:jsch</include>
+            </includes>
+            <outputDirectory>/modules/com/jcraft/jsch/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.jsch}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>commons-net:commons-net</include>
+            </includes>
+            <outputDirectory>/modules/org/apache/commons/net/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.commons.net}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
         <!--<dependencySet>-->
             <!--<useTransitiveDependencies>false</useTransitiveDependencies>-->
             <!--<includes>-->

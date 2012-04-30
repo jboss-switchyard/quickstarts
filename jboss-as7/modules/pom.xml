@@ -268,155 +268,155 @@
         <!--
         Riftsaw...
         -->
-		<dependency>
-			<groupId>org.riftsaw</groupId>
-			<artifactId>engine</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-agents</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-bpel-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-bpel-compiler</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-bpel-dao</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-bpel-epr</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-bpel-obj</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-bpel-ql</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-bpel-runtime</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-bpel-schemas</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-bpel-store</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-dao-jpa</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-dao-jpa-hibernate</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-jacob</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-scheduler-simple</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.soa.bpel</groupId>
-			<artifactId>riftsaw-utils</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.riftsaw</groupId>
+            <artifactId>engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.soa.bpel</groupId>
+            <artifactId>riftsaw-agents</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.soa.bpel</groupId>
+            <artifactId>riftsaw-bpel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.soa.bpel</groupId>
+            <artifactId>riftsaw-bpel-compiler</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.soa.bpel</groupId>
+            <artifactId>riftsaw-bpel-dao</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.soa.bpel</groupId>
+            <artifactId>riftsaw-bpel-epr</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.soa.bpel</groupId>
+            <artifactId>riftsaw-bpel-obj</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.soa.bpel</groupId>
+            <artifactId>riftsaw-bpel-ql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.soa.bpel</groupId>
+            <artifactId>riftsaw-bpel-runtime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.soa.bpel</groupId>
+            <artifactId>riftsaw-bpel-schemas</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.soa.bpel</groupId>
+            <artifactId>riftsaw-bpel-store</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.soa.bpel</groupId>
+            <artifactId>riftsaw-dao-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.soa.bpel</groupId>
+            <artifactId>riftsaw-dao-jpa-hibernate</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.soa.bpel</groupId>
+            <artifactId>riftsaw-jacob</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.soa.bpel</groupId>
+            <artifactId>riftsaw-scheduler-simple</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.soa.bpel</groupId>
+            <artifactId>riftsaw-utils</artifactId>
+        </dependency>
 
         <!--
         Batik ... (Required by BPEL console)
          -->
-		<dependency>
-			<groupId>batik</groupId>
-			<artifactId>batik-dom</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>batik</groupId>
-			<artifactId>batik-svg-dom</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>batik</groupId>
-			<artifactId>batik-svggen</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>batik</groupId>
-			<artifactId>batik-util</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>batik</groupId>
-			<artifactId>batik-css</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>batik</groupId>
-			<artifactId>batik-ext</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>batik</groupId>
-			<artifactId>batik-xml</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>batik</groupId>
-			<artifactId>batik-transcoder</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>batik</groupId>
-			<artifactId>batik-bridge</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>batik</groupId>
-			<artifactId>batik-gvt</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>batik</groupId>
-			<artifactId>batik-script</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>batik</groupId>
-			<artifactId>batik-awt-util</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>batik</groupId>
-			<artifactId>batik-parser</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>batik</groupId>
-			<artifactId>batik-anim</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>batik</groupId>
-			<artifactId>batik-codec</artifactId>
-		</dependency>
         <dependency>
-			<groupId>org.apache.ws.commons.axiom</groupId>
-			<artifactId>axiom-impl</artifactId>
-		</dependency>
+            <groupId>batik</groupId>
+            <artifactId>batik-dom</artifactId>
+        </dependency>
         <dependency>
-			<groupId>org.apache.ws.commons.axiom</groupId>
-			<artifactId>axiom-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>xml-apis</groupId>
-			<artifactId>xml-apis-ext</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>xml-apis</groupId>
-			<artifactId>xml-apis</artifactId>
-		</dependency>
+            <groupId>batik</groupId>
+            <artifactId>batik-svg-dom</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>batik</groupId>
+            <artifactId>batik-svggen</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>batik</groupId>
+            <artifactId>batik-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>batik</groupId>
+            <artifactId>batik-css</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>batik</groupId>
+            <artifactId>batik-ext</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>batik</groupId>
+            <artifactId>batik-xml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>batik</groupId>
+            <artifactId>batik-transcoder</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>batik</groupId>
+            <artifactId>batik-bridge</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>batik</groupId>
+            <artifactId>batik-gvt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>batik</groupId>
+            <artifactId>batik-script</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>batik</groupId>
+            <artifactId>batik-awt-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>batik</groupId>
+            <artifactId>batik-parser</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>batik</groupId>
+            <artifactId>batik-anim</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>batik</groupId>
+            <artifactId>batik-codec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis-ext</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+        </dependency>
 
-		<!--
-		BPM Console...
-		-->
-		<dependency>
+        <!--
+        BPM Console...
+        -->
+        <dependency>
             <groupId>org.riftsaw.console</groupId>
             <artifactId>riftsaw-bpel2svg</artifactId>
         </dependency>      
@@ -444,22 +444,22 @@
         <!--
         Spring...
         -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-asm</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-asm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
@@ -483,6 +483,10 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jms</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-ftp</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -596,6 +600,14 @@
             <groupId>org.jboss.weld</groupId>
             <artifactId>weld-core</artifactId>
             <version>${version.weld.core}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
         </dependency>
     </dependencies>
 </project>
