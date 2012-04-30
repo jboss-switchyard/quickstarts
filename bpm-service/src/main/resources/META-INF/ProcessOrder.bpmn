@@ -14,12 +14,14 @@
 
   <itemDefinition id="_messageContentInItem" />
   <itemDefinition id="_messageContentOutItem" />
+  <itemDefinition id="_messageIdItem" structureRef="String" />
 
   <process processType="Private" isExecutable="true" id="ProcessOrder" name="ProcessOrder" tns:packageName="org.switchyard.demo.openshift" >
 
     <!-- process variables -->
     <property id="messageContentIn" itemSubjectRef="_messageContentInItem"/>
     <property id="messageContentOut" itemSubjectRef="_messageContentOutItem"/>
+    <property id="messageId" itemSubjectRef="_messageIdItem"/>
 
     <!-- nodes -->
     <startEvent id="_1" name="Start" />
@@ -27,8 +29,14 @@
         <terminateEventDefinition/>
     </endEvent>
     <task id="_8" name="Inventory" tns:taskName="SwitchYard Service" >
+      <extensionElements>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <script>System.out.println("********** Inventory incoming messageId: " + messageId + " **********");</script>
+        </tns:onEntry-script>
+      </extensionElements>
       <ioSpecification>
         <dataInput id="_8_messageContentInInput" name="messageContentIn" />
+        <dataInput id="_8_messageIdInput" name="messageId" />
         <dataInput id="_8_ServiceNameInput" name="ServiceName" />
         <dataInput id="_8_MessageContentOutNameInput" name="MessageContentOutName" />
         <dataInput id="_8_ServiceOperationNameInput" name="ServiceOperationName" />
@@ -37,6 +45,7 @@
         <dataOutput id="_8_messageContentOutOutput" name="messageContentOut" />
         <inputSet>
           <dataInputRefs>_8_messageContentInInput</dataInputRefs>
+          <dataInputRefs>_8_messageIdInput</dataInputRefs>
           <dataInputRefs>_8_ServiceNameInput</dataInputRefs>
           <dataInputRefs>_8_MessageContentOutNameInput</dataInputRefs>
           <dataInputRefs>_8_ServiceOperationNameInput</dataInputRefs>
@@ -50,6 +59,10 @@
       <dataInputAssociation>
         <sourceRef>messageContentIn</sourceRef>
         <targetRef>_8_messageContentInInput</targetRef>
+      </dataInputAssociation>
+      <dataInputAssociation>
+        <sourceRef>messageId</sourceRef>
+        <targetRef>_8_messageIdInput</targetRef>
       </dataInputAssociation>
       <dataInputAssociation>
         <targetRef>_8_ServiceNameInput</targetRef>

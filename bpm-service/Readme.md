@@ -1,7 +1,10 @@
 Introduction
 ============
-This quickstart demonstrates the usage of the bpm component.  This example shows a bpm component, 
-ProcessOrder, which exposes a business process flow.
+This quickstart demonstrates the usage of the bpm component.
+This example shows a bpm component, ProcessOrder, which exposes a business process flow.
+
+The incoming messageId is mapped from the SwitchYard Context and into a process variable
+using an MVEL expression, and printed out via a BPMN onEntry-script of the Inventory service.
 
 This example is invoked through a SOAP gateway binding.  
 

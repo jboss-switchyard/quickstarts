@@ -2,6 +2,7 @@ Introduction
 ============
 This quickstart demonstrates the usage of a rules service which performs an age check.  
 The drl resource is specified using annotations within the InterviewRules interface.       
+The name of the service in the drl is specified using a Mapping annotation containing an MVEL expression.
 
 Preqrequisites 
 ==============
@@ -21,7 +22,7 @@ Expected Output:
 ================
 ```
 Running org.switchyard.quickstarts.rules.interview.RulesInterviewTest  
-********** David is a valid applicant. **********  
+********** Interview: David is a valid applicant. **********  
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.131 sec`  
 ```
 

@@ -12,6 +12,9 @@
         <component name="ProcessOrder">
             <implementation.bpm xmlns="urn:switchyard-component-bpm:config:1.0" processDefinition="META-INF/ProcessOrder.bpmn" processId="ProcessOrder">
                 <taskHandler class="org.switchyard.component.bpm.task.work.SwitchYardServiceTaskHandler" name="SwitchYard Service"/>
+                <parameters>
+                    <mapping expression="context['org.switchyard.messageId']" variable="messageId"/>
+                </parameters>
             </implementation.bpm>
             <service name="ProcessOrder">
                 <interface.java interface="org.switchyard.quickstarts.bpm.service.ProcessOrder"/>
