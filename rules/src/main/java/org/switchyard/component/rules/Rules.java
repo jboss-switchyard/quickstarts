@@ -27,6 +27,7 @@ import java.lang.annotation.Target;
 
 import org.switchyard.component.common.rules.ClockType;
 import org.switchyard.component.common.rules.EventProcessingType;
+import org.switchyard.component.common.rules.Mapping;
 
 /**
  * Rules annotation.
@@ -74,14 +75,14 @@ public @interface Rules {
     public boolean multithreadEvaluation() default false;
 
     /**
-     * Specified message content name.
-     */
-    public String messageContentName() default "";
-
-    /**
      * CEP Channels for the rules.
      */
     public Channel[] channels() default {};
+
+    /**
+     * Global Mappings for the rules.
+     */
+    public Mapping[] globals() default {};
 
     /**
      * Additional resources the rules require.

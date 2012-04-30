@@ -49,6 +49,17 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
 
+    <element name="mapping" type="common.rules:MappingType" abstract="true"/>
+    <complexType name="MappingType" abstract="true">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="expression" type="string" use="required"/>
+                <attribute name="expressionType" type="common.rules:expressionType" use="optional" default="MVEL"/>
+                <attribute name="variable" type="NCName" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <simpleType name="auditType">
         <restriction base="string">
             <enumeration value="CONSOLE"/>
@@ -68,6 +79,12 @@ MA  02110-1301, USA.
         <restriction base="string">
             <enumeration value="CLOUD"/>
             <enumeration value="STREAM"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="expressionType">
+        <restriction base="string">
+            <enumeration value="MVEL"/>
         </restriction>
     </simpleType>
 

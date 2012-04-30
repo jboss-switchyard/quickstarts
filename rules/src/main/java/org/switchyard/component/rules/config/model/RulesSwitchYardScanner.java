@@ -28,8 +28,11 @@ import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.type.classpath.IsAnnotationPresentFilter;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.common.rules.Audit;
+import org.switchyard.component.common.rules.Mapping;
 import org.switchyard.component.common.rules.config.model.AuditModel;
+import org.switchyard.component.common.rules.config.model.MappingModel;
 import org.switchyard.component.common.rules.config.model.v1.V1AuditModel;
+import org.switchyard.component.common.rules.config.model.v1.V1MappingModel;
 import org.switchyard.component.rules.Channel;
 import org.switchyard.component.rules.Execute;
 import org.switchyard.component.rules.FireAllRules;
@@ -37,6 +40,7 @@ import org.switchyard.component.rules.FireUntilHalt;
 import org.switchyard.component.rules.Rules;
 import org.switchyard.component.rules.RulesActionType;
 import org.switchyard.component.rules.config.model.v1.V1ChannelModel;
+import org.switchyard.component.rules.config.model.v1.V1GlobalsModel;
 import org.switchyard.component.rules.config.model.v1.V1RulesActionModel;
 import org.switchyard.component.rules.config.model.v1.V1RulesComponentImplementationModel;
 import org.switchyard.config.model.Scanner;
@@ -113,10 +117,6 @@ public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
                 rciModel.setMaxThreads(Integer.valueOf(maxThreads));
             }
             rciModel.setMultithreadEvaluation(Boolean.valueOf(rules.multithreadEvaluation()));
-            String messageContentName = rules.messageContentName();
-            if (!UNDEFINED.equals(messageContentName)) {
-                rciModel.setMessageContentName(messageContentName);
-            }
             JavaService javaService = JavaService.fromClass(rulesInterface);
             for (Method method : rulesClass.getDeclaredMethods()) {
                 RulesActionType rat = null;
@@ -184,6 +184,21 @@ public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
                 }
                 // setting the location will trigger deducing and setting the type
                 rciModel.addResource(new V1ResourceModel(RulesComponentImplementationModel.DEFAULT_NAMESPACE).setLocation(location));
+            }
+            GlobalsModel globalsModel = null;
+            for (Mapping globalMapping : rules.globals()) {
+                MappingModel mappingModel = new V1MappingModel(RulesComponentImplementationModel.DEFAULT_NAMESPACE);
+                mappingModel.setExpression(globalMapping.expression());
+                mappingModel.setExpressionType(globalMapping.expressionType());
+                String variable = globalMapping.variable();
+                if (!UNDEFINED.equals(variable)) {
+                    mappingModel.setVariable(variable);
+                }
+                if (globalsModel == null) {
+                    globalsModel = new V1GlobalsModel();
+                    rciModel.setGlobals(globalsModel);
+                }
+                globalsModel.addMapping(mappingModel);
             }
             componentModel.setImplementation(rciModel);
             ComponentServiceModel serviceModel = new V1ComponentServiceModel();

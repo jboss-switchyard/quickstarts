@@ -18,6 +18,12 @@
  */
 package org.switchyard.component.bpm.exchange.drools;
 
+import static org.switchyard.component.bpm.ProcessConstants.CONTEXT;
+import static org.switchyard.component.bpm.ProcessConstants.CONTEXT_EXCHANGE;
+import static org.switchyard.component.bpm.ProcessConstants.CONTEXT_IN;
+import static org.switchyard.component.bpm.ProcessConstants.CONTEXT_OUT;
+import static org.switchyard.component.bpm.ProcessConstants.EXCHANGE;
+import static org.switchyard.component.bpm.ProcessConstants.MESSAGE;
 import static org.switchyard.component.bpm.ProcessConstants.MESSAGE_CONTENT_IN;
 import static org.switchyard.component.bpm.ProcessConstants.MESSAGE_CONTENT_OUT;
 import static org.switchyard.component.bpm.ProcessConstants.PROCESS_ID_VAR;
@@ -27,7 +33,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.xml.namespace.QName;
 
@@ -40,6 +47,7 @@ import org.drools.runtime.KnowledgeSessionConfiguration;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.process.ProcessInstance;
 import org.drools.runtime.process.WorkflowProcessInstance;
+import org.jbpm.workflow.instance.impl.WorkflowProcessInstanceImpl;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
@@ -51,17 +59,24 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.common.io.resource.Resource;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.io.resource.SimpleResource;
+import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.component.bpm.ProcessActionType;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
+import org.switchyard.component.bpm.config.model.ParametersModel;
 import org.switchyard.component.bpm.config.model.ProcessActionModel;
+import org.switchyard.component.bpm.config.model.ResultsModel;
 import org.switchyard.component.bpm.config.model.TaskHandlerModel;
 import org.switchyard.component.bpm.exchange.BaseBPMExchangeHandler;
 import org.switchyard.component.bpm.task.work.TaskHandler;
 import org.switchyard.component.bpm.task.work.TaskManager;
 import org.switchyard.component.bpm.task.work.drools.DroolsTaskManager;
 import org.switchyard.component.common.rules.config.model.AuditModel;
+import org.switchyard.component.common.rules.config.model.MappingModel;
+import org.switchyard.component.common.rules.expression.ContextMap;
+import org.switchyard.component.common.rules.expression.Expression;
+import org.switchyard.component.common.rules.expression.ExpressionFactory;
 import org.switchyard.component.common.rules.util.drools.Agents;
 import org.switchyard.component.common.rules.util.drools.Audits;
 import org.switchyard.component.common.rules.util.drools.Bases;
@@ -80,6 +95,9 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
 
     private static final Logger LOGGER = Logger.getLogger(DroolsBPMExchangeHandler.class);
 
+    private static final String IGNORE_VARIABLE_PREFIX = "ignore-variable-";
+    private static final AtomicInteger IGNORE_VARIABLE_COUNT = new AtomicInteger();
+
     private final ServiceDomain _serviceDomain;
     private ClassLoader _loader;
     private String _processId;
@@ -91,6 +109,8 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
     private List<TaskHandlerModel> _taskHandlerModels = new ArrayList<TaskHandlerModel>();
     private List<TaskHandler> _taskHandlers = new ArrayList<TaskHandler>();
     private Map<String,ProcessActionModel> _actionModels = new HashMap<String,ProcessActionModel>();
+    private Map<String, Expression> _parameterExpressions = new HashMap<String, Expression>();
+    private Map<String, Expression> _resultExpressions = new HashMap<String, Expression>();
     private KnowledgeBase _kbase;
     private KnowledgeSessionConfiguration _ksessionConfig;
     private Environment _environment;
@@ -125,14 +145,6 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
         _taskHandlerModels.addAll(model.getTaskHandlers());
         ResourceType.install(_loader);
         ComponentImplementationConfig cic = new ComponentImplementationConfig(model, _loader);
-        Map<String, Object> env = new HashMap<String, Object>();
-        //env.put(EnvironmentName.ENTITY_MANAGER_FACTORY, Persistence.createEntityManagerFactory("org.jbpm.persistence.jpa"));
-        //env.put(EnvironmentName.TRANSACTION_MANAGER, AS7TransactionManagerLookup.getTransactionManager());
-        cic.setEnvironmentOverrides(env);
-        Properties props = new Properties();
-        //props.setProperty("drools.processInstanceManagerFactory", JPAProcessInstanceManagerFactory.class.getName());
-        //props.setProperty("drools.processSignalManagerFactory", JPASignalManagerFactory.class.getName());
-        cic.setPropertiesOverrides(props);
         Resource procDef = model.getProcessDefinition();
         if (procDef.getType() == null) {
             procDef = new SimpleResource(procDef.getLocation(), "BPMN2");
@@ -148,6 +160,24 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
         _audit = model.getAudit();
         for (ProcessActionModel pam : model.getProcessActions()) {
             _actionModels.put(pam.getName(), pam);
+        }
+        ExpressionFactory factory = ExpressionFactory.instance();
+        ParametersModel parameters = model.getParameters();
+        if (parameters != null) {
+            
+            for (MappingModel mapping : parameters.getMappings()) {
+                _parameterExpressions.put(mapping.getVariable(), factory.create(mapping));
+            }
+        }
+        ResultsModel results = model.getResults();
+        if (results != null) {
+            for (MappingModel mapping : results.getMappings()) {
+                String var = Strings.trimToNull(mapping.getVariable());
+                if (var == null) {
+                    var = IGNORE_VARIABLE_PREFIX + IGNORE_VARIABLE_COUNT.incrementAndGet();
+                }
+                _resultExpressions.put(var, factory.create(mapping));
+            }
         }
     }
 
@@ -197,6 +227,17 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
                     Object messageContentIn = messageIn.getContent();
                     if (messageContentIn != null) {
                         Map<String,Object> parameters = new HashMap<String,Object>();
+                        Map<String, Object> vars = new HashMap<String, Object>();
+                        vars.put(EXCHANGE, exchange);
+                        vars.put(CONTEXT, new ContextMap(context));
+                        vars.put(CONTEXT_IN, new ContextMap(context, Scope.IN));
+                        vars.put(CONTEXT_OUT, new ContextMap(context, Scope.OUT));
+                        vars.put(CONTEXT_EXCHANGE, new ContextMap(context, Scope.EXCHANGE));
+                        vars.put(MESSAGE, messageIn);
+                        for (Entry<String, Expression> pe : _parameterExpressions.entrySet()) {
+                            Object parameter = pe.getValue().evaluate(vars);
+                            parameters.put(pe.getKey(), parameter);
+                        }
                         parameters.put(_messageContentInName, messageContentIn);
                         processInstance = _ksession.startProcess(_processId, parameters);
                     } else {
@@ -241,6 +282,28 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
                 if (messageContentOut != null) {
                     messageOut.setContent(messageContentOut);
                 }
+                Map<String, Object> vars = new HashMap<String, Object>();
+                if (processInstance instanceof WorkflowProcessInstanceImpl) {
+                    Map<String, Object> piVars = ((WorkflowProcessInstanceImpl)processInstance).getVariables();
+                    if (piVars != null) {
+                        vars.putAll(piVars);
+                    }
+                }
+                vars.put(EXCHANGE, exchange);
+                vars.put(CONTEXT, new ContextMap(context));
+                vars.put(CONTEXT_IN, new ContextMap(context, Scope.IN));
+                vars.put(CONTEXT_OUT, new ContextMap(context, Scope.OUT));
+                vars.put(CONTEXT_EXCHANGE, new ContextMap(context, Scope.EXCHANGE));
+                vars.put(MESSAGE, messageOut);
+                for (Entry<String, Expression> re : _resultExpressions.entrySet()) {
+                    Object result = re.getValue().evaluate(vars);
+                    if (result != null) {
+                        String var = re.getKey();
+                        if (!var.startsWith(IGNORE_VARIABLE_PREFIX)) {
+                            context.setProperty(var, result, Scope.EXCHANGE);
+                        }
+                    }
+                }
                 exchange.send(messageOut);
             }
         }
@@ -284,6 +347,8 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
     @Override
     public void destroy() {
         _kbase = null;
+        _parameterExpressions.clear();
+        _resultExpressions.clear();
         _taskHandlers.clear();
         _taskHandlerModels.clear();
         _actionModels.clear();

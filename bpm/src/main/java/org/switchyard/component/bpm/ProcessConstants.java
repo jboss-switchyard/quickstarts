@@ -78,6 +78,19 @@ public final class ProcessConstants {
     /** messageContentOut . */
     public static final String MESSAGE_CONTENT_OUT = "messageContentOut";
 
+    /** message . */
+    public static final String MESSAGE = "message";
+    /** exchange . */
+    public static final String EXCHANGE = "exchange";
+    /** context . */
+    public static final String CONTEXT = "context";
+    /** context_in . */
+    public static final String CONTEXT_IN = "context_in";
+    /** context_out . */
+    public static final String CONTEXT_OUT = "context_out";
+    /** context_exchange . */
+    public static final String CONTEXT_EXCHANGE = "context_exchange";
+
     private ProcessConstants() {}
 
 }

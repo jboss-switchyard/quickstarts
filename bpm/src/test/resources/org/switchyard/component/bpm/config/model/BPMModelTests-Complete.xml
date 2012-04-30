@@ -25,6 +25,12 @@ MA  02110-1301, USA.
             <bpm:implementation.bpm processDefinition="foobar.bpmn" processDefinitionType="BPMN2" processId="foobar">
                 <bpm:taskHandler class="org.switchyard.component.bpm.task.work.SwitchYardServiceTaskHandler"/>
                 <bpm:resource location="foobar.drl" type="DRL"/>
+                <bpm:parameters>
+                    <bpm:mapping expression="message.content" variable="payload"/>
+                </bpm:parameters>
+                <bpm:results>
+                    <bpm:mapping expression="message.content = payload;"/>
+                </bpm:results>
             </bpm:implementation.bpm>
             <sca:service name="FoobarService">
                 <sca:interface.java interface="org.test.FoobarService"/>

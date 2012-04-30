@@ -18,8 +18,6 @@
  */
 package org.switchyard.component.rules.config.model.v1;
 
-import static org.switchyard.component.rules.RulesConstants.MESSAGE_CONTENT_NAME;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +25,7 @@ import java.util.List;
 import org.switchyard.component.common.rules.config.model.AuditModel;
 import org.switchyard.component.common.rules.config.model.v1.V1ComponentImplementationModel;
 import org.switchyard.component.rules.config.model.ChannelModel;
+import org.switchyard.component.rules.config.model.GlobalsModel;
 import org.switchyard.component.rules.config.model.RulesActionModel;
 import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
 import org.switchyard.config.Configuration;
@@ -42,13 +41,14 @@ public class V1RulesComponentImplementationModel extends V1ComponentImplementati
 
     private List<RulesActionModel> _rulesActions = new ArrayList<RulesActionModel>();
     private List<ChannelModel> _channels = new ArrayList<ChannelModel>();
+    private GlobalsModel _globals = null;
 
     /**
      * Default constructor for application use.
      */
     public V1RulesComponentImplementationModel() {
         super(RULES, DEFAULT_NAMESPACE);
-        setModelChildrenOrder(RulesActionModel.ACTION, AuditModel.AUDIT, ChannelModel.CHANNEL, ResourceModel.RESOURCE);
+        setModelChildrenOrder(RulesActionModel.ACTION, AuditModel.AUDIT, ChannelModel.CHANNEL, ResourceModel.RESOURCE, GlobalsModel.GLOBALS);
     }
 
     /**
@@ -71,24 +71,7 @@ public class V1RulesComponentImplementationModel extends V1ComponentImplementati
                 _channels.add(channel);
             }
         }
-        setModelChildrenOrder(RulesActionModel.ACTION, AuditModel.AUDIT, ChannelModel.CHANNEL, ResourceModel.RESOURCE);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getMessageContentName() {
-        return getModelAttribute(MESSAGE_CONTENT_NAME);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public RulesComponentImplementationModel setMessageContentName(String messageContentName) {
-        setModelAttribute(MESSAGE_CONTENT_NAME, messageContentName);
-        return this;
+        setModelChildrenOrder(RulesActionModel.ACTION, AuditModel.AUDIT, ChannelModel.CHANNEL, ResourceModel.RESOURCE, GlobalsModel.GLOBALS);
     }
 
     /**
@@ -124,6 +107,26 @@ public class V1RulesComponentImplementationModel extends V1ComponentImplementati
     public RulesComponentImplementationModel addChannel(ChannelModel channel) {
         addChildModel(channel);
         _channels.add(channel);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public GlobalsModel getGlobals() {
+        if (_globals == null) {
+            _globals = (GlobalsModel)getFirstChildModel(GlobalsModel.GLOBALS);
+        }
+        return _globals;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public RulesComponentImplementationModel setGlobals(GlobalsModel globals) {
+        setChildModel(globals);
+        _globals = globals;
         return this;
     }
 

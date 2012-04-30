@@ -53,25 +53,18 @@ public final class RulesConstants {
     /** {urn:switchyard-component-rules:rules:1.0}dispose . */
     public static final String DISPOSE_VAR = new QName(RULES_NAMESPACE, DISPOSE).toString();
 
-    /** messageContent . */
-    public static final String MESSAGE_CONTENT = "messageContent";
-    /** {urn:switchyard-component-rules:rules:1.0}messageContent . */
-    public static final String MESSAGE_CONTENT_VAR = new QName(RULES_NAMESPACE, MESSAGE_CONTENT).toString();
-
-    /** messageContentName . */
-    public static final String MESSAGE_CONTENT_NAME = "messageContentName";
-    /** {urn:switchyard-component-rules:rules:1.0}messageContentName . */
-    public static final String MESSAGE_CONTENT_NAME_VAR = new QName(RULES_NAMESPACE, MESSAGE_CONTENT_NAME).toString();
-
     /** message . */
     public static final String MESSAGE = "message";
-    /** {urn:switchyard-component-rules:rules:1.0}message . */
-    public static final String MESSAGE_VAR = new QName(RULES_NAMESPACE, MESSAGE).toString();
-
     /** exchange . */
     public static final String EXCHANGE = "exchange";
-    /** {urn:switchyard-component-rules:rules:1.0}exchange . */
-    public static final String EXCHANGE_VAR = new QName(RULES_NAMESPACE, EXCHANGE).toString();
+    /** context . */
+    public static final String CONTEXT = "context";
+    /** context_in . */
+    public static final String CONTEXT_IN = "context_in";
+    /** context_out . */
+    public static final String CONTEXT_OUT = "context_out";
+    /** context_exchange . */
+    public static final String CONTEXT_EXCHANGE = "context_exchange";
 
     private RulesConstants() {}
 

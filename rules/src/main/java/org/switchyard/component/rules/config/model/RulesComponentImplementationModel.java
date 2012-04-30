@@ -41,21 +41,6 @@ public interface RulesComponentImplementationModel extends ComponentImplementati
     public static final String RULES = "rules";
 
     /**
-     * Gets the "messageContentName" attribute.
-     *
-     * @return the "messageContentName" attribute
-     */
-    public String getMessageContentName();
-
-    /**
-     * Sets the "messageContentName" attribute.
-     *
-     * @param messageContentName the "messageContentName" attribute
-     * @return this instance (useful for chaining)
-     */
-    public RulesComponentImplementationModel setMessageContentName(String messageContentName);
-
-    /**
      * Gets the child rules action models.
      * @return the child rules action models
      */
@@ -76,9 +61,22 @@ public interface RulesComponentImplementationModel extends ComponentImplementati
 
     /**
      * Adds a child channel model.
-     * @param channel the child rchannel model
+     * @param channel the child channel model
      * @return this RulesComponentImplementationModel (useful for chaining)
      */
     public RulesComponentImplementationModel addChannel(ChannelModel channel);
+
+    /**
+     * Gets the child globals model.
+     * @return the child globals model
+     */
+    public GlobalsModel getGlobals();
+
+    /**
+     * Sets the child global model.
+     * @param globals the child globals model
+     * @return this RulesComponentImplementationModel (useful for chaining)
+     */
+    public RulesComponentImplementationModel setGlobals(GlobalsModel globals);
 
 }

@@ -38,6 +38,7 @@ MA  02110-1301, USA.
                     <element ref="rules:audit" minOccurs="0" maxOccurs="1"/>
                     <element ref="rules:channel" minOccurs="0" maxOccurs="unbounded"/>
                     <element ref="rules:resource" minOccurs="0" maxOccurs="unbounded"/>
+                    <element ref="rules:globals" minOccurs="0" maxOccurs="1"/>
                 </sequence>
                 <attribute name="messageContentName" type="string" use="optional"/>
             </extension>
@@ -79,6 +80,24 @@ MA  02110-1301, USA.
     <complexType name="ResourceType">
         <complexContent>
             <extension base="swyd:ResourceType"/>
+        </complexContent>
+    </complexType>
+
+    <element name="globals" type="rules:GlobalsType"/>
+    <complexType name="GlobalsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="rules:mapping" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="mapping" type="rules:MappingType" substitutionGroup="common.rules:mapping"/>
+    <complexType name="MappingType">
+        <complexContent>
+            <extension base="common.rules:MappingType"/>
         </complexContent>
     </complexType>
 

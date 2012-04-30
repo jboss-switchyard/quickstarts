@@ -19,6 +19,7 @@
 package org.switchyard.component.common.rules.config.model.v1;
 
 import static org.switchyard.component.common.rules.config.model.AuditModel.AUDIT;
+import static org.switchyard.component.common.rules.config.model.MappingModel.MAPPING;
 import static org.switchyard.config.model.resource.ResourceModel.RESOURCE;
 
 import org.switchyard.config.Configuration;
@@ -57,6 +58,8 @@ public class V1CommonRulesMarshaller extends V1CompositeMarshaller {
             return new V1AuditModel(config, getDescriptor());
         } else if (RESOURCE.equals(name)) {
             return new V1ResourceModel(config, getDescriptor());
+        } else if (MAPPING.equals(name)) {
+            return new V1MappingModel(config, getDescriptor());
         }
         return super.read(config);
     }

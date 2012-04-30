@@ -18,12 +18,16 @@
  */
 package org.switchyard.component.rules.exchange.drools;
 
+import static org.switchyard.component.rules.RulesConstants.CONTEXT;
+import static org.switchyard.component.rules.RulesConstants.CONTEXT_EXCHANGE;
+import static org.switchyard.component.rules.RulesConstants.CONTEXT_IN;
+import static org.switchyard.component.rules.RulesConstants.CONTEXT_OUT;
 import static org.switchyard.component.rules.RulesConstants.EXCHANGE;
 import static org.switchyard.component.rules.RulesConstants.MESSAGE;
-import static org.switchyard.component.rules.RulesConstants.MESSAGE_CONTENT;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -46,12 +50,17 @@ import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.common.rules.config.model.AuditModel;
+import org.switchyard.component.common.rules.config.model.MappingModel;
+import org.switchyard.component.common.rules.expression.ContextMap;
+import org.switchyard.component.common.rules.expression.Expression;
+import org.switchyard.component.common.rules.expression.ExpressionFactory;
 import org.switchyard.component.common.rules.util.drools.Agents;
 import org.switchyard.component.common.rules.util.drools.Audits;
 import org.switchyard.component.common.rules.util.drools.Bases;
@@ -62,6 +71,7 @@ import org.switchyard.component.rules.RulesActionType;
 import org.switchyard.component.rules.channel.drools.SwitchYardChannel;
 import org.switchyard.component.rules.channel.drools.SwitchYardServiceChannel;
 import org.switchyard.component.rules.config.model.ChannelModel;
+import org.switchyard.component.rules.config.model.GlobalsModel;
 import org.switchyard.component.rules.config.model.RulesActionModel;
 import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
 import org.switchyard.component.rules.exchange.BaseRulesExchangeHandler;
@@ -80,12 +90,12 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
     private final Lock _fireLock = new ReentrantLock();
     private final Lock _stateLock = new ReentrantLock();
     private String _targetNamespace;
-    private String _messageContentName;
     private ServiceDomain _domain;
     private KnowledgeAgent _kagent;
     private AuditModel _audit;
     private Map<String,RulesActionModel> _actions = new HashMap<String,RulesActionModel>();
     private Map<String,Channel> _channels = new HashMap<String,Channel>();
+    private Map<String, Expression> _globalExpressions = new HashMap<String, Expression>();
     private KnowledgeBase _kbase;
     private KnowledgeSessionConfiguration _ksessionConfig;
     private Environment _environment;
@@ -105,10 +115,6 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
     public void init(QName qname, RulesComponentImplementationModel model, ServiceDomain domain) {
         _targetNamespace = model.getComponent().getTargetNamespace();
         _domain = domain;
-        _messageContentName = model.getMessageContentName();
-        if (_messageContentName == null) {
-            _messageContentName = MESSAGE_CONTENT;
-        }
         ClassLoader loader = Classes.getClassLoader(getClass());
         ResourceType.install(loader);
         ComponentImplementationConfig cic = new ComponentImplementationConfig(model, loader);
@@ -146,6 +152,13 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
                 LOGGER.warn(clazz.getName() + " does not implement " + Channel.class.getName());
             }
         }
+        GlobalsModel globals = model.getGlobals();
+        if (globals != null) {
+            ExpressionFactory factory = ExpressionFactory.instance();
+            for (MappingModel mapping : globals.getMappings()) {
+                _globalExpressions.put(mapping.getVariable(), factory.create(mapping));
+            }
+        }
     }
 
     /**
@@ -176,8 +189,7 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
                 KnowledgeRuntimeLogger klogger = Audits.getLogger(_audit, ksessionStateless);
                 try {
                     Globals globals = ksessionStateless.getGlobals();
-                    globals.set(EXCHANGE, exchange);
-                    globals.set(MESSAGE, message);
+                    setGlobals(globals, exchange, true);
                     ksessionStateless.execute(content);
                     message = (Message)globals.get(MESSAGE);
                     content = message != null ? message.getContent() : null;
@@ -197,8 +209,7 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
                     */
                     StatefulKnowledgeSession ksessionStateful = getStatefulSession();
                     Globals globals = ksessionStateful.getGlobals();
-                    globals.set(EXCHANGE, exchange);
-                    globals.set(MESSAGE, message);
+                    setGlobals(globals, exchange, true);
                     ksessionStateful.insert(content);
                     ksessionStateful.fireAllRules();
                     message = (Message)globals.get(MESSAGE);
@@ -220,6 +231,8 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
                     */
                     boolean ksessionNew = _ksession == null;
                     final StatefulKnowledgeSession ksessionStateful = getStatefulSession();
+                    Globals globals = ksessionStateful.getGlobals();
+                    setGlobals(globals, exchange, false);
                     if (ksessionNew) {
                         final ClassLoader properLoader = Classes.getClassLoader(getClass());
                         _ksessionThread = new Thread(new Runnable() {
@@ -272,6 +285,27 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
         }
     }
 
+    private void setGlobals(Globals globals, Exchange exchange, boolean includeTrifecta) {
+        Map<String, Object> vars = new HashMap<String, Object>();
+        if (includeTrifecta) {
+            vars.put(EXCHANGE, exchange);
+            vars.put(CONTEXT, new ContextMap(exchange.getContext()));
+            vars.put(CONTEXT_IN, new ContextMap(exchange.getContext(), Scope.IN));
+            vars.put(CONTEXT_OUT, new ContextMap(exchange.getContext(), Scope.OUT));
+            vars.put(CONTEXT_EXCHANGE, new ContextMap(exchange.getContext(), Scope.EXCHANGE));
+            vars.put(MESSAGE, exchange.getMessage());
+            for (Entry<String, Object> var : vars.entrySet()) {
+                if (!_globalExpressions.containsKey(var.getKey())) {
+                    globals.set(var.getKey(), var.getValue());
+                }
+            }
+        }
+        for (Entry<String, Expression> ge : _globalExpressions.entrySet()) {
+            Object global = ge.getValue().evaluate(vars);
+            globals.set(ge.getKey(), global);
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -289,7 +323,7 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
         _actions.clear();
         _channels.clear();
         _audit = null;
-        _messageContentName = null;
+        _globalExpressions.clear();
         if (_kagent != null) {
             try {
                 _kagent.dispose();
@@ -315,9 +349,9 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
             if (_ksession == null) {
                 _ksession = _kbase.newStatefulKnowledgeSession(_ksessionConfig, _environment);
                 _klogger = Audits.getLogger(_audit, _ksession);
-                for (Map.Entry<String,Channel> entry : _channels.entrySet()) {
-                    String name = entry.getKey();
-                    Channel channel = entry.getValue();
+                for (Entry<String,Channel> c : _channels.entrySet()) {
+                    String name = c.getKey();
+                    Channel channel = c.getValue();
                     if (name != null && channel != null) {
                         if (channel instanceof SwitchYardChannel) {
                             SwitchYardChannel syc = (SwitchYardChannel)channel;

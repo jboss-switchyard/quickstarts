@@ -127,4 +127,30 @@ public interface BPMComponentImplementationModel extends ComponentImplementation
      */
     public BPMComponentImplementationModel addTaskHandler(TaskHandlerModel taskHandler);
 
+    /**
+     * Gets the child parameters model.
+     * @return the child parameters model
+     */
+    public ParametersModel getParameters();
+
+    /**
+     * Sets the child parameters model.
+     * @param parameters the child parameters model
+     * @return this BPMComponentImplementationModel (useful for chaining)
+     */
+    public BPMComponentImplementationModel setParameters(ParametersModel parameters);
+
+    /**
+     * Gets the child results model.
+     * @return the child results model
+     */
+    public ResultsModel getResults();
+
+    /**
+     * Sets the child results model.
+     * @param results the child results model
+     * @return this BPMComponentImplementationModel (useful for chaining)
+     */
+    public BPMComponentImplementationModel setResults(ResultsModel results);
+
 }

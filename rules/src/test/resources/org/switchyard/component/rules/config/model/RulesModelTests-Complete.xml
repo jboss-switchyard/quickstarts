@@ -30,6 +30,9 @@ MA  02110-1301, USA.
                 <rules:channel class="org.test.FoobarChannel" input="theInput" name="theName" operation="theOperation" reference="theReference"/>
                 <rules:resource location="foo.dsl" type="DSL"/>
                 <rules:resource location="bar.dslr" type="DSLR"/>
+                <rules:globals>
+                    <rules:mapping expression="message.content" variable="payload"/>
+                </rules:globals>
             </rules:implementation.rules>
             <sca:service name="FoobarService">
                 <sca:interface.java interface="org.test.FoobarService"/>

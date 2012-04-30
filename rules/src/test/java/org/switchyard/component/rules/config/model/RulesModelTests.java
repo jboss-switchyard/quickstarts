@@ -41,6 +41,10 @@ import org.switchyard.component.common.rules.AuditType;
 import org.switchyard.component.common.rules.ClockType;
 import org.switchyard.component.common.rules.EventProcessingType;
 import org.switchyard.component.common.rules.config.model.AuditModel;
+import org.switchyard.component.common.rules.config.model.MappingModel;
+import org.switchyard.component.common.rules.expression.Expression;
+import org.switchyard.component.common.rules.expression.ExpressionFactory;
+import org.switchyard.component.common.rules.expression.ExpressionType;
 import org.switchyard.component.rules.RulesActionType;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Scanner;
@@ -111,6 +115,11 @@ public class RulesModelTests {
         Resource dslr = res_iter.next();
         Assert.assertEquals("bar.dslr", dslr.getLocation());
         Assert.assertSame(ResourceType.valueOf("DSLR"), dslr.getType());
+        MappingModel gmm = rci.getGlobals().getMappings().iterator().next();
+        Assert.assertEquals("payload", gmm.getVariable());
+        Expression expr = ExpressionFactory.instance().create(gmm);
+        Assert.assertEquals("message.content", expr.getExpression());
+        Assert.assertEquals(ExpressionType.MVEL, expr.getType());
     }
 
     @Test

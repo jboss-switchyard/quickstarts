@@ -38,6 +38,8 @@ MA  02110-1301, USA.
                     <element ref="bpm:audit" minOccurs="0" maxOccurs="1"/>
                     <element ref="bpm:taskHandler" minOccurs="0" maxOccurs="unbounded"/>
                     <element ref="bpm:resource" minOccurs="0" maxOccurs="unbounded"/>
+                    <element ref="bpm:parameters" minOccurs="0" maxOccurs="1"/>
+                    <element ref="bpm:results" minOccurs="0" maxOccurs="1"/>
                 </sequence>
                 <attribute name="processDefinition" type="string" use="required"/>
                 <attribute name="processDefinitionType" type="NCName" use="optional" default="BPMN2"/>
@@ -80,6 +82,35 @@ MA  02110-1301, USA.
     <complexType name="ResourceType">
         <complexContent>
             <extension base="swyd:ResourceType"/>
+        </complexContent>
+    </complexType>
+
+    <element name="parameters" type="bpm:ParametersType"/>
+    <complexType name="ParametersType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:mapping" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="results" type="bpm:ResultsType"/>
+    <complexType name="ResultsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:mapping" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="mapping" type="bpm:MappingType" substitutionGroup="common.rules:mapping"/>
+    <complexType name="MappingType">
+        <complexContent>
+            <extension base="common.rules:MappingType"/>
         </complexContent>
     </complexType>
 

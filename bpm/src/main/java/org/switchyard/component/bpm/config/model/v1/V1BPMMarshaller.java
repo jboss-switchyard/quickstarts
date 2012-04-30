@@ -18,7 +18,9 @@
  */
 package org.switchyard.component.bpm.config.model.v1;
 
+import static org.switchyard.component.bpm.config.model.ParametersModel.PARAMETERS;
 import static org.switchyard.component.bpm.config.model.ProcessActionModel.ACTION;
+import static org.switchyard.component.bpm.config.model.ResultsModel.RESULTS;
 import static org.switchyard.component.bpm.config.model.TaskHandlerModel.TASK_HANDLER;
 
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
@@ -65,6 +67,10 @@ public class V1BPMMarshaller extends V1CommonRulesMarshaller {
             return new V1ProcessActionModel(config, getDescriptor());
         } else if (TASK_HANDLER.equals(name)) {
             return new V1TaskHandlerModel(config, getDescriptor());
+        } else if (PARAMETERS.equals(name)) {
+            return new V1ParametersModel(config, getDescriptor());
+        } else if (RESULTS.equals(name)) {
+            return new V1ResultsModel(config, getDescriptor());
         }
         return super.read(config);
     }

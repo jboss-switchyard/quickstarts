@@ -35,13 +35,18 @@ import org.switchyard.component.bpm.ProcessActionType;
 import org.switchyard.component.bpm.SignalEvent;
 import org.switchyard.component.bpm.StartProcess;
 import org.switchyard.component.bpm.config.model.v1.V1BPMComponentImplementationModel;
+import org.switchyard.component.bpm.config.model.v1.V1ParametersModel;
 import org.switchyard.component.bpm.config.model.v1.V1ProcessActionModel;
+import org.switchyard.component.bpm.config.model.v1.V1ResultsModel;
 import org.switchyard.component.bpm.config.model.v1.V1TaskHandlerModel;
 import org.switchyard.component.bpm.task.work.SwitchYardServiceTaskHandler;
 import org.switchyard.component.bpm.task.work.TaskHandler;
 import org.switchyard.component.common.rules.Audit;
+import org.switchyard.component.common.rules.Mapping;
 import org.switchyard.component.common.rules.config.model.AuditModel;
+import org.switchyard.component.common.rules.config.model.MappingModel;
 import org.switchyard.component.common.rules.config.model.v1.V1AuditModel;
+import org.switchyard.component.common.rules.config.model.v1.V1MappingModel;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.ScannerOutput;
@@ -198,6 +203,7 @@ public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
                 // setting the location will trigger deducing and setting the type
                 bciModel.addResource(new V1ResourceModel(BPMComponentImplementationModel.DEFAULT_NAMESPACE).setLocation(location));
             }
+            addMappings(process, bciModel);
             componentModel.setImplementation(bciModel);
         }
 
@@ -206,6 +212,40 @@ public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
         }
 
         return new ScannerOutput<SwitchYardModel>().setModel(switchyardModel);
+    }
+
+    // Code here instead of in scan() because checkstyle complains when a method is longer than 150 lines.
+    private void addMappings(Process process, BPMComponentImplementationModel bciModel) {
+        ParametersModel parametersModel = null;
+        for (Mapping parameterMapping : process.parameters()) {
+            MappingModel mappingModel = new V1MappingModel(BPMComponentImplementationModel.DEFAULT_NAMESPACE);
+            mappingModel.setExpression(parameterMapping.expression());
+            mappingModel.setExpressionType(parameterMapping.expressionType());
+            String variable = parameterMapping.variable();
+            if (!UNDEFINED.equals(variable)) {
+                mappingModel.setVariable(variable);
+            }
+            if (parametersModel == null) {
+                parametersModel = new V1ParametersModel();
+                bciModel.setParameters(parametersModel);
+            }
+            parametersModel.addMapping(mappingModel);
+        }
+        ResultsModel resultsModel = null;
+        for (Mapping resultMapping : process.results()) {
+            MappingModel mappingModel = new V1MappingModel(BPMComponentImplementationModel.DEFAULT_NAMESPACE);
+            mappingModel.setExpression(resultMapping.expression());
+            mappingModel.setExpressionType(resultMapping.expressionType());
+            String variable = resultMapping.variable();
+            if (!UNDEFINED.equals(variable)) {
+                mappingModel.setVariable(variable);
+            }
+            if (resultsModel == null) {
+                resultsModel = new V1ResultsModel();
+                bciModel.setResults(resultsModel);
+            }
+            resultsModel.addMapping(mappingModel);
+        }
     }
 
 }
