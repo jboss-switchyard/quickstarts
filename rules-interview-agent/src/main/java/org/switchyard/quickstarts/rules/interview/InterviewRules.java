@@ -18,13 +18,17 @@
  */
 package org.switchyard.quickstarts.rules.interview;
 
+import org.switchyard.component.common.rules.Mapping;
 import org.switchyard.component.rules.Execute;
 import org.switchyard.component.rules.Rules;
 
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-@Rules(value=Interview.class, agent=true, resources={"/org/switchyard/quickstarts/rules/interview/Interview.pkg"})
+@Rules(value=Interview.class,
+       agent=true,
+       resources={"/org/switchyard/quickstarts/rules/interview/Interview.drl"},
+       globals={@Mapping(expression="exchange.serviceName.localPart", variable="service")})
 public interface InterviewRules extends Interview {
 
     @Override
