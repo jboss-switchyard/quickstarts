@@ -36,7 +36,7 @@
         <module name="org.jbpm.jbpm-persistence-jpa" export="true"/>
         <module name="org.jbpm.jbpm-workitems" export="true"/>
         <module name="org.switchyard.api"/>
-        <module name="org.switchyard.common" services="export"/>
+        <module name="org.switchyard.common"/>
         <module name="org.switchyard.component.common.rules"/>
         <module name="org.switchyard.config"/>
         <module name="org.switchyard.deploy"/>

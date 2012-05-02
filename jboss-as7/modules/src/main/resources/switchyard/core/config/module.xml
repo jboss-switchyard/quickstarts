@@ -30,7 +30,7 @@
 
     <dependencies>
         <module name="javax.api"/>
-        <module name="org.switchyard.common" services="export"/>
+        <module name="org.switchyard.common"/>
         <module name="org.apache.log4j"/>
     </dependencies>
 </module>

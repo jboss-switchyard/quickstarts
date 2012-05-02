@@ -66,7 +66,7 @@
         </module>
         <module name="org.jboss.as.naming" export="true"/>
         <module name="org.switchyard.api"/>
-        <module name="org.switchyard.common" services="export"/>
+        <module name="org.switchyard.common"/>
         <module name="org.switchyard.config"/>
         <module name="org.switchyard.deploy"/>
         <module name="org.switchyard.jaxb-impl"/>
