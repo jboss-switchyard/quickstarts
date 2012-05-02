@@ -26,6 +26,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import junit.framework.Assert;
 
+import org.apache.camel.model.RouteDefinition;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.AfterClass;
@@ -46,6 +47,8 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
 public class V1CamelComponentImplementationModelTest {
     
     private static boolean oldIgnoreWhitespace;
+    
+    private static final String XML_ROUTE_PATH = "org/switchyard/component/camel/config/model/v1/SingleRouteService.xml";
 
     @BeforeClass
     public static void setup() {
@@ -77,6 +80,31 @@ public class V1CamelComponentImplementationModelTest {
         
         validateModel(implModel);
         assertThat(SingleRouteService.class.getName(), is(equalTo(implModel.getJavaClass())));
+    }
+    
+    @Test
+    public void validateModelWithXMLElement() throws Exception {
+        final V1CamelImplementationModel implModel = getCamelImplementation("switchyard-implementation-xml.xml");
+        
+        validateModel(implModel);
+        assertThat(XML_ROUTE_PATH, is(equalTo(implModel.getXMLPath())));
+    }
+    
+    @Test
+    public void addXMLPath() throws Exception {
+        V1CamelImplementationModel camelConfig = new V1CamelImplementationModel();
+        camelConfig.setXMLPath(XML_ROUTE_PATH);
+        validateModel(camelConfig);
+        Assert.assertEquals(XML_ROUTE_PATH, camelConfig.getXMLPath());
+    }
+    
+    @Test
+    public void getXMLRouteFromPath() throws Exception {
+        final V1CamelImplementationModel implModel = getCamelImplementation("switchyard-implementation-xml.xml");
+        RouteDefinition route = implModel.getRoute();
+        Assert.assertNotNull(route);
+        // Verify the route was parsed correctly
+        Assert.assertTrue(route.getInputs().get(0).getUri().startsWith("switchyard://SingleRouteService"));
     }
     
     @Test

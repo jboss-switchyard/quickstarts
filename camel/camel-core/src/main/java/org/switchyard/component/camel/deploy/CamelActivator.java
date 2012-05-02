@@ -288,7 +288,7 @@ public class CamelActivator extends BaseActivator {
      */
     private RouteDefinition getRouteDefinition(CamelComponentImplementationModel model) {
         RouteDefinition routeDef = model.getRoute();
-        if (routeDef == null) {
+        if (routeDef == null && model.getJavaClass() != null) {
             routeDef = RouteFactory.createRoute(model.getJavaClass(), model.getComponent().getTargetNamespace());
         }
         return routeDef;
