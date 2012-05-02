@@ -18,35 +18,19 @@
  */
 package org.switchyard.common.version;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.ServiceLoader;
 import java.util.Set;
 
-import org.switchyard.common.type.Classes;
+import org.switchyard.common.version.manifest.ManifestVersionFactory;
 
 /**
- * Gets Versions via their specification titles.
+ * Gets Versions via Queries.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2012 Red Hat Inc.
  */
 public abstract class VersionFactory {
 
-    private static final VersionFactory INSTANCE;
-    static {
-        final ClassLoader loader = Classes.getClassLoader(VersionFactory.class);
-        final Iterator<VersionFactory> i = ServiceLoader.load(VersionFactory.class, loader).iterator();
-        INSTANCE = i.hasNext() ? i.next() : new VersionFactory() {
-            @Override
-            public Version getVersion(Query... queries) {
-                return null;
-            }
-            @Override
-            public Set<Version> getVersions(Query... queries) {
-                return Collections.emptySet();
-            }
-        };
-    }
+    // Hardcoding until we actually have a reason to populate dynamically (via ServiceLoader).
+    private static final VersionFactory INSTANCE = new ManifestVersionFactory();
 
     /**
      * Gets the first version matching the provided queries.
