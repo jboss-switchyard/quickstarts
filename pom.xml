@@ -60,6 +60,7 @@
         <module>rules-camel-cbr</module>
         <module>rules-interview</module>
         <module>rules-interview-agent</module>
+        <module>jca-inflow-hornetq</module>
         <module>transform-jaxb</module>
         <module>transform-json</module>
         <module>transform-smooks</module>
