@@ -25,8 +25,11 @@ import org.switchyard.component.camel.config.model.direct.v1.V1CamelDirectBindin
 import org.switchyard.component.camel.config.model.file.v1.V1CamelFileBindingModel;
 import org.switchyard.component.camel.config.model.file.v1.V1CamelFileConsumerBindingModel;
 import org.switchyard.component.camel.config.model.file.v1.V1CamelFileProducerBindingModel;
+import org.switchyard.component.camel.config.model.ftp.v1.V1CamelFtpBindingModel;
+import org.switchyard.component.camel.config.model.ftps.v1.V1CamelFtpsBindingModel;
 import org.switchyard.component.camel.config.model.mock.v1.V1CamelMockBindingModel;
 import org.switchyard.component.camel.config.model.seda.v1.V1CamelSedaBindingModel;
+import org.switchyard.component.camel.config.model.sftp.v1.V1CamelSftpBindingModel;
 import org.switchyard.component.camel.config.model.timer.v1.V1CamelTimerBindingModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseMarshaller;
@@ -42,11 +45,11 @@ import org.switchyard.config.model.composite.ComponentImplementationModel;
  * @author Daniel Bevenius
  */
 public class V1CamelModelMarshaller extends BaseMarshaller {
+
     /**
      * Sole constructor.
      * 
-     * @param desc
-     *            The switchyard descriptor.
+     * @param desc The switchyard descriptor.
      */
     public V1CamelModelMarshaller(final Descriptor desc) {
         super(desc);
@@ -72,6 +75,12 @@ public class V1CamelModelMarshaller extends BaseMarshaller {
                 return new V1CamelSedaBindingModel(config, getDescriptor());
             } else if (name.endsWith(V1CamelMockBindingModel.MOCK)) {
                 return new V1CamelMockBindingModel(config, getDescriptor());
+            } else if (name.endsWith(V1CamelFtpsBindingModel.FTPS)) {
+                return new V1CamelFtpsBindingModel(config, getDescriptor());
+            } else if (name.endsWith(V1CamelSftpBindingModel.SFTP)) {
+                return new V1CamelSftpBindingModel(config, getDescriptor());
+            } else if (name.endsWith(V1CamelFtpBindingModel.FTP)) {
+                return new V1CamelFtpBindingModel(config, getDescriptor());
             }
         }
 

@@ -23,7 +23,6 @@ package org.switchyard.component.camel.config.model.direct.v1;
 import java.net.URI;
 
 import org.switchyard.component.camel.config.model.direct.CamelDirectBindingModel;
-import org.switchyard.component.camel.config.model.v1.NameValueModel;
 import org.switchyard.component.camel.config.model.v1.V1BaseCamelBindingModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
@@ -79,28 +78,6 @@ public class V1CamelDirectBindingModel extends V1BaseCamelBindingModel
         // base URI without params
         String uriStr = DIRECT + "://" + getConfig(NAME);
         return URI.create(uriStr.toString());
-    }
-    
-    private String getConfig(String configName) {
-        Configuration config = getModelConfiguration().getFirstChild(configName);
-        if (config != null) {
-            return config.getValue();
-        } else {
-            return null;
-        }
-    }
-    
-    private void setConfig(String name, String value) {
-        Configuration config = getModelConfiguration().getFirstChild(name);
-        if (config != null) {
-            // set an existing config value
-            config.setValue(value);
-        } else {
-            // create the config model and set the value
-            NameValueModel model = new NameValueModel(name);
-            model.setValue(value);
-            setChildModel(model);
-        }
     }
     
 }

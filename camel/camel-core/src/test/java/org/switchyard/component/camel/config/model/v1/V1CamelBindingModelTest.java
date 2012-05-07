@@ -24,7 +24,6 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -33,7 +32,6 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.composite.BindingModel;
 
 /**
@@ -41,8 +39,8 @@ import org.switchyard.config.model.composite.BindingModel;
  * 
  * @author Daniel Bevenius
  */
-public class V1CamelBindingModelTest {
-    
+public class V1CamelBindingModelTest extends V1BaseCamelModelTest<V1CamelBindingModel> {
+
     private static boolean oldIgnoreWhitespace;
 
     @BeforeClass
@@ -50,12 +48,12 @@ public class V1CamelBindingModelTest {
         oldIgnoreWhitespace = XMLUnit.getIgnoreWhitespace();
         XMLUnit.setIgnoreWhitespace(true);
     }
-    
+
     @AfterClass
     public static void cleanup() {
         XMLUnit.setIgnoreWhitespace(oldIgnoreWhitespace);
-    }        
-    
+    }
+
     @Test
     public void validateProgrammaticConfig() throws Exception {
         final V1CamelBindingModel bindingModel = createModel();
@@ -64,24 +62,24 @@ public class V1CamelBindingModelTest {
 
     @Test
     public void validateXmlConfig() throws Exception {
-        final V1CamelBindingModel bindingModel = pull("switchyard-camel-binding-beans.xml");
+        final V1CamelBindingModel bindingModel = getFirstCamelModelBinding("switchyard-camel-binding-beans.xml");
         validateDefaults(bindingModel);
     }
-    
+
     @Test
     public void validateCamelBindingModelWithReference() throws Exception {
-        final V1CamelBindingModel bindingModel = pull("switchyard-camel-ref-beans.xml");
+        final V1CamelBindingModel bindingModel = getFirstCamelModelBinding("switchyard-camel-ref-beans.xml");
         validateModel(bindingModel);
         assertThat(bindingModel, is(instanceOf(V1CamelBindingModel.class)));
     }
-    
+
     @Test
     public void readWriteConfig() throws Exception {
-        final String control = pull("switchyard-camel-binding-beans.xml").toString();
+        final String control = getFirstCamelModelBinding("switchyard-camel-binding-beans.xml").toString();
         final String test = createModel().toString();
         XMLAssert.assertXMLEqual(control, test);
     }
-    
+
     private V1CamelBindingModel createModel() throws URISyntaxException {
         final V1CamelBindingModel bindingModel = new V1CamelBindingModel()
         .setConfigURI(new URI("direct://input"))
@@ -96,11 +94,8 @@ public class V1CamelBindingModelTest {
         assertThat(model.getOperationSelector().getOperationName(), is("print"));
     }
 
-    private V1CamelBindingModel pull(final String configFile) throws IOException {
-        return new ModelPuller<V1CamelBindingModel>().pull(configFile, getClass());
-    }
-    
     private void validateModel(final BindingModel model) {
+    	model.validateModel().assertValid();
         assertThat(model.validateModel().isValid(), is(true));
     }
 

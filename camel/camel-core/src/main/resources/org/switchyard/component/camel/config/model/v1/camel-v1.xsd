@@ -30,7 +30,7 @@ MA  02110-1301, USA.
     <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
     <import namespace="http://www.springframework.org/schema/beans"/>
     <import namespace="http://camel.apache.org/schema/spring"/>
-    
+
     <!-- camel:binding.xxx -->
     <element name="binding.camel" type="camel:CamelBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelBindingType">
@@ -43,27 +43,66 @@ MA  02110-1301, USA.
             </extension>
         </complexContent>
     </complexType>
-    
+
     <element name="binding.file" type="camel:CamelFileBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelFileBindingType" >
         <complexContent>
             <extension base="swyd:SwitchYardBindingType">
                 <sequence>
-                	<element name="operationSelector" type="camel:CamelOperationSelectorType"/>
+                    <element name="operationSelector" type="camel:CamelOperationSelectorType"/>
                     <element name="targetDir" type="string"/>
                     <element name="autoCreate" type="boolean" minOccurs="0" maxOccurs="1"/>
-           			<element name="bufferSize" type="integer" minOccurs="0" maxOccurs="1"/>
-    	    		<element name="fileName" type="string" minOccurs="0" maxOccurs="1"/>
-    	    		<element name="flatten" type="boolean" minOccurs="0" maxOccurs="1"/>
-     	    		<element name="charset" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="bufferSize" type="integer" minOccurs="0" maxOccurs="1"/>
+                    <element name="fileName" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="flatten" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="charset" type="string" minOccurs="0" maxOccurs="1"/>
                     <element name="consume" type="camel:FileConsumerType" minOccurs="0" maxOccurs="1"/>
                     <element name="produce" type="camel:FileProducerType" minOccurs="0" maxOccurs="1"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    
-    
+
+    <element name="binding.ftp" type="camel:CamelFtpBindingType" substitutionGroup="swyd:binding.switchyard"/>
+    <complexType name="CamelFtpBindingType">
+        <complexContent>
+            <extension base="camel:CamelRemoteBindingType">
+                <sequence>
+                    <element name="passiveMode" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="siteCommand" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="timeout" type="int" minOccurs="0" maxOccurs="1"/>
+                    <element name="socketTimeout" type="int" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <element name="binding.ftps" type="camel:CamelFtpsBindingType" substitutionGroup="swyd:binding.switchyard"/>
+    <complexType name="CamelFtpsBindingType">
+        <complexContent>
+            <extension base="camel:CamelFtpBindingType">
+                <sequence>
+                    <element name="securityProtocol" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="isImplicit" type="boolean" minOccurs="0" maxOccurs="1" />
+                    <element name="execPbsz" type="long" minOccurs="0" maxOccurs="1" />
+                    <element name="execProt" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="disableSecureDataChannelDefaults" type="boolean" minOccurs="0" maxOccurs="1" />
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <element name="binding.sftp" type="camel:CamelSftpBindingType" substitutionGroup="swyd:binding.switchyard"/>
+    <complexType name="CamelSftpBindingType">
+        <complexContent>
+            <extension base="camel:CamelRemoteBindingType">
+                <sequence>
+                    <element name="knownHostsFile" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="privateKeyFile" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="privateKeyFilePassphrase" type="string" minOccurs="0" maxOccurs="1" />
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <element name="binding.atom" type="camel:CamelAtomBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelAtomBindingType" >
         <complexContent>
@@ -84,7 +123,7 @@ MA  02110-1301, USA.
             </extension>
         </complexContent>
     </complexType>
-   
+
     <element name="binding.direct" type="camel:CamelDirectBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelDirectBindingType" >
         <complexContent>
@@ -95,7 +134,7 @@ MA  02110-1301, USA.
             </extension>
         </complexContent>
     </complexType>
-    
+
     <element name="binding.timer" type="camel:CamelTimerBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelTimerBindingType" >
         <complexContent>
@@ -112,7 +151,7 @@ MA  02110-1301, USA.
             </extension>
         </complexContent>
     </complexType>
-    
+
     <element name="binding.seda" type="camel:CamelSedaBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelSedaBindingType" >
         <complexContent>
@@ -129,7 +168,7 @@ MA  02110-1301, USA.
             </extension>
         </complexContent>
     </complexType>
-    
+
     <element name="binding.mock" type="camel:CamelMockBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelMockBindingType" >
         <complexContent>
@@ -141,24 +180,24 @@ MA  02110-1301, USA.
             </extension>
         </complexContent>
     </complexType>
-    
+
     <complexType name="CamelOperationSelectorType">
       <complexContent>
          <extension base="sca:OperationSelectorType">
              <attribute name="namespace" type="string" use="optional"/>
-             <attribute name="operationName" type="string"/>           
-         </extension>         
+             <attribute name="operationName" type="string"/>
+         </extension>
       </complexContent>
-   </complexType>  
-   
+   </complexType>
+
    <complexType name="JavaDSLType">
       <attribute name="class" type="string"/>
    </complexType>
-   
+
    <complexType name="XMLDSLType">
       <attribute name="path" type="string"/>
    </complexType>
-   
+
     <!--  camel:implementation.camel -->
     <element name="implementation.camel" type="camel:CamelImplementationType" substitutionGroup="sca:implementation"/>
     <complexType name="CamelImplementationType">
@@ -174,10 +213,30 @@ MA  02110-1301, USA.
             </extension>
         </complexContent>
     </complexType>
-    
+
+    <complexType name="CamelRemoteBindingType" abstract="true">
+        <complexContent>
+            <extension base="swyd:SwitchYardBindingType">
+                <sequence>
+                    <element name="operationSelector" type="camel:CamelOperationSelectorType"/>
+                    <element name="host" type="string"  minOccurs="0" maxOccurs="1"/>
+                    <element name="port" type="int" minOccurs="0" maxOccurs="1"/>
+                    <element name="directory" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="username" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="password" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="binary" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="connectTimeout" type="int" minOccurs="0" maxOccurs="1"/>
+                    <element name="throwExceptionOnConnectionFailed" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="stepwise" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="seaparator" type="string" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <complexType name="FileConsumerType">
-    	<sequence>
-        	<element name="initialDelay" type="integer" minOccurs="0" maxOccurs="1"/>
+        <sequence>
+            <element name="initialDelay" type="integer" minOccurs="0" maxOccurs="1"/>
             <element name="delay" type="integer" minOccurs="0" maxOccurs="1"/>
             <element name="useFixedDelay" type="boolean" minOccurs="0" maxOccurs="1"/>
             <element name="recursive" type="boolean" minOccurs="0" maxOccurs="1"/>
@@ -203,18 +262,18 @@ MA  02110-1301, USA.
             <element name="startingDirectoryMustExist" type="boolean" minOccurs="0" maxOccurs="1"/>
             <element name="directoryMustExist" type="boolean" minOccurs="0" maxOccurs="1"/>
             <element name="doneFileName" type="string" minOccurs="0" maxOccurs="1"/>
-		</sequence>
+        </sequence>
     </complexType>
 
     <complexType name="FileProducerType">
         <sequence>
-        	<element name="fileExist" type="string" minOccurs="0" maxOccurs="1"/>
-			<element name="tempPrefix" type="string" minOccurs="0" maxOccurs="1"/>
-			<element name="tempFileName" type="string" minOccurs="0" maxOccurs="1"/>
-			<element name="keepLastModified" type="boolean" minOccurs="0" maxOccurs="1"/>
-			<element name="eagerDeleteTargetFile" type="boolean" minOccurs="0" maxOccurs="1"/>
-			<element name="doneFileName" type="string" minOccurs="0" maxOccurs="1"/>
-		</sequence>
+            <element name="fileExist" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="tempPrefix" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="tempFileName" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="keepLastModified" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <element name="eagerDeleteTargetFile" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <element name="doneFileName" type="string" minOccurs="0" maxOccurs="1"/>
+        </sequence>
     </complexType>
 
 </schema>

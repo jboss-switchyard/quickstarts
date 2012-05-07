@@ -21,7 +21,6 @@
 package org.switchyard.component.camel.config.model.file.v1;
 
 import java.net.URI;
-import java.util.Iterator;
 import java.util.List;
 
 import org.switchyard.component.camel.config.model.OperationSelector;
@@ -29,7 +28,6 @@ import org.switchyard.component.camel.config.model.QueryString;
 import org.switchyard.component.camel.config.model.file.CamelFileBindingModel;
 import org.switchyard.component.camel.config.model.file.CamelFileConsumerBindingModel;
 import org.switchyard.component.camel.config.model.file.CamelFileProducerBindingModel;
-import org.switchyard.component.camel.config.model.v1.NameValueModel;
 import org.switchyard.component.camel.config.model.v1.V1BaseCamelBindingModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
@@ -256,67 +254,10 @@ public class V1CamelFileBindingModel extends V1BaseCamelBindingModel implements
         List<Configuration> children = modelConfiguration.getChildren();
 
         QueryString queryString = new QueryString();
-        traverseConfiguration(children, queryString);
+        traverseConfiguration(children, queryString, TARGET_DIR);
 
         URI newURI = URI.create("file://" + getTargetDir() + queryString);
         return newURI;
     }
 
-    private void traverseConfiguration(List<Configuration> parent,
-            QueryString queryString) {
-
-        if (parent.size() != 0) {
-            Iterator<Configuration> parentIterator = parent.iterator();
-            while (parentIterator.hasNext()) {
-                Configuration child = parentIterator.next();
-
-                if (child != null
-                        && child.getName() != null
-                        && (child.getName().equalsIgnoreCase(TARGET_DIR) || child
-                                .getName().equalsIgnoreCase(
-                                        OperationSelector.OPERATION_SELECTOR))) {
-                    continue;
-                }
-
-                if (child != null && child.getChildren().size() == 0) {
-                    queryString.add(child.getName(), child.getValue());
-                } else {
-                    traverseConfiguration(child.getChildren(), queryString);
-                }
-            }
-        }
-    }
-
-    private Integer getIntegerConfig(String configName) {
-        String value = getConfig(configName);
-        return value != null ? Integer.parseInt(value) : null;
-    }
-
-    private Boolean getBooleanConfig(String configName) {
-        String value = getConfig(configName);
-        return value != null ? Boolean.valueOf(value) : null;
-    }
-
-    private String getConfig(String configName) {
-        Configuration config = getModelConfiguration()
-                .getFirstChild(configName);
-        if (config != null) {
-            return config.getValue();
-        } else {
-            return null;
-        }
-    }
-
-    private void setConfig(String name, String value) {
-        Configuration config = getModelConfiguration().getFirstChild(name);
-        if (config != null) {
-            // set an existing config value
-            config.setValue(value);
-        } else {
-            // create the config model and set the value
-            NameValueModel model = new NameValueModel(name);
-            model.setValue(value);
-            setChildModel(model);
-        }
-    }
 }

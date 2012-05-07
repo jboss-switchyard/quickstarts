@@ -18,37 +18,27 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
-
 package org.switchyard.component.camel.config.model.seda.v1;
 
-import java.io.InputStream;
-import java.util.List;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
-import junit.framework.Assert;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.component.seda.SedaEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.component.camel.config.model.seda.CamelSedaBindingModel;
+import org.switchyard.component.camel.config.model.v1.V1BaseCamelModelTest;
 import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
-import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Validation;
-import org.switchyard.config.model.composite.BindingModel;
-import org.switchyard.config.model.composite.CompositeServiceModel;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
-
 
 /**
  * Test for {@link V1CamelBindingModel}.
  *
  * @author Mario Antollini
  */
-public class V1CamelSedaBindingModelTest {
-
+public class V1CamelSedaBindingModelTest extends V1BaseCamelModelTest<V1CamelSedaBindingModel> {
 
     private static final String CAMEL_XML = "switchyard-seda-binding-beans.xml";
 
@@ -59,16 +49,15 @@ public class V1CamelSedaBindingModelTest {
     private static final Long TIMEOUT = new Long(1000);
     private static final Boolean MULTIPLE_CONSUMERS = Boolean.TRUE;
     private static final Boolean LIMIT_CONCURRENT_CONSUMERS = Boolean.FALSE;
-    
+
     private static final String CAMEL_URI = "seda://fooSedaName?size=55" +
-    		"&waitForTaskToComplete=Always&concurrentConsumers=3" +
-    		"&timeout=1000&multipleConsumers=true&limitConcurrentConsumers=false";
+        "&waitForTaskToComplete=Always&concurrentConsumers=3" +
+        "&timeout=1000&multipleConsumers=true&limitConcurrentConsumers=false";
 
     private static final String CAMEL_ENDPOINT_URI = "seda://fooSedaName?" +
-    		"concurrentConsumers=3&limitConcurrentConsumers=false&multipleConsumers=true&" +
-    		"size=55&timeout=1000&waitForTaskToComplete=Always";
-    
-    
+        "concurrentConsumers=3&limitConcurrentConsumers=false&multipleConsumers=true&" +
+        "size=55&timeout=1000&waitForTaskToComplete=Always";
+
     @Before
     public void setUp() throws Exception {
     }
@@ -77,27 +66,27 @@ public class V1CamelSedaBindingModelTest {
     public void testConfigOverride() {
         // Set a value on an existing config element
         CamelSedaBindingModel bindingModel = createSedaModel();
-        Assert.assertEquals(NAME, bindingModel.getName());
+        assertEquals(NAME, bindingModel.getName());
         bindingModel.setName("newFooSedaName");
-        Assert.assertEquals("newFooSedaName", bindingModel.getName());
+        assertEquals("newFooSedaName", bindingModel.getName());
     }
 
     @Test
     public void testReadConfig() throws Exception {
-        final CamelSedaBindingModel bindingModel = getCamelBinding(CAMEL_XML);
+        final CamelSedaBindingModel bindingModel = getFirstCamelBinding(CAMEL_XML);
         final Validation validateModel = bindingModel.validateModel();
         //Valid Model?
-        Assert.assertEquals(validateModel.isValid(), true);
+        assertEquals(validateModel.isValid(), true);
         //Camel Seda
-        Assert.assertEquals(bindingModel.getName(), NAME);
-        Assert.assertEquals(bindingModel.getSize(), SIZE);
-        Assert.assertEquals(bindingModel.getConcurrentConsumers(), CONCURRENT_CONSUMERS);
-        Assert.assertEquals(bindingModel.getWaitForTaskToComplete(), WAIT_FOR_TASK_TO_COMPLETE);
-        Assert.assertEquals(bindingModel.getTimeout(), TIMEOUT);
-        Assert.assertEquals(bindingModel.isMultipleConsumers(), MULTIPLE_CONSUMERS);
-        Assert.assertEquals(bindingModel.isLimitConcurrentConsumers(), LIMIT_CONCURRENT_CONSUMERS);
+        assertEquals(bindingModel.getName(), NAME);
+        assertEquals(bindingModel.getSize(), SIZE);
+        assertEquals(bindingModel.getConcurrentConsumers(), CONCURRENT_CONSUMERS);
+        assertEquals(bindingModel.getWaitForTaskToComplete(), WAIT_FOR_TASK_TO_COMPLETE);
+        assertEquals(bindingModel.getTimeout(), TIMEOUT);
+        assertEquals(bindingModel.isMultipleConsumers(), MULTIPLE_CONSUMERS);
+        assertEquals(bindingModel.isLimitConcurrentConsumers(), LIMIT_CONCURRENT_CONSUMERS);
         //URI
-        Assert.assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
+        assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
     }
 
     @Test
@@ -105,62 +94,50 @@ public class V1CamelSedaBindingModelTest {
         CamelSedaBindingModel bindingModel = createSedaModel();
         final Validation validateModel = bindingModel.validateModel();
         //Valid Model?
-        Assert.assertEquals(validateModel.isValid(), true);
+        assertEquals(validateModel.isValid(), true);
         //Camel Seda
-        Assert.assertEquals(bindingModel.getName(), NAME);
-        Assert.assertEquals(bindingModel.getSize(), SIZE);
-        Assert.assertEquals(bindingModel.getConcurrentConsumers(), CONCURRENT_CONSUMERS);
-        Assert.assertEquals(bindingModel.getWaitForTaskToComplete(), WAIT_FOR_TASK_TO_COMPLETE);
-        Assert.assertEquals(bindingModel.getTimeout(), TIMEOUT);
-        Assert.assertEquals(bindingModel.isMultipleConsumers(), MULTIPLE_CONSUMERS);
-        Assert.assertEquals(bindingModel.isLimitConcurrentConsumers(), LIMIT_CONCURRENT_CONSUMERS);
+        assertEquals(bindingModel.getName(), NAME);
+        assertEquals(bindingModel.getSize(), SIZE);
+        assertEquals(bindingModel.getConcurrentConsumers(), CONCURRENT_CONSUMERS);
+        assertEquals(bindingModel.getWaitForTaskToComplete(), WAIT_FOR_TASK_TO_COMPLETE);
+        assertEquals(bindingModel.getTimeout(), TIMEOUT);
+        assertEquals(bindingModel.isMultipleConsumers(), MULTIPLE_CONSUMERS);
+        assertEquals(bindingModel.isLimitConcurrentConsumers(), LIMIT_CONCURRENT_CONSUMERS);
         //URI
-        Assert.assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
+        assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
     }
 
     @Test
     public void compareWriteConfig() throws Exception {
-        String refXml = getCamelBinding(CAMEL_XML).toString();
+        String refXml = getFirstCamelBinding(CAMEL_XML).toString();
         String newXml = createSedaModel().toString();
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(refXml, newXml);
-        Assert.assertTrue(diff.toString(), diff.similar());
+        assertTrue(diff.toString(), diff.similar());
     }
-    
+
     @Test
     public void testCamelEndpoint() {
         CamelSedaBindingModel model = createSedaModel();
-        String configUri = model.getComponentURI().toString();
-        CamelContext context = new DefaultCamelContext();
-        SedaEndpoint endpoint = context.getEndpoint(configUri, SedaEndpoint.class);
-        //Assert.assertEquals(endpoint.getId(), NAME); //No way to get the endpoint name
-        Assert.assertEquals(endpoint.getSize(), SIZE.intValue());
-        Assert.assertEquals(endpoint.getConcurrentConsumers(), CONCURRENT_CONSUMERS.intValue());
-        Assert.assertEquals(endpoint.getWaitForTaskToComplete().toString(), WAIT_FOR_TASK_TO_COMPLETE);
-        Assert.assertEquals(endpoint.getTimeout(), TIMEOUT.longValue());
-        Assert.assertEquals(endpoint.isMultipleConsumers(), MULTIPLE_CONSUMERS.booleanValue());
-        Assert.assertEquals(endpoint.isMultipleConsumersSupported() , !LIMIT_CONCURRENT_CONSUMERS.booleanValue());
-        Assert.assertEquals(endpoint.getEndpointUri().toString(), CAMEL_ENDPOINT_URI);
+        SedaEndpoint endpoint = getEndpoint(model, SedaEndpoint.class);
+        //assertEquals(endpoint.getId(), NAME); //No way to get the endpoint name
+        assertEquals(endpoint.getSize(), SIZE.intValue());
+        assertEquals(endpoint.getConcurrentConsumers(), CONCURRENT_CONSUMERS.intValue());
+        assertEquals(endpoint.getWaitForTaskToComplete().toString(), WAIT_FOR_TASK_TO_COMPLETE);
+        assertEquals(endpoint.getTimeout(), TIMEOUT.longValue());
+        assertEquals(endpoint.isMultipleConsumers(), MULTIPLE_CONSUMERS.booleanValue());
+        assertEquals(endpoint.isMultipleConsumersSupported() , !LIMIT_CONCURRENT_CONSUMERS.booleanValue());
+        assertEquals(endpoint.getEndpointUri().toString(), CAMEL_ENDPOINT_URI);
     }
 
     private CamelSedaBindingModel createSedaModel() {
         return new V1CamelSedaBindingModel().setName(NAME)
-        .setSize(SIZE)
-        .setConcurrentConsumers(CONCURRENT_CONSUMERS)
-        .setWaitForTaskToComplete(WAIT_FOR_TASK_TO_COMPLETE)
-        .setTimeout(TIMEOUT)
-        .setMultipleConsumers(MULTIPLE_CONSUMERS)
-        .setLimitConcurrentConsumers(LIMIT_CONCURRENT_CONSUMERS);
-    }
-
-
-    private CamelSedaBindingModel getCamelBinding(final String config) throws Exception {
-        final InputStream in = getClass().getResourceAsStream(config);
-        final SwitchYardModel model = (SwitchYardModel) new ModelPuller<SwitchYardModel>().pull(in);
-        final List<CompositeServiceModel> services = model.getComposite().getServices();
-        final CompositeServiceModel compositeServiceModel = services.get(0);
-        final List<BindingModel> bindings = compositeServiceModel.getBindings();
-        return (CamelSedaBindingModel) bindings.get(0);
+            .setSize(SIZE)
+            .setConcurrentConsumers(CONCURRENT_CONSUMERS)
+            .setWaitForTaskToComplete(WAIT_FOR_TASK_TO_COMPLETE)
+            .setTimeout(TIMEOUT)
+            .setMultipleConsumers(MULTIPLE_CONSUMERS)
+            .setLimitConcurrentConsumers(LIMIT_CONCURRENT_CONSUMERS);
     }
 
 }

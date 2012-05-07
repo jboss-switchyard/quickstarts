@@ -27,7 +27,6 @@ import java.util.Date;
 
 import org.switchyard.component.camel.config.model.QueryString;
 import org.switchyard.component.camel.config.model.atom.AtomBindingModel;
-import org.switchyard.component.camel.config.model.v1.NameValueModel;
 import org.switchyard.component.camel.config.model.v1.V1BaseCamelBindingModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
@@ -218,52 +217,6 @@ public class V1AtomBindingModel extends V1BaseCamelBindingModel implements AtomB
             .add(THROTTLE_ENTRIES, getConfig(THROTTLE_ENTRIES));
         
         return URI.create(uriStr.toString() + queryStr);
-    }
-    
-    private Date getDateConfig(String configName, DateFormat format) {
-        String value = getConfig(configName);
-        if (value == null) {
-            return null;
-        } else {
-            try {
-                return format.parse(value);
-            } catch (java.text.ParseException parseEx) {
-                throw new IllegalArgumentException("Failed to parse "
-                        + configName + " as a date.", parseEx);
-            }
-        }
-    }
-    
-    private Integer getIntegerConfig(String configName) {
-        String value = getConfig(configName);
-        return value != null ? Integer.parseInt(value) : null;
-    }
-    
-    private Boolean getBooleanConfig(String configName) {
-        String value = getConfig(configName);
-        return value != null ? Boolean.valueOf(value) : null;
-    }
-    
-    private String getConfig(String configName) {
-        Configuration config = getModelConfiguration().getFirstChild(configName);
-        if (config != null) {
-            return config.getValue();
-        } else {
-            return null;
-        }
-    }
-    
-    private void setConfig(String name, String value) {
-        Configuration config = getModelConfiguration().getFirstChild(name);
-        if (config != null) {
-            // set an existing config value
-            config.setValue(value);
-        } else {
-            // create the config model and set the value
-            NameValueModel model = new NameValueModel(name);
-            model.setValue(value);
-            setChildModel(model);
-        }
     }
     
 }

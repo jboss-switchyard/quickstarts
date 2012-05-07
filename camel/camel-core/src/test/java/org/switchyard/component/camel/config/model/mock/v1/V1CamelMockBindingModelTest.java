@@ -18,38 +18,28 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
-
 package org.switchyard.component.camel.config.model.mock.v1;
 
-import java.io.InputStream;
-import java.util.List;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
-import junit.framework.Assert;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.processor.ThroughputLogger;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.component.camel.config.model.mock.CamelMockBindingModel;
+import org.switchyard.component.camel.config.model.v1.V1BaseCamelModelTest;
 import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
-import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Validation;
-import org.switchyard.config.model.composite.BindingModel;
-import org.switchyard.config.model.composite.CompositeServiceModel;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
-
 
 /**
  * Test for {@link V1CamelBindingModel}.
  *
  * @author Mario Antollini
  */
-public class V1CamelMockBindingModelTest {
-
+public class V1CamelMockBindingModelTest extends V1BaseCamelModelTest<V1CamelMockBindingModel> {
 
     private static final String CAMEL_XML = "switchyard-mock-binding-beans.xml";
 
@@ -66,22 +56,22 @@ public class V1CamelMockBindingModelTest {
     public void testConfigOverride() {
         // Set a value on an existing config element
         CamelMockBindingModel bindingModel = createMockModel();
-        Assert.assertEquals(NAME, bindingModel.getName());
+        assertEquals(NAME, bindingModel.getName());
         bindingModel.setName("newFooMockName");
-        Assert.assertEquals("newFooMockName", bindingModel.getName());
+        assertEquals("newFooMockName", bindingModel.getName());
     }
 
     @Test
     public void testReadConfig() throws Exception {
-        final CamelMockBindingModel bindingModel = getCamelBinding(CAMEL_XML);
+        final CamelMockBindingModel bindingModel = getFirstCamelBinding(CAMEL_XML);
         final Validation validateModel = bindingModel.validateModel();
         //Valid Model?
-        Assert.assertEquals(validateModel.isValid(), true);
+        assertEquals(validateModel.isValid(), true);
         //Camel Mock
-        Assert.assertEquals(bindingModel.getName(), NAME);
-        Assert.assertEquals(bindingModel.getReportGroup(), REPORT_GROUP);
+        assertEquals(bindingModel.getName(), NAME);
+        assertEquals(bindingModel.getReportGroup(), REPORT_GROUP);
         //URI
-        Assert.assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
+        assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
     }
 
     @Test
@@ -89,47 +79,35 @@ public class V1CamelMockBindingModelTest {
         CamelMockBindingModel bindingModel = createMockModel();
         final Validation validateModel = bindingModel.validateModel();
         //Valid Model?
-        Assert.assertEquals(validateModel.isValid(), true);
+        assertEquals(validateModel.isValid(), true);
         //Camel Mock
-        Assert.assertEquals(bindingModel.getName(), NAME);
-        Assert.assertEquals(bindingModel.getReportGroup(), REPORT_GROUP);
+        assertEquals(bindingModel.getName(), NAME);
+        assertEquals(bindingModel.getReportGroup(), REPORT_GROUP);
         //URI
-        Assert.assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
+        assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
     }
 
     @Test
     public void compareWriteConfig() throws Exception {
-        String refXml = getCamelBinding(CAMEL_XML).toString();
+        String refXml = getFirstCamelBinding(CAMEL_XML).toString();
         String newXml = createMockModel().toString();
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(refXml, newXml);
-        Assert.assertTrue(diff.toString(), diff.similar());
+        assertTrue(diff.toString(), diff.similar());
     }
 
     @Test
     public void testCamelEndpoint() {
         CamelMockBindingModel model = createMockModel();
-        String configUri = model.getComponentURI().toString();
-        CamelContext context = new DefaultCamelContext();
-        MockEndpoint endpoint = context.getEndpoint(configUri, MockEndpoint.class);
-        //Assert.assertEquals(endpoint.getId(), NAME); //No way to get the endpoint name
+        MockEndpoint endpoint = getEndpoint(model, MockEndpoint.class);
+        //assertEquals(endpoint.getId(), NAME); //No way to get the endpoint name
         ThroughputLogger logger = (ThroughputLogger)endpoint.getReporter();
-        Assert.assertEquals(logger.getGroupSize(), REPORT_GROUP);
-        Assert.assertEquals(endpoint.getEndpointUri().toString(), CAMEL_URI);
+        assertEquals(logger.getGroupSize(), REPORT_GROUP);
+        assertEquals(endpoint.getEndpointUri().toString(), CAMEL_URI);
     }
-    
+
     private CamelMockBindingModel createMockModel() {
         return new V1CamelMockBindingModel().setName(NAME).setReportGroup(REPORT_GROUP);
-    }
-
-
-    private CamelMockBindingModel getCamelBinding(final String config) throws Exception {
-        final InputStream in = getClass().getResourceAsStream(config);
-        final SwitchYardModel model = (SwitchYardModel) new ModelPuller<SwitchYardModel>().pull(in);
-        final List<CompositeServiceModel> services = model.getComposite().getServices();
-        final CompositeServiceModel compositeServiceModel = services.get(0);
-        final List<BindingModel> bindings = compositeServiceModel.getBindings();
-        return (CamelMockBindingModel) bindings.get(0);
     }
 
 }

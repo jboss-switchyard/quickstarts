@@ -21,59 +21,49 @@
 
 package org.switchyard.component.camel.config.model.timer.v1;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
-import junit.framework.Assert;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.component.timer.TimerEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.component.camel.config.model.timer.CamelTimerBindingModel;
+import org.switchyard.component.camel.config.model.v1.V1BaseCamelModelTest;
 import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
-import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Validation;
-import org.switchyard.config.model.composite.BindingModel;
-import org.switchyard.config.model.composite.CompositeServiceModel;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
-
 
 /**
  * Test for {@link V1CamelBindingModel}.
  * 
  * @author Mario Antollini
  */
-public class V1CamelTimerBindingModelTest {
-    
-	
-	private static final String CAMEL_XML = "switchyard-timer-binding-beans.xml";
-	
-	private static final String NAME = "fooTimer";
-	private static final String PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
-	private static final Long PERIOD = new Long(555);
-	private static final Long DELAY = new Long(100);
-	private static final Boolean FIXED_RATE = Boolean.TRUE;
-	private static final Boolean DAEMON = Boolean.FALSE;
+public class V1CamelTimerBindingModelTest extends V1BaseCamelModelTest<V1CamelTimerBindingModel> {
 
-	private static final String CAMEL_URI = 
-		"timer://fooTimer?time=2011-01-01T12:00:00&pattern=yyyy-MM-dd'T'HH:mm:ss&" +
-		"period=555&delay=100&fixedRate=true&daemon=false";
-	
-	private static final String CAMEL_ENDPOINT_URI = "timer://fooTimer?" +
-			"daemon=false&delay=100&fixedRate=true&pattern=yyyy-MM-dd'T'HH:mm:ss&" +
-			"period=555&time=2011-01-01T12:00:00";
-	
+    private static final String CAMEL_XML = "switchyard-timer-binding-beans.xml";
+
+    private static final String NAME = "fooTimer";
+    private static final String PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
+    private static final Long PERIOD = new Long(555);
+    private static final Long DELAY = new Long(100);
+    private static final Boolean FIXED_RATE = Boolean.TRUE;
+    private static final Boolean DAEMON = Boolean.FALSE;
+
+    private static final String CAMEL_URI = 
+        "timer://fooTimer?time=2011-01-01T12:00:00&pattern=yyyy-MM-dd'T'HH:mm:ss&" +
+        "period=555&delay=100&fixedRate=true&daemon=false";
+
+    private static final String CAMEL_ENDPOINT_URI = "timer://fooTimer?" +
+            "daemon=false&delay=100&fixedRate=true&pattern=yyyy-MM-dd'T'HH:mm:ss&" +
+            "period=555&time=2011-01-01T12:00:00";
+
     private Date referenceDate;
-	
-	@Before
+    
+    @Before
     public void setUp() throws Exception {
         referenceDate = new SimpleDateFormat(PATTERN).parse("2011-01-01T12:00:00");
     }
@@ -82,87 +72,75 @@ public class V1CamelTimerBindingModelTest {
     public void testConfigOverride() {
         // Set a value on an existing config element
         CamelTimerBindingModel bindingModel = createTimerModel();
-        Assert.assertEquals(DELAY, bindingModel.getDelay());
+        assertEquals(DELAY, bindingModel.getDelay());
         bindingModel.setDelay(new Long(999));
-        Assert.assertEquals(new Integer(999).toString(), bindingModel.getDelay().toString());
+        assertEquals(new Integer(999).toString(), bindingModel.getDelay().toString());
     }
-    
+
     @Test
     public void testReadConfig() throws Exception {
-        final V1CamelTimerBindingModel bindingModel = getCamelBinding(CAMEL_XML);
+        final V1CamelTimerBindingModel bindingModel = getFirstCamelBinding(CAMEL_XML);
         final Validation validateModel = bindingModel.validateModel();
         //Valid Model?
-        Assert.assertEquals(validateModel.isValid(), true);
+        assertEquals(validateModel.isValid(), true);
         //Camel File
-        Assert.assertEquals(bindingModel.getName(), NAME);
-        Assert.assertEquals(bindingModel.getTime().toString(), referenceDate.toString());
-        Assert.assertEquals(bindingModel.getPattern(), PATTERN);
-        Assert.assertEquals(bindingModel.getPeriod(), PERIOD);
-        Assert.assertEquals(bindingModel.getDelay(), DELAY);
-        Assert.assertEquals(bindingModel.isFixedRate(), FIXED_RATE);
-        Assert.assertEquals(bindingModel.isDaemon(), DAEMON);
-        Assert.assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
+        assertEquals(bindingModel.getName(), NAME);
+        assertEquals(bindingModel.getTime().toString(), referenceDate.toString());
+        assertEquals(bindingModel.getPattern(), PATTERN);
+        assertEquals(bindingModel.getPeriod(), PERIOD);
+        assertEquals(bindingModel.getDelay(), DELAY);
+        assertEquals(bindingModel.isFixedRate(), FIXED_RATE);
+        assertEquals(bindingModel.isDaemon(), DAEMON);
+        assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
     }
-    
+
     @Test
     public void testWriteConfig() throws Exception {
-    	CamelTimerBindingModel bindingModel = createTimerModel();
+        CamelTimerBindingModel bindingModel = createTimerModel();
         final Validation validateModel = bindingModel.validateModel();
         //Valid Model?
-        Assert.assertEquals(validateModel.isValid(), true);
+        assertEquals(validateModel.isValid(), true);
         //Camel File
-        Assert.assertEquals(bindingModel.getName(), NAME);
-        Assert.assertEquals(bindingModel.getTime().toString(), referenceDate.toString());
-        Assert.assertEquals(bindingModel.getPattern(), PATTERN);
-        Assert.assertEquals(bindingModel.getPeriod(), PERIOD);
-        Assert.assertEquals(bindingModel.getDelay(), DELAY);
-        Assert.assertEquals(bindingModel.isFixedRate(), FIXED_RATE);
-        Assert.assertEquals(bindingModel.isDaemon(), DAEMON);
-        Assert.assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
+        assertEquals(bindingModel.getName(), NAME);
+        assertEquals(bindingModel.getTime().toString(), referenceDate.toString());
+        assertEquals(bindingModel.getPattern(), PATTERN);
+        assertEquals(bindingModel.getPeriod(), PERIOD);
+        assertEquals(bindingModel.getDelay(), DELAY);
+        assertEquals(bindingModel.isFixedRate(), FIXED_RATE);
+        assertEquals(bindingModel.isDaemon(), DAEMON);
+        assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
     }
-    
+
     @Test
     public void compareWriteConfig() throws Exception {
-    	String refXml = getCamelBinding(CAMEL_XML).toString();
+        String refXml = getFirstCamelBinding(CAMEL_XML).toString();
         String newXml = createTimerModel().toString();
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(refXml, newXml);
-        Assert.assertTrue(diff.toString(), diff.similar());
+        assertTrue(diff.toString(), diff.similar());
     }
-	
+
     @Test
     public void testCamelEndpoint() {
         CamelTimerBindingModel model = createTimerModel();
-        String configUri = model.getComponentURI().toString();
-        CamelContext context = new DefaultCamelContext();
-        TimerEndpoint endpoint = context.getEndpoint(configUri, TimerEndpoint.class);
-        Assert.assertEquals(endpoint.getTimerName(), NAME);
-        Assert.assertEquals(endpoint.getTime().toString(), referenceDate.toString());
-        Assert.assertEquals(endpoint.getPeriod(), PERIOD.longValue());
-        Assert.assertEquals(endpoint.getDelay(), DELAY.longValue());
-        Assert.assertEquals(endpoint.isFixedRate(), FIXED_RATE.booleanValue());
-        Assert.assertEquals(endpoint.isDaemon(), DAEMON.booleanValue());
-        Assert.assertEquals(endpoint.getEndpointUri(), CAMEL_ENDPOINT_URI);
+        TimerEndpoint endpoint = getEndpoint(model, TimerEndpoint.class);
+        assertEquals(endpoint.getTimerName(), NAME);
+        assertEquals(endpoint.getTime().toString(), referenceDate.toString());
+        assertEquals(endpoint.getPeriod(), PERIOD.longValue());
+        assertEquals(endpoint.getDelay(), DELAY.longValue());
+        assertEquals(endpoint.isFixedRate(), FIXED_RATE.booleanValue());
+        assertEquals(endpoint.isDaemon(), DAEMON.booleanValue());
+        assertEquals(endpoint.getEndpointUri(), CAMEL_ENDPOINT_URI);
     }
-    
+
     private CamelTimerBindingModel createTimerModel() {
-    	return new V1CamelTimerBindingModel().setName(NAME)
-    		.setTime(referenceDate)
-    		.setPattern(PATTERN)
-    		.setPeriod(PERIOD)
-    		.setDelay(DELAY)
-    		.setFixedRate(FIXED_RATE)
-    		.setDaemon(DAEMON);
+        return new V1CamelTimerBindingModel().setName(NAME)
+            .setTime(referenceDate)
+            .setPattern(PATTERN)
+            .setPeriod(PERIOD)
+            .setDelay(DELAY)
+            .setFixedRate(FIXED_RATE)
+            .setDaemon(DAEMON);
     }
-    
-    
-    private V1CamelTimerBindingModel getCamelBinding(final String config) throws Exception {
-        final InputStream in = getClass().getResourceAsStream(config);
-        final SwitchYardModel model = (SwitchYardModel) new ModelPuller<SwitchYardModel>().pull(in);
-        final List<CompositeServiceModel> services = model.getComposite().getServices();
-        final CompositeServiceModel compositeServiceModel = services.get(0);
-        final List<BindingModel> bindings = compositeServiceModel.getBindings();
-        return (V1CamelTimerBindingModel) bindings.get(0);
-    }
-    
+
 }

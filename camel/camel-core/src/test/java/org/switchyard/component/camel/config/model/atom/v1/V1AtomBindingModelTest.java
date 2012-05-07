@@ -16,44 +16,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
-
 package org.switchyard.component.camel.config.model.atom.v1;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import junit.framework.Assert;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.component.atom.AtomEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.component.camel.config.model.OperationSelector;
 import org.switchyard.component.camel.config.model.atom.AtomBindingModel;
+import org.switchyard.component.camel.config.model.v1.V1BaseCamelModelTest;
 import org.switchyard.component.camel.config.model.v1.V1OperationSelector;
-import org.switchyard.config.model.ModelPuller;
 
-public class V1AtomBindingModelTest {
+/**
+ * Test of atom binding model.
+ */
+public class V1AtomBindingModelTest extends V1BaseCamelModelTest<V1AtomBindingModel> {
 
-    private static final String ATOM_XML = 
-        "/org/switchyard/component/camel/config/model/v1/switchyard-atom-binding.xml";
-    
+    private static final String ATOM_XML = "switchyard-atom-binding.xml";
+
     private static final String ATOM_URI = 
         "atom://file:///dev/null?consumer.delay=15000&feedHeader=true&filter=true"
         + "&consumer.userFixedDelay=true&consumer.initialDelay=20000&lastUpdate=2011-01-01T12:00:00"
         + "&sortEntries=true&splitEntries=true&throttleEntries=true";
-    
+
     private Date referenceDate;
     private static final URI FEED_URI = URI.create("file:///dev/null");
     private static final Integer INITIAL_DELAY = new Integer(20000);
     private static final Integer DELAY = new Integer(15000);
-    
+
     @Before
     public void setUp() throws Exception {
         referenceDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
@@ -66,71 +64,67 @@ public class V1AtomBindingModelTest {
         // Verify that what we put in is what we get out
         assertDefaults(atomModel);
     }
-    
+
     @Test
     public void testConfigOverride() {
         // set a value on an existing config element
         AtomBindingModel atomModel = createAtomModel();
-        Assert.assertEquals(DELAY, atomModel.getDelay());
+        assertEquals(DELAY, atomModel.getDelay());
         atomModel.setDelay(750);
-        Assert.assertEquals(new Integer(750), atomModel.getDelay());
+        assertEquals(new Integer(750), atomModel.getDelay());
     }
-    
+
     @Test
     public void testReadConfig() throws Exception {
-        AtomBindingModel atomModel = new ModelPuller<AtomBindingModel>().pull(ATOM_XML, getClass());
+        AtomBindingModel atomModel = getFirstCamelModelBinding(ATOM_XML);
         atomModel.assertModelValid();
-        Assert.assertEquals(atomModel.getFeedURI(), FEED_URI);
-        Assert.assertEquals(atomModel.getDelay(), DELAY);
-        Assert.assertEquals(atomModel.isFiltered(), Boolean.TRUE);
+        assertEquals(atomModel.getFeedURI(), FEED_URI);
+        assertEquals(atomModel.getDelay(), DELAY);
+        assertEquals(atomModel.isFiltered(), Boolean.TRUE);
     }
-    
+
     @Test
     public void testWriteConfig() throws Exception {
-        String refXml = new StringPuller().pull(ATOM_XML, getClass());
+        String refXml = getFirstCamelModelBinding(ATOM_XML).toString();
         String newXml = createAtomModel().toString();
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(refXml, newXml);
-        Assert.assertTrue(diff.toString(), diff.similar());
+        assertTrue(diff.toString(), diff.similar());
     }
-    
+
     @Test
     public void testComponentURI() {
         AtomBindingModel atomModel = createAtomModel();
-        Assert.assertEquals(ATOM_URI, atomModel.getComponentURI().toString());
+        assertEquals(ATOM_URI, atomModel.getComponentURI().toString());
     }
-    
+
     @Test
     public void testCamelEndpoint() {
-        
         AtomBindingModel model = createAtomModel();
-        String configUri = model.getComponentURI().toString();
-        CamelContext context = new DefaultCamelContext();
-        AtomEndpoint endpoint = context.getEndpoint(configUri, AtomEndpoint.class);
-        
-        Assert.assertEquals(FEED_URI.toString(), endpoint.getFeedUri().toString());
-        Assert.assertEquals(referenceDate, endpoint.getLastUpdate());
-        Assert.assertTrue(endpoint.isFeedHeader());
-        Assert.assertTrue(endpoint.isFilter());
-        Assert.assertTrue(endpoint.isSortEntries());
-        Assert.assertTrue(endpoint.isSplitEntries());
-        Assert.assertTrue(endpoint.isThrottleEntries());
+        AtomEndpoint endpoint = getEndpoint(model, AtomEndpoint.class);
+
+        assertEquals(FEED_URI.toString(), endpoint.getFeedUri().toString());
+        assertEquals(referenceDate, endpoint.getLastUpdate());
+        assertTrue(endpoint.isFeedHeader());
+        assertTrue(endpoint.isFilter());
+        assertTrue(endpoint.isSortEntries());
+        assertTrue(endpoint.isSplitEntries());
+        assertTrue(endpoint.isThrottleEntries());
     }
-    
-    
+
     private void assertDefaults(AtomBindingModel atomModel) {
-        Assert.assertEquals(FEED_URI, atomModel.getFeedURI());
-        Assert.assertEquals(DELAY, atomModel.getDelay());
-        Assert.assertEquals(INITIAL_DELAY, atomModel.getInitialDelay());
-        Assert.assertEquals(referenceDate.toString(), atomModel.getLastUpdate().toString());
-        Assert.assertEquals(Boolean.TRUE, atomModel.isFeedHeader());
-        Assert.assertEquals(Boolean.TRUE, atomModel.isFiltered());
-        Assert.assertEquals(Boolean.TRUE, atomModel.isFixedDelay());
-        Assert.assertEquals(Boolean.TRUE, atomModel.isSorted());
-        Assert.assertEquals(Boolean.TRUE, atomModel.isSplit());
-        Assert.assertEquals(Boolean.TRUE, atomModel.isThrottled());
+        assertEquals(FEED_URI, atomModel.getFeedURI());
+        assertEquals(DELAY, atomModel.getDelay());
+        assertEquals(INITIAL_DELAY, atomModel.getInitialDelay());
+        assertEquals(referenceDate.toString(), atomModel.getLastUpdate().toString());
+        assertEquals(Boolean.TRUE, atomModel.isFeedHeader());
+        assertEquals(Boolean.TRUE, atomModel.isFiltered());
+        assertEquals(Boolean.TRUE, atomModel.isFixedDelay());
+        assertEquals(Boolean.TRUE, atomModel.isSorted());
+        assertEquals(Boolean.TRUE, atomModel.isSplit());
+        assertEquals(Boolean.TRUE, atomModel.isThrottled());
     }
-    
+
     private AtomBindingModel createAtomModel() {
         AtomBindingModel abm = new V1AtomBindingModel()
             .setDelay(5)

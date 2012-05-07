@@ -25,7 +25,6 @@ import java.net.URI;
 
 import org.switchyard.component.camel.config.model.QueryString;
 import org.switchyard.component.camel.config.model.seda.CamelSedaBindingModel;
-import org.switchyard.component.camel.config.model.v1.NameValueModel;
 import org.switchyard.component.camel.config.model.v1.V1BaseCamelBindingModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
@@ -175,44 +174,6 @@ implements CamelSedaBindingModel {
             Boolean limitConcurrentConsumers) {
         setConfig(LIMIT_CONCURRENT_CONSUMERS, String.valueOf(limitConcurrentConsumers));
         return this;
-    }
-
-
-    private Integer getIntegerConfig(String configName) {
-        String value = getConfig(configName);
-        return value != null ? Integer.parseInt(value) : null;
-    }
-
-    private Boolean getBooleanConfig(String configName) {
-        String value = getConfig(configName);
-        return value != null ? Boolean.valueOf(value) : null;
-    }
-
-    private Long getLongConfig(String configName) {
-        String value = getConfig(configName);
-        return value != null ? Long.parseLong(value) : null;
-    }
-
-    private String getConfig(String configName) {
-        Configuration config = getModelConfiguration().getFirstChild(configName);
-        if (config != null) {
-            return config.getValue();
-        } else {
-            return null;
-        }
-    }
-
-    private void setConfig(String name, String value) {
-        Configuration config = getModelConfiguration().getFirstChild(name);
-        if (config != null) {
-            // set an existing config value
-            config.setValue(value);
-        } else {
-            // create the config model and set the value
-            NameValueModel model = new NameValueModel(name);
-            model.setValue(value);
-            setChildModel(model);
-        }
     }
 
 }

@@ -55,17 +55,17 @@ public class V1CamelComponentImplementationModelTest {
         oldIgnoreWhitespace = XMLUnit.getIgnoreWhitespace();
         XMLUnit.setIgnoreWhitespace(true);
     }
-    
+
     @AfterClass
     public static void cleanup() {
         XMLUnit.setIgnoreWhitespace(oldIgnoreWhitespace);
     }
-    
+
     @Test
     public void programmaticConfig() {
         assertThat(createModel().getJavaClass(), is(equalTo(SingleRouteService.class.getName())));
     }
-    
+
     @Test
     public void validateModelWithRouteElement() throws Exception {
         final V1CamelImplementationModel implModel = getCamelImplementation("switchyard-implementation-beans.xml");
@@ -73,15 +73,15 @@ public class V1CamelComponentImplementationModelTest {
         validateModel(implModel);
         assertThat(implModel.getRoute(), is(notNullValue()));
     }
-    
+
     @Test
     public void validateModelWithJavaElement() throws Exception {
         final V1CamelImplementationModel implModel = getCamelImplementation("switchyard-implementation-java.xml");
-        
+
         validateModel(implModel);
         assertThat(SingleRouteService.class.getName(), is(equalTo(implModel.getJavaClass())));
     }
-    
+
     @Test
     public void validateModelWithXMLElement() throws Exception {
         final V1CamelImplementationModel implModel = getCamelImplementation("switchyard-implementation-xml.xml");
@@ -113,7 +113,7 @@ public class V1CamelComponentImplementationModelTest {
         final String test = createModel().toString();
         XMLAssert.assertXMLEqual(control, test);
     }
-    
+
     @Test
     public void addRoute() throws Exception {
         V1ComponentModel component = new V1ComponentModel();
@@ -121,24 +121,23 @@ public class V1CamelComponentImplementationModelTest {
         component.setImplementation(impl);
         Assert.assertNull(impl.getRoute());
         Assert.assertNotNull(impl.addRoute());
-        System.out.println(impl);
         Assert.assertNotNull(impl.getRoute());
-        
+
         // adding a route again should fail
         try {
             impl.addRoute();
             Assert.fail("Should not be able to add multiple routes!");
         } catch (Exception ex) {}
     }
-    
+
     private V1CamelImplementationModel createModel() {
         return new V1CamelImplementationModel().setJavaClass(SingleRouteService.class.getName());
     }
-    
+
     private void validateModel(final CamelComponentImplementationModel model) {
         assertThat(model.validateModel().isValid(), is(true));
     }
-    
+
     private V1CamelImplementationModel getCamelImplementation(final String config) throws Exception {
         V1CamelImplementationModel implementation = null;
         final SwitchYardModel model = new ModelPuller<SwitchYardModel>().pull(config, getClass());

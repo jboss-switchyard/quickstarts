@@ -20,8 +20,16 @@
  */
 package org.switchyard.component.camel.config.model.v1;
 
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.component.camel.config.model.OperationSelector;
+import org.switchyard.component.camel.config.model.QueryString;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Configurations;
 import org.switchyard.config.model.Descriptor;
@@ -109,5 +117,89 @@ public abstract class V1BaseCamelBindingModel extends V1BindingModel implements
      */
     public void setEnvironment(Configuration config) {
         _environment = config;
+    }
+
+    protected final Integer getIntegerConfig(String configName) {
+        String value = getConfig(configName);
+        return value != null ? Integer.parseInt(value) : null;
+    }
+
+    protected final Boolean getBooleanConfig(String configName) {
+        String value = getConfig(configName);
+        return value != null ? Boolean.valueOf(value) : null;
+    }
+
+    protected final Long getLongConfig(String configName) {
+        String value = getConfig(configName);
+        return value != null ? Long.parseLong(value) : null;
+    }
+
+    protected final Date getDateConfig(String configName, DateFormat format) {
+        String value = getConfig(configName);
+        if (value == null) {
+            return null;
+        } else {
+            try {
+                return format.parse(value);
+            } catch (java.text.ParseException parseEx) {
+                throw new IllegalArgumentException("Failed to parse " + configName + " as a date.", parseEx);
+            }
+        }
+    }
+
+    protected final String getConfig(String configName) {
+        Configuration config = getModelConfiguration().getFirstChild(configName);
+        if (config != null) {
+            return config.getValue();
+        } else {
+            return null;
+        }
+    }
+
+    protected final <T extends Enum<T>> T getEnumerationConfig(String configName, Class<T> type) {
+        String constantName = getConfig(configName);
+        if (constantName != null) {
+            return Enum.valueOf(type, constantName);
+        }
+        return null;
+    }
+
+    protected final <X extends CamelBindingModel> X setConfig(String name, String value) {
+        Configuration config = getModelConfiguration().getFirstChild(name);
+        if (config != null) {
+            // set an existing config value
+            config.setValue(value);
+        } else {
+            // create the config model and set the value
+            NameValueModel model = new NameValueModel(name);
+            model.setValue(value);
+            setChildModel(model);
+        }
+        return (X) this;
+    }
+
+    protected final void traverseConfiguration(List<Configuration> parent, QueryString queryString,
+        String ... excludes) {
+
+        if (parent.size() != 0) {
+            List<String> excludeParameters = new ArrayList<String>(Arrays.asList(excludes));
+            // automatically remove operation selector parameter
+            excludeParameters.add(OperationSelector.OPERATION_SELECTOR);
+
+            Iterator<Configuration> parentIterator = parent.iterator();
+            while (parentIterator.hasNext()) {
+                Configuration child = parentIterator.next();
+
+                if (child != null && child.getName() != null && excludeParameters.contains(child.getName())) {
+                    continue;
+                }
+
+                if (child != null && child.getChildren().size() == 0) {
+                    queryString.add(child.getName(), child.getValue());
+                } else {
+                    traverseConfiguration(child.getChildren(), queryString, excludes);
+                }
+            }
+        }
     }
 }
