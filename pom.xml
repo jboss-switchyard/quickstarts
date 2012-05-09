@@ -84,6 +84,7 @@
     <version.ecj>3.5.1</version.ecj>
     <version.forge>1.0.2.Final</version.forge>
     <version.freemarker>2.3.15</version.freemarker>
+    <version.ftpserver>1.0.6</version.ftpserver>
     <version.hamcrest>1.1</version.hamcrest>
     <version.hibernate.annotations>3.4.0.GA</version.hibernate.annotations>
     <version.hibernate.ejb3-persistence>1.0.2.GA</version.hibernate.ejb3-persistence>
@@ -829,6 +830,11 @@
       </dependency>
       <dependency>
          <groupId>org.switchyard.quickstarts</groupId>
+         <artifactId>switchyard-quickstart-camel-ftp-binding</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.switchyard.quickstarts</groupId>
          <artifactId>switchyard-quickstart-camel-jms-binding</artifactId>
          <version>${project.version}</version>
       </dependency>
@@ -1184,6 +1190,12 @@
          <groupId>org.hamcrest</groupId>
          <artifactId>hamcrest-all</artifactId>
          <version>${version.hamcrest}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.ftpserver</groupId>
+         <artifactId>ftpserver-core</artifactId>
+         <version>${version.ftpserver}</version>
+         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.hibernate</groupId>
