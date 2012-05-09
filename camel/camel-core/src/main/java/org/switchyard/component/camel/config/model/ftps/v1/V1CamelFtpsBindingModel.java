@@ -21,7 +21,6 @@
 package org.switchyard.component.camel.config.model.ftps.v1;
 
 import org.switchyard.component.camel.config.model.QueryString;
-import org.switchyard.component.camel.config.model.ftp.CamelFtpBindingModel;
 import org.switchyard.component.camel.config.model.ftp.v1.V1CamelFtpBindingModel;
 import org.switchyard.component.camel.config.model.ftps.CamelFtpsBindingModel;
 import org.switchyard.config.Configuration;
@@ -74,7 +73,7 @@ public class V1CamelFtpsBindingModel extends V1CamelFtpBindingModel implements
     }
 
     @Override
-    public CamelFtpBindingModel setSecurityProtocol(String protocol) {
+    public V1CamelFtpBindingModel setSecurityProtocol(String protocol) {
         return setConfig(SECURITY_PROTOCOL, protocol);
     }
 
@@ -84,7 +83,7 @@ public class V1CamelFtpsBindingModel extends V1CamelFtpBindingModel implements
     }
 
     @Override
-    public CamelFtpBindingModel setImplict(Boolean implict) {
+    public V1CamelFtpBindingModel setImplict(Boolean implict) {
         return setConfig(IMPLICT, String.valueOf(implict));
     }
 
@@ -94,7 +93,7 @@ public class V1CamelFtpsBindingModel extends V1CamelFtpBindingModel implements
     }
 
     @Override
-    public CamelFtpBindingModel setExecPbsz(Long pbsz) {
+    public V1CamelFtpBindingModel setExecPbsz(Long pbsz) {
         return setConfig(EXEC_PBSZ, String.valueOf(pbsz));
     }
 
@@ -104,7 +103,7 @@ public class V1CamelFtpsBindingModel extends V1CamelFtpBindingModel implements
     }
 
     @Override
-    public CamelFtpBindingModel setExecProt(String prot) {
+    public V1CamelFtpBindingModel setExecProt(String prot) {
         return setConfig(EXEC_PROT, prot);
     }
 
@@ -114,7 +113,7 @@ public class V1CamelFtpsBindingModel extends V1CamelFtpBindingModel implements
     }
 
     @Override
-    public CamelFtpBindingModel setDisableSecureDataChannelDefaults(Boolean disableDefaults) {
+    public V1CamelFtpBindingModel setDisableSecureDataChannelDefaults(Boolean disableDefaults) {
         return setConfig(DISABLE_SECURE_DATA_CHANNEL_DEFAULTS, String.valueOf(disableDefaults));
     }
 

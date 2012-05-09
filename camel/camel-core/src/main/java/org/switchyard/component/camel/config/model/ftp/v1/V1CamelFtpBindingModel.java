@@ -22,7 +22,6 @@ package org.switchyard.component.camel.config.model.ftp.v1;
 
 import org.switchyard.component.camel.config.model.QueryString;
 import org.switchyard.component.camel.config.model.ftp.CamelFtpBindingModel;
-import org.switchyard.component.camel.config.model.remote.CamelRemoteFileBindingModel;
 import org.switchyard.component.camel.config.model.remote.v1.V1CamelRemoteFileBindingModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
@@ -53,7 +52,7 @@ public class V1CamelFtpBindingModel extends V1CamelRemoteFileBindingModel implem
     /**
      * Name of 'soTimeout' element.
      */
-    protected static final String SOCKET_TIMEOUT = "soTimeout";
+    protected static final String SO_TIMEOUT = "soTimeout";
 
     /**
      * Name of 'siteCommand' element.
@@ -69,7 +68,7 @@ public class V1CamelFtpBindingModel extends V1CamelRemoteFileBindingModel implem
     public V1CamelFtpBindingModel(Configuration config, Descriptor descriptor) {
         super(config, descriptor);
 
-        setModelChildrenOrder(PASSIVE_MODE, TIMEOUT, SOCKET_TIMEOUT, SITE_COMMAND);
+        setModelChildrenOrder(PASSIVE_MODE, TIMEOUT, SO_TIMEOUT, SITE_COMMAND);
     }
 
     /**
@@ -94,8 +93,8 @@ public class V1CamelFtpBindingModel extends V1CamelRemoteFileBindingModel implem
     }
 
     @Override
-    public CamelRemoteFileBindingModel setPassiveMode(boolean passive) {
-        return setConfig(PASSIVE_MODE, String.valueOf(passive));
+    public V1CamelFtpBindingModel setPassiveMode(boolean passive) {
+        return setConfig(PASSIVE_MODE, passive);
     }
 
     @Override
@@ -104,18 +103,18 @@ public class V1CamelFtpBindingModel extends V1CamelRemoteFileBindingModel implem
     }
 
     @Override
-    public CamelRemoteFileBindingModel setTimeout(int timeout) {
-        return setConfig(TIMEOUT, String.valueOf(timeout));
+    public V1CamelFtpBindingModel setTimeout(int timeout) {
+        return setConfig(TIMEOUT, timeout);
     }
 
     @Override
-    public Integer getSocketTimeout() {
-        return getIntegerConfig(SOCKET_TIMEOUT);
+    public Integer getSoTimeout() {
+        return getIntegerConfig(SO_TIMEOUT);
     }
 
     @Override
-    public CamelRemoteFileBindingModel setSocketTimeout(int timeout) {
-        return setConfig(SOCKET_TIMEOUT, String.valueOf(timeout));
+    public V1CamelFtpBindingModel setSoTimeout(int timeout) {
+        return setConfig(SO_TIMEOUT, timeout);
     }
 
     @Override
@@ -124,7 +123,7 @@ public class V1CamelFtpBindingModel extends V1CamelRemoteFileBindingModel implem
     }
 
     @Override
-    public CamelRemoteFileBindingModel setSiteCommand(String command) {
+    public V1CamelFtpBindingModel setSiteCommand(String command) {
         return setConfig(SITE_COMMAND, command);
     }
 

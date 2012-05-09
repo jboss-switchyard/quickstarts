@@ -27,8 +27,10 @@ import org.switchyard.component.camel.config.model.OperationSelector;
 import org.switchyard.component.camel.config.model.QueryString;
 import org.switchyard.component.camel.config.model.file.CamelFileBindingModel;
 import org.switchyard.component.camel.config.model.file.CamelFileConsumerBindingModel;
-import org.switchyard.component.camel.config.model.file.CamelFileProducerBindingModel;
-import org.switchyard.component.camel.config.model.v1.V1BaseCamelBindingModel;
+import org.switchyard.component.camel.config.model.generic.GenericFileProducerBindingModel;
+import org.switchyard.component.camel.config.model.generic.v1.V1GenericFileBindingModel;
+import org.switchyard.component.camel.config.model.generic.v1.V1GenericFileProducerBindingModel;
+import org.switchyard.component.camel.config.model.v1.V1CamelScheduledPollConsumer;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 
@@ -38,43 +40,13 @@ import org.switchyard.config.model.Descriptor;
  * @author Daniel Bevenius
  * 
  */
-public class V1CamelFileBindingModel extends V1BaseCamelBindingModel implements
+public class V1CamelFileBindingModel extends V1GenericFileBindingModel implements
         CamelFileBindingModel {
 
     /**
      * The name of this binding type ("binding.file").
      */
     public static final String FILE = "file";
-
-    /**
-     * The name of the 'targetDir' element.
-     */
-    public static final String TARGET_DIR = "targetDir";
-
-    /**
-     * The name of the 'autoCreate' element.
-     */
-    public static final String AUTO_CREATE = "autoCreate";
-
-    /**
-     * The name of the 'bufferSize' element.
-     */
-    public static final String BUFFER_SIZE = "bufferSize";
-
-    /**
-     * The name of the 'fileName' element.
-     */
-    public static final String FILE_NAME = "fileName";
-
-    /**
-     * The name of the 'flatten' element.
-     */
-    public static final String FLATTEN = "flatten";
-
-    /**
-     * The name of the 'charset' element.
-     */
-    public static final String CHARSET = "charset";
 
     /**
      * The name of the 'consume' element.
@@ -94,7 +66,7 @@ public class V1CamelFileBindingModel extends V1BaseCamelBindingModel implements
     /**
      * In charge of parsing out producer options
      */
-    private CamelFileProducerBindingModel _produce;
+    private GenericFileProducerBindingModel _produce;
 
     /**
      * Create a new V1CamelFileBindingModel.
@@ -102,9 +74,7 @@ public class V1CamelFileBindingModel extends V1BaseCamelBindingModel implements
     public V1CamelFileBindingModel() {
         super(FILE);
 
-        setModelChildrenOrder(OperationSelector.OPERATION_SELECTOR, TARGET_DIR,
-                AUTO_CREATE, BUFFER_SIZE, FILE_NAME, FLATTEN, CHARSET, CONSUME,
-                PRODUCE);
+        setModelChildrenOrder(OperationSelector.OPERATION_SELECTOR, CONSUME, PRODUCE);
     }
 
     /**
@@ -118,78 +88,6 @@ public class V1CamelFileBindingModel extends V1BaseCamelBindingModel implements
     public V1CamelFileBindingModel(final Configuration config,
             final Descriptor desc) {
         super(config, desc);
-    }
-
-    /**
-     * Returns the target directory for file endpoints.
-     * 
-     * @return file reference for the target path, or null if no TARGET_DIR
-     *         config was specified.
-     */
-    @Override
-    public String getTargetDir() {
-        return getConfig(TARGET_DIR);
-    }
-
-    @Override
-    public V1CamelFileBindingModel setTargetDir(String targetDir) {
-        setConfig(TARGET_DIR, String.valueOf(targetDir));
-        return this;
-    }
-
-    @Override
-    public Boolean isAutoCreate() {
-        return getBooleanConfig(AUTO_CREATE);
-    }
-
-    @Override
-    public V1CamelFileBindingModel setAutoCreate(Boolean autoCreate) {
-        setConfig(AUTO_CREATE, String.valueOf(autoCreate));
-        return this;
-    }
-
-    @Override
-    public Integer getBufferSize() {
-        return getIntegerConfig(BUFFER_SIZE);
-    }
-
-    @Override
-    public V1CamelFileBindingModel setBufferSize(Integer bufferSize) {
-        setConfig(BUFFER_SIZE, String.valueOf(bufferSize));
-        return this;
-    }
-
-    @Override
-    public String getFileName() {
-        return getConfig(FILE_NAME);
-    }
-
-    @Override
-    public V1CamelFileBindingModel setFileName(String fileName) {
-        setConfig(FILE_NAME, fileName);
-        return this;
-    }
-
-    @Override
-    public Boolean isFlatten() {
-        return getBooleanConfig(FLATTEN);
-    }
-
-    @Override
-    public V1CamelFileBindingModel setFlatten(Boolean flatten) {
-        setConfig(FLATTEN, String.valueOf(flatten));
-        return this;
-    }
-
-    @Override
-    public String getCharset() {
-        return getConfig(CHARSET);
-    }
-
-    @Override
-    public V1CamelFileBindingModel setCharset(String charset) {
-        setConfig(CHARSET, charset);
-        return this;
     }
 
     @Override
@@ -211,17 +109,17 @@ public class V1CamelFileBindingModel extends V1BaseCamelBindingModel implements
             // set an existing config value
             getModelConfiguration().removeChildren(CONSUME);
             getModelConfiguration().addChild(
-                    ((V1CamelFileConsumerBindingModel) consumer)
+                    ((V1CamelScheduledPollConsumer) consumer)
                             .getModelConfiguration());
         } else {
-            setChildModel((V1CamelFileConsumerBindingModel) consumer);
+            setChildModel((V1CamelScheduledPollConsumer) consumer);
         }
         _consume = consumer;
         return this;
     }
 
     @Override
-    public CamelFileProducerBindingModel getProducer() {
+    public GenericFileProducerBindingModel getProducer() {
         if (_produce == null) {
             Configuration config = getModelConfiguration().getFirstChild(
                     PRODUCE);
@@ -233,16 +131,16 @@ public class V1CamelFileBindingModel extends V1BaseCamelBindingModel implements
 
     @Override
     public V1CamelFileBindingModel setProducer(
-            CamelFileProducerBindingModel producer) {
+            GenericFileProducerBindingModel producer) {
         Configuration config = getModelConfiguration().getFirstChild(PRODUCE);
         if (config != null) {
             // set an existing config value
             getModelConfiguration().removeChildren(PRODUCE);
             getModelConfiguration().addChild(
-                    ((V1CamelFileProducerBindingModel) producer)
+                    ((V1GenericFileProducerBindingModel) producer)
                             .getModelConfiguration());
         } else {
-            setChildModel((V1CamelFileProducerBindingModel) producer);
+            setChildModel((V1GenericFileProducerBindingModel) producer);
         }
         _produce = producer;
         return this;
@@ -254,9 +152,9 @@ public class V1CamelFileBindingModel extends V1BaseCamelBindingModel implements
         List<Configuration> children = modelConfiguration.getChildren();
 
         QueryString queryString = new QueryString();
-        traverseConfiguration(children, queryString, TARGET_DIR);
+        traverseConfiguration(children, queryString, DIRECTORY);
 
-        URI newURI = URI.create("file://" + getTargetDir() + queryString);
+        URI newURI = URI.create("file://" + getDirectory() + queryString);
         return newURI;
     }
 

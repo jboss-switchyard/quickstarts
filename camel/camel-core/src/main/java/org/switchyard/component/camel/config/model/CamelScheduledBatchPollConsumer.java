@@ -16,15 +16,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.camel.config.model.file;
-
-import org.switchyard.component.camel.config.model.generic.GenericFileProducerBindingModel;
+package org.switchyard.component.camel.config.model;
 
 /**
- * Represents the configuration settings for a File Producer binding in Camel.
+ * Scheduled batch poll consumer interface. Allows to limit number of elements
+ * in one poll.
  * 
- * @author Mario Antollini
+ * @author Lukasz Dywicki
  */
-public interface CamelFileProducerBindingModel extends GenericFileProducerBindingModel {
+public interface CamelScheduledBatchPollConsumer extends CamelScheduledPollConsumer {
+
+    /**
+     * An integer that defines the maximum number of messages to gather per poll.
+     * 
+     * @return maximum number of messages per poll.
+     */
+    Integer getMaxMessagesPerPoll();
+
+    /**
+     * Specify the maximum number of messages to gather per poll.
+     * 
+     * @param maxMessagesPerPoll the maximum number of messages to gather per poll
+     * @return a reference to this binding model.
+     */
+    CamelScheduledBatchPollConsumer setMaxMessagesPerPoll(Integer maxMessagesPerPoll);
 
 }

@@ -21,8 +21,7 @@
 package org.switchyard.component.camel.config.model.sftp.v1;
 
 import static junit.framework.Assert.assertEquals;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static junit.framework.Assert.assertTrue;
 
 import org.apache.camel.component.file.remote.SftpEndpoint;
 import org.junit.Test;
@@ -39,12 +38,19 @@ public class V1CamelSftpBindingModelTest extends V1BaseCamelModelTest<V1CamelSft
 
     private static final String CAMEL_XML = "switchyard-sftp-binding-beans.xml";
 
+    private static final String CAMEL_URI = "sftp://localhost:9022/test?knownHostsFile=known_hosts"
+        + "&privateKeyFile=my.key&privateKeyFilePassphrase=test";
+
+    private static final String KNOWN_HOSTS = "known_hosts";
+    private static final String PRIVATE_KEY = "my.key";
+    private static final String PRIVATE_KEY_PASSPHRASE = "test";
+
     @Test
     public void validateCamelBindingModelWithBeanElement() throws Exception {
         final V1CamelSftpBindingModel bindingModel = getFirstCamelBinding(CAMEL_XML);
         final Validation validateModel = bindingModel.validateModel();
 
-        assertThat(validateModel.isValid(), is(true));
+        assertTrue(validateModel.isValid());
     }
 
     @Test
@@ -52,8 +58,11 @@ public class V1CamelSftpBindingModelTest extends V1BaseCamelModelTest<V1CamelSft
         CamelSftpBindingModel model = getFirstCamelBinding(CAMEL_XML);
 
         SftpEndpoint endpoint = getEndpoint(model, SftpEndpoint.class);
-        assertEquals(endpoint.getConfiguration().getProtocol(), V1CamelSftpBindingModel.SFTP);
-        assertEquals(endpoint.getEndpointUri().toString(), "sftp://localhost:9022/test?privateKeyFile=my.key");
+        assertEquals(V1CamelSftpBindingModel.SFTP, endpoint.getConfiguration().getProtocol());
+        assertEquals(KNOWN_HOSTS, endpoint.getConfiguration().getKnownHostsFile());
+        assertEquals(PRIVATE_KEY, endpoint.getConfiguration().getPrivateKeyFile());
+        assertEquals(PRIVATE_KEY_PASSPHRASE, endpoint.getConfiguration().getPrivateKeyFilePassphrase());
+        assertEquals(CAMEL_URI, endpoint.getEndpointUri().toString());
     }
 
 }

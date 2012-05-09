@@ -16,15 +16,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.camel.config.model.file;
+package org.switchyard.component.camel.config.model.v1;
 
-import org.switchyard.component.camel.config.model.generic.GenericFileProducerBindingModel;
+import static junit.framework.Assert.assertEquals;
+
+import javax.xml.namespace.QName;
+
+import org.junit.Test;
+import org.switchyard.component.camel.config.model.CamelScheduledBatchPollConsumer;
 
 /**
- * Represents the configuration settings for a File Producer binding in Camel.
+ * Test of scheduled batch poll consumer binding.
  * 
- * @author Mario Antollini
+ * @author Lukasz Dywicki
  */
-public interface CamelFileProducerBindingModel extends GenericFileProducerBindingModel {
+public class CamelScheduledBatchPollConsumerTest {
 
+    private static final Integer MAX_MESSAGES_PER_POLL = 5;
+
+    @Test
+    public void testConfigOverride() {
+        CamelScheduledBatchPollConsumer model = createModel();
+        assertEquals(MAX_MESSAGES_PER_POLL, model.getMaxMessagesPerPoll());
+    }
+
+    private CamelScheduledBatchPollConsumer createModel() {
+        return new V1CamelScheduledBatchPollConsumer(new QName("test"))
+            .setMaxMessagesPerPoll(MAX_MESSAGES_PER_POLL);
+    }
 }

@@ -41,7 +41,7 @@ import org.switchyard.config.model.composite.v1.V1BindingModel;
  * @author Daniel Bevenius
  */
 public abstract class V1BaseCamelBindingModel extends V1BindingModel implements
-        CamelBindingModel {
+    CamelBindingModel {
 
     /**
      * Camel endpoint type.
@@ -119,6 +119,32 @@ public abstract class V1BaseCamelBindingModel extends V1BindingModel implements
         _environment = config;
     }
 
+    protected final void traverseConfiguration(List<Configuration> parent, QueryString queryString,
+        String ... excludes) {
+
+        if (parent.size() != 0) {
+            List<String> excludeParameters = new ArrayList<String>(Arrays.asList(excludes));
+            // automatically remove operation selector parameter
+            excludeParameters.add(OperationSelector.OPERATION_SELECTOR);
+
+            Iterator<Configuration> parentIterator = parent.iterator();
+            while (parentIterator.hasNext()) {
+                Configuration child = parentIterator.next();
+
+                if (child != null && child.getName() != null && excludeParameters.contains(child.getName())) {
+                    continue;
+                }
+
+                if (child != null && child.getChildren().size() == 0) {
+                    queryString.add(child.getName(), child.getValue());
+                } else {
+                    traverseConfiguration(child.getChildren(), queryString, excludes);
+                }
+            }
+        }
+    }
+
+
     protected final Integer getIntegerConfig(String configName) {
         String value = getConfig(configName);
         return value != null ? Integer.parseInt(value) : null;
@@ -164,42 +190,18 @@ public abstract class V1BaseCamelBindingModel extends V1BindingModel implements
         return null;
     }
 
-    protected final <X extends CamelBindingModel> X setConfig(String name, String value) {
+    protected <X extends V1BaseCamelBindingModel> X setConfig(String name, Object value) {
+        String modelValue = String.valueOf(value);
         Configuration config = getModelConfiguration().getFirstChild(name);
         if (config != null) {
             // set an existing config value
-            config.setValue(value);
+            config.setValue(modelValue);
         } else {
             // create the config model and set the value
             NameValueModel model = new NameValueModel(name);
-            model.setValue(value);
+            model.setValue(modelValue);
             setChildModel(model);
         }
         return (X) this;
-    }
-
-    protected final void traverseConfiguration(List<Configuration> parent, QueryString queryString,
-        String ... excludes) {
-
-        if (parent.size() != 0) {
-            List<String> excludeParameters = new ArrayList<String>(Arrays.asList(excludes));
-            // automatically remove operation selector parameter
-            excludeParameters.add(OperationSelector.OPERATION_SELECTOR);
-
-            Iterator<Configuration> parentIterator = parent.iterator();
-            while (parentIterator.hasNext()) {
-                Configuration child = parentIterator.next();
-
-                if (child != null && child.getName() != null && excludeParameters.contains(child.getName())) {
-                    continue;
-                }
-
-                if (child != null && child.getChildren().size() == 0) {
-                    queryString.add(child.getName(), child.getValue());
-                } else {
-                    traverseConfiguration(child.getChildren(), queryString, excludes);
-                }
-            }
-        }
     }
 }

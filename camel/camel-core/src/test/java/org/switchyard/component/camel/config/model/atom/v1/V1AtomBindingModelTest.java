@@ -31,9 +31,12 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.component.camel.config.model.OperationSelector;
+import org.switchyard.component.camel.config.model.CamelScheduledPollConsumer;
 import org.switchyard.component.camel.config.model.atom.AtomBindingModel;
 import org.switchyard.component.camel.config.model.v1.V1BaseCamelModelTest;
+import org.switchyard.component.camel.config.model.v1.V1CamelScheduledPollConsumer;
 import org.switchyard.component.camel.config.model.v1.V1OperationSelector;
+import org.switchyard.config.model.Validation;
 
 /**
  * Test of atom binding model.
@@ -43,14 +46,15 @@ public class V1AtomBindingModelTest extends V1BaseCamelModelTest<V1AtomBindingMo
     private static final String ATOM_XML = "switchyard-atom-binding.xml";
 
     private static final String ATOM_URI = 
-        "atom://file:///dev/null?consumer.delay=15000&feedHeader=true&filter=true"
-        + "&consumer.userFixedDelay=true&consumer.initialDelay=20000&lastUpdate=2011-01-01T12:00:00"
-        + "&sortEntries=true&splitEntries=true&throttleEntries=true";
+        "atom://file:///dev/null?feedHeader=true&filter=true&lastUpdate=2011-01-01T12:00:00"
+        + "&sortEntries=true&splitEntries=true&throttleEntries=true"
+        + "&delay=15000&initialDelay=20000&useFixedDelay=true";
 
     private Date referenceDate;
     private static final URI FEED_URI = URI.create("file:///dev/null");
     private static final Integer INITIAL_DELAY = new Integer(20000);
     private static final Integer DELAY = new Integer(15000);
+    private static final Boolean USE_FIXED_DELAY = true;
 
     @Before
     public void setUp() throws Exception {
@@ -66,20 +70,13 @@ public class V1AtomBindingModelTest extends V1BaseCamelModelTest<V1AtomBindingMo
     }
 
     @Test
-    public void testConfigOverride() {
-        // set a value on an existing config element
-        AtomBindingModel atomModel = createAtomModel();
-        assertEquals(DELAY, atomModel.getDelay());
-        atomModel.setDelay(750);
-        assertEquals(new Integer(750), atomModel.getDelay());
-    }
-
-    @Test
     public void testReadConfig() throws Exception {
         AtomBindingModel atomModel = getFirstCamelModelBinding(ATOM_XML);
-        atomModel.assertModelValid();
+        final Validation validateModel = atomModel.validateModel();
+
+        assertTrue(validateModel.isValid());
         assertEquals(atomModel.getFeedURI(), FEED_URI);
-        assertEquals(atomModel.getDelay(), DELAY);
+        assertEquals(atomModel.getConsumer().getDelay(), DELAY);
         assertEquals(atomModel.isFiltered(), Boolean.TRUE);
     }
 
@@ -114,30 +111,32 @@ public class V1AtomBindingModelTest extends V1BaseCamelModelTest<V1AtomBindingMo
 
     private void assertDefaults(AtomBindingModel atomModel) {
         assertEquals(FEED_URI, atomModel.getFeedURI());
-        assertEquals(DELAY, atomModel.getDelay());
-        assertEquals(INITIAL_DELAY, atomModel.getInitialDelay());
+        assertEquals(DELAY, atomModel.getConsumer().getDelay());
+        assertEquals(INITIAL_DELAY, atomModel.getConsumer().getInitialDelay());
         assertEquals(referenceDate.toString(), atomModel.getLastUpdate().toString());
         assertEquals(Boolean.TRUE, atomModel.isFeedHeader());
         assertEquals(Boolean.TRUE, atomModel.isFiltered());
-        assertEquals(Boolean.TRUE, atomModel.isFixedDelay());
+        assertEquals(Boolean.TRUE, atomModel.getConsumer().isUseFixedDelay());
         assertEquals(Boolean.TRUE, atomModel.isSorted());
         assertEquals(Boolean.TRUE, atomModel.isSplit());
         assertEquals(Boolean.TRUE, atomModel.isThrottled());
     }
 
-    private AtomBindingModel createAtomModel() {
-        AtomBindingModel abm = new V1AtomBindingModel()
-            .setDelay(5)
+    private V1AtomBindingModel createAtomModel() {
+        V1AtomBindingModel abm = new V1AtomBindingModel()
             .setFeedHeader(true)
             .setFeedURI(FEED_URI)
-            .setFixedDelay(true)
             .setFiltered(true)
-            .setInitialDelay(INITIAL_DELAY)
-            .setDelay(DELAY)
             .setLastUpdate(referenceDate)
             .setSorted(true)
             .setSplit(true)
             .setThrottled(true);
+
+        CamelScheduledPollConsumer consumer = new V1CamelScheduledPollConsumer(V1AtomBindingModel.CONSUME)
+            .setDelay(15000)
+            .setInitialDelay(20000)
+            .setUseFixedDelay(true);
+        abm.setConsumer(consumer);
         OperationSelector os = new V1OperationSelector();
         os.setOperationName("print");
         abm.setOperationSelector(os);

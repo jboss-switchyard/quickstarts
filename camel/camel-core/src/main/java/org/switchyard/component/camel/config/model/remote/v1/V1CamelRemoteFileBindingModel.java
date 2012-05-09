@@ -26,9 +26,10 @@ import java.util.List;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator;
 import org.switchyard.component.camel.config.model.QueryString;
+import org.switchyard.component.camel.config.model.generic.v1.V1GenericFileBindingModel;
 import org.switchyard.component.camel.config.model.remote.CamelRemoteFileBindingModel;
 import org.switchyard.component.camel.config.model.remote.CamelRemoteFileConsumerBindingModel;
-import org.switchyard.component.camel.config.model.v1.V1BaseCamelBindingModel;
+import org.switchyard.component.camel.config.model.remote.CamelRemoteFileProducerBindingModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 
@@ -37,68 +38,93 @@ import org.switchyard.config.model.Descriptor;
  * 
  * @author Lukasz Dywicki
  */
-public abstract class V1CamelRemoteFileBindingModel extends V1BaseCamelBindingModel
+public abstract class V1CamelRemoteFileBindingModel extends V1GenericFileBindingModel
     implements CamelRemoteFileBindingModel {
 
     /**
      * Name of 'directory' element.
      */
-    protected static final String DIRECTORY = "directory";
-
-    /**
-     * Name of 'username' element.
-     */
-    protected static final String USERNAME = "username";
+    private static final String DIRECTORY = "directory";
 
     /**
      * Name of 'host' element.
      */
-    protected static final String HOST = "host";
+    private static final String HOST = "host";
 
     /**
      * Name of 'port' element.
      */
-    protected static final String PORT = "port";
+    private static final String PORT = "port";
+
+    /**
+     * Name of 'username' element.
+     */
+    private static final String USERNAME = "username";
 
     /**
      * Name of 'password' element.
      */
-    protected static final String PASSWORD = "password";
+    private static final String PASSWORD = "password";
 
     /**
      * Name of 'binary' element.
      */
-    protected static final String BINARY = "binary";
+    private static final String BINARY = "binary";
 
     /**
      * Name of 'connectTimeout' element.
      */
-    protected static final String CONNECTION_TIMEOUT = "connectTimeout";
+    private static final String CONNECTION_TIMEOUT = "connectTimeout";
 
     /**
      * Name of 'throwExceptionOnConnectFailed' element.
      */
-    protected static final String THROW_EXCEPTION_ON_CONNECTION_FAILED = "throwExceptionOnConnectFailed";
+    private static final String THROW_EXCEPTION_ON_CONNECT_FAILED = "throwExceptionOnConnectFailed";
 
     /**
      * Name of 'stepwise' element.
      */
-    protected static final String STEPWISE = "stepwise";
+    private static final String STEPWISE = "stepwise";
 
     /**
      * Name of 'separator' element.
      */
-    protected static final String SEPARATOR = "separator";
+    private static final String SEPARATOR = "separator";
+
+    /**
+     * Name of 'separator' element.
+     */
+    private static final String RECONNECT_DELAY = "reconnectDelay";
+
+    /**
+     * Name of 'separator' element.
+     */
+    private static final String MAXIMUM_RECONNECT_ATTEMPTS = "maximumReconnectAttempts";
+
+    /**
+     * Name of 'separator' element.
+     */
+    private static final String DISCONNECT = "disconnect";
 
     /**
      * Name of 'consume' element.
      */
-    protected static final String CONSUME = "consume";
+    public static final String CONSUME = "consume";
+
+    /**
+     * Name of 'produce' element.
+     */
+    public static final String PRODUCE = "produce";
 
     /**
      * Remote file consumer.
      */
     private CamelRemoteFileConsumerBindingModel _consume;
+
+    /**
+     * Remote file producer.
+     */
+    private CamelRemoteFileProducerBindingModel _produce;
 
     /**
      * Create a CamelRemoteBindingModel from the specified configuration and descriptor.
@@ -119,9 +145,9 @@ public abstract class V1CamelRemoteFileBindingModel extends V1BaseCamelBindingMo
         super(protocol);
 
         setModelChildrenOrder(
-            USERNAME, HOST, PORT, DIRECTORY, PASSWORD, BINARY,
-            CONNECTION_TIMEOUT, THROW_EXCEPTION_ON_CONNECTION_FAILED,
-            STEPWISE, SEPARATOR, CONSUME
+            HOST, PORT, USERNAME, PASSWORD, BINARY, CONNECTION_TIMEOUT,
+            THROW_EXCEPTION_ON_CONNECT_FAILED, STEPWISE, SEPARATOR, RECONNECT_DELAY,
+            MAXIMUM_RECONNECT_ATTEMPTS, DISCONNECT, CONSUME, PRODUCE
         );
     }
 
@@ -131,7 +157,7 @@ public abstract class V1CamelRemoteFileBindingModel extends V1BaseCamelBindingMo
     }
 
     @Override
-    public CamelRemoteFileBindingModel setUsername(String username) {
+    public V1CamelRemoteFileBindingModel setUsername(String username) {
         return setConfig(USERNAME, username);
     }
 
@@ -141,7 +167,7 @@ public abstract class V1CamelRemoteFileBindingModel extends V1BaseCamelBindingMo
     }
 
     @Override
-    public CamelRemoteFileBindingModel setHost(String host) {
+    public V1CamelRemoteFileBindingModel setHost(String host) {
         return setConfig(HOST, host);
     }
 
@@ -151,8 +177,8 @@ public abstract class V1CamelRemoteFileBindingModel extends V1BaseCamelBindingMo
     }
 
     @Override
-    public CamelRemoteFileBindingModel setPort(int port) {
-        return setConfig(PORT, String.valueOf(port));
+    public V1CamelRemoteFileBindingModel setPort(int port) {
+        return setConfig(PORT, (port));
     }
 
     @Override
@@ -161,7 +187,7 @@ public abstract class V1CamelRemoteFileBindingModel extends V1BaseCamelBindingMo
     }
 
     @Override
-    public CamelRemoteFileBindingModel setDirectory(String directory) {
+    public V1CamelRemoteFileBindingModel setDirectory(String directory) {
         return setConfig(DIRECTORY, directory);
     }
 
@@ -171,7 +197,7 @@ public abstract class V1CamelRemoteFileBindingModel extends V1BaseCamelBindingMo
     }
 
     @Override
-    public CamelRemoteFileBindingModel setPassword(String password) {
+    public V1CamelRemoteFileBindingModel setPassword(String password) {
         return setConfig(PASSWORD, password);
     }
 
@@ -181,8 +207,8 @@ public abstract class V1CamelRemoteFileBindingModel extends V1BaseCamelBindingMo
     }
 
     @Override
-    public CamelRemoteFileBindingModel setBinary(boolean binary) {
-        return setConfig(BINARY, String.valueOf(binary));
+    public V1CamelRemoteFileBindingModel setBinary(boolean binary) {
+        return setConfig(BINARY, binary);
     }
 
     @Override
@@ -191,18 +217,18 @@ public abstract class V1CamelRemoteFileBindingModel extends V1BaseCamelBindingMo
     }
 
     @Override
-    public CamelRemoteFileBindingModel setConnectionTimeout(int timeout) {
-        return setConfig(CONNECTION_TIMEOUT, String.valueOf(timeout));
+    public V1CamelRemoteFileBindingModel setConnectionTimeout(int timeout) {
+        return setConfig(CONNECTION_TIMEOUT, timeout);
     }
 
     @Override
-    public Boolean isThrowExceptionOnConnectionFailed() {
-        return getBooleanConfig(THROW_EXCEPTION_ON_CONNECTION_FAILED);
+    public Boolean isThrowExceptionOnConnectFailed() {
+        return getBooleanConfig(THROW_EXCEPTION_ON_CONNECT_FAILED);
     }
 
     @Override
-    public CamelRemoteFileBindingModel setThrowExceptionOnConnectionFailed(boolean throwException) {
-        return setConfig(THROW_EXCEPTION_ON_CONNECTION_FAILED, String.valueOf(throwException));
+    public V1CamelRemoteFileBindingModel setThrowExceptionOnConnectFailed(boolean throwException) {
+        return setConfig(THROW_EXCEPTION_ON_CONNECT_FAILED, throwException);
     }
 
     @Override
@@ -211,8 +237,8 @@ public abstract class V1CamelRemoteFileBindingModel extends V1BaseCamelBindingMo
     }
 
     @Override
-    public CamelRemoteFileBindingModel setStepwise(boolean stepwise) {
-        return setConfig(STEPWISE, String.valueOf(stepwise));
+    public V1CamelRemoteFileBindingModel setStepwise(boolean stepwise) {
+        return setConfig(STEPWISE, stepwise);
     }
 
     @Override
@@ -221,9 +247,40 @@ public abstract class V1CamelRemoteFileBindingModel extends V1BaseCamelBindingMo
     }
 
     @Override
-    public CamelRemoteFileBindingModel setSeparator(String separator) {
+    public V1CamelRemoteFileBindingModel setSeparator(String separator) {
         return setConfig(SEPARATOR, separator);
     }
+
+    @Override
+    public Integer getMaximumReconnectAttempts() {
+        return getIntegerConfig(MAXIMUM_RECONNECT_ATTEMPTS);
+    }
+
+    @Override
+    public V1CamelRemoteFileBindingModel setMaximumReconnectAttempts(Integer maximumReconnectAttempts) {
+        return setConfig(MAXIMUM_RECONNECT_ATTEMPTS, maximumReconnectAttempts);
+    }
+
+    @Override
+    public Integer getReconnectDelay() {
+        return getIntegerConfig(RECONNECT_DELAY);
+    }
+
+    @Override
+    public V1CamelRemoteFileBindingModel setReconnectDelay(Integer reconnectDelay) {
+        return setConfig(RECONNECT_DELAY, reconnectDelay);
+    }
+
+    @Override
+    public Boolean getDisconnect() {
+        return getBooleanConfig(DISCONNECT);
+    }
+
+    @Override
+    public V1CamelRemoteFileBindingModel setDisconnect(Boolean disconnect) {
+        return setConfig(DISCONNECT, disconnect);
+    }
+
     @Override
     public CamelRemoteFileConsumerBindingModel getConsumer() {
         if (_consume == null) {
@@ -250,17 +307,50 @@ public abstract class V1CamelRemoteFileBindingModel extends V1BaseCamelBindingMo
     }
 
     @Override
+    public CamelRemoteFileProducerBindingModel getProducer() {
+        if (_produce == null) {
+            Configuration config = getModelConfiguration().getFirstChild(PRODUCE);
+            _produce = new V1CamelRemoteFileProducerBindingModel(config,
+                getModelDescriptor());
+        }
+        return _produce;
+    }
+
+    @Override
+    public V1CamelRemoteFileBindingModel setProducer(CamelRemoteFileProducerBindingModel producer) {
+        Configuration config = getModelConfiguration().getFirstChild(PRODUCE);
+        if (config != null) {
+            // set an existing config value
+            getModelConfiguration().removeChildren(PRODUCE);
+            getModelConfiguration().addChild(((V1CamelRemoteFileProducerBindingModel) producer)
+                .getModelConfiguration());
+        } else {
+            setChildModel((V1CamelRemoteFileProducerBindingModel) producer);
+        }
+        _produce = producer;
+        return this;
+    }
+
+    @Override
     public URI getComponentURI() {
         Configuration modelConfiguration = getModelConfiguration();
         List<Configuration> children = modelConfiguration.getChildren();
 
-        String username = getUsername() != null ? getUsername() + "@" : "";
+        String username = "";
+        if (getUsername() != null && getPassword() != null) {
+            username = getUsername() + ":" + getPassword() + "@";
+        } else if (getUsername() != null && getPassword() == null) {
+            username = getUsername() + "@";
+        } else if (getUsername() == null && getPassword() != null) {
+            throw new IllegalArgumentException("Configuration provides password but do not specify user");
+        }
+
         String baseUri = getEndpointProtocol() + "://" + username + getHost();
         baseUri += getPort() != null ? ":" + getPort() : "";
         baseUri += getDirectory() != null ? "/" + getDirectory() : "";
 
         QueryString queryStr = new QueryString();
-        traverseConfiguration(children, queryStr, HOST, PORT, USERNAME, DIRECTORY);
+        traverseConfiguration(children, queryStr, HOST, PORT, USERNAME, PASSWORD, DIRECTORY);
 
         return URI.create(baseUri + queryStr.toString());
     }

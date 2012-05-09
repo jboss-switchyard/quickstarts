@@ -21,6 +21,7 @@
 package org.switchyard.component.camel.config.model.file.v1;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 import java.io.File;
 
@@ -30,7 +31,7 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.component.camel.config.model.file.CamelFileBindingModel;
-import org.switchyard.component.camel.config.model.file.CamelFileProducerBindingModel;
+import org.switchyard.component.camel.config.model.generic.GenericFileProducerBindingModel;
 import org.switchyard.component.camel.config.model.v1.V1BaseCamelModelTest;
 import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
 import org.switchyard.config.model.Validation;
@@ -44,7 +45,7 @@ public class V1CamelFileProducerBindingModelTest extends V1BaseCamelModelTest<V1
 
     private static final String CAMEL_XML = "switchyard-file-binding-producer-beans.xml";
 
-    private static final String TARGET_DIR = "/input/directory";
+    private static final String DIRECTORY = "/input/directory";
     private static final Boolean AUTO_CREATE = Boolean.FALSE;
     private static final String FILE_EXIST = "Override";
     private static final String TEMP_PREFIX = "prefix_";
@@ -79,17 +80,18 @@ public class V1CamelFileProducerBindingModelTest extends V1BaseCamelModelTest<V1
         final V1CamelFileBindingModel bindingModel = getFirstCamelBinding(CAMEL_XML);
         final Validation validateModel = bindingModel.validateModel();
         //Valid Model?
-        assertEquals(validateModel.isValid(), true);
+        validateModel.assertValid();
+        assertTrue(validateModel.isValid());
         //Camel
-        assertEquals(bindingModel.getTargetDir(), TARGET_DIR);
-        assertEquals(bindingModel.isAutoCreate(), AUTO_CREATE);
+        assertEquals(DIRECTORY, bindingModel.getDirectory());
+        assertEquals(AUTO_CREATE, bindingModel.isAutoCreate());
         //Camel File Producer
-        assertEquals(bindingModel.getProducer().getFileExist(), FILE_EXIST);
-        assertEquals(bindingModel.getProducer().getTempPrefix(), TEMP_PREFIX);
-        assertEquals(bindingModel.getProducer().isKeepLastModified(), KEEP_LAST_MODIFIED);
-        assertEquals(bindingModel.getProducer().isEagerDeleteTargetFile(), EAGER_DELETE_TARGET_FLE);
-        assertEquals(bindingModel.getProducer().getDoneFileName(), DONE_FILENAME);
-        assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
+        assertEquals(FILE_EXIST, bindingModel.getProducer().getFileExist());
+        assertEquals(TEMP_PREFIX, bindingModel.getProducer().getTempPrefix());
+        assertEquals(KEEP_LAST_MODIFIED, bindingModel.getProducer().isKeepLastModified());
+        assertEquals(EAGER_DELETE_TARGET_FLE, bindingModel.getProducer().isEagerDeleteTargetFile());
+        assertEquals(DONE_FILENAME, bindingModel.getProducer().getDoneFileName());
+        assertEquals(CAMEL_URI, bindingModel.getComponentURI().toString());
     }
 
     /**
@@ -116,23 +118,22 @@ public class V1CamelFileProducerBindingModelTest extends V1BaseCamelModelTest<V1
         CamelFileBindingModel model = createFileProducerModel();
         FileEndpoint endpoint = getEndpoint(model, FileEndpoint.class);
         //assertEquals(endpoint.getId(), OPERATION_NAME); //No way to get the operation name
-        assertEquals(endpoint.getConfiguration().getDirectory(), 
-                TARGET_DIR.replace("/", File.separator));
-        assertEquals(endpoint.isAutoCreate(), AUTO_CREATE.booleanValue());
-        assertEquals(endpoint.getFileExist().toString(), FILE_EXIST.toString());
-        assertEquals(endpoint.getTempPrefix(), TEMP_PREFIX);
-        assertEquals(endpoint.isKeepLastModified(), KEEP_LAST_MODIFIED.booleanValue());
-        assertEquals(endpoint.isEagerDeleteTargetFile(), EAGER_DELETE_TARGET_FLE.booleanValue());
-        assertEquals(endpoint.getDoneFileName(), DONE_FILENAME);
-        assertEquals(endpoint.getEndpointUri().toString(), CAMEL_ENDPOINT_URI);
+        assertEquals(DIRECTORY.replace("/", File.separator), endpoint.getConfiguration().getDirectory());
+        assertEquals(AUTO_CREATE.booleanValue(), endpoint.isAutoCreate());
+        assertEquals(FILE_EXIST.toString(), endpoint.getFileExist().toString());
+        assertEquals(TEMP_PREFIX, endpoint.getTempPrefix());
+        assertEquals(KEEP_LAST_MODIFIED.booleanValue(), endpoint.isKeepLastModified());
+        assertEquals(EAGER_DELETE_TARGET_FLE.booleanValue(), endpoint.isEagerDeleteTargetFile());
+        assertEquals(DONE_FILENAME, endpoint.getDoneFileName());
+        assertEquals(CAMEL_ENDPOINT_URI, endpoint.getEndpointUri().toString());
     }
-    
-    private CamelFileBindingModel createFileProducerModel() {
-        V1CamelFileBindingModel fileModel = new V1CamelFileBindingModel()
-            .setAutoCreate(AUTO_CREATE)
-            .setTargetDir(TARGET_DIR);
 
-        CamelFileProducerBindingModel producer = new V1CamelFileProducerBindingModel()
+    private CamelFileBindingModel createFileProducerModel() {
+        V1CamelFileBindingModel fileModel = (V1CamelFileBindingModel) new V1CamelFileBindingModel()
+            .setAutoCreate(AUTO_CREATE)
+            .setDirectory(DIRECTORY);
+
+        GenericFileProducerBindingModel producer = new V1CamelFileProducerBindingModel()
             .setFileExist(FILE_EXIST)
             .setTempPrefix(TEMP_PREFIX)
             .setKeepLastModified(KEEP_LAST_MODIFIED)

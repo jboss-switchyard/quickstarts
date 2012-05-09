@@ -21,10 +21,12 @@
         <sca:service name="camelTest" promote="SimpleCamelService">
             <camel:binding.sftp>
                 <camel:operationSelector operationName="print"/>
+                <camel:directory>test</camel:directory>
                 <camel:host>localhost</camel:host>
                 <camel:port>9022</camel:port>
-                <camel:directory>test</camel:directory>
+                <camel:knownHostsFile>known_hosts</camel:knownHostsFile>
                 <camel:privateKeyFile>my.key</camel:privateKeyFile>
+                <camel:privateKeyFilePassphrase>test</camel:privateKeyFilePassphrase>
             </camel:binding.sftp>
         </sca:service>
     </sca:composite>

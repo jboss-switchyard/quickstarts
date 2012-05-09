@@ -64,7 +64,7 @@ public interface CamelFtpBindingModel extends CamelRemoteFileBindingModel {
      * 
      * @return Socket timeout (in milliseconds).
      */
-    Integer getSocketTimeout();
+    Integer getSoTimeout();
 
     /**
      * Sets socket timeout.
@@ -72,7 +72,7 @@ public interface CamelFtpBindingModel extends CamelRemoteFileBindingModel {
      * @param timeout Timeout (in milliseconds).
      * @return a reference to this binding model
      */
-    CamelRemoteFileBindingModel setSocketTimeout(int timeout);
+    CamelRemoteFileBindingModel setSoTimeout(int timeout);
 
     /**
      * Gets site command.

@@ -35,6 +35,7 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 
 /**
@@ -59,7 +60,7 @@ public class V1CamelModelMarshaller extends BaseMarshaller {
     public Model read(final Configuration config) {
         String name = config.getName();
 
-        if (name.startsWith(V1CamelFileBindingModel.BINDING)) {
+        if (name.startsWith(BindingModel.BINDING)) {
 
             if (name.endsWith(V1CamelFileBindingModel.FILE)) {
                 return new V1CamelFileBindingModel(config, getDescriptor());

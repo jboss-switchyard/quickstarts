@@ -21,14 +21,14 @@
 package org.switchyard.component.camel.config.model.remote;
 
 import org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator;
-import org.switchyard.component.camel.config.model.CamelBindingModel;
+import org.switchyard.component.camel.config.model.generic.GenericFileBindingModel;
 
 /**
  * Remote file endpoint configuration.
  * 
  * @author Lukasz Dywicki
  */
-public interface CamelRemoteFileBindingModel extends CamelBindingModel {
+public interface CamelRemoteFileBindingModel extends GenericFileBindingModel {
 
     /**
      * Gets host name / ip.
@@ -59,21 +59,6 @@ public interface CamelRemoteFileBindingModel extends CamelBindingModel {
      * @return a reference to this binding model
      */
     CamelRemoteFileBindingModel setPort(int port);
-
-    /**
-     * Gets directory to poll.
-     * 
-     * @return Directory name.
-     */
-    String getDirectory();
-
-    /**
-     * Sets durectory to poll.
-     * 
-     * @param directory Directory name.
-     * @return a reference to this binding model
-     */
-    CamelRemoteFileBindingModel setDirectory(String directory);
 
     /**
      * Gets user name.
@@ -140,7 +125,7 @@ public interface CamelRemoteFileBindingModel extends CamelBindingModel {
      * 
      * @return Throw exception if value is set to true. Skip otherwise.
      */
-    Boolean isThrowExceptionOnConnectionFailed();
+    Boolean isThrowExceptionOnConnectFailed();
 
     /**
      * Sets endpoint behavior during connection problems.
@@ -148,7 +133,7 @@ public interface CamelRemoteFileBindingModel extends CamelBindingModel {
      * @param throwException Throw exception when connection is failed.
      * @return a reference to this binding model
      */
-    CamelRemoteFileBindingModel setThrowExceptionOnConnectionFailed(boolean throwException);
+    CamelRemoteFileBindingModel setThrowExceptionOnConnectFailed(boolean throwException);
 
     /**
      * Gets stepwise flag value.
@@ -185,6 +170,54 @@ public interface CamelRemoteFileBindingModel extends CamelBindingModel {
      */
     CamelRemoteFileBindingModel setSeparator(String separator);
 
+    /**
+     * Specifies the maximum reconnect attempts Camel performs when it tries to
+     * connect to the remote server. Use 0 to disable this behavior.
+     * 
+     * @return Number of maximum reconnect attempts.
+     */
+    Integer getMaximumReconnectAttempts();
+
+    /**
+     * Sets number of reconnect attempts. By default it is 3.
+     * 
+     * @param maximumReconnectAttempts Number of attempts. 0 to do not try again.
+     * @return a reference to this binding model.
+     */
+    CamelRemoteFileBindingModel setMaximumReconnectAttempts(Integer maximumReconnectAttempts);
+
+    /**
+     * Delay in millis Camel will wait before performing a reconnect attempt.
+     * 
+     * @return delay between reconnect attempts.
+     */
+    Integer getReconnectDelay();
+
+    /**
+     * Specifies delay in milliseconds between reconnect attempts.
+     * 
+     * @param reconnectDelay Delay.
+     * @return a reference to this binding model.
+     */
+    CamelRemoteFileBindingModel setReconnectDelay(Integer reconnectDelay);
+
+    /**
+     * Whether or not to disconnect from remote FTP server right after use. 
+     * Can be used for both consumer and producer. Disconnect will only disconnect
+     * the current connection to the FTP server. If you have a consumer which you want to stop,
+     * then you need to stop the consumer/route instead.
+     * 
+     * @return Should producer/consumer be disconnected every time.
+     */
+    Boolean getDisconnect();
+
+    /**
+     * Specifies if producer/consumer should close connection after operation.
+     * 
+     * @param disconnect Should connection be closed after operation?
+     * @return a reference to this binding model.
+     */
+    CamelRemoteFileBindingModel setDisconnect(Boolean disconnect);
 
     /**
      * The consumer's configurations.
@@ -202,11 +235,18 @@ public interface CamelRemoteFileBindingModel extends CamelBindingModel {
     public CamelRemoteFileBindingModel setConsumer(CamelRemoteFileConsumerBindingModel consumer);
 
     /**
-     * Specifies the maximum reconnect attempts Camel performs when it tries to connect to the remote FTP server. Use 0 to disable this behavior.
+     * The producer's configurations.
+     * 
+     * @return an instance of the camel remote file producer binding model
      */
-//    maximumReconnectAttempts
+    public CamelRemoteFileProducerBindingModel getProducer();
+
     /**
-     * Delay in millis Camel will wait before performing a reconnect attempt.
+     * Specify the producer binding model. 
+     * 
+     * @param producer The producer binding model
+     * @return a reference to this binding model
      */
-//    reconnectDelay
+    public CamelRemoteFileBindingModel setProducer(CamelRemoteFileProducerBindingModel producer);
+
 }

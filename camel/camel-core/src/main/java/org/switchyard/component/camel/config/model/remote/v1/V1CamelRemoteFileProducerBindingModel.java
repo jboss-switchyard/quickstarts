@@ -22,34 +22,36 @@ package org.switchyard.component.camel.config.model.remote.v1;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.component.camel.config.model.generic.v1.V1GenericFileConsumerBindingModel;
-import org.switchyard.component.camel.config.model.remote.CamelRemoteFileConsumerBindingModel;
+import org.switchyard.component.camel.config.model.generic.v1.V1GenericFileProducerBindingModel;
+import org.switchyard.component.camel.config.model.remote.CamelRemoteFileProducerBindingModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 
 /**
- * Consumer binding model for remote file.
+ * Binding model for remote producers.
  * 
  * @author Lukasz Dywicki
  */
-public class V1CamelRemoteFileConsumerBindingModel extends V1GenericFileConsumerBindingModel
-    implements CamelRemoteFileConsumerBindingModel {
+public class V1CamelRemoteFileProducerBindingModel extends V1GenericFileProducerBindingModel
+    implements CamelRemoteFileProducerBindingModel {
 
     /**
-     * Creates consumer binding model.
+     * Create a binding model bound to given namespace.
      * 
-     * @param config Configuration.
-     * @param desc Descriptor.
+     * @param qname Namespace.
      */
-    public V1CamelRemoteFileConsumerBindingModel(Configuration config, Descriptor desc) {
-        super(config, desc);
+    public V1CamelRemoteFileProducerBindingModel(QName qname) {
+        super(qname);
     }
 
     /**
-     * Creates new remote file consumer binding.
+     * Create a binding model from the specified configuration and descriptor.
+     * 
+     * @param config The switchyard configuration instance.
+     * @param desc The switchyard descriptor instance.
      */
-    public V1CamelRemoteFileConsumerBindingModel() {
-        super(new QName(V1CamelRemoteFileBindingModel.CONSUME));
+    public V1CamelRemoteFileProducerBindingModel(Configuration config, Descriptor desc) {
+        super(config, desc);
     }
 
 }

@@ -21,8 +21,23 @@
         <sca:service name="camelTest" promote="SimpleCamelService">
             <camel:binding.ftp>
                 <camel:operationSelector operationName="print"/>
-                <camel:host>localhost</camel:host>
                 <camel:directory>test</camel:directory>
+                <camel:host>localhost</camel:host>
+                <camel:port>203</camel:port>
+                <camel:username>camel</camel:username>
+                <camel:password>secret</camel:password>
+                <camel:binary>true</camel:binary>
+                <camel:connectTimeout>10</camel:connectTimeout>
+                <camel:disconnect>true</camel:disconnect>
+                <camel:maximumReconnectAttempts>10</camel:maximumReconnectAttempts>
+                <camel:reconnectDelay>10</camel:reconnectDelay>
+                <camel:separator>UNIX</camel:separator>
+                <camel:stepwise>true</camel:stepwise>
+                <camel:throwExceptionOnConnectFailed>true</camel:throwExceptionOnConnectFailed>
+                <camel:passiveMode>true</camel:passiveMode>
+                <camel:timeout>10</camel:timeout>
+                <camel:soTimeout>10</camel:soTimeout>
+                <camel:siteCommand>PWD</camel:siteCommand>
             </camel:binding.ftp>
         </sca:service>
     </sca:composite>

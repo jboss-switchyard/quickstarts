@@ -31,14 +31,21 @@ MA  02110-1301, USA.
     <import namespace="http://www.springframework.org/schema/beans"/>
     <import namespace="http://camel.apache.org/schema/spring"/>
 
+    <complexType name="BaseCamelBinding">
+        <complexContent>
+            <extension base="swyd:SwitchYardBindingType">
+             <sequence>
+                 <element name="operationSelector" type="camel:CamelOperationSelectorType" minOccurs="0" maxOccurs="1"/>
+             </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <!-- camel:binding.xxx -->
     <element name="binding.camel" type="camel:CamelBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelBindingType">
         <complexContent>
-            <extension base="swyd:SwitchYardBindingType">
-                <sequence>
-                    <element name="operationSelector" type="camel:CamelOperationSelectorType" minOccurs="0" maxOccurs="1"/>
-                </sequence>
+            <extension base="camel:BaseCamelBinding">
                 <attribute name="configURI" type="anyURI"/>
             </extension>
         </complexContent>
@@ -47,15 +54,8 @@ MA  02110-1301, USA.
     <element name="binding.file" type="camel:CamelFileBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelFileBindingType" >
         <complexContent>
-            <extension base="swyd:SwitchYardBindingType">
+            <extension base="camel:GenericFileBindingType">
                 <sequence>
-                    <element name="operationSelector" type="camel:CamelOperationSelectorType"/>
-                    <element name="targetDir" type="string"/>
-                    <element name="autoCreate" type="boolean" minOccurs="0" maxOccurs="1"/>
-                    <element name="bufferSize" type="integer" minOccurs="0" maxOccurs="1"/>
-                    <element name="fileName" type="string" minOccurs="0" maxOccurs="1"/>
-                    <element name="flatten" type="boolean" minOccurs="0" maxOccurs="1"/>
-                    <element name="charset" type="string" minOccurs="0" maxOccurs="1"/>
                     <element name="consume" type="camel:FileConsumerType" minOccurs="0" maxOccurs="1"/>
                     <element name="produce" type="camel:FileProducerType" minOccurs="0" maxOccurs="1"/>
                 </sequence>
@@ -69,9 +69,9 @@ MA  02110-1301, USA.
             <extension base="camel:CamelRemoteBindingType">
                 <sequence>
                     <element name="passiveMode" type="boolean" minOccurs="0" maxOccurs="1"/>
-                    <element name="siteCommand" type="string" minOccurs="0" maxOccurs="1"/>
                     <element name="timeout" type="int" minOccurs="0" maxOccurs="1"/>
-                    <element name="socketTimeout" type="int" minOccurs="0" maxOccurs="1"/>
+                    <element name="soTimeout" type="int" minOccurs="0" maxOccurs="1"/>
+                    <element name="siteCommand" type="string" minOccurs="0" maxOccurs="1"/>
                 </sequence>
             </extension>
         </complexContent>
@@ -104,11 +104,10 @@ MA  02110-1301, USA.
     </complexType>
 
     <element name="binding.atom" type="camel:CamelAtomBindingType" substitutionGroup="swyd:binding.switchyard"/>
-    <complexType name="CamelAtomBindingType" >
+    <complexType name="CamelAtomBindingType">
         <complexContent>
-            <extension base="swyd:SwitchYardBindingType">
+            <extension base="camel:BaseCamelBinding">
                 <sequence>
-                    <element name="operationSelector" type="camel:CamelOperationSelectorType"/>
                     <element name="feedURI" type="anyURI"/>
                     <element name="splitEntries" type="boolean" minOccurs="0" maxOccurs="1"/>
                     <element name="filter" type="boolean" minOccurs="0" maxOccurs="1"/>
@@ -116,9 +115,7 @@ MA  02110-1301, USA.
                     <element name="throttleEntries" type="boolean" minOccurs="0" maxOccurs="1"/>
                     <element name="feedHeader" type="boolean" minOccurs="0" maxOccurs="1"/>
                     <element name="sortEntries" type="boolean" minOccurs="0" maxOccurs="1"/>
-                    <element name="consumer.delay" type="integer" minOccurs="0" maxOccurs="1"/>
-                    <element name="consumer.initialDelay" type="integer" minOccurs="0" maxOccurs="1"/>
-                    <element name="consumer.userFixedDelay" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="consume" type="camel:ScheduledPollConsumerType" minOccurs="0" maxOccurs="1" />
                 </sequence>
             </extension>
         </complexContent>
@@ -214,58 +211,120 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
 
+    <complexType name="GenericFileBindingType">
+        <complexContent>
+            <extension base="camel:BaseCamelBinding">
+                <sequence>
+                    <element name="directory" type="string" />
+                    <element name="autoCreate" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="bufferSize" type="integer" minOccurs="0" maxOccurs="1"/>
+                    <element name="fileName" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="flatten" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="charset" type="string" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <complexType name="CamelRemoteBindingType" abstract="true">
         <complexContent>
-            <extension base="swyd:SwitchYardBindingType">
+            <extension base="camel:GenericFileBindingType">
                 <sequence>
-                    <element name="operationSelector" type="camel:CamelOperationSelectorType"/>
                     <element name="host" type="string"  minOccurs="0" maxOccurs="1"/>
                     <element name="port" type="int" minOccurs="0" maxOccurs="1"/>
-                    <element name="directory" type="string" minOccurs="0" maxOccurs="1"/>
                     <element name="username" type="string" minOccurs="0" maxOccurs="1"/>
                     <element name="password" type="string" minOccurs="0" maxOccurs="1"/>
                     <element name="binary" type="boolean" minOccurs="0" maxOccurs="1"/>
                     <element name="connectTimeout" type="int" minOccurs="0" maxOccurs="1"/>
-                    <element name="throwExceptionOnConnectionFailed" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="disconnect" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="maximumReconnectAttempts" type="int" minOccurs="0" maxOccurs="1"/>
+                    <element name="reconnectDelay" type="int" minOccurs="0" maxOccurs="1"/>
+                    <element name="separator" type="string" minOccurs="0" maxOccurs="1"/>
                     <element name="stepwise" type="boolean" minOccurs="0" maxOccurs="1"/>
-                    <element name="seaparator" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="throwExceptionOnConnectFailed" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="consume" type="camel:RemoteFileConsumerType" minOccurs="0" maxOccurs="1"/>
+                    <element name="produce" type="camel:RemoteFileProducerType" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ScheduledPollConsumerType">
+        <sequence>
+            <element name="initialDelay" type="integer" minOccurs="0" maxOccurs="1"/>
+            <element name="delay" type="integer" minOccurs="0" maxOccurs="1"/>
+            <element name="useFixedDelay" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <element name="sendEmptyMessageWhenIdle" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <element name="timeUnit" type="camel:TimeUnit" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="ScheduledBatchPollConsumerType">
+        <complexContent>
+            <extension base="camel:ScheduledPollConsumerType">
+                <sequence>
+                    <element name="maxMessagesPerPoll" type="integer" minOccurs="0" maxOccurs="1"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
 
     <complexType name="FileConsumerType">
-        <sequence>
-            <element name="initialDelay" type="integer" minOccurs="0" maxOccurs="1"/>
-            <element name="delay" type="integer" minOccurs="0" maxOccurs="1"/>
-            <element name="useFixedDelay" type="boolean" minOccurs="0" maxOccurs="1"/>
-            <element name="recursive" type="boolean" minOccurs="0" maxOccurs="1"/>
-            <element name="delete" type="boolean" minOccurs="0" maxOccurs="1"/>
-            <element name="noop" type="boolean" minOccurs="0" maxOccurs="1"/>
-            <element name="preMove" type="string" minOccurs="0" maxOccurs="1"/>
-            <element name="move" type="string" minOccurs="0" maxOccurs="1"/>
-            <element name="moveFailed" type="string" minOccurs="0" maxOccurs="1"/>
-            <element name="include" type="string" minOccurs="0" maxOccurs="1"/>
-            <element name="exclude" type="string" minOccurs="0" maxOccurs="1"/>
-            <element name="idempotent" type="boolean" minOccurs="0" maxOccurs="1"/>
-            <element name="idempotentRepository" type="string" minOccurs="0" maxOccurs="1"/>
-            <element name="inProgressRepository" type="string" minOccurs="0" maxOccurs="1"/>
-            <element name="filter" type="string" minOccurs="0" maxOccurs="1"/>
-            <element name="sorter" type="string" minOccurs="0" maxOccurs="1"/>
-            <element name="sortBy" type="string" minOccurs="0" maxOccurs="1"/>
-            <element name="readLock" type="string" minOccurs="0" maxOccurs="1"/>
-            <element name="readLockTimeout " type="long" minOccurs="0" maxOccurs="1"/>
-            <element name="readLockCheckInterval" type="integer" minOccurs="0" maxOccurs="1"/>
-            <element name="exclusiveReadLockStrategy" type="string" minOccurs="0" maxOccurs="1"/>
-            <element name="processStrategy" type="string" minOccurs="0" maxOccurs="1"/>
-            <element name="maxMessagesPerPoll" type="integer" minOccurs="0" maxOccurs="1"/>
-            <element name="startingDirectoryMustExist" type="boolean" minOccurs="0" maxOccurs="1"/>
-            <element name="directoryMustExist" type="boolean" minOccurs="0" maxOccurs="1"/>
-            <element name="doneFileName" type="string" minOccurs="0" maxOccurs="1"/>
-        </sequence>
+        <complexContent>
+            <extension base="camel:GenericFileConsumerType" />
+        </complexContent>
     </complexType>
 
     <complexType name="FileProducerType">
+        <complexContent>
+            <extension base="camel:GenericFileProducerType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="RemoteFileConsumerType">
+        <complexContent>
+            <extension base="camel:GenericFileConsumerType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="RemoteFileProducerType">
+        <complexContent>
+            <extension base="camel:GenericFileProducerType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="GenericFileConsumerType">
+        <complexContent>
+            <extension base="camel:ScheduledBatchPollConsumerType">
+                <sequence>
+                    <element name="delete" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="recursive" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="noop" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="preMove" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="move" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="moveFailed" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="include" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="exclude" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="idempotent" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="idempotentRepository" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="inProgressRepository" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="filter" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="sorter" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="sortBy" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="readLock" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="readLockTimeout " type="long" minOccurs="0" maxOccurs="1"/>
+                    <element name="readLockCheckInterval" type="integer" minOccurs="0" maxOccurs="1"/>
+                    <element name="exclusiveReadLockStrategy" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="processStrategy" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="startingDirectoryMustExist" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="directoryMustExist" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="doneFileName" type="string" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="GenericFileProducerType">
         <sequence>
             <element name="fileExist" type="string" minOccurs="0" maxOccurs="1"/>
             <element name="tempPrefix" type="string" minOccurs="0" maxOccurs="1"/>
@@ -275,5 +334,17 @@ MA  02110-1301, USA.
             <element name="doneFileName" type="string" minOccurs="0" maxOccurs="1"/>
         </sequence>
     </complexType>
+
+    <simpleType name="TimeUnit">
+        <restriction base="string">
+            <enumeration value="NANOSECONDS" />
+            <enumeration value="MICROSECONDS" />
+            <enumeration value="MILLISECONDS" />
+            <enumeration value="SECONDS" />
+            <enumeration value="MINUTES" />
+            <enumeration value="HOURS" />
+            <enumeration value="DAYS" />
+        </restriction>
+    </simpleType>
 
 </schema>

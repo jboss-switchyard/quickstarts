@@ -18,7 +18,6 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
-
 package org.switchyard.component.camel.config.model.file.v1;
 
 import static junit.framework.Assert.assertEquals;
@@ -49,24 +48,28 @@ public class V1CamelFileConsumerBindingModelTest extends V1BaseCamelModelTest<V1
     private static final String CAMEL_XML = "switchyard-file-binding-consumer-beans.xml";
 
     private static final String OPERATION_NAME = "print";
-    private static final String TARGET_DIR = "/input/directory";
-    private static final Boolean AUTO_CREATE = true;
-    private static final Integer BUFFER_SIZE = new Integer(1024);
-    private static final Integer INITIAL_DELAY = new Integer(10);
+    private static final String DIRECTORY = "/input/directory";
     private static final Boolean DELETE = Boolean.FALSE;
+    private static final Boolean RECURSIVE = true;
+    private static final Boolean NOOP = false;
+    private static final String PRE_MOVE = ".inProgress";
+    private static final String MOVE = ".done";
+    private static final String MOVE_FAILED = ".failed";
+    private static final String INCLUDE = "*.csv";
+    private static final String EXCLUDE = "*.xml";
+    private static final Boolean IDEMPOTENT = true;
+    private static final String SORT_BY = "file:name";
+    private static final String READ_LOCK = "fileLock";
+    private static final Long READ_LOCK_TIMEOUT = 10L;
     private static final Integer READ_LOCK_CHECK_INTERVAL = new Integer(1000);
+    private static final Boolean STARTING_DIRECTORY_MUST_EXIST = false;
     private static final Boolean DIRECTORY_MUST_EXIST = Boolean.TRUE;
-    private static final String CAMEL_URI = 
-        "file:///input/directory?autoCreate=true&bufferSize=1024&initialDelay=10" +
-        "&delete=false&readLockCheckInterval=1000&directoryMustExist=true";
-
-    private static final String NEW_CAMEL_URI = 
-        "file:///input/directory?autoCreate=true&bufferSize=1024&initialDelay=10" +
-        "&readLockCheckInterval=1000&delete=false&directoryMustExist=true";
-
-    private static final String CAMEL_ENDPOINT_URI = 
-        "file:///input/directory?autoCreate=true&bufferSize=1024&delete=false&" +
-        "directoryMustExist=true&initialDelay=10&readLockCheckInterval=1000";
+    private static final String DONE_FILE_NAME = "done";
+    private static final String CAMEL_URI = "file:///input/directory?delete=false&" +
+        "recursive=true&noop=false&preMove=.inProgress&move=.done&moveFailed=.failed&" +
+        "include=*.csv&exclude=*.xml&idempotent=true&sortBy=file:name&" +
+        "readLock=fileLock&readLockTimeout=10&readLockCheckInterval=1000&" +
+        "startingDirectoryMustExist=false&directoryMustExist=true&doneFileName=done";
 
     @Before
     public void setUp() throws Exception {
@@ -86,33 +89,23 @@ public class V1CamelFileConsumerBindingModelTest extends V1BaseCamelModelTest<V1
         final V1CamelFileBindingModel bindingModel = getFirstCamelBinding(CAMEL_XML);
         final Validation validateModel = bindingModel.validateModel();
         //Valid Model?
-        assertEquals(validateModel.isValid(), true);
+        assertTrue(validateModel.isValid());
         //Camel File
-        assertEquals(bindingModel.getOperationSelector().getOperationName(), OPERATION_NAME);
-        assertEquals(bindingModel.getTargetDir(), TARGET_DIR);
-        assertEquals(bindingModel.isAutoCreate(), AUTO_CREATE);
-        assertEquals(bindingModel.getBufferSize(), BUFFER_SIZE);
+        assertEquals(OPERATION_NAME, bindingModel.getOperationSelector().getOperationName());
+        assertEquals(DIRECTORY, bindingModel.getDirectory());
         //Camel File Consumer
-        assertEquals(bindingModel.getConsumer().getInitialDelay(), INITIAL_DELAY);
-        assertEquals(bindingModel.getConsumer().isDelete(), DELETE);
-        assertEquals(bindingModel.getConsumer().getReadLockCheckInterval(), READ_LOCK_CHECK_INTERVAL);
-        assertEquals(bindingModel.getConsumer().isDirectoryMustExist(), DIRECTORY_MUST_EXIST);
-        assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
+        assertConsumerModel(bindingModel.getConsumer());
+        assertEquals(CAMEL_URI, bindingModel.getComponentURI().toString());
     }
 
     @Test
     public void testWriteConfig() throws Exception {
         CamelFileBindingModel bindingModel = createFileConsumerModel();
-        assertEquals(bindingModel.getOperationSelector().getOperationName(), OPERATION_NAME);
-        assertEquals(bindingModel.getTargetDir(), TARGET_DIR);
-        assertEquals(bindingModel.isAutoCreate(), AUTO_CREATE);
-        assertEquals(bindingModel.getBufferSize(), BUFFER_SIZE);
+        assertEquals(OPERATION_NAME, bindingModel.getOperationSelector().getOperationName());
+        assertEquals(DIRECTORY, bindingModel.getDirectory());
         //Camel File Consumer
-        assertEquals(bindingModel.getConsumer().getInitialDelay(), INITIAL_DELAY);
-        assertEquals(bindingModel.getConsumer().isDelete(), DELETE);
-        assertEquals(bindingModel.getConsumer().getReadLockCheckInterval(), READ_LOCK_CHECK_INTERVAL);
-        assertEquals(bindingModel.getConsumer().isDirectoryMustExist(), DIRECTORY_MUST_EXIST);
-        assertEquals(bindingModel.getComponentURI().toString(), NEW_CAMEL_URI);
+        assertConsumerModel(bindingModel.getConsumer());
+        assertEquals(CAMEL_URI, bindingModel.getComponentURI().toString());
     }
 
     /**
@@ -131,7 +124,7 @@ public class V1CamelFileConsumerBindingModelTest extends V1BaseCamelModelTest<V1
     @Test
     public void testComponentURI() {
         CamelFileBindingModel bindingModel = createFileConsumerModel();
-        assertEquals(NEW_CAMEL_URI, bindingModel.getComponentURI().toString());
+        assertEquals(CAMEL_URI, bindingModel.getComponentURI().toString());
     }
 
     @Test
@@ -139,16 +132,10 @@ public class V1CamelFileConsumerBindingModelTest extends V1BaseCamelModelTest<V1
         CamelFileBindingModel model = createFileConsumerModel();
         FileEndpoint endpoint = getEndpoint(model, FileEndpoint.class);
         //assertEquals(endpoint.getId(), OPERATION_NAME); //No way to get the operation name
-        assertEquals(endpoint.getConfiguration().getDirectory(), 
-            TARGET_DIR.replace("/", File.separator));
-        assertEquals(endpoint.isAutoCreate(), AUTO_CREATE.booleanValue());
-        assertEquals(endpoint.getBufferSize(), BUFFER_SIZE.intValue());
-        assertEquals(endpoint.getConsumerProperties().get(
-            V1CamelFileConsumerBindingModel.INITIAL_DELAY), INITIAL_DELAY.toString());
-        assertEquals(endpoint.isDelete(), DELETE.booleanValue());
-        assertEquals(endpoint.getReadLockCheckInterval(), READ_LOCK_CHECK_INTERVAL.longValue());
-        assertEquals(endpoint.isDirectoryMustExist(), DIRECTORY_MUST_EXIST.booleanValue());
-        assertEquals(endpoint.getEndpointUri().toString(), CAMEL_ENDPOINT_URI);
+        assertEquals(DIRECTORY.replace("/", File.separator), endpoint.getConfiguration().getDirectory());
+        assertEquals(DELETE.booleanValue(), endpoint.isDelete());
+        assertEquals(READ_LOCK_CHECK_INTERVAL.longValue(), endpoint.getReadLockCheckInterval());
+        assertEquals(DIRECTORY_MUST_EXIST.booleanValue(), endpoint.isDirectoryMustExist());
     }
 
     private CamelFileBindingModel createFileConsumerModel() {
@@ -157,21 +144,47 @@ public class V1CamelFileConsumerBindingModelTest extends V1BaseCamelModelTest<V1
 
         V1CamelFileBindingModel fileModel = new V1CamelFileBindingModel();
         fileModel.setOperationSelector(operationSelector);
+        fileModel.setDirectory(DIRECTORY);
 
-        fileModel.setAutoCreate(AUTO_CREATE)
-            .setBufferSize(BUFFER_SIZE)
-            .setTargetDir(TARGET_DIR);
-
-        CamelFileConsumerBindingModel consumer = new V1CamelFileConsumerBindingModel()
-            .setInitialDelay(INITIAL_DELAY)
-            .setReadLockCheckInterval(READ_LOCK_CHECK_INTERVAL)
+        CamelFileConsumerBindingModel consumer = (CamelFileConsumerBindingModel) new V1CamelFileConsumerBindingModel()
             .setDelete(DELETE)
-            .setDirectoryMustExist(DIRECTORY_MUST_EXIST);
-
+            .setRecursive(RECURSIVE)
+            .setNoop(NOOP)
+            .setPreMove(PRE_MOVE)
+            .setMove(MOVE)
+            .setMoveFailed(MOVE_FAILED)
+            .setInclude(INCLUDE)
+            .setExclude(EXCLUDE)
+            .setIdempotent(IDEMPOTENT)
+            .setSortBy(SORT_BY)
+            .setReadLock(READ_LOCK)
+            .setReadLockTimeout(READ_LOCK_TIMEOUT)
+            .setReadLockCheckInterval(READ_LOCK_CHECK_INTERVAL)
+            .setStartingDirectoryMustExist(STARTING_DIRECTORY_MUST_EXIST)
+            .setDirectoryMustExist(DIRECTORY_MUST_EXIST)
+            .setDoneFileName(DONE_FILE_NAME);
         fileModel.setConsumer(consumer);
         fileModel.setOperationSelector(operationSelector);
 
         return fileModel;
     }
 
+    private void assertConsumerModel(CamelFileConsumerBindingModel consumer) {
+        assertEquals(RECURSIVE, consumer.isRecursive());
+        assertEquals(DELETE, consumer.isDelete());
+        assertEquals(NOOP, consumer.isNoop());
+        assertEquals(PRE_MOVE, consumer.getPreMove());
+        assertEquals(MOVE, consumer.getMove());
+        assertEquals(MOVE_FAILED, consumer.getMoveFailed());
+        assertEquals(INCLUDE, consumer.getInclude());
+        assertEquals(EXCLUDE, consumer.getExclude());
+        assertEquals(IDEMPOTENT, consumer.isIdempotent());
+        assertEquals(SORT_BY, consumer.getSortBy());
+        assertEquals(READ_LOCK, consumer.getReadLock());
+        assertEquals(READ_LOCK_TIMEOUT, consumer.getReadLockTimeout());
+        assertEquals(READ_LOCK_CHECK_INTERVAL, consumer.getReadLockCheckInterval());
+        assertEquals(STARTING_DIRECTORY_MUST_EXIST, consumer.isStartingDirectoryMustExist());
+        assertEquals(DIRECTORY_MUST_EXIST, consumer.isDirectoryMustExist());
+        assertEquals(DONE_FILE_NAME, consumer.getDoneFileName());
+    }
 }

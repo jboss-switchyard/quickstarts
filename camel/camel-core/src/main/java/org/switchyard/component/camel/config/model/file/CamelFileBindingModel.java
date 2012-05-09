@@ -18,99 +18,15 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
-
 package org.switchyard.component.camel.config.model.file;
 
-import org.switchyard.component.camel.config.model.CamelBindingModel;
-
+import org.switchyard.component.camel.config.model.generic.GenericFileBindingModel;
+import org.switchyard.component.camel.config.model.generic.GenericFileProducerBindingModel;
 
 /**
  * Represents the configuration settings for Camel File binding.
  */
-public interface CamelFileBindingModel extends CamelBindingModel {
-
-    /**
-     * The target directory.
-     * @return the target directory
-     */
-    public String getTargetDir();
-
-    /**
-     * Specify the target directory.
-     * @param targetDir the target directory
-     * @return a reference to this Camel File binding model
-     */
-    public CamelFileBindingModel setTargetDir(String targetDir);
-
-    /**
-     * Whether missing directories in the file's pathname will be created or not. 
-     * For the file consumer, that means creating the starting directory. 
-     * For the file producer, it means the directory to where the files should be written.
-     * @return the auto-create setting or null if it has not been specified
-     */
-    public Boolean isAutoCreate();
-
-    /**
-     * Specify whether missing directories in the file's pathname will be created or not.
-     * @param autoCreate true if directories will be created, false otherwise
-     * @return a reference to this Camel File binding model
-     */
-    public CamelFileBindingModel setAutoCreate(Boolean autoCreate);
-
-    /**
-     * Buffer sized in bytes.
-     * @return the buffer size setting or null if it has not been specified
-     */
-    public Integer getBufferSize();
-
-    /**
-     * Specify buffer size in bytes.
-     * @param bufferSize buffer size in bytes
-     * @return a reference to this Camel File binding model
-     */
-    public CamelFileBindingModel setBufferSize(Integer bufferSize);
-
-    /**
-     * Expression such as File Language to dynamically set the filename. 
-     * For consumers, it's used as a filename filter. 
-     * For producers, it's used to evaluate the filename to write
-     * @return the file name setting or null if it has not been specified
-     */
-    public String getFileName();
-
-    /**
-     * Specify expression such as File Language to dynamically set the filename.
-     * @param fileName expression to dynamically set the filename
-     * @return a reference to this Camel File binding model
-     */
-    public CamelFileBindingModel setFileName(String fileName);
-
-    /**
-     * Whether the file name path will get leading paths stripped; so it's just the file name. 
-     * @return the flatten setting or null if it has not been specified
-     */
-    public Boolean isFlatten();
-
-    /**
-     * Specify whether the file name will be stripped.
-     * @param flatten true to get it flattened, false otherwise
-     * @return a reference to this Camel File binding model
-     */
-    public CamelFileBindingModel setFlatten(Boolean flatten);
-
-    /**
-     * Camel 2.5: this option is used to specify the encoding of the file, and camel will 
-     * set the Exchange property with Exchange.CHARSET_NAME with the value of this option. 
-     * @return the charset setting or null if it has not been specified
-     */
-    public String getCharset();
-
-    /**
-     * Camel 2.5: Specify the encoding of the file.
-     * @param charset the encoding of the file
-     * @return a reference to this Camel File binding model
-     */
-    public CamelFileBindingModel setCharset(String charset);
+public interface CamelFileBindingModel extends GenericFileBindingModel {
 
     /**
      * The consumer's configurations.
@@ -123,18 +39,18 @@ public interface CamelFileBindingModel extends CamelBindingModel {
      * @param consumer the consumer binding model
      * @return a reference to this Camel File binding model
      */
-    public CamelFileBindingModel setConsumer(CamelFileConsumerBindingModel consumer);
+    public GenericFileBindingModel setConsumer(CamelFileConsumerBindingModel consumer);
 
     /**
      * The producers's configurations.
      * @return an instance of the camel file producer binding model
      */
-    public CamelFileProducerBindingModel getProducer();
+    public GenericFileProducerBindingModel getProducer();
 
     /**
      * Specify the producer binding model.
      * @param producer the producer binding model
      * @return a reference to this Camel File binding model
      */
-    public CamelFileBindingModel setProducer(CamelFileProducerBindingModel producer);
+    public GenericFileBindingModel setProducer(GenericFileProducerBindingModel producer);
 }

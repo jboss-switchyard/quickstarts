@@ -1,3 +1,23 @@
+/*
+ * JBoss, Home of Professional Open Source Copyright 2009, Red Hat Middleware
+ * LLC, and individual contributors by the @authors tag. See the copyright.txt
+ * in the distribution for a full listing of individual contributors.
+ * 
+ * This is free software; you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ * 
+ * This software is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
+ * site: http://www.fsf.org.
+ */
 package org.switchyard.component.camel.config.model.sftp.v1;
 
 import org.switchyard.component.camel.config.model.QueryString;
@@ -48,7 +68,7 @@ public class V1CamelSftpBindingModel extends V1CamelRemoteFileBindingModel
     }
 
     @Override
-    public CamelSftpBindingModel setKnownHostsFile(String knownHostsFile) {
+    public V1CamelSftpBindingModel setKnownHostsFile(String knownHostsFile) {
         return setConfig(KNOWN_HOSTS_FILE, knownHostsFile);
     }
 
@@ -58,7 +78,7 @@ public class V1CamelSftpBindingModel extends V1CamelRemoteFileBindingModel
     }
 
     @Override
-    public CamelSftpBindingModel setPrivateKeyFile(String privateKeyFile) {
+    public V1CamelSftpBindingModel setPrivateKeyFile(String privateKeyFile) {
         return setConfig(PRIVATE_KEY_FILE, privateKeyFile);
     }
 
@@ -68,7 +88,7 @@ public class V1CamelSftpBindingModel extends V1CamelRemoteFileBindingModel
     }
 
     @Override
-    public CamelSftpBindingModel setPrivateKeyFilePassphrase(String passphrase) {
+    public V1CamelSftpBindingModel setPrivateKeyFilePassphrase(String passphrase) {
         return setConfig(PRIVATE_KEY_FILE_PASSPHRASE, passphrase);
     }
 

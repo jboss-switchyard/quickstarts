@@ -1,36 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- JBoss, Home of Professional Open Source Copyright 2011 Red Hat Inc. 
-	and/or its affiliates and other contributors as indicated by the @authors 
-	tag. All rights reserved. See the copyright.txt in the distribution for a 
-	full listing of individual contributors. This copyrighted material is made 
-	available to anyone wishing to use, modify, copy, or redistribute it subject 
-	to the terms and conditions of the GNU Lesser General Public License, v. 
-	2.1. This program is distributed in the hope that it will be useful, but 
-	WITHOUT A WARRANTY; without even the implied warranty of MERCHANTABILITY 
-	or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License 
-	for more details. You should have received a copy of the GNU Lesser General 
-	Public License, v.2.1 along with this distribution; if not, write to the 
-	Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
-	MA 02110-1301, USA. -->
+    and/or its affiliates and other contributors as indicated by the @authors 
+    tag. All rights reserved. See the copyright.txt in the distribution for a 
+    full listing of individual contributors. This copyrighted material is made 
+    available to anyone wishing to use, modify, copy, or redistribute it subject 
+    to the terms and conditions of the GNU Lesser General Public License, v. 
+    2.1. This program is distributed in the hope that it will be useful, but 
+    WITHOUT A WARRANTY; without even the implied warranty of MERCHANTABILITY 
+    or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License 
+    for more details. You should have received a copy of the GNU Lesser General 
+    Public License, v.2.1 along with this distribution; if not, write to the 
+    Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+    MA 02110-1301, USA. -->
 <switchyard 
     xmlns="urn:switchyard-config:switchyard:1.0"
     xmlns:camel="urn:switchyard-component-camel:config:1.0" 
     xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" >
 
-	<sca:composite name="camelTest" targetNamespace="urn:camel-core:test:1.0">
-		<sca:service name="camelTest" promote="SimpleCamelService">
-			<camel:binding.file>
-			    <camel:operationSelector operationName="print"/>
-			    <camel:targetDir>/input/directory</camel:targetDir>
-				<camel:autoCreate>true</camel:autoCreate>
-				<camel:bufferSize>1024</camel:bufferSize>
-				<camel:consume>
-					<camel:initialDelay>10</camel:initialDelay>
-					<camel:delete>false</camel:delete>
-					<camel:readLockCheckInterval>1000</camel:readLockCheckInterval>
-					<camel:directoryMustExist>true</camel:directoryMustExist>
-				</camel:consume>
-			</camel:binding.file>
-		</sca:service>
-	</sca:composite>
+    <sca:composite name="camelTest" targetNamespace="urn:camel-core:test:1.0">
+        <sca:service name="camelTest" promote="SimpleCamelService">
+            <camel:binding.file>
+                <camel:operationSelector operationName="print"/>
+                <camel:directory>/input/directory</camel:directory>
+                <camel:consume>
+                    <camel:delete>false</camel:delete>
+                    <camel:recursive>true</camel:recursive>
+                    <camel:noop>false</camel:noop>
+                    <camel:preMove>.inProgress</camel:preMove>
+                    <camel:move>.done</camel:move>
+                    <camel:moveFailed>.failed</camel:moveFailed>
+                    <camel:include>*.csv</camel:include>
+                    <camel:exclude>*.xml</camel:exclude>
+                    <camel:idempotent>true</camel:idempotent>
+                    <camel:sortBy>file:name</camel:sortBy>
+                    <camel:readLock>fileLock</camel:readLock>
+                    <camel:readLockTimeout>10</camel:readLockTimeout>
+                    <camel:readLockCheckInterval>1000</camel:readLockCheckInterval>
+                    <camel:startingDirectoryMustExist>false</camel:startingDirectoryMustExist>
+                    <camel:directoryMustExist>true</camel:directoryMustExist>
+                    <camel:doneFileName>done</camel:doneFileName>
+                </camel:consume>
+            </camel:binding.file>
+        </sca:service>
+    </sca:composite>
 </switchyard>

@@ -18,38 +18,15 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
-package org.switchyard.component.camel.config.model.remote.v1;
+package org.switchyard.component.camel.config.model.remote;
 
-import javax.xml.namespace.QName;
-
-import org.switchyard.component.camel.config.model.generic.v1.V1GenericFileConsumerBindingModel;
-import org.switchyard.component.camel.config.model.remote.CamelRemoteFileConsumerBindingModel;
-import org.switchyard.config.Configuration;
-import org.switchyard.config.model.Descriptor;
+import org.switchyard.component.camel.config.model.generic.GenericFileProducerBindingModel;
 
 /**
- * Consumer binding model for remote file.
+ * Remote file producer model.
  * 
  * @author Lukasz Dywicki
  */
-public class V1CamelRemoteFileConsumerBindingModel extends V1GenericFileConsumerBindingModel
-    implements CamelRemoteFileConsumerBindingModel {
-
-    /**
-     * Creates consumer binding model.
-     * 
-     * @param config Configuration.
-     * @param desc Descriptor.
-     */
-    public V1CamelRemoteFileConsumerBindingModel(Configuration config, Descriptor desc) {
-        super(config, desc);
-    }
-
-    /**
-     * Creates new remote file consumer binding.
-     */
-    public V1CamelRemoteFileConsumerBindingModel() {
-        super(new QName(V1CamelRemoteFileBindingModel.CONSUME));
-    }
+public interface CamelRemoteFileProducerBindingModel extends GenericFileProducerBindingModel {
 
 }

@@ -46,6 +46,7 @@ public class V1CamelFtpsBindingModelTest extends V1BaseCamelModelTest<V1CamelFtp
         final V1CamelFtpsBindingModel bindingModel = getFirstCamelBinding(CAMEL_XML);
         final Validation validateModel = bindingModel.validateModel();
 
+        validateModel.assertValid();
         assertThat(validateModel.isValid(), is(true));
         //assertThat(bindingModel.getTargetDir().toString(), is(equalTo(expectedDirectoryName())));
     }

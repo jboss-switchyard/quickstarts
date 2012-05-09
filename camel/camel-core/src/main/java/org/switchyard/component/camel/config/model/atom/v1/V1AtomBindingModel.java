@@ -16,18 +16,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
-
 package org.switchyard.component.camel.config.model.atom.v1;
 
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.switchyard.component.camel.config.model.QueryString;
+import org.switchyard.component.camel.config.model.CamelScheduledPollConsumer;
 import org.switchyard.component.camel.config.model.atom.AtomBindingModel;
 import org.switchyard.component.camel.config.model.v1.V1BaseCamelBindingModel;
+import org.switchyard.component.camel.config.model.v1.V1CamelScheduledPollConsumer;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 
@@ -35,11 +36,12 @@ import org.switchyard.config.model.Descriptor;
  * Implementation of AtomBindingModel.
  */
 public class V1AtomBindingModel extends V1BaseCamelBindingModel implements AtomBindingModel {
-    
+
     /**
      * Camel endpoint type.
      */
     public static final String ATOM = "atom";
+
     /**
      * Camel endpoint configuration values.
      */
@@ -50,29 +52,29 @@ public class V1AtomBindingModel extends V1BaseCamelBindingModel implements AtomB
     private static final String THROTTLE_ENTRIES    = "throttleEntries";
     private static final String FEED_HEADER         = "feedHeader";
     private static final String SORT_ENTRIES        = "sortEntries";
-    private static final String DELAY               = "consumer.delay";
-    private static final String INITIAL_DELAY       = "consumer.initialDelay";
-    private static final String FIXED_DELAY         = "consumer.userFixedDelay";
-    
+
+    /**
+     * Consumer element.
+     */
+    public static final String CONSUME        = "consume";
+    private CamelScheduledPollConsumer _consume;
+
     // Used for dateTime fields
     private static DateFormat _dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-    
+
     /**
      * Create a new AtomBindingModel.
      */
     public V1AtomBindingModel() {
         super(ATOM);
         setModelChildrenOrder(
-                FEED_URI,
-                SPLIT_ENTRIES, 
-                FILTER, 
-                LAST_UPDATE, 
-                THROTTLE_ENTRIES, 
-                FEED_HEADER, 
-                SORT_ENTRIES, 
-                DELAY, 
-                INITIAL_DELAY, 
-                FIXED_DELAY);
+            FEED_URI,
+            SPLIT_ENTRIES, 
+            FILTER, 
+            LAST_UPDATE, 
+            THROTTLE_ENTRIES, 
+            FEED_HEADER, 
+            SORT_ENTRIES);
     }
     
     /**
@@ -83,17 +85,6 @@ public class V1AtomBindingModel extends V1BaseCamelBindingModel implements AtomB
      */
     public V1AtomBindingModel(Configuration config, Descriptor desc) {
         super(config, desc);
-    }
-
-    @Override
-    public Integer getDelay() {
-        return getIntegerConfig(DELAY);
-    }
-    
-    @Override
-    public V1AtomBindingModel setDelay(int delay) {
-        setConfig(DELAY, String.valueOf(delay));
-        return this;
     }
 
     @Override
@@ -108,32 +99,9 @@ public class V1AtomBindingModel extends V1BaseCamelBindingModel implements AtomB
 
     @Override
     public V1AtomBindingModel setFeedURI(URI uri) {
-        setConfig(FEED_URI, uri.toString());
-        return this;
+        return setConfig(FEED_URI, uri.toString());
     }
 
-    @Override
-    public Boolean isFixedDelay() {
-        return getBooleanConfig(FIXED_DELAY);
-    }
-
-    @Override
-    public V1AtomBindingModel setFixedDelay(boolean delay) {
-        setConfig(FIXED_DELAY, String.valueOf(delay));
-        return this;
-    }
-
-    @Override
-    public Integer getInitialDelay() {
-        return getIntegerConfig(INITIAL_DELAY);
-    }
-
-    @Override
-    public V1AtomBindingModel setInitialDelay(int delay) {
-        setConfig(INITIAL_DELAY, String.valueOf(delay));
-        return this;
-    }
-    
     @Override
     public Date getLastUpdate() {
         return getDateConfig(LAST_UPDATE, _dateFormat);
@@ -200,23 +168,42 @@ public class V1AtomBindingModel extends V1BaseCamelBindingModel implements AtomB
         return this;
     }
 
+
+    @Override
+    public CamelScheduledPollConsumer getConsumer() {
+        if (_consume == null) {
+            Configuration config = getModelConfiguration().getFirstChild(CONSUME);
+            _consume = new V1CamelScheduledPollConsumer(config,
+                getModelDescriptor());
+        }
+        return _consume;
+    }
+
+    @Override
+    public V1AtomBindingModel setConsumer(CamelScheduledPollConsumer consumer) {
+        Configuration config = getModelConfiguration().getFirstChild(CONSUME);
+        if (config != null) {
+            // set an existing config value
+            getModelConfiguration().removeChildren(CONSUME);
+            getModelConfiguration().addChild(((V1CamelScheduledPollConsumer) consumer)
+                .getModelConfiguration());
+        } else {
+            setChildModel((V1CamelScheduledPollConsumer) consumer);
+        }
+        _consume = consumer;
+        return this;
+    }
+
     @Override
     public URI getComponentURI() {
-        // base URI without params
-        String uriStr = ATOM + "://" + getConfig(FEED_URI);
-        // create query string from config values
-        QueryString queryStr = new QueryString()
-            .add(DELAY, getConfig(DELAY))
-            .add(FEED_HEADER, getConfig(FEED_HEADER))
-            .add(FILTER, getConfig(FILTER))
-            .add(FIXED_DELAY, getConfig(FIXED_DELAY))
-            .add(INITIAL_DELAY, getConfig(INITIAL_DELAY))
-            .add(LAST_UPDATE, getConfig(LAST_UPDATE))
-            .add(SORT_ENTRIES, getConfig(SORT_ENTRIES))
-            .add(SPLIT_ENTRIES, getConfig(SPLIT_ENTRIES))
-            .add(THROTTLE_ENTRIES, getConfig(THROTTLE_ENTRIES));
-        
-        return URI.create(uriStr.toString() + queryStr);
+        Configuration modelConfiguration = getModelConfiguration();
+        List<Configuration> children = modelConfiguration.getChildren();
+
+        String baseUri = ATOM + "://" + getFeedURI();
+
+        QueryString queryStr = new QueryString();
+        traverseConfiguration(children, queryStr, FEED_URI);
+
+        return URI.create(baseUri + queryStr.toString());
     }
-    
 }
