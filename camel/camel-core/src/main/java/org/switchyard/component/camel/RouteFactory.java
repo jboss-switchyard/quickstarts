@@ -75,10 +75,6 @@ public final class RouteFactory {
      * @return the route definition
      */
     public static RouteDefinition createRoute(Class<?> routeClass, String namespace) {
-        if (!routeClass.isAnnotationPresent(Route.class)) {
-            throw new SwitchYardException("@Route definition is missing on class " 
-                    + routeClass.getName());
-        }
         
         if (!RouteBuilder.class.isAssignableFrom(routeClass)) {
             throw new SwitchYardException("Java DSL class " + routeClass.getName() 
