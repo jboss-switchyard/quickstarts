@@ -49,6 +49,16 @@ import org.switchyard.component.camel.SwitchyardEndpoint;
 import org.switchyard.component.camel.composer.CamelComposition;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.component.camel.config.model.CamelComponentImplementationModel;
+import org.switchyard.component.camel.config.model.atom.v1.V1CamelAtomBindingModel;
+import org.switchyard.component.camel.config.model.direct.v1.V1CamelDirectBindingModel;
+import org.switchyard.component.camel.config.model.file.v1.V1CamelFileBindingModel;
+import org.switchyard.component.camel.config.model.ftp.v1.V1CamelFtpBindingModel;
+import org.switchyard.component.camel.config.model.ftps.v1.V1CamelFtpsBindingModel;
+import org.switchyard.component.camel.config.model.mock.v1.V1CamelMockBindingModel;
+import org.switchyard.component.camel.config.model.seda.v1.V1CamelSedaBindingModel;
+import org.switchyard.component.camel.config.model.sftp.v1.V1CamelSftpBindingModel;
+import org.switchyard.component.camel.config.model.timer.v1.V1CamelTimerBindingModel;
+import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
 import org.switchyard.composer.MessageComposer;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.composite.BindingModel;
@@ -72,22 +82,26 @@ public class CamelActivator extends BaseActivator {
      * Camel can access the SY service domain.
      */
     public static final String SERVICE_DOMAIN = "org.switchyard.camel.serviceDomain";
-    
-    private static final String CAMEL_TYPE = "camel";
-    private static final String DIRECT_TYPE = "direct";
-    private static final String FILE_TYPE = "file";
-    
+
     private CamelContext _camelContext;
     private Configuration _environment;
-    
+
     /**
      * Creates a new activator for Camel endpoint types.
      */
     public CamelActivator() {
         super(new String[] {
-                CAMEL_TYPE, 
-                DIRECT_TYPE, 
-                FILE_TYPE});
+            V1CamelBindingModel.CAMEL, 
+            V1CamelAtomBindingModel.ATOM,
+            V1CamelDirectBindingModel.DIRECT,
+            V1CamelFileBindingModel.FILE,
+            V1CamelFtpBindingModel.FTP,
+            V1CamelFtpsBindingModel.FTPS,
+            V1CamelMockBindingModel.MOCK,
+            V1CamelSedaBindingModel.SEDA,
+            V1CamelSftpBindingModel.SFTP,
+            V1CamelTimerBindingModel.TIMER
+        });
     }
 
     @Override
