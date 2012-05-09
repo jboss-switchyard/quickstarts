@@ -30,7 +30,7 @@ import org.switchyard.component.camel.config.model.CamelScheduledPollConsumer;
  * Atom component only supports consumer processing, so this binding can only
  * be used on a service (not a reference).
  */
-public interface AtomBindingModel extends CamelBindingModel {
+public interface CamelAtomBindingModel extends CamelBindingModel {
     
     /**
      * The Atom feed URI which will be polled.
@@ -43,7 +43,7 @@ public interface AtomBindingModel extends CamelBindingModel {
      * @param uri feed URI
      * @return a reference to this Atom binding model
      */
-    AtomBindingModel setFeedURI(URI uri);
+    CamelAtomBindingModel setFeedURI(URI uri);
 
     /**
      * Whether feed entries will be split on each poll.
@@ -56,7 +56,7 @@ public interface AtomBindingModel extends CamelBindingModel {
      * @param split true if entries should be split, false otherwise
      * @return a reference to this Atom binding model
      */
-    AtomBindingModel setSplit(boolean split);
+    CamelAtomBindingModel setSplit(boolean split);
 
     /**
      * Whether the component should only return new RSS entries.
@@ -69,14 +69,14 @@ public interface AtomBindingModel extends CamelBindingModel {
      * @param filter true to filter the feed
      * @return a reference to this Atom binding model
      */
-    AtomBindingModel setFiltered(boolean filter);
+    CamelAtomBindingModel setFiltered(boolean filter);
 
     /**
      * Set the start date used by the filter for pulling new feeds.
      * @param lastUpdate date after which entries should be pulled
      * @return a reference to this Atom binding model
      */
-    AtomBindingModel setLastUpdate(Date lastUpdate);
+    CamelAtomBindingModel setLastUpdate(Date lastUpdate);
 
     /**
      * The start date used by the filter for pulling new feeds.
@@ -90,7 +90,7 @@ public interface AtomBindingModel extends CamelBindingModel {
      * @param throttled specify true to enable throttling
      * @return a reference to this Atom binding model
      */
-    AtomBindingModel setThrottled(boolean throttled);
+    CamelAtomBindingModel setThrottled(boolean throttled);
 
     /**
      * Whether throttling is enabled for this endpoint.
@@ -103,7 +103,7 @@ public interface AtomBindingModel extends CamelBindingModel {
      * @param header true to include the header, false to not include
      * @return a reference to this Atom binding model
      */
-    AtomBindingModel setFeedHeader(boolean header);
+    CamelAtomBindingModel setFeedHeader(boolean header);
 
     /**
      * Whether the Abdera feed object is included as a header.
@@ -116,7 +116,7 @@ public interface AtomBindingModel extends CamelBindingModel {
      * @param sorted set to true for split entries to be sorted
      * @return a reference to this Atom binding model
      */
-    AtomBindingModel setSorted(boolean sorted);
+    CamelAtomBindingModel setSorted(boolean sorted);
 
     /**
      * Whether split entries are sorted by date.
@@ -130,7 +130,7 @@ public interface AtomBindingModel extends CamelBindingModel {
      * @param consumer Configuration of consumer.
      * @return a reference to this Atom binding model
      */
-    AtomBindingModel setConsumer(CamelScheduledPollConsumer consumer);
+    CamelAtomBindingModel setConsumer(CamelScheduledPollConsumer consumer);
 
     /**
      * @return Atom consumer configuration.

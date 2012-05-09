@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.component.camel.config.model.OperationSelector;
 import org.switchyard.component.camel.config.model.CamelScheduledPollConsumer;
-import org.switchyard.component.camel.config.model.atom.AtomBindingModel;
+import org.switchyard.component.camel.config.model.atom.CamelAtomBindingModel;
 import org.switchyard.component.camel.config.model.v1.V1BaseCamelModelTest;
 import org.switchyard.component.camel.config.model.v1.V1CamelScheduledPollConsumer;
 import org.switchyard.component.camel.config.model.v1.V1OperationSelector;
@@ -41,7 +41,7 @@ import org.switchyard.config.model.Validation;
 /**
  * Test of atom binding model.
  */
-public class V1AtomBindingModelTest extends V1BaseCamelModelTest<V1AtomBindingModel> {
+public class V1CamelAtomBindingModelTest extends V1BaseCamelModelTest<V1CamelAtomBindingModel> {
 
     private static final String ATOM_XML = "switchyard-atom-binding.xml";
 
@@ -64,14 +64,14 @@ public class V1AtomBindingModelTest extends V1BaseCamelModelTest<V1AtomBindingMo
 
     @Test
     public void testAllConfigSettings() {
-        AtomBindingModel atomModel = createAtomModel();
+        CamelAtomBindingModel atomModel = createAtomModel();
         // Verify that what we put in is what we get out
         assertDefaults(atomModel);
     }
 
     @Test
     public void testReadConfig() throws Exception {
-        AtomBindingModel atomModel = getFirstCamelModelBinding(ATOM_XML);
+        CamelAtomBindingModel atomModel = getFirstCamelModelBinding(ATOM_XML);
         final Validation validateModel = atomModel.validateModel();
 
         assertTrue(validateModel.isValid());
@@ -91,13 +91,13 @@ public class V1AtomBindingModelTest extends V1BaseCamelModelTest<V1AtomBindingMo
 
     @Test
     public void testComponentURI() {
-        AtomBindingModel atomModel = createAtomModel();
+        CamelAtomBindingModel atomModel = createAtomModel();
         assertEquals(ATOM_URI, atomModel.getComponentURI().toString());
     }
 
     @Test
     public void testCamelEndpoint() {
-        AtomBindingModel model = createAtomModel();
+        CamelAtomBindingModel model = createAtomModel();
         AtomEndpoint endpoint = getEndpoint(model, AtomEndpoint.class);
 
         assertEquals(FEED_URI.toString(), endpoint.getFeedUri().toString());
@@ -109,7 +109,7 @@ public class V1AtomBindingModelTest extends V1BaseCamelModelTest<V1AtomBindingMo
         assertTrue(endpoint.isThrottleEntries());
     }
 
-    private void assertDefaults(AtomBindingModel atomModel) {
+    private void assertDefaults(CamelAtomBindingModel atomModel) {
         assertEquals(FEED_URI, atomModel.getFeedURI());
         assertEquals(DELAY, atomModel.getConsumer().getDelay());
         assertEquals(INITIAL_DELAY, atomModel.getConsumer().getInitialDelay());
@@ -122,8 +122,8 @@ public class V1AtomBindingModelTest extends V1BaseCamelModelTest<V1AtomBindingMo
         assertEquals(Boolean.TRUE, atomModel.isThrottled());
     }
 
-    private V1AtomBindingModel createAtomModel() {
-        V1AtomBindingModel abm = new V1AtomBindingModel()
+    private V1CamelAtomBindingModel createAtomModel() {
+        V1CamelAtomBindingModel abm = new V1CamelAtomBindingModel()
             .setFeedHeader(true)
             .setFeedURI(FEED_URI)
             .setFiltered(true)
@@ -132,7 +132,7 @@ public class V1AtomBindingModelTest extends V1BaseCamelModelTest<V1AtomBindingMo
             .setSplit(true)
             .setThrottled(true);
 
-        CamelScheduledPollConsumer consumer = new V1CamelScheduledPollConsumer(V1AtomBindingModel.CONSUME)
+        CamelScheduledPollConsumer consumer = new V1CamelScheduledPollConsumer(V1CamelAtomBindingModel.CONSUME)
             .setDelay(15000)
             .setInitialDelay(20000)
             .setUseFixedDelay(true);

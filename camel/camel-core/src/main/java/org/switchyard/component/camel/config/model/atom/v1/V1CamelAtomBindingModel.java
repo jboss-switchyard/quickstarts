@@ -26,7 +26,7 @@ import java.util.List;
 
 import org.switchyard.component.camel.config.model.QueryString;
 import org.switchyard.component.camel.config.model.CamelScheduledPollConsumer;
-import org.switchyard.component.camel.config.model.atom.AtomBindingModel;
+import org.switchyard.component.camel.config.model.atom.CamelAtomBindingModel;
 import org.switchyard.component.camel.config.model.v1.V1BaseCamelBindingModel;
 import org.switchyard.component.camel.config.model.v1.V1CamelScheduledPollConsumer;
 import org.switchyard.config.Configuration;
@@ -35,7 +35,7 @@ import org.switchyard.config.model.Descriptor;
 /**
  * Implementation of AtomBindingModel.
  */
-public class V1AtomBindingModel extends V1BaseCamelBindingModel implements AtomBindingModel {
+public class V1CamelAtomBindingModel extends V1BaseCamelBindingModel implements CamelAtomBindingModel {
 
     /**
      * Camel endpoint type.
@@ -65,7 +65,7 @@ public class V1AtomBindingModel extends V1BaseCamelBindingModel implements AtomB
     /**
      * Create a new AtomBindingModel.
      */
-    public V1AtomBindingModel() {
+    public V1CamelAtomBindingModel() {
         super(ATOM);
         setModelChildrenOrder(
             FEED_URI,
@@ -83,7 +83,7 @@ public class V1AtomBindingModel extends V1BaseCamelBindingModel implements AtomB
      * @param config The switchyard configuration instance.
      * @param desc The switchyard descriptor instance.
      */
-    public V1AtomBindingModel(Configuration config, Descriptor desc) {
+    public V1CamelAtomBindingModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
@@ -98,7 +98,7 @@ public class V1AtomBindingModel extends V1BaseCamelBindingModel implements AtomB
     }
 
     @Override
-    public V1AtomBindingModel setFeedURI(URI uri) {
+    public V1CamelAtomBindingModel setFeedURI(URI uri) {
         return setConfig(FEED_URI, uri.toString());
     }
 
@@ -108,7 +108,7 @@ public class V1AtomBindingModel extends V1BaseCamelBindingModel implements AtomB
     }
 
     @Override
-    public V1AtomBindingModel setLastUpdate(Date date) {
+    public V1CamelAtomBindingModel setLastUpdate(Date date) {
         setConfig(LAST_UPDATE, _dateFormat.format(date));
         return this;
     }
@@ -119,7 +119,7 @@ public class V1AtomBindingModel extends V1BaseCamelBindingModel implements AtomB
     }
 
     @Override
-    public V1AtomBindingModel setFeedHeader(boolean feedHeader) {
+    public V1CamelAtomBindingModel setFeedHeader(boolean feedHeader) {
         setConfig(FEED_HEADER, String.valueOf(feedHeader));
         return this;
     }
@@ -130,7 +130,7 @@ public class V1AtomBindingModel extends V1BaseCamelBindingModel implements AtomB
     }
 
     @Override
-    public V1AtomBindingModel setFiltered(boolean filtered) {
+    public V1CamelAtomBindingModel setFiltered(boolean filtered) {
         setConfig(FILTER, String.valueOf(filtered));
         return this;
     }
@@ -141,7 +141,7 @@ public class V1AtomBindingModel extends V1BaseCamelBindingModel implements AtomB
     }
 
     @Override
-    public V1AtomBindingModel setSorted(boolean sorted) {
+    public V1CamelAtomBindingModel setSorted(boolean sorted) {
         setConfig(SORT_ENTRIES, String.valueOf(sorted));
         return this;
     }
@@ -152,7 +152,7 @@ public class V1AtomBindingModel extends V1BaseCamelBindingModel implements AtomB
     }
 
     @Override
-    public V1AtomBindingModel setSplit(boolean split) {
+    public V1CamelAtomBindingModel setSplit(boolean split) {
         setConfig(SPLIT_ENTRIES, String.valueOf(split));
         return this;
     }
@@ -163,7 +163,7 @@ public class V1AtomBindingModel extends V1BaseCamelBindingModel implements AtomB
     }
 
     @Override
-    public V1AtomBindingModel setThrottled(boolean throttled) {
+    public V1CamelAtomBindingModel setThrottled(boolean throttled) {
         setConfig(THROTTLE_ENTRIES, String.valueOf(throttled));
         return this;
     }
@@ -180,7 +180,7 @@ public class V1AtomBindingModel extends V1BaseCamelBindingModel implements AtomB
     }
 
     @Override
-    public V1AtomBindingModel setConsumer(CamelScheduledPollConsumer consumer) {
+    public V1CamelAtomBindingModel setConsumer(CamelScheduledPollConsumer consumer) {
         Configuration config = getModelConfiguration().getFirstChild(CONSUME);
         if (config != null) {
             // set an existing config value
