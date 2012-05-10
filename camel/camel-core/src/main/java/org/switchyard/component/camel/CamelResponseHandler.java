@@ -26,7 +26,7 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
 import org.switchyard.ServiceReference;
-import org.switchyard.composer.MessageComposer;
+import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.exception.SwitchYardException;
 
 /**

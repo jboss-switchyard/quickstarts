@@ -36,7 +36,7 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.camel.composer.CamelComposition;
-import org.switchyard.composer.MessageComposer;
+import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InvocationContract;
 import org.switchyard.metadata.java.JavaService;

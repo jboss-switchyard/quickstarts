@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
 package org.switchyard.component.soap;
 
 import java.io.ByteArrayOutputStream;
@@ -35,13 +34,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.ws.soap.SOAPBinding;
 
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -50,21 +46,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.Context;
-import org.switchyard.Exchange;
 import org.switchyard.Message;
-import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
-import org.switchyard.ServiceReference;
 import org.switchyard.common.net.SocketAddr;
-import org.switchyard.component.soap.composer.SOAPContextMapper;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
-import org.switchyard.composer.ContextMapper;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
-import org.switchyard.internal.DefaultContext;
 import org.switchyard.metadata.BaseService;
 import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
@@ -72,7 +61,6 @@ import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.test.InvocationFaultException;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.SwitchYardRunner;
-import org.switchyard.test.mixins.HTTPMixIn;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -83,6 +71,7 @@ import org.w3c.dom.Node;
  */
 @RunWith(SwitchYardRunner.class)
 public class SOAPGatewayTest {
+
     private static final int DEFAULT_THREAD_COUNT = 10;
     private static final long DEFAULT_NO_OF_THREADS = 100;
 
@@ -231,26 +220,6 @@ public class SOAPGatewayTest {
     @After
     public void tearDown() throws Exception {
         // All are stopped by Test Runner
-    }
-
-    @Test
-    public void testContextMapping() throws Exception {
-        QName firstName = new QName("urn:names:1.0", "first");
-        QName lastName = new QName("urn:names:1.0", "last");
-        ContextMapper<SOAPMessage> mapper = new SOAPContextMapper();
-        Context context = new DefaultContext();
-        // test mapFrom
-        SOAPMessage source = SOAPUtil.createMessage(SOAPBinding.SOAP11HTTP_BINDING);
-        source.getSOAPHeader().addChildElement(firstName).setValue("John");
-        source.getSOAPHeader().addChildElement(lastName).setValue("Doe");
-        mapper.mapFrom(source, context);
-        Assert.assertEquals("John", context.getPropertyValue(firstName.toString()));
-        Assert.assertEquals("Doe", context.getPropertyValue(lastName.toString()));
-        // test mapTo
-        SOAPMessage target = SOAPUtil.createMessage(SOAPBinding.SOAP11HTTP_BINDING);
-        mapper.mapTo(context, target);
-        Assert.assertEquals("John", ((Element)target.getSOAPHeader().getChildElements(firstName).next()).getTextContent());
-        Assert.assertEquals("Doe", ((Element)target.getSOAPHeader().getChildElements(lastName).next()).getTextContent());
     }
 
     @Test

@@ -127,18 +127,16 @@ public class ContextMap implements Context, Map<String, Object> {
      * {@inheritDoc}
      */
     @Override
-    public Context setProperty(String name, Object val) {
-        _context.setProperty(name, val);
-        return this;
+    public Property setProperty(String name, Object val) {
+        return _context.setProperty(name, val);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Context setProperty(String name, Object val, Scope scope) {
-        _context.setProperty(name, val, scope);
-        return this;
+    public Property setProperty(String name, Object val, Scope scope) {
+        return _context.setProperty(name, val, scope);
     }
 
     /**

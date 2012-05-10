@@ -41,6 +41,7 @@
     </parent>
 
     <modules>
+        <module>composer</module>
         <module>rules</module>
     </modules>
 

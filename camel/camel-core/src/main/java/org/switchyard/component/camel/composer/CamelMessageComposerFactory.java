@@ -19,8 +19,8 @@
 package org.switchyard.component.camel.composer;
 
 import org.apache.camel.Message;
-import org.switchyard.composer.MessageComposer;
-import org.switchyard.composer.MessageComposerFactory;
+import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.common.composer.MessageComposerFactory;
 
 /**
  * CamelMessageComposerFactory.

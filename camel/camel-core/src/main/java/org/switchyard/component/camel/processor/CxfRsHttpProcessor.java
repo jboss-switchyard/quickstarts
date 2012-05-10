@@ -22,7 +22,7 @@ package org.switchyard.component.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.switchyard.component.camel.CamelConstants;
-import org.switchyard.composer.MessageComposer;
+import org.switchyard.component.common.composer.MessageComposer;
 
 /**
  * A cxfrs Camel Processor that uses HTTP client api. Sets the method based

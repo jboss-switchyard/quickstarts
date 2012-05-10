@@ -24,6 +24,9 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composer.ContextMapperModel;
+import org.switchyard.config.model.composer.MessageComposerModel;
+import org.switchyard.config.model.composer.v1.V1MessageComposerModel;
 import org.switchyard.config.model.composite.BindingModel;
 
 /**
@@ -51,8 +54,13 @@ public class V1SOAPMarshaller extends BaseMarshaller {
     @Override
     public Model read(Configuration config) {
         Descriptor desc = getDescriptor();
-        if (config.getName().startsWith(BindingModel.BINDING)) {
+        String name = config.getName();
+        if (name.startsWith(BindingModel.BINDING)) {
             return new SOAPBindingModel(config, desc);
+        } else if (name.equals(ContextMapperModel.CONTEXT_MAPPER)) {
+            return new V1SOAPContextMapperModel(config, desc);
+        } else if (name.equals(MessageComposerModel.MESSAGE_COMPOSER)) {
+            return new V1MessageComposerModel(config, desc);
         }
         return null;
     }

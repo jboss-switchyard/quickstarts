@@ -22,7 +22,7 @@ package org.switchyard.component.camel.processor;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.switchyard.Exchange;
-import org.switchyard.composer.MessageComposer;
+import org.switchyard.component.common.composer.MessageComposer;
 
 /**
  * A default Camel Processor.

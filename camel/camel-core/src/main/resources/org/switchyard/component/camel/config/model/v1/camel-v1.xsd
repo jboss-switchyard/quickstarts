@@ -35,6 +35,8 @@ MA  02110-1301, USA.
         <complexContent>
             <extension base="swyd:SwitchYardBindingType">
              <sequence>
+                 <element name="contextMapper" type="swyd:ContextMapperType"  minOccurs="0" maxOccurs="1"/>
+                 <element name="messageComposer" type="swyd:MessageComposerType" minOccurs="0" maxOccurs="1"/>
                  <element name="operationSelector" type="camel:CamelOperationSelectorType" minOccurs="0" maxOccurs="1"/>
              </sequence>
             </extension>
@@ -126,6 +128,8 @@ MA  02110-1301, USA.
         <complexContent>
             <extension base="swyd:SwitchYardBindingType">
                 <sequence>
+                    <element name="contextMapper" type="swyd:ContextMapperType"  minOccurs="0" maxOccurs="1"/>
+                    <element name="messageComposer" type="swyd:MessageComposerType" minOccurs="0" maxOccurs="1"/>
                     <element name="name" type="string"/>
                 </sequence>
             </extension>
@@ -137,6 +141,8 @@ MA  02110-1301, USA.
         <complexContent>
             <extension base="swyd:SwitchYardBindingType">
                 <sequence>
+                    <element name="contextMapper" type="swyd:ContextMapperType"  minOccurs="0" maxOccurs="1"/>
+                    <element name="messageComposer" type="swyd:MessageComposerType" minOccurs="0" maxOccurs="1"/>
                     <element name="name" type="string"/>
                     <element name="time" type="dateTime" minOccurs="0" maxOccurs="1"/>
                     <element name="pattern" type="string" minOccurs="0" maxOccurs="1"/>
@@ -154,6 +160,8 @@ MA  02110-1301, USA.
         <complexContent>
             <extension base="swyd:SwitchYardBindingType">
                 <sequence>
+                    <element name="contextMapper" type="swyd:ContextMapperType"  minOccurs="0" maxOccurs="1"/>
+                    <element name="messageComposer" type="swyd:MessageComposerType" minOccurs="0" maxOccurs="1"/>
                     <element name="name" type="string"/>
                     <element name="size" type="integer"/>
                     <element name="concurrentConsumers" type="integer"/>
@@ -171,6 +179,8 @@ MA  02110-1301, USA.
         <complexContent>
             <extension base="swyd:SwitchYardBindingType">
                 <sequence>
+                    <element name="contextMapper" type="swyd:ContextMapperType"  minOccurs="0" maxOccurs="1"/>
+                    <element name="messageComposer" type="swyd:MessageComposerType" minOccurs="0" maxOccurs="1"/>
                     <element name="name" type="string"/>
                     <element name="reportGroup" type="integer"/>
                 </sequence>

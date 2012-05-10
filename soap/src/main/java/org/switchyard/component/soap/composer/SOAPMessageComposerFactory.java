@@ -20,8 +20,8 @@ package org.switchyard.component.soap.composer;
 
 import javax.xml.soap.SOAPMessage;
 
-import org.switchyard.composer.MessageComposer;
-import org.switchyard.composer.MessageComposerFactory;
+import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.common.composer.MessageComposerFactory;
 
 /**
  * SOAPMessageComposerFactory.

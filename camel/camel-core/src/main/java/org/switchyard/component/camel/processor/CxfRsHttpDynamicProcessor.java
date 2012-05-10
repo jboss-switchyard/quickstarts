@@ -40,7 +40,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.camel.CamelConstants;
-import org.switchyard.composer.MessageComposer;
+import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.ServiceOperation;

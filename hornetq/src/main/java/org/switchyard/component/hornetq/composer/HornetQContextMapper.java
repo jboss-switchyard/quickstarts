@@ -18,13 +18,15 @@
  */
 package org.switchyard.component.hornetq.composer;
 
+import static org.switchyard.Scope.EXCHANGE;
+import static org.switchyard.component.hornetq.composer.HornetQComposition.HORNETQ_MESSAGE_PROPERTY;
+
 import org.hornetq.api.core.PropertyConversionException;
 import org.hornetq.api.core.SimpleString;
 import org.hornetq.api.core.client.ClientMessage;
 import org.switchyard.Context;
 import org.switchyard.Property;
-import org.switchyard.Scope;
-import org.switchyard.composer.BaseContextMapper;
+import org.switchyard.component.common.composer.BaseContextMapper;
 
 /**
  * HornetQContextMapper.
@@ -41,16 +43,10 @@ public class HornetQContextMapper extends BaseContextMapper<ClientMessage> {
         for (SimpleString key : source.getPropertyNames()) {
             String name = key.toString();
             if (matches(name)) {
-                String value = null;
-                try {
-                    value = source.getStringProperty(key);
-                } catch (PropertyConversionException pce) {
-                    // ignore and keep going (here just to keep checkstyle happy)
-                    pce.getMessage();
-                }
+                Object value = source.getObjectProperty(key);
                 if (value != null) {
                     // HornetQ ClientMessage properties -> Context EXCHANGE properties
-                    context.setProperty(name, value, Scope.EXCHANGE);
+                    context.setProperty(name, value, EXCHANGE).addLabels(HORNETQ_MESSAGE_PROPERTY);
                 }
             }
         }
@@ -61,7 +57,7 @@ public class HornetQContextMapper extends BaseContextMapper<ClientMessage> {
      */
     @Override
     public void mapTo(Context context, ClientMessage target) throws Exception {
-        for (Property property : context.getProperties(Scope.EXCHANGE)) {
+        for (Property property : context.getProperties(EXCHANGE)) {
             String name = property.getName();
             if (matches(name)) {
                 Object value = property.getValue();

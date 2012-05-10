@@ -18,6 +18,12 @@
  */
 package org.switchyard.component.camel.composer;
 
+import static org.switchyard.Scope.EXCHANGE;
+import static org.switchyard.Scope.IN;
+import static org.switchyard.Scope.OUT;
+import static org.switchyard.component.camel.composer.CamelComposition.CAMEL_EXCHANGE_PROPERTY;
+import static org.switchyard.component.camel.composer.CamelComposition.CAMEL_MESSAGE_HEADER;
+
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -25,7 +31,7 @@ import org.apache.camel.Message;
 import org.switchyard.Context;
 import org.switchyard.Property;
 import org.switchyard.Scope;
-import org.switchyard.composer.BaseContextMapper;
+import org.switchyard.component.common.composer.BaseContextMapper;
 
 /**
  * CamelContextMapper.
@@ -34,7 +40,7 @@ import org.switchyard.composer.BaseContextMapper;
  */
 public class CamelContextMapper extends BaseContextMapper<Message> {
 
-    private static final Scope[] IN_OUT = new Scope[]{Scope.IN, Scope.OUT};
+    private static final Scope[] IN_OUT = new Scope[]{IN, OUT};
 
     /**
      * {@inheritDoc}
@@ -44,9 +50,9 @@ public class CamelContextMapper extends BaseContextMapper<Message> {
         Scope scope;
         Exchange exchange = source.getExchange();
         if (exchange.getIn() == source) {
-            scope = Scope.IN;
+            scope = IN;
         } else {
-            scope = Scope.OUT;
+            scope = OUT;
         }
         for (Map.Entry<String,Object> header : source.getHeaders().entrySet()) {
             String name = header.getKey();
@@ -54,7 +60,7 @@ public class CamelContextMapper extends BaseContextMapper<Message> {
                 Object value = header.getValue();
                 if (value != null) {
                     // Camel Message headers -> Context ${scope} properties
-                    context.setProperty(name, value, scope);
+                    context.setProperty(name, value, scope).addLabels(CAMEL_MESSAGE_HEADER);
                 }
             }
         }
@@ -65,7 +71,7 @@ public class CamelContextMapper extends BaseContextMapper<Message> {
                     Object value = property.getValue();
                     if (value != null) {
                         // Camel Exchange properties -> Context EXCHANGE properties
-                        context.setProperty(name, value, Scope.EXCHANGE);
+                        context.setProperty(name, value, EXCHANGE).addLabels(CAMEL_EXCHANGE_PROPERTY);
                     }
                 }
             }
@@ -91,7 +97,7 @@ public class CamelContextMapper extends BaseContextMapper<Message> {
             }
         }
         if (exchange != null) {
-            for (Property property : context.getProperties(Scope.EXCHANGE)) {
+            for (Property property : context.getProperties(EXCHANGE)) {
                 String name = property.getName();
                 if (matches(name)) {
                     Object value = property.getValue();

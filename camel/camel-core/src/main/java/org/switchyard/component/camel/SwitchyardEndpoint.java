@@ -24,7 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.switchyard.component.camel.composer.CamelComposition;
-import org.switchyard.composer.MessageComposer;
+import org.switchyard.component.common.composer.MessageComposer;
 
 /**
  * A Camel Endpoint that is a simple ProcessorEndpoint.

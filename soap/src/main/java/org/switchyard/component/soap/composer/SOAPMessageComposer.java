@@ -30,8 +30,8 @@ import javax.xml.transform.dom.DOMSource;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeState;
 import org.switchyard.Message;
+import org.switchyard.component.common.composer.BaseMessageComposer;
 import org.switchyard.component.soap.util.SOAPUtil;
-import org.switchyard.composer.BaseMessageComposer;
 
 /**
  * The SOAP implementation of MessageComposer simply copies the SOAP body into

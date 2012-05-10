@@ -19,12 +19,13 @@
 
 package org.switchyard.component.bean.internal.context;
 
+import java.util.Set;
+
+import javax.enterprise.context.ApplicationScoped;
+
 import org.switchyard.Context;
 import org.switchyard.Property;
 import org.switchyard.Scope;
-
-import javax.enterprise.context.ApplicationScoped;
-import java.util.Set;
 
 /**
  * SwitchYard Context proxy.
@@ -77,12 +78,12 @@ public class ContextProxy implements Context {
     }
 
     @Override
-    public Context setProperty(String name, Object val) {
+    public Property setProperty(String name, Object val) {
         return getContext().setProperty(name, val);
     }
 
     @Override
-    public Context setProperty(String name, Object val, Scope scope) {
+    public Property setProperty(String name, Object val, Scope scope) {
         return getContext().setProperty(name, val, scope);
     }
 

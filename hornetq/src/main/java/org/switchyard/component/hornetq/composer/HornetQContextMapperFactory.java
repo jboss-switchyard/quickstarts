@@ -19,8 +19,8 @@
 package org.switchyard.component.hornetq.composer;
 
 import org.hornetq.api.core.client.ClientMessage;
-import org.switchyard.composer.ContextMapper;
-import org.switchyard.composer.ContextMapperFactory;
+import org.switchyard.component.common.composer.ContextMapper;
+import org.switchyard.component.common.composer.ContextMapperFactory;
 
 /**
  * HornetQContextMapperFactory.

@@ -26,7 +26,7 @@ MA  02110-1301, USA.
     <sca:service name="SampleSOAPService12" promote="publish-as-ws">
        <sca:interface.wsdl interface="HelloWebService1.2.wsdl#wsdl.porttype(HelloSOAP12Service)"/>
        <soap:binding.soap>
-           <swyd:contextMapper includes="Content-Type"/>
+           <soap:contextMapper includes="Content-Type"/>
            <soap:wsdl>HelloWebService1.2.wsdl</soap:wsdl>
            <soap:wsdlPort>{urn:switchyard-component-soap:test-ws:1.0}HelloSOAP12Service:HelloSOAP12ServicePort</soap:wsdlPort>
        </soap:binding.soap>

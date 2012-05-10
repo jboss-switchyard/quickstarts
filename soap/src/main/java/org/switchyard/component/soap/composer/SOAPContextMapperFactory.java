@@ -20,8 +20,8 @@ package org.switchyard.component.soap.composer;
 
 import javax.xml.soap.SOAPMessage;
 
-import org.switchyard.composer.ContextMapper;
-import org.switchyard.composer.ContextMapperFactory;
+import org.switchyard.component.common.composer.ContextMapper;
+import org.switchyard.component.common.composer.ContextMapperFactory;
 
 /**
  * SOAPContextMapperFactory.

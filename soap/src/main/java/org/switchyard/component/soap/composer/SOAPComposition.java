@@ -20,11 +20,12 @@ package org.switchyard.component.soap.composer;
 
 import javax.xml.soap.SOAPMessage;
 
-import org.switchyard.composer.Composition;
-import org.switchyard.composer.MessageComposer;
-import org.switchyard.config.model.composer.ContextMapperModel;
+import org.switchyard.component.common.composer.Composition;
+import org.switchyard.component.common.composer.ContextMapper;
+import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.soap.config.model.SOAPBindingModel;
+import org.switchyard.component.soap.config.model.SOAPContextMapperModel;
 import org.switchyard.config.model.composer.MessageComposerModel;
-import org.switchyard.config.model.composite.BindingModel;
 
 /**
  * Utility class for SOAP-specific Composition.
@@ -32,6 +33,12 @@ import org.switchyard.config.model.composite.BindingModel;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public final class SOAPComposition {
+
+    /** The "soap_message_header" context property label. */
+    public static final String SOAP_MESSAGE_HEADER = "soap_message_header";
+
+    /** The "soap_message_mime_header" context property label. */
+    public static final String SOAP_MESSAGE_MIME_HEADER = "soap_message_mime_header";
 
     /**
      * Uses the {@link Composition} class to create a SOAP-specific MessageComposer.
@@ -43,13 +50,18 @@ public final class SOAPComposition {
 
     /**
      * Uses the {@link Composition} class to create a SOAP-specific MessageComposer.
-     * @param bm a BidingModel to get configuration details from
+     * @param sbm a SOAPBindingModel to get configuration details from
      * @return the MessageComposer
      */
-    public static MessageComposer<SOAPMessage> getMessageComposer(BindingModel bm) {
-        ContextMapperModel cmm = bm != null ? bm.getContextMapper() : null;
-        MessageComposerModel mcm = bm != null ? bm.getMessageComposer() : null;
-        return Composition.getMessageComposer(SOAPMessage.class, cmm, mcm);
+    public static MessageComposer<SOAPMessage> getMessageComposer(SOAPBindingModel sbm) {
+        SOAPContextMapperModel scmm = sbm != null ? sbm.getSOAPContextMapper() : null;
+        MessageComposerModel mcm = sbm != null ? sbm.getMessageComposer() : null;
+        MessageComposer<SOAPMessage> mc = Composition.getMessageComposer(SOAPMessage.class, scmm, mcm);
+        ContextMapper<SOAPMessage> cm = mc.getContextMapper();
+        if (cm instanceof SOAPContextMapper && scmm != null) {
+            ((SOAPContextMapper)cm).setSOAPHeadersType(scmm.getSOAPHeadersType());
+        }
+        return mc;
     }
 
     private SOAPComposition() {}

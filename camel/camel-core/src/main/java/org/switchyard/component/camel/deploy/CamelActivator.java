@@ -59,7 +59,7 @@ import org.switchyard.component.camel.config.model.seda.v1.V1CamelSedaBindingMod
 import org.switchyard.component.camel.config.model.sftp.v1.V1CamelSftpBindingModel;
 import org.switchyard.component.camel.config.model.timer.v1.V1CamelTimerBindingModel;
 import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
-import org.switchyard.composer.MessageComposer;
+import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;

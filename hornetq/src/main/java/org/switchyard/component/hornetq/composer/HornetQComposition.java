@@ -19,11 +19,11 @@
 package org.switchyard.component.hornetq.composer;
 
 import org.hornetq.api.core.client.ClientMessage;
-import org.switchyard.composer.Composition;
-import org.switchyard.composer.MessageComposer;
+import org.switchyard.component.common.composer.Composition;
+import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.hornetq.config.model.HornetQBindingModel;
 import org.switchyard.config.model.composer.ContextMapperModel;
 import org.switchyard.config.model.composer.MessageComposerModel;
-import org.switchyard.config.model.composite.BindingModel;
 
 /**
  * Utility class for HornetQ-specific Composition.
@@ -31,6 +31,9 @@ import org.switchyard.config.model.composite.BindingModel;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public final class HornetQComposition {
+
+    /** The "hornetq_message_property" context property label. */
+    public static final String HORNETQ_MESSAGE_PROPERTY = "hornetq_message_property";
 
     /**
      * Uses the {@link Composition} class to create a HornetQ-specific MessageComposer.
@@ -42,12 +45,12 @@ public final class HornetQComposition {
 
     /**
      * Uses the {@link Composition} class to create a HornetQ-specific MessageComposer.
-     * @param bm a BidingModel to get configuration details from
+     * @param hqbm a HornetQBindingModel to get configuration details from
      * @return the MessageComposer
      */
-    public static MessageComposer<ClientMessage> getMessageComposer(BindingModel bm) {
-        ContextMapperModel cmm = bm != null ? bm.getContextMapper() : null;
-        MessageComposerModel mcm = bm != null ? bm.getMessageComposer() : null;
+    public static MessageComposer<ClientMessage> getMessageComposer(HornetQBindingModel hqbm) {
+        ContextMapperModel cmm = hqbm != null ? hqbm.getContextMapper() : null;
+        MessageComposerModel mcm = hqbm != null ? hqbm.getMessageComposer() : null;
         return Composition.getMessageComposer(ClientMessage.class, cmm, mcm);
     }
 

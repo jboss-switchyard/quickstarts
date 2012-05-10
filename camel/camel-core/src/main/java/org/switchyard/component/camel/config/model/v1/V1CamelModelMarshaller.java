@@ -35,6 +35,10 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composer.ContextMapperModel;
+import org.switchyard.config.model.composer.MessageComposerModel;
+import org.switchyard.config.model.composer.v1.V1ContextMapperModel;
+import org.switchyard.config.model.composer.v1.V1MessageComposerModel;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 
@@ -99,6 +103,14 @@ public class V1CamelModelMarshaller extends BaseMarshaller {
 
         if (name.startsWith(ComponentImplementationModel.IMPLEMENTATION)) {
             return new V1CamelImplementationModel(config, getDescriptor());
+        }
+
+        if (name.equals(ContextMapperModel.CONTEXT_MAPPER)) {
+            return new V1ContextMapperModel(config, getDescriptor());
+        }
+
+        if (name.equals(MessageComposerModel.MESSAGE_COMPOSER)) {
+            return new V1MessageComposerModel(config, getDescriptor());
         }
 
         return null;

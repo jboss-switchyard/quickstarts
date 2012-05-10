@@ -28,6 +28,10 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composer.ContextMapperModel;
+import org.switchyard.config.model.composer.MessageComposerModel;
+import org.switchyard.config.model.composer.v1.V1ContextMapperModel;
+import org.switchyard.config.model.composer.v1.V1MessageComposerModel;
 import org.switchyard.config.model.domain.PropertiesModel;
 import org.switchyard.config.model.domain.PropertyModel;
 import org.switchyard.config.model.domain.v1.V1PropertiesModel;
@@ -80,6 +84,14 @@ public class V1ModelMarshaller extends BaseMarshaller {
         
         if (name.startsWith(V1OperationSelector.OPERATION_SELECTOR)) {
             return new V1OperationSelector(config, getDescriptor());
+        }
+        
+        if (name.equals(ContextMapperModel.CONTEXT_MAPPER)) {
+            return new V1ContextMapperModel(config, getDescriptor());
+        }
+        
+        if (name.equals(MessageComposerModel.MESSAGE_COMPOSER)) {
+            return new V1MessageComposerModel(config, getDescriptor());
         }
         
         return null;

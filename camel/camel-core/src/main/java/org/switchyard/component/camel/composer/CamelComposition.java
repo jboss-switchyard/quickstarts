@@ -19,11 +19,11 @@
 package org.switchyard.component.camel.composer;
 
 import org.apache.camel.Message;
-import org.switchyard.composer.Composition;
-import org.switchyard.composer.MessageComposer;
+import org.switchyard.component.camel.config.model.CamelBindingModel;
+import org.switchyard.component.common.composer.Composition;
+import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.config.model.composer.ContextMapperModel;
 import org.switchyard.config.model.composer.MessageComposerModel;
-import org.switchyard.config.model.composite.BindingModel;
 
 /**
  * Utility class for Camel-specific Composition.
@@ -31,6 +31,12 @@ import org.switchyard.config.model.composite.BindingModel;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public final class CamelComposition {
+
+    /** The "camel_exchange_property" context property label. */
+    public static final String CAMEL_EXCHANGE_PROPERTY = "camel_exchange_property";
+
+    /** The "camel_message_header" context property label. */
+    public static final String CAMEL_MESSAGE_HEADER = "camel_message_header";
 
     /**
      * Uses the {@link Composition} class to create a Camel-specific MessageComposer.
@@ -42,12 +48,12 @@ public final class CamelComposition {
 
     /**
      * Uses the {@link Composition} class to create a Camel-specific MessageComposer.
-     * @param bm a BidingModel to get configuration details from
+     * @param cbm a CamelBindingModel to get configuration details from
      * @return the MessageComposer
      */
-    public static MessageComposer<Message> getMessageComposer(BindingModel bm) {
-        ContextMapperModel cmm = bm != null ? bm.getContextMapper() : null;
-        MessageComposerModel mcm = bm != null ? bm.getMessageComposer() : null;
+    public static MessageComposer<Message> getMessageComposer(CamelBindingModel cbm) {
+        ContextMapperModel cmm = cbm != null ? cbm.getContextMapper() : null;
+        MessageComposerModel mcm = cbm != null ? cbm.getMessageComposer() : null;
         return Composition.getMessageComposer(Message.class, cmm, mcm);
     }
 

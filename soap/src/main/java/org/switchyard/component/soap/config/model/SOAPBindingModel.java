@@ -79,6 +79,15 @@ public class SOAPBindingModel extends V1BindingModel {
      */
     public SOAPBindingModel(Configuration config, Descriptor desc) {
         super(config, desc);
+        setModelChildrenOrder(WSDL, PORT, SOCKET_ADDRESS);
+    }
+
+    /**
+     * Gets the SOAPContextMapperModel.
+     * @return the SOAPContextMapperModel
+     */
+    public SOAPContextMapperModel getSOAPContextMapper() {
+        return (SOAPContextMapperModel)getContextMapper();
     }
 
     /**

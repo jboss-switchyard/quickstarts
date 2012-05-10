@@ -25,7 +25,7 @@ import javax.xml.namespace.QName;
 import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.common.xml.QNameUtil;
-import org.switchyard.composer.BaseMessageComposer;
+import org.switchyard.component.common.composer.BaseMessageComposer;
 
 /**
  * The Camel implementation of MessageComposer.

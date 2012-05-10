@@ -30,12 +30,12 @@ import org.hornetq.api.core.client.ServerLocator;
 import org.switchyard.Exchange;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.hornetq.composer.HornetQComposition;
 import org.switchyard.component.hornetq.config.model.HornetQBindingModel;
 import org.switchyard.component.hornetq.config.model.HornetQConfigModel;
 import org.switchyard.component.hornetq.config.model.OperationSelector;
 import org.switchyard.component.hornetq.internal.HornetQUtil;
-import org.switchyard.composer.MessageComposer;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.exception.SwitchYardException;
 

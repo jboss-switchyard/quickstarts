@@ -19,8 +19,8 @@
 package org.switchyard.component.hornetq.composer;
 
 import org.hornetq.api.core.client.ClientMessage;
-import org.switchyard.composer.MessageComposer;
-import org.switchyard.composer.MessageComposerFactory;
+import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.common.composer.MessageComposerFactory;
 
 /**
  * HornetQMessageComposerFactory.

@@ -19,8 +19,8 @@
 package org.switchyard.component.camel.composer;
 
 import org.apache.camel.Message;
-import org.switchyard.composer.ContextMapper;
-import org.switchyard.composer.ContextMapperFactory;
+import org.switchyard.component.common.composer.ContextMapper;
+import org.switchyard.component.common.composer.ContextMapperFactory;
 
 /**
  * CamelContextMapperFactory.

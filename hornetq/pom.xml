@@ -32,17 +32,18 @@
     </build>
 
     <dependencies>
-    
-		<dependency>
-	        <groupId>org.switchyard</groupId>
-	        <artifactId>switchyard-config</artifactId>
-	    </dependency>
-	    
-		<dependency>
-			<groupId>org.switchyard.components</groupId>
-			<artifactId>switchyard-component-bean</artifactId>
-		</dependency>
-		
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-bean</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-common-composer</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
