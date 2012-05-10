@@ -1,0 +1,18 @@
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+            xmlns:camel="urn:switchyard-component-camel:config:1.0">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-ftp-binding" targetNamespace="urn:switchyard-quickstart:camel-ftp-binding:0.1.0">
+        <service name="GreetingService" promote="GreetingService">
+            <camel:binding.ftp>
+                <camel:directory>/</camel:directory>
+                <camel:host>localhost</camel:host>
+                <camel:port>2222</camel:port>
+                <camel:username>camel</camel:username>
+                <camel:password>isMyFriend</camel:password>
+                <camel:consume>
+                    <camel:initialDelay>50</camel:initialDelay>
+                    <camel:delay>50</camel:delay>
+                </camel:consume>
+            </camel:binding.ftp>
+        </service>
+    </composite>
+</switchyard>
