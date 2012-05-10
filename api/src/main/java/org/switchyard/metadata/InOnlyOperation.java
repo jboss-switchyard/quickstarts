@@ -19,21 +19,28 @@
 
 package org.switchyard.metadata;
 
+import java.io.IOException;
+
 import javax.xml.namespace.QName;
 
 import org.switchyard.ExchangePattern;
 import org.switchyard.io.Serialization.AccessType;
+import org.switchyard.io.Serialization.CoverageType;
+import org.switchyard.io.Serialization.Factory;
 import org.switchyard.io.Serialization.Strategy;
+import org.switchyard.metadata.InOnlyOperation.InOnlyOperationFactory;
 
 /**
  * Default implementation of ServiceOperation for ExchangePattern.IN_ONLY 
  * operations.
  */
-@Strategy(access=AccessType.FIELD)
+@Strategy(access=AccessType.FIELD, coverage=CoverageType.INCLUSIVE, factory=InOnlyOperationFactory.class)
 public class InOnlyOperation extends BaseInvocationContract implements ServiceOperation {
     
     // The operation name
     private String _operationName;
+
+    private InOnlyOperation() {}
 
     /**
      * Create a new instance of an InOnly operation with a default message name.
@@ -75,5 +82,15 @@ public class InOnlyOperation extends BaseInvocationContract implements ServiceOp
     @Override
     public String toString() {
         return _operationName + "{IN_ONLY}";
+    }
+    
+    /**
+     * The serialization factory for InOnlyOperation.
+     */
+    public static final class InOnlyOperationFactory implements Factory<InOnlyOperation> {
+        @Override
+        public InOnlyOperation create(Class<InOnlyOperation> type) throws IOException {
+            return new InOnlyOperation();
+        }
     }
 }

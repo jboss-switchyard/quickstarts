@@ -19,6 +19,8 @@
 
 package org.switchyard.config;
 
+import static org.switchyard.config.OutputKey.EXCLUDE_XML_DECLARATION;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -172,8 +174,8 @@ public abstract class BaseConfiguration implements Configuration {
     public String toString() {
         try {
             StringWriter writer = new StringWriter();
-            write(writer);
-            return writer.toString();
+            write(writer, EXCLUDE_XML_DECLARATION);
+            return writer.toString().trim();
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }

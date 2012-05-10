@@ -37,10 +37,18 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
 public class V1ContextMapperModel extends BaseModel implements ContextMapperModel {
 
     /**
-     * Constructs a new V1ContextMapperModel.
+     * Constructs a new V1ContextMapperModel in the default switchyard namespace.
      */
     public V1ContextMapperModel() {
-        super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, CONTEXT_MAPPER));
+        this(SwitchYardModel.DEFAULT_NAMESPACE);
+    }
+
+    /**
+     * Constructs a new V1ContextMapperModel in the specified namespace.
+     * @param namespace the specified namespace
+     */
+    public V1ContextMapperModel(String namespace) {
+        super(new QName(namespace, CONTEXT_MAPPER));
     }
 
     /**
@@ -68,8 +76,26 @@ public class V1ContextMapperModel extends BaseModel implements ContextMapperMode
      * {@inheritDoc}
      */
     @Override
+    public ContextMapperModel setClazz(Class<?> clazz) {
+        setModelAttribute("class", clazz != null ? clazz.getName() : null);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getIncludes() {
         return Strings.trimToNull(getModelAttribute("includes"));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ContextMapperModel setIncludes(String includes) {
+        setModelAttribute("includes", includes);
+        return this;
     }
 
     /**
@@ -84,6 +110,15 @@ public class V1ContextMapperModel extends BaseModel implements ContextMapperMode
      * {@inheritDoc}
      */
     @Override
+    public ContextMapperModel setExcludes(String excludes) {
+        setModelAttribute("excludes", excludes);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getIncludeNamespaces() {
         return Strings.trimToNull(getModelAttribute("includeNamespaces"));
     }
@@ -92,8 +127,26 @@ public class V1ContextMapperModel extends BaseModel implements ContextMapperMode
      * {@inheritDoc}
      */
     @Override
+    public ContextMapperModel setIncludeNamespaces(String includeNamespaces) {
+        setModelAttribute("includeNamespaces", includeNamespaces);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getExcludeNamespaces() {
         return Strings.trimToNull(getModelAttribute("excludeNamespaces"));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ContextMapperModel setExcludeNamespaces(String excludeNamespaces) {
+        setModelAttribute("excludeNamespaces", excludeNamespaces);
+        return this;
     }
 
 }

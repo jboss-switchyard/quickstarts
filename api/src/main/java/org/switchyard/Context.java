@@ -99,9 +99,9 @@ public interface Context {
      * exists, the value of the property is replaced. 
      * @param name name of the property to set
      * @param val the value to set for the property
-     * @return a reference to the updated Context
+     * @return a reference to the set Property
      */
-    Context setProperty(String name, Object val);
+    Property setProperty(String name, Object val);
     
     /**
      * Sets the named context property with the specified value in a specific
@@ -111,14 +111,14 @@ public interface Context {
      * @param name name of the property to set
      * @param val the value to set for the property
      * @param scope scope of the property to add
-     * @return a reference to the updated Context
+     * @return a reference to the set Property
      */
-    Context setProperty(String name, Object val, Scope scope);
+    Property setProperty(String name, Object val, Scope scope);
     
     /**
      * Adds the set of properties to this context.
      * @param properties set of properties to add
-     * @return a reference to the udpated Context
+     * @return a reference to the updated Context
      */
     Context setProperties(Set<Property> properties);
 }

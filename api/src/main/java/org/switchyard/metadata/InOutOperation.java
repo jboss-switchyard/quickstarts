@@ -19,21 +19,28 @@
 
 package org.switchyard.metadata;
 
+import java.io.IOException;
+
 import javax.xml.namespace.QName;
 
 import org.switchyard.ExchangePattern;
 import org.switchyard.io.Serialization.AccessType;
+import org.switchyard.io.Serialization.CoverageType;
+import org.switchyard.io.Serialization.Factory;
 import org.switchyard.io.Serialization.Strategy;
+import org.switchyard.metadata.InOutOperation.InOutOperationFactory;
 
 /**
  * Default implementation of ServiceOperation for ExchangePattern.IN_OUT
  * operations.
  */
-@Strategy(access=AccessType.FIELD)
+@Strategy(access=AccessType.FIELD, coverage=CoverageType.INCLUSIVE, factory=InOutOperationFactory.class)
 public class InOutOperation extends BaseInvocationContract implements ServiceOperation {
     
     // operation name
     private String _operationName;
+
+    private InOutOperation() {}
 
     /**
      * Create a new instance of an InOut operation with a default message name.
@@ -87,5 +94,15 @@ public class InOutOperation extends BaseInvocationContract implements ServiceOpe
     @Override
     public String toString() {
         return _operationName + "{IN_OUT}";
+    }
+    
+    /**
+     * The serialization factory for InOutOperation.
+     */
+    public static final class InOutOperationFactory implements Factory<InOutOperation> {
+        @Override
+        public InOutOperation create(Class<InOutOperation> type) throws IOException {
+            return new InOutOperation();
+        }
     }
 }

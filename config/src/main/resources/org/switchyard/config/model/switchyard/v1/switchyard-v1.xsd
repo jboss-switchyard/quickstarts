@@ -41,16 +41,10 @@ MA  02110-1301, USA.
     <element name="binding.switchyard" type="swyd:SwitchYardBindingType" substitutionGroup="sca:binding" abstract="true"/>
     <complexType name="SwitchYardBindingType" abstract="true">
         <complexContent>
-            <extension base="sca:Binding">
-                <sequence>
-                    <element ref="swyd:contextMapper" minOccurs="0" maxOccurs="1"/>
-                    <element ref="swyd:messageComposer" minOccurs="0" maxOccurs="1"/>
-                </sequence>
-            </extension>
+            <extension base="sca:Binding"/>
         </complexContent>
     </complexType>
 
-    <element name="contextMapper" type="swyd:ContextMapperType"/>
     <complexType name="ContextMapperType">
         <attribute name="class" type="string" use="optional"/>
         <attribute name="includes" type="string" use="optional"/>
@@ -59,7 +53,6 @@ MA  02110-1301, USA.
         <attribute name="excludeNamespaces" type="string" use="optional"/>
     </complexType>
 
-    <element name="messageComposer" type="swyd:MessageComposerType"/>
     <complexType name="MessageComposerType">
         <attribute name="class" type="string" use="optional"/>
     </complexType>
@@ -88,7 +81,7 @@ MA  02110-1301, USA.
     <complexType name="ValidateType" abstract="true">
         <attribute name="name" type="string" use="required"/>
     </complexType>
-    
+
     <element name="domain" type="swyd:DomainType"/>
     <complexType name="DomainType">
         <sequence>
@@ -99,7 +92,7 @@ MA  02110-1301, USA.
         </sequence>
         <attribute name="name" type="string" use="optional"/>
     </complexType>
-    
+
     <element name="properties" type="swyd:PropertiesType"/>
     <complexType name="PropertiesType">
         <sequence>
@@ -113,51 +106,47 @@ MA  02110-1301, USA.
         <attribute name="value" type="string" use="required"/>
     </complexType>
 
-   <!--
-        A reusable element; currently used as:
-            a child of the BPM component's BPMImplementationType, defined in bpm-v1.xsd, and
-            a child of the Rules component's RulesImplementationType defined in rules-v1.xsd.
-    -->
     <element name="resource" type="swyd:ResourceType"/>
     <complexType name="ResourceType">
         <attribute name="location" type="string" use="required"/>
         <attribute name="type" type="NCName" use="required"/>
     </complexType>
-    
+
     <element name="handlers" type="swyd:HandlersType"/>
     <complexType name="HandlersType">
         <sequence>
             <element ref="swyd:handler" minOccurs="0" maxOccurs="unbounded"/>
         </sequence>
     </complexType>
-    
+
     <element name="handler" type="swyd:HandlerType"/>
     <complexType name="HandlerType">
         <attribute name="name" type="string" use="optional"/>
         <attribute name="class" type="string" use="required"/>
     </complexType>
-    
+
     <element name="artifacts" type="swyd:ArtifactsType"/>
     <complexType name="ArtifactsType">
         <sequence>
             <element ref="swyd:artifact" minOccurs="0" maxOccurs="unbounded"/>
         </sequence>
     </complexType>
-    
+
     <element name="artifact" type="swyd:ArtifactType"/>
     <complexType name="ArtifactType">
         <attribute name="name" type="string" use="required"/>
         <attribute name="url" type="string" use="required"/>
     </complexType>
-    
-   <element name="interface.esb" type="swyd:EsbInterface" substitutionGroup="sca:interface"/>
-   <complexType name="EsbInterface">
-      <complexContent>
-         <extension base="sca:Interface">
-            <attribute name="inputType" type="string" use="optional"/>
-            <attribute name="outputType" type="string" use="optional"/>
-            <attribute name="faultType" type="string" use="optional"/>
-         </extension>
-      </complexContent>
-   </complexType>
+
+    <element name="interface.esb" type="swyd:EsbInterface" substitutionGroup="sca:interface"/>
+    <complexType name="EsbInterface">
+        <complexContent>
+            <extension base="sca:Interface">
+                <attribute name="inputType" type="string" use="optional"/>
+                <attribute name="outputType" type="string" use="optional"/>
+                <attribute name="faultType" type="string" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
 </schema>

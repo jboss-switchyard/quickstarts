@@ -19,19 +19,26 @@
 
 package org.switchyard.metadata;
 
+import java.io.IOException;
+
 import org.switchyard.io.Serialization.AccessType;
+import org.switchyard.io.Serialization.CoverageType;
+import org.switchyard.io.Serialization.Factory;
 import org.switchyard.io.Serialization.Strategy;
+import org.switchyard.metadata.BaseExchangeContract.BaseExchangeContractFactory;
 
 /**
  * Base exchange contract.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-@Strategy(access=AccessType.FIELD)
+@Strategy(access=AccessType.FIELD, coverage=CoverageType.INCLUSIVE, factory=BaseExchangeContractFactory.class)
 public class BaseExchangeContract implements ExchangeContract {
 
     private ServiceOperation _operation;
     private InvocationContract _invoker;
+    
+    private BaseExchangeContract() {}
     
     /**
      * Create a new BaseExchangeContract with the specified invocation contract.
@@ -55,5 +62,15 @@ public class BaseExchangeContract implements ExchangeContract {
     @Override
     public ServiceOperation getServiceOperation() {
         return _operation;
+    }
+    
+    /**
+     * The serialization factory for BaseExchangeContract.
+     */
+    public static final class BaseExchangeContractFactory implements Factory<BaseExchangeContract> {
+        @Override
+        public BaseExchangeContract create(Class<BaseExchangeContract> type) throws IOException {
+            return new BaseExchangeContract();
+        }
     }
 }

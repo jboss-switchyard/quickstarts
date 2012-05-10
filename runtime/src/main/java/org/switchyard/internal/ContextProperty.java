@@ -20,9 +20,13 @@
 package org.switchyard.internal;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.switchyard.Property;
 import org.switchyard.Scope;
+import org.switchyard.common.lang.Strings;
 import org.switchyard.internal.ContextProperty.ContextPropertyFactory;
 import org.switchyard.io.Serialization.AccessType;
 import org.switchyard.io.Serialization.Factory;
@@ -37,6 +41,7 @@ public class ContextProperty implements Property {
     private String _name;
     private Scope _scope;
     private Object _value;
+    private Set<String> _labels = Collections.synchronizedSet(new TreeSet<String>());
     
     // Private ctor used for internal serialization only
     private ContextProperty() {
@@ -76,6 +81,60 @@ public class ContextProperty implements Property {
         _value = value;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<String> getLabels() {
+        return Collections.unmodifiableSet(_labels);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Property addLabels(String... labels) {
+        for (String label : labels) {
+            label = normalizeLabel(label);
+            if (label != null) {
+                _labels.add(label);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Property removeLabels(String... labels) {
+        for (String label : labels) {
+            label = normalizeLabel(label);
+            if (label != null) {
+                _labels.remove(label);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasLabel(String label) {
+        label = normalizeLabel(label);
+        return label != null && _labels.contains(label);
+    }
+
+    private String normalizeLabel(String label) {
+        label = Strings.trimToNull(label);
+        if (label != null) {
+            label = label.toLowerCase();
+        }
+        return label;
+    }
+
+    // NOTE: Labels are intentionally not part of equals(Object) or hashCode().
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -91,6 +150,7 @@ public class ContextProperty implements Property {
                 && (_value == null ? comp.getValue() == null : _value.equals(comp.getValue()));
     }
 
+    // NOTE: Labels are intentionally not part of equals(Object) or hashCode().
     @Override
     public int hashCode() {
         int hash = 1;
@@ -102,7 +162,9 @@ public class ContextProperty implements Property {
 
     @Override
     public String toString() {
-        return ("[name=" + _name + ", scope=" + _scope + ", value=" + _value + "]");
+        String labels = Strings.concat(", ", _labels.toArray(new String[_labels.size()]));
+        labels = "{" + (labels != null ? labels : "") + "}";
+        return ("[name=" + _name + ", scope=" + _scope + ", value=" + _value + ", labels=" + labels + "]");
     }
     
     /**

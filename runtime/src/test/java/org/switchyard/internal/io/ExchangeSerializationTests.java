@@ -29,7 +29,6 @@ import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
@@ -75,7 +74,6 @@ public final class ExchangeSerializationTests {
     }
 
     @Test
-    @Ignore
     public void testExchangeSerialization() throws Exception {
         ExchangeImpl exchange = buildExchange();
         exchange = serDeser(exchange, ExchangeImpl.class);
@@ -86,8 +84,8 @@ public final class ExchangeSerializationTests {
         if (ctx == null) {
             ctx = new DefaultContext();
         }
-        ctx.setProperty("foo", "bar");
-        ctx.setProperty("car", new Car(new Person("driver")));
+        ctx.setProperty("foo", "bar").addLabels("roller derby", "karate");
+        ctx.setProperty("car", new Car(new Person("driver"))).addLabels("Mustang");
         return ctx;
     }
 
@@ -114,7 +112,12 @@ public final class ExchangeSerializationTests {
 
     private void assertContext(Context ctx) throws Exception {
         Assert.assertEquals("bar", ctx.getProperty("foo").getValue());
+        Assert.assertTrue(ctx.getProperty("foo").hasLabel("Roller Derby"));
+        Assert.assertTrue(ctx.getProperty("foo").hasLabel("karate"));
+        Assert.assertFalse(ctx.getProperty("foo").hasLabel("football"));
         Assert.assertEquals("driver", ((Car)ctx.getProperty("car").getValue()).getDriver().getName());
+        Assert.assertTrue(ctx.getProperty("car").hasLabel("mUsTaNg"));
+        Assert.assertFalse(ctx.getProperty("car").hasLabel("Pinto"));
     }
 
     private void assertMessage(Message msg) throws Exception {
@@ -132,7 +135,7 @@ public final class ExchangeSerializationTests {
     private void assertExchange(Exchange exchange) throws Exception {
         assertContext(exchange.getContext());
         assertMessage(exchange.getMessage());
-        Assert.assertEquals(ExchangeContract.IN_ONLY, exchange.getContract());
+        Assert.assertEquals(ExchangeContract.IN_OUT.getServiceOperation().getExchangePattern(), exchange.getContract().getServiceOperation().getExchangePattern());
         Assert.assertEquals(ExchangePhase.IN, exchange.getPhase());
         Assert.assertEquals(ExchangeState.OK, exchange.getState());
     }

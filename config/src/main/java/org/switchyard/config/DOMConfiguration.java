@@ -709,8 +709,12 @@ public class DOMConfiguration extends BaseConfiguration {
             if (other._element != null) {
                 return false;
             }
-        } else if (!_element.equals(other._element)) {
-            return false;
+        } else {
+            _element.normalize();
+            other._element.normalize();
+            if (!_element.isEqualNode(other._element)) {
+                return false;
+            }
         }
         return true;
     }

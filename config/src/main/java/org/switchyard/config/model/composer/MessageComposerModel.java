@@ -19,7 +19,6 @@
 
 package org.switchyard.config.model.composer;
 
-import org.switchyard.common.composer.MessageComposerInfo;
 import org.switchyard.config.model.Model;
 
 /**
@@ -27,9 +26,22 @@ import org.switchyard.config.model.Model;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface MessageComposerModel extends Model, MessageComposerInfo {
+public interface MessageComposerModel extends Model {
 
     /** messageComposer variable. */
     public static final String MESSAGE_COMPOSER = "messageComposer";
+
+    /**
+     * Gets the type of ContextMapper.
+     * @return the type of ContextMapper
+     */
+    public Class<?> getClazz();
+
+    /**
+     * Sets the type of ContextMapper.
+     * @param clazz type of ContextMapper
+     * @return this instance (useful for chaining)
+     */
+    public MessageComposerModel setClazz(Class<?> clazz);
 
 }

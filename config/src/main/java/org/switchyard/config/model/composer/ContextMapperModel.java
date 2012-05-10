@@ -19,7 +19,6 @@
 
 package org.switchyard.config.model.composer;
 
-import org.switchyard.common.composer.ContextMapperInfo;
 import org.switchyard.config.model.Model;
 
 /**
@@ -27,9 +26,74 @@ import org.switchyard.config.model.Model;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface ContextMapperModel extends Model, ContextMapperInfo {
+public interface ContextMapperModel extends Model {
 
     /** contextMapper variable. */
     public static final String CONTEXT_MAPPER = "contextMapper";
+
+    /**
+     * Gets the type of ContextMapper.
+     * @return the type of ContextMapper
+     */
+    public Class<?> getClazz();
+
+    /**
+     * Sets the type of ContextMapper.
+     * @param clazz the  the type of ContextMapper
+     * @return this instance (useful for chaining)
+     */
+    public ContextMapperModel setClazz(Class<?> clazz);
+
+    /**
+     * Gets the comma-separated list of regex property includes.
+     * @return the comma-separated list of regex property includes
+     */
+    public String getIncludes();
+
+    /**
+     * Sets the comma-separated list of regex property includes.
+     * @param includes the comma-separated list of regex property includes
+     * @return this instance (useful for chaining)
+     */
+    public ContextMapperModel setIncludes(String includes);
+
+    /**
+     * Gets the comma-separated list of regex property excludes.
+     * @return the comma-separated list of regex property excludes
+     */
+    public String getExcludes();
+
+    /**
+     * Sets the comma-separated list of regex property excludes.
+     * @param excludes the comma-separated list of regex property excludes
+     * @return this instance (useful for chaining)
+     */
+    public ContextMapperModel setExcludes(String excludes);
+
+    /**
+     * Gets the comma-separated list of regex property include namespaces.
+     * @return the comma-separated list of regex property include namespaces
+     */
+    public String getIncludeNamespaces();
+
+    /**
+     * Sets the comma-separated list of regex property include namespaces.
+     * @param includeNamespaces the comma-separated list of regex property include namespaces
+     * @return this instance (useful for chaining)
+     */
+    public ContextMapperModel setIncludeNamespaces(String includeNamespaces);
+
+    /**
+     * Gets the comma-separated list of regex property exclude namespace.
+     * @return the comma-separated list of regex property exclude namespace
+     */
+    public String getExcludeNamespaces();
+
+    /**
+     * Sets the comma-separated list of regex property exclude namespace.
+     * @param excludeNamespaces the comma-separated list of regex property exclude namespace
+     * @return this instance (useful for chaining)
+     */
+    public ContextMapperModel setExcludeNamespaces(String excludeNamespaces);
 
 }

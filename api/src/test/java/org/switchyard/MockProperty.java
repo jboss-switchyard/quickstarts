@@ -18,6 +18,12 @@
  */
 package org.switchyard;
 
+import java.util.Collections;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.switchyard.common.lang.Strings;
+
 
 /**
  * MockProperty.
@@ -29,6 +35,7 @@ public class MockProperty implements Property {
     private final String _name;
     private final Object _value;
     private final Scope _scope;
+    private Set<String> _labels = Collections.synchronizedSet(new TreeSet<String>());
 
     public MockProperty(String name, Object value, Scope scope) {
         _name = name;
@@ -58,6 +65,59 @@ public class MockProperty implements Property {
     @Override
     public Scope getScope() {
         return _scope;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<String> getLabels() {
+        return Collections.unmodifiableSet(_labels);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Property addLabels(String... labels) {
+        for (String label : labels) {
+            label = normalizeLabel(label);
+            if (label != null) {
+                _labels.add(label);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Property removeLabels(String... labels) {
+        for (String label : labels) {
+            label = normalizeLabel(label);
+            if (label != null) {
+                _labels.remove(label);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasLabel(String label) {
+        label = normalizeLabel(label);
+        return label != null && _labels.contains(label);
+    }
+
+    private String normalizeLabel(String label) {
+        label = Strings.trimToNull(label);
+        if (label != null) {
+            label = label.toLowerCase();
+        }
+        return label;
     }
 
 }

@@ -37,10 +37,18 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
 public class V1MessageComposerModel extends BaseModel implements MessageComposerModel {
 
     /**
-     * Constructs a new V1MessageComposerModel.
+     * Constructs a new V1MessageComposerModel in the default switchyard namespace.
      */
     public V1MessageComposerModel() {
-        super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, MESSAGE_COMPOSER));
+        this(SwitchYardModel.DEFAULT_NAMESPACE);
+    }
+
+    /**
+     * Constructs a new V1MessageComposerModel in the specified namespace.
+     * @param namespace the specified namespace
+     */
+    public V1MessageComposerModel(String namespace) {
+        super(new QName(namespace, MESSAGE_COMPOSER));
     }
 
     /**
@@ -62,6 +70,15 @@ public class V1MessageComposerModel extends BaseModel implements MessageComposer
             return Classes.forName(name, getClass());
         }
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MessageComposerModel setClazz(Class<?> clazz) {
+        setModelAttribute("class", clazz != null ? clazz.getName() : null);
+        return this;
     }
 
 }

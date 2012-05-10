@@ -122,23 +122,24 @@ public class MockContext implements Context {
      * {@inheritDoc}
      */
     @Override
-    public Context setProperty(String name, Object val) {
-        setProperty(name, val, Scope.EXCHANGE);
-        return this;
+    public Property setProperty(String name, Object val) {
+        return setProperty(name, val, Scope.EXCHANGE);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Context setProperty(String name, Object val, Scope scope) {
+    public Property setProperty(String name, Object val, Scope scope) {
         Map<String,Property> properties = getPropertiesMap(scope);
         if (val != null) {
-            properties.put(name, new MockProperty(name, val, scope));
+            Property p = new MockProperty(name, val, scope);
+            properties.put(name, p);
+            return p;
         } else {
             properties.remove(name);
+            return null;
         }
-        return this;
     }
 
     /**

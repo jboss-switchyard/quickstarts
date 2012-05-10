@@ -1,4 +1,6 @@
 package org.switchyard;
+
+import java.util.Set;
 /* 
  * JBoss, Home of Professional Open Source 
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
@@ -28,16 +30,44 @@ public interface Property {
      * @return property scope
      */
     Scope getScope();
-    
+
     /**
      * The name of the property.
      * @return property name
      */
     String getName();
-    
+
     /**
      * The value of the property.
      * @return property value
      */
     Object getValue();
+
+    /**
+     * The labels of the property.
+     * @return the labels
+     */
+    Set<String> getLabels();
+
+    /**
+     * Adds labels to the property.
+     * @param labels the labels to add
+     * @return this property (useful for chaining)
+     */
+    Property addLabels(String... labels);
+
+    /**
+     * Removes labels from the property.
+     * @param labels the labels to remove
+     * @return this property (useful for chaining)
+     */
+    Property removeLabels(String... labels);
+
+    /**
+     * If the property has the specified label.
+     * @param label the specified label
+     * @return this property (useful for chaining)
+     */
+    boolean hasLabel(String label);
+
 }
