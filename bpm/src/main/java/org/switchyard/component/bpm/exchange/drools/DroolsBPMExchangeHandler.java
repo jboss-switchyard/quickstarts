@@ -19,9 +19,6 @@
 package org.switchyard.component.bpm.exchange.drools;
 
 import static org.switchyard.component.bpm.ProcessConstants.CONTEXT;
-import static org.switchyard.component.bpm.ProcessConstants.CONTEXT_EXCHANGE;
-import static org.switchyard.component.bpm.ProcessConstants.CONTEXT_IN;
-import static org.switchyard.component.bpm.ProcessConstants.CONTEXT_OUT;
 import static org.switchyard.component.bpm.ProcessConstants.EXCHANGE;
 import static org.switchyard.component.bpm.ProcessConstants.MESSAGE;
 import static org.switchyard.component.bpm.ProcessConstants.MESSAGE_CONTENT_IN;
@@ -109,7 +106,9 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
     private List<TaskHandlerModel> _taskHandlerModels = new ArrayList<TaskHandlerModel>();
     private List<TaskHandler> _taskHandlers = new ArrayList<TaskHandler>();
     private Map<String,ProcessActionModel> _actionModels = new HashMap<String,ProcessActionModel>();
+    private Map<String, Scope> _parameterContextScopes = new HashMap<String, Scope>();
     private Map<String, Expression> _parameterExpressions = new HashMap<String, Expression>();
+    private Map<String, Scope> _resultContextScopes = new HashMap<String, Scope>();
     private Map<String, Expression> _resultExpressions = new HashMap<String, Expression>();
     private KnowledgeBase _kbase;
     private KnowledgeSessionConfiguration _ksessionConfig;
@@ -166,6 +165,7 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
         if (parameters != null) {
             
             for (MappingModel mapping : parameters.getMappings()) {
+                _parameterContextScopes.put(mapping.getVariable(), mapping.getContextScope());
                 _parameterExpressions.put(mapping.getVariable(), factory.create(mapping));
             }
         }
@@ -176,6 +176,7 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
                 if (var == null) {
                     var = IGNORE_VARIABLE_PREFIX + IGNORE_VARIABLE_COUNT.incrementAndGet();
                 }
+                _resultContextScopes.put(var, mapping.getContextScope());
                 _resultExpressions.put(var, factory.create(mapping));
             }
         }
@@ -224,25 +225,20 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
         switch (processActionType) {
             case START_PROCESS:
                 if (_processId != null) {
+                    Map<String,Object> parameters = new HashMap<String,Object>();
                     Object messageContentIn = messageIn.getContent();
                     if (messageContentIn != null) {
-                        Map<String,Object> parameters = new HashMap<String,Object>();
-                        Map<String, Object> vars = new HashMap<String, Object>();
-                        vars.put(EXCHANGE, exchange);
-                        vars.put(CONTEXT, new ContextMap(context));
-                        vars.put(CONTEXT_IN, new ContextMap(context, Scope.IN));
-                        vars.put(CONTEXT_OUT, new ContextMap(context, Scope.OUT));
-                        vars.put(CONTEXT_EXCHANGE, new ContextMap(context, Scope.EXCHANGE));
-                        vars.put(MESSAGE, messageIn);
-                        for (Entry<String, Expression> pe : _parameterExpressions.entrySet()) {
-                            Object parameter = pe.getValue().evaluate(vars);
-                            parameters.put(pe.getKey(), parameter);
-                        }
                         parameters.put(_messageContentInName, messageContentIn);
-                        processInstance = _ksession.startProcess(_processId, parameters);
-                    } else {
-                        processInstance = _ksession.startProcess(_processId);
                     }
+                    Map<String, Object> vars = new HashMap<String, Object>();
+                    vars.put(EXCHANGE, exchange);
+                    vars.put(MESSAGE, messageIn);
+                    for (Entry<String, Expression> pe : _parameterExpressions.entrySet()) {
+                        vars.put(CONTEXT, new ContextMap(context, _parameterContextScopes.get(pe.getKey())));
+                        Object parameter = pe.getValue().evaluate(vars);
+                        parameters.put(pe.getKey(), parameter);
+                    }
+                    processInstance = _ksession.startProcess(_processId, parameters);
                     processInstanceId = Long.valueOf(processInstance.getId());
                 } else {
                     throwNullParameterException(processActionType, PROCESS_ID_VAR);
@@ -290,18 +286,12 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
                     }
                 }
                 vars.put(EXCHANGE, exchange);
-                vars.put(CONTEXT, new ContextMap(context));
-                vars.put(CONTEXT_IN, new ContextMap(context, Scope.IN));
-                vars.put(CONTEXT_OUT, new ContextMap(context, Scope.OUT));
-                vars.put(CONTEXT_EXCHANGE, new ContextMap(context, Scope.EXCHANGE));
                 vars.put(MESSAGE, messageOut);
                 for (Entry<String, Expression> re : _resultExpressions.entrySet()) {
+                    vars.put(CONTEXT, new ContextMap(context, _resultContextScopes.get(re.getKey())));
                     Object result = re.getValue().evaluate(vars);
-                    if (result != null) {
-                        String var = re.getKey();
-                        if (!var.startsWith(IGNORE_VARIABLE_PREFIX)) {
-                            context.setProperty(var, result, Scope.EXCHANGE);
-                        }
+                    if (!re.getKey().startsWith(IGNORE_VARIABLE_PREFIX)) {
+                        context.setProperty(re.getKey(), result, Scope.EXCHANGE);
                     }
                 }
                 exchange.send(messageOut);
@@ -347,7 +337,9 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
     @Override
     public void destroy() {
         _kbase = null;
+        _parameterContextScopes.clear();
         _parameterExpressions.clear();
+        _resultContextScopes.clear();
         _resultExpressions.clear();
         _taskHandlers.clear();
         _taskHandlerModels.clear();

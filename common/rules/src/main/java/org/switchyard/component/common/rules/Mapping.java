@@ -20,11 +20,14 @@ package org.switchyard.component.common.rules;
 
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static org.switchyard.Scope.IN;
+import static org.switchyard.component.common.rules.expression.ExpressionType.MVEL;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import org.switchyard.Scope;
 import org.switchyard.component.common.rules.expression.ExpressionType;
 
 /**
@@ -38,6 +41,11 @@ import org.switchyard.component.common.rules.expression.ExpressionType;
 public @interface Mapping {
 
     /**
+     * Specified context scope.
+     */
+    public Scope contextScope() default IN;
+
+    /**
      * Specified expression.
      */
     public String expression();
@@ -45,7 +53,7 @@ public @interface Mapping {
     /**
      * Specified expression type.
      */
-    public ExpressionType expressionType() default ExpressionType.MVEL;
+    public ExpressionType expressionType() default MVEL;
 
     /**
      * Specified variable.

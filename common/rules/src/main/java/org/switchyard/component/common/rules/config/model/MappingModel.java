@@ -18,6 +18,7 @@
  */
 package org.switchyard.component.common.rules.config.model;
 
+import org.switchyard.Scope;
 import org.switchyard.component.common.rules.expression.ExpressionType;
 import org.switchyard.config.model.Model;
 
@@ -32,6 +33,19 @@ public interface MappingModel extends Model {
      * The mapping XML element.
      */
     public static final String MAPPING = "mapping";
+
+    /**
+     * Gets the context scope of the mapping.
+     * @return the context scope of the mapping
+     */
+    public Scope getContextScope();
+
+    /**
+     * Sets the context scope of the mapping.
+     * @param contextScope the context scope of the mapping
+     * @return this MappingModel (useful for chaining)
+     */
+    public MappingModel setContextScope(Scope contextScope);
 
     /**
      * Gets the expression of the mapping.

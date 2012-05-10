@@ -53,6 +53,7 @@ MA  02110-1301, USA.
     <complexType name="MappingType" abstract="true">
         <complexContent>
             <extension base="sca:CommonExtensionBase">
+                <attribute name="contextScope" type="common.rules:contextScope" use="optional" default="IN"/>
                 <attribute name="expression" type="string" use="required"/>
                 <attribute name="expressionType" type="common.rules:expressionType" use="optional" default="MVEL"/>
                 <attribute name="variable" type="NCName" use="optional"/>
@@ -72,6 +73,14 @@ MA  02110-1301, USA.
         <restriction base="string">
             <enumeration value="REALTIME"/>
             <enumeration value="PSEUDO"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="contextScope">
+        <restriction base="string">
+            <enumeration value="IN"/>
+            <enumeration value="OUT"/>
+            <enumeration value="EXCHANGE"/>
         </restriction>
     </simpleType>
 

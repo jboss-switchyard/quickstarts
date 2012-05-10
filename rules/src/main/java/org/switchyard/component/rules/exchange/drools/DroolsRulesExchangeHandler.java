@@ -19,9 +19,6 @@
 package org.switchyard.component.rules.exchange.drools;
 
 import static org.switchyard.component.rules.RulesConstants.CONTEXT;
-import static org.switchyard.component.rules.RulesConstants.CONTEXT_EXCHANGE;
-import static org.switchyard.component.rules.RulesConstants.CONTEXT_IN;
-import static org.switchyard.component.rules.RulesConstants.CONTEXT_OUT;
 import static org.switchyard.component.rules.RulesConstants.EXCHANGE;
 import static org.switchyard.component.rules.RulesConstants.MESSAGE;
 
@@ -95,6 +92,7 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
     private AuditModel _audit;
     private Map<String,RulesActionModel> _actions = new HashMap<String,RulesActionModel>();
     private Map<String,Channel> _channels = new HashMap<String,Channel>();
+    private Map<String, Scope> _globalContextScopes = new HashMap<String, Scope>();
     private Map<String, Expression> _globalExpressions = new HashMap<String, Expression>();
     private KnowledgeBase _kbase;
     private KnowledgeSessionConfiguration _ksessionConfig;
@@ -156,6 +154,7 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
         if (globals != null) {
             ExpressionFactory factory = ExpressionFactory.instance();
             for (MappingModel mapping : globals.getMappings()) {
+                _globalContextScopes.put(mapping.getVariable(), mapping.getContextScope());
                 _globalExpressions.put(mapping.getVariable(), factory.create(mapping));
             }
         }
@@ -289,18 +288,16 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
         Map<String, Object> vars = new HashMap<String, Object>();
         if (includeTrifecta) {
             vars.put(EXCHANGE, exchange);
-            vars.put(CONTEXT, new ContextMap(exchange.getContext()));
-            vars.put(CONTEXT_IN, new ContextMap(exchange.getContext(), Scope.IN));
-            vars.put(CONTEXT_OUT, new ContextMap(exchange.getContext(), Scope.OUT));
-            vars.put(CONTEXT_EXCHANGE, new ContextMap(exchange.getContext(), Scope.EXCHANGE));
+            vars.put(CONTEXT, exchange.getContext());
             vars.put(MESSAGE, exchange.getMessage());
             for (Entry<String, Object> var : vars.entrySet()) {
-                if (!_globalExpressions.containsKey(var.getKey())) {
-                    globals.set(var.getKey(), var.getValue());
-                }
+                globals.set(var.getKey(), var.getValue());
             }
         }
         for (Entry<String, Expression> ge : _globalExpressions.entrySet()) {
+            if (includeTrifecta) {
+                vars.put(CONTEXT, new ContextMap(exchange.getContext(), _globalContextScopes.get(ge.getKey())));
+            }
             Object global = ge.getValue().evaluate(vars);
             globals.set(ge.getKey(), global);
         }
@@ -323,6 +320,7 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
         _actions.clear();
         _channels.clear();
         _audit = null;
+        _globalContextScopes.clear();
         _globalExpressions.clear();
         if (_kagent != null) {
             try {

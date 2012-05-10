@@ -188,6 +188,7 @@ public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
             GlobalsModel globalsModel = null;
             for (Mapping globalMapping : rules.globals()) {
                 MappingModel mappingModel = new V1MappingModel(RulesComponentImplementationModel.DEFAULT_NAMESPACE);
+                mappingModel.setContextScope(globalMapping.contextScope());
                 mappingModel.setExpression(globalMapping.expression());
                 mappingModel.setExpressionType(globalMapping.expressionType());
                 String variable = globalMapping.variable();

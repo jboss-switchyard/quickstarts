@@ -18,8 +18,10 @@
  */
 package org.switchyard.component.common.rules.config.model.v1;
 
+import static org.switchyard.Scope.IN;
 import static org.switchyard.component.common.rules.expression.ExpressionType.MVEL;
 
+import org.switchyard.Scope;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.common.rules.config.model.MappingModel;
 import org.switchyard.component.common.rules.expression.ExpressionType;
@@ -49,6 +51,25 @@ public class V1MappingModel extends BaseModel implements MappingModel {
      */
     public V1MappingModel(Configuration config, Descriptor desc) {
         super(config, desc);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Scope getContextScope() {
+        String cs = getModelAttribute("contextScope");
+        return cs != null ? Scope.valueOf(cs) : IN;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MappingModel setContextScope(Scope contextScope) {
+        String cs = contextScope != null ? contextScope.name() : null;
+        setModelAttribute("contextScope", cs);
+        return this;
     }
 
     /**

@@ -18,6 +18,8 @@
  */
 package org.switchyard.component.common.rules.expression;
 
+import static org.switchyard.Scope.IN;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -44,7 +46,7 @@ public class ContextMap implements Context, Map<String, Object> {
      * @param context the specified context
      */
     public ContextMap(Context context) {
-        this(context, Scope.IN);
+        this(context, IN);
     }
 
     /**

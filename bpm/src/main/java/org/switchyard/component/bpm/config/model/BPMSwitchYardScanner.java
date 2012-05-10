@@ -219,6 +219,7 @@ public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
         ParametersModel parametersModel = null;
         for (Mapping parameterMapping : process.parameters()) {
             MappingModel mappingModel = new V1MappingModel(BPMComponentImplementationModel.DEFAULT_NAMESPACE);
+            mappingModel.setContextScope(parameterMapping.contextScope());
             mappingModel.setExpression(parameterMapping.expression());
             mappingModel.setExpressionType(parameterMapping.expressionType());
             String variable = parameterMapping.variable();
@@ -234,6 +235,7 @@ public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
         ResultsModel resultsModel = null;
         for (Mapping resultMapping : process.results()) {
             MappingModel mappingModel = new V1MappingModel(BPMComponentImplementationModel.DEFAULT_NAMESPACE);
+            mappingModel.setContextScope(resultMapping.contextScope());
             mappingModel.setExpression(resultMapping.expression());
             mappingModel.setExpressionType(resultMapping.expressionType());
             String variable = resultMapping.variable();

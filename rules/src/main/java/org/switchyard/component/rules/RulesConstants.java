@@ -53,18 +53,12 @@ public final class RulesConstants {
     /** {urn:switchyard-component-rules:rules:1.0}dispose . */
     public static final String DISPOSE_VAR = new QName(RULES_NAMESPACE, DISPOSE).toString();
 
-    /** message . */
-    public static final String MESSAGE = "message";
     /** exchange . */
     public static final String EXCHANGE = "exchange";
     /** context . */
     public static final String CONTEXT = "context";
-    /** context_in . */
-    public static final String CONTEXT_IN = "context_in";
-    /** context_out . */
-    public static final String CONTEXT_OUT = "context_out";
-    /** context_exchange . */
-    public static final String CONTEXT_EXCHANGE = "context_exchange";
+    /** message . */
+    public static final String MESSAGE = "message";
 
     private RulesConstants() {}
 
