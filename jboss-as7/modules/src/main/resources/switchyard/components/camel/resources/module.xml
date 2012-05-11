@@ -79,6 +79,7 @@
         <module name="org.switchyard.deploy"/>
         <module name="org.switchyard.jaxb-impl"/>
         <module name="org.switchyard.component.bean" />
+        <module name="org.switchyard.component.common.composer" />
         <module name="org.springframework" />
     </dependencies>
 </module>
