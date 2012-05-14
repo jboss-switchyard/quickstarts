@@ -8,14 +8,14 @@
     <sca:composite name="camel-soap-proxy" targetNamespace="urn:switchyard-quickstart:camel-soap-proxy:1.0">
         <sca:service name="ProxyService" promote="ProxyService">
             <soap:binding.soap>
-                <swyd:contextMapper/>
+                <soap:contextMapper/>
                 <soap:wsdl>META-INF/ReverseService.wsdl</soap:wsdl>
                 <soap:socketAddr>:18002</soap:socketAddr>
             </soap:binding.soap>
         </sca:service>
         <sca:reference name="ReverseService" promote="ProxyService/ReverseService" multiplicity="0..1">
             <soap:binding.soap>
-                <swyd:contextMapper/>
+                <soap:contextMapper/>
                 <soap:wsdl>META-INF/ReverseService.wsdl</soap:wsdl>
             </soap:binding.soap>
         </sca:reference>
