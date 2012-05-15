@@ -188,6 +188,39 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
 
+    <element name="binding.jms" type="camel:CamelJmsBindingType" substitutionGroup="swyd:binding.switchyard"/>
+    <complexType name="CamelJmsBindingType">
+        <complexContent>
+            <extension base="camel:BaseCamelBinding">
+                <sequence>
+                    <choice minOccurs="1">
+                        <element name="queue" type="string"/>
+                        <element name="topic" type="string"/>
+                    </choice>
+                    <element name="connectionFactory" type="string" />
+                    <element name="username" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="password" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="clientId" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="durableSubscriptionName" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="concurrentConsumers" type="int" minOccurs="0" maxOccurs="1"/>
+                    <element name="maxConcurrentConsumers" type="int" minOccurs="0" maxOccurs="1"/>
+                    <element name="disableReplyTo" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="preserveMessageQos" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="deliveryPersistent" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="priority" type="int" minOccurs="0" maxOccurs="1"/>
+                    <element name="explicitQosEnabled" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="replyTo" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="replyToType" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="requestTimeout" type="int" minOccurs="0" maxOccurs="1"/>
+                    <element name="selector" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="timeToLive" type="int" minOccurs="0" maxOccurs="1"/>
+                    <element name="transacted" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="transactionManager" type="string" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <complexType name="CamelOperationSelectorType">
       <complexContent>
          <extension base="sca:OperationSelectorType">
