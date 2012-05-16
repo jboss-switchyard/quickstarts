@@ -18,6 +18,15 @@
       <groupId>org.switchyard.components</groupId>
       <artifactId>switchyard-component-soap</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-forge-bean-plugin</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-forge-common</artifactId>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

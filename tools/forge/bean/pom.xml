@@ -15,6 +15,20 @@
   <url>http://switchyard.org</url>
   <dependencies>
     <dependency>
+      <groupId>org.jboss.forge</groupId>
+      <artifactId>forge-shell</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.forge</groupId>
+      <artifactId>forge-test-harness</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.switchyard</groupId>
+        <artifactId>switchyard-forge-common</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.switchyard.components</groupId>
       <artifactId>switchyard-component-bean</artifactId>
     </dependency>

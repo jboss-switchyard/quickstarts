@@ -23,15 +23,52 @@
         <module>rules</module>
         <module>bpm</module>
     </modules>
+    
+    <profiles>
+       <profile>
+          <id>skipForgeTests</id>
+          <activation>
+              <activeByDefault>true</activeByDefault>
+          </activation>
+          <properties>
+             <maven.test.skip>true</maven.test.skip>
+          </properties>
+       </profile>
+       <profile>
+          <id>runForgeTests</id>
+       </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-shell-api</artifactId>
+           <groupId>org.apache.xalan</groupId>
+           <artifactId>serializer</artifactId>
+        </dependency>
+        <dependency>
+           <groupId>org.apache.xalan</groupId>
+           <artifactId>xalan</artifactId>
+        </dependency>
+        <dependency>
+           <groupId>org.jboss.forge</groupId>
+           <artifactId>forge-shell</artifactId>
+           <scope>test</scope>
+        </dependency>
+        <dependency>
+           <groupId>org.jboss.forge</groupId>
+           <artifactId>forge-shell-api</artifactId>
+        </dependency>
+        <dependency>
+           <groupId>org.jboss.forge</groupId>
+           <artifactId>forge-test-harness</artifactId>
+           <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-forge-common</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
