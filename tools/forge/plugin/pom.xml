@@ -3,35 +3,19 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.switchyard</groupId>
     <artifactId>switchyard-core-parent</artifactId>
+    <groupId>org.switchyard</groupId>
     <version>0.5.0-SNAPSHOT</version>
     <relativePath>../../../pom.xml</relativePath>
   </parent>
-
   <artifactId>switchyard-forge-plugin</artifactId>
   <name>SwitchYard: Forge Plugin</name>
   <description>SwitchYard Forge Support</description>
   <url>http://switchyard.org</url>
-
   <dependencies>
     <dependency>
-      <groupId>org.jboss.forge</groupId>
-      <artifactId>forge-shell-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.forge</groupId>
-      <artifactId>forge-maven-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.switchyard</groupId>
-      <artifactId>switchyard-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.switchyard</groupId>
-      <artifactId>switchyard-forge-common</artifactId>
+      <groupId>javax.activation</groupId>
+      <artifactId>activation</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.xalan</groupId>
@@ -42,11 +26,45 @@
       <artifactId>serializer</artifactId>
     </dependency>
     <dependency>
-      <groupId>javax.activation</groupId>
-      <artifactId>activation</artifactId>
+      <groupId>org.jboss.forge</groupId>
+      <artifactId>forge-maven-api</artifactId>
+      <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.forge</groupId>
+      <artifactId>forge-shell</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.forge</groupId>
+      <artifactId>forge-shell-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.forge</groupId>
+      <artifactId>forge-test-harness</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.interceptor</groupId>
+      <artifactId>jboss-interceptor-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-ext</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-forge-common</artifactId>
+    </dependency>
+    
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
@@ -56,17 +74,22 @@
           <target>1.6</target>
         </configuration>
       </plugin>
-     <plugin>
-       <groupId>org.apache.maven.plugins</groupId>
-       <artifactId>maven-jar-plugin</artifactId>
-       <configuration>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
           <archive>
-             <manifestEntries>
-                <Dependencies>org.apache.xalan, log4j</Dependencies>
-             </manifestEntries>
+            <manifestEntries>
+              <Dependencies>org.apache.xalan, log4j</Dependencies>
+            </manifestEntries>
           </archive>
-       </configuration>
-     </plugin>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <useProjectReferences>false</useProjectReferences>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>

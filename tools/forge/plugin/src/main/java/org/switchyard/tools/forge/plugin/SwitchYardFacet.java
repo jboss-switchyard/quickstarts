@@ -52,6 +52,7 @@ import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresPackagingType;
 import org.switchyard.common.type.Classes;
+import org.switchyard.common.version.Versions;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Models;
 import org.switchyard.config.model.composite.ComponentModel;
@@ -342,7 +343,7 @@ public class SwitchYardFacet extends AbstractFacet {
         }
         
         // Update the project with version and dependency info
-        setVersion(SwitchYardFacet.class.getPackage().getSpecificationVersion());
+        setVersion(Versions.getSwitchYardVersion());
         installDependencies();
         addPluginRepository();
         
