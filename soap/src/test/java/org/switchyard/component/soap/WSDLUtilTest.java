@@ -113,6 +113,33 @@ public class WSDLUtilTest {
         WSDLUtil.getPort(service, new PortName("HelloWebServiceSpanishPort"));
     }
 
+    @Test
+    public void soapAction() throws Exception {
+        Service service = WSDLUtil.getService("HelloWebService.wsdl", new PortName("HelloWebService:"));
+        Assert.assertNotNull(service);
+        Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "HelloWebService"));
+        Port port = WSDLUtil.getPort(service, new PortName("HelloWebServicePort"));
+        Assert.assertNotNull(port);
+        String action = WSDLUtil.getSoapAction(port, "sayHello");
+        Assert.assertEquals(action, "uri:something:that:needs#tobevalid");
+        action = WSDLUtil.getSoapAction(port, "helloWS");
+        Assert.assertEquals(action, "");
+        
+    }
+
+    @Test
+    public void soap12Action() throws Exception {
+        Service service = WSDLUtil.getService("HelloWebService1.2.wsdl", new PortName("HelloSOAP12Service:"));
+        Assert.assertNotNull(service);
+        Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "HelloSOAP12Service"));
+        Port port = WSDLUtil.getPort(service, new PortName("HelloSOAP12ServicePort"));
+        Assert.assertNotNull(port);
+        String action = WSDLUtil.getSoapAction(port, "sayHello");
+        Assert.assertEquals(action, "uri:soap12:that:needs#tobevalid");
+        action = WSDLUtil.getSoapAction(port, "helloWS");
+        Assert.assertEquals(action, "");
+    }
+
     /*
     @Test
     public void contracts() throws Exception {

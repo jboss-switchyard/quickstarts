@@ -80,7 +80,7 @@ public final class SOAPUtil {
     /**
      * SOAP 1.2 Server Fault Qname.
      */
-    public static final QName SOAP12_SERVER_FAULT_TYPE = new QName(SOAP12_URI, "Server");
+    public static final QName SOAP12_RECEIVER_FAULT_TYPE = new QName(SOAP12_URI, "Receiver");
 
     /**
      * SOAP 1.2 Fault QName.
@@ -122,6 +122,17 @@ public final class SOAPUtil {
     }
 
     /**
+     * Determines if the envelope is SOAP 1.1 or 1.2.
+     *
+     * @param soapMessage The SOAPMessage
+     * @return The true if envelope is SOAP 1.2
+     * @throws SOAPException If the envelope could not be read
+     */
+    public static Boolean isSOAP12(SOAPMessage soapMessage) throws SOAPException {
+        return soapMessage.getSOAPPart().getEnvelope().getNamespaceURI().equals(SOAP12_URI);
+    }
+
+    /**
      * Adds a SOAP 1.1 or 1.2 Fault element to the SOAPBody.
      *
      * @param soapMessage The SOAPMessage
@@ -129,7 +140,7 @@ public final class SOAPUtil {
      * @throws SOAPException If the fault could not be generated
      */
     public static SOAPFault addFault(SOAPMessage soapMessage) throws SOAPException {
-        if (soapMessage.getSOAPPart().getEnvelope().getNamespaceURI().equals(SOAP12_URI)) {
+        if (isSOAP12(soapMessage)) {
             return soapMessage.getSOAPBody().addFault(SOAP12_FAULT_MESSAGE_TYPE, "Send failed");
         } else {
             return soapMessage.getSOAPBody().addFault(SOAP12_FAULT_MESSAGE_TYPE, "Send failed");
@@ -173,10 +184,18 @@ public final class SOAPUtil {
      */
     public static SOAPMessage generateSOAP12Fault(final Throwable th) throws SOAPException {
         final SOAPMessage faultMsg = SOAP12_MESSAGE_FACTORY.createMessage();
-        return generateFault(th, faultMsg, SOAP12_SERVER_FAULT_TYPE);
+        return generateFault(th, faultMsg, SOAP12_RECEIVER_FAULT_TYPE);
     }
 
     private static SOAPMessage generateFault(final Throwable th, final SOAPMessage faultMsg, final QName faultQname) throws SOAPException {
+        if (LOGGER.isDebugEnabled()) {
+            final StringWriter sw = new StringWriter();
+            final PrintWriter pw = new PrintWriter(sw);
+            th.printStackTrace(pw);
+            pw.flush();
+            pw.close();
+            LOGGER.debug(sw.toString());
+        }
         if (th instanceof SOAPFaultException) {
             // Copy the Fault from the exception
             SOAPFault exFault = ((SOAPFaultException) th).getFault();

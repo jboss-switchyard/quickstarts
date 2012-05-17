@@ -26,6 +26,7 @@ import javax.wsdl.Port;
 import javax.wsdl.WSDLException;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.AddressingFeature;
@@ -91,8 +92,10 @@ public class OutboundHandler extends BaseServiceHandler {
                 Service service = Service.create(wsdlUrl, portName.getServiceQName());
                 _dispatcher = service.createDispatch(portName.getPortQName(), SOAPMessage.class, Service.Mode.MESSAGE, new AddressingFeature(false, false));
                 // this does not return a proper qualified Fault element and has no Detail so deferring for now
-                // BindingProvider bp = (BindingProvider) _dispatcher;
-                // bp.getRequestContext().put("jaxws.response.throwExceptionIfSOAPFault", Boolean.FALSE);
+                // _dispatcher.getRequestContext().put("jaxws.response.throwExceptionIfSOAPFault", Boolean.FALSE);
+
+                // Defaulting to use soapAction property in request header
+                _dispatcher.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
 
             } catch (MalformedURLException e) {
                 throw new WebServiceConsumeException(e);
@@ -165,6 +168,9 @@ public class OutboundHandler extends BaseServiceHandler {
         SOAPMessage response = null;
         try {
             String firstBodyElement = SOAPUtil.getFirstBodyElement(soapMessage);
+            String action = WSDLUtil.getSoapAction(_wsdlPort, firstBodyElement);
+            _dispatcher.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY, "\"" + action + "\"");
+
             if (WSDLUtil.isOneWay(_wsdlPort, firstBodyElement)) {
                 _dispatcher.invokeOneWay(soapMessage);
                 //return empty response

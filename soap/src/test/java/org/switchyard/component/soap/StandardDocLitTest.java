@@ -64,8 +64,8 @@ public class StandardDocLitTest {
     private ServiceDomain _domain = new ServiceDomainManager().createDomain();
     private SOAPBindingModel _config;
     private static URL _serviceURL;
-    private SOAPGateway _soapInbound;
-    private SOAPGateway _soapOutbound;
+    private InboundHandler _soapInbound;
+    private OutboundHandler _soapOutbound;
     
     @org.switchyard.test.ServiceOperation("webservice-consumer")
     private Invoker consumerService;
@@ -79,7 +79,7 @@ public class StandardDocLitTest {
         DoclitSOAPProvider provider = new DoclitSOAPProvider();
 
         String host = System.getProperty("org.switchyard.test.soap.host", "localhost");
-        String port = System.getProperty("org.switchyard.test.soap.port", "18001");
+        String port = System.getProperty("org.switchyard.test.soap.port", "48080");
 
         _puller = new ModelPuller<CompositeModel>();
         CompositeModel composite = _puller.pull("/DoclitSwitchyard.xml", getClass());
@@ -88,42 +88,38 @@ public class StandardDocLitTest {
         _config = (SOAPBindingModel)compositeService.getBindings().get(0);
 
         _domain.registerService(_config.getServiceName(), new OrderServiceInterface(), provider);
+        _domain.registerServiceReference(_config.getServiceName(), new OrderServiceInterface());
         
         _config.setPublishAsWS(true);
         _config.setSocketAddr(new SocketAddr(host, Integer.parseInt(port)));
         
-        _soapInbound = new SOAPGateway();
-        _soapInbound.init(_config, _domain);
+        _soapInbound = new InboundHandler(_config, _domain);
 
         _soapInbound.start();
 
         _serviceURL = new URL("http://" + host + ":" + port + "/OrderService");
 
         // A WS Consumer as Service
-        _soapOutbound = new SOAPGateway();
         SOAPBindingModel config2 = new SOAPBindingModel();
         config2.setWsdl(_serviceURL.toExternalForm() + "?wsdl");
         config2.setServiceName(consumerService.getServiceName());
-        _soapOutbound.init(config2, _domain);
+        _soapOutbound = new OutboundHandler(config2);
         _soapOutbound.start();
+        _domain.registerService(consumerService.getServiceName(), new OrderServiceInterface(), _soapOutbound);
         
         XMLUnit.setIgnoreWhitespace(true);
     }
 
     @After
     public void tearDown() throws Exception {
-        _soapOutbound.stop();
-        _soapInbound.stop();
-        _soapInbound.destroy();
-        _soapOutbound.destroy();
+        // NOOP
     }
 
-    @Ignore
     @Test
     public void standardDocLitOperation() throws Exception {
         
         DOMSource domSource = new DOMSource(_testKit.readResourceDocument("/doclit_request.xml"));
-        Message responseMsg = consumerService.sendInOut(toString(domSource.getNode()));
+        Message responseMsg = consumerService.operation("submitOrder").sendInOut(toString(domSource.getNode()));
         String response = toString(responseMsg.getContent(Node.class));
         _testKit.compareXMLToResource(response, "/doclit_response.xml");
         

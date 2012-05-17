@@ -49,7 +49,7 @@
   <binding name="HelloWebServicePortBinding" type="tns:HelloWebService">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
     <operation name="sayHello">
-      <soap:operation soapAction=""/>
+      <soap:operation soapAction="uri:something:that:needs#tobevalid"/>
       <input>
         <soap:body use="literal"/>
       </input>

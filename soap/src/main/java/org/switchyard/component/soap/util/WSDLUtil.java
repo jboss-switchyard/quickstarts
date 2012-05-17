@@ -30,6 +30,7 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
 import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
@@ -38,6 +39,8 @@ import javax.wsdl.Port;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.soap.SOAPOperation;
+import javax.wsdl.extensions.soap12.SOAP12Operation;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.XMLConstants;
@@ -253,8 +256,8 @@ public final class WSDLUtil {
         for (ExtensibilityElement extElement : extElements) {
             if (extElement.getElementType().getNamespaceURI().equals(WSDL_SOAP12_URI)) {
                 bindingId = SOAPBinding.SOAP12HTTP_BINDING;
-                break;
             }
+            break;
         }
         return bindingId;
     }
@@ -286,6 +289,65 @@ public final class WSDLUtil {
        }
        return isOneWay;
    }
+
+   /**
+     * Get the SOAP {@link BindingOperation} instance for the specified SOAP operation name.
+     * @param port The WSDL port.
+     * @param elementName The SOAP Body element name.
+     * @return The BindingOperation instance, or null if the operation was not found on the port.
+     */
+    public static BindingOperation getBindingOperation(Port port, String elementName) {
+        Operation operation = getOperation(port, elementName);
+        if (operation != null) {
+            List<BindingOperation> bindingOperations = port.getBinding().getBindingOperations();
+            for (BindingOperation bindingOperation : bindingOperations) {
+                if (bindingOperation.getName().equals(operation.getName())) {
+                    return bindingOperation;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get the soapAction value for a given operation.
+     *
+     * @param port The WSDL service port.
+     * @param elementName The SOAP Body element name.
+     * @return the soapAction value if it exists.
+     */
+    public static String getSoapAction(final Port port, final String elementName) {
+        // Overloaded methods not supported
+        BindingOperation operation = getBindingOperation(port, elementName);
+        return getSoapAction(operation);
+    }
+
+    /**
+     * Get the soapAction value for a given operation.
+     *
+     * @param operation The WSDL BindingOperation.
+     * @return the soapAction value if it exists.
+     */
+    public static String getSoapAction(final BindingOperation operation) {
+        String soapActionUri = "";
+        if (operation != null) {
+            List<ExtensibilityElement> extElements = operation.getExtensibilityElements();
+            for (ExtensibilityElement extElement : extElements) {
+                if (extElement instanceof SOAPOperation) {
+                    soapActionUri = ((SOAPOperation) extElement).getSoapActionURI();
+                    break;
+                } else if (extElement instanceof SOAP12Operation) {
+                    SOAP12Operation soapOperation = ((SOAP12Operation) extElement);
+                    Boolean soapActionRequired = soapOperation.getSoapActionRequired();
+                    if ((soapActionRequired == null) || soapActionRequired) {
+                        soapActionUri = soapOperation.getSoapActionURI();
+                    }
+                    break;
+                }
+            }
+        }
+        return soapActionUri;
+    }
 
     /**
      * Get the methods Input message's name.

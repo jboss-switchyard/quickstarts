@@ -24,6 +24,8 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.Property;
+import org.switchyard.Scope;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.w3c.dom.Document;
@@ -69,8 +71,18 @@ public class SOAPProvider extends BaseHandler {
                 exchange.sendFault(message);
             } else {
                 message = exchange.createMessage();
+                Property soapActionProp = exchange.getContext().getProperty("Soapaction", Scope.IN);
+                String soapAction = "";
+                if (soapActionProp != null) {
+                    soapAction = (String) soapActionProp.getValue();
+                } else {
+                    soapActionProp = exchange.getContext().getProperty("Content-Type", Scope.IN);
+                    if (soapActionProp != null) {
+                        soapAction = (String) soapActionProp.getValue();
+                    }
+                }
                 response = "<test:sayHelloResponse xmlns:test=\"urn:switchyard-component-soap:test-ws:1.0\">"
-                             + "   <return>Hello " + toWhom + "</return>"
+                             + "   <return>Hello " + toWhom + "! The soapAction received is " + soapAction + "</return>"
                              + "</test:sayHelloResponse>";
                 setContent(message, response);
                 exchange.send(message);

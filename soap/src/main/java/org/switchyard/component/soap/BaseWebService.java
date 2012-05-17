@@ -19,11 +19,18 @@
  
 package org.switchyard.component.soap;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.Provider;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.ServiceMode;
+import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.WebServiceProvider;
+import javax.xml.ws.handler.MessageContext;
 
 
 /**
@@ -34,8 +41,16 @@ import javax.xml.ws.WebServiceProvider;
 @WebServiceProvider
 @ServiceMode(Mode.MESSAGE)
 public class BaseWebService implements Provider<SOAPMessage> {
+
+    private static String ACTION_EQUALS = "action=";
+    private static String CONTENT_TYPE_L = "Content-type";
+    private static String CONTENT_TYPE = "Content-Type";
+
     private InboundHandler _serviceConsumer;
     private ClassLoader _invocationClassLoader;
+
+    @Resource
+    private WebServiceContext _wsContext;
 
     protected BaseWebService() {
     }
@@ -62,6 +77,30 @@ public class BaseWebService implements Provider<SOAPMessage> {
      * @return the SOAP response
      */
     public SOAPMessage invoke(final SOAPMessage request) {
+        if (request != null) {
+            // Workaround for SOAP1.2 SOAPAction. Although HTTP header has the action value it is missing in
+            // the SOAPMessage's MimeHeader
+            MimeHeaders mimeHeaders = request.getMimeHeaders();
+            String[] mimeContentTypes = mimeHeaders.getHeader(CONTENT_TYPE);
+            if (mimeContentTypes != null)  {
+                String mimeContentType = mimeContentTypes[0];
+                if ((mimeContentType != null) && (mimeContentType.indexOf(ACTION_EQUALS) == -1)) {
+                    Map headers = (Map) _wsContext.getMessageContext().get(MessageContext.HTTP_REQUEST_HEADERS);
+                    List<String> contentTypes = (List) headers.get(CONTENT_TYPE_L);
+                    if ((contentTypes == null) || (contentTypes.size() == 0)) {
+                        contentTypes = (List) headers.get(CONTENT_TYPE);
+                    }
+                    if ((contentTypes != null) && (contentTypes.size() > 0)) {
+                        int idx =  contentTypes.get(0).indexOf(ACTION_EQUALS);
+                        if (idx > 0) {
+                            String action = contentTypes.get(0).substring(idx + 7).replace("\"\"","\"");
+                            mimeHeaders.setHeader(CONTENT_TYPE, mimeContentType + "; " + ACTION_EQUALS + action);
+                        }
+                    }
+                }
+            }
+        }
+
         SOAPMessage response = null;
         ClassLoader original = Thread.currentThread().getContextClassLoader();
         try {
