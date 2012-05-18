@@ -119,6 +119,11 @@
             <filtered>true</filtered>
         </file>
         <file>
+            <source>src/main/resources/external/camel/jpa/module.xml</source>
+            <outputDirectory>/modules/org/apache/camel/jpa/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
             <source>src/main/resources/external/camel/ftp/module.xml</source>
             <outputDirectory>/modules/org/apache/camel/ftp/main</outputDirectory>
             <filtered>true</filtered>
@@ -368,6 +373,14 @@
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
+                <include>org.apache.camel:camel-jpa</include>
+            </includes>
+            <outputDirectory>/modules/org/apache/camel/jpa/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.camel}.${artifact.extension}</outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
                 <include>org.apache.camel:camel-ftp</include>
             </includes>
             <outputDirectory>/modules/org/apache/camel/ftp/main</outputDirectory>
@@ -430,6 +443,8 @@
                 <include>org.springframework:spring-jms</include>
                 <include>org.springframework:spring-jdbc</include>
                 <include>org.springframework:spring-tx</include>
+                <include>org.springframework:spring-jdbc</include>
+                <include>org.springframework:spring-orm</include>
             </includes>
             <outputDirectory>/modules/org/springframework/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${version.spring}.${artifact.extension}

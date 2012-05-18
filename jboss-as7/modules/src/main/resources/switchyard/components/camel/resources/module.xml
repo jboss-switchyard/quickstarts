@@ -51,6 +51,14 @@
                 <include path="META-INF/services/org/apache/camel/component"/>
             </exports>
         </module>
+        <module name="org.apache.camel.jpa" services="export" export="true">
+            <imports>
+                <include path="META-INF/services/org/apache/camel/component"/>
+            </imports>
+            <exports>
+                <include path="META-INF/services/org/apache/camel/component"/>
+            </exports>
+        </module>
         <module name="org.apache.camel.cxf" export="true" optional="true">
             <imports>
                 <include path="META-INF/cxf"/>
