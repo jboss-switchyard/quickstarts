@@ -27,6 +27,7 @@ import org.switchyard.component.camel.config.model.ftp.v1.V1CamelFtpBindingModel
 import org.switchyard.component.camel.config.model.ftps.v1.V1CamelFtpsBindingModel;
 import org.switchyard.component.camel.config.model.jms.v1.V1CamelJmsBindingModel;
 import org.switchyard.component.camel.config.model.mail.v1.V1CamelMailBindingModel;
+import org.switchyard.component.camel.config.model.jpa.v1.V1CamelJpaBindingModel;
 import org.switchyard.component.camel.config.model.mock.v1.V1CamelMockBindingModel;
 import org.switchyard.component.camel.config.model.netty.v1.V1CamelNettyTcpBindingModel;
 import org.switchyard.component.camel.config.model.netty.v1.V1CamelNettyUdpBindingModel;
@@ -69,11 +70,12 @@ public class V1CamelModelMarshaller extends BaseMarshaller {
         String name = config.getName();
 
         if (name.startsWith(BindingModel.BINDING)) {
-
             if (name.endsWith(V1CamelFileBindingModel.FILE)) {
                 return new V1CamelFileBindingModel(config, getDescriptor());
             } else if (name.endsWith(V1CamelBindingModel.CAMEL)) {
                 return new V1CamelBindingModel(config, getDescriptor());
+            } else if (name.endsWith(V1CamelJpaBindingModel.JPA)) {
+                return new V1CamelJpaBindingModel(config, getDescriptor());
             } else if (name.endsWith(V1CamelAtomBindingModel.ATOM)) {
                 return new V1CamelAtomBindingModel(config, getDescriptor());
             } else if (name.endsWith(V1CamelTimerBindingModel.TIMER)) {
@@ -102,6 +104,8 @@ public class V1CamelModelMarshaller extends BaseMarshaller {
                 return new V1CamelSqlBindingModel(config, getDescriptor());
             } else if (name.endsWith(V1CamelMailBindingModel.MAIL)) {
                 return new V1CamelMailBindingModel(config, getDescriptor());
+            } else if (name.endsWith(V1CamelJpaBindingModel.JPA)) {
+                return new V1CamelJpaBindingModel(config, getDescriptor());
             }
         }
 

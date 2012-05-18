@@ -212,6 +212,21 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
 
+    <element name="binding.jpa" type="camel:CamelJpaBindingType" substitutionGroup="swyd:binding.switchyard"/>
+    <complexType name="CamelJpaBindingType">
+        <complexContent>
+            <extension base="camel:BaseCamelBinding">
+                <sequence>
+                    <element name="entityClassName" type="string"/>
+                    <element name="persistenceUnit" type="string"/>
+                    <element name="transactionManager" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="consume" type="camel:JpaConsumerType" minOccurs="0" maxOccurs="1"/>
+                    <element name="produce" type="camel:JpaProducerType" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <element name="binding.mock" type="camel:CamelMockBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelMockBindingType" >
         <complexContent>
@@ -474,6 +489,30 @@ MA  02110-1301, USA.
             <element name="keepLastModified" type="boolean" minOccurs="0" maxOccurs="1"/>
             <element name="eagerDeleteTargetFile" type="boolean" minOccurs="0" maxOccurs="1"/>
             <element name="doneFileName" type="string" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="JpaConsumerType">
+        <complexContent>
+            <extension base="camel:ScheduledBatchPollConsumerType">
+                <sequence>
+                    <element name="consumeDelete" type="boolean" minOccurs="0" maxOccurs="1" />
+                    <element name="consumeLockEntity" type="boolean" minOccurs="0" maxOccurs="1" />
+                    <element name="maximumResults" type="int" minOccurs="0" maxOccurs="1" />
+                    <element name="consumer.query" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="consumer.namedQuery" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="consumer.nativeQuery" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="consumer.resultClass" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="consumer.transacted" type="boolean" minOccurs="0" maxOccurs="1" />
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="JpaProducerType">
+        <sequence>
+            <element name="flushOnSend" type="boolean" minOccurs="0" maxOccurs="1" />
+            <element name="usePersist" type="boolean" minOccurs="0" maxOccurs="1" />
         </sequence>
     </complexType>
 

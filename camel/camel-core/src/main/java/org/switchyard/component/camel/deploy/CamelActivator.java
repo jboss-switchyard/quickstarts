@@ -30,7 +30,6 @@ import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
-import org.apache.log4j.Logger;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.camel.SwitchYardCamelContext;
@@ -49,6 +48,7 @@ import org.switchyard.component.camel.config.model.file.v1.V1CamelFileBindingMod
 import org.switchyard.component.camel.config.model.ftp.v1.V1CamelFtpBindingModel;
 import org.switchyard.component.camel.config.model.ftps.v1.V1CamelFtpsBindingModel;
 import org.switchyard.component.camel.config.model.jms.v1.V1CamelJmsBindingModel;
+import org.switchyard.component.camel.config.model.jpa.v1.V1CamelJpaBindingModel;
 import org.switchyard.component.camel.config.model.mail.v1.V1CamelMailBindingModel;
 import org.switchyard.component.camel.config.model.mock.v1.V1CamelMockBindingModel;
 import org.switchyard.component.camel.config.model.netty.v1.V1CamelNettyTcpBindingModel;
@@ -101,11 +101,11 @@ public class CamelActivator extends BaseActivator {
         V1CamelJmsBindingModel.JMS,
         V1CamelQuartzBindingModel.QUARTZ,
         V1CamelSqlBindingModel.SQL,
-        V1CamelMailBindingModel.MAIL
+        V1CamelMailBindingModel.MAIL,
+        V1CamelJpaBindingModel.JPA
     };
 
     private SwitchYardCamelContext _camelContext;
-    private static Logger _logger = Logger.getLogger(CamelActivator.class);
 
     private Configuration _environment;
 
