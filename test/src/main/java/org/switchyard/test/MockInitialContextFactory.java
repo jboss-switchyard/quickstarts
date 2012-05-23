@@ -22,7 +22,10 @@ package org.switchyard.test;
 import org.junit.Assert;
 import org.switchyard.test.mixins.CDIMixIn;
 
+import javax.naming.CompositeName;
 import javax.naming.Context;
+import javax.naming.Name;
+import javax.naming.NameParser;
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
 import java.lang.reflect.InvocationHandler;
@@ -38,6 +41,12 @@ import java.util.Map;
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public class MockInitialContextFactory implements InitialContextFactory {
+
+    protected static final NameParser NAME_PARSER = new NameParser() {
+        public Name parse(String name) throws NamingException {
+            return new CompositeName(name);
+        }
+    };
 
     /**
      * Bound objects.
@@ -157,6 +166,8 @@ public class MockInitialContextFactory implements InitialContextFactory {
                 }
                 _boundObjects.remove(name);
                 return null;
+            } else if (methodName.equals("getNameParser")) {
+                return NAME_PARSER;
             } else if (methodName.equals("close")) {
                 return true;
             }
