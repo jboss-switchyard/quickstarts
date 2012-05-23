@@ -4,6 +4,8 @@ This quickstart demonstrates the usage of a rules service which performs an age 
 The package resource is specified using annotations within the InterviewRules interface.       
 The name of the service in the drl is specified using a Mapping annotation containing an MVEL expression.
 
+![Rules Interview Agent Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/rules-interview-agent/rules-interview-agent.jpg)
+
 Preqrequisites 
 ==============
 Maven

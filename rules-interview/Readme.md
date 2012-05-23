@@ -4,6 +4,9 @@ This quickstart demonstrates the usage of a rules service which performs an age 
 The drl resource is specified using annotations within the InterviewRules interface.       
 The name of the service in the drl is specified using a Mapping annotation containing an MVEL expression.
 
+![Rules Interview Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/rules-interview/rules-interview.jpg)
+
+
 Preqrequisites 
 ==============
 Maven

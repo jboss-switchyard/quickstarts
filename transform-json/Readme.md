@@ -5,6 +5,9 @@ creates and returns an OrderAck object based on information from the Order objec
 The JSON transformer then transforms the OrderAck to a JSON order object back into a Java Order 
 object.
 
+![Transform JSON Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/transform-json/transform-json.jpg)
+
+
 Prerequisites
 =============
 Maven

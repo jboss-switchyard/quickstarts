@@ -4,6 +4,10 @@ This quickstart demonstrates the use of a JMS binding for a BPEL service.  Also 
 note : the Camel JMS binding in the quickstart uses WSDL as it's interface type
 instead of Java.
 
+
+![BPEL JMS Binding Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/bpel-service/jms_binding/bpel-jms-binding.jpg)
+
+
 Running the quickstart
 ======================
 

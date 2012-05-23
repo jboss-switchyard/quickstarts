@@ -4,6 +4,9 @@ This quickstart demonstrates the usage of the JAXB transformer.   No special con
 included here for the transformer configuration - because a CDI Bean Service is used here and 
 JAXB types are used in the Service interface, the transformation is automatic. 
 
+![Transform JAXB Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/transform-jaxb/transform-jaxb.jpg)
+
+
 Preqrequisites 
 ==============
 Maven

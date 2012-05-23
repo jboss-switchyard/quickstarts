@@ -7,9 +7,15 @@ through a WSDL inteface.
 The first example, say_hello, demonstrates a BPEL process that reads a message passed as input and 
 replies to it with a "Hello, &lt;input&gt;" message.
 
+![Say Hello Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/bpel-service/say_hello/bpel-say-hello.jpg)
+
 The second example, loan_approval, demonstrates multiple BPEL processes interacting with each other. 
 There is a loan approval service that invokes a risk assessment service to help determine whether to 
 approve a loan application.
+
+
+![Loan Approval Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/bpel-service/loan_approval/bpel-loan-approval.jpg)
+
 
 Both examples are invoked through a SOAP gateway binding.  
 

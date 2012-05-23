@@ -5,6 +5,8 @@ quickstart - OrderService - creates an OrderAck object based on the information 
 object receives.  The object is then transformed by the Smooks transformer from an OrderAck 
 object to a submitOrder XML and then back to a Order Java object.     
 
+![Transform Smooks Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/transform-smooks/transform-smooks.jpg)
+
 
 Requirements
 ============

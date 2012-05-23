@@ -3,6 +3,8 @@ Introduction
 This quickstart demonstrates the usage of a soap-proxy service.   A SOAP service is deployed 
 on port 18001 (ReverseService), and a proxy service is started on port 18002 to proxy it. 
 
+![Camel SOAP Proxy Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/camel-soap-proxy/camel-soap-proxy.jpg)
+
 Preqrequisites 
 ==============
 Maven

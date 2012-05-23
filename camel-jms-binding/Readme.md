@@ -3,6 +3,9 @@ Introduction
 This quickstart demonstrates the usage of the Camel Component and it's binding feature, by binding 
 to a JMS Queue. When a message arrives in this queue the service will be invoked.
 
+![Camel JMS Binding Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/camel-jms-binding/camel-jms-binding.jpg)
+
+
 Running the quickstart
 ======================
 

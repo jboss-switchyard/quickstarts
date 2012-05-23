@@ -5,6 +5,8 @@ quickstart is a dummy service (OrderService) which simply returns the order obje
 be processed by the transformer.  The object is then transformed from an Order object to an 
 OrderAck object using XSLT.  
 
+![Transform XSLT Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/transform-xslt/transform-xslt.jpg)
+
 This example is invoked through a SOAP gateway binding.  
 
 Running the quickstart

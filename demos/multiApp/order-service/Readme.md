@@ -2,6 +2,9 @@
 
 The MultiApp order-service project contains two services : OrderService and InventoryService.  This application is used by the web and order-consumer projects.
 
+![MultiApp OrderSerivce Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/demos/multiApp/order-service/order-service.jpg)
+
+
 ## Running the OrderService application
 
 * The artifacts deployment must be present before deploying the order-service application.

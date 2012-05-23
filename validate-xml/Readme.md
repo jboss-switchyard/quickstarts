@@ -7,6 +7,8 @@ The object is then transformed from an Order object to an OrderAck object using 
 The only one difference is that XML validator of message contents is enabled in this service. So SOAP
 Fault is caught when you submit a invalid SOAP request against XML Schema.
 
+![Validate XML Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/validate-xml/validate-xml.jpg)
+
 This example is invoked through a SOAP gateway binding.  
 
 Running the quickstart

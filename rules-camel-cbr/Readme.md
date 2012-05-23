@@ -4,6 +4,9 @@ This quickstart demonstrates the usage of a rules service in conjuction with a c
 The drl resource is specified using annotations within the DestinationServiceRules interface, and checks the id of Widgets to determine their destination.
 Then, a Camel route looks at the destination set on the Widgets, and routes it to the appropriate service (RedService, GreenService, or BlueService).
 
+![Rules Camel CBR Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/rules-camel-cbr/rules-camel-cbr.jpg)
+
+
 Preqrequisites 
 ==============
 Maven

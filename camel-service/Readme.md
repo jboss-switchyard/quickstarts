@@ -5,6 +5,8 @@ services using Camel routes.    This quickstart contains two SwitchYard services
 "XMLService".   Messages sent to JavaDSL will be routed to XMLService, which will log the message
 line by line.
 
+![Camel Service Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/camel-service/camel-service.jpg)
+
 Preqrequisites 
 ==============
 Maven

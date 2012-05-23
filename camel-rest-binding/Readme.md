@@ -13,6 +13,9 @@ Experiment with your favourite REST client to see how this QS behaves and send u
 +-----------------+      +--------------+      +----------------+      +------------------+
 </pre>
 
+![Camel Rest Binding Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/camel-rest-binding/camel-rest-binding.jpg)
+
+
 Running the quickstart
 ======================
 

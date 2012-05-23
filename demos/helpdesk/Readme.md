@@ -9,6 +9,9 @@ If the ticket is rejected, no further action is necessary.
 If more details are requested, a user must provide more details. Then, the process loops back to the review stage again.
 Finally, the process reaches its end.
 
+![Helpdesk Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/demos/helpdesk/helpdesk.jpg)
+
+
 Preqrequisites 
 ==============
 Maven

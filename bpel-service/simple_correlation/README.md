@@ -8,6 +8,9 @@ In this case, a 'hello' message must be sent first, and then a 'goodbye'
 message must follow, where both messages must have the same ID field to
 enable them to be correlated to the same process instance.
 
+![Simple Correlation Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/bpel-service/simple_correlation/bpel-correlation.jpg)
+
+
 Running the quickstart
 ======================
 

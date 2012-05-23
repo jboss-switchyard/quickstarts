@@ -3,6 +3,9 @@ Introduction
 This quickstart demonstrates the usage of the HornetQ Component and it's binding feature,
 by binding to a HornetQ Queue. When a message arrives in this queue the service will be invoked.
 
+![HornetQ Binding Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/hornetq-binding/hornetq-binding.jpg)
+
+
 JBoss AS 7
 ----------
 1. Build the quickstart:
