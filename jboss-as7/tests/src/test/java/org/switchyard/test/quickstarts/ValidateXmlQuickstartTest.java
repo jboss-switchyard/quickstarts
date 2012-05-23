@@ -46,7 +46,7 @@ public class ValidateXmlQuickstartTest {
 
         httpMixIn.initialize();
         try {
-            String response = httpMixIn.postString("http://localhost:18001/quickstart-validate-xml/OrderService", SOAP_REQUEST);System.out.println(response);
+            String response = httpMixIn.postString("http://localhost:8080/quickstart-validate-xml/OrderService", SOAP_REQUEST);System.out.println(response);
             XMLAssert.assertXpathEvaluatesTo("Error during validation with '/xsd/orders.xsd' as 'XML_SCHEMA'.", "//faultstring", response);
         } finally {
             httpMixIn.uninitialize();

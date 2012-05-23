@@ -50,7 +50,7 @@ public class BpelServiceSayHelloQuickstartTest {
     	HTTPMixIn httpMixIn = new HTTPMixIn();
     	httpMixIn.initialize();
     	try {
-    		String response = httpMixIn.postString("http://localhost:18001/SayHelloService", SOAP_REQUEST);
+    		String response = httpMixIn.postString("http://localhost:8080/SayHelloService/SayHelloService", SOAP_REQUEST);
 
     		org.w3c.dom.Document d = XMLUnit.buildControlDocument(response);
             java.util.HashMap<String,String> m = new java.util.HashMap<String,String>();

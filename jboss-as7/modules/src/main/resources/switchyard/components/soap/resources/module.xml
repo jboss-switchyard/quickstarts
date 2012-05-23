@@ -29,6 +29,8 @@
         <module name="javax.api"/>
         <module name="javax.wsdl4j.api"/>
         <module name="org.apache.log4j"/>
+        <module name="org.jboss.as.webservices" export="true"/>
+        <module name="org.jboss.ws.spi" services="import" export="true"/>
         <module name="org.switchyard.api"/>
         <module name="org.switchyard.common"/>
         <module name="org.switchyard.config"/>

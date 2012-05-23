@@ -50,7 +50,7 @@ public class BpelServiceLoanApprovalQuickstartTest {
         HTTPMixIn httpMixIn = new HTTPMixIn();
         httpMixIn.initialize();
         try {
-            String response = httpMixIn.postString("http://localhost:18001/loanService", SOAP_REQUEST_1);
+            String response = httpMixIn.postString("http://localhost:8080/loanService/loanService", SOAP_REQUEST_1);
 
             org.w3c.dom.Document d = XMLUnit.buildControlDocument(response);
             java.util.HashMap<String,String> m = new java.util.HashMap<String,String>();
@@ -76,7 +76,8 @@ public class BpelServiceLoanApprovalQuickstartTest {
         HTTPMixIn httpMixIn = new HTTPMixIn();
         httpMixIn.initialize();
         try {
-            String response = httpMixIn.postString("http://localhost:18001/loanService", SOAP_REQUEST_2);
+            String response = httpMixIn.postString("http://localhost:8080/loanService/loanService", SOAP_REQUEST_2);
+            System.out.println(response);
 
             org.w3c.dom.Document d = XMLUnit.buildControlDocument(response);
             java.util.HashMap<String,String> m = new java.util.HashMap<String,String>();

@@ -50,7 +50,7 @@ public class HelpDeskDemoQuickstartTest {
         http.initialize();
         bpm.initialize();
         try {
-            http.postResourceAndTestXML("http://localhost:18001/HelpDeskService", "/xml/soap-request.xml", "/xml/soap-response.xml");
+            http.postResourceAndTestXML("http://localhost:8080/HelpDeskService/HelpDeskService", "/xml/soap-request.xml", "/xml/soap-response.xml");
             bpm.completeHumanTasks();
         } finally {
             bpm.uninitialize();

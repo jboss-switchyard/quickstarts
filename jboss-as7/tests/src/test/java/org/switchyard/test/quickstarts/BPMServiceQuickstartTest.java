@@ -45,7 +45,7 @@ public class BPMServiceQuickstartTest {
     	HTTPMixIn httpMixIn = new HTTPMixIn();
     	httpMixIn.initialize();
     	try {
-    		String response = httpMixIn.postString("http://localhost:18001/swydws/ProcessOrder", SOAP_REQUEST);
+    		String response = httpMixIn.postString("http://localhost:8080/swydws/ProcessOrder", SOAP_REQUEST);
     		XMLAssert.assertXpathEvaluatesTo("PO-19839-XYZ", "//orderId", response);
     		XMLAssert.assertXpathEvaluatesTo("true", "//accepted", response);
     		XMLAssert.assertXpathEvaluatesTo("Thanks for your order, it has been shipped!", "//status", response);
