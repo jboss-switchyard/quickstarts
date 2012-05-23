@@ -5,6 +5,9 @@ of a service invocation.  The only service in the application is a Bean service 
 "WorkService".  The service accepts commands and can be instructed to rollback by sending a
 message containing the string "rollback".
 
+![Policy Transaction Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/demos/policy-transaction/policy-transaction.jpg)
+
+
 Running the quickstart
 ======================
 

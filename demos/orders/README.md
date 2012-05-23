@@ -6,6 +6,9 @@ This example demonstrates how to:
 2. Expose a SwitchYard Service through a SOAP interface.
 3. Expose a [JSF](http://www.jboss.org/richfaces) User Interface to the same CDI based Service.
 
+![Orders Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/demos/orders/orders.jpg)
+
+
 ## Prerequisites
 
 1. Java 6.
