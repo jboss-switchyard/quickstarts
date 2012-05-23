@@ -19,11 +19,7 @@
  
 package org.switchyard.component.soap;
 
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.wsdl.Operation;
 import javax.wsdl.Part;
@@ -32,9 +28,6 @@ import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.ws.Endpoint;
 
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
@@ -48,6 +41,8 @@ import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.soap.composer.SOAPComposition;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
+import org.switchyard.component.soap.endpoint.EndpointPublisherFactory;
+import org.switchyard.component.soap.endpoint.WSEndpoint;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
 import org.switchyard.deploy.BaseServiceHandler;
@@ -64,7 +59,6 @@ public class InboundHandler extends BaseServiceHandler {
     private static final Logger LOGGER = Logger.getLogger(InboundHandler.class);
     private static final long DEFAULT_TIMEOUT = 15000;
     private static final String MESSAGE_NAME = "MESSAGE_NAME";
-    private static final String WSDL_LOCATION = "javax.xml.ws.wsdl.description";
 
     private final SOAPBindingModel _config;
     private final MessageComposer<SOAPMessage> _messageComposer;
@@ -72,9 +66,8 @@ public class InboundHandler extends BaseServiceHandler {
     private ServiceDomain _domain;
     private ServiceReference _service;
     private long _waitTimeout = DEFAULT_TIMEOUT; // default of 15 seconds
-    private Endpoint _endpoint;
+    private WSEndpoint _endpoint;
     private Port _wsdlPort;
-    private String _scheme = "http";
     private String _bindingId;
 
     /**
@@ -93,7 +86,6 @@ public class InboundHandler extends BaseServiceHandler {
      * @throws WebServicePublishException If unable to publish the endpoint
      */
     public void start() throws WebServicePublishException {
-        ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
         try {
             _service = _domain.getServiceReference(_config.getServiceName());
             PortName portName = _config.getPort();
@@ -102,42 +94,10 @@ public class InboundHandler extends BaseServiceHandler {
             // Update the portName
             portName.setServiceQName(wsdlService.getQName());
             portName.setName(_wsdlPort.getName());
-            
-            BaseWebService wsProvider = new BaseWebService();
-            wsProvider.setInvocationClassLoader(Thread.currentThread().getContextClassLoader());
-            // Hook the handler
-            wsProvider.setConsumer(this);
-            
-            List<Source> metadata = new ArrayList<Source>();
-            StreamSource source = WSDLUtil.getStream(_config.getWsdl());
-            metadata.add(source);
-            Map<String, Object> properties = new HashMap<String, Object>();
-            properties.put(Endpoint.WSDL_SERVICE, portName.getServiceQName());
-            properties.put(Endpoint.WSDL_PORT, portName.getPortQName());
-            properties.put(WSDL_LOCATION, WSDLUtil.getURL(_config.getWsdl()).toExternalForm());
-
-            String path = "/" + portName.getServiceName();
-            if (_config.getContextPath() != null) {
-                path = "/" + _config.getContextPath() + "/" + portName.getServiceName();
-            }
-            String publishUrl = _scheme + "://" + _config.getSocketAddr().getHost() + ":" + _config.getSocketAddr().getPort() + path;
-
-            LOGGER.info("Publishing WebService at " + publishUrl);
-            // make sure we don't pollute the class loader used by the WS subsystem
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-
             _bindingId = WSDLUtil.getBindingId(_wsdlPort);
-
-            _endpoint = Endpoint.create(_bindingId, wsProvider);
-            _endpoint.setMetadata(metadata);
-            _endpoint.setProperties(properties);
-            _endpoint.publish(publishUrl);
-        } catch (MalformedURLException e) {
-            throw new WebServicePublishException(e);
+            _endpoint = EndpointPublisherFactory.getEndpointPublisher().publish(_config, _bindingId, this);
         } catch (WSDLException e) {
             throw new WebServicePublishException(e);
-        } finally {
-            Thread.currentThread().setContextClassLoader(origLoader);
         }
     }
 
@@ -145,7 +105,9 @@ public class InboundHandler extends BaseServiceHandler {
      * Stop lifecycle.
      */
     public void stop() {
-        _endpoint.stop();
+        if (_endpoint != null) {
+            _endpoint.stop();
+        }
         LOGGER.info("WebService " + _config.getPort() + " stopped.");
     }
 

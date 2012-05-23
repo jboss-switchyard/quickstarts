@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
  
-package org.switchyard.component.soap;
+package org.switchyard.component.soap.endpoint;
 
 import java.util.List;
 import java.util.Map;
@@ -31,6 +31,8 @@ import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.handler.MessageContext;
+
+import org.switchyard.component.soap.InboundHandler;
 
 
 /**
@@ -52,7 +54,10 @@ public class BaseWebService implements Provider<SOAPMessage> {
     @Resource
     private WebServiceContext _wsContext;
 
-    protected BaseWebService() {
+    /**
+     * Contruct a generic Webservice.
+     */
+    public BaseWebService() {
     }
 
     /**
