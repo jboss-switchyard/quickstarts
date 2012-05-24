@@ -1,49 +1,37 @@
-<?xml version="1.0" encoding="UTF-8"?> 
-<definitions id="Definition"
-             targetNamespace="http://www.jboss.org/drools"
-             typeLanguage="http://www.java.com/javaTypes"
-             expressionLanguage="http://www.mvel.org/2.0"
-             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd"
-             xmlns:g="http://www.jboss.org/drools/flow/gpd"
-             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
-             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
-             xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
-             xmlns:tns="http://www.jboss.org/drools">
-
-  <itemDefinition id="_messageContentInItem" />
-  <itemDefinition id="_messageContentOutItem" />
-  <itemDefinition id="_messageIdItem" structureRef="String" />
-
-  <process processType="Private" isExecutable="true" id="ProcessOrder" name="ProcessOrder" tns:packageName="org.switchyard.demo.openshift" >
-
-    <!-- process variables -->
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:g="http://www.jboss.org/drools/flow/gpd" xmlns:tns="http://www.jboss.org/drools" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="Definition" expressionLanguage="http://www.mvel.org/2.0" targetNamespace="http://www.jboss.org/drools" typeLanguage="http://www.java.com/javaTypes">
+  <itemDefinition id="_messageContentInItem"/>
+  <itemDefinition id="_messageContentOutItem"/>
+  <itemDefinition id="_messageIdItem" structureRef="String"/>
+  <process id="ProcessOrder" tns:packageName="org.switchyard.demo.openshift" name="ProcessOrder" isExecutable="true" processType="Private">
     <property id="messageContentIn" itemSubjectRef="_messageContentInItem"/>
     <property id="messageContentOut" itemSubjectRef="_messageContentOutItem"/>
     <property id="messageId" itemSubjectRef="_messageIdItem"/>
-
-    <!-- nodes -->
-    <startEvent id="_1" name="Start" />
-    <endEvent id="_7" name="End" >
-        <terminateEventDefinition/>
+    <startEvent id="_1" name="Start">
+      <outgoing>_1-_8</outgoing>
+    </startEvent>
+    <endEvent id="_7" name="End">
+      <incoming>_9-_7</incoming>
+      <terminateEventDefinition id="TerminateEventDefinition_1"/>
     </endEvent>
-    <task id="_8" name="Inventory" tns:taskName="SwitchYard Service" >
+    <task id="_8" tns:taskName="SwitchYard Service" name="Inventory">
       <extensionElements>
-        <tns:onEntry-script scriptFormat="http://www.java.com/java">
-          <script>System.out.println("********** Inventory incoming messageId: " + messageId + " **********");</script>
+        <tns:onEntry-script tns:scriptFormat="http://www.java.com/java">
+          <tns:script>System.out.println(&quot;********** Inventory incoming messageId: &quot; + messageId + &quot; **********&quot;);</tns:script>
         </tns:onEntry-script>
       </extensionElements>
-      <ioSpecification>
-        <dataInput id="_8_messageContentInInput" name="messageContentIn" />
-        <dataInput id="_8_messageIdInput" name="messageId" />
-        <dataInput id="_8_ServiceNameInput" name="ServiceName" />
-        <dataInput id="_8_MessageContentOutNameInput" name="MessageContentOutName" />
-        <dataInput id="_8_ServiceOperationNameInput" name="ServiceOperationName" />
-        <dataInput id="_8_OutputMessageVariableInput" name="OutputMessageVariable" />
-        <dataInput id="_8_MessageContentInNameInput" name="MessageContentInName" />
-        <dataOutput id="_8_messageContentOutOutput" name="messageContentOut" />
-        <inputSet>
+      <incoming>_1-_8</incoming>
+      <outgoing>_8-_11</outgoing>
+      <ioSpecification id="InputOutputSpecification_1">
+        <dataInput id="_8_messageContentInInput" name="messageContentIn"/>
+        <dataInput id="_8_messageIdInput" name="messageId"/>
+        <dataInput id="_8_ServiceNameInput" name="ServiceName"/>
+        <dataInput id="_8_MessageContentOutNameInput" name="MessageContentOutName"/>
+        <dataInput id="_8_ServiceOperationNameInput" name="ServiceOperationName"/>
+        <dataInput id="_8_OutputMessageVariableInput" name="OutputMessageVariable"/>
+        <dataInput id="_8_MessageContentInNameInput" name="MessageContentInName"/>
+        <dataOutput id="_8_messageContentOutOutput" name="messageContentOut"/>
+        <inputSet id="InputSet_1">
           <dataInputRefs>_8_messageContentInInput</dataInputRefs>
           <dataInputRefs>_8_messageIdInput</dataInputRefs>
           <dataInputRefs>_8_ServiceNameInput</dataInputRefs>
@@ -52,237 +40,241 @@
           <dataInputRefs>_8_OutputMessageVariableInput</dataInputRefs>
           <dataInputRefs>_8_MessageContentInNameInput</dataInputRefs>
         </inputSet>
-        <outputSet>
+        <outputSet id="OutputSet_1">
           <dataOutputRefs>_8_messageContentOutOutput</dataOutputRefs>
         </outputSet>
       </ioSpecification>
-      <dataInputAssociation>
+      <dataInputAssociation id="DataInputAssociation_1">
         <sourceRef>messageContentIn</sourceRef>
         <targetRef>_8_messageContentInInput</targetRef>
       </dataInputAssociation>
-      <dataInputAssociation>
+      <dataInputAssociation id="DataInputAssociation_2">
         <sourceRef>messageId</sourceRef>
         <targetRef>_8_messageIdInput</targetRef>
       </dataInputAssociation>
-      <dataInputAssociation>
+      <dataInputAssociation id="DataInputAssociation_3">
         <targetRef>_8_ServiceNameInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">Inventory</from>
-          <to xsi:type="tFormalExpression">_8_ServiceNameInput</to>
+        <assignment id="Assignment_1">
+          <from xsi:type="tFormalExpression" id="FormalExpression_1">Inventory</from>
+          <to xsi:type="tFormalExpression" id="FormalExpression_2">_8_ServiceNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation>
+      <dataInputAssociation id="DataInputAssociation_4">
         <targetRef>_8_MessageContentOutNameInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression"></from>
-          <to xsi:type="tFormalExpression">_8_MessageContentOutNameInput</to>
+        <assignment id="Assignment_2">
+          <from xsi:type="tFormalExpression" id="FormalExpression_3"/>
+          <to xsi:type="tFormalExpression" id="FormalExpression_4">_8_MessageContentOutNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation>
+      <dataInputAssociation id="DataInputAssociation_5">
         <targetRef>_8_ServiceOperationNameInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">checkAvailability</from>
-          <to xsi:type="tFormalExpression">_8_ServiceOperationNameInput</to>
+        <assignment id="Assignment_3">
+          <from xsi:type="tFormalExpression" id="FormalExpression_5">checkAvailability</from>
+          <to xsi:type="tFormalExpression" id="FormalExpression_6">_8_ServiceOperationNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation>
+      <dataInputAssociation id="DataInputAssociation_6">
         <targetRef>_8_OutputMessageVariableInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">item-available</from>
-          <to xsi:type="tFormalExpression">_8_OutputMessageVariableInput</to>
+        <assignment id="Assignment_4">
+          <from xsi:type="tFormalExpression" id="FormalExpression_7">item-available</from>
+          <to xsi:type="tFormalExpression" id="FormalExpression_8">_8_OutputMessageVariableInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation>
+      <dataInputAssociation id="DataInputAssociation_7">
         <targetRef>_8_MessageContentInNameInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression"></from>
-          <to xsi:type="tFormalExpression">_8_MessageContentInNameInput</to>
+        <assignment id="Assignment_5">
+          <from xsi:type="tFormalExpression" id="FormalExpression_9"/>
+          <to xsi:type="tFormalExpression" id="FormalExpression_10">_8_MessageContentInNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataOutputAssociation>
+      <dataOutputAssociation id="DataOutputAssociation_1">
         <sourceRef>_8_messageContentOutOutput</sourceRef>
         <targetRef>messageContentOut</targetRef>
       </dataOutputAssociation>
     </task>
-    <task id="_9" name="Shipping" tns:taskName="SwitchYard Service" >
-      <ioSpecification>
-        <dataInput id="_9_messageContentInInput" name="messageContentIn" />
-        <dataInput id="_9_ServiceNameInput" name="ServiceName" />
-        <dataInput id="_9_MessageContentOutNameInput" name="MessageContentOutName" />
-        <dataInput id="_9_ServiceOperationNameInput" name="ServiceOperationName" />
-        <dataInput id="_9_MessageContentInNameInput" name="MessageContentInName" />
-        <dataOutput id="_9_messageContentOutOutput" name="messageContentOut" />
-        <inputSet>
+    <task id="_9" tns:taskName="SwitchYard Service" name="Shipping">
+      <incoming>_11-_9</incoming>
+      <outgoing>_9-_7</outgoing>
+      <ioSpecification id="InputOutputSpecification_2">
+        <dataInput id="_9_messageContentInInput" name="messageContentIn"/>
+        <dataInput id="_9_ServiceNameInput" name="ServiceName"/>
+        <dataInput id="_9_MessageContentOutNameInput" name="MessageContentOutName"/>
+        <dataInput id="_9_ServiceOperationNameInput" name="ServiceOperationName"/>
+        <dataInput id="_9_MessageContentInNameInput" name="MessageContentInName"/>
+        <dataOutput id="_9_messageContentOutOutput" name="messageContentOut"/>
+        <inputSet id="InputSet_2">
           <dataInputRefs>_9_messageContentInInput</dataInputRefs>
           <dataInputRefs>_9_ServiceNameInput</dataInputRefs>
           <dataInputRefs>_9_MessageContentOutNameInput</dataInputRefs>
           <dataInputRefs>_9_ServiceOperationNameInput</dataInputRefs>
           <dataInputRefs>_9_MessageContentInNameInput</dataInputRefs>
         </inputSet>
-        <outputSet>
+        <outputSet id="OutputSet_2">
           <dataOutputRefs>_9_messageContentOutOutput</dataOutputRefs>
         </outputSet>
       </ioSpecification>
-      <dataInputAssociation>
+      <dataInputAssociation id="DataInputAssociation_8">
         <sourceRef>messageContentIn</sourceRef>
         <targetRef>_9_messageContentInInput</targetRef>
       </dataInputAssociation>
-      <dataInputAssociation>
+      <dataInputAssociation id="DataInputAssociation_9">
         <targetRef>_9_ServiceNameInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">Shipping</from>
-          <to xsi:type="tFormalExpression">_9_ServiceNameInput</to>
+        <assignment id="Assignment_6">
+          <from xsi:type="tFormalExpression" id="FormalExpression_11">Shipping</from>
+          <to xsi:type="tFormalExpression" id="FormalExpression_12">_9_ServiceNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation>
+      <dataInputAssociation id="DataInputAssociation_10">
         <targetRef>_9_MessageContentOutNameInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression"></from>
-          <to xsi:type="tFormalExpression">_9_MessageContentOutNameInput</to>
+        <assignment id="Assignment_7">
+          <from xsi:type="tFormalExpression" id="FormalExpression_13"/>
+          <to xsi:type="tFormalExpression" id="FormalExpression_14">_9_MessageContentOutNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation>
+      <dataInputAssociation id="DataInputAssociation_11">
         <targetRef>_9_ServiceOperationNameInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">ship</from>
-          <to xsi:type="tFormalExpression">_9_ServiceOperationNameInput</to>
+        <assignment id="Assignment_8">
+          <from xsi:type="tFormalExpression" id="FormalExpression_15">ship</from>
+          <to xsi:type="tFormalExpression" id="FormalExpression_16">_9_ServiceOperationNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation>
+      <dataInputAssociation id="DataInputAssociation_12">
         <targetRef>_9_MessageContentInNameInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression"></from>
-          <to xsi:type="tFormalExpression">_9_MessageContentInNameInput</to>
+        <assignment id="Assignment_9">
+          <from xsi:type="tFormalExpression" id="FormalExpression_17"/>
+          <to xsi:type="tFormalExpression" id="FormalExpression_18">_9_MessageContentInNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataOutputAssociation>
+      <dataOutputAssociation id="DataOutputAssociation_2">
         <sourceRef>_9_messageContentOutOutput</sourceRef>
         <targetRef>messageContentOut</targetRef>
       </dataOutputAssociation>
     </task>
-    <task id="_10" name="BackOrder" tns:taskName="SwitchYard Service" >
-      <ioSpecification>
-        <dataInput id="_10_messageContentInInput" name="messageContentIn" />
-        <dataInput id="_10_ServiceNameInput" name="ServiceName" />
-        <dataInput id="_10_MessageContentOutNameInput" name="MessageContentOutName" />
-        <dataInput id="_10_ServiceOperationNameInput" name="ServiceOperationName" />
-        <dataInput id="_10_MessageContentInNameInput" name="MessageContentInName" />
-        <dataOutput id="_10_messageContentOutOutput" name="messageContentOut" />
-        <inputSet>
+    <task id="_10" tns:taskName="SwitchYard Service" name="BackOrder">
+      <incoming>_11-_10</incoming>
+      <outgoing>_10-_12</outgoing>
+      <ioSpecification id="InputOutputSpecification_3">
+        <dataInput id="_10_messageContentInInput" name="messageContentIn"/>
+        <dataInput id="_10_ServiceNameInput" name="ServiceName"/>
+        <dataInput id="_10_MessageContentOutNameInput" name="MessageContentOutName"/>
+        <dataInput id="_10_ServiceOperationNameInput" name="ServiceOperationName"/>
+        <dataInput id="_10_MessageContentInNameInput" name="MessageContentInName"/>
+        <dataOutput id="_10_messageContentOutOutput" name="messageContentOut"/>
+        <inputSet id="InputSet_3">
           <dataInputRefs>_10_messageContentInInput</dataInputRefs>
           <dataInputRefs>_10_ServiceNameInput</dataInputRefs>
           <dataInputRefs>_10_MessageContentOutNameInput</dataInputRefs>
           <dataInputRefs>_10_ServiceOperationNameInput</dataInputRefs>
           <dataInputRefs>_10_MessageContentInNameInput</dataInputRefs>
         </inputSet>
-        <outputSet>
+        <outputSet id="OutputSet_3">
           <dataOutputRefs>_10_messageContentOutOutput</dataOutputRefs>
         </outputSet>
       </ioSpecification>
-      <dataInputAssociation>
+      <dataInputAssociation id="DataInputAssociation_13">
         <sourceRef>messageContentIn</sourceRef>
         <targetRef>_10_messageContentInInput</targetRef>
       </dataInputAssociation>
-      <dataInputAssociation>
+      <dataInputAssociation id="DataInputAssociation_14">
         <targetRef>_10_ServiceNameInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">BackOrder</from>
-          <to xsi:type="tFormalExpression">_10_ServiceNameInput</to>
+        <assignment id="Assignment_10">
+          <from xsi:type="tFormalExpression" id="FormalExpression_19">BackOrder</from>
+          <to xsi:type="tFormalExpression" id="FormalExpression_20">_10_ServiceNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation>
+      <dataInputAssociation id="DataInputAssociation_15">
         <targetRef>_10_MessageContentOutNameInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression"></from>
-          <to xsi:type="tFormalExpression">_10_MessageContentOutNameInput</to>
+        <assignment id="Assignment_11">
+          <from xsi:type="tFormalExpression" id="FormalExpression_21"/>
+          <to xsi:type="tFormalExpression" id="FormalExpression_22">_10_MessageContentOutNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation>
+      <dataInputAssociation id="DataInputAssociation_16">
         <targetRef>_10_ServiceOperationNameInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">hold</from>
-          <to xsi:type="tFormalExpression">_10_ServiceOperationNameInput</to>
+        <assignment id="Assignment_12">
+          <from xsi:type="tFormalExpression" id="FormalExpression_23">hold</from>
+          <to xsi:type="tFormalExpression" id="FormalExpression_24">_10_ServiceOperationNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation>
+      <dataInputAssociation id="DataInputAssociation_17">
         <targetRef>_10_MessageContentInNameInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression"></from>
-          <to xsi:type="tFormalExpression">_10_MessageContentInNameInput</to>
+        <assignment id="Assignment_13">
+          <from xsi:type="tFormalExpression" id="FormalExpression_25"/>
+          <to xsi:type="tFormalExpression" id="FormalExpression_26">_10_MessageContentInNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataOutputAssociation>
+      <dataOutputAssociation id="DataOutputAssociation_3">
         <sourceRef>_10_messageContentOutOutput</sourceRef>
         <targetRef>messageContentOut</targetRef>
       </dataOutputAssociation>
     </task>
-    <exclusiveGateway id="_11" name="Gateway" gatewayDirection="Diverging" />
-    <endEvent id="_12" name="End" >
-        <terminateEventDefinition/>
+    <exclusiveGateway id="_11" name="Gateway" gatewayDirection="Diverging">
+      <incoming>_8-_11</incoming>
+      <outgoing>_11-_9</outgoing>
+      <outgoing>_11-_10</outgoing>
+    </exclusiveGateway>
+    <endEvent id="_12" name="End">
+      <incoming>_10-_12</incoming>
+      <terminateEventDefinition id="TerminateEventDefinition_2"/>
     </endEvent>
-
-    <!-- connections -->
-    <sequenceFlow id="_9-_7" sourceRef="_9" targetRef="_7" />
-    <sequenceFlow id="_1-_8" sourceRef="_1" targetRef="_8" />
-    <sequenceFlow id="_11-_9" sourceRef="_11" targetRef="_9" name="ship" tns:priority="1" >
-      <conditionExpression xsi:type="tFormalExpression" language="http://www.java.com/java" >return ((Boolean)messageContentOut).booleanValue();</conditionExpression>
+    <sequenceFlow id="_9-_7" sourceRef="_9" targetRef="_7"/>
+    <sequenceFlow id="_1-_8" sourceRef="_1" targetRef="_8"/>
+    <sequenceFlow id="_11-_9" tns:priority="1" name="ship" sourceRef="_11" targetRef="_9">
+      <conditionExpression xsi:type="tFormalExpression" id="FormalExpression_27" language="http://www.java.com/java">return ((Boolean)messageContentOut).booleanValue();</conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="_11-_10" sourceRef="_11" targetRef="_10" name="hold" tns:priority="1" >
-      <conditionExpression xsi:type="tFormalExpression" language="http://www.java.com/java" >return !((Boolean)messageContentOut).booleanValue();</conditionExpression>
+    <sequenceFlow id="_11-_10" tns:priority="1" name="hold" sourceRef="_11" targetRef="_10">
+      <conditionExpression xsi:type="tFormalExpression" id="FormalExpression_28" language="http://www.java.com/java">return !((Boolean)messageContentOut).booleanValue();</conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="_8-_11" sourceRef="_8" targetRef="_11" />
-    <sequenceFlow id="_10-_12" sourceRef="_10" targetRef="_12" />
-
+    <sequenceFlow id="_8-_11" sourceRef="_8" targetRef="_11"/>
+    <sequenceFlow id="_10-_12" sourceRef="_10" targetRef="_12"/>
   </process>
-
-  <bpmndi:BPMNDiagram>
-    <bpmndi:BPMNPlane bpmnElement="ProcessOrder" >
-      <bpmndi:BPMNShape bpmnElement="_1" >
-        <dc:Bounds x="178" y="30" width="48" height="48" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_Process_1" bpmnElement="ProcessOrder">
+      <bpmndi:BPMNShape id="BPMNShape_StartEvent_1" bpmnElement="_1">
+        <dc:Bounds height="48.0" width="48.0" x="178.0" y="30.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_7" >
-        <dc:Bounds x="95" y="446" width="48" height="48" />
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_1" bpmnElement="_7">
+        <dc:Bounds height="48.0" width="48.0" x="95.0" y="446.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_8" >
-        <dc:Bounds x="151" y="136" width="100" height="48" />
+      <bpmndi:BPMNShape id="BPMNShape_Task_1" bpmnElement="_8">
+        <dc:Bounds height="48.0" width="100.0" x="151.0" y="136.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_9" >
-        <dc:Bounds x="68" y="354" width="100" height="48" />
+      <bpmndi:BPMNShape id="BPMNShape_Task_2" bpmnElement="_9">
+        <dc:Bounds height="48.0" width="100.0" x="68.0" y="354.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_10" >
-        <dc:Bounds x="229" y="359" width="100" height="48" />
+      <bpmndi:BPMNShape id="BPMNShape_Task_3" bpmnElement="_10">
+        <dc:Bounds height="48.0" width="100.0" x="229.0" y="359.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_11" >
-        <dc:Bounds x="175" y="242" width="48" height="48" />
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_1" bpmnElement="_11" isMarkerVisible="true">
+        <dc:Bounds height="48.0" width="48.0" x="175.0" y="242.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_12" >
-        <dc:Bounds x="254" y="447" width="48" height="48" />
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_2" bpmnElement="_12">
+        <dc:Bounds height="48.0" width="48.0" x="254.0" y="447.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge bpmnElement="_9-_7" >
-        <di:waypoint x="118" y="378" />
-        <di:waypoint x="119" y="470" />
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_1" bpmnElement="_9-_7" sourceElement="BPMNShape_Task_2" targetElement="BPMNShape_EndEvent_1">
+        <di:waypoint xsi:type="dc:Point" x="118.0" y="402.0"/>
+        <di:waypoint xsi:type="dc:Point" x="119.0" y="446.0"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_1-_8" >
-        <di:waypoint x="202" y="54" />
-        <di:waypoint x="201" y="160" />
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_2" bpmnElement="_1-_8" sourceElement="BPMNShape_StartEvent_1" targetElement="BPMNShape_Task_1">
+        <di:waypoint xsi:type="dc:Point" x="202.0" y="78.0"/>
+        <di:waypoint xsi:type="dc:Point" x="201.0" y="136.0"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_11-_9" >
-        <di:waypoint x="199" y="266" />
-        <di:waypoint x="118" y="378" />
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_3" bpmnElement="_11-_9" sourceElement="BPMNShape_ExclusiveGateway_1" targetElement="BPMNShape_Task_2">
+        <di:waypoint xsi:type="dc:Point" x="199.0" y="291.0"/>
+        <di:waypoint xsi:type="dc:Point" x="118.0" y="354.0"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_11-_10" >
-        <di:waypoint x="199" y="266" />
-        <di:waypoint x="279" y="383" />
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_4" bpmnElement="_11-_10" sourceElement="BPMNShape_ExclusiveGateway_1" targetElement="BPMNShape_Task_3">
+        <di:waypoint xsi:type="dc:Point" x="199.0" y="291.0"/>
+        <di:waypoint xsi:type="dc:Point" x="279.0" y="359.0"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_8-_11" >
-        <di:waypoint x="201" y="160" />
-        <di:waypoint x="199" y="266" />
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_5" bpmnElement="_8-_11" sourceElement="BPMNShape_Task_1" targetElement="BPMNShape_ExclusiveGateway_1">
+        <di:waypoint xsi:type="dc:Point" x="201.0" y="184.0"/>
+        <di:waypoint xsi:type="dc:Point" x="199.0" y="242.0"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_10-_12" >
-        <di:waypoint x="279" y="383" />
-        <di:waypoint x="278" y="471" />
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_6" bpmnElement="_10-_12" sourceElement="BPMNShape_Task_3" targetElement="BPMNShape_EndEvent_2">
+        <di:waypoint xsi:type="dc:Point" x="279.0" y="407.0"/>
+        <di:waypoint xsi:type="dc:Point" x="278.0" y="447.0"/>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
-
 </definitions>

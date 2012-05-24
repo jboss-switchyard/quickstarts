@@ -19,9 +19,9 @@ JBoss AS 7
 1. Build the quickstart:
     mvn clean install
 2. Start the application server:
-    cd switchyard-as7-0.4/bin ; ./standalone.sh
+    cd switchyard-as7-0.5/bin ; ./standalone.sh
 3. Deploy the web application:
-    cp target/switchyard-quickstart-demo-helpdesk-webapp.war <path-to>/switchyard-as7-0.4/standalone/deployments/
+    cp target/switchyard-quickstart-demo-helpdesk-webapp.war <path-to>/switchyard-as7-0.5/standalone/deployments/
 4. Start the Human Task server:
     mvn exec:java -Dexec.args="start.taskserver"
 5. In a web browser window, use the web application:
@@ -31,7 +31,7 @@ JBoss AS 7
     So far there are no processes started, so there are no tasks.
 6. In a different console window, start a process (this will use the SOAP gateway):
     mvn exec:java -Dexec.args="start.process"
-   You can do this as many times as you wish, starting as many processes as you wish.
+    You can do this as many times as you wish, starting as many processes as you wish.
 7. Going back to your web browser window:
     As krisv (a developer), click the Submit button to get the list of tasks.
     As krisv, review the tasks you want to perform and click the Submit button again.

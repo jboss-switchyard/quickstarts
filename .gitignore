@@ -1,6 +1,7 @@
 .project
 .classpath
 .settings/
+.bpmn/
 target/
 bin/
 components-file/bin/

@@ -34,23 +34,11 @@
 
   <name>Quickstart Demo : Help Desk</name>
 
-
-    <dependencyManagement>
-       <dependencies>
-          <dependency>
-             <groupId>org.hibernate</groupId>
-             <artifactId>hibernate-core</artifactId>
-             <version>${version.hibernate.core.helpdesk}</version>
-          </dependency>
-          <dependency>
-             <groupId>org.hibernate</groupId>
-             <artifactId>hibernate-entitymanager</artifactId>
-             <version>${version.hibernate.entitymanager.helpdesk}</version>
-          </dependency>
-       </dependencies>
-    </dependencyManagement>
-
   <dependencies>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-entitymanager</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-api</artifactId>
@@ -86,18 +74,17 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-entitymanager</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
       <scope>test</scope>
     </dependency>
+    <!--
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <scope>test</scope>
+    </dependency>
+    -->
   </dependencies>
 
   <build>

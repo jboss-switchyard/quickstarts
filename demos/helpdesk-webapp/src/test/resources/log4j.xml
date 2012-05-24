@@ -21,11 +21,11 @@
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 <log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
 
-	<appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d{HH:mm:ss,SSS} %-5p [%c] %m%n"/>
-		</layout>
-	</appender>
+    <appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{HH:mm:ss,SSS} %-5p [%c] %m%n"/>
+        </layout>
+    </appender>
 
     <logger name="org.apache.commons">
         <level value="ERROR"/>
@@ -36,22 +36,25 @@
     <logger name="org.hibernate">
         <level value="ERROR"/>
     </logger>
+    <logger name="org.hibernate.tool.hbm2ddl.SchemaExport">
+        <level value="FATAL"/>
+    </logger>
     <logger name="org.jboss.weld">
         <level value="ERROR"/>
     </logger>
-	<logger name="org.jboss.interceptor">
-		<level value="ERROR"/>
-	</logger>
-	<logger name="org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient">
-		<level value="DEBUG"/>
-	</logger>
-	<logger name="org.switchyard.component.bpm.task.service.jbpm.JBPMTaskServer">
-		<level value="DEBUG"/>
-	</logger>
+    <logger name="org.jboss.interceptor">
+        <level value="ERROR"/>
+    </logger>
+    <logger name="org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient">
+        <level value="DEBUG"/>
+    </logger>
+    <logger name="org.switchyard.component.bpm.task.service.jbpm.JBPMTaskServer">
+        <level value="DEBUG"/>
+    </logger>
 
-	<root>
-		<level value="INFO"/>
-		<appender-ref ref="STDOUT"/>
-	</root>
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
 
 </log4j:configuration>

@@ -28,7 +28,7 @@ JBoss AS 7
 
 Expected Output:
 ================
-(Note: There are actually two tests, one where the tasks are automatically completed, and one which shows the BPM Task API to complete them manually.  Below is output only for one test. Remember that the review has a random outcome, thus your output might differ from below.)
+(Note: Remember that the review has a random outcome, thus your output might differ from below.)
 ```
 Running org.switchyard.quickstarts.demos.helpdesk.HelpDeskTests
 INFO  [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskServer] Starting jBPM TaskServer on 127.0.0.1:9123...
