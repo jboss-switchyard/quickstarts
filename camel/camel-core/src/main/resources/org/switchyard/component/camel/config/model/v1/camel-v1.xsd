@@ -188,6 +188,49 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
 
+    <element name="binding.netty-tcp" type="camel:CamelNettyTcpBindingType" substitutionGroup="swyd:binding.switchyard"/>
+    <complexType name="CamelNettyTcpBindingType">
+        <complexContent>
+            <extension base="camel:CamelNettyBindingType">
+                <sequence>
+                    <element name="textline" type="boolean" minOccurs="0" maxOccurs="1" />
+                    <element name="tcpNoDelay" type="boolean" minOccurs="0" maxOccurs="1" />
+                    <element name="keepAlive" type="boolean" minOccurs="0" maxOccurs="1" />
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <element name="binding.netty-udp" type="camel:CamelNettyUdpBindingType" substitutionGroup="swyd:binding.switchyard"/>
+    <complexType name="CamelNettyUdpBindingType">
+        <complexContent>
+            <extension base="camel:CamelNettyBindingType">
+                <sequence>
+                    <element name="broadcast" type="boolean" minOccurs="0" maxOccurs="1" />
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="CamelNettyBindingType" abstract="true">
+        <complexContent>
+            <extension base="camel:BaseCamelBinding">
+                <sequence>
+                    <element name="host" type="string" />
+                    <element name="port" type="int" />
+                    <element name="receiveBufferSize" type="long" minOccurs="0" maxOccurs="1"/>
+                    <element name="sendBufferSize" type="long" minOccurs="0" maxOccurs="1"/>
+                    <element name="reuseAddress" type="boolean" minOccurs="0" maxOccurs="1" />
+                    <element name="encoders" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="decoders" type="string"  minOccurs="0" maxOccurs="1" />
+                    <element name="allowDefaultCodec" type="boolean" minOccurs="0" maxOccurs="1" />
+                    <element name="workerCount" type="int" minOccurs="0" maxOccurs="1" />
+                    <element name="sync" type="boolean" minOccurs="0" maxOccurs="1" />
+                    <element name="disconnect" type="boolean" minOccurs="0" maxOccurs="1" />
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <element name="binding.jms" type="camel:CamelJmsBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelJmsBindingType">
         <complexContent>

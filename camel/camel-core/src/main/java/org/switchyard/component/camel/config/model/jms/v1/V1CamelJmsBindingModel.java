@@ -60,7 +60,7 @@ public class V1CamelJmsBindingModel extends V1BaseCamelBindingModel
     private static final String TRANSACTION_MANAGER = "transactionManager";
 
     /**
-     * Create a new CamelDirectBindingModel.
+     * Create a new CamelJmsBindingModel.
      */
     public V1CamelJmsBindingModel() {
         super(JMS);

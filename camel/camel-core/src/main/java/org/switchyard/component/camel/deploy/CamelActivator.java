@@ -56,6 +56,8 @@ import org.switchyard.component.camel.config.model.ftp.v1.V1CamelFtpBindingModel
 import org.switchyard.component.camel.config.model.ftps.v1.V1CamelFtpsBindingModel;
 import org.switchyard.component.camel.config.model.jms.v1.V1CamelJmsBindingModel;
 import org.switchyard.component.camel.config.model.mock.v1.V1CamelMockBindingModel;
+import org.switchyard.component.camel.config.model.netty.v1.V1CamelNettyTcpBindingModel;
+import org.switchyard.component.camel.config.model.netty.v1.V1CamelNettyUdpBindingModel;
 import org.switchyard.component.camel.config.model.seda.v1.V1CamelSedaBindingModel;
 import org.switchyard.component.camel.config.model.sftp.v1.V1CamelSftpBindingModel;
 import org.switchyard.component.camel.config.model.timer.v1.V1CamelTimerBindingModel;
@@ -99,6 +101,8 @@ public class CamelActivator extends BaseActivator {
             V1CamelFtpBindingModel.FTP,
             V1CamelFtpsBindingModel.FTPS,
             V1CamelMockBindingModel.MOCK,
+            V1CamelNettyTcpBindingModel.NETTY_TCP,
+            V1CamelNettyUdpBindingModel.NETTY_UDP,
             V1CamelSedaBindingModel.SEDA,
             V1CamelSftpBindingModel.SFTP,
             V1CamelTimerBindingModel.TIMER,
