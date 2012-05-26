@@ -1095,6 +1095,11 @@
       </dependency>
       <dependency>
          <groupId>org.apache.camel</groupId>
+         <artifactId>camel-netty</artifactId>
+         <version>${version.camel}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.camel</groupId>
          <artifactId>camel-spring</artifactId>
          <version>${version.camel}</version>
       </dependency>
