@@ -51,6 +51,7 @@
         <module>camel-binding</module>
         <module>camel-ftp-binding</module>
         <module>camel-jms-binding</module>
+        <module>camel-netty-binding</module>
         <module>camel-rest-binding</module>
         <module>camel-service</module>
         <module>camel-soap-proxy</module>

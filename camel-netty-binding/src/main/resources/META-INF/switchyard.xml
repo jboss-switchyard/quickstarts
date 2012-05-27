@@ -1,0 +1,23 @@
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+    xmlns:camel="urn:switchyard-component-camel:config:1.0"
+    xmlns:bean="urn:switchyard-component-bean:config:1.0">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+        name="camel-netty-binding" targetNamespace="urn:switchyard-quickstart:camel-netty-binding:0.1.0">
+
+        <service name="GreetingService" promote="GreetingService">
+            <camel:binding.netty-tcp>
+                <camel:host>localhost</camel:host>
+                <camel:port>3939</camel:port>
+                <camel:allowDefaultCodec>false</camel:allowDefaultCodec>
+                <camel:sync>false</camel:sync>
+            </camel:binding.netty-tcp>
+            <camel:binding.netty-udp>
+                <camel:host>localhost</camel:host>
+                <camel:port>3940</camel:port>
+                <camel:allowDefaultCodec>false</camel:allowDefaultCodec>
+                <camel:sync>false</camel:sync>
+            </camel:binding.netty-udp>
+        </service>
+
+    </composite>
+</switchyard>
