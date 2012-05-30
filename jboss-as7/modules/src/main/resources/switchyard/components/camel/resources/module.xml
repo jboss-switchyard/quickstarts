@@ -74,9 +74,11 @@
         </module>
         <module name="org.apache.camel.netty" services="export" export="true">
             <imports>
+                <include path="META-INF/services/org/apache/camel"/>
                 <include path="META-INF/services/org/apache/camel/component"/>
             </imports>
             <exports>
+                <include path="META-INF/services/org/apache/camel"/>
                 <include path="META-INF/services/org/apache/camel/component"/>
             </exports>
         </module>
