@@ -115,6 +115,16 @@
             <filtered>true</filtered>
         </file>
         <file>
+            <source>src/main/resources/external/camel/quartz/module.xml</source>
+            <outputDirectory>/modules/org/apache/camel/quartz/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
+            <source>src/main/resources/external/quartz/module.xml</source>
+            <outputDirectory>/modules/org/quartz-scheduler/quartz/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
             <source>src/main/resources/external/saxon/module.xml</source>
             <outputDirectory>/modules/net/sourceforge/saxon/main</outputDirectory>
             <filtered>true</filtered>
@@ -163,6 +173,11 @@
         <file>
             <source>src/main/resources/external/apache/commons/net/module.xml</source>
             <outputDirectory>/modules/org/apache/commons/net/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
+            <source>src/main/resources/external/apache/commons/collections/module.xml</source>
+            <outputDirectory>/modules/org/apache/commons/collections/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
@@ -324,6 +339,22 @@
             <outputFileNameMapping>${artifact.artifactId}-${version.camel}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.apache.camel:camel-quartz</include>
+            </includes>
+            <outputDirectory>/modules/org/apache/camel/quartz/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.camel}.${artifact.extension}</outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.quartz-scheduler:quartz</include>
+            </includes>
+            <outputDirectory>/modules/org/quartz-scheduler/quartz/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.quartz}.${artifact.extension}</outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
            <useTransitiveDependencies>false</useTransitiveDependencies>
            <includes>
               <include>net.sourceforge.saxon:saxonhe</include>
@@ -424,6 +455,15 @@
             </includes>
             <outputDirectory>/modules/org/apache/commons/net/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${version.commons.net}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>commons-collections:commons-collections</include>
+            </includes>
+            <outputDirectory>/modules/org/apache/commons/collections/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.commons.collections}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
         <!--<dependencySet>-->
