@@ -18,6 +18,10 @@
  */
 package org.switchyard.component.bpel.riftsaw;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
+
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
 import javax.xml.soap.SOAPFault;
@@ -31,6 +35,8 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.Property;
+import org.switchyard.Scope;
 import org.switchyard.component.bpel.BPELFault;
 import org.switchyard.component.bpel.config.model.BPELComponentImplementationModel;
 import org.switchyard.component.bpel.exchange.BPELExchangeHandler;
@@ -43,6 +49,9 @@ import org.w3c.dom.Node;
  *
  */
 public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExchangeHandler {
+    
+    /** Context property label for SOAP message headers. */
+    public static final String SOAP_MESSAGE_HEADER = "soap_message_header";
 
     private static final String VFS_SCHEME = "vfs";
 
@@ -215,11 +224,18 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public void handleMessage(final Exchange exchange) throws HandlerException {
         Node request = exchange.getMessage().getContent(Node.class);
-        
-        java.util.Map<String, Object> headers =
-                  new java.util.HashMap<String, Object>();
+
+        java.util.Map<String, Object> headers = new HashMap<String, Object>();
+        Iterator<Property> h = exchange.getContext().getProperties(Scope.EXCHANGE).iterator();
+        while (h.hasNext()) {
+            Property p = h.next();
+            if (p.hasLabel(SOAP_MESSAGE_HEADER)) {
+                headers.put(p.getName(), p.getValue());
+            }
+        }
         
         try {
             // Find part name associated with operation on port type
@@ -246,6 +262,12 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
                 // Strip off wrapper and part to just return
                 // the part contents
                 message.setContent(WSDLHelper.unwrapMessagePart(response));
+                
+                // Set header parts for a response message
+                Set<String> keys = headers.keySet(); // headers are set by invoke method !!!
+                for (String key : keys) {
+                    exchange.getContext().setProperty(key,headers.get(key)).addLabels(SOAP_MESSAGE_HEADER);
+                }
 
                 exchange.send(message);
             }

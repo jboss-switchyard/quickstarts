@@ -42,8 +42,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.switchyard.components</groupId>
-			<artifactId>switchyard-component-soap</artifactId>
-			<scope>test</scope>
+			<artifactId>switchyard-component-soap</artifactId>	
+      		<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.switchyard</groupId>
