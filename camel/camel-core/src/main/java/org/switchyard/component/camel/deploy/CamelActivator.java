@@ -58,6 +58,7 @@ import org.switchyard.component.camel.config.model.jms.v1.V1CamelJmsBindingModel
 import org.switchyard.component.camel.config.model.mock.v1.V1CamelMockBindingModel;
 import org.switchyard.component.camel.config.model.netty.v1.V1CamelNettyTcpBindingModel;
 import org.switchyard.component.camel.config.model.netty.v1.V1CamelNettyUdpBindingModel;
+import org.switchyard.component.camel.config.model.quartz.v1.V1CamelQuartzBindingModel;
 import org.switchyard.component.camel.config.model.seda.v1.V1CamelSedaBindingModel;
 import org.switchyard.component.camel.config.model.sftp.v1.V1CamelSftpBindingModel;
 import org.switchyard.component.camel.config.model.timer.v1.V1CamelTimerBindingModel;
@@ -76,7 +77,6 @@ import org.switchyard.exception.SwitchYardException;
  * Activates Camel bindings, references and implementations in SwitchYard. 
  * 
  * @author Daniel Bevenius
- *
  */
 public class CamelActivator extends BaseActivator {
 
@@ -107,6 +107,7 @@ public class CamelActivator extends BaseActivator {
             V1CamelSftpBindingModel.SFTP,
             V1CamelTimerBindingModel.TIMER,
             V1CamelJmsBindingModel.JMS,
+            V1CamelQuartzBindingModel.QUARTZ
         });
     }
 

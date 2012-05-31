@@ -31,6 +31,7 @@ import org.switchyard.component.camel.config.model.jms.v1.V1CamelJmsBindingModel
 import org.switchyard.component.camel.config.model.mock.v1.V1CamelMockBindingModel;
 import org.switchyard.component.camel.config.model.netty.v1.V1CamelNettyTcpBindingModel;
 import org.switchyard.component.camel.config.model.netty.v1.V1CamelNettyUdpBindingModel;
+import org.switchyard.component.camel.config.model.quartz.v1.V1CamelQuartzBindingModel;
 import org.switchyard.component.camel.config.model.seda.v1.V1CamelSedaBindingModel;
 import org.switchyard.component.camel.config.model.sftp.v1.V1CamelSftpBindingModel;
 import org.switchyard.component.camel.config.model.timer.v1.V1CamelTimerBindingModel;
@@ -95,6 +96,8 @@ public class V1CamelModelMarshaller extends BaseMarshaller {
                 return new V1CamelNettyTcpBindingModel(config, getDescriptor());
             } else if (name.endsWith(V1CamelNettyUdpBindingModel.NETTY_UDP)) {
                 return new V1CamelNettyUdpBindingModel(config, getDescriptor());
+            } else if (name.endsWith(V1CamelQuartzBindingModel.QUARTZ)) {
+                return new V1CamelQuartzBindingModel(config, getDescriptor());
             }
         }
 

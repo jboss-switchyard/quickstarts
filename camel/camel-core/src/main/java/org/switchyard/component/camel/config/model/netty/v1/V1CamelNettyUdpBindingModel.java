@@ -49,7 +49,7 @@ public class V1CamelNettyUdpBindingModel extends V1CamelNettyBindingModel
      */
     public V1CamelNettyUdpBindingModel() {
         super(NETTY_UDP);
-        setModelChildrenOrder();
+        setModelChildrenOrder(BROADCAST);
     }
 
     /**

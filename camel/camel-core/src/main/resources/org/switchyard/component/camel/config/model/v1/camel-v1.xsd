@@ -231,6 +231,21 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
 
+    <element name="binding.quartz" type="camel:CamelQuartzBindingType" substitutionGroup="swyd:binding.switchyard"/>
+    <complexType name="CamelQuartzBindingType">
+        <complexContent>
+            <extension base="camel:BaseCamelBinding">
+                <sequence>
+                    <element name="name" type="string" />
+                    <element name="cron" type="string" />
+                    <element name="stateful" type="boolean" minOccurs="0" maxOccurs="1" />
+                    <element name="trigger.startTime" type="dateTime" minOccurs="0" maxOccurs="1" />
+                    <element name="trigger.endTime" type="dateTime" minOccurs="0" maxOccurs="1" />
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <element name="binding.jms" type="camel:CamelJmsBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelJmsBindingType">
         <complexContent>
