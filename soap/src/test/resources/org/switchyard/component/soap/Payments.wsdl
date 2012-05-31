@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="Payments" targetNamespace="urn:test:unwrapped" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn:test:unwrapped" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="urn:test:unwrapped" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="urn:test:unwrapped">
+  <xs:element name="invoice" type="tns:invoice"/>
+  <xs:complexType name="invoice">
+    <xs:sequence>
+      <xs:element name="amount" type="xs:double"/>
+      <xs:element name="daysOut" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="submit" type="tns:submit"/>
+  <xs:complexType name="submit">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="invoice" type="tns:invoice"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="submitResponse" type="tns:submitResponse"/>
+  <xs:complexType name="submitResponse">
+    <xs:sequence/>
+  </xs:complexType>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="submitResponse">
+    <wsdl:part name="parameters" element="tns:submitResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="submit">
+    <wsdl:part name="parameters" element="tns:submit">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="PaymentsPortType">
+    <wsdl:operation name="submit">
+      <wsdl:input name="submit" message="tns:submit">
+    </wsdl:input>
+      <wsdl:output name="submitResponse" message="tns:submitResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="PaymentsSoapBinding" type="tns:PaymentsPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="submit">
+      <soap:operation soapAction="submit" style="document"/>
+      <wsdl:input name="submit">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="submitResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Payments">
+    <wsdl:port name="PaymentsPort" binding="tns:PaymentsSoapBinding">
+      <soap:address location="http://localhost:8081/Payments"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

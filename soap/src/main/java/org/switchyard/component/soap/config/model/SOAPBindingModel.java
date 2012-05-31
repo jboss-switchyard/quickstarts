@@ -61,7 +61,7 @@ public class SOAPBindingModel extends V1BindingModel {
     private SocketAddr _socketAddr;
     private String _contextPath;
     private Boolean _publishAsWS = false;
-
+    
     private Configuration _environment = Configurations.emptyConfig();
     /**
      * Constructor.
@@ -88,6 +88,14 @@ public class SOAPBindingModel extends V1BindingModel {
      */
     public SOAPContextMapperModel getSOAPContextMapper() {
         return (SOAPContextMapperModel)getContextMapper();
+    }
+    
+    /**
+     * Gets the SOAPMessageComposerModel.
+     * @return the SOAPMessageComposerModel
+     */
+    public SOAPMessageComposerModel getSOAPMessageComposer() {
+        return (SOAPMessageComposerModel)getMessageComposer();
     }
 
     /**

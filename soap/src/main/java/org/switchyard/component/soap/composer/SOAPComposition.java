@@ -18,6 +18,7 @@
  */
 package org.switchyard.component.soap.composer;
 
+import javax.wsdl.Port;
 import javax.xml.soap.SOAPMessage;
 
 import org.switchyard.component.common.composer.Composition;
@@ -25,7 +26,7 @@ import org.switchyard.component.common.composer.ContextMapper;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.config.model.SOAPContextMapperModel;
-import org.switchyard.config.model.composer.MessageComposerModel;
+import org.switchyard.component.soap.config.model.SOAPMessageComposerModel;
 
 /**
  * Utility class for SOAP-specific Composition.
@@ -51,12 +52,19 @@ public final class SOAPComposition {
     /**
      * Uses the {@link Composition} class to create a SOAP-specific MessageComposer.
      * @param sbm a SOAPBindingModel to get configuration details from
+     * @param wsdlPort the WSDL port where the message is defined
      * @return the MessageComposer
      */
-    public static MessageComposer<SOAPMessage> getMessageComposer(SOAPBindingModel sbm) {
+    public static MessageComposer<SOAPMessage> getMessageComposer(SOAPBindingModel sbm, Port wsdlPort) {
         SOAPContextMapperModel scmm = sbm != null ? sbm.getSOAPContextMapper() : null;
-        MessageComposerModel mcm = sbm != null ? sbm.getMessageComposer() : null;
+        SOAPMessageComposerModel mcm = sbm != null ? sbm.getSOAPMessageComposer() : null;
         MessageComposer<SOAPMessage> mc = Composition.getMessageComposer(SOAPMessage.class, scmm, mcm);
+        if (mc instanceof SOAPMessageComposer && mcm != null) {
+            SOAPMessageComposer smc = (SOAPMessageComposer)mc;
+            smc.setComposerConfig(mcm);
+            smc.setWsdlPort(wsdlPort);
+            
+        }
         ContextMapper<SOAPMessage> cm = mc.getContextMapper();
         if (cm instanceof SOAPContextMapper && scmm != null) {
             ((SOAPContextMapper)cm).setSOAPHeadersType(scmm.getSOAPHeadersType());

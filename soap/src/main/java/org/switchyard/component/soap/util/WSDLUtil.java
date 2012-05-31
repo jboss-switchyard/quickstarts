@@ -226,12 +226,12 @@ public final class WSDLUtil {
     }
 
     /**
-     * Get the SOAP {@link Operation} instance for the specified SOAP operation name.
+     * Get the SOAP {@link Operation} instance for the specified message element.
      * @param port The WSDL port.
      * @param elementName The SOAP Body element name.
      * @return The Operation instance, or null if the operation was not found on the port.
      */
-    public static Operation getOperation(Port port, String elementName) {
+    public static Operation getOperationByElement(Port port, String elementName) {
         
         List<Operation> operations = port.getBinding().getPortType().getOperations();
         
@@ -242,6 +242,25 @@ public final class WSDLUtil {
             }
         }
         return null;
+    }
+    
+    /**
+     * Get the {@link Operation} instance for the specified SOAP operation name.
+     * @param port The WSDL port.
+     * @param operationName The SOAP Body element name.
+     * @return The Operation instance, or null if the operation was not found on the port.
+     */
+    public static Operation getOperationByName(Port port, String operationName) {
+        Operation operation = null;
+        List<Operation> operationList = port.getBinding().getPortType().getOperations();
+        
+        for (Operation op : operationList) {
+            if (op.getName().equals(operationName)) {
+                operation = op;
+                break;
+            }
+        }
+        return operation;
     }
 
     /**
@@ -272,7 +291,7 @@ public final class WSDLUtil {
     public static boolean isOneWay(final Port port, final String elementName) {
         // Overloaded methods not supported
         // Encrypted messages will be treated as request-response as it cannot be decrypted
-        Operation operation = getOperation(port, elementName);
+        Operation operation = getOperationByElement(port, elementName);
         return isOneWay(operation);
     }
     
@@ -297,7 +316,7 @@ public final class WSDLUtil {
      * @return The BindingOperation instance, or null if the operation was not found on the port.
      */
     public static BindingOperation getBindingOperation(Port port, String elementName) {
-        Operation operation = getOperation(port, elementName);
+        Operation operation = getOperationByElement(port, elementName);
         if (operation != null) {
             List<BindingOperation> bindingOperations = port.getBinding().getBindingOperations();
             for (BindingOperation bindingOperation : bindingOperations) {
@@ -375,7 +394,7 @@ public final class WSDLUtil {
         QName messageName = null;
         // Overloaded methods not supported
         // Encrypted messages will be treated as request-response as it cannot be decrypted
-        Operation operation = getOperation(port, operationName);
+        Operation operation = getOperationByElement(port, operationName);
         if (operation != null) {
             messageName = operation.getInput().getMessage().getQName();
         }

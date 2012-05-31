@@ -26,7 +26,6 @@ import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composer.ContextMapperModel;
 import org.switchyard.config.model.composer.MessageComposerModel;
-import org.switchyard.config.model.composer.v1.V1MessageComposerModel;
 import org.switchyard.config.model.composite.BindingModel;
 
 /**
@@ -60,7 +59,7 @@ public class V1SOAPMarshaller extends BaseMarshaller {
         } else if (name.equals(ContextMapperModel.CONTEXT_MAPPER)) {
             return new V1SOAPContextMapperModel(config, desc);
         } else if (name.equals(MessageComposerModel.MESSAGE_COMPOSER)) {
-            return new V1MessageComposerModel(config, desc);
+            return new V1SOAPMessageComposerModel(config, desc);
         }
         return null;
     }

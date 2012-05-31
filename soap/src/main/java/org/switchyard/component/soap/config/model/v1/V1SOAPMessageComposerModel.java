@@ -18,62 +18,50 @@
  */
 package org.switchyard.component.soap.config.model.v1;
 
-import static org.switchyard.component.soap.composer.SOAPHeadersType.VALUE;
-
-import org.switchyard.component.soap.composer.SOAPHeadersType;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
-import org.switchyard.component.soap.config.model.SOAPContextMapperModel;
+import org.switchyard.component.soap.config.model.SOAPMessageComposerModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.composer.v1.V1ContextMapperModel;
+import org.switchyard.config.model.composer.v1.V1MessageComposerModel;
 
 /**
- * V1SOAPContextMapperModel.
- *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2012 Red Hat Inc.
+ * V1SOAPMessageComposerModel.
  */
-public class V1SOAPContextMapperModel extends V1ContextMapperModel implements SOAPContextMapperModel {
+public class V1SOAPMessageComposerModel extends V1MessageComposerModel implements SOAPMessageComposerModel {
 
     /**
      * Constructs a new V1SOAPContextMapperModel.
      */
-    public V1SOAPContextMapperModel() {
+    public V1SOAPMessageComposerModel() {
         super(SOAPBindingModel.DEFAULT_NAMESPACE);
     }
     
     /**
-     * Constructs a new V1SOAPContextMapperModel in the specified namespace.
+     * Constructs a new V1SOAPMessageComposerModel in the specified namespace.
      * @param namespace the specified namespace
      */
-    public V1SOAPContextMapperModel(String namespace) {
+    public V1SOAPMessageComposerModel(String namespace) {
         super(namespace);
     }
 
     /**
-     * Constructs a new V1SOAPContextMapperModel with the specified Configuration and Descriptor.
+     * Constructs a new V1SOAPMessageComposerModel with the specified Configuration and Descriptor.
      * @param config the Configuration
      * @param desc the Descriptor
      */
-    public V1SOAPContextMapperModel(Configuration config, Descriptor desc) {
+    public V1SOAPMessageComposerModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public SOAPHeadersType getSOAPHeadersType() {
-        String sht = getModelAttribute("soapHeadersType");
-        return sht != null ? SOAPHeadersType.valueOf(sht) : VALUE;
+    public boolean isUnwrapped() {
+        String unwrap = getModelAttribute("unwrapped");
+        return unwrap != null && Boolean.valueOf(unwrap);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public SOAPContextMapperModel setSOAPHeadersType(SOAPHeadersType soapHeadersType) {
-        String sht = soapHeadersType != null ? soapHeadersType.name() : null;
-        setModelAttribute("soapHeadersType", sht);
+    public SOAPMessageComposerModel setUnwrapped(boolean unwrapped) {
+        setModelAttribute("unwrapped", String.valueOf(unwrapped));
         return this;
     }
 

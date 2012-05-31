@@ -34,7 +34,15 @@ MA  02110-1301, USA.
             </extension>
         </complexContent>
     </complexType>
-
+    
+    <complexType name="MessageComposerType">
+        <complexContent>
+            <extension base="swyd:MessageComposerType">
+                <attribute name="unwrapped" type="boolean" use="optional" />
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <element name="binding.soap" type="soap:SOAPBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="SOAPBindingType">
         <complexContent>
@@ -47,7 +55,7 @@ MA  02110-1301, USA.
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="messageComposer" type="swyd:MessageComposerType" minOccurs="0" maxOccurs="1">
+                    <element name="messageComposer" type="soap:MessageComposerType" minOccurs="0" maxOccurs="1">
                         <annotation>
                             <documentation>
                                 Specify the MessageComposer to be used.

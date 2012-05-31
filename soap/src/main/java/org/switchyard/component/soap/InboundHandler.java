@@ -50,7 +50,7 @@ import org.switchyard.exception.DeliveryException;
 import org.w3c.dom.Node;
 
 /**
- * Hanldes SOAP requests to invoke a SwitchYard service.
+ * Handles SOAP requests to invoke a SwitchYard service.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
@@ -61,8 +61,8 @@ public class InboundHandler extends BaseServiceHandler {
     private static final String MESSAGE_NAME = "MESSAGE_NAME";
 
     private final SOAPBindingModel _config;
-    private final MessageComposer<SOAPMessage> _messageComposer;
-
+    
+    private MessageComposer<SOAPMessage> _messageComposer;
     private ServiceDomain _domain;
     private ServiceReference _service;
     private long _waitTimeout = DEFAULT_TIMEOUT; // default of 15 seconds
@@ -78,7 +78,6 @@ public class InboundHandler extends BaseServiceHandler {
     public InboundHandler(final SOAPBindingModel config, ServiceDomain domain) {
         _config = config;
         _domain = domain;
-        _messageComposer = SOAPComposition.getMessageComposer(config);
     }
 
     /**
@@ -96,6 +95,9 @@ public class InboundHandler extends BaseServiceHandler {
             portName.setName(_wsdlPort.getName());
             _bindingId = WSDLUtil.getBindingId(_wsdlPort);
             _endpoint = EndpointPublisherFactory.getEndpointPublisher().publish(_config, _bindingId, this);
+            
+            // Create and configure the SOAP message composer
+            _messageComposer = SOAPComposition.getMessageComposer(_config, _wsdlPort);
         } catch (WSDLException e) {
             throw new WebServicePublishException(e);
         }
@@ -142,7 +144,7 @@ public class InboundHandler extends BaseServiceHandler {
         }
         try {
             firstBodyElement = SOAPUtil.getFirstBodyElement(soapMessage);
-            operation = WSDLUtil.getOperation(_wsdlPort, firstBodyElement);
+            operation = WSDLUtil.getOperationByElement(_wsdlPort, firstBodyElement);
             if (operation != null) {
                 operationName = operation.getName();
                 oneWay = WSDLUtil.isOneWay(operation);
@@ -170,7 +172,10 @@ public class InboundHandler extends BaseServiceHandler {
                 throw e instanceof SOAPException ? (SOAPException)e : new SOAPException(e);
             }
 
-            assertComposedMessageOK(message, operation);
+            // Do not perfom this check if the message has been unwrapped
+            if (_config.getSOAPMessageComposer() == null || !_config.getSOAPMessageComposer().isUnwrapped()) {
+                assertComposedMessageOK(message, operation);
+            }
 
             exchange.getContext().setProperty(MESSAGE_NAME, 
                     operation.getInput().getMessage().getQName().getLocalPart(),
@@ -218,10 +223,6 @@ public class InboundHandler extends BaseServiceHandler {
     private void assertComposedMessageOK(Message soapMessage, Operation operation) throws SOAPException {
         Node inputMessage = soapMessage.getContent(Node.class);
 
-        if (inputMessage == null) {
-            throw new SOAPException("Composer created a null ESB Message payload for service '" + _service.getName() + "'.  Must be of type '" + SOAPMessage.class.getName() + "'.");
-        }
-        
         String actualNS = inputMessage.getNamespaceURI();
         String actualLN = inputMessage.getLocalName();
         @SuppressWarnings("unchecked")

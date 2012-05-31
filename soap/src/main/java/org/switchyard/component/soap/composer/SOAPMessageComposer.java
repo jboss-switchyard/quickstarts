@@ -19,19 +19,28 @@
 
 package org.switchyard.component.soap.composer;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.wsdl.Operation;
+import javax.wsdl.Part;
+import javax.wsdl.Port;
 import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.dom.DOMSource;
 
+import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeState;
 import org.switchyard.Message;
 import org.switchyard.component.common.composer.BaseMessageComposer;
+import org.switchyard.component.soap.config.model.SOAPMessageComposerModel;
 import org.switchyard.component.soap.util.SOAPUtil;
+import org.switchyard.component.soap.util.WSDLUtil;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * The SOAP implementation of MessageComposer simply copies the SOAP body into
@@ -40,6 +49,10 @@ import org.switchyard.component.soap.util.SOAPUtil;
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
 public class SOAPMessageComposer extends BaseMessageComposer<SOAPMessage> {
+
+    private static Logger _log = Logger.getLogger(SOAPMessageComposer.class);
+    private SOAPMessageComposerModel _config;
+    private Port _wsdlPort;
 
     /**
      * {@inheritDoc}
@@ -54,30 +67,37 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPMessage> {
         if (soapBody == null) {
             throw new SOAPException("Missing SOAP body from request");
         }
-        final Iterator<?> children = soapBody.getChildElements();
-        boolean found = false;
+        List<Element> bodyChildren = getChildElements(soapBody);
 
         try {
-            while (children.hasNext()) {
-                final javax.xml.soap.Node node = (javax.xml.soap.Node) children.next();
-                if (node instanceof SOAPElement) {
-                    if (found) {
-                        throw new SOAPException("Found multiple SOAPElements in SOAPBody");
+            if (bodyChildren.size() > 1) {
+                throw new SOAPException("Found multiple SOAPElements in SOAPBody");
+            } else if (bodyChildren.size() == 0 || bodyChildren.get(0) == null) {
+                throw new SOAPException("Could not find SOAPElement in SOAPBody");
+            }
+            
+            Node bodyNode = bodyChildren.get(0);
+            if (_config != null && _config.isUnwrapped()) {
+                // peel off the operation wrapper, if present
+                String opName = exchange.getContract().getServiceOperation().getName();
+                if (opName != null && opName.equals(bodyNode.getLocalName())) {
+                    List<Element> subChildren = getChildElements(bodyNode);
+                    if (subChildren.size() == 0 || subChildren.size() > 1) {
+                        _log.debug("Unable to unwrap element: " + bodyNode.getLocalName()
+                               + ". A single child element is required.");
+                    } else {
+                        bodyNode = subChildren.get(0);
                     }
-                    node.detachNode();
-                    message.setContent(new DOMSource(node));
-                    found = true;
                 }
             }
+            
+            bodyNode = bodyNode.getParentNode().removeChild(bodyNode);
+            message.setContent(new DOMSource(bodyNode));
         } catch (Exception ex) {
             if (ex instanceof SOAPException) {
                 throw (SOAPException) ex;
             }
             throw new SOAPException(ex);
-        }
-
-        if (!found) {
-            throw new SOAPException("Could not find SOAPElement in SOAPBody");
         }
 
         return message;
@@ -105,6 +125,16 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPMessage> {
             try {
                 org.w3c.dom.Node messageNodeImport = target.getSOAPBody().getOwnerDocument().importNode(input, true);
                 if (exchange.getState() != ExchangeState.FAULT || isSOAPFaultPayload(input)) {
+                    if (_config != null && _config.isUnwrapped()) {
+                        String opName = exchange.getContract().getServiceOperation().getName();
+                        String ns = getWrapperNamespace(opName, exchange.getPhase() == null);
+                        // Don't wrap if it's already wrapped
+                        if (!messageNodeImport.getLocalName().equals(opName)) {
+                            Element wrapper = messageNodeImport.getOwnerDocument().createElementNS(ns, opName);
+                            wrapper.appendChild(messageNodeImport);
+                            messageNodeImport = wrapper;
+                        }
+                    }
                     target.getSOAPBody().appendChild(messageNodeImport);
                 } else {
                     // convert to SOAP Fault since ExchangeState is FAULT but the message is not SOAP Fault
@@ -119,6 +149,22 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPMessage> {
 
         return target;
     }
+    
+    /**
+     * Gets the SOAPMessageComposerModel config.
+     * @return the SOAPMessageComposerModel
+     */
+    public SOAPMessageComposerModel getComposerConfig() {
+        return _config;
+    }
+
+    /**
+     * Sets the SOAPMessageComposerModel config.
+     * @param composerConfig configuration
+     */
+    public void setComposerConfig(SOAPMessageComposerModel composerConfig) {
+        _config = composerConfig;
+    }
 
     private boolean isSOAPFaultPayload(org.w3c.dom.Node messageNode) {
         String rootName = messageNode.getLocalName().toLowerCase();
@@ -132,6 +178,50 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPMessage> {
         }
 
         return false;
+    }
+    
+    // Retrieves the immediate child of the specified parent element
+    private List<Element> getChildElements(Node parent) {
+        List<Element> children = new ArrayList<Element>();
+        NodeList nodes = parent.getChildNodes();
+        for (int i = 0; i < nodes.getLength(); i++) {
+            if (nodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                children.add((Element)nodes.item(i));
+            }
+        }
+        
+        return children;
+    }
+    
+    private String getWrapperNamespace(String operationName, boolean input) {
+        String ns = null;
+        
+        if (_wsdlPort != null) {
+            Operation op = WSDLUtil.getOperationByName(_wsdlPort, operationName);
+            @SuppressWarnings("unchecked")
+            List<Part> parts = input ? op.getInput().getMessage().getOrderedParts(null) 
+                    : op.getOutput().getMessage().getOrderedParts(null);
+            
+            ns = parts.get(0).getElementName().getNamespaceURI();
+        }
+        
+        return ns;
+    }
+
+    /**
+     * Get the WSDL Port used by this message composer.
+     * @return the wsdlPort
+     */
+    public Port getWsdlPort() {
+        return _wsdlPort;
+    }
+
+    /**
+     * Set the WSDL Port used by this message composer.
+     * @param wsdlPort WSDL port
+     */
+    public void setWsdlPort(Port wsdlPort) {
+        _wsdlPort = wsdlPort;
     }
 
 }

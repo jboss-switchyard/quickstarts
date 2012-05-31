@@ -53,8 +53,8 @@ public class OutboundHandler extends BaseServiceHandler {
     private static final Logger LOGGER = Logger.getLogger(OutboundHandler.class);
 
     private final SOAPBindingModel _config;
-    private final MessageComposer<SOAPMessage> _messageComposer;
-
+    
+    private MessageComposer<SOAPMessage> _messageComposer;
     private Dispatch<SOAPMessage> _dispatcher;
     private Port _wsdlPort;
     private String _bindingId;
@@ -65,7 +65,6 @@ public class OutboundHandler extends BaseServiceHandler {
      */
     public OutboundHandler(final SOAPBindingModel config) {
         _config = config;
-        _messageComposer = SOAPComposition.getMessageComposer(config);
     }
 
     /**
@@ -84,6 +83,7 @@ public class OutboundHandler extends BaseServiceHandler {
                 portName.setName(_wsdlPort.getName());
 
                 _bindingId = WSDLUtil.getBindingId(_wsdlPort);
+                _messageComposer = SOAPComposition.getMessageComposer(_config, _wsdlPort);
 
                 URL wsdlUrl = WSDLUtil.getURL(_config.getWsdl());
                 LOGGER.info("Creating dispatch with WSDL " + wsdlUrl);
