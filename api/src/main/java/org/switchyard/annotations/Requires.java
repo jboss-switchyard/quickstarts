@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,22 +16,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
 package org.switchyard.annotations;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import org.switchyard.policy.SecurityPolicy;
+import org.switchyard.policy.TransactionPolicy;
 
 /**
- * Indicates the type of managed transaction requested by a service.
+ * Specifies the types of policies that are required.
+ * 
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public enum ManagedTransactionType {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@Inherited
+public @interface Requires {
+
     /**
-     * Service joins a global transaction and the transactional
-     * context is propagated on any references.
+     * The security policies.
      */
-    SHARED, 
+    SecurityPolicy[] security() default {};
+
     /**
-     * Service runs in an isolated transaction and transactional
-     * context is not propagated on any references.
+     * The transaction policy.
      */
-    LOCAL;
+    TransactionPolicy[] transaction() default {};
+
 }

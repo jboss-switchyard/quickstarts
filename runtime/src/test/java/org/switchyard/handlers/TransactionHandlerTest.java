@@ -38,7 +38,7 @@ import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
 import org.switchyard.MockExchange;
 import org.switchyard.internal.DefaultContext;
-import org.switchyard.policy.ExchangePolicy;
+import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.TransactionPolicy;
 
 
@@ -59,8 +59,8 @@ public class TransactionHandlerTest {
 	
 	@Test
 	public void incompatibleRequirements() {
-		ExchangePolicy.require(exchange, TransactionPolicy.PROPAGATE);
-		ExchangePolicy.require(exchange, TransactionPolicy.SUSPEND);
+		PolicyUtil.require(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
+		PolicyUtil.require(exchange, TransactionPolicy.SUSPENDS_TRANSACTION);
 		exchange.setPhase(ExchangePhase.IN);
 		
 		try {
@@ -79,7 +79,7 @@ public class TransactionHandlerTest {
 		// We currently view a propagated transaction without a requirement
 		// as harmless.  This tests confirms this behavior and acts as a guard
 		// in case our behavior changes.
-		ExchangePolicy.provide(exchange, TransactionPolicy.PROPAGATE);
+		PolicyUtil.provide(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
 		exchange.setPhase(ExchangePhase.IN);
 
 		try {
@@ -91,7 +91,7 @@ public class TransactionHandlerTest {
 	
 	@Test
 	public void propagateRequiredButNotProvided() {
-		ExchangePolicy.require(exchange, TransactionPolicy.PROPAGATE);
+		PolicyUtil.require(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
 		exchange.setPhase(ExchangePhase.IN);
 		
 		try {
@@ -107,7 +107,7 @@ public class TransactionHandlerTest {
 	
 	@Test
 	public void suspendTransaction() throws Exception {
-		ExchangePolicy.require(exchange, TransactionPolicy.SUSPEND);
+		PolicyUtil.require(exchange, TransactionPolicy.SUSPENDS_TRANSACTION);
 		exchange.setPhase(ExchangePhase.IN);
 		handler.handleMessage(exchange);
 		// transaction should be disabled

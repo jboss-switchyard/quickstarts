@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -19,24 +19,24 @@
 package org.switchyard.policy;
 
 /**
- * Supported types for <a href="http://docs.oasis-open.org/opencsa/sca-policy/sca-policy-1.1-spec-csprd03.html#_Toc311121490">Transaction Policy</a>.
+ * Supported types for <a href="http://docs.oasis-open.org/opencsa/sca-policy/sca-policy-1.1-spec-csprd03.html#_Toc311121482">Security Policy</a>.
  * 
- * @author Keith Babo &copy; 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public enum TransactionPolicy implements Policy {
+public enum SecurityPolicy implements Policy {
 
     /**
-     * Any existing transaction should continue and be used during the invocation.
+     * Ensure that the client is authenticated by the server.
      */
-    PROPAGATES_TRANSACTION("propagatesTransaction"),
+    CLIENT_AUTHENTICATION("clientAuthentication"),
     /**
-     * Any existing transaction should be suspended before the invocation takes place.
+     * Ensure that only authorized entities can view the contents of a message.
      */
-    SUSPENDS_TRANSACTION("suspendsTransaction");
+    CONFIDENTIALITY("confidentiality");
 
     private String _name;
 
-    private TransactionPolicy(String name) {
+    private SecurityPolicy(String name) {
         _name = name;
     }
 

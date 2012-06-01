@@ -30,7 +30,7 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
-import org.switchyard.policy.ExchangePolicy;
+import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.TransactionPolicy;
 
 
@@ -90,7 +90,7 @@ public class TransactionHandler implements ExchangeHandler {
     }
     
     private void handleOut(Exchange exchange) {
-        if (!suspendRequired(exchange)) {
+        if (!suspendsRequired(exchange)) {
             // nothing to do here
             return;
         }
@@ -105,19 +105,19 @@ public class TransactionHandler implements ExchangeHandler {
     
     private void handleIn(Exchange exchange) throws HandlerException {
         // check for incompatible policy definition 
-        if (suspendRequired(exchange) && propagateRequired(exchange)) {
+        if (suspendsRequired(exchange) && propagatesRequired(exchange)) {
             throw new HandlerException("Invalid transaction policy : "
-                + TransactionPolicy.SUSPEND + " and " + TransactionPolicy.PROPAGATE
+                + TransactionPolicy.SUSPENDS_TRANSACTION + " and " + TransactionPolicy.PROPAGATES_TRANSACTION
                 + " cannot be requested simultaneously.");
         }
         
         // are we expecting a transaction to be provided?
-        if (propagateRequired(exchange) && !propagateProvided(exchange)) {
+        if (propagatesRequired(exchange) && !propagatesProvided(exchange)) {
             throw new HandlerException(
                     "Transaction policy requires an active transaction, but no transaction is present.");
         }
         
-        if (suspendRequired(exchange)) {
+        if (suspendsRequired(exchange)) {
             Transaction transaction = (Transaction)
                     exchange.getContext().getPropertyValue(TRANSACTION_PROPERTY);
             
@@ -136,7 +136,7 @@ public class TransactionHandler implements ExchangeHandler {
                 }
                 // if an active transaction was present, it has been suspended -
                 // mark the policy requirement as provided.
-                ExchangePolicy.provide(exchange, TransactionPolicy.SUSPEND);
+                PolicyUtil.provide(exchange, TransactionPolicy.SUSPENDS_TRANSACTION);
             } else {
                 // after invocation - check to see if we need to resume transaction
                 if (isInOnly(exchange)) {
@@ -148,16 +148,16 @@ public class TransactionHandler implements ExchangeHandler {
         }
     }
     
-    private boolean propagateProvided(Exchange exchange) {
-        return ExchangePolicy.isProvided(exchange, TransactionPolicy.PROPAGATE);
+    private boolean propagatesProvided(Exchange exchange) {
+        return PolicyUtil.isProvided(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
     }
     
-    private boolean suspendRequired(Exchange exchange) {
-        return ExchangePolicy.isRequired(exchange, TransactionPolicy.SUSPEND);
+    private boolean suspendsRequired(Exchange exchange) {
+        return PolicyUtil.isRequired(exchange, TransactionPolicy.SUSPENDS_TRANSACTION);
     }
     
-    private boolean propagateRequired(Exchange exchange) {
-        return ExchangePolicy.isRequired(exchange, TransactionPolicy.PROPAGATE);
+    private boolean propagatesRequired(Exchange exchange) {
+        return PolicyUtil.isRequired(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
     }
     
     private boolean isInOnly(Exchange exchange) {

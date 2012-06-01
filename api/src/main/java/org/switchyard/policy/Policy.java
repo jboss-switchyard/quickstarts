@@ -16,14 +16,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
 package org.switchyard.policy;
-
 
 /**
  * Base contract for all policy types.  Every policy has a string literal 
  * representation which is used to identify the policy in application 
  * configuration (e.g. "suspendsTransaction").
+ * 
+ * @author Keith Babo &copy; 2011 Red Hat Inc.
  */
 public interface Policy {
 
@@ -31,5 +31,6 @@ public interface Policy {
      * Returns the string identifier for the policy.
      * @return policy name
      */
-    String getName();
+    public String getName();
+
 }

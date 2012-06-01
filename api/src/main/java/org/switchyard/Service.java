@@ -57,5 +57,5 @@ public interface Service {
       * Returns a list of required policies for this service.
       * @return list of required policy
       */
-      List<Policy> getRequiredPolicy();
+      List<Policy> getRequiredPolicies();
 }

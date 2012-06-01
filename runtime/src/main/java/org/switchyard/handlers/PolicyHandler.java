@@ -27,7 +27,7 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
-import org.switchyard.policy.ExchangePolicy;
+import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.Policy;
 
 
@@ -52,10 +52,10 @@ public class PolicyHandler implements ExchangeHandler {
     public void handleMessage(Exchange exchange) throws HandlerException {
         // only execute on the IN phase
         if (ExchangePhase.IN.equals(exchange.getPhase())) {
-            Set<Policy> required = ExchangePolicy.getRequired(exchange);
+            Set<Policy> required = PolicyUtil.getRequired(exchange);
             Iterator<Policy> reqIt = required.iterator();
             while (reqIt.hasNext()) {
-                if (ExchangePolicy.isProvided(exchange, reqIt.next())) {
+                if (PolicyUtil.isProvided(exchange, reqIt.next())) {
                     reqIt.remove();
                 }
             }

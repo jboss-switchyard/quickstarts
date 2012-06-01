@@ -82,7 +82,7 @@ public interface ServiceReference {
      * Returns a list of policies provided by this service reference.
      * @return list of provided policy
      */
-     List<Policy> getProvidedPolicy();
+     List<Policy> getProvidedPolicies();
 
      /**
       * Unregisters this service reference from the domain it's registered in.

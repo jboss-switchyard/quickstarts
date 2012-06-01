@@ -32,7 +32,7 @@ import org.switchyard.ServiceReference;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.ServiceOperation;
-import org.switchyard.policy.ExchangePolicy;
+import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.Policy;
 
 /**
@@ -101,7 +101,7 @@ public class ServiceReferenceImpl implements ServiceReference {
     public Exchange createExchange(String operation, ExchangeHandler handler) {
         Exchange ex = _domain.createExchange(this, operation, handler);
         for (Policy policy : _provides) {
-            ExchangePolicy.provide(ex, policy);
+            PolicyUtil.provide(ex, policy);
         }
         return ex;
     }
@@ -117,7 +117,7 @@ public class ServiceReferenceImpl implements ServiceReference {
     }
 
     @Override
-    public List<Policy> getProvidedPolicy() {
+    public List<Policy> getProvidedPolicies() {
         return Collections.unmodifiableList(_provides);
     }
     

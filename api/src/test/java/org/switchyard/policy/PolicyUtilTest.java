@@ -25,26 +25,26 @@ import org.switchyard.Exchange;
 import org.switchyard.MockContext;
 import org.switchyard.MockExchange;
 
-public class ExchangePolicyTest {
+public class PolicyUtilTest {
 
     @Test
     public void testProvidePolicy() {
     	Exchange ex = new MockExchange().setContext(new MockContext());
-    	ExchangePolicy.provide(ex, DummyPolicy.A);
-    	Assert.assertTrue(ExchangePolicy.isProvided(ex, DummyPolicy.A));
-    	Assert.assertFalse(ExchangePolicy.isProvided(ex, DummyPolicy.B));
-    	Assert.assertFalse(ExchangePolicy.isRequired(ex, DummyPolicy.B));
-    	Assert.assertEquals(1, ExchangePolicy.getProvided(ex).size());
+    	PolicyUtil.provide(ex, DummyPolicy.A);
+    	Assert.assertTrue(PolicyUtil.isProvided(ex, DummyPolicy.A));
+    	Assert.assertFalse(PolicyUtil.isProvided(ex, DummyPolicy.B));
+    	Assert.assertFalse(PolicyUtil.isRequired(ex, DummyPolicy.B));
+    	Assert.assertEquals(1, PolicyUtil.getProvided(ex).size());
     }
     
     @Test
     public void testRequirePolicy() {
     	Exchange ex = new MockExchange().setContext(new MockContext());
-    	ExchangePolicy.require(ex, DummyPolicy.A);
-    	Assert.assertTrue(ExchangePolicy.isRequired(ex, DummyPolicy.A));
-    	Assert.assertFalse(ExchangePolicy.isRequired(ex, DummyPolicy.B));
-    	Assert.assertFalse(ExchangePolicy.isProvided(ex, DummyPolicy.A));
-    	Assert.assertEquals(1, ExchangePolicy.getRequired(ex).size());
+    	PolicyUtil.require(ex, DummyPolicy.A);
+    	Assert.assertTrue(PolicyUtil.isRequired(ex, DummyPolicy.A));
+    	Assert.assertFalse(PolicyUtil.isRequired(ex, DummyPolicy.B));
+    	Assert.assertFalse(PolicyUtil.isProvided(ex, DummyPolicy.A));
+    	Assert.assertEquals(1, PolicyUtil.getRequired(ex).size());
     }
 }
 

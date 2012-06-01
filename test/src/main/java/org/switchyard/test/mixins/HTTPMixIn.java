@@ -19,16 +19,23 @@
 
 package org.switchyard.test.mixins;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.URIException;
-import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
+import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.OptionsMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
@@ -36,12 +43,6 @@ import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.switchyard.test.SwitchYardTestKit;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 
 /**
  * HTTP Test Mix In.
@@ -82,7 +83,7 @@ public class HTTPMixIn extends AbstractTestMixIn {
     public static final String HTTP_OPTIONS = "OPTIONS";
 
     private HttpClient _httpClient;
-    private String _contentType = "text/xml";
+    private String _contentType = "text/xml;charset=UTF-8";
     private HashMap<String,String> _requestHeaders = new HashMap<String,String>();
     private HashMap<String,String> _expectedHeaders = new HashMap<String,String>();
     private boolean _dumpMessages = false;
@@ -306,8 +307,9 @@ public class HTTPMixIn extends AbstractTestMixIn {
      * @param headers request headers in HashMap
      * @return this instance
      */
-    public HTTPMixIn setRequestHeaders(HashMap<String,String> headers) {
-        _requestHeaders = headers;
+    public HTTPMixIn setRequestHeaders(Map<String,String> headers) {
+        _requestHeaders.clear();
+        _requestHeaders.putAll(headers);
         return this;
     }
     
@@ -327,8 +329,9 @@ public class HTTPMixIn extends AbstractTestMixIn {
      * @param headers expected response headers in HashMap
      * @return this instance
      */
-    public HTTPMixIn setExpectedHeaders(HashMap<String,String> headers) {
-        _expectedHeaders = headers;
+    public HTTPMixIn setExpectedHeaders(Map<String,String> headers) {
+        _expectedHeaders.clear();
+        _expectedHeaders.putAll(headers);
         return this;
     }
     

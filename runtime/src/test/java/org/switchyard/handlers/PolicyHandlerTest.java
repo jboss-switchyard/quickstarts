@@ -27,7 +27,7 @@ import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
 import org.switchyard.MockExchange;
 import org.switchyard.internal.DefaultContext;
-import org.switchyard.policy.ExchangePolicy;
+import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.Policy;
 
 
@@ -48,9 +48,9 @@ public class PolicyHandlerTest {
 	
 	@Test
 	public void requiredButNotProvided() {
-		ExchangePolicy.require(exchange, new FooPolicy());
-		ExchangePolicy.require(exchange, new BarPolicy());
-        ExchangePolicy.provide(exchange, new BarPolicy());
+		PolicyUtil.require(exchange, new FooPolicy());
+		PolicyUtil.require(exchange, new BarPolicy());
+        PolicyUtil.provide(exchange, new BarPolicy());
 		exchange.setPhase(ExchangePhase.IN);
 		
 		try {
@@ -67,7 +67,7 @@ public class PolicyHandlerTest {
 	@Test
     public void providedButNotRequired() {
 	    // this should not be an error
-	    ExchangePolicy.provide(exchange, new FooPolicy());
+	    PolicyUtil.provide(exchange, new FooPolicy());
         exchange.setPhase(ExchangePhase.IN);
 
         try {
@@ -79,8 +79,8 @@ public class PolicyHandlerTest {
 	
 	@Test
     public void requiredAndProvided() {
-        ExchangePolicy.require(exchange, new FooPolicy());
-        ExchangePolicy.provide(exchange, new FooPolicy());
+        PolicyUtil.require(exchange, new FooPolicy());
+        PolicyUtil.provide(exchange, new FooPolicy());
         exchange.setPhase(ExchangePhase.IN);
 
         try {

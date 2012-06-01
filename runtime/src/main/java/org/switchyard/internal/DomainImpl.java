@@ -51,7 +51,7 @@ import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.ServiceOperation;
-import org.switchyard.policy.ExchangePolicy;
+import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.Policy;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.spi.ExchangeBus;
@@ -255,8 +255,8 @@ public class DomainImpl implements ServiceDomain {
         // create the exchange
         ExchangeImpl exchange = new ExchangeImpl(service.getName(), contract, dispatcher, this, replyChain);
         
-        for (Policy policy : service.getRequiredPolicy()) {
-            ExchangePolicy.require(exchange, policy);
+        for (Policy policy : service.getRequiredPolicies()) {
+            PolicyUtil.require(exchange, policy);
         }
         return exchange;
     }

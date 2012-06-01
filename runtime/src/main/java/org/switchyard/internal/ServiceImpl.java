@@ -87,7 +87,7 @@ public class ServiceImpl implements Service {
     }
     
     @Override
-    public List<Policy> getRequiredPolicy() {
+    public List<Policy> getRequiredPolicies() {
         return Collections.unmodifiableList(_requires);
     }
 }

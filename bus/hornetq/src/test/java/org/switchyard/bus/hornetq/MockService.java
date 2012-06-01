@@ -64,7 +64,7 @@ public class MockService implements Service {
     }
 
     @Override
-    public List<Policy> getRequiredPolicy() {
+    public List<Policy> getRequiredPolicies() {
         return null;
     }
 

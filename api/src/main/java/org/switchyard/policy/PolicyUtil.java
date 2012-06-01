@@ -31,12 +31,12 @@ import org.switchyard.Property;
  * requirement that a specific policy must be provided.  The set of required and
  * provided policies is carried as an exchange-scoped context property.
  */
-public final class ExchangePolicy {
+public final class PolicyUtil {
 
     private static String PROVIDED_PROPERTY = "org.switchyard.policy.provided";
     private static String REQUIRED_PROPERTY = "org.switchyard.policy.required";
     
-    private ExchangePolicy() {
+    private PolicyUtil() {
         
     }
     
