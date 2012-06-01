@@ -52,7 +52,6 @@ public class HelpDesk {
         USERS_GROUPS.put("david", Arrays.asList(new String[] {"users"}));
     }
 
-    private final TaskService _taskService;
     private final TaskClient _taskClient;
     private final List<Task> _userTasks;
     private final Map<Long, Ticket> _userTickets;
@@ -60,8 +59,7 @@ public class HelpDesk {
     
 
     public HelpDesk() {
-        _taskService = TaskService.instance();
-        _taskClient = _taskService.newTaskClient();
+        _taskClient = TaskService.instance().newTaskClient();
         _userTasks = Collections.synchronizedList(new ArrayList<Task>());
         _userTickets = Collections.synchronizedMap(new LinkedHashMap<Long, Ticket>());
     }

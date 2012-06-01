@@ -11,8 +11,8 @@
   </parent>
 
   <groupId>org.switchyard.quickstarts.demos</groupId>
-  <artifactId>switchyard-quickstart-demo-policy-transaction</artifactId>
-  <name>Quickstart Demo : Transaction Policy</name>
+  <artifactId>switchyard-quickstart-demo-policy-security</artifactId>
+  <name>Quickstart Demo : Security Policy</name>
 
   <dependencies>
     <dependency>
@@ -29,67 +29,17 @@
     </dependency>
     <dependency>
       <groupId>org.switchyard.components</groupId>
-      <artifactId>switchyard-component-camel</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.switchyard.components</groupId>
       <artifactId>switchyard-component-bean</artifactId>
     </dependency>
     <dependency>
-        <groupId>javax.jms</groupId>
-        <artifactId>jms</artifactId>
+      <groupId>org.switchyard.components</groupId>
+      <artifactId>switchyard-component-soap</artifactId>
     </dependency>
-    <dependency>
-       <groupId>org.hornetq</groupId>
-       <artifactId>hornetq-core-client</artifactId>
-    </dependency>
-	<dependency>
-        <groupId>org.hornetq</groupId>
-        <artifactId>hornetq-core</artifactId>
-    </dependency>
-	<dependency>
-        <groupId>org.hornetq</groupId>
-        <artifactId>hornetq-jms</artifactId>
-    </dependency>
-	<dependency>
-        <groupId>org.hornetq</groupId>
-        <artifactId>hornetq-jms-client</artifactId>
-    </dependency>
-	<dependency>
-	    <groupId>org.jboss.netty</groupId>
-	    <artifactId>netty</artifactId>
-	</dependency>
-	<dependency>
-        <groupId>org.jboss.naming</groupId>
-        <artifactId>jnpserver</artifactId>
-	</dependency>
-	<dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-all</artifactId>
-        <scope>test</scope>
-	</dependency>
-	<dependency>
-        <groupId>org.hamcrest</groupId>
-        <artifactId>hamcrest-all</artifactId>
-        <scope>test</scope>
-	</dependency>
   </dependencies>
   <build>
     <finalName>${project.artifactId}</finalName>
 
     <plugins>
-	   <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-jar-plugin</artifactId>
-      <configuration>
-         <archive>
-            <manifestEntries>
-               <Dependencies>org.hornetq</Dependencies>
-               <Dependencies>org.jboss.as.naming</Dependencies>
-            </manifestEntries>
-         </archive>
-	     </configuration>
-	   </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
@@ -120,7 +70,7 @@
         <configuration>
             <executable>java</executable>
             <classpathScope>test</classpathScope>
-            <mainClass>org.switchyard.quickstarts.demo.policy.transaction.HornetQClient</mainClass>
+            <mainClass>org.switchyard.quickstarts.demo.policy.security.WorkServiceMain</mainClass>
         </configuration>
       </plugin>
     </plugins>

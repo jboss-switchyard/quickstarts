@@ -1,9 +1,9 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
- * full listing of individual contributors.
+ * full listing of indivcommandual contributors.
  *
  * This copyrighted material is made available to anyone wishing to use, 
  * modify, copy, or redistribute it subject to the terms and conditions 
@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.quickstarts.demos.helpdesk;
+package org.switchyard.quickstarts.demo.policy.security;
 
 import java.io.StringReader;
 
@@ -30,34 +30,34 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2012 Red Hat Inc.
  */
 public class Transformers {
 
-    @Transformer(from = "{urn:switchyard-quickstart-demo:helpdesk:1.0}openTicket")
-    public Ticket transform(Element from) {
-        Ticket ticket = new Ticket();
-        ticket.setId(getElementValue(from, "id"));
-        return ticket;
+    @Transformer(from = "{urn:switchyard-quickstart-demo:policy-security:0.1.0}doWork")
+    public Work transform(Element from) {
+        Work work = new Work();
+        work.setCommand(getElementValue(from, "command"));
+        return work;
     }
 
-    @Transformer(to = "{urn:switchyard-quickstart-demo:helpdesk:1.0}openTicketResponse")
-    public Element transformToElement(TicketAck ticketAck) {
+    @Transformer(to = "{urn:switchyard-quickstart-demo:policy-security:0.1.0}doWorkResponse")
+    public Element transformToElement(WorkAck workAck) {
         StringBuilder ackXml = new StringBuilder()
-            .append("<helpdesk:openTicketResponse xmlns:helpdesk=\"urn:switchyard-quickstart-demo:helpdesk:1.0\">")
-            .append(    "<ticketAck>")
-            .append(        "<id>" + ticketAck.getId() + "</id>")
-            .append(        "<received>" + ticketAck.isReceived() + "</received>")
-            .append(    "</ticketAck>")
-            .append("</helpdesk:openTicketResponse>");
+            .append("<policy-security:doWorkResponse xmlns:policy-security=\"urn:switchyard-quickstart-demo:policy-security:0.1.0\">")
+            .append(    "<workAck>")
+            .append(        "<command>" + workAck.getCommand() + "</command>")
+            .append(        "<received>" + workAck.isReceived() + "</received>")
+            .append(    "</workAck>")
+            .append("</policy-security:doWorkResponse>");
         return toElement(ackXml.toString());
     }
 
     @Transformer
-    public Ticket transformToTicket(TicketAck ticketAck) {
-        Ticket ticket = new Ticket();
-        ticket.setId(ticketAck.getId());
-        return ticket;
+    public Work transformToWork(WorkAck workAck) {
+        Work work = new Work();
+        work.setCommand(workAck.getCommand());
+        return work;
     }
 
     private String getElementValue(Element parent, String elementName) {

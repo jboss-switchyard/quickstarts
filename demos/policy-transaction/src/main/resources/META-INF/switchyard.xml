@@ -1,18 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?><switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:camel="urn:switchyard-component-camel:config:1.0">
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:camel="urn:switchyard-component-camel:config:1.0">
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="policy-transaction" targetNamespace="urn:switchyard-quickstart-demo:policy-transaction:0.1.0">
         <service name="WorkService" promote="WorkService">
-        
-            <!-- This binding provides an inbound transaction, satisfying a service
-                 requirement for a propagated transaction. -->
+            <!-- This binding provides an inbound transaction, satisfying a service requirement for a propagated transaction. -->
             <camel:binding.camel configURI="jms://policyQSTransacted?connectionFactory=%23JmsXA&amp;transactionManager=%23jtaTransactionManager&amp;transacted=true"/>
-            
-            <!--  This binding does *not* provide an inbound transaction, violating
-                  a service requirement for a propagated transaction. -->
+            <!-- This binding does *not* provide an inbound transaction, violating a service requirement for a propagated transaction. -->
             <camel:binding.camel configURI="jms://policyQSNonTransacted?connectionFactory=#ConnectionFactory"/>
         </service>
     </composite>
-    
-    <!--  Uncomment this section to trace message exchange activity
+    <!-- Uncomment this section to trace message exchange activity
     <domain>
         <handlers>
             <handler class="org.switchyard.handlers.MessageTrace" name="MessageTrace"/>

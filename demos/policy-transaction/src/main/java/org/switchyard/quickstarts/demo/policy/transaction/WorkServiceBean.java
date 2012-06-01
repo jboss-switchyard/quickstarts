@@ -23,16 +23,16 @@ import javax.naming.InitialContext;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
-import org.switchyard.annotations.ManagedTransaction;
-import org.switchyard.annotations.ManagedTransactionType;
+import org.switchyard.annotations.Requires;
 import org.switchyard.component.bean.Service;
+import org.switchyard.policy.TransactionPolicy;
 
 /**
  *  Transactional service implementation. To trigger a rollback on the 
  *  current transaction, pass <code>WorkService.ROLLBACK</code> as the command name.
  */
 @Service(WorkService.class)
-@ManagedTransaction(ManagedTransactionType.SHARED)
+@Requires(transaction = TransactionPolicy.PROPAGATES_TRANSACTION)
 public class WorkServiceBean
     implements org.switchyard.quickstarts.demo.policy.transaction.WorkService {
     
