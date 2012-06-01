@@ -187,7 +187,15 @@ MA  02110-1301, USA.
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="swyd:TransformType" />
+            <extension base="swyd:TransformType">
+              <attribute name="contextPath" type="string" use="optional">
+                  <annotation>
+                      <documentation xml:lang="en">
+                          The JAXB Context Path containing an ObjectFactory definition.
+                      </documentation>
+                  </annotation>
+              </attribute>
+            </extension>
         </complexContent>
     </complexType>
 

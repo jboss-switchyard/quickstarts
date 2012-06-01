@@ -19,18 +19,19 @@
 
 package org.switchyard.transform.jaxb.internal;
 
-import org.switchyard.Message;
-import org.switchyard.common.xml.QNameUtil;
-import org.switchyard.config.model.Scannable;
-import org.switchyard.exception.SwitchYardException;
-import org.switchyard.transform.BaseTransformer;
+import java.io.StringWriter;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
-import java.io.StringWriter;
+
+import org.switchyard.Message;
+import org.switchyard.common.xml.QNameUtil;
+import org.switchyard.config.model.Scannable;
+import org.switchyard.exception.SwitchYardException;
+import org.switchyard.transform.BaseTransformer;
 
 /**
  * JAXB Marshalling transformer.
@@ -43,7 +44,6 @@ import java.io.StringWriter;
 @Scannable(false)
 public class JAXBMarshalTransformer<F, T> extends BaseTransformer<Message, Message> {
 
-    private String _contextPath;
     private JAXBContext _jaxbContext;
 
     /**
@@ -55,11 +55,14 @@ public class JAXBMarshalTransformer<F, T> extends BaseTransformer<Message, Messa
      */
     public JAXBMarshalTransformer(QName from, QName to, String contextPath) throws SwitchYardException {
         super(from, to);
-        this._contextPath = contextPath;
         try {
-            _jaxbContext = JAXBContext.newInstance(contextPath);
+            if (contextPath != null) {
+                _jaxbContext = JAXBContext.newInstance(contextPath);
+            } else {
+                _jaxbContext = JAXBContext.newInstance(QNameUtil.toJavaMessageType(from));
+            }
         } catch (JAXBException e) {
-            throw new SwitchYardException("Failed to create JAXBContext for contextPath '" + _contextPath + "'.", e);
+            throw new SwitchYardException("Failed to create JAXBContext for '" + from + "'.", e);
         }
     }
 
@@ -70,7 +73,7 @@ public class JAXBMarshalTransformer<F, T> extends BaseTransformer<Message, Messa
         try {
             marshaller = _jaxbContext.createMarshaller();
         } catch (JAXBException e) {
-            throw new SwitchYardException("Failed to create Marshaller for contextPath '" + _contextPath + "'.", e);
+            throw new SwitchYardException("Failed to create Marshaller for type '" + getFrom() + "'.", e);
         }
 
         try {
@@ -83,7 +86,7 @@ public class JAXBMarshalTransformer<F, T> extends BaseTransformer<Message, Messa
 
             message.setContent(resultWriter.toString());
         } catch (JAXBException e) {
-            throw new SwitchYardException("Failed to unmarshall for contextPath '" + _contextPath + "'.", e);
+            throw new SwitchYardException("Failed to unmarshall for type '" + getFrom() + "'.", e);
         }
 
         return message;

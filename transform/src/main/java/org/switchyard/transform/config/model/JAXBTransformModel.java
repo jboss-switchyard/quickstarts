@@ -30,4 +30,21 @@ public interface JAXBTransformModel extends TransformModel {
 
     /** The "jaxb" name. */
     public static final String JAXB = "jaxb";
+
+    /** The "contextPath" name. */
+    public static final String CONTEXT_PATH = "contextPath";
+    
+    /**
+     * Gets the contextPath attribute.
+     * @return the contextPath attribute
+     */
+    public String getContextPath();
+
+    /**
+     * Sets the contextPath attribute.
+     * @param contextPath the contextPath attribute
+     * @return this JAXBTransformModel (useful for chaining)
+     */
+    public JAXBTransformModel setContextPath(String contextPath);
+
 }

@@ -19,6 +19,8 @@
 
 package org.switchyard.transform.config.model.v1;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.transform.TransformModel;
@@ -26,8 +28,6 @@ import org.switchyard.config.model.transform.v1.V1BaseTransformModel;
 import org.switchyard.transform.TransformerFactoryClass;
 import org.switchyard.transform.config.model.JAXBTransformModel;
 import org.switchyard.transform.jaxb.internal.JAXBTransformerFactory;
-
-import javax.xml.namespace.QName;
 
 /**
  * A version 1 JAXBTransformModel.
@@ -51,5 +51,22 @@ public class V1JAXBTransformModel extends V1BaseTransformModel implements JAXBTr
      */
     public V1JAXBTransformModel(Configuration config, Descriptor desc) {
         super(config, desc);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getContextPath() {
+        return getModelAttribute(CONTEXT_PATH);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JAXBTransformModel setContextPath(String contextPath) {
+        setModelAttribute(CONTEXT_PATH, contextPath);
+        return this;
     }
 }

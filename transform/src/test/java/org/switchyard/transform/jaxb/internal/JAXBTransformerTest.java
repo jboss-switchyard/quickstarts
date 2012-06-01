@@ -21,17 +21,21 @@ package org.switchyard.transform.jaxb.internal;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.List;
 
+import javax.xml.namespace.QName;
 import javax.xml.transform.stream.StreamSource;
 
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
 import org.junit.Test;
+import org.switchyard.config.model.ModelPuller;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.internal.DefaultMessage;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.AbstractTransformerTestCase;
 import org.switchyard.transform.Transformer;
+import org.switchyard.transform.config.model.JAXBTransformModel;
 import org.xml.sax.SAXException;
 
 /**
@@ -40,20 +44,14 @@ import org.xml.sax.SAXException;
 public class JAXBTransformerTest extends AbstractTransformerTestCase {
 
     @Test
-    public void test_createFromServiceInterface() throws IOException, SAXException {
-        List<Transformer<?,?>> transformers = JAXBTransformerFactory.newTransformers(OrderService.class);
-
-        Assert.assertEquals(2, transformers.size());
-        JAXBUnmarshalTransformer unmarshalTransformer = (JAXBUnmarshalTransformer) transformers.get(0);
-        JAXBMarshalTransformer marshalTransformer = (JAXBMarshalTransformer) transformers.get(1);
-
-        Assert.assertEquals("purchaseOrder", unmarshalTransformer.getFrom().toString());
-        Assert.assertEquals(JavaService.toMessageType(POType.class), unmarshalTransformer.getTo());
-        Assert.assertEquals(JavaService.toMessageType(POType.class), marshalTransformer.getFrom());
-        Assert.assertEquals("purchaseOrder", marshalTransformer.getTo().toString());
+    public void test_createFromClass() throws IOException, SAXException {
+        JAXBUnmarshalTransformer unmarshalTransformer = new JAXBUnmarshalTransformer(
+                new QName("purchaseOrder"), JavaService.toMessageType(POType.class), null);
+        
+        JAXBMarshalTransformer marshalTransformer = new JAXBMarshalTransformer(
+                JavaService.toMessageType(POType.class), new QName("purchaseOrder"), null);
 
         DefaultMessage message = new DefaultMessage();
-
         message.setContent(new StreamSource(new StringReader(PO_XML)));
 
         // Transform XML to Java POType and back to XML...
@@ -75,6 +73,15 @@ public class JAXBTransformerTest extends AbstractTransformerTestCase {
         Transformer marshalingTransformer = getTransformer("switchyard-config-02.xml");
         Assert.assertEquals("java:org.switchyard.transform.jaxb.internal.POType", marshalingTransformer.getFrom().toString());
         Assert.assertEquals("A", marshalingTransformer.getTo().toString());
+    }
+    
+    @Test
+    public void test_configReadContextPath() throws IOException {
+        SwitchYardModel config = new ModelPuller<SwitchYardModel>().pull("org/switchyard/transform/jaxb/internal/switchyard-config-03.xml");
+        for (TransformModel tm : config.getTransforms().getTransforms()) {
+            Assert.assertTrue(tm instanceof JAXBTransformModel);
+            Assert.assertEquals("org.switchyard.transform.jaxb.internal", ((JAXBTransformModel)tm).getContextPath());
+        }
     }
 
     @Test

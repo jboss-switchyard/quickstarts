@@ -19,15 +19,16 @@
 
 package org.switchyard.transform;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.junit.Assert;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
-
-import java.io.IOException;
-import java.io.InputStream;
+import org.switchyard.internal.transform.BaseTransformerRegistry;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
@@ -55,7 +56,7 @@ public abstract class AbstractTransformerTestCase {
         if (transformModel == null) {
             Assert.fail("No smooks config.");
         }
-
-        return TransformerUtil.newTransformer(transformModel);
+        TransformerRegistryLoader trl = new TransformerRegistryLoader(new BaseTransformerRegistry());
+        return trl.newTransformer(transformModel);
     }
 }

@@ -162,7 +162,6 @@ public class Deployment extends AbstractDeployment {
         undeployServiceBindings();
         undeployImplementations();
         undeployReferenceBindings();
-        undeployAutoRegisteredTransformers();
     }
 
     /**
@@ -380,7 +379,6 @@ public class Deployment extends AbstractDeployment {
                 _log.debug("Registering reference " + reference.getQName()
                        + " for component " + component.getImplementation().getType() + " for deployment " + getName());
                 ServiceInterface refIntf = getComponentReferenceInterface(reference);
-                deployAutoRegisteredTransformers(refIntf);
                 references.add(getDomain().registerServiceReference(reference.getQName(), refIntf));
             }
             
@@ -392,7 +390,6 @@ public class Deployment extends AbstractDeployment {
                 ServiceHandler handler = activator.activateService(service.getQName(), component);
                 Activation activation = new Activation(activator, service.getQName(), handler);
                 ServiceInterface serviceIntf = getComponentServiceInterface(service);
-                deployAutoRegisteredTransformers(serviceIntf);
                 List<Policy> requires = getPolicyRequirements(service);
                 activation.addService(getDomain().registerService(service.getQName(), serviceIntf, handler, requires));
                 activation.addReferences(references);

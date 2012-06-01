@@ -135,7 +135,8 @@ public class XsltTransformerTest extends AbstractTransformerTestCase {
         model.setFrom(new QName("A"));
         model.setTo(new QName("B"));
 
-        Transformer<?,?> transformer = TransformerUtil.newTransformer(model);
+        TransformerRegistryLoader trl = new TransformerRegistryLoader(new BaseTransformerRegistry());
+        Transformer<?,?> transformer = trl.newTransformer(model);
 
         Assert.assertTrue(transformer instanceof XsltTransformer);
     }

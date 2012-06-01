@@ -19,7 +19,6 @@
 
 package org.switchyard.deploy.internal;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -27,13 +26,7 @@ import javax.xml.namespace.QName;
 import org.switchyard.ServiceDomain;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.deploy.Activator;
-import org.switchyard.exception.SwitchYardException;
-import org.switchyard.metadata.ServiceInterface;
-import org.switchyard.metadata.java.JavaService;
-import org.switchyard.transform.Transformer;
-import org.switchyard.transform.TransformerRegistry;
 import org.switchyard.transform.TransformerRegistryLoader;
-import org.switchyard.transform.jaxb.internal.JAXBTransformerFactory;
 import org.switchyard.validate.ValidatorRegistryLoader;
 
 /**
@@ -75,11 +68,6 @@ public abstract class AbstractDeployment {
      * Flag to indicate whether or not deployment should fail if an activator is not available.
      */
     private boolean _failOnMissingActivator = true;
-
-    /**
-     * Automatically registered transformers (e.g. JAXB type transformers).
-     */
-    private List<Transformer<?, ?>> _autoRegisteredTransformers = new ArrayList<Transformer<?, ?>>();
 
     /**
      * Create a new instance of a deployment from a configuration model.
@@ -210,32 +198,5 @@ public abstract class AbstractDeployment {
      */
     public SwitchYardModel getConfig() {
         return _switchyardConfig;
-    }
-
-    protected void deployAutoRegisteredTransformers(ServiceInterface serviceInterface) throws SwitchYardException {
-        TransformerRegistry transformerReg = getDomain().getTransformerRegistry();
-
-        if (serviceInterface instanceof JavaService) {
-            Class<?> javaInterface = ((JavaService) serviceInterface).getJavaInterface();
-            List<Transformer<?,?>> jaxbTransformers = JAXBTransformerFactory.newTransformers(javaInterface);
-
-            for (Transformer<?,?> jaxbTransformer : jaxbTransformers) {
-                if (!transformerReg.hasTransformer(jaxbTransformer.getFrom(), jaxbTransformer.getTo())) {
-                    transformerReg.addTransformer(jaxbTransformer);
-                    _autoRegisteredTransformers.add(jaxbTransformer);
-                }
-            }
-        }
-    }
-
-    protected void undeployAutoRegisteredTransformers() {
-        TransformerRegistry transformerReg = getDomain().getTransformerRegistry();
-        try {
-            for (Transformer dynamicallyAddedTransformer : _autoRegisteredTransformers) {
-                transformerReg.removeTransformer(dynamicallyAddedTransformer);
-            }
-        } finally {
-            _autoRegisteredTransformers.clear();
-        }
     }
 }

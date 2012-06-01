@@ -73,7 +73,6 @@ import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.test.mixins.AbstractTestMixIn;
 import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.Transformer;
-import org.switchyard.transform.TransformerUtil;
 import org.w3c.dom.Document;
 
 /**
@@ -406,7 +405,7 @@ public class SwitchYardTestKit {
      * @return The Transformer instance.
      */
     public Transformer newTransformer(TransformModel transformModel) {
-        return TransformerUtil.newTransformer(transformModel);
+        return _deployment.getTransformerRegistryLoader().newTransformer(transformModel);
     }
 
     /**
@@ -420,11 +419,11 @@ public class SwitchYardTestKit {
             Assert.fail("Invalid TransformModel instance.  Must specify 'from' and 'to' data types.");
         }
 
-        Transformer<?,?> transformer = TransformerUtil.newTransformer(transformModel);
+        Transformer<?,?> transformer = _deployment.getTransformerRegistryLoader().newTransformer(transformModel);
         if (transformer.getFrom() == null) {
             transformer = new TransformerWrapper(transformer, transformModel);
         }
-        _deployment.getDomain().getTransformerRegistry().removeTransformer(transformer);
+        _deployment.getDomain().getTransformerRegistry().addTransformer(transformer);
 
         return transformer;
     }

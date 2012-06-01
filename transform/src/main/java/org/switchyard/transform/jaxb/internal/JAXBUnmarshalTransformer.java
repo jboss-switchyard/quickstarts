@@ -27,6 +27,7 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 
 import org.switchyard.Message;
+import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.config.model.Scannable;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.transform.BaseTransformer;
@@ -42,7 +43,6 @@ import org.switchyard.transform.BaseTransformer;
 @Scannable(false)
 public class JAXBUnmarshalTransformer<F, T> extends BaseTransformer<Message, Message> {
 
-    private String _contextPath;
     private JAXBContext _jaxbContext;
 
     /**
@@ -54,11 +54,14 @@ public class JAXBUnmarshalTransformer<F, T> extends BaseTransformer<Message, Mes
      */
     public JAXBUnmarshalTransformer(QName from, QName to, String contextPath) throws SwitchYardException {
         super(from, to);
-        this._contextPath = contextPath;
         try {
-            _jaxbContext = JAXBContext.newInstance(contextPath);
+            if (contextPath != null) {
+                _jaxbContext = JAXBContext.newInstance(contextPath);
+            } else {
+                _jaxbContext = JAXBContext.newInstance(QNameUtil.toJavaMessageType(to));
+            }
         } catch (JAXBException e) {
-            throw new SwitchYardException("Failed to create JAXBContext for contextPath '" + _contextPath + "'.", e);
+            throw new SwitchYardException("Failed to create JAXBContext for '" + to + "'.", e);
         }
     }
 
@@ -69,7 +72,7 @@ public class JAXBUnmarshalTransformer<F, T> extends BaseTransformer<Message, Mes
         try {
             unmarshaller = _jaxbContext.createUnmarshaller();
         } catch (JAXBException e) {
-            throw new SwitchYardException("Failed to create Unmarshaller for contextPath '" + _contextPath + "'.", e);
+            throw new SwitchYardException("Failed to create Unmarshaller for '" + getTo() + "'.", e);
         }
 
         try {
@@ -81,7 +84,7 @@ public class JAXBUnmarshalTransformer<F, T> extends BaseTransformer<Message, Mes
                 message.setContent(unmarshalledObject);
             }
         } catch (JAXBException e) {
-            throw new SwitchYardException("Failed to unmarshall for contextPath '" + _contextPath + "'.", e);
+            throw new SwitchYardException("Failed to unmarshall for '" + getTo() + "'.", e);
         }
 
         return message;

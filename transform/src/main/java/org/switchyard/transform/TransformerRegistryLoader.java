@@ -22,9 +22,12 @@ package org.switchyard.transform;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.switchyard.common.type.Classes;
@@ -33,6 +36,7 @@ import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.exception.DuplicateTransformerException;
 import org.switchyard.exception.SwitchYardException;
+import org.switchyard.transform.config.model.JavaTransformModel;
 
 /**
  * {@link TransformerRegistry} loader class.
@@ -53,11 +57,14 @@ public class TransformerRegistryLoader {
     /**
      * Transformers.
      */
-    private List<Transformer> _transformers = new LinkedList<Transformer>();
+    private List<Transformer<?,?>> _transformers = new LinkedList<Transformer<?,?>>();
     /**
      * The registry instance into which the transforms were loaded.
      */
     private TransformerRegistry _transformerRegistry;
+    
+    private Map<Class<?>, TransformerFactory<?>> _transformerFactories = 
+            new HashMap<Class<?>, TransformerFactory<?>>();
 
     /**
      * Public constructor.
@@ -82,7 +89,7 @@ public class TransformerRegistryLoader {
 
         try {
             for (TransformModel transformModel : transforms.getTransforms()) {
-                Collection<Transformer<?, ?>> transformers = TransformerUtil.newTransformers(transformModel);
+                Collection<Transformer<?, ?>> transformers = newTransformers(transformModel);
                 transformerLoop : for (Transformer<?, ?> transformer : transformers) {
                     if (_transformerRegistry.hasTransformer(transformer.getFrom(), transformer.getTo())) {
                         Transformer<?, ?> registeredTransformer = _transformerRegistry.getTransformer(transformer.getFrom(), transformer.getTo());
@@ -124,7 +131,7 @@ public class TransformerRegistryLoader {
      * Unregister all transformers.
      */
     public void unregisterTransformers() {
-        for (Transformer transformer : _transformers) {
+        for (Transformer<?, ?> transformer : _transformers) {
             _transformerRegistry.removeTransformer(transformer);
         }
     }
@@ -155,7 +162,72 @@ public class TransformerRegistryLoader {
         }
     }
 
+    /**
+     * Create a new {@link org.switchyard.transform.Transformer} instance from the supplied {@link TransformModel} instance.
+     * @param transformModel The TransformModel instance.
+     * @return The Transformer instance.
+     */
+    public Transformer<?, ?> newTransformer(TransformModel transformModel) {
+        return newTransformers(transformModel).iterator().next();
+    }
+
+    /**
+     * Create a Collection of {@link Transformer} instances from the supplied {@link TransformModel} instance.
+     * @param transformModel The TransformModel instance.
+     * @return The Transformer instance.
+     */
+    public Collection<Transformer<?, ?>> newTransformers(TransformModel transformModel) {
+
+        Collection<Transformer<?, ?>> transformers = null;
+
+        if (transformModel instanceof JavaTransformModel) {
+            String className = ((JavaTransformModel) transformModel).getClazz();
+            try {
+                Class<?> transformClass = Classes.forName(className, TransformerUtil.class);
+
+                transformers = TransformerUtil.newTransformers(transformClass, transformModel.getFrom(), transformModel.getTo());
+            } catch (Exception e) {
+                throw new SwitchYardException("Error constructing Transformer instance for class '" + className + "'.", e);
+            }
+        } else {
+            TransformerFactory factory = getTransformerFactory(transformModel);
+
+            transformers = new ArrayList<Transformer<?, ?>>();
+            transformers.add(factory.newTransformer(transformModel));
+        }
+
+        if (transformers == null || transformers.isEmpty()) {
+            throw new SwitchYardException("Unknown TransformModel type '" + transformModel.getClass().getName() + "'.");
+        }
+
+        return transformers;
+    }
+
     private String toDescription(Transformer<?, ?> transformer) {
         return transformer.getClass().getName() + "(" + transformer.getFrom() + ", " + transformer.getTo() + ")";
+    }
+
+    private TransformerFactory<?> getTransformerFactory(TransformModel transformModel) {
+        TransformerFactoryClass transformerFactoryClass = transformModel.getClass().getAnnotation(TransformerFactoryClass.class);
+
+        if (transformerFactoryClass == null) {
+            throw new SwitchYardException("TransformModel type '" + transformModel.getClass().getName() + "' is not annotated with an @TransformerFactoryClass annotation.");
+        }
+
+        Class<?> factoryClass = transformerFactoryClass.value();
+        if (!TransformerFactory.class.isAssignableFrom(factoryClass)) {
+            throw new SwitchYardException("Invalid TransformerFactory implementation.  Must implement '" + org.switchyard.transform.TransformerFactory.class.getName() + "'.");
+        }
+
+        try {
+            if (!_transformerFactories.containsKey(factoryClass)) {
+                TransformerFactory<?> factory = (TransformerFactory<?>) factoryClass.newInstance();
+                _transformerFactories.put(factoryClass, factory);
+            }
+            
+            return _transformerFactories.get(factoryClass);
+        } catch (Exception e) {
+            throw new SwitchYardException("Failed to create an instance of TransformerFactory '" + factoryClass.getName() + "'.  Class must have a public default constructor and not be abstract.");
+        }
     }
 }

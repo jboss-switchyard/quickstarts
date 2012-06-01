@@ -19,20 +19,18 @@
 
 package org.switchyard.transform;
 
-import org.switchyard.common.type.Classes;
-import org.switchyard.common.xml.QNameUtil;
-import org.switchyard.config.model.transform.TransformModel;
-import org.switchyard.exception.SwitchYardException;
-import org.switchyard.metadata.java.JavaService;
-import org.switchyard.transform.config.model.JavaTransformModel;
-
-import javax.xml.namespace.QName;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import javax.xml.namespace.QName;
+
+import org.switchyard.common.xml.QNameUtil;
+import org.switchyard.exception.SwitchYardException;
+import org.switchyard.metadata.java.JavaService;
 
 /**
  * Transformer Utility methods.
@@ -44,47 +42,6 @@ public final class TransformerUtil {
     private static final QName OBJECT_TYPE = JavaService.toMessageType(Object.class);
 
     private TransformerUtil() {}
-
-    /**
-     * Create a new {@link org.switchyard.transform.Transformer} instance from the supplied {@link TransformModel} instance.
-     * @param transformModel The TransformModel instance.
-     * @return The Transformer instance.
-     */
-    public static Transformer<?, ?> newTransformer(TransformModel transformModel) {
-        return newTransformers(transformModel).iterator().next();
-    }
-
-    /**
-     * Create a Collection of {@link Transformer} instances from the supplied {@link TransformModel} instance.
-     * @param transformModel The TransformModel instance.
-     * @return The Transformer instance.
-     */
-    public static Collection<Transformer<?, ?>> newTransformers(TransformModel transformModel) {
-
-        Collection<Transformer<?, ?>> transformers = null;
-
-        if (transformModel instanceof JavaTransformModel) {
-            String className = ((JavaTransformModel) transformModel).getClazz();
-            try {
-                Class<?> transformClass = Classes.forName(className, TransformerUtil.class);
-
-                transformers = newTransformers(transformClass, transformModel.getFrom(), transformModel.getTo());
-            } catch (Exception e) {
-                throw new SwitchYardException("Error constructing Transformer instance for class '" + className + "'.", e);
-            }
-        } else {
-            TransformerFactory factory = newTransformerFactory(transformModel);
-
-            transformers = new ArrayList<Transformer<?, ?>>();
-            transformers.add(factory.newTransformer(transformModel));
-        }
-
-        if (transformers == null || transformers.isEmpty()) {
-            throw new SwitchYardException("Unknown TransformModel type '" + transformModel.getClass().getName() + "'.");
-        }
-
-        return transformers;
-    }
 
     /**
      * Create a new {@link org.switchyard.transform.Transformer} instance from the supplied
@@ -318,26 +275,6 @@ public final class TransformerUtil {
         }
 
         return new TransformerMethod(from, to, publicMethod);
-    }
-
-    private static TransformerFactory newTransformerFactory(TransformModel transformModel) {
-        TransformerFactoryClass transformerFactoryClass = transformModel.getClass().getAnnotation(TransformerFactoryClass.class);
-
-        if (transformerFactoryClass == null) {
-            throw new SwitchYardException("TransformModel type '" + transformModel.getClass().getName() + "' is not annotated with an @TransformerFactoryClass annotation.");
-        }
-
-        Class<?> factoryClass = transformerFactoryClass.value();
-
-        if (!org.switchyard.transform.TransformerFactory.class.isAssignableFrom(factoryClass)) {
-            throw new SwitchYardException("Invalid TransformerFactory implementation.  Must implement '" + org.switchyard.transform.TransformerFactory.class.getName() + "'.");
-        }
-
-        try {
-            return (org.switchyard.transform.TransformerFactory) factoryClass.newInstance();
-        } catch (Exception e) {
-            throw new SwitchYardException("Failed to create an instance of TransformerFactory '" + factoryClass.getName() + "'.  Class must have a public default constructor and not be abstract.");
-        }
     }
 
     private static class TransformerMethod extends TransformerTypes {

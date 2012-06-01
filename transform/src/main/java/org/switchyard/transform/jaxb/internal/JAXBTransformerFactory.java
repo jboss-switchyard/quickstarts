@@ -55,23 +55,10 @@ public class JAXBTransformerFactory implements TransformerFactory<JAXBTransformM
         QName fromType = model.getFrom();
         QName toType = model.getTo();
 
-        return newTransformer(fromType, toType);
-    }
-
-    /**
-     * Create a new JAX Transformer for the give from and to types.
-     * <p/>
-     * Either the from or the to must be a JAXB annotated type.
-     *
-     * @param fromType From type.
-     * @param toType To type.
-     * @return The transformer instance.
-     */
-    public static Transformer<?, ?> newTransformer(QName fromType, QName toType) {
         if (toJavaTransformType(fromType, toType) == JavaTransformType.JAVA2XML) {
-            return new JAXBMarshalTransformer(fromType, toType, getJavaPackage(fromType));
+            return new JAXBMarshalTransformer(fromType, toType, model.getContextPath());
         } else {
-            return new JAXBUnmarshalTransformer(fromType, toType, getJavaPackage(toType));
+            return new JAXBUnmarshalTransformer(fromType, toType, model.getContextPath());
         }
     }
 
