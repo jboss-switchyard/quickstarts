@@ -34,12 +34,13 @@ import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.policy.SecurityPolicy;
 import org.switchyard.policy.TransactionPolicy;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class TransactionPolicyTest {
+public class RequiredPoliciesTest {
     
     private SwitchYardModel _scannedModel;
     
@@ -60,29 +61,42 @@ public class TransactionPolicyTest {
     public void verifyPolicyGenerated() throws Exception {
         List<ComponentModel> components = _scannedModel.getComposite().getComponents();
         
+        boolean ssFound = false;
         boolean ltsFound = false;
         boolean stsFound = false;
         
         for(ComponentModel component : components) {
+            if(component.getName().equals("SecureService")) {
+                ComponentServiceModel svc = component.getServices().get(0);
+                Assert.assertTrue(svc.hasPolicyRequirement(SecurityPolicy.CLIENT_AUTHENTICATION.getName()));
+                Assert.assertTrue(svc.hasPolicyRequirement(SecurityPolicy.CONFIDENTIALITY.getName()));
+                ComponentReferenceModel ref = component.getReferences().get(0);
+                Assert.assertTrue(ref.hasPolicyRequirement(SecurityPolicy.CLIENT_AUTHENTICATION.getName()));
+                Assert.assertTrue(ref.hasPolicyRequirement(SecurityPolicy.CONFIDENTIALITY.getName()));
+                ssFound = true;
+                continue;
+            }
+            
             if(component.getName().equals("LocalTransactionService")) {
             	ComponentServiceModel svc = component.getServices().get(0);
-            	Assert.assertTrue(svc.hasPolicyRequirement(TransactionPolicy.SUSPEND.toString()));
+            	Assert.assertTrue(svc.hasPolicyRequirement(TransactionPolicy.SUSPENDS_TRANSACTION.getName()));
             	ComponentReferenceModel ref = component.getReferences().get(0);
-            	Assert.assertTrue(ref.hasPolicyRequirement(TransactionPolicy.SUSPEND.toString()));
+            	Assert.assertTrue(ref.hasPolicyRequirement(TransactionPolicy.SUSPENDS_TRANSACTION.getName()));
             	ltsFound = true;
             	continue;
             }
             
             if(component.getName().equals("SharedTransactionService")) {
             	ComponentServiceModel svc = component.getServices().get(0);
-            	Assert.assertTrue(svc.hasPolicyRequirement(TransactionPolicy.PROPAGATE.toString()));
+            	Assert.assertTrue(svc.hasPolicyRequirement(TransactionPolicy.PROPAGATES_TRANSACTION.getName()));
             	ComponentReferenceModel ref = component.getReferences().get(0);
-            	Assert.assertTrue(ref.hasPolicyRequirement(TransactionPolicy.PROPAGATE.toString()));
+            	Assert.assertTrue(ref.hasPolicyRequirement(TransactionPolicy.PROPAGATES_TRANSACTION.getName()));
             	stsFound = true;
             	continue;
             }
         }
         
+        Assert.assertTrue("SecureService not discovered!", ssFound);
         Assert.assertTrue("LocalTransactionService not discovered!", ltsFound);
         Assert.assertTrue("SharedTransactionService not discovered!", stsFound);
     }

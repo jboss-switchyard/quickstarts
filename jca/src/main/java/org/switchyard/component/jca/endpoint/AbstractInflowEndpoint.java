@@ -27,7 +27,7 @@ import org.switchyard.ServiceReference;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.jca.composer.JCAComposition;
 import org.switchyard.component.jca.config.model.JCABindingModel;
-import org.switchyard.policy.ExchangePolicy;
+import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.TransactionPolicy;
 
 /**
@@ -176,9 +176,9 @@ public abstract class AbstractInflowEndpoint {
         
         Exchange exchange = _serviceRef.createExchange(_operationName, handler);
         if (_transacted) {
-            ExchangePolicy.provide(exchange, TransactionPolicy.PROPAGATE);
+            PolicyUtil.provide(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
         } else {
-            ExchangePolicy.provide(exchange, TransactionPolicy.SUSPEND);
+            PolicyUtil.provide(exchange, TransactionPolicy.SUSPENDS_TRANSACTION);
         }
         return exchange;
         

@@ -64,8 +64,8 @@
         <module>camel/camel-cdi</module>
         <module>clojure</module>
         <module>hornetq</module>
-        <module>tools/forge</module>
         <module>jca</module>
+        <module>tools/forge</module>
     </modules>
 
     <repositories>

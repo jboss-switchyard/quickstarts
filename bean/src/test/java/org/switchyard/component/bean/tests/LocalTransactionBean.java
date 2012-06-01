@@ -21,12 +21,12 @@ package org.switchyard.component.bean.tests;
 
 import javax.inject.Inject;
 
-import org.switchyard.annotations.ManagedTransaction;
-import org.switchyard.annotations.ManagedTransactionType;
+import org.switchyard.annotations.Requires;
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
+import org.switchyard.policy.TransactionPolicy;
 
-@ManagedTransaction(ManagedTransactionType.LOCAL)
+@Requires(transaction = TransactionPolicy.SUSPENDS_TRANSACTION)
 @Service(value = OneWay.class, name = "LocalTransactionService")
 public class LocalTransactionBean implements OneWay {
     

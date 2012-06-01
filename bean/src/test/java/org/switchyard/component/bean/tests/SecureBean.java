@@ -24,11 +24,11 @@ import javax.inject.Inject;
 import org.switchyard.annotations.Requires;
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
-import org.switchyard.policy.TransactionPolicy;
+import org.switchyard.policy.SecurityPolicy;
 
-@Requires(transaction = TransactionPolicy.PROPAGATES_TRANSACTION)
-@Service(value = OneWay.class, name = "SharedTransactionService")
-public class SharedTransactionBean implements OneWay {
+@Requires(security = {SecurityPolicy.CLIENT_AUTHENTICATION, SecurityPolicy.CONFIDENTIALITY})
+@Service(value = OneWay.class, name = "SecureService")
+public class SecureBean implements OneWay {
     
     @Inject @Reference
     private OneWay oneWay;

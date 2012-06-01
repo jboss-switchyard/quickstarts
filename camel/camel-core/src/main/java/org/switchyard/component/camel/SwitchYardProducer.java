@@ -35,7 +35,7 @@ import org.switchyard.component.camel.deploy.CamelActivator;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceOperation;
-import org.switchyard.policy.ExchangePolicy;
+import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.TransactionPolicy;
 
 /**
@@ -82,7 +82,7 @@ public class SwitchYardProducer extends DefaultProducer {
         
         // Set appropriate policy based on Camel exchange properties
         if (camelExchange.isTransacted()) {
-            ExchangePolicy.provide(switchyardExchange, TransactionPolicy.PROPAGATE);
+            PolicyUtil.provide(switchyardExchange, TransactionPolicy.PROPAGATES_TRANSACTION);
         }
         
         Message switchyardMessage = _messageComposer.compose(camelExchange.getIn(), switchyardExchange, true);

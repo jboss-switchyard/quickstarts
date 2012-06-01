@@ -110,7 +110,7 @@ public class BaseWebService implements Provider<SOAPMessage> {
         ClassLoader original = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(_invocationClassLoader);
-            response = _serviceConsumer.invoke(request);
+            response = _serviceConsumer.invoke(request, _wsContext);
         } finally {
             Thread.currentThread().setContextClassLoader(original);
         }
