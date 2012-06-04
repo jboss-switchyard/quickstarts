@@ -9,4 +9,14 @@
             </binding.soap>
         </service>
 	</composite>
+    <transforms xmlns:xform="urn:switchyard-config:transform:1.0">
+        <xform:transform.jaxb 
+            from="java:org.switchyard.quickstarts.transform.jaxb.OrderAck" 
+            to="{urn:switchyard-quickstart:transform-jaxb:1.0}orderAck" 
+            contextPath="org.switchyard.quickstarts.transform.jaxb"/>
+        <xform:transform.jaxb 
+            from="{urn:switchyard-quickstart:transform-jaxb:1.0}order" 
+            to="java:org.switchyard.quickstarts.transform.jaxb.Order" 
+            contextPath="org.switchyard.quickstarts.transform.jaxb"/>
+    </transforms>
 </switchyard>

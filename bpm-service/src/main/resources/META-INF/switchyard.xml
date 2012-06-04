@@ -30,4 +30,14 @@
             </reference>
         </component>
     </composite>
+    <transforms xmlns:xform="urn:switchyard-config:transform:1.0">
+        <xform:transform.jaxb 
+            from="java:org.switchyard.quickstarts.bpm.service.data.OrderAck" 
+            to="{urn:switchyard-quickstart:bpm-service:1.0}submitOrderResponse" 
+            contextPath="org.switchyard.quickstarts.bpm.service.data"/>
+        <xform:transform.jaxb 
+            from="{urn:switchyard-quickstart:bpm-service:1.0}submitOrder" 
+            to="java:org.switchyard.quickstarts.bpm.service.data.Order" 
+            contextPath="org.switchyard.quickstarts.bpm.service.data"/>
+    </transforms>
 </switchyard>

@@ -37,7 +37,9 @@ import org.switchyard.test.SwitchYardTestKit;
 import org.switchyard.test.mixins.CDIMixIn;
 
 @RunWith(SwitchYardRunner.class)
-@SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
+@SwitchYardTestCaseConfig(
+        config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
+        mixins = CDIMixIn.class)
 public class JaxbTransformationTest {
 
     @ServiceOperation("OrderService.submitOrder")
