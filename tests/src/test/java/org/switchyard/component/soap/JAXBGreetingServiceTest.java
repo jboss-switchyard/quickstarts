@@ -34,9 +34,13 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.common.net.SocketAddr;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.StreamUtil;
+import org.switchyard.config.model.ModelPuller;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.extensions.wsdl.WSDLService;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
+import org.switchyard.test.SwitchYardTestKit;
 import org.switchyard.test.mixins.CDIMixIn;
 
 @RunWith(SwitchYardRunner.class)
@@ -48,9 +52,11 @@ public class JAXBGreetingServiceTest {
     private ServiceDomain _domain;
 
     private SOAPBindingModel config;
+    
+    private SwitchYardTestKit _testKit;
 
     @Before
-    public void setUp() throws MalformedURLException {
+    public void setUp() throws Exception {
         String host = System.getProperty("org.switchyard.test.soap.host", "localhost");
         String port = System.getProperty("org.switchyard.test.soap.port", "48080");
         
@@ -59,6 +65,8 @@ public class JAXBGreetingServiceTest {
         config.setWsdl("src/test/resources/GreetingServiceImplService.wsdl");
         config.setServiceName(GREETING_SERVICE_NAME);
         config.setSocketAddr(new SocketAddr(host, Integer.parseInt(port)));
+        
+        registerTransformers();
     }
 
     @Test
@@ -127,6 +135,13 @@ public class JAXBGreetingServiceTest {
             XMLAssert.assertXMLEqual(expectedResponse, actualResponse);
         } finally {
             inboundHandler.stop();
+        }
+    }
+    
+    private void registerTransformers() throws Exception {
+        SwitchYardModel config = new ModelPuller<SwitchYardModel>().pull("jaxb-transformers.xml");
+        for (TransformModel tm : config.getTransforms().getTransforms()) {
+            _testKit.registerTransformer(tm);
         }
     }
 }

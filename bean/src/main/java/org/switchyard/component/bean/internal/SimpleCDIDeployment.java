@@ -76,7 +76,6 @@ public class SimpleCDIDeployment extends AbstractDeployment {
 
     @Override
     public void stop() {
-        undeployAutoRegisteredTransformers();
     }
 
     @Override
@@ -124,7 +123,6 @@ public class SimpleCDIDeployment extends AbstractDeployment {
             handler.addReference(service);
             handler.start();
 
-            deployAutoRegisteredTransformers(serviceInterface);
         }
     }
 }
