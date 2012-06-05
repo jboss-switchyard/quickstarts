@@ -175,6 +175,14 @@
     <repository>
       <id>fungal</id>
       <url>http://jesperpedersen.github.com/fungal/maven2</url>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
     </repository>
   </repositories>
 
