@@ -29,8 +29,8 @@ Running the quickstart
    configuration of the quickstart, you should see the output below in the
    AS server.log.
 9. Undeploy the application
-    rm ${AS7}/standalone/deployments/switchyard-quickstart-policy-transaction-{version}.jar.deployed
-    rm ${AS7}/standalone/deployments/switchyard-quickstart-demos-policy-transaction-hornetq-jms.xml
+    rm ${AS7}/standalone/deployments/switchyard-quickstart-demo-policy-transaction-{version}.jar.deployed
+    rm ${AS7}/standalone/deployments/switchyard-quickstart-demo-policy-transaction-hornetq-jms.xml
 
 ```
 :: WorkService :: Received command =>  rollback
@@ -49,19 +49,19 @@ You can test any of these transaction policy scenarios using this quickstart:
 
 1) Global transaction propagated to the bean service.  This is the default
    configuration of the quickstart and requires the WorkServiceBean to be
-   annotated with @ManagedTransaction(ManagedTransactionType.SHARED) and
-   messages to be sent to the policyQSTransacted queue.
+   annotated with @Requires(transaction=TransactionPolicy.PROPAGATES_TRANSACTION)
+   and messages to be sent to the policyQSTransacted queue.
 
 2) Policy violation - transaction required to be propagated, but no transaction
    provided by the gateway.  To exercise this scenario, send a message to the
-   policyQSNonTransacted queue with ManagedTransactionType.SHARED on the bean
-   service.
+   policyQSNonTransacted queue with TransactionPolicy.PROPAGATES_TRANSACTION
+   on the bean service.
 
 3) Suspend incoming transaction.  Change the WorkServiceBean transaction
-   annotation type to ManagedTransactionType.LOCAL and send a message to the
-   policyQSTransacted queue with the command "rollback".  Check the output and
-   note that the rollback does not impact the transaction used to receive the
-   JMS message.
+   annotation type to TransactionPolicy.SUSPENDS_TRANSACTION and send a
+   message to the policyQSTransacted queue with the command "rollback".  Check
+   the output and note that the rollback does not impact the transaction used
+   to receive the JMS message.
 
 
 Options
