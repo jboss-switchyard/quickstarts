@@ -26,6 +26,8 @@
     </resources>
 
     <dependencies>
+        <!-- Needed for @Resource annotations -->
+        <module name="javax.annotation.api"/>
         <module name="javax.api"/>
         <module name="javax.wsdl4j.api"/>
         <module name="org.apache.log4j"/>
