@@ -181,8 +181,10 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
         cic.setEnvironmentOverrides(env);
         cic.setPropertiesOverrides(props);
         Resource procDef = model.getProcessDefinition();
-        if (procDef.getType() == null) {
-            procDef = new SimpleResource(procDef.getLocation(), "BPMN2");
+        if (procDef != null) {
+            if (procDef.getType() == null) {
+                procDef = new SimpleResource(procDef.getLocation(), "BPMN2");
+            }
         }
         if (model.isAgent()) {
             _kagent = Agents.newAgent(cic, procDef);

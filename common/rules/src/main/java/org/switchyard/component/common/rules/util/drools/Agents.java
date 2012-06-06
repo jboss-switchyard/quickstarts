@@ -19,7 +19,6 @@
 package org.switchyard.component.common.rules.util.drools;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -72,7 +71,11 @@ public final class Agents {
         List<Resource> resources = new ArrayList<Resource>();
         resources.addAll(model.getResources());
         if (additionalResources != null) {
-            resources.addAll(Arrays.asList(additionalResources));
+            for (Resource additionalResource : additionalResources) {
+                if (additionalResource != null) {
+                    resources.add(additionalResource);
+                }
+            }
         }
         ClassLoader loader = cic.getLoader();
         if (loader == null) {

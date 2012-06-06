@@ -41,7 +41,7 @@ MA  02110-1301, USA.
                     <element ref="bpm:parameters" minOccurs="0" maxOccurs="1"/>
                     <element ref="bpm:results" minOccurs="0" maxOccurs="1"/>
                 </sequence>
-                <attribute name="processDefinition" type="string" use="required"/>
+                <attribute name="processDefinition" type="string" use="optional"/>
                 <attribute name="processDefinitionType" type="NCName" use="optional" default="BPMN2"/>
                 <attribute name="processId" type="string" use="required"/>
                 <attribute name="persistent" type="boolean" use="optional" default="false"/>

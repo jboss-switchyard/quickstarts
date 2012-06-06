@@ -19,7 +19,6 @@
 package org.switchyard.component.common.rules.util.drools;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.drools.KnowledgeBase;
@@ -52,7 +51,11 @@ public final class Bases {
         List<Resource> resources = new ArrayList<Resource>();
         resources.addAll(cic.getModel().getResources());
         if (additionalResources != null) {
-            resources.addAll(Arrays.asList(additionalResources));
+            for (Resource additionalResource : additionalResources) {
+                if (additionalResource != null) {
+                    resources.add(additionalResource);
+                }
+            }
         }
         ClassLoader loader = cic.getLoader();
         if (loader == null) {
