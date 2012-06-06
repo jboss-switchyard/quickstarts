@@ -204,5 +204,10 @@
             <type>war</type>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.switchyard.quickstarts.demos</groupId>
+            <artifactId>switchyard-quickstart-demo-policy-security</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
