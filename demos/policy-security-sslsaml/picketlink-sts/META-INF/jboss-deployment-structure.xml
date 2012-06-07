@@ -1,0 +1,10 @@
+<jboss-deployment-structure>
+  
+  <deployment>
+    <!-- Add picketlink module dependency -->
+    <dependencies>
+      <module name="org.picketlink" />
+    </dependencies>
+  </deployment>
+</jboss-deployment-structure>
+
