@@ -27,6 +27,7 @@ import static org.switchyard.bus.camel.processors.Processors.CONSUMER_CALLBACK;
 import static org.switchyard.bus.camel.processors.Processors.DOMAIN_HANDLERS;
 import static org.switchyard.bus.camel.processors.Processors.GENERIC_POLICY;
 import static org.switchyard.bus.camel.processors.Processors.PROVIDER_CALLBACK;
+import static org.switchyard.bus.camel.processors.Processors.SECURITY;
 import static org.switchyard.bus.camel.processors.Processors.TRANSACTION_HANDLER;
 import static org.switchyard.bus.camel.processors.Processors.TRANSFORMATION;
 import static org.switchyard.bus.camel.processors.Processors.VALIDATION;
@@ -147,6 +148,7 @@ public class CamelExchangeBus implements ExchangeBus {
                     .processRef(DOMAIN_HANDLERS.name())
                     .processRef(ADDRESSING.name())
                     .processRef(TRANSACTION_HANDLER.name())
+                    .processRef(SECURITY.name())
                     .processRef(GENERIC_POLICY.name())
                     .processRef(VALIDATION.name())
                     .processRef(TRANSFORMATION.name())

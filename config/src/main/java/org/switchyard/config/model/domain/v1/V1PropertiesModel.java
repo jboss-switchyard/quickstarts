@@ -20,7 +20,10 @@ package org.switchyard.config.model.domain.v1;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.xml.namespace.QName;
 
@@ -66,14 +69,6 @@ public class V1PropertiesModel extends BaseModel implements PropertiesModel {
      * {@inheritDoc}
      */
     @Override
-    public SwitchYardModel getSwitchYard() {
-        return (SwitchYardModel)getModelParent();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public synchronized List<PropertyModel> getProperties() {
         return Collections.unmodifiableList(_properties);
     }
@@ -87,7 +82,7 @@ public class V1PropertiesModel extends BaseModel implements PropertiesModel {
         _properties.add(property);
         return this;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -103,6 +98,9 @@ public class V1PropertiesModel extends BaseModel implements PropertiesModel {
         return property;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PropertyModel removeProperty(String propertyName) {
         PropertyModel removed = null;
@@ -114,6 +112,38 @@ public class V1PropertiesModel extends BaseModel implements PropertiesModel {
             }
         }
         return removed;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Properties toProperties() {
+        Properties properties = new Properties();
+        for (PropertyModel pm : getProperties()) {
+            String name = pm.getName();
+            String value = pm.getValue();
+            if (name != null && value != null) {
+                properties.setProperty(name, value);
+            }
+        }
+        return properties;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String,String> toMap() {
+        Map<String,String> map = new HashMap<String,String>();
+        for (PropertyModel pm : getProperties()) {
+            String name = pm.getName();
+            String value = pm.getValue();
+            if (name != null && value != null) {
+                map.put(name, value);
+            }
+        }
+        return map;
     }
 
 }

@@ -195,7 +195,7 @@ public abstract class BaseConfiguration implements Configuration {
      */
     @Override
     public String toString() {
-        return getString(OutputKey.EXCLUDE_XML_DECLARATION);
+        return getString(OutputKey.OMIT_XML_DECLARATION, OutputKey.PRETTY_PRINT);
     }
 
 }

@@ -19,9 +19,10 @@
 package org.switchyard.config.model.domain;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import org.switchyard.config.model.Model;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * The "properties" configuration model.
@@ -30,12 +31,6 @@ public interface PropertiesModel extends Model {
 
     /** The "properties" name. */
     public static final String PROPERTIES = "properties";
-
-    /**
-     * Gets the parent switchyard model.
-     * @return the parent switchyard model
-     */
-    public SwitchYardModel getSwitchYard();
 
     /**
      * Gets the child property models.
@@ -63,4 +58,17 @@ public interface PropertiesModel extends Model {
      * @return the removed property or null if the named property was not present
      */
     public PropertyModel removeProperty(String propertyName);
+
+    /**
+     * Converts this PropertiesModel to a Properties.
+     * @return the Properties
+     */
+    public Properties toProperties();
+
+    /**
+     * Converts this PropertiesModel to a Map<String,String>.
+     * @return the Map<String,String>
+     */
+    public Map<String,String> toMap();
+
 }

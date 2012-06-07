@@ -35,6 +35,7 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.ServiceSecurity;
 import org.switchyard.event.DomainShutdownEvent;
 import org.switchyard.event.DomainStartupEvent;
 import org.switchyard.event.EventObserver;
@@ -62,6 +63,7 @@ public class DomainImpl implements ServiceDomain {
     private static Logger _logger = Logger.getLogger(DomainImpl.class);
 
     private final QName _name;
+    private final ServiceSecurity _security;
     private EventManager _eventManager;
     private ServiceRegistry _registry;
     private ExchangeBus _exchangeBus;
@@ -77,11 +79,12 @@ public class DomainImpl implements ServiceDomain {
      * @param name name
      */
     public DomainImpl(QName name) {
-        this(name, 
-            new DefaultServiceRegistry(), 
-            new LocalExchangeBus(), 
-            new BaseTransformerRegistry(), 
-            new BaseValidatorRegistry(), 
+        this(name,
+            new DefaultServiceSecurity(),
+            new DefaultServiceRegistry(),
+            new LocalExchangeBus(),
+            new BaseTransformerRegistry(),
+            new BaseValidatorRegistry(),
             new EventManager());
         // this constructor is used for tests, normally exchange bus can listen
         // for domain events
@@ -91,6 +94,7 @@ public class DomainImpl implements ServiceDomain {
     /**
      * Create a new ServiceDomain.
      * @param name name
+     * @param security service security
      * @param registry registry
      * @param exchangeBus message exchange bus
      * @param transformerRegistry transformerRegistry
@@ -98,6 +102,7 @@ public class DomainImpl implements ServiceDomain {
      * @param eventManager event manager
      */
     public DomainImpl(QName name,
+            ServiceSecurity security,
             ServiceRegistry registry,
             ExchangeBus exchangeBus,
             TransformerRegistry transformerRegistry,
@@ -105,6 +110,7 @@ public class DomainImpl implements ServiceDomain {
             EventManager eventManager) {
 
         _name = name;
+        _security = security;
         _registry = registry;
         _exchangeBus  = exchangeBus;
         _transformerRegistry = transformerRegistry;
@@ -195,7 +201,12 @@ public class DomainImpl implements ServiceDomain {
     public QName getName() {
         return _name;
     }
-
+    
+    @Override
+    public ServiceSecurity getServiceSecurity() {
+        return _security;
+    }
+    
     @Override
     public TransformerRegistry getTransformerRegistry() {
         return _transformerRegistry;

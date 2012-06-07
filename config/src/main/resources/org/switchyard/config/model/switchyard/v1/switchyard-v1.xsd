@@ -96,6 +96,7 @@ MA  02110-1301, USA.
             <element ref="swyd:validates" minOccurs="0" maxOccurs="1"/>
             <element ref="swyd:properties" minOccurs="0" maxOccurs="1"/>
             <element ref="swyd:handlers" minOccurs="0" maxOccurs="1"/>
+            <element ref="swyd:security" minOccurs="0" maxOccurs="1"/>
         </sequence>
         <attribute name="name" type="string" use="optional"/>
     </complexType>
@@ -106,7 +107,7 @@ MA  02110-1301, USA.
             <element ref="swyd:property" minOccurs="0" maxOccurs="unbounded"/>
         </sequence>
     </complexType>
-    
+
     <element name="property" type="swyd:PropertyType"/>
     <complexType name="PropertyType">
         <attribute name="name" type="string" use="required"/>
@@ -143,6 +144,19 @@ MA  02110-1301, USA.
     <complexType name="ArtifactType">
         <attribute name="name" type="string" use="required"/>
         <attribute name="url" type="string" use="required"/>
+    </complexType>
+
+    <element name="security" type="swyd:SecurityType"/>
+    <complexType name="SecurityType">
+        <sequence>
+            <element ref="swyd:properties" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+        <attribute name="callbackHandler" type="string" use="optional"/>
+        <attribute name="moduleName" type="string" use="optional"/>
+        <!--
+        <attribute name="rolesAllowed" type="string" use="optional"/>
+        <attribute name="runAs" type="string" use="optional"/>
+        -->
     </complexType>
 
     <element name="interface.esb" type="swyd:EsbInterface" substitutionGroup="sca:interface"/>

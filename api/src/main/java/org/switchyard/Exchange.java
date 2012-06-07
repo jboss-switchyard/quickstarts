@@ -16,9 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
 package org.switchyard;
-
 
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceOperation;
@@ -37,6 +35,7 @@ public interface Exchange {
      * Context property name used for Message ID.
      */
     String MESSAGE_ID = "org.switchyard.messageId";
+
     /**
      * Context property name used for Relates To.
      */
@@ -139,10 +138,11 @@ public interface Exchange {
      * @return The exchange State.
      */
     ExchangeState getState();
-    
+
     /**
      * Get the exchange phase.
      * @return the exchange phase
      */
     ExchangePhase getPhase();
+
 }

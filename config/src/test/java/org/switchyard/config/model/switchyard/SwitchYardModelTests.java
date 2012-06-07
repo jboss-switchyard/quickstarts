@@ -43,6 +43,7 @@ import org.switchyard.config.model.composite.test.soap.SOAPBindingModel;
 import org.switchyard.config.model.domain.DomainModel;
 import org.switchyard.config.model.domain.HandlerModel;
 import org.switchyard.config.model.domain.PropertiesModel;
+import org.switchyard.config.model.domain.SecurityModel;
 import org.switchyard.config.model.switchyard.test.java.JavaTransformModel;
 import org.switchyard.config.model.switchyard.test.smooks.SmooksConfigModel;
 import org.switchyard.config.model.switchyard.test.smooks.SmooksTransformModel;
@@ -103,7 +104,7 @@ public class SwitchYardModelTests {
         Assert.assertEquals("MyWebService/SOAPPort", port.getPort());
         String name = port.getBinding().getService().getComposite().getComponents().get(0).getName();
         Assert.assertEquals("SimpleService", name);
-        // Verify transform definitions
+        // Verify transform configuration
         TransformsModel transforms = switchyard.getTransforms();
         JavaTransformModel java_transform = (JavaTransformModel)transforms.getTransforms().get(0);
         Assert.assertEquals("msgA", java_transform.getFrom().getLocalPart());
@@ -117,25 +118,33 @@ public class SwitchYardModelTests {
         // Verify domain configuration
         DomainModel domain = switchyard.getDomain();
         Assert.assertEquals("TestDomain", domain.getName());
+        // Verify property configuration
         PropertiesModel props = domain.getProperties();
         Assert.assertEquals(2, props.getProperties().size());
         Assert.assertEquals("bar", props.getProperty("foo").getValue());
         Assert.assertEquals("fish", props.getProperty("tuna").getValue());
         Assert.assertEquals(switchyard, domain.getSwitchYard());
+        // Verify handler configuration
         Assert.assertEquals(1, domain.getHandlers().getHandlers().size());
         HandlerModel handler = domain.getHandlers().getHandlers().get(0);
         Assert.assertEquals("handler1", handler.getName());
         Assert.assertEquals("org.switchyard.handlers.TestHandler", handler.getClassName());
-        
-        // Verify artifact config
+        // Verify artifact configuration
         ArtifactsModel artifacts = switchyard.getArtifacts();
         Assert.assertEquals(1, artifacts.getArtifacts().size());
         ArtifactModel artifact = artifacts.getArtifact("OrderService");
         Assert.assertNotNull("ArtifactModel for OrderService was not read!", artifact);
         Assert.assertEquals("OrderService", artifact.getName());
         Assert.assertEquals("http://localhost:8080/guvnorsoa/rest/packages/OrderService", artifact.getURL());
+        // Verify security configuration
+        SecurityModel security = domain.getSecurity();
+        Assert.assertEquals(domain, security.getDomain());
+        Assert.assertEquals(Object.class, security.getCallbackHandler(getClass().getClassLoader()));
+        Assert.assertEquals("other", security.getModuleName());
+        Assert.assertEquals("iam", security.getProperties().toProperties().getProperty("will"));
+        Assert.assertEquals("iam", security.getProperties().toMap().get("will"));
     }
-    
+
     @Test
     public void testArtifactCreate() throws Exception {
         ArtifactsModel artifacts = new V1ArtifactsModel();

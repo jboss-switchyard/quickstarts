@@ -26,7 +26,9 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.xml.namespace.QName;
@@ -45,6 +47,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.events.StartDocument;
 import javax.xml.stream.events.XMLEvent;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -57,6 +60,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.switchyard.common.lang.Strings;
 import org.w3c.dom.Document;
@@ -99,6 +103,27 @@ public final class XMLHelper {
      * The event reader creator for DOM nodes.
      */
     private static final EventReaderCreator EVENT_READER_CREATOR;
+    /**
+     * Default output keys to use for writing DOM nodes.
+     */
+    private static final Map<String, String> DEFAULT_OUTPUT_PROPERTIES;
+    /**
+     * Hint to pretty-print Nodes.
+     */
+    public static final String PRETTY_PRINT_HINT = "pretty-print";
+    /**
+     * XSL to pretty-print Nodes. (Hard-coded here so as to be faster than reading in a resource.)
+     */
+    private static final String PRETTY_PRINT_XSL =
+        "<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:xalan='http://xml.apache.org/xslt' version='1.0'>"
+          + "<xsl:output method='xml' encoding='UTF-8' indent='yes' xalan:indent-amount='4'/>"
+          + "<xsl:strip-space elements='*'/>"
+          + "<xsl:template match='@*|node()'>"
+              + "<xsl:copy>"
+                  + "<xsl:apply-templates select='@*|node()'/>"
+              + "</xsl:copy>"
+          + "</xsl:template>"
+      + "</xsl:stylesheet>";
 
     private XMLHelper() {
     }
@@ -499,24 +524,6 @@ public final class XMLHelper {
     }
 
     /**
-     * Transform a DOM Node to String.
-     * @param node The Node to be transformed.
-     * @return a String representation.
-     * @throws ParserConfigurationException Parser confiuration exception
-     * @throws TransformerException Transformer exception
-     */
-    public static String toString(final Node node)
-        throws ParserConfigurationException, TransformerException {
-        TransformerFactory transFactory = TransformerFactory.newInstance();
-        Transformer transformer = transFactory.newTransformer();
-        StringWriter writer = new StringWriter();
-        DOMSource source = new DOMSource(node);
-        StreamResult result = new StreamResult(writer);
-        transformer.transform(source, result);
-        return writer.toString();
-    }
-
-    /**
      * Get the first child Element of the supplied node that matches a given tag name.
      *
      * @param node The DOM Node.
@@ -604,6 +611,18 @@ public final class XMLHelper {
                 name = node.getNodeName();
             }
             return name;
+        }
+        return null;
+    }
+
+    /**
+     * Gets the value of the node.
+     * @param node the node
+     * @return the value of the node if the node is not null, otherwise null
+     */
+    public static String valueOf(Node node) {
+        if (node != null) {
+            return node.getNodeValue();
         }
         return null;
     }
@@ -719,6 +738,118 @@ public final class XMLHelper {
         return qnames.toArray(new QName[qnames.size()]);
     }
 
+    /**
+     * Converts a Node to a String.
+     * @param node the Node
+     * @return the String
+     */
+    public static String toString(Node node) {
+        return toString(node, DEFAULT_OUTPUT_PROPERTIES);
+    }
+
+    /**
+     * Converts a Node to a String, using the specified output properties.
+     * @param node the Node
+     * @param outputProperties the specified output properties
+     * @return the String
+     */
+    public static String toString(Node node, Map<String, String> outputProperties) {
+        StringWriter writer = new StringWriter();
+        try {
+            write(node, writer, outputProperties);
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
+        return writer.toString();
+    }
+
+    /**
+     * Converts a Node to a pretty-print String.
+     * @param node the Node
+     * @return the pretty-print String
+     */
+    public static String toPretty(Node node) {
+        Map<String, String> outputProperties = new HashMap<String, String>();
+        outputProperties.putAll(DEFAULT_OUTPUT_PROPERTIES);
+        outputProperties.put(PRETTY_PRINT_HINT, "yes");
+        return toString(node, outputProperties);
+    }
+
+    /**
+     * Writes a Node to a Writer.
+     * @param node the Node
+     * @param writer the Writer
+     * @throws IOException if a problem occurs while writing
+     */
+    public static void write(Node node, Writer writer) throws IOException {
+        write(node, writer, DEFAULT_OUTPUT_PROPERTIES);
+    }
+
+    /**
+     * Writes a Node to a Writer, using the specified output properties.
+     * @param node the Node
+     * @param writer the Writer
+     * @param outputProperties the specified output properties
+     * @throws IOException if a problem occurs while writing
+     */
+    public static void write(Node node, Writer writer, Map<String, String> outputProperties) throws IOException {
+        try {
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer t;
+            if (isPrettyPrint(outputProperties)) {
+                t = tf.newTransformer(new StreamSource(new StringReader(PRETTY_PRINT_XSL)));
+            } else {
+                t = tf.newTransformer();
+            }
+            for (Map.Entry<String, String> entry : outputProperties.entrySet()) {
+                if (!entry.getKey().equals(PRETTY_PRINT_HINT)) {
+                    t.setOutputProperty(entry.getKey(), entry.getValue());
+                }
+            }
+            t.transform(new DOMSource(node), new StreamResult(writer));
+        } catch (TransformerException te) {
+            throw new IOException(te);
+        }
+    }
+
+    private static boolean isPrettyPrint(Map<String, String> outputProperties) {
+        String pp = Strings.trimToNull(outputProperties.get(PRETTY_PRINT_HINT));
+        if (pp != null) {
+            pp = pp.toLowerCase();
+            return pp.equals("yes") || pp.equals("true");
+        }
+        return false;
+    }
+
+    /**
+     * Logs a Node.
+     * @param node the Node
+     */
+    public static void log(Node node) {
+        log(node, Level.INFO);
+    }
+
+    /**
+     * Logs a Node at the specified Level.
+     * @param node the Node
+     * @param level the specified Level
+     */
+    public static void log(Node node, Level level) {
+        log(node, level, LOGGER);
+    }
+
+    /**
+     * Logs a Node at the specified Level, to the specified Logger.
+     * @param node the Node
+     * @param level the specified Level
+     * @param logger the specified Logger
+     */
+    public static void log(Node node, Level level, Logger logger) {
+        if (logger.isEnabledFor(level)) {
+            logger.log(level, toString(node));
+        }
+    }
+
     static {
         final XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
@@ -735,6 +866,8 @@ public final class XMLHelper {
         docBuilderFactory.setNamespaceAware(true);
         DOCUMENT_BUILDER_FACTORY = docBuilderFactory;
         
+        DEFAULT_OUTPUT_PROPERTIES = new HashMap<String, String>();
+        DEFAULT_OUTPUT_PROPERTIES.put(OutputKeys.OMIT_XML_DECLARATION, "yes");
     }
 
     /**

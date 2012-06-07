@@ -27,19 +27,25 @@ import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
+import org.switchyard.ServiceSecurity;
 import org.switchyard.bus.camel.CamelExchangeBus;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.domain.DomainModel;
 import org.switchyard.config.model.domain.HandlerModel;
+import org.switchyard.config.model.domain.PropertiesModel;
+import org.switchyard.config.model.domain.SecurityModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.internal.DefaultServiceRegistry;
+import org.switchyard.internal.DefaultServiceSecurity;
 import org.switchyard.internal.DomainImpl;
 import org.switchyard.internal.EventManager;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.internal.validate.BaseValidatorRegistry;
 import org.switchyard.spi.ServiceRegistry;
+import org.switchyard.transform.TransformerRegistry;
+import org.switchyard.validate.ValidatorRegistry;
 
 /**
  * {@link org.switchyard.ServiceDomain} manager class.
@@ -61,21 +67,18 @@ public class ServiceDomainManager {
      * Root domain property.
      */
     public static final QName ROOT_DOMAIN = new QName("org.switchyard.domains.root");
-    /**
-     * Exchange Bus provider class name key.
-     */
-    public static final String BUS_CLASS_NAME = "busProvider";
-    /**
-     * Registry class name property.
-     */
-    public static final String REGISTRY_CLASS_NAME = "registryProvider";
     
     private static Logger _log = Logger.getLogger(ServiceDomainManager.class);
 
-    // Share the same service registry and bus across domains to give visibility 
-    // to registered services across application domains
+    // Share the same service registry and event manager across domains
+    // to give visibility to registered services across application domains
     private ServiceRegistry _registry = new DefaultServiceRegistry();
     private EventManager _eventManager = new EventManager();
+
+    /**
+     * Constructs a new ServiceDomainManager.
+     */
+    public ServiceDomainManager() {}
 
     /**
      * Create a ServiceDomain instance.
@@ -94,14 +97,15 @@ public class ServiceDomainManager {
      * @return The ServiceDomain instance.
      */
     public ServiceDomain createDomain(QName domainName, SwitchYardModel switchyardConfig) {
-        BaseTransformerRegistry transformerRegistry = new BaseTransformerRegistry();
-        BaseValidatorRegistry validatorRegistry = new BaseValidatorRegistry();
+        ServiceSecurity serviceSecurity = getServiceSecurity(switchyardConfig);
+        TransformerRegistry transformerRegistry = new BaseTransformerRegistry();
+        ValidatorRegistry validatorRegistry = new BaseValidatorRegistry();
 
         SwitchYardCamelContext camelContext = new SwitchYardCamelContext();
         CamelExchangeBus bus = new CamelExchangeBus(camelContext);
 
         DomainImpl domain = new DomainImpl(
-                domainName, _registry, bus, transformerRegistry, validatorRegistry, _eventManager);
+                domainName, serviceSecurity, _registry, bus, transformerRegistry, validatorRegistry, _eventManager);
         camelContext.setServiceDomain(domain);
 
         if (switchyardConfig != null) {
@@ -110,7 +114,29 @@ public class ServiceDomainManager {
 
         return domain;
     }
-
+    
+    private ServiceSecurity getServiceSecurity(SwitchYardModel switchyard) {
+        DefaultServiceSecurity serviceSecurity = new DefaultServiceSecurity();
+        if (switchyard != null) {
+            DomainModel domain = switchyard.getDomain();
+            if (domain != null) {
+                SecurityModel config = domain.getSecurity();
+                if (config != null) {
+                    PropertiesModel properties = config.getProperties();
+                    serviceSecurity
+                        .setModuleName(config.getModuleName())
+                        .setCallbackHandler(config.getCallbackHandler(getClass().getClassLoader()))
+                        /*
+                        .setRunAs(config.getRunAs())
+                        .setRolesAllowed(config.getRolesAllowed());
+                        */
+                        .setProperties(properties != null ? properties.toMap() : null);
+                }
+            }
+        }
+        return serviceSecurity;
+    }
+    
     /**
      * Return the shared EventManager used for all ServiceDomain instances.
      * @return EventManager instance
@@ -118,7 +144,7 @@ public class ServiceDomainManager {
     public EventManager getEventManager() {
         return _eventManager;
     }
-
+    
     /**
      * Looks for handler definitions in the switchyard config and attempts to 
      * create and add them to the domain's global handler chain.

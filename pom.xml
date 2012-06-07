@@ -19,6 +19,7 @@
     <module>common-camel</module>
     <module>config</module>
     <module>api</module>
+    <module>security</module>
     <module>extensions/wsdl</module>
     <module>transform</module>
     <module>validate</module>

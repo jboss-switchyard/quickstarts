@@ -18,20 +18,60 @@
  */
 package org.switchyard.config;
 
+import org.switchyard.common.lang.Strings;
+
 /**
- * Hints for configuration output.
+ * OutputKey hints for Configuration output.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public enum OutputKey {
 
     /** The include-ordering hint. */
-    INCLUDE_ORDERING,
+    INCLUDE_ORDERING("include-ordering"),
 
     /** The exclude-normalization hint. */
-    EXCLUDE_NORMALIZATION,
+    EXCLUDE_NORMALIZATION("exclude-normalization"),
 
-    /** The exclude-xml-declaration hint. */
-    EXCLUDE_XML_DECLARATION
+    /** The omit-xml-declaration hint. */
+    OMIT_XML_DECLARATION("omit-xml-declaration"),
+
+    /** The pretty-print hint. */
+    PRETTY_PRINT("pretty-print");
+
+    private final String _hint;
+
+    /**
+     * Constructs a new OutputKey with the specified hint.
+     * @param hint the specified hint
+     */
+    private OutputKey(String hint) {
+        _hint = hint;
+    }
+
+    /**
+     * Gets the hint.
+     * @return the hint
+     */
+    public String hint() {
+        return _hint;
+    }
+
+    /**
+     * Derives an OutputKey from the specified hint.
+     * @param hint the hint
+     * @return the OutputKey
+     */
+    public static OutputKey fromHint(String hint) {
+        hint = Strings.trimToNull(hint);
+        if (hint != null) {
+            for (OutputKey ok : values()) {
+                if (ok.hint().equalsIgnoreCase(hint)) {
+                    return ok;
+                }
+            }
+        }
+        return null;
+    }
 
 }

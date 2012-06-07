@@ -26,7 +26,7 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
  */
 public interface DomainModel extends NamedModel {
     
-    /** The "domain" name. :-) */
+    /** The "domain" name. */
     public static final String DOMAIN = "domain";
     
     /**
@@ -44,20 +44,34 @@ public interface DomainModel extends NamedModel {
     /**
      * Sets the child properties model.
      * @param properties the child properties model.
-     * @return this SwitchYardModel (useful for chaining)
+     * @return this DomainModel (useful for chaining)
      */
     public DomainModel setProperties(PropertiesModel properties);
     
     /**
      * Gets the list of handlers defined at the domain level.
-     * @return properties for the domain
+     * @return handlers for the domain
      */
     public HandlersModel getHandlers();
     
     /**
      * Sets the child handlers model.
      * @param handlers the child handlers model.
-     * @return this SwitchYardModel (useful for chaining)
+     * @return this DomainModel (useful for chaining)
      */
     public DomainModel setHandlers(HandlersModel handlers);
+    
+    /**
+     * Gets the child security model.
+     * @return the child security model
+     */
+    public SecurityModel getSecurity();
+    
+    /**
+     * Sets the child security model.
+     * @param security the child security model
+     * @return this DomainModel (useful for chaining)
+     */
+    public DomainModel setSecurity(SecurityModel security);
+    
 }

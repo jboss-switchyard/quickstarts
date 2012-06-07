@@ -29,7 +29,6 @@ import org.switchyard.MockExchange;
 import org.switchyard.policy.Policy;
 import org.switchyard.policy.PolicyUtil;
 
-
 public class PolicyHandlerTest {
     
     static final String FOO_POLICY_NAME = "foo";

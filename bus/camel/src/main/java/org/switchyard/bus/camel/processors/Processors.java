@@ -28,6 +28,7 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.handlers.AddressingHandler;
 import org.switchyard.handlers.PolicyHandler;
+import org.switchyard.handlers.SecurityHandler;
 import org.switchyard.handlers.TransactionHandler;
 import org.switchyard.handlers.TransformHandler;
 import org.switchyard.handlers.ValidateHandler;
@@ -62,6 +63,15 @@ public enum Processors {
         @Override
         public Processor create(ServiceDomain domain) {
             return wrap(new TransactionHandler());
+        }
+    },
+    /**
+     * Security processor wrapper.
+     */
+    SECURITY {
+        @Override
+        public Processor create(ServiceDomain domain) {
+            return wrap(new SecurityHandler(domain.getServiceSecurity()));
         }
     },
     /**

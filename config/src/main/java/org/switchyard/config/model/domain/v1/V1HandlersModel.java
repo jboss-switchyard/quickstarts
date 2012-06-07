@@ -32,7 +32,7 @@ import org.switchyard.config.model.domain.HandlersModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
- * A version 1 PropertiesModel.
+ * A version 1 HandlersModel.
  */
 public class V1HandlersModel extends BaseModel implements HandlersModel {
 

@@ -16,38 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
 package org.switchyard.handlers;
 
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
-import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
 import org.switchyard.policy.Policy;
 import org.switchyard.policy.PolicyUtil;
 
-
 /**
  * Generic policy handler which simply checks to make sure all required policies
- * have been provided.  This handler should always occur *after* the other 
+ * have been provided.  This handler should always occur *after* the other
  * policy handlers in the handler chain, which allows policy-specific handlers
  * to adjust the set of provided/required policies as appropriate.
  */
-public class PolicyHandler implements ExchangeHandler {
-    
-    private static Logger _log = Logger.getLogger(PolicyHandler.class);
-    
+public class PolicyHandler extends BaseHandler {
+
     /**
      * Create a new PolicyHandler.
      */
-    public PolicyHandler() {
-        
-    }
-    
+    public PolicyHandler() {}
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handleMessage(Exchange exchange) throws HandlerException {
         // only execute on the IN phase
@@ -64,16 +60,11 @@ public class PolicyHandler implements ExchangeHandler {
                 Iterator<Policy> missing = required.iterator();
                 String requires = missing.next().getName();
                 while (missing.hasNext()) {
-                    requires += ", " + missing.next().getName();
+                    requires += " " + missing.next().getName();
                 }
-                throw new HandlerException("Required policy has not been provided: " + requires);
+                throw new HandlerException("Required policies have not been provided: " + requires);
             }
-            
         }
     }
-    
-    @Override
-    public void handleFault(Exchange exchange) {
-        
-    }
+
 }
