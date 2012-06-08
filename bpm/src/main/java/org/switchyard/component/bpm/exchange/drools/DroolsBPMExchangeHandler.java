@@ -50,6 +50,8 @@ import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
 import org.drools.KnowledgeBase;
 import org.drools.agent.KnowledgeAgent;
+import org.drools.event.rule.DefaultAgendaEventListener;
+import org.drools.event.rule.RuleFlowGroupActivatedEvent;
 import org.drools.logger.KnowledgeRuntimeLogger;
 import org.drools.persistence.jpa.JPAKnowledgeService;
 import org.drools.runtime.Environment;
@@ -440,6 +442,12 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
                 } else {
                     _ksession = _kbase.newStatefulKnowledgeSession(_ksessionConfig, _environment);
                 }
+                _ksession.addEventListener(new DefaultAgendaEventListener() {
+                    @Override
+                    public void afterRuleFlowGroupActivated(RuleFlowGroupActivatedEvent event) {
+                        ((StatefulKnowledgeSession)event.getKnowledgeRuntime()).fireAllRules();
+                    }
+                });
                 _klogger = Audits.getLogger(_audit, _ksession);
                 TaskManager tm = new DroolsTaskManager(_ksession);
                 for (TaskHandlerModel thm : _taskHandlerModels) {

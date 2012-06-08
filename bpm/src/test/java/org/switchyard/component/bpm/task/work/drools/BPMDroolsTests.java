@@ -40,6 +40,7 @@ import org.switchyard.BaseHandler;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
+import org.switchyard.Message;
 import org.switchyard.Property;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
@@ -50,6 +51,7 @@ import org.switchyard.component.bpm.config.model.v1.V1TaskHandlerModel;
 import org.switchyard.component.bpm.exchange.BPMExchangeHandler;
 import org.switchyard.component.bpm.exchange.BPMExchangeHandlerFactory;
 import org.switchyard.component.bpm.task.work.SwitchYardServiceTaskHandler;
+import org.switchyard.config.model.resource.v1.V1ResourceModel;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.test.SwitchYardRunner;
 
@@ -64,6 +66,7 @@ public class BPMDroolsTests {
     private static final String TEST_CALL_SERVICE = "org/switchyard/component/bpm/drools/BPMDroolsTests-CallService.bpmn";
     private static final String TEST_CONTROL_PROCESS = "org/switchyard/component/bpm/drools/BPMDroolsTests-ControlProcess.bpmn";
     private static final String TEST_REUSE_HANDLER = "org/switchyard/component/bpm/drools/BPMDroolsTests-ReuseHandler.bpmn";
+    private static final String TEST_RULES_FIRED = "org/switchyard/component/bpm/drools/BPMDroolsTests-RulesFired.bpmn";
 
     private ServiceDomain serviceDomain;
 
@@ -72,7 +75,7 @@ public class BPMDroolsTests {
         final Holder holder = new Holder();
         serviceDomain.registerService(new QName("CallService"), new InOnlyService(), new BaseHandler(){
             public void handleMessage(Exchange exchange) throws HandlerException {
-                holder.value = "message handled";
+                holder.setValue("message handled");
             }
         });
         serviceDomain.registerServiceReference(new QName("CallService"), new InOnlyService());
@@ -86,7 +89,7 @@ public class BPMDroolsTests {
         ksession.startProcess("CallService");
         ksession.halt();
         ksession.dispose();
-        Assert.assertEquals("message handled", holder.value);
+        Assert.assertEquals("message handled", holder.getValue());
     }
 
     @Test
@@ -94,7 +97,7 @@ public class BPMDroolsTests {
         final Holder holder = new Holder();
         serviceDomain.registerService(new QName("CallService"), new InOnlyService(), new BaseHandler(){
             public void handleMessage(Exchange exchange) throws HandlerException {
-                holder.value = "message handled";
+                holder.setValue("message handled");
             }
         });
         serviceDomain.registerServiceReference(new QName("CallService"), new InOnlyService());
@@ -123,7 +126,7 @@ public class BPMDroolsTests {
         exchange.send(exchange.createMessage());
         handler.stop();
         handler.destroy();
-        Assert.assertEquals("message handled", holder.value);
+        Assert.assertEquals("message handled", holder.getValue());
     }
 
     @Test
@@ -142,12 +145,39 @@ public class BPMDroolsTests {
         Context context = exchange.getContext();
         context.setProperty(ACTION_TYPE_VAR, START_PROCESS, EXCHANGE);
         exchange.send(exchange.createMessage());
-        Assert.assertEquals("handler executed", ReuseHandler._holder.value);
-        ReuseHandler._holder.value = null;
+        Assert.assertEquals("handler executed", ReuseHandler._holder.getValue());
+        ReuseHandler._holder.setValue(null);
     }
 
-    static final class Holder {
-        public Object value;
+    @Test
+    public void testRulesFired() throws Exception {
+        final Holder holder = new Holder();
+        QName qname = new QName("RulesFired");
+        BPMExchangeHandler handler = BPMExchangeHandlerFactory.instance().newBPMExchangeHandler(serviceDomain);
+        serviceDomain.registerService(qname, new InOnlyService(), handler);
+        ServiceReference serviceRef = serviceDomain.registerServiceReference(qname, new InOnlyService());
+        BPMComponentImplementationModel bci_model = new V1BPMComponentImplementationModel();
+        bci_model.setProcessDefinition(new SimpleResource(TEST_RULES_FIRED, "BPMN2"));
+        org.switchyard.common.io.resource.ResourceType drlType =  org.switchyard.common.io.resource.ResourceType.valueOf("DRL");
+        bci_model.addResource(new V1ResourceModel(BPMComponentImplementationModel.DEFAULT_NAMESPACE).setLocation(TEST_RULES_FIRED.replaceFirst(".bpmn", ".drl")).setType(drlType));
+        bci_model.setProcessId(qname.getLocalPart());
+        bci_model.setMessageContentInName("holder");
+        handler.init(qname, bci_model);
+        handler.start();
+        Exchange exchange = serviceRef.createExchange();
+        Context context = exchange.getContext();
+        context.setProperty(ACTION_TYPE_VAR, START_PROCESS, EXCHANGE);
+        Message message = exchange.createMessage();
+        message.setContent(holder);
+        exchange.send(message);
+        Assert.assertEquals("rules fired", holder.getValue());
+    }
+
+    public static final class Holder {
+        private String _value;
+        public String getValue() { return _value; }
+        public void setValue(String value) { _value = value; }
+        public String toString() { return _value; }
     }
 
 }
