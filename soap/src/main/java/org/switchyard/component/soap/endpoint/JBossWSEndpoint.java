@@ -22,6 +22,7 @@ package org.switchyard.component.soap.endpoint;
 import java.util.Map;
 import java.util.ServiceLoader;
 
+import org.apache.log4j.Logger;
 import org.jboss.wsf.spi.classloading.ClassLoaderProvider;
 import org.jboss.wsf.spi.deployment.Endpoint;
 import org.jboss.wsf.spi.metadata.webservices.WebservicesMetaData;
@@ -38,6 +39,7 @@ import org.switchyard.component.soap.WebServicePublishException;
  */
 public class JBossWSEndpoint implements WSEndpoint {
 
+    private static final Logger LOG = Logger.getLogger(JBossWSEndpoint.class);
     private static final String HOST = "default-host";
     private static final EndpointPublisherFactory FACTORY;
 
@@ -66,12 +68,12 @@ public class JBossWSEndpoint implements WSEndpoint {
      */
     public void publish(String contextRoot, Map<String, String> urlPatternToClassNameMap, WebservicesMetaData metadata, InboundHandler handler) throws Exception {
         _context = _publisher.publish(contextRoot, Thread.currentThread().getContextClassLoader(), urlPatternToClassNameMap, metadata);
-         for (Endpoint ep : _context.getEndpoints()) {
+        for (Endpoint ep : _context.getEndpoints()) {
             BaseWebService wsProvider = (BaseWebService) ep.getInstanceProvider().getInstance(BaseWebService.class.getName()).getValue();
             wsProvider.setInvocationClassLoader(Thread.currentThread().getContextClassLoader());
             // Hook the handler
             wsProvider.setConsumer(handler);
-         }
+        }
     }
 
     /**
@@ -80,10 +82,10 @@ public class JBossWSEndpoint implements WSEndpoint {
     public void stop() {
         if (_context != null && _publisher != null) {
             try {
-               //undeploy endpoints
-               _publisher.destroy(_context);
+                //undeploy endpoints
+                _publisher.destroy(_context);
             } catch (Exception e) {
-               e.printStackTrace();
+                LOG.error(e);
             }
         }
     }
