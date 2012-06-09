@@ -146,7 +146,14 @@ public class SwitchYardComponentService implements Service<List<Component>> {
 
     @Override
     public void stop(StopContext context) {
-
+        for (Component component : _components) {
+            LOG.info("Stopping SwitchYard component " + component.getName());
+            try {
+                component.destroy();
+            }  catch (Exception e) {
+                LOG.error("Unable to stop " + component.getName(), e);
+            }
+        }
     }
 
     /**
