@@ -31,6 +31,7 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.composite.BindingModel;
+import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
@@ -71,6 +72,24 @@ public abstract class V1BaseCamelModelTest<T extends CamelBindingModel> {
         final SwitchYardModel model = new ModelPuller<SwitchYardModel>().pull(in);
         final List<CompositeServiceModel> services = model.getComposite().getServices();
         final CompositeServiceModel compositeServiceModel = services.get(0);
+        final List<BindingModel> bindings = compositeServiceModel.getBindings();
+        return (T) bindings.get(0);
+    }
+
+    /**
+     * Lookup camel reference binding model in SCA configuration and use Switchard
+     * model as root and return first element from it.
+     * 
+     * @param config Configuration location.
+     * @return Camel binding.
+     * @throws Exception In case of any problems exception is not handled.
+     */
+    @SuppressWarnings("unchecked")
+    protected T getFirstCamelReferenceBinding(final String config) throws Exception {
+        final InputStream in = Classes.getResourceAsStream(config, getClass());
+        final SwitchYardModel model = new ModelPuller<SwitchYardModel>().pull(in);
+        final List<CompositeReferenceModel> services = model.getComposite().getReferences();
+        final CompositeReferenceModel compositeServiceModel = services.get(0);
         final List<BindingModel> bindings = compositeServiceModel.getBindings();
         return (T) bindings.get(0);
     }

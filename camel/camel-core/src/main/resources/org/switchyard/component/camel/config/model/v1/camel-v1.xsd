@@ -279,6 +279,20 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
 
+    <element name="binding.sql" type="camel:CamelSqlBindingType" substitutionGroup="swyd:binding.switchyard"/>
+    <complexType name="CamelSqlBindingType">
+        <complexContent>
+            <extension base="camel:BaseCamelBinding">
+                <sequence>
+                    <element name="query" type="string" />
+                    <element name="dataSourceRef" type="string" />
+                    <element name="batch" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="placeholder" type="string" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <complexType name="CamelOperationSelectorType">
       <complexContent>
          <extension base="sca:OperationSelectorType">
