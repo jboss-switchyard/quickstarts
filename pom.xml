@@ -869,6 +869,11 @@
       </dependency>
       <dependency>
          <groupId>org.switchyard.quickstarts</groupId>
+         <artifactId>switchyard-quickstart-camel-sql-binding</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.switchyard.quickstarts</groupId>
          <artifactId>switchyard-quickstart-camel-rest-binding</artifactId>
          <version>${project.version}</version>
       </dependency>
