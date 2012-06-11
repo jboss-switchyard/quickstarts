@@ -1202,6 +1202,11 @@
       </dependency>
       <dependency>
          <groupId>org.apache.camel</groupId>
+         <artifactId>camel-sql</artifactId>
+         <version>${version.camel}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.camel</groupId>
          <artifactId>camel-ftp</artifactId>
          <version>${version.camel}</version>
       </dependency>
@@ -1646,6 +1651,11 @@
       <dependency>
          <groupId>org.springframework</groupId>
          <artifactId>spring-tx</artifactId>
+         <version>${version.spring}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.springframework</groupId>
+         <artifactId>spring-jdbc</artifactId>
          <version>${version.spring}</version>
       </dependency>
       <dependency>
