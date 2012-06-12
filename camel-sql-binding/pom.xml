@@ -10,14 +10,12 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>switchyard-quickstart-camel-netty-binding</artifactId>
-  <name>Quickstart : Camel Netty Binding</name>
+  <artifactId>switchyard-quickstart-camel-sql-binding</artifactId>
+  <name>Quickstart : Camel SQL Binding</name>
 
   <properties>
     <switchyard.version>0.5.0-SNAPSHOT</switchyard.version>
-    <maven.exec.mainClass>org.switchyard.quickstarts.camel.netty.binding.TCPClient</maven.exec.mainClass>
   </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.switchyard</groupId>
@@ -38,6 +36,11 @@
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-test</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
        <groupId>org.hamcrest</groupId>
@@ -72,25 +75,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <configuration>
-            <executable>java</executable>
-            <classpathScope>test</classpathScope>
-            <mainClass>${maven.exec.mainClass}</mainClass>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>udp</id>
-
-      <properties>
-        <maven.exec.mainClass>org.switchyard.quickstarts.camel.netty.binding.UDPClient</maven.exec.mainClass>
-      </properties>
-    </profile>
-  </profiles>
 </project>
