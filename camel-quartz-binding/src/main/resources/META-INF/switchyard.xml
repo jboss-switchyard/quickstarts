@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0"
     xmlns:camel="urn:switchyard-component-camel:config:1.0"
     xmlns:bean="urn:switchyard-component-bean:config:1.0">

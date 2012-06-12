@@ -1,0 +1,137 @@
+/* 
+ * JBoss, Home of Professional Open Source 
+ * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * as indicated by the @author tags. All rights reserved. 
+ * See the copyright.txt in the distribution for a 
+ * full listing of individual contributors.
+ *
+ * This copyrighted material is made available to anyone wishing to use, 
+ * modify, copy, or redistribute it subject to the terms and conditions 
+ * of the GNU Lesser General Public License, v. 2.1. 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A 
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details. 
+ * You should have received a copy of the GNU Lesser General Public License, 
+ * v.2.1 along with this distribution; if not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ */
+package org.switchyard.quickstarts.camel.sql;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+
+import javax.naming.InitialContext;
+import javax.naming.Name;
+import javax.naming.NamingException;
+
+import junit.framework.Assert;
+
+import org.h2.jdbcx.JdbcDataSource;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.switchyard.Message;
+import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
+import org.switchyard.test.Invoker;
+import org.switchyard.test.MockInitialContextFactory;
+import org.switchyard.test.ServiceOperation;
+import org.switchyard.test.SwitchYardRunner;
+import org.switchyard.test.SwitchYardTestCaseConfig;
+import org.switchyard.test.mixins.CDIMixIn;
+
+/**
+ * SQL binding test - checks insert and retrieve operation.
+ * 
+ * @author Lukasz Dywicki
+ */
+@SwitchYardTestCaseConfig(
+    config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
+    mixins = {CDIMixIn.class},
+    scanners = BeanSwitchYardScanner.class
+)
+@RunWith(SwitchYardRunner.class)
+public class CamelSqlBindingTest {
+
+    private static Connection connection;
+
+    private final static String PAYLOAD = "Keith";
+
+    @ServiceOperation("GreetingService")
+    private Invoker invoker;
+
+    @BeforeClass
+    public static void startUp() throws Exception {
+        MockInitialContextFactory.install();
+
+        InitialContext initialContext = new InitialContext();
+
+        JdbcDataSource ds = new JdbcDataSource();
+        ds.setURL("jdbc:h2:target/camel-sql-quickstart");
+        ds.setUser("sa");
+        ds.setPassword("sa");
+        connection = ds.getConnection();
+        bind(initialContext, "java:jboss/datasources/GreetDS", ds);
+
+        String createStatement = "CREATE TABLE greetings ("
+            + "id INT PRIMARY KEY AUTO_INCREMENT, "
+            + "name VARCHAR(255) "
+        + ");";
+
+        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS greetings");
+        connection.createStatement().executeUpdate(createStatement);
+    }
+
+    @Before
+    public void before() throws Exception {
+        connection.createStatement().execute("TRUNCATE TABLE greetings");
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldRetrieveGreetings() throws Exception {
+        PreparedStatement statement = connection.prepareStatement("INSERT INTO greetings (name) VALUES (?)");
+        statement.setString(1, PAYLOAD);
+        assertEquals(1, statement.executeUpdate());
+
+        Message message = invoker.operation("retrieve").sendInOut(null);
+        List<Map<String, Object>> content = message.getContent(List.class);
+
+        Map<String, Object> firstRow = content.iterator().next();
+        Assert.assertEquals(PAYLOAD, firstRow.get("name"));
+    }
+
+    @Test
+    public void shouldStoreGreet() throws Exception {
+        invoker.operation("store").sendInOnly(PAYLOAD);
+
+        ResultSet result = connection.createStatement().executeQuery("SELECT * FROM greetings");
+        assertTrue(result.next());
+        assertEquals(PAYLOAD, result.getString("name"));
+        result.close();
+    }
+
+
+    @AfterClass
+    public static void shutDown() throws SQLException {
+        if (!connection.isClosed()) {
+            connection.close();
+        }
+        MockInitialContextFactory.clear();
+    }
+
+    private static void bind(InitialContext initialContext, String name, Object object) throws NamingException {
+        Name jndiName = initialContext.getNameParser("").parse(name);
+        initialContext.bind(name, object);
+        initialContext.bind(jndiName, object);
+    }
+}

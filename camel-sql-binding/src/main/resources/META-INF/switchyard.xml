@@ -1,0 +1,59 @@
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+    xmlns:camel="urn:switchyard-component-camel:config:1.0"
+    xmlns:swyd="urn:switchyard-config:switchyard:1.0"
+    xmlns:bean="urn:switchyard-component-bean:config:1.0">
+
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+        name="camel-sql-binding" targetNamespace="urn:switchyard-quickstart:camel-sql-binding:0.1.0">
+    
+        <component name="CamelComponent">
+            <service name="GreetingService">
+                <interface.java interface="org.switchyard.quickstarts.camel.sql.binding.GreetingService" />
+            </service>
+
+            <camel:implementation.camel>
+                <route xmlns="http://camel.apache.org/schema/spring">
+                    <log message="Input: ${body}" />
+                    <choice>
+                        <when>
+                            <simple>${body} == null</simple>
+                            <log message="Retrieve" />
+                            <to uri="switchyard://GreetingsDatabaseRetrieve"/>
+                        </when>
+                        <otherwise>
+                            <log message="Store" />
+                            <to uri="switchyard://GreetingsDatabaseStore"/>
+                        </otherwise>
+                    </choice>
+                    <log message="Output: ${body}" />
+                </route>
+            </camel:implementation.camel>
+
+            <reference name="GreetingsDatabaseStore">
+                <swyd:interface.esb inputType="java:java.lang.String" remotable="false" />
+            </reference>
+            <reference name="GreetingsDatabaseRetrieve">
+                <swyd:interface.esb inputType="java:java.lang.String" outputType="java:java.util.List" remotable="false" />
+            </reference>
+        </component>
+
+        <reference name="GreetingsDatabaseStore" multiplicity="0..1" promote="GreetingsDatabaseStore">
+            <swyd:interface.esb inputType="java:java.lang.String" remotable="false" />
+            <camel:binding.sql>
+                <camel:operationSelector operationName="store" />
+                <camel:query>INSERT INTO greetings (name) VALUES (#)</camel:query>
+                <camel:dataSourceRef>java:jboss/datasources/GreetDS</camel:dataSourceRef>
+            </camel:binding.sql>
+        </reference>
+
+        <reference name="GreetingsDatabaseRetrieve" multiplicity="0..1" promote="GreetingsDatabaseRetrieve">
+            <swyd:interface.esb inputType="java:java.lang.String" outputType="java:java.util.List" remotable="false" />
+            <camel:binding.sql>
+                <camel:operationSelector operationName="retrieve" />
+                <camel:query>SELECT * FROM greetings</camel:query>
+                <camel:dataSourceRef>java:jboss/datasources/GreetDS</camel:dataSourceRef>
+            </camel:binding.sql>
+        </reference>
+    </composite>
+
+</switchyard>
