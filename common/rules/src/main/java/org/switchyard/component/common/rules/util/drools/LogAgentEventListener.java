@@ -30,22 +30,19 @@ public class LogAgentEventListener extends LogSystemEventListener implements Age
 
     private static final Logger LOGGER = Logger.getLogger(LogAgentEventListener.class);
 
-    private String _messagePrefix;
-
     /**
      * Default constructor.
      */
     public LogAgentEventListener() {
-        this(null);
+        super();
     }
 
     /**
-     * Construction specifying the agent name.
+     * Constructor specifying an agent name.
      * @param agentName the agent name
      */
     public LogAgentEventListener(String agentName) {
-        super();
-        setAgentName(agentName);
+        super(getAgentPrefix(agentName));
     }
 
     /**
@@ -60,20 +57,15 @@ public class LogAgentEventListener extends LogSystemEventListener implements Age
      * {@inheritDoc}
      */
     @Override
-    protected final String getMessagePrefix() {
-        return _messagePrefix;
+    public final void setAgentName(String agentName) {
+        setMessagePrefix(getAgentPrefix(agentName));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void setAgentName(String agentName) {
-        _messagePrefix = new StringBuilder()
-            .append("Agent: ")
+    private static String getAgentPrefix(String agentName) {
+        return new StringBuilder()
+            .append("Agent[")
             .append(String.valueOf(agentName))
-            .append(" , ")
-            .append(super.getMessagePrefix())
+            .append("]")
             .toString();
     }
 

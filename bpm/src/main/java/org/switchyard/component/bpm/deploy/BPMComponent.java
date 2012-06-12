@@ -57,8 +57,8 @@ public class BPMComponent extends BaseComponent {
         super.destroy();
     }
 
-    /* (non-Javadoc)
-     * @see org.switchyard.deploy.Component#createActivator(org.switchyard.ServiceDomain)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public Activator createActivator(ServiceDomain domain) {

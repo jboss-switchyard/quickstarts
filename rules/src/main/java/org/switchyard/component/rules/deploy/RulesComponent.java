@@ -57,6 +57,9 @@ public class RulesComponent extends BaseComponent {
         super.destroy();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Activator createActivator(ServiceDomain domain) {
         RulesActivator activator = new RulesActivator();

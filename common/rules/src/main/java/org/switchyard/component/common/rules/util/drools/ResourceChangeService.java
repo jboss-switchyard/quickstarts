@@ -21,9 +21,8 @@ package org.switchyard.component.common.rules.util.drools;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.log4j.Logger;
 import org.drools.SystemEventListener;
 import org.drools.SystemEventListenerFactory;
 import org.drools.agent.impl.PrintStreamSystemEventListener;
@@ -31,6 +30,7 @@ import org.drools.core.util.DelegatingSystemEventListener;
 import org.drools.io.ResourceChangeScanner;
 import org.drools.io.ResourceChangeScannerConfiguration;
 import org.drools.io.ResourceFactory;
+import org.switchyard.common.lang.Strings;
 import org.switchyard.deploy.Component;
 
 /**
@@ -40,23 +40,36 @@ import org.switchyard.deploy.Component;
  */
 public final class ResourceChangeService {
 
-    // TODO: make configurable
-    private static final String DROOLS_RESOURCE_SCANNER_INTERVAL = "drools.resource.scanner.interval";
-
-    private static Set<String> _componentNames = Collections.synchronizedSet(new HashSet<String>());
-    private static Lock _componentNamesLock = new ReentrantLock();
-
-    private static SystemEventListener _originalSystemEventListener = null;
-    private static Boolean _componentStarted = false;
+    private static final Logger LOGGER = Logger.getLogger(ResourceChangeService.class);
 
     /**
-     * If this is the first component calling start, then actually start the change services.
+     * The "drools.resource.scanner.interval" property.
+     */
+    public static final String DROOLS_RESOURCE_SCANNER_INTERVAL = "drools.resource.scanner.interval";
+    // TODO: Make the above and all properties listed in KnowledgeAgentConfigurationImpl configurable in SwitchYard
+
+    private static Set<String> _names = Collections.synchronizedSet(new HashSet<String>());
+    private static SystemEventListener _originalSystemEventListener = null;
+    private static boolean _running = false;
+
+    /**
+     * If this is the first component calling start, then start the change services.
      * @param component the component
      */
     public static void start(Component component) {
-        _componentNamesLock.lock();
+        start(component.getName());
+    }
+
+    /**
+     * If this is the first time calling start, then start the change services.
+     * @param name the name to keep track of
+     */
+    public static synchronized void start(final String name) {
         try {
-            if (_componentNames.size() == 0) {
+            if (_names.size() == 0 && !_running) {
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Starting resource change service...");
+                }
                 // ORDER IS IMPORTANT!
                 // 1) set the system event listener to our implementation
                 _originalSystemEventListener = SystemEventListenerFactory.getSystemEventListener();
@@ -72,40 +85,53 @@ public final class ResourceChangeService {
                 ResourceFactory.getResourceChangeNotifierService().start();
                 // 3) start the scanner
                 ResourceChangeScanner rcs = ResourceFactory.getResourceChangeScannerService();
-                ResourceChangeScannerConfiguration rcs_conf = rcs.newResourceChangeScannerConfiguration();
-                // TODO: make configurable
-                rcs_conf.setProperty(DROOLS_RESOURCE_SCANNER_INTERVAL, "60");
-                rcs.configure(rcs_conf);
+                String drsi = Strings.trimToNull(System.getProperty(DROOLS_RESOURCE_SCANNER_INTERVAL));
+                if (drsi != null && !drsi.equals("60")) {
+                    ResourceChangeScannerConfiguration rcs_conf = rcs.newResourceChangeScannerConfiguration();
+                    rcs_conf.setProperty(DROOLS_RESOURCE_SCANNER_INTERVAL, drsi);
+                    rcs.configure(rcs_conf);
+                }
                 rcs.start();
-                if (!_componentStarted) {
-                    _componentStarted = true;
+                _running = true;
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Resource change service started.");
                 }
             }
         } finally {
-            _componentNames.add(component.getName());
-            _componentNamesLock.unlock();
+            _names.add(name);
         }
     }
 
     /**
-     * If this is the last component calling stop, then actually stop the change services.
+     * If this is the last component calling stop, then stop the change services.
      * @param component the component
      */
     public static void stop(Component component) {
-        _componentNamesLock.lock();
-        try {
-            _componentNames.remove(component.getName());
-            if ((_componentNames.size() == 0) && _componentStarted) {
-                // ORDER IS IMPORTANT!
-                // 1) stop the scanner
-                ResourceFactory.getResourceChangeScannerService().stop();
-                // 2) stop the notifier
-                ResourceFactory.getResourceChangeNotifierService().stop();
-                // 3) set the system event listener back to the original implementation
-                SystemEventListenerFactory.setSystemEventListener(_originalSystemEventListener);
+        stop(component.getName());
+    }
+
+    /**
+     * If this is the last time calling stop, then stop the change services.
+     * @param name the name to keep track of
+     */
+    public static synchronized void stop(final String name) {
+        _names.remove(name);
+        if (_names.size() == 0 && _running) {
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Stopping resource change service...");
             }
-        } finally {
-            _componentNamesLock.unlock();
+            // ORDER IS IMPORTANT!
+            // 1) stop the scanner
+            ResourceFactory.getResourceChangeScannerService().stop();
+            // 2) stop the notifier
+            ResourceFactory.getResourceChangeNotifierService().stop();
+            // 3) set the system event listener back to the original implementation
+            SystemEventListenerFactory.setSystemEventListener(_originalSystemEventListener);
+            _originalSystemEventListener = null;
+            _running = false;
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Resource change service stopped.");
+            }
         }
     }
 

@@ -23,12 +23,14 @@ import java.io.StringReader;
 import java.net.URL;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.drools.ChangeSet;
 import org.drools.xml.ChangeSetSemanticModule;
 import org.drools.xml.SemanticModules;
 import org.drools.xml.XmlChangeSetReader;
 import org.switchyard.common.io.resource.Resource;
 import org.switchyard.common.type.Classes;
+import org.switchyard.config.ConfigurationPuller;
 import org.switchyard.exception.SwitchYardException;
 import org.xml.sax.SAXException;
 
@@ -38,6 +40,8 @@ import org.xml.sax.SAXException;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public final class ChangeSets {
+
+    private static final Logger LOGGER = Logger.getLogger(ChangeSets.class);
 
     /**
      * Creates a new ChangeSet given the specified list of resources.
@@ -56,13 +60,24 @@ public final class ChangeSets {
      */
     public static ChangeSet newChangeSet(List<? extends Resource> resources, ClassLoader loader) {
         StringBuilder xml = new StringBuilder();
-        xml.append("<change-set xmlns='http://drools.org/drools-5.0/change-set' xmlns:xs='http://www.w3.org/2001/XMLSchema-instance' xs:schemaLocation='http://drools.org/drools-5.0/change-set http://anonsvn.jboss.org/repos/labs/labs/jbossrules/trunk/drools-api/src/main/resources/change-set-1.0.0.xsd'>");
         if (loader == null) {
-            loader = Classes.getClassLoader(ChangeSet.class);
+            loader = Classes.getClassLoader(ChangeSets.class);
         }
-        for (Resource resource : resources) {
-            addResourceXML(resource, xml, loader);
+        xml.append("<change-set xmlns=\"http://drools.org/drools-5.0/change-set\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema-instance\" xs:schemaLocation=\"http://drools.org/drools-5.0/change-set https://raw.github.com/droolsjbpm/droolsjbpm-knowledge/master/knowledge-api/src/main/resources/change-set-1.0.0.xsd\">");
+        xml.append("<add>");
+        if (resources != null) {
+            for (Resource resource : resources) {
+                // TODO: decision table configuration requires a bit more...
+                if (resource != null) {
+                    URL url = resource.getLocationURL(loader);
+                    org.drools.builder.ResourceType type = Resources.convert(resource.getType());
+                    if (url != null && type != null) {
+                        xml.append(String.format("<resource source=\"%s\" type=\"%s\"/>", url, type.getName()));
+                    }
+                }
+            }
         }
+        xml.append("</add>");
         xml.append("</change-set>");
         return newChangeSet(xml.toString(), loader);
     }
@@ -83,6 +98,16 @@ public final class ChangeSets {
      * @return the ChangeSet
      */
     public static ChangeSet newChangeSet(String xml, ClassLoader loader) {
+        if (LOGGER.isDebugEnabled()) {
+            String xcs;
+            try {
+                // try to make the xml "pretty"
+                xcs = new ConfigurationPuller().pull(new StringReader(xml)).toString();
+            } catch (IOException ioe) {
+                xcs = xml;
+            }
+            LOGGER.debug("newChangeSet:\n" + xcs);
+        }
         SemanticModules semanticModules = new SemanticModules();
         semanticModules.addSemanticModule(new ChangeSetSemanticModule());
         XmlChangeSetReader reader = new XmlChangeSetReader(semanticModules);
@@ -99,23 +124,6 @@ public final class ChangeSets {
         }
     }
 
-    private static void addResourceXML(Resource resource, StringBuilder xml, ClassLoader loader) {
-        // TODO: decision table configuration requires a bit more...
-        if (resource != null) {
-            URL url = resource.getLocationURL(loader);
-            if (url != null) {
-                org.drools.builder.ResourceType type = Resources.convert(resource.getType());
-                if (type != null) {
-                    xml.append("<add><resource source='");
-                    xml.append(url);
-                    xml.append("' type='");
-                    xml.append(type.getName());
-                    xml.append("'/></add>");
-                }
-            }
-        }
-    }
-
-    private ChangeSets() {};
+    private ChangeSets() {}
 
 }

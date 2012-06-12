@@ -20,6 +20,7 @@ package org.switchyard.component.common.rules.util.drools;
 
 import org.apache.log4j.Logger;
 import org.drools.SystemEventListener;
+import org.switchyard.common.lang.Strings;
 
 /**
  * A SystemEventListener that uses log4j.
@@ -30,14 +31,41 @@ public class LogSystemEventListener implements SystemEventListener {
 
     private static final Logger LOGGER = Logger.getLogger(LogSystemEventListener.class);
 
-    private static final String MESSAGE_PREFIX = "Message: ";
-    private static final String OBJECT_PREFIX = " , Object: ";
-
+    private String _messagePrefix;
 
     /**
      * Default constructor.
      */
-    public LogSystemEventListener() {}
+    public LogSystemEventListener() {
+        this(null);
+    }
+
+    /**
+     * Constructor specifying a message prefix.
+     * @param messagePrefix the message prefix
+     */
+    public LogSystemEventListener(String messagePrefix) {
+        setMessagePrefix(messagePrefix);
+    }
+
+    /**
+     * Gets the message prefix.
+     * @return the message prefix
+     */
+    protected final String getMessagePrefix() {
+        return _messagePrefix;
+    }
+
+    /**
+     * Sets the message prefix.
+     * @param messagePrefix the message prefix
+     * @return this instance (useful for chaining)
+     */
+    protected final LogSystemEventListener setMessagePrefix(String messagePrefix) {
+        messagePrefix = Strings.trimToNull(messagePrefix);
+        _messagePrefix = messagePrefix != null ? messagePrefix + ": " : "";
+        return this;
+    }
 
     /**
      * Gets the correct logger.
@@ -45,14 +73,6 @@ public class LogSystemEventListener implements SystemEventListener {
      */
     protected Logger getLogger() {
         return LOGGER;
-    }
-
-    /**
-     * Gets the correct message prefix.
-     * @return the message prefix
-     */
-    protected String getMessagePrefix() {
-        return MESSAGE_PREFIX;
     }
 
     private final String format(String message) {
@@ -64,10 +84,10 @@ public class LogSystemEventListener implements SystemEventListener {
 
     private final String format(String message, Object object) {
         return new StringBuilder()
-            .append(getMessagePrefix())
-            .append(String.valueOf(message))
-            .append(OBJECT_PREFIX)
+            .append(format(message))
+            .append(" - Object[")
             .append(String.valueOf(object))
+            .append("]")
             .toString();
     }
 
