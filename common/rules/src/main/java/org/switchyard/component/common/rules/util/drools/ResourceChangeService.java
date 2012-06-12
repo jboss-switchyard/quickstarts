@@ -47,6 +47,7 @@ public final class ResourceChangeService {
     private static Lock _componentNamesLock = new ReentrantLock();
 
     private static SystemEventListener _originalSystemEventListener = null;
+    private static Boolean _componentStarted = false;
 
     /**
      * If this is the first component calling start, then actually start the change services.
@@ -76,6 +77,9 @@ public final class ResourceChangeService {
                 rcs_conf.setProperty(DROOLS_RESOURCE_SCANNER_INTERVAL, "60");
                 rcs.configure(rcs_conf);
                 rcs.start();
+                if (!_componentStarted) {
+                    _componentStarted = true;
+                }
             }
         } finally {
             _componentNames.add(component.getName());
@@ -91,7 +95,7 @@ public final class ResourceChangeService {
         _componentNamesLock.lock();
         try {
             _componentNames.remove(component.getName());
-            if (_componentNames.size() == 0) {
+            if ((_componentNames.size() == 0) && _componentStarted) {
                 // ORDER IS IMPORTANT!
                 // 1) stop the scanner
                 ResourceFactory.getResourceChangeScannerService().stop();
