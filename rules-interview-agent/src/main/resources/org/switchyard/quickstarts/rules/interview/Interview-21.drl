@@ -21,7 +21,7 @@ global java.lang.String service
 
 rule "Is of valid age"
     when
-        $a : Applicant( age > 17 )
+        $a : Applicant( age > 20 )
     then
         $a.setValid( true );
         System.out.println("********** " + service + ": " + $a.getName() + " is a valid applicant. **********");
@@ -29,7 +29,7 @@ end
 
 rule "Is not of valid age"
     when
-        $a : Applicant( age < 18 )
+        $a : Applicant( age < 21 )
     then
         $a.setValid( false );
         System.err.println("********** " + service + ": " + $a.getName() + " is NOT a valid applicant. **********");

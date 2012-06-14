@@ -25,7 +25,7 @@ Expected Output:
 ================
 ```
 Running org.switchyard.quickstarts.rules.interview.RulesInterviewTest  
-********** Interview: David is a valid applicant. **********  
+********** Interview: Twenty is a valid applicant. **********  
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.131 sec`  
 ```
 
