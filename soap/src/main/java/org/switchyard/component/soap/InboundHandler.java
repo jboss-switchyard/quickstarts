@@ -63,7 +63,7 @@ public class InboundHandler extends BaseServiceHandler {
 
     private static final Logger LOGGER = Logger.getLogger(InboundHandler.class);
     private static final long DEFAULT_TIMEOUT = 15000;
-    private static final String MESSAGE_NAME = "MESSAGE_NAME";
+    private static final String MESSAGE_NAME = "org.switchyard.soap.messageName";
 
     private final SOAPBindingModel _config;
     
