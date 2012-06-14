@@ -27,9 +27,11 @@ import org.switchyard.component.rules.Rules;
  */
 @Rules(value=Interview.class,
        agent=true,
-       resources={"/org/switchyard/quickstarts/rules/interview/Interview.drl"},
+       resources={InterviewRules.PKG},
        globals={@Mapping(expression="exchange.serviceName.localPart", variable="service")})
 public interface InterviewRules extends Interview {
+
+    static String PKG = "/org/switchyard/quickstarts/rules/interview/Interview.pkg";
 
     @Override
     @Execute

@@ -37,7 +37,7 @@ public class RulesInterviewTest {
 
     @Test
     public void testInterviewRules() {
-        verify.sendInOnly(new Applicant("David", 39));
+        verify.sendInOnly(new Applicant("Twenty", 20));
     }
 
 }

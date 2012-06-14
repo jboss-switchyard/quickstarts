@@ -55,6 +55,7 @@
         <artifactId>exec-maven-plugin</artifactId>
         <executions>
           <execution>
+            <id>drl2pkg</id>
             <phase>compile</phase>
             <goals>
               <goal>java</goal>
@@ -65,6 +66,36 @@
                 <argument>write</argument>
                 <argument>${basedir}/src/main/resources/org/switchyard/quickstarts/rules/interview/Interview.drl</argument>
                 <argument>${basedir}/target/classes/org/switchyard/quickstarts/rules/interview/Interview.pkg</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>drl2pkg-18</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>org.switchyard.component.common.rules.util.drools.Packages</mainClass>
+              <arguments>
+                <argument>write</argument>
+                <argument>${basedir}/src/main/resources/org/switchyard/quickstarts/rules/interview/Interview-18.drl</argument>
+                <argument>${basedir}/target/classes/org/switchyard/quickstarts/rules/interview/Interview-18.pkg</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>drl2pkg-21</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>org.switchyard.component.common.rules.util.drools.Packages</mainClass>
+              <arguments>
+                <argument>write</argument>
+                <argument>${basedir}/src/main/resources/org/switchyard/quickstarts/rules/interview/Interview-21.drl</argument>
+                <argument>${basedir}/target/classes/org/switchyard/quickstarts/rules/interview/Interview-21.pkg</argument>
               </arguments>
             </configuration>
           </execution>
