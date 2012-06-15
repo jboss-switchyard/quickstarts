@@ -61,19 +61,34 @@ public interface InboundInteractionModel extends Model {
     InboundInteractionModel setInboundOperation(final InboundOperationModel operation);
     
     /**
-     * get Endpoint class name.
+     * get Endpoint class name. TODO remove
      * 
      * @return Endpoint class name
      */
-    String getEndpointClassName();
+    //String getEndpointClassName();
     
     /**
-     * set Endpoint class name.
+     * set Endpoint class name. TODO remove
      * 
      * @param endpoint Endpoint class name to set
      * @return {@link InboundInteractionModel} to suport method chaining
      */
-    InboundInteractionModel setEndpointClassName(final String endpoint);
+    //InboundInteractionModel setEndpointClassName(final String endpoint);
+
+    /**
+     * get Endpoint model.
+     * 
+     * @return {@link EndpointModel}
+     */
+    EndpointModel getEndpoint();
+    
+    /**
+     * set Endpoint model.
+     * 
+     * @param endpoint {@link EndpointModel} to set
+     * @return {@link InboundInteractionModel} to support method chaining
+     */
+    InboundInteractionModel setEndpoint(final EndpointModel endpoint);
 
     /**
      * get transacted.

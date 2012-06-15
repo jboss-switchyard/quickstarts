@@ -58,4 +58,19 @@ public interface OutboundConnectionModel extends Model {
      * @return {@link OutboundConnectionModel} to support method chaining
      */
     OutboundConnectionModel setConnection(final ConnectionModel model);
+    
+    /**
+     * get whether the interaction with EIS is managed or not.
+     * 
+     * @return true if managed
+     */
+    boolean isManaged();
+    
+    /**
+     * set whether the interaction with EIS is managed or not.
+     * 
+     * @param managed true if managed
+     * @return {@link OutboundConnectionModel} to support method chaining
+     */
+    OutboundConnectionModel setManaged(final boolean managed);
 }

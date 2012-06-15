@@ -45,7 +45,7 @@ public class V1JCABindingModelOutboundTest {
         final ModelPuller<SwitchYardModel> modelPuller = new ModelPuller<SwitchYardModel>();
         final URL xml = getClass().getResource("jca-outbound-binding.xml");
         final SwitchYardModel switchYardModel = modelPuller.pull(xml);
-        jbm = (JCABindingModel) switchYardModel.getComposite().getServices().get(0).getBindings().get(0);
+        jbm = (JCABindingModel) switchYardModel.getComposite().getReferences().get(0).getBindings().get(0);
     }
     
     @Test
@@ -74,5 +74,6 @@ public class V1JCABindingModelOutboundTest {
         Assert.assertEquals("operationName", jbm.getOutboundInteraction().getOperation().getName());
         Assert.assertNotNull(jbm.getOutboundInteraction().getOperation().getInteractionSpec());
         Assert.assertEquals("value5", jbm.getOutboundInteraction().getOperation().getInteractionSpec().getProperty("prop5"));
+        Assert.assertEquals("value6", jbm.getOutboundInteraction().getProcessor().getProperty("prop6"));
     }
 }

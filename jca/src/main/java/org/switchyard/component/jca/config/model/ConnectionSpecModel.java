@@ -27,4 +27,19 @@ package org.switchyard.component.jca.config.model;
  *
  */
 public interface ConnectionSpecModel extends BasePropertyContainerModel {
+
+    /**
+     * Get connection spec class name.
+     * 
+     * @return connection spec class name
+     */
+    String getConnectionSpecClassName();
+    
+    /**
+     * Set connection spec class name.
+     * 
+     * @param name connection spec class name
+     * @return {@ConnectionSpecModel} to support method chaining
+     */
+    ConnectionSpecModel setConnectionSpecClassName(String name);
 }

@@ -48,7 +48,7 @@ public class JMSMessageComposer extends BaseMessageComposer<Message> {
         
         final org.switchyard.Message message = create ? exchange.createMessage() : exchange.getMessage();
         getContextMapper().mapFrom(source, exchange.getContext());
-        message.setContent(bytearr);
+        message.setContent(new String(bytearr));
         return message;
     }
 
@@ -59,7 +59,7 @@ public class JMSMessageComposer extends BaseMessageComposer<Message> {
     public Message decompose(Exchange exchange, Message target) throws Exception {
         BytesMessage targetBytes = (BytesMessage)target;
         getContextMapper().mapTo(exchange.getContext(), target);
-        final byte[] content = exchange.getMessage().getContent(byte[].class);
+        final byte[] content = exchange.getMessage().getContent(String.class).getBytes();
         targetBytes.writeBytes(content);
         return target;
     }

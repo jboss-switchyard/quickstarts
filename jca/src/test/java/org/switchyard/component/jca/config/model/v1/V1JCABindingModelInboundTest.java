@@ -68,7 +68,8 @@ public class V1JCABindingModelInboundTest {
         Assert.assertNotNull(jbm.getInboundInteraction().getListener());
         Assert.assertEquals("javax.jms.MessageListener", jbm.getInboundInteraction().getListener().getClassName());
         Assert.assertEquals("onMessage", jbm.getInboundInteraction().getInboundOperation().getName());
-        Assert.assertEquals("org.switchyard.component.jca.endpoint.JMSEndpoint", jbm.getInboundInteraction().getEndpointClassName());
+        Assert.assertEquals("org.switchyard.component.jca.endpoint.JMSEndpoint", jbm.getInboundInteraction().getEndpoint().getEndpointClassName());
+        Assert.assertEquals("value2", jbm.getInboundInteraction().getEndpoint().getProperty("prop2"));
         Assert.assertEquals(true, jbm.getInboundInteraction().isTransacted());
     }
     

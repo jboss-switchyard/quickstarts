@@ -27,4 +27,19 @@ package org.switchyard.component.jca.config.model;
  *
  */
 public interface ConnectionModel extends BasePropertyContainerModel {
+
+    /**
+     * Set connection factory JNDI name.
+     * 
+     * @return connection factory JNDI name
+     */
+    String getConnectionFactoryJNDIName();
+    
+    /**
+     * Set connection factory JNDI name.
+     * 
+     * @param name connection factory JNDI name
+     * @return {@link ConnectionModel} to support method chaining
+     */
+    ConnectionModel setConnectionFactoryJNDIName(String name);
 }

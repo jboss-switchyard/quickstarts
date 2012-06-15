@@ -2,8 +2,6 @@ package org.switchyard.component.jca.deploy;
 
 import java.util.Map;
 
-import javax.resource.cci.MappedRecord;
-
 import org.switchyard.component.bean.Service;
 
 @Service(JCACCIService.class)

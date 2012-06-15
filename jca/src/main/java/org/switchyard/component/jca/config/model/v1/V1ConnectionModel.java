@@ -53,4 +53,15 @@ public class V1ConnectionModel extends V1BasePropertyContainerModel implements C
         super(config, desc);
     }
 
+    @Override
+    public String getConnectionFactoryJNDIName() {
+        return getModelAttribute(JCAConstants.JNDI_NAME);
+    }
+
+    @Override
+    public ConnectionModel setConnectionFactoryJNDIName(String name) {
+        setModelAttribute(JCAConstants.JNDI_NAME, name);
+        return this;
+    }
+
 }

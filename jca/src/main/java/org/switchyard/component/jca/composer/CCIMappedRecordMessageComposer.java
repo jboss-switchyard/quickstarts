@@ -32,7 +32,7 @@ import org.switchyard.component.common.composer.BaseMessageComposer;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  */
-public class CCIMessageComposer extends BaseMessageComposer<MappedRecord> {
+public class CCIMappedRecordMessageComposer extends BaseMessageComposer<MappedRecord> {
 
     /**
      * {@inheritDoc}

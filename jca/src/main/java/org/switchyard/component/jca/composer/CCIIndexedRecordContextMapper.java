@@ -18,7 +18,7 @@
  */
 package org.switchyard.component.jca.composer;
 
-import javax.resource.cci.MappedRecord;
+import javax.resource.cci.IndexedRecord;
 
 import org.switchyard.Context;
 import org.switchyard.Property;
@@ -27,18 +27,18 @@ import org.switchyard.component.jca.JCAConstants;
 import org.switchyard.component.common.composer.BaseContextMapper;
 
 /**
- * CCIContextMapper.
+ * ContextMapper for CCI IndexedRecord.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  */
-public class CCIContextMapper extends BaseContextMapper<MappedRecord> {
+public class CCIIndexedRecordContextMapper extends BaseContextMapper<IndexedRecord> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void mapFrom(MappedRecord source, Context context) throws Exception {
+    public void mapFrom(IndexedRecord source, Context context) throws Exception {
         String recordName = source.getRecordName();
         if (recordName != null) {
             context.setProperty(JCAConstants.CCI_RECORD_NAME_KEY, recordName, Scope.EXCHANGE)
@@ -56,7 +56,7 @@ public class CCIContextMapper extends BaseContextMapper<MappedRecord> {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void mapTo(Context context, MappedRecord target) throws Exception {
+    public void mapTo(Context context, IndexedRecord target) throws Exception {
         for (Property property : context.getProperties(Scope.EXCHANGE)) {
             String name = property.getName();
             Object value = property.getValue();
@@ -69,7 +69,7 @@ public class CCIContextMapper extends BaseContextMapper<MappedRecord> {
             } else if (name.equals(JCAConstants.CCI_RECORD_SHORT_DESC_KEY)) {
                 target.setRecordShortDescription(value.toString());
             } else if (matches(name)) {
-                    target.put(name, value);
+                    target.add(name + "=" + value);
             }
         }
     }

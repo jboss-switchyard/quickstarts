@@ -27,7 +27,7 @@ package org.switchyard.component.jca;
 public final class JCAConstants {
 
     /** The "jca" namespace. */
-    public static final String DEFAULT_NAMESPACE = "http://docs.oasis-open.org/ns/opencsa/sca/200912/binding-jca";
+    public static final String DEFAULT_NAMESPACE = "urn:switchyard-component-jca:config:1.0";
     
     /** component name. */
     public static final String COMPONENT_NAME = "JCAComponent";
@@ -68,25 +68,35 @@ public final class JCAConstants {
     public static final String INBOUND_OPERATION = "inboundOperation";
     /** selected operation. */
     public static final String SELECTED_OPERATION = "selectedOperation";
-    /** endpoint class. */
-    public static final String ENDPOINT_CLASS = "endpointClass";
+    /** endpoint. */
+    public static final String ENDPOINT = "endpoint";
     /** transacted. */
     public static final String TRANSACTED = "transacted";
-    
+    /** processor. */
+    public static final String PROCESSOR = "processor";
+
     /** property. */
     public static final String PROPERTY = "property";
     /** name. */
     public static final String NAME = "name";
     /** value. */
     public static final String VALUE = "value";
-    
+
     /** default message listener class. */
     public static final String DEFAULT_LISTENER_CLASS = "javax.resource.cci.MessageListener";
-    
+
     /** CCI record name key. */
     public static final String CCI_RECORD_NAME_KEY = "recordName";
     /** CCI record short description key. */
     public static final String CCI_RECORD_SHORT_DESC_KEY = "recordShortDescription";
+
+    /** managed. */
+    public static final String MANAGED = "managed";
+    /** jndi name. */
+    public static final String JNDI_NAME = "jndiName";
+    /** type. */
+    public static final String TYPE = "type";
+
 
     private JCAConstants() {}
 

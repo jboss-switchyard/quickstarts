@@ -73,4 +73,19 @@ public interface OutboundInteractionModel extends Model {
      * @return {@link OutboundInteractionModel} to support method chaining
      */
     OutboundInteractionModel setOperation(final OperationModel model);
+
+    /**
+     * get Processor model.
+     * 
+     * @return {@link ProcessorModel}
+     */
+    ProcessorModel getProcessor();
+    
+    /**
+     * set Processor model.
+     * 
+     * @param model {@link ProcessorModel} to set
+     * @return {@link OutboundInteractionModel} to support method chaining
+     */
+    OutboundInteractionModel setProcessor(ProcessorModel model);
 }

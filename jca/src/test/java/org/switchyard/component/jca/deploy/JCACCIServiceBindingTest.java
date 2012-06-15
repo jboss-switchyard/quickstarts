@@ -23,19 +23,21 @@ package org.switchyard.component.jca.deploy;
 
 import javax.resource.cci.MappedRecord;
 import javax.resource.cci.Record;
+import javax.resource.cci.RecordFactory;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.SwitchYardTestKit;
 import org.switchyard.test.mixins.CDIMixIn;
 import org.switchyard.test.mixins.jca.JCAMixIn;
-import org.switchyard.test.mixins.jca.JCAMixInConfig;
+import org.switchyard.test.mixins.jca.MockRecordFactory;
 import org.switchyard.test.mixins.jca.MockResourceAdapter;
+import org.switchyard.test.mixins.jca.ResourceAdapterConfig;
 
 /**
  * Functional test for {@link JCAActivator}.
@@ -45,16 +47,25 @@ import org.switchyard.test.mixins.jca.MockResourceAdapter;
  */
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(config = "switchyard-inbound-cci-test.xml", mixins = {CDIMixIn.class, JCAMixIn.class})
-@JCAMixInConfig(mockResourceAdapter = "mock-ra.rar")
 public class JCACCIServiceBindingTest  {
+    
+    private static final String ADAPTER_NAME = "myeis-ra.rar";
+    private static final String JNDI_CONNECTION_FACTORY = "java:jboss/MyEISConnectionFactory";
+    private static final String MCF_CLASS = "org.switchyard.test.mixins.jca.MockManagedConnectionFactory";
     
     private SwitchYardTestKit _testKit;
     private JCAMixIn _jcaMixIn;
     private MockResourceAdapter _adapter;
+    private RecordFactory _recordFactory;
     
-    @Before
-    public void getMixIns() {
-        _adapter = _jcaMixIn.getMockResourceAdapter();
+    @BeforeDeploy
+    public void before() {
+        ResourceAdapterConfig ra = new ResourceAdapterConfig(ResourceAdapterConfig.ResourceAdapterType.MOCK)
+                                                .setName(ADAPTER_NAME)
+                                                .addConnectionDefinition(JNDI_CONNECTION_FACTORY, MCF_CLASS);
+        _jcaMixIn.deployResourceAdapters(ra);
+        _adapter = (MockResourceAdapter) _jcaMixIn.getResourceAdapter(ADAPTER_NAME);
+        _recordFactory = new MockRecordFactory();
     }
 
     @Test
@@ -63,7 +74,7 @@ public class JCACCIServiceBindingTest  {
         mockHandler.forwardInToOut();
 
         _adapter.fireCreateEndpoint();
-        MappedRecord input = _jcaMixIn.createCCIMappedRecord();
+        MappedRecord input = _recordFactory.createMappedRecord("testInflowCCI input");
         input.put("input", "Hello World!");
         Record result = _adapter.fireDelivery(input);
         _adapter.fireRelease();
@@ -80,7 +91,7 @@ public class JCACCIServiceBindingTest  {
 
         _adapter.fireCreateEndpoint();
         _adapter.fireBeforeDelivery();
-        MappedRecord input1 = _jcaMixIn.createCCIMappedRecord();
+        MappedRecord input1 = _recordFactory.createMappedRecord("testInflowCCIWithBeforeAfterDelivery input1");
         input1.put("input", "Hello1");
         Record result1 = _adapter.fireDelivery(input1);
         _adapter.fireAfterDelivery();
@@ -97,7 +108,7 @@ public class JCACCIServiceBindingTest  {
 
         _adapter.fireCreateEndpoint();
 
-        MappedRecord input1 = _jcaMixIn.createCCIMappedRecord();
+        MappedRecord input1 = _recordFactory.createMappedRecord("testInflowCCIReuseReleasedEndpoint input1");
         input1.put("input", "Hello1");
         Record result1 = _adapter.fireDelivery(input1);
 
@@ -107,7 +118,7 @@ public class JCACCIServiceBindingTest  {
 
         _adapter.fireRelease();
         
-        MappedRecord input2 = _jcaMixIn.createCCIMappedRecord();
+        MappedRecord input2 = _recordFactory.createMappedRecord("testInflowCCIReuseReleasedEndpoint input2");
         input2.put("input", "Hello2");
         Record result2 = _adapter.fireDelivery(input2);
         
@@ -124,9 +135,9 @@ public class JCACCIServiceBindingTest  {
 
         _adapter.fireCreateEndpoint();
         _adapter.fireBeforeDelivery();
-        MappedRecord input1 = _jcaMixIn.createCCIMappedRecord();
+        MappedRecord input1 = _recordFactory.createMappedRecord("testInflowCCIErrorMultipleDelivery input1");
         input1.put("input", "Hello1");
-        MappedRecord input2 = _jcaMixIn.createCCIMappedRecord();
+        MappedRecord input2 = _recordFactory.createMappedRecord("testInflowCCIErrorMultipleDelivery input2");
         input2.put("input", "Hello2");
         Record result1 = _adapter.fireDelivery(input1);
         Record result2 = _adapter.fireDelivery(input2);
@@ -138,7 +149,7 @@ public class JCACCIServiceBindingTest  {
         mockHandler.forwardInToOut();
 
         _adapter.fireCreateEndpoint();
-        MappedRecord input1 = _jcaMixIn.createCCIMappedRecord();
+        MappedRecord input1 = _recordFactory.createMappedRecord("testInflowCCIErrorAfterDeliveryWithoutBefore input1");
         input1.put("input", "Hello1");
         Record result1 = _adapter.fireDelivery(input1);
         _adapter.fireAfterDelivery();
@@ -151,7 +162,7 @@ public class JCACCIServiceBindingTest  {
 
         _adapter.fireCreateEndpoint();
         _adapter.fireBeforeDelivery();
-        MappedRecord input1 = _jcaMixIn.createCCIMappedRecord();
+        MappedRecord input1 = _recordFactory.createMappedRecord("testInflowCCIErrorBeforeDeliveryWithoutPreviousAfter input1");
         input1.put("input", "Hello1");
         Record result1 = _adapter.fireDelivery(input1);
         

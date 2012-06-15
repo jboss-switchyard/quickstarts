@@ -25,7 +25,7 @@ import javax.transaction.TransactionManager;
 import org.switchyard.component.jca.endpoint.AbstractInflowEndpoint;
 
 /**
- * JCA deployment metadata.
+ * JCA inflow deployment metadata.
  *
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  */

@@ -33,6 +33,7 @@ import javax.transaction.TransactionManager;
 import org.switchyard.component.jca.JCAConstants;
 import org.switchyard.component.jca.config.model.JCABindingModel;
 import org.switchyard.component.jca.endpoint.AbstractInflowEndpoint;
+import org.switchyard.component.jca.processor.AbstractOutboundProcessor;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.deploy.BaseActivator;
 import org.switchyard.deploy.ServiceHandler;
@@ -111,13 +112,15 @@ public class JCAActivator extends BaseActivator {
         String raName = jcaconfig.getInboundConnection().getResourceAdapter().getName();
         String raid = ConnectorServices.getRegisteredResourceAdapterIdentifier(stripDotRarSuffix(raName));
         if (raid == null) {
-            throw new IllegalArgumentException("ResourceAdapter " + raName + " couldn't be found.");
+            throw new IllegalArgumentException("Unique key for ResourceAdapter '" + raName + "' couldn't be found.");
         }
         
+        Properties raProps = jcaconfig.getInboundConnection().getResourceAdapter().getProperties();
         Properties activationProps = jcaconfig.getInboundConnection().getActivationSpec().getProperties();
         String listener = jcaconfig.getInboundInteraction().getListener().getClassName();
         String operationName = jcaconfig.getInboundInteraction().getInboundOperation().getName();
-        String endpointClassName = jcaconfig.getInboundInteraction().getEndpointClassName(); 
+        String endpointClassName = jcaconfig.getInboundInteraction().getEndpoint().getEndpointClassName(); 
+        Properties endpointProps = jcaconfig.getInboundInteraction().getEndpoint().getProperties();
         
         Class<?> listenerType = null;
         try {
@@ -143,8 +146,14 @@ public class JCAActivator extends BaseActivator {
             
             Activation activation = listenerContainer.getActivation();
             activationSpec = activation.createInstance();
-            PropertyEditors.mapJavaBeanProperties(activationSpec, activationProps);
+            if (!activationProps.isEmpty()) {
+                PropertyEditors.mapJavaBeanProperties(activationSpec, activationProps);
+            }
+
             resourceAdapter = _raRepository.getResourceAdapter(raid);
+            if (!raProps.isEmpty()) {
+                PropertyEditors.mapJavaBeanProperties(resourceAdapter, raProps);
+            }
         } catch (Exception e) {
             throw new IllegalArgumentException("Couldn't acquire the ResourceAdapter '" + raName + "'.", e);
         }
@@ -154,12 +163,16 @@ public class JCAActivator extends BaseActivator {
          try {
              endpointClass = (Class<?>)_appClassLoader.loadClass(endpointClassName);
              endpoint = (AbstractInflowEndpoint) endpointClass.newInstance();
+             if (!endpointProps.isEmpty()) {
+                 PropertyEditors.mapJavaBeanProperties(endpoint, endpointProps);
+             }
          } catch (Exception e) {
              throw new IllegalArgumentException("Endpoint class '" + endpointClassName + "' couldn't be instantiated.", e);
          }
 
          boolean transacted = jcaconfig.getInboundInteraction().isTransacted();
-         endpoint.setOperationName(operationName)
+         endpoint.setApplicationClassLoader(_appClassLoader)
+                     .setOperationName(operationName)
                      .setServiceDomain(getServiceDomain())
                      .setServiceQName(name)
                      .setDeliveryTransacted(transacted)
@@ -178,8 +191,62 @@ public class JCAActivator extends BaseActivator {
     }
     
     private OutboundHandler handleReferenceBinding(JCABindingModel config, QName name) {
-        // TODO support reference binding on JCA outbound
-        return new OutboundHandler();
+        JCABindingModel jcaconfig = (JCABindingModel)config;
+        boolean managed = jcaconfig.getOutboundConnection().isManaged();
+        if (!managed) {
+            throw new IllegalArgumentException("Non-Managed Scenario is not supported yet");
+        }
+        
+        Properties raProps = jcaconfig.getOutboundConnection().getResourceAdapter().getProperties();
+        String raName = jcaconfig.getOutboundConnection().getResourceAdapter().getName();
+        String raid = ConnectorServices.getRegisteredResourceAdapterIdentifier(stripDotRarSuffix(raName));
+        if (raid == null) {
+            throw new IllegalArgumentException("Unique key for ResourceAdapter '" + raName + "' couldn't be found.");
+        }
+        
+        ResourceAdapter resourceAdapter = null;
+        try {
+            resourceAdapter = _raRepository.getResourceAdapter(raid);
+            if (!raProps.isEmpty()) {
+                PropertyEditors.mapJavaBeanProperties(resourceAdapter, raProps);
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Couldn't acquire the ResourceAdapter '" + raName + "'.", e);
+            
+        }
+
+        Properties processorProps = jcaconfig.getOutboundInteraction().getProcessor().getProperties();
+        AbstractOutboundProcessor processor = null;
+        String processorClassName = jcaconfig.getOutboundInteraction().getProcessor().getProcessorClassName();
+        Class<?> processorClass = null;
+        try {
+            processorClass = (Class<?>)_appClassLoader.loadClass(processorClassName);
+            processor = (AbstractOutboundProcessor) processorClass.newInstance();
+            if (!processorProps.isEmpty()) {
+                PropertyEditors.mapJavaBeanProperties(processor, processorProps);
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Outbound Processor class '" + processorClassName + "' couldn't be instantiated.", e);
+        }
+        
+        String cfJndiName = jcaconfig.getOutboundConnection().getConnection().getConnectionFactoryJNDIName();
+        Properties connProps = jcaconfig.getOutboundConnection().getConnection().getProperties();
+        processor.setApplicationClassLoader(_appClassLoader)
+                    .setMCFProperties(connProps)
+                    .setConnectionFactoryJNDIName(cfJndiName);
+
+        if (jcaconfig.getOutboundInteraction().getConnectionSpec() != null) {
+            String connSpecClassName = jcaconfig.getOutboundInteraction().getConnectionSpec().getConnectionSpecClassName();
+            Properties connSpecProps = jcaconfig.getOutboundInteraction().getConnectionSpec().getProperties();
+            processor.setConnectionSpec(connSpecClassName, connSpecProps);
+        }
+        if (jcaconfig.getOutboundInteraction().getInteractionSpec() != null) {
+            String interactSpecClassName = jcaconfig.getOutboundInteraction().getInteractionSpec().getInteractionSpecClassName();
+            Properties interactSpecProps = jcaconfig.getOutboundInteraction().getInteractionSpec().getProperties();
+            processor.setInteractionSpec(interactSpecClassName, interactSpecProps);
+        }
+
+        return new OutboundHandler(processor);
     }
     
     private String stripDotRarSuffix(final String raName) {

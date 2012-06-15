@@ -35,11 +35,13 @@ public class JMSEndpoint extends AbstractInflowEndpoint implements MessageListen
     private MessageComposer<Message> _composer;
     
     @Override
+    public void initialize() {
+        super.initialize();
+        _composer = getMessageComposer(Message.class);
+    }
+    
+    @Override
     public void onMessage(Message message) {
-        
-        if (_composer == null) {
-            _composer = getMessageComposer(Message.class);
-        }
         
         final Exchange exchange = createExchange();
         try {

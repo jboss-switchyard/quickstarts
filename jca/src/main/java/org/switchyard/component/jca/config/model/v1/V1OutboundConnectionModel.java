@@ -78,4 +78,20 @@ public class V1OutboundConnectionModel extends BaseModel implements OutboundConn
         return this;
     }
 
+    @Override
+    public boolean isManaged() {
+        String managed = getModelAttribute(JCAConstants.MANAGED);
+        if (managed == null) {
+            setManaged(true);
+            managed = "true";
+        }
+        
+        return Boolean.parseBoolean(managed);
+    }
+    
+    @Override
+    public OutboundConnectionModel setManaged(boolean managed) {
+        setModelAttribute(JCAConstants.MANAGED, Boolean.toString(managed));
+        return this;
+    }
 }

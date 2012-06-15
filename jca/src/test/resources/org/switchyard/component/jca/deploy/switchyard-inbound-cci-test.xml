@@ -21,17 +21,17 @@
     
         <!-- Service binding example -->
         <sca:service name="JCACCIService" promote="ComponentName/JCACCIService">
-            <binding.jca xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912/binding-jca">
+            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
                <inboundConnection>
-                   <resourceAdapter name="mock-ra.rar" type="javax.resource.spi.ResourceAdapter">
-                   </resourceAdapter>
-                   <activationSpec type="javax.resource.spi.ActivationSpec">
-                   </activationSpec>
+                   <resourceAdapter name="myeis-ra.rar"/>
+                   <activationSpec/>
                </inboundConnection>
                <inboundInteraction>
                    <listener>javax.resource.cci.MessageListener</listener>
                    <inboundOperation name="onMessage" selectedOperation="onMessage"/>
-                   <endpointClass>org.switchyard.component.jca.endpoint.CCIEndpoint</endpointClass>
+                   <endpoint type="org.switchyard.component.jca.endpoint.CCIEndpoint">
+                       <property name="connectionFactoryJNDIName" value="java:jboss/MyEISConnectionFactory"/>
+                   </endpoint>
                    <transacted>true</transacted>
                </inboundInteraction>
             </binding.jca>

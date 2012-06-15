@@ -31,6 +31,7 @@ import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.TransactionPolicy;
 
 /**
+ * Abstract message endpoint class for JCA inflow.
  * 
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  *
@@ -43,6 +44,7 @@ public abstract class AbstractInflowEndpoint {
     private ServiceReference _serviceRef;
     private String _operationName;
     private boolean _transacted = false;
+    private ClassLoader _appClassLoader;
     
     /**
      * initialize.
@@ -169,6 +171,26 @@ public abstract class AbstractInflowEndpoint {
         return this;
     }
     
+    /**
+     * set application class loader.
+     * 
+     * @param loader application class loader
+     * @return this instance
+     */
+    public AbstractInflowEndpoint setApplicationClassLoader(ClassLoader loader) {
+        _appClassLoader = loader;
+        return this;
+    }
+    
+    /**
+     * get application class loader.
+     * 
+     * @return application class loader
+     */
+    public ClassLoader getApplicationClassLoader() {
+        return _appClassLoader;
+    }
+    
     protected Exchange createExchange(ExchangeHandler handler) {
         if (_serviceRef == null) {
             throw new IllegalStateException("initialize() must be called before exchange.");
@@ -191,4 +213,5 @@ public abstract class AbstractInflowEndpoint {
     protected <T> MessageComposer<T> getMessageComposer(Class<T> clazz) {
         return JCAComposition.getMessageComposer(clazz);
     }
+
 }

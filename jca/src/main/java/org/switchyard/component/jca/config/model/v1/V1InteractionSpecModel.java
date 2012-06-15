@@ -53,4 +53,15 @@ public class V1InteractionSpecModel extends V1BasePropertyContainerModel impleme
         super(config, desc);
     }
 
+    @Override
+    public String getInteractionSpecClassName() {
+        return getModelAttribute(JCAConstants.TYPE);
+    }
+
+    @Override
+    public InteractionSpecModel setInteractionSpecClassName(String name) {
+        setModelAttribute(JCAConstants.TYPE, name);
+        return this;
+    }
+
 }

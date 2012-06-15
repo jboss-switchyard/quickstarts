@@ -23,6 +23,7 @@ package org.switchyard.component.jca.config.model.v1;
 import javax.xml.namespace.QName;
 
 import org.switchyard.component.jca.JCAConstants;
+import org.switchyard.component.jca.config.model.EndpointModel;
 import org.switchyard.component.jca.config.model.InboundInteractionModel;
 import org.switchyard.component.jca.config.model.InboundOperationModel;
 import org.switchyard.component.jca.config.model.ListenerModel;
@@ -79,21 +80,13 @@ public class V1InboundInteractionModel extends BaseModel implements InboundInter
     }
 
     @Override
-    public String getEndpointClassName() {
-        Configuration config = getModelConfiguration().getFirstChild(JCAConstants.ENDPOINT_CLASS);
-        return config.getValue();
+    public EndpointModel getEndpoint() {
+        return (EndpointModel) getFirstChildModel(JCAConstants.ENDPOINT);
     }
 
     @Override
-    public InboundInteractionModel setEndpointClassName(String endpoint) {
-        Configuration config = getModelConfiguration().getFirstChild(JCAConstants.ENDPOINT_CLASS);
-        if (config != null) {
-            config.setValue(endpoint);
-        } else {
-            V1NameValueModel model = new V1NameValueModel(JCAConstants.ENDPOINT_CLASS);
-            model.setValue(endpoint);
-            setChildModel(model);
-        }
+    public InboundInteractionModel setEndpoint(EndpointModel endpoint) {
+        setChildModel(endpoint);
         return this;
     }
 

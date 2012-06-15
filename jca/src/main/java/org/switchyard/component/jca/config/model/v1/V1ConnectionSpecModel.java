@@ -53,4 +53,15 @@ public class V1ConnectionSpecModel extends V1BasePropertyContainerModel implemen
         super(config, desc);
     }
 
+    @Override
+    public String getConnectionSpecClassName() {
+        return getModelAttribute(JCAConstants.TYPE);
+    }
+
+    @Override
+    public ConnectionSpecModel setConnectionSpecClassName(String name) {
+        setModelAttribute(JCAConstants.TYPE, name);
+        return this;
+    }
+
 }

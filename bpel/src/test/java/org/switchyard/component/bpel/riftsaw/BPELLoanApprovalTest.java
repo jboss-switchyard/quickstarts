@@ -39,6 +39,7 @@ public class BPELLoanApprovalTest {
     public void init() {
     	try {
     		_testKit = new SwitchYardTestKit(this);
+    		_testKit.start();
     	} catch(Exception e) {
     		e.printStackTrace();
     		fail("Unable to initialize testkit: "+ e);

@@ -16,35 +16,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.jca.composer;
+package org.switchyard.component.jca.processor.cci;
 
-import javax.resource.cci.MappedRecord;
+import javax.resource.cci.Connection;
+import javax.resource.cci.IndexedRecord;
+import javax.resource.cci.Interaction;
+import javax.resource.cci.InteractionSpec;
+import javax.resource.cci.RecordFactory;
 
-import org.switchyard.component.common.composer.MessageComposer;
-import org.switchyard.component.common.composer.MessageComposerFactory;
+import org.switchyard.Exchange;
+import org.switchyard.Message;
+import org.switchyard.component.jca.composer.JCAComposition;
 
 /**
- * CCIMessageComposerFactory.
- *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * IndexedRecordHandler.
+ * 
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
+ *
  */
-public class CCIMessageComposerFactory extends MessageComposerFactory<MappedRecord> {
+public class IndexedRecordHandler extends RecordHandler<IndexedRecord> {
 
     /**
-     * {@inheritDoc}
+     * Constructor.
      */
-    @Override
-    public Class<MappedRecord> getTargetClass() {
-        return MappedRecord.class;
+    public IndexedRecordHandler() {
+        setMessageComposer(JCAComposition.getMessageComposer(IndexedRecord.class));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public MessageComposer<MappedRecord> newMessageComposerDefault() {
-        return new CCIMessageComposer();
+    public Message handle(Exchange exchange, RecordFactory factory, InteractionSpec interactionSpec, Connection conn, Interaction interact) throws Exception {
+        IndexedRecord record = factory.createIndexedRecord(IndexedRecordHandler.class.getName());
+        IndexedRecord outRecord = (IndexedRecord) interact.execute(interactionSpec, getMessageComposer().decompose(exchange, record));
+        return getMessageComposer().compose(outRecord, exchange, true);
     }
-
 }

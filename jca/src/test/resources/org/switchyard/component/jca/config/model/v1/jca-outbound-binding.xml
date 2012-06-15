@@ -15,34 +15,37 @@
 <switchyard 
     xmlns="urn:switchyard-config:switchyard:1.0"
     xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
-    xmlns:jca="http://docs.oasis-open.org/ns/opencsa/sca/200912/binding-jca" 
+    xmlns:jca="urn:switchyard-component-jca:config:1.0" 
     xmlns:bean="urn:switchyard-component-bean:config:1.0">
 
     <sca:composite name="JCAJMSTest" targetNamespace="urn:jca:test:1.0">
-        <sca:service name="JCAJMSService" promote="ComponentName/JCAJMSService">
-            <binding.jca xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912/binding-jca">
+        <sca:reference name="JCAJMSService" promote="ComponentName/JCAJMSService">
+            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
                <outboundConnection>
-                   <resourceAdapter name="hornetq-ra.rar" type="javax.resource.spi.ResourceAdapter">
+                   <resourceAdapter name="hornetq-ra.rar">
                        <property name="prop1" value="value1"/>
                    </resourceAdapter>
-                   <connection type="javax.resource.spi.ManagedConnectionFactory">
+                   <connection>
                        <property name="prop2" value="value2"/>
                    </connection>
                </outboundConnection>
                <outboundInteraction>
-                   <connectionSpec type="javax.resource.spi.ConnectionSpec">
+                   <connectionSpec>
                        <property name="prop3" value="value3"/>
                    </connectionSpec>
-                   <interactionSpec type="javax.resource.spi.InteractionSpec">
+                   <interactionSpec>
                        <property name="prop4" value="value4"/>
                    </interactionSpec>
                    <operation name="operationName">
-                        <interactionSpec type="javax.resource.spi.InteractionSpec">
+                        <interactionSpec>
                             <property name="prop5" value="value5"/>
                         </interactionSpec>
                    </operation>
+                   <processor type="org.switchyard.component.jca.processor.CCIProcessor">
+                       <property name="prop6" value="value6"/>
+                   </processor>
                </outboundInteraction>
             </binding.jca>
-        </sca:service>
+        </sca:reference>
     </sca:composite>
 </switchyard>

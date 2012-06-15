@@ -18,33 +18,33 @@
  */
 package org.switchyard.component.jca.composer;
 
-import javax.resource.cci.MappedRecord;
+import javax.resource.cci.IndexedRecord;
 
 import org.switchyard.component.common.composer.ContextMapper;
 import org.switchyard.component.common.composer.ContextMapperFactory;
 
 /**
- * CCIContextMapperFactory.
+ * ContextMapperFactory for CCI IndexedRecord.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  */
-public class CCIContextMapperFactory extends ContextMapperFactory<MappedRecord> {
+public class CCIIndexedRecordContextMapperFactory extends ContextMapperFactory<IndexedRecord> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Class<MappedRecord> getTargetClass() {
-        return MappedRecord.class;
+    public Class<IndexedRecord> getTargetClass() {
+        return IndexedRecord.class;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ContextMapper<MappedRecord> newContextMapperDefault() {
-        return new CCIContextMapper();
+    public ContextMapper<IndexedRecord> newContextMapperDefault() {
+        return new CCIIndexedRecordContextMapper();
     }
 
 }

@@ -27,6 +27,7 @@ import org.switchyard.component.jca.config.model.ConnectionSpecModel;
 import org.switchyard.component.jca.config.model.InteractionSpecModel;
 import org.switchyard.component.jca.config.model.OperationModel;
 import org.switchyard.component.jca.config.model.OutboundInteractionModel;
+import org.switchyard.component.jca.config.model.ProcessorModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
@@ -44,7 +45,10 @@ public class V1OutboundInteractionModel extends BaseModel implements OutboundInt
      */
     public V1OutboundInteractionModel() {
         super(new QName(JCAConstants.DEFAULT_NAMESPACE, JCAConstants.OUTBOUND_INTERACTION));
-        setModelChildrenOrder(JCAConstants.CONNECTION_SPEC, JCAConstants.INTERACTION_SPEC, JCAConstants.OPERATION);
+        setModelChildrenOrder(JCAConstants.CONNECTION_SPEC,
+                                JCAConstants.INTERACTION_SPEC,
+                                JCAConstants.OPERATION,
+                                JCAConstants.PROCESSOR);
     }
     
     /**
@@ -86,6 +90,17 @@ public class V1OutboundInteractionModel extends BaseModel implements OutboundInt
 
     @Override
     public OutboundInteractionModel setOperation(OperationModel model) {
+        setChildModel(model);
+        return this;
+    }
+
+    @Override
+    public ProcessorModel getProcessor() {
+        return (ProcessorModel) getFirstChildModel(JCAConstants.PROCESSOR);
+    }
+
+    @Override
+    public OutboundInteractionModel setProcessor(ProcessorModel model) {
         setChildModel(model);
         return this;
     }

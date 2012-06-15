@@ -20,6 +20,11 @@
  */
 package org.switchyard.component.jca.deploy;
 
+import org.switchyard.Exchange;
+import org.switchyard.ExchangePattern;
+import org.switchyard.HandlerException;
+import org.switchyard.Message;
+import org.switchyard.component.jca.processor.AbstractOutboundProcessor;
 import org.switchyard.deploy.BaseServiceHandler;
 
 /**
@@ -30,13 +35,32 @@ import org.switchyard.deploy.BaseServiceHandler;
  */
 public class OutboundHandler extends BaseServiceHandler {
     
+    private AbstractOutboundProcessor _processor;
+
     /**
      * Constructor.
      * 
+     * @param processor {@link AbstractOutboundProcessor}
      */
-    public OutboundHandler() {
-        // TODO
-        throw new IllegalArgumentException("JCA outbound binding is not supported yet.");
+    public OutboundHandler(AbstractOutboundProcessor processor) {
+        _processor = processor;
+    }
+
+    @Override
+    public void start() {
+        _processor.initialize();
     }
     
+    @Override
+    public void stop() {
+        _processor.uninitialize();
+    }
+    
+    @Override
+    public void handleMessage(final Exchange exchange) throws HandlerException {
+        Message out = _processor.process(exchange);
+        if (exchange.getContract().getServiceOperation().getExchangePattern() == ExchangePattern.IN_OUT) {
+            exchange.send(out);
+        }
+    }
 }

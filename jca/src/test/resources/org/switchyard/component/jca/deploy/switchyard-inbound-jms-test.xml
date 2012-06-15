@@ -15,18 +15,17 @@
 <switchyard 
     xmlns="urn:switchyard-config:switchyard:1.0"
     xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
-    xmlns:jca="http://docs.oasis-open.org/ns/opencsa/sca/200912/binding-jca" 
+    xmlns:jca="urn:switchyard-component-jca:config:1.0" 
     xmlns:bean="urn:switchyard-component-bean:config:1.0">
 
     <sca:composite name="JCAJMSTest" targetNamespace="urn:jca:test:1.0">
     
         <!-- Service binding example -->
         <sca:service name="JCAJMSService" promote="ComponentName/JCAJMSService">
-            <binding.jca xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912/binding-jca">
+            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
                <inboundConnection>
-                   <resourceAdapter name="hornetq-ra.rar" type="javax.resource.spi.ResourceAdapter">
-                   </resourceAdapter>
-                   <activationSpec type="javax.resource.spi.ActivationSpec">
+                   <resourceAdapter name="hornetq-ra.rar"/>
+                   <activationSpec>
                        <property name="destinationType" value="javax.jms.Queue"/>
                        <property name="destination" value="queue/TestQueue"/>
                    </activationSpec>
@@ -34,7 +33,7 @@
                <inboundInteraction>
                    <listener>javax.jms.MessageListener</listener>
                    <inboundOperation name="onMessage" selectedOperation="onMessage"/>
-                   <endpointClass>org.switchyard.component.jca.endpoint.JMSEndpoint</endpointClass>
+                   <endpoint type="org.switchyard.component.jca.endpoint.JMSEndpoint" />
                    <transacted>true</transacted>
                </inboundInteraction>
             </binding.jca>

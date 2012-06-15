@@ -18,14 +18,12 @@
  */
 package org.switchyard.component.jca.endpoint;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
+import javax.naming.InitialContext;
+import javax.resource.cci.ConnectionFactory;
 import javax.resource.cci.MappedRecord;
 import javax.resource.cci.MessageListener;
 import javax.resource.cci.Record;
+import javax.resource.cci.RecordFactory;
 
 import org.switchyard.Exchange;
 import org.switchyard.SynchronousInOutHandler;
@@ -38,31 +36,41 @@ import org.switchyard.exception.SwitchYardException;
  *
  */
 public class CCIEndpoint extends AbstractInflowEndpoint implements MessageListener {
-
+    
     private static final long DEFAULT_TIMEOUT = 15000;
     private static final String DEFAULT_RECORD_NAME = "DefaultMappedRecord";
     private static final String DEFAULT_DESCRIPTION = "Default MappedRecord implementation by " + CCIEndpoint.class.getName();
 
+    private String _connectionFactoryJNDIName;
     private long _waitTimeout = DEFAULT_TIMEOUT;
     private String _recordName = DEFAULT_RECORD_NAME;
     private String _description = DEFAULT_DESCRIPTION;
     private MessageComposer<MappedRecord> _composer;
+    private RecordFactory _recordFactory;
+    
+    @Override
+    public void initialize() {
+        super.initialize();
+        
+        _composer = getMessageComposer(MappedRecord.class);
+        try {
+            ConnectionFactory factory = (ConnectionFactory) new InitialContext().lookup(_connectionFactoryJNDIName);
+            _recordFactory = factory.getRecordFactory();
+        } catch (Exception e) {
+            throw new SwitchYardException(e);
+        }
+    }
     
     @Override
     public Record onMessage(Record record) {
-    
-        if (_composer == null) {
-            _composer = getMessageComposer(MappedRecord.class);
-        }
-        
+
         SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
         Exchange exchange = createExchange(inOutHandler);
         try {
             exchange.send(_composer.compose((MappedRecord)record, exchange, true));
 
             exchange = inOutHandler.waitForOut(_waitTimeout);
-            MappedRecord returnRecord = new DefaultMappedRecord();
-            returnRecord.setRecordName(_recordName);
+            MappedRecord returnRecord = _recordFactory.createMappedRecord(_recordName);
             returnRecord.setRecordShortDescription(_description);
             return _composer.decompose(exchange, returnRecord);
         } catch (Exception e) {
@@ -70,102 +78,21 @@ public class CCIEndpoint extends AbstractInflowEndpoint implements MessageListen
         }
     }
     
-    @SuppressWarnings("rawtypes")
-    private class DefaultMappedRecord implements MappedRecord {
-
-        private static final long serialVersionUID = 6036209388088632116L;
-        private String _recordName;
-        private String _description;
-        private HashMap<Object,Object> _map = new HashMap<Object,Object>();
-        
-        @Override
-        public String getRecordName() {
-            return _recordName;
-        }
-
-        @Override
-        public void setRecordName(String name) {
-            _recordName = name;
-        }
-
-        @Override
-        public void setRecordShortDescription(String description) {
-            _description = description;
-        }
-
-        @Override
-        public String getRecordShortDescription() {
-            return _description;
-        }
-
-        @Override
-        public int size() {
-            return _map.size();
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return _map.size() == 0;
-        }
-
-        @Override
-        public boolean containsKey(Object key) {
-            return _map.containsKey(key);
-        }
-
-        @Override
-        public boolean containsValue(Object value) {
-            return _map.containsValue(value);
-        }
-
-        @Override
-        public Object get(Object key) {
-            return _map.get(key);
-        }
-
-        @Override
-        public Object put(Object key, Object value) {
-            return _map.put(key, value);
-        }
-
-        @Override
-        public Object remove(Object key) {
-            return _map.remove(key);
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public void putAll(Map m) {
-            _map.putAll(m);
-        }
-
-        @Override
-        public void clear() {
-            _map.clear();
-        }
-
-        @Override
-        public Set keySet() {
-            return _map.keySet();
-        }
-
-        @Override
-        public Collection values() {
-            return _map.values();
-        }
-
-        @Override
-        public Set entrySet() {
-            return _map.entrySet();
-        }
-
-        @Override
-        public Object clone() {
-            DefaultMappedRecord cloned = new DefaultMappedRecord();
-            cloned.setRecordName(getRecordName().toString());
-            cloned.setRecordShortDescription(getRecordShortDescription().toString());
-            cloned.putAll((HashMap)_map.clone());
-            return cloned;
-        }
+    /**
+     * set implementation class name for {@link RecordFactory}.
+     * 
+     * @param name class name
+     */
+    public void setConnectionFactoryJNDIName(String name) {
+        _connectionFactoryJNDIName = name;
+    }
+    
+    /**
+     * get implementation class name for {@link RecordFactory}.
+     * 
+     * @return class name
+     */
+    public String getConnectionFactoryJNDIName() {
+        return _connectionFactoryJNDIName;
     }
 }

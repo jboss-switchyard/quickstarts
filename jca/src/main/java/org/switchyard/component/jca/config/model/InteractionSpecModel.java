@@ -27,4 +27,19 @@ package org.switchyard.component.jca.config.model;
  *
  */
 public interface InteractionSpecModel extends BasePropertyContainerModel {
+
+    /**
+     * Get interaction spec class name.
+     * 
+     * @return interaction spec class name
+     */
+    String getInteractionSpecClassName();
+    
+    /**
+     * Set interaction spec class name.
+     * 
+     * @param name interaction spec class name
+     * @return {@link InteractionSpecModel} to support method chaining
+     */
+    InteractionSpecModel setInteractionSpecClassName(String name);
 }
