@@ -1,0 +1,8 @@
+<resource-adapters>
+    <resource-adapter>
+        <archive>template-ra.rar</archive>
+        <connection-definitions>
+            <connection-definition jndi-name="java:/ConnectionFactoryJNDI" class-name="ManagedConnectionFactory"/>
+        </connection-definitions>
+    </resource-adapter>
+</resource-adapters>

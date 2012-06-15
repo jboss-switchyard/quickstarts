@@ -18,65 +18,97 @@
  */
 package org.switchyard.test.mixins.jca;
 
+import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
 import org.jboss.jca.deployers.fungal.AbstractFungalDeployment;
-import org.jboss.jca.deployers.fungal.RAConfiguration;
-import org.jboss.jca.deployers.fungal.RADeployer;
+import org.jboss.jca.deployers.fungal.RAActivator;
 import org.jboss.jca.embedded.Embedded;
 import org.jboss.jca.embedded.EmbeddedFactory;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 import com.github.fungal.api.Kernel;
-import com.github.fungal.api.deployer.MainDeployer;
-import com.github.fungal.spi.deployers.Deployer;
+import com.github.fungal.api.util.FileUtil;
+
 /**
- * Handle dirty hack against IronJacamar embedded and fungal kernel.
- * TODO eliminate this class if IronJacamar embedded gets APIs for these stuffs
+ * Handle IronJacamar embedded and fungal kernel.
  * 
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  *
  */
 public class SwitchYardIronJacamarHandler {
-    private final Embedded _embedded;
-    private Kernel _kernel;
-    private MainDeployer _mainDeployer;
-    private ResourceAdapterRepository _resourceAdapterRepository;
-    private List<ResourceAdapterArchive> _deployments = new ArrayList<ResourceAdapterArchive>();
+    private static final String TEMPLATE_RA_XML = "jcamixin-ironjacamar-template-ra.xml";
+    private static final String TEMP_OUT_DIR = System.getProperty("java.io.tmpdir")
+                                                + File.separator + "switchyard.iron.jacamar";
+    private static final String KERNEL_BEAN_NAME = "Kernel";
+    private static final String RESOURCE_ADAPTER_REPOSITORY_BEAN_NAME = "ResourceAdapterRepository";
+    private static final String RA_ACTIVATOR_BEAN_NAME = "RAActivator";
     
-    /**
-     * Constructor.
-     * 
-     * @throws Exception when it fails to instantiate the {@link Embedded}
-     */
-    public SwitchYardIronJacamarHandler() throws Exception {
-        _embedded = EmbeddedFactory.create();
-    }
-
+    private Embedded _embedded;
+    private Kernel _kernel;
+    private ResourceAdapterRepository _resourceAdapterRepository;
+    private List<URL> _manualDeployments = new ArrayList<URL>();
+    
     /**
      * Start the IronJacamar embedded.
      * 
      * @throws Throwable when it fails to start
      */
     public void startup() throws Throwable {
-        _embedded.startup();
-        _kernel = getFieldValue(_embedded, Kernel.class, "kernel");
-        _mainDeployer = _kernel.getMainDeployer();
+        _embedded = EmbeddedFactory.create();
+        try {
+            _embedded.startup();
+        } catch (Throwable t) {
+            // avoid SWITCHYARD-874 ...
+            System.gc();
+            _embedded.startup();
+        }
+        _kernel = _embedded.lookup(KERNEL_BEAN_NAME, Kernel.class);
     }
 
     /**
      * Deploy a {@link ResourceAdapterArchive}.
      * 
-     * @param raa {@link ResourceAdapterArchive} to deploy.
+     * @param raa {@link ResourceAdapterArchive} to deploy
+     * @param connDefs a list of connection defintions
      * @throws Throwable failed to deploy
      */
-    public void deploy(ResourceAdapterArchive raa) throws Throwable {
-        _embedded.deploy(raa);
-        _deployments.add(raa);
+    public void deploy(ResourceAdapterArchive raa, Map<String, String> connDefs) throws Throwable {
+        File outdir = new File(TEMP_OUT_DIR);
+        if (!outdir.exists()) {
+            if (!outdir.mkdir()) {
+                throw new RuntimeException("Failed to create directory: " + TEMP_OUT_DIR);
+            }
+        }
+        
+        if (connDefs != null && connDefs.size() != 0) {
+            URL raxmlUrl = createRaXml(raa.getName(), connDefs);
+            RAActivator activator = _embedded.lookup(RA_ACTIVATOR_BEAN_NAME, RAActivator.class);
+            activator.setEnabled(false);
+            _embedded.deploy(raa);
+            _embedded.deploy(raxmlUrl);
+            _manualDeployments.add(raxmlUrl);
+            activator.setEnabled(true);
+        } else {
+            _embedded.deploy(raa);
+        }
     }
     
     /**
@@ -85,13 +117,21 @@ public class SwitchYardIronJacamarHandler {
      * @throws Throwable when it fails to shutdown
      */
     public void shutdown() throws Throwable {
-        for (ResourceAdapterArchive raa : _deployments) {
-            _embedded.undeploy(raa);
+        try {
+            for (URL d : _manualDeployments) {
+                try {
+                    _embedded.undeploy(d);
+                    new File(d.toURI()).delete();
+                } catch (Throwable t) {
+                    t.getMessage(); // ignore
+                }
+            }
+            _embedded.shutdown();
+        } finally {
+            new FileUtil().delete(new File(TEMP_OUT_DIR));
+            _kernel = null;
+            _embedded = null;
         }
-        
-        _embedded.shutdown();
-        _kernel = null;
-        _mainDeployer = null;
     }
     
     /**
@@ -107,29 +147,14 @@ public class SwitchYardIronJacamarHandler {
      * Get {@link ResourceAdapterRepository}.
      * 
      * @return {@link ResourceAdapterRepository} instance
-     * @throws Exception when it fails to acquire
+     * @throws Throwable when it fails to acquire
      */
-    public ResourceAdapterRepository getResourceAdapterRepository() throws Exception {
+    public ResourceAdapterRepository getResourceAdapterRepository() throws Throwable {
         if (_resourceAdapterRepository != null) {
             return _resourceAdapterRepository;
         }
         
-        Object deployers = getFieldValue(_mainDeployer, Object.class, "deployers");
-        Method getDeployersMethod = deployers.getClass().getDeclaredMethod("getDeployers", new Class[0]);
-        getDeployersMethod.setAccessible(true);
-        @SuppressWarnings("unchecked")
-        List<Deployer> deployerList = (List<Deployer>) getDeployersMethod.invoke(deployers, new Object[0]);
-        getDeployersMethod.setAccessible(false);
-        
-        RADeployer radeployer = null;
-        for (Deployer deployer : deployerList) {
-            if (deployer instanceof RADeployer) {
-                radeployer = RADeployer.class.cast(deployer);
-                break;
-            }
-        }
-
-        _resourceAdapterRepository = ((RAConfiguration)radeployer.getConfiguration()).getResourceAdapterRepository();
+        _resourceAdapterRepository = _embedded.lookup(RESOURCE_ADAPTER_REPOSITORY_BEAN_NAME, ResourceAdapterRepository.class);
         return _resourceAdapterRepository;
     }
     
@@ -153,6 +178,41 @@ public class SwitchYardIronJacamarHandler {
         return null;
     }
     
+    /**
+     * Create *-ra.xml from the template to bind ConnectionFactory to JNDI.
+     */
+    private URL createRaXml(String raName, Map<String, String> connDefs) throws Exception {
+        // TODO support multiple connection definition
+        String cfJndi = connDefs.keySet().toArray(new String[0])[0];
+        String cfClass = connDefs.get(cfJndi);
+        
+        InputStream template = Thread.currentThread().getContextClassLoader().getResourceAsStream(TEMPLATE_RA_XML);
+        Document doc = DocumentBuilderFactory.newInstance()
+                                                .newDocumentBuilder()
+                                                .parse(template);
+
+        Node archive = doc.getElementsByTagName("archive").item(0);
+        archive.setTextContent(raName);
+        Node connection = doc.getElementsByTagName("connection-definition").item(0);
+        NamedNodeMap attributes = connection.getAttributes();
+        attributes.getNamedItem("class-name").setNodeValue(cfClass);
+        attributes.getNamedItem("jndi-name").setNodeValue(cfJndi);
+        
+        String raxml = stripDotRarSuffix(raName);
+        if (!raxml.endsWith("-ra")) {
+            raxml += "-ra";
+        }
+        raxml += ".xml";
+        File outFile = new File(TEMP_OUT_DIR, raxml);
+        
+        Transformer t = TransformerFactory.newInstance().newTransformer();
+        Source src = new DOMSource(doc);
+        Result res = new StreamResult(outFile);
+        t.transform(src, res);
+
+        return outFile.toURI().toURL();
+    }
+    
     private <T> T getFieldValue(Object target, Class<T> type, String name) throws Exception {
         Class<?> targetClass = target.getClass();
         while (targetClass != Object.class) {
@@ -174,4 +234,14 @@ public class SwitchYardIronJacamarHandler {
         return null;
     }
     
+    private String stripDotRarSuffix(final String raName) {
+        if (raName == null) {
+            return null;
+        }
+        // See RaDeploymentParsingProcessor
+        if (raName.endsWith(".rar")) {
+            return raName.substring(0, raName.indexOf(".rar"));
+        }
+        return raName;
+    }
 }

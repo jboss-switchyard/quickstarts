@@ -58,7 +58,7 @@ public class MockManagedConnectionFactory implements ManagedConnectionFactory {
     public ManagedConnection createManagedConnection(Subject arg0,
             ConnectionRequestInfo arg1) throws ResourceException {
         _logger.debug("call createManagedConnection(" + arg0 + ", " + arg1 + ")");
-        return null;
+        return new MockManagedConnection();
     }
 
     @Override
@@ -78,5 +78,15 @@ public class MockManagedConnectionFactory implements ManagedConnectionFactory {
     @Override
     public void setLogWriter(PrintWriter arg0) throws ResourceException {
         _logger.debug("call setLogWriter(" + arg0 + ")");
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        return obj.equals(this);
+    }
+    
+    @Override
+    public int hashCode() {
+        return this.hashCode();
     }
 }

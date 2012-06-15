@@ -160,15 +160,30 @@ public class SwitchYardTestKit {
             }
         }
         createMixInInstances();
-        intialize();
+        initializeMixIns();
     }
 
     /**
-     * Initialize.
+     * invoke the methods annotated with {@link BeforeDeploy} on test class and deploy SwitchYard application.
+     * 
+     * @throws Exception failed to deploy
      */
-    private void intialize() throws Exception {
-        initializeMixIns();
+    public void start() throws Exception {
+        beforeDeploy();
         deploy();
+    }
+
+    /**
+     * invoke the methods annotated with {@link BeforeDeploy} on test class.
+     */
+    private void beforeDeploy() throws Exception {
+        Method[] publicMethods = _testInstance.getClass().getMethods();
+        for (Method method : publicMethods) {
+            BeforeDeploy beforeAnno = method.getAnnotation(BeforeDeploy.class);
+            if (beforeAnno != null) {
+                method.invoke(_testInstance);
+            }
+        }
     }
 
     /**

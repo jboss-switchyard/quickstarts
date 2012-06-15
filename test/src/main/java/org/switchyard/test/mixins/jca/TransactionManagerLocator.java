@@ -18,15 +18,25 @@
  */
 package org.switchyard.test.mixins.jca;
 
+import javax.naming.InitialContext;
+import javax.transaction.TransactionManager;
+
 /**
- * MockConnectionInterface.
+ * A TransactionManager locator which is used by HornetQ ResourceAdapter.
+ * The way to get TransactionManager from actual JBossAS instance doesn't work
+ * with IronJacamar embedded, so this class performs that instead.
  * 
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  *
  */
-public interface MockConnectionInterface {
+public class TransactionManagerLocator {
     /**
-     * dummy method.
+     * get TransactionManager.
+     * 
+     * @return TransactionManager
+     * @throws Exception 
      */
-    public void callMe();
+    public TransactionManager getTransactionManager() throws Exception {
+        return (TransactionManager) new InitialContext().lookup("java:jboss/TransactionManager");
+    }
 }

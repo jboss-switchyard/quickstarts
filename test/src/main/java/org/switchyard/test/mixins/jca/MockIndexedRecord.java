@@ -18,28 +18,41 @@
  */
 package org.switchyard.test.mixins.jca;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnectionFactory;
+import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
+import javax.resource.cci.IndexedRecord;
 
 /**
- * MockConnectionManager.
+ * MockIndexedRecord.
  * 
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  *
  */
-public class MockConnectionManager implements ConnectionManager {
+@SuppressWarnings("rawtypes")
+public class MockIndexedRecord extends ArrayList implements IndexedRecord {
 
-    private Logger _logger = Logger.getLogger(MockConnectionManager.class);
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1341376132007016249L;
+    private String _recordName;
+    private String _recordShortDescription;
     
     @Override
-    public Object allocateConnection(ManagedConnectionFactory arg0,
-            ConnectionRequestInfo arg1) throws ResourceException {
-        _logger.debug("call allocateConnection(" + arg0 + ", " + arg1 + ")");
-        return arg0.createManagedConnection(null, arg1).getConnection(null, arg1);
+    public String getRecordName() {
+        return _recordName;
     }
+
+    @Override
+    public void setRecordName(String name) {
+        _recordName = name;
+    }
+
+    @Override
+    public void setRecordShortDescription(String description) {
+        _recordShortDescription = description;
+    }
+
+    @Override
+    public String getRecordShortDescription() {
+        return _recordShortDescription;
+    }
+
 }

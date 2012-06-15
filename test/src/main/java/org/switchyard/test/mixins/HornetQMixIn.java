@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jms.BytesMessage;
 import javax.jms.Connection;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -386,7 +387,7 @@ public class HornetQMixIn extends NamingMixIn {
      * Reads the body of a JMS {@link Message} as an Object.
      * 
      * @param msg the JMS {@link Message}.
-     * @return Object the object read.
+     * @return the object read.
      * @throws JMSException if an error occurs while trying to read the body content.
      */
     public Object readObjectFromJMSMessage(final Message msg) throws JMSException {
@@ -396,7 +397,24 @@ public class HornetQMixIn extends NamingMixIn {
     }
     
     /**
-     * Reads the body of a JMS {@link Message} as an String.
+     * Reads the body of a JMS {@link Message} as a byte[].
+     * 
+     * @param msg JMS {@link Message}
+     * @return the byte[] read.
+     * @throws JMSException if an error occurs while trying to read the body content.
+     */
+    public byte[] readBytesFromJMSMessage(final Message msg) throws JMSException {
+        Assert.assertTrue(msg instanceof BytesMessage);
+        BytesMessage bsMsg = (BytesMessage)msg;
+        if (bsMsg.getBodyLength() >= Integer.MAX_VALUE) {
+            Assert.fail("Message body is too large[" + bsMsg.getBodyLength() + "]: extract it manually.");
+        }
+        byte[] ba = new byte[(int)bsMsg.getBodyLength()];
+        bsMsg.readBytes(ba);
+        return ba;
+    }
+    /**
+     * Reads the body of a JMS {@link Message} as a String.
      * @param msg the JMS {@link Message}.
      * @return the string read.
      * @throws JMSException if an error occurs while trying to read the body content.
@@ -407,6 +425,8 @@ public class HornetQMixIn extends NamingMixIn {
             return txt.getText();
         } else if (msg instanceof ObjectMessage) {
             return (String)readObjectFromJMSMessage(msg);
+        } else if (msg instanceof BytesMessage) {
+            return new String(readBytesFromJMSMessage(msg));
         }
         throw new RuntimeException("The message body could not be extracted as String: " + msg);
     }

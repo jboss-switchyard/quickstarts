@@ -19,27 +19,30 @@
 package org.switchyard.test.mixins.jca;
 
 import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnectionFactory;
-
-import org.apache.log4j.Logger;
+import javax.resource.cci.IndexedRecord;
+import javax.resource.cci.MappedRecord;
+import javax.resource.cci.RecordFactory;
 
 /**
- * MockConnectionManager.
+ * MockRecordFactory.
  * 
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  *
  */
-public class MockConnectionManager implements ConnectionManager {
+public class MockRecordFactory implements RecordFactory {
 
-    private Logger _logger = Logger.getLogger(MockConnectionManager.class);
-    private static final long serialVersionUID = 1L;
-    
     @Override
-    public Object allocateConnection(ManagedConnectionFactory arg0,
-            ConnectionRequestInfo arg1) throws ResourceException {
-        _logger.debug("call allocateConnection(" + arg0 + ", " + arg1 + ")");
-        return arg0.createManagedConnection(null, arg1).getConnection(null, arg1);
+    public MappedRecord createMappedRecord(String recordName) throws ResourceException {
+        MappedRecord rec = new MockMappedRecord();
+        rec.setRecordName(recordName);
+        return rec;
     }
+
+    @Override
+    public IndexedRecord createIndexedRecord(String recordName) throws ResourceException {
+        IndexedRecord rec = new MockIndexedRecord();
+        rec.setRecordName(recordName);
+        return rec;
+    }
+
 }

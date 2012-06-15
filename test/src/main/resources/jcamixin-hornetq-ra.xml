@@ -51,6 +51,18 @@ Copyright 2009 Red Hat, Inc.
          <config-property-type>java.lang.String</config-property-type>
          <config-property-value>server-id=0</config-property-value>
       </config-property>
+      <config-property>
+        <description>The class to use for locating the transactionmanager</description>
+        <config-property-name>TransactionManagerLocatorClass</config-property-name>
+        <config-property-type>java.lang.String</config-property-type>
+        <config-property-value>org.switchyard.test.mixins.jca.TransactionManagerLocator</config-property-value>
+      </config-property>
+      <config-property>
+        <description>The method to use for locating the transactionmanager</description>
+        <config-property-name>TransactionManagerLocatorMethod</config-property-name>
+        <config-property-type>java.lang.String</config-property-type>
+        <config-property-value>getTransactionManager</config-property-value>
+      </config-property>
       <!--
       <config-property>
         <description>Does we support HA</description>

@@ -65,7 +65,7 @@ class MockManagedConnection implements ManagedConnection {
     public Object getConnection(Subject arg0, ConnectionRequestInfo arg1)
             throws ResourceException {
         _logger.debug("call getConnection(" + arg0 + ", " + arg1 + ")");
-        return null;
+        return null; //return new MockConnection(_listener);
     }
 
     @Override
@@ -89,7 +89,7 @@ class MockManagedConnection implements ManagedConnection {
     @Override
     public XAResource getXAResource() throws ResourceException {
         _logger.debug("call getXAResource");
-        return null;
+        return new MockXAResource();
     }
 
     @Override

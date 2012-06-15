@@ -16,30 +16,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.test.mixins.jca;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnectionFactory;
+package org.switchyard.test;
 
-import org.apache.log4j.Logger;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * MockConnectionManager.
- * 
- * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
+ * Indicate the method to be invoked before deploy SwitchYard application.
  *
+ * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  */
-public class MockConnectionManager implements ConnectionManager {
-
-    private Logger _logger = Logger.getLogger(MockConnectionManager.class);
-    private static final long serialVersionUID = 1L;
-    
-    @Override
-    public Object allocateConnection(ManagedConnectionFactory arg0,
-            ConnectionRequestInfo arg1) throws ResourceException {
-        _logger.debug("call allocateConnection(" + arg0 + ", " + arg1 + ")");
-        return arg0.createManagedConnection(null, arg1).getConnection(null, arg1);
-    }
+@Target({METHOD})
+@Retention(RUNTIME)
+@Documented
+public @interface BeforeDeploy {
 }
