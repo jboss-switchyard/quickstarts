@@ -1,0 +1,23 @@
+<configuration xmlns="urn:hornetq">
+
+   <connection-factory name="ConnectionFactory">
+      <connectors>
+        <connector-ref connector-name="invm-connector"/>
+      </connectors>
+      
+      <entries>
+         <entry name="ConnectionFactory"/>
+      </entries>
+   </connection-factory>
+   
+   <queue name="OrderQueue">
+      <entry name="OrderQueue"/>
+   </queue>
+   <queue name="ShippingQueue">
+      <entry name="ShippingQueue"/>
+   </queue>
+   <queue name="FillingStockQueue">
+      <entry name="FillingStockQueue"/>
+   </queue>
+   
+</configuration>

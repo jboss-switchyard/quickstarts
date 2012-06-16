@@ -1,6 +1,6 @@
 Introduction
 ============
-This quickstart demonstrates the usage of the JCA Component and it's binding feature,
+This quickstart demonstrates the usage of the JCA Component and it's service binding feature,
 by binding to a HornetQ Queue. When a message arrives in this queue the service will be invoked.
 
 JBoss AS 7
@@ -15,9 +15,9 @@ JBoss AS 7
    echo "" >> ${AS7}/standalone/configuration/application-roles.properties
    echo "guest=guest" >> ${AS7}/standalone/configuration/application-roles.properties
 5. Deploy JMS Queue
-    cp src/test/resources/switchyard-quickstart-hornetq-binding-hornetq-jms.xml ${AS7}/standalone/deployments
+    cp src/test/resources/switchyard-quickstart-jca-inflow-hornetq-jms.xml ${AS7}/standalone/deployments
 6. Deploy the quickstart
-    cp target/switchyard-quickstarts-hornetq-binding.jar ${AS7}/standalone/deployments
+    cp target/switchyard-quickstarts-jca-inflow-hornetq.jar ${AS7}/standalone/deployments
 7. Execute HornetQClient
     mvn exec:java
 8. Check the server console for output from the service.

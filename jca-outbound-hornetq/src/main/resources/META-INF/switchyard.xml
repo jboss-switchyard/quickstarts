@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+            name="switchyard-quickstart-jca-outbound-hornetq"
+            xmlns:jca="urn:switchyard-component-jca:config:1.0"
+            xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
+            xmlns:bean="urn:switchyard-component-bean:config:1.0">
+            
+    <sca:composite name="jca-outbound-hornetq" targetNamespace="urn:switchyard-quickstart:jca-outbound-hornetq:0.1.0">
+    
+        <sca:service name="OrderService" promote="OrderComponent/OrderService">
+            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
+               <inboundConnection>
+                   <resourceAdapter name="hornetq-ra.rar">
+                   </resourceAdapter>
+                   <activationSpec>
+                       <property name="destinationType" value="javax.jms.Queue"/>
+                       <property name="destination" value="OrderQueue"/>
+                   </activationSpec>
+               </inboundConnection>
+               <inboundInteraction>
+                   <listener>javax.jms.MessageListener</listener>
+                   <inboundOperation name="process" selectedOperation="process"/>
+                   <endpoint type="org.switchyard.component.jca.endpoint.JMSEndpoint"/>
+                   <transacted>true</transacted>
+               </inboundInteraction>
+            </binding.jca>
+        </sca:service>
+
+        <sca:reference name="ShippingReference" promote="OrderComponent/ShippingReference" multiplicity="1..1">
+            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
+               <outboundConnection>
+                   <resourceAdapter name="hornetq-ra.rar"/>
+                   <connection jndiName="java:/JmsXA"/>
+               </outboundConnection>
+               <outboundInteraction>
+                   <processor type="org.switchyard.component.jca.processor.JMSProcessor">
+                       <property name="destination" value="ShippingQueue"/>
+                   </processor>
+               </outboundInteraction>
+            </binding.jca>
+        </sca:reference>
+        <sca:reference name="FillingStockReference" promote="OrderComponent/FillingStockReference" multiplicity="1..1">
+            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
+               <outboundConnection>
+                   <resourceAdapter name="hornetq-ra.rar"/>
+                   <connection jndiName="java:/JmsXA"/>
+               </outboundConnection>
+               <outboundInteraction>
+                   <processor type="org.switchyard.component.jca.processor.JMSProcessor">
+                       <property name="destination" value="FillingStockQueue"/>
+                   </processor>
+               </outboundInteraction>
+            </binding.jca>
+        </sca:reference>
+        
+        <sca:component name="OrderComponent">
+            <bean:implementation.bean class="org.switchyard.quickstarts.jca.outbound.OrderServiceBean"/>
+            <sca:service name="OrderService">
+                <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.OrderService"/>
+            </sca:service>
+            <sca:reference name="ShippingReference">
+                <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.OrderService"/>
+            </sca:reference>
+            <sca:reference name="FillingStockReference">
+                <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.OrderService"/>
+            </sca:reference>
+        </sca:component>
+    </sca:composite>
+</switchyard>

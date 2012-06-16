@@ -25,10 +25,12 @@ import javax.jms.MessageProducer;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Exchange;
 import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
@@ -36,7 +38,7 @@ import org.switchyard.test.SwitchYardTestKit;
 import org.switchyard.test.mixins.CDIMixIn;
 import org.switchyard.test.mixins.HornetQMixIn;
 import org.switchyard.test.mixins.jca.JCAMixIn;
-import org.switchyard.test.mixins.jca.JCAMixInConfig;
+import org.switchyard.test.mixins.jca.ResourceAdapterConfig;
 
 /**
  * Functional test for a SwitchYard Service which has a service binding to a HornetQ
@@ -49,12 +51,17 @@ import org.switchyard.test.mixins.jca.JCAMixInConfig;
         config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
         mixins = {CDIMixIn.class, HornetQMixIn.class, JCAMixIn.class},
         scanners = BeanSwitchYardScanner.class)
-@JCAMixInConfig(hornetQResourceAdapter = "hornetq-ra.rar")
 public class JCAInflowBindingTest {
     
     private SwitchYardTestKit _testKit;
-    private HornetQMixIn _mixIn;
+    private HornetQMixIn _hqMixIn;
+    private JCAMixIn _jcaMixIn;
     
+    @BeforeDeploy
+    public void before() {
+        ResourceAdapterConfig ra = new ResourceAdapterConfig(ResourceAdapterConfig.ResourceAdapterType.HORNETQ);
+        _jcaMixIn.deployResourceAdapters(ra);
+    }
     /**
      * Triggers the 'GreetingService' by sending a HornetQ Message to the 'GreetingServiceQueue'
      */
@@ -63,15 +70,15 @@ public class JCAInflowBindingTest {
         final String payload = "dummy payload";
         final MockHandler greetingService = _testKit.registerInOnlyService("GreetingService");
         
-        final MessageProducer producer = _mixIn.getJMSSession().createProducer(HornetQMixIn.getJMSQueue("GreetingServiceQueue"));
-        final BytesMessage message = _mixIn.getJMSSession().createBytesMessage();
+        final MessageProducer producer = _hqMixIn.getJMSSession().createProducer(HornetQMixIn.getJMSQueue("GreetingServiceQueue"));
+        final BytesMessage message = _hqMixIn.getJMSSession().createBytesMessage();
         message.writeBytes(payload.getBytes());
         producer.send(message);
         
         Thread.sleep(1000);
         
         final Exchange recievedExchange = greetingService.getMessages().iterator().next();
-        Assert.assertEquals(payload, new String(recievedExchange.getMessage().getContent(byte[].class)));
+        Assert.assertEquals(payload, recievedExchange.getMessage().getContent(String.class));
     }
     
 }

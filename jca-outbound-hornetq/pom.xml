@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.switchyard.quickstarts</groupId>
+    <artifactId>switchyard-quickstart-parent</artifactId>
+    <version>0.5.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>switchyard-quickstart-jca-outbound-hornetq</artifactId>
+  <name>Quickstart : JCA Outbound Binding for HornetQ</name>
+
+  <dependencies>
+	<dependency>
+        <groupId>org.switchyard.components</groupId>
+        <artifactId>switchyard-component-jca</artifactId>
+	</dependency>
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-test</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-plugin</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>javax.jms</groupId>
+        <artifactId>jms</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>${project.artifactId}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.switchyard</groupId>
+        <artifactId>switchyard-plugin</artifactId>
+          <executions>
+          <execution>
+            <goals>
+              <goal>configure</goal>
+            </goals>
+            <configuration>
+              <scannerClassNames>
+                <param>org.switchyard.component.bean.config.model.BeanSwitchYardScanner</param>
+              </scannerClassNames>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <configuration>
+                <executable>java</executable>
+                <classpathScope>test</classpathScope>
+                <mainClass>org.switchyard.quickstarts.jca.outbound.HornetQClient</mainClass>
+                <arguments>
+                    <argument>BREAD</argument>
+                    <argument>PIZZA</argument>
+                    <argument>JAM</argument>
+                    <argument>POTATO</argument>
+                    <argument>MILK</argument>
+                    <argument>JAM</argument>
+                    <argument>TOYODA RUV4 2008 SILVER</argument>
+                </arguments>
+            </configuration>
+        </plugin>
+    </plugins>
+  </build>
+</project>
