@@ -40,7 +40,7 @@ import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.test.ShrinkwrapUtil;
-import org.switchyard.test.mixins.AbstractTestMixIn;
+import org.switchyard.test.mixins.NamingMixIn;
 
 
 /**
@@ -49,7 +49,7 @@ import org.switchyard.test.mixins.AbstractTestMixIn;
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  *
  */
-public class JCAMixIn extends AbstractTestMixIn {
+public class JCAMixIn extends NamingMixIn {
 
     private static final String MOCK_RESOURCE_ADAPTER_XML = "jcamixin-mock-ra.xml";
     private static final String HORNETQ_RESOURCE_ADAPTER_XML = "jcamixin-hornetq-ra.xml";
@@ -64,6 +64,7 @@ public class JCAMixIn extends AbstractTestMixIn {
     
     @Override
     public void initialize() {
+        super.initialize();
         try {
             _ironJacamar = new SwitchYardIronJacamarHandler();
             _ironJacamar.startup();
@@ -178,6 +179,7 @@ public class JCAMixIn extends AbstractTestMixIn {
         } catch (Throwable t) {
             t.printStackTrace();
         }
+        super.uninitialize();
     }
     
     private void deployMockResourceAdapter(String raName) {

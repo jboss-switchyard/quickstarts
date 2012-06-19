@@ -159,7 +159,6 @@ public class SwitchYardTestKit {
                 _testMixIns = Arrays.asList(testMixIns);
             }
         }
-        JBossASNamingServiceInstaller.install();
         createMixInInstances();
         intialize();
     }
@@ -178,7 +177,6 @@ public class SwitchYardTestKit {
     public void cleanup() {
         undeploy();
         cleanupMixIns();
-        JBossASNamingServiceInstaller.clear();
     }
 
     /**

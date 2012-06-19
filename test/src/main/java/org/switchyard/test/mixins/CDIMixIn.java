@@ -43,7 +43,7 @@ import org.switchyard.test.SimpleTestDeployment;
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class CDIMixIn extends AbstractTestMixIn {
+public class CDIMixIn extends NamingMixIn {
     private static final String BINDING_CONTEXT = "java:comp";
     private static final String BEAN_MANAGER_NAME = "BeanManager";
     
@@ -53,6 +53,8 @@ public class CDIMixIn extends AbstractTestMixIn {
 
     @Override
     public void initialize() {
+        super.initialize();
+
         // Deploy the weld container...
         _weld = new Weld();
         _weldContainer = _weld.initialize();
@@ -176,16 +178,12 @@ public class CDIMixIn extends AbstractTestMixIn {
         if (_weld != null) {
             _weld.shutdown();
             _weld = null;
-
-            try {
-                Context ctx = (Context) new InitialContext().lookup(BINDING_CONTEXT);
-                ctx.unbind(BEAN_MANAGER_NAME);
-            } catch (Exception e) {
-                throw new IllegalStateException("Failed to unbind BeanManager", e);
-            }
         } else {
             Thread.dumpStack();
         }
+
+        // Clean up JNDI tree
+        super.uninitialize();
     }
 
     private Object createBeanInstance(Bean<?> bean) {

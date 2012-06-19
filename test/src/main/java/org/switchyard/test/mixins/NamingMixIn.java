@@ -18,7 +18,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
-package org.switchyard.test;
+package org.switchyard.test.mixins;
 
 import javax.naming.CompositeName;
 import javax.naming.Context;
@@ -31,56 +31,60 @@ import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.junit.Assert;
 
 /**
- * Setup the naming service.
+ * Code related to JNDI stuff.
  * 
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
- *
+ * @author Lukasz Dywicki
  */
-public final class JBossASNamingServiceInstaller {
+public class NamingMixIn extends AbstractTestMixIn {
+
     private static final String INITIAL_CONTEXT_FACTORY_NAME = "org.jboss.as.naming.InitialContextFactory";
     private static final CompositeName EMPTY_NAME = new CompositeName();
-    
-    private JBossASNamingServiceInstaller() {
-    }
-    
+
     /**
-     * install.
+     * Instance of context shared with children classes.
      */
-    public static void install() {
+    private static InitialContext initialContext;
+
+    @Override
+    public void initialize() {
         String factoryName = System.getProperty(Context.INITIAL_CONTEXT_FACTORY);
         if (factoryName != null && !factoryName.equals(INITIAL_CONTEXT_FACTORY_NAME)) {
             return;
         }
-        
+
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY, INITIAL_CONTEXT_FACTORY_NAME);
         NamingContext.initializeNamingManager();
         NamespaceContextSelector.setDefault(new NamespaceContextSelector() {
             public Context getContext(String identifier) {
                 try {
-                    return (Context)new InitialContext().lookup(EMPTY_NAME);
+                    return (Context) new InitialContext().lookup(EMPTY_NAME);
                 } catch (NamingException e) {
                     throw new RuntimeException(e);
                 }
             }
         });
 
-        try {
-            InitialContext initialContext = new InitialContext();
+        if (initialContext == null) {
             try {
-                Context.class.cast(initialContext.lookup("java:comp"));
-            } catch (Exception e) {
-                initialContext.createSubcontext("java:comp");
+                initialContext = new InitialContext();
+                try {
+                    Context.class.cast(initialContext.lookup("java:comp"));
+                } catch (Exception e) {
+                    initialContext.createSubcontext("java:comp");
+                }
+            } catch (NamingException e) {
+                Assert.fail("Failed to create context : " + e.getMessage());
             }
-        } catch (NamingException e) {
-            e.printStackTrace();
-            Assert.fail("Failed to create context : " + e.getMessage());
         }
     }
 
-    /**
-     * clear NamingStore.
-     */
-    public static void clear() {
+    public InitialContext getInitialContext() {
+        return initialContext;
+    }
+
+    @Override
+    public void uninitialize() {
         NamingContext.setActiveNamingStore(new InMemoryNamingStore());
     }
 }

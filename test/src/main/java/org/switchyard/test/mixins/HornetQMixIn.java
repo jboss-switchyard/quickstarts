@@ -69,7 +69,7 @@ import org.hornetq.jms.server.embedded.EmbeddedJMS;
  * 
  * @author Daniel Bevenius
  */
-public class HornetQMixIn extends AbstractTestMixIn {
+public class HornetQMixIn extends NamingMixIn {
     
     private static final String HORNETQ_CONF_FILE = "hornetq-configuration.xml";
     private static final String HORNETQ_JMS_CONF_FILE = "hornetq-jms.xml";
@@ -107,6 +107,7 @@ public class HornetQMixIn extends AbstractTestMixIn {
     
     @Override
     public void initialize() {
+        super.initialize();
         if (_startEmbedded) {
             _embeddedJMS = new EmbeddedJMS();
             _embeddedJMS.setConfigResourcePath(HORNETQ_CONF_FILE);
@@ -195,6 +196,9 @@ public class HornetQMixIn extends AbstractTestMixIn {
             }
         } catch (final Exception e) {
             throw new RuntimeException(e);
+        } finally {
+            // always clean JNDI context
+            super.uninitialize();
         }
     }
     
