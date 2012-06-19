@@ -60,6 +60,7 @@ public class MessageTrace implements ExchangeHandler {
         StringBuilder summary = new StringBuilder()
             .append(indent(0) + "------- Begin Message Trace -------")
             .append(indent(0) + "Service -> " + exchange.getServiceName())
+            .append(indent(0) + "Operation -> " + exchange.getContract().getServiceOperation().getName())
             .append(indent(0) + "Phase -> " + exchange.getPhase())
             .append(indent(0) + "State -> " + exchange.getState());
         

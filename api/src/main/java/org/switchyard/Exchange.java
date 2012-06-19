@@ -47,7 +47,22 @@ public interface Exchange {
      * Context property name used for Message Content Type.
      */
     String CONTENT_TYPE = "org.switchyard.contentType";
-    
+
+    /**
+     * Context property name used for Operation Name.
+     */
+    String OPERATION_NAME = "org.switchyard.operationName";
+
+    /**
+     * Context property name used for Fault Type.
+     */
+    String FAULT_TYPE = "org.switchyard.faultType";
+
+    /**
+     * Context property name used for Service Name.
+     */
+    String SERVICE_NAME = "org.switchyard.serviceName";
+
     /**
      * Retrieves the exchange context.
      * @return the exchange context
