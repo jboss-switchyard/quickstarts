@@ -39,6 +39,7 @@ import org.switchyard.component.camel.composer.CamelComposition;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InvocationContract;
+import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.metadata.java.JavaService;
 
 /**
@@ -47,8 +48,10 @@ import org.switchyard.metadata.java.JavaService;
  * @author Daniel Bevenius
  *
  */
-public class CamelResponseHandlerTest
-{
+public class CamelResponseHandlerTest {
+
+    private static final QName JAVA_STRING_QNAME = new QName("java:java.lang.String");
+    private static final QName SERVICE_QNAME = new QName("java:" + MockService.class.getName());
 
     private MessageComposer<org.apache.camel.Message> _messageComposer;
 
@@ -62,19 +65,19 @@ public class CamelResponseHandlerTest
         final CamelResponseHandler responseHandler = new CamelResponseHandler(null, null, _messageComposer);
         responseHandler.handleMessage(null);
     }
-    
+
     @Test
     public void handleMessageWithOutputType() throws HandlerException {
         final Exchange camelExchange = createMockCamelExchange();
         final ServiceReference serviceReference = createMockServiceRef();
         final org.switchyard.Exchange switchYardExchange = createMockExchangeWithBody(10);
         final CamelResponseHandler responseHandler = new CamelResponseHandler(camelExchange, serviceReference, _messageComposer);
-        
+
         responseHandler.handleMessage(switchYardExchange);
-        
+
         assertThat(switchYardExchange.getMessage().getContent(Integer.class), is(equalTo(new Integer(10))));
     }
-    
+
     private Exchange createMockCamelExchange() {
         final Exchange camelExchange = mock(Exchange.class);
         final org.apache.camel.Message camelMessage = mock(org.apache.camel.Message.class);
@@ -83,31 +86,37 @@ public class CamelResponseHandlerTest
         when(camelExchange.getOut()).thenReturn(camelMessage);
         return camelExchange;
     }
-    
+
     private ServiceReference createMockServiceRef() {
         final ServiceReference serviceReference = mock(ServiceReference.class);
         when(serviceReference.getInterface()).thenReturn(JavaService.fromClass(MockService.class));
         return serviceReference;
     }
-    
+
     private org.switchyard.Exchange createMockExchangeWithBody(final Integer payload) {
-        
         final org.switchyard.Exchange switchYardExchange = mock(org.switchyard.Exchange.class);
         final org.switchyard.Context switchYardContext = mock(org.switchyard.Context.class);
         final ExchangeContract exchangeContract = mock(ExchangeContract.class);
         final InvocationContract invocationContract = mock(InvocationContract.class);
+        final ServiceOperation serviceOperation = mock(ServiceOperation.class);
+
         final Message message = mock(Message.class);
         when(message.getContent(Integer.class)).thenReturn(payload);
         when(switchYardExchange.getContext()).thenReturn(switchYardContext);
+        when(switchYardExchange.getServiceName()).thenReturn(SERVICE_QNAME);
         when(switchYardExchange.getMessage()).thenReturn(message);
-        when(invocationContract.getOutputType()).thenReturn(new QName("java:java.lang.String"));
+        when(invocationContract.getOutputType()).thenReturn(JAVA_STRING_QNAME);
         when(exchangeContract.getInvokerInvocationMetaData()).thenReturn(invocationContract);
+        when(serviceOperation.getInputType()).thenReturn(JAVA_STRING_QNAME);
+        when(serviceOperation.getOutputType()).thenReturn(null);
+        when(serviceOperation.getFaultType()).thenReturn(null);
+        when(exchangeContract.getServiceOperation()).thenReturn(serviceOperation);
         when(switchYardExchange.getContract()).thenReturn(exchangeContract);
 
         return switchYardExchange;
         
     }
-    
+
     private class MockService {
         @SuppressWarnings("unused")
         public void print(final String msg) {

@@ -182,7 +182,7 @@ MA  02110-1301, USA.
                     <element name="contextMapper" type="swyd:ContextMapperType"  minOccurs="0" maxOccurs="1"/>
                     <element name="messageComposer" type="swyd:MessageComposerType" minOccurs="0" maxOccurs="1"/>
                     <element name="name" type="string"/>
-                    <element name="reportGroup" type="integer"/>
+                    <element name="reportGroup" type="integer" minOccurs="0" maxOccurs="1"/>
                 </sequence>
             </extension>
         </complexContent>

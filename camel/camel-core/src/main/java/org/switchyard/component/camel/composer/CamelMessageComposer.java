@@ -18,6 +18,10 @@
  */
 package org.switchyard.component.camel.composer;
 
+import static org.switchyard.Exchange.FAULT_TYPE;
+import static org.switchyard.Exchange.OPERATION_NAME;
+import static org.switchyard.Exchange.SERVICE_NAME;
+
 import java.io.InputStream;
 
 import javax.xml.namespace.QName;
@@ -26,6 +30,7 @@ import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.component.common.composer.BaseMessageComposer;
+import org.switchyard.metadata.ServiceOperation;
 
 /**
  * The Camel implementation of MessageComposer.
@@ -63,6 +68,13 @@ public class CamelMessageComposer extends BaseMessageComposer<org.apache.camel.M
     @Override
     public org.apache.camel.Message decompose(Exchange exchange, org.apache.camel.Message target) throws Exception {
         getContextMapper().mapTo(exchange.getContext(), target);
+
+        // TODO Consider if it is better to extend context mapper api and pass switchyard exchange to it.
+        ServiceOperation operation = exchange.getContract().getServiceOperation();
+        target.setHeader(OPERATION_NAME, operation.getName());
+        target.setHeader(FAULT_TYPE, operation.getFaultType());
+        target.setHeader(SERVICE_NAME, exchange.getServiceName());
+
         target.setBody(exchange.getMessage().getContent());
         return target;
     }
