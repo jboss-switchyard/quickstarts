@@ -26,20 +26,17 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.UserTransaction;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.switchyard.exception.SwitchYardException;
-import org.switchyard.test.JBossASNamingServiceInstaller;
+import org.switchyard.test.mixins.NamingMixIn;
 
 /**
  * Unit test for {@link TransactionManagerFactory}.
@@ -47,22 +44,18 @@ import org.switchyard.test.JBossASNamingServiceInstaller;
  * @author Daniel Bevenius
  */
 public class TransactionManagerFactoryTest {
-    
-    private static InitialContext initialContext;
 
-    @BeforeClass
-    public static void installMockContextFactory() throws Exception {
-        JBossASNamingServiceInstaller.install();
-    }
-    
+    private NamingMixIn mixIn;
+
     @Before
-    public void createContext() throws NamingException {
-        initialContext = new InitialContext();
+    public void setUp() {
+        mixIn = new NamingMixIn();
+        mixIn.initialize();
     }
-    
+
     @After
-    public void clearContext() {
-        JBossASNamingServiceInstaller.clear();
+    public void shutDown() {
+        mixIn.uninitialize();
     }
 
     @Test
@@ -70,28 +63,28 @@ public class TransactionManagerFactoryTest {
         final TransactionManagerFactory factory = TransactionManagerFactory.getInstance();
         assertThat(factory, is(notNullValue()));
     }
-    
+
     @Test
     public void createSpringTransactionManager() throws Exception {
-        initialContext.bind("java:comp/UserTransaction", mock(UserTransaction.class));
-        initialContext.bind("java:comp/TransactionManager", mock(TransactionManager.class));
-        initialContext.bind("java:comp/TransactionSynchronizationRegistry", mock(TransactionSynchronizationRegistry.class));
+        mixIn.getInitialContext().bind("java:comp/UserTransaction", mock(UserTransaction.class));
+        mixIn.getInitialContext().bind("java:comp/TransactionManager", mock(TransactionManager.class));
+        mixIn.getInitialContext().bind("java:comp/TransactionSynchronizationRegistry", mock(TransactionSynchronizationRegistry.class));
         final TransactionManagerFactory factory = TransactionManagerFactory.getInstance();
         final PlatformTransactionManager tm = factory.create();
         assertThat(tm, is(notNullValue()));
     }
-    
+
     @Test (expected = SwitchYardException.class)
     public void showThrowIfTMIsUnknown() {
         final TransactionManagerFactory factory = TransactionManagerFactory.getInstance();
         factory.create();
     }
-    
+
     @Test
     public void createJBossTransactionManager() throws Exception {
-        initialContext.bind("java:jboss/UserTransaction", mock(UserTransaction.class));
-        initialContext.bind("java:jboss/TransactionManager", mock(TransactionManager.class));
-        initialContext.bind("java:jboss/TransactionSynchronizationRegistry", mock(TransactionSynchronizationRegistry.class));
+        mixIn.getInitialContext().bind("java:jboss/UserTransaction", mock(UserTransaction.class));
+        mixIn.getInitialContext().bind("java:jboss/TransactionManager", mock(TransactionManager.class));
+        mixIn.getInitialContext().bind("java:jboss/TransactionSynchronizationRegistry", mock(TransactionSynchronizationRegistry.class));
         final TransactionManagerFactory factory = TransactionManagerFactory.getInstance();
         final PlatformTransactionManager tm = factory.create();
         assertThat(tm, is(instanceOf(JtaTransactionManager.class)));
