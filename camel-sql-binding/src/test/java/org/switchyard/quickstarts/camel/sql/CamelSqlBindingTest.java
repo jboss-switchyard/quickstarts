@@ -35,6 +35,7 @@ import javax.naming.NamingException;
 import junit.framework.Assert;
 
 import org.h2.jdbcx.JdbcDataSource;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -43,7 +44,6 @@ import org.junit.runner.RunWith;
 import org.switchyard.Message;
 import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.test.Invoker;
-import org.switchyard.test.MockInitialContextFactory;
 import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
@@ -69,18 +69,17 @@ public class CamelSqlBindingTest {
     @ServiceOperation("GreetingService")
     private Invoker invoker;
 
+    private CDIMixIn mixin;
+
+	private static JdbcDataSource dataSource;
+
     @BeforeClass
     public static void startUp() throws Exception {
-        MockInitialContextFactory.install();
-
-        InitialContext initialContext = new InitialContext();
-
-        JdbcDataSource ds = new JdbcDataSource();
-        ds.setURL("jdbc:h2:target/camel-sql-quickstart");
-        ds.setUser("sa");
-        ds.setPassword("sa");
-        connection = ds.getConnection();
-        bind(initialContext, "java:jboss/datasources/GreetDS", ds);
+        dataSource = new JdbcDataSource();
+        dataSource.setURL("jdbc:h2:target/camel-sql-quickstart");
+        dataSource.setUser("sa");
+        dataSource.setPassword("sa");
+        connection = dataSource.getConnection();
 
         String createStatement = "CREATE TABLE greetings ("
             + "id INT PRIMARY KEY AUTO_INCREMENT, "
@@ -94,6 +93,12 @@ public class CamelSqlBindingTest {
     @Before
     public void before() throws Exception {
         connection.createStatement().execute("TRUNCATE TABLE greetings");
+        mixin.getInitialContext().bind("java:jboss/datasources/GreetDS", dataSource);
+    }
+
+    @After
+    public void after() throws Exception {
+        mixin.getInitialContext().unbind("java:jboss/datasources/GreetDS");
     }
 
     @Test
@@ -126,12 +131,6 @@ public class CamelSqlBindingTest {
         if (!connection.isClosed()) {
             connection.close();
         }
-        MockInitialContextFactory.clear();
     }
 
-    private static void bind(InitialContext initialContext, String name, Object object) throws NamingException {
-        Name jndiName = initialContext.getNameParser("").parse(name);
-        initialContext.bind(name, object);
-        initialContext.bind(jndiName, object);
-    }
 }
