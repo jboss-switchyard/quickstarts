@@ -250,7 +250,7 @@ public final class ValidatorUtil {
             
             @Override
             public Class<?> getType() {
-                return publicMethod.getReturnType();
+                return publicMethod.getParameterTypes()[0];
             }
         };
 

@@ -60,6 +60,7 @@ public class ValidatorUtilTest {
 
         Assert.assertTrue(!(validator instanceof TestValidator));
         Assert.assertTrue(validator.validate(new B()));
+        Assert.assertEquals(B.class, validator.getType());
     }
 
     @Test
