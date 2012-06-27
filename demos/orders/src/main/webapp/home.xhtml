@@ -29,7 +29,7 @@
     <title>Order Service</title>
 </head>
 
-<body>
+<body style="color:#7F7F7F;background-color:Black;">
 <div id="content">
     <h1>New Order</h1>
 
@@ -39,21 +39,24 @@
 
     <h:form id="newOrder">
         <div>
-            Order ID:
-            <h:inputText id="orderID" value="#{order.orderId}" required="true"/>
-            <br/>
-            Item ID:
-            <h:inputText id="itemID" value="#{order.itemId}" required="true"/>
-            <br/>
-            Quantity:
-            <h:inputText id="quantity" value="#{order.quantity}" required="true"/>
-            <p/>
-            <h:commandButton id="createOrder" value="Create" action="#{order.create}"/>
+            <div>
+            Order ID: <h:inputText id="itemID" value="#{order.itemId}" required="true" />
+            </div>
+            <div>
+            Item ID: <h:inputText id="orderID" value="#{order.orderId}" required="true" />
+            </div>
+            <div>
+            Quantity: <h:inputText id="quantity" value="#{order.quantity}" required="true" />
+            </div>
+            <div>
+            <h:commandButton id="createOrder" value="Create" action="#{order.create}" style="width:10%;"/>
+            </div>
+            <div style="float: left;"><img src="img/em.gif" alt="" />
+            </div>
         </div>
     </h:form>
 
     <div style="font-style: italic; font-size: small">
-        <p/>
         Service also available over SOAP.  Try with <a href="http://www.soapui.org">soapUI</a> using the <a href="http://localhost:18001/OrderService?wsdl">Service WSDL</a>.
     </div>
 
