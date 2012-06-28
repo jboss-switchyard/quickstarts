@@ -18,6 +18,7 @@
  */
 package org.switchyard.component.common.rules.util.drools;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.drools.SystemEventListener;
 import org.switchyard.common.lang.Strings;
@@ -96,7 +97,12 @@ public class LogSystemEventListener implements SystemEventListener {
      */
     @Override
     public final void info(String message) {
-        getLogger().info(format(message));
+        /*
+        if (getLogger().isInfoEnabled()) {
+            getLogger().info(format(message));
+        }
+        */
+        debug(message); // squelch to DEBUG
     }
 
     /**
@@ -104,7 +110,12 @@ public class LogSystemEventListener implements SystemEventListener {
      */
     @Override
     public final void info(String message, Object object) {
-        getLogger().info(format(message, object));
+        /*
+        if (getLogger().isInfoEnabled()) {
+            getLogger().info(format(message, object));
+        }
+        */
+        debug(message, object); // squelch to DEBUG
     }
 
     /**
@@ -112,7 +123,9 @@ public class LogSystemEventListener implements SystemEventListener {
      */
     @Override
     public final void warning(String message) {
-        getLogger().warn(format(message));
+        if (getLogger().isEnabledFor(Level.WARN)) {
+            getLogger().warn(format(message));
+        }
     }
 
     /**
@@ -120,7 +133,9 @@ public class LogSystemEventListener implements SystemEventListener {
      */
     @Override
     public final void warning(String message, Object object) {
-        getLogger().warn(format(message, object));
+        if (getLogger().isEnabledFor(Level.WARN)) {
+            getLogger().warn(format(message, object));
+        }
     }
  
     /**
@@ -128,7 +143,9 @@ public class LogSystemEventListener implements SystemEventListener {
      */
     @Override
     public final void exception(Throwable e) {
-        getLogger().error(format(e.getMessage()), e);
+        if (getLogger().isEnabledFor(Level.ERROR)) {
+            getLogger().error(format(e.getMessage()), e);
+        }
     }
 
     /**
@@ -136,7 +153,9 @@ public class LogSystemEventListener implements SystemEventListener {
      */
     @Override
     public final void exception(String message, Throwable e) {
-        getLogger().error(format(message), e);
+        if (getLogger().isEnabledFor(Level.ERROR)) {
+            getLogger().error(format(message), e);
+        }
     }
 
     /**
@@ -144,7 +163,9 @@ public class LogSystemEventListener implements SystemEventListener {
      */
     @Override
     public final void debug(String message) {
-        getLogger().debug(format(message));
+        if (getLogger().isDebugEnabled()) {
+            getLogger().debug(format(message));
+        }
     }
 
     /**
@@ -152,7 +173,9 @@ public class LogSystemEventListener implements SystemEventListener {
      */
     @Override
     public final void debug(String message, Object object) {
-        getLogger().debug(format(message, object));
+        if (getLogger().isDebugEnabled()) {
+            getLogger().debug(format(message, object));
+        }
     }
 
 }

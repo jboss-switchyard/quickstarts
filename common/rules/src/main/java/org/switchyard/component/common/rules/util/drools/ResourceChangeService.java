@@ -67,8 +67,8 @@ public final class ResourceChangeService {
     public static synchronized void start(final String name) {
         try {
             if (_names.size() == 0 && !_running) {
-                if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Starting resource change service...");
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Starting resource change service...");
                 }
                 // ORDER IS IMPORTANT!
                 // 1) set the system event listener to our implementation
@@ -93,8 +93,8 @@ public final class ResourceChangeService {
                 }
                 rcs.start();
                 _running = true;
-                if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Resource change service started.");
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Resource change service started.");
                 }
             }
         } finally {
@@ -117,8 +117,8 @@ public final class ResourceChangeService {
     public static synchronized void stop(final String name) {
         _names.remove(name);
         if (_names.size() == 0 && _running) {
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Stopping resource change service...");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Stopping resource change service...");
             }
             // ORDER IS IMPORTANT!
             // 1) stop the scanner
@@ -129,8 +129,8 @@ public final class ResourceChangeService {
             SystemEventListenerFactory.setSystemEventListener(_originalSystemEventListener);
             _originalSystemEventListener = null;
             _running = false;
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Resource change service stopped.");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Resource change service stopped.");
             }
         }
     }
