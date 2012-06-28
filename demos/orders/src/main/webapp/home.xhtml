@@ -27,36 +27,31 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
     <title>Order Service</title>
+    <link type="text/css" rel="stylesheet" href="css/default.css"/>
 </head>
 
-<body style="color:#7F7F7F;background-color:Black;">
+<body class="body">
+<div>
+	<img src="img/sw.jpg" />
+</div>
 <div id="content">
     <h1>New Order</h1>
 
-    <div style="color: red">
+    <div class="warning">
        <h:messages id="messages" globalOnly="false" />
     </div>
 
     <h:form id="newOrder">
         <div>
-            <div>
-            Order ID: <h:inputText id="itemID" value="#{order.itemId}" required="true" />
-            </div>
-            <div>
-            Item ID: <h:inputText id="orderID" value="#{order.orderId}" required="true" />
-            </div>
-            <div>
-            Quantity: <h:inputText id="quantity" value="#{order.quantity}" required="true" />
-            </div>
-            <div>
-            <h:commandButton id="createOrder" value="Create" action="#{order.create}" style="width:10%;"/>
-            </div>
-            <div style="float: left;"><img src="img/em.gif" alt="" />
-            </div>
+            <label class="label">Order ID:&nbsp;</label><h:inputText id="itemID" value="#{order.itemId}" required="true" class="input" /><br/>
+            <label class="label">Item ID:&nbsp;</label><h:inputText id="orderID" value="#{order.orderId}" required="true" class="input" /><br/>
+            <label class="label">Quantity:&nbsp;</label><h:inputText id="quantity" value="#{order.quantity}" required="true" class="input"/><br/>
+            <label class="lbl">&nbsp;</label><h:commandButton id="createOrder" value="Create" action="#{order.create}" class="button" />
         </div>
     </h:form>
-
-    <div style="font-style: italic; font-size: small">
+<br />
+<br />
+    <div class="clarification">
         Service also available over SOAP.  Try with <a href="http://www.soapui.org">soapUI</a> using the <a href="http://localhost:18001/OrderService?wsdl">Service WSDL</a>.
     </div>
 
