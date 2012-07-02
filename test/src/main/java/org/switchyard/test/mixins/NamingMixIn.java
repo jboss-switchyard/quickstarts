@@ -79,6 +79,10 @@ public class NamingMixIn extends AbstractTestMixIn {
         }
     }
 
+    /**
+     * Returns the InitialContext used in the NamingMixIn.
+     * @return InitialContext instance
+     */
     public InitialContext getInitialContext() {
         return initialContext;
     }

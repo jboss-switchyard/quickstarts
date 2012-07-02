@@ -38,38 +38,50 @@ public class TransactionMixIn extends NamingMixIn {
     /**
      * Location of persistent store for tx logs.
      */
-    private String storeDir = "target/tx-store";
-	private JTAEnvironmentBean jtaEnvironmentBean;
+    private String _storeDir = "target/tx-store";
+    private JTAEnvironmentBean _jtaEnvironmentBean;
 
     @Override
     public void initialize() {
         super.initialize();
 
-        System.setProperty("ObjectStoreEnvironmentBean.objectStoreDir", storeDir);
-        System.setProperty("com.arjuna.ats.arjuna.objectstore.objectStoreDir", storeDir);
+        System.setProperty("ObjectStoreEnvironmentBean.objectStoreDir", _storeDir);
+        System.setProperty("com.arjuna.ats.arjuna.objectstore.objectStoreDir", _storeDir);
 
         try {
             InitialContext initialContext = new InitialContext();
-            jtaEnvironmentBean = new JTAEnvironmentBean();
+            _jtaEnvironmentBean = new JTAEnvironmentBean();
 
-            initialContext.bind("java:jboss/TransactionManager", jtaEnvironmentBean.getTransactionManager());
-            initialContext.bind("java:jboss/UserTransaction", jtaEnvironmentBean.getUserTransaction());
-            initialContext.bind("java:jboss/TransactionSynchronizationRegistry", jtaEnvironmentBean.getTransactionSynchronizationRegistry());
+            initialContext.bind("java:jboss/TransactionManager", _jtaEnvironmentBean.getTransactionManager());
+            initialContext.bind("java:jboss/UserTransaction", _jtaEnvironmentBean.getUserTransaction());
+            initialContext.bind("java:jboss/TransactionSynchronizationRegistry", _jtaEnvironmentBean.getTransactionSynchronizationRegistry());
         } catch (NamingException e) {
             throw new SwitchYardException("Unable to bind transaction manager in JNDI", e);
         }
     }
 
+    /**
+     * Returns an instance of UserTransaction.
+     * @return UserTransaction
+     */
     public UserTransaction getUserTransaction() {
-        return jtaEnvironmentBean.getUserTransaction();
+        return _jtaEnvironmentBean.getUserTransaction();
     }
 
+    /**
+     * Returns the TransactionManager used by the TransactionMixIn.
+     * @return TransactionManager instance
+     */
     public TransactionManager getTransactionManager() {
-       return jtaEnvironmentBean.getTransactionManager();
+       return _jtaEnvironmentBean.getTransactionManager();
     }
 
+    /**
+     * Returns the SynchronizationRegistry used by the TransactionMixIn.
+     * @return SynchronizationRegistry instance
+     */
     public TransactionSynchronizationRegistry getTransactionSynchronizationRegistry() {
-        return jtaEnvironmentBean.getTransactionSynchronizationRegistry();
+        return _jtaEnvironmentBean.getTransactionSynchronizationRegistry();
     }
 
 }
