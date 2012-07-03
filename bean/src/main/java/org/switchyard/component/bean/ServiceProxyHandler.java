@@ -124,22 +124,18 @@ public class ServiceProxyHandler implements ServiceHandler {
                             + exchange.getServiceName() + "'.  Invoking bean method '" + invocation.getMethod().getName() + "'.");
                 }
 
+                Object responseObject;
+                ContextProxy.setContext(exchange.getContext());
+                try {
+                    responseObject = invocation.getMethod().invoke(_serviceBean, invocation.getArgs());
+                } finally {
+                    ContextProxy.setContext(null);
+                }
+                
                 if (exchangePattern == ExchangePattern.IN_OUT) {
-                    Object responseObject;
-
-                    ContextProxy.setContext(exchange.getContext());
-                    try {
-                        responseObject = invocation.getMethod().invoke(_serviceBean, invocation.getArgs());
-                    } finally {
-                        ContextProxy.setContext(null);
-                    }
-
                     Message message = exchange.createMessage();
-
                     message.setContent(responseObject);
                     exchange.send(message);
-                } else {
-                    invocation.getMethod().invoke(_serviceBean, invocation.getArgs());
                 }
             } catch (IllegalAccessException e) {
                 throw new BeanComponentException("Cannot invoke operation '" + invocation.getMethod().getName() + "' on bean component '" + _serviceBean.getClass().getName() + "'.", e);
