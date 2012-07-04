@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messaging-deployment xmlns="urn:jboss:messaging-deployment:1.0">
+    <hornetq-server>
+        <jms-destinations>
+            <jms-queue name="OrderQueue">
+                <entry name="OrderQueue"/>
+            </jms-queue>
+            <jms-queue name="ShippingQueue">
+                <entry name="ShippingQueue"/>
+            </jms-queue>
+            <jms-queue name="FillingStockQueue">
+                <entry name="FillingStockQueue"/>
+            </jms-queue>
+        </jms-destinations>
+    </hornetq-server>
+</messaging-deployment>

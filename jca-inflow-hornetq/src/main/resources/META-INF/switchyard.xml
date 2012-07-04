@@ -1,28 +1,35 @@
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0"
-            xmlns:jca="http://docs.oasis-open.org/ns/opencsa/sca/200912/binding-jca"
 		    xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
+           xmlns:jca="urn:switchyard-component-jca:config:1.0"
 		    xmlns:bean="urn:switchyard-component-bean:config:1.0">
             
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="jca-inflow-hornetq" targetNamespace="urn:switchyard-quickstart:jca-inflow-hornetq:0.1.0">
     
-        <service name="GreetingService" promote="GreetingService">
-            <binding.jca xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912/binding-jca">
+        <service name="GreetingService" promote="GreetingComponent/GreetingService">
+            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
                <inboundConnection>
-                   <resourceAdapter name="hornetq-ra.rar" type="javax.resource.spi.ResourceAdapter">
+                   <resourceAdapter name="hornetq-ra.rar">
                    </resourceAdapter>
-                   <activationSpec type="javax.resource.spi.ActivationSpec">
+                   <activationSpec>
                        <property name="destinationType" value="javax.jms.Queue"/>
                        <property name="destination" value="queue/GreetingServiceQueue"/>
                    </activationSpec>
                </inboundConnection>
                <inboundInteraction>
                    <listener>javax.jms.MessageListener</listener>
-                   <inboundOperation name="onMessage" selectedOperation="onMessage"/>
-                   <endpointClass>org.switchyard.component.jca.endpoint.JMSEndpoint</endpointClass>
+                   <inboundOperation name="greet" selectedOperation="greet"/>
+                   <endpoint type="org.switchyard.component.jca.endpoint.JMSEndpoint"/>
                    <transacted>true</transacted>
                </inboundInteraction>
             </binding.jca>
         </service>
-
+        
+        <component name="GreetingComponent">
+            <bean:implementation.bean class="org.switchyard.quickstarts.jca.inflow.GreetingServiceBean"/>
+            <sca:service name="GreetingService">
+                <sca:interface.java interface="org.switchyard.quickstarts.jca.inflow.GreetingService"/>
+            </sca:service>
+        </component>
+        
     </composite>
 </switchyard>
