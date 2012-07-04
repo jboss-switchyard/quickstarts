@@ -64,13 +64,15 @@ import org.hornetq.core.remoting.impl.netty.TransportConstants;
 import org.hornetq.jms.client.HornetQConnectionFactory;
 import org.hornetq.jms.client.HornetQQueue;
 import org.hornetq.jms.server.embedded.EmbeddedJMS;
+import org.switchyard.test.MixInDependencies;
 
 /**
  * HornetQ Test Mix In.
  * 
  * @author Daniel Bevenius
  */
-public class HornetQMixIn extends NamingMixIn {
+@MixInDependencies(required={NamingMixIn.class})
+public class HornetQMixIn extends AbstractTestMixIn {
     
     private static final String HORNETQ_CONF_FILE = "hornetq-configuration.xml";
     private static final String HORNETQ_JMS_CONF_FILE = "hornetq-jms.xml";

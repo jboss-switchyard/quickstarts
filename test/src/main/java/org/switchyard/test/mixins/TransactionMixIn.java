@@ -25,6 +25,7 @@ import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.UserTransaction;
 
 import org.switchyard.exception.SwitchYardException;
+import org.switchyard.test.MixInDependencies;
 
 import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 
@@ -33,7 +34,8 @@ import com.arjuna.ats.jta.common.JTAEnvironmentBean;
  * 
  * @author Lukasz Dywicki
  */
-public class TransactionMixIn extends NamingMixIn {
+@MixInDependencies(required={NamingMixIn.class})
+public class TransactionMixIn extends AbstractTestMixIn {
 
     /**
      * Location of persistent store for tx logs.

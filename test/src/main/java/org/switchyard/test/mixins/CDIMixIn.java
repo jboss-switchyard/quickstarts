@@ -36,6 +36,7 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.common.type.Classes;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.AbstractDeployment;
+import org.switchyard.test.MixInDependencies;
 import org.switchyard.test.SimpleTestDeployment;
 
 /**
@@ -43,7 +44,8 @@ import org.switchyard.test.SimpleTestDeployment;
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class CDIMixIn extends NamingMixIn {
+@MixInDependencies(required={NamingMixIn.class})
+public class CDIMixIn extends AbstractTestMixIn {
     private static final String BINDING_CONTEXT = "java:comp";
     private static final String BEAN_MANAGER_NAME = "BeanManager";
     

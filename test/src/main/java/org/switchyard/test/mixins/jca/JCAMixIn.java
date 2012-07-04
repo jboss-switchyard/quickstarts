@@ -40,8 +40,11 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.internal.AbstractDeployment;
+import org.switchyard.test.MixInDependencies;
 import org.switchyard.test.ShrinkwrapUtil;
+import org.switchyard.test.mixins.AbstractTestMixIn;
 import org.switchyard.test.mixins.NamingMixIn;
+import org.switchyard.test.mixins.HornetQMixIn;
 
 /**
  * JCA Test Mix In for deploying the IronJacamar Embedded.
@@ -49,7 +52,8 @@ import org.switchyard.test.mixins.NamingMixIn;
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  *
  */
-public class JCAMixIn extends NamingMixIn {
+@MixInDependencies(required={NamingMixIn.class}, optional={HornetQMixIn.class})
+public class JCAMixIn extends AbstractTestMixIn {
     private static final String JNDI_PREFIX = "java:jboss";
     private static final String JNDI_USER_TRANSACTION = JNDI_PREFIX + "/UserTransaction";
     private static final String HORNETQ_DEFAULT_CF_JNDI = "java:/JmsXA";
@@ -173,7 +177,7 @@ public class JCAMixIn extends NamingMixIn {
     }
 
     // TODO support arbitrary message listener interface for inflow
-    // TODO support self-made ConnectionFactory to mock up their own EIS"s API for outbound
+    // TODO support self-made ConnectionFactory to mock up their own EIS's API for outbound
     private void deployMockResourceAdapter(String raName, Map<String, String> connDefs) {
         ResourceAdapterArchive raa =
                 ShrinkWrap.create(ResourceAdapterArchive.class, stripDotRarSuffix(raName == null ? "mock-ra.rar" : raName) + ".rar");

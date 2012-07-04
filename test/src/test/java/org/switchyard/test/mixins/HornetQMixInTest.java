@@ -37,10 +37,13 @@ import org.junit.Test;
  */
 public class HornetQMixInTest {
     
+    private static NamingMixIn namingMixIn;
     private static HornetQMixIn hornetQMixIn;
-
+    
     @BeforeClass
     public static void setup() {
+        namingMixIn = new NamingMixIn();
+        namingMixIn.initialize();
         hornetQMixIn = new HornetQMixIn();
         hornetQMixIn.initialize();
     }
@@ -48,6 +51,7 @@ public class HornetQMixInTest {
     @AfterClass
     public static void tearDown() {
         hornetQMixIn.uninitialize();
+        namingMixIn.uninitialize();
     }
 
     @Test

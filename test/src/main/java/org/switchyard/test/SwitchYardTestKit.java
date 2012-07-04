@@ -689,18 +689,48 @@ public class SwitchYardTestKit {
             return;
         }
 
+        List<Class<? extends TestMixIn>> created = new ArrayList<Class<? extends TestMixIn>>();
         for (Class<? extends TestMixIn> mixInType : _testMixIns) {
-            try {
-                TestMixIn testMixIn = newMixInInstance(mixInType, _testInstance);
-                testMixIn.setTestKit(this);
-                _testMixInInstances.add(testMixIn);
-            } catch (Exception e) {
-                e.printStackTrace();
-                Assert.fail("Failed to create instance of TestMixIn type " + mixInType.getName() + ".  Make sure it defines a public default constructor.");
-            }
+                createMixInRecursively(mixInType, created);
+        }
+        
+        // update type list as well
+        _testMixIns = new ArrayList<Class<? extends TestMixIn>>();
+        for (TestMixIn mixin : _testMixInInstances) {
+            _testMixIns.add(mixin.getClass());
         }
     }
 
+    private <T extends TestMixIn> void createMixInRecursively(Class<T> mixInType, List<Class<? extends TestMixIn>> created) {
+        // create dependencies first
+        MixInDependencies dependencies = mixInType.getAnnotation(MixInDependencies.class);
+        if (dependencies != null) {
+            Class<? extends TestMixIn>[] activeDependencies = dependencies.required();
+            if (activeDependencies != null && activeDependencies[0] != NullMixIns.class) {
+                for (Class<? extends TestMixIn> mixin : activeDependencies) {
+                    createMixInRecursively(mixin, created);
+                }
+            }
+            Class<? extends TestMixIn>[] passiveDependencies = dependencies.optional();
+            if (passiveDependencies != null && passiveDependencies[0] != NullMixIns.class) {
+                for (Class<? extends TestMixIn> mixin : passiveDependencies) {
+                    if (_testMixIns.contains(mixin)) {
+                        createMixInRecursively(mixin, created);
+                    }
+                }
+            }
+        }
+        
+        if (created.contains(mixInType)) {
+            return;
+        }
+        
+        TestMixIn testMixIn = newMixInInstance(mixInType, _testInstance);
+        testMixIn.setTestKit(this);
+        _testMixInInstances.add(testMixIn);
+        created.add(mixInType);
+    }
+    
     protected static <T extends TestMixIn> T newMixInInstance(Class<T> mixInType, Object testInstance) {
         Class<? extends Object> testClass = testInstance.getClass();
         Method[] methods = testClass.getDeclaredMethods();

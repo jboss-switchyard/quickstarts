@@ -40,7 +40,6 @@ public class NamingMixIn extends AbstractTestMixIn {
 
     private static final String INITIAL_CONTEXT_FACTORY_NAME = "org.jboss.as.naming.InitialContextFactory";
     private static final CompositeName EMPTY_NAME = new CompositeName();
-    private static Integer referenceCounter = 0;
     
     /**
      * Instance of context shared with children classes.
@@ -49,44 +48,34 @@ public class NamingMixIn extends AbstractTestMixIn {
 
     @Override
     public void initialize() {
-        // ensure to initialize only once and count references
-        // TODO remove this once SWITCHYARD-906 is fixed
-        synchronized (referenceCounter) {
-            if (referenceCounter != 0) {
-                referenceCounter++;
-                return;
-            }
+        String factoryName = System.getProperty(Context.INITIAL_CONTEXT_FACTORY);
+        if (factoryName != null && !factoryName.equals(INITIAL_CONTEXT_FACTORY_NAME)) {
+            return;
+        }
 
-            String factoryName = System.getProperty(Context.INITIAL_CONTEXT_FACTORY);
-            if (factoryName != null && !factoryName.equals(INITIAL_CONTEXT_FACTORY_NAME)) {
-                return;
-            }
-
-            System.setProperty(Context.INITIAL_CONTEXT_FACTORY, INITIAL_CONTEXT_FACTORY_NAME);
-            NamingContext.initializeNamingManager();
-            NamespaceContextSelector.setDefault(new NamespaceContextSelector() {
-                public Context getContext(String identifier) {
-                    try {
-                        return (Context) new InitialContext().lookup(EMPTY_NAME);
-                    } catch (NamingException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
-
-            if (initialContext == null) {
+        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, INITIAL_CONTEXT_FACTORY_NAME);
+        NamingContext.initializeNamingManager();
+        NamespaceContextSelector.setDefault(new NamespaceContextSelector() {
+            public Context getContext(String identifier) {
                 try {
-                    initialContext = new InitialContext();
-                    try {
-                        Context.class.cast(initialContext.lookup("java:comp"));
-                    } catch (Exception e) {
-                        initialContext.createSubcontext("java:comp");
-                    }
+                    return (Context) new InitialContext().lookup(EMPTY_NAME);
                 } catch (NamingException e) {
-                    Assert.fail("Failed to create context : " + e.getMessage());
+                    throw new RuntimeException(e);
                 }
             }
-            referenceCounter++;
+        });
+
+        if (initialContext == null) {
+            try {
+                initialContext = new InitialContext();
+                try {
+                    Context.class.cast(initialContext.lookup("java:comp"));
+                } catch (Exception e) {
+                    initialContext.createSubcontext("java:comp");
+                }
+            } catch (NamingException e) {
+                Assert.fail("Failed to create context : " + e.getMessage());
+            }
         }
     }
 
@@ -100,13 +89,6 @@ public class NamingMixIn extends AbstractTestMixIn {
 
     @Override
     public void uninitialize() {
-        // ensure to uninitialize after all of mixins depend on NamingMixIn have been uninitialized
-        // TODO remove this once SWITCHYARD-906 is fixed
-        synchronized (referenceCounter) {
-            referenceCounter--;
-            if (referenceCounter == 0) {
-                NamingContext.setActiveNamingStore(new InMemoryNamingStore());
-            }
-        }
+        NamingContext.setActiveNamingStore(new InMemoryNamingStore());
     }
 }
