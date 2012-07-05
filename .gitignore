@@ -2,6 +2,7 @@
 .settings
 .classpath
 target/
+.gwt/
 *.iml
 *.ipr
 *.iws

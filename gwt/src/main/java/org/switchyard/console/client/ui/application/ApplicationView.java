@@ -27,6 +27,7 @@ import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.switchyard.console.client.model.Application;
 import org.switchyard.console.client.ui.artifacts.ArtifactReferencesList;
+import org.switchyard.console.client.ui.common.ValidatorsList;
 import org.switchyard.console.client.ui.widgets.LocalNameFormItem;
 import org.switchyard.console.client.ui.widgets.NamespaceFormItem;
 
@@ -52,6 +53,7 @@ public class ApplicationView extends DisposableViewImpl implements ApplicationPr
     private ApplicationTransformationsEditor _transformationsEditor;
     private ApplicationsList _applicationsList;
     private Application _selectedApplication;
+    private ValidatorsList _validatorsList;
 
     @Override
     public Widget createWidget() {
@@ -79,6 +81,7 @@ public class ApplicationView extends DisposableViewImpl implements ApplicationPr
         _servicesEditor = new ApplicationServicesEditor(_presenter);
         _artifactReferencesList = new ArtifactReferencesList();
         _transformationsEditor = new ApplicationTransformationsEditor(_presenter);
+        _validatorsList = new ValidatorsList();
 
         _artifactReferencesList.addSelectionChangeHandler(new Handler() {
             @Override
@@ -96,7 +99,8 @@ public class ApplicationView extends DisposableViewImpl implements ApplicationPr
                         "Displays details for a specific application.  Select an application to see its implementation details.")
                 .setMaster(null, formWidget).addDetail("Services", _servicesEditor.asWidget())
                 .addDetail("Artifact References", _artifactReferencesList.asWidget())
-                .addDetail("Transformers", _transformationsEditor.asWidget());
+                .addDetail("Transformers", _transformationsEditor.asWidget())
+                .addDetail("Validators", _validatorsList.asWidget());
         applicationDetailsLayout.build();
         formWidget.getParent().setStyleName("fill-layout-width");
 
@@ -129,6 +133,7 @@ public class ApplicationView extends DisposableViewImpl implements ApplicationPr
         _artifactReferencesList.setData(application == null ? null : application.getArtifacts());
         _servicesEditor.setApplication(application);
         _transformationsEditor.setApplication(application);
+        _validatorsList.setData(application == null ? null : application.getValidators());
     }
 
 }

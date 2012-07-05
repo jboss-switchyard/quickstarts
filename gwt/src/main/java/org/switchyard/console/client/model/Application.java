@@ -38,14 +38,15 @@ public interface Application extends HasQName {
      * @param services the services provided by this application.
      */
     public void setServices(List<Service> services);
-    
+
     /**
      * @return the component services defined within this application.
      */
     public List<ComponentService> getComponentServices();
-    
+
     /**
-     * @param componentServices the component services defined within this application.
+     * @param componentServices the component services defined within this
+     *            application.
      */
     public void setComponentServices(List<ComponentService> componentServices);
 
@@ -58,7 +59,7 @@ public interface Application extends HasQName {
      * @param transformers the transforms defined within this application.
      */
     public void setTransformers(List<Transformer> transformers);
-    
+
     /**
      * @return the artifacts referenced by this application.
      */
@@ -68,5 +69,15 @@ public interface Application extends HasQName {
      * @param artifacts the artifacts referenced by this application.
      */
     public void setArtifacts(List<ArtifactReference> artifacts);
-    
+
+    /**
+     * @return the validators used by this application.
+     */
+    public List<Validator> getValidators();
+
+    /**
+     * @param validators the validators used by this application.
+     */
+    public void setValidators(List<Validator> validators);
+
 }
