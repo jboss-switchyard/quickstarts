@@ -33,8 +33,8 @@ import static org.switchyard.as7.extension.SwitchYardModelConstants.FROM;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.GATEWAYS;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.IMPLEMENTATION;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.IMPLEMENTATION_CONFIGURATION;
-import static org.switchyard.as7.extension.SwitchYardModelConstants.MIN_TIME;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.MAX_TIME;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.MIN_TIME;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.PROMOTED_SERVICE;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.REFERENCES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.SERVICES;
@@ -44,6 +44,7 @@ import static org.switchyard.as7.extension.SwitchYardModelConstants.TOTAL_COUNT;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.TOTAL_TIME;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.TRANSFORMERS;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.URL;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.VALIDATORS;
 
 import java.util.Map;
 import java.util.Set;
@@ -57,6 +58,7 @@ import org.switchyard.admin.ComponentService;
 import org.switchyard.admin.MessageMetrics;
 import org.switchyard.admin.Service;
 import org.switchyard.admin.Transformer;
+import org.switchyard.admin.Validator;
 import org.switchyard.config.model.switchyard.ArtifactModel;
 
 /**
@@ -121,6 +123,13 @@ final public class ModelNodeCreationUtil {
      *          },
      *          ...
      *      ]
+     *      "validators" =&gt; [
+     *          {
+     *              "name" =&gt; "typeName",
+     *              "type" =&gt; "XML",
+     *          },
+     *          ...
+     *      ]
      * </pre></code>
      * 
      * @param application the {@link Application} used to populate the node.
@@ -142,11 +151,18 @@ final public class ModelNodeCreationUtil {
         for (Transformer transformer : application.getTransformers()) {
             transformersNode.add(createTransformerNode(transformer));
         }
-        
+
         ModelNode artifactsNode = new ModelNode();
         if (application.getConfig().getArtifacts() != null) {
             for (ArtifactModel artifact : application.getConfig().getArtifacts().getArtifacts()) {
                 artifactsNode.add(createArtifactNode(artifact));
+            }
+        }
+
+        ModelNode validatorsNode = new ModelNode();
+        if (application.getValidators() != null) {
+            for (Validator validator : application.getValidators()) {
+                validatorsNode.add(createValidatorNode(validator));
             }
         }
 
@@ -155,6 +171,7 @@ final public class ModelNodeCreationUtil {
         applicationNode.get(COMPONENT_SERVICES).set(componentServicesNode);
         applicationNode.get(TRANSFORMERS).set(transformersNode);
         applicationNode.get(ARTIFACTS).set(artifactsNode);
+        applicationNode.get(VALIDATORS).set(validatorsNode);
 
         return applicationNode;
     }
@@ -302,7 +319,7 @@ final public class ModelNodeCreationUtil {
     public static ModelNode createComponentNode(Component component) {
         ModelNode componentNode = new ModelNode();
         componentNode.get(NAME).set(component.getName());
-        
+
         Set<String> types = component.getTypes();
         if (types == null || types.isEmpty()) {
             componentNode.get(ACTIVATION_TYPES).addEmptyList();
@@ -311,12 +328,12 @@ final public class ModelNodeCreationUtil {
                 componentNode.get(ACTIVATION_TYPES).add(type);
             }
         }
-        
-        Map<String,String> properties = component.getProperties();
+
+        Map<String, String> properties = component.getProperties();
         if (properties == null || properties.isEmpty()) {
             componentNode.get(PROPERTIES);
         } else {
-            for (Map.Entry<String,String> property : properties.entrySet()) {
+            for (Map.Entry<String, String> property : properties.entrySet()) {
                 componentNode.get(PROPERTIES).get(property.getKey()).set(property.getValue());
             }
         }
@@ -417,7 +434,6 @@ final public class ModelNodeCreationUtil {
 
         return transformationNode;
     }
-    
 
     /**
      * Creates a new {@link ModelNode} tree from the {@link ArtifactModel}. The
@@ -436,10 +452,36 @@ final public class ModelNodeCreationUtil {
         artifactNode.get(URL).set(artifact.getURL());
         return artifactNode;
     }
-    
+
     /**
-     * Adds metrics to an existing node from the {@link MessageMetrics}. The tree
-     * has the form: <br>
+     * Creates a new {@link ModelNode} tree from the validtors. The tree has the
+     * form: <br>
+     * <code><pre>
+     *      "name" =&gt; "typeName",
+     *      "type" =&gt; "XML",
+     * </pre></code>
+     * 
+     * @param validator the {@link Validator} used to populate the node.
+     * @return a new {@link ModelNode}
+     */
+    public static ModelNode createValidatorNode(Validator validator) {
+        ModelNode validatorNode = new ModelNode();
+        if (validator.getName() == null) {
+            validatorNode.get(NAME);
+        } else {
+            validatorNode.get(NAME).set(validator.getName().toString());
+        }
+        if (validator.getType() == null) {
+            validatorNode.get(TYPE);
+        } else {
+            validatorNode.get(TYPE).set(validator.getType());
+        }
+        return validatorNode;
+    }
+
+    /**
+     * Adds metrics to an existing node from the {@link MessageMetrics}. The
+     * tree has the form: <br>
      * <code><pre>
      *      "successCount" =&gt; "successCount",
      *      "faultCount" =&gt; "faultCount",
@@ -455,7 +497,7 @@ final public class ModelNodeCreationUtil {
      * @return a new {@link ModelNode}
      */
     public static ModelNode addMetricsToNode(ModelNode node, MessageMetrics metrics) {
-        
+
         node.get(SUCCESS_COUNT).set(metrics.getSuccessCount());
         node.get(FAULT_COUNT).set(metrics.getFaultCount());
         node.get(TOTAL_COUNT).set(metrics.getTotalCount());
@@ -463,13 +505,13 @@ final public class ModelNodeCreationUtil {
         node.get(MIN_TIME).set(metrics.getMinProcessingTime());
         node.get(MAX_TIME).set(metrics.getMaxProcessingTime());
         node.get(TOTAL_TIME).set(metrics.getTotalProcessingTime());
-        
+
         return node;
     }
-    
+
     /**
-     * Creates a new {@link ModelNode} tree from the {@link Service} for metrics.
-     * The tree has the form: <br>
+     * Creates a new {@link ModelNode} tree from the {@link Service} for
+     * metrics. The tree has the form: <br>
      * <code><pre>
      *      "name" =&gt; "serviceName",
      *      "successCount" =&gt; "successCount",
@@ -502,7 +544,7 @@ final public class ModelNodeCreationUtil {
 
         serviceNode.get(NAME).set(service.getName().toString());
         addMetricsToNode(serviceNode, service.getPromotedService().getMessageMetrics());
-        
+
         ModelNode referencesNode = new ModelNode();
         for (ComponentReference reference : service.getPromotedService().getReferences()) {
             ModelNode referenceNode = new ModelNode();

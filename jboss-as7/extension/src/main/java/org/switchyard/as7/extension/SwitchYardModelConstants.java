@@ -138,6 +138,10 @@ public final class SwitchYardModelConstants {
      * Constant for model key: url.
      */
     public static final String URL = "url";
+    /**
+     * Constant for model key: validators.
+     */
+    public static final String VALIDATORS = "validators";
     
     /**
      * Constant for model key: successCount.

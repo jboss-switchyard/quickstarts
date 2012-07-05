@@ -65,6 +65,7 @@ import static org.switchyard.as7.extension.SwitchYardModelConstants.TOTAL_TIME;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.TRANSFORMERS;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.URL;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.USES_ARTIFACT;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.VALIDATORS;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -162,7 +163,7 @@ final class SwitchYardSubsystemProviders {
             return Descriptions.getSubsystemUsesArtifact(locale);
         }
     };
-    
+
     static final DescriptionProvider SUBSYSTEM_SHOW_METRICS = new DescriptionProvider() {
 
         public ModelNode getModelDescription(final Locale locale) {
@@ -316,6 +317,11 @@ final class SwitchYardSubsystemProviders {
             op.get(REPLY_PROPERTIES, VALUE_TYPE, ARTIFACTS, DESCRIPTION).set(
                     bundle.getString("switchyard.read-application.reply.artifacts"));
             populateArtifactValueTypeNode(op.get(REPLY_PROPERTIES, VALUE_TYPE, ARTIFACTS), locale);
+
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, VALIDATORS, TYPE).set(ModelType.LIST);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, VALIDATORS, DESCRIPTION).set(
+                    bundle.getString("switchyard.read-application.reply.validators"));
+            populateValidatorValueTypeNode(op.get(REPLY_PROPERTIES, VALUE_TYPE, VALIDATORS), locale);
 
             return op;
         }
@@ -509,6 +515,17 @@ final class SwitchYardSubsystemProviders {
                     bundle.getString("switchyard.read-application.reply.artifact.name"));
             op.get(VALUE_TYPE, URL, TYPE).set(ModelType.STRING);
             op.get(VALUE_TYPE, URL, DESCRIPTION).set(bundle.getString("switchyard.read-application.reply.artifact.url"));
+        }
+
+        static void populateValidatorValueTypeNode(ModelNode op, Locale locale) {
+            final ResourceBundle bundle = getResourceBundle(locale);
+
+            op.get(VALUE_TYPE, NAME, TYPE).set(ModelType.STRING);
+            op.get(VALUE_TYPE, NAME, DESCRIPTION).set(
+                    bundle.getString("switchyard.read-application.reply.validator.name"));
+            op.get(VALUE_TYPE, TYPE, TYPE).set(ModelType.STRING);
+            op.get(VALUE_TYPE, TYPE, DESCRIPTION).set(
+                    bundle.getString("switchyard.read-application.reply.validator.type"));
         }
     }
 }
