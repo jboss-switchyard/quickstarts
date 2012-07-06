@@ -192,6 +192,11 @@
             <artifactId>switchyard-quickstart-jca-inflow-hornetq</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.switchyard.quickstarts</groupId>
+            <artifactId>switchyard-quickstart-jca-outbound-hornetq</artifactId>
+            <scope>test</scope>
+        </dependency>
          <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
             <artifactId>switchyard-quickstart-demo-orders</artifactId>
