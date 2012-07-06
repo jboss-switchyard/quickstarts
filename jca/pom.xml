@@ -84,10 +84,6 @@
             <artifactId>jboss-as-connector</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hornetq</groupId>
-            <artifactId>hornetq-ra</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.ironjacamar</groupId>
             <artifactId>ironjacamar-core-api</artifactId>
         </dependency>
