@@ -128,15 +128,22 @@
         </dependency>
         <dependency>
             <groupId>org.hornetq</groupId>
-            <artifactId>hornetq-core</artifactId>
-            <scope>compile</scope>
+            <artifactId>hornetq-ra</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hornetq</groupId>
+            <artifactId>hornetq-core-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hornetq</groupId>
             <artifactId>hornetq-jms-client</artifactId>
+        </dependency>
+         <dependency>
+            <groupId>org.hornetq</groupId>
+            <artifactId>hornetq-core</artifactId>
             <scope>compile</scope>
         </dependency>
-        <dependency>
+       <dependency>
             <groupId>org.hornetq</groupId>
             <artifactId>hornetq-jms</artifactId>
             <scope>compile</scope>
