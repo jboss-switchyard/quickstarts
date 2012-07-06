@@ -19,11 +19,10 @@
 
 package org.switchyard.config;
 
-import static org.switchyard.config.OutputKey.EXCLUDE_XML_DECLARATION;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -35,6 +34,8 @@ import java.util.TreeSet;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 
 /**
  * An abstract representation of a Configuration, containing default implementations for many of the defined methods.
@@ -163,6 +164,28 @@ public abstract class BaseConfiguration implements Configuration {
      * {@inheritDoc}
      */
     @Override
+    public Source getSource(OutputKey... keys) {
+        return new StreamSource(new StringReader(getString(keys)));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getString(OutputKey... keys) {
+        try {
+            StringWriter writer = new StringWriter();
+            write(writer, keys);
+            return writer.toString().trim();
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void write(OutputStream out, OutputKey... keys) throws IOException {
         write(new OutputStreamWriter(out), keys);
     }
@@ -172,13 +195,7 @@ public abstract class BaseConfiguration implements Configuration {
      */
     @Override
     public String toString() {
-        try {
-            StringWriter writer = new StringWriter();
-            write(writer, EXCLUDE_XML_DECLARATION);
-            return writer.toString().trim();
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
-        }
+        return getString(OutputKey.EXCLUDE_XML_DECLARATION);
     }
 
 }

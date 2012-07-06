@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -174,30 +174,31 @@ public final class Descriptor {
     }
 
     /**
-     * Creates a Schema based on the combined schema documents/definitions found that are associated with the specified namespace.
+     * Creates a Schema based on the combined schema documents/definitions found that are associated with the specified namespaces.
      * @param namespaces the namespaces of the schemas
      * @return the new Schema
      */
     public synchronized Schema getSchema(Set<String> namespaces) {
         Schema schema = _namespaces_schema_map.get(namespaces);
         if (schema == null) {
-            List<Source> sourceList = new ArrayList<Source>();
+            Map<String, Source> nsSourceMap = new TreeMap<String, Source>(new NamespaceComparator());
             try {
                 for (String namespace : namespaces) {
                     String schemaLocation = getSchemaLocation(namespace);
                     if (schemaLocation != null) {
-                        URL resource = Classes.getResource(schemaLocation, Descriptor.class);
-                        if (resource != null) {
-                            String xsd = new StringPuller().pull(resource);
-                            sourceList.add(new StreamSource(new StringReader(xsd)));
+                        URL url = Classes.getResource(schemaLocation, Descriptor.class);
+                        if (url != null) {
+                            String xsd = new StringPuller().pull(url);
+                            nsSourceMap.put(namespace, new StreamSource(new StringReader(xsd)));
                         }
                     }
                 }
-                if (sourceList.size() > 0) {
-                    Source[] sources = sourceList.toArray(new Source[sourceList.size()]);
+                if (nsSourceMap.size() > 0) {
                     SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
                     factory.setResourceResolver(new DescriptorLSResourceResolver(this));
-                    schema = factory.newSchema(sources);
+                    Collection<Source> sortedSources = nsSourceMap.values();
+                    Source[] schemaSources = sortedSources.toArray(new Source[sortedSources.size()]);
+                    schema = factory.newSchema(schemaSources);
                     _namespaces_schema_map.put(namespaces, schema);
                 }
             } catch (Exception e) {
@@ -462,6 +463,7 @@ public final class Descriptor {
             }
             return null;
         }
+
     }
 
     private static final class DescriptorLSInput implements LSInput {
@@ -613,6 +615,7 @@ public final class Descriptor {
         public void setCertifiedText(boolean certifiedText) {
             _certifiedText = certifiedText;
         }
+
     }
 
 }

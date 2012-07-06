@@ -49,9 +49,9 @@ public class ElementPuller extends Puller<Element> {
     }
 
     /**
-     * Safely pulls an Element from a Reader.
-     * @param reader a Reader of the resource
-     * @return the resource, or null if not found
+     * Pulls an Element from a Reader.
+     * @param reader a Reader of the element
+     * @return the element
      * @throws IOException if a problem occurred
      */
     public Element pull(Reader reader) throws IOException {
@@ -59,9 +59,9 @@ public class ElementPuller extends Puller<Element> {
     }
 
     /**
-     * Safely pulls an Element from an InputSource.
-     * @param is an InputSource of the resource
-     * @return the resource, or null if not found
+     * Pulls an Element from an InputSource.
+     * @param is an InputSource of the element
+     * @return the element
      * @throws IOException if a problem occurred
      */
     public Element pull(InputSource is) throws IOException {
@@ -79,28 +79,41 @@ public class ElementPuller extends Puller<Element> {
     }
 
     /**
-     * Safely returns the root element of a DOM document.
+     * Pulls the root element of a DOM document, additionally normalizing it.
      * @param document the document
-     * @return the element, or null if the document is null
+     * @return the element
      */
     public Element pull(Document document) {
-        return pull(document.getDocumentElement());
+        return pull(document, true);
     }
 
     /**
-     * Safely returns the element itself, additionally normalizing it.
+     * Pulls the root element of a DOM document.
+     * @param document the document
+     * @param normalize whether or not to normalize the document
+     * @return the element
+     */
+    public Element pull(Document document, boolean normalize) {
+        if (normalize) {
+            document.normalizeDocument();
+        }
+        return pull(document.getDocumentElement(), normalize);
+    }
+
+    /**
+     * Returns the element itself, additionally normalizing it.
      * @param element the element
-     * @return the element, or null if the passed in element is null
+     * @return the element
      */
     public Element pull(Element element) {
         return pull(element, true);
     }
 
     /**
-     * Safely returns the element, optionally normalizing it.
+     * Returns the element, optionally normalizing it.
      * @param element the element
      * @param normalize whether or not to normalize the element
-     * @return the element, or null if the passed in element is null
+     * @return the element
      */
     public Element pull(Element element, boolean normalize) {
         if (normalize) {
@@ -110,9 +123,9 @@ public class ElementPuller extends Puller<Element> {
     }
 
     /**
-     * Safely pulls (constructs) a basic Element from a qualified name.
+     * Pulls (constructs) a basic Element from a qualified name.
      * @param qname the qualified name
-     * @return the model, or null if the qualified name is null
+     * @return the element
      */
     public Element pull(QName qname) {
         StringBuilder sb = new StringBuilder();

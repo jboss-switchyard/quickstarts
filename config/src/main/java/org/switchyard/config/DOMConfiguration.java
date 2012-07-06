@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
 package org.switchyard.config;
 
 import java.io.IOException;
@@ -28,7 +27,6 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -523,9 +521,22 @@ public class DOMConfiguration extends BaseConfiguration {
      */
     @Override
     public Configuration addChild(Configuration child) {
-        DOMConfiguration config = new DOMConfiguration(child);
-        _element.getOwnerDocument().adoptNode(config._element);
-        _element.appendChild(config._element);
+        Document this_doc = _element.getOwnerDocument();
+        this_doc.normalizeDocument();
+        DOMConfiguration child_config = new DOMConfiguration(child);
+        Document child_doc = child_config._element.getOwnerDocument();
+        if (child_doc != this_doc) {
+            child_doc.normalizeDocument();
+            this_doc.adoptNode(child_config._element);
+        }
+        _element.appendChild(child_config._element);
+        String child_xmlns = Strings.trimToNull(child_config._element.getNamespaceURI());
+        if (child_xmlns == null) {
+            String this_xmlns = Strings.trimToNull(this._element.getNamespaceURI());
+            if (this_xmlns != null) {
+                this_doc.renameNode(child_config._element, this_xmlns, child_config.getName());
+            }
+        }
         return this;
     }
 
@@ -650,14 +661,6 @@ public class DOMConfiguration extends BaseConfiguration {
      * {@inheritDoc}
      */
     @Override
-    public Source getSource() {
-        return new DOMSource(_element);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void write(Writer writer, OutputKey... keys) throws IOException {
         try {
             TransformerFactory tf = TransformerFactory.newInstance();
@@ -673,7 +676,7 @@ public class DOMConfiguration extends BaseConfiguration {
             if (key_list.contains(OutputKey.EXCLUDE_XML_DECLARATION)) {
                 t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             }
-            t.transform(getSource(), new StreamResult(writer));
+            t.transform(new DOMSource(_element), new StreamResult(writer));
         } catch (TransformerException te) {
             throw new IOException(te);
         }

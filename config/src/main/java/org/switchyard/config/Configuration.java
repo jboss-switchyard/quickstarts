@@ -310,9 +310,17 @@ public interface Configuration {
 
     /**
      * Gets a source of the underlying config structure.
+     * @param keys the OutputKeys to respect
      * @return the source
      */
-    public Source getSource();
+    public Source getSource(OutputKey... keys);
+
+    /**
+     * Gets a string of the underlying config structure.
+     * @param keys the OutputKeys to respect
+     * @return the string
+     */
+    public String getString(OutputKey... keys);
 
     /**
      * Writes this config out in it's native form (implementation-specific).
