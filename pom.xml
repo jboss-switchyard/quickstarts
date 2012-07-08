@@ -112,7 +112,7 @@
     <version.maven.shade.plugin>1.4</version.maven.shade.plugin>
     <version.maven.plugin.api>3.0.3</version.maven.plugin.api>
     <version.mina>2.0.1</version.mina>
-    <version.milyn>1.5</version.milyn>
+    <version.milyn>1.5.1</version.milyn>
     <version.mvel>2.1.0.drools16</version.mvel>
     <!--
     <version.mysql-connector-java>5.1.19</version.mysql-connector-java>
