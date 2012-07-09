@@ -107,6 +107,7 @@
     <version.jettison>1.2</version.jettison>
     <version.jta>1.1</version.jta>
     <version.jsch>0.1.44-1</version.jsch>
+    <version.junit>4.10</version.junit>
     <version.maven.gwt.plugin>2.3.0</version.maven.gwt.plugin>
     <version.maven.exec.plugin>1.2</version.maven.exec.plugin>
     <version.maven.shade.plugin>1.4</version.maven.shade.plugin>
@@ -1113,6 +1114,11 @@
          <artifactId>jta</artifactId>
          <version>${version.jta}</version>
       </dependency>
+      <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>
+         <version>${version.junit}</version>
+      </dependency>
      <dependency>
          <groupId>com.jcraft</groupId>
          <artifactId>jsch</artifactId>
@@ -1422,6 +1428,11 @@
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>forge-shell-api</artifactId>
+         <version>${version.forge}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-test-harness</artifactId>
          <version>${version.forge}</version>
       </dependency>
       <dependency>
