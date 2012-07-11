@@ -19,11 +19,14 @@
 
 package org.switchyard.handlers;
 
+import java.util.UUID;
+
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.InvalidTransactionException;
 import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
+import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
@@ -41,185 +44,387 @@ import org.switchyard.internal.DefaultContext;
 import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.TransactionPolicy;
 
-
 public class TransactionHandlerTest {
-	
-	private MockTransactionManager tm;
-	private MockExchange exchange;
-	private TransactionHandler handler;
-	
-	@Before
-	public void setUp() {
-		tm = new MockTransactionManager();
-		exchange = new MockExchange();
-		exchange.setContext(new DefaultContext());
-		handler = new TransactionHandler();
-		handler.setTransactionManager(tm);
-	}
-	
-	@Test
-	public void incompatibleRequirements() {
-		PolicyUtil.require(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
-		PolicyUtil.require(exchange, TransactionPolicy.SUSPENDS_TRANSACTION);
-		exchange.setPhase(ExchangePhase.IN);
-		
-		try {
-			handler.handleMessage(exchange);
-		} catch (HandlerException handlerEx) {
-			// expected
-			System.out.println(handlerEx.toString());
-			return;
-		}
-		
-		Assert.fail("Expected a handler exception due to incompatible policy");
-	}
-	
-	@Test
-	public void propagateProvidedButNotRequired() {
-		// We currently view a propagated transaction without a requirement
-		// as harmless.  This tests confirms this behavior and acts as a guard
-		// in case our behavior changes.
-		PolicyUtil.provide(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
-		exchange.setPhase(ExchangePhase.IN);
 
-		try {
-			handler.handleMessage(exchange);
-		} catch (HandlerException handlerEx) {
-			Assert.fail("Exception not expected when transaction is provided but not required: " + handlerEx);
-		}
-	}
-	
-	@Test
-	public void propagateRequiredButNotProvided() {
-		PolicyUtil.require(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
-		exchange.setPhase(ExchangePhase.IN);
-		
-		try {
-			handler.handleMessage(exchange);
-		} catch (HandlerException handlerEx) {
-			// expected
-			System.out.println(handlerEx.toString());
-			return;
-		}
-		
-		Assert.fail("Handler should fail when propagation required, but not provided");
-	}
-	
-	@Test
-	public void suspendTransaction() throws Exception {
-		PolicyUtil.require(exchange, TransactionPolicy.SUSPENDS_TRANSACTION);
-		exchange.setPhase(ExchangePhase.IN);
-		handler.handleMessage(exchange);
-		// transaction should be disabled
-		Assert.assertFalse(tm.getTransaction().active);
-		exchange.setPhase(ExchangePhase.OUT);
-		handler.handleMessage(exchange);
-		// transaction should be enabled
-		Assert.assertTrue(tm.getTransaction().active);
-	}
+    private MockTransactionManager tm;
+    private MockExchange exchange;
+    private TransactionHandler handler;
+
+    @Before
+    public void setUp() {
+        tm = new MockTransactionManager();
+        exchange = new MockExchange();
+        exchange.setContext(new DefaultContext());
+        handler = new TransactionHandler();
+        handler.setTransactionManager(tm);
+    }
+
+    @Test
+    public void incompatibleRequirements_PropagatesAndSuspends() {
+        PolicyUtil.require(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
+        PolicyUtil.require(exchange, TransactionPolicy.SUSPENDS_TRANSACTION);
+        exchange.setPhase(ExchangePhase.IN);
+
+        try {
+            handler.handleMessage(exchange);
+        } catch (HandlerException handlerEx) {
+            // expected
+            System.out.println(handlerEx.toString());
+            return;
+        }
+
+        Assert.fail("Expected a handler exception due to incompatible policy");
+    }
+
+    @Test
+    public void incompatibleRequirements_managedLocal() {
+        PolicyUtil.require(exchange, TransactionPolicy.MANAGED_TRANSACTION_LOCAL);
+        exchange.setPhase(ExchangePhase.IN);
+
+        try {
+            handler.handleMessage(exchange);
+        } catch (HandlerException handlerEx) {
+            System.out.println(handlerEx.toString());
+            return;
+        }
+
+        Assert.fail("Expected a handler exception due to incompatible policy");
+    }
+
+    @Test
+    public void incompatibleRequirements_managedGlobalAndNoManaged() {
+        PolicyUtil.require(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL);
+        PolicyUtil.require(exchange, TransactionPolicy.NO_MANAGED_TRANSACTION);
+        exchange.setPhase(ExchangePhase.IN);
+
+        try {
+            handler.handleMessage(exchange);
+        } catch (HandlerException handlerEx) {
+            // expected
+            System.out.println(handlerEx.toString());
+            return;
+        }
+
+        Assert.fail("Expected a handler exception due to incompatible policy");
+    }
+
+    @Test
+    public void incompatibleRequirements_PropagatesAndNoManaged() {
+        PolicyUtil.require(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
+        PolicyUtil.require(exchange, TransactionPolicy.NO_MANAGED_TRANSACTION);
+        exchange.setPhase(ExchangePhase.IN);
+
+        try {
+            handler.handleMessage(exchange);
+        } catch (HandlerException handlerEx) {
+            // expected
+            System.out.println(handlerEx.toString());
+            return;
+        }
+
+        Assert.fail("Expected a handler exception due to incompatible policy");
+    }
+
+    @Test
+    public void propagateProvidedButNotRequired() {
+        // We currently view a propagated transaction without a requirement
+        // as harmless. This tests confirms this behavior and acts as a guard
+        // in case our behavior changes.
+        PolicyUtil.provide(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
+        exchange.setPhase(ExchangePhase.IN);
+
+        try {
+            handler.handleMessage(exchange);
+        } catch (HandlerException handlerEx) {
+            Assert.fail("Exception not expected when transaction is provided but not required: "
+                    + handlerEx);
+        }
+    }
+
+    @Test
+    public void propagateRequiredAndProvided() throws Exception {
+        PolicyUtil.require(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
+        PolicyUtil.provide(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
+        exchange.setPhase(ExchangePhase.IN);
+
+        tm.begin();
+        Transaction tx = tm.getTransaction();
+
+        handler.handleMessage(exchange);
+        exchange.setPhase(ExchangePhase.OUT);
+        handler.handleMessage(exchange);
+
+        Transaction tx2 = tm.getTransaction();
+        Assert.assertEquals(tx, tx2);
+        Assert.assertEquals(Status.STATUS_ACTIVE, tx2.getStatus());
+    }
+
+    @Test
+    public void propagateRequiredAndProvidedWithManagedGlobalRequired() throws Exception {
+        PolicyUtil.require(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL);
+        propagateRequiredAndProvided();
+        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL));
+    }
+
+    @Test
+    public void propagateRequiredButNotProvidedWithManagedGlobalRequired() throws Exception {
+        PolicyUtil.require(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
+        PolicyUtil.require(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL);
+        exchange.setPhase(ExchangePhase.IN);
+
+        Assert.assertEquals(null, tm.getTransaction());
+
+        handler.handleMessage(exchange);
+        Transaction tx = tm.getTransaction();
+        Assert.assertEquals(Status.STATUS_ACTIVE, tx.getStatus());
+        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.PROPAGATES_TRANSACTION));
+        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL));
+
+        exchange.setPhase(ExchangePhase.OUT);
+        handler.handleMessage(exchange);
+        Assert.assertEquals(Status.STATUS_COMMITTED, tx.getStatus());
+    }
+
+    @Test
+    public void transactionRolledbackByHandler() throws Exception {
+        PolicyUtil.require(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
+        PolicyUtil.require(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL);
+        exchange.setPhase(ExchangePhase.IN);
+
+        Assert.assertEquals(null, tm.getTransaction());
+
+        handler.handleMessage(exchange);
+        Transaction tx = tm.getTransaction();
+        Assert.assertEquals(Status.STATUS_ACTIVE, tx.getStatus());
+        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.PROPAGATES_TRANSACTION));
+        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL));
+
+        tx.setRollbackOnly();
+        exchange.setPhase(ExchangePhase.OUT);
+        handler.handleMessage(exchange);
+        Assert.assertEquals(Status.STATUS_ROLLEDBACK, tx.getStatus());
+    }
+
+    @Test
+    public void propagateRequiredButNotProvided() {
+        PolicyUtil.require(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
+        exchange.setPhase(ExchangePhase.IN);
+
+        try {
+            handler.handleMessage(exchange);
+        } catch (HandlerException handlerEx) {
+            // expected
+            System.out.println(handlerEx.toString());
+            return;
+        }
+
+        Assert.fail("Handler should fail when propagation required, but not provided");
+    }
+
+    @Test
+    public void suspendAndManagedGlobalRequired() throws Exception {
+        PolicyUtil.require(exchange, TransactionPolicy.SUSPENDS_TRANSACTION);
+        PolicyUtil.require(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL);
+        exchange.setPhase(ExchangePhase.IN);
+        tm.begin();
+        Transaction tx1 = tm.getTransaction();
+
+        handler.handleMessage(exchange);
+        Transaction tx2 = tm.getTransaction();
+        Assert.assertNotSame(tx1, tx2);
+        Assert.assertEquals(Status.STATUS_ACTIVE, tx1.getStatus());
+        Assert.assertEquals(Status.STATUS_ACTIVE, tx2.getStatus());
+        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.SUSPENDS_TRANSACTION));
+        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL));
+        
+        exchange.setPhase(ExchangePhase.OUT);
+        handler.handleMessage(exchange);
+        Assert.assertEquals(tx1, tm.getTransaction());
+        Assert.assertEquals(Status.STATUS_ACTIVE, tx1.getStatus());
+        Assert.assertEquals(Status.STATUS_COMMITTED, tx2.getStatus());
+    }
+
+    @Test
+    public void suspendAndManagedGlobalRequiredButNoTransaction() throws Exception {
+        PolicyUtil.require(exchange, TransactionPolicy.SUSPENDS_TRANSACTION);
+        PolicyUtil.require(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL);
+        exchange.setPhase(ExchangePhase.IN);
+
+        handler.handleMessage(exchange);
+        Transaction tx2 = tm.getTransaction();
+        Assert.assertEquals(Status.STATUS_ACTIVE, tx2.getStatus());
+        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.SUSPENDS_TRANSACTION));
+        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL));
+        
+        exchange.setPhase(ExchangePhase.OUT);
+        handler.handleMessage(exchange);
+        Assert.assertEquals(Status.STATUS_COMMITTED, tx2.getStatus());
+    }
+
+    @Test
+    public void suspendTransaction() throws Exception {
+        PolicyUtil.require(exchange, TransactionPolicy.SUSPENDS_TRANSACTION);
+        exchange.setPhase(ExchangePhase.IN);
+        tm.begin();
+        Transaction tx1 = tm.getTransaction();
+
+        handler.handleMessage(exchange);
+        // transaction should be disabled
+        Assert.assertNull(tm.getTransaction());
+        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.SUSPENDS_TRANSACTION));
+
+        exchange.setPhase(ExchangePhase.OUT);
+        handler.handleMessage(exchange);
+        Transaction tx2 = tm.getTransaction();
+        // transaction should be enabled
+        Assert.assertEquals(tx1, tx2);
+        Assert.assertEquals(Status.STATUS_ACTIVE, tx2.getStatus());
+        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.NO_MANAGED_TRANSACTION));
+    }
+    
+    @Test
+    public void suspendAndNoManagedRequired() throws Exception {
+        PolicyUtil.require(exchange, TransactionPolicy.NO_MANAGED_TRANSACTION);
+        suspendTransaction();
+    }
+    
+    @Test
+    public void suspendRequiredButNoTransaction() throws Exception {
+        PolicyUtil.require(exchange, TransactionPolicy.SUSPENDS_TRANSACTION);
+        exchange.setPhase(ExchangePhase.IN);
+        handler.handleMessage(exchange);
+        Assert.assertNull(tm.getTransaction());
+        exchange.setPhase(ExchangePhase.OUT);
+        handler.handleMessage(exchange);
+        Assert.assertNull(tm.getTransaction());
+        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.NO_MANAGED_TRANSACTION));
+    }
+    
+    @Test
+    public void suspendAndNoManagedRequiredButNoTransaction() throws Exception {
+        PolicyUtil.require(exchange, TransactionPolicy.NO_MANAGED_TRANSACTION);
+        suspendRequiredButNoTransaction();
+    }
 }
 
 class MockTransactionManager implements TransactionManager {
-	
-	private ThreadLocal<MockTransaction> transaction = new ThreadLocal<MockTransaction>();
-	
-	MockTransactionManager() {
-		transaction.set(new MockTransaction());
-	}
 
-	@Override
-	public void begin() throws NotSupportedException, SystemException {		
-	}
+    private ThreadLocal<MockTransaction> transaction = new ThreadLocal<MockTransaction>();
 
-	@Override
-	public void commit() throws RollbackException, HeuristicMixedException,
-			HeuristicRollbackException, SecurityException,
-			IllegalStateException, SystemException {
-	}
-	
-	@Override
-	public int getStatus() throws SystemException {
-		return 0;
-	}
+    @Override
+    public void begin() throws NotSupportedException, SystemException {
+        transaction.set(new MockTransaction());
+    }
 
-	@Override
-	public MockTransaction getTransaction() throws SystemException {
-		return transaction.get();
-	}
+    @Override
+    public void commit() throws RollbackException, HeuristicMixedException,
+            HeuristicRollbackException, SecurityException,
+            IllegalStateException, SystemException {
+        transaction.get().commit();
+        transaction.remove();
+    }
 
-	@Override
-	public void resume(Transaction arg0) throws InvalidTransactionException,
-			IllegalStateException, SystemException {
-		transaction.get().active = true;
-	}
+    @Override
+    public int getStatus() throws SystemException {
+        if (transaction.get() != null) {
+            return transaction.get().getStatus();
+        } else {
+            return Status.STATUS_NO_TRANSACTION;
+        }
+    }
 
-	@Override
-	public void rollback() throws IllegalStateException, SecurityException,
-			SystemException {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public MockTransaction getTransaction() throws SystemException {
+        return transaction.get();
+    }
 
-	@Override
-	public void setRollbackOnly() throws IllegalStateException, SystemException {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void resume(Transaction arg0) throws InvalidTransactionException,
+            IllegalStateException, SystemException {
+        transaction.set(MockTransaction.class.cast(arg0));
+    }
 
-	@Override
-	public void setTransactionTimeout(int arg0) throws SystemException {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void rollback() throws IllegalStateException, SecurityException,
+            SystemException {
+        transaction.get().rollback();
+        transaction.remove();
+    }
 
-	@Override
-	public Transaction suspend() throws SystemException {
-		MockTransaction t = transaction.get();
-		t.active = false;
-		return t;
-	}
+    @Override
+    public void setRollbackOnly() throws IllegalStateException, SystemException {
+        transaction.get().setRollbackOnly();
+    }
+
+    @Override
+    public void setTransactionTimeout(int arg0) throws SystemException {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public Transaction suspend() throws SystemException {
+        MockTransaction t = transaction.get();
+        transaction.remove();
+        return t;
+    }
 }
 
 class MockTransaction implements Transaction {
-	
-	boolean active = true;
-	
-	@Override
-	public void commit() throws RollbackException, HeuristicMixedException,
-			HeuristicRollbackException, SecurityException,
-			IllegalStateException, SystemException {		
-	}
 
-	@Override
-	public boolean delistResource(XAResource arg0, int arg1)
-			throws IllegalStateException, SystemException {
-		return false;
-	}
+    private int status = Status.STATUS_ACTIVE;
+    private String uuid;
+    
+    public MockTransaction() {
+        uuid = UUID.randomUUID().toString();
+    }
+    
+    @Override
+    public void commit() throws RollbackException, HeuristicMixedException,
+            HeuristicRollbackException, SecurityException,
+            IllegalStateException, SystemException {
+        status = Status.STATUS_COMMITTED;
+    }
 
-	@Override
-	public boolean enlistResource(XAResource arg0) throws RollbackException,
-			IllegalStateException, SystemException {
-		return false;
-	}
+    @Override
+    public boolean delistResource(XAResource arg0, int arg1)
+            throws IllegalStateException, SystemException {
+        return false;
+    }
 
-	@Override
-	public int getStatus() throws SystemException {
-		return 0;
-	}
+    @Override
+    public boolean enlistResource(XAResource arg0) throws RollbackException,
+            IllegalStateException, SystemException {
+        return false;
+    }
 
-	@Override
-	public void registerSynchronization(Synchronization arg0)
-			throws RollbackException, IllegalStateException, SystemException {		
-	}
+    @Override
+    public int getStatus() throws SystemException {
+        return status;
+    }
 
-	@Override
-	public void rollback() throws IllegalStateException, SystemException {
-		
-	}
+    @Override
+    public void registerSynchronization(Synchronization arg0)
+            throws RollbackException, IllegalStateException, SystemException {
+    }
 
-	@Override
-	public void setRollbackOnly() throws IllegalStateException, SystemException {
-		
-	}
-	
+    @Override
+    public void rollback() throws IllegalStateException, SystemException {
+        status = Status.STATUS_ROLLEDBACK;
+    }
+
+    @Override
+    public void setRollbackOnly() throws IllegalStateException, SystemException {
+        status = Status.STATUS_MARKED_ROLLBACK;
+    }
+
+    public String getUUID() {
+        return uuid;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        MockTransaction target = MockTransaction.class.cast(obj);
+        return uuid.equals(target.getUUID());
+    }
 }

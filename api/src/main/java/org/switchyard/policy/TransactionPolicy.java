@@ -25,6 +25,23 @@ package org.switchyard.policy;
  */
 public enum TransactionPolicy implements Policy {
 
+    /** Transaction implementation policies */
+    /**
+     * Uses any existing global transaction propagated from the client
+     * or else begins and complete a new global transaction.
+     */
+    MANAGED_TRANSACTION_GLOBAL("managedTransaction.Global"),
+    /**
+     * SwitchYard runtime begins and complete a Local Transaction Containment for each Exchange.
+     */
+    MANAGED_TRANSACTION_LOCAL("managedTransaction.Local"),
+    /**
+     * SwitchYard runtime doesn't start any transaction. Application has a responsibility
+     * to manage the transaction boundaries.
+     */
+    NO_MANAGED_TRANSACTION("noManagedTransaction"),
+
+    /** Transaction interaction policies */
     /**
      * Any existing transaction should continue and be used during the invocation.
      */
