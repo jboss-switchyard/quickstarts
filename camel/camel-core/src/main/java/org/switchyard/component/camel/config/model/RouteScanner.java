@@ -19,11 +19,6 @@
 
 package org.switchyard.component.camel.config.model;
 
-import java.io.IOException;
-import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.util.List;
-
 import org.switchyard.common.type.classpath.AbstractTypeFilter;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.component.camel.Route;
@@ -43,9 +38,15 @@ import org.switchyard.config.model.composite.v1.V1InterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 
+import java.io.IOException;
+import java.lang.reflect.Modifier;
+import java.net.URL;
+import java.util.List;
+
 /**
  * Scans for classes with @Route methods and creates a Camel Route definition
  * for each.
+ * @author <a href="mailto:eduardo.devera@gmail.com">eduardo.devera</a>
  */
 public class RouteScanner implements Scanner<SwitchYardModel> {
 
@@ -62,7 +63,7 @@ public class RouteScanner implements Scanner<SwitchYardModel> {
             // Top-level component definition
             ComponentModel componentModel = new V1ComponentModel();
             componentModel.setName(routeClass.getSimpleName());
-            
+
             // Component implementation definition
             CamelComponentImplementationModel camelModel = new V1CamelImplementationModel();
             camelModel.setJavaClass(routeClass.getName());
@@ -73,7 +74,7 @@ public class RouteScanner implements Scanner<SwitchYardModel> {
             ComponentServiceModel serviceModel = new V1ComponentServiceModel();
             InterfaceModel csiModel = new V1InterfaceModel(InterfaceModel.JAVA);
             Class<?> serviceInterface = routeClass.getAnnotation(Route.class).value();
-            serviceModel.setName(serviceInterface.getSimpleName());
+            serviceModel.setName(getServiceName(routeClass));
             csiModel.setInterface(serviceInterface.getName());
             serviceModel.setInterface(csiModel);
             componentModel.addService(serviceModel);
@@ -87,6 +88,12 @@ public class RouteScanner implements Scanner<SwitchYardModel> {
         }
 
         return new ScannerOutput<SwitchYardModel>().setModel(switchyardModel);
+    }
+
+    private String getServiceName(Class<?> routeClass) {
+        return routeClass.getAnnotation(Route.class).name().equals(Route.EMPTY)
+                ? routeClass.getAnnotation(Route.class).value().getSimpleName()
+                : routeClass.getAnnotation(Route.class).name();
     }
 
     private List<Class<?>> scanForRoutes(List<URL> urls) throws IOException {

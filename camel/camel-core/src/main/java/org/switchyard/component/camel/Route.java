@@ -20,17 +20,18 @@
 
 package org.switchyard.component.camel;
 
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 /**
  * Designates a class as a Camel route provider.  A required value element 
  * of type java.lang.Class is required to identify the service interface for the
- * route service.
+ * route service. An optional name element of type java.lang.String is used to
+ * define the service name.
  */
 @Target({TYPE})
 @Retention(RUNTIME)
@@ -41,4 +42,16 @@ public @interface Route {
      * Service interface for the route.
      */
     Class<?> value();
+
+    /**
+     * Optional Service name.
+     */
+    String name() default EMPTY;
+
+    /**
+     * Constant representing a null (i.e. unassigned) value.
+     * Annotations are not allowed to have empty values, so a default
+     * representation for an empty value is used.
+     */
+    public static final String EMPTY = "";
 }
