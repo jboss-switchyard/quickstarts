@@ -253,7 +253,7 @@ public class CamelActivator extends BaseActivator {
             final RouteDefinition routeDef, 
             final CamelComponentImplementationModel ccim) {
         
-        final List<ProcessorDefinition> outputs = routeDef.getOutputs();
+        final List<ProcessorDefinition<?>> outputs = routeDef.getOutputs();
         for (ProcessorDefinition processorDef : outputs) {
             if (processorDef instanceof ToDefinition) {
                 final ToDefinition to = (ToDefinition) processorDef;
