@@ -20,12 +20,11 @@
  */
 package org.switchyard.quickstarts.jca.inflow;
 
-import javax.jms.BytesMessage;
 import javax.jms.MessageProducer;
+import javax.jms.TextMessage;
 
 import junit.framework.Assert;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Exchange;
@@ -71,8 +70,8 @@ public class JCAInflowBindingTest {
         final MockHandler greetingService = _testKit.registerInOnlyService("GreetingService");
         
         final MessageProducer producer = _hqMixIn.getJMSSession().createProducer(HornetQMixIn.getJMSQueue("GreetingServiceQueue"));
-        final BytesMessage message = _hqMixIn.getJMSSession().createBytesMessage();
-        message.writeBytes(payload.getBytes());
+        final TextMessage message = _hqMixIn.getJMSSession().createTextMessage();
+        message.setText(payload);
         producer.send(message);
         
         Thread.sleep(1000);

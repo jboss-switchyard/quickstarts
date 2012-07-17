@@ -24,14 +24,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.jms.BytesMessage;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
@@ -77,8 +76,8 @@ public class JCAOutboundBindingTest {
         Session session = _hqMixIn.getJMSSession();
         final MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(ORDER_QUEUE));
         for (String order : orders ) {
-            final BytesMessage message = _hqMixIn.getJMSSession().createBytesMessage();
-            message.writeBytes(order.getBytes());
+            final TextMessage message = _hqMixIn.getJMSSession().createTextMessage();
+            message.setText(order);
             producer.send(message);
         }
         session.close();
