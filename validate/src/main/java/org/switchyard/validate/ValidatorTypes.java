@@ -46,4 +46,12 @@ public class ValidatorTypes {
     public QName getName() {
         return _name;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("%s [name=%s]", getClass().getSimpleName(), getName());
+    }
 }

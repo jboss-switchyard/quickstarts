@@ -24,10 +24,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.apache.log4j.Logger;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.java.JavaService;
@@ -38,6 +41,8 @@ import org.switchyard.metadata.java.JavaService;
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public final class TransformerUtil {
+
+    private static final Logger LOGGER = Logger.getLogger(TransformerUtil.class);
 
     private static final QName OBJECT_TYPE = JavaService.toMessageType(Object.class);
 
@@ -144,7 +149,11 @@ public final class TransformerUtil {
             QName from = ((Transformer) transformerObject).getFrom();
             QName to = ((Transformer) transformerObject).getTo();
             if (from != null && to != null) {
-                transformations.add(new TransformerTypes(from, to));
+                TransformerTypes transformerTypes = new TransformerTypes(from, to);
+                transformations.add(transformerTypes);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("added: " + transformerTypes);
+                }
             }
         }
 
@@ -154,7 +163,18 @@ public final class TransformerUtil {
             org.switchyard.annotations.Transformer transformerAnno = publicMethod.getAnnotation(org.switchyard.annotations.Transformer.class);
             if (transformerAnno != null) {
                 TransformerMethod transformerMethod = toTransformerMethod(publicMethod, transformerAnno);
-                transformations.add(new TransformerTypes(transformerMethod.getFrom(), transformerMethod.getTo()));
+                TransformerTypes transformerTypes = new TransformerTypes(transformerMethod.getFrom(), transformerMethod.getTo());
+                transformations.add(transformerTypes);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("added: " + transformerTypes);
+                }
+            }
+        }
+
+        Collections.sort(transformations, new TransformerTypesComparator());
+        if (LOGGER.isDebugEnabled()) {
+            for (TransformerTypes transformerTypes : transformations) {
+                LOGGER.debug("sorted: " + transformerTypes);
             }
         }
 
@@ -295,6 +315,33 @@ public final class TransformerUtil {
 
         private Method getMethod() {
             return _method;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return String.format("%s [from=%s, to=%s, method=%s]", getClass().getSimpleName(), getFrom(), getTo(), getMethod());
+        }
+    }
+
+    private static final class TransformerTypesComparator implements Comparator<TransformerTypes> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int compare(TransformerTypes tt1, TransformerTypes tt2) {
+            int c = String.valueOf(tt1.getFrom()).compareTo(String.valueOf(tt2.getFrom()));
+            if (c == 0) {
+                c = String.valueOf(tt1.getTo()).compareTo(String.valueOf(tt2.getTo()));
+                if (c == 0 && tt1 instanceof TransformerMethod && tt2 instanceof TransformerMethod) {
+                    TransformerMethod tm1 = (TransformerMethod)tt1;
+                    TransformerMethod tm2 = (TransformerMethod)tt2;
+                    c = String.valueOf(tm1.getMethod()).compareTo(String.valueOf(tm2.getMethod()));
+                }
+            }
+            return c;
         }
     }
 }

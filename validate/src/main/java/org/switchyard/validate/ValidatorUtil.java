@@ -19,6 +19,18 @@
 
 package org.switchyard.validate;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
+import org.apache.log4j.Logger;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.config.model.validate.ValidateModel;
@@ -26,20 +38,14 @@ import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.validate.config.model.JavaValidateModel;
 
-import javax.xml.namespace.QName;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 /**
  * Validator Utility methods.
  *
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  */
 public final class ValidatorUtil {
+
+    private static final Logger LOGGER = Logger.getLogger(ValidatorUtil.class);
 
     private static final QName OBJECT_TYPE = JavaService.toMessageType(Object.class);
 
@@ -179,7 +185,11 @@ public final class ValidatorUtil {
         if (validatorObject instanceof org.switchyard.validate.Validator) {
             QName name = ((Validator) validatorObject).getName();
             if (name != null) {
-                validations.add(new ValidatorTypes(name));
+                ValidatorTypes validatorTypes = new ValidatorTypes(name);
+                validations.add(validatorTypes);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("added: " + validatorTypes);
+                }
             }
         }
 
@@ -189,7 +199,18 @@ public final class ValidatorUtil {
             org.switchyard.annotations.Validator validatorAnno = publicMethod.getAnnotation(org.switchyard.annotations.Validator.class);
             if (validatorAnno != null) {
                 ValidatorMethod validatorMethod = toValidatorMethod(publicMethod, validatorAnno);
-                validations.add(new ValidatorTypes(validatorMethod.getName()));
+                ValidatorTypes validatorTypes= new ValidatorTypes(validatorMethod.getName());
+                validations.add(validatorTypes);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("added: " + validatorTypes);
+                }
+            }
+        }
+
+        Collections.sort(validations, new ValidatorTypesComparator());
+        if (LOGGER.isDebugEnabled()) {
+            for (ValidatorTypes validatorTypes : validations) {
+                LOGGER.debug("sorted: " + validatorTypes);
             }
         }
 
@@ -333,6 +354,30 @@ public final class ValidatorUtil {
 
         private Method getMethod() {
             return _method;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return String.format("%s [name=%s, method=%s]", getClass().getSimpleName(), getName(), getMethod());
+        }
+    }
+
+    private static final class ValidatorTypesComparator implements Comparator<ValidatorTypes> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int compare(ValidatorTypes vt1, ValidatorTypes vt2) {
+            int c = String.valueOf(vt1.getName()).compareTo(String.valueOf(vt2.getName()));
+            if (c == 0 && vt1 instanceof ValidatorMethod && vt2 instanceof ValidatorMethod) {
+                ValidatorMethod vm1 = (ValidatorMethod)vt1;
+                ValidatorMethod vm2 = (ValidatorMethod)vt2;
+                c = String.valueOf(vm1.getMethod()).compareTo(String.valueOf(vm2.getMethod()));
+            }
+            return c;
         }
     }
 }

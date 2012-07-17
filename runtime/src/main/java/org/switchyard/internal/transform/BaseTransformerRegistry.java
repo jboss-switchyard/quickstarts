@@ -157,7 +157,7 @@ public class BaseTransformerRegistry implements TransformerRegistry {
             return null;
         }
         if (fallbackTransforms.size() == 1) {
-            Transformer<?, ?> fallbackTransformer = fallbackTransforms.get(0)._transformer;
+            Transformer<?, ?> fallbackTransformer = fallbackTransforms.get(0).getTransformer();
             addFallbackTransformer(fallbackTransformer, from, to);
             return fallbackTransformer;
         }
@@ -170,13 +170,13 @@ public class BaseTransformerRegistry implements TransformerRegistry {
 
             messageBuilder.append("Multiple possible fallback transformers available:");
             for (JavaSourceFallbackTransformer t : fallbackTransforms) {
-                messageBuilder.append("\n\t- from '" + t._transformer.getFrom() + "' to '" + t._transformer.getTo() + "'");
+                messageBuilder.append("\n\t- from '" + t.getTransformer().getFrom() + "' to '" + t.getTransformer().getTo() + "'");
             }
             _log.debug(messageBuilder.toString());
         }
 
         // Closest super-type will be first in the list..
-        Transformer<?, ?> fallbackTransformer = fallbackTransforms.get(0)._transformer;
+        Transformer<?, ?> fallbackTransformer = fallbackTransforms.get(0).getTransformer();
         addFallbackTransformer(fallbackTransformer, from, to);
         return fallbackTransformer;
     }
@@ -283,6 +283,14 @@ public class BaseTransformerRegistry implements TransformerRegistry {
         public Class<?> getJavaType() {
             return _javaType;
         }
+
+        /**
+         * Get the Transformer.
+         * @return The Transformer.
+         */
+        public Transformer<?, ?> getTransformer() {
+            return _transformer;
+        }
     }
 
     /**
@@ -293,11 +301,11 @@ public class BaseTransformerRegistry implements TransformerRegistry {
     public static class JavaSourceFallbackTransformerComparator<T extends JavaSourceFallbackTransformer> implements Comparator<T>, Serializable {
         @Override
         public int compare(T t1, T t2) {
-            if (t1._javaType == t2._javaType) {
+            if (t1.getJavaType() == t2.getJavaType()) {
                 return 0;
-            } else if (t1._javaType.isAssignableFrom(t2._javaType)) {
+            } else if (t1.getJavaType().isAssignableFrom(t2.getJavaType())) {
                 return 1;
-            } else if (t2._javaType.isAssignableFrom(t1._javaType)) {
+            } else if (t2.getJavaType().isAssignableFrom(t1.getJavaType())) {
                 return -1;
             } else {
                 // Unrelated types.  This means there are branches in the inheritance options,

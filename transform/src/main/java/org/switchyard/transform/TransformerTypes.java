@@ -58,4 +58,12 @@ public class TransformerTypes {
     public QName getTo() {
         return _to;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("%s [from=%s, to=%s]", getClass().getSimpleName(), getFrom(), getTo());
+    }
 }

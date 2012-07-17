@@ -165,7 +165,7 @@ public class BaseValidatorRegistry implements ValidatorRegistry {
             return null;
         }
         if (fallbackValidates.size() == 1) {
-            Validator<?> fallbackValidator = fallbackValidates.get(0)._validator;
+            Validator<?> fallbackValidator = fallbackValidates.get(0).getValidator();
             addFallbackValidator(fallbackValidator, name);
             return fallbackValidator;
         }
@@ -178,13 +178,13 @@ public class BaseValidatorRegistry implements ValidatorRegistry {
 
             messageBuilder.append("Multiple possible fallback validators available:");
             for (JavaSourceFallbackValidator t : fallbackValidates) {
-                messageBuilder.append("\n\t- name '" + t._validator.getName() + "'");
+                messageBuilder.append("\n\t- name '" + t.getValidator().getName() + "'");
             }
             _log.debug(messageBuilder.toString());
         }
 
         // Closest super-type will be first in the list..
-        Validator<?> fallbackValidator = fallbackValidates.get(0)._validator;
+        Validator<?> fallbackValidator = fallbackValidates.get(0).getValidator();
         addFallbackValidator(fallbackValidator, name);
         return fallbackValidator;
     }
@@ -219,6 +219,14 @@ public class BaseValidatorRegistry implements ValidatorRegistry {
         public Class<?> getJavaType() {
             return _javaType;
         }
+
+        /**
+         * Get the Validator.
+         * @return The Validator.
+         */
+        public Validator<?> getValidator() {
+            return _validator;
+        }
     }
 
     /**
@@ -229,11 +237,11 @@ public class BaseValidatorRegistry implements ValidatorRegistry {
     public static class JavaSourceFallbackValidatorComparator<T extends JavaSourceFallbackValidator> implements Comparator<T>, Serializable {
         @Override
         public int compare(T t1, T t2) {
-            if (t1._javaType == t2._javaType) {
+            if (t1.getJavaType() == t2.getJavaType()) {
                 return 0;
-            } else if (t1._javaType.isAssignableFrom(t2._javaType)) {
+            } else if (t1.getJavaType().isAssignableFrom(t2.getJavaType())) {
                 return 1;
-            } else if (t2._javaType.isAssignableFrom(t1._javaType)) {
+            } else if (t2.getJavaType().isAssignableFrom(t1.getJavaType())) {
                 return -1;
             } else {
                 // Unrelated types.  This means there are branches in the inheritance options,

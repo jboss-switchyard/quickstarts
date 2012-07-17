@@ -340,7 +340,7 @@ public class DOMConfiguration extends BaseConfiguration {
         NodeList nodes = _element.getChildNodes();
         for (int i=0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
+            if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
                 return true;
             }
         }
@@ -356,7 +356,7 @@ public class DOMConfiguration extends BaseConfiguration {
             NodeList nodes = _element.getChildNodes();
             for (int i=0; i < nodes.getLength(); i++) {
                 Node node = nodes.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
                     String node_name = XMLHelper.nameOf(node);
                     if (node_name.equals(name)) {
                         return true;
@@ -376,7 +376,7 @@ public class DOMConfiguration extends BaseConfiguration {
             NodeList nodes = _element.getChildNodes();
             for (int i=0; i < nodes.getLength(); i++) {
                 Node node = nodes.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
                     QName node_qname = XMLHelper.createQName((Element)node);
                     if (node_qname.equals(qname)) {
                         return true;
@@ -396,7 +396,7 @@ public class DOMConfiguration extends BaseConfiguration {
         NodeList nodes = _element.getChildNodes();
         for (int i=0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
+            if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
                 configs.add(new DOMConfiguration((Element)node));
             }
         }
@@ -412,7 +412,7 @@ public class DOMConfiguration extends BaseConfiguration {
         NodeList nodes = _element.getChildNodes();
         for (int i=0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
+            if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
                 if (XMLHelper.nameOf(node).equals(name)) {
                     configs.add(new DOMConfiguration((Element)node));
                 }
@@ -430,7 +430,7 @@ public class DOMConfiguration extends BaseConfiguration {
         NodeList nodes = _element.getChildNodes();
         for (int i=0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
+            if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
                 if (XMLHelper.nameOf(node).startsWith(name)) {
                     configs.add(new DOMConfiguration((Element)node));
                 }
@@ -448,7 +448,7 @@ public class DOMConfiguration extends BaseConfiguration {
         NodeList nodes = _element.getChildNodes();
         for (int i=0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
+            if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
                 if (XMLHelper.nameOf(node).matches(regexp)) {
                     configs.add(new DOMConfiguration((Element)node));
                 }
@@ -478,7 +478,7 @@ public class DOMConfiguration extends BaseConfiguration {
         NodeList nodes = _element.getChildNodes();
         for (int i=0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
+            if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
                 if (XMLHelper.nameOf(node).equals(name)) {
                     return new DOMConfiguration((Element)node);
                 }
@@ -495,7 +495,7 @@ public class DOMConfiguration extends BaseConfiguration {
         NodeList nodes = _element.getChildNodes();
         for (int i=0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
+            if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
                 if (XMLHelper.nameOf(node).startsWith(name)) {
                     return new DOMConfiguration((Element)node);
                 }
@@ -511,7 +511,10 @@ public class DOMConfiguration extends BaseConfiguration {
     public Configuration getFirstChild(QName qname) {
         NodeList nodes = _element.getElementsByTagNameNS(qname.getNamespaceURI(), qname.getLocalPart());
         if (nodes.getLength() > 0) {
-            return new DOMConfiguration((Element)nodes.item(0));
+            Node node = nodes.item(0);
+            if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
+                return new DOMConfiguration((Element)node);
+            }
         }
         return null;
     }
@@ -548,7 +551,7 @@ public class DOMConfiguration extends BaseConfiguration {
         NodeList nodes = _element.getChildNodes();
         for (int i=0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
+            if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
                 _element.removeChild(node);
             }
         }
@@ -563,7 +566,7 @@ public class DOMConfiguration extends BaseConfiguration {
         NodeList nodes = _element.getChildNodes();
         for (int i=0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
+            if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
                 if (XMLHelper.nameOf(node).equals(name)) {
                     _element.removeChild(node);
                 }
@@ -580,7 +583,7 @@ public class DOMConfiguration extends BaseConfiguration {
         NodeList nodes = _element.getChildNodes();
         for (int i=0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
+            if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
                 if (XMLHelper.nameOf(node).startsWith(name)) {
                     _element.removeChild(node);
                 }
@@ -597,7 +600,7 @@ public class DOMConfiguration extends BaseConfiguration {
         NodeList nodes = _element.getChildNodes();
         for (int i=0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
+            if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
                 if (XMLHelper.nameOf(node).matches(regexp)) {
                     _element.removeChild(node);
                 }
@@ -613,7 +616,10 @@ public class DOMConfiguration extends BaseConfiguration {
     public Configuration removeChildren(QName qname) {
         NodeList nodes = _element.getElementsByTagNameNS(qname.getNamespaceURI(), qname.getLocalPart());
         for (int i=0; i < nodes.getLength(); i++) {
-            _element.removeChild(nodes.item(i));
+            Node node = nodes.item(i);
+            if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
+                _element.removeChild(node);
+            }
         }
         return this;
     }

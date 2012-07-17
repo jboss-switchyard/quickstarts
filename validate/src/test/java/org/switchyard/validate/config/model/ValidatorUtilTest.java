@@ -19,16 +19,18 @@
 
 package org.switchyard.validate.config.model;
 
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
 import junit.framework.Assert;
+
 import org.junit.Test;
 import org.switchyard.annotations.Validator;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.validate.BaseValidator;
 import org.switchyard.validate.ValidatorTypes;
 import org.switchyard.validate.ValidatorUtil;
-
-import javax.xml.namespace.QName;
-import java.util.List;
 
 /**
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
@@ -40,10 +42,10 @@ public class ValidatorUtilTest {
         List<ValidatorTypes> validateTypes = ValidatorUtil.listValidations(TestValidator.class);
 
         Assert.assertEquals(4, validateTypes.size());
-        Assert.assertEquals(JavaService.toMessageType(A.class), validateTypes.get(0).getName());
-        Assert.assertEquals(JavaService.toMessageType(B.class), validateTypes.get(1).getName());
-        Assert.assertEquals(QName.valueOf("X"), validateTypes.get(2).getName());
-        Assert.assertEquals(QName.valueOf("Z"), validateTypes.get(3).getName());
+        Assert.assertEquals(QName.valueOf("X"), validateTypes.get(0).getName());
+        Assert.assertEquals(QName.valueOf("Z"), validateTypes.get(1).getName());
+        Assert.assertEquals(JavaService.toMessageType(A.class), validateTypes.get(2).getName());
+        Assert.assertEquals(JavaService.toMessageType(B.class), validateTypes.get(3).getName());
     }
 
     @Test

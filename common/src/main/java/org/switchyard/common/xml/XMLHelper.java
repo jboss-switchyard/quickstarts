@@ -43,6 +43,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.events.StartDocument;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -440,7 +441,16 @@ public final class XMLHelper {
         throws ParserConfigurationException, XMLStreamException {
         final Document doc = getNewDocument();
         final XMLEventWriter writer = EVENT_WRITER_CREATOR.createXMLEventWriter(doc);
-        XMLHelper.copyXMLEventStream(reader, writer);
+        final XMLEvent event = reader.peek();
+        int type = event.getEventType();
+        boolean omitDoc = false;
+        if (type == XMLStreamConstants.START_DOCUMENT) {
+            StartDocument startDocument = (StartDocument) event;
+            if (startDocument.getVersion() == null) {
+                omitDoc = true;
+            }
+        }
+        XMLHelper.copyXMLEventStream(reader, writer, omitDoc);
         return doc;
     }
     

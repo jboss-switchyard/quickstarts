@@ -19,16 +19,18 @@
 
 package org.switchyard.transform.config.model;
 
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
 import junit.framework.Assert;
+
 import org.junit.Test;
 import org.switchyard.annotations.Transformer;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.TransformerTypes;
 import org.switchyard.transform.TransformerUtil;
-
-import javax.xml.namespace.QName;
-import java.util.List;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
@@ -40,16 +42,16 @@ public class TransformerUtilTest {
         List<TransformerTypes> transformTypes = TransformerUtil.listTransformations(TestTransformer.class);
 
         Assert.assertEquals(5, transformTypes.size());
-        Assert.assertEquals(JavaService.toMessageType(A.class), transformTypes.get(0).getFrom());
-        Assert.assertEquals(JavaService.toMessageType(B.class), transformTypes.get(0).getTo());
-        Assert.assertEquals(JavaService.toMessageType(B.class), transformTypes.get(1).getFrom());
+        Assert.assertEquals(QName.valueOf("X"), transformTypes.get(0).getFrom());
+        Assert.assertEquals(QName.valueOf("Y"), transformTypes.get(0).getTo());
+        Assert.assertEquals(QName.valueOf("Z"), transformTypes.get(1).getFrom());
         Assert.assertEquals(JavaService.toMessageType(A.class), transformTypes.get(1).getTo());
-        Assert.assertEquals(QName.valueOf("X"), transformTypes.get(2).getFrom());
-        Assert.assertEquals(QName.valueOf("Y"), transformTypes.get(2).getTo());
-        Assert.assertEquals(QName.valueOf("Z"), transformTypes.get(3).getFrom());
-        Assert.assertEquals(JavaService.toMessageType(A.class), transformTypes.get(3).getTo());
+        Assert.assertEquals(JavaService.toMessageType(A.class), transformTypes.get(2).getFrom());
+        Assert.assertEquals(JavaService.toMessageType(B.class), transformTypes.get(2).getTo());
+        Assert.assertEquals(JavaService.toMessageType(B.class), transformTypes.get(3).getFrom());
+        Assert.assertEquals(QName.valueOf("Z"), transformTypes.get(3).getTo());
         Assert.assertEquals(JavaService.toMessageType(B.class), transformTypes.get(4).getFrom());
-        Assert.assertEquals(QName.valueOf("Z"), transformTypes.get(4).getTo());
+        Assert.assertEquals(JavaService.toMessageType(A.class), transformTypes.get(4).getTo());
     }
 
     @Test
@@ -104,31 +106,31 @@ public class TransformerUtilTest {
             super(JavaService.toMessageType(A.class), JavaService.toMessageType(B.class));
         }
 
-        // #1: A to B
+        // A to B
         @Override
         public Object transform(Object from) {
             return new B();
         }
 
-        // #2: B to A
+        // B to A
         @Transformer
         public A bToA(B b) {
             return new A();
         }
 
-        // #3: X to Y
+        // X to Y
         @Transformer(from = "X", to = "Y")
         public String xToY(String x) {
             return "Y";
         }
 
-        // #4: Z to A
+        // Z to A
         @Transformer(from = "Z")
         public A zToA(B z) {
             return new A();
         }
 
-        // #5: B to Z
+        // B to Z
         @Transformer(to = "Z")
         public A bToZ(B b) {
             return new A();
