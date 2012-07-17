@@ -18,8 +18,17 @@
  */
 package org.switchyard.component.jca.composer;
 
-import javax.jms.BytesMessage;
+import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import javax.jms.MapMessage;
 import javax.jms.Message;
+import javax.jms.ObjectMessage;
+import javax.jms.StreamMessage;
+import javax.jms.TextMessage;
+import javax.jms.BytesMessage;
+
 import org.switchyard.Exchange;
 import org.switchyard.component.common.composer.BaseMessageComposer;
 import org.switchyard.exception.SwitchYardException;
@@ -37,18 +46,46 @@ public class JMSMessageComposer extends BaseMessageComposer<Message> {
      */
     @Override
     public org.switchyard.Message compose(Message source, Exchange exchange, boolean create) throws Exception {
-        // assuming the message is BytesMessage in this composer
-        BytesMessage sourceBytes = (BytesMessage)source;
-        if (sourceBytes.getBodyLength() > Integer.MAX_VALUE) {
-            throw new SwitchYardException("The size of message content exceeds "
-                    + Integer.MAX_VALUE + " bytes, that is not supported by this MessageComposer");
-        }
-        byte[] bytearr = new byte[(int)sourceBytes.getBodyLength()];
-        sourceBytes.readBytes(bytearr);
-        
         final org.switchyard.Message message = create ? exchange.createMessage() : exchange.getMessage();
         getContextMapper().mapFrom(source, exchange.getContext());
-        message.setContent(new String(bytearr));
+
+        if (source instanceof BytesMessage) {
+            BytesMessage sourceBytes = BytesMessage.class.cast(source);
+            if (sourceBytes.getBodyLength() > Integer.MAX_VALUE) {
+                throw new SwitchYardException("The size of message content exceeds "
+                        + Integer.MAX_VALUE + " bytes, that is not supported by this MessageComposer");
+            }
+            byte[] bytearr = new byte[(int)sourceBytes.getBodyLength()];
+            sourceBytes.readBytes(bytearr);
+            message.setContent(bytearr);
+
+        } else if (source instanceof MapMessage) {
+            MapMessage sourceMap = MapMessage.class.cast(source);
+            Map<String,Object> body = new HashMap<String,Object>();
+            Enumeration<?> e = sourceMap.getMapNames();
+            while (e.hasMoreElements()) {
+                String key = String.class.cast(e.nextElement());
+                body.put(key, sourceMap.getObject(key));
+            }
+            message.setContent(body);
+            
+         } else if (source instanceof ObjectMessage) {
+             ObjectMessage sourceObj = ObjectMessage.class.cast(source);
+             message.setContent(sourceObj.getObject());
+             
+        } else if (source instanceof StreamMessage) {
+            StreamMessage sourceStream = StreamMessage.class.cast(source);
+            message.setContent(sourceStream);
+            
+        } else if (source instanceof TextMessage) {
+            TextMessage sourceText = TextMessage.class.cast(source);
+            message.setContent(sourceText.getText());
+            
+        } else {
+            // plain javax.jms.Message doesn't have body content
+            message.setContent(null);
+        }
+
         return message;
     }
 
@@ -57,11 +94,12 @@ public class JMSMessageComposer extends BaseMessageComposer<Message> {
      */
     @Override
     public Message decompose(Exchange exchange, Message target) throws Exception {
-        BytesMessage targetBytes = (BytesMessage)target;
+        ObjectMessage targetObj = ObjectMessage.class.cast(target);
         getContextMapper().mapTo(exchange.getContext(), target);
-        final byte[] content = exchange.getMessage().getContent(String.class).getBytes();
-        targetBytes.writeBytes(content);
-        return target;
+        // expect transformer to transform the content into Serializable ...
+        targetObj.setObject(exchange.getMessage().getContent(Serializable.class));
+        
+        return targetObj;
     }
 
 }

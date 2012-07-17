@@ -44,9 +44,9 @@ public class JMSContextMapper extends BaseContextMapper<Message> {
         while (e.hasMoreElements()) {
             String key = e.nextElement().toString();
             if (matches(key)) {
-                String value = null;
+                Object value = null;
                 try {
-                    value = source.getStringProperty(key);
+                    value = source.getObjectProperty(key);
                 } catch (JMSException pce) {
                     // ignore and keep going (here just to keep checkstyle happy)
                     pce.getMessage();

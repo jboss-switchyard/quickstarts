@@ -120,8 +120,9 @@ public class JMSProcessor extends AbstractOutboundProcessor {
             connection.start();
             
             session = connection.createSession(_txEnabled, _ackMode);
-            Message msg = session.createBytesMessage();
             MessageProducer producer = session.createProducer(_jmsDestination);
+
+            Message msg = session.createObjectMessage();
             MessageComposer<Message> composer = JCAComposition.getMessageComposer(Message.class);
             producer.send(composer.decompose(exchange, msg));
             return null;

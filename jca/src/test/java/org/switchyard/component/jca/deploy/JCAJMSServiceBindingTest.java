@@ -21,8 +21,8 @@
  */
 package org.switchyard.component.jca.deploy;
 
-import javax.jms.BytesMessage;
 import javax.jms.MessageProducer;
+import javax.jms.TextMessage;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -63,8 +63,8 @@ public class JCAJMSServiceBindingTest  {
         final MockHandler mockHandler = _testKit.registerInOutService("JCAJMSService");
         
         final MessageProducer producer = _hqMixIn.getJMSSession().createProducer(HornetQMixIn.getJMSQueue(INPUT_QUEUE));
-        BytesMessage msg = _hqMixIn.getJMSSession().createBytesMessage();
-        msg.writeBytes("payload".getBytes());
+        TextMessage msg = _hqMixIn.getJMSSession().createTextMessage();
+        msg.setText("payload");
         producer.send(msg);
         
         // wait for message to be picked up the HornetQ queue.
