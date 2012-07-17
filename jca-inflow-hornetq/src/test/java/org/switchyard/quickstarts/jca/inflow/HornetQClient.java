@@ -20,9 +20,9 @@
  */
 package org.switchyard.quickstarts.jca.inflow;
 
-import javax.jms.BytesMessage;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 
 import org.switchyard.test.mixins.HornetQMixIn;
 
@@ -65,8 +65,8 @@ public final class HornetQClient {
         try {
             final Session session = hqMixIn.createJMSSession();
             final MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(QUEUE));
-            final BytesMessage message = session.createBytesMessage();
-            message.writeBytes(args[0].getBytes());
+            final TextMessage message = session.createTextMessage();
+            message.setText(args[0]);
             producer.send(message);
         
             System.out.println("Sent message [" + message + "]");
