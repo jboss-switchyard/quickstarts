@@ -1190,56 +1190,122 @@
          <groupId>org.apache.camel</groupId>
          <artifactId>camel-atom</artifactId>
          <version>${version.camel}</version>
+         <exclusions>
+            <exclusion>
+               <groupId>com.sun.xml.bind</groupId>
+               <artifactId>jaxb-impl</artifactId>
+            </exclusion>
+         </exclusions>
       </dependency>
       <dependency>
          <groupId>org.apache.camel</groupId>
          <artifactId>camel-core</artifactId>
          <version>${version.camel}</version>
+         <exclusions>
+            <exclusion>
+               <groupId>com.sun.xml.bind</groupId>
+               <artifactId>jaxb-impl</artifactId>
+            </exclusion>
+         </exclusions>
       </dependency>
       <dependency>
          <groupId>org.apache.camel</groupId>
          <artifactId>camel-cxf</artifactId>
          <version>${version.camel}</version>
+         <exclusions>
+            <exclusion>
+               <groupId>com.sun.xml.bind</groupId>
+               <artifactId>jaxb-impl</artifactId>
+            </exclusion>
+         </exclusions>
       </dependency>
       <dependency>
          <groupId>org.apache.camel</groupId>
          <artifactId>camel-jms</artifactId>
          <version>${version.camel}</version>
+         <exclusions>
+            <exclusion>
+               <groupId>com.sun.xml.bind</groupId>
+               <artifactId>jaxb-impl</artifactId>
+            </exclusion>
+         </exclusions>
       </dependency>
       <dependency>
          <groupId>org.apache.camel</groupId>
          <artifactId>camel-netty</artifactId>
          <version>${version.camel}</version>
+         <exclusions>
+            <exclusion>
+               <groupId>com.sun.xml.bind</groupId>
+               <artifactId>jaxb-impl</artifactId>
+            </exclusion>
+         </exclusions>
       </dependency>
       <dependency>
          <groupId>org.apache.camel</groupId>
          <artifactId>camel-spring</artifactId>
          <version>${version.camel}</version>
+         <exclusions>
+            <exclusion>
+               <groupId>com.sun.xml.bind</groupId>
+               <artifactId>jaxb-impl</artifactId>
+            </exclusion>
+         </exclusions>
       </dependency>
       <dependency>
          <groupId>org.apache.camel</groupId>
          <artifactId>camel-sql</artifactId>
          <version>${version.camel}</version>
+         <exclusions>
+            <exclusion>
+               <groupId>com.sun.xml.bind</groupId>
+               <artifactId>jaxb-impl</artifactId>
+            </exclusion>
+         </exclusions>
       </dependency>
       <dependency>
          <groupId>org.apache.camel</groupId>
          <artifactId>camel-ftp</artifactId>
          <version>${version.camel}</version>
+         <exclusions>
+            <exclusion>
+               <groupId>com.sun.xml.bind</groupId>
+               <artifactId>jaxb-impl</artifactId>
+            </exclusion>
+         </exclusions>
       </dependency>
       <dependency>
          <groupId>org.apache.camel</groupId>
          <artifactId>camel-quartz</artifactId>
          <version>${version.camel}</version>
+         <exclusions>
+            <exclusion>
+               <groupId>com.sun.xml.bind</groupId>
+               <artifactId>jaxb-impl</artifactId>
+            </exclusion>
+         </exclusions>
       </dependency>
       <dependency>
          <groupId>org.apache.camel</groupId>
          <artifactId>camel-test</artifactId>
          <version>${version.camel}</version>
+         <exclusions>
+            <exclusion>
+               <groupId>com.sun.xml.bind</groupId>
+               <artifactId>jaxb-impl</artifactId>
+            </exclusion>
+         </exclusions>
       </dependency>
       <dependency>
          <groupId>org.apache.camel</groupId>
          <artifactId>camel-test-spring</artifactId>
          <version>${version.camel}</version>
+         <exclusions>
+            <exclusion>
+               <groupId>com.sun.xml.bind</groupId>
+               <artifactId>jaxb-impl</artifactId>
+            </exclusion>
+         </exclusions>
       </dependency>
       <dependency>
          <groupId>org.apache.cxf</groupId>
