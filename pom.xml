@@ -58,6 +58,7 @@
         <module>camel-service</module>
         <module>camel-soap-proxy</module>
         <module>hornetq-binding</module>
+        <module>rest-binding</module>
         <module>rules-camel-cbr</module>
         <module>rules-interview</module>
         <module>rules-interview-agent</module>
