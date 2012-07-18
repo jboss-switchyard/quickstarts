@@ -68,7 +68,7 @@ public class SwitchYardDeploymentProcessor implements DeploymentUnitProcessor {
                 (ServiceDomainManager) phaseContext.getServiceRegistry().getRequiredService(SwitchYardServiceDomainManagerService.SERVICE_NAME).getService().getValue();
 
         SwitchYardMetaData metaData = deploymentUnit.getAttachment(SwitchYardMetaData.ATTACHMENT_KEY);
-        SwitchYardDeployment deployment = new SwitchYardDeployment(deploymentUnit, metaData.geSwitchYardModel(), domainManager);
+        SwitchYardDeployment deployment = new SwitchYardDeployment(deploymentUnit, metaData.getSwitchYardModel(), domainManager);
         SwitchYardService container = new SwitchYardService(deployment);
         final ServiceTarget serviceTarget = phaseContext.getServiceTarget();
         final ServiceName switchyardServiceName = deploymentUnit.getServiceName().append(SwitchYardService.SERVICE_NAME);

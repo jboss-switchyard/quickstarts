@@ -22,5 +22,6 @@
 
     <include assembly="composer/assembly.xml" />
     <include assembly="rules/assembly.xml" />
+    <include assembly="rest/assembly.xml" />
 
 </assembly>

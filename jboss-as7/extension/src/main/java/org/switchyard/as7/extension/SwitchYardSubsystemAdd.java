@@ -53,6 +53,7 @@ import org.switchyard.as7.extension.services.SwitchYardAdminService;
 import org.switchyard.as7.extension.services.SwitchYardComponentService;
 import org.switchyard.as7.extension.services.SwitchYardInjectorService;
 import org.switchyard.as7.extension.services.SwitchYardServiceDomainManagerService;
+import org.switchyard.as7.extension.util.ServerUtil;
 import org.switchyard.deploy.Component;
 import org.switchyard.deploy.ServiceDomainManager;
 
@@ -112,6 +113,7 @@ public final class SwitchYardSubsystemAdd extends AbstractBoottimeAddStepHandler
         }, OperationContext.Stage.RUNTIME);
         LOG.info("Activating SwitchYard Extension");
 
+        ServerUtil.setRegistry(context.getServiceRegistry(false));
         final SwitchYardInjectorService injectorService = new SwitchYardInjectorService();
         final ServiceBuilder<Map<String, String>> injectorServiceBuilder = context.getServiceTarget().addService(SwitchYardInjectorService.SERVICE_NAME, injectorService);
         if (operation.has(SOCKET_BINDING)) {

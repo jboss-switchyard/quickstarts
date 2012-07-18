@@ -99,7 +99,7 @@ public class SwitchYardMetaData {
      * Setter for SwitchYard Model.
      * @return the SwitchYardModel
      */
-    public SwitchYardModel geSwitchYardModel() {
+    public SwitchYardModel getSwitchYardModel() {
         return _switchYardModel;
     }
 }

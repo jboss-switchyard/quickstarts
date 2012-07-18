@@ -28,6 +28,14 @@
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-admin</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-resteasy</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jaxrs</artifactId>
+        </dependency>
         <!-- external dependencies -->
         <dependency>
             <groupId>org.jboss.as</groupId>

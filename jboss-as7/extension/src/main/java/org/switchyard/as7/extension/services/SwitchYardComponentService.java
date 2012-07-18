@@ -105,14 +105,14 @@ public class SwitchYardComponentService implements Service<List<Component>> {
                             component.addResourceDependency(_resourceAdapterRepository.getValue());
                             _components.add(component);
                         } catch (InstantiationException ie) {
-                            LOG.error("Unable to instantiate class " + className);
+                            LOG.error("Unable to instantiate class " + className, ie);
                         } catch (IllegalAccessException iae) {
-                            LOG.error("Unable to access constructor for " + className);
+                            LOG.error("Unable to access constructor for " + className, iae);
                         }
                     } catch (ClassNotFoundException cnfe) {
-                        LOG.error("Unable to load class " + className);
+                        LOG.error("Unable to load class " + className, cnfe);
                     } catch (ModuleLoadException mle) {
-                        LOG.error("Unable to load module " + moduleIdentifier);
+                        LOG.error("Unable to load module " + moduleIdentifier, mle);
                     }
                 }
             }

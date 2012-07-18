@@ -16,20 +16,26 @@
   ~ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   ~ MA  02110-1301, USA.
   -->
+
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
 
-    <include assembly="bean/assembly.xml" />
-    <include assembly="bpel/assembly.xml" />
-    <include assembly="bpm/assembly.xml" />
-    <include assembly="camel/assembly.xml" />
-    <!--<include assembly="clojure/assembly.xml" />-->
-    <include assembly="common/assembly.xml" />
-    <include assembly="hornetq/assembly.xml" />
-    <include assembly="resteasy/assembly.xml" />
-    <include assembly="rules/assembly.xml" />
-    <include assembly="soap/assembly.xml" />
-    <include assembly="jca/assembly.xml" />
-
+    <files>
+        <file>
+            <source>src/main/resources/switchyard/components/resteasy/resources/module.xml</source>
+            <outputDirectory>/modules/org/switchyard/component/resteasy/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+    </files>
+    <dependencySets>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.switchyard.components:switchyard-component-resteasy</include>
+            </includes>
+            <outputDirectory>/modules/org/switchyard/component/resteasy/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}</outputFileNameMapping>
+        </dependencySet>
+    </dependencySets>
 </assembly>
