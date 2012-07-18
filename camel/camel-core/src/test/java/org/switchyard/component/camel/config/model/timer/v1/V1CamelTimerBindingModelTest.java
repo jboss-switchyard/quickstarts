@@ -28,11 +28,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.camel.component.timer.TimerEndpoint;
-import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.switchyard.component.camel.config.model.timer.CamelTimerBindingModel;
 import org.switchyard.component.camel.config.model.v1.V1BaseCamelModelTest;
@@ -59,9 +57,9 @@ public class V1CamelTimerBindingModelTest extends V1BaseCamelModelTest<V1CamelTi
         "timer://fooTimer?time=2011-01-01T12:00:00&pattern=yyyy-MM-dd'T'HH:mm:ss&" +
         "period=555&delay=100&fixedRate=true&daemon=false";
 
-    private static final String CAMEL_ENDPOINT_URI = "timer://fooTimer?" +
-            "daemon=false&delay=100&fixedRate=true&pattern=yyyy-MM-dd'T'HH:mm:ss&" +
-            "period=555&time=2011-01-01T12:00:00";
+    private static final String CAMEL_ENDPOINT_URI =
+        "timer://fooTimer?daemon=false&delay=100&fixedRate=true&pattern=yyyy-MM-dd%27T%27HH%3Amm%3Ass&" +
+        "period=555&time=2011-01-01T12%3A00%3A00";
 
     private Date referenceDate;
     
@@ -123,7 +121,6 @@ public class V1CamelTimerBindingModelTest extends V1BaseCamelModelTest<V1CamelTi
     }
 
     @Test
-    @Ignore("Because changes in camel endpoint creation this test started to fail")
     public void testCamelEndpoint() {
         CamelTimerBindingModel model = createTimerModel();
         TimerEndpoint endpoint = getEndpoint(model, TimerEndpoint.class);
@@ -133,7 +130,7 @@ public class V1CamelTimerBindingModelTest extends V1BaseCamelModelTest<V1CamelTi
         assertEquals(endpoint.getDelay(), DELAY.longValue());
         assertEquals(endpoint.isFixedRate(), FIXED_RATE.booleanValue());
         assertEquals(endpoint.isDaemon(), DAEMON.booleanValue());
-        assertEquals(endpoint.getEndpointUri(), UnsafeUriCharactersEncoder.encode(CAMEL_ENDPOINT_URI));
+        assertEquals(endpoint.getEndpointUri(), CAMEL_ENDPOINT_URI);
     }
 
     private CamelTimerBindingModel createTimerModel() {

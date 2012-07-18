@@ -19,8 +19,8 @@
  
 package org.switchyard.component.soap.util;
 
-import java.io.ByteArrayInputStream;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Iterator;
 
@@ -237,7 +237,7 @@ public final class SOAPUtil {
      * @throws XMLStreamException If the SOAP message could not be read
      */
     public static Document parseAsDom(final String soapRes) throws ParserConfigurationException, XMLStreamException {
-        final XMLEventReader reader = XMLHelper.getXMLEventReader(new ByteArrayInputStream(soapRes.getBytes()));
+        final XMLEventReader reader = XMLHelper.getXMLEventReader(new StringReader(soapRes));
         return XMLHelper.createDocument(reader);
     }
 

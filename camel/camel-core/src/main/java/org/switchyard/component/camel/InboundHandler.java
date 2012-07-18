@@ -26,10 +26,10 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.util.URISupport;
@@ -58,7 +58,7 @@ public class InboundHandler extends BaseServiceHandler {
     private static final String TRANSACTED_REF = "transactionPolicy";
     private static TransactionManagerFactory TM_FACTORY = TransactionManagerFactory.getInstance();
     private final CamelBindingModel _camelBindingModel;
-    private final CamelContext _camelContext;
+    private final ModelCamelContext _camelContext;
     private RouteDefinition _routeDefinition;
     private QName _serviceName;
 
@@ -66,10 +66,10 @@ public class InboundHandler extends BaseServiceHandler {
      * Sole constructor.
      * 
      * @param camelBindingModel The {@link CamelBindingModel}.
-     * @param camelContext The {@link CamelContext}.
+     * @param camelContext The {@link ModelCamelContext}.
      * @param serviceName The target service name.
      */
-    public InboundHandler(final CamelBindingModel camelBindingModel, final CamelContext camelContext, final QName serviceName) {
+    public InboundHandler(final CamelBindingModel camelBindingModel, final ModelCamelContext camelContext, final QName serviceName) {
         _camelBindingModel = camelBindingModel;
         _camelContext = camelContext;
         _routeDefinition = createRouteDefinition(serviceName);
@@ -157,13 +157,13 @@ public class InboundHandler extends BaseServiceHandler {
     }
 
     /**
-     * Will create the Camel route and add it to the {@link CamelContext}.
+     * Will create the Camel route and add it to the {@link ModelCamelContext}.
      */
     @Override
     public void start() {
         try {
             if (_routeDefinition.getStatus(_camelContext).isStartable()) {
-                _camelContext.startRoute(_routeDefinition);
+                _camelContext.startRoute(_routeDefinition.getId());
             }
         } catch (Exception ex) {
             throw new SwitchYardException("Failed to start route for service " + _serviceName, ex);

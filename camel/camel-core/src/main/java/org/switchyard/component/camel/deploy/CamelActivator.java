@@ -35,6 +35,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
@@ -87,7 +88,7 @@ public class CamelActivator extends BaseActivator {
      */
     public static final String SERVICE_DOMAIN = "org.switchyard.camel.serviceDomain";
 
-    private CamelContext _camelContext;
+    private ModelCamelContext _camelContext;
     private Configuration _environment;
 
     /**
@@ -248,13 +249,12 @@ public class CamelActivator extends BaseActivator {
         }
     }
 
-    @SuppressWarnings("rawtypes")
     private void checkSwitchYardReferencedServiceExist(
             final RouteDefinition routeDef, 
             final CamelComponentImplementationModel ccim) {
         
         final List<ProcessorDefinition<?>> outputs = routeDef.getOutputs();
-        for (ProcessorDefinition processorDef : outputs) {
+        for (ProcessorDefinition<?> processorDef : outputs) {
             if (processorDef instanceof ToDefinition) {
                 final ToDefinition to = (ToDefinition) processorDef;
                 final URI componentUri = URI.create(to.getUri());
@@ -321,15 +321,6 @@ public class CamelActivator extends BaseActivator {
         final String endpointUri = binding.getComponentURI().toString();
         final MessageComposer<Message> messageComposer = CamelComposition.getMessageComposer(binding);
         return new OutboundHandler(endpointUri, _camelContext, messageComposer);
-    }
-    
-    /**
-     * Set the {@link CamelContext} to be used by this Activator.
-     * 
-     * @param camelContext the CamelContext.
-     */
-    public void setCamelContext(final CamelContext camelContext) {
-        _camelContext = camelContext;
     }
     
     /**
