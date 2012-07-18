@@ -125,6 +125,8 @@
     <version.quartz>1.8.5</version.quartz>
     <version.protobuf>2.4.1</version.protobuf>
     <version.protostuff>1.0.4</version.protostuff>
+    <!-- Needed until AS7 is upgraded with this version -->
+    <version.resteasy>2.3.4.Final</version.resteasy>
     <version.riftsaw.ode>3.0.0.20120316-M2</version.riftsaw.ode>
     <version.riftsaw.engine>3.0.0.20120316-M2</version.riftsaw.engine>
     <version.riftsaw.console>2.4.1.Final</version.riftsaw.console>
@@ -795,7 +797,17 @@
       </dependency>
       <dependency>
          <groupId>org.switchyard.components</groupId>
+         <artifactId>switchyard-component-common-rest</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.switchyard.components</groupId>
          <artifactId>switchyard-component-common-rules</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.switchyard.components</groupId>
+         <artifactId>switchyard-component-resteasy</artifactId>
          <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1515,6 +1527,21 @@
          <groupId>org.jboss.netty</groupId>
          <artifactId>netty</artifactId>
          <version>${version.netty}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.resteasy</groupId>
+         <artifactId>resteasy-jaxrs</artifactId>
+         <version>${version.resteasy}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.resteasy</groupId>
+         <artifactId>resteasy-jaxb-provider</artifactId>
+         <version>${version.resteasy}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.resteasy</groupId>
+         <artifactId>resteasy-jdk-http</artifactId>
+         <version>${version.resteasy}</version>
       </dependency>
       <dependency>
          <groupId>org.jboss.soa.bpel</groupId>
