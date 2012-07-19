@@ -97,6 +97,11 @@
             <artifactId>switchyard-component-common-composer</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-common-rest</artifactId>
+        </dependency>
+
          <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-camel-as7</artifactId>

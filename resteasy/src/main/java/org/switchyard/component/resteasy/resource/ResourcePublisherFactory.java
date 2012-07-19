@@ -16,47 +16,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
+ 
+package org.switchyard.component.resteasy.resource;
 
-package org.switchyard.component.camel;
+import java.util.ServiceLoader;
+
+import org.switchyard.component.resteasy.RESTEasyPublishException;
 
 /**
- * Constants used by Camel component.
+ * Factory for creating Resource publisher.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public final class CamelConstants {
+public final class ResourcePublisherFactory {
+
+    private static final ResourcePublisher PUBLISHER;
+
+
+    private ResourcePublisherFactory() {
+    }
 
     /**
-     * HTTP scheme.
+     * Creates a ResourcePublisher based on the environment.
+     * @return The ResourcePublisher
      */
-    public static final String HTTP_SCHEME = "http:";
+    public static ResourcePublisher getPublisher() {
+        return PUBLISHER;
+    }
 
-    /**
-     * cxfrs transport scheme.
-     */
-    public static final String CXFRS_SCHEME = "cxfrs:";
-
-    /**
-     * Scheme seperator.
-     */
-    public static final String SCHEME_SUFFIX = "//";
-
-    /**
-     * cxfrs://http://<host>:<port> transport scheme.
-     */
-    public static final String CXFRS_HTTP_SCHEME = CXFRS_SCHEME + SCHEME_SUFFIX + HTTP_SCHEME + SCHEME_SUFFIX;
-
-    /**
-     * cxfrs://http:/// transport scheme.
-     */
-    public static final String CXFRS_HTTP_NO_HOST_SCHEME = CXFRS_HTTP_SCHEME + "/";
-
-    /**
-     * resourceClasses.
-     */
-    public static final String RESOURCE_CLASSES = "resourceClasses=";
-
-    private CamelConstants() {
-        // Utility class
+    static {
+        try {
+            PUBLISHER = ServiceLoader.load(ResourcePublisher.class).iterator().next();
+        } catch (Exception e) {
+            throw new RESTEasyPublishException(e);
+        }
     }
 }

@@ -17,46 +17,43 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.component.camel;
+package org.switchyard.component.resteasy.util.support;
 
 /**
- * Constants used by Camel component.
+ * Item for WarehouseService.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public final class CamelConstants {
+public class Item {
+    private Integer _itemId;
+    private String _name;
 
-    /**
-     * HTTP scheme.
-     */
-    public static final String HTTP_SCHEME = "http:";
+    public Item(Integer itemId, String name) {
+        _itemId = itemId;
+        _name = name;
+    }
 
-    /**
-     * cxfrs transport scheme.
-     */
-    public static final String CXFRS_SCHEME = "cxfrs:";
+    public Integer getItemId() {
+        return _itemId;
+    }
 
-    /**
-     * Scheme seperator.
-     */
-    public static final String SCHEME_SUFFIX = "//";
+    public void setItemId(Integer itemId) {
+        _itemId = itemId;
+    }
 
-    /**
-     * cxfrs://http://<host>:<port> transport scheme.
-     */
-    public static final String CXFRS_HTTP_SCHEME = CXFRS_SCHEME + SCHEME_SUFFIX + HTTP_SCHEME + SCHEME_SUFFIX;
+    public String getName() {
+        return _name;
+    }
 
-    /**
-     * cxfrs://http:/// transport scheme.
-     */
-    public static final String CXFRS_HTTP_NO_HOST_SCHEME = CXFRS_HTTP_SCHEME + "/";
+    public void setName(String name) {
+        _name = name;
+    }
 
-    /**
-     * resourceClasses.
-     */
-    public static final String RESOURCE_CLASSES = "resourceClasses=";
+    public String toString() {
+        return "[" + _itemId + ":" +_name + "]";
+    }
 
-    private CamelConstants() {
-        // Utility class
+    public boolean equals(Item item) {
+        return (_itemId == item.getItemId()) && (_name.equals(item.getName()));
     }
 }

@@ -17,46 +17,35 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.component.camel;
+package org.switchyard.component.resteasy;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.QueryParam;
 
 /**
- * Constants used by Camel component.
+ * A Greeter Resource.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public final class CamelConstants {
+@Path("/greeters")
+public interface HelloResource {
+
+    @PUT
+    @Path("{name}")
+    String addGreeter(@PathParam("name") String name);
+
+    @GET
+    @Path("{name}")
+    String greeterInfo(@PathParam("name") String name);
 
     /**
-     * HTTP scheme.
+     * A multi parameter test. A url will be of the form /greeters/name and anotherName will be in the request body.
      */
-    public static final String HTTP_SCHEME = "http:";
-
-    /**
-     * cxfrs transport scheme.
-     */
-    public static final String CXFRS_SCHEME = "cxfrs:";
-
-    /**
-     * Scheme seperator.
-     */
-    public static final String SCHEME_SUFFIX = "//";
-
-    /**
-     * cxfrs://http://<host>:<port> transport scheme.
-     */
-    public static final String CXFRS_HTTP_SCHEME = CXFRS_SCHEME + SCHEME_SUFFIX + HTTP_SCHEME + SCHEME_SUFFIX;
-
-    /**
-     * cxfrs://http:/// transport scheme.
-     */
-    public static final String CXFRS_HTTP_NO_HOST_SCHEME = CXFRS_HTTP_SCHEME + "/";
-
-    /**
-     * resourceClasses.
-     */
-    public static final String RESOURCE_CLASSES = "resourceClasses=";
-
-    private CamelConstants() {
-        // Utility class
-    }
+    @POST
+    @Path("{name}")
+    String sayHello(String anotherName);
 }

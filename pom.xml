@@ -55,6 +55,7 @@
         <module>bean</module>
         <module>rules</module>
         <module>bpm</module>
+        <module>resteasy</module>
         <module>soap</module>
         <module>bpel</module>
         <module>tests</module>

@@ -17,46 +17,50 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.component.camel;
+package org.switchyard.component.common.rest.support;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.MatrixParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Produces;
+import javax.ws.rs.PUT;
 
 /**
- * Constants used by Camel component.
+ * REST interface for OrderService.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public final class CamelConstants {
+@Path("/order")
+@Produces({"application/xml"})
+@Consumes({"application/xml"})
+public class OrderResource {
 
-    /**
-     * HTTP scheme.
-     */
-    public static final String HTTP_SCHEME = "http:";
-
-    /**
-     * cxfrs transport scheme.
-     */
-    public static final String CXFRS_SCHEME = "cxfrs:";
-
-    /**
-     * Scheme seperator.
-     */
-    public static final String SCHEME_SUFFIX = "//";
-
-    /**
-     * cxfrs://http://<host>:<port> transport scheme.
-     */
-    public static final String CXFRS_HTTP_SCHEME = CXFRS_SCHEME + SCHEME_SUFFIX + HTTP_SCHEME + SCHEME_SUFFIX;
-
-    /**
-     * cxfrs://http:/// transport scheme.
-     */
-    public static final String CXFRS_HTTP_NO_HOST_SCHEME = CXFRS_HTTP_SCHEME + "/";
-
-    /**
-     * resourceClasses.
-     */
-    public static final String RESOURCE_CLASSES = "resourceClasses=";
-
-    private CamelConstants() {
-        // Utility class
+    @POST
+    @Path("/")
+    public Order newOrder() {
+        return null;
     }
+
+    @GET
+    @Path("{orderId}")
+    public Order getOrder(@PathParam("orderId") Integer orderId) {
+        return null;
+    }
+
+    @PUT
+    @Path("/item")
+    public String addItems(Order order) {
+        return null;
+    }
+
+    @DELETE
+    @Path("")
+    public String removeItem(@MatrixParam("itemId") String orderItemId) {
+        return null;
+    }
+
 }

@@ -16,47 +16,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
+ 
+package org.switchyard.component.resteasy.resource;
 
-package org.switchyard.component.camel;
+import java.util.List;
 
 /**
- * Constants used by Camel component.
+ * Interface for allowing SwitchYard to publish RESTEasy resources.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public final class CamelConstants {
+public interface ResourcePublisher {
 
     /**
-     * HTTP scheme.
+     * Publish a RESTEasy resource.
+     * @param context The web context root where the resource need to be published
+     * @param instances The a list of JAX-RS resource instances
+     * @return The published resource holder
+     * @throws Exception if resource could not be published
      */
-    public static final String HTTP_SCHEME = "http:";
-
-    /**
-     * cxfrs transport scheme.
-     */
-    public static final String CXFRS_SCHEME = "cxfrs:";
-
-    /**
-     * Scheme seperator.
-     */
-    public static final String SCHEME_SUFFIX = "//";
-
-    /**
-     * cxfrs://http://<host>:<port> transport scheme.
-     */
-    public static final String CXFRS_HTTP_SCHEME = CXFRS_SCHEME + SCHEME_SUFFIX + HTTP_SCHEME + SCHEME_SUFFIX;
-
-    /**
-     * cxfrs://http:/// transport scheme.
-     */
-    public static final String CXFRS_HTTP_NO_HOST_SCHEME = CXFRS_HTTP_SCHEME + "/";
-
-    /**
-     * resourceClasses.
-     */
-    public static final String RESOURCE_CLASSES = "resourceClasses=";
-
-    private CamelConstants() {
-        // Utility class
-    }
+    Resource publish(String context, List<Object> instances) throws Exception;
 }

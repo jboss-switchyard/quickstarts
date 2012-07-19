@@ -17,46 +17,47 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.component.camel;
+package org.switchyard.component.resteasy.util.support;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Produces;
+import javax.ws.rs.PUT;
 
 /**
- * Constants used by Camel component.
+ * REST interface for WarehouseService.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public final class CamelConstants {
+@Path("/warehouse")
+public interface WarehouseResource {
 
-    /**
-     * HTTP scheme.
-     */
-    public static final String HTTP_SCHEME = "http:";
+    @GET
+    @Path("{itemId}")
+    @Produces({"application/xml"})
+    public Item getItem(@PathParam("itemId") Integer itemId);
 
-    /**
-     * cxfrs transport scheme.
-     */
-    public static final String CXFRS_SCHEME = "cxfrs:";
+    @PUT
+    @Path("/")
+    @Consumes({"application/xml"})
+    public String addItem(Item item) throws Exception;
 
-    /**
-     * Scheme seperator.
-     */
-    public static final String SCHEME_SUFFIX = "//";
+    @POST
+    @Path("/")
+    @Consumes({"application/xml"})
+    public String updateItem(Item item) throws Exception;
 
-    /**
-     * cxfrs://http://<host>:<port> transport scheme.
-     */
-    public static final String CXFRS_HTTP_SCHEME = CXFRS_SCHEME + SCHEME_SUFFIX + HTTP_SCHEME + SCHEME_SUFFIX;
+    @DELETE
+    @Path("{itemId}")
+    public String removeItem(@PathParam("itemId") Integer itemId) throws Exception;
 
-    /**
-     * cxfrs://http:/// transport scheme.
-     */
-    public static final String CXFRS_HTTP_NO_HOST_SCHEME = CXFRS_HTTP_SCHEME + "/";
+    @GET
+    @Path("/count/")
+    public Integer getItemCount();
 
-    /**
-     * resourceClasses.
-     */
-    public static final String RESOURCE_CLASSES = "resourceClasses=";
-
-    private CamelConstants() {
-        // Utility class
-    }
+    public void testVoid();
 }

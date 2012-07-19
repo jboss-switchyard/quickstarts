@@ -16,47 +16,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
+ 
+package org.switchyard.component.resteasy;
 
-package org.switchyard.component.camel;
+import org.switchyard.exception.SwitchYardException;
 
 /**
- * Constants used by Camel component.
+ * Wrapper for RESTEasy creation exceptions.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public final class CamelConstants {
+public class RESTEasyPublishException extends SwitchYardException {
+    private static final long serialVersionUID = 1L;
 
     /**
-     * HTTP scheme.
+     * Public constructor.
+     * @param message Exception message.
      */
-    public static final String HTTP_SCHEME = "http:";
+    public RESTEasyPublishException(final String message) {
+        super(message);
+    }
 
     /**
-     * cxfrs transport scheme.
+     * Public constructor.
+     * @param message Exception message.
+     * @param cause Exception cause.
      */
-    public static final String CXFRS_SCHEME = "cxfrs:";
+    public RESTEasyPublishException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 
     /**
-     * Scheme seperator.
+     * Public constructor.
+     * @param cause Exception cause.
      */
-    public static final String SCHEME_SUFFIX = "//";
-
-    /**
-     * cxfrs://http://<host>:<port> transport scheme.
-     */
-    public static final String CXFRS_HTTP_SCHEME = CXFRS_SCHEME + SCHEME_SUFFIX + HTTP_SCHEME + SCHEME_SUFFIX;
-
-    /**
-     * cxfrs://http:/// transport scheme.
-     */
-    public static final String CXFRS_HTTP_NO_HOST_SCHEME = CXFRS_HTTP_SCHEME + "/";
-
-    /**
-     * resourceClasses.
-     */
-    public static final String RESOURCE_CLASSES = "resourceClasses=";
-
-    private CamelConstants() {
-        // Utility class
+    public RESTEasyPublishException(final Throwable cause) {
+        super(cause);
     }
 }

@@ -16,47 +16,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
+package org.switchyard.component.resteasy.deploy;
 
-package org.switchyard.component.camel;
+import org.switchyard.ServiceDomain;
+import org.switchyard.deploy.Activator;
+import org.switchyard.deploy.BaseComponent;
 
 /**
- * Constants used by Camel component.
+ * An implementation of RESTEasy component.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public final class CamelConstants {
+public class RESTEasyComponent extends BaseComponent {
 
     /**
-     * HTTP scheme.
+     * Default constructor.
      */
-    public static final String HTTP_SCHEME = "http:";
+    public RESTEasyComponent() {
+        super();
+        setName("RESTEasyComponent");
+    }
 
     /**
-     * cxfrs transport scheme.
+     * {@inheritDoc}
      */
-    public static final String CXFRS_SCHEME = "cxfrs:";
-
-    /**
-     * Scheme seperator.
-     */
-    public static final String SCHEME_SUFFIX = "//";
-
-    /**
-     * cxfrs://http://<host>:<port> transport scheme.
-     */
-    public static final String CXFRS_HTTP_SCHEME = CXFRS_SCHEME + SCHEME_SUFFIX + HTTP_SCHEME + SCHEME_SUFFIX;
-
-    /**
-     * cxfrs://http:/// transport scheme.
-     */
-    public static final String CXFRS_HTTP_NO_HOST_SCHEME = CXFRS_HTTP_SCHEME + "/";
-
-    /**
-     * resourceClasses.
-     */
-    public static final String RESOURCE_CLASSES = "resourceClasses=";
-
-    private CamelConstants() {
-        // Utility class
+    @Override
+    public Activator createActivator(ServiceDomain domain) {
+        RESTEasyActivator activator = new RESTEasyActivator();
+        activator.setServiceDomain(domain);
+        activator.setEnvironment(getConfig());
+        return activator;
     }
 }
