@@ -81,7 +81,7 @@ public class InOnlyOperation extends BaseInvocationContract implements ServiceOp
 
     @Override
     public String toString() {
-        return _operationName + "{IN_ONLY}";
+        return _operationName + " : IN_ONLY : [" + getInputType() + ", null, " + getFaultType() + "]";
     }
     
     /**
