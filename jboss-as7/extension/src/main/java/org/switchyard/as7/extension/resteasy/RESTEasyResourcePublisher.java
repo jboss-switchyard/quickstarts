@@ -21,6 +21,7 @@ package org.switchyard.as7.extension.resteasy;
 
 import java.lang.reflect.InvocationTargetException;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.naming.NamingException;
@@ -84,14 +85,20 @@ public class RESTEasyResourcePublisher implements ResourcePublisher {
             host.addChild(serverContext);
             serverContext.create();
             serverContext.start();
+            LOG.info("Published RESTEasy context " + serverContext.getPath());
         }
         Registry registry = (Registry)serverContext.getServletContext().getAttribute(Registry.class.getName());
+        List<Class<?>> classes = new ArrayList<Class<?>>();
         // Add as singleton instance
         for (Object instance : instances) {
             LOG.debug("Publishing ... " + instance);
             registry.addSingletonResource(instance);
+            classes.add(instance.getClass());
         }
-        return new RESTEasyResource();
+        RESTEasyResource resource = new RESTEasyResource();
+        resource.setClasses(classes);
+        resource.setContext(serverContext);
+        return resource;
     }
 
     private static class LocalInstanceManager implements InstanceManager {
