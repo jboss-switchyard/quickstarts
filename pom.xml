@@ -125,6 +125,7 @@
     <!-- <version.javax.resource>1.6</version.javax.resource> -->
     <version.org.jboss.spec.javax.resource16>1.0.0.Final</version.org.jboss.spec.javax.resource16>
     <version.quartz>1.8.5</version.quartz>
+    <version.picketlink>2.1.1.Final</version.picketlink>
     <version.protobuf>2.4.1</version.protobuf>
     <version.protostuff>1.0.4</version.protostuff>
     <!-- Needed until AS7 is upgraded with this version -->
@@ -774,6 +775,11 @@
       </dependency>
       <dependency>
          <groupId>org.switchyard</groupId>
+         <artifactId>switchyard-security</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.switchyard</groupId>
          <artifactId>switchyard-transform</artifactId>
          <version>${project.version}</version>
       </dependency>
@@ -1011,7 +1017,12 @@
       </dependency>
       <dependency>
          <groupId>org.switchyard.quickstarts.demos</groupId>
-         <artifactId>switchyard-quickstart-demo-policy-security</artifactId>
+         <artifactId>switchyard-quickstart-demo-policy-security-sslbasic</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.switchyard.quickstarts.demos</groupId>
+         <artifactId>switchyard-quickstart-demo-policy-security-sslsaml</artifactId>
          <version>${project.version}</version>
       </dependency>
 
@@ -1768,6 +1779,16 @@
          <version>${version.mysql-connector-java}</version>
       </dependency>
       -->
+      <dependency>
+         <groupId>org.picketlink</groupId>
+         <artifactId>picketlink-core</artifactId>
+         <version>${version.picketlink}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.picketlink.distribution</groupId>
+         <artifactId>picketlink-jbas7</artifactId>
+         <version>${version.picketlink}</version>
+      </dependency>
       <dependency>
          <groupId>org.quartz-scheduler</groupId>
          <artifactId>quartz</artifactId>
