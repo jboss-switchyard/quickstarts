@@ -717,6 +717,11 @@
       </dependency>
       <dependency>
          <groupId>org.switchyard</groupId>
+         <artifactId>switchyard-forge-resteasy-plugin</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.switchyard</groupId>
          <artifactId>switchyard-forge-rules-plugin</artifactId>
          <version>${project.version}</version>
       </dependency>
