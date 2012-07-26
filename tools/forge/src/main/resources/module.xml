@@ -5,6 +5,7 @@
 	<resource-root path="switchyard-forge-plugin-${project.version}.jar"/>
 	<resource-root path="switchyard-forge-bean-plugin-${project.version}.jar"/>
 	<resource-root path="switchyard-forge-soap-plugin-${project.version}.jar"/>
+	<resource-root path="switchyard-forge-resteasy-plugin-${project.version}.jar"/>
 	<resource-root path="switchyard-forge-rules-plugin-${project.version}.jar"/>
 	<resource-root path="switchyard-forge-bpm-plugin-${project.version}.jar"/>
 	<resource-root path="switchyard-forge-camel-plugin-${project.version}.jar"/>

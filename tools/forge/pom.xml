@@ -59,6 +59,10 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-forge-resteasy-plugin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
             <artifactId>switchyard-forge-rules-plugin</artifactId>
         </dependency>
         <dependency>
