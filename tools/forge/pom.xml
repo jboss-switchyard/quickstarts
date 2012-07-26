@@ -20,6 +20,7 @@
         <module>camel</module>
         <module>clojure</module>
         <module>soap</module>
+        <module>resteasy</module>
         <module>rules</module>
         <module>bpm</module>
     </modules>

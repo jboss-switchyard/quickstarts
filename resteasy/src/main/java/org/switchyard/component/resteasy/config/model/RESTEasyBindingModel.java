@@ -64,7 +64,7 @@ public class RESTEasyBindingModel extends V1BindingModel {
      */
     public RESTEasyBindingModel() {
         super(RESTEASY, DEFAULT_NAMESPACE);
-        setModelChildrenOrder(RESOURCE_INTERFACES, CONTEXT_PATH, ADDRESS);
+        setModelChildrenOrder(RESOURCE_INTERFACES, ADDRESS, CONTEXT_PATH);
     }
 
     /**
@@ -120,6 +120,14 @@ public class RESTEasyBindingModel extends V1BindingModel {
      */
     public void setAddress(String address) {
         _address = address;
+        Configuration childConfig = getModelConfiguration().getFirstChild(ADDRESS);
+        if (childConfig == null) {
+            ValueModel addressConfig = new ValueModel(ADDRESS);
+            addressConfig.setValue(address);
+            setChildModel(addressConfig);
+        } else {
+            childConfig.setValue(address);
+        }
     }
 
     /**
@@ -155,6 +163,14 @@ public class RESTEasyBindingModel extends V1BindingModel {
      */
     public void setInterfaces(String interfaces) {
         _resourceInterfaces = interfaces;
+        Configuration childConfig = getModelConfiguration().getFirstChild(RESOURCE_INTERFACES);
+        if (childConfig == null) {
+            ValueModel intfConfig = new ValueModel(RESOURCE_INTERFACES);
+            intfConfig.setValue(interfaces);
+            setChildModel(intfConfig);
+        } else {
+            childConfig.setValue(interfaces);
+        }
     }
 
     /**
@@ -188,6 +204,14 @@ public class RESTEasyBindingModel extends V1BindingModel {
      */
     public void setContextPath(String contextPath) {
         this._contextPath = contextPath;
+        Configuration childConfig = getModelConfiguration().getFirstChild(CONTEXT_PATH);
+        if (childConfig == null) {
+            ValueModel pathConfig = new ValueModel(CONTEXT_PATH);
+            pathConfig.setValue(contextPath);
+            setChildModel(pathConfig);
+        } else {
+            childConfig.setValue(contextPath);
+        }
     }
 
     /**
