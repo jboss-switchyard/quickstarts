@@ -23,8 +23,8 @@ import javax.resource.cci.IndexedRecord;
 import org.switchyard.Context;
 import org.switchyard.Property;
 import org.switchyard.Scope;
+import org.switchyard.component.common.composer.BaseRegexContextMapper;
 import org.switchyard.component.jca.JCAConstants;
-import org.switchyard.component.common.composer.BaseContextMapper;
 
 /**
  * ContextMapper for CCI IndexedRecord.
@@ -32,7 +32,7 @@ import org.switchyard.component.common.composer.BaseContextMapper;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  */
-public class CCIIndexedRecordContextMapper extends BaseContextMapper<IndexedRecord> {
+public class CCIIndexedRecordContextMapper extends BaseRegexContextMapper<IndexedRecord> {
 
     /**
      * {@inheritDoc}

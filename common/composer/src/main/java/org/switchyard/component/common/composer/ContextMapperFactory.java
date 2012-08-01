@@ -44,15 +44,15 @@ public abstract class ContextMapperFactory<T> {
 
     /**
      * Component developer should implement this message to provide their default/fallback implementation
-     * if the ContextMapperInfo passed into {@link ContextMapperFactory#newContextMapper(ContextMapperInfo)}
+     * if the ContextMapperModel passed into {@link ContextMapperFactory#newContextMapper(ContextMapperModel)}
      * doesn't specify (or specifies a bad) context mapper class to use.
      * @return the default/fallback context mapper implementation
      */
     public abstract ContextMapper<T> newContextMapperDefault();
 
     /**
-     * Will create a new ContextMapper based on the specifications of the passed in ContextMapperInfo, or if
-     * a class it not specified, will apply the rest of the info properties on the default/fallback implementation.
+     * Will create a new ContextMapper based on the specifications of the passed in ContextMapperModel, or if
+     * a class it not specified, will apply the rest of the model properties on the default/fallback implementation.
      * @param model contains the config details
      * @return the new ContextMapper instance
      */
@@ -62,10 +62,13 @@ public abstract class ContextMapperFactory<T> {
         ContextMapperFactory<T> contextMapperFactory = ContextMapperFactory.getContextMapperFactory(getTargetClass());
         if (model != null) {
             contextMapper = contextMapperFactory.newContextMapper((Class<ContextMapper<T>>)model.getClazz());
-            contextMapper.setIncludes(model.getIncludes());
-            contextMapper.setExcludes(model.getExcludes());
-            contextMapper.setIncludeNamespaces(model.getIncludeNamespaces());
-            contextMapper.setExcludeNamespaces(model.getExcludeNamespaces());
+            if (contextMapper instanceof RegexContextMapper) {
+                RegexContextMapper<T> regexContextMapper = (RegexContextMapper<T>)contextMapper;
+                regexContextMapper.setIncludes(model.getIncludes());
+                regexContextMapper.setExcludes(model.getExcludes());
+                regexContextMapper.setIncludeNamespaces(model.getIncludeNamespaces());
+                regexContextMapper.setExcludeNamespaces(model.getExcludeNamespaces());
+            }
         } else {
             contextMapper = contextMapperFactory.newContextMapperDefault();
         }

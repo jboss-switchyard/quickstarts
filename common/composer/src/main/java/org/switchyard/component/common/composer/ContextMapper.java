@@ -18,60 +18,16 @@
  */
 package org.switchyard.component.common.composer;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.Context;
 
 /**
- * Maps context properties from and to a source or target object, with the ability to selectively choose which properties with regex expressions.
+ * Maps context properties from and to a source or target object.
  * 
  * @param <T> the type of source and target object
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2011 Red Hat Inc.
  */
 public interface ContextMapper<T> {
-
-    /**
-     * Sets a comma-separated list of regex property includes.
-     * @param includes the includes
-     * @return this ContextMapper (useful for chaining)
-     */
-    public ContextMapper<T> setIncludes(String includes);
-
-    /**
-     * Sets a comma-separated list of regex property excludes.
-     * @param excludes the excludes
-     * @return this ContextMapper (useful for chaining)
-     */
-    public ContextMapper<T> setExcludes(String excludes);
-
-    /**
-     * Sets a comma-separated list of regex property namespace includes.
-     * @param includeNamespaces the namespace includes
-     * @return this ContextMapper (useful for chaining)
-     */
-    public ContextMapper<T> setIncludeNamespaces(String includeNamespaces);
-
-    /**
-     * Sets a comma-separated list of regex property namespace excludes.
-     * @param excludeNamespaces the namespace excludes
-     * @return this ContextMapper (useful for chaining)
-     */
-    public ContextMapper<T> setExcludeNamespaces(String excludeNamespaces);
-
-    /**
-     * Decides if the specified name passes the collective regex expressions.
-     * @param name the name to test
-     * @return whether the name passes the matching tests
-     */
-    public boolean matches(String name);
-
-    /**
-     * Decides if the specified qualified name passes the collective regex expressions.
-     * @param qname the qualified name to test
-     * @return whether the qualified name passes the matching tests
-     */
-    public boolean matches(QName qname);
 
     /**
      * Maps a source object's properties to the context.

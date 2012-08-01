@@ -26,14 +26,14 @@ import org.hornetq.api.core.SimpleString;
 import org.hornetq.api.core.client.ClientMessage;
 import org.switchyard.Context;
 import org.switchyard.Property;
-import org.switchyard.component.common.composer.BaseContextMapper;
+import org.switchyard.component.common.composer.BaseRegexContextMapper;
 
 /**
  * HornetQContextMapper.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class HornetQContextMapper extends BaseContextMapper<ClientMessage> {
+public class HornetQContextMapper extends BaseRegexContextMapper<ClientMessage> {
 
     /**
      * {@inheritDoc}

@@ -22,10 +22,11 @@ import java.util.Enumeration;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
+
 import org.switchyard.Context;
 import org.switchyard.Property;
 import org.switchyard.Scope;
-import org.switchyard.component.common.composer.BaseContextMapper;
+import org.switchyard.component.common.composer.BaseRegexContextMapper;
 
 /**
  * JCAJMSContextMapper.
@@ -33,7 +34,7 @@ import org.switchyard.component.common.composer.BaseContextMapper;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  */
-public class JMSContextMapper extends BaseContextMapper<Message> {
+public class JMSContextMapper extends BaseRegexContextMapper<Message> {
 
     /**
      * {@inheritDoc}

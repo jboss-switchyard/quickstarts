@@ -21,8 +21,8 @@ package org.switchyard.component.soap.composer;
 import static org.switchyard.Scope.EXCHANGE;
 import static org.switchyard.Scope.IN;
 import static org.switchyard.Scope.OUT;
-import static org.switchyard.component.soap.composer.SOAPComposition.SOAP_MESSAGE_MIME_HEADER;
 import static org.switchyard.component.soap.composer.SOAPComposition.SOAP_MESSAGE_HEADER;
+import static org.switchyard.component.soap.composer.SOAPComposition.SOAP_MESSAGE_MIME_HEADER;
 import static org.switchyard.component.soap.composer.SOAPHeadersType.VALUE;
 import static org.switchyard.component.soap.composer.SOAPHeadersType.XML;
 
@@ -41,7 +41,7 @@ import org.switchyard.Property;
 import org.switchyard.common.io.pull.ElementPuller;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
-import org.switchyard.component.common.composer.BaseContextMapper;
+import org.switchyard.component.common.composer.BaseRegexContextMapper;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.ConfigurationPuller;
 import org.w3c.dom.Element;
@@ -52,7 +52,7 @@ import org.w3c.dom.Node;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class SOAPContextMapper extends BaseContextMapper<SOAPMessage> {
+public class SOAPContextMapper extends BaseRegexContextMapper<SOAPMessage> {
 
     private SOAPHeadersType _soapHeadersType = null;
 

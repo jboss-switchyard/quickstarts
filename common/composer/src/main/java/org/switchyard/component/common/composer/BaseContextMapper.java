@@ -18,126 +18,31 @@
  */
 package org.switchyard.component.common.composer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import javax.xml.namespace.QName;
-
-import org.switchyard.common.lang.Strings;
-import org.switchyard.common.xml.XMLHelper;
+import org.switchyard.Context;
 
 /**
- * Base class for ContextMapper.  Adds the regex pattern matching ability.
+ * Base class for ContextMapper, no-op'ing the required methods in case the extender only needs to override one of them.
  *
  * @param <T> the type of source/target object
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2011 Red Hat Inc.
  */
-public abstract class BaseContextMapper<T> implements ContextMapper<T> {
+public class BaseContextMapper<T> implements ContextMapper<T> {
 
-    private final List<Pattern> _includes = new ArrayList<Pattern>();
-    private final List<Pattern> _excludes = new ArrayList<Pattern>();
-    private final List<Pattern> _includeNamespaces = new ArrayList<Pattern>();
-    private final List<Pattern> _excludeNamespaces = new ArrayList<Pattern>();
-
-    private void setPatternList(String regexs, List<Pattern> patternList) {
-        Set<String> regexSet = Strings.uniqueSplitTrimToNull(regexs, ",");
-        List<Pattern> tmpList = new ArrayList<Pattern>();
-        for (String regex : regexSet) {
-            try {
-                Pattern pattern = Pattern.compile(regex);
-                tmpList.add(pattern);
-            } catch (PatternSyntaxException pse) {
-                throw new IllegalArgumentException("\"" + regex + "\" is not a valid regex pattern: " + pse.getMessage());
-            }
-        }
-        synchronized (patternList) {
-            patternList.clear();
-            patternList.addAll(tmpList);
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void mapFrom(T source, Context context) throws Exception {
+        // No-op; override if desired.
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ContextMapper<T> setIncludes(String includes) {
-        setPatternList(includes, _includes);
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ContextMapper<T> setExcludes(String excludes) {
-        setPatternList(excludes, _excludes);
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ContextMapper<T> setIncludeNamespaces(String includeNamespaces) {
-        setPatternList(includeNamespaces, _includeNamespaces);
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ContextMapper<T> setExcludeNamespaces(String excludeNamespaces) {
-        setPatternList(excludeNamespaces, _excludeNamespaces);
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean matches(String name) {
-        return matches(XMLHelper.createQName(name));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean matches(QName qname) {
-        return qname != null && matches(qname.getLocalPart(), _includes, _excludes) && matches(qname.getNamespaceURI(), _includeNamespaces, _excludeNamespaces);
-    }
-
-    private boolean matches(String test, List<Pattern> includes, List<Pattern> excludes) {
-        boolean green = false;
-        boolean red = false;
-        for (Pattern include : includes) {
-            if (include.matcher(test).matches()) {
-                green = true;
-                break;
-            } else {
-                red = true;
-            }
-        }
-        boolean matches = green || !red;
-        if (matches) {
-            green = false;
-            red = false;
-            for (Pattern exclude : excludes) {
-                if (!exclude.matcher(test).matches()) {
-                    green = true;
-                    break;
-                } else {
-                    red = true;
-                }
-            }
-            matches = green || !red;
-        }
-        return matches;
+    public void mapTo(Context context, T target) throws Exception {
+        // No-op; override if desired.
     }
 
 }
