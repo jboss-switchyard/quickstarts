@@ -77,13 +77,10 @@ public class JMSProcessor extends AbstractOutboundProcessor {
 
     @Override
     public void initialize() {
-        if (_transacted == null || _transacted.equals("")) {
-            _txEnabled = true;
-        } else {
-            _txEnabled = Boolean.parseBoolean(_transacted);
-        }
+        _txEnabled = Boolean.parseBoolean(_transacted);
+
         if (_acknowledgeMode == null || _acknowledgeMode.equals("")) {
-            _ackMode = Session.SESSION_TRANSACTED;
+            _ackMode = Session.AUTO_ACKNOWLEDGE;
         } else {
             _ackMode = Integer.parseInt(_acknowledgeMode);
         }

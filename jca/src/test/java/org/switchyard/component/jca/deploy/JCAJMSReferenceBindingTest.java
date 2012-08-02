@@ -24,6 +24,8 @@ package org.switchyard.component.jca.deploy;
 import javax.jms.MessageConsumer;
 import javax.transaction.UserTransaction;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.test.BeforeDeploy;
@@ -60,14 +62,26 @@ public class JCAJMSReferenceBindingTest  {
     }
     
     @Test
-    public void testOutboundJMS() throws Exception {
+    public void testUnmanagedOutboundJMS() throws Exception {
+        String payload = "Karakoromo";
+        _service.sendInOnly(payload);
+        
+        final MessageConsumer consumer = _hqMixIn.getJMSSession().createConsumer(HornetQMixIn.getJMSQueue(OUTPUT_QUEUE));
+        _hqMixIn.readJMSMessageAndTestString(consumer.receive(1000), payload);
+    }
+    
+    @Test
+    public void testManagedOutboundJMS() throws Exception {
         String payload = "Ashihiki";
         UserTransaction tx = _jcaMixIn.getUserTransaction();
         tx.begin();
         _service.sendInOnly(payload);
-        tx.commit();
         
         final MessageConsumer consumer = _hqMixIn.getJMSSession().createConsumer(HornetQMixIn.getJMSQueue(OUTPUT_QUEUE));
+        Assert.assertNull(consumer.receive(1000));
+        
+        tx.commit();
+        
         _hqMixIn.readJMSMessageAndTestString(consumer.receive(1000), payload);
     }
 }
