@@ -55,12 +55,6 @@
             <scope>provided</scope>
 	      <version>${project.version}</version>
 	    </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-test</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
 
         <!-- Import the CDI API, we use provided scope as the API is included in JBoss AS 7 -->
         <dependency>
@@ -83,6 +77,11 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-test</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

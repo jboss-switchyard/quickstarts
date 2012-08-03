@@ -47,6 +47,7 @@
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-test</artifactId>
       <version>${switchyard.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
