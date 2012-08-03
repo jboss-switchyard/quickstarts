@@ -28,6 +28,7 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Property;
 import org.switchyard.Scope;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.validate.Validator;
 import org.switchyard.validate.ValidatorRegistry;
 
@@ -66,9 +67,14 @@ public class ValidateHandler extends BaseHandler {
     public void handleMessage(Exchange exchange) throws HandlerException {
         Validator validator = get(exchange);
         if (validator != null) {
-            if (!applyValidator(exchange, validator)) {
-                throw new HandlerException("Validator '" + validator.getClass().getName()
-                        + "' returned false.  Check input payload matches requirements of the Validator implementation.");
+            try {
+                if (!applyValidator(exchange, validator)) {
+                    throw new HandlerException("Validator '" + validator.getClass().getName()
+                            + "' returned false.  Check input payload matches requirements of the Validator implementation.");
+                }
+            } catch (SwitchYardException syEx) {
+                // Validators which throw SwitchYardException should be reported as HandlerException
+                throw new HandlerException(syEx.getMessage());
             }
         }
     }

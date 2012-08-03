@@ -21,7 +21,6 @@ package org.switchyard;
 
 import java.util.List;
 
-
 /**
  * An ordered list of {@code Handler} instances that can be associated with a
  * service or exchange instance.  Note that HandlerChain extends ExchangeHandler
@@ -36,6 +35,12 @@ public interface HandlerChain extends ExchangeHandler {
      * ServiceDomain.registerService().
      */
     final String PROVIDER_HANDLER = "provider";
+    
+    /**
+     * Reserved name for the service consumer handler.  This name is used for
+     * the callback handler used by a consumer to process reply messages.
+     */
+    final String CONSUMER_HANDLER = "consumer";
 
     /**
      * Add a handler to the front of the chain.
@@ -80,4 +85,12 @@ public interface HandlerChain extends ExchangeHandler {
      * @return list of handlers in chain
      */
     List<ExchangeHandler> getHandlers();
+    
+    /**
+     * Create a shallow copy of the handler chain.  The returned chain represents 
+     * a distinct collection from the original, but the individual handler
+     * instances are identical.  
+     * @return copy of the default chain.
+     */
+    HandlerChain copy();
 }

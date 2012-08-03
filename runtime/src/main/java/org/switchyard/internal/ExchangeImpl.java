@@ -28,10 +28,10 @@ import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
+import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
 import org.switchyard.ExchangeState;
-import org.switchyard.HandlerChain;
 import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
@@ -64,7 +64,7 @@ public class ExchangeImpl implements Exchange {
     @Include private ExchangeState    _state = ExchangeState.OK;
     private Dispatcher                _dispatch;
     private TransformerRegistry       _transformerRegistry;
-    private HandlerChain              _replyChain;
+    private ExchangeHandler           _replyHandler;
     private ServiceDomain             _domain;
     private Long                      _startTime;
     @Include private Context          _context;
@@ -107,9 +107,9 @@ public class ExchangeImpl implements Exchange {
      * @param contract exchange contract
      * @param dispatch exchange dispatcher
      * @param domain service domain for this exchange
-     * @param replyChain handler chain for replies
+     * @param replyHandler handler for replies
      */
-    public ExchangeImpl(QName serviceName, ExchangeContract contract, Dispatcher dispatch, ServiceDomain domain, HandlerChain replyChain) {
+    public ExchangeImpl(QName serviceName, ExchangeContract contract, Dispatcher dispatch, ServiceDomain domain, ExchangeHandler replyHandler) {
 
         // Check that the ExchangeContract exists and has invoker metadata and a ServiceOperation defined on it...
         if (contract == null) {
@@ -122,7 +122,7 @@ public class ExchangeImpl implements Exchange {
 
         // Make sure we have an output endpoint when the pattern is IN_OUT...
         ExchangePattern exchangePattern = contract.getServiceOperation().getExchangePattern();
-        if (replyChain == null && exchangePattern == ExchangePattern.IN_OUT) {
+        if (replyHandler == null && exchangePattern == ExchangePattern.IN_OUT) {
             throw new SwitchYardException("Invalid Exchange construct.  Must supply an reply handler for an IN_OUT Exchange.");
         }
 
@@ -131,12 +131,12 @@ public class ExchangeImpl implements Exchange {
         _contract = contract;
         _dispatch = dispatch;
         _transformerRegistry = domain.getTransformerRegistry();
-        _replyChain = replyChain;
+        _replyHandler = replyHandler;
         _context = new DefaultContext();
 
         if (_log.isDebugEnabled()) {
             ServiceOperation serviceOperation = contract.getServiceOperation();
-            _log.debug("Created " + serviceOperation.getExchangePattern() + " Exchange instance (" + instanceHash() + ") for Service '" + serviceName + "', operation '" + serviceOperation.getName() + "'.  Response HandlerChain: " + _replyChain);
+            _log.debug("Created " + serviceOperation.getExchangePattern() + " Exchange instance (" + instanceHash() + ") for Service '" + serviceName + "', operation '" + serviceOperation.getName() + "'.  Response Handler: " + replyHandler);
         }
     }
 
@@ -212,11 +212,11 @@ public class ExchangeImpl implements Exchange {
     }
     
     /**
-     * Get the reply handler chain for this exchange.
-     * @return reply chain
+     * Get the reply handler for this exchange.
+     * @return reply handler
      */
-    public HandlerChain getReplyChain() {
-        return _replyChain;
+    public ExchangeHandler getReplyHandler() {
+        return _replyHandler;
     }
 
     /**
@@ -253,7 +253,7 @@ public class ExchangeImpl implements Exchange {
         // if a fault was thrown by the handler chain and there's no reply chain
         // we need to log.
         // TODO : stick this in a central fault/error queue
-        if (ExchangeState.FAULT.equals(_state) && _replyChain == null) {
+        if (ExchangeState.FAULT.equals(_state) && _replyHandler == null) {
             // Attempt to convert content to String
             String faultContent;
             try {

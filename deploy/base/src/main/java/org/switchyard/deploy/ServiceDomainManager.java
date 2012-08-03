@@ -19,10 +19,15 @@
 
 package org.switchyard.deploy;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
+import org.apache.log4j.Logger;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
+import org.switchyard.bus.camel.CamelExchangeBus;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.domain.HandlerModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
@@ -30,7 +35,6 @@ import org.switchyard.exception.SwitchYardException;
 import org.switchyard.internal.DefaultServiceRegistry;
 import org.switchyard.internal.DomainImpl;
 import org.switchyard.internal.EventManager;
-import org.switchyard.internal.LocalExchangeBus;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.internal.validate.BaseValidatorRegistry;
 import org.switchyard.spi.ExchangeBus;
@@ -64,11 +68,12 @@ public class ServiceDomainManager {
      * Registry class name property.
      */
     public static final String REGISTRY_CLASS_NAME = "registryProvider";
+    
+    private static Logger _log = Logger.getLogger(ServiceDomainManager.class);
 
     // Share the same service registry and bus across domains to give visibility 
     // to registered services across application domains
     private ServiceRegistry _registry = new DefaultServiceRegistry();
-    private ExchangeBus _bus = new LocalExchangeBus();
     private EventManager _eventManager = new EventManager();
 
     /**
@@ -90,13 +95,12 @@ public class ServiceDomainManager {
     public ServiceDomain createDomain(QName domainName, SwitchYardModel switchyardConfig) {
         BaseTransformerRegistry transformerRegistry = new BaseTransformerRegistry();
         BaseValidatorRegistry validatorRegistry = new BaseValidatorRegistry();
+        List<ExchangeHandler> handlers = getDomainHandlers(switchyardConfig);
+        ExchangeBus bus = new CamelExchangeBus();
         
         DomainImpl domain = new DomainImpl(
-                domainName, _registry, _bus, transformerRegistry, validatorRegistry, _eventManager);
-        // add appropriate domain config
-        if (switchyardConfig != null) {
-            addHandlersToDomain(domain, switchyardConfig);
-        }
+                domainName, _registry, bus, transformerRegistry, validatorRegistry, _eventManager);
+        domain.getHandlers().addAll(handlers);
 
         return domain;
     }
@@ -112,9 +116,11 @@ public class ServiceDomainManager {
     /**
      * Looks for handler definitions in the switchyard config and attempts to 
      * create and add them to the domain's global handler chain.
+     *
      */
-    private void addHandlersToDomain(ServiceDomain domain, SwitchYardModel config) {
-        if (config.getDomain() != null && config.getDomain().getHandlers() != null) {
+    private List<ExchangeHandler> getDomainHandlers(SwitchYardModel config) {
+        LinkedList<ExchangeHandler> handlers = new LinkedList<ExchangeHandler>();
+        if (config != null && config.getDomain() != null && config.getDomain().getHandlers() != null) {
             for (HandlerModel handlerConfig : config.getDomain().getHandlers().getHandlers()) {
                 Class<?> handlerClass = Classes.forName(handlerConfig.getClassName());
                 if (handlerClass == null) {
@@ -125,12 +131,14 @@ public class ServiceDomainManager {
                             + " is not an instance of " + ExchangeHandler.class.getName());
                 }
                 try {
+                    _log.debug("Adding handler " + handlerConfig.getName() + " to domain.");
                     ExchangeHandler handler = (ExchangeHandler)handlerClass.newInstance();
-                    domain.getHandlerChain().addFirst(handlerConfig.getName(), handler);
+                    handlers.addLast(handler);
                 } catch (Exception ex) {
                     throw new SwitchYardException("Failed to initialize handler class " + handlerClass.getName(), ex);
                 }
             }
         }
+        return handlers;
     }
 }

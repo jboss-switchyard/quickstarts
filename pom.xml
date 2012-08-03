@@ -23,7 +23,7 @@
     <module>validate</module>
     <module>runtime</module>
     <module>admin</module>
-    <module>bus/hornetq</module>
+    <module>bus/camel</module>
     <module>test</module>
     <module>tools/maven/plugins/switchyard</module>
     <module>deploy/base</module>

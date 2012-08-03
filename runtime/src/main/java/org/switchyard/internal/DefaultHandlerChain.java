@@ -48,11 +48,8 @@ public class DefaultHandlerChain implements HandlerChain {
      * Create a new handler chain with no handlers in it.
      */
     public DefaultHandlerChain() {
-        if (_logger.isDebugEnabled()) {
-            _logger.debug("Created empty DefaultHandlerChain.");
-        }
     }
-
+    
     /**
      * Create a new handler chain with the specified handlers.  This ctor
      * is not intended for external use - it's used by the clone() method.
@@ -60,6 +57,20 @@ public class DefaultHandlerChain implements HandlerChain {
      */
     private DefaultHandlerChain(List<HandlerRef> handlers) {
         _chain.addAll(handlers);
+    }
+
+    /**
+     * Create a handler chain from a list of ExchangeHandler instances.  The 
+     * handlers in the chain are named using the class name of the handler.
+     * @param handlers list of handlers
+     * @return new HandlerChain containing the list of handlers in order
+     */
+    public static DefaultHandlerChain fromList(List<ExchangeHandler> handlers) {
+        DefaultHandlerChain chain = new DefaultHandlerChain();
+        for (ExchangeHandler handler : handlers) {
+            chain.addLast(handler.getClass().getName(), handler);
+        }
+        return chain;
     }
 
     @Override

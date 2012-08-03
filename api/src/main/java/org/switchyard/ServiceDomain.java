@@ -136,14 +136,13 @@ public interface ServiceDomain {
      * @return validator registry instance
      */
     ValidatorRegistry getValidatorRegistry();
-
+    
     /**
-     * Returns the default handler chain for this service domain.  Handlers
-     * present in this chain will execute for all message exchange activity
-     * within the domain.
-     * @return default handler chain
+     * Returns the list of domain-level handlers that execute on every 
+     * message exchange.
+     * @return list of exchange handlers
      */
-    HandlerChain getHandlerChain();
+    List<ExchangeHandler> getHandlers();
     
     /**
      * Add an EventObserver for the specified event type.  A single instance
@@ -160,4 +159,11 @@ public interface ServiceDomain {
      * @return event publisher
      */
     EventPublisher getEventPublisher();
+    
+    /**
+     * Cleans up all resources associated with a ServiceDomain instance including
+     * the transformer/validator/service registry and exchange bus.  ServiceDomain
+     * instances can not be used after they are destroyed.
+     */
+    void destroy();
 }

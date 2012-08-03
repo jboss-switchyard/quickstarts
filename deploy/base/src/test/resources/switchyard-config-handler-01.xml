@@ -21,6 +21,7 @@
     <domain>
         <handlers>
             <handler name="test-handler" class="org.switchyard.deploy.handler.DummyHandler"/>
+            <handler name="test-handler2" class="org.switchyard.deploy.handler.DummyHandler"/>
         </handlers>
     </domain>
 </switchyard>

@@ -21,28 +21,18 @@ package org.switchyard;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.internal.DefaultServiceRegistry;
 import org.switchyard.internal.DomainImpl;
-import org.switchyard.internal.EventManager;
-import org.switchyard.internal.LocalExchangeBus;
-import org.switchyard.internal.transform.BaseTransformerRegistry;
-import org.switchyard.internal.validate.BaseValidatorRegistry;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
 
 public class MockDomain extends DomainImpl {
-
+    
     public static final QName DEFAULT_DOMAIN = 
         new QName("urn:switchyard:test", "MockDomain");
     
     public MockDomain() {
-        super(DEFAULT_DOMAIN, 
-                new DefaultServiceRegistry(), 
-                new LocalExchangeBus(), 
-                new BaseTransformerRegistry(),
-                new BaseValidatorRegistry(),
-                new EventManager());
+        super(DEFAULT_DOMAIN);
     }
     
     public ServiceReference createInOnlyService(QName serviceName) {

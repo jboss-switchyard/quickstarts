@@ -19,23 +19,23 @@
 
 package org.switchyard.spi;
 
-import org.switchyard.HandlerChain;
+import org.switchyard.ExchangeHandler;
 import org.switchyard.Service;
-import org.switchyard.transform.TransformerRegistry;
+import org.switchyard.ServiceDomain;
 
 /**
  * An implementation-neutral representation of a message bus.  The bus handles
  * dispatch for message exchange between service consumer and provider.
  */
 public interface ExchangeBus {
+    
     /**
      * Create an exchange dispatcher for the specified service and handler chain.
      * @param service service instance
-     * @param handlerChain handlers invoked by dispatcher on delivery
-     * @param transformerRegistry The {@link TransformerRegistry}.
+     * @param serviceHandler invoked by dispatcher on delivery
      * @return Dispatcher service dispatch reference
      */
-    Dispatcher createDispatcher(Service service, HandlerChain handlerChain, TransformerRegistry transformerRegistry);
+    Dispatcher createDispatcher(Service service, ExchangeHandler serviceHandler);
     
     /**
      * Retrieves a dispatcher for the specified service.
@@ -44,5 +44,21 @@ public interface ExchangeBus {
      * has been created
      */
     Dispatcher getDispatcher(Service service);
+    
+    /**
+     * Initialize the exchange bus with it's parent service domain.
+     * @param domain service domain in which this bus will be used
+     */
+    void init(ServiceDomain domain);
+    
+    /**
+     * Start the exchange bus.
+     */
+    void start();
+    
+    /**
+     * Stop the exchange bus.
+     */
+    void stop();
     
 }

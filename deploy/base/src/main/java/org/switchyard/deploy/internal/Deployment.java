@@ -179,6 +179,7 @@ public class Deployment extends AbstractDeployment {
         getTransformerRegistryLoader().unregisterTransformers();
 
         getDomain().getEventPublisher().publish(new ApplicationUndeployedEvent(this));
+        getDomain().destroy();
     }
     
     /**

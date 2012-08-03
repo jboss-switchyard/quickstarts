@@ -20,10 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard.bus.hornetq;
-
-import java.util.HashMap;
-import java.util.Map;
+package org.switchyard.bus.camel;
 
 import javax.xml.namespace.QName;
 
@@ -33,27 +30,24 @@ import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
-import org.switchyard.HandlerChain;
 import org.switchyard.HandlerException;
 import org.switchyard.MockDomain;
 import org.switchyard.Scope;
 import org.switchyard.Service;
-import org.switchyard.internal.DefaultHandlerChain;
 import org.switchyard.internal.ExchangeImpl;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.spi.Dispatcher;
 
-public class HornetQDispatcherTest {
+public class ExchangeDispatcherTest {
 
-    private HornetQBus _provider;
+    private CamelExchangeBus _provider;
 
     @Before
     public void setUp() throws Exception {
-        Map<String, Object> config = new HashMap<String, Object>();
-        config.put(HornetQBus.WORK_DIR, "target/hornetQ");
-        _provider = new HornetQBus(config);
+        _provider = new CamelExchangeBus();
+        _provider.init(new MockDomain());
         _provider.start();
     }
     
@@ -66,10 +60,8 @@ public class HornetQDispatcherTest {
     public void testDispatchInOnly() throws Exception {
         Service service = new MockService(
                 new QName("testDispatchInOnly"), new InOnlyService());
-        HandlerChain inHandlers = new DefaultHandlerChain();
         ExchangeSink sink = new ExchangeSink();
-        inHandlers.addLast("in", sink);
-        Dispatcher dispatch = _provider.createDispatcher(service, inHandlers, null);
+        Dispatcher dispatch = _provider.createDispatcher(service, sink);
         
         Exchange exchange = new ExchangeImpl(service.getName(), ExchangeContract.IN_ONLY, dispatch, new MockDomain(), null);
         exchange.send(exchange.createMessage());
@@ -85,17 +77,13 @@ public class HornetQDispatcherTest {
     public void testDispatchInOut() throws Exception {
         Service service = new MockService(
                 new QName("testDispatchInOut"), new InOutService());
-        // provider handlers
-        HandlerChain inHandlers = new DefaultHandlerChain();
+        // provider handler
         ExchangeSink inHandler = new ExchangeSink(true);
-        inHandlers.addLast("in", inHandler);
-        // consumer handlers
-        Dispatcher dispatch = _provider.createDispatcher(service, inHandlers, null);
-        HandlerChain outHandlers = new DefaultHandlerChain();
+        Dispatcher dispatch = _provider.createDispatcher(service, inHandler);
+        // consumer handler
         ExchangeSink outHandler = new ExchangeSink();
-        outHandlers.addLast("out", outHandler);
         
-        Exchange exchange = new ExchangeImpl(service.getName(), ExchangeContract.IN_OUT, dispatch, new MockDomain(), outHandlers);
+        Exchange exchange = new ExchangeImpl(service.getName(), ExchangeContract.IN_OUT, dispatch, new MockDomain(), outHandler);
         exchange.send(exchange.createMessage());
         Thread.sleep(400);
         

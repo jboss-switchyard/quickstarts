@@ -29,48 +29,13 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>switchyard-bus-hornetq</artifactId>
+    <artifactId>switchyard-bus-camel</artifactId>
     <packaging>jar</packaging>
-    <name>SwitchYard: HornetQ Bus</name>
-    <description>Bus provider using HornetQ Core</description>
+    <name>SwitchYard: Camel Exchange Bus</name>
+    <description>Bus provider using Camel Core</description>
     <url>http://switchyard.org</url>
-
-    <!-- overriding hornetq version as the newer version is incompatible -->
-    <properties>
-        <version.hornetq>2.1.1.Final</version.hornetq>
-    </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.hornetq</groupId>
-                <artifactId>hornetq-core</artifactId>
-                <version>${version.hornetq}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hornetq</groupId>
-                <artifactId>hornetq-core-client</artifactId>
-                <version>${version.hornetq}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
+    
     <dependencies>
-        <dependency>
-            <groupId>org.hornetq</groupId>
-            <artifactId>hornetq-core-client</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hornetq</groupId>
-            <artifactId>hornetq-core</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.netty</groupId>
-            <artifactId>netty</artifactId>
-        </dependency>
-
         <!-- internal dependencies -->
         <dependency>
             <groupId>org.switchyard</groupId>
@@ -80,11 +45,6 @@
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-runtime</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-test</artifactId>
-            <scope>test</scope>
-        </dependency>
          <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-runtime</artifactId>
@@ -92,11 +52,15 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-        <!-- N/A -->
+        
         <!-- external dependencies -->
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
         </dependency>
     </dependencies>
 </project>

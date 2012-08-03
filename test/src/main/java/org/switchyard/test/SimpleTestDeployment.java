@@ -60,5 +60,8 @@ public class SimpleTestDeployment extends AbstractDeployment {
 
     @Override
     public void destroy() {
+        if (getDomain() != null) {
+            getDomain().destroy();
+        }
     }
 }

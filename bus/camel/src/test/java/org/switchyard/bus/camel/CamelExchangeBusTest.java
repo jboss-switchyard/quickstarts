@@ -20,10 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.switchyard.bus.hornetq;
-
-import java.util.HashMap;
-import java.util.Map;
+package org.switchyard.bus.camel;
 
 import javax.xml.namespace.QName;
 
@@ -31,21 +28,22 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.switchyard.BaseHandler;
+import org.switchyard.MockDomain;
 import org.switchyard.Service;
 import org.switchyard.internal.DefaultHandlerChain;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.spi.Dispatcher;
 
-public class HornetQBusTest {
+public class CamelExchangeBusTest {
 
-    private HornetQBus _provider;
+    private CamelExchangeBus _provider;
 
     @Before
     public void setUp() throws Exception {
-        Map<String, Object> config = new HashMap<String, Object>();
-        config.put(HornetQBus.WORK_DIR, "target/hornetQ");
-        _provider = new HornetQBus(config);
+        _provider = new CamelExchangeBus();
+        _provider.init(new MockDomain());
         _provider.start();
     }
     
@@ -59,30 +57,19 @@ public class HornetQBusTest {
         // verify that dispatchers can be created for an InOnly service
         _provider.createDispatcher(
                 new MockService(new QName("inOnly"), new InOnlyService()), 
-                new DefaultHandlerChain(), null);
+                new BaseHandler());
 
         // verify that dispatchers can be created for an InOut service
         _provider.createDispatcher(
                 new MockService(new QName("inOut"), new InOutService()), 
-                new DefaultHandlerChain(), null);
+                new BaseHandler());
     }
     
     @Test
     public void testGetDispatcher() throws Exception {
         Service service = new MockService(new QName("testGetDispatcher"));
-        Dispatcher dispatch = _provider.createDispatcher(service, new DefaultHandlerChain(), null);
+        Dispatcher dispatch = _provider.createDispatcher(service, new DefaultHandlerChain());
         
         Assert.assertEquals(dispatch, _provider.getDispatcher(service));
-    }
-    
-    @Test
-    public void testUseExistingHornetQConfig() throws Exception {
-        Map<String, Object> config = new HashMap<String, Object>();
-        config.put(HornetQBus.WORK_DIR, "target/configTest");
-        config.put(HornetQBus.CONFIG_PATH, "configTest/hornetq-configuration.xml");
-        config.put(HornetQBus.SERVER_ID, "1");
-        HornetQBus bus = new HornetQBus(config);
-        bus.start();
-        bus.stop();
     }
 }

@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.bus.hornetq;
+package org.switchyard.bus.camel;
 
 import java.util.List;
 

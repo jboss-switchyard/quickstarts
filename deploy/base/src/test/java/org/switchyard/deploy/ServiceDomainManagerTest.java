@@ -40,6 +40,6 @@ public class ServiceDomainManagerTest {
         ServiceDomain domain = new ServiceDomainManager().createDomain(
                 new QName("test"), switchyard);
         
-        Assert.assertEquals(8, domain.getHandlerChain().getHandlers().size());
+        Assert.assertEquals(2, domain.getHandlers().size());
     }
 }
