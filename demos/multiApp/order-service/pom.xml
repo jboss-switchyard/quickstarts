@@ -50,14 +50,15 @@
       <groupId>org.switchyard.components</groupId>
       <artifactId>switchyard-component-soap</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.switchyard</groupId>
-      <artifactId>switchyard-test</artifactId>
-    </dependency>
-    <dependency>
+   <dependency>
       <groupId>org.switchyard.quickstarts.demos</groupId>
       <artifactId>switchyard-quickstart-demo-multi-artifacts</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-test</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

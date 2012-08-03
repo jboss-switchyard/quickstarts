@@ -31,43 +31,44 @@
       <artifactId>switchyard-component-bean</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.switchyard</groupId>
-      <artifactId>switchyard-test</artifactId>
+      <groupId>javax.jms</groupId>
+      <artifactId>jms</artifactId>
     </dependency>
     <dependency>
-        <groupId>javax.jms</groupId>
-        <artifactId>jms</artifactId>
+      <groupId>org.hornetq</groupId>
+      <artifactId>hornetq-core-client</artifactId>
     </dependency>
-	<dependency>
-	    <groupId>org.hornetq</groupId>
-	    <artifactId>hornetq-core-client</artifactId>
-	</dependency>
-	<dependency>
-        <groupId>org.hornetq</groupId>
-        <artifactId>hornetq-core</artifactId>
+    <dependency>
+      <groupId>org.hornetq</groupId>
+      <artifactId>hornetq-core</artifactId>
     </dependency>
-	<dependency>
-        <groupId>org.hornetq</groupId>
-        <artifactId>hornetq-jms</artifactId>
+    <dependency>
+      <groupId>org.hornetq</groupId>
+      <artifactId>hornetq-jms</artifactId>
     </dependency>
-	<dependency>
-	    <groupId>org.jboss.netty</groupId>
-	    <artifactId>netty</artifactId>
-	</dependency>
-	<dependency>
-        <groupId>org.jboss.naming</groupId>
-        <artifactId>jnpserver</artifactId>
-	</dependency>
-	<dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-all</artifactId>
-        <scope>test</scope>
-	</dependency>
-	<dependency>
-        <groupId>org.hamcrest</groupId>
-        <artifactId>hamcrest-all</artifactId>
-        <scope>test</scope>
-	</dependency>
+    <dependency>
+      <groupId>org.jboss.netty</groupId>
+      <artifactId>netty</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.naming</groupId>
+      <artifactId>jnpserver</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-all</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <finalName>${project.artifactId}</finalName>
