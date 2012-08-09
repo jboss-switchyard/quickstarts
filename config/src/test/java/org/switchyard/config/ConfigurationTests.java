@@ -46,6 +46,7 @@ public class ConfigurationTests {
     private static final String NAMESPACES_XML = "/org/switchyard/config/ConfigurationTests-Namespaces.xml";
     private static final String ORDER_CHILDREN_UNORDERED_XML = "/org/switchyard/config/ConfigurationTests-OrderChildren-Unordered.xml";
     private static final String ORDER_CHILDREN_ORDERED_XML = "/org/switchyard/config/ConfigurationTests-OrderChildren-Ordered.xml";
+    private static final String CDATA_VALUE_XML = "/org/switchyard/config/ConfigurationTests-CdataValue.xml";
 
     private ConfigurationPuller _cfg_puller;
     private StringPuller _str_puller;
@@ -152,4 +153,10 @@ public class ConfigurationTests {
         Assert.assertTrue(diff.toString(), diff.identical());
     }
 
+    @Test
+    public void testCdataValue() throws Exception {
+        Configuration config = _cfg_puller.pull(CDATA_VALUE_XML, getClass());
+        Assert.assertEquals("test-simple-value", config.getFirstChild("simple").getValue());
+        Assert.assertEquals("test-complex-value", config.getFirstChild("complex").getValue());
+    }
 }

@@ -44,6 +44,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 /**
  * A DOM (Document Object Model) representation of a Configuration.
@@ -119,7 +120,12 @@ public class DOMConfiguration extends BaseConfiguration {
     @Override
     public String getValue() {
         Node text_node = getTextNode(false);
-        return text_node != null ? text_node.getNodeValue() : null;
+        if (text_node instanceof Text) {
+            return ((Text)text_node).getWholeText();
+        } else if (text_node != null) {
+            return text_node.getNodeValue();
+        }
+        return null;
     }
 
     /**
