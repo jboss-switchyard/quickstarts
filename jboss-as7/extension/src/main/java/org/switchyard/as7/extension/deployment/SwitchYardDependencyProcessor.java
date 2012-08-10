@@ -45,10 +45,12 @@ public class SwitchYardDependencyProcessor implements DeploymentUnitProcessor {
     private static final ModuleIdentifier SWITCHYARD_ID = ModuleIdentifier.create("org.switchyard");
     private static final ModuleIdentifier SWITCHYARD_API_ID = ModuleIdentifier.create("org.switchyard.api");
     private static final ModuleIdentifier SWITCHYARD_COMMON_ID = ModuleIdentifier.create("org.switchyard.common");
+    private static final ModuleIdentifier SWITCHYARD_COMMON_CAMEL_ID = ModuleIdentifier.create("org.switchyard.common-camel");
     private static final ModuleIdentifier SWITCHYARD_CONFIG_ID = ModuleIdentifier.create("org.switchyard.config");
     private static final ModuleIdentifier SWITCHYARD_RUNTIME_ID = ModuleIdentifier.create("org.switchyard.runtime");
     private static final ModuleIdentifier SWITCHYARD_TRANSFORM_ID = ModuleIdentifier.create("org.switchyard.transform");
     private static final ModuleIdentifier SWITCHYARD_VALIDATE_ID = ModuleIdentifier.create("org.switchyard.validate");
+    private static final ModuleIdentifier DELTASPIKE_ID = ModuleIdentifier.create("org.apache.deltaspike.core-api");
 
     private List<ModuleIdentifier> _componentModules;
     /**
@@ -75,6 +77,8 @@ public class SwitchYardDependencyProcessor implements DeploymentUnitProcessor {
         moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_ID, false, false, true, false));
         moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_API_ID, false, false, false, false));
         moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_COMMON_ID, false, false, false, false));
+        moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, DELTASPIKE_ID, false, false, false, false));
+//        moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_COMMON_CAMEL_ID, false, false, false, false));
         moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_CONFIG_ID, false, false, false, false));
         ModuleDependency dep = new ModuleDependency(moduleLoader, SWITCHYARD_RUNTIME_ID, false, false, true, false);
         dep.addImportFilter(META_INF_FILTER, true);

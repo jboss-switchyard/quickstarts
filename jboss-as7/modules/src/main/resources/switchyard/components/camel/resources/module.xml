@@ -26,8 +26,6 @@
 
     <resources>
         <resource-root path="switchyard-component-camel-${project.version}.jar"/>
-        <resource-root path="switchyard-component-camel-as7-${project.version}.jar"/>
-        <resource-root path="switchyard-component-camel-cdi-${project.version}.jar"/>
     </resources>
 
     <dependencies>
@@ -36,6 +34,7 @@
         <module name="javax.ws.rs.api"/>
         <module name="org.apache.log4j"/>
         <module name="org.apache.camel.core" services="export" export="true"/>
+        <module name="org.apache.camel.cdi" services="export" export="true" />
         <module name="org.apache.camel.spring" services="export" export="true">
             <imports>
                 <include path="META-INF/services/org/apache/camel/component"/>

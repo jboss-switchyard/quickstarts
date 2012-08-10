@@ -192,15 +192,6 @@
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-camel</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-camel-as7</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-camel-cdi</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <!--<dependency>-->
             <!--<groupId>org.switchyard.components</groupId>-->
             <!--<artifactId>switchyard-component-clojure</artifactId>-->
@@ -481,6 +472,10 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cdi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring</artifactId>
         </dependency>
         <dependency>
@@ -517,6 +512,10 @@
             <artifactId>quartz</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.deltaspike.core</groupId>
+            <artifactId>deltaspike-core-api</artifactId>
+        </dependency>
         <!--
         Drools/jBPM...
         -->

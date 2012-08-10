@@ -42,6 +42,7 @@ import org.switchyard.as7.extension.SwitchYardDeploymentMarker;
 public class SwitchYardCdiIntegrationProcessor implements DeploymentUnitProcessor {
 
     private static final String SWITCHYARD_CDI_EXTENSION = "org.switchyard.component.bean.SwitchYardCDIServiceDiscovery";
+    private static final String DELTASPIKE_CDI_EXTENSION = "org.apache.deltaspike.core.api.provider.BeanManagerProvider";
 
     private static Logger _logger = Logger.getLogger(SwitchYardCdiIntegrationProcessor.class);
 
@@ -59,46 +60,54 @@ public class SwitchYardCdiIntegrationProcessor implements DeploymentUnitProcesso
             // Add the Weld portable extension
             final DeploymentUnit parent = deploymentUnit.getParent() == null ? deploymentUnit : deploymentUnit.getParent();
             synchronized (parent) {
-                boolean found = false;
-                final List<Metadata<Extension>> extensions = parent.getAttachmentList(WeldAttachments.PORTABLE_EXTENSIONS);
-                for (Metadata<Extension> extension : extensions) {
-                    if (extension.getLocation().equals(SWITCHYARD_CDI_EXTENSION)) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    _logger.debug("SwitchYard Application for deployment unit '" + deploymentUnit.getName() + "' contains CDI Beans.  "
-                            + "Attaching SwitchYard CDI Discovery Extension to deployment.");
-
-                    try {
-                        final Module module = deploymentUnit.getAttachment(Attachments.MODULE);
-                        Class<? extends Extension> clazz = (Class<? extends Extension>) module.getClassLoader().loadClass(SWITCHYARD_CDI_EXTENSION);
-                        final Extension ext = clazz.newInstance();
-                        Metadata<Extension> metadata = new Metadata<Extension>() {
-                            @Override
-                            public Extension getValue() {
-                                return ext;
-                            }
-
-                            @Override
-                            public String getLocation() {
-                                return SWITCHYARD_CDI_EXTENSION;
-                            }
-                        };
-                        parent.addToAttachmentList(WeldAttachments.PORTABLE_EXTENSIONS, metadata);
-                    } catch (InstantiationException ie) {
-                        throw new DeploymentUnitProcessingException(ie);
-                    } catch (IllegalAccessException iae) {
-                        throw new DeploymentUnitProcessingException(iae);
-                    } catch (ClassNotFoundException cnfe) {
-                        throw new DeploymentUnitProcessingException(cnfe);
-                    }
-                }
+                checkExtension(SWITCHYARD_CDI_EXTENSION, deploymentUnit, parent);
+                checkExtension(DELTASPIKE_CDI_EXTENSION, deploymentUnit, parent);
             }
         } else {
             _logger.debug("SwitchYard Application for deployment unit '" + deploymentUnit.getName() + "' does not appear to contain CDI Beans "
                     + "(no META-INF/beans.xml file in unit).  Not attaching SwitchYard CDI Discovery Extension to deployment.");
+        }
+    }
+
+    private void checkExtension(final String extensionName, DeploymentUnit deploymentUnit, DeploymentUnit parent) throws DeploymentUnitProcessingException {
+        final Module module = deploymentUnit.getAttachment(Attachments.MODULE);
+        final List<Metadata<Extension>> extensions = parent.getAttachmentList(WeldAttachments.PORTABLE_EXTENSIONS);
+
+        boolean found = false;
+        for (Metadata<Extension> extension : extensions) {
+            if (extension.getLocation().equals(extensionName)) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            _logger.debug("SwitchYard Application for deployment unit '" + deploymentUnit.getName() + "' contains CDI Beans.  "
+                    + "Attaching SwitchYard CDI Discovery (" + extensionName + ") to deployment.");
+
+            try {
+                Class<?> extensionClass = module.getClassLoader().loadClass(extensionName);
+                final Extension extensionInstance = (Extension) extensionClass.newInstance();
+
+                Metadata<Extension> metadata = new Metadata<Extension>() {
+                    @Override
+                    public Extension getValue() {
+                        return extensionInstance;
+                    }
+
+                    @Override
+                    public String getLocation() {
+                        return extensionName;
+                    }
+                };
+                parent.addToAttachmentList(WeldAttachments.PORTABLE_EXTENSIONS, metadata);
+            } catch (InstantiationException ie) {
+                throw new DeploymentUnitProcessingException(ie);
+            } catch (IllegalAccessException iae) {
+                throw new DeploymentUnitProcessingException(iae);
+            } catch (ClassNotFoundException cnfe) {
+                throw new DeploymentUnitProcessingException(cnfe);
+            }
         }
     }
 

@@ -37,6 +37,11 @@
             <filtered>true</filtered>
         </file>
         <file>
+            <source>src/main/resources/external/apache/deltaspike/core-api/module.xml</source>
+            <outputDirectory>/modules/org/apache/deltaspike/core-api/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
             <source>src/main/resources/external/drools/module.xml</source>
             <outputDirectory>/modules/org/drools/main</outputDirectory>
             <filtered>true</filtered>
@@ -86,6 +91,11 @@
         <file>
             <source>src/main/resources/external/camel/core/module.xml</source>
             <outputDirectory>/modules/org/apache/camel/core/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
+            <source>src/main/resources/external/camel/cdi/module.xml</source>
+            <outputDirectory>/modules/org/apache/camel/cdi/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
@@ -220,6 +230,15 @@
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
+                <include>org.apache.deltaspike.core:deltaspike-core-api</include>
+            </includes>
+            <outputDirectory>/modules/org/apache/deltaspike/core-api/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.deltaspike}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
                 <include>org.drools:drools-compiler</include>
                 <include>org.drools:drools-core</include>
                 <include>org.drools:drools-persistence-jpa</include>
@@ -300,6 +319,14 @@
                 <include>org.apache.camel:camel-core</include>
             </includes>
             <outputDirectory>/modules/org/apache/camel/core/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.camel}.${artifact.extension}</outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.apache.camel:camel-cdi</include>
+            </includes>
+            <outputDirectory>/modules/org/apache/camel/cdi/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${version.camel}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
