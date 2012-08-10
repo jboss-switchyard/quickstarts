@@ -82,6 +82,7 @@
     <version.commons.httpclient>3.1</version.commons.httpclient>
     <version.commons.net>2.2</version.commons.net>
     <version.commons.ssl>0.3.9</version.commons.ssl>
+    <version.deltaspike>0.2-incubating</version.deltaspike>
     <version.drools>5.4.0.Final</version.drools>
     <version.ecj>3.5.1</version.ecj>
     <version.forge>1.0.2.Final</version.forge>
@@ -808,11 +809,6 @@
       </dependency>
       <dependency>
          <groupId>org.switchyard.components</groupId>
-         <artifactId>switchyard-component-camel-as7</artifactId>
-         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.switchyard.components</groupId>
          <artifactId>switchyard-component-hornetq</artifactId>
          <version>${project.version}</version>
       </dependency>
@@ -1263,6 +1259,17 @@
       </dependency>
       <dependency>
          <groupId>org.apache.camel</groupId>
+         <artifactId>camel-cdi</artifactId>
+         <version>${version.camel}</version>
+         <exclusions>
+            <exclusion>
+               <groupId>com.sun.xml.bind</groupId>
+               <artifactId>jaxb-impl</artifactId>
+            </exclusion>
+         </exclusions>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.camel</groupId>
          <artifactId>camel-cxf</artifactId>
          <version>${version.camel}</version>
          <exclusions>
@@ -1410,6 +1417,11 @@
          <groupId>org.codehaus.jettison</groupId>
          <artifactId>jettison</artifactId>
          <version>${version.jettison}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.deltaspike.core</groupId>
+         <artifactId>deltaspike-core-api</artifactId>
+         <version>${version.deltaspike}</version>
       </dependency>
       <dependency>
          <groupId>org.drools</groupId>
