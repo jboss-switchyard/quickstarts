@@ -30,6 +30,7 @@ import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.log4j.Logger;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.camel.SwitchYardCamelContext;
@@ -102,6 +103,8 @@ public class CamelActivator extends BaseActivator {
     };
 
     private SwitchYardCamelContext _camelContext;
+    private static Logger _logger = Logger.getLogger(CamelActivator.class);
+
     private Configuration _environment;
 
     /**
@@ -249,7 +252,7 @@ public class CamelActivator extends BaseActivator {
         final MessageComposer<CamelBindingData> messageComposer = CamelComposition.getMessageComposer(binding);
         return new OutboundHandler(endpointUri, _camelContext, messageComposer);
     }
-    
+
     /**
      * Gets the {@link CamelContext} used by this Activator.
      * 

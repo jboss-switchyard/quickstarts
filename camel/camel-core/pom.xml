@@ -102,11 +102,6 @@
             <artifactId>switchyard-component-common-rest</artifactId>
         </dependency>
 
-         <dependency>
-            <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-camel-as7</artifactId>
-        </dependency>
-
         <dependency>
            <groupId>org.jboss.weld.se</groupId>
            <artifactId>weld-se-core</artifactId>
@@ -116,6 +111,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cdi</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>

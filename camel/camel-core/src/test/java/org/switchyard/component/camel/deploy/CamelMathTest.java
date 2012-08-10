@@ -31,6 +31,7 @@ import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.SwitchYardTestKit;
+import org.switchyard.test.mixins.CDIMixIn;
 
 /**
  * Test header presence populated by CamelMessageComposer in camel messages.
@@ -38,7 +39,7 @@ import org.switchyard.test.SwitchYardTestKit;
  * @author Lukasz Dywicki
  */
 @RunWith(SwitchYardRunner.class)
-@SwitchYardTestCaseConfig(config = "switchyard-activator-math-test.xml")
+@SwitchYardTestCaseConfig(config = "switchyard-activator-math-test.xml", mixins = CDIMixIn.class)
 public class CamelMathTest {
 
     private final static String SERVICE_NAMESPACE = "{urn:camel-core:test:1.0}";
