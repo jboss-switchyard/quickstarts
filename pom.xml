@@ -717,6 +717,11 @@
       </dependency>
       <dependency>
          <groupId>org.switchyard</groupId>
+         <artifactId>switchyard-forge-http-plugin</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.switchyard</groupId>
          <artifactId>switchyard-forge-soap-plugin</artifactId>
          <version>${project.version}</version>
       </dependency>
@@ -798,6 +803,11 @@
       <dependency>
          <groupId>org.switchyard.components</groupId>
          <artifactId>switchyard-component-hornetq</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.switchyard.components</groupId>
+         <artifactId>switchyard-component-http</artifactId>
          <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -908,6 +918,11 @@
       <dependency>
          <groupId>org.switchyard.quickstarts</groupId>
          <artifactId>switchyard-quickstart-hornetq-binding</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.switchyard.quickstarts</groupId>
+         <artifactId>switchyard-quickstart-http-binding</artifactId>
          <version>${project.version}</version>
       </dependency>
       <dependency>
