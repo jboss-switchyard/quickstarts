@@ -17,12 +17,10 @@
  * MA  02110-1301, USA.
  */
  
-package org.switchyard.as7.extension.resteasy;
+package org.switchyard.as7.extension.http;
 
 import java.lang.reflect.InvocationTargetException;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.naming.NamingException;
 
@@ -35,28 +33,28 @@ import org.apache.tomcat.InstanceManager;
 import org.jboss.as.server.ServerEnvironment;
 import org.jboss.as.web.deployment.WebCtxLoader;
 import org.jboss.logging.Logger;
-import org.jboss.resteasy.spi.Registry;
 import org.switchyard.as7.extension.util.ServerUtil;
-import org.switchyard.component.resteasy.resource.Resource;
-import org.switchyard.component.resteasy.resource.ResourcePublisher;
+import org.switchyard.component.http.InboundHandler;
+import org.switchyard.component.http.HttpGatewayServlet;
+import org.switchyard.component.http.endpoint.Endpoint;
+import org.switchyard.component.http.endpoint.EndpointPublisher;
 
 /**
- * Creates a RESTEasy resource on AS7.
+ * Publishes standalone HTTP endpoint.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public class RESTEasyResourcePublisher implements ResourcePublisher {
+public class JBossWebEndpointPublisher implements EndpointPublisher {
 
     private static final Logger LOG = Logger.getLogger("org.switchyard");
-    private static final String LISTENER_CLASS = "org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap";
     private static final String SERVER_TEMP_DIR = System.getProperty(ServerEnvironment.SERVER_TEMP_DIR);
-    private static final String SERVLET_NAME = "RestEasy";
-    private static final String SERVLET_CLASS = "org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher";
+    private static final String SERVLET_NAME = "HttpGatewayServlet";
 
     /**
      * {@inheritDoc}
      */
-    public Resource publish(String context, List<Object> instances) throws Exception {
+    public Endpoint publish(String context, InboundHandler handler) throws Exception {
+        
         Host host = ServerUtil.getDefaultHost().getHost();
         StandardContext serverContext = (StandardContext) host.findChild("/" + context);
         if (serverContext == null) {
@@ -71,36 +69,29 @@ public class RESTEasyResourcePublisher implements ResourcePublisher {
             serverContext.setDocBase(docBase.getPath());
             serverContext.addLifecycleListener(new ContextConfig());
 
-            final Loader loader = new WebCtxLoader(instances.get(0).getClass().getClassLoader());
+            final Loader loader = new WebCtxLoader(Thread.currentThread().getContextClassLoader());
             loader.setContainer(host);
             serverContext.setLoader(loader);
             serverContext.setInstanceManager(new LocalInstanceManager());
 
             Wrapper wrapper = serverContext.createWrapper();
             wrapper.setName(SERVLET_NAME);
-            wrapper.setServletClass(SERVLET_CLASS);
+            wrapper.setServletClass(HttpGatewayServlet.class.getName());
+            //wrapper.setServlet(new HttpGatewayServlet(handler));
             wrapper.setLoadOnStartup(1);
             serverContext.addChild(wrapper);
             serverContext.addServletMapping("/*", SERVLET_NAME);
-            serverContext.addApplicationListener(LISTENER_CLASS);
 
             host.addChild(serverContext);
             serverContext.create();
             serverContext.start();
-            LOG.info("Published RESTEasy context " + serverContext.getPath());
+            HttpGatewayServlet instance = (HttpGatewayServlet) wrapper.getServlet();
+            instance.setHandler(handler);
+            LOG.info("Published HTTP context " + serverContext.getPath());
+        } else {
+            throw new RuntimeException("Context " + context + " already exists!");
         }
-        Registry registry = (Registry)serverContext.getServletContext().getAttribute(Registry.class.getName());
-        List<Class<?>> classes = new ArrayList<Class<?>>();
-        // Add as singleton instance
-        for (Object instance : instances) {
-            LOG.debug("Publishing ... " + instance);
-            registry.addSingletonResource(instance);
-            classes.add(instance.getClass());
-        }
-        RESTEasyResource resource = new RESTEasyResource();
-        resource.setClasses(classes);
-        resource.setContext(serverContext);
-        return resource;
+        return new JBossWebEndpoint(serverContext);
     }
 
     private static class LocalInstanceManager implements InstanceManager {

@@ -250,6 +250,10 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-http</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-jca</artifactId>
         </dependency>
          <dependency>

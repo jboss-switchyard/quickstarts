@@ -52,6 +52,7 @@
         <module name="org.switchyard.config"/>
         <module name="org.switchyard.deploy"/>
         <module name="org.switchyard.runtime"/>
+        <module name="org.switchyard.component.http"/>
         <module name="org.switchyard.component.resteasy"/>
         <module name="org.jboss.resteasy.resteasy-jaxrs"/>
     </dependencies>
