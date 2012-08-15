@@ -168,6 +168,10 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-bus-camel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
             <artifactId>switchyard-deploy</artifactId>
         </dependency>
         <dependency>

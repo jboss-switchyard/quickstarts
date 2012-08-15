@@ -22,22 +22,18 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 
-<module xmlns="urn:jboss:module:1.0" name="org.switchyard.deploy">
+<module xmlns="urn:jboss:module:1.0" name="org.switchyard.bus.camel">
 
     <resources>
-        <resource-root path="switchyard-deploy-${project.version}.jar"/>
+        <resource-root path="switchyard-bus-camel-${project.version}.jar"/>
     </resources>
 
     <dependencies>
         <module name="javax.api"/>
+        <module name="javax.transaction.api"/>
         <module name="org.apache.log4j"/>
+        <module name="org.apache.camel.core"/>
         <module name="org.switchyard.api"/>
-        <module name="org.switchyard.api.extensions.wsdl"/>
-        <module name="org.switchyard.bus.camel"/>
-        <module name="org.switchyard.common"/>
-        <module name="org.switchyard.config"/>
         <module name="org.switchyard.runtime"/>
-        <module name="org.switchyard.transform"/>
-        <module name="org.switchyard.validate"/>
     </dependencies>
 </module>

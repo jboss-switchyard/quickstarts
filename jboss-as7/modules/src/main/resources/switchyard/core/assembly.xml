@@ -72,6 +72,11 @@
             <filtered>true</filtered>
         </file>
         <file>
+            <source>src/main/resources/switchyard/core/bus/camel/module.xml</source>
+            <outputDirectory>/modules/org/switchyard/bus/camel/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
             <source>src/main/resources/switchyard/core/module.xml</source>
             <outputDirectory>/modules/org/switchyard/main</outputDirectory>
             <filtered>true</filtered>
@@ -147,6 +152,15 @@
                 <include>org.switchyard:switchyard-runtime</include>
             </includes>
             <outputDirectory>/modules/org/switchyard/runtime/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.switchyard:switchyard-bus-camel</include>
+            </includes>
+            <outputDirectory>/modules/org/switchyard/bus/camel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
