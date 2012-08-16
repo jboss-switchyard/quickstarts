@@ -219,7 +219,8 @@ public class SOAPGatewayTest {
     
     @After
     public void tearDown() throws Exception {
-        // All are stopped by Test Runner
+        _soapInbound11.stop();
+        _soapInbound12.stop();
     }
 
     @Test

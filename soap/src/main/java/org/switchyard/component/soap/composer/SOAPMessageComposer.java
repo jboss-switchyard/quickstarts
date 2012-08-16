@@ -119,10 +119,9 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPMessage> {
                 return (SOAPMessage) message.getContent();
             }
             
-            // convert the message content to a form we can work with
-            org.w3c.dom.Node input = message.getContent(org.w3c.dom.Node.class);
-            
             try {
+                // convert the message content to a form we can work with
+                org.w3c.dom.Node input = message.getContent(org.w3c.dom.Node.class);
                 org.w3c.dom.Node messageNodeImport = target.getSOAPBody().getOwnerDocument().importNode(input, true);
                 if (exchange.getState() != ExchangeState.FAULT || isSOAPFaultPayload(input)) {
                     if (_config != null && _config.isUnwrapped()) {
@@ -141,11 +140,21 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPMessage> {
                     SOAPUtil.addFault(target).addDetail().appendChild(messageNodeImport);
                 }
             } catch (Exception e) {
+                // Account for exception as payload in case of fault
+                if (exchange.getState().equals(ExchangeState.FAULT)
+                        && exchange.getMessage().getContent() instanceof Exception) {
+                    // Throw the Exception and let JAX-WS format the fault.
+                    throw exchange.getMessage().getContent(Exception.class);
+                }
                 throw new SOAPException("Unable to parse SOAP Message", e);
             }
         }
-
-        getContextMapper().mapTo(exchange.getContext(), target);
+        
+        try {
+            getContextMapper().mapTo(exchange.getContext(), target);
+        } catch (Exception ex) {
+            throw new SOAPException("Failed to map context properties to SOAP message", ex);
+        }
 
         return target;
     }
