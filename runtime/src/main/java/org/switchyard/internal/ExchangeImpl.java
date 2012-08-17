@@ -44,6 +44,7 @@ import org.switchyard.io.Serialization.Include;
 import org.switchyard.io.Serialization.Strategy;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceOperation;
+import org.switchyard.metadata.java.JavaService;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.transform.TransformSequence;
@@ -195,6 +196,9 @@ public class ExchangeImpl implements Exchange {
         
         _phase = ExchangePhase.OUT;
         _state = ExchangeState.FAULT;
+        
+        initFaultTransformSequence(message);
+        
         sendInternal(message);
     }
 
@@ -320,6 +324,24 @@ public class ExchangeImpl implements Exchange {
                     from(serviceOperationOutputType).
                     to(exchangeOutputType).
                     associateWith(this, Scope.OUT);
+        }
+    }
+    
+    private void initFaultTransformSequence(Message message) {
+        QName exceptionTypeName = _contract.getServiceOperation().getFaultType();
+        QName invokerFaultTypeName = _contract.getInvokerInvocationMetaData().getFaultType();
+
+        if (exceptionTypeName == null && message.getContent() instanceof Exception) {
+            exceptionTypeName = JavaService.toMessageType(message.getContent().getClass());
+        }
+
+        if (exceptionTypeName != null && invokerFaultTypeName != null) {
+            // Set up the type info on the message context so as the exception gets transformed
+            // appropriately for the invoker...
+            TransformSequence.
+                from(exceptionTypeName).
+                to(invokerFaultTypeName).
+                associateWith(this, Scope.OUT);
         }
     }
 

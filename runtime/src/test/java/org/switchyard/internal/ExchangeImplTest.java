@@ -40,7 +40,11 @@ import org.switchyard.Scope;
 import org.switchyard.ServiceReference;
 import org.switchyard.event.EventObserver;
 import org.switchyard.metadata.ExchangeContract;
+import org.switchyard.metadata.InOutOperation;
+import org.switchyard.metadata.InOutService;
+import org.switchyard.metadata.java.JavaService;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
+import org.switchyard.transform.BaseTransformer;
 
 /**
  *  Unit tests for the ExchangeImpl class.
@@ -310,5 +314,46 @@ public class ExchangeImplTest {
         // Make sure the exchange is in fault status
         Assert.assertEquals(ExchangeState.FAULT, exchange.getState());
     }
+    
+    @Test
+    public void testFaultTransformSequence() throws Exception {
+        final QName serviceName = new QName("testFaultTransformSequence");
+        // Provide the service
+        MockHandler provider = new MockHandler() {
+            @Override
+            public void handleMessage(Exchange exchange) throws HandlerException {
+                Message fault = exchange.createMessage();
+                fault.setContent(new Exception("testFaultTransformSequence"));
+                exchange.sendFault(fault);
+            }
+        };
+        InOutOperation providerContract = new InOutOperation("faultOp", 
+                JavaService.toMessageType(String.class),   // input
+                JavaService.toMessageType(String.class));  // output
+        InOutOperation consumerContract = new InOutOperation("faultOp", 
+                JavaService.toMessageType(String.class),   // input
+                JavaService.toMessageType(String.class),   // output
+                JavaService.toMessageType(String.class));  // fault
+        _domain.registerService(serviceName, new InOutService(providerContract), provider);
+        _domain.getTransformerRegistry().addTransformer(new ExceptionToStringTransformer());
+        ServiceReference service = _domain.registerServiceReference(serviceName, new InOutService(consumerContract));
 
+        // Consume the service
+        Exchange exchange = service.createExchange(new MockHandler());
+        exchange.send(exchange.createMessage());
+
+        // Make sure the exchange is in fault status
+        Assert.assertEquals(exchange.getMessage().getContent().getClass(), String.class);
+        Assert.assertEquals(exchange.getMessage().getContent(), "testFaultTransformSequence");
+    }
+
+}
+
+class ExceptionToStringTransformer extends BaseTransformer<Exception, String> {
+
+    @Override
+    public String transform(Exception from) {
+        return from.getMessage();
+    }
+    
 }

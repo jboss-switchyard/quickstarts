@@ -23,8 +23,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
@@ -32,10 +30,6 @@ import org.switchyard.ExchangeState;
 import org.switchyard.HandlerChain;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
-import org.switchyard.Scope;
-import org.switchyard.metadata.ExchangeContract;
-import org.switchyard.metadata.java.JavaService;
-import org.switchyard.transform.TransformSequence;
 
 /**
  * Default handler chain.
@@ -174,7 +168,6 @@ public class DefaultHandlerChain implements HandlerChain {
             _logger.debug("", handlerEx);
 
             Message faultMessage = exchange.createMessage().setContent(handlerEx);
-            initFaultTransformsequence(exchange, handlerEx, faultMessage);
             exchange.sendFault(faultMessage);
         }
     }
@@ -186,25 +179,6 @@ public class DefaultHandlerChain implements HandlerChain {
             handlers.add(hr.getHandler());
         }
         return Collections.unmodifiableList(handlers);
-    }
-
-    private void initFaultTransformsequence(Exchange exchange, HandlerException handlerEx, Message faultMessage) {
-        ExchangeContract contract = exchange.getContract();
-        QName exceptionTypeName = contract.getServiceOperation().getFaultType();
-        QName invokerFaultTypeName = contract.getInvokerInvocationMetaData().getFaultType();
-
-        if (exceptionTypeName == null) {
-            exceptionTypeName = JavaService.toMessageType(handlerEx.getClass());
-        }
-
-        if (exceptionTypeName != null && invokerFaultTypeName != null) {
-            // Set up the type info on the message context so as the exception gets transformed
-            // appropriately for the invoker...
-            TransformSequence.
-                from(exceptionTypeName).
-                to(invokerFaultTypeName).
-                associateWith(exchange, Scope.OUT);
-        }
     }
     
     /**
