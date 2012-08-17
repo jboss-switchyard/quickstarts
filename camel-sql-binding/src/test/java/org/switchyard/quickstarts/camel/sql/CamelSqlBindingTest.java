@@ -48,6 +48,7 @@ import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.CDIMixIn;
+import org.switchyard.test.mixins.NamingMixIn;
 
 /**
  * SQL binding test - checks insert and retrieve operation.
@@ -69,7 +70,7 @@ public class CamelSqlBindingTest {
     @ServiceOperation("GreetingService")
     private Invoker invoker;
 
-    private CDIMixIn mixin;
+    private NamingMixIn mixin;
 
 	private static JdbcDataSource dataSource;
 
