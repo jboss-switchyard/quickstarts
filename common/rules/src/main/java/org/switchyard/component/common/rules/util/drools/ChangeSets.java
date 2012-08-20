@@ -28,9 +28,10 @@ import org.drools.ChangeSet;
 import org.drools.xml.ChangeSetSemanticModule;
 import org.drools.xml.SemanticModules;
 import org.drools.xml.XmlChangeSetReader;
+import org.switchyard.common.io.pull.ElementPuller;
 import org.switchyard.common.io.resource.Resource;
 import org.switchyard.common.type.Classes;
-import org.switchyard.config.ConfigurationPuller;
+import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.exception.SwitchYardException;
 import org.xml.sax.SAXException;
 
@@ -102,7 +103,7 @@ public final class ChangeSets {
             String xcs;
             try {
                 // try to make the xml "pretty"
-                xcs = new ConfigurationPuller().pull(new StringReader(xml)).toString();
+                xcs = XMLHelper.toString(new ElementPuller().pull(new StringReader(xml)));
             } catch (IOException ioe) {
                 xcs = xml;
             }

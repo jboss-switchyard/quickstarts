@@ -19,12 +19,18 @@
  
 package org.switchyard.component.http.composer;
 
+import java.util.Collections;
+import java.util.Set;
+
+import org.switchyard.component.common.composer.SecurityBindingData;
+import org.switchyard.security.credential.Credential;
+
 /**
  * HTTP request binding data.
  *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
+ * @author Magesh Kumar B <mageshbk@jboss.com> &copy; 2012 Red Hat Inc.
  */
-public class HttpRequestBindingData extends HttpBindingData {
+public class HttpRequestBindingData extends HttpBindingData implements SecurityBindingData {
     private HttpRequestInfo _requestInfo;
 
     /**
@@ -40,4 +46,13 @@ public class HttpRequestBindingData extends HttpBindingData {
     public void setRequestInfo(HttpRequestInfo requestInfo) {
         _requestInfo = requestInfo;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<Credential> extractCredentials() {
+        return _requestInfo != null ? _requestInfo.getCredentials() : Collections.<Credential>emptySet();
+    }
+
 }

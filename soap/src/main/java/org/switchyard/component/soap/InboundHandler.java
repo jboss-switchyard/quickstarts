@@ -21,7 +21,6 @@ package org.switchyard.component.soap;
 
 import java.util.List;
 
-import javax.servlet.ServletRequest;
 import javax.wsdl.Operation;
 import javax.wsdl.Part;
 import javax.wsdl.Port;
@@ -30,7 +29,6 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
 
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
@@ -52,8 +50,7 @@ import org.switchyard.component.soap.util.WSDLUtil;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.exception.DeliveryException;
 import org.switchyard.exception.SwitchYardException;
-import org.switchyard.policy.PolicyUtil;
-import org.switchyard.policy.SecurityPolicy;
+import org.switchyard.security.SecurityContext;
 import org.w3c.dom.Node;
 
 /**
@@ -182,23 +179,13 @@ public class InboundHandler extends BaseServiceHandler {
         try {
             SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
             Exchange exchange = _service.createExchange(operationName, inOutHandler);
-            
-            // Set appropriate policy based on the web service context
-            if (wsContext != null) {
-                if (wsContext.getUserPrincipal() != null) {
-                    PolicyUtil.provide(exchange, SecurityPolicy.CLIENT_AUTHENTICATION);
-                }
-                ServletRequest servletRequest = (ServletRequest)wsContext.getMessageContext().get(MessageContext.SERVLET_REQUEST);
-                if (servletRequest != null && servletRequest.isSecure()) {
-                    PolicyUtil.provide(exchange, SecurityPolicy.CONFIDENTIALITY);
-                }
-            }
-            
+
+            SOAPBindingData soapBindingData = new SOAPBindingData(soapMessage, wsContext);
+            SecurityContext.get().getCredentials().addAll(soapBindingData.extractCredentials());
+
             Message message;
             try {
-                // TODO: As part of SWITCHYARD-830, move the security policy provisions above into the SOAPContextMapper
-                //       using the as-of-now passed-in WebServiceContext.
-                message = _messageComposer.compose(new SOAPBindingData(soapMessage, wsContext), exchange, true);
+                message = _messageComposer.compose(soapBindingData, exchange, true);
             } catch (Exception e) {
                 throw e instanceof SOAPException ? (SOAPException)e : new SOAPException(e);
             }
@@ -250,6 +237,8 @@ public class InboundHandler extends BaseServiceHandler {
             }
         } catch (SOAPException se) {
             return handleException(oneWay, se);
+        } finally {
+            SecurityContext.clear();
         }
     }
 

@@ -21,8 +21,12 @@ package org.switchyard.component.http.composer;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import org.switchyard.security.credential.Credential;
 
 /**
  * Wrapper for HTTP request details.
@@ -54,6 +58,7 @@ public class HttpRequestInfo implements Serializable {
     private String _requestPath;
     private List<String> _pathInfoTokens = new ArrayList<String>();
     private Map<String, String[]> _queryParams = new HashMap<String, String[]>();
+    private Set<Credential> _credentials = new HashSet<Credential>();
 
     /**
      * @return _the authType
@@ -365,6 +370,14 @@ public class HttpRequestInfo implements Serializable {
     }
 
     /**
+     * Gets the credentials.
+     * @return the credentials
+     */
+    public Set<Credential> getCredentials() {
+        return _credentials;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -380,6 +393,6 @@ public class HttpRequestInfo implements Serializable {
                 + _requestSessionId + ", requestURI=" + _requestURI + ", scheme="
                 + _scheme + ", serverName=" + _serverName + ", requestPath="
                 + _requestPath + ", pathInfoTokens=" + _pathInfoTokens
-                + ", queryParams=" + _queryParams + "]";
+                + ", queryParams=" + _queryParams + ", credentials=" + _credentials + "]";
     }
 }

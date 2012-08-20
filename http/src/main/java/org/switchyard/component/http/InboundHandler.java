@@ -21,6 +21,7 @@ package org.switchyard.component.http;
 
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
+import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
@@ -29,15 +30,15 @@ import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.common.selector.OperationSelector;
 import org.switchyard.component.common.selector.OperationSelectorFactory;
-import org.switchyard.component.http.composer.HttpComposition;
 import org.switchyard.component.http.composer.HttpBindingData;
+import org.switchyard.component.http.composer.HttpComposition;
 import org.switchyard.component.http.composer.HttpRequestBindingData;
 import org.switchyard.component.http.composer.HttpResponseBindingData;
 import org.switchyard.component.http.config.model.HttpBindingModel;
 import org.switchyard.component.http.endpoint.Endpoint;
 import org.switchyard.component.http.endpoint.EndpointPublisherFactory;
 import org.switchyard.deploy.BaseServiceHandler;
-import org.switchyard.ExchangePattern;
+import org.switchyard.security.SecurityContext;
 
 /**
  * Hanldes HTTP requests to invoke a SwitchYard service.
@@ -105,6 +106,7 @@ public class InboundHandler extends BaseServiceHandler {
             SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
             Exchange exchange = _service.createExchange(_operationSelector.selectOperation(input).getLocalPart(), inOutHandler);
             Message message = _messageComposer.compose(input, exchange, true);
+            SecurityContext.get().getCredentials().addAll(input.extractCredentials());
             if (exchange.getContract().getConsumerOperation().getExchangePattern() == ExchangePattern.IN_ONLY) {
                 exchange.send(message);
                 response = new HttpResponseBindingData();
@@ -115,6 +117,8 @@ public class InboundHandler extends BaseServiceHandler {
             }
         } catch (Exception e) {
             LOGGER.error(e, e);
+        } finally {
+            SecurityContext.clear();
         }
         return response;
     }

@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * HTTP response binding data.
  *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
+ * @author Magesh Kumar B <mageshbk@jboss.com> &copy; 2012 Red Hat Inc.
  */
 public class HttpResponseBindingData extends HttpBindingData {
 

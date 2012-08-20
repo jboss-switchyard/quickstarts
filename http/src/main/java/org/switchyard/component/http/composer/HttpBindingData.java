@@ -40,7 +40,7 @@ import org.switchyard.component.http.ContentType;
 /**
  * HTTP binding data that wraps the headers and body.
  *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
+ * @author Magesh Kumar B <mageshbk@jboss.com> &copy; 2012 Red Hat Inc.
  */
 public abstract class HttpBindingData implements BindingData {
 

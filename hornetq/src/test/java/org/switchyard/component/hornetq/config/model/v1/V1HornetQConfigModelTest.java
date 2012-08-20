@@ -322,7 +322,7 @@ public class V1HornetQConfigModelTest {
         final String xml = model.toString();
         final File savedModel = folder.newFile("hornetq-model.xml");
         final FileWriter fileWriter = new FileWriter(savedModel);
-        model.write(fileWriter, OutputKey.EXCLUDE_XML_DECLARATION);
+        model.write(fileWriter, OutputKey.OMIT_XML_DECLARATION, OutputKey.PRETTY_PRINT);
         
         final String xmlFromFile = new StringPuller().pull(savedModel);
         XMLUnit.setIgnoreWhitespace(true);

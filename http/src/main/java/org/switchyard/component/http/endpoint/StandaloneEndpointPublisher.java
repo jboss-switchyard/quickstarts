@@ -20,9 +20,9 @@
 package org.switchyard.component.http.endpoint;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.InetSocketAddress;
 import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +39,7 @@ import org.switchyard.component.http.InboundHandler;
 import org.switchyard.component.http.composer.HttpRequestBindingData;
 import org.switchyard.component.http.composer.HttpRequestInfo;
 import org.switchyard.component.http.composer.HttpResponseBindingData;
+import org.switchyard.security.credential.extract.HttpExchangeCredentialsExtractor;
 
 /**
  * Publishes standalone HTTP endpoint.
@@ -175,6 +176,9 @@ public class StandaloneEndpointPublisher implements EndpointPublisher {
                 requestInfo.addQueryParam(nameValue[0], nameValue[1]);
             }
         }
+
+        // Credentials...
+        requestInfo.getCredentials().addAll(new HttpExchangeCredentialsExtractor().extractCredentials(request));
 
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace(requestInfo);

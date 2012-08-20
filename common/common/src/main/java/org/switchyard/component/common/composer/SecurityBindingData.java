@@ -18,9 +18,21 @@
  */
 package org.switchyard.component.common.composer;
 
+import java.util.Set;
+
+import org.switchyard.security.credential.Credential;
+
 /**
- * BindingData.
+ * SecurityBindingData.
  * 
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public interface BindingData {}
+public interface SecurityBindingData extends BindingData {
+
+    /**
+     * Extracts the Credentials from the SecurityBindingData.
+     * @return the Credentials
+     */
+    public Set<Credential> extractCredentials();
+
+}

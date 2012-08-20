@@ -18,17 +18,26 @@
  */
 package org.switchyard.component.soap.composer;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.servlet.ServletRequest;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
 
-import org.switchyard.component.common.composer.BindingData;
+import org.switchyard.component.common.composer.SecurityBindingData;
+import org.switchyard.security.credential.Credential;
+import org.switchyard.security.credential.extract.SOAPMessageCredentialsExtractor;
+import org.switchyard.security.credential.extract.ServletRequestCredentialsExtractor;
+import org.switchyard.security.credential.extract.WebServiceContextCredentialsExtractor;
 
 /**
  * SOAP binding data.
  * 
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class SOAPBindingData implements BindingData {
+public class SOAPBindingData implements SecurityBindingData {
 
     private final SOAPMessage _soapMessage;
     private final WebServiceContext _webServiceContext;
@@ -65,6 +74,25 @@ public class SOAPBindingData implements BindingData {
      */
     public WebServiceContext getWebServiceContext() {
         return _webServiceContext;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<Credential> extractCredentials() {
+        Set<Credential> credentials = new HashSet<Credential>();
+        credentials.addAll(new SOAPMessageCredentialsExtractor().extractCredentials(getSOAPMessage()));
+        credentials.addAll(new WebServiceContextCredentialsExtractor().extractCredentials(getWebServiceContext()));
+        credentials.addAll(new ServletRequestCredentialsExtractor().extractCredentials(getServletRequest()));
+        return credentials;
+    }
+
+    private ServletRequest getServletRequest() {
+        if (_webServiceContext != null) {
+            return (ServletRequest)_webServiceContext.getMessageContext().get(MessageContext.SERVLET_REQUEST);
+        }
+        return null;
     }
 
 }
