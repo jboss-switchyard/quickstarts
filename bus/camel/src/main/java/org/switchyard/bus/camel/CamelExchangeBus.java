@@ -243,8 +243,9 @@ class ConsumerCallbackProcessor implements Processor {
         }
     }
     
-    private void handleFault(ExchangeImpl exchange, HandlerException handlerEx) {
-        Message faultMessage = exchange.createMessage().setContent(handlerEx);
+    private void handleFault(ExchangeImpl exchange, HandlerException ex) {
+        Throwable error = ex.isWrapper() ? ex.getCause() : ex;
+        Message faultMessage = exchange.createMessage().setContent(error);
         exchange.sendFault(faultMessage);
         
         ExchangeContract contract = exchange.getContract();
@@ -252,7 +253,7 @@ class ConsumerCallbackProcessor implements Processor {
         QName invokerFaultTypeName = contract.getInvokerInvocationMetaData().getFaultType();
 
         if (exceptionTypeName == null) {
-            exceptionTypeName = JavaService.toMessageType(handlerEx.getClass());
+            exceptionTypeName = JavaService.toMessageType(error.getClass());
         }
 
         if (exceptionTypeName != null && invokerFaultTypeName != null) {

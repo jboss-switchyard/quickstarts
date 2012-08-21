@@ -39,6 +39,8 @@ public class HandlerException extends Exception {
      * Generated serial version UID.
      */
     private static final long serialVersionUID = -4026111208898030754L;
+    
+    private boolean _wrapper;
 
     /**
      * Create a new HandlerException with the specified error message.
@@ -54,6 +56,7 @@ public class HandlerException extends Exception {
      */
     public HandlerException(final Throwable cause) {
         super(cause);
+        _wrapper = true;
     }
 
     /**
@@ -63,5 +66,15 @@ public class HandlerException extends Exception {
      */
     public HandlerException(final String message, final Throwable cause) {
         super(message, cause);
+    }
+    
+    /**
+     * Indicates whether this HandlerException is simply a wrapper for another 
+     * exception type - i.e. it contains no independent error message or stack
+     * trace detail.
+     * @return true if this is a wrapper exception, false otherwise
+     */
+    public boolean isWrapper() {
+        return _wrapper;
     }
 }
