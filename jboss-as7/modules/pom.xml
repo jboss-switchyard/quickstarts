@@ -154,6 +154,10 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
             <artifactId>switchyard-bus-camel</artifactId>
         </dependency>
         <dependency>
@@ -254,6 +258,18 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
         -->
+
+        <!--
+        PicketLink...
+        -->
+        <dependency>
+           <groupId>org.picketlink</groupId>
+           <artifactId>picketlink-core</artifactId>
+        </dependency>
+        <dependency>
+           <groupId>org.picketlink.distribution</groupId>
+           <artifactId>picketlink-jbas7</artifactId>
+        </dependency>
 
         <!--
         Riftsaw...

@@ -38,6 +38,7 @@
         <module name="org.switchyard.common-camel"/>
         <module name="org.switchyard.config"/>
         <module name="org.switchyard.runtime"/>
+        <module name="org.switchyard.security" export="true"/>
         <module name="org.switchyard.transform"/>
         <module name="org.switchyard.validate"/>
     </dependencies>

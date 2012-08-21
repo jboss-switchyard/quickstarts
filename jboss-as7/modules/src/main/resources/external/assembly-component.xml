@@ -22,6 +22,11 @@
 
     <files>
         <file>
+            <source>src/main/resources/external/picketlink/module.xml</source>
+            <outputDirectory>/modules/org/picketlink/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
             <source>src/main/resources/external/milyn/module.xml</source>
             <outputDirectory>/modules/org/milyn/main</outputDirectory>
             <filtered>true</filtered>
@@ -186,6 +191,22 @@
         </file>
     </files>
     <dependencySets>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.picketlink:picketlink-core</include>
+            </includes>
+            <outputDirectory>/modules/org/picketlink/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.picketlink}.${artifact.extension}</outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.picketlink.distribution:picketlink-jbas7</include>
+            </includes>
+            <outputDirectory>/modules/org/picketlink/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.picketlink}.${artifact.extension}</outputFileNameMapping>
+        </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>

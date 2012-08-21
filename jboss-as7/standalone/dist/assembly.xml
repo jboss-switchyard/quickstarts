@@ -18,6 +18,7 @@
                 <exclude>META-INF/</exclude>
                 <exclude>xsl/</exclude>
                 <exclude>modules/org/jboss/as/console/main/jboss-as-console*-resources.jar</exclude>
+                <exclude>modules/org/picketlink/main/*2.0.2*.jar</exclude>
             </excludes>
             <fileMode>644</fileMode>
             <directoryMode>755</directoryMode>

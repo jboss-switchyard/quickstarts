@@ -56,6 +56,11 @@
             <filtered>true</filtered>
         </file>
         <file>
+            <source>src/main/resources/switchyard/core/security/module.xml</source>
+            <outputDirectory>/modules/org/switchyard/security/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
             <source>src/main/resources/switchyard/core/transform/module.xml</source>
             <outputDirectory>/modules/org/switchyard/transform/main</outputDirectory>
             <filtered>true</filtered>
@@ -165,6 +170,15 @@
                 <include>org.switchyard:switchyard-runtime</include>
             </includes>
             <outputDirectory>/modules/org/switchyard/runtime/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
+         <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.switchyard:switchyard-security</include>
+            </includes>
+            <outputDirectory>/modules/org/switchyard/security/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>

@@ -26,7 +26,8 @@
     xmlns:fn="http://www.w3.org/2005/xpath-functions"
     xmlns:xdt="http://www.w3.org/2005/xpath-datatypes"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    exclude-result-prefixes="xs xsl xsi fn xdt">
+    xmlns:as="urn:jboss:domain:1.2"
+    exclude-result-prefixes="xs xsl xsi fn xdt as">
 
 <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
 

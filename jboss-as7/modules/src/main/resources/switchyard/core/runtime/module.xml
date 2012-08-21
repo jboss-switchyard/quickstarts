@@ -34,5 +34,6 @@
         <module name="org.apache.log4j"/>
         <module name="org.switchyard.api"/>
         <module name="org.switchyard.common"/>
+        <module name="org.switchyard.security" export="true"/>
     </dependencies>
 </module>

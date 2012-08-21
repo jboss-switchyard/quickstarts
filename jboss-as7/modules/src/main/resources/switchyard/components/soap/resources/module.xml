@@ -41,5 +41,6 @@
         <module name="org.switchyard.component.common"/>
         <module name="org.switchyard.component.soap.ws-impl"/>
         <module name="org.switchyard.component.soap.saaj-impl"/>
+        <module name="org.switchyard.security" export="true"/>
     </dependencies>
 </module>
