@@ -85,13 +85,17 @@ public class SwitchYardExpectedException implements TestRule {
     }
 
     public static Throwable getCauseFromHandlerException(final Throwable thrown) {
+        Throwable cause = thrown;
         if (thrown instanceof InvocationFaultException) {
             final InvocationFaultException faultException = (InvocationFaultException) thrown;
-            final HandlerException handlerException = (HandlerException) faultException.getCause();
-            final Throwable cause = handlerException.getCause();
-            return cause;
+            if (faultException.getCause() instanceof HandlerException) {
+                HandlerException handlerEx = (HandlerException)faultException.getCause();
+                cause = handlerEx.isWrapper() ? handlerEx.getCause() : handlerEx;
+            } else if (faultException.getFaultMessage().getContent() instanceof Exception) {
+                cause = faultException.getFaultMessage().getContent(Throwable.class);
+            }
         }
-        return thrown;
+        return cause;
     }
 
 }

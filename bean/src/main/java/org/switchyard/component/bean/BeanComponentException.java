@@ -41,6 +41,14 @@ public class BeanComponentException extends HandlerException {
     public BeanComponentException(final String message) {
         super(message);
     }
+    
+    /**
+     * Create a new BeanComponentException with the specified cause.
+     * @param cause underlying error
+     */
+    public BeanComponentException(final Throwable cause) {
+        super(cause);
+    }
 
     /**
      * Public constructor.

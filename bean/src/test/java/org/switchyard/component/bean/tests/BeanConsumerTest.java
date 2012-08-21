@@ -73,7 +73,7 @@ public class BeanConsumerTest {
     }
 
     @Test
-    public void consumeInOnlyServiceFromBean_Fault_service_exception() {
+    public void consumeInOutServiceFromBean_Fault_service_exception() {
         try {
             // this should result in a fault
             inOut.sendInOut(new ConsumerException("throw me a remote exception please!!"));
@@ -81,12 +81,9 @@ public class BeanConsumerTest {
             Assert.fail("Exception thrown by bean but not turned into fault!");
         } catch (InvocationFaultException infEx) {
             Message faultMsg = infEx.getFaultMessage();
-            Assert.assertTrue(faultMsg.getContent() instanceof BeanComponentException);
-            BeanComponentException beanEx = faultMsg.getContent(BeanComponentException.class);
-            Assert.assertEquals("Invocation of operation 'consumeInOutService' on bean component '" + 
-                    ConsumerBean.class.getName() + "' failed with exception.  See attached cause.", beanEx.getMessage());
+            Assert.assertTrue(faultMsg.getContent() instanceof ConsumerException);
             Assert.assertTrue(infEx.isType(ConsumerException.class));
-            Assert.assertEquals("remote-exception-received", beanEx.getCause().getCause().getMessage());
+            Assert.assertEquals("remote-exception-received", faultMsg.getContent(Exception.class).getMessage());
         }
     }
 }

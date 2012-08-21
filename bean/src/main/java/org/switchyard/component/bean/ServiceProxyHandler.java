@@ -115,8 +115,8 @@ public class ServiceProxyHandler implements ServiceHandler {
         Invocation invocation = _serviceMetadata.getInvocation(exchange);
 
         if (invocation != null) {
+            ExchangePattern exchangePattern = exchange.getContract().getServiceOperation().getExchangePattern();
             try {
-                ExchangePattern exchangePattern = exchange.getContract().getServiceOperation().getExchangePattern();
 
                 if (_logger.isDebugEnabled()) {
                     _logger.debug("CDI Bean Service ExchangeHandler proxy class received " + exchangePattern + " Exchange ("
@@ -137,11 +137,25 @@ public class ServiceProxyHandler implements ServiceHandler {
                     message.setContent(responseObject);
                     exchange.send(message);
                 }
-            } catch (IllegalAccessException e) {
-                throw new BeanComponentException("Cannot invoke operation '" + invocation.getMethod().getName() + "' on bean component '" + _serviceBean.getClass().getName() + "'.", e);
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-                throw new BeanComponentException("Invocation of operation '" + invocation.getMethod().getName() + "' on bean component '" + _serviceBean.getClass().getName() + "' failed with exception.  See attached cause.", e);
+            } catch (Exception ex) {
+                String errMsg = "Invocation of operation '" + invocation.getMethod().getName() 
+                        + "' on bean component '" + _serviceBean.getClass().getName() + "failed.";
+                // write error details to log
+                if (exchangePattern == ExchangePattern.IN_ONLY) {
+                    _logger.warn(errMsg, ex);
+                } else if (_logger.isDebugEnabled()) {
+                    _logger.debug(errMsg, ex);
+                }
+                
+                // if exchange supports fault, send one
+                if (exchangePattern == ExchangePattern.IN_OUT) {
+                    Throwable faultContent = ex;
+                    if (faultContent instanceof InvocationTargetException) {
+                        faultContent = ((InvocationTargetException)ex).getTargetException();
+                    }
+                    throw new BeanComponentException(faultContent);
+                }
+                
             }
         } else {
             throw new SwitchYardException("Unexpected error.  BeanServiceMetadata should return an Invocation instance, or throw a BeanComponentException.");
