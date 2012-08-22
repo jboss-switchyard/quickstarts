@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+<definitions name="BusinessTravel" targetNamespace="http://www.jboss.org/bpel/examples"
+	xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.jboss.org/bpel/examples"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+	xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+    xmlns:wsba="http://docs.oasis-open.org/ws-tx/wsba/2006/06"
+    xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+
+	<types>
+		<xsd:schema targetNamespace="http://www.jboss.org/bpel/examples"
+			xmlns="http://www.w3.org/2001/XMLSchema">
+
+			<xsd:element name="orderRequestType">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="id" type="xsd:int" />
+						<xsd:element name="name" type="xsd:string" />
+						<xsd:element name="from" type="xsd:string" />
+						<xsd:element name="to" type="xsd:string" />
+						<xsd:element name="persons" type="xsd:int" />
+						<xsd:element name="arrival" type="xsd:date" />
+						<xsd:element name="departure" type="xsd:date" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="orderResponseType">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="id" type="xsd:int" />
+						<xsd:element name="fltid" type="xsd:string" />
+						<xsd:element name="return_fltid" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="completeRequestType">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="id" type="xsd:int" />
+						<xsd:element name="simulateException" type="xsd:boolean" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="completeResponseType">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="id" type="xsd:int" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:complexType name="scopeFault">
+				<xsd:sequence>
+					<xsd:element name="faultMessage" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:complexType>
+
+		</xsd:schema>
+	</types>
+
+	<message name="orderRequest">
+		<part name="parameters" element="tns:orderRequestType" />
+	</message>
+	<message name="orderResponse">
+		<part name="parameters" element="tns:orderResponseType" />
+	</message>
+	<message name="completeRequest">
+		<part name="parameters" element="tns:completeRequestType" />
+	</message>
+	<message name="completeResponse">
+		<part name="parameters" element="tns:completeResponseType" />
+	</message>
+	<message name="exceptionResponse">
+		<part name="parameters" type="tns:scopeFault" />
+	</message>
+
+    <wsp:Policy wsu:Id="BAAtomicPolicy" >
+        <wsba:BAAtomicOutcomeAssertion wsp:Optional="true"/>
+    </wsp:Policy>
+
+	<portType name="BusinessTravelService">
+		<operation name="order">
+			<input message="tns:orderRequest" />
+			<output message="tns:orderResponse" />
+		</operation>
+		<operation name="complete">
+			<input message="tns:completeRequest" />
+			<output message="tns:completeResponse" />
+			<fault message="tns:exceptionResponse" name="exception" />
+		</operation>
+	</portType>
+
+	<binding name="BusinessTravelServiceBinding" type="tns:BusinessTravelService">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+		<operation name="order">
+			<soap:operation soapAction="http://www.jboss.org/bpel/examples/order" />
+            <wsp:PolicyReference URI="#BAAtomicPolicy" required="true" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="complete">
+			<soap:operation soapAction="http://www.jboss.org/bpel/examples/complete" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+			<fault name="exception">
+				<soap:fault use="literal" name="exception"
+					namespace="http://www.jboss.org/bpel/examples" />
+			</fault>
+		</operation>
+	</binding>
+
+	<service name="BusinessTravelService">
+		<port name="BusinessTravelPort" binding="tns:BusinessTravelServiceBinding">
+			<soap:address location="http://127.0.0.1:8080/xts_subordinate_wsba/BusinessTravelService" />
+		</port>
+	</service>
+
+	<plnk:partnerLinkType name="BusinessTravelService">
+		<plnk:role name="BusinessTravelProvider" portType="tns:BusinessTravelService" />
+	</plnk:partnerLinkType>
+	<vprop:property name="SessionID" type="xsd:int" />
+
+	<vprop:propertyAlias propertyName="tns:SessionID"
+		messageType="tns:orderRequest" part="parameters">
+		<vprop:query>id</vprop:query>
+	</vprop:propertyAlias>
+
+	<vprop:propertyAlias propertyName="tns:SessionID"
+		messageType="tns:orderResponse" part="parameters">
+		<vprop:query>id</vprop:query>
+	</vprop:propertyAlias>
+
+	<vprop:propertyAlias propertyName="tns:SessionID"
+		messageType="tns:completeRequest" part="parameters">
+		<vprop:query>id</vprop:query>
+	</vprop:propertyAlias>
+
+	<vprop:propertyAlias propertyName="tns:SessionID"
+		messageType="tns:completeResponse" part="parameters">
+		<vprop:query>id</vprop:query>
+	</vprop:propertyAlias>
+
+</definitions>

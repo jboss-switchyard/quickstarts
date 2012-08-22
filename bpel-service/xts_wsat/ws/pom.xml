@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+      <groupId>org.switchyard.quickstarts</groupId>
+      <artifactId>switchyard-quickstart-bpel-service-xts-wsat</artifactId>
+      <version>0.6.0-SNAPSHOT</version>
+      <relativePath>../pom.xml</relativePath>
+  </parent>
+  <artifactId>switchyard-quickstart-bpel-service-xts-wsat-ws</artifactId>
+  <name>Quickstart : BPEL Service : XTS WSAT : Airport Web Service</name>
+  <packaging>ejb</packaging>
+  
+  <dependencies>
+		<dependency>
+			<groupId>org.jboss.ejb3</groupId>
+			<artifactId>jboss-ejb3-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>jboss.jbossws</groupId>
+					<artifactId>jboss-jaxrpc</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.narayana.xts</groupId>
+			<artifactId>jbossxts</artifactId>
+			<version>${narayana.version}</version>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+		<plugin>
+			<artifactId>maven-ejb-plugin</artifactId>
+			<configuration>
+				<ejbVersion>3.1</ejbVersion>
+				<archive>
+					<manifest>
+						<addClasspath>true</addClasspath>
+					</manifest>
+				</archive>
+			</configuration>
+		</plugin>
+		</plugins>
+	</build>
+
+</project>

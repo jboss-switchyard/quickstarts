@@ -1,0 +1,9 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pp="http://www.jboss.org/bpel/examples/pp">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <pp:completeRequestType>
+         <id>4</id>
+         <simulateException>false</simulateException>
+      </pp:completeRequestType>
+   </soapenv:Body>
+</soapenv:Envelope>
