@@ -22,6 +22,7 @@ package org.switchyard.internal;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.EventObject;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,8 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.event.DomainShutdownEvent;
+import org.switchyard.event.DomainStartupEvent;
 import org.switchyard.event.EventObserver;
 import org.switchyard.event.EventPublisher;
 import org.switchyard.event.ReferenceRegistrationEvent;
@@ -70,6 +73,7 @@ public class DomainImpl implements ServiceDomain {
     private TransformerRegistry _transformerRegistry;
     private ValidatorRegistry _validatorRegistry;
     private List<ExchangeHandler> _userHandlers = new LinkedList<ExchangeHandler>();
+    private Map<String, Object> _attachements = Collections.synchronizedMap(new LinkedHashMap<String, Object>());
     private Map<QName, ServiceReference> _references =
             new ConcurrentHashMap<QName, ServiceReference>();
 
@@ -84,6 +88,9 @@ public class DomainImpl implements ServiceDomain {
             new BaseTransformerRegistry(), 
             new BaseValidatorRegistry(), 
             new EventManager());
+        // this constructor is used for tests, normally exchange bus can listen
+        // for domain events
+//        ((LocalExchangeBus) _exchangeBus).init(this);
     }
     
     /**
@@ -108,10 +115,11 @@ public class DomainImpl implements ServiceDomain {
         _transformerRegistry = transformerRegistry;
         _validatorRegistry = validatorRegistry;
         _eventManager = eventManager;
-        
+
         setEventPublisher(_transformerRegistry);
         setEventPublisher(_validatorRegistry);
-        
+
+        _eventManager.publish(new DomainStartupEvent(this));
         _exchangeBus.init(this);
         _exchangeBus.start();
 
@@ -119,7 +127,7 @@ public class DomainImpl implements ServiceDomain {
             _logger.debug("Created SwitchYard ServiceDomain instance '" + name + "'.");
         }
     }
-    
+
     @Override
     public Service registerService(QName serviceName, ServiceInterface metadata, 
             ExchangeHandler handler) {
@@ -285,6 +293,7 @@ public class DomainImpl implements ServiceDomain {
     @Override
     public void destroy() {
         _exchangeBus.stop();
+        _eventManager.publish(new DomainShutdownEvent(this));
         _references.clear();
     }
 
@@ -304,7 +313,11 @@ public class DomainImpl implements ServiceDomain {
         return _userHandlers;
     }
 
-    
+    @Override
+    public Map<String, Object> getProperties() {
+        return _attachements;
+    }
+
     private void setEventPublisher(Object target) {
         if (target == null) {
             return;

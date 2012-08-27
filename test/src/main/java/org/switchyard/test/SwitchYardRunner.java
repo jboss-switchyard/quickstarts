@@ -25,6 +25,7 @@ import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
+import org.switchyard.common.camel.SwitchYardCamelContext;
 
 import java.lang.reflect.Field;
 
@@ -64,6 +65,7 @@ public class SwitchYardRunner extends BlockJUnit4ClassRunner {
         set(_testKit.getConfigModel(), PropertyMatchResolution.ASSIGNABLE);
         set(_testKit.getServiceDomain(), PropertyMatchResolution.ASSIGNABLE);
         set(_testKit.getServiceDomain().getTransformerRegistry(), PropertyMatchResolution.ASSIGNABLE);
+        set(_testKit.getServiceDomain().getProperties().get(SwitchYardCamelContext.CAMEL_CONTEXT_PROPERTY), PropertyMatchResolution.ASSIGNABLE);
 
         setInvokers();
         

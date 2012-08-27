@@ -28,7 +28,9 @@ import org.apache.log4j.Logger;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.bus.camel.CamelExchangeBus;
+import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.common.type.Classes;
+import org.switchyard.config.model.domain.DomainModel;
 import org.switchyard.config.model.domain.HandlerModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.exception.SwitchYardException;
@@ -37,7 +39,6 @@ import org.switchyard.internal.DomainImpl;
 import org.switchyard.internal.EventManager;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.internal.validate.BaseValidatorRegistry;
-import org.switchyard.spi.ExchangeBus;
 import org.switchyard.spi.ServiceRegistry;
 
 /**
@@ -95,16 +96,21 @@ public class ServiceDomainManager {
     public ServiceDomain createDomain(QName domainName, SwitchYardModel switchyardConfig) {
         BaseTransformerRegistry transformerRegistry = new BaseTransformerRegistry();
         BaseValidatorRegistry validatorRegistry = new BaseValidatorRegistry();
-        List<ExchangeHandler> handlers = getDomainHandlers(switchyardConfig);
-        ExchangeBus bus = new CamelExchangeBus();
-        
+
+        SwitchYardCamelContext camelContext = new SwitchYardCamelContext();
+        CamelExchangeBus bus = new CamelExchangeBus(camelContext);
+
         DomainImpl domain = new DomainImpl(
                 domainName, _registry, bus, transformerRegistry, validatorRegistry, _eventManager);
-        domain.getHandlers().addAll(handlers);
+        camelContext.setServiceDomain(domain);
+
+        if (switchyardConfig != null) {
+            domain.getHandlers().addAll(getDomainHandlers(switchyardConfig.getDomain()));
+        }
 
         return domain;
     }
-    
+
     /**
      * Return the shared EventManager used for all ServiceDomain instances.
      * @return EventManager instance
@@ -112,16 +118,16 @@ public class ServiceDomainManager {
     public EventManager getEventManager() {
         return _eventManager;
     }
-    
+
     /**
      * Looks for handler definitions in the switchyard config and attempts to 
      * create and add them to the domain's global handler chain.
      *
      */
-    private List<ExchangeHandler> getDomainHandlers(SwitchYardModel config) {
+    private List<ExchangeHandler> getDomainHandlers(DomainModel domain) {
         LinkedList<ExchangeHandler> handlers = new LinkedList<ExchangeHandler>();
-        if (config != null && config.getDomain() != null && config.getDomain().getHandlers() != null) {
-            for (HandlerModel handlerConfig : config.getDomain().getHandlers().getHandlers()) {
+        if (domain != null && domain.getHandlers() != null) {
+            for (HandlerModel handlerConfig : domain.getHandlers().getHandlers()) {
                 Class<?> handlerClass = Classes.forName(handlerConfig.getClassName());
                 if (handlerClass == null) {
                     throw new SwitchYardException("Handler class not found " + handlerConfig.getClassName());

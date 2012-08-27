@@ -34,6 +34,7 @@ import org.switchyard.HandlerException;
 import org.switchyard.MockDomain;
 import org.switchyard.Scope;
 import org.switchyard.Service;
+import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.internal.ExchangeImpl;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InOnlyService;
@@ -43,17 +44,20 @@ import org.switchyard.spi.Dispatcher;
 public class ExchangeDispatcherTest {
 
     private CamelExchangeBus _provider;
+    private SwitchYardCamelContext _camelContext;
 
     @Before
     public void setUp() throws Exception {
-        _provider = new CamelExchangeBus();
-        _provider.init(new MockDomain());
-        _provider.start();
+        MockDomain mockDomain = new MockDomain();
+        _camelContext = new SwitchYardCamelContext();
+        _provider = new CamelExchangeBus(_camelContext);
+        _provider.init(mockDomain);
+        _camelContext.start();
     }
     
     @After
     public void tearDown() throws Exception {
-        _provider.stop();
+        _camelContext.stop();
     }
     
     @Test

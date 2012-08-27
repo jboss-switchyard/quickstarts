@@ -21,6 +21,7 @@ package org.switchyard;
 
 import java.util.EventObject;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -159,11 +160,20 @@ public interface ServiceDomain {
      * @return event publisher
      */
     EventPublisher getEventPublisher();
-    
+
+    /**
+     * Shared properties/POJOs which are not part of switchyard core-api.
+     * 
+     * @return Bag with objects.
+     */
+    Map<String, Object> getProperties();
+
     /**
      * Cleans up all resources associated with a ServiceDomain instance including
      * the transformer/validator/service registry and exchange bus.  ServiceDomain
      * instances can not be used after they are destroyed.
      */
     void destroy();
+
+
 }

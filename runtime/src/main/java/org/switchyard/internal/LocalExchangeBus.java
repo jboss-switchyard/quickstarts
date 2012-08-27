@@ -53,7 +53,7 @@ public class LocalExchangeBus implements ExchangeBus {
      */
     public LocalExchangeBus() {
     }
-    
+
     @Override
     public void init(ServiceDomain domain) {
         _domain = domain;
@@ -79,6 +79,16 @@ public class LocalExchangeBus implements ExchangeBus {
     }
 
     @Override
+    public void start() {
+        // NOP
+    }
+
+    @Override
+    public void stop() {
+        _dispatchers.clear();
+    }
+
+    @Override
     public synchronized Dispatcher createDispatcher(
             Service service, ExchangeHandler handler) {
         HandlerChain userHandlers = DefaultHandlerChain.fromList(_domain.getHandlers());
@@ -97,16 +107,6 @@ public class LocalExchangeBus implements ExchangeBus {
     @Override
     public Dispatcher getDispatcher(Service service) {
         return _dispatchers.get(service.getName());
-    }
-
-    @Override
-    public void start() {
-        // NOP
-    }
-
-    @Override
-    public void stop() {
-        _dispatchers.clear();
     }
 
 }

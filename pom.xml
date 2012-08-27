@@ -16,6 +16,7 @@
   <modules>
     <module>build</module>
     <module>common</module>
+    <module>common-camel</module>
     <module>config</module>
     <module>api</module>
     <module>extensions/wsdl</module>

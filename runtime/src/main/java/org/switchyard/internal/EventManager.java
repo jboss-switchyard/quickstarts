@@ -48,6 +48,10 @@ public class EventManager implements EventPublisher {
     
     @Override
     public void publish(EventObject event) {
+       if (_logger.isTraceEnabled()) {
+           _logger.trace("Publishing event " + event);
+       }
+
        for (EventObserver observer : getObserversForEvent(event.getClass())) {
            try {
                observer.notify(event);

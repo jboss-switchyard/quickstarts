@@ -44,7 +44,7 @@ public interface ExchangeBus {
      * has been created
      */
     Dispatcher getDispatcher(Service service);
-    
+
     /**
      * Initialize the exchange bus with it's parent service domain.
      * @param domain service domain in which this bus will be used
@@ -60,5 +60,5 @@ public interface ExchangeBus {
      * Stop the exchange bus.
      */
     void stop();
-    
+
 }
