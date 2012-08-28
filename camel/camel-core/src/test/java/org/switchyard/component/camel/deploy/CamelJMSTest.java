@@ -33,13 +33,13 @@ import javax.jms.Destination;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.naming.InitialContext;
-import javax.xml.namespace.QName;
 
-import org.junit.Ignore;
+import org.apache.camel.CamelContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Exchange;
-import org.switchyard.deploy.internal.Deployment;
+import org.switchyard.ServiceDomain;
+import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
@@ -57,7 +57,7 @@ import org.switchyard.test.mixins.HornetQMixIn;
 @RunWith(SwitchYardRunner.class)
 public class CamelJMSTest {
 
-    private static final QName SERVICE_NAME = new QName("urn:camel-core:test:1.0", "SimpleCamelService");
+    private ServiceDomain _domain;
 
     private SwitchYardTestKit _testKit;
     
@@ -66,7 +66,6 @@ public class CamelJMSTest {
         sendAndAssertOneMessage();
     }
 
-    @Ignore
     @Test
     public void stopAndStartCamelActivator() throws Exception {
         sendAndAssertOneMessage();
@@ -78,12 +77,14 @@ public class CamelJMSTest {
         sendAndAssertOneMessage();
     }
 
-    private void stopCamelActivator() {
-        getCamelActivator().stop();
+    private void stopCamelActivator() throws Exception {
+         CamelContext context = (CamelContext) _domain.getProperties().get(SwitchYardCamelContext.CAMEL_CONTEXT_PROPERTY);
+        context.suspend();
     }
 
-    private void startCamelActivator() {
-        getCamelActivator().start();
+    private void startCamelActivator() throws Exception {
+        CamelContext context = (CamelContext) _domain.getProperties().get(SwitchYardCamelContext.CAMEL_CONTEXT_PROPERTY);
+        context.resume();
     }
 
     private void sendAndAssertOneMessage() throws Exception, InterruptedException {
@@ -100,11 +101,6 @@ public class CamelJMSTest {
         assertThat(recievedExchange.getMessage().getContent(String.class), is(equalTo(payload)));
     }
 
-    private CamelActivator getCamelActivator() {
-        final Deployment deployment = (Deployment) _testKit.getDeployment();
-        return (CamelActivator) deployment.findActivator("camel");
-    }
-    
     private void sendTextToQueue(final String text, final String destinationName) throws Exception {
         InitialContext initialContext = null;
         Connection connection = null;

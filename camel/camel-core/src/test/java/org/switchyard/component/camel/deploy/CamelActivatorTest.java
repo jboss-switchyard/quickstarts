@@ -85,7 +85,6 @@ public class CamelActivatorTest {
         assertOneMessage(mockHandler, "dummy payload");
 
         // Stop the camel components for the service...
-        activator.stop();
 
         try {
             producerTemplate.sendBody("direct://input2", "dummy payload");
@@ -95,8 +94,6 @@ public class CamelActivatorTest {
         }
 
         // Restart the camel components for the service...
-        activator.start();
-
         producerTemplate.sendBody("direct://input", "dummy payload");
         assertOneMessage(mockHandler, "dummy payload");
     }

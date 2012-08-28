@@ -22,8 +22,6 @@ package org.switchyard.component.camel.transformer;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.spi.PackageScanClassResolver;
-import org.switchyard.component.camel.deploy.CamelActivator;
 
 /**
  * A singleton converter that can be used by Switchyard Transformers
@@ -41,10 +39,10 @@ public final class CamelConverter {
     private CamelConverter() {
         final DefaultCamelContext camelContext = new DefaultCamelContext();
 
-        PackageScanClassResolver packageScanClassResolver = CamelActivator.getPackageScanClassResolver();
-        if (packageScanClassResolver != null) {
-            camelContext.setPackageScanClassResolver(packageScanClassResolver);
-        }
+//        PackageScanClassResolver packageScanClassResolver = CamelActivator.getPackageScanClassResolver();
+//        if (packageScanClassResolver != null) {
+//            camelContext.setPackageScanClassResolver(packageScanClassResolver);
+//        }
 
         _typeConverter = camelContext.getTypeConverter();
     }
