@@ -263,22 +263,6 @@ public class HttpBindingModel extends V1BindingModel {
     }
 
     /**
-     * Gets the HttpContextMapperModel.
-     * @return the HttpContextMapperModel
-     */
-    public HttpContextMapperModel getHttpContextMapper() {
-        return (HttpContextMapperModel)getContextMapper();
-    }
-    
-    /**
-     * Gets the HttpMessageComposerModel.
-     * @return the HttpMessageComposerModel
-     */
-    public HttpMessageComposerModel getHttpMessageComposer() {
-        return (HttpMessageComposerModel)getMessageComposer();
-    }
-
-    /**
      * Sets the global configuration.
      * 
      * @param config the environment/global config

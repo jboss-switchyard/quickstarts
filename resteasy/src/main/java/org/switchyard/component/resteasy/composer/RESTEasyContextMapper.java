@@ -29,15 +29,15 @@ import java.util.Map;
 
 import org.switchyard.Context;
 import org.switchyard.Property;
-import org.switchyard.component.common.composer.BaseContextMapper;
+import org.switchyard.component.common.composer.BaseRegexContextMapper;
 
 /**
  * RESTEasyContextMapper.
  *
+ * @author Magesh Kumar B <mageshbk@jboss.com> &copy; 2012 Red Hat Inc.
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public class RESTEasyContextMapper extends BaseContextMapper<RESTEasyMessage> {
+public class RESTEasyContextMapper extends BaseRegexContextMapper<RESTEasyMessage> {
 
     /**
      * {@inheritDoc}
@@ -48,11 +48,13 @@ public class RESTEasyContextMapper extends BaseContextMapper<RESTEasyMessage> {
         while (entries.hasNext()) {
             Map.Entry<String, List<String>> entry = entries.next();
             String name = entry.getKey();
-            List<String> values = entry.getValue();
-            if ((values != null) && (values.size() == 1)) {
-                context.setProperty(name, values.get(0), IN).addLabels(HTTP_HEADER);
-            } else if ((values != null) && (values.size() > 1)) {
-                context.setProperty(name, values, IN).addLabels(HTTP_HEADER);
+            if (matches(name)) {
+                List<String> values = entry.getValue();
+                if ((values != null) && (values.size() == 1)) {
+                    context.setProperty(name, values.get(0), IN).addLabels(HTTP_HEADER);
+                } else if ((values != null) && (values.size() > 1)) {
+                    context.setProperty(name, values, IN).addLabels(HTTP_HEADER);
+                }
             }
         }
     }
@@ -66,14 +68,16 @@ public class RESTEasyContextMapper extends BaseContextMapper<RESTEasyMessage> {
         for (Property property : context.getProperties(OUT)) {
             if (property.hasLabel(HTTP_HEADER)) {
                 String name = property.getName();
-                Object value = property.getValue();
-                if (value != null) {
-                    if (value instanceof List) {
-                        httpHeaders.put(name, (List)value);
-                    } else if (value instanceof String) {
-                        List<String> list = new ArrayList<String>();
-                        list.add(String.valueOf(value));
-                        httpHeaders.put(name, list);
+                if (matches(name)) {
+                    Object value = property.getValue();
+                    if (value != null) {
+                        if (value instanceof List) {
+                            httpHeaders.put(name, (List)value);
+                        } else if (value instanceof String) {
+                            List<String> list = new ArrayList<String>();
+                            list.add(String.valueOf(value));
+                            httpHeaders.put(name, list);
+                        }
                     }
                 }
             }

@@ -25,7 +25,7 @@ import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.component.common.composer.BaseMessageComposer;
-import org.switchyard.component.http.config.model.HttpMessageComposerModel;
+import org.switchyard.config.model.composer.MessageComposerModel;
 
 /**
  * The HTTP implementation of MessageComposer simply copies the HTTP body into
@@ -36,7 +36,7 @@ import org.switchyard.component.http.config.model.HttpMessageComposerModel;
 public class HttpMessageComposer extends BaseMessageComposer<HttpMessage> {
 
     private static Logger _log = Logger.getLogger(HttpMessageComposer.class);
-    private HttpMessageComposerModel _config;
+    private MessageComposerModel _config;
 
     /**
      * {@inheritDoc}
@@ -102,18 +102,18 @@ public class HttpMessageComposer extends BaseMessageComposer<HttpMessage> {
     }
 
     /**
-     * Gets the HttpMessageComposerModel config.
-     * @return the HttpMessageComposerModel
+     * Gets the MessageComposerModel config.
+     * @return the MessageComposerModel
      */
-    public HttpMessageComposerModel getComposerConfig() {
+    public MessageComposerModel getComposerConfig() {
         return _config;
     }
 
     /**
-     * Sets the HttpMessageComposerModel config.
+     * Sets the MessageComposerModel config.
      * @param composerConfig configuration
      */
-    public void setComposerConfig(HttpMessageComposerModel composerConfig) {
+    public void setComposerConfig(MessageComposerModel composerConfig) {
         _config = composerConfig;
     }
 

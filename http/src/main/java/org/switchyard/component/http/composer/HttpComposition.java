@@ -22,8 +22,8 @@ package org.switchyard.component.http.composer;
 import org.switchyard.component.common.composer.Composition;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.http.config.model.HttpBindingModel;
-import org.switchyard.component.http.config.model.HttpContextMapperModel;
-import org.switchyard.component.http.config.model.HttpMessageComposerModel;
+import org.switchyard.config.model.composer.ContextMapperModel;
+import org.switchyard.config.model.composer.MessageComposerModel;
 
 /**
  * Utility class for HTTP-specific Composition.
@@ -46,17 +46,16 @@ public final class HttpComposition {
 
     /**
      * Uses the {@link Composition} class to create a HTTP-specific MessageComposer.
-     * @param sbm a HttpBindingModel to get configuration details from
+     * @param hbm a HttpBindingModel to get configuration details from
      * @return the MessageComposer
      */
-    public static MessageComposer<HttpMessage> getMessageComposer(HttpBindingModel sbm) {
-        HttpContextMapperModel scmm = sbm != null ? sbm.getHttpContextMapper() : null;
-        HttpMessageComposerModel mcm = sbm != null ? sbm.getHttpMessageComposer() : null;
-        MessageComposer<HttpMessage> mc = Composition.getMessageComposer(HttpMessage.class, scmm, mcm);
+    public static MessageComposer<HttpMessage> getMessageComposer(HttpBindingModel hbm) {
+        ContextMapperModel cmm = hbm != null ? hbm.getContextMapper() : null;
+        MessageComposerModel mcm = hbm != null ? hbm.getMessageComposer() : null;
+        MessageComposer<HttpMessage> mc = Composition.getMessageComposer(HttpMessage.class, cmm, mcm);
         if (mc instanceof HttpMessageComposer && mcm != null) {
             HttpMessageComposer smc = (HttpMessageComposer)mc;
             smc.setComposerConfig(mcm);
-            
         }
         return mc;
     }

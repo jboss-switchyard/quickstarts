@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
- 
 package org.switchyard.component.http.composer;
 
 import static org.switchyard.Scope.IN;
@@ -30,15 +29,15 @@ import java.util.Map;
 
 import org.switchyard.Context;
 import org.switchyard.Property;
-import org.switchyard.component.common.composer.BaseContextMapper;
+import org.switchyard.component.common.composer.BaseRegexContextMapper;
 
 /**
  * HttpContextMapper.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
+ * @author Magesh Kumar B <mageshbk@jboss.com> &copy; 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class HttpContextMapper extends BaseContextMapper<HttpMessage> {
+public class HttpContextMapper extends BaseRegexContextMapper<HttpMessage> {
 
     /**
      * {@inheritDoc}
@@ -49,11 +48,13 @@ public class HttpContextMapper extends BaseContextMapper<HttpMessage> {
         while (entries.hasNext()) {
             Map.Entry<String, List<String>> entry = entries.next();
             String name = entry.getKey();
-            List<String> values = entry.getValue();
-            if ((values != null) && (values.size() == 1)) {
-                context.setProperty(name, values.get(0), IN).addLabels(HTTP_HEADER);
-            } else if ((values != null) && (values.size() > 1)) {
-                context.setProperty(name, values, IN).addLabels(HTTP_HEADER);
+            if (matches(name)) {
+                List<String> values = entry.getValue();
+                if ((values != null) && (values.size() == 1)) {
+                    context.setProperty(name, values.get(0), IN).addLabels(HTTP_HEADER);
+                } else if ((values != null) && (values.size() > 1)) {
+                    context.setProperty(name, values, IN).addLabels(HTTP_HEADER);
+                }
             }
         }
     }
@@ -67,15 +68,16 @@ public class HttpContextMapper extends BaseContextMapper<HttpMessage> {
         for (Property property : context.getProperties(OUT)) {
             if (property.hasLabel(HTTP_HEADER)) {
                 String name = property.getName();
-                // if (matches(name)) required?
-                Object value = property.getValue();
-                if (value != null) {
-                    if (value instanceof List) {
-                        httpHeaders.put(name, (List)value);
-                    } else if (value instanceof String) {
-                        List<String> list = new ArrayList<String>();
-                        list.add(String.valueOf(value));
-                        httpHeaders.put(name, list);
+                if (matches(name)) {
+                    Object value = property.getValue();
+                    if (value != null) {
+                        if (value instanceof List) {
+                            httpHeaders.put(name, (List)value);
+                        } else if (value instanceof String) {
+                            List<String> list = new ArrayList<String>();
+                            list.add(String.valueOf(value));
+                            httpHeaders.put(name, list);
+                        }
                     }
                 }
             }
