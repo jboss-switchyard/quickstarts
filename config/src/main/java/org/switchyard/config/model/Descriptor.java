@@ -340,6 +340,16 @@ public final class Descriptor {
      * @return the appropriate Marshaller to use
      */
     public synchronized Marshaller getMarshaller(String namespace) {
+        return getMarshaller(namespace, null);
+    }
+    
+    /**
+     * Lazily gets (and possibly creating and caching) a Marshaller based on the specified namespace and ClassLoader.
+     * @param namespace the namespace
+     * @param loader ClassLoader
+     * @return the appropriate Marshaller to use
+     */
+    public synchronized Marshaller getMarshaller(String namespace, ClassLoader loader) {
         if (namespace == null) {
             return null;
         }
@@ -347,7 +357,7 @@ public final class Descriptor {
         if (marshaller == null) {
             String typeName = getProperty(MARSHALLER, namespace);
             if (typeName != null) {
-                Class<?> type = Classes.forName(typeName, Descriptor.class);
+                Class<?> type = loader != null ? Classes.forName(typeName, loader) : Classes.forName(typeName, Descriptor.class);
                 marshaller = (Marshaller)Construction.construct(type, new Class<?>[]{Descriptor.class}, new Object[]{this});
                 if (marshaller != null) {
                     _namespace_marshaller_map.put(namespace, marshaller);

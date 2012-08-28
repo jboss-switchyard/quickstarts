@@ -57,6 +57,13 @@ MA  02110-1301, USA.
         <attribute name="class" type="string" use="optional"/>
     </complexType>
 
+    <element name="operationSelector.switchyard" type="swyd:SwitchYardOperationSelectorType" substitutionGroup="sca:operationSelector" abstract="true"/>
+    <complexType name="SwitchYardOperationSelectorType" abstract="true">
+        <complexContent>
+            <extension base="sca:OperationSelectorType"/>
+        </complexContent>
+    </complexType>
+    
     <element name="transforms" type="swyd:TransformsType"/>
     <complexType name="TransformsType">
         <sequence>
