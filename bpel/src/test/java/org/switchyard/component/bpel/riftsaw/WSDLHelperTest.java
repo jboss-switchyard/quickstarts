@@ -48,6 +48,28 @@ public class WSDLHelperTest {
 		}
 	}
 
+    @Test
+    public void testUnwrapMessagePartWhitespace() {
+        String content="content";
+        String xml="<message><partName>\r\n   <"+content+"/>\r\n</partName></message>";
+        
+        try {
+            org.w3c.dom.Element elem=DOMUtils.stringToDOM(xml);
+            
+            org.w3c.dom.Element unwrapped=WSDLHelper.unwrapMessagePart(elem);
+            
+            if (unwrapped == null) {
+                fail("Result is null");
+            }
+         
+            if (unwrapped.getNodeName().equals(content) == false) {
+                fail("Unexpected unwrapped content: "+unwrapped.getNodeName());
+            }
+        } catch(Exception e) {
+            fail("Failed: "+e);
+        }
+    }
+
 	@Test
 	public void testWrapRequestMessagePart() {
 		try {

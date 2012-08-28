@@ -135,7 +135,27 @@ public final class WSDLHelper {
      * @return The unwrapped content
      */
     public static org.w3c.dom.Element unwrapMessagePart(org.w3c.dom.Element content) {
-        return ((org.w3c.dom.Element)content.getFirstChild().getFirstChild());
+        
+        org.w3c.dom.NodeList nl=content.getChildNodes();
+        
+        for (int i=0; i < nl.getLength(); i++) {
+            
+            if (nl.item(i) instanceof org.w3c.dom.Element) {
+                
+                org.w3c.dom.NodeList nl2=((org.w3c.dom.Element)nl.item(i)).getChildNodes();
+                
+                for (int j=0; j < nl2.getLength(); j++) {
+                    
+                    if (nl2.item(j) instanceof org.w3c.dom.Element) {
+                        return ((org.w3c.dom.Element)nl2.item(j));
+                    }
+                }
+                
+                return (null);
+            }
+        }
+        
+        return (null);
     }
 
     /**

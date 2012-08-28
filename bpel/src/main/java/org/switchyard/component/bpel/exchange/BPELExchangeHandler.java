@@ -37,8 +37,9 @@ public interface BPELExchangeHandler extends ServiceHandler {
      * @param model the configuration
      * @param intf the WSDL interface details
      * @param engine the BPEL engine
+     * @param config The configuration
      */
     public void init(QName qname, BPELComponentImplementationModel model,
-                    String intf, BPELEngine engine);
+                    String intf, BPELEngine engine, java.util.Properties config);
 
 }

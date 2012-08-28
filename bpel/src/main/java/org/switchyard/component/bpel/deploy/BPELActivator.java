@@ -25,13 +25,10 @@ import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
 import org.riftsaw.engine.BPELEngine;
-import org.riftsaw.engine.BPELEngineFactory;
-import org.riftsaw.engine.internal.BPELEngineImpl;
 import org.switchyard.component.bpel.config.model.BPELComponentImplementationModel;
 import org.switchyard.component.bpel.exchange.BPELExchangeHandler;
 import org.switchyard.component.bpel.exchange.BPELExchangeHandlerFactory;
 import org.switchyard.component.bpel.riftsaw.RiftsawServiceLocator;
-import org.switchyard.config.Configuration;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
@@ -49,22 +46,33 @@ public class BPELActivator extends BaseActivator {
     
     private static Map<QName, BPELExchangeHandler> _handlers = new HashMap<QName , BPELExchangeHandler>();
 
-    private static BPELEngine _engine=null;
-    private static Configuration _configuration=null;
-    private static RiftsawServiceLocator locator = new RiftsawServiceLocator();
+    private BPELEngine _engine=null;
+    private RiftsawServiceLocator _locator=null;
+    private java.util.Properties _config=null;
     
     
     /**
      * Constructs a new Activator of type "bpel".
+     * 
+     * @param engine The BPEL engine
+     * @param locator The service locator
+     * @param config The properties
      */
-    public BPELActivator() {
+    public BPELActivator(BPELEngine engine, RiftsawServiceLocator locator,
+                        java.util.Properties config) {
         super("bpel");
+        
+        _engine = engine;
+        _locator = locator;
+        _config = config;
     }
-    
     
     @Override
     public ServiceHandler activateService(QName serviceName, ComponentModel config) {
-        init();
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Activate service: "+serviceName+" config="+config);
+        }
         
         BPELExchangeHandler handler = BPELExchangeHandlerFactory.instance().newBPELExchangeHandler(getServiceDomain());
         BPELComponentImplementationModel bciModel = (BPELComponentImplementationModel)config.getImplementation();
@@ -83,11 +91,13 @@ public class BPELActivator extends BaseActivator {
         
         // take care of references
         for (ComponentReferenceModel crm : config.getReferences()) {
-            locator.addServiceDomain(crm.getQName(), getServiceDomain());
-            ((RiftsawServiceLocator)_engine.getServiceLocator()).initialiseReference(crm);
+            _locator.addServiceDomain(crm.getQName(), getServiceDomain());
+            _locator.initialiseReference(crm);
         }
         
-        handler.init(serviceName, bciModel, service.getInterface().getInterface(), _engine);
+        handler.init(serviceName, bciModel,
+                service.getInterface().getInterface(), _engine, _config);
+        
         _handlers.put(serviceName, handler);
             
         return handler;
@@ -95,72 +105,11 @@ public class BPELActivator extends BaseActivator {
     
     @Override
     public void deactivateService(QName name, ServiceHandler handler) {
-        _handlers.remove(name);
-        // Check if engine should be removed
-        synchronized (BPELActivator.class) {
-            if (_handlers.size() == 0 && _engine != null) {
-                try {
-                    _engine.close();
-                    _engine = null;
-                } catch (Exception e) {
-                    LOG.error("Failed to close BPEL engine", e);
-                }
-            }
-        }
-    }
-
-
-    /**
-     * Associate the configuration with the activator.
-     * 
-     * @param config The configuration
-     */
-    protected void setConfiguration(Configuration config) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Setting configuration to: "+config);
+            LOG.debug("De-activate service: "+name+" handler="+handler);
         }
-        _configuration = config;
+        
+        _handlers.remove(name);
     }
 
-    protected void init() {
-        // _engine is a static member, so this synchronization needs to be on the class
-        synchronized (BPELActivator.class) {
-            if (_engine == null) {
-                _engine = BPELEngineFactory.getEngine();
-                
-                try {
-                    java.util.Properties props=new java.util.Properties();
-
-                    // Load default properties
-                    try {
-                        java.io.InputStream is=BPELEngineImpl.class.getClassLoader().getResourceAsStream("bpel.properties");
-                
-                        props.load(is);
-                    } catch (Exception e) {
-                        throw new SwitchYardException("Failed to load default properties: "+ e, e);
-                    }
-
-                    if (_configuration != null) {
-                        // Overwrite default properties with values from configuration
-                        for (Configuration child : _configuration.getChildren()) {
-                            if (LOG.isDebugEnabled()) {
-                                if (props.containsKey(child.getName())) {
-                                    LOG.debug("Overriding BPEL property: "+child.getName()
-                                            +" = "+child.getValue());
-                                } else {
-                                    LOG.debug("Setting BPEL property: "+child.getName()
-                                            +" = "+child.getValue());
-                                }
-                            }
-                            props.put(child.getName(), child.getValue());
-                        }
-                    }
-                    
-                    _engine.init(locator, props);
-                } catch (Exception e) {
-                    throw new SwitchYardException("Failed to initialize the engine: "+ e, e);
-                }
-            }
-        }
-    }
 }

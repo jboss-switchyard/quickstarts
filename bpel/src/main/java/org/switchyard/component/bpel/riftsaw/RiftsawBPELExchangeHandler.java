@@ -21,6 +21,7 @@ package org.switchyard.component.bpel.riftsaw;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TimerTask;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
@@ -50,6 +51,8 @@ import org.w3c.dom.Node;
  */
 public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExchangeHandler {
     
+    private static final int UNDEPLOY_DELAY = 10000;
+
     /** Context property label for SOAP message headers. */
     public static final String SOAP_MESSAGE_HEADER = "soap_message_header";
 
@@ -65,10 +68,14 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
     private QName _serviceName = null;
     private javax.wsdl.Definition _wsdl = null;
     private javax.wsdl.PortType _portType = null;
+    private long _undeployDelay=UNDEPLOY_DELAY;
+    
     private static java.util.Map<QName, QName> _serviceRefToCompositeMap=
                 new java.util.HashMap<QName, QName>();
     private static java.util.Map<QName, DeploymentRef> _deployed=
                         new java.util.HashMap<QName, DeploymentRef>();
+    private static java.util.Timer _timer=new java.util.Timer();
+    private static java.util.List<QName> _undeployed=new java.util.ArrayList<QName>();
 
     /**
      * Constructs a new RiftSaw BPEL ExchangeHandler within the specified ServiceDomain.
@@ -81,7 +88,7 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
      * {@inheritDoc}
      */
     public void init(QName qname, BPELComponentImplementationModel model,
-                 String intf, BPELEngine engine) {
+                 String intf, BPELEngine engine, java.util.Properties config) {
 
         _engine = engine;
 
@@ -94,18 +101,37 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
 
         _wsdlServiceName = service.getQName();
         _serviceName = qname;
+        
+        // Setup configuration
+        if (config.containsKey("bpel.undeploy.delay")) {
+            try {
+                _undeployDelay = Long.parseLong(config.getProperty("bpel.undeploy.delay"));
+                
+            } catch (Exception e) {
+                LOG.error("Unable to transform property value '"
+                        +config.getProperty("bpel.undeploy.delay")
+                        +"' into undeploy delay value", e);
+            }
+        }
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Undeployment delay="+_undeployDelay+"ms");
+        }
 
         // Check if composite is already been initialized for BPEL processes
         QName compositeName = model.getComponent().getComposite().getQName();
 
         if (!_serviceRefToCompositeMap.containsValue(compositeName)) {
-
             try {
                 java.io.File deployFile=getDeployment();
-
+    
                 DeploymentRef ref=engine.deploy(getDeploymentName(), deployFile);
-
+    
                 _deployed.put(qname, ref);
+                
+                // Remove, in case marked for undeployment as part
+                // of replacing an existing deployed jar
+                _undeployed.remove(qname);
             } catch (Exception e) {
                 throw new SwitchYardException(e);
             }
@@ -224,7 +250,6 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public void handleMessage(final Exchange exchange) throws HandlerException {
         Node request = exchange.getMessage().getContent(Node.class);
 
@@ -301,13 +326,50 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
             LOG.debug("STOP: " + _serviceName);
         }
         
-        DeploymentRef ref=_deployed.get(_serviceName);
+        _undeployed.add(_serviceName);
         
-        if (ref != null) {            
-            _engine.undeploy(ref);
+        if (_undeployDelay > 0) {
+            _timer.schedule(new TimerTask() {
+                public void run() {
+                    undeploy();
+                }
+                
+            }, _undeployDelay);
+        } else {
+            undeploy();
         }
         
         _serviceRefToCompositeMap.remove(_serviceName);
+    }
+    
+    private void undeploy() {
+        synchronized (_undeployed) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Checking whether to undeploy '"
+                            +_serviceName+"'");
+            }
+            
+            if (_undeployed.contains(_serviceName)
+                        && _deployed.containsKey(_serviceName)) {
+                DeploymentRef ref=_deployed.get(_serviceName);
+                
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Undeploy '"
+                            +_serviceName+"' with ref: "+ref);
+                }
+
+                if (ref != null) {  
+                    try {
+                        _engine.undeploy(ref);
+                    } catch (Exception e) {
+                        LOG.error("Failed to undeploy '"+_serviceName+"'", e);
+                    }
+                }
+                
+                _deployed.remove(_serviceName);
+                _undeployed.remove(_serviceName);
+            }
+        }
     }
 
     /**
