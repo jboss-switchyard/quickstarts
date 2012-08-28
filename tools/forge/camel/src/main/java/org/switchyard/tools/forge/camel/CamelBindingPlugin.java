@@ -19,6 +19,7 @@
 
 package org.switchyard.tools.forge.camel;
 
+import java.lang.reflect.Method;
 import java.net.URI;
 
 import javax.inject.Inject;
@@ -35,7 +36,8 @@ import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
 import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
-import org.switchyard.component.camel.config.model.v1.V1OperationSelector;
+import org.switchyard.component.common.selector.config.model.v1.V1StaticOperationSelectorModel;
+import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
@@ -89,9 +91,16 @@ public class CamelBindingPlugin implements Plugin {
         
         // Add an operation selector if an operation name has been specified
         if (operationName != null) {
-            V1OperationSelector operation = new V1OperationSelector();
+            V1StaticOperationSelectorModel operation = new V1StaticOperationSelectorModel();
             operation.setOperationName(operationName);
-            binding.setOperationSelector(operation);
+            try {
+                Method setChildMethod = binding.getClass().getMethod("setChildModel", new Class[]{Model.class});
+                setChildMethod.setAccessible(true);
+                setChildMethod.invoke(binding, operation);
+                setChildMethod.setAccessible(false);
+            } catch (Exception e) {
+                out.println(out.renderColor(ShellColor.YELLOW, "Failed to set operationName: " + e.getMessage()));
+            }
         }
         
         service.addBinding(binding);

@@ -35,7 +35,7 @@
 
     <parent>
         <groupId>org.switchyard.components</groupId>
-        <artifactId>switchyard-component-common</artifactId>
+        <artifactId>switchyard-component-common-parent</artifactId>
         <version>0.6.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>

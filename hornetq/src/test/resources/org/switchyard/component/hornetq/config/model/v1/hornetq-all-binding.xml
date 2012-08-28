@@ -15,12 +15,13 @@
 <switchyard 
     xmlns="urn:switchyard-config:switchyard:1.0"
     xmlns:hornetq="urn:switchyard-component-hornetq:config:1.0" 
+    xmlns:selector="urn:switchyard-component-common-selector:config:1.0" 
     xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" >
 
     <sca:composite name="hornetQTest" targetNamespace="urn:hornetq:test:1.0">
         <sca:service name="hornetQTest" promote="HornetQTestService">
             <hornetq:binding.hornetq>
-                <hornetq:operationSelector operationName="printIt"/>
+                <selector:operationSelector operationName="printIt"/>
                 <hornetq:config>
                     <hornetq:ackBatchSize>200</hornetq:ackBatchSize>
                     <hornetq:autoGroup>true</hornetq:autoGroup>

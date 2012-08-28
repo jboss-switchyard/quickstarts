@@ -32,7 +32,6 @@ import org.junit.Test;
 import org.switchyard.component.camel.config.model.file.CamelFileBindingModel;
 import org.switchyard.component.camel.config.model.v1.V1BaseCamelModelTest;
 import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
-import org.switchyard.component.camel.config.model.v1.V1OperationSelector;
 import org.switchyard.config.model.Validation;
 
 /**
@@ -86,16 +85,13 @@ public class V1CamelFileBindingModelTest extends V1BaseCamelModelTest<V1CamelFil
     }
 
     private V1CamelFileBindingModel createModel() {
-        V1OperationSelector selector = new V1OperationSelector();
-        selector.setOperationName("print");
         return (V1CamelFileBindingModel) new V1CamelFileBindingModel()
             .setDirectory(DIRECTORY)
             .setAutoCreate(AUTO_CREATE)
             .setBufferSize(BUFFER_SIZE)
             .setFileName(FILE_NAME)
             .setFlatten(FLATTEN)
-            .setCharset(CHARSET)
-            .setOperationSelector(selector);
+            .setCharset(CHARSET);
     }
 
 }

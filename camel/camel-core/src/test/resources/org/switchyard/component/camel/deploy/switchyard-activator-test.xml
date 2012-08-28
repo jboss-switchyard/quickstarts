@@ -15,6 +15,7 @@
 <switchyard 
     xmlns="urn:switchyard-config:switchyard:1.0"
     xmlns:camel="urn:switchyard-component-camel:config:1.0" 
+    xmlns:selector="urn:switchyard-component-common-selector:config:1.0" 
     xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
     xmlns:bean="urn:switchyard-component-bean:config:1.0">
 
@@ -23,7 +24,7 @@
         <sca:service name="SimpleCamelService" promote="ComponentName/SimpleCamelService">
             <camel:binding.camel configURI="direct://input"/>
             <camel:binding.camel configURI="direct://input2">
-			    <camel:operationSelector operationName="print"/>
+                <selector:operationSelector operationName="print"/>
             </camel:binding.camel>
         </sca:service>
         

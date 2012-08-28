@@ -27,13 +27,12 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.switchyard.component.common.selector.config.model.v1.V1BindingModel;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
-import org.switchyard.component.camel.config.model.OperationSelector;
 import org.switchyard.component.camel.config.model.QueryString;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Configurations;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.composite.v1.V1BindingModel;
 
 /**
  * Version 1.0 implementation of a {@link CamelBindingModel}.
@@ -48,7 +47,6 @@ public abstract class V1BaseCamelBindingModel extends V1BindingModel implements
      */
     public static final String CAMEL = "camel";
 
-    private OperationSelector _operationSelector;
     private Configuration _environment = Configurations.emptyConfig();
 
     /**
@@ -84,23 +82,6 @@ public abstract class V1BaseCamelBindingModel extends V1BindingModel implements
         setModelChildrenOrder();
     }
 
-    @Override
-    public OperationSelector getOperationSelector() {
-        if (_operationSelector == null) {
-            _operationSelector = (V1OperationSelector) getFirstChildModelStartsWith(OperationSelector.OPERATION_SELECTOR);
-        }
-        return _operationSelector;
-    }
-
-    @Override
-    public V1BaseCamelBindingModel setOperationSelector(
-            OperationSelector operationSelector) {
-        if (_operationSelector == null) {
-            setChildModel(operationSelector);
-        }
-        return this;
-    }
-
     /**
      * Returns the global configuration.
      * 
@@ -124,8 +105,6 @@ public abstract class V1BaseCamelBindingModel extends V1BindingModel implements
 
         if (parent.size() != 0) {
             List<String> excludeParameters = new ArrayList<String>(Arrays.asList(excludes));
-            // automatically remove operation selector parameter
-            excludeParameters.add(OperationSelector.OPERATION_SELECTOR);
 
             Iterator<Configuration> parentIterator = parent.iterator();
             while (parentIterator.hasNext()) {

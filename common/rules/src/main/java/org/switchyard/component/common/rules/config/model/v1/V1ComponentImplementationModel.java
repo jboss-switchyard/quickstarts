@@ -28,6 +28,7 @@ import org.switchyard.component.common.rules.config.model.AuditModel;
 import org.switchyard.component.common.rules.config.model.ComponentImplementationModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.Marshaller;
 import org.switchyard.config.model.resource.ResourceModel;
 
 /**
@@ -64,8 +65,10 @@ public abstract class V1ComponentImplementationModel extends org.switchyard.conf
      */
     public V1ComponentImplementationModel(Configuration config, Descriptor desc) {
         super(config, desc);
+        ClassLoader modelLoader = V1ComponentImplementationModel.class.getClassLoader();
         for (Configuration resource_config : config.getChildren(ResourceModel.RESOURCE)) {
-            ResourceModel resource = (ResourceModel)readModel(resource_config);
+            Marshaller marsh = desc.getMarshaller(resource_config.getQName().getNamespaceURI(), modelLoader);
+            ResourceModel resource = (ResourceModel)marsh.read(resource_config);
             if (resource != null) {
                 _resources.add(resource);
             }

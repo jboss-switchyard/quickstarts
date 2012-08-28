@@ -26,10 +26,8 @@ import static junit.framework.Assert.assertTrue;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
-import org.switchyard.component.camel.config.model.OperationSelector;
 import org.switchyard.component.camel.config.model.netty.CamelNettyUdpBindingModel;
 import org.switchyard.component.camel.config.model.v1.V1BaseCamelModelTest;
-import org.switchyard.component.camel.config.model.v1.V1OperationSelector;
 import org.switchyard.config.model.Validation;
 
 /**
@@ -79,8 +77,6 @@ public class V1CamelNettyUdpBindingModelTest extends V1BaseCamelModelTest<V1Came
     }
 
     private V1CamelNettyUdpBindingModel createModel() {
-        OperationSelector operationSelector = new V1OperationSelector();
-        operationSelector.setOperationName("print");
         return (V1CamelNettyUdpBindingModel) new V1CamelNettyUdpBindingModel()
             .setBroadcast(BROADCAST)
             .setHost(HOST)

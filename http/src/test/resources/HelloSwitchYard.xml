@@ -20,12 +20,13 @@ MA  02110-1301, USA.
 <sca:composite xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
            targetNamespace="urn:resteasy:test:1.0"
            xmlns:http="urn:switchyard-component-http:config:1.0"
+           xmlns:selector="urn:switchyard-component-common-selector:config:1.0"
            name="m1app">
 
     <sca:service name="SampleHttpProviderService" promote="SomeProviderService">
         <http:binding.http>
+            <selector:operationSelector operationName="sayHello"/>
             <http:contextPath>http</http:contextPath>
-            <http:operationSelector>sayHello</http:operationSelector>
         </http:binding.http>
     </sca:service>
 

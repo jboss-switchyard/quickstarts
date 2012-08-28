@@ -75,7 +75,11 @@
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-forge-plugin</artifactId>
         </dependency>
-    </dependencies>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-common</artifactId>
+        </dependency>
+     </dependencies>
     <build>
         <plugins>
             <plugin>

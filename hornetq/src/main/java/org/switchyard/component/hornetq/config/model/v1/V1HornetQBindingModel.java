@@ -20,13 +20,12 @@
  */
 package org.switchyard.component.hornetq.config.model.v1;
 
+import org.switchyard.component.common.selector.config.model.v1.V1BindingModel;
 import org.switchyard.component.hornetq.config.model.HornetQBindingModel;
 import org.switchyard.component.hornetq.config.model.HornetQConfigModel;
 import org.switchyard.component.hornetq.config.model.HornetQConstants;
-import org.switchyard.component.hornetq.config.model.OperationSelector;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.composite.v1.V1BindingModel;
 
 /**
  * 
@@ -36,7 +35,6 @@ import org.switchyard.config.model.composite.v1.V1BindingModel;
 public class V1HornetQBindingModel extends V1BindingModel implements HornetQBindingModel {
     
     private HornetQConfigModel _configModel;
-    private OperationSelector _operationSelector;
 
     /**
      * Constructs a HornetQBindingModel using the default {@link HornetQConstants#DEFAULT_NAMESPACE}.
@@ -72,18 +70,4 @@ public class V1HornetQBindingModel extends V1BindingModel implements HornetQBind
         return this;
     }
 
-    @Override
-    public OperationSelector getOperationSelector() {
-        if (_operationSelector == null) {
-            _operationSelector = (OperationSelector) getFirstChildModel(OperationSelector.OPERATION_SELECTOR);
-        }
-        return _operationSelector;
-    }
-
-    @Override
-    public HornetQBindingModel setOperationSelector(final OperationSelector operationSelector) {
-        setChildModel(operationSelector);
-        return this;
-    }
-    
 }

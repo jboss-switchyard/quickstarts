@@ -20,7 +20,6 @@
     <sca:composite name="camelTest" targetNamespace="urn:camel-core:test:1.0">
         <sca:service name="camelTest" promote="SimpleCamelService">
             <camel:binding.ftp>
-                <camel:operationSelector operationName="print"/>
                 <camel:directory>test</camel:directory>
                 <camel:host>localhost</camel:host>
                 <camel:port>203</camel:port>

@@ -1,4 +1,4 @@
 <http:binding.http xmlns:http="urn:switchyard-component-http:config:1.0">
+    <operationSelector xmlns="urn:switchyard-component-common-selector:config:1.0" operationName="sayHello"/>
     <http:contextPath>/</http:contextPath>
-    <http:operationSelector>sayHello</http:operationSelector>
 </http:binding.http>

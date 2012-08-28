@@ -24,9 +24,11 @@ MA  02110-1301, USA.
         xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
         xmlns:spring="http://www.springframework.org/schema/beans"
         xmlns:camelSpring="http://camel.apache.org/schema/spring"
+        xmlns:common.selector="urn:switchyard-component-common-selector:config:1.0"
         elementFormDefault="qualified">
 
     <import namespace="urn:switchyard-config:switchyard:1.0"/>
+    <import namespace="urn:switchyard-component-common-selector:config:1.0"/>
     <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
     <import namespace="http://www.springframework.org/schema/beans"/>
     <import namespace="http://camel.apache.org/schema/spring"/>
@@ -37,7 +39,6 @@ MA  02110-1301, USA.
              <sequence>
                  <element name="contextMapper" type="swyd:ContextMapperType"  minOccurs="0" maxOccurs="1"/>
                  <element name="messageComposer" type="swyd:MessageComposerType" minOccurs="0" maxOccurs="1"/>
-                 <element name="operationSelector" type="camel:CamelOperationSelectorType" minOccurs="0" maxOccurs="1"/>
              </sequence>
             </extension>
         </complexContent>
@@ -126,10 +127,8 @@ MA  02110-1301, USA.
     <element name="binding.direct" type="camel:CamelDirectBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelDirectBindingType" >
         <complexContent>
-            <extension base="swyd:SwitchYardBindingType">
+            <extension base="camel:BaseCamelBinding">
                 <sequence>
-                    <element name="contextMapper" type="swyd:ContextMapperType"  minOccurs="0" maxOccurs="1"/>
-                    <element name="messageComposer" type="swyd:MessageComposerType" minOccurs="0" maxOccurs="1"/>
                     <element name="name" type="string"/>
                 </sequence>
             </extension>
@@ -139,10 +138,8 @@ MA  02110-1301, USA.
     <element name="binding.timer" type="camel:CamelTimerBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelTimerBindingType" >
         <complexContent>
-            <extension base="swyd:SwitchYardBindingType">
+            <extension base="camel:BaseCamelBinding">
                 <sequence>
-                    <element name="contextMapper" type="swyd:ContextMapperType"  minOccurs="0" maxOccurs="1"/>
-                    <element name="messageComposer" type="swyd:MessageComposerType" minOccurs="0" maxOccurs="1"/>
                     <element name="name" type="string"/>
                     <element name="time" type="dateTime" minOccurs="0" maxOccurs="1"/>
                     <element name="pattern" type="string" minOccurs="0" maxOccurs="1"/>
@@ -158,10 +155,8 @@ MA  02110-1301, USA.
     <element name="binding.seda" type="camel:CamelSedaBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelSedaBindingType" >
         <complexContent>
-            <extension base="swyd:SwitchYardBindingType">
+            <extension base="camel:BaseCamelBinding">
                 <sequence>
-                    <element name="contextMapper" type="swyd:ContextMapperType"  minOccurs="0" maxOccurs="1"/>
-                    <element name="messageComposer" type="swyd:MessageComposerType" minOccurs="0" maxOccurs="1"/>
                     <element name="name" type="string"/>
                     <element name="size" type="integer"/>
                     <element name="concurrentConsumers" type="integer"/>
@@ -177,10 +172,8 @@ MA  02110-1301, USA.
     <element name="binding.mock" type="camel:CamelMockBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelMockBindingType" >
         <complexContent>
-            <extension base="swyd:SwitchYardBindingType">
+            <extension base="camel:BaseCamelBinding">
                 <sequence>
-                    <element name="contextMapper" type="swyd:ContextMapperType"  minOccurs="0" maxOccurs="1"/>
-                    <element name="messageComposer" type="swyd:MessageComposerType" minOccurs="0" maxOccurs="1"/>
                     <element name="name" type="string"/>
                     <element name="reportGroup" type="integer" minOccurs="0" maxOccurs="1"/>
                 </sequence>
@@ -292,15 +285,6 @@ MA  02110-1301, USA.
             </extension>
         </complexContent>
     </complexType>
-
-    <complexType name="CamelOperationSelectorType">
-      <complexContent>
-         <extension base="sca:OperationSelectorType">
-             <attribute name="namespace" type="string" use="optional"/>
-             <attribute name="operationName" type="string"/>
-         </extension>
-      </complexContent>
-   </complexType>
 
    <complexType name="JavaDSLType">
       <attribute name="class" type="string"/>

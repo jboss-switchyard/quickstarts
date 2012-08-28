@@ -23,7 +23,7 @@ package org.switchyard.component.camel.config.model;
 import java.net.URI;
 
 import org.switchyard.config.Configuration;
-import org.switchyard.config.model.composite.BindingModel;
+import org.switchyard.component.common.selector.config.model.BindingModel;
 
 /**
  * A binding definition that specifies how communication between Apache Camel
@@ -67,21 +67,6 @@ public interface CamelBindingModel extends BindingModel {
      */
     URI getComponentURI();
     
-    /**
-     * Gets the {@link OperationSelector} on the underlying binding model.
-     * 
-     * @return {@link OperationSelector} The operationSelector for this binding.
-     */
-    OperationSelector getOperationSelector();
-    
-    /**
-     * Sets the {@link OperationSelector} on the underlying binding model.
-     * 
-     * @param operationSelector The operationSelector for this binding.
-     * @return {@link CamelBindingModel} to support method chaining.
-     */
-    CamelBindingModel setOperationSelector(OperationSelector operationSelector);
-
     /**
      * Sets the global configuration.
      * 

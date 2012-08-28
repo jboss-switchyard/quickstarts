@@ -20,6 +20,8 @@
  */
 package org.switchyard.component.hornetq.deploy;
 
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.hornetq.api.core.client.ClientConsumer;
 import org.hornetq.api.core.client.ClientMessage;
@@ -32,13 +34,15 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.hornetq.composer.HornetQBindingData;
+import org.switchyard.component.common.selector.OperationSelector;
+import org.switchyard.component.common.selector.OperationSelectorFactory;
 import org.switchyard.component.hornetq.composer.HornetQComposition;
 import org.switchyard.component.hornetq.config.model.HornetQBindingModel;
 import org.switchyard.component.hornetq.config.model.HornetQConfigModel;
-import org.switchyard.component.hornetq.config.model.OperationSelector;
 import org.switchyard.component.hornetq.internal.HornetQUtil;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.exception.SwitchYardException;
+import org.switchyard.metadata.ServiceOperation;
 
 /**
  * A HornetQ inbound handler is a HornetQ MessageHandler that handles messages from a HornetQ
@@ -54,6 +58,7 @@ public class InboundHandler extends BaseServiceHandler implements MessageHandler
     private final HornetQBindingModel _bindingModel;
     private final HornetQConfigModel _configModel;
     private final MessageComposer<HornetQBindingData> _messageComposer;
+    private final OperationSelector<HornetQBindingData> _operationSelector;
     private ClassLoader _applicationClassLoader;
     private ServiceReference _serviceRef;
     private ServiceDomain _domain;
@@ -74,6 +79,9 @@ public class InboundHandler extends BaseServiceHandler implements MessageHandler
         _bindingModel = hbm;
         _configModel = hbm.getHornetQConfig();
         _messageComposer = HornetQComposition.getMessageComposer(hbm);
+        _operationSelector = OperationSelectorFactory
+                                .getOperationSelectorFactory(HornetQBindingData.class)
+                                .newOperationSelector(hbm.getOperationSelector());
         _domain = domain;
         _serverLocator = serverLocator;
     }
@@ -109,12 +117,13 @@ public class InboundHandler extends BaseServiceHandler implements MessageHandler
     
     @Override
     public void onMessage(final ClientMessage message) {
-        final Exchange exchange = _serviceRef.createExchange(getOperationName(), this);
         final ClassLoader origCl = Thread.currentThread().getContextClassLoader();
         try {
+            HornetQBindingData bindingData = new HornetQBindingData(message);
+            Exchange exchange = _serviceRef.createExchange(getOperationName(bindingData), this);
             Thread.currentThread().setContextClassLoader(_applicationClassLoader);
             _logger.info("onMessage :" + message);
-            exchange.send(_messageComposer.compose(new HornetQBindingData(message), exchange, true));
+            exchange.send(_messageComposer.compose(bindingData, exchange, true));
         } catch (final Exception e) {
             throw new SwitchYardException(e);
         } finally {
@@ -122,11 +131,26 @@ public class InboundHandler extends BaseServiceHandler implements MessageHandler
         }
     }
     
-    private String getOperationName() {
-        final OperationSelector operationSelector = _bindingModel.getOperationSelector();
-        if (operationSelector != null) {
-            return operationSelector.getOperationName();
+    private String getOperationName(HornetQBindingData message) throws Exception {
+        String operationName = null;
+        if (_operationSelector != null) {
+            operationName = _operationSelector.selectOperation(message).getLocalPart();
         }
-        return null;
+        
+        if (operationName == null) {
+            final Set<ServiceOperation> operations = _serviceRef.getInterface().getOperations();
+            if (operations.size() != 1) {
+                final StringBuilder msg = new StringBuilder();
+                msg.append("No operationSelector was configured for the HornetQ Component and the Service Interface ");
+                msg.append("contains more than one operation: ").append(operations);
+                msg.append("Please add an operationSelector element.");
+                throw new SwitchYardException(msg.toString());
+            }
+            final ServiceOperation serviceOperation = operations.iterator().next();
+            operationName = serviceOperation.getName();
+        }
+        
+        return operationName;
+        
     }
 }

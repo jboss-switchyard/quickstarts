@@ -25,7 +25,6 @@ import javax.xml.namespace.QName;
 import org.switchyard.component.jca.JCAConstants;
 import org.switchyard.component.jca.config.model.EndpointModel;
 import org.switchyard.component.jca.config.model.InboundInteractionModel;
-import org.switchyard.component.jca.config.model.InboundOperationModel;
 import org.switchyard.component.jca.config.model.ListenerModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
@@ -44,7 +43,7 @@ public class V1InboundInteractionModel extends BaseModel implements InboundInter
      */
     public V1InboundInteractionModel() {
         super(new QName(JCAConstants.DEFAULT_NAMESPACE, JCAConstants.INBOUND_INTERACTION));
-        setModelChildrenOrder(JCAConstants.LISTENER, JCAConstants.INBOUND_OPERATION);
+        setModelChildrenOrder(JCAConstants.LISTENER, JCAConstants.ENDPOINT, JCAConstants.TRANSACTED);
     }
     
     /**
@@ -65,17 +64,6 @@ public class V1InboundInteractionModel extends BaseModel implements InboundInter
     @Override
     public InboundInteractionModel setListener(ListenerModel listener) {
         setChildModel(listener);
-        return this;
-    }
-
-    @Override
-    public InboundOperationModel getInboundOperation() {
-        return (InboundOperationModel) getFirstChildModel(JCAConstants.INBOUND_OPERATION);
-    }
-
-    @Override
-    public InboundInteractionModel setInboundOperation(InboundOperationModel operation) {
-        setChildModel(operation);
         return this;
     }
 

@@ -29,6 +29,7 @@ import org.switchyard.Exchange;
 import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.jca.composer.MappedRecordBindingData;
+import org.switchyard.component.common.selector.OperationSelector;
 import org.switchyard.exception.SwitchYardException;
 /**
  * Concrete message endpoint class for JCA message inflow using JCA CCI MessageListener interface.
@@ -47,6 +48,7 @@ public class CCIEndpoint extends AbstractInflowEndpoint implements MessageListen
     private String _recordName = DEFAULT_RECORD_NAME;
     private String _description = DEFAULT_DESCRIPTION;
     private MessageComposer<MappedRecordBindingData> _composer;
+    private OperationSelector<MappedRecordBindingData> _selector;
     private RecordFactory _recordFactory;
     
     @Override
@@ -54,6 +56,8 @@ public class CCIEndpoint extends AbstractInflowEndpoint implements MessageListen
         super.initialize();
         
         _composer = getMessageComposer(MappedRecordBindingData.class);
+        _selector = getOperationSelector(MappedRecordBindingData.class);
+
         try {
             ConnectionFactory factory = (ConnectionFactory) new InitialContext().lookup(_connectionFactoryJNDIName);
             _recordFactory = factory.getRecordFactory();
@@ -64,11 +68,13 @@ public class CCIEndpoint extends AbstractInflowEndpoint implements MessageListen
     
     @Override
     public Record onMessage(Record record) {
-
         SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
-        Exchange exchange = createExchange(inOutHandler);
+        MappedRecord sourceRecord = MappedRecord.class.cast(record);
         try {
-            exchange.send(_composer.compose(new MappedRecordBindingData((MappedRecord)record), exchange, true));
+            MappedRecordBindingData bindingData = new MappedRecordBindingData(sourceRecord);
+            String operation = _selector != null ? _selector.selectOperation(bindingData).getLocalPart() : null;
+            Exchange exchange = createExchange(operation, inOutHandler);
+            exchange.send(_composer.compose(bindingData, exchange, true));
 
             exchange = inOutHandler.waitForOut(_waitTimeout);
             MappedRecord returnRecord = _recordFactory.createMappedRecord(_recordName);

@@ -50,7 +50,7 @@ public class V1CamelSftpBindingModelTest extends V1BaseCamelModelTest<V1CamelSft
         final V1CamelSftpBindingModel bindingModel = getFirstCamelBinding(CAMEL_XML);
         final Validation validateModel = bindingModel.validateModel();
 
-        assertTrue(validateModel.isValid());
+        assertTrue(validateModel.getMessage(), validateModel.isValid());
     }
 
     @Test

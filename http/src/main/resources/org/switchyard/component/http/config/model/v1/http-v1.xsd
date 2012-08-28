@@ -55,13 +55,6 @@ MA  02110-1301, USA.
                                 </documentation>
                                 </annotation>
                             </element>
-                            <element name="operationSelector" type="string" minOccurs="1" maxOccurs="1">
-                                <annotation>
-                                <documentation>
-                                    The service operation that will be invoked for the HTTP endpoint in case of Reference bindings.
-                                </documentation>
-                                </annotation>
-                            </element>
                         </sequence>
                         <sequence>
                             <element name="address" type="string" minOccurs="0" maxOccurs="1">

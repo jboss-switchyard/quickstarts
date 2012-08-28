@@ -87,8 +87,6 @@
    <complexType name="JCAInboundInteraction">
       <sequence>
          <element name="listener" type="string" minOccurs="0" />
-         <element name="inboundOperation" type="jca:InboundOperation"
-                  minOccurs="0" maxOccurs="unbounded" />
          <element name="endpoint" type="jca:Endpoint" minOccurs="0" />
          <element name="transacted" type="boolean" minOccurs="0" />
          <any namespace="##other" processContents="lax" minOccurs="0"

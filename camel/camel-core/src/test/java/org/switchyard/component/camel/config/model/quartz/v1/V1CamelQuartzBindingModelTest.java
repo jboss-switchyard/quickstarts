@@ -31,10 +31,8 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
-import org.switchyard.component.camel.config.model.OperationSelector;
 import org.switchyard.component.camel.config.model.quartz.CamelQuartzBindingModel;
 import org.switchyard.component.camel.config.model.v1.V1BaseCamelModelTest;
-import org.switchyard.component.camel.config.model.v1.V1OperationSelector;
 import org.switchyard.config.model.Validation;
 
 /**
@@ -99,8 +97,6 @@ public class V1CamelQuartzBindingModelTest extends V1BaseCamelModelTest<V1CamelQ
     }
 
     private V1CamelQuartzBindingModel createModel() {
-        OperationSelector operationSelector = new V1OperationSelector();
-        operationSelector.setOperationName("print");
         return (V1CamelQuartzBindingModel) new V1CamelQuartzBindingModel()
             .setName(NAME)
             .setCron(CRON)

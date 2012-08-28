@@ -27,10 +27,8 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
-import org.switchyard.component.camel.config.model.OperationSelector;
 import org.switchyard.component.camel.config.model.sql.CamelSqlBindingModel;
 import org.switchyard.component.camel.config.model.v1.V1BaseCamelModelTest;
-import org.switchyard.component.camel.config.model.v1.V1OperationSelector;
 import org.switchyard.config.model.Validation;
 
 /**
@@ -84,8 +82,6 @@ public class V1CamelSqlBindingModelTest extends V1BaseCamelModelTest<V1CamelSqlB
     }
 
     private V1CamelSqlBindingModel createModel() {
-        OperationSelector operationSelector = new V1OperationSelector();
-        operationSelector.setOperationName("print");
         return (V1CamelSqlBindingModel) new V1CamelSqlBindingModel()
             .setQuery(QUERY)
             .setDataSourceRef(DATA_SOURCE_REF)

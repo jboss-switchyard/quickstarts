@@ -18,6 +18,8 @@
  */
 package org.switchyard.component.jca.endpoint;
 
+import java.util.Set;
+
 import javax.xml.namespace.QName;
 
 import org.switchyard.Exchange;
@@ -26,8 +28,12 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.jca.composer.JCABindingData;
+import org.switchyard.component.common.selector.OperationSelector;
+import org.switchyard.component.common.selector.OperationSelectorFactory;
 import org.switchyard.component.jca.composer.JCAComposition;
 import org.switchyard.component.jca.config.model.JCABindingModel;
+import org.switchyard.exception.SwitchYardException;
+import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.TransactionPolicy;
 
@@ -43,7 +49,6 @@ public abstract class AbstractInflowEndpoint {
     private ServiceDomain _domain;
     private QName _serviceQName;
     private ServiceReference _serviceRef;
-    private String _operationName;
     private boolean _transacted = false;
     private ClassLoader _appClassLoader;
     
@@ -135,24 +140,6 @@ public abstract class AbstractInflowEndpoint {
     }
 
     /**
-     * set operation name.
-     * @param name operation name
-     * @return this instance
-     */
-    public AbstractInflowEndpoint setOperationName(String name) {
-        _operationName = name;
-        return this;
-    }
-    
-    /**
-     * get operation name.
-     * @return String representation of operation name
-     */
-    public String getOperationName() {
-        return _operationName;
-    }
-
-    /**
      * return whether the delivery is transacted or not.
      * 
      * @return true if transacted
@@ -192,12 +179,25 @@ public abstract class AbstractInflowEndpoint {
         return _appClassLoader;
     }
     
-    protected Exchange createExchange(ExchangeHandler handler) {
+    protected Exchange createExchange(String operation, ExchangeHandler handler) {
         if (_serviceRef == null) {
             throw new IllegalStateException("initialize() must be called before exchange.");
         }
         
-        Exchange exchange = _serviceRef.createExchange(_operationName, handler);
+        if (operation == null) {
+            final Set<ServiceOperation> operations = _serviceRef.getInterface().getOperations();
+            if (operations.size() != 1) {
+                final StringBuilder msg = new StringBuilder();
+                msg.append("No operationSelector was configured for the JCA Component and the Service Interface ");
+                msg.append("contains more than one operation: ").append(operations);
+                msg.append("Please add an operationSelector element.");
+                throw new SwitchYardException(msg.toString());
+            }
+            final ServiceOperation serviceOperation = operations.iterator().next();
+            operation = serviceOperation.getName();
+        }
+        
+        Exchange exchange = _serviceRef.createExchange(operation, handler);
         if (_transacted) {
             PolicyUtil.provide(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
         } else {
@@ -207,12 +207,16 @@ public abstract class AbstractInflowEndpoint {
         
     }
     
-    protected Exchange createExchange() {
-        return createExchange(null);
+    protected Exchange createExchange(String operation) {
+        return createExchange(operation, null);
     }
    
     protected <D extends JCABindingData> MessageComposer<D> getMessageComposer(Class<D> clazz) {
         return JCAComposition.getMessageComposer(clazz);
     }
 
+    protected <D extends JCABindingData> OperationSelector<D> getOperationSelector(Class<D> clazz) {
+        return OperationSelectorFactory.getOperationSelectorFactory(clazz)
+                                        .newOperationSelector(_jcaBindingModel.getOperationSelector());
+    }
 }

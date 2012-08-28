@@ -14,7 +14,6 @@
     MA 02110-1301, USA. -->
 
 <camel:binding.atom xmlns:camel="urn:switchyard-component-camel:config:1.0">
-    <camel:operationSelector operationName="print"/>
     <camel:feedURI>file:///dev/null</camel:feedURI>
     <camel:splitEntries>true</camel:splitEntries>
     <camel:filter>true</camel:filter>

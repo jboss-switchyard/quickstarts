@@ -20,6 +20,7 @@
  */
 package org.switchyard.component.jca.config.model.v1;
 
+import org.switchyard.component.common.selector.config.model.v1.V1BindingModel;
 import org.switchyard.component.jca.JCAConstants;
 import org.switchyard.component.jca.config.model.InboundConnectionModel;
 import org.switchyard.component.jca.config.model.InboundInteractionModel;
@@ -28,7 +29,6 @@ import org.switchyard.component.jca.config.model.OutboundConnectionModel;
 import org.switchyard.component.jca.config.model.OutboundInteractionModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.composite.v1.V1BindingModel;
 
 /**
  * 
@@ -46,8 +46,7 @@ public class V1JCABindingModel extends V1BindingModel implements JCABindingModel
                                 JCAConstants.INBOUND_CONNECTION,
                                 JCAConstants.OUTBOUND_INTERACTION,
                                 JCAConstants.INBOUND_INTERACTION,
-                                JCAConstants.WIRE_FORMAT,
-                                JCAConstants.OPERATION_SELECTOR);
+                                JCAConstants.WIRE_FORMAT);
     }
 
     /**

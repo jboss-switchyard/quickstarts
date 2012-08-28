@@ -26,10 +26,8 @@ import static junit.framework.Assert.assertTrue;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
-import org.switchyard.component.camel.config.model.OperationSelector;
 import org.switchyard.component.camel.config.model.netty.CamelNettyTcpBindingModel;
 import org.switchyard.component.camel.config.model.v1.V1BaseCamelModelTest;
-import org.switchyard.component.camel.config.model.v1.V1OperationSelector;
 import org.switchyard.config.model.Validation;
 
 /**
@@ -91,8 +89,6 @@ public class V1CamelNettyTcpBindingModelTest extends V1BaseCamelModelTest<V1Came
     }
 
     private V1CamelNettyTcpBindingModel createModel() {
-        OperationSelector operationSelector = new V1OperationSelector();
-        operationSelector.setOperationName("print");
         return (V1CamelNettyTcpBindingModel) new V1CamelNettyTcpBindingModel()
             .setTextline(TEXTLINE)
             .setTcpNoDelay(TCP_NO_DELAY)

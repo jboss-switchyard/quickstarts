@@ -33,7 +33,6 @@ public class HttpConfigModelTest {
 
     private static final String HTTP_BINDING = "http-binding.xml";
     private static final String HTTP_BINDING2 = "http-binding2.xml";
-    private static final String HTTP_BINDING_INVALID = "http-binding-invalid.xml";
 
     @Test
     public void testReadConfigBinding() throws Exception {
@@ -42,7 +41,5 @@ public class HttpConfigModelTest {
         Assert.assertTrue(model.isModelValid());
         model = puller.pull(HTTP_BINDING2, getClass());
         Assert.assertTrue(model.isModelValid());
-        model = puller.pull(HTTP_BINDING_INVALID, getClass());
-        Assert.assertFalse(model.isModelValid());
     }
 }

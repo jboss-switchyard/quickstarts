@@ -82,8 +82,7 @@ public class V1CamelBindingModelTest extends V1BaseCamelModelTest<V1CamelBinding
 
     private V1CamelBindingModel createModel() throws URISyntaxException {
         final V1CamelBindingModel bindingModel = new V1CamelBindingModel()
-        .setConfigURI(new URI("direct://input"))
-        .setOperationSelector(new V1OperationSelector().setOperationName("print"));
+        .setConfigURI(new URI("direct://input"));
         return bindingModel;
     }
 
@@ -91,7 +90,6 @@ public class V1CamelBindingModelTest extends V1BaseCamelModelTest<V1CamelBinding
         validateModel(model);
         assertThat(model.getType(), is("camel"));
         assertThat(model.getConfigURI().getScheme(), is("direct"));
-        assertThat(model.getOperationSelector().getOperationName(), is("print"));
     }
 
     private void validateModel(final BindingModel model) {

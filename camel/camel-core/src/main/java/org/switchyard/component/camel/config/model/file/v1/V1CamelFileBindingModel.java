@@ -23,7 +23,6 @@ package org.switchyard.component.camel.config.model.file.v1;
 import java.net.URI;
 import java.util.List;
 
-import org.switchyard.component.camel.config.model.OperationSelector;
 import org.switchyard.component.camel.config.model.QueryString;
 import org.switchyard.component.camel.config.model.file.CamelFileBindingModel;
 import org.switchyard.component.camel.config.model.file.CamelFileConsumerBindingModel;
@@ -74,7 +73,7 @@ public class V1CamelFileBindingModel extends V1GenericFileBindingModel implement
     public V1CamelFileBindingModel() {
         super(FILE);
 
-        setModelChildrenOrder(OperationSelector.OPERATION_SELECTOR, CONSUME, PRODUCE);
+        setModelChildrenOrder(CONSUME, PRODUCE);
     }
 
     /**

@@ -30,12 +30,10 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.component.camel.config.model.OperationSelector;
 import org.switchyard.component.camel.config.model.file.CamelFileBindingModel;
 import org.switchyard.component.camel.config.model.file.CamelFileConsumerBindingModel;
 import org.switchyard.component.camel.config.model.v1.V1BaseCamelModelTest;
 import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
-import org.switchyard.component.camel.config.model.v1.V1OperationSelector;
 import org.switchyard.config.model.Validation;
 
 /**
@@ -47,7 +45,6 @@ public class V1CamelFileConsumerBindingModelTest extends V1BaseCamelModelTest<V1
 
     private static final String CAMEL_XML = "switchyard-file-binding-consumer-beans.xml";
 
-    private static final String OPERATION_NAME = "print";
     private static final String DIRECTORY = "/input/directory";
     private static final Boolean DELETE = Boolean.FALSE;
     private static final Boolean RECURSIVE = true;
@@ -91,7 +88,6 @@ public class V1CamelFileConsumerBindingModelTest extends V1BaseCamelModelTest<V1
         //Valid Model?
         assertTrue(validateModel.isValid());
         //Camel File
-        assertEquals(OPERATION_NAME, bindingModel.getOperationSelector().getOperationName());
         assertEquals(DIRECTORY, bindingModel.getDirectory());
         //Camel File Consumer
         assertConsumerModel(bindingModel.getConsumer());
@@ -101,7 +97,6 @@ public class V1CamelFileConsumerBindingModelTest extends V1BaseCamelModelTest<V1
     @Test
     public void testWriteConfig() throws Exception {
         CamelFileBindingModel bindingModel = createFileConsumerModel();
-        assertEquals(OPERATION_NAME, bindingModel.getOperationSelector().getOperationName());
         assertEquals(DIRECTORY, bindingModel.getDirectory());
         //Camel File Consumer
         assertConsumerModel(bindingModel.getConsumer());
@@ -139,11 +134,7 @@ public class V1CamelFileConsumerBindingModelTest extends V1BaseCamelModelTest<V1
     }
 
     private CamelFileBindingModel createFileConsumerModel() {
-        OperationSelector operationSelector = new V1OperationSelector();
-        operationSelector.setOperationName(OPERATION_NAME);
-
         V1CamelFileBindingModel fileModel = new V1CamelFileBindingModel();
-        fileModel.setOperationSelector(operationSelector);
         fileModel.setDirectory(DIRECTORY);
 
         CamelFileConsumerBindingModel consumer = (CamelFileConsumerBindingModel) new V1CamelFileConsumerBindingModel()
@@ -164,7 +155,6 @@ public class V1CamelFileConsumerBindingModelTest extends V1BaseCamelModelTest<V1
             .setDirectoryMustExist(DIRECTORY_MUST_EXIST)
             .setDoneFileName(DONE_FILE_NAME);
         fileModel.setConsumer(consumer);
-        fileModel.setOperationSelector(operationSelector);
 
         return fileModel;
     }

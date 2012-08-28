@@ -34,6 +34,7 @@ import org.switchyard.ServiceReference;
 import org.switchyard.component.camel.composer.CamelBindingData;
 import org.switchyard.component.camel.deploy.CamelActivator;
 import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.common.selector.OperationSelector;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.policy.PolicyUtil;
@@ -78,7 +79,20 @@ public class SwitchYardProducer extends DefaultProducer {
     public void process(final org.apache.camel.Exchange camelExchange) throws Exception {
         final String targetUri = (String) camelExchange.getProperty("CamelToEndpoint");
         ServiceDomain domain = (ServiceDomain)camelExchange.getContext().getRegistry().lookup(CamelActivator.SERVICE_DOMAIN);
+        
         final ServiceReference serviceRef = lookupServiceReference(targetUri, domain);
+        final String serviceName = serviceRef.getName().getLocalPart();
+        @SuppressWarnings("unchecked")
+        OperationSelector<CamelBindingData> selector =
+                (OperationSelector<CamelBindingData>) camelExchange.getContext()
+                                                                    .getRegistry()
+                                                                    .lookup(serviceName + InboundHandler.OPERATION_SELECTOR_REF);
+        if (selector != null) {
+            QName op = selector.selectOperation(new CamelBindingData(camelExchange.getIn()));
+            _namespace = op.getNamespaceURI();
+            _operationName = op.getLocalPart();
+        }
+        
         final Exchange switchyardExchange = createSwitchyardExchange(camelExchange, serviceRef);
         
         // Set appropriate policy based on Camel exchange properties
@@ -121,6 +135,7 @@ public class SwitchYardProducer extends DefaultProducer {
         if (_operationName != null) {
             operationName = _operationName;
         }
+        
         // From Service Interface
         if (operationName == null) {
             final Set<ServiceOperation> operations = serviceRef.getInterface().getOperations();
@@ -128,7 +143,7 @@ public class SwitchYardProducer extends DefaultProducer {
                 final StringBuilder msg = new StringBuilder();
                 msg.append("No operationSelector was configured for the Camel Component and the Service Interface ");
                 msg.append("contains more than one operation: ").append(operations);
-                msg.append("Please add an operationSelector element with the target 'operationName' as an attribute.");
+                msg.append("Please add an operationSelector element.");
                 throw new SwitchYardException(msg.toString());
             }
             final ServiceOperation serviceOperation = operations.iterator().next();
@@ -136,4 +151,5 @@ public class SwitchYardProducer extends DefaultProducer {
         }
         return operationName;
     }
+    
 }

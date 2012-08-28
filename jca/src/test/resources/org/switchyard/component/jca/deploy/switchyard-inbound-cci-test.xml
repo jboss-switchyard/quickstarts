@@ -15,6 +15,7 @@
 <switchyard 
     xmlns="urn:switchyard-config:switchyard:1.0"
     xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
+    xmlns:selector="urn:switchyard-component-common-selector:config:1.0"
     xmlns:bean="urn:switchyard-component-bean:config:1.0">
 
     <sca:composite name="JCACCITest" targetNamespace="urn:jca:test:1.0">
@@ -22,13 +23,13 @@
         <!-- Service binding example -->
         <sca:service name="JCACCIService" promote="ComponentName/JCACCIService">
             <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
+               <selector:operationSelector operationName="onMessage"/>
                <inboundConnection>
                    <resourceAdapter name="myeis-ra.rar"/>
                    <activationSpec/>
                </inboundConnection>
                <inboundInteraction>
                    <listener>javax.resource.cci.MessageListener</listener>
-                   <inboundOperation name="onMessage" selectedOperation="onMessage"/>
                    <endpoint type="org.switchyard.component.jca.endpoint.CCIEndpoint">
                        <property name="connectionFactoryJNDIName" value="java:jboss/MyEISConnectionFactory"/>
                    </endpoint>

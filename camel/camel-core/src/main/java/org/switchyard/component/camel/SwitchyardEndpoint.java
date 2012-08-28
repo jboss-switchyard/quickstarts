@@ -33,16 +33,17 @@ import org.switchyard.component.common.composer.MessageComposer;
  *
  */
 public class SwitchyardEndpoint extends DefaultEndpoint {
+    
     /**
      * Producer property.
      */
     private String _namespace;
-    
+
     /**
      * Producer property.
      */
     private String _operationName;
-    
+
     /**
      * Producer property.
      */
@@ -97,11 +98,8 @@ public class SwitchyardEndpoint extends DefaultEndpoint {
      */
     @Override
     public Consumer createConsumer(final Processor processor) throws Exception {
-        if (_operationName == null) {
-            _consumer = new SwitchYardConsumer(this, processor, getMessageComposer());
-            return _consumer;
-        }
-        return null;
+        _consumer = new SwitchYardConsumer(this, processor, getMessageComposer());
+        return _consumer;
     }
     
     /**

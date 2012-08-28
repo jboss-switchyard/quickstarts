@@ -47,8 +47,6 @@ public final class JCAConstants {
     public static final String INBOUND_INTERACTION = "inboundInteraction";
     /** wire format. */
     public static final String WIRE_FORMAT = "wireFormat";
-    /** operation selector. */
-    public static final String OPERATION_SELECTOR = "operationSelector";
     
     /** resource adapter. */
     public static final String RESOURCE_ADAPTER = "resourceAdapter";
@@ -64,10 +62,6 @@ public final class JCAConstants {
     public static final String OPERATION = "operation";
     /** listener. */
     public static final String LISTENER = "listener";
-    /** inbound operation. */
-    public static final String INBOUND_OPERATION = "inboundOperation";
-    /** selected operation. */
-    public static final String SELECTED_OPERATION = "selectedOperation";
     /** endpoint. */
     public static final String ENDPOINT = "endpoint";
     /** transacted. */

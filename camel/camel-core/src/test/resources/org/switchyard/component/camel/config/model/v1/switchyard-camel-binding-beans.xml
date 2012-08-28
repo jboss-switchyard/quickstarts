@@ -14,5 +14,4 @@
 	MA 02110-1301, USA. -->
 <camel:binding.camel xmlns:camel="urn:switchyard-component-camel:config:1.0" 
 	configURI="direct://input">
-	<camel:operationSelector operationName="print"/>
 </camel:binding.camel>

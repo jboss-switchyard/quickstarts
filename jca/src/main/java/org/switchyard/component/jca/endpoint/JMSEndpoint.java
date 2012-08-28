@@ -24,6 +24,7 @@ import javax.jms.MessageListener;
 import org.switchyard.Exchange;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.jca.composer.JMSBindingData;
+import org.switchyard.component.common.selector.OperationSelector;
 import org.switchyard.exception.SwitchYardException;
 /**
  * Concrete message endpoint class for JCA message inflow using JMS MessageListener interface.
@@ -34,19 +35,23 @@ import org.switchyard.exception.SwitchYardException;
 public class JMSEndpoint extends AbstractInflowEndpoint implements MessageListener {
     
     private MessageComposer<JMSBindingData> _composer;
+    private OperationSelector<JMSBindingData> _selector;
     
     @Override
     public void initialize() {
         super.initialize();
         _composer = getMessageComposer(JMSBindingData.class);
+        _selector = getOperationSelector(JMSBindingData.class);
     }
     
     @Override
     public void onMessage(Message message) {
         
-        final Exchange exchange = createExchange();
         try {
-            exchange.send(_composer.compose(new JMSBindingData(message), exchange, true));
+            JMSBindingData bindingData = new JMSBindingData(message);
+            final String operation = _selector != null ? _selector.selectOperation(bindingData).getLocalPart() : null;
+            final Exchange exchange = createExchange(operation);
+            exchange.send(_composer.compose(bindingData, exchange, true));
         } catch (Exception e) {
             throw new SwitchYardException(e);
         }

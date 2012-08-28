@@ -28,10 +28,8 @@ import org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSepara
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
-import org.switchyard.component.camel.config.model.OperationSelector;
 import org.switchyard.component.camel.config.model.ftp.CamelFtpBindingModel;
 import org.switchyard.component.camel.config.model.v1.V1BaseCamelModelTest;
-import org.switchyard.component.camel.config.model.v1.V1OperationSelector;
 import org.switchyard.config.model.Validation;
 
 /**
@@ -100,8 +98,6 @@ public class V1CamelFtpBindingModelTest extends V1BaseCamelModelTest<V1CamelFtpB
     }
 
     private V1CamelFtpBindingModel createModel() {
-        OperationSelector operationSelector = new V1OperationSelector();
-        operationSelector.setOperationName("print");
         return (V1CamelFtpBindingModel) new V1CamelFtpBindingModel()
             .setPassiveMode(PASSIVE_MODE)
             .setTimeout(TIMEOUT)
@@ -119,8 +115,7 @@ public class V1CamelFtpBindingModelTest extends V1BaseCamelModelTest<V1CamelFtpB
             .setSeparator(SEPARATOR.name())
             .setReconnectDelay(RECONNECT_DELAY)
             .setMaximumReconnectAttempts(MAXIMUM_RECONNECT_ATTEMPTS)
-            .setDisconnect(DISCONNECT)
-            .setOperationSelector(operationSelector);
+            .setDisconnect(DISCONNECT);
     }
 
     private void assertModel(CamelFtpBindingModel model) {

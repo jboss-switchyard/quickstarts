@@ -15,6 +15,7 @@
 <switchyard 
     xmlns="urn:switchyard-config:switchyard:1.0"
     xmlns:hornetq="urn:switchyard-component-hornetq:config:1.0" 
+    xmlns:selector="urn:switchyard-component-common-selector:config:1.0" 
     xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
     xmlns:bean="urn:switchyard-component-bean:config:1.0">
 
@@ -23,7 +24,7 @@
         <!-- Service binding example -->
 		<sca:service name="HornetQService" promote="ComponentName/HornetQService">
 	        <hornetq:binding.hornetq>
-	            <hornetq:operationSelector operationName="print"/>
+	            <selector:operationSelector operationName="print"/>
 	            <hornetq:config>
 	                <hornetq:connector>
 	                   <hornetq:factoryClass>org.hornetq.core.remoting.impl.invm.InVMConnectorFactory</hornetq:factoryClass>

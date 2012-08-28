@@ -27,6 +27,8 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.common.selector.OperationSelector;
+import org.switchyard.component.common.selector.OperationSelectorFactory;
 import org.switchyard.component.http.composer.HttpComposition;
 import org.switchyard.component.http.composer.HttpBindingData;
 import org.switchyard.component.http.composer.HttpRequestBindingData;
@@ -51,7 +53,7 @@ public class InboundHandler extends BaseServiceHandler {
     private ServiceDomain _domain;
     private ServiceReference _service;
     private MessageComposer<HttpBindingData> _messageComposer;
-    private String _operationName;
+    private final OperationSelector<HttpBindingData> _operationSelector;
     private Endpoint _endpoint;
 
     /**
@@ -62,6 +64,9 @@ public class InboundHandler extends BaseServiceHandler {
     public InboundHandler(final HttpBindingModel config, ServiceDomain domain) {
         _config = config;
         _domain = domain;
+        _operationSelector = OperationSelectorFactory
+                .getOperationSelectorFactory(HttpBindingData.class)
+                .newOperationSelector(config.getOperationSelector());
     }
 
     /**
@@ -70,9 +75,12 @@ public class InboundHandler extends BaseServiceHandler {
      * @throws HttpPublishException If unable to publish the service
      */
     public void start() throws HttpPublishException {
+        if (_operationSelector == null) {
+            throw new HttpPublishException("operatoinSelector must be specified for HTTP service binding.");
+        }
+        
         try {
             _service = _domain.getServiceReference(_config.getServiceName());
-            _operationName = _config.getOperationName();
             String contextPath = _config.getContextPath();
             if (contextPath == null) {
                 contextPath = "/";
@@ -95,7 +103,7 @@ public class InboundHandler extends BaseServiceHandler {
         HttpResponseBindingData response = null;
         try {
             SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
-            Exchange exchange = _service.createExchange(_operationName, inOutHandler);
+            Exchange exchange = _service.createExchange(_operationSelector.selectOperation(input).getLocalPart(), inOutHandler);
             Message message = _messageComposer.compose(input, exchange, true);
             if (exchange.getContract().getConsumerOperation().getExchangePattern() == ExchangePattern.IN_ONLY) {
                 exchange.send(message);

@@ -20,7 +20,7 @@
  */
 package org.switchyard.component.jca.config.model;
 
-import org.switchyard.config.model.composite.BindingModel;
+import org.switchyard.component.common.selector.config.model.BindingModel;
 
 /**
  * A binding definition for JCA gateway.

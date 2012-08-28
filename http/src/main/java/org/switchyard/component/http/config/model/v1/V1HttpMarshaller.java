@@ -19,9 +19,9 @@
 
 package org.switchyard.component.http.config.model.v1;
 
+import org.switchyard.component.common.selector.config.model.v1.V1CommonBindingMarshaller;
 import org.switchyard.component.http.config.model.HttpBindingModel;
 import org.switchyard.config.Configuration;
-import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composer.ContextMapperModel;
@@ -35,7 +35,7 @@ import org.switchyard.config.model.composite.BindingModel;
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public class V1HttpMarshaller extends BaseMarshaller {
+public class V1HttpMarshaller extends V1CommonBindingMarshaller {
 
     /**
      * Construct a HTTP Model Marshaller with help of a Descriptor.
@@ -64,6 +64,6 @@ public class V1HttpMarshaller extends BaseMarshaller {
         if (name.equals(MessageComposerModel.MESSAGE_COMPOSER)) {
             return new V1MessageComposerModel(config, getDescriptor());
         }
-        return null;
+        return super.read(config);
     }
 }

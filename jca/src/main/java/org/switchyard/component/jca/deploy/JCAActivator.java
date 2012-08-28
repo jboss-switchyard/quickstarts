@@ -118,7 +118,6 @@ public class JCAActivator extends BaseActivator {
         Properties raProps = jcaconfig.getInboundConnection().getResourceAdapter().getProperties();
         Properties activationProps = jcaconfig.getInboundConnection().getActivationSpec().getProperties();
         String listener = jcaconfig.getInboundInteraction().getListener().getClassName();
-        String operationName = jcaconfig.getInboundInteraction().getInboundOperation().getName();
         String endpointClassName = jcaconfig.getInboundInteraction().getEndpoint().getEndpointClassName(); 
         Properties endpointProps = jcaconfig.getInboundInteraction().getEndpoint().getProperties();
         
@@ -172,7 +171,6 @@ public class JCAActivator extends BaseActivator {
 
          boolean transacted = jcaconfig.getInboundInteraction().isTransacted();
          endpoint.setApplicationClassLoader(_appClassLoader)
-                     .setOperationName(operationName)
                      .setServiceDomain(getServiceDomain())
                      .setServiceQName(name)
                      .setDeliveryTransacted(transacted)

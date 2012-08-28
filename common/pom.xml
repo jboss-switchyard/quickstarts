@@ -27,10 +27,10 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>switchyard-component-common</artifactId>
+    <artifactId>switchyard-component-common-parent</artifactId>
     <packaging>pom</packaging>
-    <name>SwitchYard: Common Component Libraries</name>
-    <description>The SwitchYard Common Component Libraries.</description>
+    <name>SwitchYard: Common Component Libraries Parent</name>
+    <description>The parent for SwitchYard Common Component Libraries.</description>
     <url>http://switchyard.org</url>
 
     <parent>
@@ -41,7 +41,7 @@
     </parent>
 
     <modules>
-        <module>composer</module>
+        <module>common</module>
         <module>rest</module>
         <module>rules</module>
     </modules>

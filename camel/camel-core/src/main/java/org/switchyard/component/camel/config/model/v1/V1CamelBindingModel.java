@@ -25,7 +25,6 @@ import java.net.URI;
 import org.switchyard.common.net.SocketAddr;
 import org.switchyard.component.camel.config.model.ConfigURI;
 import org.switchyard.component.camel.config.model.ConfigURIFactory;
-import org.switchyard.component.camel.config.model.OperationSelector;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 
@@ -157,12 +156,6 @@ public class V1CamelBindingModel extends V1BaseCamelBindingModel {
     @Override
     public URI getComponentURI() {
         return getConfigURI().getURI();
-    }
-
-    @Override
-    public V1CamelBindingModel setOperationSelector(OperationSelector operationSelector) {
-        super.setOperationSelector(operationSelector);
-        return this;
     }
 
 }
