@@ -29,6 +29,7 @@
 
         <sca:service name="SymbolService" promote="SymbolService/SymbolService">
             <http:binding.http>
+                <http:contextMapper includes="[cC]ontent-type"/>
                 <http:contextPath>http-binding/symbol</http:contextPath>
                 <http:operationSelector>getSymbol</http:operationSelector>
             </http:binding.http>
