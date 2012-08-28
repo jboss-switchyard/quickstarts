@@ -142,7 +142,7 @@ public class RESTEasyBindingPlugin implements Plugin {
         String projectName = _project.getFacet(MetadataFacet.class).getProjectName();
         if (contextPath != null) {
             binding.setContextPath(contextPath);
-        } else {
+        } else if (address == null) {
             binding.setContextPath(projectName);
         }
         reference.addBinding(binding);

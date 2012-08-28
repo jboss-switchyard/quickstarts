@@ -32,10 +32,24 @@ MA  02110-1301, USA.
         <complexContent>
             <extension base="swyd:SwitchYardBindingType">
                 <sequence>
+                    <element name="contextMapper" type="swyd:ContextMapperType"  minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>
+                                Specify the ContextMapper to be used.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="messageComposer" type="swyd:MessageComposerType" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>
+                                Specify the MessageComposer to be used.
+                            </documentation>
+                        </annotation>
+                    </element>
                     <element name="interfaces" type="string" minOccurs="1" maxOccurs="1">
                         <annotation>
                             <documentation>
-                                A comma seperated list of interfaces or abstract/empty classes with REST annotations.
+                                A comma separated list of interfaces or abstract/empty classes with REST annotations.
                             </documentation>
                         </annotation>
                     </element>

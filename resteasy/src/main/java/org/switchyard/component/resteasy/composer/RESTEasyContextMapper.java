@@ -16,12 +16,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
- 
-package org.switchyard.component.http.composer;
+package org.switchyard.component.resteasy.composer;
 
 import static org.switchyard.Scope.IN;
 import static org.switchyard.Scope.OUT;
-import static org.switchyard.component.http.composer.HttpComposition.HTTP_HEADER;
+import static org.switchyard.component.resteasy.composer.RESTEasyComposition.HTTP_HEADER;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,18 +32,18 @@ import org.switchyard.Property;
 import org.switchyard.component.common.composer.BaseContextMapper;
 
 /**
- * HttpContextMapper.
+ * RESTEasyContextMapper.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public class HttpContextMapper extends BaseContextMapper<HttpMessage> {
+public class RESTEasyContextMapper extends BaseContextMapper<RESTEasyMessage> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void mapFrom(HttpMessage source, Context context) throws Exception {
+    public void mapFrom(RESTEasyMessage source, Context context) throws Exception {
         Iterator<Map.Entry<String, List<String>>> entries = source.getHeaders().entrySet().iterator();
         while (entries.hasNext()) {
             Map.Entry<String, List<String>> entry = entries.next();
@@ -62,12 +61,11 @@ public class HttpContextMapper extends BaseContextMapper<HttpMessage> {
      * {@inheritDoc}
      */
     @Override
-    public void mapTo(Context context, HttpMessage target) throws Exception {
+    public void mapTo(Context context, RESTEasyMessage target) throws Exception {
         Map<String, List<String>> httpHeaders = target.getHeaders();
         for (Property property : context.getProperties(OUT)) {
             if (property.hasLabel(HTTP_HEADER)) {
                 String name = property.getName();
-                // if (matches(name)) required?
                 Object value = property.getValue();
                 if (value != null) {
                     if (value instanceof List) {

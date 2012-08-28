@@ -19,9 +19,11 @@
  
 package org.switchyard.component.resteasy.resource;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import com.sun.net.httpserver.HttpServer;
 import org.jboss.resteasy.plugins.server.sun.http.HttpContextBuilder;
 
@@ -31,24 +33,38 @@ import org.jboss.resteasy.plugins.server.sun.http.HttpContextBuilder;
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
 public class StandaloneResourcePublisher implements ResourcePublisher {
+    private static final Logger LOGGER = Logger.getLogger(StandaloneResourcePublisher.class);
 
     // The global standalone HttpServer
     private static HttpServer _httpServer;
     private static HttpContextBuilder _contextBuilder;
 
+    static {
+        try {
+            _contextBuilder = new HttpContextBuilder();
+            _httpServer = HttpServer.create(new InetSocketAddress(8080), 10);
+            _httpServer.setExecutor(null); // creates a default executor
+            _httpServer.start();
+        } catch (IOException ioe) {
+            LOGGER.error("Unable to launch standalone http server", ioe);
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
     public Resource publish(String context, List<Object> instances) throws Exception {
-        if (_httpServer == null) {
-            _contextBuilder = new HttpContextBuilder();
-            _contextBuilder.setPath(context);
-            _httpServer = HttpServer.create(new InetSocketAddress(8080), 10);
-            _httpServer.start();
-        } else {
+        if (_contextBuilder.getPath().equals(context)) {
             _contextBuilder.cleanup();
-            _httpServer.removeContext(_contextBuilder.getPath());
+            try {
+                _httpServer.removeContext(_contextBuilder.getPath());
+            } catch (IllegalArgumentException iae) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(iae);
+                }
+            }
             _contextBuilder.getDeployment().getDefaultContextObjects().clear();
+            _contextBuilder.setPath(context);
         }
         // Add as singleton instance
         for (Object instance : instances) {

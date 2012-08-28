@@ -37,12 +37,9 @@ import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.metadata.BaseService;
-import org.switchyard.metadata.InOnlyOperation;
-import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceOperation;
-import org.switchyard.test.InvocationFaultException;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardRunner;
@@ -82,10 +79,10 @@ public class RESTEasyGatewayTest {
         _config = (RESTEasyBindingModel)compositeService.getBindings().get(0);
 
         // Massive hack for Test Runner. Register both a service and a reference binding.
+
         _domain.registerService(_config.getServiceName(), new InOutService(), mockService);
         _domain.registerServiceReference(_config.getServiceName(), new InOutService());
         _restInbound = new InboundHandler(_config, _domain);
-        _restInbound.start();
 
         CompositeReferenceModel compositeReference = composite.getReferences().get(0);
         _configRef = (RESTEasyBindingModel)compositeReference.getBindings().get(0);
@@ -94,6 +91,8 @@ public class RESTEasyGatewayTest {
         // Massive hack for Test Runner. Register both a service and a reference binding.
         _domain.registerService(_configRef.getServiceName(), new HelloRESTEasyInterface(), _restOutbound);
         _domain.registerServiceReference(_configRef.getServiceName(), new HelloRESTEasyInterface());
+
+        _restInbound.start();
         _restOutbound.start();
     }
 
@@ -129,7 +128,7 @@ public class RESTEasyGatewayTest {
     }
 
     private static class HelloRESTEasyInterface extends BaseService {
-        private static Set<ServiceOperation> _operations = new HashSet<ServiceOperation>(2);
+        private static Set<ServiceOperation> _operations = new HashSet<ServiceOperation>(3);
         static {
             _operations.add(new InOutOperation("addGreeter", STRING_QNAME, STRING_QNAME));
             _operations.add(new InOutOperation("greeterInfo", STRING_QNAME, STRING_QNAME));

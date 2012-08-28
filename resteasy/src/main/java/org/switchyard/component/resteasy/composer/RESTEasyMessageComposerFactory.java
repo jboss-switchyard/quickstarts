@@ -16,35 +16,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
+package org.switchyard.component.resteasy.composer;
 
-package org.switchyard.component.resteasy;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.common.composer.MessageComposerFactory;
 
 /**
- * A Greeter Resource.
+ * RESTEasyMessageComposerFactory.
  *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-@Path("/greeters")
-public interface HelloResource {
-
-    @PUT
-    @Path("{name}")
-    String addGreeter(@PathParam("name") String name);
-
-    @GET
-    @Path("{name}")
-    String greeterInfo(@PathParam("name") String name);
+public class RESTEasyMessageComposerFactory extends MessageComposerFactory<RESTEasyMessage> {
 
     /**
-     * A multi parameter test. A url will be of the form /greeters/name and anotherName will be in the request body.
+     * {@inheritDoc}
      */
-    @POST
-    @Path("{name}")
-    String sayHello(String anotherName);
+    @Override
+    public Class<RESTEasyMessage> getTargetClass() {
+        return RESTEasyMessage.class;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MessageComposer<RESTEasyMessage> newMessageComposerDefault() {
+        return new RESTEasyMessageComposer();
+    }
+
 }

@@ -28,6 +28,9 @@ import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.SynchronousInOutHandler;
+import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.resteasy.composer.RESTEasyComposition;
+import org.switchyard.component.resteasy.composer.RESTEasyMessage;
 import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
 import org.switchyard.component.resteasy.resource.Resource;
 import org.switchyard.component.resteasy.resource.ResourcePublisherFactory;
@@ -35,7 +38,7 @@ import org.switchyard.component.resteasy.util.ClassUtil;
 import org.switchyard.deploy.BaseServiceHandler;
 
 /**
- * Hanldes RESTEasy requests to invoke a SwitchYard service.
+ * Handles RESTEasy requests to invoke a SwitchYard service.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
@@ -44,10 +47,10 @@ public class InboundHandler extends BaseServiceHandler {
     private static final Logger LOGGER = Logger.getLogger(InboundHandler.class);
 
     private final RESTEasyBindingModel _config;
-
     private ServiceDomain _domain;
     private ServiceReference _service;
     private Resource _resource;
+    private MessageComposer<RESTEasyMessage> _messageComposer;
 
     /**
      * Constructor.
@@ -75,37 +78,39 @@ public class InboundHandler extends BaseServiceHandler {
             }
             // Add as singleton instances
             _resource = ResourcePublisherFactory.getPublisher().publish(contextPath, instances);
+            // Create and configure the RESTEasy message composer
+            _messageComposer = RESTEasyComposition.getMessageComposer(_config);
         } catch (Exception e) {
             throw new RESTEasyPublishException(e);
         }
     }
 
     /**
-     * Inokes the SwitchYard service.
+     * Invokes the SwitchYard service.
      *
      * @param operationName the name of the service operation
-     * @param input the request parameter
+     * @param restMessageRequest the request RESTEasyMessage
      * @param oneWay true of this is a oneway request
      * @return the response from invocation
      */
-    public Object invoke(final String operationName, final Object input, final boolean oneWay) {
-        Object response = null;
+    public RESTEasyMessage invoke(final String operationName, final RESTEasyMessage restMessageRequest, final boolean oneWay) {
+        RESTEasyMessage output = new RESTEasyMessage();
         try {
             SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
             Exchange exchange = _service.createExchange(operationName, inOutHandler);
-            Message message = exchange.createMessage();
-            message.setContent(input);
+            Message message = _messageComposer.compose(restMessageRequest, exchange, true);
             if (oneWay) {
                 exchange.send(message);
             } else {
                 exchange.send(message);
                 exchange = inOutHandler.waitForOut();
-                response = exchange.getMessage().getContent();
+                output = _messageComposer.decompose(exchange, output);
             }
         } catch (Exception e) {
-            LOGGER.error(e, e);
+            LOGGER.error("Unexpected exception handling inbound REST request", e);
+            output.setContent(null);
         }
-        return response;
+        return output;
     }
 
     /**

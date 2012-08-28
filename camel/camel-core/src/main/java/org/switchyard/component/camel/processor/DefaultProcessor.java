@@ -29,7 +29,7 @@ import org.switchyard.component.common.composer.MessageComposer;
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public class DefaultProcessor implements Processor{
+public class DefaultProcessor implements Processor {
 
     private final MessageComposer<Message> _messageComposer;
     private Exchange _exchange;
@@ -40,7 +40,7 @@ public class DefaultProcessor implements Processor{
      * @param composer the message composer to be used
      * @param exchange the switchayrd exchange
      */
-    public DefaultProcessor(MessageComposer composer, Exchange exchange) {
+    public DefaultProcessor(MessageComposer<Message> composer, Exchange exchange) {
         _messageComposer = composer;
         _exchange = exchange;
     }
@@ -67,7 +67,7 @@ public class DefaultProcessor implements Processor{
      *
      * @return the message composer
      */
-    public MessageComposer getComposer() {
+    public MessageComposer<Message> getComposer() {
         return _messageComposer;
     }
 }

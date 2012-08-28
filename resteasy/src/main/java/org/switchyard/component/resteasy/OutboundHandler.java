@@ -22,8 +22,8 @@ package org.switchyard.component.resteasy;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
-import javax.ws.rs.core.MediaType;
 
+import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
@@ -34,9 +34,12 @@ import org.jboss.resteasy.client.ClientResponse;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
-import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
+import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.common.rest.RsMethod;
 import org.switchyard.component.common.rest.RsMethodUtil;
+import org.switchyard.component.resteasy.composer.RESTEasyComposition;
+import org.switchyard.component.resteasy.composer.RESTEasyMessage;
+import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
 import org.switchyard.deploy.BaseServiceHandler;
 
 /**
@@ -51,6 +54,7 @@ public class OutboundHandler extends BaseServiceHandler {
     private final RESTEasyBindingModel _config;
     private String _baseAddress = "http://localhost:8080";
     private Map<String, RsMethod> _resourcePaths;
+    private MessageComposer<RESTEasyMessage> _messageComposer;
 
     /**
      * Constructor.
@@ -72,6 +76,8 @@ public class OutboundHandler extends BaseServiceHandler {
         if (address != null) {
             _baseAddress = address;
         }
+        // Create and configure the RESTEasy message composer
+        _messageComposer = RESTEasyComposition.getMessageComposer(_config);
     }
 
     /**
@@ -95,7 +101,6 @@ public class OutboundHandler extends BaseServiceHandler {
         }
         try {
             String path = RsMethodUtil.getPath(restMethod, exchange);
-            Object content = exchange.getMessage().getContent();
             String contextPath = _config.getContextPath();
 
             if (contextPath != null) {
@@ -119,9 +124,10 @@ public class OutboundHandler extends BaseServiceHandler {
 
             // Support for manual client
             ClientRequest request = new ClientRequest(_baseAddress + path);
+            RESTEasyMessage restRequest = _messageComposer.decompose(exchange, new RESTEasyMessage());
+            Object content = restRequest.getContent();
             if ((restMethod.getRequestType() != null) && (content != null) && !restMethod.hasParam()) {
                 // Factor based on media type
-                // TODO: Maybe use our transformers here, perhaps?
                 if (restMethod.getConsumes().contains(MediaType.TEXT_PLAIN_TYPE)) {
                     request.body(MediaType.TEXT_PLAIN, content);
                 } else if (restMethod.getConsumes().contains(MediaType.APPLICATION_XML_TYPE) || restMethod.getConsumes().contains(MediaType.WILDCARD_TYPE)) {
@@ -150,16 +156,20 @@ public class OutboundHandler extends BaseServiceHandler {
             } else if (restMethod.hasMatrixParam()) {
                 request.matrixParameter(restMethod.getParamName(), content);
             }
+            request.getHeaders().putAll(restRequest.getHeaders());
             ClientResponse<?> response = request.httpMethod(restMethod.getMethod(), restMethod.getResponseType());
             if (response.getStatus() == 200) {
-                Message out = exchange.createMessage();
+                RESTEasyMessage restResponse = new RESTEasyMessage();
+                restResponse.setContent(response.getEntity());
+                restResponse.setHeaders(response.getHeaders());
+                Message out = _messageComposer.compose(restResponse, exchange, true);
                 // Our transformer magic transforms the entity appropriately here :)
-                out.setContent(response.getEntity());
                 exchange.send(out);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new HandlerException("Unexpected exception handling REST request", e);
+            final String m = "Unexpected exception handling outbound REST request";
+            LOGGER.error(m, e);
+            throw new HandlerException(m, e);
         }
     }
 }

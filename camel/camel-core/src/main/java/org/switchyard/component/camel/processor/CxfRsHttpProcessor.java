@@ -20,6 +20,7 @@
 package org.switchyard.component.camel.processor;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.common.rest.RsMethodUtil;
@@ -42,7 +43,7 @@ public class CxfRsHttpProcessor extends DefaultProcessor {
      * @param composer the message composer to be used
      * @param exchange the switchayrd exchange
      */
-    public CxfRsHttpProcessor(MessageComposer composer, org.switchyard.Exchange exchange) {
+    public CxfRsHttpProcessor(MessageComposer<Message> composer, org.switchyard.Exchange exchange) {
         super(composer, exchange);
     }
 

@@ -30,6 +30,9 @@ import javassist.CtField;
 import javassist.CtMethod;
 import javassist.CtNewMethod;
 import javassist.NotFoundException;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.annotation.Annotation;
 
 import org.apache.log4j.Logger;
 import org.switchyard.common.type.Classes;
@@ -45,13 +48,24 @@ public final class ClassUtil {
     private static final String SUFFIX = "RestImpl";
     private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
 
+    private static final String CONTEXT_ANNOTATION = "javax.ws.rs.core.Context";
     private static final String END_OF_LINE = ";";
     private static final String FIELD_NAME = "_serviceConsumer";
     private static final String FIELD_DECL = "public org.switchyard.component.resteasy.InboundHandler " + FIELD_NAME + END_OF_LINE;
+    private static final String FIELD_HEADERS_NAME = "_headers";
+    private static final String FIELD_DECL_HEADERS = "private javax.ws.rs.core.HttpHeaders " + FIELD_HEADERS_NAME + END_OF_LINE;
+    private static final String METHOD_BODY_MESSAGE = "org.switchyard.component.resteasy.composer.RESTEasyMessage";
+    private static final String METHOD_VAR_REQUEST = "request";
+    private static final String METHOD_VAR_RESPONSE = "response";
+    private static final String METHOD_BODY_REQUEST = METHOD_BODY_MESSAGE + " " + METHOD_VAR_REQUEST + " = new " + METHOD_BODY_MESSAGE + "()" + END_OF_LINE;
+    private static final String METHOD_BODY_HEADERS = "if (" + FIELD_HEADERS_NAME + " != null) { " + METHOD_VAR_REQUEST + ".setHeaders(" + FIELD_HEADERS_NAME + ".getRequestHeaders());}";
+    private static final String METHOD_BODY_CONTENT = METHOD_VAR_REQUEST + ".setContent(%s)" + END_OF_LINE;
     private static final String METHOD_BODY = "{%s}";
-    private static final String METHOD_FRAGMENT = FIELD_NAME + ".invoke(\"%s\", %s";
-    private static final String METHOD_NO_RETURN = "%s, %b)" + END_OF_LINE;
-    private static final String METHOD_RETURN = "return (%s)%s, %b)" + END_OF_LINE;
+    private static final String METHOD_FRAGMENT = FIELD_NAME + ".invoke(\"%s\", " + METHOD_VAR_REQUEST;
+    private static final String METHOD_WITH_NO_RETURN = METHOD_FRAGMENT + ", %b)" + END_OF_LINE;
+    private static final String METHOD_WITH_RETURN = METHOD_BODY_MESSAGE + " " + METHOD_VAR_RESPONSE + " = " + METHOD_FRAGMENT + ", %b)" + END_OF_LINE;
+    private static final String METHOD_RETURN = "if (" + METHOD_VAR_RESPONSE + " != null) { return (%s)" + METHOD_VAR_RESPONSE + ".getContent();}"
+                                                    + "else { return null;}";
 
     private ClassUtil() {
     }
@@ -108,25 +122,37 @@ public final class ClassUtil {
 
             CtField ctField = CtField.make(FIELD_DECL, cc);
             cc.addField(ctField);
+            ctField = CtField.make(FIELD_DECL_HEADERS, cc);
+            ConstPool cp = cc.getClassFile().getConstPool();
+            AnnotationsAttribute attr = new AnnotationsAttribute(cp, AnnotationsAttribute.visibleTag);
+            Annotation annot = new Annotation(CONTEXT_ANNOTATION, cp);
+            attr.addAnnotation(annot);
+            ctField.getFieldInfo().addAttribute(attr);
+            cc.addField(ctField);
 
             CtMethod[] intfMethods = intf.getDeclaredMethods();
             for (CtMethod intfMethod : intfMethods) {
                 CtMethod method = CtNewMethod.copy(intfMethod, cc, null);
                 CtClass[] paramTypes = method.getParameterTypes();
-                String body = "";
-                String fragment = "";
+                String bodyFragment = "";
+                StringBuilder body = new StringBuilder()
+                                            .append(METHOD_BODY_REQUEST)
+                                            .append(METHOD_BODY_HEADERS);
                 if (paramTypes.length == 1) {
-                    fragment = String.format(METHOD_FRAGMENT, method.getName(), "$1");
+                    body.append(String.format(METHOD_BODY_CONTENT, "$1"));
                 } else {
-                    fragment = String.format(METHOD_FRAGMENT, method.getName(), "null");
+                    body.append(String.format(METHOD_BODY_CONTENT, "null"));
                 }
                 CtClass returnType = method.getReturnType();
                 if (!(returnType == CtClass.voidType)) {
-                    body = String.format(METHOD_BODY, String.format(METHOD_RETURN, returnType.getName(), fragment, false));
+                    bodyFragment = String.format(METHOD_WITH_RETURN, method.getName(), false);
+                    body.append(bodyFragment);
+                    body.append(String.format(METHOD_RETURN, returnType.getName()));
                 } else {
-                    body = String.format(METHOD_BODY, String.format(METHOD_NO_RETURN, fragment, true));
+                    bodyFragment = String.format(METHOD_WITH_NO_RETURN, method.getName(), true);
+                    body.append(bodyFragment);
                 }
-                method.setBody(body);
+                method.setBody(String.format(METHOD_BODY, body.toString()));
                 cc.addMethod(method);
             }
             clazz = cc.toClass();
