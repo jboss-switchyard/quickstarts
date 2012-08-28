@@ -21,7 +21,7 @@
     <modules>
         <module>testutil</module>
         <module>distribution</module>
-        <module>plugins/mergeassembly</module>
+        <!-- <module>plugins/mergeassembly</module> -->
         <module>jboss-as7</module>
         <module>tools/dist</module>
         <module>tools/forge</module>

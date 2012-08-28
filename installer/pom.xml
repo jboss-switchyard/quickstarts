@@ -135,7 +135,7 @@
                         <id>assembly-installer</id>
                         <phase>generate-test-resources</phase>
                         <goals>
-                            <goal>attached</goal>
+                            <goal>single</goal>
                         </goals>
                         <configuration>
                             <appendAssemblyId>false</appendAssemblyId>

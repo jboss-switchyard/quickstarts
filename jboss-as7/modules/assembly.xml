@@ -25,8 +25,30 @@
     <formats>
         <format>zip</format>
     </formats>
-
-    <include assembly="src/main/resources/switchyard/assembly.xml" />
-    <include assembly="src/main/resources/external/assembly.xml" />
+    
+    <componentDescriptors>
+      <componentDescriptor>src/main/resources/switchyard/core/assembly-component.xml</componentDescriptor>
+      
+      <!-- FROM: src/main/resources/switchyard/components/assembly.xml -->
+      <componentDescriptor>src/main/resources/switchyard/components/bean/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/bpel/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/bpm/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/camel/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/hornetq/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/http/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/resteasy/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/rules/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/soap/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/jca/assembly-component.xml</componentDescriptor>
+      
+      <!-- FROM: src/main/resources/switchyard/components/common/assembly.xml -->
+      <componentDescriptor>src/main/resources/switchyard/components/common/composer/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/common/rules/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/common/rest/assembly-component.xml</componentDescriptor>
+      
+      <componentDescriptor>src/main/resources/switchyard/console/assembly-component.xml</componentDescriptor>
+      
+      <componentDescriptor>src/main/resources/external/assembly-component.xml</componentDescriptor>
+    </componentDescriptors>
 
 </assembly>
