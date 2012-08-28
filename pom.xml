@@ -823,7 +823,7 @@
       </dependency>
       <dependency>
          <groupId>org.switchyard.components</groupId>
-         <artifactId>switchyard-component-common-composer</artifactId>
+         <artifactId>switchyard-component-common</artifactId>
          <version>${project.version}</version>
       </dependency>
       <dependency>
