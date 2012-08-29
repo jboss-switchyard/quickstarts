@@ -38,7 +38,7 @@
         <module name="org.switchyard.common"/>
         <module name="org.switchyard.config"/>
         <module name="org.switchyard.deploy"/>
-        <module name="org.switchyard.component.common.composer"/>
+        <module name="org.switchyard.component.common"/>
         <module name="org.switchyard.component.soap.ws-impl"/>
         <module name="org.switchyard.component.soap.saaj-impl"/>
     </dependencies>

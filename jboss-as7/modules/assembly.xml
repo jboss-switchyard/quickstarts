@@ -42,7 +42,7 @@
       <componentDescriptor>src/main/resources/switchyard/components/jca/assembly-component.xml</componentDescriptor>
       
       <!-- FROM: src/main/resources/switchyard/components/common/assembly.xml -->
-      <componentDescriptor>src/main/resources/switchyard/components/common/composer/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/common/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/common/rules/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/common/rest/assembly-component.xml</componentDescriptor>
       

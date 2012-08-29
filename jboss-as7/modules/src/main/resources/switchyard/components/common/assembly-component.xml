@@ -21,8 +21,8 @@
 
     <files>
         <file>
-            <source>src/main/resources/switchyard/components/common/composer/resources/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/component/common/composer/main</outputDirectory>
+            <source>src/main/resources/switchyard/components/common/resources/module.xml</source>
+            <outputDirectory>/modules/org/switchyard/component/common/main</outputDirectory>
             <filtered>true</filtered>
         </file>
     </files>
@@ -30,10 +30,10 @@
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
-                <include>org.switchyard.components:switchyard-component-common-composer</include>
+                <include>org.switchyard.components:switchyard-component-common</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/common/composer/main</outputDirectory>
+            <outputDirectory>/modules/org/switchyard/component/common/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
-    </dependencySets>
+     </dependencySets>
 </component>
