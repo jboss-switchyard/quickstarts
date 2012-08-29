@@ -18,7 +18,6 @@
  */
 package org.switchyard.component.hornetq.composer;
 
-import org.hornetq.api.core.client.ClientMessage;
 import org.switchyard.component.common.composer.ContextMapper;
 import org.switchyard.component.common.composer.ContextMapperFactory;
 
@@ -27,21 +26,21 @@ import org.switchyard.component.common.composer.ContextMapperFactory;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class HornetQContextMapperFactory extends ContextMapperFactory<ClientMessage> {
+public class HornetQContextMapperFactory extends ContextMapperFactory<HornetQBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Class<ClientMessage> getTargetClass() {
-        return ClientMessage.class;
+    public Class<HornetQBindingData> getBindingDataClass() {
+        return HornetQBindingData.class;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ContextMapper<ClientMessage> newContextMapperDefault() {
+    public ContextMapper<HornetQBindingData> newContextMapperDefault() {
         return new HornetQContextMapper();
     }
 

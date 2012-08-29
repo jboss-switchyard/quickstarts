@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -18,33 +18,31 @@
  */
 package org.switchyard.component.jca.composer;
 
-import javax.resource.cci.IndexedRecord;
-
-import org.switchyard.component.common.composer.ContextMapper;
-import org.switchyard.component.common.composer.ContextMapperFactory;
+import javax.jms.Message;
 
 /**
- * ContextMapperFactory for CCI IndexedRecord.
- *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
- * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
+ * JMS binding data.
+ * 
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class CCIIndexedRecordContextMapperFactory extends ContextMapperFactory<IndexedRecord> {
+public class JMSBindingData implements JCABindingData {
+
+    private final Message _message;
 
     /**
-     * {@inheritDoc}
+     * Constructs a new JMS binding data with the specified message.
+     * @param message the specified message
      */
-    @Override
-    public Class<IndexedRecord> getTargetClass() {
-        return IndexedRecord.class;
+    public JMSBindingData(Message message) {
+        _message = message;
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the message.
+     * @return the message
      */
-    @Override
-    public ContextMapper<IndexedRecord> newContextMapperDefault() {
-        return new CCIIndexedRecordContextMapper();
+    public Message getMessage() {
+        return _message;
     }
 
 }

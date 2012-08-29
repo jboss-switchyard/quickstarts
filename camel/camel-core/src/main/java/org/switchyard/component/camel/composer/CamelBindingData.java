@@ -16,14 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
- 
-package org.switchyard.component.http.composer;
+package org.switchyard.component.camel.composer;
+
+import org.apache.camel.Message;
+import org.switchyard.component.common.composer.BindingData;
 
 /**
- * A HTTP Request Message.
- *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
+ * Camel binding data.
+ * 
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class HttpRequestMessage extends HttpMessage {
+public class CamelBindingData implements BindingData {
+
+    private final Message _message;
+
+    /**
+     * Constructs a new Camel binding data with the specified message.
+     * @param message the specified message
+     */
+    public CamelBindingData(Message message) {
+        _message = message;
+    }
+
+    /**
+     * Gets the message.
+     * @return the message
+     */
+    public Message getMessage() {
+        return _message;
+    }
 
 }

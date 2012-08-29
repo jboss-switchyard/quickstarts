@@ -31,8 +31,8 @@ import org.jboss.com.sun.net.httpserver.HttpHandler;
 import org.jboss.com.sun.net.httpserver.HttpServer;
 import org.switchyard.component.http.ContentType;
 import org.switchyard.component.http.InboundHandler;
-import org.switchyard.component.http.composer.HttpRequestMessage;
-import org.switchyard.component.http.composer.HttpResponseMessage;
+import org.switchyard.component.http.composer.HttpRequestBindingData;
+import org.switchyard.component.http.composer.HttpResponseBindingData;
 
 /**
  * Publishes standalone HTTP endpoint.
@@ -81,7 +81,7 @@ public class StandaloneEndpointPublisher implements EndpointPublisher {
         }
 
         public void handle(HttpExchange exchange) {
-            HttpRequestMessage httpRequest = new HttpRequestMessage();
+            HttpRequestBindingData httpRequest = new HttpRequestBindingData();
             byte[] responseBody = null;
             try {
                 String contentType = exchange.getRequestHeaders().getFirst(CONTENT_TYPE);
@@ -91,7 +91,7 @@ public class StandaloneEndpointPublisher implements EndpointPublisher {
             } catch (IOException e) {
                 LOGGER.error("Unexpected Exception while reading request", e);
             }
-            HttpResponseMessage httpResponse = _handler.invoke(httpRequest);
+            HttpResponseBindingData httpResponse = _handler.invoke(httpRequest);
             try {
                 if (httpResponse != null) {
                     exchange.getResponseHeaders().putAll(httpResponse.getHeaders());

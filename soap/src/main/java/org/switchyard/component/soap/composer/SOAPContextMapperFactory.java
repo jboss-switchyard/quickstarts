@@ -18,8 +18,6 @@
  */
 package org.switchyard.component.soap.composer;
 
-import javax.xml.soap.SOAPMessage;
-
 import org.switchyard.component.common.composer.ContextMapper;
 import org.switchyard.component.common.composer.ContextMapperFactory;
 
@@ -28,21 +26,21 @@ import org.switchyard.component.common.composer.ContextMapperFactory;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class SOAPContextMapperFactory extends ContextMapperFactory<SOAPMessage> {
+public class SOAPContextMapperFactory extends ContextMapperFactory<SOAPBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Class<SOAPMessage> getTargetClass() {
-        return SOAPMessage.class;
+    public Class<SOAPBindingData> getBindingDataClass() {
+        return SOAPBindingData.class;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ContextMapper<SOAPMessage> newContextMapperDefault() {
+    public ContextMapper<SOAPBindingData> newContextMapperDefault() {
         return new SOAPContextMapper();
     }
 

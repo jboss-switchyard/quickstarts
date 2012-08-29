@@ -37,26 +37,28 @@ import org.switchyard.metadata.ServiceOperation;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class CamelMessageComposer extends BaseMessageComposer<org.apache.camel.Message> {
+public class CamelMessageComposer extends BaseMessageComposer<CamelBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Message compose(org.apache.camel.Message source, Exchange exchange, boolean create) throws Exception {
+    public Message compose(CamelBindingData source, Exchange exchange, boolean create) throws Exception {
         // map context properties
         getContextMapper().mapFrom(source, exchange.getContext());
-        
+
+        org.apache.camel.Message sourceMessage = source.getMessage();
+
         // map content
         Message message = create ? exchange.createMessage() : exchange.getMessage();
         QName msgType = getMessageType(exchange);
         Object content;
         if (msgType == null) {
-            content = source.getBody();
+            content = sourceMessage.getBody();
         } else if (QNameUtil.isJavaMessageType(msgType)) {
-            content = source.getBody(QNameUtil.toJavaMessageType(msgType));
+            content = sourceMessage.getBody(QNameUtil.toJavaMessageType(msgType));
         } else {
-            content = source.getBody(InputStream.class);
+            content = sourceMessage.getBody(InputStream.class);
         }
         message.setContent(content);
         return message;
@@ -66,16 +68,17 @@ public class CamelMessageComposer extends BaseMessageComposer<org.apache.camel.M
      * {@inheritDoc}
      */
     @Override
-    public org.apache.camel.Message decompose(Exchange exchange, org.apache.camel.Message target) throws Exception {
+    public CamelBindingData decompose(Exchange exchange, CamelBindingData target) throws Exception {
         getContextMapper().mapTo(exchange.getContext(), target);
 
-        // TODO Consider if it is better to extend context mapper api and pass switchyard exchange to it.
-        ServiceOperation operation = exchange.getContract().getServiceOperation();
-        target.setHeader(OPERATION_NAME, operation.getName());
-        target.setHeader(FAULT_TYPE, operation.getFaultType());
-        target.setHeader(SERVICE_NAME, exchange.getServiceName());
+        org.apache.camel.Message targetMessage = target.getMessage();
 
-        target.setBody(exchange.getMessage().getContent());
+        ServiceOperation operation = exchange.getContract().getServiceOperation();
+        targetMessage.setHeader(OPERATION_NAME, operation.getName());
+        targetMessage.setHeader(FAULT_TYPE, operation.getFaultType());
+        targetMessage.setHeader(SERVICE_NAME, exchange.getServiceName());
+
+        targetMessage.setBody(exchange.getMessage().getContent());
         return target;
     }
     

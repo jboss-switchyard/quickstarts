@@ -36,25 +36,25 @@ public final class JCAComposition {
 
     /**
      * Uses the {@link Composition} class to create a JCA-specific MessageComposer.
-     * @param type {@link Class} for message type
-     * @param <T> message type
+     * @param bindingDataType {@link Class} for binding data type
+     * @param <D> jca binding data type
      * @return the MessageComposer
      */
-    public static <T> MessageComposer<T> getMessageComposer(Class<T> type) {
-        return Composition.getMessageComposer(type);
+    public static <D extends JCABindingData> MessageComposer<D> getMessageComposer(Class<D> bindingDataType) {
+        return Composition.getMessageComposer(bindingDataType);
     }
 
     /**
      * Uses the {@link Composition} class to create a JCA-specific MessageComposer.
      * @param jcabm a JCABindingModel to get configuration details from
-     * @param type {@link Class} for message type
-     * @param <T> message type
+     * @param bindingDataType {@link Class} for binding data type
+     * @param <D> jca binding data type
      * @return the MessageComposer
      */
-    public static <T> MessageComposer<T> getMessageComposer(JCABindingModel jcabm, Class<T> type) {
+    public static <D extends JCABindingData> MessageComposer<D> getMessageComposer(JCABindingModel jcabm, Class<D> bindingDataType) {
         ContextMapperModel cmm = jcabm != null ? jcabm.getContextMapper() : null;
         MessageComposerModel mcm = jcabm != null ? jcabm.getMessageComposer() : null;
-        return Composition.getMessageComposer(type, cmm, mcm);
+        return Composition.getMessageComposer(bindingDataType, cmm, mcm);
     }
 
     private JCAComposition() {}

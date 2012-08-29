@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,34 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.common.composer;
+package org.switchyard.component.jca.composer;
+
+import javax.resource.cci.IndexedRecord;
 
 /**
- * Base class for MessageComposer.
- *
- * @param <D> the type of binding data
- *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * Indexed record binding data.
+ * 
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public abstract class BaseMessageComposer<D extends BindingData> implements MessageComposer<D> {
+public class IndexedRecordBindingData implements RecordBindingData<IndexedRecord> {
 
-    private ContextMapper<D> _contextMapper;
+    private final IndexedRecord _record;
 
     /**
-     * {@inheritDoc}
+     * Constructs a new indexed record binding data with the specified indexed record.
+     * @param record the specified indexed record
      */
-    @Override
-    public ContextMapper<D> getContextMapper() {
-        return _contextMapper;
+    public IndexedRecordBindingData(IndexedRecord record) {
+        _record = record;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public MessageComposer<D> setContextMapper(ContextMapper<D> contextMapper) {
-        _contextMapper = contextMapper;
-        return this;
+    public IndexedRecord getRecord() {
+        return _record;
     }
 
 }

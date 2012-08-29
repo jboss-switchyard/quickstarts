@@ -44,9 +44,9 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.http.composer.HttpComposition;
-import org.switchyard.component.http.composer.HttpMessage;
-import org.switchyard.component.http.composer.HttpRequestMessage;
-import org.switchyard.component.http.composer.HttpResponseMessage;
+import org.switchyard.component.http.composer.HttpBindingData;
+import org.switchyard.component.http.composer.HttpRequestBindingData;
+import org.switchyard.component.http.composer.HttpResponseBindingData;
 import org.switchyard.component.http.config.model.HttpBindingModel;
 import org.switchyard.deploy.BaseServiceHandler;
 
@@ -68,7 +68,7 @@ public class OutboundHandler extends BaseServiceHandler {
 
     private final HttpBindingModel _config;
 
-    private MessageComposer<HttpMessage> _messageComposer;
+    private MessageComposer<HttpBindingData> _messageComposer;
     private String _baseAddress = "http://localhost:8080";
     private String _httpMethod = HTTP_GET;
     private String _contentType;
@@ -119,7 +119,7 @@ public class OutboundHandler extends BaseServiceHandler {
     public void handleMessage(final Exchange exchange) throws HandlerException {
         HttpClient httpclient = new DefaultHttpClient();
         try {
-            HttpMessage httpRequest = _messageComposer.decompose(exchange, new HttpRequestMessage());
+            HttpBindingData httpRequest = _messageComposer.decompose(exchange, new HttpRequestBindingData());
             HttpRequestBase request = null;
             if (_httpMethod.equals(HTTP_GET)) {
                 request = new HttpGet(_baseAddress);
@@ -153,7 +153,7 @@ public class OutboundHandler extends BaseServiceHandler {
             int status = response.getStatusLine().getStatusCode();
             if (status == HttpServletResponse.SC_OK) {
                 HttpEntity entity = response.getEntity();
-                HttpResponseMessage httpResponse = new HttpResponseMessage();
+                HttpResponseBindingData httpResponse = new HttpResponseBindingData();
                 Header[] headers = response.getAllHeaders();
                 for (Header header : headers) {
                     httpResponse.addHeader(header.getName(), header.getValue());

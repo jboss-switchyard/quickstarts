@@ -23,17 +23,17 @@ import org.switchyard.Context;
 /**
  * Base class for ContextMapper, no-op'ing the required methods in case the extender only needs to override one of them.
  *
- * @param <T> the type of source/target object
+ * @param <D> the type of binding data
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2011 Red Hat Inc.
  */
-public class BaseContextMapper<T> implements ContextMapper<T> {
+public class BaseContextMapper<D extends BindingData> implements ContextMapper<D> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void mapFrom(T source, Context context) throws Exception {
+    public void mapFrom(D source, Context context) throws Exception {
         // No-op; override if desired.
     }
 
@@ -41,7 +41,7 @@ public class BaseContextMapper<T> implements ContextMapper<T> {
      * {@inheritDoc}
      */
     @Override
-    public void mapTo(Context context, T target) throws Exception {
+    public void mapTo(Context context, D target) throws Exception {
         // No-op; override if desired.
     }
 

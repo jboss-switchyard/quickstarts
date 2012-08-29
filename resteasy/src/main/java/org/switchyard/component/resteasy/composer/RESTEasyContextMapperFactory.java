@@ -26,21 +26,21 @@ import org.switchyard.component.common.composer.ContextMapperFactory;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class RESTEasyContextMapperFactory extends ContextMapperFactory<RESTEasyMessage> {
+public class RESTEasyContextMapperFactory extends ContextMapperFactory<RESTEasyBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Class<RESTEasyMessage> getTargetClass() {
-        return RESTEasyMessage.class;
+    public Class<RESTEasyBindingData> getBindingDataClass() {
+        return RESTEasyBindingData.class;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ContextMapper<RESTEasyMessage> newContextMapperDefault() {
+    public ContextMapper<RESTEasyBindingData> newContextMapperDefault() {
         return new RESTEasyContextMapper();
     }
 

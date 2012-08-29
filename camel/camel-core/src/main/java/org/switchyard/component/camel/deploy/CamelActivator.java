@@ -29,7 +29,6 @@ import javax.naming.NamingException;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Message;
 import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
@@ -47,6 +46,7 @@ import org.switchyard.component.camel.OutboundHandler;
 import org.switchyard.component.camel.RouteFactory;
 import org.switchyard.component.camel.SwitchYardConsumer;
 import org.switchyard.component.camel.SwitchyardEndpoint;
+import org.switchyard.component.camel.composer.CamelBindingData;
 import org.switchyard.component.camel.composer.CamelComposition;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.component.camel.config.model.CamelComponentImplementationModel;
@@ -319,7 +319,7 @@ public class CamelActivator extends BaseActivator {
 
     private ServiceHandler createOutboundHandler(final CamelBindingModel binding, final QName name) {
         final String endpointUri = binding.getComponentURI().toString();
-        final MessageComposer<Message> messageComposer = CamelComposition.getMessageComposer(binding);
+        final MessageComposer<CamelBindingData> messageComposer = CamelComposition.getMessageComposer(binding);
         return new OutboundHandler(endpointUri, _camelContext, messageComposer);
     }
     

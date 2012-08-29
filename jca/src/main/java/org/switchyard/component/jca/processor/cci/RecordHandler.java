@@ -21,23 +21,23 @@ package org.switchyard.component.jca.processor.cci;
 import javax.resource.cci.Connection;
 import javax.resource.cci.Interaction;
 import javax.resource.cci.InteractionSpec;
-import javax.resource.cci.Record;
 import javax.resource.cci.RecordFactory;
 
-import org.switchyard.Message;
 import org.switchyard.Exchange;
+import org.switchyard.Message;
 import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.jca.composer.RecordBindingData;
 
 /**
  * RecordHandler.
  * 
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  *
- * @param <T> Record type
+ * @param <D> record binding data type
  */
-public abstract class RecordHandler<T extends Record> {
+public abstract class RecordHandler<D extends RecordBindingData<?>> {
 
-    private MessageComposer<T> _composer;
+    private MessageComposer<D> _composer;
 
     /**
      * handle interaction.
@@ -57,7 +57,7 @@ public abstract class RecordHandler<T extends Record> {
      * 
      * @param composer message composer
      */
-    public void setMessageComposer(MessageComposer<T> composer) {
+    public void setMessageComposer(MessageComposer<D> composer) {
         _composer = composer;
     }
 
@@ -66,7 +66,7 @@ public abstract class RecordHandler<T extends Record> {
      * 
      * @return MessageComposer instance
      */
-    public MessageComposer<T> getMessageComposer() {
+    public MessageComposer<D> getMessageComposer() {
         return _composer;
     }
 }

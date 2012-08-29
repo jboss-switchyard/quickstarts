@@ -23,6 +23,7 @@ import javax.jms.MessageListener;
 
 import org.switchyard.Exchange;
 import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.jca.composer.JMSBindingData;
 import org.switchyard.exception.SwitchYardException;
 /**
  * Concrete message endpoint class for JCA message inflow using JMS MessageListener interface.
@@ -32,12 +33,12 @@ import org.switchyard.exception.SwitchYardException;
  */
 public class JMSEndpoint extends AbstractInflowEndpoint implements MessageListener {
     
-    private MessageComposer<Message> _composer;
+    private MessageComposer<JMSBindingData> _composer;
     
     @Override
     public void initialize() {
         super.initialize();
-        _composer = getMessageComposer(Message.class);
+        _composer = getMessageComposer(JMSBindingData.class);
     }
     
     @Override
@@ -45,7 +46,7 @@ public class JMSEndpoint extends AbstractInflowEndpoint implements MessageListen
         
         final Exchange exchange = createExchange();
         try {
-            exchange.send(_composer.compose(message, exchange, true));
+            exchange.send(_composer.compose(new JMSBindingData(message), exchange, true));
         } catch (Exception e) {
             throw new SwitchYardException(e);
         }

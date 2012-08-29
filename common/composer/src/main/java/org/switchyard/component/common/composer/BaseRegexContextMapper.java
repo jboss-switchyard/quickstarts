@@ -32,11 +32,11 @@ import org.switchyard.common.xml.XMLHelper;
 /**
  * Base class for RegexContextMapper; adds the regex pattern matching ability.
  *
- * @param <T> the type of source/target object
+ * @param <D> the type of binding data
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class BaseRegexContextMapper<T> extends BaseContextMapper<T> implements RegexContextMapper<T> {
+public class BaseRegexContextMapper<D extends BindingData> extends BaseContextMapper<D> implements RegexContextMapper<D> {
 
     private final List<Pattern> _includes = new ArrayList<Pattern>();
     private final List<Pattern> _excludes = new ArrayList<Pattern>();
@@ -64,7 +64,7 @@ public class BaseRegexContextMapper<T> extends BaseContextMapper<T> implements R
      * {@inheritDoc}
      */
     @Override
-    public ContextMapper<T> setIncludes(String includes) {
+    public ContextMapper<D> setIncludes(String includes) {
         setPatternList(includes, _includes);
         return this;
     }
@@ -73,7 +73,7 @@ public class BaseRegexContextMapper<T> extends BaseContextMapper<T> implements R
      * {@inheritDoc}
      */
     @Override
-    public ContextMapper<T> setExcludes(String excludes) {
+    public ContextMapper<D> setExcludes(String excludes) {
         setPatternList(excludes, _excludes);
         return this;
     }
@@ -82,7 +82,7 @@ public class BaseRegexContextMapper<T> extends BaseContextMapper<T> implements R
      * {@inheritDoc}
      */
     @Override
-    public ContextMapper<T> setIncludeNamespaces(String includeNamespaces) {
+    public ContextMapper<D> setIncludeNamespaces(String includeNamespaces) {
         setPatternList(includeNamespaces, _includeNamespaces);
         return this;
     }
@@ -91,7 +91,7 @@ public class BaseRegexContextMapper<T> extends BaseContextMapper<T> implements R
      * {@inheritDoc}
      */
     @Override
-    public ContextMapper<T> setExcludeNamespaces(String excludeNamespaces) {
+    public ContextMapper<D> setExcludeNamespaces(String excludeNamespaces) {
         setPatternList(excludeNamespaces, _excludeNamespaces);
         return this;
     }

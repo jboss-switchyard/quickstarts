@@ -23,11 +23,11 @@ import org.switchyard.Context;
 /**
  * Maps context properties from and to a source or target object.
  * 
- * @param <T> the type of source and target object
+ * @param <D> the type of binding data
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2011 Red Hat Inc.
  */
-public interface ContextMapper<T> {
+public interface ContextMapper<D extends BindingData> {
 
     /**
      * Maps a source object's properties to the context.
@@ -35,7 +35,7 @@ public interface ContextMapper<T> {
      * @param context the context to map to
      * @throws Exception if there was a problem
      */
-    public void mapFrom(T source, Context context) throws Exception;
+    public void mapFrom(D source, Context context) throws Exception;
 
     /**
      * Maps a context's properties into a target object.
@@ -43,6 +43,6 @@ public interface ContextMapper<T> {
      * @param target the target to map to
      * @throws Exception if there was a problem
      */
-    public void mapTo(Context context, T target) throws Exception;
+    public void mapTo(Context context, D target) throws Exception;
 
 }

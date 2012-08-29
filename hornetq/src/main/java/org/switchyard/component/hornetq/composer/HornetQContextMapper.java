@@ -33,17 +33,18 @@ import org.switchyard.component.common.composer.BaseRegexContextMapper;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class HornetQContextMapper extends BaseRegexContextMapper<ClientMessage> {
+public class HornetQContextMapper extends BaseRegexContextMapper<HornetQBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void mapFrom(ClientMessage source, Context context) throws Exception {
-        for (SimpleString key : source.getPropertyNames()) {
+    public void mapFrom(HornetQBindingData source, Context context) throws Exception {
+        ClientMessage clientMessage = source.getClientMessage();
+        for (SimpleString key : clientMessage.getPropertyNames()) {
             String name = key.toString();
             if (matches(name)) {
-                Object value = source.getObjectProperty(key);
+                Object value = clientMessage.getObjectProperty(key);
                 if (value != null) {
                     // HornetQ ClientMessage properties -> Context EXCHANGE properties
                     context.setProperty(name, value, EXCHANGE).addLabels(HORNETQ_MESSAGE_PROPERTY);
@@ -56,7 +57,8 @@ public class HornetQContextMapper extends BaseRegexContextMapper<ClientMessage> 
      * {@inheritDoc}
      */
     @Override
-    public void mapTo(Context context, ClientMessage target) throws Exception {
+    public void mapTo(Context context, HornetQBindingData target) throws Exception {
+        ClientMessage clientMessage = target.getClientMessage();
         for (Property property : context.getProperties(EXCHANGE)) {
             String name = property.getName();
             if (matches(name)) {
@@ -64,7 +66,7 @@ public class HornetQContextMapper extends BaseRegexContextMapper<ClientMessage> 
                 if (value != null) {
                     try {
                         // Context EXCHANGE properties -> HornetQ ClientMessage properties
-                        target.putObjectProperty(name, value);
+                        clientMessage.putObjectProperty(name, value);
                     } catch (PropertyConversionException pce) {
                         // ignore and keep going (here just to keep checkstyle happy)
                         pce.getMessage();

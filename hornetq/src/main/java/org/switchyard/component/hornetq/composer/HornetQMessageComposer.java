@@ -18,7 +18,6 @@
  */
 package org.switchyard.component.hornetq.composer;
 
-import org.hornetq.api.core.client.ClientMessage;
 import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.component.common.composer.BaseMessageComposer;
@@ -29,16 +28,16 @@ import org.switchyard.component.hornetq.internal.HornetQUtil;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class HornetQMessageComposer extends BaseMessageComposer<ClientMessage> {
+public class HornetQMessageComposer extends BaseMessageComposer<HornetQBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Message compose(ClientMessage source, Exchange exchange, boolean create) throws Exception {
+    public Message compose(HornetQBindingData source, Exchange exchange, boolean create) throws Exception {
         final Message message = create ? exchange.createMessage() : exchange.getMessage();
         getContextMapper().mapFrom(source, exchange.getContext());
-        message.setContent(HornetQUtil.readBytes(source));
+        message.setContent(HornetQUtil.readBytes(source.getClientMessage()));
         return message;
     }
 
@@ -46,10 +45,10 @@ public class HornetQMessageComposer extends BaseMessageComposer<ClientMessage> {
      * {@inheritDoc}
      */
     @Override
-    public ClientMessage decompose(Exchange exchange, ClientMessage target) throws Exception {
+    public HornetQBindingData decompose(Exchange exchange, HornetQBindingData target) throws Exception {
         getContextMapper().mapTo(exchange.getContext(), target);
         final byte[] content = exchange.getMessage().getContent(byte[].class);
-        target.getBodyBuffer().writeBytes(content);
+        target.getClientMessage().getBodyBuffer().writeBytes(content);
         return target;
     }
 

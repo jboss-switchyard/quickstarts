@@ -40,8 +40,8 @@ public final class HttpComposition {
      * Uses the {@link Composition} class to create a HTTP-specific MessageComposer.
      * @return the MessageComposer
      */
-    public static MessageComposer<HttpMessage> getMessageComposer() {
-        return Composition.getMessageComposer(HttpMessage.class);
+    public static MessageComposer<HttpBindingData> getMessageComposer() {
+        return Composition.getMessageComposer(HttpBindingData.class);
     }
 
     /**
@@ -49,10 +49,10 @@ public final class HttpComposition {
      * @param hbm a HttpBindingModel to get configuration details from
      * @return the MessageComposer
      */
-    public static MessageComposer<HttpMessage> getMessageComposer(HttpBindingModel hbm) {
+    public static MessageComposer<HttpBindingData> getMessageComposer(HttpBindingModel hbm) {
         ContextMapperModel cmm = hbm != null ? hbm.getContextMapper() : null;
         MessageComposerModel mcm = hbm != null ? hbm.getMessageComposer() : null;
-        MessageComposer<HttpMessage> mc = Composition.getMessageComposer(HttpMessage.class, cmm, mcm);
+        MessageComposer<HttpBindingData> mc = Composition.getMessageComposer(HttpBindingData.class, cmm, mcm);
         if (mc instanceof HttpMessageComposer && mcm != null) {
             HttpMessageComposer smc = (HttpMessageComposer)mc;
             smc.setComposerConfig(mcm);

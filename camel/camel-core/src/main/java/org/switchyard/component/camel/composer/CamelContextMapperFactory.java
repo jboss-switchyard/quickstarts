@@ -18,7 +18,6 @@
  */
 package org.switchyard.component.camel.composer;
 
-import org.apache.camel.Message;
 import org.switchyard.component.common.composer.ContextMapper;
 import org.switchyard.component.common.composer.ContextMapperFactory;
 
@@ -27,21 +26,21 @@ import org.switchyard.component.common.composer.ContextMapperFactory;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class CamelContextMapperFactory extends ContextMapperFactory<Message> {
+public class CamelContextMapperFactory extends ContextMapperFactory<CamelBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Class<Message> getTargetClass() {
-        return Message.class;
+    public Class<CamelBindingData> getBindingDataClass() {
+        return CamelBindingData.class;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ContextMapper<Message> newContextMapperDefault() {
+    public ContextMapper<CamelBindingData> newContextMapperDefault() {
         return new CamelContextMapper();
     }
 

@@ -54,16 +54,16 @@ public final class ClassUtil {
     private static final String FIELD_DECL = "public org.switchyard.component.resteasy.InboundHandler " + FIELD_NAME + END_OF_LINE;
     private static final String FIELD_HEADERS_NAME = "_headers";
     private static final String FIELD_DECL_HEADERS = "private javax.ws.rs.core.HttpHeaders " + FIELD_HEADERS_NAME + END_OF_LINE;
-    private static final String METHOD_BODY_MESSAGE = "org.switchyard.component.resteasy.composer.RESTEasyMessage";
+    private static final String METHOD_BODY_BINDING_DATA = "org.switchyard.component.resteasy.composer.RESTEasyBindingData";
     private static final String METHOD_VAR_REQUEST = "request";
     private static final String METHOD_VAR_RESPONSE = "response";
-    private static final String METHOD_BODY_REQUEST = METHOD_BODY_MESSAGE + " " + METHOD_VAR_REQUEST + " = new " + METHOD_BODY_MESSAGE + "()" + END_OF_LINE;
+    private static final String METHOD_BODY_REQUEST = METHOD_BODY_BINDING_DATA + " " + METHOD_VAR_REQUEST + " = new " + METHOD_BODY_BINDING_DATA + "()" + END_OF_LINE;
     private static final String METHOD_BODY_HEADERS = "if (" + FIELD_HEADERS_NAME + " != null) { " + METHOD_VAR_REQUEST + ".setHeaders(" + FIELD_HEADERS_NAME + ".getRequestHeaders());}";
     private static final String METHOD_BODY_CONTENT = METHOD_VAR_REQUEST + ".setContent(%s)" + END_OF_LINE;
     private static final String METHOD_BODY = "{%s}";
     private static final String METHOD_FRAGMENT = FIELD_NAME + ".invoke(\"%s\", " + METHOD_VAR_REQUEST;
     private static final String METHOD_WITH_NO_RETURN = METHOD_FRAGMENT + ", %b)" + END_OF_LINE;
-    private static final String METHOD_WITH_RETURN = METHOD_BODY_MESSAGE + " " + METHOD_VAR_RESPONSE + " = " + METHOD_FRAGMENT + ", %b)" + END_OF_LINE;
+    private static final String METHOD_WITH_RETURN = METHOD_BODY_BINDING_DATA + " " + METHOD_VAR_RESPONSE + " = " + METHOD_FRAGMENT + ", %b)" + END_OF_LINE;
     private static final String METHOD_RETURN = "if (" + METHOD_VAR_RESPONSE + " != null) { return (%s)" + METHOD_VAR_RESPONSE + ".getContent();}"
                                                     + "else { return null;}";
 

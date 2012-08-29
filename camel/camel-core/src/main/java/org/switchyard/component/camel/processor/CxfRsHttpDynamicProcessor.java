@@ -22,9 +22,9 @@ package org.switchyard.component.camel.processor;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.switchyard.component.camel.CamelConstants;
+import org.switchyard.component.camel.composer.CamelBindingData;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.common.rest.RsMethod;
 import org.switchyard.component.common.rest.RsMethodUtil;
@@ -50,7 +50,7 @@ public class CxfRsHttpDynamicProcessor extends DefaultProcessor {
      * @param exchange the switchayrd exchange
      * @param uri the camel cxfrs endpoint uri
      */
-    public CxfRsHttpDynamicProcessor(MessageComposer<Message> composer, org.switchyard.Exchange exchange, String uri) {
+    public CxfRsHttpDynamicProcessor(MessageComposer<CamelBindingData> composer, org.switchyard.Exchange exchange, String uri) {
         super(composer, exchange);
         String resourceClasses = uri.split(CamelConstants.RESOURCE_CLASSES)[1].split("&")[0];
         _resourcePaths = RsMethodUtil.parseResources(resourceClasses);

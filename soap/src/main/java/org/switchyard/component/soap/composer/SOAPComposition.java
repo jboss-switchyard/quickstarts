@@ -19,7 +19,6 @@
 package org.switchyard.component.soap.composer;
 
 import javax.wsdl.Port;
-import javax.xml.soap.SOAPMessage;
 
 import org.switchyard.component.common.composer.Composition;
 import org.switchyard.component.common.composer.ContextMapper;
@@ -45,8 +44,8 @@ public final class SOAPComposition {
      * Uses the {@link Composition} class to create a SOAP-specific MessageComposer.
      * @return the MessageComposer
      */
-    public static MessageComposer<SOAPMessage> getMessageComposer() {
-        return Composition.getMessageComposer(SOAPMessage.class);
+    public static MessageComposer<SOAPBindingData> getMessageComposer() {
+        return Composition.getMessageComposer(SOAPBindingData.class);
     }
 
     /**
@@ -55,17 +54,17 @@ public final class SOAPComposition {
      * @param wsdlPort the WSDL port where the message is defined
      * @return the MessageComposer
      */
-    public static MessageComposer<SOAPMessage> getMessageComposer(SOAPBindingModel sbm, Port wsdlPort) {
+    public static MessageComposer<SOAPBindingData> getMessageComposer(SOAPBindingModel sbm, Port wsdlPort) {
         SOAPContextMapperModel scmm = sbm != null ? sbm.getSOAPContextMapper() : null;
         SOAPMessageComposerModel mcm = sbm != null ? sbm.getSOAPMessageComposer() : null;
-        MessageComposer<SOAPMessage> mc = Composition.getMessageComposer(SOAPMessage.class, scmm, mcm);
+        MessageComposer<SOAPBindingData> mc = Composition.getMessageComposer(SOAPBindingData.class, scmm, mcm);
         if (mc instanceof SOAPMessageComposer && mcm != null) {
             SOAPMessageComposer smc = (SOAPMessageComposer)mc;
             smc.setComposerConfig(mcm);
             smc.setWsdlPort(wsdlPort);
             
         }
-        ContextMapper<SOAPMessage> cm = mc.getContextMapper();
+        ContextMapper<SOAPBindingData> cm = mc.getContextMapper();
         if (cm instanceof SOAPContextMapper && scmm != null) {
             ((SOAPContextMapper)cm).setSOAPHeadersType(scmm.getSOAPHeadersType());
         }

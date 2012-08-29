@@ -44,6 +44,7 @@ import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.component.camel.composer.CamelBindingData;
 import org.switchyard.component.camel.composer.CamelComposition;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.component.common.composer.MessageComposer;
@@ -73,7 +74,7 @@ public class OutboundHandlerTest extends CamelTestSupport {
     @ServiceOperation("TargetService")
     private Invoker _targetService;
 
-    private MessageComposer<org.apache.camel.Message> _messageComposer;
+    private MessageComposer<CamelBindingData> _messageComposer;
     private ServiceReference _service;
 
     /**

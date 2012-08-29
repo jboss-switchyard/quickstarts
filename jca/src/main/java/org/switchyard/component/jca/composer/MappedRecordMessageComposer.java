@@ -18,33 +18,45 @@
  */
 package org.switchyard.component.jca.composer;
 
-import javax.resource.cci.MappedRecord;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.switchyard.component.common.composer.MessageComposer;
-import org.switchyard.component.common.composer.MessageComposerFactory;
+import org.switchyard.Exchange;
+import org.switchyard.component.common.composer.BaseMessageComposer;
 
 /**
- * MessageComposerFactory for CCI MappedRecord.
+ * MessageComposer implementation for CCI MappedRecord that is used by JCA component.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  */
-public class CCIMappedRecordMessageComposerFactory extends MessageComposerFactory<MappedRecord> {
+public class MappedRecordMessageComposer extends BaseMessageComposer<MappedRecordBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Class<MappedRecord> getTargetClass() {
-        return MappedRecord.class;
+    public org.switchyard.Message compose(MappedRecordBindingData source, Exchange exchange, boolean create) throws Exception {
+        
+        final org.switchyard.Message message = create ? exchange.createMessage() : exchange.getMessage();
+        getContextMapper().mapFrom(source, exchange.getContext());
+        Map<Object,Object> m = new HashMap<Object,Object>();
+        m.putAll(source.getRecord());
+        message.setContent(m);
+        return message;
     }
 
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public MessageComposer<MappedRecord> newMessageComposerDefault() {
-        return new CCIMappedRecordMessageComposer();
+    public MappedRecordBindingData decompose(Exchange exchange, MappedRecordBindingData target) throws Exception {
+
+        getContextMapper().mapTo(exchange.getContext(), target);
+        final Map<?,?> content = exchange.getMessage().getContent(Map.class);
+        target.getRecord().putAll(content);
+        return target;
     }
 
 }

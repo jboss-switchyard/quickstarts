@@ -35,6 +35,7 @@ import org.junit.Test;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.ServiceReference;
+import org.switchyard.component.camel.composer.CamelBindingData;
 import org.switchyard.component.camel.composer.CamelComposition;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.metadata.ExchangeContract;
@@ -53,7 +54,7 @@ public class CamelResponseHandlerTest {
     private static final QName JAVA_STRING_QNAME = new QName("java:java.lang.String");
     private static final QName SERVICE_QNAME = new QName("java:" + MockService.class.getName());
 
-    private MessageComposer<org.apache.camel.Message> _messageComposer;
+    private MessageComposer<CamelBindingData> _messageComposer;
 
     @Before
     public void before() {

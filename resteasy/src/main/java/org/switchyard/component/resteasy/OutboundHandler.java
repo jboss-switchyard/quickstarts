@@ -38,7 +38,7 @@ import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.common.rest.RsMethod;
 import org.switchyard.component.common.rest.RsMethodUtil;
 import org.switchyard.component.resteasy.composer.RESTEasyComposition;
-import org.switchyard.component.resteasy.composer.RESTEasyMessage;
+import org.switchyard.component.resteasy.composer.RESTEasyBindingData;
 import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
 import org.switchyard.deploy.BaseServiceHandler;
 
@@ -54,7 +54,7 @@ public class OutboundHandler extends BaseServiceHandler {
     private final RESTEasyBindingModel _config;
     private String _baseAddress = "http://localhost:8080";
     private Map<String, RsMethod> _resourcePaths;
-    private MessageComposer<RESTEasyMessage> _messageComposer;
+    private MessageComposer<RESTEasyBindingData> _messageComposer;
 
     /**
      * Constructor.
@@ -124,7 +124,7 @@ public class OutboundHandler extends BaseServiceHandler {
 
             // Support for manual client
             ClientRequest request = new ClientRequest(_baseAddress + path);
-            RESTEasyMessage restRequest = _messageComposer.decompose(exchange, new RESTEasyMessage());
+            RESTEasyBindingData restRequest = _messageComposer.decompose(exchange, new RESTEasyBindingData());
             Object content = restRequest.getContent();
             if ((restMethod.getRequestType() != null) && (content != null) && !restMethod.hasParam()) {
                 // Factor based on media type
@@ -159,7 +159,7 @@ public class OutboundHandler extends BaseServiceHandler {
             request.getHeaders().putAll(restRequest.getHeaders());
             ClientResponse<?> response = request.httpMethod(restMethod.getMethod(), restMethod.getResponseType());
             if (response.getStatus() == 200) {
-                RESTEasyMessage restResponse = new RESTEasyMessage();
+                RESTEasyBindingData restResponse = new RESTEasyBindingData();
                 restResponse.setContent(response.getEntity());
                 restResponse.setHeaders(response.getHeaders());
                 Message out = _messageComposer.compose(restResponse, exchange, true);

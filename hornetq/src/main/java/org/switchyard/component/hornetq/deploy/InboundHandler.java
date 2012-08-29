@@ -31,6 +31,7 @@ import org.switchyard.Exchange;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.hornetq.composer.HornetQBindingData;
 import org.switchyard.component.hornetq.composer.HornetQComposition;
 import org.switchyard.component.hornetq.config.model.HornetQBindingModel;
 import org.switchyard.component.hornetq.config.model.HornetQConfigModel;
@@ -52,7 +53,7 @@ public class InboundHandler extends BaseServiceHandler implements MessageHandler
 
     private final HornetQBindingModel _bindingModel;
     private final HornetQConfigModel _configModel;
-    private final MessageComposer<ClientMessage> _messageComposer;
+    private final MessageComposer<HornetQBindingData> _messageComposer;
     private ClassLoader _applicationClassLoader;
     private ServiceReference _serviceRef;
     private ServiceDomain _domain;
@@ -113,7 +114,7 @@ public class InboundHandler extends BaseServiceHandler implements MessageHandler
         try {
             Thread.currentThread().setContextClassLoader(_applicationClassLoader);
             _logger.info("onMessage :" + message);
-            exchange.send(_messageComposer.compose(message, exchange, true));
+            exchange.send(_messageComposer.compose(new HornetQBindingData(message), exchange, true));
         } catch (final Exception e) {
             throw new SwitchYardException(e);
         } finally {

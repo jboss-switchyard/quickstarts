@@ -28,21 +28,21 @@ import org.switchyard.component.common.composer.ContextMapperFactory;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public class HttpContextMapperFactory extends ContextMapperFactory<HttpMessage> {
+public class HttpContextMapperFactory extends ContextMapperFactory<HttpBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Class<HttpMessage> getTargetClass() {
-        return HttpMessage.class;
+    public Class<HttpBindingData> getBindingDataClass() {
+        return HttpBindingData.class;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ContextMapper<HttpMessage> newContextMapperDefault() {
+    public ContextMapper<HttpBindingData> newContextMapperDefault() {
         return new HttpContextMapper();
     }
 

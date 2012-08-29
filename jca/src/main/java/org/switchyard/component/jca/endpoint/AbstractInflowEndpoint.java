@@ -25,6 +25,7 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.jca.composer.JCABindingData;
 import org.switchyard.component.jca.composer.JCAComposition;
 import org.switchyard.component.jca.config.model.JCABindingModel;
 import org.switchyard.policy.PolicyUtil;
@@ -210,7 +211,7 @@ public abstract class AbstractInflowEndpoint {
         return createExchange(null);
     }
    
-    protected <T> MessageComposer<T> getMessageComposer(Class<T> clazz) {
+    protected <D extends JCABindingData> MessageComposer<D> getMessageComposer(Class<D> clazz) {
         return JCAComposition.getMessageComposer(clazz);
     }
 

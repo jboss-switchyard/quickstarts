@@ -30,7 +30,7 @@ import org.switchyard.ServiceReference;
 import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.resteasy.composer.RESTEasyComposition;
-import org.switchyard.component.resteasy.composer.RESTEasyMessage;
+import org.switchyard.component.resteasy.composer.RESTEasyBindingData;
 import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
 import org.switchyard.component.resteasy.resource.Resource;
 import org.switchyard.component.resteasy.resource.ResourcePublisherFactory;
@@ -50,7 +50,7 @@ public class InboundHandler extends BaseServiceHandler {
     private ServiceDomain _domain;
     private ServiceReference _service;
     private Resource _resource;
-    private MessageComposer<RESTEasyMessage> _messageComposer;
+    private MessageComposer<RESTEasyBindingData> _messageComposer;
 
     /**
      * Constructor.
@@ -93,8 +93,8 @@ public class InboundHandler extends BaseServiceHandler {
      * @param oneWay true of this is a oneway request
      * @return the response from invocation
      */
-    public RESTEasyMessage invoke(final String operationName, final RESTEasyMessage restMessageRequest, final boolean oneWay) {
-        RESTEasyMessage output = new RESTEasyMessage();
+    public RESTEasyBindingData invoke(final String operationName, final RESTEasyBindingData restMessageRequest, final boolean oneWay) {
+        RESTEasyBindingData output = new RESTEasyBindingData();
         try {
             SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
             Exchange exchange = _service.createExchange(operationName, inOutHandler);

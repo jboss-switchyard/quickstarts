@@ -19,10 +19,10 @@
 
 package org.switchyard.component.camel.processor;
 
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.switchyard.Exchange;
 import org.switchyard.component.camel.CamelConstants;
+import org.switchyard.component.camel.composer.CamelBindingData;
 import org.switchyard.component.common.composer.MessageComposer;
 
 /**
@@ -46,7 +46,7 @@ public final class ProcessorFactory {
      * @param uri the configuration uri
      * @return the Camel processor
      */
-    public static Processor newProcessor(MessageComposer<Message> composer, Exchange exchange, String uri) {
+    public static Processor newProcessor(MessageComposer<CamelBindingData> composer, Exchange exchange, String uri) {
         if ((uri != null) && uri.startsWith(CamelConstants.CXFRS_SCHEME)) {
             if (uri.contains(CamelConstants.RESOURCE_CLASSES)) {
                 return new CxfRsHttpDynamicProcessor(composer, exchange, uri);

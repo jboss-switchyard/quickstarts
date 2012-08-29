@@ -31,6 +31,7 @@ import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.component.camel.composer.CamelBindingData;
 import org.switchyard.component.camel.deploy.CamelActivator;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.exception.SwitchYardException;
@@ -56,7 +57,7 @@ public class SwitchYardProducer extends DefaultProducer {
     
     private String _namespace;
     private String _operationName;
-    private final MessageComposer<org.apache.camel.Message> _messageComposer;
+    private final MessageComposer<CamelBindingData> _messageComposer;
     
     /**
      * Sole constructor.
@@ -66,7 +67,7 @@ public class SwitchYardProducer extends DefaultProducer {
      * @param operationName the operation name of the target SwitchYard service.
      * @param messageComposer the MessageComposer to use
      */
-    public SwitchYardProducer(final Endpoint endpoint, final String namespace, final String operationName, final MessageComposer<org.apache.camel.Message> messageComposer) {
+    public SwitchYardProducer(final Endpoint endpoint, final String namespace, final String operationName, final MessageComposer<CamelBindingData> messageComposer) {
         super(endpoint);
         _namespace = namespace;
         _operationName = operationName;
@@ -85,7 +86,7 @@ public class SwitchYardProducer extends DefaultProducer {
             PolicyUtil.provide(switchyardExchange, TransactionPolicy.PROPAGATES_TRANSACTION);
         }
         
-        Message switchyardMessage = _messageComposer.compose(camelExchange.getIn(), switchyardExchange, true);
+        Message switchyardMessage = _messageComposer.compose(new CamelBindingData(camelExchange.getIn()), switchyardExchange, true);
         switchyardExchange.send(switchyardMessage);
     }
     

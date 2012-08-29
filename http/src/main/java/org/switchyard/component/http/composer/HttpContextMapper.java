@@ -37,13 +37,13 @@ import org.switchyard.component.common.composer.BaseRegexContextMapper;
  * @author Magesh Kumar B <mageshbk@jboss.com> &copy; 2012 Red Hat Inc.
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class HttpContextMapper extends BaseRegexContextMapper<HttpMessage> {
+public class HttpContextMapper extends BaseRegexContextMapper<HttpBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void mapFrom(HttpMessage source, Context context) throws Exception {
+    public void mapFrom(HttpBindingData source, Context context) throws Exception {
         Iterator<Map.Entry<String, List<String>>> entries = source.getHeaders().entrySet().iterator();
         while (entries.hasNext()) {
             Map.Entry<String, List<String>> entry = entries.next();
@@ -63,7 +63,7 @@ public class HttpContextMapper extends BaseRegexContextMapper<HttpMessage> {
      * {@inheritDoc}
      */
     @Override
-    public void mapTo(Context context, HttpMessage target) throws Exception {
+    public void mapTo(Context context, HttpBindingData target) throws Exception {
         Map<String, List<String>> httpHeaders = target.getHeaders();
         for (Property property : context.getProperties(OUT)) {
             if (property.hasLabel(HTTP_HEADER)) {

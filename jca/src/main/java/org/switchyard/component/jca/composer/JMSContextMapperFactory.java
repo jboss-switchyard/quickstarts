@@ -18,7 +18,6 @@
  */
 package org.switchyard.component.jca.composer;
 
-import javax.jms.Message;
 import org.switchyard.component.common.composer.ContextMapper;
 import org.switchyard.component.common.composer.ContextMapperFactory;
 
@@ -28,21 +27,21 @@ import org.switchyard.component.common.composer.ContextMapperFactory;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  */
-public class JMSContextMapperFactory extends ContextMapperFactory<Message> {
+public class JMSContextMapperFactory extends ContextMapperFactory<JMSBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Class<Message> getTargetClass() {
-        return Message.class;
+    public Class<JMSBindingData> getBindingDataClass() {
+        return JMSBindingData.class;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ContextMapper<Message> newContextMapperDefault() {
+    public ContextMapper<JMSBindingData> newContextMapperDefault() {
         return new JMSContextMapper();
     }
 

@@ -48,7 +48,7 @@ import org.w3c.dom.NodeList;
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
-public class SOAPMessageComposer extends BaseMessageComposer<SOAPMessage> {
+public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
 
     private static Logger _log = Logger.getLogger(SOAPMessageComposer.class);
     private SOAPMessageComposerModel _config;
@@ -58,12 +58,13 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPMessage> {
      * {@inheritDoc}
      */
     @Override
-    public Message compose(SOAPMessage source, Exchange exchange, boolean create) throws Exception {
+    public Message compose(SOAPBindingData source, Exchange exchange, boolean create) throws Exception {
+        final SOAPMessage soapMessage = source.getSOAPMessage();
         final Message message = create ? exchange.createMessage() : exchange.getMessage();
 
         getContextMapper().mapFrom(source, exchange.getContext());
 
-        final SOAPBody soapBody = source.getSOAPBody();
+        final SOAPBody soapBody = soapMessage.getSOAPBody();
         if (soapBody == null) {
             throw new SOAPException("Missing SOAP body from request");
         }
@@ -107,7 +108,8 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPMessage> {
      * {@inheritDoc}
      */
     @Override
-    public SOAPMessage decompose(Exchange exchange, SOAPMessage target) throws Exception {
+    public SOAPBindingData decompose(Exchange exchange, SOAPBindingData target) throws Exception {
+        final SOAPMessage soapMessage = target.getSOAPMessage();
         final Message message = exchange.getMessage();
 
         if (message != null) {
@@ -116,13 +118,13 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPMessage> {
                 throw new SOAPException("Null response from service");
             }
             if (message.getContent() instanceof SOAPMessage) {
-                return (SOAPMessage) message.getContent();
+                return new SOAPBindingData((SOAPMessage)message.getContent());
             }
             
             try {
                 // convert the message content to a form we can work with
                 org.w3c.dom.Node input = message.getContent(org.w3c.dom.Node.class);
-                org.w3c.dom.Node messageNodeImport = target.getSOAPBody().getOwnerDocument().importNode(input, true);
+                org.w3c.dom.Node messageNodeImport = soapMessage.getSOAPBody().getOwnerDocument().importNode(input, true);
                 if (exchange.getState() != ExchangeState.FAULT || isSOAPFaultPayload(input)) {
                     if (_config != null && _config.isUnwrapped()) {
                         String opName = exchange.getContract().getServiceOperation().getName();
@@ -134,10 +136,10 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPMessage> {
                             messageNodeImport = wrapper;
                         }
                     }
-                    target.getSOAPBody().appendChild(messageNodeImport);
+                    soapMessage.getSOAPBody().appendChild(messageNodeImport);
                 } else {
                     // convert to SOAP Fault since ExchangeState is FAULT but the message is not SOAP Fault
-                    SOAPUtil.addFault(target).addDetail().appendChild(messageNodeImport);
+                    SOAPUtil.addFault(soapMessage).addDetail().appendChild(messageNodeImport);
                 }
             } catch (Exception e) {
                 // Account for exception as payload in case of fault

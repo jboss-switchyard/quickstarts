@@ -19,30 +19,11 @@
  
 package org.switchyard.component.http.composer;
 
-import javax.servlet.http.HttpServletResponse;
-
 /**
- * A HTTP Response Message.
+ * HTTP request binding data.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public class HttpResponseMessage extends HttpMessage {
+public class HttpRequestBindingData extends HttpBindingData {
 
-    private int _status = HttpServletResponse.SC_ACCEPTED;
-
-    /**
-     * Get the HTTP response status.
-     * @return HTTP response status
-     */
-    public int getStatus() {
-        return _status;
-    }
-
-    /**
-     * Set the HTTP response status.
-     * @param status the response status
-     */
-    public void setStatus(int status) {
-        _status = status;
-    }
 }

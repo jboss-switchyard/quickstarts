@@ -18,7 +18,6 @@
  */
 package org.switchyard.component.camel.composer;
 
-import org.apache.camel.Message;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.common.composer.MessageComposerFactory;
 
@@ -27,21 +26,21 @@ import org.switchyard.component.common.composer.MessageComposerFactory;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class CamelMessageComposerFactory extends MessageComposerFactory<Message> {
+public class CamelMessageComposerFactory extends MessageComposerFactory<CamelBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Class<Message> getTargetClass() {
-        return Message.class;
+    public Class<CamelBindingData> getBindingDataClass() {
+        return CamelBindingData.class;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public MessageComposer<Message> newMessageComposerDefault() {
+    public MessageComposer<CamelBindingData> newMessageComposerDefault() {
         return new CamelMessageComposer();
     }
 

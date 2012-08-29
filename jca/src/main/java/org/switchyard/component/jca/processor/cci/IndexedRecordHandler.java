@@ -26,6 +26,7 @@ import javax.resource.cci.RecordFactory;
 
 import org.switchyard.Exchange;
 import org.switchyard.Message;
+import org.switchyard.component.jca.composer.IndexedRecordBindingData;
 import org.switchyard.component.jca.composer.JCAComposition;
 
 /**
@@ -34,19 +35,19 @@ import org.switchyard.component.jca.composer.JCAComposition;
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  *
  */
-public class IndexedRecordHandler extends RecordHandler<IndexedRecord> {
+public class IndexedRecordHandler extends RecordHandler<IndexedRecordBindingData> {
 
     /**
      * Constructor.
      */
     public IndexedRecordHandler() {
-        setMessageComposer(JCAComposition.getMessageComposer(IndexedRecord.class));
+        setMessageComposer(JCAComposition.getMessageComposer(IndexedRecordBindingData.class));
     }
 
     @Override
     public Message handle(Exchange exchange, RecordFactory factory, InteractionSpec interactionSpec, Connection conn, Interaction interact) throws Exception {
         IndexedRecord record = factory.createIndexedRecord(IndexedRecordHandler.class.getName());
-        IndexedRecord outRecord = (IndexedRecord) interact.execute(interactionSpec, getMessageComposer().decompose(exchange, record));
-        return getMessageComposer().compose(outRecord, exchange, true);
+        IndexedRecord outRecord = (IndexedRecord) interact.execute(interactionSpec, getMessageComposer().decompose(exchange, new IndexedRecordBindingData(record)).getRecord());
+        return getMessageComposer().compose(new IndexedRecordBindingData(outRecord), exchange, true);
     }
 }

@@ -52,7 +52,7 @@ import org.w3c.dom.Node;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class SOAPContextMapper extends BaseRegexContextMapper<SOAPMessage> {
+public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
 
     private SOAPHeadersType _soapHeadersType = null;
 
@@ -78,9 +78,10 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPMessage> {
      * {@inheritDoc}
      */
     @Override
-    public void mapFrom(SOAPMessage source, Context context) throws Exception {
+    public void mapFrom(SOAPBindingData source, Context context) throws Exception {
+        SOAPMessage soapMessage = source.getSOAPMessage();
         @SuppressWarnings("unchecked")
-        Iterator<MimeHeader> mimeHeaders = source.getMimeHeaders().getAllHeaders();
+        Iterator<MimeHeader> mimeHeaders = soapMessage.getMimeHeaders().getAllHeaders();
         while (mimeHeaders.hasNext()) {
             MimeHeader mimeHeader = mimeHeaders.next();
             String name = mimeHeader.getName();
@@ -93,7 +94,7 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPMessage> {
             }
         }
         @SuppressWarnings("unchecked")
-        Iterator<SOAPHeaderElement> soapHeaders = source.getSOAPHeader().examineAllHeaderElements();
+        Iterator<SOAPHeaderElement> soapHeaders = soapMessage.getSOAPHeader().examineAllHeaderElements();
         while (soapHeaders.hasNext()) {
             SOAPHeaderElement soapHeader = soapHeaders.next();
             QName qname = soapHeader.getElementQName();
@@ -128,8 +129,9 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPMessage> {
      * {@inheritDoc}
      */
     @Override
-    public void mapTo(Context context, SOAPMessage target) throws Exception {
-        MimeHeaders mimeHeaders = target.getMimeHeaders();
+    public void mapTo(Context context, SOAPBindingData target) throws Exception {
+        SOAPMessage soapMessage = target.getSOAPMessage();
+        MimeHeaders mimeHeaders = soapMessage.getMimeHeaders();
         for (Property property : context.getProperties(OUT)) {
             String name = property.getName();
             if (matches(name)) {
@@ -140,7 +142,7 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPMessage> {
                 }
             }
         }
-        SOAPHeader soapHeader = target.getSOAPHeader();
+        SOAPHeader soapHeader = soapMessage.getSOAPHeader();
         for (Property property : context.getProperties(EXCHANGE)) {
             String name = property.getName();
             QName qname = XMLHelper.createQName(name);

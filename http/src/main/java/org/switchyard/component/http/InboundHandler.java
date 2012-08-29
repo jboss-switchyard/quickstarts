@@ -28,9 +28,9 @@ import org.switchyard.ServiceReference;
 import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.http.composer.HttpComposition;
-import org.switchyard.component.http.composer.HttpMessage;
-import org.switchyard.component.http.composer.HttpRequestMessage;
-import org.switchyard.component.http.composer.HttpResponseMessage;
+import org.switchyard.component.http.composer.HttpBindingData;
+import org.switchyard.component.http.composer.HttpRequestBindingData;
+import org.switchyard.component.http.composer.HttpResponseBindingData;
 import org.switchyard.component.http.config.model.HttpBindingModel;
 import org.switchyard.component.http.endpoint.Endpoint;
 import org.switchyard.component.http.endpoint.EndpointPublisherFactory;
@@ -50,7 +50,7 @@ public class InboundHandler extends BaseServiceHandler {
 
     private ServiceDomain _domain;
     private ServiceReference _service;
-    private MessageComposer<HttpMessage> _messageComposer;
+    private MessageComposer<HttpBindingData> _messageComposer;
     private String _operationName;
     private Endpoint _endpoint;
 
@@ -91,19 +91,19 @@ public class InboundHandler extends BaseServiceHandler {
      * @param input the HTTP request message
      * @return the HTTP response message from invocation
      */
-    public HttpResponseMessage invoke(final HttpRequestMessage input) {
-        HttpResponseMessage response = null;
+    public HttpResponseBindingData invoke(final HttpRequestBindingData input) {
+        HttpResponseBindingData response = null;
         try {
             SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
             Exchange exchange = _service.createExchange(_operationName, inOutHandler);
             Message message = _messageComposer.compose(input, exchange, true);
             if (exchange.getContract().getServiceOperation().getExchangePattern() == ExchangePattern.IN_ONLY) {
                 exchange.send(message);
-                response = new HttpResponseMessage();
+                response = new HttpResponseBindingData();
             } else {
                 exchange.send(message);
                 exchange = inOutHandler.waitForOut();
-                response = (HttpResponseMessage) _messageComposer.decompose(exchange, new HttpResponseMessage());
+                response = (HttpResponseBindingData) _messageComposer.decompose(exchange, new HttpResponseBindingData());
             }
         } catch (Exception e) {
             LOGGER.error(e, e);

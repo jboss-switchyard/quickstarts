@@ -20,7 +20,6 @@
  */
 package org.switchyard.component.hornetq.deploy;
 
-import org.hornetq.api.core.client.ClientMessage;
 import org.hornetq.api.core.client.ClientProducer;
 import org.hornetq.api.core.client.ClientSession;
 import org.hornetq.api.core.client.ClientSessionFactory;
@@ -28,6 +27,7 @@ import org.hornetq.api.core.client.ServerLocator;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.hornetq.composer.HornetQBindingData;
 import org.switchyard.component.hornetq.composer.HornetQComposition;
 import org.switchyard.component.hornetq.config.model.HornetQBindingModel;
 import org.switchyard.component.hornetq.config.model.HornetQConfigModel;
@@ -44,7 +44,7 @@ import org.switchyard.exception.SwitchYardException;
 public class OutboundHandler extends BaseServiceHandler {
 
     private final ServerLocator _serverLocator;
-    private final MessageComposer<ClientMessage> _messageComposer;
+    private final MessageComposer<HornetQBindingData> _messageComposer;
     private ClientSessionFactory _factory;
     private ClientSession _session;
     private ClientProducer _producer;
@@ -82,8 +82,8 @@ public class OutboundHandler extends BaseServiceHandler {
     public void handleMessage(final Exchange exchange) throws HandlerException {
         // send using producer.
         try {
-            final ClientMessage message = _messageComposer.decompose(exchange, _session.createMessage(true));
-            _producer.send(message);
+            final HornetQBindingData bindingData = _messageComposer.decompose(exchange, new HornetQBindingData(_session.createMessage(true)));
+            _producer.send(bindingData.getClientMessage());
         } catch (final Exception e) {
             throw new HandlerException(e);
         }

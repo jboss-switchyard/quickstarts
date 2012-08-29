@@ -15,6 +15,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA  02110-1301, USA.
 #
-org.switchyard.component.jca.composer.CCIMappedRecordContextMapperFactory
-org.switchyard.component.jca.composer.CCIIndexedRecordContextMapperFactory
+org.switchyard.component.jca.composer.MappedRecordContextMapperFactory
+org.switchyard.component.jca.composer.IndexedRecordContextMapperFactory
 org.switchyard.component.jca.composer.JMSContextMapperFactory

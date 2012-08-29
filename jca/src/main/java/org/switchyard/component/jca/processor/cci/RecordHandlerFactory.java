@@ -20,8 +20,8 @@ package org.switchyard.component.jca.processor.cci;
 
 import javax.resource.cci.IndexedRecord;
 import javax.resource.cci.MappedRecord;
-import javax.resource.cci.Record;
 
+import org.switchyard.component.jca.composer.RecordBindingData;
 import org.switchyard.exception.SwitchYardException;
 
 /**
@@ -42,7 +42,7 @@ public final class RecordHandlerFactory {
      * @param loader ClassLoader for application
      * @return RecordHandler instance
      */
-    public static RecordHandler<? extends Record> createRecordHandler(Class<?> recordType, ClassLoader loader) {
+    public static RecordHandler<? extends RecordBindingData<?>> createRecordHandler(Class<?> recordType, ClassLoader loader) {
         if (recordType.equals(MappedRecord.class)) {
             return new MappedRecordHandler();
         } else if (recordType.equals(IndexedRecord.class)) {
@@ -50,7 +50,7 @@ public final class RecordHandlerFactory {
         } else {
             try {
                 Class<?> clazz = loader.loadClass(RecordHandlerFactory.class.getPackage().getName() + "." + recordType.getSimpleName() + "RecordHandler");
-                return (RecordHandler) clazz.newInstance();
+                return (RecordHandler<?>)clazz.newInstance();
             } catch (Exception e) {
                 throw new SwitchYardException("record type '" + recordType.getName() + "is not supported");
             }

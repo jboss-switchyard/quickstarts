@@ -20,8 +20,8 @@
 package org.switchyard.component.http.composer;
 
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -30,14 +30,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.switchyard.component.common.composer.BindingData;
 import org.switchyard.component.http.ContentType;
 
 /**
- * A HTTP Message that wraps the headers and body.
+ * HTTP binding data that wraps the headers and body.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public abstract class HttpMessage {
+public abstract class HttpBindingData implements BindingData {
 
     private Map<String, List<String>> _headers;
     private byte[] _body;

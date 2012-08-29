@@ -23,39 +23,39 @@ import javax.xml.namespace.QName;
 /**
  * Maps context properties from and to a source or target object, with the ability to selectively choose which properties with regex expressions.
  * 
- * @param <T> the type of source and target object
+ * @param <D> the type of binding data
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public interface RegexContextMapper<T> extends ContextMapper<T> {
+public interface RegexContextMapper<D extends BindingData> extends ContextMapper<D> {
 
     /**
      * Sets a comma-separated list of regex property includes.
      * @param includes the includes
      * @return this ContextMapper (useful for chaining)
      */
-    public ContextMapper<T> setIncludes(String includes);
+    public ContextMapper<D> setIncludes(String includes);
 
     /**
      * Sets a comma-separated list of regex property excludes.
      * @param excludes the excludes
      * @return this ContextMapper (useful for chaining)
      */
-    public ContextMapper<T> setExcludes(String excludes);
+    public ContextMapper<D> setExcludes(String excludes);
 
     /**
      * Sets a comma-separated list of regex property namespace includes.
      * @param includeNamespaces the namespace includes
      * @return this ContextMapper (useful for chaining)
      */
-    public ContextMapper<T> setIncludeNamespaces(String includeNamespaces);
+    public ContextMapper<D> setIncludeNamespaces(String includeNamespaces);
 
     /**
      * Sets a comma-separated list of regex property namespace excludes.
      * @param excludeNamespaces the namespace excludes
      * @return this ContextMapper (useful for chaining)
      */
-    public ContextMapper<T> setExcludeNamespaces(String excludeNamespaces);
+    public ContextMapper<D> setExcludeNamespaces(String excludeNamespaces);
 
     /**
      * Decides if the specified name passes the collective regex expressions.

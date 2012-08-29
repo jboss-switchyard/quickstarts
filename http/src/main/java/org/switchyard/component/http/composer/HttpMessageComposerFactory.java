@@ -28,21 +28,21 @@ import org.switchyard.component.common.composer.MessageComposerFactory;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public class HttpMessageComposerFactory extends MessageComposerFactory<HttpMessage> {
+public class HttpMessageComposerFactory extends MessageComposerFactory<HttpBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Class<HttpMessage> getTargetClass() {
-        return HttpMessage.class;
+    public Class<HttpBindingData> getBindingDataClass() {
+        return HttpBindingData.class;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public MessageComposer<HttpMessage> newMessageComposerDefault() {
+    public MessageComposer<HttpBindingData> newMessageComposerDefault() {
         return new HttpMessageComposer();
     }
 

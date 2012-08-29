@@ -33,11 +33,13 @@ import org.switchyard.common.xml.XMLHelper;
  */
 public class RegexContextMapperTests {
 
-    private RegexContextMapper<Object> _regexContextMapper;
+    private static final class TestData implements BindingData {}
+
+    private RegexContextMapper<TestData> _regexContextMapper;
 
     @Before
     public void before() throws Exception {
-        _regexContextMapper = new BaseRegexContextMapper<Object>();
+        _regexContextMapper = new BaseRegexContextMapper<TestData>();
     }
 
     @After

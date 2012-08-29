@@ -18,47 +18,31 @@
  */
 package org.switchyard.component.jca.composer;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.resource.cci.IndexedRecord;
-
-import org.switchyard.Exchange;
-import org.switchyard.component.common.composer.BaseMessageComposer;
+import org.switchyard.component.common.composer.ContextMapper;
+import org.switchyard.component.common.composer.ContextMapperFactory;
 
 /**
- * MessageComposer implementation for CCI IndexedRecord that is used by JCA component.
+ * ContextMapperFactory for CCI MappedRecord.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  */
-public class CCIIndexedRecordMessageComposer extends BaseMessageComposer<IndexedRecord> {
+public class MappedRecordContextMapperFactory extends ContextMapperFactory<MappedRecordBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public org.switchyard.Message compose(IndexedRecord source, Exchange exchange, boolean create) throws Exception {
-        
-        final org.switchyard.Message message = create ? exchange.createMessage() : exchange.getMessage();
-        getContextMapper().mapFrom(source, exchange.getContext());
-        List<Object> l = new ArrayList<Object>();
-        l.addAll(source);
-        message.setContent(l);
-        return message;
+    public Class<MappedRecordBindingData> getBindingDataClass() {
+        return MappedRecordBindingData.class;
     }
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public IndexedRecord decompose(Exchange exchange, IndexedRecord target) throws Exception {
-
-        getContextMapper().mapTo(exchange.getContext(), target);
-        final List<?> content = exchange.getMessage().getContent(List.class);
-        target.addAll(content);
-        return target;
+    public ContextMapper<MappedRecordBindingData> newContextMapperDefault() {
+        return new MappedRecordContextMapper();
     }
 
 }

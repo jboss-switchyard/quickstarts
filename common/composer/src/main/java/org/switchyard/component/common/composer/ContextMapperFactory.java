@@ -28,11 +28,11 @@ import org.switchyard.config.model.composer.ContextMapperModel;
 /**
  * Utility AND base class making it easy for Component developers to specify their own ContextMapper implementations.
  *
- * @param <T> the type of source/target object
+ * @param <D> the type of binding data
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public abstract class ContextMapperFactory<T> {
+public abstract class ContextMapperFactory<D extends BindingData> {
 
     private static final Logger LOGGER = Logger.getLogger(ContextMapperFactory.class);
 
@@ -40,7 +40,7 @@ public abstract class ContextMapperFactory<T> {
      * Component developer should implement this message to specify the type of source/target object.
      * @return the type of source/target object
      */
-    public abstract Class<T> getTargetClass();
+    public abstract Class<D> getBindingDataClass();
 
     /**
      * Component developer should implement this message to provide their default/fallback implementation
@@ -48,7 +48,7 @@ public abstract class ContextMapperFactory<T> {
      * doesn't specify (or specifies a bad) context mapper class to use.
      * @return the default/fallback context mapper implementation
      */
-    public abstract ContextMapper<T> newContextMapperDefault();
+    public abstract ContextMapper<D> newContextMapperDefault();
 
     /**
      * Will create a new ContextMapper based on the specifications of the passed in ContextMapperModel, or if
@@ -57,13 +57,13 @@ public abstract class ContextMapperFactory<T> {
      * @return the new ContextMapper instance
      */
     @SuppressWarnings("unchecked")
-    public final ContextMapper<T> newContextMapper(ContextMapperModel model) {
-        ContextMapper<T> contextMapper = null;
-        ContextMapperFactory<T> contextMapperFactory = ContextMapperFactory.getContextMapperFactory(getTargetClass());
+    public final ContextMapper<D> newContextMapper(ContextMapperModel model) {
+        ContextMapper<D> contextMapper = null;
+        ContextMapperFactory<D> contextMapperFactory = ContextMapperFactory.getContextMapperFactory(getBindingDataClass());
         if (model != null) {
-            contextMapper = contextMapperFactory.newContextMapper((Class<ContextMapper<T>>)model.getClazz());
+            contextMapper = contextMapperFactory.newContextMapper((Class<ContextMapper<D>>)model.getClazz());
             if (contextMapper instanceof RegexContextMapper) {
-                RegexContextMapper<T> regexContextMapper = (RegexContextMapper<T>)contextMapper;
+                RegexContextMapper<D> regexContextMapper = (RegexContextMapper<D>)contextMapper;
                 regexContextMapper.setIncludes(model.getIncludes());
                 regexContextMapper.setExcludes(model.getExcludes());
                 regexContextMapper.setIncludeNamespaces(model.getIncludeNamespaces());
@@ -81,8 +81,8 @@ public abstract class ContextMapperFactory<T> {
      * @param custom the custom ContextMapper class
      * @return the new ContextMapper instance
      */
-    public final ContextMapper<T> newContextMapper(Class<? extends ContextMapper<T>> custom) {
-        ContextMapper<T> contextMapper = null;
+    public final ContextMapper<D> newContextMapper(Class<? extends ContextMapper<D>> custom) {
+        ContextMapper<D> contextMapper = null;
         if (custom != null) {
             try {
                 contextMapper = custom.newInstance();
@@ -99,12 +99,12 @@ public abstract class ContextMapperFactory<T> {
     /**
      * Constructs a new ContextMapperFactory that is known to be able to construct ContextMappers
      * of the specified type.
-     * @param <F> the type of source/target object
+     * @param <F> the type of binding data
      * @param targetClass the target ContextMapper class
      * @return the new ContextMapperFactory instance
      */
     @SuppressWarnings("unchecked")
-    public static final <F> ContextMapperFactory<F> getContextMapperFactory(Class<F> targetClass) {
+    public static final <F extends BindingData> ContextMapperFactory<F> getContextMapperFactory(Class<F> targetClass) {
         return (ContextMapperFactory<F>)getContextMapperFactories().get(targetClass);
     }
 
@@ -117,7 +117,7 @@ public abstract class ContextMapperFactory<T> {
         Map<Class, ContextMapperFactory> factories = new HashMap<Class, ContextMapperFactory>();
         ServiceLoader<ContextMapperFactory> services = ServiceLoader.load(ContextMapperFactory.class);
         for (ContextMapperFactory factory : services) {
-            factories.put(factory.getTargetClass(), factory);
+            factories.put(factory.getBindingDataClass(), factory);
         }
         return factories;
     }

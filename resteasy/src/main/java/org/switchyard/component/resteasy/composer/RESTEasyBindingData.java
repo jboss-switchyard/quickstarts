@@ -23,25 +23,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.switchyard.component.common.composer.BindingData;
+
 /**
  * Wrapper for RESTEasy messages.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public class RESTEasyMessage {
+public class RESTEasyBindingData implements BindingData {
     private Object _content;
     private Map<String, List<String>> _headers;
 
     /**
      * Creates a new RESTEasy message.
      */
-    public RESTEasyMessage() {}
+    public RESTEasyBindingData() {}
 
     /**
      * Creates a new RESTEasy message, given the specified content.
      * @param content the specified content
      */
-    public RESTEasyMessage(Object content) {
+    public RESTEasyBindingData(Object content) {
         setContent(content);
     }
 

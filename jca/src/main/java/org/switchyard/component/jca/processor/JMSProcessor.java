@@ -33,6 +33,7 @@ import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.jca.composer.JCAComposition;
+import org.switchyard.component.jca.composer.JMSBindingData;
 import org.switchyard.exception.SwitchYardException;
 
 /**
@@ -120,8 +121,8 @@ public class JMSProcessor extends AbstractOutboundProcessor {
             MessageProducer producer = session.createProducer(_jmsDestination);
 
             Message msg = session.createObjectMessage();
-            MessageComposer<Message> composer = JCAComposition.getMessageComposer(Message.class);
-            producer.send(composer.decompose(exchange, msg));
+            MessageComposer<JMSBindingData> composer = JCAComposition.getMessageComposer(JMSBindingData.class);
+            producer.send(composer.decompose(exchange, new JMSBindingData(msg)).getMessage());
             return null;
         } catch (Exception e) {
             throw new HandlerException("Failed to process JMS outbound interaction", e);

@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -18,33 +18,11 @@
  */
 package org.switchyard.component.jca.composer;
 
-import javax.resource.cci.IndexedRecord;
-
-import org.switchyard.component.common.composer.MessageComposer;
-import org.switchyard.component.common.composer.MessageComposerFactory;
+import org.switchyard.component.common.composer.BindingData;
 
 /**
- * MessageComposerFactory for CCI IndexedRecord.
- *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
- * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
+ * JCA binding data.
+ * 
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class CCIIndexedRecordMessageComposerFactory extends MessageComposerFactory<IndexedRecord> {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Class<IndexedRecord> getTargetClass() {
-        return IndexedRecord.class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public MessageComposer<IndexedRecord> newMessageComposerDefault() {
-        return new CCIIndexedRecordMessageComposer();
-    }
-
-}
+public interface JCABindingData extends BindingData {}

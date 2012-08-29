@@ -16,34 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.common.composer;
+package org.switchyard.component.jca.composer;
+
+import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.common.composer.MessageComposerFactory;
 
 /**
- * Base class for MessageComposer.
- *
- * @param <D> the type of binding data
+ * MessageComposerFactory for CCI MappedRecord.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  */
-public abstract class BaseMessageComposer<D extends BindingData> implements MessageComposer<D> {
-
-    private ContextMapper<D> _contextMapper;
+public class MappedRecordMessageComposerFactory extends MessageComposerFactory<MappedRecordBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ContextMapper<D> getContextMapper() {
-        return _contextMapper;
+    public Class<MappedRecordBindingData> getBindingDataClass() {
+        return MappedRecordBindingData.class;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public MessageComposer<D> setContextMapper(ContextMapper<D> contextMapper) {
-        _contextMapper = contextMapper;
-        return this;
+    public MessageComposer<MappedRecordBindingData> newMessageComposerDefault() {
+        return new MappedRecordMessageComposer();
     }
 
 }

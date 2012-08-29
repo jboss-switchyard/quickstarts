@@ -28,11 +28,11 @@ import org.switchyard.config.model.composer.MessageComposerModel;
 /**
  * Utility AND base class making it easy for Component developers to specify their own MessageComposer implementations.
  *
- * @param <T> the type of source/target object
+ * @param <D> the type of binding data
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public abstract class MessageComposerFactory<T> {
+public abstract class MessageComposerFactory<D extends BindingData> {
 
     private static final Logger LOGGER = Logger.getLogger(MessageComposerFactory.class);
 
@@ -40,7 +40,7 @@ public abstract class MessageComposerFactory<T> {
      * Component developer should implement this message to specify the type of source/target object.
      * @return the type of source/target object
      */
-    public abstract Class<T> getTargetClass();
+    public abstract Class<D> getBindingDataClass();
 
     /**
      * Component developer should implement this message to provide their default/fallback implementation
@@ -48,7 +48,7 @@ public abstract class MessageComposerFactory<T> {
      * doesn't specify (or specifies a bad) message composer class to use.
      * @return the default/fallback message composer implementation
      */
-    public abstract MessageComposer<T> newMessageComposerDefault();
+    public abstract MessageComposer<D> newMessageComposerDefault();
 
     /**
      * Will create a new MessageComposer based on the specifications of the passed in MessageComposerInfo, or if
@@ -57,11 +57,11 @@ public abstract class MessageComposerFactory<T> {
      * @return the new MessageComposer instance
      */
     @SuppressWarnings("unchecked")
-    public final MessageComposer<T> newMessageComposer(MessageComposerModel model) {
-        MessageComposer<T> messageComposer = null;
-        MessageComposerFactory<T> messageComposerFactory = MessageComposerFactory.getMessageComposerFactory(getTargetClass());
+    public final MessageComposer<D> newMessageComposer(MessageComposerModel model) {
+        MessageComposer<D> messageComposer = null;
+        MessageComposerFactory<D> messageComposerFactory = MessageComposerFactory.getMessageComposerFactory(getBindingDataClass());
         if (model != null) {
-            messageComposer = messageComposerFactory.newMessageComposer((Class<MessageComposer<T>>)model.getClazz());
+            messageComposer = messageComposerFactory.newMessageComposer((Class<MessageComposer<D>>)model.getClazz());
         } else {
             messageComposer = messageComposerFactory.newMessageComposerDefault();
         }
@@ -74,8 +74,8 @@ public abstract class MessageComposerFactory<T> {
      * @param custom the custom MessageComposer class
      * @return the new MessageComposer instance
      */
-    public final MessageComposer<T> newMessageComposer(Class<? extends MessageComposer<T>> custom) {
-        MessageComposer<T> messageComposer = null;
+    public final MessageComposer<D> newMessageComposer(Class<? extends MessageComposer<D>> custom) {
+        MessageComposer<D> messageComposer = null;
         if (custom != null) {
             try {
                 messageComposer = custom.newInstance();
@@ -92,12 +92,12 @@ public abstract class MessageComposerFactory<T> {
     /**
      * Constructs a new MessageComposerFactory that is known to be able to construct MessageComposers
      * of the specified type.
-     * @param <F> the type of source/target object
+     * @param <F> the type of binding data
      * @param targetClass the target MessageComposer class
      * @return the new MessageComposerFactory instance
      */
     @SuppressWarnings("unchecked")
-    public static final <F> MessageComposerFactory<F> getMessageComposerFactory(Class<F> targetClass) {
+    public static final <F extends BindingData> MessageComposerFactory<F> getMessageComposerFactory(Class<F> targetClass) {
         return (MessageComposerFactory<F>)getMessageComposerFactories().get(targetClass);
     }
 
@@ -110,7 +110,7 @@ public abstract class MessageComposerFactory<T> {
         Map<Class, MessageComposerFactory> factories = new HashMap<Class, MessageComposerFactory>();
         ServiceLoader<MessageComposerFactory> services = ServiceLoader.load(MessageComposerFactory.class);
         for (MessageComposerFactory factory : services) {
-            factories.put(factory.getTargetClass(), factory);
+            factories.put(factory.getBindingDataClass(), factory);
         }
         return factories;
     }

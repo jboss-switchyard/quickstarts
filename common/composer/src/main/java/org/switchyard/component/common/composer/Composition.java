@@ -30,53 +30,53 @@ import org.switchyard.config.model.composer.v1.V1ContextMapperModel;
 public final class Composition {
 
     /**
-     * Gets a ContextMapper instance based on the supported target class.
-     * @param <T> the type of target class
-     * @param targetClass the target class
+     * Gets a ContextMapper instance based on the supported binding data type.
+     * @param <D> the type of binding data
+     * @param bindingDataType the binding data type
      * @return the ContextMapper instance
      */
-    public static final <T> ContextMapper<T> getContextMapper(Class<T> targetClass) {
-        return ContextMapperFactory.getContextMapperFactory(targetClass).newContextMapperDefault();
+    public static final <D extends BindingData> ContextMapper<D> getContextMapper(Class<D> bindingDataType) {
+        return ContextMapperFactory.getContextMapperFactory(bindingDataType).newContextMapperDefault();
     }
 
     /**
-     * Gets a ContextMapper instance based on the supported target class.
-     * @param <T> the type of target class
-     * @param targetClass the target class
+     * Gets a ContextMapper instance based on the supported binding data type.
+     * @param <D> the type of binding data
+     * @param bindingDataType the binding data type
      * @param contextMapperModel specific context mapper details
      * @return the ContextMapper instance
      */
-    public static final <T> ContextMapper<T> getContextMapper(Class<T> targetClass, ContextMapperModel contextMapperModel) {
+    public static final <D extends BindingData> ContextMapper<D> getContextMapper(Class<D> bindingDataType, ContextMapperModel contextMapperModel) {
         if (contextMapperModel == null) {
             // If you don't specify a ContexMapperInfo, your ContextMapper will not match anything!
             contextMapperModel = new V1ContextMapperModel().setExcludes(".*");
         }
-        return ContextMapperFactory.getContextMapperFactory(targetClass).newContextMapper(contextMapperModel);
+        return ContextMapperFactory.getContextMapperFactory(bindingDataType).newContextMapper(contextMapperModel);
     }
 
     /**
-     * Gets a MessageComposer instance based on the supported target class.
-     * @param <T> the type of target class
-     * @param targetClass the target class
+     * Gets a MessageComposer instance based on the supported binding data type.
+     * @param <D> the type of binding data
+     * @param bindingDataType the binding data type
      * @return the MessageComposer instance
      */
-    public static final <T> MessageComposer<T> getMessageComposer(Class<T> targetClass) {
-        MessageComposer<T> messageComposer = MessageComposerFactory.getMessageComposerFactory(targetClass).newMessageComposerDefault();
-        messageComposer.setContextMapper(getContextMapper(targetClass));
+    public static final <D extends BindingData> MessageComposer<D> getMessageComposer(Class<D> bindingDataType) {
+        MessageComposer<D> messageComposer = MessageComposerFactory.getMessageComposerFactory(bindingDataType).newMessageComposerDefault();
+        messageComposer.setContextMapper(getContextMapper(bindingDataType));
         return messageComposer;
     }
 
     /**
-     * Gets a MessageComposer instance based on the supported target class.
-     * @param <T> the type of target class
-     * @param targetClass the target class
+     * Gets a MessageComposer instance based on the supported binding data type.
+     * @param <D> the type of binding data
+     * @param bindingDataType the binding data type
      * @param contextMapperModel specific context mapper details
      * @param messageComposerModel message composer details
      * @return the MessageComposer instance
      */
-    public static final <T> MessageComposer<T> getMessageComposer(Class<T> targetClass, ContextMapperModel contextMapperModel, MessageComposerModel messageComposerModel) {
-        MessageComposer<T> messageComposer = MessageComposerFactory.getMessageComposerFactory(targetClass).newMessageComposer(messageComposerModel);
-        messageComposer.setContextMapper(getContextMapper(targetClass, contextMapperModel));
+    public static final <D extends BindingData> MessageComposer<D> getMessageComposer(Class<D> bindingDataType, ContextMapperModel contextMapperModel, MessageComposerModel messageComposerModel) {
+        MessageComposer<D> messageComposer = MessageComposerFactory.getMessageComposerFactory(bindingDataType).newMessageComposer(messageComposerModel);
+        messageComposer.setContextMapper(getContextMapper(bindingDataType, contextMapperModel));
         return messageComposer;
     }
 

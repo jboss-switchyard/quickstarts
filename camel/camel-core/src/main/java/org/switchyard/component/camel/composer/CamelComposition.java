@@ -18,7 +18,6 @@
  */
 package org.switchyard.component.camel.composer;
 
-import org.apache.camel.Message;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.component.common.composer.Composition;
 import org.switchyard.component.common.composer.MessageComposer;
@@ -42,8 +41,8 @@ public final class CamelComposition {
      * Uses the {@link Composition} class to create a Camel-specific MessageComposer.
      * @return the MessageComposer
      */
-    public static MessageComposer<Message> getMessageComposer() {
-        return Composition.getMessageComposer(Message.class);
+    public static MessageComposer<CamelBindingData> getMessageComposer() {
+        return Composition.getMessageComposer(CamelBindingData.class);
     }
 
     /**
@@ -51,10 +50,10 @@ public final class CamelComposition {
      * @param cbm a CamelBindingModel to get configuration details from
      * @return the MessageComposer
      */
-    public static MessageComposer<Message> getMessageComposer(CamelBindingModel cbm) {
+    public static MessageComposer<CamelBindingData> getMessageComposer(CamelBindingModel cbm) {
         ContextMapperModel cmm = cbm != null ? cbm.getContextMapper() : null;
         MessageComposerModel mcm = cbm != null ? cbm.getMessageComposer() : null;
-        return Composition.getMessageComposer(Message.class, cmm, mcm);
+        return Composition.getMessageComposer(CamelBindingData.class, cmm, mcm);
     }
 
     private CamelComposition() {}

@@ -21,7 +21,6 @@ package org.switchyard.component.http.composer;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.component.common.composer.BaseMessageComposer;
@@ -33,16 +32,15 @@ import org.switchyard.config.model.composer.MessageComposerModel;
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public class HttpMessageComposer extends BaseMessageComposer<HttpMessage> {
+public class HttpMessageComposer extends BaseMessageComposer<HttpBindingData> {
 
-    private static Logger _log = Logger.getLogger(HttpMessageComposer.class);
     private MessageComposerModel _config;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Message compose(HttpMessage source, Exchange exchange, boolean create) throws Exception {
+    public Message compose(HttpBindingData source, Exchange exchange, boolean create) throws Exception {
         final Message message = create ? exchange.createMessage() : exchange.getMessage();
 
         getContextMapper().mapFrom(source, exchange.getContext());
@@ -57,23 +55,23 @@ public class HttpMessageComposer extends BaseMessageComposer<HttpMessage> {
      * {@inheritDoc}
      */
     @Override
-    public HttpMessage decompose(Exchange exchange, HttpMessage target) throws Exception {
+    public HttpBindingData decompose(Exchange exchange, HttpBindingData target) throws Exception {
         final Message message = exchange.getMessage();
         if (message != null) {
             Object content = message.getContent();
-            if (target instanceof HttpResponseMessage) {
+            if (target instanceof HttpResponseBindingData) {
                 int status = HttpServletResponse.SC_OK;
                 setContent(content, target);
                 if (content == null) {
                     status = HttpServletResponse.SC_NO_CONTENT;
-                } else if (content instanceof HttpResponseMessage) {
-                    status = ((HttpResponseMessage) content).getStatus();
+                } else if (content instanceof HttpResponseBindingData) {
+                    status = ((HttpResponseBindingData) content).getStatus();
                 } else if ((content instanceof String) || (content instanceof byte[])) {
                     status = HttpServletResponse.SC_OK;
                 } else {
                     status = HttpServletResponse.SC_BAD_GATEWAY;
                 }
-                HttpResponseMessage response = (HttpResponseMessage) target;
+                HttpResponseBindingData response = (HttpResponseBindingData) target;
                 response.setStatus(status);
             } else {
                 setContent(content, target);
@@ -85,11 +83,11 @@ public class HttpMessageComposer extends BaseMessageComposer<HttpMessage> {
         return target;
     }
 
-    private void setContent(final Object content, HttpMessage message) {
+    private void setContent(final Object content, HttpBindingData message) {
         if (content == null) {
             message.setBodyBytes(null);
-        } else if (content instanceof HttpMessage) {
-            HttpMessage httpMessage = (HttpMessage) content;
+        } else if (content instanceof HttpBindingData) {
+            HttpBindingData httpMessage = (HttpBindingData) content;
             message.setHeaders(httpMessage.getHeaders());
             message.setBodyBytes(httpMessage.getBodyBytes());
         } else if (content instanceof String) {

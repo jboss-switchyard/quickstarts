@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.switchyard.component.http.composer.HttpRequestMessage;
-import org.switchyard.component.http.composer.HttpResponseMessage;
+import org.switchyard.component.http.composer.HttpRequestBindingData;
+import org.switchyard.component.http.composer.HttpResponseBindingData;
 
 /**
  * Hanldes HTTP requests to invoke a SwitchYard service.
@@ -112,7 +112,7 @@ public class HttpGatewayServlet extends HttpServlet {
      */
     public void handle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-            HttpRequestMessage httpRequest = new HttpRequestMessage();
+            HttpRequestBindingData httpRequest = new HttpRequestBindingData();
             byte[] responseBody = null;
             try {
                 httpRequest.setContentType(new ContentType(request.getContentType()));
@@ -127,7 +127,7 @@ public class HttpGatewayServlet extends HttpServlet {
             } catch (IOException e) {
                 LOGGER.error("Unexpected Exception while reading request", e);
             }
-            HttpResponseMessage httpResponse = _handler.invoke(httpRequest);
+            HttpResponseBindingData httpResponse = _handler.invoke(httpRequest);
             try {
                 if (httpResponse != null) {
                     Iterator<Map.Entry<String, List<String>>> entries = httpResponse.getHeaders().entrySet().iterator();

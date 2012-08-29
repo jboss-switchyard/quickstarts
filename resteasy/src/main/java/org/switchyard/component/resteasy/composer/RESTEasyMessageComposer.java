@@ -28,13 +28,13 @@ import org.switchyard.component.common.composer.BaseMessageComposer;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class RESTEasyMessageComposer extends BaseMessageComposer<RESTEasyMessage> {
+public class RESTEasyMessageComposer extends BaseMessageComposer<RESTEasyBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Message compose(RESTEasyMessage source, Exchange exchange, boolean create) throws Exception {
+    public Message compose(RESTEasyBindingData source, Exchange exchange, boolean create) throws Exception {
         final Message message = create ? exchange.createMessage() : exchange.getMessage();
         getContextMapper().mapFrom(source, exchange.getContext());
         message.setContent(source.getContent());
@@ -45,7 +45,7 @@ public class RESTEasyMessageComposer extends BaseMessageComposer<RESTEasyMessage
      * {@inheritDoc}
      */
     @Override
-    public RESTEasyMessage decompose(Exchange exchange, RESTEasyMessage target) throws Exception {
+    public RESTEasyBindingData decompose(Exchange exchange, RESTEasyBindingData target) throws Exception {
         target.setContent(exchange.getMessage().getContent());
         getContextMapper().mapTo(exchange.getContext(), target);
         return target;

@@ -34,20 +34,21 @@ import org.switchyard.component.common.composer.BaseRegexContextMapper;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  */
-public class JMSContextMapper extends BaseRegexContextMapper<Message> {
+public class JMSContextMapper extends BaseRegexContextMapper<JMSBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void mapFrom(Message source, Context context) throws Exception {
-        Enumeration<?> e = source.getPropertyNames();
+    public void mapFrom(JMSBindingData source, Context context) throws Exception {
+        Message message = source.getMessage();
+        Enumeration<?> e = message.getPropertyNames();
         while (e.hasMoreElements()) {
             String key = e.nextElement().toString();
             if (matches(key)) {
                 Object value = null;
                 try {
-                    value = source.getObjectProperty(key);
+                    value = message.getObjectProperty(key);
                 } catch (JMSException pce) {
                     // ignore and keep going (here just to keep checkstyle happy)
                     pce.getMessage();
@@ -65,7 +66,8 @@ public class JMSContextMapper extends BaseRegexContextMapper<Message> {
      * {@inheritDoc}
      */
     @Override
-    public void mapTo(Context context, Message target) throws Exception {
+    public void mapTo(Context context, JMSBindingData target) throws Exception {
+        Message message = target.getMessage();
         for (Property property : context.getProperties(Scope.EXCHANGE)) {
             String name = property.getName();
             if (matches(name)) {
@@ -73,7 +75,7 @@ public class JMSContextMapper extends BaseRegexContextMapper<Message> {
                 if (value != null) {
                     try {
                         // Context EXCHANGE properties -> JMS Message properties
-                        target.setObjectProperty(name, value);
+                        message.setObjectProperty(name, value);
                     } catch (JMSException pce) {
                         // ignore and keep going (here just to keep checkstyle happy)
                         pce.getMessage();

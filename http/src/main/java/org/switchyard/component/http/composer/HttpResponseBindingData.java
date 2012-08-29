@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,34 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.common.composer;
+ 
+package org.switchyard.component.http.composer;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
- * Base class for MessageComposer.
+ * HTTP response binding data.
  *
- * @param <D> the type of binding data
- *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public abstract class BaseMessageComposer<D extends BindingData> implements MessageComposer<D> {
+public class HttpResponseBindingData extends HttpBindingData {
 
-    private ContextMapper<D> _contextMapper;
+    private int _status = HttpServletResponse.SC_ACCEPTED;
 
     /**
-     * {@inheritDoc}
+     * Get the HTTP response status.
+     * @return HTTP response status
      */
-    @Override
-    public ContextMapper<D> getContextMapper() {
-        return _contextMapper;
+    public int getStatus() {
+        return _status;
     }
 
     /**
-     * {@inheritDoc}
+     * Set the HTTP response status.
+     * @param status the response status
      */
-    @Override
-    public MessageComposer<D> setContextMapper(ContextMapper<D> contextMapper) {
-        _contextMapper = contextMapper;
-        return this;
+    public void setStatus(int status) {
+        _status = status;
     }
-
 }

@@ -28,6 +28,7 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.component.camel.composer.CamelBindingData;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.deploy.ServiceHandler;
 import org.switchyard.exception.SwitchYardException;
@@ -43,7 +44,7 @@ import org.switchyard.exception.SwitchYardException;
  */
 public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandler {
     
-    private final MessageComposer<org.apache.camel.Message> _messageComposer;
+    private final MessageComposer<CamelBindingData> _messageComposer;
     
     /**
      * Sole constructor.
@@ -52,7 +53,7 @@ public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandle
      * @param processor The Camel processor that this consumer will delegate to.
      * @param messageComposer the MessageComposer this consumer should use
      */
-    public SwitchYardConsumer(final Endpoint endpoint, final Processor processor, final MessageComposer<org.apache.camel.Message> messageComposer) {
+    public SwitchYardConsumer(final Endpoint endpoint, final Processor processor, final MessageComposer<CamelBindingData> messageComposer) {
         super(endpoint, processor);
         _messageComposer = messageComposer;
     }
@@ -112,7 +113,7 @@ public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandle
                 ? getEndpoint().createExchange(org.apache.camel.ExchangePattern.InOut)
                 : getEndpoint().createExchange(org.apache.camel.ExchangePattern.InOnly);
          try {
-             _messageComposer.decompose(switchyardExchange, camelExchange.getIn());
+             _messageComposer.decompose(switchyardExchange, new CamelBindingData(camelExchange.getIn()));
          } catch (Exception e) {
              throw new SwitchYardException(e);
          }
@@ -128,7 +129,7 @@ public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandle
         }
         Message switchyardMessage;
         try {
-            switchyardMessage = _messageComposer.compose(camelMessage, switchyardExchange, false);
+            switchyardMessage = _messageComposer.compose(new CamelBindingData(camelMessage), switchyardExchange, false);
         } catch (Exception e) {
             throw new SwitchYardException(e);
         }

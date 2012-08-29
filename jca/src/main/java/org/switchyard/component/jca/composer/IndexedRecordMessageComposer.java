@@ -18,31 +18,45 @@
  */
 package org.switchyard.component.jca.composer;
 
-import org.switchyard.component.common.composer.MessageComposer;
-import org.switchyard.component.common.composer.MessageComposerFactory;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.switchyard.Exchange;
+import org.switchyard.component.common.composer.BaseMessageComposer;
 
 /**
- * JCAJMSMessageComposerFactory.
+ * MessageComposer implementation for CCI IndexedRecord that is used by JCA component.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  */
-public class JMSMessageComposerFactory extends MessageComposerFactory<JMSBindingData> {
+public class IndexedRecordMessageComposer extends BaseMessageComposer<IndexedRecordBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Class<JMSBindingData> getBindingDataClass() {
-        return JMSBindingData.class;
+    public org.switchyard.Message compose(IndexedRecordBindingData source, Exchange exchange, boolean create) throws Exception {
+        
+        final org.switchyard.Message message = create ? exchange.createMessage() : exchange.getMessage();
+        getContextMapper().mapFrom(source, exchange.getContext());
+        List<Object> l = new ArrayList<Object>();
+        l.addAll(source.getRecord());
+        message.setContent(l);
+        return message;
     }
 
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public MessageComposer<JMSBindingData> newMessageComposerDefault() {
-        return new JMSMessageComposer();
+    public IndexedRecordBindingData decompose(Exchange exchange, IndexedRecordBindingData target) throws Exception {
+
+        getContextMapper().mapTo(exchange.getContext(), target);
+        final List<?> content = exchange.getMessage().getContent(List.class);
+        target.getRecord().addAll(content);
+        return target;
     }
 
 }

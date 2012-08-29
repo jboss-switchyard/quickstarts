@@ -26,6 +26,7 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
 import org.switchyard.ServiceReference;
+import org.switchyard.component.camel.composer.CamelBindingData;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.exception.SwitchYardException;
 
@@ -42,16 +43,16 @@ import org.switchyard.exception.SwitchYardException;
 public class CamelResponseHandler implements ExchangeHandler {
     
     private final org.apache.camel.Exchange _camelExchange;
-    private final MessageComposer<org.apache.camel.Message> _messageComposer;
+    private final MessageComposer<CamelBindingData> _messageComposer;
 
     /**
      * Sole constructor.
      * 
-     * @param camelExchange The Camel {@link org.apache.camel.Message}
+     * @param camelExchange The Camel {@link org.apache.camel.Exchange}
      * @param reference The SwitchYard ServiceReference.
      * @param messageComposer the MessageComposer to use
      */
-    public CamelResponseHandler(final org.apache.camel.Exchange camelExchange, final ServiceReference reference, final MessageComposer<org.apache.camel.Message> messageComposer) {
+    public CamelResponseHandler(final org.apache.camel.Exchange camelExchange, final ServiceReference reference, final MessageComposer<CamelBindingData> messageComposer) {
         if (camelExchange ==  null) {
             throw new SwitchYardException("[camelExchange] argument must not be null");
         }
@@ -75,7 +76,7 @@ public class CamelResponseHandler implements ExchangeHandler {
         try {
             Message camelMsg = _camelExchange.getPattern().equals(ExchangePattern.InOnly)
                     ? _camelExchange.getIn() : _camelExchange.getOut();
-            _messageComposer.decompose(switchYardExchange, camelMsg);
+            _messageComposer.decompose(switchYardExchange, new CamelBindingData(camelMsg));
         } catch (Exception e) {
             throw new HandlerException(e);
         }

@@ -18,7 +18,6 @@
  */
 package org.switchyard.component.hornetq.composer;
 
-import org.hornetq.api.core.client.ClientMessage;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.common.composer.MessageComposerFactory;
 
@@ -27,21 +26,21 @@ import org.switchyard.component.common.composer.MessageComposerFactory;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class HornetQMessageComposerFactory extends MessageComposerFactory<ClientMessage> {
+public class HornetQMessageComposerFactory extends MessageComposerFactory<HornetQBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Class<ClientMessage> getTargetClass() {
-        return ClientMessage.class;
+    public Class<HornetQBindingData> getBindingDataClass() {
+        return HornetQBindingData.class;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public MessageComposer<ClientMessage> newMessageComposerDefault() {
+    public MessageComposer<HornetQBindingData> newMessageComposerDefault() {
         return new HornetQMessageComposer();
     }
 

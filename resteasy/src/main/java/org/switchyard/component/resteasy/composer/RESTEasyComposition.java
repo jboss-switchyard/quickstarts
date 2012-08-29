@@ -38,8 +38,8 @@ public final class RESTEasyComposition {
      * Uses the {@link Composition} class to create a RESTEasy-specific MessageComposer.
      * @return the MessageComposer
      */
-    public static MessageComposer<RESTEasyMessage> getMessageComposer() {
-        return Composition.getMessageComposer(RESTEasyMessage.class);
+    public static MessageComposer<RESTEasyBindingData> getMessageComposer() {
+        return Composition.getMessageComposer(RESTEasyBindingData.class);
     }
 
     /**
@@ -47,10 +47,10 @@ public final class RESTEasyComposition {
      * @param rebm a RESTEasyBindingModel to get configuration details from
      * @return the MessageComposer
      */
-    public static MessageComposer<RESTEasyMessage> getMessageComposer(RESTEasyBindingModel rebm) {
+    public static MessageComposer<RESTEasyBindingData> getMessageComposer(RESTEasyBindingModel rebm) {
         ContextMapperModel cmm = rebm != null ? rebm.getContextMapper() : null;
         MessageComposerModel mcm = rebm != null ? rebm.getMessageComposer() : null;
-        return Composition.getMessageComposer(RESTEasyMessage.class, cmm, mcm);
+        return Composition.getMessageComposer(RESTEasyBindingData.class, cmm, mcm);
     }
 
     private RESTEasyComposition() {}

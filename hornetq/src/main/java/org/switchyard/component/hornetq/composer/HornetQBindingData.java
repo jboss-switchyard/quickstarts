@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,34 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.common.composer;
+package org.switchyard.component.hornetq.composer;
+
+import org.hornetq.api.core.client.ClientMessage;
+import org.switchyard.component.common.composer.BindingData;
 
 /**
- * Base class for MessageComposer.
- *
- * @param <D> the type of binding data
- *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * HornetQ binding data.
+ * 
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public abstract class BaseMessageComposer<D extends BindingData> implements MessageComposer<D> {
+public class HornetQBindingData implements BindingData {
 
-    private ContextMapper<D> _contextMapper;
+    private final ClientMessage _clientMessage;
 
     /**
-     * {@inheritDoc}
+     * Constructs a new HornetQ binding data with the specified client message.
+     * @param clientMessage the specified client message
      */
-    @Override
-    public ContextMapper<D> getContextMapper() {
-        return _contextMapper;
+    public HornetQBindingData(ClientMessage clientMessage) {
+        _clientMessage = clientMessage;
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the client message.
+     * @return the client message
      */
-    @Override
-    public MessageComposer<D> setContextMapper(ContextMapper<D> contextMapper) {
-        _contextMapper = contextMapper;
-        return this;
+    public ClientMessage getClientMessage() {
+        return _clientMessage;
     }
 
 }

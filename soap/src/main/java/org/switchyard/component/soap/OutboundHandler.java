@@ -37,6 +37,7 @@ import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.soap.composer.SOAPBindingData;
 import org.switchyard.component.soap.composer.SOAPComposition;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
@@ -54,7 +55,7 @@ public class OutboundHandler extends BaseServiceHandler {
 
     private final SOAPBindingModel _config;
     
-    private MessageComposer<SOAPMessage> _messageComposer;
+    private MessageComposer<SOAPBindingData> _messageComposer;
     private Dispatch<SOAPMessage> _dispatcher;
     private Port _wsdlPort;
     private String _bindingId;
@@ -128,7 +129,7 @@ public class OutboundHandler extends BaseServiceHandler {
 
             SOAPMessage request;
             try {
-                request = _messageComposer.decompose(exchange, SOAPUtil.createMessage(_bindingId));
+                request = _messageComposer.decompose(exchange, new SOAPBindingData(SOAPUtil.createMessage(_bindingId))).getSOAPMessage();
             } catch (Exception e) {
                 throw e instanceof SOAPException ? (SOAPException)e : new SOAPException(e);
             }
@@ -141,7 +142,7 @@ public class OutboundHandler extends BaseServiceHandler {
             if (response != null) {
                 Message message;
                 try {
-                    message = _messageComposer.compose(response, exchange, true);
+                    message = _messageComposer.compose(new SOAPBindingData(response), exchange, true);
                 } catch (Exception e) {
                     throw e instanceof SOAPException ? (SOAPException)e : new SOAPException(e);
                 }

@@ -18,47 +18,31 @@
  */
 package org.switchyard.component.jca.composer;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.resource.cci.MappedRecord;
-
-import org.switchyard.Exchange;
-import org.switchyard.component.common.composer.BaseMessageComposer;
+import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.common.composer.MessageComposerFactory;
 
 /**
- * MessageComposer implementation for CCI MappedRecord that is used by JCA component.
+ * MessageComposerFactory for CCI IndexedRecord.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  */
-public class CCIMappedRecordMessageComposer extends BaseMessageComposer<MappedRecord> {
+public class IndexedRecordMessageComposerFactory extends MessageComposerFactory<IndexedRecordBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public org.switchyard.Message compose(MappedRecord source, Exchange exchange, boolean create) throws Exception {
-        
-        final org.switchyard.Message message = create ? exchange.createMessage() : exchange.getMessage();
-        getContextMapper().mapFrom(source, exchange.getContext());
-        Map<Object,Object> m = new HashMap<Object,Object>();
-        m.putAll(source);
-        message.setContent(m);
-        return message;
+    public Class<IndexedRecordBindingData> getBindingDataClass() {
+        return IndexedRecordBindingData.class;
     }
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public MappedRecord decompose(Exchange exchange, MappedRecord target) throws Exception {
-
-        getContextMapper().mapTo(exchange.getContext(), target);
-        final Map<?,?> content = exchange.getMessage().getContent(Map.class);
-        target.putAll(content);
-        return target;
+    public MessageComposer<IndexedRecordBindingData> newMessageComposerDefault() {
+        return new IndexedRecordMessageComposer();
     }
 
 }

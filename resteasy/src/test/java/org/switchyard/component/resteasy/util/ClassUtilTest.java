@@ -24,7 +24,7 @@ import java.lang.reflect.Method;
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.component.resteasy.InboundHandler;
-import org.switchyard.component.resteasy.composer.RESTEasyMessage;
+import org.switchyard.component.resteasy.composer.RESTEasyBindingData;
 import org.switchyard.component.resteasy.util.support.Item;
 
 /**
@@ -60,25 +60,25 @@ public class ClassUtilTest extends InboundHandler {
         method.invoke(instance);
     }
 
-    public RESTEasyMessage invoke(final String operationName, final RESTEasyMessage restMessageRequest, final boolean oneWay) {
+    public RESTEasyBindingData invoke(final String operationName, final RESTEasyBindingData restMessageRequest, final boolean oneWay) {
         Object input = restMessageRequest.getContent();
         if (operationName.equals("getItem")) {
             Assert.assertTrue(input instanceof Integer);
             Assert.assertTrue((Integer)input == 1);
             Assert.assertFalse(oneWay);
-            return new RESTEasyMessage(new Item(1, "Apple"));
+            return new RESTEasyBindingData(new Item(1, "Apple"));
         } else if (operationName.equals("addItem") || operationName.equals("updateItem")) {
             Assert.assertTrue(input instanceof Item);
             Assert.assertFalse(oneWay);
-            return new RESTEasyMessage(((Item)input).toString());
+            return new RESTEasyBindingData(((Item)input).toString());
         } else if (operationName.equals("removeItem")) {
             Assert.assertTrue(input instanceof Integer);
             Assert.assertFalse(oneWay);
-            return new RESTEasyMessage("2");
+            return new RESTEasyBindingData("2");
         } else if (operationName.equals("getItemCount")) {
             Assert.assertTrue(input == null);
             Assert.assertFalse(oneWay);
-            return new RESTEasyMessage(0);
+            return new RESTEasyBindingData(0);
         } else if (operationName.equals("testVoid")) {
             Assert.assertTrue(input == null);
             Assert.assertTrue(oneWay);

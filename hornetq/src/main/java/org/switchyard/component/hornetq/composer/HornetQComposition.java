@@ -18,7 +18,6 @@
  */
 package org.switchyard.component.hornetq.composer;
 
-import org.hornetq.api.core.client.ClientMessage;
 import org.switchyard.component.common.composer.Composition;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.hornetq.config.model.HornetQBindingModel;
@@ -39,8 +38,8 @@ public final class HornetQComposition {
      * Uses the {@link Composition} class to create a HornetQ-specific MessageComposer.
      * @return the MessageComposer
      */
-    public static MessageComposer<ClientMessage> getMessageComposer() {
-        return Composition.getMessageComposer(ClientMessage.class);
+    public static MessageComposer<HornetQBindingData> getMessageComposer() {
+        return Composition.getMessageComposer(HornetQBindingData.class);
     }
 
     /**
@@ -48,10 +47,10 @@ public final class HornetQComposition {
      * @param hqbm a HornetQBindingModel to get configuration details from
      * @return the MessageComposer
      */
-    public static MessageComposer<ClientMessage> getMessageComposer(HornetQBindingModel hqbm) {
+    public static MessageComposer<HornetQBindingData> getMessageComposer(HornetQBindingModel hqbm) {
         ContextMapperModel cmm = hqbm != null ? hqbm.getContextMapper() : null;
         MessageComposerModel mcm = hqbm != null ? hqbm.getMessageComposer() : null;
-        return Composition.getMessageComposer(ClientMessage.class, cmm, mcm);
+        return Composition.getMessageComposer(HornetQBindingData.class, cmm, mcm);
     }
 
     private HornetQComposition() {}

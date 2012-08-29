@@ -28,6 +28,7 @@ import javax.resource.cci.RecordFactory;
 import org.switchyard.Exchange;
 import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.jca.composer.MappedRecordBindingData;
 import org.switchyard.exception.SwitchYardException;
 /**
  * Concrete message endpoint class for JCA message inflow using JCA CCI MessageListener interface.
@@ -45,14 +46,14 @@ public class CCIEndpoint extends AbstractInflowEndpoint implements MessageListen
     private long _waitTimeout = DEFAULT_TIMEOUT;
     private String _recordName = DEFAULT_RECORD_NAME;
     private String _description = DEFAULT_DESCRIPTION;
-    private MessageComposer<MappedRecord> _composer;
+    private MessageComposer<MappedRecordBindingData> _composer;
     private RecordFactory _recordFactory;
     
     @Override
     public void initialize() {
         super.initialize();
         
-        _composer = getMessageComposer(MappedRecord.class);
+        _composer = getMessageComposer(MappedRecordBindingData.class);
         try {
             ConnectionFactory factory = (ConnectionFactory) new InitialContext().lookup(_connectionFactoryJNDIName);
             _recordFactory = factory.getRecordFactory();
@@ -67,12 +68,12 @@ public class CCIEndpoint extends AbstractInflowEndpoint implements MessageListen
         SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
         Exchange exchange = createExchange(inOutHandler);
         try {
-            exchange.send(_composer.compose((MappedRecord)record, exchange, true));
+            exchange.send(_composer.compose(new MappedRecordBindingData((MappedRecord)record), exchange, true));
 
             exchange = inOutHandler.waitForOut(_waitTimeout);
             MappedRecord returnRecord = _recordFactory.createMappedRecord(_recordName);
             returnRecord.setRecordShortDescription(_description);
-            return _composer.decompose(exchange, returnRecord);
+            return _composer.decompose(exchange, new MappedRecordBindingData(returnRecord)).getRecord();
         } catch (Exception e) {
             throw new SwitchYardException(e);
         }

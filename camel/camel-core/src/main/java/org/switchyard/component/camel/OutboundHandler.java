@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
+import org.switchyard.component.camel.composer.CamelBindingData;
 import org.switchyard.component.camel.processor.ProcessorFactory;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.deploy.BaseServiceHandler;
@@ -49,7 +50,7 @@ public class OutboundHandler extends BaseServiceHandler {
     
     private static Logger _logger = Logger.getLogger(OutboundHandler.class);
 
-    private final MessageComposer<org.apache.camel.Message> _messageComposer;
+    private final MessageComposer<CamelBindingData> _messageComposer;
     private final ProducerTemplate _producerTemplate;
     private final CamelContext _camelContext;
     private final String _uri;
@@ -61,7 +62,7 @@ public class OutboundHandler extends BaseServiceHandler {
      * @param context The {@link CamelContext}.
      * @param messageComposer the MessageComposer this handler should use
      */
-    public OutboundHandler(final String uri, final CamelContext context, MessageComposer<org.apache.camel.Message> messageComposer) {
+    public OutboundHandler(final String uri, final CamelContext context, MessageComposer<CamelBindingData> messageComposer) {
         this(uri, context, messageComposer, null);
     }
 
@@ -73,7 +74,7 @@ public class OutboundHandler extends BaseServiceHandler {
      * @param messageComposer the MessageComposer this handler should use.
      * @param producerTemplate The {@link ProducerTemplate} to be used by this handler.
      */
-    public OutboundHandler(final String uri, final CamelContext context, MessageComposer<org.apache.camel.Message> messageComposer, ProducerTemplate producerTemplate) {
+    public OutboundHandler(final String uri, final CamelContext context, MessageComposer<CamelBindingData> messageComposer, ProducerTemplate producerTemplate) {
         if (uri == null) {
             throw new IllegalArgumentException("uri argument must not be null");
         }

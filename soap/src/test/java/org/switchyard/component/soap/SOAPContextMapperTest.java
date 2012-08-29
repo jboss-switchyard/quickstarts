@@ -27,6 +27,7 @@ import javax.xml.ws.soap.SOAPBinding;
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.Context;
+import org.switchyard.component.soap.composer.SOAPBindingData;
 import org.switchyard.component.soap.composer.SOAPContextMapper;
 import org.switchyard.component.soap.composer.SOAPHeadersType;
 import org.switchyard.component.soap.util.SOAPUtil;
@@ -89,12 +90,12 @@ public class SOAPContextMapperTest {
         Context context = new DefaultContext();
         // test mapFrom
         SOAPMessage source = newSourceMessage();
-        mapper.mapFrom(source, context);
+        mapper.mapFrom(new SOAPBindingData(source), context);
         Assert.assertEquals("John", getPropertyValue(context, FIRST_NAME));
         Assert.assertEquals("Doe", getPropertyValue(context, LAST_NAME));
         // test mapTo
         SOAPMessage target = newTargetMessage();
-        mapper.mapTo(context, target);
+        mapper.mapTo(context, new SOAPBindingData(target));
         Assert.assertEquals("John", getChildElement(target, FIRST_NAME).getTextContent());
         Assert.assertEquals("Doe", getChildElement(target, LAST_NAME).getTextContent());
     }
@@ -106,12 +107,12 @@ public class SOAPContextMapperTest {
         Context context = new DefaultContext();
         // test mapFrom
         SOAPMessage source = newSourceMessage();
-        mapper.mapFrom(source, context);
+        mapper.mapFrom(new SOAPBindingData(source), context);
         Assert.assertEquals("<first xmlns=\"urn:names:1.0\">John</first>", getPropertyValue(context, FIRST_NAME));
         Assert.assertEquals("<last xmlns=\"urn:names:1.0\">Doe</last>", getPropertyValue(context, LAST_NAME));
         // test mapTo
         SOAPMessage target = newTargetMessage();
-        mapper.mapTo(context, target);
+        mapper.mapTo(context, new SOAPBindingData(target));
         Assert.assertEquals("John", getChildElement(target, FIRST_NAME).getTextContent());
         Assert.assertEquals("Doe", getChildElement(target, LAST_NAME).getTextContent());
     }
@@ -123,12 +124,12 @@ public class SOAPContextMapperTest {
         Context context = new DefaultContext();
         // test mapFrom
         SOAPMessage source = newSourceMessage();
-        mapper.mapFrom(source, context);
+        mapper.mapFrom(new SOAPBindingData(source), context);
         Assert.assertEquals(newConfiguration("<first xmlns=\"urn:names:1.0\">John</first>"), getPropertyValue(context, FIRST_NAME));
         Assert.assertEquals(newConfiguration("<last xmlns=\"urn:names:1.0\">Doe</last>"), getPropertyValue(context, LAST_NAME));
         // test mapTo
         SOAPMessage target = newTargetMessage();
-        mapper.mapTo(context, target);
+        mapper.mapTo(context, new SOAPBindingData(target));
         Assert.assertEquals("John", getChildElement(target, FIRST_NAME).getTextContent());
         Assert.assertEquals("Doe", getChildElement(target, LAST_NAME).getTextContent());
     }
@@ -140,12 +141,12 @@ public class SOAPContextMapperTest {
         Context context = new DefaultContext();
         // test mapFrom
         SOAPMessage source = newSourceMessage();
-        mapper.mapFrom(source, context);
+        mapper.mapFrom(new SOAPBindingData(source), context);
         Assert.assertEquals("<first xmlns=\"urn:names:1.0\">John</first>", toString((Element)getPropertyValue(context, FIRST_NAME)));
         Assert.assertEquals("<last xmlns=\"urn:names:1.0\">Doe</last>", toString((Element)getPropertyValue(context, LAST_NAME)));
         // test mapTo
         SOAPMessage target = newTargetMessage();
-        mapper.mapTo(context, target);
+        mapper.mapTo(context, new SOAPBindingData(target));
         Assert.assertEquals("John", getChildElement(target, FIRST_NAME).getTextContent());
         Assert.assertEquals("Doe", getChildElement(target, LAST_NAME).getTextContent());
     }

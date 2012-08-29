@@ -32,19 +32,20 @@ import org.switchyard.component.jca.JCAConstants;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  */
-public class CCIIndexedRecordContextMapper extends BaseRegexContextMapper<IndexedRecord> {
+public class IndexedRecordContextMapper extends BaseRegexContextMapper<IndexedRecordBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void mapFrom(IndexedRecord source, Context context) throws Exception {
-        String recordName = source.getRecordName();
+    public void mapFrom(IndexedRecordBindingData source, Context context) throws Exception {
+        IndexedRecord record = source.getRecord();
+        String recordName = record.getRecordName();
         if (recordName != null) {
             context.setProperty(JCAConstants.CCI_RECORD_NAME_KEY, recordName, Scope.EXCHANGE)
                     .addLabels(JCAComposition.JCA_MESSAGE_PROPERTY);
         }
-        String recordDescription = source.getRecordShortDescription();
+        String recordDescription = record.getRecordShortDescription();
         if (recordDescription != null) {
             context.setProperty(JCAConstants.CCI_RECORD_SHORT_DESC_KEY, recordDescription, Scope.EXCHANGE)
                     .addLabels(JCAComposition.JCA_MESSAGE_PROPERTY);
@@ -56,7 +57,8 @@ public class CCIIndexedRecordContextMapper extends BaseRegexContextMapper<Indexe
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void mapTo(Context context, IndexedRecord target) throws Exception {
+    public void mapTo(Context context, IndexedRecordBindingData target) throws Exception {
+        IndexedRecord record = target.getRecord();
         for (Property property : context.getProperties(Scope.EXCHANGE)) {
             String name = property.getName();
             Object value = property.getValue();
@@ -65,11 +67,11 @@ public class CCIIndexedRecordContextMapper extends BaseRegexContextMapper<Indexe
             }
             
             if (name.equals(JCAConstants.CCI_RECORD_NAME_KEY)) {
-                target.setRecordName(value.toString());
+                record.setRecordName(value.toString());
             } else if (name.equals(JCAConstants.CCI_RECORD_SHORT_DESC_KEY)) {
-                target.setRecordShortDescription(value.toString());
+                record.setRecordShortDescription(value.toString());
             } else if (matches(name)) {
-                    target.add(name + "=" + value);
+                record.add(name + "=" + value);
             }
         }
     }

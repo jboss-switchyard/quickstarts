@@ -38,7 +38,7 @@ import org.switchyard.component.common.composer.BaseRegexContextMapper;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public class CamelContextMapper extends BaseRegexContextMapper<Message> {
+public class CamelContextMapper extends BaseRegexContextMapper<CamelBindingData> {
 
     private static final Scope[] IN_OUT = new Scope[]{IN, OUT};
 
@@ -46,15 +46,16 @@ public class CamelContextMapper extends BaseRegexContextMapper<Message> {
      * {@inheritDoc}
      */
     @Override
-    public void mapFrom(Message source, Context context) throws Exception {
+    public void mapFrom(CamelBindingData source, Context context) throws Exception {
         Scope scope;
-        Exchange exchange = source.getExchange();
+        Message message = source.getMessage();
+        Exchange exchange = message.getExchange();
         if (exchange.getIn() == source) {
             scope = IN;
         } else {
             scope = OUT;
         }
-        for (Map.Entry<String,Object> header : source.getHeaders().entrySet()) {
+        for (Map.Entry<String,Object> header : message.getHeaders().entrySet()) {
             String name = header.getKey();
             if (matches(name)) {
                 Object value = header.getValue();
@@ -82,8 +83,9 @@ public class CamelContextMapper extends BaseRegexContextMapper<Message> {
      * {@inheritDoc}
      */
     @Override
-    public void mapTo(Context context, Message target) throws Exception {
-        Exchange exchange = target.getExchange();
+    public void mapTo(Context context, CamelBindingData target) throws Exception {
+        Message message = target.getMessage();
+        Exchange exchange = message.getExchange();
         for (Scope scope : IN_OUT) {
             for (Property property : context.getProperties(scope)) {
                 String name = property.getName();
@@ -91,7 +93,7 @@ public class CamelContextMapper extends BaseRegexContextMapper<Message> {
                     Object value = property.getValue();
                     if (value != null) {
                         // Context ${scope} properties -> Camel Message headers
-                        target.setHeader(name, value);
+                        message.setHeader(name, value);
                     }
                 }
             }

@@ -19,10 +19,10 @@
 package org.switchyard.component.camel;
 
 import org.apache.camel.Consumer;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.switchyard.component.camel.composer.CamelBindingData;
 import org.switchyard.component.camel.composer.CamelComposition;
 import org.switchyard.component.common.composer.MessageComposer;
 
@@ -46,7 +46,7 @@ public class SwitchyardEndpoint extends DefaultEndpoint {
     /**
      * Producer property.
      */
-    private MessageComposer<Message> _messageComposer;
+    private MessageComposer<CamelBindingData> _messageComposer;
     
     /**
      * SwitchYard Consumer that handles events from SwitchYard and delegates
@@ -73,7 +73,7 @@ public class SwitchyardEndpoint extends DefaultEndpoint {
      * @param messageComposer the message composer
      * @return this endpoint (useful for chaining)
      */
-    public synchronized SwitchyardEndpoint setMessageComposer(MessageComposer<Message> messageComposer) {
+    public synchronized SwitchyardEndpoint setMessageComposer(MessageComposer<CamelBindingData> messageComposer) {
         _messageComposer = messageComposer;
         return this;
     }
@@ -82,7 +82,7 @@ public class SwitchyardEndpoint extends DefaultEndpoint {
      * Gets the message composer this endpoint should pass along to producers and consumers.
      * @return the message composer
      */
-    public synchronized MessageComposer<Message> getMessageComposer() {
+    public synchronized MessageComposer<CamelBindingData> getMessageComposer() {
         if (_messageComposer == null) {
             _messageComposer = CamelComposition.getMessageComposer();
         }

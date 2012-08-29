@@ -26,21 +26,21 @@ import org.switchyard.component.common.composer.MessageComposerFactory;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class RESTEasyMessageComposerFactory extends MessageComposerFactory<RESTEasyMessage> {
+public class RESTEasyMessageComposerFactory extends MessageComposerFactory<RESTEasyBindingData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Class<RESTEasyMessage> getTargetClass() {
-        return RESTEasyMessage.class;
+    public Class<RESTEasyBindingData> getBindingDataClass() {
+        return RESTEasyBindingData.class;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public MessageComposer<RESTEasyMessage> newMessageComposerDefault() {
+    public MessageComposer<RESTEasyBindingData> newMessageComposerDefault() {
         return new RESTEasyMessageComposer();
     }
 

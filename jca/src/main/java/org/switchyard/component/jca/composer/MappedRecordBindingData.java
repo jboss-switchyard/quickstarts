@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -20,31 +20,29 @@ package org.switchyard.component.jca.composer;
 
 import javax.resource.cci.MappedRecord;
 
-import org.switchyard.component.common.composer.ContextMapper;
-import org.switchyard.component.common.composer.ContextMapperFactory;
-
 /**
- * ContextMapperFactory for CCI MappedRecord.
- *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
- * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
+ * Mapped record binding data.
+ * 
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class CCIMappedRecordContextMapperFactory extends ContextMapperFactory<MappedRecord> {
+public class MappedRecordBindingData implements RecordBindingData<MappedRecord> {
+
+    private final MappedRecord _record;
 
     /**
-     * {@inheritDoc}
+     * Constructs a new mapped record binding data with the specified mapped record.
+     * @param record the specified mapped record
      */
-    @Override
-    public Class<MappedRecord> getTargetClass() {
-        return MappedRecord.class;
+    public MappedRecordBindingData(MappedRecord record) {
+        _record = record;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ContextMapper<MappedRecord> newContextMapperDefault() {
-        return new CCIMappedRecordContextMapper();
+    public MappedRecord getRecord() {
+        return _record;
     }
 
 }
