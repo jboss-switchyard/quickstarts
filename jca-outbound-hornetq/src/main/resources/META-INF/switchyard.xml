@@ -2,6 +2,7 @@
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0"
             name="switchyard-quickstart-jca-outbound-hornetq"
             xmlns:jca="urn:switchyard-component-jca:config:1.0"
+            xmlns:selector="urn:switchyard-component-common-selector:config:1.0"
             xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
             xmlns:bean="urn:switchyard-component-bean:config:1.0">
             
@@ -9,6 +10,7 @@
     
         <sca:service name="OrderService" promote="OrderComponent/OrderService">
             <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
+               <selector:operationSelector operationName="process"/>
                <inboundConnection>
                    <resourceAdapter name="hornetq-ra.rar">
                    </resourceAdapter>
@@ -19,7 +21,6 @@
                </inboundConnection>
                <inboundInteraction>
                    <listener>javax.jms.MessageListener</listener>
-                   <inboundOperation name="process" selectedOperation="process"/>
                    <endpoint type="org.switchyard.component.jca.endpoint.JMSEndpoint"/>
                    <transacted>true</transacted>
                </inboundInteraction>
