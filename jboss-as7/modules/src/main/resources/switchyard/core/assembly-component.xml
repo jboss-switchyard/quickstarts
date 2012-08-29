@@ -41,6 +41,11 @@
             <filtered>true</filtered>
         </file>
         <file>
+            <source>src/main/resources/switchyard/core/common-camel/module.xml</source>
+            <outputDirectory>/modules/org/switchyard/common-camel/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
             <source>src/main/resources/switchyard/core/config/module.xml</source>
             <outputDirectory>/modules/org/switchyard/config/main</outputDirectory>
             <filtered>true</filtered>
@@ -106,6 +111,15 @@
                 <include>org.switchyard:switchyard-common</include>
             </includes>
             <outputDirectory>/modules/org/switchyard/common/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.switchyard:switchyard-common-camel</include>
+            </includes>
+            <outputDirectory>/modules/org/switchyard/common-camel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>

@@ -35,5 +35,6 @@
         <module name="org.apache.camel.core"/>
         <module name="org.switchyard.api"/>
         <module name="org.switchyard.runtime"/>
+        <module name="org.switchyard.common-camel"/>
     </dependencies>
 </module>
