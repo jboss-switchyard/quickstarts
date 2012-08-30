@@ -108,8 +108,9 @@
     <version.jta>1.1</version.jta>
     <version.jsch>0.1.48</version.jsch>
     <version.junit>4.10</version.junit>
-    <version.maven.gwt.plugin>2.3.0-1</version.maven.gwt.plugin>
+    <version.maven.archetype.plugin>2.0</version.maven.archetype.plugin>
     <version.maven.exec.plugin>1.2</version.maven.exec.plugin>
+    <version.maven.gwt.plugin>2.3.0-1</version.maven.gwt.plugin>
     <version.maven.shade.plugin>1.4</version.maven.shade.plugin>
     <version.maven.plugin.api>3.0.3</version.maven.plugin.api>
     <version.mina>2.0.4</version.mina>
@@ -197,6 +198,11 @@
     <pluginManagement>
       <plugins>
          <plugin>
+             <groupId>org.apache.maven.plugins</groupId>
+             <artifactId>maven-archetype-plugin</artifactId>
+             <version>${version.maven.archetype.plugin}</version>
+         </plugin>
+         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-shade-plugin</artifactId>
             <version>${version.maven.shade.plugin}</version>
@@ -223,10 +229,10 @@
                   <pluginExecutionFilter>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <versionRange>[1.0,)</versionRange>
+                    <versionRange>[2.3,)</versionRange>
                     <goals>
-                      <goal>unpack</goal>
-                      <goal>copy</goal>
+                      <goal>unpack-dependencies</goal>
+                      <goal>copy-dependencies</goal>
                     </goals>
                   </pluginExecutionFilter>
                   <action>
