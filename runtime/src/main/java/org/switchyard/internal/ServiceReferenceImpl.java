@@ -30,10 +30,12 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.exception.SwitchYardException;
+import org.switchyard.metadata.Registrant;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.ServiceOperation;
-import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.Policy;
+import org.switchyard.policy.PolicyUtil;
+import org.switchyard.spi.Dispatcher;
 
 /**
  * A reference to a service registered in a SwitchYard domain.  The reference
@@ -47,6 +49,20 @@ public class ServiceReferenceImpl implements ServiceReference {
     private DomainImpl _domain;
     private List<Policy> _provides;
     private ExchangeHandler _handler;
+    private Dispatcher _dispatcher;
+    private Registrant _consumerMetadata;
+    
+    /**
+     * Creates a new reference to a service.
+     * @param name name of the service reference
+     * @param serviceInterface the service interface
+     * @param domain domain in which the service is used 
+     */
+    public ServiceReferenceImpl(QName name, 
+            ServiceInterface serviceInterface, 
+            DomainImpl domain) {
+        this(name, serviceInterface, domain, null, null, null);
+    }
 
     /**
      * Creates a new reference to a service.
@@ -55,17 +71,20 @@ public class ServiceReferenceImpl implements ServiceReference {
      * @param provides list of policies provided by this reference
      * @param handler handler used to process reply faults/messages
      * @param domain domain in which the service is used 
+     * @param consumerMetadata information related to the consumer
      */
     public ServiceReferenceImpl(QName name, 
             ServiceInterface serviceInterface, 
-            List<Policy> provides,
+            DomainImpl domain,
             ExchangeHandler handler,
-            DomainImpl domain) {
+            List<Policy> provides,
+            Registrant consumerMetadata) {
         
         _name = name;
         _interface = serviceInterface;
         _handler = handler;
         _domain = domain;
+        _consumerMetadata = consumerMetadata;
         
         if (provides != null) {
             _provides = provides;
@@ -99,7 +118,14 @@ public class ServiceReferenceImpl implements ServiceReference {
 
     @Override
     public Exchange createExchange(String operation, ExchangeHandler handler) {
-        Exchange ex = _domain.createExchange(this, operation, handler);
+        ExchangeImpl ex = new ExchangeImpl(_domain, handler);
+        ServiceOperation op = _interface.getOperation(operation);
+        if (op == null) {
+            throw new SwitchYardException("Operation " + operation + " does not exist for service " + _name);
+        }
+        ex.consumer(this, op);
+        ex.setOutputDispatcher(_dispatcher);
+        
         for (Policy policy : _provides) {
             PolicyUtil.provide(ex, policy);
         }
@@ -126,6 +152,25 @@ public class ServiceReferenceImpl implements ServiceReference {
         _domain.unregisterServiceReference(this);
     }
 
+    /**
+     * Sets the list of provided policies for this service reference.
+     * @param provides list of policies provided
+     * @return this ServiceReference instance
+     */
+    public ServiceReferenceImpl setProvides(List<Policy> provides) {
+        _provides = provides;
+        return this;
+    }
+    
+    /**
+     * Specifies the exchange handler to use to process reply messages and faults.
+     * @param handler exchange handler
+     * @return this ServiceReference instance
+     */
+    public ServiceReferenceImpl setHandler(ExchangeHandler handler) {
+        _handler = handler;
+        return this;
+    }
     
     /**
      * The domain in which this service reference is registered.
@@ -133,6 +178,31 @@ public class ServiceReferenceImpl implements ServiceReference {
      */
     public ServiceDomain getDomain() {
         return _domain;
+    }
+    
+    /**
+     * Specifies the exchange bus dispatcher to use for this reference.
+     * @param dispatcher the exchange dispatcher
+     * @return this ServiceReference instance
+     */
+    public ServiceReferenceImpl setDispatcher(Dispatcher dispatcher) {
+        _dispatcher = dispatcher;
+        return this;
+    }
+
+    @Override
+    public Registrant getConsumerMetadata() {
+        return _consumerMetadata;
+    }
+    
+    /**
+     * Specifies the consumer metadata associated with this service reference.
+     * @param consumer consumer metadata
+     * @return this ServiceReference instance
+     */
+    public ServiceReferenceImpl setConsumerMetadata(Registrant consumer) {
+        _consumerMetadata = consumer;
+        return this;
     }
 
 }

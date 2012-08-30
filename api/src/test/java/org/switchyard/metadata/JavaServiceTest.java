@@ -22,7 +22,6 @@ package org.switchyard.metadata;
 import javax.xml.namespace.QName;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.switchyard.ExchangePattern;
 import org.switchyard.annotations.OperationTypes;

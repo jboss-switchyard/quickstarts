@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.metadata.Registrant;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.policy.Policy;
 
@@ -30,32 +31,45 @@ import org.switchyard.policy.Policy;
  * A service registered with the SwitchYard runtime.
  */
 public interface Service {
+    
     /**
      * Qualified name of the service.
      * @return service name
      */
     QName getName();
+    
     /**
-    * Interface metadata for the registered service.
-    * @return the service interface
-    */
+     * Interface metadata for the registered service.
+     * @return the service interface
+     */
     ServiceInterface getInterface();
     
     /**
      * Unregisters this service from the domain it's registered in.
      */
     void unregister();
-    
 
     /**
      * The domain in which this service reference is registered.
      * @return service domain which created this service reference
      */
-     ServiceDomain getDomain();
+    ServiceDomain getDomain();
      
-     /**
-      * Returns a list of required policies for this service.
-      * @return list of required policy
-      */
-      List<Policy> getRequiredPolicies();
+    /**
+     * Returns a list of required policies for this service.
+     * @return list of required policy
+     */
+    List<Policy> getRequiredPolicies();
+    
+    /**
+     * Return the exchange handler representing the provider.
+     * @return provider's exchange handler
+     */
+    ExchangeHandler getProviderHandler();
+    
+    /**
+     * Return the provider metadata associated with this service.
+     * @return provider metadata
+     */
+    Registrant getProviderMetadata();
 }

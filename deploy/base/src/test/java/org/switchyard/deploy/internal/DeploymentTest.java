@@ -32,6 +32,8 @@ import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.type.Classes;
+import org.switchyard.config.model.composite.BindingModel;
+import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.switchyard.EsbInterfaceModel;
 import org.switchyard.deploy.ActivatorLoader;
 import org.switchyard.deploy.components.MockActivator;
@@ -61,6 +63,38 @@ public class DeploymentTest {
         MockDomain serviceDomain = new MockDomain();
         deployment.init(serviceDomain, ActivatorLoader.createActivators(serviceDomain));
         deployment.destroy();
+    }
+    
+    @Test
+    public void testRegistrants() throws Exception {
+        InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-mock-01.xml", getClass());
+        Deployment deployment = new Deployment(swConfigStream);
+        swConfigStream.close();
+
+        MockDomain serviceDomain = new MockDomain();
+        deployment.init(serviceDomain, ActivatorLoader.createActivators(serviceDomain));
+        deployment.start();
+        
+        // check metadata is included for services and references
+        Service implService = deployment.getDomain().getServices(
+                new QName("urn:test:config-mock-binding:1.0", "TestService")).get(0);
+        Assert.assertNotNull(implService.getProviderMetadata());
+        Assert.assertTrue(implService.getProviderMetadata().getConfig() instanceof ComponentImplementationModel);
+        
+        Service bindingService = deployment.getDomain().getServices(
+                new QName("urn:test:config-mock-binding:1.0", "TestReference")).get(0);
+        Assert.assertNotNull(bindingService.getProviderMetadata());
+        Assert.assertTrue(bindingService.getProviderMetadata().getConfig() instanceof BindingModel);
+        
+        ServiceReference implReference = deployment.getDomain().getServiceReference(
+                new QName("urn:test:config-mock-binding:1.0", "TestReference"));
+        Assert.assertNotNull(implReference.getConsumerMetadata());
+        Assert.assertTrue(implReference.getConsumerMetadata().getConfig() instanceof ComponentImplementationModel);
+        
+        ServiceReference bindingReference = deployment.getDomain().getServiceReference(
+                new QName("urn:test:config-mock-binding:1.0", "TestService"));
+        Assert.assertNotNull(bindingReference.getConsumerMetadata());
+        Assert.assertTrue(bindingReference.getConsumerMetadata().getConfig() instanceof BindingModel);
     }
     
     @Test

@@ -26,7 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePhase;
-import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.spi.Dispatcher;
 
 /**
@@ -40,28 +40,28 @@ public class ExchangeDispatcher implements Dispatcher {
      */
     public static final String SY_EXCHANGE = "SwitchYardExchange";
     
-    private Service _service;
+    private ServiceReference _reference;
     private ProducerTemplate _producer;
 
     /**
      * Create a new Dispatcher instance.
-     * @param service dispatch for this service
+     * @param reference dispatch for this reference
      * @param producer Camel producer template used to consume a service
      */
-    public ExchangeDispatcher(Service service, ProducerTemplate producer) {
-        _service = service;
+    public ExchangeDispatcher(ServiceReference reference, ProducerTemplate producer) {
+        _reference = reference;
         _producer = producer;
     }
     
     @Override
-    public Service getService() {
-        return _service;
+    public ServiceReference getServiceReference() {
+        return _reference;
     }
 
     @Override
     public void dispatch(final Exchange exchange) {
         if (exchange.getPhase().equals(ExchangePhase.IN)) {
-            _producer.send("direct:" + exchange.getServiceName(), 
+            _producer.send("direct:" + exchange.getConsumer().getName(),
                     new Processor() {
                         public void process(org.apache.camel.Exchange ex) {
                             ex.setProperty(SY_EXCHANGE, exchange);

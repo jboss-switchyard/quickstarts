@@ -27,8 +27,10 @@ import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerChain;
-import org.switchyard.Service;
+import org.switchyard.HandlerException;
 import org.switchyard.ServiceDomain;
+import org.switchyard.ServiceReference;
+import org.switchyard.handlers.AddressingHandler;
 import org.switchyard.handlers.PolicyHandler;
 import org.switchyard.handlers.TransactionHandler;
 import org.switchyard.handlers.TransformHandler;
@@ -63,12 +65,13 @@ public class LocalExchangeBus implements ExchangeBus {
         
         // Build out the request and reply handler chains.
         _requestChain = new DefaultHandlerChain();
+        _requestChain.addLast("addressing", new AddressingHandler(_domain));
         _requestChain.addLast("transaction-pre-invoke", transactionHandler);
         _requestChain.addLast("generic-policy", new PolicyHandler());
         _requestChain.addLast("validation-before-transform", validateHandler);
         _requestChain.addLast("transformation", transformHandler);
         _requestChain.addLast("validation-after-transform", validateHandler);
-        _requestChain.addLast(HandlerChain.PROVIDER_HANDLER, new BaseHandler());
+        _requestChain.addLast("provider", new ProviderHandler());
         _requestChain.addLast("transaction-post-invoke", transactionHandler);
         
         _replyChain = new DefaultHandlerChain();
@@ -89,24 +92,22 @@ public class LocalExchangeBus implements ExchangeBus {
     }
 
     @Override
-    public synchronized Dispatcher createDispatcher(
-            Service service, ExchangeHandler handler) {
+    public synchronized Dispatcher createDispatcher(ServiceReference reference) {
         HandlerChain userHandlers = DefaultHandlerChain.fromList(_domain.getHandlers());
         HandlerChain requestChain = _requestChain.copy();
         HandlerChain replyChain = _replyChain.copy();
         requestChain.addFirst("domain-handlers", userHandlers);
         replyChain.addFirst("domain-handlers", userHandlers);
-        requestChain.replace(HandlerChain.PROVIDER_HANDLER, handler);
         
-        Dispatcher dispatcher = new LocalDispatcher(service, requestChain, replyChain);
-        _dispatchers.put(service.getName(), dispatcher);
+        Dispatcher dispatcher = new LocalDispatcher(reference, requestChain, replyChain);
+        _dispatchers.put(reference.getName(), dispatcher);
         
         return dispatcher;
     }
 
     @Override
-    public Dispatcher getDispatcher(Service service) {
-        return _dispatchers.get(service.getName());
+    public Dispatcher getDispatcher(ServiceReference reference) {
+        return _dispatchers.get(reference.getName());
     }
 
 }
@@ -114,14 +115,14 @@ public class LocalExchangeBus implements ExchangeBus {
 class LocalDispatcher implements Dispatcher {
     private HandlerChain _requestChain;
     private HandlerChain _replyChain;
-    private Service _service;
+    private ServiceReference _reference;
 
     /**
      * Constructor.
      * @param handlerChain handler chain
      */
-    LocalDispatcher(final Service service, final HandlerChain requestChain, final HandlerChain replyChain) {
-        _service = service;
+    LocalDispatcher(final ServiceReference reference, final HandlerChain requestChain, final HandlerChain replyChain) {
+        _reference = reference;
         _requestChain = requestChain;
         _replyChain = replyChain;
     }
@@ -145,7 +146,16 @@ class LocalDispatcher implements Dispatcher {
     }
 
     @Override
-    public Service getService() {
-        return _service;
+    public ServiceReference getServiceReference() {
+        return _reference;
     }
+}
+
+class ProviderHandler extends BaseHandler {
+
+    @Override
+    public void handleMessage(Exchange exchange) throws HandlerException {
+        exchange.getProvider().getProviderHandler().handleMessage(exchange);
+    }
+    
 }

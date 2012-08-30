@@ -20,9 +20,8 @@
 package org.switchyard;
 
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.metadata.ExchangeContract;
+import org.switchyard.metadata.ServiceOperation;
 
 /**
  * An Exchange represents an instance of a service invocation with a specific
@@ -70,16 +69,39 @@ public interface Exchange {
     Context getContext();
 
     /**
-     * Get the contract associated with this exchange.
-     * @return The exchange contract.
+     * Get the service reference representing the consumer.
+     * @return The consumer service reference instance.
+     */
+    ServiceReference getConsumer();
+    
+    /**
+     * Get the service representing the provider.  This method will return
+     * null before an exchange is sent for the first time.
+     * @return the provider's service
+     */
+    Service getProvider();
+    
+    /**
+     * The contract between consumer and provider for this exchange.
+     * @return exchange contract
      */
     ExchangeContract getContract();
     
     /**
-     * The service being invoked by this exchange.
-     * @return Service to be invoked
+     * Set service consumer info for this exchange.
+     * @param consumer the service reference used by the exchange
+     * @param operation the operation being invoked
+     * @return this Exchange instance
      */
-    QName getServiceName();
+    Exchange consumer(ServiceReference consumer, ServiceOperation operation);
+    
+    /**
+     * Set service provider info for this exchange.
+     * @param provider the service provider used by the exchange
+     * @param operation the operation being invoked
+     * @return this Exchange instance
+     */
+    Exchange provider(Service provider, ServiceOperation operation);
 
     /**
      * Returns the current message for the exchange.  On new exchanges, this

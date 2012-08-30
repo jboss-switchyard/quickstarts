@@ -25,25 +25,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.activation.DataSource;
-import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
 import org.switchyard.Context;
-import org.switchyard.Exchange;
-import org.switchyard.ExchangePhase;
-import org.switchyard.ExchangeState;
 import org.switchyard.Message;
-import org.switchyard.MockDomain;
-import org.switchyard.MockHandler;
-import org.switchyard.ServiceReference;
 import org.switchyard.internal.DefaultContext;
 import org.switchyard.internal.DefaultMessage;
-import org.switchyard.internal.ExchangeImpl;
 import org.switchyard.internal.io.Data.Car;
 import org.switchyard.internal.io.Data.Person;
-import org.switchyard.metadata.ExchangeContract;
 
 /**
  * Tests de/serialization of a Context, Message and Exchange, as well as pertinent objects reachable in the graph.
@@ -73,13 +64,6 @@ public final class ExchangeSerializationTests {
         assertMessage(msg);
     }
 
-    @Test
-    public void testExchangeSerialization() throws Exception {
-        ExchangeImpl exchange = buildExchange();
-        exchange = serDeser(exchange, ExchangeImpl.class);
-        assertExchange(exchange);
-    }
-
     private DefaultContext buildContext(DefaultContext ctx) {
         if (ctx == null) {
             ctx = new DefaultContext();
@@ -96,18 +80,6 @@ public final class ExchangeSerializationTests {
         msg.setContent("content");
         msg.addAttachment("data", new MockDataSource("mock", "text/plain", "abc123"));
         return msg;
-    }
-
-    private ExchangeImpl buildExchange() {
-        MockDomain domain = new MockDomain();
-        MockHandler handler = new MockHandler();
-        ServiceReference service = domain.createInOutService(new QName("InPhase"), handler);
-        ExchangeImpl exchange = (ExchangeImpl)service.createExchange(handler);
-        buildContext((DefaultContext)exchange.getContext());
-        DefaultMessage msg = buildMessage((DefaultMessage)exchange.createMessage());
-        exchange.send(msg);
-        handler.waitForOKMessage();
-        return exchange;
     }
 
     private void assertContext(Context ctx) throws Exception {
@@ -130,14 +102,6 @@ public final class ExchangeSerializationTests {
             baos.write(buff, 0, read);
         }
         Assert.assertEquals("abc123", new String(baos.toByteArray()));
-    }
-
-    private void assertExchange(Exchange exchange) throws Exception {
-        assertContext(exchange.getContext());
-        assertMessage(exchange.getMessage());
-        Assert.assertEquals(ExchangeContract.IN_OUT.getServiceOperation().getExchangePattern(), exchange.getContract().getServiceOperation().getExchangePattern());
-        Assert.assertEquals(ExchangePhase.IN, exchange.getPhase());
-        Assert.assertEquals(ExchangeState.OK, exchange.getState());
     }
 
     private static final class MockDataSource implements DataSource {

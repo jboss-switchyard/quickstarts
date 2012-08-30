@@ -24,9 +24,11 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.ExchangeHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.event.ServiceUnregistrationEvent;
+import org.switchyard.metadata.Registrant;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.policy.Policy;
 
@@ -40,23 +42,46 @@ public class ServiceImpl implements Service {
     private QName _name;
     private ServiceInterface _interface;
     private DomainImpl _domain;
+    private ExchangeHandler _providerHandler;
     private List<Policy> _requires;
+    private Registrant _providerMetadata;
+    
+    /**
+     * Creates a new Service instance representing a service provider.
+     * @param name name of the service reference
+     * @param serviceInterface the service interface
+     * @param domain domain in which the service is used 
+     * @param providerHandler the exchange handler representing the provider
+     */
+    public ServiceImpl(QName name, 
+            ServiceInterface serviceInterface, 
+            DomainImpl domain,
+            ExchangeHandler providerHandler) {
+        this(name, serviceInterface, domain, providerHandler, null, null);
+    }
+
 
     /**
-     * Creates a new reference to a service.
+     * Creates a new Service instance representing a service provider.
      * @param name name of the service reference
      * @param serviceInterface the service interface
      * @param requires list of policies required for this reference
      * @param domain domain in which the service is used 
+     * @param providerMetadata information related to the provider
+     * @param providerHandler the exchange handler representing the provider
      */
     public ServiceImpl(QName name, 
             ServiceInterface serviceInterface, 
+            DomainImpl domain, 
+            ExchangeHandler providerHandler,
             List<Policy> requires,
-            DomainImpl domain) {
+            Registrant providerMetadata) {
         
         _name = name;
         _interface = serviceInterface;
         _domain = domain;
+        _providerHandler = providerHandler;
+        _providerMetadata = providerMetadata;
         
         if (requires != null) {
             _requires = requires;
@@ -89,5 +114,35 @@ public class ServiceImpl implements Service {
     @Override
     public List<Policy> getRequiredPolicies() {
         return Collections.unmodifiableList(_requires);
+    }
+
+    @Override
+    public ExchangeHandler getProviderHandler() {
+        return _providerHandler;
+    }
+
+    @Override
+    public Registrant getProviderMetadata() {
+        return _providerMetadata;
+    }
+    
+    /**
+     * Sets the list of required policies for this service.
+     * @param requires list of policies required
+     * @return this ServiceImpl instance
+     */
+    public ServiceImpl setRequires(List<Policy> requires) {
+        _requires = requires;
+        return this;
+    }
+    
+    /**
+     * Specifies the provider metadata associated with this service.
+     * @param provider provider metadata
+     * @return this ServiceImpl instance
+     */
+    public ServiceImpl setProviderMetadata(Registrant provider) {
+        _providerMetadata = provider;
+        return this;
     }
 }

@@ -40,7 +40,6 @@ import org.junit.Test;
 import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
 import org.switchyard.MockExchange;
-import org.switchyard.internal.DefaultContext;
 import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.TransactionPolicy;
 
@@ -54,7 +53,6 @@ public class TransactionHandlerTest {
     public void setUp() {
         tm = new MockTransactionManager();
         exchange = new MockExchange();
-        exchange.setContext(new DefaultContext());
         handler = new TransactionHandler();
         handler.setTransactionManager(tm);
     }

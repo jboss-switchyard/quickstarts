@@ -27,8 +27,8 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
-import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.Policy;
+import org.switchyard.policy.PolicyUtil;
 
 
 /**

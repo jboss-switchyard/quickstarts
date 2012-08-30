@@ -37,10 +37,11 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Scope;
-import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.ServiceReference;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.exception.SwitchYardException;
+import org.switchyard.handlers.AddressingHandler;
 import org.switchyard.handlers.PolicyHandler;
 import org.switchyard.handlers.TransactionHandler;
 import org.switchyard.handlers.TransformHandler;
@@ -59,7 +60,7 @@ import org.switchyard.transform.TransformSequence;
 public class CamelExchangeBus implements ExchangeBus {
 
     private static final String IN_OUT_CHECK = 
-            "${property.SwitchYardExchange.contract.serviceOperation.exchangePattern} == 'IN_OUT'";
+            "${property.SwitchYardExchange.contract.consumerOperation.exchangePattern} == 'IN_OUT'";
 
     private Logger _logger = Logger.getLogger(CamelExchangeBus.class);
 
@@ -89,6 +90,7 @@ public class CamelExchangeBus implements ExchangeBus {
 
         SimpleRegistry registry = _camelContext.getWritebleRegistry();
         registry.put("domain-handlers", new HandlerProcessor(domain.getHandlers()));
+        registry.put("addressing", new HandlerProcessor(new AddressingHandler(domain)));
         registry.put("transaction-handler", new HandlerProcessor(transactionHandler));
         registry.put("generic-policy", new HandlerProcessor(new PolicyHandler()));
         registry.put("validation", new HandlerProcessor(validateHandler));
@@ -122,29 +124,30 @@ public class CamelExchangeBus implements ExchangeBus {
     }
 
     @Override
-    public Dispatcher getDispatcher(Service service) {
-        return _dispatchers.get(service.getName());
+    public Dispatcher getDispatcher(ServiceReference reference) {
+        return _dispatchers.get(reference.getName());
     }
 
     @Override
-    public Dispatcher createDispatcher(final Service service, final ExchangeHandler serviceHandler) {
+    public Dispatcher createDispatcher(final ServiceReference reference) {
         if (_logger.isDebugEnabled()) {
-            _logger.debug("Creating dispatcher for " + service.getName() + " and handler " + serviceHandler);
+            _logger.debug("Creating Camel dispatcher for " + reference.getName());
         }
 
-        final String endpoint = "direct:" + service.getName();
+        final String endpoint = "direct:" + reference.getName();
 
         RouteBuilder rb = new RouteBuilder() {
             public void configure() throws Exception {
                 from(endpoint).routeId(endpoint)
                     .onException(HandlerException.class).processRef("consumer-callback").handled(true).end()
                     .processRef("domain-handlers")
+                    .processRef("addressing")
                     .processRef("transaction-handler")
                     .processRef("generic-policy")
                     .processRef("validation")
                     .processRef("transformation")
                     .processRef("validation")
-                    .process(new HandlerProcessor(serviceHandler))
+                    .process(new ProviderProcessor())
                     .processRef("transaction-handler")
                     .filter().simple(IN_OUT_CHECK)
                         .processRef("domain-handlers")
@@ -171,12 +174,12 @@ public class CamelExchangeBus implements ExchangeBus {
 
             _camelContext.addRoutes(rb);
         } catch (Exception ex) {
-            throw new SwitchYardException("Failed to create Camel route for service " + service.getName(), ex);
+            throw new SwitchYardException("Failed to create Camel route for service " + reference.getName(), ex);
         }
 
         ExchangeDispatcher dispatcher = new ExchangeDispatcher(
-            service, _camelContext.createProducerTemplate());
-        _dispatchers.put(service.getName(), dispatcher);
+                reference, _camelContext.createProducerTemplate());
+        _dispatchers.put(reference.getName(), dispatcher);
         return dispatcher;
     }
 
@@ -203,6 +206,16 @@ class HandlerProcessor implements Processor {
         }
     }
     
+}
+
+class ProviderProcessor implements Processor {
+    @Override
+    public void process(Exchange ex) throws Exception {
+        org.switchyard.Exchange syEx = ex.getProperty(
+                ExchangeDispatcher.SY_EXCHANGE, org.switchyard.Exchange.class);
+        syEx.getProvider().getProviderHandler().handleMessage(ex.getProperty(
+                ExchangeDispatcher.SY_EXCHANGE, org.switchyard.Exchange.class));
+    }
 }
 
 class ConsumerCallbackProcessor implements Processor {
@@ -233,9 +246,13 @@ class ConsumerCallbackProcessor implements Processor {
         exchange.sendFault(faultMessage);
         
         ExchangeContract contract = exchange.getContract();
-        QName exceptionTypeName = contract.getServiceOperation().getFaultType();
-        QName invokerFaultTypeName = contract.getInvokerInvocationMetaData().getFaultType();
+        QName exceptionTypeName = null;
+        if (contract.getProviderOperation() != null) {
+            exceptionTypeName = contract.getProviderOperation().getFaultType();
+        }
+        QName invokerFaultTypeName = contract.getConsumerOperation().getFaultType();
 
+        // no fault defined on provider interface
         if (exceptionTypeName == null) {
             exceptionTypeName = JavaService.toMessageType(error.getClass());
         }

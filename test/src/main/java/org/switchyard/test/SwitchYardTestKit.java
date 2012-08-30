@@ -45,6 +45,7 @@ import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
 import org.switchyard.ExchangeHandler;
+import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.type.classpath.ClasspathScanner;
@@ -383,6 +384,24 @@ public class SwitchYardTestKit {
      */
     public void registerInOnlyService(String serviceName, ExchangeHandler serviceHandler) {
         getServiceDomain().registerService(createQName(serviceName), new InOnlyService(), serviceHandler);
+    }
+    
+    /**
+     * Removes all service providers from the domain with the specified name.
+     * @param serviceName local part of a service QName
+     */
+    public void removeService(String serviceName) {
+        removeService(createQName(serviceName));
+    }
+    
+    /**
+     * Removes all service providers from the domain with the specified name.
+     * @param serviceName qualified name of the service
+     */
+    public void removeService(QName serviceName) {
+        for (Service service : getServiceDomain().getServices(serviceName)) {
+            service.unregister();
+        }
     }
 
     /**

@@ -20,7 +20,7 @@
 package org.switchyard.spi;
 
 import org.switchyard.Exchange;
-import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 
 /**
  * Dispatches messages to a given service.
@@ -31,7 +31,7 @@ public interface Dispatcher {
      * The name of the service.
      * @return service reference
      */
-    Service getService();
+    ServiceReference getServiceReference();
     
     /**
      * Dispatch an exchange.

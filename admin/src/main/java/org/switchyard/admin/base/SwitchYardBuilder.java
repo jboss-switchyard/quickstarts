@@ -80,7 +80,7 @@ public class SwitchYardBuilder implements EventObserver {
         // Recording metrics at multiple levels at this point instead of
         // aggregating them.
         for (Service service : _switchYard.getServices()) {
-            if (service.getName().equals(event.getExchange().getServiceName())) {
+            if (service.getName().equals(event.getExchange().getProvider().getName())) {
                 // 1 - the aggregate switchyard stats
                 _switchYard.getMessageMetrics().recordMetrics(event.getExchange());
                 
@@ -90,7 +90,7 @@ public class SwitchYardBuilder implements EventObserver {
             }
             // 3 - reference stats
             for (ComponentReference reference : service.getPromotedService().getReferences()) {
-                if (reference.getName().equals(event.getExchange().getServiceName())) {
+                if (reference.getName().equals(event.getExchange().getConsumer().getName())) {
                     ((BaseComponentReference)reference).getMessageMetrics().recordMetrics(event.getExchange());
                 }
             }

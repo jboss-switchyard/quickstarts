@@ -19,9 +19,8 @@
 
 package org.switchyard;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.metadata.ExchangeContract;
+import org.switchyard.metadata.ServiceOperation;
 
 /**
  * Dumb implementation of Exchange meant for unit testing. 
@@ -30,10 +29,11 @@ public class MockExchange implements Exchange {
     
     private ExchangeState _state;
     private ExchangePhase _phase;
-    private QName _serviceName;
     private ExchangeContract _contract;
     private Message _message;
     private Context _context;
+    private ServiceReference _consumer;
+    private Service _provider;
     
     public MockExchange() {
     }
@@ -64,11 +64,6 @@ public class MockExchange implements Exchange {
     }
 
     @Override
-    public QName getServiceName() {
-        return _serviceName;
-    }
-
-    @Override
     public ExchangeState getState() {
         return _state;
     }
@@ -93,11 +88,6 @@ public class MockExchange implements Exchange {
         return this;
     }
     
-    public MockExchange setServiceName(QName serviceName) {
-        _serviceName = serviceName;
-        return this;
-    }
-    
     public MockExchange setMessage(Message message) {
         _message = message;
         return this;
@@ -110,6 +100,28 @@ public class MockExchange implements Exchange {
     
     public MockExchange setContract(ExchangeContract contract) {
         _contract = contract;
+        return this;
+    }
+
+    @Override
+    public ServiceReference getConsumer() {
+        return _consumer;
+    }
+
+    @Override
+    public Service getProvider() {
+        return _provider;
+    }
+    
+    @Override
+    public MockExchange consumer(ServiceReference consumer, ServiceOperation operations) {
+        _consumer = consumer;
+        return this;
+    }
+    
+    @Override
+    public MockExchange provider(Service provider, ServiceOperation operations) {
+        _provider = provider;
         return this;
     }
 }

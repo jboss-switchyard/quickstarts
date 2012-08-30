@@ -28,11 +28,10 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.BaseHandler;
 import org.switchyard.MockDomain;
-import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.common.camel.SwitchYardCamelContext;
-import org.switchyard.internal.DefaultHandlerChain;
+import org.switchyard.internal.ServiceReferenceImpl;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.spi.Dispatcher;
@@ -59,21 +58,22 @@ public class CamelExchangeBusTest {
     @Test
     public void testCreateDispatcher() throws Exception {
         // verify that dispatchers can be created for an InOnly service
-        _provider.createDispatcher(
-                new MockService(new QName("inOnly"), new InOnlyService()), 
-                new BaseHandler());
+        ServiceReference inOnly = new ServiceReferenceImpl(
+                new QName("inOnly"), new InOnlyService(), null);
+        _provider.createDispatcher(inOnly);
 
         // verify that dispatchers can be created for an InOut service
-        _provider.createDispatcher(
-                new MockService(new QName("inOut"), new InOutService()), 
-                new BaseHandler());
+        ServiceReference inOut = new ServiceReferenceImpl(
+                new QName("inOut"), new InOutService(), null);
+        _provider.createDispatcher(inOut);
     }
     
     @Test
     public void testGetDispatcher() throws Exception {
-        Service service = new MockService(new QName("testGetDispatcher"));
-        Dispatcher dispatch = _provider.createDispatcher(service, new DefaultHandlerChain());
+        ServiceReference ref = new ServiceReferenceImpl(
+                new QName("testGetDispatcher"), new InOnlyService(), null);
+        Dispatcher dispatch = _provider.createDispatcher(ref);
         
-        Assert.assertEquals(dispatch, _provider.getDispatcher(service));
+        Assert.assertEquals(dispatch, _provider.getDispatcher(ref));
     }
 }

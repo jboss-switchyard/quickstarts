@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,29 +16,40 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
+package org.switchyard.deploy;
 
-package org.switchyard.metadata;
+import org.switchyard.config.model.composite.ComponentImplementationModel;
+import org.switchyard.metadata.Registrant;
 
 /**
- * Exchange Contract.
- * <p/>
- * Two-way Exchange contract, detailing the requirements of both the consumer
- * and provider {@link ServiceOperation} being invoked.
- *
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ * Represents implementation metadata for a service or reference.
  */
-public interface ExchangeContract {
+public class Implementation implements Registrant {
+    
+    private ComponentImplementationModel _config;
     
     /**
-     * Returns the consumer contract for a message exchange.
-     * @return consumer contract
+     * Create a new Implementation instance.
+     * @param config implementation configuration
      */
-    ServiceOperation getConsumerOperation();
-    
-    /**
-     * Returns the provider contract for a message exchange.
-     * @return provider contract
-     */
-    ServiceOperation getProviderOperation();
-    
+    public Implementation(ComponentImplementationModel config) {
+        _config = config;
+    }
+
+    @Override
+    public boolean isBinding() {
+        return false;
+    }
+
+    @Override
+    public boolean isImplementation() {
+        return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public ComponentImplementationModel getConfig() {
+        return _config;
+    }
+
 }

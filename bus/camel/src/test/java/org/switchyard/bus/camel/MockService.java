@@ -23,9 +23,11 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.ExchangeHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.metadata.InOnlyService;
+import org.switchyard.metadata.Registrant;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.policy.Policy;
 
@@ -33,14 +35,16 @@ public class MockService implements Service {
     
     private QName _serviceName;
     private ServiceInterface _serviceInterface;
+    private ExchangeHandler _handler;
     
-    public MockService(QName serviceName) {
-        this(serviceName, new InOnlyService());
+    public MockService(QName serviceName, ExchangeHandler handler) {
+        this(serviceName, new InOnlyService(), handler);
     }
     
-    public MockService(QName serviceName, ServiceInterface serviceInterface) {
+    public MockService(QName serviceName, ServiceInterface serviceInterface, ExchangeHandler handler) {
         _serviceName = serviceName;
         _serviceInterface = serviceInterface;
+        _handler = handler;
     }
 
     @Override
@@ -65,6 +69,17 @@ public class MockService implements Service {
 
     @Override
     public List<Policy> getRequiredPolicies() {
+        return null;
+    }
+
+    @Override
+    public ExchangeHandler getProviderHandler() {
+        return _handler;
+    }
+
+    @Override
+    public Registrant getProviderMetadata() {
+        // TODO Auto-generated method stub
         return null;
     }
 

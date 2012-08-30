@@ -27,9 +27,11 @@ import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
+import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
 import org.switchyard.Scope;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
+import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.TransformSequence;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
@@ -79,6 +81,13 @@ public class TransformHandler extends BaseHandler {
      */
     @Override
     public void handleMessage(Exchange exchange) throws HandlerException {
+        // Initialize transform sequence for operation types
+        if (exchange.getPhase() == ExchangePhase.IN) {
+            initInTransformSequence(exchange);
+        } else {
+            initOutTransformSequence(exchange);
+        }
+        
         // Apply transforms to the message...
         TransformSequence.applySequence(exchange, _registry);
         if (!TransformSequence.assertTransformsApplied(exchange)) {
@@ -95,6 +104,7 @@ public class TransformHandler extends BaseHandler {
     @Override
     public void handleFault(Exchange exchange) {
         // Apply transforms to the fault...
+        initFaultTransformSequence(exchange);
         TransformSequence.applySequence(exchange, _registry);
         if (!TransformSequence.assertTransformsApplied(exchange)) {
             QName actualPayloadType = TransformSequence.getCurrentMessageType(exchange);
@@ -108,5 +118,49 @@ public class TransformHandler extends BaseHandler {
         // Replace the CONTENT_TYPE property to indicate current content type after transform
         exchange.getContext().setProperty(Exchange.CONTENT_TYPE, TransformSequence.getCurrentMessageType(exchange), Scope.activeScope(exchange));
     }
+
+    private void initInTransformSequence(Exchange exchange) {
+        QName exchangeInputType = exchange.getContract().getConsumerOperation().getInputType();
+        QName serviceOperationInputType = exchange.getContract().getProviderOperation().getInputType();
+
+        if (exchangeInputType != null && serviceOperationInputType != null) {
+            TransformSequence.
+                    from(exchangeInputType).
+                    to(serviceOperationInputType).
+                    associateWith(exchange, Scope.IN);
+        }
+    }
+
+    private void initOutTransformSequence(Exchange exchange) {
+        QName serviceOperationOutputType = exchange.getContract().getProviderOperation().getOutputType();
+        QName exchangeOutputType = exchange.getContract().getConsumerOperation().getOutputType();
+
+        if (serviceOperationOutputType != null && exchangeOutputType != null) {
+            TransformSequence.
+                    from(serviceOperationOutputType).
+                    to(exchangeOutputType).
+                    associateWith(exchange, Scope.OUT);
+        }
+    }
+    
+    private void initFaultTransformSequence(Exchange exchange) {
+        QName exceptionTypeName = exchange.getContract().getProviderOperation().getFaultType();
+        QName invokerFaultTypeName = exchange.getContract().getConsumerOperation().getFaultType();
+
+        Object content = exchange.getMessage().getContent();
+        if (exceptionTypeName == null && content instanceof Exception) {
+            exceptionTypeName = JavaService.toMessageType(content.getClass());
+        }
+
+        if (exceptionTypeName != null && invokerFaultTypeName != null) {
+            // Set up the type info on the message context so as the exception gets transformed
+            // appropriately for the invoker...
+            TransformSequence.
+                from(exceptionTypeName).
+                to(invokerFaultTypeName).
+                associateWith(exchange, Scope.OUT);
+        }
+    }
+
 }
 

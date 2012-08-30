@@ -24,7 +24,6 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.switchyard.Service;
-import org.switchyard.ServiceDomain;
 
 /**
  * A runtime service registry can be queried
@@ -36,12 +35,9 @@ public interface ServiceRegistry {
     /**
      * Register a service.
      * @param service service 
-     * @param endpoint endpoint
-     * @param domain domain
      * @return registered service
      */
-    Service registerService(
-            Service service, Dispatcher endpoint, ServiceDomain domain);
+    Service registerService(Service service);
     /**
      * Unregister the service.
      * @param service service
@@ -59,10 +55,4 @@ public interface ServiceRegistry {
      * @return services
      */
     List<Service> getServices(QName serviceName);
-    /**
-     * Get the list of services for the specified domain name.
-     * @param domainName domain name
-     * @return services
-     */
-    List<Service> getServicesForDomain(QName domainName);
 }

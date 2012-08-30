@@ -26,9 +26,8 @@ import org.junit.Test;
 import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
 import org.switchyard.MockExchange;
-import org.switchyard.internal.DefaultContext;
-import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.Policy;
+import org.switchyard.policy.PolicyUtil;
 
 
 public class PolicyHandlerTest {
@@ -42,7 +41,6 @@ public class PolicyHandlerTest {
 	@Before
 	public void setUp() {
 		exchange = new MockExchange();
-		exchange.setContext(new DefaultContext());
 		handler = new PolicyHandler();
 	}
 	

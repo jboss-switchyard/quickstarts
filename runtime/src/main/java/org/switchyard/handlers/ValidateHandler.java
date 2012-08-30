@@ -65,7 +65,7 @@ public class ValidateHandler extends BaseHandler {
      */
     @Override
     public void handleMessage(Exchange exchange) throws HandlerException {
-        Validator validator = get(exchange);
+        Validator<?> validator = get(exchange);
         if (validator != null) {
             try {
                 if (!applyValidator(exchange, validator)) {
@@ -81,7 +81,7 @@ public class ValidateHandler extends BaseHandler {
 
     @Override
     public void handleFault(Exchange exchange) {
-        Validator validator = get(exchange);
+        Validator<?> validator = get(exchange);
         if (validator != null) {
             if (!applyValidator(exchange, validator)) {
                 _logger.warn("Validator '" + validator.getClass().getName()
@@ -108,6 +108,7 @@ public class ValidateHandler extends BaseHandler {
         }
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private boolean applyValidator(Exchange exchange, Validator validator) {
         Message message = exchange.getMessage();
         boolean validated = false;

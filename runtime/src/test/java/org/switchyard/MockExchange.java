@@ -19,97 +19,18 @@
 
 package org.switchyard;
 
-import javax.xml.namespace.QName;
-
-import org.switchyard.metadata.ExchangeContract;
+import org.switchyard.internal.ExchangeImpl;
 
 /**
  * Dumb implementation of Exchange meant for unit testing. 
  */
-public class MockExchange implements Exchange {
-    
-    private ExchangeState _state;
-    private ExchangePhase _phase;
-    private QName _serviceName;
-    private ExchangeContract _contract;
-    private Message _message;
-    private Context _context;
+public class MockExchange extends ExchangeImpl {
     
     public MockExchange() {
-    }
-
-    @Override
-    public Message createMessage() {
-        return _message;
-    }
-
-    @Override
-    public Context getContext() {
-        return _context;
-    }
-
-    @Override
-    public ExchangeContract getContract() {
-        return _contract;
-    }
-
-    @Override
-    public Message getMessage() {
-        return _message;
-    }
-
-    @Override
-    public ExchangePhase getPhase() {
-        return _phase;
-    }
-
-    @Override
-    public QName getServiceName() {
-        return _serviceName;
-    }
-
-    @Override
-    public ExchangeState getState() {
-        return _state;
-    }
-
-    @Override
-    public void send(Message message) {
-        // NOP
-    }
-
-    @Override
-    public void sendFault(Message message) {
-        // NOP
-    }
-
-    public MockExchange setPhase(ExchangePhase phase) {
-        _phase = phase;
-        return this;
+        super(new MockDomain());
     }
     
-    public MockExchange setState(ExchangeState state) {
-        _state = state;
-        return this;
-    }
-    
-    public MockExchange setServiceName(QName serviceName) {
-        _serviceName = serviceName;
-        return this;
-    }
-    
-    public MockExchange setMessage(Message message) {
-        _message = message;
-        return this;
-    }
-    
-    public MockExchange setContext(Context context) {
-        _context = context;
-        return this;
-    }
-    
-    public MockExchange setContract(ExchangeContract contract) {
-        _contract = contract;
-        return this;
+    public void setPhase(ExchangePhase phase) {
+        super.setPhase(phase);
     }
 }

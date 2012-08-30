@@ -21,34 +21,37 @@ package org.switchyard.metadata;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.io.Serialization.AccessType;
-import org.switchyard.io.Serialization.Strategy;
+import org.switchyard.ExchangePattern;
 
 /**
  * Base invocation contract.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-@Strategy(access=AccessType.FIELD)
-public class BaseInvocationContract implements InvocationContract {
+public class BaseServiceOperation implements ServiceOperation {
 
-    private QName _inputType; // Undefined by default
-    private QName _outputType; // Undefined by default
-    private QName _faultType; // Undefined by default
-
-    /**
-     * Constructor.
-     */
-    public BaseInvocationContract() {
-    }
+    private QName           _inputType;
+    private QName           _outputType;
+    private QName           _faultType;
+    private String          _name;
+    private ExchangePattern _pattern;
 
     /**
      * Constructor.
+     * @param pattern the exchange pattern
+     * @param name the operation name
      * @param inputType Input type associated with the invocation instance.
      * @param outputType Output type associated with the invocation instance.
      * @param faultType Fault type associated with the invocation instance.
      */
-    public BaseInvocationContract(QName inputType, QName outputType, QName faultType) {
+    public BaseServiceOperation(
+            ExchangePattern pattern,
+            String name,
+            QName inputType, 
+            QName outputType, 
+            QName faultType) {
+        _pattern = pattern;
+        _name = name;
         _inputType = inputType;
         _outputType = outputType;
         _faultType = faultType;
@@ -59,7 +62,7 @@ public class BaseInvocationContract implements InvocationContract {
      * @param inputType Input type associated with the invocation instance.
      * @return {@link this} instance.
      */
-    public BaseInvocationContract setInputType(QName inputType) {
+    public BaseServiceOperation setInputType(QName inputType) {
         _inputType = inputType;
         return this;
     }
@@ -74,7 +77,7 @@ public class BaseInvocationContract implements InvocationContract {
      * @param outputType Output type associated with the invocation instance.
      * @return {@link this} instance.
      */
-    public BaseInvocationContract setOutputType(QName outputType) {
+    public BaseServiceOperation setOutputType(QName outputType) {
         _outputType = outputType;
         return this;
     }
@@ -89,7 +92,7 @@ public class BaseInvocationContract implements InvocationContract {
      * @param faultType Fault type associated with the invocation instance.
      * @return {@link this} instance.
      */
-    public BaseInvocationContract setFaultType(QName faultType) {
+    public BaseServiceOperation setFaultType(QName faultType) {
         _faultType = faultType;
         return this;
     }
@@ -98,4 +101,20 @@ public class BaseInvocationContract implements InvocationContract {
     public QName getFaultType() {
         return _faultType;
     }
+
+    @Override
+    public ExchangePattern getExchangePattern() {
+        return _pattern;
+    }
+
+    @Override
+    public String getName() {
+        return _name;
+    }
+
+    @Override
+    public String toString() {
+        return _name + " : " + _pattern + " : [" + getInputType() + ", " + getOutputType() + ", " + getFaultType() + "]";
+    }
+    
 }

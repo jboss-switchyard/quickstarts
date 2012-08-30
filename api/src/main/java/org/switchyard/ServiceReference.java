@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.metadata.Registrant;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.policy.Policy;
 
@@ -83,9 +84,15 @@ public interface ServiceReference {
      * @return list of provided policy
      */
      List<Policy> getProvidedPolicies();
-
+     
      /**
       * Unregisters this service reference from the domain it's registered in.
       */
      void unregister();
+     
+     /**
+      * Return the consumer metadata associated with this service.
+      * @return consumer metadata
+      */
+     Registrant getConsumerMetadata();
 }

@@ -31,13 +31,14 @@ import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
-import org.switchyard.MockDomain;
 import org.switchyard.MockHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceReference;
 import org.switchyard.event.EventObserver;
 import org.switchyard.event.ReferenceRegistrationEvent;
+import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOnlyService;
+import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.java.JavaService;
@@ -65,9 +66,11 @@ public class DomainImplTest {
     @Test
     public void testCreateExchange() {
         Exchange inOnly = _inOnlyReference.createExchange();
-        Assert.assertEquals(ExchangePattern.IN_ONLY, inOnly.getContract().getServiceOperation().getExchangePattern());
+        inOnly.consumer(null, new InOnlyOperation("foo"));
+        Assert.assertEquals(ExchangePattern.IN_ONLY, inOnly.getContract().getConsumerOperation().getExchangePattern());
         Exchange inOut = _inOutReference.createExchange(new MockHandler());
-        Assert.assertEquals(ExchangePattern.IN_OUT, inOut.getContract().getServiceOperation().getExchangePattern());
+        inOut.consumer(null, new InOutOperation("foo"));
+        Assert.assertEquals(ExchangePattern.IN_OUT, inOut.getContract().getConsumerOperation().getExchangePattern());
     }
     
     @Test

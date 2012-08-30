@@ -19,30 +19,29 @@
 
 package org.switchyard.metadata;
 
-import javax.xml.namespace.QName;
-
 /**
- * Generic Invocation Contract.
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
- * @see org.switchyard.annotations.OperationTypes
+ * Represents a component which registers a service and/or reference within a
+ * service domain.
  */
-public interface InvocationContract {
+public interface Registrant {
+
     /**
-     * The name of the input message type.
-     * @return input message type or null if no type information is available.
-     * @see org.switchyard.annotations.OperationTypes
+     * Indicates whether the registrant is a binding or implementation.
+     * @return true if binding, false otherwise
      */
-    QName getInputType();
+    boolean isBinding();
+    
     /**
-     * The name of the output message type.
-     * @return output message name or null if no type information is available.
-     * @see org.switchyard.annotations.OperationTypes
+     * Indicates whether the registrant is a binding or implementation.
+     * @return true if implementation, false otherwise
      */
-    QName getOutputType();
+    boolean isImplementation();
+    
     /**
-     * The name of the output message type.
-     * @return output message name or null if no type information is available.
-     * @see org.switchyard.annotations.OperationTypes
+     * Returns a config representation based on the type of registrant.  
+     * @param <T> Implementations will return ComponentImplementationModel, while 
+     * bindings will return BindingModel.
+     * @return type-specific configuration model
      */
-    QName getFaultType();
+    <T> T getConfig();
 }

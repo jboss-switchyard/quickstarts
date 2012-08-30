@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,61 +16,69 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
 package org.switchyard.metadata;
 
-import java.io.IOException;
-
-import org.switchyard.io.Serialization.AccessType;
-import org.switchyard.io.Serialization.CoverageType;
-import org.switchyard.io.Serialization.Factory;
-import org.switchyard.io.Serialization.Strategy;
-import org.switchyard.metadata.BaseExchangeContract.BaseExchangeContractFactory;
-
 /**
- * Base exchange contract.
- *
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ * Base implementation of ExchangeContract.
  */
-@Strategy(access=AccessType.FIELD, coverage=CoverageType.INCLUSIVE, factory=BaseExchangeContractFactory.class)
 public class BaseExchangeContract implements ExchangeContract {
+    
+    private ServiceOperation _consumer;
+    private ServiceOperation _provider;
 
-    private ServiceOperation _operation;
-    private InvocationContract _invoker;
-    
-    private BaseExchangeContract() {}
-    
     /**
-     * Create a new BaseExchangeContract with the specified invocation contract.
-     * @param operation contract for the service provider
-     * @param invoker contract for the service consumer
+     * Create a new, empty BaseExchangeContract.
      */
-    public BaseExchangeContract(ServiceOperation operation, ServiceOperation invoker) {
-        if (operation == null || invoker == null) {
-            throw new IllegalArgumentException(
-                    "BaseExchangeContract: operation and invoker parameters required");
-        }
-        _operation = operation;
-        _invoker = invoker;
-    }
-
-    @Override
-    public InvocationContract getInvokerInvocationMetaData() {
-        return _invoker;
-    }
-
-    @Override
-    public ServiceOperation getServiceOperation() {
-        return _operation;
+    public BaseExchangeContract() {
+        
     }
     
     /**
-     * The serialization factory for BaseExchangeContract.
+     * Create a new BaseExchangeContract with the specified consumer info.
+     * @param consumer consumer contract
      */
-    public static final class BaseExchangeContractFactory implements Factory<BaseExchangeContract> {
-        @Override
-        public BaseExchangeContract create(Class<BaseExchangeContract> type) throws IOException {
-            return new BaseExchangeContract();
-        }
+    public BaseExchangeContract(ServiceOperation consumer) {
+        _consumer = consumer;
     }
+    
+    /**
+     * Create a new BaseExchangeContract with the specified consumer and provider info.
+     * @param consumer consumer contract
+     * @param provider provider contract
+     */
+    public BaseExchangeContract(ServiceOperation consumer, ServiceOperation provider) {
+        _consumer = consumer;
+        _provider = provider;
+    }
+    
+    @Override
+    public ServiceOperation getConsumerOperation() {
+        return _consumer;
+    }
+
+    @Override
+    public ServiceOperation getProviderOperation() {
+        return _provider;
+    }
+    
+    /**
+     * Specify the consumer contract.
+     * @param consumer consumer contract
+     * @return this BaseExchangeContract instance
+     */
+    public BaseExchangeContract setConsumerOperation(ServiceOperation consumer) {
+        _consumer = consumer;
+        return this;
+    }
+    
+    /**
+     * Specify the provider contract.
+     * @param provider provider contract
+     * @return this BaseExchangeContract instance
+     */
+    public BaseExchangeContract setProviderOperation(ServiceOperation provider) {
+        _provider = provider;
+        return this;
+    }
+
 }

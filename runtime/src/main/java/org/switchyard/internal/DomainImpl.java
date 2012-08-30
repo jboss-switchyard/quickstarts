@@ -31,7 +31,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
-import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
@@ -43,16 +42,12 @@ import org.switchyard.event.EventPublisher;
 import org.switchyard.event.ReferenceRegistrationEvent;
 import org.switchyard.event.ReferenceUnregistrationEvent;
 import org.switchyard.event.ServiceRegistrationEvent;
-import org.switchyard.exception.SwitchYardException;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.internal.validate.BaseValidatorRegistry;
-import org.switchyard.metadata.BaseExchangeContract;
-import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InOutService;
+import org.switchyard.metadata.Registrant;
 import org.switchyard.metadata.ServiceInterface;
-import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.policy.Policy;
-import org.switchyard.policy.PolicyUtil;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.spi.ExchangeBus;
 import org.switchyard.spi.ServiceRegistry;
@@ -132,23 +127,21 @@ public class DomainImpl implements ServiceDomain {
     public Service registerService(QName serviceName, ServiceInterface metadata, 
             ExchangeHandler handler) {
         List<Policy> requires = Collections.emptyList();
-        return registerService(serviceName, metadata, handler, requires);
+        return registerService(serviceName, metadata, handler, requires, null);
     }
 
     @Override
     public Service registerService(QName serviceName,
-            ServiceInterface metadata, ExchangeHandler handler, List<Policy> requires) {
+            ServiceInterface metadata, ExchangeHandler handler, List<Policy> requires, Registrant owner) {
         
         // If no service interface is provided, we default to InOutService
         if (metadata == null) {
             metadata = new InOutService();
         }
         // Create the service 
-        Service service = new ServiceImpl(serviceName, metadata, requires, this);
-        Dispatcher ep = _exchangeBus.createDispatcher(service, handler);
-        
+        Service service = new ServiceImpl(serviceName, metadata, this, handler, requires, owner);
         // register the service
-        _registry.registerService(service, ep, this);
+        _registry.registerService(service);
         _eventManager.publish(new ServiceRegistrationEvent(service));
         return service;
     }
@@ -156,19 +149,21 @@ public class DomainImpl implements ServiceDomain {
     @Override
     public ServiceReference registerServiceReference(QName serviceName,
             ServiceInterface metadata) {
-        return registerServiceReference(serviceName, metadata, null, null);
+        return registerServiceReference(serviceName, metadata, null, null, null);
     }
 
     @Override
     public ServiceReference registerServiceReference(QName serviceName,
             ServiceInterface metadata, ExchangeHandler handler) {
-        return registerServiceReference(serviceName, metadata, handler, null);
+        return registerServiceReference(serviceName, metadata, handler, null, null);
     }
     
     @Override
     public ServiceReference registerServiceReference(QName serviceName,
-            ServiceInterface metadata, ExchangeHandler handler, List<Policy> provides) {
-        ServiceReference reference = new ServiceReferenceImpl(serviceName, metadata, provides, handler, this);
+            ServiceInterface metadata, ExchangeHandler handler, List<Policy> provides, Registrant owner) {
+        ServiceReferenceImpl reference = new ServiceReferenceImpl(serviceName, metadata, this, handler, provides, owner);
+        Dispatcher dispatch = _exchangeBus.createDispatcher(reference);
+        reference.setDispatcher(dispatch);
         _references.put(serviceName, reference);
         _eventManager.publish(new ReferenceRegistrationEvent(reference));
         
@@ -195,69 +190,6 @@ public class DomainImpl implements ServiceDomain {
         // TODO Auto-generated method stub
         
     }
-
-    /**
-     * Create an exchange for the specified operation.
-     * @param reference service reference used for the invocation
-     * @param operation operation name to invoke
-     * @return a new exchange
-     */
-    public Exchange createExchange(ServiceReference reference, String operation) {
-        return createExchange(reference, operation, null);
-    }
-    
-    /**
-     * Create an exchange for the specified operation.
-     * @param reference service reference used for the invocation
-     * @param operation operation name to invoke
-     * @param handler handler used to process reply messages
-     * @return a new exchange
-     */
-    public Exchange createExchange(
-            ServiceReference reference, String operation, ExchangeHandler handler) {
-        // TODO : This assumes an exact match between service reference name and service name.  
-        // We need to look for service wiring that might connect different names.
-        List<Service> services = _registry.getServices(reference.getName());
-        
-        if (services == null || services.isEmpty()) {
-            throw new SwitchYardException("No registered service found for " + reference.getName());
-        }
-
-        // At this stage, just pick the first service implementation we find and go with
-        // it.  In the future, it would be nice if we could make this pluggable.
-        Service service = services.get(0);
-        Dispatcher dispatcher = _exchangeBus.getDispatcher(service);
-        
-        ServiceOperation referenceOp = reference.getInterface().getOperation(operation);
-        if (referenceOp == null) {
-            // try for a default operation
-            if (reference.getInterface().getOperations().size() == 1) {
-                referenceOp = reference.getInterface().getOperations().iterator().next();
-            } else {
-                throw new SwitchYardException("Operation " + operation 
-                    + " is not included in interface for reference: " + reference.getName());
-            }
-        }
-        ServiceOperation serviceOp = service.getInterface().getOperation(operation);
-        if (serviceOp == null) {
-            // try for a default operation
-            if (service.getInterface().getOperations().size() == 1) {
-                serviceOp = service.getInterface().getOperations().iterator().next();
-            } else {
-                throw new SwitchYardException("Operation " + operation 
-                    + " is not included in interface for service: " + service.getName());
-            }
-        }
-
-        ExchangeContract contract = new BaseExchangeContract(serviceOp, referenceOp);
-        // create the exchange
-        ExchangeImpl exchange = new ExchangeImpl(service.getName(), contract, dispatcher, this, handler);
-        
-        for (Policy policy : service.getRequiredPolicies()) {
-            PolicyUtil.require(exchange, policy);
-        }
-        return exchange;
-    }
     
     @Override
     public QName getName() {
@@ -273,6 +205,17 @@ public class DomainImpl implements ServiceDomain {
     public ValidatorRegistry getValidatorRegistry() {
         return _validatorRegistry;
     }
+    
+     @Override
+     public List<Service> getServices() {
+         return _registry.getServices();
+     }
+       
+
+     @Override
+     public List<Service> getServices(QName serviceName) {
+         return _registry.getServices(serviceName);
+     }
     
     /**
      * Convenient access to the domain's service registry.

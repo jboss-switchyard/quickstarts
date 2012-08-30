@@ -21,7 +21,6 @@ package org.switchyard.internal;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +29,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
 import org.switchyard.Service;
-import org.switchyard.ServiceDomain;
-import org.switchyard.spi.Dispatcher;
 import org.switchyard.spi.ServiceRegistry;
 
 /**
@@ -43,21 +40,6 @@ public class DefaultServiceRegistry implements ServiceRegistry {
 
     private final Map<QName, List<Service>> _services =
         new HashMap<QName, List<Service>>();
-
-    @Override
-    public List<Service> getServicesForDomain(QName domainName) {
-        List<Service> domainServices = getServices();
-        // Using an explicit iterator because we are removing elements
-        for (Iterator<Service> i = domainServices.iterator(); i.hasNext();) {
-            Service sr = (Service) i.next();
-            // prune services that do not match the specified domain
-            if (!sr.getDomain().getName().equals(domainName)) {
-                i.remove();
-            }
-        }
-
-        return domainServices;
-    }
 
     @Override
     public synchronized List<Service> getServices() {
@@ -80,8 +62,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
     }
 
     @Override
-    public synchronized Service registerService(
-            Service service, Dispatcher endpoint, ServiceDomain domain) {
+    public synchronized Service registerService(Service service) {
 
         List<Service> serviceList = _services.get(service.getName());
         if (serviceList == null) {
@@ -92,7 +73,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
         serviceList.add(service);
 
         if (_logger.isDebugEnabled()) {
-            _logger.debug("Registered Service '" + service.getName() + "' to ServiceDomain '" + domain.getName() + "'.");
+            _logger.debug("Registered Service '" + service.getName() + "'.");
         }
 
         return service;

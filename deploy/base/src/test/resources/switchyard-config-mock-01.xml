@@ -26,11 +26,17 @@ MA  02110-1301, USA.
         <sca:service name="TestService" promote="TestService">
             <mock:binding.mock/>
         </sca:service>
+        <sca:reference name="TestReference" promote="TestService/TestReference">
+            <mock:binding.mock/>
+        </sca:reference>
         <sca:component name="TestService">
             <mock:implementation.mock/>
             <sca:service name="TestService">
                 <mock:interface.mock/>
             </sca:service>
+            <sca:reference name="TestReference">
+                <mock:interface.mock/>
+            </sca:reference>
         </sca:component>
     </sca:composite>
 </switchyard>

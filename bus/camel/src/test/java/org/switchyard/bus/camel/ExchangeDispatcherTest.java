@@ -34,24 +34,28 @@ import org.switchyard.HandlerException;
 import org.switchyard.MockDomain;
 import org.switchyard.Scope;
 import org.switchyard.Service;
+import org.switchyard.ServiceDomain;
+import org.switchyard.ServiceReference;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.internal.ExchangeImpl;
-import org.switchyard.metadata.ExchangeContract;
+import org.switchyard.internal.ServiceReferenceImpl;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
+import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.spi.Dispatcher;
 
 public class ExchangeDispatcherTest {
 
+    private ServiceDomain _domain;
     private CamelExchangeBus _provider;
     private SwitchYardCamelContext _camelContext;
 
     @Before
     public void setUp() throws Exception {
-        MockDomain mockDomain = new MockDomain();
+        _domain = new MockDomain();
         _camelContext = new SwitchYardCamelContext();
         _provider = new CamelExchangeBus(_camelContext);
-        _provider.init(mockDomain);
+        _provider.init(_domain);
         _camelContext.start();
     }
     
@@ -62,12 +66,16 @@ public class ExchangeDispatcherTest {
     
     @Test
     public void testDispatchInOnly() throws Exception {
-        Service service = new MockService(
-                new QName("testDispatchInOnly"), new InOnlyService());
+        QName name = new QName("testDispatchInOnly");
         ExchangeSink sink = new ExchangeSink();
-        Dispatcher dispatch = _provider.createDispatcher(service, sink);
+        Service service = new MockService(name, new InOnlyService(), sink);
+        ServiceReference reference = new ServiceReferenceImpl(name, new InOnlyService(), null);
+        Dispatcher dispatch = _provider.createDispatcher(reference);
         
-        Exchange exchange = new ExchangeImpl(service.getName(), ExchangeContract.IN_ONLY, dispatch, new MockDomain(), null);
+        ExchangeImpl exchange = new ExchangeImpl(_domain);
+        exchange.consumer(reference, reference.getInterface().getOperation(ServiceInterface.DEFAULT_OPERATION));
+        exchange.provider(service, service.getInterface().getOperation(ServiceInterface.DEFAULT_OPERATION));
+        exchange.setOutputDispatcher(dispatch);
         exchange.send(exchange.createMessage());
         Thread.sleep(200);
         
@@ -79,15 +87,20 @@ public class ExchangeDispatcherTest {
 
     @Test
     public void testDispatchInOut() throws Exception {
-        Service service = new MockService(
-                new QName("testDispatchInOut"), new InOutService());
+        QName name = new QName("testDispatchInOut");
         // provider handler
         ExchangeSink inHandler = new ExchangeSink(true);
-        Dispatcher dispatch = _provider.createDispatcher(service, inHandler);
         // consumer handler
         ExchangeSink outHandler = new ExchangeSink();
         
-        Exchange exchange = new ExchangeImpl(service.getName(), ExchangeContract.IN_OUT, dispatch, new MockDomain(), outHandler);
+        Service service = new MockService(name, new InOutService(), inHandler);
+        ServiceReference reference = new ServiceReferenceImpl(name, new InOutService(), null);
+        Dispatcher dispatch = _provider.createDispatcher(reference);
+        
+        ExchangeImpl exchange = new ExchangeImpl(_domain, outHandler);
+        exchange.consumer(reference, reference.getInterface().getOperation(ServiceInterface.DEFAULT_OPERATION));
+        exchange.provider(service, service.getInterface().getOperation(ServiceInterface.DEFAULT_OPERATION));
+        exchange.setOutputDispatcher(dispatch);
         exchange.send(exchange.createMessage());
         Thread.sleep(400);
         

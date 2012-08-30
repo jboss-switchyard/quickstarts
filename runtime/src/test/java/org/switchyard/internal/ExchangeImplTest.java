@@ -39,7 +39,6 @@ import org.switchyard.MockHandler;
 import org.switchyard.Scope;
 import org.switchyard.ServiceReference;
 import org.switchyard.event.EventObserver;
-import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.java.JavaService;
@@ -60,7 +59,7 @@ public class ExchangeImplTest {
     
     @Test
     public void testSendFaultOnNewExchange() {
-        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, _domain);
+        Exchange exchange = new ExchangeImpl(_domain);
         try {
             exchange.sendFault(exchange.createMessage());
             Assert.fail("Sending a fault on a new exchange is not allowed");
@@ -71,7 +70,7 @@ public class ExchangeImplTest {
     
     @Test
     public void testPhaseIsNullOnNewExchange() {
-        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, _domain, null);
+        Exchange exchange = new ExchangeImpl(_domain);
         Assert.assertNull(exchange.getPhase());
     }
     
@@ -133,7 +132,7 @@ public class ExchangeImplTest {
 
     @Test
     public void testNullSend() {
-        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, _domain, null);
+        Exchange exchange = new ExchangeImpl(_domain);
         try {
             exchange.send(null);
             Assert.fail("Expected IllegalArgumentException.");
@@ -144,7 +143,7 @@ public class ExchangeImplTest {
 
     @Test
     public void testNullSendFault() {
-        Exchange exchange = new ExchangeImpl(null, ExchangeContract.IN_ONLY, null, _domain, null);
+        Exchange exchange = new ExchangeImpl(_domain);
         try {
             exchange.sendFault(null);
             Assert.fail("Expected IllegalArgumentException.");
@@ -329,7 +328,8 @@ public class ExchangeImplTest {
         };
         InOutOperation providerContract = new InOutOperation("faultOp", 
                 JavaService.toMessageType(String.class),   // input
-                JavaService.toMessageType(String.class));  // output
+                JavaService.toMessageType(String.class),   // output
+                JavaService.toMessageType(Exception.class));  // fault
         InOutOperation consumerContract = new InOutOperation("faultOp", 
                 JavaService.toMessageType(String.class),   // input
                 JavaService.toMessageType(String.class),   // output
@@ -343,7 +343,7 @@ public class ExchangeImplTest {
         exchange.send(exchange.createMessage());
 
         // Make sure the exchange is in fault status
-        Assert.assertEquals(exchange.getMessage().getContent().getClass(), String.class);
+        Assert.assertEquals(String.class, exchange.getMessage().getContent().getClass());
         Assert.assertEquals(exchange.getMessage().getContent(), "testFaultTransformSequence");
     }
 

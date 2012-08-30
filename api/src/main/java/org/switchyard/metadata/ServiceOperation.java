@@ -19,6 +19,8 @@
 
 package org.switchyard.metadata;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.ExchangePattern;
 
 /**
@@ -37,7 +39,7 @@ import org.switchyard.ExchangePattern;
  * implementation of ServiceInterface.  For example, the expected mapping of 
  * a Java interface would be Java method name to ServiceInterface operation name.
  */
-public interface ServiceOperation extends InvocationContract {
+public interface ServiceOperation {
 
     /**
      * The exchange pattern for the operation.
@@ -49,4 +51,25 @@ public interface ServiceOperation extends InvocationContract {
      * @return operation name
      */
     String getName();
+    
+    /**
+     * The name of the input message type.
+     * @return input message type or null if no type information is available.
+     * @see org.switchyard.annotations.OperationTypes
+     */
+    QName getInputType();
+    
+    /**
+     * The name of the output message type.
+     * @return output message name or null if no type information is available.
+     * @see org.switchyard.annotations.OperationTypes
+     */
+    QName getOutputType();
+    
+    /**
+     * The name of the output message type.
+     * @return output message name or null if no type information is available.
+     * @see org.switchyard.annotations.OperationTypes
+     */
+    QName getFaultType();
 }

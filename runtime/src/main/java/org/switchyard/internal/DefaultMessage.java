@@ -61,7 +61,7 @@ public class DefaultMessage implements Message {
      * @return <code>this</code> Message instance.
      */
     public DefaultMessage setTransformerRegistry(TransformerRegistry transformerRegistry) {
-        this._transformerRegistry = transformerRegistry;
+        _transformerRegistry = transformerRegistry;
         return this;
     }
 

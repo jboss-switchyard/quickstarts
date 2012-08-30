@@ -19,9 +19,8 @@
 
 package org.switchyard.spi;
 
-import org.switchyard.ExchangeHandler;
-import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.ServiceReference;
 
 /**
  * An implementation-neutral representation of a message bus.  The bus handles
@@ -30,20 +29,19 @@ import org.switchyard.ServiceDomain;
 public interface ExchangeBus {
     
     /**
-     * Create an exchange dispatcher for the specified service and handler chain.
-     * @param service service instance
-     * @param serviceHandler invoked by dispatcher on delivery
+     * Create an exchange dispatcher for the specified service reference.
+     * @param reference service reference
      * @return Dispatcher service dispatch reference
      */
-    Dispatcher createDispatcher(Service service, ExchangeHandler serviceHandler);
+    Dispatcher createDispatcher(ServiceReference reference);
     
     /**
-     * Retrieves a dispatcher for the specified service.
-     * @param service target service
+     * Retrieves a dispatcher for the specified service reference.
+     * @param reference target reference
      * @return dispatcher for the specified service, or null if no dispatcher
      * has been created
      */
-    Dispatcher getDispatcher(Service service);
+    Dispatcher getDispatcher(ServiceReference reference);
 
     /**
      * Initialize the exchange bus with it's parent service domain.
