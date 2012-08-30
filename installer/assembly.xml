@@ -66,7 +66,7 @@
                 <include>org.switchyard:switchyard-as7-standalone-bundle</include>
             </includes>
             <outputDirectory>${installer.root.dir}/res</outputDirectory>
-            <outputFileNameMapping>SwitchYard-AS7-Bundle.zip</outputFileNameMapping>
+            <outputFileNameMapping>switchyard-as7-bundle.zip</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>

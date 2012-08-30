@@ -40,7 +40,7 @@
                                     <type>zip</type>
                                 </artifactItem>
                             </artifactItems>
-                            <!-- Comment when using JBossWS stack 
+                            <!-- Comment when using JBossWS stack
                             <excludes>**/javax/xml/soap/api/**,**/javax/xml/ws/api/**,**/org/apache/cxf/**,**/org/apache/ws/**,**/org/jboss/as/messaging/**,**/org/jboss/as/webservices/**,**/org/jboss/ws/**,**/org/jboss/osgi/**</excludes>-->
                             <!-- Uncomment when using JBossWS stack -->
                             <excludes>**/org/jboss/as/messaging/**,**/org/jboss/osgi/**</excludes>
@@ -134,7 +134,7 @@
                         </goals>
                         <configuration>
                             <appendAssemblyId>false</appendAssemblyId>
-                            <finalName>SwitchYard-AS7-OpenShift-Express</finalName>
+                            <finalName>switchyard-as7-openshift-express</finalName>
                             <descriptors>
                                 <descriptor>${basedir}/assembly.xml</descriptor>
                             </descriptors>

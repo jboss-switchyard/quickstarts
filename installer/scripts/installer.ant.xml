@@ -18,21 +18,21 @@
   -->
 
 <project name="SwitchYard AS7 Installer" default="install" basedir=".">
-	
+
 	<!--  The following -D properties can be used to control install behavior:
 	         o AS7_PATH = path to AS7 install - prevents input prompt
 	         o SKIP_CONSOLE = do not install console
 			 o SKIP_BPEL_CONSOLE = do not install BPEL console
 	         o SKIP_FORGE = do not install forge
-                 o SKIP_AS7 = do not install SwitchYard to AS7 
+                 o SKIP_AS7 = do not install SwitchYard to AS7
 	 -->
-	
+
     <property file="installer.properties"/>
 
     <target name="download-sy-as7-check">
  	<condition property="sy.as7.not.available">
           <not>
-            <available file="res/SwitchYard-AS7-Bundle.zip"/>
+            <available file="res/switchyard-as7-bundle.zip"/>
           </not>
         </condition>
     </target>
@@ -46,7 +46,7 @@
           </and>
         </condition>
     </target>
-	
+
     <target name="download-sy-tools-check">
         <condition property="sy.tools.not.available">
           <and>
@@ -57,12 +57,12 @@
           </and>
         </condition>
     </target>
-	
+
     <target name="download-sy-tools" depends="download-sy-tools-check" if="sy.tools.not.available">
         <echo>Downloading SwitchYard Tools Bundle ...</echo>
         <get src="${switchyard.tools.url}" dest="res/switchyard-tools.zip"/>
     </target>
-	
+
     <target name="extract-sy-tools-forge" depends="download-sy-tools" if="installForge">
         <unzip src="res/switchyard-tools.zip" dest="res/" overwrite="true">
             <mapper type="flatten"/>
@@ -82,8 +82,8 @@
     </target>
 
     <target name="download-as7-zip" depends="download-as7-check" if="as7.not.available">
-        <echo>Downloading AS7 ...</echo>	
-        <get src="${as7.dist.url}" dest="res/jboss-as-${as7.version}.zip"/> 
+        <echo>Downloading AS7 ...</echo>
+        <get src="${as7.dist.url}" dest="res/jboss-as-${as7.version}.zip"/>
     </target>
 
     <target name="download-as7" depends="download-as7-zip">
@@ -93,8 +93,8 @@
     </target>
 
     <target name="download-sy-as7" depends="download-sy-as7-check" if="sy.as7.not.available">
-        <echo>Downloading SwitchYard AS7 Bundle ..."</echo>	
-        <get src="${as7.bundle.url}" dest="res/SwitchYard-AS7-Bundle.zip"/> 
+        <echo>Downloading SwitchYard AS7 Bundle ..."</echo>
+        <get src="${as7.bundle.url}" dest="res/switchyard-as7-bundle.zip"/>
     </target>
 
     <target name="download-sy-forge-module-check">
@@ -189,11 +189,11 @@
           <and>
             <not>
               <isset property="AS7_PATH"/>
-            </not>   
+            </not>
             <not>
               <isset property="SKIP_AS7"/>
             </not>
-          </and> 
+          </and>
         </condition>
     </target>
 
@@ -225,7 +225,7 @@
            <or>
             <available file="${AS7_PATH}/jboss-modules.jar" />
             <isset property="SKIP_AS7"/>
-           </or> 
+           </or>
         </condition>
         <antcall target="notAS7"/>
 
@@ -233,7 +233,7 @@
           <or>
             <available file="quickstarts" filepath="${QUICKSTART_PATH}" />
 	    <isset property="SKIP_AS7"/>
-          </or>  
+          </or>
         </condition>
         <condition property="switchyardResourcesAlreadyInstalled">
           <or>
@@ -258,22 +258,22 @@
             <param name="AS7_PATH" value="${AS7_PATH}"/>
         </antcall>
         <antcall target="unzipQuickstartResources">
-            <param name="AS7_PATH" value="${AS7_PATH}"/> 
+            <param name="AS7_PATH" value="${AS7_PATH}"/>
         </antcall>
         <antcall target="install-forge">
-            <param name="AS7_PATH" value="${AS7_PATH}"/> 
+            <param name="AS7_PATH" value="${AS7_PATH}"/>
 	</antcall>
         <antcall target="install-sy-console">
-            <param name="AS7_PATH" value="${AS7_PATH}"/> 
+            <param name="AS7_PATH" value="${AS7_PATH}"/>
 	</antcall>
 		<antcall target="install-bpel-console">
-            <param name="AS7_PATH" value="${AS7_PATH}"/> 
+            <param name="AS7_PATH" value="${AS7_PATH}"/>
 	</antcall>
-    </target>	
+    </target>
 
     <target name="unzipSwitchyardResources" unless="switchyardResourcesAlreadyInstalled">
         <!-- Install into the AS7 install.... -->
-        <unzip src="res/SwitchYard-AS7-Bundle.zip" dest="${AS7_PATH}" overwrite="true">
+        <unzip src="res/switchyard-as7-bundle.zip" dest="${AS7_PATH}" overwrite="true">
             <patternset>
                 <include name="standalone/**" />
                 <include name="modules/**" />
@@ -303,7 +303,7 @@
 
     <target name="unzipQuickstartResources" unless="quickstartResourcesAlreadyInstalled">
         <!-- Install SwitchYard stuff into this directory.... -->
-        <unzip src="res/SwitchYard-AS7-Bundle.zip" dest="${QUICKSTART_PATH}" overwrite="true">
+        <unzip src="res/switchyard-as7-bundle.zip" dest="${QUICKSTART_PATH}" overwrite="true">
             <patternset>
                 <include name="quickstarts/**" />
             </patternset>
@@ -321,7 +321,7 @@
               <equals arg1="${install.sy.console.question}" arg2="y" />
            </and>
         </condition>
-		
+
         <fail message="Please install AS7 or run this installer again and download an AS7 distribution.">
             <condition>
                 <and>
@@ -338,7 +338,7 @@
     	<property environment="env"/>
         <condition property="forge.home.set">
 	       <isset property="env.FORGE_HOME"/>
-        </condition>	
+        </condition>
     </target>
 
     <target name="request-forge-home" if="installForge" unless="forge.home.set" depends="check-forge-home">
@@ -406,7 +406,7 @@
     </target>
 
     <target name="install-forge" if="installForge" depends="request-forge-install, request-forge-home, set-forge-home, validate-forge-home-version, download-sy-forge-module" unless="SKIP_FORGE">
-    	
+
         <condition property="forge.plugindir.exists">
             <available file="config" filepath="${user.home}/.forge" />
         </condition>
@@ -416,10 +416,10 @@
         <echo>Unzipping switchyard forge plugin module...</echo>
         <unzip dest="${user.home}/.forge/plugins/org/switchyard"
                 src="res/switchyard-forge-plugins.zip"/>
-        <echo>Unzipped SwitchYard forge plugin.</echo>  
+        <echo>Unzipped SwitchYard forge plugin.</echo>
 
 	<condition property="java.share.dir" value="/usr/share/java">
-	    <available file="/usr/share/java"/>	
+	    <available file="/usr/share/java"/>
         </condition>
 	<property name="java.share.dir" value="${basedir}"/>
 	<path id="usr.share.java">
@@ -443,19 +443,19 @@
 
         <fileset dir="${FORGE_PATH}/modules/org/jboss/forge/parser/xml/main">
             <include name="forge-parser-xml-*"/>
-        </fileset>  
+        </fileset>
 
         <fileset dir="${FORGE_PATH}/modules/org/jboss/forge/parser/java/api/main">
             <include name="forge-parser-java-api-*"/>
         </fileset>
-		
+
 		<fileset dir="${basedir}">
  			<include name="lib/switchyard-forge-installer.jar"/>
 		</fileset>
 
                 <path refid="usr.share.java"/>
 
-	</path>	
+	</path>
 	<java classname="org.switchyard.forge.installer.Installer">
 		<arg value="org.switchyard.switchyard-forge-plugin"/>
 		<arg value="${project.version}"/>
@@ -464,7 +464,7 @@
     </target>
 
     <!-- jBPM console commands not supported in 0.3
-    
+
     <target name="download-jbpm-console-check">
         <condition property="jbpm.console.not.available">
            <not>
@@ -478,7 +478,7 @@
         <get src="${switchyard.jbpm.console.url}" dest="${basedir}/switchyard-jbpm-gwt-console-server.war"/>
     <get src="${jbpm.gwt.console.url}" dest="${basedir}/jbpm-gwt-console.war"/>
     </target>
-    
+
     <target name="request-jbpm-console-install">
         <input message="Would you like to install the JBPM Console (y/n)?" addproperty="install.jbpm.console.question" validargs="y,n" defaultvalue="y" />
 
@@ -490,12 +490,12 @@
         </condition>
         <antcall target="download-jbpm-console"/>
     </target>
-    
+
     <target name="install-jbpm-console" if="installJBPMConsole" depends="request-jbpm-console-install">
     <copy todir="${AS7_PATH}/standalone/deployments" file="${basedir}/switchyard-jbpm-gwt-console-server.war"/>
         <copy todir="${AS7_PATH}/standalone/deployments" file="${basedir}/jbpm-gwt-console.war"/>
     </target>
-    
+
     -->
 
 </project>
