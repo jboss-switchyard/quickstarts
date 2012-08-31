@@ -18,6 +18,11 @@
  */
 package org.switchyard.deploy;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Configurations;
 
@@ -28,11 +33,12 @@ public abstract class BaseComponent implements Component {
 
     private String _name;
     private Configuration _config = Configurations.emptyConfig();
+    private List<String> _activationTypes = new LinkedList<String>();
 
-    /**
-     * Default constructor.
-     */
-    public BaseComponent() {
+    protected BaseComponent(String ... types) {
+        if (types != null) {
+            _activationTypes.addAll(Arrays.asList(types));
+        }
     }
 
     /* (non-Javadoc)
@@ -69,6 +75,11 @@ public abstract class BaseComponent implements Component {
      */
     public Configuration getConfig() {
         return _config;
+    }
+    
+    @Override
+    public List<String> getActivationTypes() {
+        return Collections.unmodifiableList(_activationTypes);
     }
 
     /* (non-Javadoc)

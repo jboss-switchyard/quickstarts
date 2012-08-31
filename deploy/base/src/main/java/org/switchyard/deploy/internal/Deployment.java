@@ -21,8 +21,10 @@ package org.switchyard.deploy.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +40,7 @@ import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
+import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.InterfaceModel;
@@ -198,6 +201,38 @@ public class Deployment extends AbstractDeployment {
         } else {
             return null;
         }
+    }
+    
+    /**
+     * Returns a list of activator types required by this deployment.  The list
+     * is built from implementation, service binding, and reference binding 
+     * types in the application.
+     * @return list of activator type names
+     */
+    public List<String> getActivationTypes() {
+        HashSet<String> types = new HashSet<String>();
+        CompositeModel composite = getConfig().getComposite();
+        
+        // reference bindings
+        for (CompositeReferenceModel reference : composite.getReferences()) {
+            for (BindingModel binding : reference.getBindings()) {
+                types.add(binding.getType());
+            }
+        }
+        // service bindings
+        for (CompositeServiceModel service : composite.getServices()) {
+            for (BindingModel binding : service.getBindings()) {
+                types.add(binding.getType());
+            }
+        }
+        // implementations
+        for (ComponentModel component : composite.getComponents()) {
+            if (component.getImplementation() != null) {
+                types.add(component.getImplementation().getType());
+            }
+        }
+        
+        return new ArrayList<String>(types);
     }
     
     /**

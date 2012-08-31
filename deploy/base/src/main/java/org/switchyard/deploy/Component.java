@@ -19,6 +19,8 @@
 
 package org.switchyard.deploy;
 
+import java.util.List;
+
 import org.switchyard.ServiceDomain;
 import org.switchyard.config.Configuration;
 
@@ -36,6 +38,13 @@ public interface Component {
      * @return An Activator instance that will be used by deployments.
      */
     Activator createActivator(ServiceDomain domain);
+    
+    /**
+     * Get the activator types that this Component can create.
+     * @return List<String> The activation types that this Component supports.
+     */
+    List<String> getActivationTypes();
+    
     /**
      * Returns the name of the Component instance.
      * @return The name.

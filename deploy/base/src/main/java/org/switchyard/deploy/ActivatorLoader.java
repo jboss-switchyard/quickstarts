@@ -59,15 +59,31 @@ public final class ActivatorLoader {
      * 
      * @param serviceDomain The service domain to be used by the activator.
      * @param components The components from which the activators are created.
+     * @param types List of types to be activated
      * @return A List of activators.
      */
-    public static List<Activator> createActivators(ServiceDomain serviceDomain, List<Component> components) {
+    public static List<Activator> createActivators(ServiceDomain serviceDomain, List<Component> components, List<String> types) {
         List<Activator> activators = new ArrayList<Activator>();
         for (Component component : components) {
-            Activator activator = component.createActivator(serviceDomain);
-            _log.debug("Registered activator " + activator.getClass());
-            activators.add(activator);
+            if (canActivate(component, types)) {
+                Activator activator = component.createActivator(serviceDomain);
+                _log.debug("Registered activator " + activator.getClass());
+                activators.add(activator);
+            }
         }
         return activators;
+    }
+    
+    /**
+     * Determine if a component is eligible to activate a given set of types.
+     */
+    private static boolean canActivate(Component component, List<String> activationTypes) {
+        for (String componentType : component.getActivationTypes()) {
+            if (activationTypes.contains(componentType)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 }

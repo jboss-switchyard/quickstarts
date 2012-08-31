@@ -20,6 +20,7 @@
 package org.switchyard.deploy.internal;
 
 import java.io.InputStream;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
@@ -85,6 +86,17 @@ public class DeploymentTest {
         Assert.assertTrue(activator.stopCalled());
         Assert.assertTrue(activator.deactivateServiceCalled());
         Assert.assertTrue(activator.deactivateBindingCalled());
+    }
+    
+    @Test
+    public void testActivationTypes() throws Exception {
+        InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-mock-01.xml", getClass());
+        Deployment deployment = new Deployment(swConfigStream);
+        swConfigStream.close();
+
+        List<String> types = deployment.getActivationTypes();
+        Assert.assertEquals(1, types.size());
+        Assert.assertEquals("mock", types.iterator().next());
     }
     
     @Test
