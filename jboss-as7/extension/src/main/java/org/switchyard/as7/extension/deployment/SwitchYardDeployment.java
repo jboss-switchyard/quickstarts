@@ -37,6 +37,7 @@ import org.switchyard.as7.extension.SwitchYardModelConstants;
 import org.switchyard.as7.extension.admin.ModelNodeCreationUtil;
 import org.switchyard.as7.extension.services.SwitchYardAdminService;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.ActivatorLoader;
 import org.switchyard.deploy.Component;
 import org.switchyard.deploy.ServiceDomainManager;
@@ -97,7 +98,9 @@ public class SwitchYardDeployment {
             setDeploymentState(SwitchYardDeploymentState.INITIALIZING);
 
             _appServiceDomain = _domainManager.createDomain(_deployment.getName(), _deployment.getConfig());
-            _deployment.init(_appServiceDomain, ActivatorLoader.createActivators(_appServiceDomain, components));
+            List<Activator> activators = ActivatorLoader.createActivators(
+                    _appServiceDomain, components, _deployment.getActivationTypes());
+            _deployment.init(_appServiceDomain, activators);
             
             setDeploymentState(SwitchYardDeploymentState.STARTING);
             _deployment.start();

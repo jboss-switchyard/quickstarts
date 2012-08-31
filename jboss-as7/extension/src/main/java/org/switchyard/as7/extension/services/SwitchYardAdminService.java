@@ -88,8 +88,9 @@ public class SwitchYardAdminService implements Service<SwitchYard> {
 
         // add in the components and application settings
         for (Component component : (List<Component>) _components.getValue()) {
-            _switchYard.addComponent(new BaseComponent(component.getName(), component.createActivator(null)
-                    .getActivationTypes(), convertConfiguration(component.getConfig())));
+            _switchYard.addComponent(new BaseComponent(component.getName(), 
+                    component.getActivationTypes(), 
+                    convertConfiguration(component.getConfig())));
         }
     }
 
