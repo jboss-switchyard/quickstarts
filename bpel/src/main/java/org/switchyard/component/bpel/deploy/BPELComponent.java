@@ -116,11 +116,13 @@ public class BPELComponent extends BaseComponent {
 
         LOG.info("Destroy BPEL component");
         
-        try {
-            _engine.close();
-            _engine = null;
-        } catch (Exception e) {
-            LOG.error("Failed to close BPEL engine", e);
+        if (_engine != null) {
+            try {
+                _engine.close();
+                _engine = null;
+            } catch (Exception e) {
+                LOG.error("Failed to close BPEL engine", e);
+            }
         }
     }
     
@@ -129,8 +131,13 @@ public class BPELComponent extends BaseComponent {
      */
     @Override
     public Activator createActivator(ServiceDomain domain) {
+        BPELEngine engine=null;
         
-        BPELActivator activator=new BPELActivator(getEngine(), _locator,
+        if (domain != null) {
+            engine = getEngine();
+        }
+        
+        BPELActivator activator=new BPELActivator(engine, _locator,
                                     _config);
         
         activator.setServiceDomain(domain);
