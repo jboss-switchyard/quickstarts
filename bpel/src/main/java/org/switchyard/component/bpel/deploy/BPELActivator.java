@@ -41,14 +41,19 @@ import org.switchyard.exception.SwitchYardException;
  *
  */
 public class BPELActivator extends BaseActivator {
+    
+    /**
+     * BPEL component activator type name.
+     */
+    public static final String BPEL_TYPE = "bpel";
 
     private static final Logger LOG = Logger.getLogger(BPELActivator.class);
     
     private static Map<QName, BPELExchangeHandler> _handlers = new HashMap<QName , BPELExchangeHandler>();
 
-    private BPELEngine _engine=null;
-    private RiftsawServiceLocator _locator=null;
-    private java.util.Properties _config=null;
+    private BPELEngine _engine = null;
+    private RiftsawServiceLocator _locator = null;
+    private java.util.Properties _config = null;
     
     
     /**
@@ -58,9 +63,8 @@ public class BPELActivator extends BaseActivator {
      * @param locator The service locator
      * @param config The properties
      */
-    public BPELActivator(BPELEngine engine, RiftsawServiceLocator locator,
-                        java.util.Properties config) {
-        super("bpel");
+    public BPELActivator(BPELEngine engine, RiftsawServiceLocator locator, java.util.Properties config) {
+        super(BPEL_TYPE);
         
         _engine = engine;
         _locator = locator;
@@ -106,7 +110,7 @@ public class BPELActivator extends BaseActivator {
     @Override
     public void deactivateService(QName name, ServiceHandler handler) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("De-activate service: "+name+" handler="+handler);
+            LOG.debug("De-activate service: " + name + " handler=" + handler);
         }
         
         _handlers.remove(name);

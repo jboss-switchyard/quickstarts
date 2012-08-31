@@ -33,7 +33,7 @@ public class SOAPComponent extends BaseComponent {
      * Default constructor.
      */
     public SOAPComponent() {
-        super();
+        super(SOAPActivator.SOAP_TYPE);
         setName("SOAPComponent");
     }
 

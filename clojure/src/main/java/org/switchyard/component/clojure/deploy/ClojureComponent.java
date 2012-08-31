@@ -33,6 +33,7 @@ public class ClojureComponent extends BaseComponent {
      * Default constructor.
      */
     public ClojureComponent() {
+        super(ClojureActivator.TYPES);
         setName("ClojureComponent");
     }
 

@@ -36,14 +36,19 @@ import org.switchyard.deploy.ServiceHandler;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class RulesActivator extends BaseActivator {
-
+    
+    /**
+     * Rules component activator type name.
+     */
+    public static final String RULES_TYPE = "rules";
+    
     private Map<QName,RulesExchangeHandler> _handlers = new HashMap<QName,RulesExchangeHandler>();
 
     /**
      * Constructs a new Activator of type "rules".
      */
     public RulesActivator() {
-        super("rules");
+        super(RULES_TYPE);
     }
    
     /**

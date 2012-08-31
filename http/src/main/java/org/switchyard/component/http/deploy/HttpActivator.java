@@ -37,7 +37,7 @@ import org.switchyard.deploy.ServiceHandler;
  */
 public class HttpActivator extends BaseActivator {
 
-    private static final String HTTP_TYPE = "http";
+    static final String HTTP_TYPE = "http";
     private Configuration _environment;
 
     /**

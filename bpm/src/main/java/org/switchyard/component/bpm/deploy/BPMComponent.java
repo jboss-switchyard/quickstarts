@@ -35,7 +35,7 @@ public class BPMComponent extends BaseComponent {
      * Default constructor.
      */
     public BPMComponent() {
-        super();
+        super(BPMActivator.BPM_TYPE);
         setName("BPMComponent");
     }
 

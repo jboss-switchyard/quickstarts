@@ -33,7 +33,7 @@ public class HttpComponent extends BaseComponent {
      * Default constructor.
      */
     public HttpComponent() {
-        super();
+        super(HttpActivator.HTTP_TYPE);
         setName("HttpComponent");
     }
 

@@ -44,6 +44,7 @@ public class BPELComponent extends BaseComponent {
      * Default constructor.
      */
     public BPELComponent() {
+        super(BPELActivator.BPEL_TYPE);
         setName("BPELComponent");
     }
 

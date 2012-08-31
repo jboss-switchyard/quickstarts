@@ -55,7 +55,7 @@ public class JCAActivator extends BaseActivator {
 
     private static final String JBOSS_TRANSACTION_MANAGER = "java:jboss/TransactionManager";
 
-    private static final String[] TYPES = new String[] {"jca"};
+    static final String[] TYPES = new String[] {"jca"};
     
     private final ClassLoader _appClassLoader;
     

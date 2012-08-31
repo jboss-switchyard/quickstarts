@@ -48,10 +48,15 @@ import org.switchyard.deploy.ServiceHandler;
 public class HornetQActivator extends BaseActivator {
     
     /**
+     * HornetQ component activator type name.
+     */
+    public static final String HORNETQ_TYPE = "hornetq";
+    
+    /**
      * No-args constructor to support service activation.
      */
     public HornetQActivator() {
-        super("hornetq");
+        super(HORNETQ_TYPE);
     }
     
     @Override

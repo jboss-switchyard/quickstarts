@@ -33,7 +33,7 @@ public class RESTEasyComponent extends BaseComponent {
      * Default constructor.
      */
     public RESTEasyComponent() {
-        super();
+        super(RESTEasyActivator.RESTEASY_TYPE);
         setName("RESTEasyComponent");
     }
 

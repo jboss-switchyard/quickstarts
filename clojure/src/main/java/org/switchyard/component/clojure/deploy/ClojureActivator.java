@@ -35,7 +35,7 @@ import org.switchyard.deploy.ServiceHandler;
  */
 public class ClojureActivator extends BaseActivator {
     
-    private static final String[] TYPES = new String[] {"clojure"};
+    static final String[] TYPES = new String[] {"clojure"};
     
     /**
      * Sole constructor .

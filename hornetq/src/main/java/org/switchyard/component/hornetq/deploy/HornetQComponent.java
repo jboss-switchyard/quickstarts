@@ -33,6 +33,7 @@ public class HornetQComponent extends BaseComponent {
      * Default constructor.
      */
     public HornetQComponent() {
+        super(HornetQActivator.HORNETQ_TYPE);
         setName("HornetQComponent");
     }
 

@@ -36,6 +36,11 @@ import org.switchyard.deploy.ServiceHandler;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class BPMActivator extends BaseActivator {
+    
+    /**
+     * BPM component activator type name.
+     */
+    public static final String BPM_TYPE = "bpm";
 
     private Map<QName,BPMExchangeHandler> _handlers = new HashMap<QName,BPMExchangeHandler>();
 
@@ -43,7 +48,7 @@ public class BPMActivator extends BaseActivator {
      * Constructs a new Activator of type "bpm".
      */
     public BPMActivator() {
-        super("bpm");
+        super(BPM_TYPE);
     }
 
     /**

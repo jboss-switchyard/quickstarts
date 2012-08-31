@@ -35,7 +35,7 @@ import org.switchyard.deploy.ServiceHandler;
  */
 public class SOAPActivator extends BaseActivator {
 
-    private static final String SOAP_TYPE = "soap";
+    static final String SOAP_TYPE = "soap";
     private Configuration _environment;
     
     /**

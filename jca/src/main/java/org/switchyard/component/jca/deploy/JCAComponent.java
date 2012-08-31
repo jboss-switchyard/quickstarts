@@ -37,6 +37,7 @@ public class JCAComponent extends BaseComponent {
      * Default constructor.
      */
     public JCAComponent() {
+        super(JCAActivator.TYPES);
         setName(JCAConstants.COMPONENT_NAME);
     }
 

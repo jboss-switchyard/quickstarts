@@ -35,7 +35,7 @@ public class RulesComponent extends BaseComponent {
      * Default constructor.
      */
     public RulesComponent() {
-        super();
+        super(RulesActivator.RULES_TYPE);
         setName("RulesComponent");
     }
 

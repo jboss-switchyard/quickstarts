@@ -33,6 +33,7 @@ public class CamelComponent extends BaseComponent {
      * Default constructor.
      */
     public CamelComponent() {
+        super(CamelActivator.CAMEL_TYPES);
         setName("CamelComponent");
     }
 

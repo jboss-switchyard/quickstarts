@@ -87,6 +87,27 @@ public class CamelActivator extends BaseActivator {
      * Camel can access the SY service domain.
      */
     public static final String SERVICE_DOMAIN = "org.switchyard.camel.serviceDomain";
+    
+    /**
+     * Camel activation types.
+     */
+    public static final String[] CAMEL_TYPES = new String[] {
+        V1CamelBindingModel.CAMEL, 
+        V1CamelAtomBindingModel.ATOM,
+        V1CamelDirectBindingModel.DIRECT,
+        V1CamelFileBindingModel.FILE,
+        V1CamelFtpBindingModel.FTP,
+        V1CamelFtpsBindingModel.FTPS,
+        V1CamelMockBindingModel.MOCK,
+        V1CamelNettyTcpBindingModel.NETTY_TCP,
+        V1CamelNettyUdpBindingModel.NETTY_UDP,
+        V1CamelSedaBindingModel.SEDA,
+        V1CamelSftpBindingModel.SFTP,
+        V1CamelTimerBindingModel.TIMER,
+        V1CamelJmsBindingModel.JMS,
+        V1CamelQuartzBindingModel.QUARTZ,
+        V1CamelSqlBindingModel.SQL
+    };
 
     private ModelCamelContext _camelContext;
     private Configuration _environment;
@@ -95,23 +116,7 @@ public class CamelActivator extends BaseActivator {
      * Creates a new activator for Camel endpoint types.
      */
     public CamelActivator() {
-        super(new String[] {
-            V1CamelBindingModel.CAMEL, 
-            V1CamelAtomBindingModel.ATOM,
-            V1CamelDirectBindingModel.DIRECT,
-            V1CamelFileBindingModel.FILE,
-            V1CamelFtpBindingModel.FTP,
-            V1CamelFtpsBindingModel.FTPS,
-            V1CamelMockBindingModel.MOCK,
-            V1CamelNettyTcpBindingModel.NETTY_TCP,
-            V1CamelNettyUdpBindingModel.NETTY_UDP,
-            V1CamelSedaBindingModel.SEDA,
-            V1CamelSftpBindingModel.SFTP,
-            V1CamelTimerBindingModel.TIMER,
-            V1CamelJmsBindingModel.JMS,
-            V1CamelQuartzBindingModel.QUARTZ,
-            V1CamelSqlBindingModel.SQL
-        });
+        super(CAMEL_TYPES);
     }
 
     @Override

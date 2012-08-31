@@ -33,6 +33,7 @@ public class BeanComponent extends BaseComponent {
      * Default constructor.
      */
     public BeanComponent() {
+        super(BeanComponentActivator.BEAN_TYPE);
         setName("BeanComponent");
     }
 

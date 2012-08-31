@@ -37,7 +37,7 @@ import org.switchyard.deploy.ServiceHandler;
  */
 public class RESTEasyActivator extends BaseActivator {
 
-    private static final String RESTEASY_TYPE = "rest";
+    static final String RESTEASY_TYPE = "rest";
     private Configuration _environment;
 
     /**
