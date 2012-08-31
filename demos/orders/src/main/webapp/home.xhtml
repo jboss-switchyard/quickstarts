@@ -43,8 +43,8 @@
 
     <h:form id="newOrder">
         <div>
-            <label class="label">Order ID:&nbsp;</label><h:inputText id="itemID" value="#{order.itemId}" required="true" class="input" /><br/>
-            <label class="label">Item ID:&nbsp;</label><h:inputText id="orderID" value="#{order.orderId}" required="true" class="input" /><br/>
+            <label class="label">Order ID:&nbsp;</label><h:inputText id="itemID" value="#{order.orderId}" required="true" class="input" /><br/>
+            <label class="label">Item ID:&nbsp;</label><h:inputText id="orderID" value="#{order.itemId}" required="true" class="input" /><br/>
             <label class="label">Quantity:&nbsp;</label><h:inputText id="quantity" value="#{order.quantity}" required="true" class="input"/><br/>
             <label class="lbl">&nbsp;</label><h:commandButton id="createOrder" value="Create" action="#{order.create}" class="button" />
         </div>
