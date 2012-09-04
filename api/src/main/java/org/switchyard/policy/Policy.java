@@ -27,10 +27,31 @@ package org.switchyard.policy;
  */
 public interface Policy {
 
+    /** policy type. */
+    public enum PolicyType {INTERACTION, IMPLEMENTATION};
+    
     /**
      * Returns the string identifier for the policy.
      * @return policy name
      */
     public String getName();
 
+    /**
+     * Returns the policy type.
+     * @return policy type
+     */
+    public PolicyType getType();
+    
+    /**
+     * Returns whether the policy passed in parameter is compatible with this or not.
+     * @param target policy to check compatibility
+     * @return true if compatible
+     */
+    public boolean isCompatibleWith(Policy target);
+    
+    /**
+     * Returns a policy which is a dependency of this Policy.
+     * @return a policy dependency
+     */
+    public Policy getPolicyDependency();
 }

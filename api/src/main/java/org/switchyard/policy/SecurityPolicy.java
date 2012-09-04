@@ -28,11 +28,22 @@ public enum SecurityPolicy implements Policy {
     /**
      * Ensure that the client is authenticated by the server.
      */
-    CLIENT_AUTHENTICATION("clientAuthentication"),
+    CLIENT_AUTHENTICATION("clientAuthentication") {
+        @Override
+        public PolicyType getType() {
+            return PolicyType.INTERACTION;
+        }
+    },
+    
     /**
      * Ensure that only authorized entities can view the contents of a message.
      */
-    CONFIDENTIALITY("confidentiality");
+    CONFIDENTIALITY("confidentiality") {
+        @Override
+        public PolicyType getType() {
+            return PolicyType.INTERACTION;
+        }
+    };
 
     private String _name;
 
@@ -56,4 +67,19 @@ public enum SecurityPolicy implements Policy {
         return getName();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isCompatibleWith(Policy target) {
+        return true;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Policy getPolicyDependency() {
+        return null;
+    }
 }

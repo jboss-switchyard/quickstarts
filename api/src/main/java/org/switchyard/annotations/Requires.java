@@ -33,7 +33,7 @@ import org.switchyard.policy.TransactionPolicy;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE,ElementType.FIELD})
 @Inherited
 public @interface Requires {
 

@@ -57,6 +57,8 @@ public class TransactionHandlerTest {
         handler.setTransactionManager(tm);
     }
 
+    /* policy combination error */
+    
     @Test
     public void incompatibleRequirements_PropagatesAndSuspends() {
         PolicyUtil.require(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
@@ -75,7 +77,8 @@ public class TransactionHandlerTest {
     }
 
     @Test
-    public void incompatibleRequirements_managedLocal() {
+    public void incompatibleRequirements_managedGlobalAndmanagedLocal() {
+        PolicyUtil.require(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL);
         PolicyUtil.require(exchange, TransactionPolicy.MANAGED_TRANSACTION_LOCAL);
         exchange.setPhase(ExchangePhase.IN);
 
@@ -107,6 +110,40 @@ public class TransactionHandlerTest {
     }
 
     @Test
+    public void incompatibleRequirements_managedLocalAndNoManaged() {
+        PolicyUtil.require(exchange, TransactionPolicy.MANAGED_TRANSACTION_LOCAL);
+        PolicyUtil.require(exchange, TransactionPolicy.NO_MANAGED_TRANSACTION);
+        exchange.setPhase(ExchangePhase.IN);
+
+        try {
+            handler.handleMessage(exchange);
+        } catch (HandlerException handlerEx) {
+            // expected
+            System.out.println(handlerEx.toString());
+            return;
+        }
+
+        Assert.fail("Expected a handler exception due to incompatible policy");
+    }
+
+    @Test
+    public void incompatibleRequirements_PropagatesAndManagedLocal() {
+        PolicyUtil.require(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
+        PolicyUtil.require(exchange, TransactionPolicy.MANAGED_TRANSACTION_LOCAL);
+        exchange.setPhase(ExchangePhase.IN);
+
+        try {
+            handler.handleMessage(exchange);
+        } catch (HandlerException handlerEx) {
+            // expected
+            System.out.println(handlerEx.toString());
+            return;
+        }
+
+        Assert.fail("Expected a handler exception due to incompatible policy");
+    }
+
+    @Test
     public void incompatibleRequirements_PropagatesAndNoManaged() {
         PolicyUtil.require(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
         PolicyUtil.require(exchange, TransactionPolicy.NO_MANAGED_TRANSACTION);
@@ -123,14 +160,32 @@ public class TransactionHandlerTest {
         Assert.fail("Expected a handler exception due to incompatible policy");
     }
 
+    /* invalid transaction status */
+    
     @Test
-    public void propagateProvidedButNotRequired() {
+    public void propagatesRequiredButNoTransaction() {
+        PolicyUtil.require(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
+        exchange.setPhase(ExchangePhase.IN);
+
+        try {
+            handler.handleMessage(exchange);
+        } catch (HandlerException handlerEx) {
+            // expected
+            System.out.println(handlerEx.toString());
+            return;
+        }
+        Assert.fail("Expected a handler exception due to invalid policy");
+    }
+    
+    @Test
+    public void propagateProvidedButNotRequired() throws Exception {
         // We currently view a propagated transaction without a requirement
         // as harmless. This tests confirms this behavior and acts as a guard
         // in case our behavior changes.
         PolicyUtil.provide(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
         exchange.setPhase(ExchangePhase.IN);
-
+        tm.begin();
+        
         try {
             handler.handleMessage(exchange);
         } catch (HandlerException handlerEx) {
@@ -139,6 +194,8 @@ public class TransactionHandlerTest {
         }
     }
 
+    /* transaction propagation */
+    
     @Test
     public void propagateRequiredAndProvided() throws Exception {
         PolicyUtil.require(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
@@ -164,6 +221,8 @@ public class TransactionHandlerTest {
         Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL));
     }
 
+    /* Creates new transaction */
+    
     @Test
     public void propagateRequiredButNotProvidedWithManagedGlobalRequired() throws Exception {
         PolicyUtil.require(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
@@ -183,6 +242,23 @@ public class TransactionHandlerTest {
         Assert.assertEquals(Status.STATUS_COMMITTED, tx.getStatus());
     }
 
+    @Test
+    public void managedLocalRequiredWithNoTransactionProvided() throws Exception {
+        PolicyUtil.require(exchange, TransactionPolicy.MANAGED_TRANSACTION_LOCAL);
+        exchange.setPhase(ExchangePhase.IN);
+        
+        Assert.assertEquals(null, tm.getTransaction());
+        
+        handler.handleMessage(exchange);
+        Transaction tx = tm.getTransaction();
+        Assert.assertEquals(Status.STATUS_ACTIVE, tx.getStatus());
+        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.MANAGED_TRANSACTION_LOCAL));
+        
+        exchange.setPhase(ExchangePhase.OUT);
+        handler.handleMessage(exchange);
+        Assert.assertEquals(Status.STATUS_COMMITTED, tx.getStatus());
+    }
+    
     @Test
     public void transactionRolledbackByHandler() throws Exception {
         PolicyUtil.require(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
@@ -204,21 +280,24 @@ public class TransactionHandlerTest {
     }
 
     @Test
-    public void propagateRequiredButNotProvided() {
-        PolicyUtil.require(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
+    public void suspendAndManagedGlobalRequiredButNoTransaction() throws Exception {
+        PolicyUtil.require(exchange, TransactionPolicy.SUSPENDS_TRANSACTION);
+        PolicyUtil.require(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL);
         exchange.setPhase(ExchangePhase.IN);
 
-        try {
-            handler.handleMessage(exchange);
-        } catch (HandlerException handlerEx) {
-            // expected
-            System.out.println(handlerEx.toString());
-            return;
-        }
-
-        Assert.fail("Handler should fail when propagation required, but not provided");
+        handler.handleMessage(exchange);
+        Transaction tx2 = tm.getTransaction();
+        Assert.assertEquals(Status.STATUS_ACTIVE, tx2.getStatus());
+        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.SUSPENDS_TRANSACTION));
+        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL));
+        
+        exchange.setPhase(ExchangePhase.OUT);
+        handler.handleMessage(exchange);
+        Assert.assertEquals(Status.STATUS_COMMITTED, tx2.getStatus());
     }
 
+    /* Suspends existing transaction and create new transaction */
+    
     @Test
     public void suspendAndManagedGlobalRequired() throws Exception {
         PolicyUtil.require(exchange, TransactionPolicy.SUSPENDS_TRANSACTION);
@@ -243,24 +322,54 @@ public class TransactionHandlerTest {
     }
 
     @Test
-    public void suspendAndManagedGlobalRequiredButNoTransaction() throws Exception {
+    public void suspendsAndManagedLocalRequired() throws Exception {
         PolicyUtil.require(exchange, TransactionPolicy.SUSPENDS_TRANSACTION);
-        PolicyUtil.require(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL);
+        PolicyUtil.require(exchange, TransactionPolicy.MANAGED_TRANSACTION_LOCAL);
         exchange.setPhase(ExchangePhase.IN);
-
+        tm.begin();
+        Transaction tx1 = tm.getTransaction();
+        
         handler.handleMessage(exchange);
         Transaction tx2 = tm.getTransaction();
+        Assert.assertNotSame(tx1, tx2);
+        Assert.assertEquals(Status.STATUS_ACTIVE, tx1.getStatus());
         Assert.assertEquals(Status.STATUS_ACTIVE, tx2.getStatus());
         Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.SUSPENDS_TRANSACTION));
-        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL));
+        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.MANAGED_TRANSACTION_LOCAL));
         
         exchange.setPhase(ExchangePhase.OUT);
         handler.handleMessage(exchange);
+        Transaction tx3 = tm.getTransaction();
+        Assert.assertEquals(tx1, tx3);
         Assert.assertEquals(Status.STATUS_COMMITTED, tx2.getStatus());
+        Assert.assertEquals(Status.STATUS_ACTIVE, tx3.getStatus());
+    }
+
+    /* Suspends existing transaction and run under no managed transaction */
+    
+    @Test
+    public void noManagedRequired() throws Exception {
+        PolicyUtil.require(exchange, TransactionPolicy.NO_MANAGED_TRANSACTION);
+        exchange.setPhase(ExchangePhase.IN);
+        tm.begin();
+        Transaction tx1 = tm.getTransaction();
+        
+        handler.handleMessage(exchange);
+        Transaction tx2 = tm.getTransaction();
+        Assert.assertNotNull(tx1);
+        Assert.assertNull(tx2);
+        Assert.assertEquals(Status.STATUS_ACTIVE, tx1.getStatus());
+        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.NO_MANAGED_TRANSACTION));
+        
+        exchange.setPhase(ExchangePhase.OUT);
+        handler.handleMessage(exchange);
+        Transaction tx3 = tm.getTransaction();
+        Assert.assertEquals(tx1, tx3);
+        Assert.assertEquals(Status.STATUS_ACTIVE, tx3.getStatus());
     }
 
     @Test
-    public void suspendTransaction() throws Exception {
+    public void suspendsRequired() throws Exception {
         PolicyUtil.require(exchange, TransactionPolicy.SUSPENDS_TRANSACTION);
         exchange.setPhase(ExchangePhase.IN);
         tm.begin();
@@ -277,14 +386,16 @@ public class TransactionHandlerTest {
         // transaction should be enabled
         Assert.assertEquals(tx1, tx2);
         Assert.assertEquals(Status.STATUS_ACTIVE, tx2.getStatus());
-        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.NO_MANAGED_TRANSACTION));
     }
     
     @Test
     public void suspendAndNoManagedRequired() throws Exception {
         PolicyUtil.require(exchange, TransactionPolicy.NO_MANAGED_TRANSACTION);
-        suspendTransaction();
+        suspendsRequired();
+        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.NO_MANAGED_TRANSACTION));
     }
+    
+    /* no transaction */
     
     @Test
     public void suspendRequiredButNoTransaction() throws Exception {
@@ -295,13 +406,14 @@ public class TransactionHandlerTest {
         exchange.setPhase(ExchangePhase.OUT);
         handler.handleMessage(exchange);
         Assert.assertNull(tm.getTransaction());
-        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.NO_MANAGED_TRANSACTION));
+        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.SUSPENDS_TRANSACTION));
     }
     
     @Test
     public void suspendAndNoManagedRequiredButNoTransaction() throws Exception {
         PolicyUtil.require(exchange, TransactionPolicy.NO_MANAGED_TRANSACTION);
         suspendRequiredButNoTransaction();
+        Assert.assertTrue(PolicyUtil.isProvided(exchange, TransactionPolicy.NO_MANAGED_TRANSACTION));
     }
 }
 

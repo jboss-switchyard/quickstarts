@@ -80,6 +80,12 @@ public interface ServiceReference {
     Exchange createExchange(String operation, ExchangeHandler handler);
     
     /**
+     * Returns a list of required policies for this service reference.
+     * @return list of required policy
+     */
+     List<Policy> getRequiredPolicies();
+
+     /**
      * Returns a list of policies provided by this service reference.
      * @return list of provided policy
      */

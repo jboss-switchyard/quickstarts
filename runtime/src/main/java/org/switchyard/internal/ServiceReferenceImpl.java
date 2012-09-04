@@ -47,7 +47,8 @@ public class ServiceReferenceImpl implements ServiceReference {
     private QName _name;
     private ServiceInterface _interface;
     private DomainImpl _domain;
-    private List<Policy> _provides;
+    private List<Policy> _requires;
+    private List<Policy> _provides = Collections.emptyList();
     private ExchangeHandler _handler;
     private Dispatcher _dispatcher;
     private Registrant _consumerMetadata;
@@ -61,7 +62,7 @@ public class ServiceReferenceImpl implements ServiceReference {
     public ServiceReferenceImpl(QName name, 
             ServiceInterface serviceInterface, 
             DomainImpl domain) {
-        this(name, serviceInterface, domain, null, null, null);
+        this(name, serviceInterface, domain, null, null, null, null);
     }
 
     /**
@@ -69,6 +70,7 @@ public class ServiceReferenceImpl implements ServiceReference {
      * @param name name of the service reference
      * @param serviceInterface the service interface
      * @param provides list of policies provided by this reference
+     * @param requires list of policies required for this reference
      * @param handler handler used to process reply faults/messages
      * @param domain domain in which the service is used 
      * @param consumerMetadata information related to the consumer
@@ -76,8 +78,9 @@ public class ServiceReferenceImpl implements ServiceReference {
     public ServiceReferenceImpl(QName name, 
             ServiceInterface serviceInterface, 
             DomainImpl domain,
-            ExchangeHandler handler,
             List<Policy> provides,
+            List<Policy> requires,
+            ExchangeHandler handler,
             Registrant consumerMetadata) {
         
         _name = name;
@@ -91,6 +94,12 @@ public class ServiceReferenceImpl implements ServiceReference {
         } else {
             _provides = Collections.emptyList();
         }
+        if (requires != null) {
+            _requires = requires;
+        } else {
+            _requires = Collections.emptyList();
+        }
+        
     }
     
     @Override
@@ -126,6 +135,9 @@ public class ServiceReferenceImpl implements ServiceReference {
         ex.consumer(this, op);
         ex.setOutputDispatcher(_dispatcher);
         
+        for (Policy policy : _requires) {
+            PolicyUtil.require(ex, policy);
+        }
         for (Policy policy : _provides) {
             PolicyUtil.provide(ex, policy);
         }
@@ -143,6 +155,11 @@ public class ServiceReferenceImpl implements ServiceReference {
     }
 
     @Override
+    public List<Policy> getRequiredPolicies() {
+        return Collections.unmodifiableList(_requires);
+    }
+    
+    @Override
     public List<Policy> getProvidedPolicies() {
         return Collections.unmodifiableList(_provides);
     }
@@ -152,16 +169,6 @@ public class ServiceReferenceImpl implements ServiceReference {
         _domain.unregisterServiceReference(this);
     }
 
-    /**
-     * Sets the list of provided policies for this service reference.
-     * @param provides list of policies provided
-     * @return this ServiceReference instance
-     */
-    public ServiceReferenceImpl setProvides(List<Policy> provides) {
-        _provides = provides;
-        return this;
-    }
-    
     /**
      * Specifies the exchange handler to use to process reply messages and faults.
      * @param handler exchange handler

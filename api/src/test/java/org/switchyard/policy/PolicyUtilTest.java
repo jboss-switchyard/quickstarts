@@ -56,5 +56,19 @@ enum DummyPolicy implements Policy {
 	public String getName() {
 		return toString();
 	}
+
+    @Override
+    public PolicyType getType() {
+        return PolicyType.INTERACTION;
+    }
+
+    @Override
+    public boolean isCompatibleWith(Policy target) {
+        return true;
+    }
 	
+    @Override
+    public Policy getPolicyDependency() {
+        return null;
+    }
 }

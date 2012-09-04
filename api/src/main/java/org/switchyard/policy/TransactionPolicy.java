@@ -30,26 +30,100 @@ public enum TransactionPolicy implements Policy {
      * Uses any existing global transaction propagated from the client
      * or else begins and complete a new global transaction.
      */
-    MANAGED_TRANSACTION_GLOBAL("managedTransaction.Global"),
+    MANAGED_TRANSACTION_GLOBAL("managedTransaction.Global") {
+        @Override
+        public PolicyType getType() {
+            return PolicyType.IMPLEMENTATION;
+        }
+        @Override
+        public boolean isCompatibleWith(Policy target) {
+            if (target == MANAGED_TRANSACTION_LOCAL
+                    || target == NO_MANAGED_TRANSACTION) {
+                return false;
+            }
+            return true;
+        }
+    },
+    
     /**
      * SwitchYard runtime begins and complete a Local Transaction Containment for each Exchange.
      */
-    MANAGED_TRANSACTION_LOCAL("managedTransaction.Local"),
+    MANAGED_TRANSACTION_LOCAL("managedTransaction.Local") {
+        @Override
+        public PolicyType getType() {
+            return PolicyType.IMPLEMENTATION;
+        }
+        @Override
+        public boolean isCompatibleWith(Policy target) {
+            if (target == MANAGED_TRANSACTION_GLOBAL
+                    || target == NO_MANAGED_TRANSACTION
+                    || target == PROPAGATES_TRANSACTION) {
+                return false;
+            }
+            return true;
+        }
+        @Override
+        public Policy getPolicyDependency() {
+            return SUSPENDS_TRANSACTION;
+        }
+    },
+    
     /**
      * SwitchYard runtime doesn't start any transaction. Application has a responsibility
      * to manage the transaction boundaries.
      */
-    NO_MANAGED_TRANSACTION("noManagedTransaction"),
+    NO_MANAGED_TRANSACTION("noManagedTransaction") {
+        @Override
+        public PolicyType getType() {
+            return PolicyType.IMPLEMENTATION;
+        }
+        @Override
+        public boolean isCompatibleWith(Policy target) {
+            if (target == MANAGED_TRANSACTION_GLOBAL
+                    || target == MANAGED_TRANSACTION_LOCAL
+                    || target == PROPAGATES_TRANSACTION) {
+                return false;
+            }
+            return true;
+        }
+    },
 
     /** Transaction interaction policies */
     /**
      * Any existing transaction should continue and be used during the invocation.
      */
-    PROPAGATES_TRANSACTION("propagatesTransaction"),
+    PROPAGATES_TRANSACTION("propagatesTransaction") {
+        @Override
+        public PolicyType getType() {
+            return PolicyType.INTERACTION;
+        }
+        @Override
+        public boolean isCompatibleWith(Policy target) {
+            if (target == MANAGED_TRANSACTION_LOCAL
+                    || target == NO_MANAGED_TRANSACTION
+                    || target == SUSPENDS_TRANSACTION) {
+                return false;
+            }
+            return true;
+        }
+    },
+    
     /**
      * Any existing transaction should be suspended before the invocation takes place.
      */
-    SUSPENDS_TRANSACTION("suspendsTransaction");
+    SUSPENDS_TRANSACTION("suspendsTransaction") {
+        @Override
+        public PolicyType getType() {
+            return PolicyType.INTERACTION;
+        }
+        @Override
+        public boolean isCompatibleWith(Policy target) {
+            if (target == PROPAGATES_TRANSACTION) {
+                return false;
+            }
+            return true;
+        }
+    };
 
     private String _name;
 
@@ -73,4 +147,8 @@ public enum TransactionPolicy implements Policy {
         return getName();
     }
 
+    @Override
+    public Policy getPolicyDependency() {
+        return null;
+    }
 }

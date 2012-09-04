@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
+import org.switchyard.Property;
 import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.TransactionPolicy;
 
@@ -44,6 +45,8 @@ public class TransactionHandler implements ExchangeHandler {
             "org.switchyard.exchange.transaction.suspended";
     private static final String INITIATED_TRANSACTION_PROPERTY = 
             "org.switchyard.exchange.transaction.initiated";
+    private static final String BEFORE_INVOKED_PROPERTY =
+            "org.switchyard.exchange.transaction.beforeInvoked";
     
     private static Logger _log = Logger.getLogger(TransactionHandler.class);
     
@@ -69,11 +72,12 @@ public class TransactionHandler implements ExchangeHandler {
             return;
         }
         
-        // execute policy behavior based on exchange phase
-        if (managedGlobalProvided(exchange) || noManagedProvided(exchange)) {
+        Property prop = exchange.getContext().getProperty(BEFORE_INVOKED_PROPERTY);
+        if (prop != null && Boolean.class.cast(prop.getValue())) {
             // OUT phase in IN_OUT exchange or 2nd invocation in IN_ONLY exchange
             handleAfter(exchange);
         } else {
+            exchange.getContext().setProperty(BEFORE_INVOKED_PROPERTY, Boolean.TRUE);
             handleBefore(exchange);
         }
     }
@@ -120,92 +124,96 @@ public class TransactionHandler implements ExchangeHandler {
     }
     
     private void handleBefore(Exchange exchange) throws HandlerException {
+        if (!(propagatesRequired(exchange) || suspendsRequired(exchange) || managedGlobalRequired(exchange)
+                || managedLocalRequired(exchange) || noManagedRequired(exchange))) {
+            return;
+        }
+        
+        evaluatePolicyCombination(exchange);
+        evaluateTransactionStatus(exchange);
+        
+        if (isEligibleToSuspendTransaction(exchange)) {
+            suspendTransaction(exchange);
+        }
+        
+        if (isEligibleToStartTransaction(exchange)) {
+            startTransaction(exchange);
+        }
+        
+        provideRequiredPolicies(exchange);
+    }
+
+    private void evaluatePolicyCombination(Exchange exchange) throws HandlerException {
         // check for incompatible policy definition 
         if (suspendsRequired(exchange) && propagatesRequired(exchange)) {
             throw new HandlerException("Invalid transaction policy : "
                 + TransactionPolicy.SUSPENDS_TRANSACTION + " and " + TransactionPolicy.PROPAGATES_TRANSACTION
                 + " cannot be requested simultaneously.");
         }
-        if (managedLocalRequired(exchange)) {
-            throw new HandlerException("Unsupported transaction policy : "
-                    + TransactionPolicy.MANAGED_TRANSACTION_LOCAL + " is not supported for now. Use "
-                    + TransactionPolicy.SUSPENDS_TRANSACTION + " on the callee service instead.");
-        }
-        if (managedGlobalRequired(exchange) && noManagedRequired(exchange)) {
+        if (managedGlobalRequired(exchange) && managedLocalRequired(exchange)
+                || managedGlobalRequired(exchange) && noManagedRequired(exchange)
+                || managedLocalRequired(exchange) && noManagedRequired(exchange)) {
             throw new HandlerException("Invalid transaction policy : "
                     + TransactionPolicy.MANAGED_TRANSACTION_GLOBAL + ", " + TransactionPolicy.MANAGED_TRANSACTION_LOCAL
                     + " and " + TransactionPolicy.NO_MANAGED_TRANSACTION + " cannot be requested simultaneously with each other.");
         }
-        if (propagatesRequired(exchange) && noManagedRequired(exchange)) {
+        if (propagatesRequired(exchange) && managedLocalRequired(exchange)
+                || propagatesRequired(exchange) && noManagedRequired(exchange)) {
             throw new HandlerException("Invalid transaction policy : "
                     + TransactionPolicy.PROPAGATES_TRANSACTION + " cannot be requested with "
                     + TransactionPolicy.MANAGED_TRANSACTION_LOCAL + " nor " + TransactionPolicy.NO_MANAGED_TRANSACTION);
         }
-
-        // platform default behavior: do not touch the transaction at all if interaction policy is absent
-        if (!suspendsRequired(exchange) && !(propagatesRequired(exchange))) {
-            return;
-        }
-        
-        if (propagatesRequired(exchange)) {
-            if (propagatesProvided(exchange)) {
-                PolicyUtil.provide(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL);
-
-            } else if (managedGlobalRequired(exchange)) {
-                // propagates & managedGlobal are required but transaction doesn't exist: create new one
-                try {
-                    startTransaction(exchange);
-                } catch (Exception e) {
-                    throw new HandlerException("TransactionHandler failed to initiate a transaction", e);
-                }
-                PolicyUtil.provide(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
-                PolicyUtil.provide(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL);
-
-            } else {
-                // platform default behavior: raise an error if propagates required and implementation policy is absent,
-                // however, active transaction is not provided
-                throw new HandlerException(
-                        "Transaction policy requires an active transaction, but no transaction is present.");
-            }
-            return;
-        }
-        
-        if (suspendsRequired(exchange)) {
-            if (_log.isDebugEnabled()) {
-                _log.debug("Suspending active transaction for exchange.");
-            }
-
-            suspendTransaction(exchange);
-            // if an active transaction was present, it has been suspended -
-            // mark the policy requirement as provided.
-            PolicyUtil.provide(exchange, TransactionPolicy.SUSPENDS_TRANSACTION);
-            
-            if (managedGlobalRequired(exchange)) {
-                // start new global transaction
-                try {
-                    startTransaction(exchange);
-                } catch (Exception e) {
-                    throw new HandlerException("TransactionHandler failed to initiate a transaction", e);
-                }
-                PolicyUtil.provide(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL);
-
-            } else {
-                // requested implementation policy is noManaged or absent
-                PolicyUtil.provide(exchange, TransactionPolicy.NO_MANAGED_TRANSACTION);
-            }
-        }
-    }
-
-    private boolean propagatesProvided(Exchange exchange) {
-        return PolicyUtil.isProvided(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
     }
     
-    private boolean managedGlobalProvided(Exchange exchange) {
-        return PolicyUtil.isProvided(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL);
-    }
+    private void evaluateTransactionStatus(Exchange exchange) throws HandlerException {
+        Transaction transaction = getCurrentTransaction();
 
-    private boolean noManagedProvided(Exchange exchange) {
-        return PolicyUtil.isProvided(exchange, TransactionPolicy.NO_MANAGED_TRANSACTION);
+        if (transaction == null && propagatesRequired(exchange) && !managedGlobalRequired(exchange)) {
+            throw new HandlerException("Invalid transaction status : " 
+                    + TransactionPolicy.PROPAGATES_TRANSACTION + " is required but the transaction doesn't exist");
+        }
+    }
+    
+    private boolean isEligibleToSuspendTransaction(Exchange exchange) throws HandlerException {
+        Transaction transaction = getCurrentTransaction();
+        if (transaction == null) {
+           return false;
+       }
+
+        if (managedLocalRequired(exchange) || noManagedRequired(exchange) || suspendsRequired(exchange)) {
+            return true;
+        }
+
+       return false;
+    }
+    
+    private boolean isEligibleToStartTransaction(Exchange exchange) throws HandlerException {
+        Transaction transaction = getCurrentTransaction();
+        
+        if (managedLocalRequired(exchange)) {
+            return true;
+        } else if (managedGlobalRequired(exchange)) {
+            if (transaction == null) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private void provideRequiredPolicies(Exchange exchange) {
+        if (suspendsRequired(exchange)) {
+            provideSuspends(exchange);
+        } else if (propagatesRequired(exchange)) {
+            providePropagates(exchange);
+        }
+        
+        if (managedGlobalRequired(exchange)) {
+            provideManagedGlobal(exchange);
+        } else if (managedLocalRequired(exchange)) {
+            provideManagedLocal(exchange);
+        } else if (noManagedRequired(exchange)) {
+            provideNoManaged(exchange);
+        }
     }
     
     private boolean managedGlobalRequired(Exchange exchange) {
@@ -228,37 +236,77 @@ public class TransactionHandler implements ExchangeHandler {
         return PolicyUtil.isRequired(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
     }
     
-    private void startTransaction(Exchange exchange) throws Exception {
+    private void providePropagates(Exchange exchange) {
+        PolicyUtil.provide(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
+    }
+    
+    private void provideSuspends(Exchange exchange) {
+        PolicyUtil.provide(exchange, TransactionPolicy.SUSPENDS_TRANSACTION);
+    }
+
+    private void provideManagedGlobal(Exchange exchange) {
+        PolicyUtil.provide(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL);
+    }
+    
+    private void provideManagedLocal(Exchange exchange) {
+        PolicyUtil.provide(exchange, TransactionPolicy.MANAGED_TRANSACTION_LOCAL);
+    }
+    
+    private void provideNoManaged(Exchange exchange) {
+        PolicyUtil.provide(exchange, TransactionPolicy.NO_MANAGED_TRANSACTION);
+    }
+
+    private void startTransaction(Exchange exchange) throws HandlerException {
         if (_log.isDebugEnabled()) {
             _log.debug("creating new transaction");
         }
 
-        if (_transactionManager.getStatus() == Status.STATUS_NO_TRANSACTION) {
-            _transactionManager.begin();
-            Transaction transaction = _transactionManager.getTransaction();
+        int txStatus = getCurrentTransactionStatus();
+
+        if (txStatus == Status.STATUS_NO_TRANSACTION) {
+            Transaction transaction = null;
+            try {
+                _transactionManager.begin();
+                transaction = _transactionManager.getTransaction();
+            } catch (Exception e) {
+                throw new HandlerException("Failed to create new transaction", e);
+            }
             exchange.getContext().setProperty(INITIATED_TRANSACTION_PROPERTY, transaction);
         } else {
             throw new HandlerException("Transaction already exists");
         }
     }
     
-    private void endTransaction() throws Exception {
+    private void endTransaction() throws HandlerException {
         if (_log.isDebugEnabled()) {
             _log.debug("completing transaction");
         }
         
-        Transaction transaction = _transactionManager.getTransaction();
-        if (transaction.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
-            transaction.rollback();
-        } else if (transaction.getStatus() == Status.STATUS_ACTIVE) {
-            transaction.commit();
+        int txStatus = getCurrentTransactionStatus();
+
+        if (txStatus == Status.STATUS_MARKED_ROLLBACK) {
+            try {
+                _transactionManager.rollback();
+            } catch (Exception e) {
+                throw new HandlerException("Failed to rollback transaction", e);
+            }
+        } else if (txStatus == Status.STATUS_ACTIVE) {
+            try {
+                _transactionManager.commit();
+            } catch (Exception e) {
+                throw new HandlerException("Failed to commit transaction", e);
+            }
         } else {
-            throw new HandlerException("Could not complete transaction due to invalid status - code="
-                    + transaction.getStatus() + ": see javax.transaction.Status.");
+            throw new HandlerException("Failed to complete transaction due to invalid status - code="
+                    + txStatus + ": see javax.transaction.Status.");
         }
     }
 
     private void suspendTransaction(Exchange exchange) {
+        if (_log.isDebugEnabled()) {
+            _log.debug("Suspending active transaction for exchange.");
+        }
+
         Transaction transaction = null;
         try {
                 transaction = _transactionManager.suspend();
@@ -278,6 +326,22 @@ public class TransactionHandler implements ExchangeHandler {
             _transactionManager.resume(transaction);
         } catch (Exception ex) {
             _log.error("Failed to resume transaction after service invocation.", ex);
+        }
+    }
+
+    private Transaction getCurrentTransaction() throws HandlerException {
+        try {
+            return _transactionManager.getTransaction();
+        } catch (Exception e) {
+            throw new HandlerException("Failed to retrieve transaction status", e);
+        }
+    }
+    
+    private int getCurrentTransactionStatus() throws HandlerException {
+        try {
+            return _transactionManager.getStatus();
+        } catch (Exception e) {
+            throw new HandlerException("Failed to retrieve transaction status", e);
         }
     }
 }
