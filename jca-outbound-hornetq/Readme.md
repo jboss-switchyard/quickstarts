@@ -1,8 +1,8 @@
 Introduction
 ============
 This quickstart demonstrates the usage of the JCA Component and it's reference binding feature,
-by binding to a HornetQ Queue. When service is involed the message will be sended to the queue.
-This quickstart also have service binding to a HornetQ Queue. When you send a message into 
+by binding to a HornetQ Queue. When service is invoked the message will be sent to the queue.
+This quickstart also has a service binding to a HornetQ Queue. When you send a message into 
 OrderService queue, corresponding OrderServiceBean#process() will be called. And then
 OrderServiceBean will forward it to the ShippingQueue or FillingStockQueue through the reference bindings.
 
