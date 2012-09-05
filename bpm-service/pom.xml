@@ -74,6 +74,13 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <configuration>
+              <mainClass>org.switchyard.quickstarts.bpm.service.BPMClient</mainClass>
+          </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>

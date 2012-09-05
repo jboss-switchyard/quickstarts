@@ -24,6 +24,10 @@ JBoss AS 7
     cp target/switchyard-quickstart-transform-jaxb.jar ${AS7}/standalone/deployments
 4. Submit a request with your preferred SOAP client - src/test/resources/xml contains sample 
    requests and the responses that you should see
+   Alternatively use the simple bundled SOAP client and the sample request XML e.g.
+```
+    mvn exec:java
+```
 
 
 

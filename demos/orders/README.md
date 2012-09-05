@@ -20,6 +20,12 @@ This example demonstrates how to:
 2. Execute the Service by creating a new Order through one of the Service interfaces:
     * <b>JSF</b>: Goto <http://localhost:8080/switchyard-quickstart-demo-orders-[switchard-version]>.
     * <b>SOAP</b>:  Using a SOAP client application (such as [soapUI](http://www.soapui.org)), load the Service WSDL (<http://localhost:18001/demo-orders/OrderService?wsdl>) and submit a new order.  Note that the only valid <i>Item ID</i> is "BUTTER".
+    * <b>SOAP</b>L  Using the example SOAP client e.g. 
+```
+    mvn exec:java
+```
+
+    
 
 ## Further Reading
 

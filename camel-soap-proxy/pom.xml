@@ -95,6 +95,13 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>org.switchyard.quickstarts.camel.soap.proxy.CamelClient</mainClass>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

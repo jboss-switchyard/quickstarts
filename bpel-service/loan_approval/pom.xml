@@ -12,4 +12,15 @@
   <name>Quickstart : BPEL Service : Loan Approval</name>
   <packaging>jar</packaging>
 
+  <build>
+      <plugins>
+          <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>exec-maven-plugin</artifactId>
+              <configuration>
+                  <mainClass>org.switchyard.quickstarts.bpel.service.BPELLoanClient</mainClass>
+              </configuration>
+          </plugin>
+      </plugins>
+  </build>
 </project>

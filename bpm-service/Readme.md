@@ -31,6 +31,10 @@ JBoss AS 7
 4. Submit a webservice request to invoke the SOAP gateway.  There are a number of ways to do this :
       - Submit a request with your preferred SOAP client - src/test/resources/xml contains sample 
         requests and the responses that you should see
+      - Use the simple bundled SOAP client and the sample request XML e.g.
+```
+    mvn exec:java
+```
       - SOAP-UI : Use the wsdl for this projects (src/main/resources/wsdl/) to create a soap-ui 
         project.  Use the sample request (src/test/resources/xml/soap-request.xml) as an example 
         of a sample request.  The output below is the expected output :
