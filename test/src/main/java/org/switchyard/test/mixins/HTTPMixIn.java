@@ -20,6 +20,7 @@
 package org.switchyard.test.mixins;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -33,6 +34,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.DeleteMethod;
+import org.apache.commons.httpclient.methods.FileRequestEntity;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
@@ -164,6 +166,37 @@ public class HTTPMixIn extends AbstractTestMixIn {
         } catch (UnsupportedEncodingException e) {
             _logger.error("Unable to set request entity", e);
         }
+        try {
+            return execute(postMethod);
+        } finally {
+            postMethod.releaseConnection();
+        }
+    }
+
+    /**
+     * POST the specified request payload to the specified HTTP endpoint.
+     * @param endpointURL The HTTP endpoint URL.
+     * @param request The file resource containing the request payload.
+     * @return The HTTP response payload.
+     */
+    public String postFile(String endpointURL, String request) {
+
+        FileRequestEntity requestEntity = new FileRequestEntity
+            (new File(request), "text/xml; charset=utf-8");
+
+        if (_dumpMessages) {
+            _logger.info("Sending a POST request to [" + endpointURL + "]");
+            ByteArrayOutputStream target = new ByteArrayOutputStream();
+            try {
+                requestEntity.writeRequest(target);
+                _logger.info("Request body:[" + target.toString() + "]");
+            } catch (IOException e) {
+                _logger.error("Unable to write FileRequestEntity to stream", e);
+            }
+        }
+
+        PostMethod postMethod = new PostMethod(endpointURL);
+        postMethod.setRequestEntity(requestEntity);
         try {
             return execute(postMethod);
         } finally {
