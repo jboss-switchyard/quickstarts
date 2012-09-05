@@ -18,41 +18,39 @@
  */
 package org.switchyard.admin.base;
 
-import javax.xml.namespace.QName;
+import java.util.Collections;
+import java.util.List;
 
-import org.switchyard.admin.ComponentReference;
+import org.switchyard.admin.Application;
+import org.switchyard.admin.ComponentService;
+import org.switchyard.admin.ServiceOperation;
+import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.ComponentServiceModel;
 
 /**
- * BaseComponentReference
- * 
- * Base implementation for {@link ComponentReference}.
- * 
- * @author Rob Cernich
+ * Service without interface definition/operations.
  */
-public class BaseComponentReference extends BaseMessageMetricsAware implements ComponentReference {
-
-    private final QName _name;
-    private final String _interface;
+public class BaseNoopComponentService extends BaseComponentService implements ComponentService {
 
     /**
-     * Create a new BaseComponentReference.
+     * Create a new BaseComponentService from a config model.
      * 
-     * @param name the name of the reference
-     * @param interfaceName the required interface
+     * @param serviceConfig the component service configuration
+     * @param componentConfig the component configuration
+     * @param application the switchyard application
      */
-    public BaseComponentReference(QName name, String interfaceName) {
-        _name = name;
-        _interface = interfaceName;
+    public BaseNoopComponentService(ComponentServiceModel serviceConfig, ComponentModel componentConfig, Application application) {
+        super(serviceConfig, componentConfig, application);
     }
 
     @Override
-    public QName getName() {
-        return _name;
+    public List<ServiceOperation> getServiceOperations() {
+        return Collections.emptyList();
     }
 
     @Override
-    public String getInterface() {
-        return _interface;
+    public ServiceOperation getServiceOperation(String operation) {
+        return null;
     }
 
 }

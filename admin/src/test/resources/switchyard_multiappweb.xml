@@ -4,7 +4,7 @@
         <component name="ItemEntry">
             <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.demo.multiapp.web.ItemEntry"/>
             <reference name="InventoryService">
-                <interface.java interface="org.switchyard.quickstarts.demo.multiapp.InventoryService"/>
+                <interface.java interface="org.switchyard.admin.base.TestInterface"/>
             </reference>
         </component>
     </composite>

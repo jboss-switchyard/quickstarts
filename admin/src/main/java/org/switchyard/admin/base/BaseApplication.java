@@ -36,6 +36,7 @@ import org.switchyard.admin.Validator;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
+import org.switchyard.config.model.composite.InterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.validate.ValidateModel;
@@ -162,7 +163,13 @@ public class BaseApplication implements Application {
             // multiple services per component.
             if (component.getServices().size() > 0) {
                 ComponentServiceModel service = component.getServices().get(0);
-                _componentServices.put(service.getQName(), new BaseComponentService(service, component, this));
+                if (service.getInterface() == null) { 
+                    _componentServices.put(service.getQName(), new BaseNoopComponentService(service, component, this));
+                } else if (InterfaceModel.JAVA.equals(service.getInterface().getType())) {
+                    _componentServices.put(service.getQName(), new BaseJavaComponentService(service, component, this));
+                } else if (InterfaceModel.WSDL.equals(service.getInterface().getType())) {
+                    _componentServices.put(service.getQName(), new BaseWsdlComponentService(service, component, this));
+                }
             }
         }
     }

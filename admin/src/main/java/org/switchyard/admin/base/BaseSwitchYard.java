@@ -43,7 +43,7 @@ import org.switchyard.common.version.Versions;
  * object value. This is to support multiple services registered with the same
  * name.
  */
-public class BaseSwitchYard implements SwitchYard {
+public class BaseSwitchYard extends BaseMessageMetricsAware implements SwitchYard {
 
     private final String _version;
     private ConcurrentMap<QName, Application> _applications = new ConcurrentHashMap<QName, Application>();
@@ -51,7 +51,6 @@ public class BaseSwitchYard implements SwitchYard {
     private List<Service> _services = Collections.synchronizedList(new LinkedList<Service>());
     private Set<String> _socketBindingNames = Collections.synchronizedSet(new HashSet<String>());
     private ConcurrentMap<String, String> _properties = new ConcurrentHashMap<String, String>();
-    private MessageMetricsSupport _messageMetrics = new MessageMetricsSupport();
 
     /**
      * Create a new BaseSwitchYard.
@@ -259,8 +258,4 @@ public class BaseSwitchYard implements SwitchYard {
         _properties.remove(name);
     }
 
-    @Override
-    public MessageMetricsSupport getMessageMetrics() {
-        return _messageMetrics;
-    }
 }

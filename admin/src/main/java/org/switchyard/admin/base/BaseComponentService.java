@@ -40,42 +40,15 @@ import org.switchyard.config.model.composite.InterfaceModel;
  * 
  * @author Rob Cernich
  */
-public class BaseComponentService implements ComponentService {
-    
+public abstract class BaseComponentService extends BaseMessageMetricsAware implements ComponentService {
+
     private final QName _name;
     private final String _implementation;
     private final String _interface;
     private final Application _application;
     private List<ComponentReference> _references;
     private final String _implementationConfiguration;
-    private MessageMetricsSupport _messageMetrics = new MessageMetricsSupport();
 
-    /**
-     * Create a new BaseComponentService.
-     * 
-     * @param name the name of this service
-     * @param implementation the implementation of this service
-     * @param implementationConfiguration the raw configuration for the implementation of this service
-     * @param interfaceName the interface this service implements
-     * @param application the application providing this service
-     * @param references the references required by this service
-     */
-    public BaseComponentService(QName name, String implementation, 
-            String implementationConfiguration, 
-            String interfaceName, 
-            Application application, 
-            List<ComponentReference> references) {
-        
-        _name = name;
-        _implementation = implementation;
-        _interface = interfaceName;
-        _application = application;
-        if (references != null) {
-            _references = new LinkedList<ComponentReference>(references);
-        }
-        _implementationConfiguration = implementationConfiguration;
-    }
-    
     /**
      * Create a new BaseComponentService from a config model.
      * 
@@ -84,14 +57,13 @@ public class BaseComponentService implements ComponentService {
      * @param application the switchyard application
      */
     public BaseComponentService(ComponentServiceModel serviceConfig, ComponentModel componentConfig, Application application) {
-        
         _name = serviceConfig.getQName();
         _implementation = getComponentImplementationType(componentConfig);
         _interface = getInterfaceName(serviceConfig.getInterface());
         _application = application;
         _references = new LinkedList<ComponentReference>();
         _implementationConfiguration = getComponentImplementationConfiguration(componentConfig);
-        
+
         for (ComponentReferenceModel referenceModel : componentConfig.getReferences()) {
             _references.add(new BaseComponentReference(referenceModel.getQName(), 
                     getInterfaceName(referenceModel.getInterface())));
@@ -129,11 +101,6 @@ public class BaseComponentService implements ComponentService {
     @Override
     public String getImplementationConfiguration() {
         return _implementationConfiguration;
-    }
-
-    @Override
-    public MessageMetricsSupport getMessageMetrics() {
-        return _messageMetrics;
     }
 
     private String getInterfaceName(InterfaceModel interfaceModel) {

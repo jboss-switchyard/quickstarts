@@ -33,11 +33,11 @@ public interface InterfaceModel extends TypedModel {
     /**
      * Name of standard SCA Java interface.
      */
-    static final String JAVA = "java";
+    public static final String JAVA = "java";
     /**
      * Name of standard SCA WSDL interface.
      */
-    static final String WSDL = "wsdl";
+    public static final String WSDL = "wsdl";
 
 
     /**

@@ -22,38 +22,23 @@ package org.switchyard.admin.base;
 import javax.xml.namespace.QName;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.deploy.event.ApplicationDeployedEvent;
 import org.switchyard.deploy.internal.Deployment;
 
-public class SwitchYardBuilderTest {
+public class SwitchYardBuilderTest extends SwitchYardBuilderTestBase {
 
-    private static final QName TEST_APP = new QName("test-app");
-    
-    private BaseSwitchYard _switchYard;
-    private Deployment _deployment;
-    
     public SwitchYardBuilderTest() throws Exception {
-        _deployment = new MockDeployment(
-                new ModelPuller<SwitchYardModel>().pull("switchyard.xml", getClass()), 
-                TEST_APP);
+        super();
     }
-    
-    @Before
-    public void setUp() {
-        _switchYard = new BaseSwitchYard();
-        SwitchYardBuilder builder = new SwitchYardBuilder(_switchYard);
-        builder.notify(new ApplicationDeployedEvent(_deployment));
-    }
-    
-    @Test
+
+	@Test
     public void testApplication() {
         Assert.assertEquals(1, _switchYard.getApplications().size());
     }
-    
+
     @Test
     public void testService() {
         Assert.assertEquals(1, _switchYard.getApplication(TEST_APP).getServices().size());

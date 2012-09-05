@@ -27,7 +27,7 @@ import javax.xml.namespace.QName;
  * 
  * @author Rob Cernich
  */
-public interface ComponentReference {
+public interface ComponentReference extends MessageMetricsAware {
 
     /**
      * @return the name of this reference.
@@ -38,9 +38,5 @@ public interface ComponentReference {
      * @return the interface required for this reference.
      */
     String getInterface();
-    
-    /** Returns message metrics for this service.
-     * @return message metrics for this service
-     */
-    MessageMetrics getMessageMetrics();
+
 }

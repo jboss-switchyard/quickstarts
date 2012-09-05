@@ -29,7 +29,7 @@ import javax.xml.namespace.QName;
  * 
  * @author Rob Cernich
  */
-public interface ComponentService {
+public interface ComponentService extends MessageMetricsAware {
 
     /**
      * @return the name of this service.
@@ -53,6 +53,18 @@ public interface ComponentService {
     String getInterface();
 
     /**
+     * @return the operations exposed by this service.
+     */
+    List<ServiceOperation> getServiceOperations();
+
+    /**
+     * Gets service operation by name.
+     * @param operation the name of a operation provided by this service.
+     * @return the requested operation, may be null
+     */
+    ServiceOperation getServiceOperation(String operation);
+
+    /**
      * @return the references required by this service.
      */
     List<ComponentReference> getReferences();
@@ -62,9 +74,4 @@ public interface ComponentService {
      */
     Application getApplication();
 
-    /** Returns message metrics for this service.
-     * @return message metrics for this service
-     */
-    MessageMetrics getMessageMetrics();
-    
 }

@@ -44,16 +44,16 @@ MA  02110-1301, USA.
         <sca:component name="SimpleService">
             <bean:implementation.bean class="org.switchyard.example.m1app.SimpleBean"/>
             <sca:service name="SimpleService">
-                <sca:interface.java interface="org.switchyard.example.m1app.SimpleService"/>
+                <sca:interface.java interface="org.switchyard.admin.base.TestInterface"/>
             </sca:service>
             <sca:reference name="anotherService">
-                <sca:interface.java interface="org.switchyard.example.m1app.AnotherService"/>
+                <sca:interface.java interface="org.switchyard.admin.base.TestInterface"/>
             </sca:reference>
         </sca:component>
         <sca:component name="AnotherService">
             <bean:implementation.bean class="org.switchyard.example.m1app.AnotherBean"/>
             <sca:service name="AnotherService">
-                <sca:interface.java interface="org.switchyard.example.m1app.AnotherService"/>
+                <sca:interface.java interface="org.switchyard.admin.base.TestInterface"/>
             </sca:service>
         </sca:component>
     </sca:composite>

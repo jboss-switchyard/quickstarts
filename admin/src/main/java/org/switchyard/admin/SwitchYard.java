@@ -28,7 +28,7 @@ import javax.xml.namespace.QName;
 /**
  * Top-level admin interface for SwitchYard runtime.
  */
-public interface SwitchYard {
+public interface SwitchYard extends MessageMetricsAware {
 
     /**
      * The SwitchYard version.
@@ -89,11 +89,5 @@ public interface SwitchYard {
      * @return the SwitchYard system configuration properties.
      */
     Map<String,String> getProperties();
-    
-    /**
-     * Returns aggregate message metrics for the SwitchYard runtime.
-     * @return aggregate metrics for all services
-     */
-    MessageMetrics getMessageMetrics();
 
 }

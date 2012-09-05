@@ -20,8 +20,12 @@ package org.switchyard.admin.base;
 
 import java.util.EventObject;
 
+import javax.xml.namespace.QName;
+
+import org.switchyard.Exchange;
 import org.switchyard.admin.ComponentReference;
 import org.switchyard.admin.Service;
+import org.switchyard.admin.ServiceOperation;
 import org.switchyard.deploy.event.ApplicationDeployedEvent;
 import org.switchyard.deploy.event.ApplicationUndeployedEvent;
 import org.switchyard.deploy.internal.AbstractDeployment;
@@ -80,18 +84,28 @@ public class SwitchYardBuilder implements EventObserver {
         // Recording metrics at multiple levels at this point instead of
         // aggregating them.
         for (Service service : _switchYard.getServices()) {
-            if (service.getName().equals(event.getExchange().getProvider().getName())) {
+            Exchange exchange = event.getExchange();
+            QName serviceName = exchange.getProvider().getName();
+            String operationName = exchange.getContract().getProviderOperation().getName();
+            if (service.getName().equals(serviceName)) {
                 // 1 - the aggregate switchyard stats
-                _switchYard.getMessageMetrics().recordMetrics(event.getExchange());
+                _switchYard.recordMetrics(exchange);
                 
                 // 2 - service stats
                 BaseComponentService cs = (BaseComponentService)service.getPromotedService();
-                cs.getMessageMetrics().recordMetrics(event.getExchange());
+                cs.recordMetrics(exchange);
+
+                // 3 - operation statistics
+                for (ServiceOperation serviceOperation : cs.getServiceOperations()) {
+                    if (serviceOperation.getName().equals(operationName)) {
+                        serviceOperation.recordMetrics(exchange);
+                    }
+                }
             }
-            // 3 - reference stats
+            // 4 - reference stats
             for (ComponentReference reference : service.getPromotedService().getReferences()) {
                 if (reference.getName().equals(event.getExchange().getConsumer().getName())) {
-                    ((BaseComponentReference)reference).getMessageMetrics().recordMetrics(event.getExchange());
+                    ((BaseComponentReference)reference).recordMetrics(exchange);
                 }
             }
         }
