@@ -60,6 +60,7 @@ public class JCAJMSServiceBindingTest  {
     
     @Test
     public void testInflowJMS() throws Exception {
+        _testKit.removeService("JCAJMSService");
         final MockHandler mockHandler = _testKit.registerInOutService("JCAJMSService");
         
         final MessageProducer producer = _hqMixIn.getJMSSession().createProducer(HornetQMixIn.getJMSQueue(INPUT_QUEUE));

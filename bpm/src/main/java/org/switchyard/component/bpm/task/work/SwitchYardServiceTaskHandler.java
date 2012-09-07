@@ -101,7 +101,7 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
                         messageIn.setContent(messageContentIn);
                     }
                     if (inOutHandler != null && ExchangePattern.IN_OUT.equals(
-                            exchangeIn.getContract().getServiceOperation().getExchangePattern())) {
+                            exchangeIn.getContract().getConsumerOperation().getExchangePattern())) {
                         exchangeIn.send(messageIn);
                         try {
                             Exchange exchangeOut = inOutHandler.waitForOut();

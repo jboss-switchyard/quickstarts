@@ -23,17 +23,18 @@ import java.util.Map;
 
 import javax.activation.DataSource;
 import javax.ws.rs.core.MediaType;
-import javax.xml.namespace.QName;
 
 import org.junit.Assert;
 import org.junit.Test;
-
 import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePhase;
 import org.switchyard.ExchangeState;
 import org.switchyard.Message;
+import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.metadata.ExchangeContract;
+import org.switchyard.metadata.ServiceOperation;
 
 /**
  * Tests for REST utility.
@@ -114,10 +115,6 @@ public class RsMethodUtilTest {
             return null;
         }
 
-        public QName getServiceName() {
-            return null;
-        }
-
         public Message getMessage() {
             return new MockMessage();
         }
@@ -139,6 +136,26 @@ public class RsMethodUtilTest {
         }
 
         public ExchangePhase getPhase() {
+            return null;
+        }
+
+        @Override
+        public ServiceReference getConsumer() {
+            return null;
+        }
+
+        @Override
+        public Service getProvider() {
+            return null;
+        }
+
+        @Override
+        public Exchange consumer(ServiceReference consumer, ServiceOperation operation) {
+            return null;
+        }
+
+        @Override
+        public Exchange provider(Service provider, ServiceOperation operation) {
             return null;
         }
     }

@@ -89,6 +89,8 @@ public class CamelJMSTest {
 
     private void sendAndAssertOneMessage() throws Exception, InterruptedException {
         final String payload = "dummy payload";
+        // remove the currently registered service for SimpleCamelService
+        _testKit.removeService("SimpleCamelService");
         final MockHandler simpleCamelService = _testKit.registerInOnlyService("SimpleCamelService");
 
         sendTextToQueue(payload, "testQueue");

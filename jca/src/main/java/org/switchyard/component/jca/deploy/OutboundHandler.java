@@ -59,7 +59,7 @@ public class OutboundHandler extends BaseServiceHandler {
     @Override
     public void handleMessage(final Exchange exchange) throws HandlerException {
         Message out = _processor.process(exchange);
-        if (exchange.getContract().getServiceOperation().getExchangePattern() == ExchangePattern.IN_OUT) {
+        if (exchange.getContract().getProviderOperation().getExchangePattern() == ExchangePattern.IN_OUT) {
             exchange.send(out);
         }
     }

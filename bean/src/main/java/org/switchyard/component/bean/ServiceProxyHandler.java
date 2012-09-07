@@ -115,13 +115,13 @@ public class ServiceProxyHandler implements ServiceHandler {
         Invocation invocation = _serviceMetadata.getInvocation(exchange);
 
         if (invocation != null) {
-            ExchangePattern exchangePattern = exchange.getContract().getServiceOperation().getExchangePattern();
+            ExchangePattern exchangePattern = exchange.getContract().getProviderOperation().getExchangePattern();
             try {
 
                 if (_logger.isDebugEnabled()) {
                     _logger.debug("CDI Bean Service ExchangeHandler proxy class received " + exchangePattern + " Exchange ("
                             + System.identityHashCode(exchange) + ") for Bean Service '"
-                            + exchange.getServiceName() + "'.  Invoking bean method '" + invocation.getMethod().getName() + "'.");
+                            + exchange.getProvider().getName() + "'.  Invoking bean method '" + invocation.getMethod().getName() + "'.");
                 }
 
                 Object responseObject;

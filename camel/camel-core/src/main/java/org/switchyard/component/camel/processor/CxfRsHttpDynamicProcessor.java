@@ -61,9 +61,9 @@ public class CxfRsHttpDynamicProcessor extends DefaultProcessor {
      */
     @Override
     public void process(Exchange camelExchange) throws Exception {
-        final RsMethod restMethod = _resourcePaths.get(getExchange().getContract().getServiceOperation().toString());
+        final RsMethod restMethod = _resourcePaths.get(getExchange().getContract().getProviderOperation().toString());
         if (restMethod == null) {
-            throw new RuntimeException("Could not map " + getExchange().getContract().getServiceOperation().getName() + " to any REST method.");
+            throw new RuntimeException("Could not map " + getExchange().getContract().getProviderOperation().getName() + " to any REST method.");
         }
         camelExchange.getIn().setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.TRUE);
         camelExchange.getIn().setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, restMethod.getResponseType());

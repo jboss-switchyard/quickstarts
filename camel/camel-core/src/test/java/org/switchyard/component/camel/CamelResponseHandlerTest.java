@@ -34,12 +34,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.Service;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.camel.composer.CamelBindingData;
 import org.switchyard.component.camel.composer.CamelComposition;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.metadata.ExchangeContract;
-import org.switchyard.metadata.InvocationContract;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.metadata.java.JavaService;
 
@@ -98,20 +98,22 @@ public class CamelResponseHandlerTest {
         final org.switchyard.Exchange switchYardExchange = mock(org.switchyard.Exchange.class);
         final org.switchyard.Context switchYardContext = mock(org.switchyard.Context.class);
         final ExchangeContract exchangeContract = mock(ExchangeContract.class);
-        final InvocationContract invocationContract = mock(InvocationContract.class);
         final ServiceOperation serviceOperation = mock(ServiceOperation.class);
+        final ServiceOperation referenceOperation = mock(ServiceOperation.class);
+        final Service provider = mock(Service.class);
 
         final Message message = mock(Message.class);
+        when(provider.getName()).thenReturn(SERVICE_QNAME);
+        when(switchYardExchange.getProvider()).thenReturn(provider);
         when(message.getContent(Integer.class)).thenReturn(payload);
         when(switchYardExchange.getContext()).thenReturn(switchYardContext);
-        when(switchYardExchange.getServiceName()).thenReturn(SERVICE_QNAME);
         when(switchYardExchange.getMessage()).thenReturn(message);
-        when(invocationContract.getOutputType()).thenReturn(JAVA_STRING_QNAME);
-        when(exchangeContract.getInvokerInvocationMetaData()).thenReturn(invocationContract);
+        when(referenceOperation.getOutputType()).thenReturn(JAVA_STRING_QNAME);
+        when(exchangeContract.getProviderOperation()).thenReturn(serviceOperation);
         when(serviceOperation.getInputType()).thenReturn(JAVA_STRING_QNAME);
         when(serviceOperation.getOutputType()).thenReturn(null);
         when(serviceOperation.getFaultType()).thenReturn(null);
-        when(exchangeContract.getServiceOperation()).thenReturn(serviceOperation);
+        when(exchangeContract.getConsumerOperation()).thenReturn(referenceOperation);
         when(switchYardExchange.getContract()).thenReturn(exchangeContract);
 
         return switchYardExchange;

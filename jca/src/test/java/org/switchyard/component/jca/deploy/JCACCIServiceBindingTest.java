@@ -70,6 +70,7 @@ public class JCACCIServiceBindingTest  {
 
     @Test
     public void testInflowCCI() throws Exception {
+        _testKit.removeService("JCACCIService");
         final MockHandler mockHandler = _testKit.registerInOutService("JCACCIService");
         mockHandler.forwardInToOut();
 
@@ -86,6 +87,7 @@ public class JCACCIServiceBindingTest  {
     
     @Test
     public void testInflowCCIWithBeforeAfterDelivery() throws Exception {
+        _testKit.removeService("JCACCIService");
         final MockHandler mockHandler = _testKit.registerInOutService("JCACCIService");
         mockHandler.forwardInToOut();
 
@@ -103,6 +105,7 @@ public class JCACCIServiceBindingTest  {
 
     @Test
     public void testInflowCCIReuseReleasedEndpoint() throws Exception {
+        _testKit.removeService("JCACCIService");
         final MockHandler mockHandler = _testKit.registerInOutService("JCACCIService");
         mockHandler.forwardInToOut();
 

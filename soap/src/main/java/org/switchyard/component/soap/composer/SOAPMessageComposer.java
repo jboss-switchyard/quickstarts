@@ -80,7 +80,7 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
             Node bodyNode = bodyChildren.get(0);
             if (_config != null && _config.isUnwrapped()) {
                 // peel off the operation wrapper, if present
-                String opName = exchange.getContract().getServiceOperation().getName();
+                String opName = exchange.getContract().getConsumerOperation().getName();
                 if (opName != null && opName.equals(bodyNode.getLocalName())) {
                     List<Element> subChildren = getChildElements(bodyNode);
                     if (subChildren.size() == 0 || subChildren.size() > 1) {
@@ -127,7 +127,7 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
                 org.w3c.dom.Node messageNodeImport = soapMessage.getSOAPBody().getOwnerDocument().importNode(input, true);
                 if (exchange.getState() != ExchangeState.FAULT || isSOAPFaultPayload(input)) {
                     if (_config != null && _config.isUnwrapped()) {
-                        String opName = exchange.getContract().getServiceOperation().getName();
+                        String opName = exchange.getContract().getProviderOperation().getName();
                         String ns = getWrapperNamespace(opName, exchange.getPhase() == null);
                         // Don't wrap if it's already wrapped
                         if (!messageNodeImport.getLocalName().equals(opName)) {

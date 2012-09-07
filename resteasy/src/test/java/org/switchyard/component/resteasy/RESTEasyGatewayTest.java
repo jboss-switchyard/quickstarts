@@ -28,7 +28,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
@@ -36,14 +35,12 @@ import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
+import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.metadata.BaseService;
 import org.switchyard.metadata.InOutOperation;
-import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.MockHandler;
-import org.switchyard.test.SwitchYardRunner;
-import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.mixins.HTTPMixIn;
 
 /**
@@ -51,16 +48,13 @@ import org.switchyard.test.mixins.HTTPMixIn;
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-@RunWith(SwitchYardRunner.class)
-@SwitchYardTestCaseConfig(mixins = HTTPMixIn.class)
 public class RESTEasyGatewayTest {
 
     private static final QName STRING_QNAME = new QName("java:java.lang.String");
     private static ModelPuller<CompositeModel> _puller;
     private ServiceDomain _domain;
-    private HTTPMixIn httpMixIn;
-
-    @org.switchyard.test.ServiceOperation("{urn:resteasy:test:1.0}SampleRESTEasyConsumerService")
+    private HTTPMixIn _httpMixIn = new HTTPMixIn();
+    
     private Invoker _consumerService;
 
     private RESTEasyBindingModel _config;
@@ -71,6 +65,10 @@ public class RESTEasyGatewayTest {
 
     @Before
     public void setUp() throws Exception {
+        _httpMixIn.initialize();
+        _domain = new ServiceDomainManager().createDomain();
+        _consumerService = new Invoker(_domain, QName.valueOf("{urn:resteasy:test:1.0}SampleRESTEasyConsumerService"));
+        
         _puller = new ModelPuller<CompositeModel>();
         CompositeModel composite = _puller.pull("/HelloSwitchYard.xml", getClass());
         composite.assertModelValid();
@@ -80,8 +78,8 @@ public class RESTEasyGatewayTest {
 
         // Massive hack for Test Runner. Register both a service and a reference binding.
 
-        _domain.registerService(_config.getServiceName(), new InOutService(), mockService);
-        _domain.registerServiceReference(_config.getServiceName(), new InOutService());
+        _domain.registerService(_config.getServiceName(), new HelloRESTEasyInterface(), mockService);
+        _domain.registerServiceReference(_config.getServiceName(), new HelloRESTEasyInterface());
         _restInbound = new InboundHandler(_config, _domain);
 
         CompositeReferenceModel compositeReference = composite.getReferences().get(0);
@@ -104,13 +102,13 @@ public class RESTEasyGatewayTest {
 
     @Test
     public void restGatewayServiceTest() throws Exception {
-        String response = httpMixIn.sendString("http://localhost:8080/greeters/magesh", "", HTTPMixIn.HTTP_PUT);
+        String response = _httpMixIn.sendString("http://localhost:8080/greeters/magesh", "", HTTPMixIn.HTTP_PUT);
         Assert.assertEquals(1, mockService.getMessages().size());
         Assert.assertEquals("magesh", response);
-        response = httpMixIn.sendString("http://localhost:8080/greeters/keith", "", HTTPMixIn.HTTP_GET);
+        response = _httpMixIn.sendString("http://localhost:8080/greeters/keith", "", HTTPMixIn.HTTP_GET);
         Assert.assertEquals(2, mockService.getMessages().size());
         Assert.assertEquals("keith", response);
-        response = httpMixIn.sendString("http://localhost:8080/greeters/magesh", "keith", HTTPMixIn.HTTP_POST);
+        response = _httpMixIn.sendString("http://localhost:8080/greeters/magesh", "keith", HTTPMixIn.HTTP_POST);
         Assert.assertEquals(3, mockService.getMessages().size());
         Assert.assertEquals("keith", response);
     }

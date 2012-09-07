@@ -240,7 +240,7 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
         }
         UserTransaction userTx = null;
         Context context = exchange.getContext();
-        ServiceOperation serviceOperation = exchange.getContract().getServiceOperation();
+        ServiceOperation serviceOperation = exchange.getContract().getProviderOperation();
         ProcessActionModel processActionModel = _actionModels.get(serviceOperation.getName());
         ProcessActionType processActionType = getProcessActionType(context, processActionModel);
         Message messageIn = exchange.getMessage();

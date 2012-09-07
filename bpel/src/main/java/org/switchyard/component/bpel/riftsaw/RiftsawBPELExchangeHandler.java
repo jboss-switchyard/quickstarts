@@ -266,7 +266,7 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
             // Find part name associated with operation on port type
             javax.wsdl.Operation operation =
                     _portType.getOperation(exchange.getContract().
-                            getServiceOperation().getName(),
+                            getProviderOperation().getName(),
                                 null, null);
 
             Element newreq =
@@ -276,10 +276,10 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
             // Invoke the operation on the BPEL process
             Element response = _engine.invoke(_wsdlServiceName, null,
                     exchange.getContract().
-                        getServiceOperation().getName(),
+                    getProviderOperation().getName(),
                             newreq, headers);
 
-            if (exchange.getContract().getServiceOperation().
+            if (exchange.getContract().getProviderOperation().
                     getExchangePattern().equals(ExchangePattern.IN_OUT)) {
 
                 Message message = exchange.createMessage();

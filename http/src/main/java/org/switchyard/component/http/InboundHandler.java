@@ -97,7 +97,7 @@ public class InboundHandler extends BaseServiceHandler {
             SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
             Exchange exchange = _service.createExchange(_operationName, inOutHandler);
             Message message = _messageComposer.compose(input, exchange, true);
-            if (exchange.getContract().getServiceOperation().getExchangePattern() == ExchangePattern.IN_ONLY) {
+            if (exchange.getContract().getConsumerOperation().getExchangePattern() == ExchangePattern.IN_ONLY) {
                 exchange.send(message);
                 response = new HttpResponseBindingData();
             } else {

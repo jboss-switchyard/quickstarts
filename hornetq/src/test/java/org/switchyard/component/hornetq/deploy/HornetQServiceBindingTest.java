@@ -30,6 +30,7 @@ import org.hornetq.api.core.client.ClientProducer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.ServiceDomain;
 import org.switchyard.component.hornetq.internal.HornetQUtil;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardRunner;
@@ -51,6 +52,7 @@ public class HornetQServiceBindingTest  {
     private static final String INPUT_QUEUE = "jms.queue.consumer";
     private SwitchYardTestKit _testKit;
     private HornetQMixIn _mixIn;
+    private ServiceDomain _domain;
     
     @Before
     public void getHornetQMixIn() {
@@ -59,6 +61,8 @@ public class HornetQServiceBindingTest  {
 
     @Test
     public void servicebinding() throws HornetQException {
+        // replace existing component service in config
+        _testKit.removeService("HornetQService");
         final MockHandler mockHandler = _testKit.registerInOutService("HornetQService");
         final ClientProducer hornetQProducer = _mixIn.getClientSession().createProducer(INPUT_QUEUE);
         hornetQProducer.send(_mixIn.createMessage("payload"));

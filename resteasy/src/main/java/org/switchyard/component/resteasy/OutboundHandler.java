@@ -94,8 +94,8 @@ public class OutboundHandler extends BaseServiceHandler {
      */
     @Override
     public void handleMessage(final Exchange exchange) throws HandlerException {
-        final RsMethod restMethod = _resourcePaths.get(exchange.getContract().getServiceOperation().toString());
-        final String opName = exchange.getContract().getServiceOperation().getName();
+        final RsMethod restMethod = _resourcePaths.get(exchange.getContract().getProviderOperation().toString());
+        final String opName = exchange.getContract().getProviderOperation().getName();
         if (restMethod == null) {
             throw new RuntimeException("Could not map " + opName + " to any RESTEasy method.");
         }

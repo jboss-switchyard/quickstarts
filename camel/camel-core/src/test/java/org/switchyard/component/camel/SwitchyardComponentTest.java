@@ -64,7 +64,7 @@ public class SwitchyardComponentTest extends CamelTestSupport {
         
         _serviceDomain.registerService(new QName(_serviceName), new InOutService(), 
                 new ResponseService(expectedResponse));
-        _serviceDomain.registerServiceReference(new QName(_serviceName), new InOutService());
+        _serviceDomain.registerServiceReference(new QName(_serviceName), new InOutService("process"));
         
         final String response = (String) template.requestBody("direct:input", payload);
         assertThat(response, is(equalTo(expectedResponse)));
@@ -75,7 +75,7 @@ public class SwitchyardComponentTest extends CamelTestSupport {
         final String payload = "bajja";
         final MockHandler mockService = new MockHandler();
         _serviceDomain.registerService(new QName(_serviceName), new InOnlyService(), mockService);
-        _serviceDomain.registerServiceReference(new QName(_serviceName), new InOnlyService());
+        _serviceDomain.registerServiceReference(new QName(_serviceName), new InOnlyService("process"));
         
         template.sendBody("direct:input", payload);
         

@@ -177,7 +177,7 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
             return;
         }
         Context context = exchange.getContext();
-        ServiceOperation serviceOperation = exchange.getContract().getServiceOperation();
+        ServiceOperation serviceOperation = exchange.getContract().getProviderOperation();
         RulesActionModel rulesActionModel = _actions.get(serviceOperation.getName());
         RulesActionType rulesActionType = getRulesActionType(context, rulesActionModel);
         Message message = exchange.getMessage();

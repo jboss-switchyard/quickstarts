@@ -113,7 +113,6 @@ public class HttpGatewayServlet extends HttpServlet {
     public void handle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
             HttpRequestBindingData httpRequest = new HttpRequestBindingData();
-            byte[] responseBody = null;
             try {
                 httpRequest.setContentType(new ContentType(request.getContentType()));
                 httpRequest.setBodyFromStream(request.getInputStream());

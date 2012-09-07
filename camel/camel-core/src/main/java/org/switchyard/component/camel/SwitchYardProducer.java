@@ -100,8 +100,14 @@ public class SwitchYardProducer extends DefaultProducer {
     }
     
     private Exchange createSwitchyardExchange(final org.apache.camel.Exchange camelExchange, final ServiceReference serviceRef) {
-        return serviceRef.createExchange(lookupOperationNameFor(camelExchange, serviceRef), 
-                new CamelResponseHandler(camelExchange, serviceRef, _messageComposer));
+        String opName = lookupOperationNameFor(camelExchange, serviceRef);
+        CamelResponseHandler handler = new CamelResponseHandler(camelExchange, serviceRef, _messageComposer);
+        
+        if (opName != null) {
+            return serviceRef.createExchange(opName, handler);
+        } else {
+            return serviceRef.createExchange(handler);
+        }
     }
     
     

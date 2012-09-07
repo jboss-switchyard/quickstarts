@@ -23,7 +23,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Message;
-import org.switchyard.component.bean.BeanComponentException;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.test.InvocationFaultException;
 import org.switchyard.test.Invoker;
@@ -65,10 +64,10 @@ public class BeanConsumerTest {
             unknownXOp.sendInOut("hello");
             // if we got here, then our negative test failed
             Assert.fail("Invalid operation allowed!");
-        } catch (SwitchYardException syEx) {
+        } catch (InvocationFaultException ifEx) {
             Assert.assertEquals(
                     "Operation unknownXOp is not included in interface for service: ConsumerService", 
-                    syEx.getMessage());
+                    ifEx.getFaultMessage().getContent(Exception.class).getMessage());
         }
     }
 

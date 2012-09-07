@@ -21,6 +21,7 @@ package org.switchyard.component.http;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.xml.namespace.QName;
 
 import org.junit.After;
@@ -36,12 +37,9 @@ import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.metadata.BaseService;
-import org.switchyard.metadata.InOnlyOperation;
-import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceOperation;
-import org.switchyard.test.InvocationFaultException;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardRunner;
@@ -82,7 +80,7 @@ public class HttpGatewayTest {
 
         // Massive hack for Test Runner. Register both a service and a reference binding.
         _domain.registerService(_config.getServiceName(), new InOutService(), mockService);
-        _domain.registerServiceReference(_config.getServiceName(), new InOutService());
+        _domain.registerServiceReference(_config.getServiceName(), new HelloInterface());
         _httpInbound = new InboundHandler(_config, _domain);
         _httpInbound.start();
 

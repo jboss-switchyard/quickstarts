@@ -137,7 +137,7 @@ public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandle
     }
 
     private boolean isInOut(final Exchange exchange) {
-        return exchange.getContract().getServiceOperation().getExchangePattern() == ExchangePattern.IN_OUT;
+        return exchange.getContract().getProviderOperation().getExchangePattern() == ExchangePattern.IN_OUT;
     }
     
     @Override

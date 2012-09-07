@@ -73,10 +73,10 @@ public class CamelMessageComposer extends BaseMessageComposer<CamelBindingData> 
 
         org.apache.camel.Message targetMessage = target.getMessage();
 
-        ServiceOperation operation = exchange.getContract().getServiceOperation();
+        ServiceOperation operation = exchange.getContract().getProviderOperation();
         targetMessage.setHeader(OPERATION_NAME, operation.getName());
         targetMessage.setHeader(FAULT_TYPE, operation.getFaultType());
-        targetMessage.setHeader(SERVICE_NAME, exchange.getServiceName());
+        targetMessage.setHeader(SERVICE_NAME, exchange.getProvider().getName());
 
         targetMessage.setBody(exchange.getMessage().getContent());
         return target;
@@ -90,9 +90,9 @@ public class CamelMessageComposer extends BaseMessageComposer<CamelBindingData> 
     private QName getMessageType(Exchange exchange) {
         QName msgType;
         if (exchange.getPhase() == null) {
-            msgType = exchange.getContract().getInvokerInvocationMetaData().getInputType();
+            msgType = exchange.getContract().getConsumerOperation().getInputType();
         } else {
-            msgType = exchange.getContract().getInvokerInvocationMetaData().getOutputType();
+            msgType = exchange.getContract().getConsumerOperation().getOutputType();
         }
         
         return msgType;

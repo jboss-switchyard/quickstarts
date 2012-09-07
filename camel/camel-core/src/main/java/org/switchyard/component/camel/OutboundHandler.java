@@ -126,7 +126,7 @@ public class OutboundHandler extends BaseServiceHandler {
     }
     
     private boolean isInOnly(final Exchange exchange) {
-        return exchange.getContract().getServiceOperation().getExchangePattern() == ExchangePattern.IN_ONLY;
+        return exchange.getContract().getConsumerOperation().getExchangePattern() == ExchangePattern.IN_ONLY;
     }
 
     private void handleInOnly(final Exchange exchange) throws HandlerException {

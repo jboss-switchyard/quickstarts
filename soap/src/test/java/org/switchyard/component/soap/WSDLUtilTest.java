@@ -20,27 +20,18 @@
 package org.switchyard.component.soap;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
+import javax.xml.namespace.QName;
 
 import org.junit.Assert;
 import org.junit.Test;
-
-import org.switchyard.Exchange;
-import org.switchyard.ExchangeHandler;
-import org.switchyard.ServiceReference;
 import org.switchyard.component.soap.util.WSDLUtil;
-import org.switchyard.metadata.BaseExchangeContract;
-import org.switchyard.metadata.BaseInvocationContract;
 import org.switchyard.metadata.BaseService;
-import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.InOutOperation;
-import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.ServiceOperation;
 
 /**

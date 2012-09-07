@@ -33,6 +33,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.ServiceDomain;
 import org.switchyard.component.camel.deploy.support.CustomPackageScanResolver;
 import org.switchyard.deploy.internal.Deployment;
 import org.switchyard.test.MockHandler;
@@ -51,10 +52,13 @@ import org.switchyard.test.mixins.CDIMixIn;
 @SwitchYardTestCaseConfig(config = "switchyard-activator-test.xml", mixins = CDIMixIn.class)
 public class CamelActivatorTest {
 
+    private ServiceDomain _domain;
     private SwitchYardTestKit _testKit;
 
     @Test
     public void sendOneWayMessageThroughCamelToSwitchYardService() throws Exception {
+        // remove the currently registered service for SimpleCamelService
+        _testKit.removeService("SimpleCamelService");
         final MockHandler mockHandler = _testKit.registerInOnlyService("SimpleCamelService");
         final CamelContext camelContext = getCamelContext();
         final ProducerTemplate producerTemplate = camelContext.createProducerTemplate();
