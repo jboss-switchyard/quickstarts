@@ -67,6 +67,8 @@ public class JCAInflowBindingTest {
     @Test
     public void triggerGreetingService() throws Exception {
         final String payload = "dummy payload";
+        // replace existing implementation for testing purposes
+        _testKit.removeService("GreetingService");
         final MockHandler greetingService = _testKit.registerInOnlyService("GreetingService");
         
         final MessageProducer producer = _hqMixIn.getJMSSession().createProducer(HornetQMixIn.getJMSQueue("GreetingServiceQueue"));

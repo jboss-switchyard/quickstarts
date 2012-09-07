@@ -57,6 +57,8 @@ public class CamelJMSBindingTest {
     @Test
     public void sendTextMessageToJMSQueue() throws Exception {
         final String payload = "dummy payload";
+        // replace existing implementation for testing purposes
+        _testKit.removeService("GreetingService");
         final MockHandler greetingService = _testKit.registerInOnlyService("GreetingService");
         
         sendTextToQueue(payload, QUEUE_NAME);

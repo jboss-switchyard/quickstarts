@@ -28,7 +28,7 @@ import org.switchyard.component.rules.Rules;
 @Rules(value=Interview.class,
        agent=true,
        resources={InterviewRules.PKG},
-       globals={@Mapping(expression="exchange.serviceName.localPart", variable="service")})
+       globals={@Mapping(expression="exchange.provider.name.localPart", variable="service")})
 public interface InterviewRules extends Interview {
 
     static String PKG = "/org/switchyard/quickstarts/rules/interview/Interview.pkg";

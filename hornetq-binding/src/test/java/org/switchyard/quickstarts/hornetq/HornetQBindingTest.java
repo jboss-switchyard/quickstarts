@@ -61,6 +61,8 @@ public class HornetQBindingTest {
     @Test
     public void triggerGreetingService() throws Exception {
         final String payload = "dummy payload";
+        // replace existing implementation for testing purposes
+        _testKit.removeService("GreetingService");
         final MockHandler greetingService = _testKit.registerInOnlyService("GreetingService");
         
         final ClientProducer producer = _mixIn.getClientSession().createProducer("jms.queue.GreetingServiceQueue");
