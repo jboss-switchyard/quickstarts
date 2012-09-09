@@ -20,10 +20,6 @@ package org.switchyard.as7.extension.admin;
 
 import static org.switchyard.as7.extension.SwitchYardModelConstants.SERVICE_NAME;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import javax.xml.namespace.QName;
 
 import org.jboss.as.controller.OperationContext;
@@ -32,7 +28,6 @@ import org.jboss.as.controller.OperationStepHandler;
 import org.jboss.dmr.ModelNode;
 import org.jboss.msc.service.ServiceController;
 import org.switchyard.admin.Application;
-import org.switchyard.admin.MessageMetrics;
 import org.switchyard.admin.Service;
 import org.switchyard.admin.SwitchYard;
 import org.switchyard.as7.extension.services.SwitchYardAdminService;
@@ -72,13 +67,13 @@ public final class SwitchYardSubsystemShowMetrics implements OperationStepHandle
                 
                 SwitchYard switchYard = SwitchYard.class.cast(controller.getService().getValue());
                 if (operation.hasDefined(SERVICE_NAME)) {
-                    final QName serviceName = QName.valueOf(operation.get(SERVICE_NAME).asString());
+                    final String serviceName = operation.get(SERVICE_NAME).asString();
+                    final QName serviceQName = QName.valueOf(serviceName);
                     for (Application application : switchYard.getApplications()) {
-                        Service service = findService(serviceName, application);
-                        if (service != null) {
-                            context.getResult().add(
-                                    ModelNodeCreationUtil.createServiceMetricsNode(service));
-                            break;
+                        for (Service service : application.getServices()) {
+                            if ("*".equals(serviceName) || serviceQName.equals(service.getName())) {
+                                context.getResult().add(ModelNodeCreationUtil.createServiceMetricsNode(service));
+                            }
                         }
                     }
                 } else {
@@ -93,12 +88,4 @@ public final class SwitchYardSubsystemShowMetrics implements OperationStepHandle
         context.completeStep();
     }
     
-    private Service findService(QName serviceName, Application application) {
-        for (Service service : application.getServices()) {
-            if (serviceName.equals(service.getName())) {
-                return service;
-            }
-        }
-        return null;
-    }
 }

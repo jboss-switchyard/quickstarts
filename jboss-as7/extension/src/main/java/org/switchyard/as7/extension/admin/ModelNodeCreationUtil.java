@@ -35,6 +35,7 @@ import static org.switchyard.as7.extension.SwitchYardModelConstants.IMPLEMENTATI
 import static org.switchyard.as7.extension.SwitchYardModelConstants.IMPLEMENTATION_CONFIGURATION;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.MAX_TIME;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.MIN_TIME;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.OPERATIONS;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.PROMOTED_SERVICE;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.REFERENCES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.SERVICES;
@@ -57,6 +58,7 @@ import org.switchyard.admin.ComponentReference;
 import org.switchyard.admin.ComponentService;
 import org.switchyard.admin.MessageMetrics;
 import org.switchyard.admin.Service;
+import org.switchyard.admin.ServiceOperation;
 import org.switchyard.admin.Transformer;
 import org.switchyard.admin.Validator;
 import org.switchyard.config.model.switchyard.ArtifactModel;
@@ -492,8 +494,8 @@ final public class ModelNodeCreationUtil {
      *      "totalTime" =&gt; "totalTime"
      * </pre></code>
      * 
-     * @param service the {@link Service} used to populate the node.
      * @param node the node to add metrics to
+     * @param metrics the metrics to add to the node
      * @return a new {@link ModelNode}
      */
     public static ModelNode addMetricsToNode(ModelNode node, MessageMetrics metrics) {
@@ -521,6 +523,19 @@ final public class ModelNodeCreationUtil {
      *      "minTime" =&gt; "minTime",
      *      "maxTime" =&gt; "maxTime",
      *      "totalTime" =&gt; "totalTime",
+     *      "operations" =&gt; [
+     *          {
+     *              "name" =&gt; "operationName",
+     *               "successCount" =&gt; "successCount",
+     *               "faultCount" =&gt; "faultCount",
+     *               "totalCount" =&gt; "totalCount",
+     *               "averageTime" =&gt; "averageTime",
+     *               "minTime" =&gt; "minTime",
+     *               "maxTime" =&gt; "maxTime",
+     *               "totalTime" =&gt; "totalTime",
+     *          },
+     *          ...
+     *      ],
      *      "references" =&gt; [
      *          {
      *              "name" =&gt; "referenceName",
@@ -544,6 +559,15 @@ final public class ModelNodeCreationUtil {
 
         serviceNode.get(NAME).set(service.getName().toString());
         addMetricsToNode(serviceNode, service.getPromotedService().getMessageMetrics());
+
+        ModelNode operationsNode = new ModelNode();
+        for (ServiceOperation operation : service.getPromotedService().getServiceOperations()) {
+            ModelNode operationNode = new ModelNode();
+            operationNode.get(NAME).set(operation.getName());
+            addMetricsToNode(operationNode, operation.getMessageMetrics());
+            operationsNode.add(operationNode);
+        }
+        serviceNode.get(OPERATIONS).set(operationsNode);
 
         ModelNode referencesNode = new ModelNode();
         for (ComponentReference reference : service.getPromotedService().getReferences()) {

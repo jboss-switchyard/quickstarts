@@ -64,7 +64,7 @@ public class RESTEasyResourcePublisher implements ResourcePublisher {
             serverContext.setPath("/" + context);
             File docBase = new File(SERVER_TEMP_DIR, context);
             if (!docBase.exists()) {
-                if(!docBase.mkdirs()) {
+                if (!docBase.mkdirs()) {
                     throw new RuntimeException("Unable to create temp directory " + docBase.getPath());
                 }
             }

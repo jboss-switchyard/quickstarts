@@ -107,6 +107,10 @@ public final class SwitchYardModelConstants {
      */
     public static final String GATEWAYS = "gateways";
     /**
+     * Constant for model key: operations.
+     */
+    public static final String OPERATIONS = "operations";
+    /**
      * Constant for model key: promotedService.
      */
     public static final String PROMOTED_SERVICE = "promotedService";
