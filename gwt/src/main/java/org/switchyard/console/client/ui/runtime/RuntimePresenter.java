@@ -29,7 +29,6 @@ import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.model.MessageMetrics;
-import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.model.ServiceMetrics;
 import org.switchyard.console.client.model.SwitchYardStore;
 
@@ -79,14 +78,14 @@ public class RuntimePresenter extends Presenter<RuntimePresenter.MyView, Runtime
         void setPresenter(RuntimePresenter presenter);
 
         /**
-         * @param services the services deployed on the server.
+         * @param serviceMetrics metrics for all services deployed on the server.
          */
-        void setServices(List<Service> services);
+        void setServices(List<ServiceMetrics> serviceMetrics);
 
         /**
          * @param service set the selected service
          */
-        void setService(Service service);
+        void setService(ServiceMetrics service);
 
         /**
          * @param serviceMetrics the metrics for the selected service.
@@ -137,12 +136,12 @@ public class RuntimePresenter extends Presenter<RuntimePresenter.MyView, Runtime
      * presenter will load the service details and pass them back to the view to
      * be displayed.
      * 
-     * @param service the selected service.
+     * @param serviceMetrics the selected service.
      */
-    public void onServiceSelected(Service service) {
+    public void onServiceSelected(ServiceMetrics serviceMetrics) {
         PlaceRequest request = new PlaceRequest(NameTokens.RUNTIME_PRESENTER);
-        if (service != null) {
-            request = request.with(NameTokens.SERVICE_NAME_PARAM, URL.encode(service.getName()));
+        if (serviceMetrics != null) {
+            request = request.with(NameTokens.SERVICE_NAME_PARAM, URL.encode(serviceMetrics.getName()));
         }
         _placeManager.revealRelativePlace(request, -1);
     }
@@ -215,10 +214,10 @@ public class RuntimePresenter extends Presenter<RuntimePresenter.MyView, Runtime
     }
 
     private void loadServicesList() {
-        _switchYardStore.loadServices(new AsyncCallback<List<Service>>() {
+        _switchYardStore.loadAllServiceMetrics(new AsyncCallback<List<ServiceMetrics>>() {
             @Override
-            public void onSuccess(List<Service> services) {
-                getView().setServices(services);
+            public void onSuccess(List<ServiceMetrics> serviceMetrics) {
+                getView().setServices(serviceMetrics);
             }
 
             @Override
@@ -237,10 +236,7 @@ public class RuntimePresenter extends Presenter<RuntimePresenter.MyView, Runtime
 
             @Override
             public void onSuccess(ServiceMetrics result) {
-                Service service = _switchYardStore.getBeanFactory().service().as();
-                service.setName(result.getName());
-
-                getView().setService(service);
+                getView().setService(result);
                 getView().setServiceMetrics(result);
             }
 

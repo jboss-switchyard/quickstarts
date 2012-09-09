@@ -21,6 +21,8 @@ package org.jboss.dmr.client;
 
 import java.io.IOException;
 
+import com.google.gwt.ajaxloader.client.ArrayHelper;
+
 /**
  * see also http://quake2-gwt-port.googlecode.com/hg/src/com/google/gwt/corp/emul/java/io/DataInputStream.java?r=5c7c4b545ff4a8875b4cab5d77492d37e150d46b
  */
@@ -58,9 +60,10 @@ public class DataInput {
     }
 
     public double readDouble() throws IOException {
-        byte doubleBytes[] = new byte[8];
-        readFully(doubleBytes);
-        return IEEE754.toDouble(doubleBytes);
+        // byte doubleBytes[] = new byte[8];
+        // readFully(doubleBytes);
+        return IEEE754.toDouble(ArrayHelper.toJsArrayInteger(bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++],
+                bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++]));
     }
 
     public float readFloat() throws IOException {
@@ -110,16 +113,16 @@ public class DataInput {
         }
         if ((a & 0xe0) == 0xb0) {
             int b = readUnsignedByte();
-            sb.append((char)(((a& 0x1F) << 6) | (b & 0x3F)));
+            sb.append((char) (((a & 0x1F) << 6) | (b & 0x3F)));
             return 2;
         }
         if ((a & 0xf0) == 0xe0) {
             int b = readUnsignedByte();
             int c = readUnsignedByte();
-            sb.append((char)(((a & 0x0F) << 12) | ((b & 0x3F) << 6) | (c & 0x3F)));
+            sb.append((char) (((a & 0x0F) << 12) | ((b & 0x3F) << 6) | (c & 0x3F)));
             return 3;
         }
-        throw new IllegalArgumentException("Illegal byte "+a);
+        throw new IllegalArgumentException("Illegal byte " + a);
     }
 
     public int readUnsignedByte() throws IOException {

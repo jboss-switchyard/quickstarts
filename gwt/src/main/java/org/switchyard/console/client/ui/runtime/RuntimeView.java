@@ -24,10 +24,8 @@ import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.switchyard.console.client.model.MessageMetrics;
-import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.model.ServiceMetrics;
 import org.switchyard.console.client.ui.runtime.RuntimePresenter.MyView;
-import org.switchyard.console.client.ui.service.ServicesList;
 
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -46,18 +44,20 @@ public class RuntimeView extends DisposableViewImpl implements MyView {
 
     private RuntimePresenter _presenter;
     private MessageMetricsViewer _systemMetricsViewer;
-    private ServicesList _servicesList;
+    private ServiceMetricsList _servicesList;
     private MessageMetricsViewer _serviceMetricsViewer;
     private ServiceReferenceMetricsList _serviceReferenceMetricsList;
+    private ServiceOperationMetricsList _serviceOperationMetricsList;
     private MessageMetrics _systemMetrics;
-    private Service _selectedService;
+    private ServiceMetrics _selectedService;
 
     @Override
     public Widget createWidget() {
         _systemMetricsViewer = new MessageMetricsViewer(false);
-        _servicesList = new ServicesList();
+        _servicesList = new ServiceMetricsList();
         _serviceMetricsViewer = new MessageMetricsViewer(true);
         _serviceReferenceMetricsList = new ServiceReferenceMetricsList();
+        _serviceOperationMetricsList = new ServiceOperationMetricsList();
 
         _servicesList.addSelectionChangeHandler(new Handler() {
             @Override
@@ -76,6 +76,7 @@ public class RuntimeView extends DisposableViewImpl implements MyView {
                 .setDescription(
                         "Displays message metrics for individual services.  Select a service to see message metrics for a specific service.")
                 .setMaster(null, servicesWidget).addDetail("Service Metrics", _serviceMetricsViewer.asWidget())
+                .addDetail("Operation Metrics", _serviceOperationMetricsList.asWidget())
                 .addDetail("Reference Metrics", _serviceReferenceMetricsList.asWidget());
         serviceMetricsLayout.build();
         servicesWidget = servicesWidget.getParent();
@@ -84,8 +85,7 @@ public class RuntimeView extends DisposableViewImpl implements MyView {
         SimpleLayout layout = new SimpleLayout().setTitle("SwitchYard Message Metrics").setHeadline("System")
                 .setDescription("Displays message metrics for the SwitchYard subsystem.")
                 .addContent("System Message Metrics", _systemMetricsViewer.asWidget())
-                .addContent("spacer", new HTMLPanel("&nbsp;"))
-                .addContent("Service Message Metrics", servicesWidget);
+                .addContent("spacer", new HTMLPanel("&nbsp;")).addContent("Service Message Metrics", servicesWidget);
 
         return layout.build();
     }
@@ -96,8 +96,8 @@ public class RuntimeView extends DisposableViewImpl implements MyView {
     }
 
     @Override
-    public void setServices(List<Service> services) {
-        _servicesList.setData(services);
+    public void setServices(List<ServiceMetrics> serviceMetrics) {
+        _servicesList.setData(serviceMetrics);
     }
 
     @Override
@@ -105,14 +105,17 @@ public class RuntimeView extends DisposableViewImpl implements MyView {
         if (serviceMetrics == null) {
             _serviceMetricsViewer.clear();
             _serviceReferenceMetricsList.setServiceMetrics(null);
+            _serviceOperationMetricsList.setServiceMetrics(null);
             return;
         }
         if (_systemMetrics == null) {
             _serviceMetricsViewer.setMessageMetrics(serviceMetrics);
         } else {
-            _serviceMetricsViewer.setMessageMetrics(serviceMetrics, _systemMetrics.getTotalCount(), _systemMetrics.getTotalProcessingTime());
+            _serviceMetricsViewer.setMessageMetrics(serviceMetrics, _systemMetrics.getTotalCount(),
+                    _systemMetrics.getTotalProcessingTime());
         }
         _serviceReferenceMetricsList.setServiceMetrics(serviceMetrics);
+        _serviceOperationMetricsList.setServiceMetrics(serviceMetrics);
     }
 
     @Override
@@ -123,10 +126,11 @@ public class RuntimeView extends DisposableViewImpl implements MyView {
             return;
         }
         _systemMetricsViewer.setMessageMetrics(systemMetrics);
+        _servicesList.setSystemMetrics(systemMetrics);
     }
 
     @Override
-    public void setService(Service service) {
+    public void setService(ServiceMetrics service) {
         _selectedService = service;
         _servicesList.setSelection(service);
     }

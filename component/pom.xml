@@ -27,18 +27,15 @@
     <dependency>
       <groupId>org.jboss.ballroom</groupId>
       <artifactId>widgets</artifactId>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.gwtplatform</groupId>
       <artifactId>gwtp-mvp-client</artifactId>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.google.inject</groupId>

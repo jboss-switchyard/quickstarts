@@ -155,7 +155,7 @@ public class IEEE754 {
         return bytes;
     }-*/;
 
-    public static native double toDouble(byte[] bytes) /*-{
+    public static native double toDouble(JsArrayInteger bytes) /*-{
         var ebits = 11;
         var fbits = 52;
 

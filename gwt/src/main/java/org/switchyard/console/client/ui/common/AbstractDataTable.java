@@ -145,6 +145,16 @@ public abstract class AbstractDataTable<T> {
         };
     }
 
+    protected Comparator<T> createNumberColumnCommparator(final Column<T, ? extends Number> column) {
+        return new Comparator<T>() {
+            @SuppressWarnings({"rawtypes", "unchecked" })
+            @Override
+            public int compare(T o1, T o2) {
+                return ((Comparable) column.getValue(o1)).compareTo((Comparable) column.getValue(o2));
+            }
+        };
+    }
+
     /**
      * Add column definitions to the table.
      * 

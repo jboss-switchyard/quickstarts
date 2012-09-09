@@ -18,36 +18,22 @@
  */
 package org.switchyard.console.client.model;
 
-import java.util.List;
-
 /**
- * ServiceMetrics
+ * OperationMetrics
  * 
  * <p/>
- * Message metrics specific to a service.
- * 
- * @author Rob Cernich
+ * Message metrics specific to an operation.
  */
-public interface ServiceMetrics extends MessageMetrics, HasQName {
+public interface OperationMetrics extends MessageMetrics {
 
     /**
-     * @return metrics for operations
+     * @return operation name
      */
-    List<OperationMetrics> getOperations();
+    String getName();
 
     /**
-     * @param value metrics for operations
+     * @param value operation name
      */
-    void setOperations(List<OperationMetrics> value);
-
-    /**
-     * @return metrics for referenced services
-     */
-    List<ServiceMetrics> getReferences();
-
-    /**
-     * @param value metrics for referenced services
-     */
-    void setReferences(List<ServiceMetrics> value);
+    void setName(String value);
 
 }

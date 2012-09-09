@@ -93,7 +93,6 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         return _factory;
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public void loadSystemDetails(final AsyncCallback<SystemDetails> callback) {
         // /subsystem=switchyard:get-version()
@@ -121,7 +120,6 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         });
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public void loadApplications(final AsyncCallback<List<Application>> callback) {
         // /subsystem=switchyard:list-applications()
@@ -159,7 +157,6 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         });
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public void loadApplication(final String applicationName, final AsyncCallback<Application> callback) {
         // /subsystem=switchyard:read-application(name=applicationName)
@@ -191,7 +188,6 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         });
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public void loadComponents(final AsyncCallback<List<Component>> callback) {
         // /subsystem=switchyard:list-components
@@ -229,7 +225,6 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         });
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public void loadComponent(final String componentName, final AsyncCallback<Component> callback) {
         // /subsystem=switchyard:read-component(name=componentName)
@@ -261,7 +256,6 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         });
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public void loadServices(final AsyncCallback<List<Service>> callback) {
         // /subsystem=switchyard:list-services()
@@ -296,7 +290,6 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         });
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public void loadService(final String serviceName, final String applicationName,
             final AsyncCallback<Service> callback) {
@@ -352,13 +345,44 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
             public void onSuccess(DMRResponse result) {
                 final ModelNode response = result.get();
                 if (response.hasDefined(RESULT)) {
-                    final ServiceMetrics metrics = createServiceMetrics(response.get(RESULT).asList().get(0));
+                    final List<ServiceMetrics> metrics = createServiceMetrics(response.get(RESULT));
+                    if (metrics != null && metrics.size() > 0) {
+                        callback.onSuccess(metrics.get(0));
+                        return;
+                    }
+                }
+                callback.onFailure(new Exception("Could not load metrics for service: " + serviceName));
+            }
+        });
+    }
+
+    @Override
+    public void loadAllServiceMetrics(final AsyncCallback<List<ServiceMetrics>> callback) {
+        // /subsystem=switchyard:show-metrics(service-name=*)
+
+        final ModelNode operation = new ModelNode();
+        operation.get(OP).set(SHOW_METRICS);
+        operation.get(OP_ADDR, SUBSYSTEM).set(SWITCHYARD);
+        operation.get(SERVICE_NAME).set("*");
+
+        _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                final ModelNode response = result.get();
+                if (response.hasDefined(RESULT)) {
+                    final List<ServiceMetrics> metrics = createServiceMetrics(response.get(RESULT));
                     if (metrics != null) {
                         callback.onSuccess(metrics);
                         return;
                     }
                 }
-                callback.onFailure(new Exception("Could not load metrics for service: " + serviceName));
+                callback.onFailure(new Exception("Could not load all service metrics."));
             }
         });
     }
@@ -489,13 +513,17 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         }
     }
 
-    private ServiceMetrics createServiceMetrics(final ModelNode metricsNode) {
-        try {
-            return AutoBeanCodex.decode(_factory, ServiceMetrics.class, metricsNode.toJSONString(true)).as();
-        } catch (Exception e) {
-            Log.error("Failed to parse data source representation", e);
-            return null;
+    private List<ServiceMetrics> createServiceMetrics(final ModelNode metricsNode) {
+        final List<ModelNode> items = metricsNode.asList();
+        final List<ServiceMetrics> metrics = new ArrayList<ServiceMetrics>(items.size());
+        for (ModelNode item : items) {
+            try {
+                metrics.add(AutoBeanCodex.decode(_factory, ServiceMetrics.class, item.toJSONString(true)).as());
+            } catch (Exception e) {
+                Log.error("Failed to parse data source representation", e);
+            }
         }
+        return metrics;
     }
 
     private MessageMetrics createMessageMetrics(final ModelNode metricsNode) {

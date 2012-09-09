@@ -22,24 +22,21 @@
     <dependency>
       <groupId>org.jboss.ballroom</groupId>
       <artifactId>widgets</artifactId>
-      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
     </dependency>
 
     <dependency>
       <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-servlet</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>com.google.code</groupId>
       <artifactId>gwt-visualization</artifactId>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -49,7 +46,8 @@
     <dependency>
       <groupId>com.gwtplatform</groupId>
       <artifactId>gwtp-mvp-client</artifactId>
-      <scope>provided</scope>
+      <!-- this gets picked up as provided through dependencyManagement -->
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.google.inject</groupId>
@@ -153,6 +151,24 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>package-gwt-module</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <descriptors>
+            <descriptor>src/main/assembly/module.xml</descriptor>
+          </descriptors>
+        </configuration>
       </plugin>
 
       <!-- Most of this code is from jbossas, so don't run checkstyle -->
