@@ -87,6 +87,8 @@ public class CamelFtpBindingTest {
     @Test
     public void receiveFile() throws Exception {
         final String payload = "dummy payload";
+        // replace existing implementation for testing purposes
+        _testKit.removeService("GreetingService");
         final MockHandler greetingService = _testKit.registerInOnlyService("GreetingService");
 
         createFile(payload, FILE_NAME);

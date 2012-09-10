@@ -53,7 +53,9 @@ public class CamelNettyBindingTest {
 	private final static String PAYLOAD = "Keith";;
 
     @Test
-    public void sendTextMessageTroughtTcp() throws Exception {
+    public void sendTextMessageThroughTcp() throws Exception {    
+        // replace existing implementation for testing purposes
+        _testKit.removeService("GreetingService");
         final MockHandler greetingService = _testKit.registerInOnlyService("GreetingService");
 
         Socket clientSocket = new Socket("localhost", 3939);
@@ -72,7 +74,9 @@ public class CamelNettyBindingTest {
     }
 
     @Test
-    public void sendTextMessageTroughtUdp() throws Exception {
+    public void sendTextMessageThroughUdp() throws Exception {    
+        // replace existing implementation for testing purposes
+        _testKit.removeService("GreetingService");
         final MockHandler greetingService = _testKit.registerInOnlyService("GreetingService");
 
         MulticastSocket clientSocket = new MulticastSocket();

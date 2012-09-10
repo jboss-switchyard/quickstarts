@@ -47,7 +47,9 @@ public class CamelQuartzBindingTest {
     private SwitchYardTestKit _testKit;
 
     @Test
-    public void shouldExecuteService() throws Exception {
+    public void shouldExecuteService() throws Exception {    
+        // replace existing implementation for testing purposes
+        _testKit.removeService("GreetingService");
         final MockHandler greetingService = _testKit.registerInOnlyService("GreetingService");
 
         // Number of executions can vary, depends on moment when sleep will be executed

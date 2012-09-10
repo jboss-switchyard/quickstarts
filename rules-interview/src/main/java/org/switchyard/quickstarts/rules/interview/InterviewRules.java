@@ -27,7 +27,7 @@ import org.switchyard.component.rules.Rules;
  */
 @Rules(value=Interview.class,
        resources={"/org/switchyard/quickstarts/rules/interview/Interview.drl"},
-       globals={@Mapping(expression="exchange.serviceName.localPart", variable="service")})
+       globals={@Mapping(expression="exchange.provider.name.localPart", variable="service")})
 public interface InterviewRules extends Interview {
 
     @Override
