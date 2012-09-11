@@ -39,6 +39,7 @@ MA  02110-1301, USA.
                     <element ref="rules:channel" minOccurs="0" maxOccurs="unbounded"/>
                     <element ref="rules:resource" minOccurs="0" maxOccurs="unbounded"/>
                     <element ref="rules:globals" minOccurs="0" maxOccurs="1"/>
+                    <element ref="rules:facts" minOccurs="0" maxOccurs="1"/>
                 </sequence>
                 <attribute name="messageContentName" type="string" use="optional"/>
             </extension>
@@ -85,6 +86,17 @@ MA  02110-1301, USA.
 
     <element name="globals" type="rules:GlobalsType"/>
     <complexType name="GlobalsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="rules:mapping" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="facts" type="rules:FactsType"/>
+    <complexType name="FactsType">
         <complexContent>
             <extension base="sca:CommonExtensionBase">
                 <sequence>

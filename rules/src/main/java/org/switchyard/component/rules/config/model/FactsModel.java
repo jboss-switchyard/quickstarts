@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -18,18 +18,34 @@
  */
 package org.switchyard.component.rules.config.model;
 
-import org.switchyard.component.common.rules.Mapping;
-import org.switchyard.component.rules.Execute;
-import org.switchyard.component.rules.Rules;
+import java.util.List;
+
+import org.switchyard.component.common.rules.config.model.MappingModel;
+import org.switchyard.config.model.Model;
 
 /**
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * FactsModel.
+ *
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-@Rules(resources={"path/to/my.drl"}, facts={@Mapping(expression="context['foobar']")})
-public interface DoStuffRules extends DoStuff {
+public interface FactsModel extends Model {
 
-    @Override
-    @Execute
-    public void doStuff(Object stuff);
+    /**
+     * The facts XML element.
+     */
+    public static final String FACTS = "facts";
+
+    /**
+     * Gets the child mapping models.
+     * @return the child mapping models
+     */
+    public List<MappingModel> getMappings();
+
+    /**
+     * Adds a child mapping model.
+     * @param mapping the child mapping model
+     * @return this FactsModel (useful for chaining)
+     */
+    public FactsModel addMapping(MappingModel mapping);
 
 }

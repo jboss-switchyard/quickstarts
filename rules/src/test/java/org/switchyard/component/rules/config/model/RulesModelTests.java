@@ -117,9 +117,13 @@ public class RulesModelTests {
         Assert.assertSame(ResourceType.valueOf("DSLR"), dslr.getType());
         MappingModel gmm = rci.getGlobals().getMappings().iterator().next();
         Assert.assertEquals("payload", gmm.getVariable());
-        Expression expr = ExpressionFactory.instance().create(gmm);
-        Assert.assertEquals("message.content", expr.getExpression());
-        Assert.assertEquals(ExpressionType.MVEL, expr.getType());
+        Expression gex = ExpressionFactory.instance().create(gmm);
+        Assert.assertEquals("message.content", gex.getExpression());
+        Assert.assertEquals(ExpressionType.MVEL, gex.getType());
+        MappingModel fmm = rci.getFacts().getMappings().iterator().next();
+        Expression fex = ExpressionFactory.instance().create(fmm);
+        Assert.assertEquals("context['foobar']", fex.getExpression());
+        Assert.assertEquals(ExpressionType.MVEL, fex.getType());
     }
 
     @Test
@@ -159,6 +163,10 @@ public class RulesModelTests {
             ResourceModel rm = rm_iter.next();
             Assert.assertEquals("path/to/my.drl", rm.getLocation());
             Assert.assertSame(ResourceType.valueOf("DRL"), rm.getType());
+            MappingModel fmm = rci.getFacts().getMappings().iterator().next();
+            Expression fex = ExpressionFactory.instance().create(fmm);
+            Assert.assertEquals("context['foobar']", fex.getExpression());
+            Assert.assertEquals(ExpressionType.MVEL, fex.getType());
         }
     }
 

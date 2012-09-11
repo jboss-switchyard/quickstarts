@@ -85,6 +85,11 @@ public @interface Rules {
     public Mapping[] globals() default {};
 
     /**
+     * Fact Mappings for the rules.
+     */
+    public Mapping[] facts() default {};
+
+    /**
      * Additional resources the rules require.
      */
     public String[] resources() default "";

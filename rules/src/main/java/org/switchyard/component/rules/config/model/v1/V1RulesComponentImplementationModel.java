@@ -25,6 +25,7 @@ import java.util.List;
 import org.switchyard.component.common.rules.config.model.AuditModel;
 import org.switchyard.component.common.rules.config.model.v1.V1ComponentImplementationModel;
 import org.switchyard.component.rules.config.model.ChannelModel;
+import org.switchyard.component.rules.config.model.FactsModel;
 import org.switchyard.component.rules.config.model.GlobalsModel;
 import org.switchyard.component.rules.config.model.RulesActionModel;
 import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
@@ -42,13 +43,14 @@ public class V1RulesComponentImplementationModel extends V1ComponentImplementati
     private List<RulesActionModel> _rulesActions = new ArrayList<RulesActionModel>();
     private List<ChannelModel> _channels = new ArrayList<ChannelModel>();
     private GlobalsModel _globals = null;
+    private FactsModel _facts = null;
 
     /**
      * Default constructor for application use.
      */
     public V1RulesComponentImplementationModel() {
         super(RULES, DEFAULT_NAMESPACE);
-        setModelChildrenOrder(RulesActionModel.ACTION, AuditModel.AUDIT, ChannelModel.CHANNEL, ResourceModel.RESOURCE, GlobalsModel.GLOBALS);
+        setModelChildrenOrder(RulesActionModel.ACTION, AuditModel.AUDIT, ChannelModel.CHANNEL, ResourceModel.RESOURCE, GlobalsModel.GLOBALS, FactsModel.FACTS);
     }
 
     /**
@@ -71,7 +73,7 @@ public class V1RulesComponentImplementationModel extends V1ComponentImplementati
                 _channels.add(channel);
             }
         }
-        setModelChildrenOrder(RulesActionModel.ACTION, AuditModel.AUDIT, ChannelModel.CHANNEL, ResourceModel.RESOURCE, GlobalsModel.GLOBALS);
+        setModelChildrenOrder(RulesActionModel.ACTION, AuditModel.AUDIT, ChannelModel.CHANNEL, ResourceModel.RESOURCE, GlobalsModel.GLOBALS, FactsModel.FACTS);
     }
 
     /**
@@ -127,6 +129,26 @@ public class V1RulesComponentImplementationModel extends V1ComponentImplementati
     public RulesComponentImplementationModel setGlobals(GlobalsModel globals) {
         setChildModel(globals);
         _globals = globals;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public FactsModel getFacts() {
+        if (_facts == null) {
+            _facts = (FactsModel)getFirstChildModel(FactsModel.FACTS);
+        }
+        return _facts;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public RulesComponentImplementationModel setFacts(FactsModel facts) {
+        setChildModel(facts);
+        _facts = facts;
         return this;
     }
 

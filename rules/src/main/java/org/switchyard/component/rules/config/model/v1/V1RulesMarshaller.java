@@ -19,6 +19,7 @@
 package org.switchyard.component.rules.config.model.v1;
 
 import static org.switchyard.component.rules.config.model.ChannelModel.CHANNEL;
+import static org.switchyard.component.rules.config.model.FactsModel.FACTS;
 import static org.switchyard.component.rules.config.model.GlobalsModel.GLOBALS;
 import static org.switchyard.component.rules.config.model.RulesActionModel.ACTION;
 
@@ -68,6 +69,8 @@ public class V1RulesMarshaller extends V1CommonRulesMarshaller {
             return new V1ChannelModel(config, getDescriptor());
         } else if (GLOBALS.equals(name)) {
             return new V1GlobalsModel(config, getDescriptor());
+        } else if (FACTS.equals(name)) {
+            return new V1FactsModel(config, getDescriptor());
         }
         return super.read(config);
     }

@@ -40,6 +40,7 @@ import org.switchyard.component.rules.FireUntilHalt;
 import org.switchyard.component.rules.Rules;
 import org.switchyard.component.rules.RulesActionType;
 import org.switchyard.component.rules.config.model.v1.V1ChannelModel;
+import org.switchyard.component.rules.config.model.v1.V1FactsModel;
 import org.switchyard.component.rules.config.model.v1.V1GlobalsModel;
 import org.switchyard.component.rules.config.model.v1.V1RulesActionModel;
 import org.switchyard.component.rules.config.model.v1.V1RulesComponentImplementationModel;
@@ -198,6 +199,22 @@ public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
                     rciModel.setGlobals(globalsModel);
                 }
                 globalsModel.addMapping(mappingModel);
+            }
+            FactsModel factsModel = null;
+            for (Mapping factMapping : rules.facts()) {
+                MappingModel mappingModel = new V1MappingModel(RulesComponentImplementationModel.DEFAULT_NAMESPACE);
+                mappingModel.setContextScope(factMapping.contextScope());
+                mappingModel.setExpression(factMapping.expression());
+                mappingModel.setExpressionType(factMapping.expressionType());
+                String variable = factMapping.variable();
+                if (!UNDEFINED.equals(variable)) {
+                    mappingModel.setVariable(variable);
+                }
+                if (factsModel == null) {
+                    factsModel = new V1FactsModel();
+                    rciModel.setFacts(factsModel);
+                }
+                factsModel.addMapping(mappingModel);
             }
             componentModel.setImplementation(rciModel);
             ComponentServiceModel serviceModel = new V1ComponentServiceModel();

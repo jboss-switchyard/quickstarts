@@ -73,10 +73,23 @@ public interface RulesComponentImplementationModel extends ComponentImplementati
     public GlobalsModel getGlobals();
 
     /**
-     * Sets the child global model.
+     * Sets the child globals model.
      * @param globals the child globals model
      * @return this RulesComponentImplementationModel (useful for chaining)
      */
     public RulesComponentImplementationModel setGlobals(GlobalsModel globals);
+
+    /**
+     * Gets the child facts model.
+     * @return the child facts model
+     */
+    public FactsModel getFacts();
+
+    /**
+     * Sets the child facts model.
+     * @param facts the child facts model
+     * @return this RulesComponentImplementationModel (useful for chaining)
+     */
+    public RulesComponentImplementationModel setFacts(FactsModel facts);
 
 }

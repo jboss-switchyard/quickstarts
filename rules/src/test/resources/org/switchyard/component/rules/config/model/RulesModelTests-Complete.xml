@@ -33,6 +33,9 @@ MA  02110-1301, USA.
                 <rules:globals>
                     <rules:mapping expression="message.content" variable="payload"/>
                 </rules:globals>
+                <rules:facts>
+                    <rules:mapping expression="context['foobar']"/>
+                </rules:facts>
             </rules:implementation.rules>
             <sca:service name="FoobarService">
                 <sca:interface.java interface="org.test.FoobarService"/>
