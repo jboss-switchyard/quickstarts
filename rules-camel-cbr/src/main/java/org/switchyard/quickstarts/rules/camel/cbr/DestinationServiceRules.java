@@ -18,17 +18,20 @@
  */
 package org.switchyard.quickstarts.rules.camel.cbr;
 
+import org.switchyard.component.common.rules.Mapping;
 import org.switchyard.component.rules.Execute;
 import org.switchyard.component.rules.Rules;
 
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-@Rules(value=DestinationService.class, resources={"/META-INF/DestinationServiceRules.drl"})
+@Rules(value=DestinationService.class,
+       resources={"/META-INF/DestinationServiceRules.drl"},
+       facts={@Mapping(expression="message.content.widget")})
 public interface DestinationServiceRules extends DestinationService {
 
     @Override
     @Execute
-    public void determineDestination(Widget widget);
+    public void determineDestination(Box box);
 
 }

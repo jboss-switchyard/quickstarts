@@ -30,8 +30,8 @@ public class RedServiceBean implements RedService {
     private static final Logger LOGGER = Logger.getLogger(RedServiceBean.class);
     
     @Override
-    public void handleRed(Widget widget) {
-        LOGGER.info("Red service processing widget with id: " + widget.getId());
+    public void handleRed(Box box) {
+        LOGGER.info("Red service processing boxed widget with id: " + box.getWidget().getId());
     }
 
 }

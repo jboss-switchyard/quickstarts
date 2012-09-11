@@ -47,9 +47,9 @@ public class RulesCamelCBRTest {
     @Test
     public void testRGBWidgets() throws Exception {
         for (String[] test : TESTS) {
-            Widget widget = new Widget(test[0]);
-            router.sendInOnly(widget);
-            Assert.assertEquals(test[1], widget.getDestination());
+            Box box = new Box(new Widget(test[0]));
+            router.sendInOnly(box);
+            Assert.assertEquals(test[1], box.getDestination());
         }
     }
 

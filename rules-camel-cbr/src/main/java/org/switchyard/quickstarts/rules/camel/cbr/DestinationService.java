@@ -23,6 +23,6 @@ package org.switchyard.quickstarts.rules.camel.cbr;
  */
 public interface DestinationService {
 
-    public void determineDestination(Widget widget);
+    public void determineDestination(Box box);
 
 }

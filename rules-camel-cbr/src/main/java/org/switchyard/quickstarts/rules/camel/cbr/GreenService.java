@@ -23,6 +23,6 @@ package org.switchyard.quickstarts.rules.camel.cbr;
  */
 public interface GreenService {
 
-    public void handleGreen(Widget widget);
+    public void handleGreen(Box box);
 
 }

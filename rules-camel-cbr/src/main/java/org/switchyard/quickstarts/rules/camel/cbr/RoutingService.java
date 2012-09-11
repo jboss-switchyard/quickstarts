@@ -23,6 +23,6 @@ package org.switchyard.quickstarts.rules.camel.cbr;
  */
 public interface RoutingService {
 
-    public void processRoute(Widget widget);
+    public void processRoute(Box box);
 
 }

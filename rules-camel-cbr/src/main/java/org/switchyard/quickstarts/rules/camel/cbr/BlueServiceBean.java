@@ -30,8 +30,8 @@ public class BlueServiceBean implements BlueService {
     private static final Logger LOGGER = Logger.getLogger(BlueServiceBean.class);
  
     @Override
-    public void handleBlue(Widget widget) {
-        LOGGER.info("Blue service processing widget with id: " + widget.getId());
+    public void handleBlue(Box box) {
+        LOGGER.info("Blue service processing boxed widget with id: " + box.getWidget().getId());
     }
 
 }
