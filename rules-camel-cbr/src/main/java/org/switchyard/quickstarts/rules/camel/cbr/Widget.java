@@ -23,10 +23,11 @@ import java.io.Serializable;
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
+@SuppressWarnings("serial")
 public class Widget implements Serializable {
 
     private final String _id;
-    private String _destination;
+    private Box _box;
 
     public Widget(String id) {
         _id = id;
@@ -36,12 +37,12 @@ public class Widget implements Serializable {
         return _id;
     }
 
-    public String getDestination() {
-        return _destination;
+    public Box getBox() {
+        return _box;
     }
 
-    public void setDestination(String destination) {
-        _destination = destination;
+    public void setBox(Box box) {
+        _box = box;
     }
 
 }

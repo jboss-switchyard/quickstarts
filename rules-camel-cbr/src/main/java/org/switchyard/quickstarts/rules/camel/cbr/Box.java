@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -18,11 +18,32 @@
  */
 package org.switchyard.quickstarts.rules.camel.cbr;
 
-/**
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
- */
-public interface BlueService {
+import java.io.Serializable;
 
-    public void handleBlue(Box box);
+/**
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ */
+@SuppressWarnings("serial")
+public class Box implements Serializable {
+
+    private final Widget _widget;
+    private String _destination;
+
+    public Box(Widget widget) {
+        _widget = widget;
+        _widget.setBox(this);
+    }
+
+    public Widget getWidget() {
+        return _widget;
+    }
+
+    public String getDestination() {
+        return _destination;
+    }
+
+    public void setDestination(String destination) {
+        _destination = destination;
+    }
 
 }

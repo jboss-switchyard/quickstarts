@@ -30,8 +30,8 @@ public class GreenServiceBean implements GreenService {
     private static final Logger LOGGER = Logger.getLogger(GreenServiceBean.class);
     
     @Override
-    public void handleGreen(Widget widget) {
-        LOGGER.info("Green service processing widget with id: " + widget.getId());
+    public void handleGreen(Box box) {
+        LOGGER.info("Green service processing boxed widget with id: " + box.getWidget().getId());
     }
 
 }
