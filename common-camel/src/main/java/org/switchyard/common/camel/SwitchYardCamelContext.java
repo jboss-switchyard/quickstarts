@@ -26,12 +26,16 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.component.cdi.CdiBeanRegistry;
+import org.apache.camel.component.cdi.CdiInjector;
 import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
+import org.apache.deltaspike.core.api.provider.BeanManagerProvider;
+import org.apache.log4j.Logger;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.camel.event.CamelEventBridge;
 import org.switchyard.event.EventPublisher;
@@ -49,8 +53,20 @@ public class SwitchYardCamelContext extends DefaultCamelContext {
 
     private final SimpleRegistry _writeableRegistry = new SimpleRegistry();
     private ServiceDomain _domain;
+    private Logger _logger = Logger.getLogger(SwitchYardCamelContext.class);
 
     private AtomicInteger _count = new AtomicInteger();
+
+    /**
+     * Creates new camel context.
+     */
+    public SwitchYardCamelContext() {
+        if (isEnableCdiIntegration()) {
+            setInjector(new CdiInjector(getInjector()));
+        } else {
+            _logger.warn("CDI environment not detected, disabling Camel CDI integration");
+        }
+    }
 
     /**
      * Associates camel context with given service domain.
@@ -103,6 +119,9 @@ public class SwitchYardCamelContext extends DefaultCamelContext {
 
         final List<Registry> registries = new ArrayList<Registry>();
         registries.add(new JndiRegistry());
+        if (isEnableCdiIntegration()) {
+            registries.add(new CdiBeanRegistry());
+        }
         registries.add(_writeableRegistry);
 
         for (Registry registry : registriesLoaders) {
@@ -119,6 +138,21 @@ public class SwitchYardCamelContext extends DefaultCamelContext {
      */
     public ServiceDomain getServiceDomain() {
         return _domain;
+    }
+
+    /**
+     * Checks if CDI runtime is enabled for this deployment.
+     * 
+     * @return True if CDI runtime is detected.
+     */
+    private boolean isEnableCdiIntegration() {
+        try {
+            BeanManagerProvider.getInstance();
+            return true;
+        } catch (IllegalStateException e) {
+            e.getMessage(); // keeps checkstyle happy
+        }
+        return false;
     }
 
     /**

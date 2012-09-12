@@ -358,13 +358,13 @@ public class Deployment extends AbstractDeployment {
                     throw new SwitchYardException("Failed to load Service interface class '" + interfaceClass + "'.");
                 }
                 serviceInterface = JavaService.fromClass(serviceInterfaceType);
-            } else if (intfModel.getType().equals(WSDL_INTERFACE)) {
+            } else if (InterfaceModel.WSDL.equals(intfModel.getType())) {
                 try {
                     serviceInterface = WSDLService.fromWSDL(intfModel.getInterface());
                 } catch (WSDLReaderException wsdlre) {
                     throw new SwitchYardException(wsdlre);
                 }
-            } else if (intfModel.getType().equals(EsbInterfaceModel.ESB)) {
+            } else if (EsbInterfaceModel.ESB.equals(intfModel.getType())) {
                 EsbInterfaceModel esbIntf = (EsbInterfaceModel)intfModel;
                 validateEsbInterface(esbIntf);
                 if (esbIntf.getOutputType() == null) {
@@ -393,7 +393,7 @@ public class Deployment extends AbstractDeployment {
     }
     
     private boolean isJavaInterface(final String type) {
-        return type.equals(JAVA_INTERFACE);
+        return InterfaceModel.JAVA.equals(type);
     }
     
     private void deployImplementations() {
