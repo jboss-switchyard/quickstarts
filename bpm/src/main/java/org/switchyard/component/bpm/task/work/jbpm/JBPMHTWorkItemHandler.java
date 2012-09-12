@@ -62,20 +62,17 @@ public class JBPMHTWorkItemHandler extends MinaHTWorkItemHandler {
 
     private static final Logger LOGGER = Logger.getLogger(JBPMHTWorkItemHandler.class);
 
-    private final ClassLoader _loader;
-
     /**
      * Package-private constructor.
      * @param kruntime the KnowledgeRuntime
      * @param loader the ClassLoader
      */
-    JBPMHTWorkItemHandler(KnowledgeRuntime kruntime, ClassLoader loader) {
+    JBPMHTWorkItemHandler(KnowledgeRuntime kruntime) {
         super(kruntime);
-        _loader = loader;
     }
 
     private void registerTaskEvents() {
-        TaskCompletedHandler eventResponseHandler = new TaskCompletedHandler(_loader);
+        TaskCompletedHandler eventResponseHandler = new TaskCompletedHandler();
         TaskEventKey key = new TaskEventKey(TaskCompletedEvent.class, -1);
         getClient().registerForEvent(key, false, eventResponseHandler);
         eventHandlers.put(key, eventResponseHandler);
@@ -107,12 +104,6 @@ public class JBPMHTWorkItemHandler extends MinaHTWorkItemHandler {
 
     private final class TaskCompletedHandler extends AbstractBaseResponseHandler implements EventResponseHandler {
 
-        private final ClassLoader _loader;
-
-        private TaskCompletedHandler(ClassLoader loader) {
-            _loader = loader;
-        }
-
         public void execute(Payload payload) {
             TaskEvent event = (TaskEvent)payload.get();
             final long taskId = event.getTaskId();
@@ -133,36 +124,31 @@ public class JBPMHTWorkItemHandler extends MinaHTWorkItemHandler {
         }
 
         public void handleCompletedTask(long taskId) {
-            final ClassLoader previous = Classes.setTCCL(_loader);
-            try {
-                Task task = getClient().getTask(taskId);
-                long workItemId = task.getTaskData().getWorkItemId();
-                if (task.getTaskData().getStatus() == Status.Completed) {
-                    String userId = task.getTaskData().getActualOwner().getId();
-                    Map<String, Object> results = new HashMap<String, Object>();
-                    results.put("ActorId", userId);
-                    long contentId = task.getTaskData().getOutputContentId();
-                    if (contentId != -1) {
-                        Content content = getClient().getContent(contentId);
-                        Object result = unmarshall(task.getTaskData().getDocumentType(), content.getContent(), marshallerContext, session.getEnvironment());
-                        results.put("Result", result);
-                        if (result instanceof Map) {
-                            Map<?, ?> map = (Map<?, ?>)result;
-                            for (Map.Entry<?, ?> entry : map.entrySet()) {
-                                if (entry.getKey() instanceof String) {
-                                    results.put((String)entry.getKey(), entry.getValue());
-                                }
+            Task task = getClient().getTask(taskId);
+            long workItemId = task.getTaskData().getWorkItemId();
+            if (task.getTaskData().getStatus() == Status.Completed) {
+                String userId = task.getTaskData().getActualOwner().getId();
+                Map<String, Object> results = new HashMap<String, Object>();
+                results.put("ActorId", userId);
+                long contentId = task.getTaskData().getOutputContentId();
+                if (contentId != -1) {
+                    Content content = getClient().getContent(contentId);
+                    Object result = unmarshall(task.getTaskData().getDocumentType(), content.getContent(), marshallerContext, session.getEnvironment());
+                    results.put("Result", result);
+                    if (result instanceof Map) {
+                        Map<?, ?> map = (Map<?, ?>)result;
+                        for (Map.Entry<?, ?> entry : map.entrySet()) {
+                            if (entry.getKey() instanceof String) {
+                                results.put((String)entry.getKey(), entry.getValue());
                             }
                         }
-                        session.getWorkItemManager().completeWorkItem(task.getTaskData().getWorkItemId(), results);
-                    } else {
-                        session.getWorkItemManager().completeWorkItem(workItemId, results);
                     }
+                    session.getWorkItemManager().completeWorkItem(task.getTaskData().getWorkItemId(), results);
                 } else {
-                    session.getWorkItemManager().abortWorkItem(workItemId);
+                    session.getWorkItemManager().completeWorkItem(workItemId, results);
                 }
-            } finally {
-                Classes.setTCCL(previous);
+            } else {
+                session.getWorkItemManager().abortWorkItem(workItemId);
             }
         }
     }

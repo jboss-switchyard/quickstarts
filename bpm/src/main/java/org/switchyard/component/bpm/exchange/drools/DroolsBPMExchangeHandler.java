@@ -460,7 +460,6 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
                     th.setMessageContentOutName(_messageContentOutName);
                     th.setTargetNamespace(_targetNamespace);
                     th.setServiceDomain(_serviceDomain);
-                    th.setLoader(_loader);
                     tm.registerHandler(th);
                     th.init();
                     _taskHandlers.add(th);

@@ -93,19 +93,6 @@ public interface TaskHandler {
     public TaskHandler setServiceDomain(ServiceDomain serviceDomain);
 
     /**
-     * Gets the ClassLoader to use for any classloading this TaskHandler needs to perform.
-     * @return the ClassLoader
-     */
-    public ClassLoader getLoader();
-
-    /**
-     * Sets the ClassLoader to use for any classloading this TaskHandler needs to perform.
-     * @param loader the ClassLoader
-     * @return this handler (useful for chaining)
-     */
-    public TaskHandler setLoader(ClassLoader loader);
-
-    /**
      * Initializes this handler.
      */
     public void init();

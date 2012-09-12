@@ -72,7 +72,7 @@ public class JBPMHumanTaskHandler extends DroolsTaskHandler {
     private synchronized void init(TaskManager manager) {
         if (getWorkItemHandler() == null) {
             KnowledgeRuntime kruntime = (KnowledgeRuntime)((DroolsTaskManager)manager).getProcessRuntime();
-            setWorkItemHandler(new JBPMHTWorkItemHandler(kruntime, getLoader()));
+            setWorkItemHandler(new JBPMHTWorkItemHandler(kruntime));
         }
     }
 }

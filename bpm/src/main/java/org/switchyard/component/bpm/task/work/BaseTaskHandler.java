@@ -32,7 +32,6 @@ public abstract class BaseTaskHandler implements TaskHandler {
     private String _messageContentOutName;
     private String _targetNamespace;
     private ServiceDomain _serviceDomain;
-    private ClassLoader _loader;
 
     /**
      * Constructs a new BaseTaskHandler using the simple name of the implementation class.
@@ -131,23 +130,6 @@ public abstract class BaseTaskHandler implements TaskHandler {
     @Override
     public TaskHandler setServiceDomain(ServiceDomain serviceDomain) {
         _serviceDomain = serviceDomain;
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ClassLoader getLoader() {
-        return _loader;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TaskHandler setLoader(ClassLoader loader) {
-        _loader = loader;
         return this;
     }
 
