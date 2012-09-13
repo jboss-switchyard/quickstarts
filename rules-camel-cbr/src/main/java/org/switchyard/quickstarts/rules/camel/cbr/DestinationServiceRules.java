@@ -18,6 +18,8 @@
  */
 package org.switchyard.quickstarts.rules.camel.cbr;
 
+//import org.drools.event.rule.DebugAgendaEventListener;
+//import org.drools.event.rule.DebugWorkingMemoryEventListener;
 import org.switchyard.component.common.rules.Mapping;
 import org.switchyard.component.rules.Execute;
 import org.switchyard.component.rules.Rules;
@@ -27,6 +29,7 @@ import org.switchyard.component.rules.Rules;
  */
 @Rules(value=DestinationService.class,
        resources={"/META-INF/DestinationServiceRules.drl"},
+       //eventListeners={DebugAgendaEventListener.class, DebugWorkingMemoryEventListener.class},
        facts={@Mapping(expression="message.content.widget")})
 public interface DestinationServiceRules extends DestinationService {
 
