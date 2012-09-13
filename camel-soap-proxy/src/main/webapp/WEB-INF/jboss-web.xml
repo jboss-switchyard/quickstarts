@@ -1,0 +1,3 @@
+<jboss-web>
+    <context-root>ReverseService</context-root>
+</jboss-web>

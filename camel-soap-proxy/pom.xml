@@ -78,6 +78,23 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <warName>ReverseService</warName>
+                    <packagingExcludes>WEB-INF/lib/,WEB-INF/classes/META-INF/</packagingExcludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-a-war</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

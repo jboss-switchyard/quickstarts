@@ -39,8 +39,8 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
         mixins = {HTTPMixIn.class})
 public class CamelSOAPProxyTest {
 
-    private static final String WEB_SERVICE = "http://localhost:18001/ReverseService";
-    private static final String PROXY_SERVICE = "http://localhost:18002/ReverseService";
+    private static final String WEB_SERVICE = "http://localhost:8080/ReverseService";
+    private static final String PROXY_SERVICE = "http://localhost:8080/proxy/ReverseService";
 
     private HTTPMixIn _http;
     private Endpoint _endpoint;

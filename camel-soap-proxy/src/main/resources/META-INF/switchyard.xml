@@ -10,7 +10,7 @@
             <soap:binding.soap>
                 <soap:contextMapper/>
                 <soap:wsdl>META-INF/ReverseService.wsdl</soap:wsdl>
-                <soap:socketAddr>:18002</soap:socketAddr>
+                <soap:contextPath>proxy</soap:contextPath>
             </soap:binding.soap>
         </sca:service>
         <sca:reference name="ReverseService" promote="ProxyService/ReverseService" multiplicity="0..1">

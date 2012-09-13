@@ -1,0 +1,10 @@
+<web-app>
+  <servlet>
+    <servlet-name>ReverseService</servlet-name>
+    <servlet-class>org.switchyard.quickstarts.camel.soap.proxy.ReverseService</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ReverseService</servlet-name>
+    <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+</web-app>

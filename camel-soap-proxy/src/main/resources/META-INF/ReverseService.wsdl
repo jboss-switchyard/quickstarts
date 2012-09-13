@@ -55,7 +55,7 @@
   
   <service name="ReverseService">
     <port name="ReverseServicePort" binding="tns:ReverseServiceBinding">
-      <soap:address location="http://localhost:18001/ReverseService"/>
+      <soap:address location="http://localhost:8080/ReverseService"/>
     </port>
   </service>
 </definitions>
