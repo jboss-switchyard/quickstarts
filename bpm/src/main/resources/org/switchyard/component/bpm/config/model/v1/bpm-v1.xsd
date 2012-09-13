@@ -36,6 +36,7 @@ MA  02110-1301, USA.
                 <sequence>
                     <element ref="bpm:action" minOccurs="0" maxOccurs="unbounded"/>
                     <element ref="bpm:audit" minOccurs="0" maxOccurs="1"/>
+                    <element ref="bpm:eventListener" minOccurs="0" maxOccurs="unbounded"/>
                     <element ref="bpm:taskHandler" minOccurs="0" maxOccurs="unbounded"/>
                     <element ref="bpm:resource" minOccurs="0" maxOccurs="unbounded"/>
                     <element ref="bpm:parameters" minOccurs="0" maxOccurs="1"/>
@@ -67,6 +68,13 @@ MA  02110-1301, USA.
     <complexType name="AuditType">
         <complexContent>
             <extension base="common.rules:AuditType"/>
+        </complexContent>
+    </complexType>
+
+    <element name="eventListener" type="bpm:EventListenerType" substitutionGroup="common.rules:eventListener"/>
+    <complexType name="EventListenerType">
+        <complexContent>
+            <extension base="common.rules:EventListenerType"/>
         </complexContent>
     </complexType>
 

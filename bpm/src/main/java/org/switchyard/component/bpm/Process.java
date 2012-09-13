@@ -24,6 +24,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.EventListener;
 
 import org.switchyard.component.bpm.task.work.BaseTaskHandler;
 import org.switchyard.component.bpm.task.work.TaskHandler;
@@ -93,6 +94,11 @@ public @interface Process {
      * Additional resources the process requires.
      */
     public String[] resources() default "";
+
+    /**
+     * EventListeners for the process.
+     */
+    public Class<? extends EventListener>[] eventListeners() default {};
 
     /**
      * Specified task handlers for the process.

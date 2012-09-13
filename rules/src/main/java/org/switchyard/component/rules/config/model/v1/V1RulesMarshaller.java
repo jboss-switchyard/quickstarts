@@ -18,12 +18,14 @@
  */
 package org.switchyard.component.rules.config.model.v1;
 
+import static org.switchyard.component.common.rules.config.model.EventListenerModel.EVENT_LISTENER;
 import static org.switchyard.component.rules.config.model.ChannelModel.CHANNEL;
 import static org.switchyard.component.rules.config.model.FactsModel.FACTS;
 import static org.switchyard.component.rules.config.model.GlobalsModel.GLOBALS;
 import static org.switchyard.component.rules.config.model.RulesActionModel.ACTION;
 
 import org.switchyard.component.common.rules.config.model.v1.V1CommonRulesMarshaller;
+import org.switchyard.component.common.rules.config.model.v1.V1EventListenerModel;
 import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
@@ -65,6 +67,8 @@ public class V1RulesMarshaller extends V1CommonRulesMarshaller {
             return new V1RulesComponentImplementationModel(config, getDescriptor());
         } else if (ACTION.equals(name)) {
             return new V1RulesActionModel(config, getDescriptor());
+        } else if (EVENT_LISTENER.equals(name)) {
+            return new V1EventListenerModel(config, getDescriptor());
         } else if (CHANNEL.equals(name)) {
             return new V1ChannelModel(config, getDescriptor());
         } else if (GLOBALS.equals(name)) {

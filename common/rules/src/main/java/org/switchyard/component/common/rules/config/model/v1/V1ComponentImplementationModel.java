@@ -26,6 +26,7 @@ import org.switchyard.component.common.rules.ClockType;
 import org.switchyard.component.common.rules.EventProcessingType;
 import org.switchyard.component.common.rules.config.model.AuditModel;
 import org.switchyard.component.common.rules.config.model.ComponentImplementationModel;
+import org.switchyard.component.common.rules.config.model.EventListenerModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Marshaller;
@@ -39,6 +40,7 @@ import org.switchyard.config.model.resource.ResourceModel;
 public abstract class V1ComponentImplementationModel extends org.switchyard.config.model.composite.v1.V1ComponentImplementationModel implements ComponentImplementationModel {
 
     private AuditModel _audit;
+    private List<EventListenerModel> _eventListeners = new ArrayList<EventListenerModel>();
     private List<ResourceModel> _resources = new ArrayList<ResourceModel>();
 
     /**
@@ -66,6 +68,13 @@ public abstract class V1ComponentImplementationModel extends org.switchyard.conf
     public V1ComponentImplementationModel(Configuration config, Descriptor desc) {
         super(config, desc);
         ClassLoader modelLoader = V1ComponentImplementationModel.class.getClassLoader();
+        for (Configuration eventListener_config : config.getChildren(EventListenerModel.EVENT_LISTENER)) {
+            Marshaller marsh = desc.getMarshaller(eventListener_config.getQName().getNamespaceURI(), modelLoader);
+            EventListenerModel eventListener = (EventListenerModel)marsh.read(eventListener_config);
+            if (eventListener != null) {
+                _eventListeners.add(eventListener);
+            }
+        }
         for (Configuration resource_config : config.getChildren(ResourceModel.RESOURCE)) {
             Marshaller marsh = desc.getMarshaller(resource_config.getQName().getNamespaceURI(), modelLoader);
             ResourceModel resource = (ResourceModel)marsh.read(resource_config);
@@ -183,6 +192,24 @@ public abstract class V1ComponentImplementationModel extends org.switchyard.conf
     public V1ComponentImplementationModel setAudit(AuditModel audit) {
         setChildModel(audit);
         _audit = audit;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<EventListenerModel> getEventListeners() {
+        return Collections.unmodifiableList(_eventListeners);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ComponentImplementationModel addEventListener(EventListenerModel eventListener) {
+        addChildModel(eventListener);
+        _eventListeners.add(eventListener);
         return this;
     }
 

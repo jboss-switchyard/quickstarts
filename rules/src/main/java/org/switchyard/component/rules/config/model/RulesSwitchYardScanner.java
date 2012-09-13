@@ -18,9 +18,12 @@
  */
 package org.switchyard.component.rules.config.model;
 
+import static org.switchyard.component.rules.config.model.RulesComponentImplementationModel.DEFAULT_NAMESPACE;
+
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.EventListener;
 import java.util.List;
 
 import org.switchyard.common.lang.Strings;
@@ -32,6 +35,7 @@ import org.switchyard.component.common.rules.Mapping;
 import org.switchyard.component.common.rules.config.model.AuditModel;
 import org.switchyard.component.common.rules.config.model.MappingModel;
 import org.switchyard.component.common.rules.config.model.v1.V1AuditModel;
+import org.switchyard.component.common.rules.config.model.v1.V1EventListenerModel;
 import org.switchyard.component.common.rules.config.model.v1.V1MappingModel;
 import org.switchyard.component.rules.Channel;
 import org.switchyard.component.rules.Execute;
@@ -138,7 +142,7 @@ public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
             }
             Audit audit = rulesClass.getAnnotation(Audit.class);
             if (audit != null) {
-                AuditModel aModel = new V1AuditModel(rciModel.getModelConfiguration().getQName().getNamespaceURI());
+                AuditModel aModel = new V1AuditModel(DEFAULT_NAMESPACE);
                 aModel.setType(audit.type());
                 int interval = audit.interval();
                 if (interval != -1) {
@@ -149,9 +153,12 @@ public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
                 }
                 rciModel.setAudit(aModel);
             }
+            for (Class<? extends EventListener> elc : rules.eventListeners()) {
+                rciModel.addEventListener(new V1EventListenerModel(DEFAULT_NAMESPACE).setClazz(elc));
+            }
             for (Channel channel : rules.channels()) {
-                Class<?> channelClass = channel.value();
-                ChannelModel channelModel = new V1ChannelModel().setClazz(channelClass.getName());
+                Class<? extends org.drools.runtime.Channel> channelClass = channel.value();
+                ChannelModel channelModel = new V1ChannelModel().setClazz(channelClass);
                 String channelName = channel.name();
                 if (UNDEFINED.equals(channelName)) {
                     channelName = channelClass.getSimpleName();
@@ -182,41 +189,11 @@ public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
                     continue;
                 }
                 // setting the location will trigger deducing and setting the type
-                rciModel.addResource(new V1ResourceModel(RulesComponentImplementationModel.DEFAULT_NAMESPACE).setLocation(location));
+                rciModel.addResource(new V1ResourceModel(DEFAULT_NAMESPACE).setLocation(location));
             }
-            GlobalsModel globalsModel = null;
-            for (Mapping globalMapping : rules.globals()) {
-                MappingModel mappingModel = new V1MappingModel(RulesComponentImplementationModel.DEFAULT_NAMESPACE);
-                mappingModel.setContextScope(globalMapping.contextScope());
-                mappingModel.setExpression(globalMapping.expression());
-                mappingModel.setExpressionType(globalMapping.expressionType());
-                String variable = globalMapping.variable();
-                if (!UNDEFINED.equals(variable)) {
-                    mappingModel.setVariable(variable);
-                }
-                if (globalsModel == null) {
-                    globalsModel = new V1GlobalsModel();
-                    rciModel.setGlobals(globalsModel);
-                }
-                globalsModel.addMapping(mappingModel);
-            }
-            FactsModel factsModel = null;
-            for (Mapping factMapping : rules.facts()) {
-                MappingModel mappingModel = new V1MappingModel(RulesComponentImplementationModel.DEFAULT_NAMESPACE);
-                mappingModel.setContextScope(factMapping.contextScope());
-                mappingModel.setExpression(factMapping.expression());
-                mappingModel.setExpressionType(factMapping.expressionType());
-                String variable = factMapping.variable();
-                if (!UNDEFINED.equals(variable)) {
-                    mappingModel.setVariable(variable);
-                }
-                if (factsModel == null) {
-                    factsModel = new V1FactsModel();
-                    rciModel.setFacts(factsModel);
-                }
-                factsModel.addMapping(mappingModel);
-            }
+            addMappings(rules, rciModel);
             componentModel.setImplementation(rciModel);
+
             ComponentServiceModel serviceModel = new V1ComponentServiceModel();
             InterfaceModel csiModel = new V1InterfaceModel(InterfaceModel.JAVA);
             csiModel.setInterface(rulesInterface.getName());
@@ -231,6 +208,42 @@ public class RulesSwitchYardScanner implements Scanner<SwitchYardModel> {
         }
 
         return new ScannerOutput<SwitchYardModel>().setModel(switchyardModel);
+    }
+
+    // Code here instead of in scan() because checkstyle complains when a method is longer than 150 lines.
+    private void addMappings(Rules rules, RulesComponentImplementationModel rciModel) {
+        GlobalsModel globalsModel = null;
+        for (Mapping globalMapping : rules.globals()) {
+            MappingModel mappingModel = new V1MappingModel(DEFAULT_NAMESPACE);
+            mappingModel.setContextScope(globalMapping.contextScope());
+            mappingModel.setExpression(globalMapping.expression());
+            mappingModel.setExpressionType(globalMapping.expressionType());
+            String variable = globalMapping.variable();
+            if (!UNDEFINED.equals(variable)) {
+                mappingModel.setVariable(variable);
+            }
+            if (globalsModel == null) {
+                globalsModel = new V1GlobalsModel();
+                rciModel.setGlobals(globalsModel);
+            }
+            globalsModel.addMapping(mappingModel);
+        }
+        FactsModel factsModel = null;
+        for (Mapping factMapping : rules.facts()) {
+            MappingModel mappingModel = new V1MappingModel(DEFAULT_NAMESPACE);
+            mappingModel.setContextScope(factMapping.contextScope());
+            mappingModel.setExpression(factMapping.expression());
+            mappingModel.setExpressionType(factMapping.expressionType());
+            String variable = factMapping.variable();
+            if (!UNDEFINED.equals(variable)) {
+                mappingModel.setVariable(variable);
+            }
+            if (factsModel == null) {
+                factsModel = new V1FactsModel();
+                rciModel.setFacts(factsModel);
+            }
+            factsModel.addMapping(mappingModel);
+        }
     }
 
 }

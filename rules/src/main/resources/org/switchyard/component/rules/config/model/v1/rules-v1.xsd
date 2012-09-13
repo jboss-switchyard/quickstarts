@@ -36,12 +36,12 @@ MA  02110-1301, USA.
                 <sequence>
                     <element ref="rules:action" minOccurs="0" maxOccurs="unbounded"/>
                     <element ref="rules:audit" minOccurs="0" maxOccurs="1"/>
+                    <element ref="rules:eventListener" minOccurs="0" maxOccurs="unbounded"/>
                     <element ref="rules:channel" minOccurs="0" maxOccurs="unbounded"/>
                     <element ref="rules:resource" minOccurs="0" maxOccurs="unbounded"/>
                     <element ref="rules:globals" minOccurs="0" maxOccurs="1"/>
                     <element ref="rules:facts" minOccurs="0" maxOccurs="1"/>
                 </sequence>
-                <attribute name="messageContentName" type="string" use="optional"/>
             </extension>
         </complexContent>
     </complexType>
@@ -61,6 +61,13 @@ MA  02110-1301, USA.
     <complexType name="AuditType">
         <complexContent>
             <extension base="common.rules:AuditType"/>
+        </complexContent>
+    </complexType>
+
+    <element name="eventListener" type="rules:EventListenerType" substitutionGroup="common.rules:eventListener"/>
+    <complexType name="EventListenerType">
+        <complexContent>
+            <extension base="common.rules:EventListenerType"/>
         </complexContent>
     </complexType>
 

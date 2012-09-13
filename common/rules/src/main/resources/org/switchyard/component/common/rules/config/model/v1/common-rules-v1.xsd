@@ -49,6 +49,15 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
 
+    <element name="eventListener" type="common.rules:EventListenerType" abstract="true"/>
+    <complexType name="EventListenerType" abstract="true">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="class" type="string" use="required"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <element name="mapping" type="common.rules:MappingType" abstract="true"/>
     <complexType name="MappingType" abstract="true">
         <complexContent>

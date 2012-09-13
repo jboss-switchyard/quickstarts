@@ -18,6 +18,7 @@
  */
 package org.switchyard.component.rules.config.model;
 
+import org.drools.event.rule.DebugWorkingMemoryEventListener;
 import org.switchyard.component.common.rules.Mapping;
 import org.switchyard.component.rules.Execute;
 import org.switchyard.component.rules.Rules;
@@ -25,7 +26,10 @@ import org.switchyard.component.rules.Rules;
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-@Rules(resources={"path/to/my.drl"}, facts={@Mapping(expression="context['foobar']")})
+@Rules(
+    resources={"path/to/my.drl"},
+    eventListeners={DebugWorkingMemoryEventListener.class},
+    facts={@Mapping(expression="context['foobar']")})
 public interface DoStuffRules extends DoStuff {
 
     @Override

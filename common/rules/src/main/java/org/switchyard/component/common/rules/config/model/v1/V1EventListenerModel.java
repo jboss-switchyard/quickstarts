@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,40 +16,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.config.model.v1;
+package org.switchyard.component.common.rules.config.model.v1;
 
-import static org.switchyard.component.bpm.config.model.BPMComponentImplementationModel.DEFAULT_NAMESPACE;
-
-import javax.xml.namespace.QName;
+import java.util.EventListener;
 
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.Classes;
-import org.switchyard.component.bpm.config.model.TaskHandlerModel;
-import org.switchyard.component.bpm.task.work.TaskHandler;
+import org.switchyard.common.xml.XMLHelper;
+import org.switchyard.component.common.rules.config.model.EventListenerModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
 
 /**
- * The 1st version TaskHandlerModel.
+ * The 1st version EventListenerModel.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class V1TaskHandlerModel extends BaseModel implements TaskHandlerModel {
+public class V1EventListenerModel extends BaseModel implements EventListenerModel {
 
     /**
-     * Creates a new TaskHandlerModel in the default namespace.
+     * Creates a new EventListenerModel in the specified namespace.
+     * @param namespace the namespace
      */
-    public V1TaskHandlerModel() {
-        super(new QName(DEFAULT_NAMESPACE, TASK_HANDLER));
+    public V1EventListenerModel(String namespace) {
+        super(XMLHelper.createQName(namespace, EVENT_LISTENER));
     }
 
     /**
-     * Creates a new TaskHandlerModel with the specified configuration and descriptor.
+     * Creates a new EventListenerModel with the specified configuration and descriptor.
      * @param config the configuration
      * @param desc the descriptor
      */
-    public V1TaskHandlerModel(Configuration config, Descriptor desc) {
+    public V1EventListenerModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
@@ -58,35 +57,18 @@ public class V1TaskHandlerModel extends BaseModel implements TaskHandlerModel {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public Class<? extends TaskHandler> getClazz(ClassLoader loader) {
+    public Class<? extends EventListener> getClazz(ClassLoader loader) {
         String c = Strings.trimToNull(getModelAttribute("class"));
-        return c != null ? (Class<? extends TaskHandler>)Classes.forName(c, loader) : null;
+        return c != null ? (Class<? extends EventListener>)Classes.forName(c, loader) : null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public TaskHandlerModel setClazz(Class<? extends TaskHandler> clazz) {
+    public EventListenerModel setClazz(Class<? extends EventListener> clazz) {
         String c = clazz != null ? clazz.getName() : null;
         setModelAttribute("class", c);
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getName() {
-        return getModelAttribute("name");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TaskHandlerModel setName(String name) {
-        setModelAttribute("name", name);
         return this;
     }
 

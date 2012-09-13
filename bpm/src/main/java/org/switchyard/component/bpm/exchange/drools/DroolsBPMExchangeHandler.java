@@ -99,6 +99,7 @@ import org.switchyard.component.common.rules.util.drools.Bases;
 import org.switchyard.component.common.rules.util.drools.ComponentImplementationConfig;
 import org.switchyard.component.common.rules.util.drools.Configs;
 import org.switchyard.component.common.rules.util.drools.Environments;
+import org.switchyard.component.common.rules.util.drools.Events;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.metadata.ServiceOperation;
 
@@ -117,7 +118,7 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
     private final Lock _stateLock = new ReentrantLock();
     private final Lock _processLock = new ReentrantLock();
     private final ServiceDomain _serviceDomain;
-    private ClassLoader _loader;
+    private ComponentImplementationConfig _componentImplementationConfig;
     private String _processId;
     private boolean _persistent;
     private Integer _sessionId;
@@ -153,7 +154,6 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
      */
     @Override
     public void init(QName qname, BPMComponentImplementationModel model) {
-        _loader = Classes.getClassLoader(getClass());
         _processId = model.getProcessId();
         _persistent = model.isPersistent();
         _sessionId = model.getSessionId();
@@ -168,8 +168,9 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
         ComponentModel cm = model.getComponent();
         _targetNamespace = cm != null ? cm.getTargetNamespace() : null;
         _taskHandlerModels.addAll(model.getTaskHandlers());
-        ResourceType.install(_loader);
-        ComponentImplementationConfig cic = new ComponentImplementationConfig(model, _loader);
+        ClassLoader loader = Classes.getClassLoader(getClass());
+        ResourceType.install(loader);
+        _componentImplementationConfig = new ComponentImplementationConfig(model, loader);
         Map<String, Object> env = new HashMap<String, Object>();
         Properties props = new Properties();
         if (_persistent) {
@@ -180,8 +181,8 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
             props.setProperty("drools.processInstanceManagerFactory", JPAProcessInstanceManagerFactory.class.getName());
             props.setProperty("drools.processSignalManagerFactory", JPASignalManagerFactory.class.getName());
         }
-        cic.setEnvironmentOverrides(env);
-        cic.setPropertiesOverrides(props);
+        _componentImplementationConfig.setEnvironmentOverrides(env);
+        _componentImplementationConfig.setPropertiesOverrides(props);
         Resource procDef = model.getProcessDefinition();
         if (procDef != null) {
             if (procDef.getType() == null) {
@@ -189,13 +190,13 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
             }
         }
         if (model.isAgent()) {
-            _kagent = Agents.newAgent(cic, procDef);
+            _kagent = Agents.newAgent(_componentImplementationConfig, procDef);
             _kbase = _kagent.getKnowledgeBase();
         } else {
-            _kbase = Bases.newBase(cic, procDef);
+            _kbase = Bases.newBase(_componentImplementationConfig, procDef);
         }
-        _ksessionConfig = Configs.getSessionConfiguration(cic);
-        _environment = Environments.getEnvironment(cic);
+        _ksessionConfig = Configs.getSessionConfiguration(_componentImplementationConfig);
+        _environment = Environments.getEnvironment(_componentImplementationConfig);
         _audit = model.getAudit();
         for (ProcessActionModel pam : model.getProcessActions()) {
             _actionModels.put(pam.getName(), pam);
@@ -421,6 +422,7 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
                 _kagent = null;
             }
         }
+        _componentImplementationConfig = null;
     }
 
     private StatefulKnowledgeSession getStatefulSession(Integer sessionId) {
@@ -442,16 +444,17 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
                 } else {
                     _ksession = _kbase.newStatefulKnowledgeSession(_ksessionConfig, _environment);
                 }
+                _klogger = Audits.getLogger(_audit, _ksession);
                 _ksession.addEventListener(new DefaultAgendaEventListener() {
                     @Override
                     public void afterRuleFlowGroupActivated(RuleFlowGroupActivatedEvent event) {
                         ((StatefulKnowledgeSession)event.getKnowledgeRuntime()).fireAllRules();
                     }
                 });
-                _klogger = Audits.getLogger(_audit, _ksession);
+                Events.addEventListeners(_componentImplementationConfig, _ksession);
                 TaskManager tm = new DroolsTaskManager(_ksession);
                 for (TaskHandlerModel thm : _taskHandlerModels) {
-                    TaskHandler th = Construction.construct(thm.getClazz());
+                    TaskHandler th = Construction.construct(thm.getClazz(_componentImplementationConfig.getLoader()));
                     String name = thm.getName();
                     if (name != null) {
                         th.setName(name);

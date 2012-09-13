@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.switchyard.component.common.rules.config.model.AuditModel;
+import org.switchyard.component.common.rules.config.model.EventListenerModel;
 import org.switchyard.component.common.rules.config.model.v1.V1ComponentImplementationModel;
 import org.switchyard.component.rules.config.model.ChannelModel;
 import org.switchyard.component.rules.config.model.FactsModel;
@@ -50,7 +51,7 @@ public class V1RulesComponentImplementationModel extends V1ComponentImplementati
      */
     public V1RulesComponentImplementationModel() {
         super(RULES, DEFAULT_NAMESPACE);
-        setModelChildrenOrder(RulesActionModel.ACTION, AuditModel.AUDIT, ChannelModel.CHANNEL, ResourceModel.RESOURCE, GlobalsModel.GLOBALS, FactsModel.FACTS);
+        setModelChildrenOrder(RulesActionModel.ACTION, AuditModel.AUDIT, EventListenerModel.EVENT_LISTENER, ChannelModel.CHANNEL, ResourceModel.RESOURCE, GlobalsModel.GLOBALS, FactsModel.FACTS);
     }
 
     /**
@@ -73,7 +74,7 @@ public class V1RulesComponentImplementationModel extends V1ComponentImplementati
                 _channels.add(channel);
             }
         }
-        setModelChildrenOrder(RulesActionModel.ACTION, AuditModel.AUDIT, ChannelModel.CHANNEL, ResourceModel.RESOURCE, GlobalsModel.GLOBALS, FactsModel.FACTS);
+        setModelChildrenOrder(RulesActionModel.ACTION, AuditModel.AUDIT, EventListenerModel.EVENT_LISTENER, ChannelModel.CHANNEL, ResourceModel.RESOURCE, GlobalsModel.GLOBALS, FactsModel.FACTS);
     }
 
     /**

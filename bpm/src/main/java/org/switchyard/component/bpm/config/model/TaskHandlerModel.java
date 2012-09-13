@@ -35,9 +35,10 @@ public interface TaskHandlerModel extends Model {
 
     /**
      * Gets the TaskHandler class.
+     * @param loader the ClassLoader to use
      * @return the TaskHandler class
      */
-    public Class<? extends TaskHandler> getClazz();
+    public Class<? extends TaskHandler> getClazz(ClassLoader loader);
 
     /**
      * Sets the TaskHandler class.

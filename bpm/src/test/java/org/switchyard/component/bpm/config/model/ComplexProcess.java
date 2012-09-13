@@ -18,6 +18,7 @@
  */
 package org.switchyard.component.bpm.config.model;
 
+import org.drools.event.DebugProcessEventListener;
 import org.switchyard.component.bpm.Process;
 import org.switchyard.component.bpm.config.model.ComplexProcess.My1stHandler;
 import org.switchyard.component.bpm.config.model.ComplexProcess.My2ndHandler;
@@ -37,6 +38,7 @@ import org.switchyard.component.bpm.task.work.TaskManager;
     definitionType="BPMN2",
     id="ComplexProcess",
     resources={"path/to/my.dsl", "path/to/my.dslr"},
+    eventListeners={DebugProcessEventListener.class},
     taskHandlers={My1stHandler.class, My2ndHandler.class})
 public interface ComplexProcess {
 

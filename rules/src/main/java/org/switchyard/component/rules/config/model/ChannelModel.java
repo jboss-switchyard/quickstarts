@@ -20,6 +20,7 @@ package org.switchyard.component.rules.config.model;
 
 import javax.xml.namespace.QName;
 
+import org.drools.runtime.Channel;
 import org.switchyard.config.model.NamedModel;
 
 /**
@@ -35,17 +36,18 @@ public interface ChannelModel extends NamedModel {
     public static final String CHANNEL = "channel";
 
     /**
-     * Gets the clazz attribute.
-     * @return the clazz attribute
+     * Gets the Channel class.
+     * @param loader the ClassLoader to use
+     * @return the Channel class
      */
-    public String getClazz();
+    public Class<? extends Channel> getClazz(ClassLoader loader);
 
     /**
-     * Sets the clazz attribute.
-     * @param clazz the clazz attribute
+     * Sets the Channel class.
+     * @param clazz the Channel class
      * @return this ChannelModel (useful for chaining)
      */
-    public ChannelModel setClazz(String clazz);
+    public ChannelModel setClazz(Class<? extends Channel> clazz);
 
     /**
      * Gets the input attribute.

@@ -33,6 +33,7 @@ import org.switchyard.component.bpm.config.model.ProcessActionModel;
 import org.switchyard.component.bpm.config.model.ResultsModel;
 import org.switchyard.component.bpm.config.model.TaskHandlerModel;
 import org.switchyard.component.common.rules.config.model.AuditModel;
+import org.switchyard.component.common.rules.config.model.EventListenerModel;
 import org.switchyard.component.common.rules.config.model.v1.V1ComponentImplementationModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
@@ -55,7 +56,7 @@ public class V1BPMComponentImplementationModel extends V1ComponentImplementation
      */
     public V1BPMComponentImplementationModel() {
         super(BPM, DEFAULT_NAMESPACE);
-        setModelChildrenOrder(ProcessActionModel.ACTION, AuditModel.AUDIT, TaskHandlerModel.TASK_HANDLER, ResourceModel.RESOURCE, ParametersModel.PARAMETERS, ResultsModel.RESULTS);
+        setModelChildrenOrder(ProcessActionModel.ACTION, AuditModel.AUDIT, EventListenerModel.EVENT_LISTENER, TaskHandlerModel.TASK_HANDLER, ResourceModel.RESOURCE, ParametersModel.PARAMETERS, ResultsModel.RESULTS);
     }
 
     /**
@@ -78,7 +79,7 @@ public class V1BPMComponentImplementationModel extends V1ComponentImplementation
                 _taskHandlers.add(taskHandler);
             }
         }
-        setModelChildrenOrder(ProcessActionModel.ACTION, AuditModel.AUDIT, TaskHandlerModel.TASK_HANDLER, ResourceModel.RESOURCE, ParametersModel.PARAMETERS, ResultsModel.RESULTS);
+        setModelChildrenOrder(ProcessActionModel.ACTION, AuditModel.AUDIT, EventListenerModel.EVENT_LISTENER, TaskHandlerModel.TASK_HANDLER, ResourceModel.RESOURCE, ParametersModel.PARAMETERS, ResultsModel.RESULTS);
     }
 
     /**

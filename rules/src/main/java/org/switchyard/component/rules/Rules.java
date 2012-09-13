@@ -24,6 +24,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.EventListener;
 
 import org.switchyard.component.common.rules.ClockType;
 import org.switchyard.component.common.rules.EventProcessingType;
@@ -73,6 +74,11 @@ public @interface Rules {
      * Specified multithread evaluation.
      */
     public boolean multithreadEvaluation() default false;
+
+    /**
+     * EventListeners for the rules.
+     */
+    public Class<? extends EventListener>[] eventListeners() default {};
 
     /**
      * CEP Channels for the rules.

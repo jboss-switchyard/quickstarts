@@ -18,9 +18,12 @@
  */
 package org.switchyard.component.bpm.config.model;
 
+import static org.switchyard.component.bpm.config.model.BPMComponentImplementationModel.DEFAULT_NAMESPACE;
+
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.EventListener;
 import java.util.List;
 
 import org.switchyard.common.io.resource.ResourceType;
@@ -46,6 +49,7 @@ import org.switchyard.component.common.rules.Mapping;
 import org.switchyard.component.common.rules.config.model.AuditModel;
 import org.switchyard.component.common.rules.config.model.MappingModel;
 import org.switchyard.component.common.rules.config.model.v1.V1AuditModel;
+import org.switchyard.component.common.rules.config.model.v1.V1EventListenerModel;
 import org.switchyard.component.common.rules.config.model.v1.V1MappingModel;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
@@ -180,7 +184,7 @@ public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
             }
             Audit audit = processClass.getAnnotation(Audit.class);
             if (audit != null) {
-                AuditModel aModel = new V1AuditModel(bciModel.getModelConfiguration().getQName().getNamespaceURI());
+                AuditModel aModel = new V1AuditModel(DEFAULT_NAMESPACE);
                 aModel.setType(audit.type());
                 int interval = audit.interval();
                 if (interval != -1) {
@@ -190,6 +194,9 @@ public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
                     aModel.setLog(audit.log());
                 }
                 bciModel.setAudit(aModel);
+            }
+            for (Class<? extends EventListener> elc : process.eventListeners()) {
+                bciModel.addEventListener(new V1EventListenerModel(DEFAULT_NAMESPACE).setClazz(elc));
             }
             bciModel.addTaskHandler(new V1TaskHandlerModel().setClazz(SwitchYardServiceTaskHandler.class).setName(SwitchYardServiceTaskHandler.SWITCHYARD_SERVICE));
             for (Class<? extends TaskHandler> taskHandlerClass : process.taskHandlers()) {
@@ -204,7 +211,7 @@ public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
                     continue;
                 }
                 // setting the location will trigger deducing and setting the type
-                bciModel.addResource(new V1ResourceModel(BPMComponentImplementationModel.DEFAULT_NAMESPACE).setLocation(location));
+                bciModel.addResource(new V1ResourceModel(DEFAULT_NAMESPACE).setLocation(location));
             }
             addMappings(process, bciModel);
             componentModel.setImplementation(bciModel);
@@ -221,7 +228,7 @@ public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
     private void addMappings(Process process, BPMComponentImplementationModel bciModel) {
         ParametersModel parametersModel = null;
         for (Mapping parameterMapping : process.parameters()) {
-            MappingModel mappingModel = new V1MappingModel(BPMComponentImplementationModel.DEFAULT_NAMESPACE);
+            MappingModel mappingModel = new V1MappingModel(DEFAULT_NAMESPACE);
             mappingModel.setContextScope(parameterMapping.contextScope());
             mappingModel.setExpression(parameterMapping.expression());
             mappingModel.setExpressionType(parameterMapping.expressionType());
@@ -237,7 +244,7 @@ public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
         }
         ResultsModel resultsModel = null;
         for (Mapping resultMapping : process.results()) {
-            MappingModel mappingModel = new V1MappingModel(BPMComponentImplementationModel.DEFAULT_NAMESPACE);
+            MappingModel mappingModel = new V1MappingModel(DEFAULT_NAMESPACE);
             mappingModel.setContextScope(resultMapping.contextScope());
             mappingModel.setExpression(resultMapping.expression());
             mappingModel.setExpressionType(resultMapping.expressionType());

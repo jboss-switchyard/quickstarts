@@ -31,6 +31,8 @@ import junit.framework.Assert;
 
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.drools.event.rule.DebugWorkingMemoryEventListener;
+import org.drools.runtime.Channel;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.common.io.pull.StringPuller;
@@ -41,6 +43,7 @@ import org.switchyard.component.common.rules.AuditType;
 import org.switchyard.component.common.rules.ClockType;
 import org.switchyard.component.common.rules.EventProcessingType;
 import org.switchyard.component.common.rules.config.model.AuditModel;
+import org.switchyard.component.common.rules.config.model.EventListenerModel;
 import org.switchyard.component.common.rules.config.model.MappingModel;
 import org.switchyard.component.common.rules.expression.Expression;
 import org.switchyard.component.common.rules.expression.ExpressionFactory;
@@ -74,7 +77,8 @@ public class RulesModelTests {
 
     @Test
     public void testReadComplete() throws Exception {
-        SwitchYardModel switchyard = _puller.pull(COMPLETE_XML, getClass());
+        ClassLoader loader = getClass().getClassLoader();
+        SwitchYardModel switchyard = _puller.pull(COMPLETE_XML, loader);
         CompositeModel composite = switchyard.getComposite();
         ComponentModel component = composite.getComponents().get(0);
         ComponentImplementationModel implementation = component.getImplementation();
@@ -97,8 +101,10 @@ public class RulesModelTests {
         Assert.assertEquals("processBar", ram.getName());
         Assert.assertEquals(RulesActionType.FIRE_UNTIL_HALT, ram.getType());
         Assert.assertEquals("bars", ram.getEntryPoint());
+        EventListenerModel elm = rci.getEventListeners().iterator().next();
+        Assert.assertEquals(DebugWorkingMemoryEventListener.class, elm.getClazz(loader));
         ChannelModel cm = rci.getChannels().iterator().next();
-        Assert.assertEquals("org.test.FoobarChannel", cm.getClazz());
+        Assert.assertEquals(TestChannel.class, cm.getClazz(loader));
         Assert.assertEquals(QName.valueOf("theInput"), cm.getInput());
         Assert.assertEquals("theName", cm.getName());
         Assert.assertEquals("theOperation", cm.getOperation());
@@ -144,6 +150,7 @@ public class RulesModelTests {
 
     @Test
     public void testScanForRules() throws Exception {
+        ClassLoader loader = getClass().getClassLoader();
         Scanner<SwitchYardModel> scanner = new RulesSwitchYardScanner();
         ScannerInput<SwitchYardModel> input = new ScannerInput<SwitchYardModel>().setName(getClass().getSimpleName());
         List<URL> urls = new ArrayList<URL>();
@@ -163,6 +170,7 @@ public class RulesModelTests {
             ResourceModel rm = rm_iter.next();
             Assert.assertEquals("path/to/my.drl", rm.getLocation());
             Assert.assertSame(ResourceType.valueOf("DRL"), rm.getType());
+            Assert.assertEquals(DebugWorkingMemoryEventListener.class, rci.getEventListeners().iterator().next().getClazz(loader));
             MappingModel fmm = rci.getFacts().getMappings().iterator().next();
             Expression fex = ExpressionFactory.instance().create(fmm);
             Assert.assertEquals("context['foobar']", fex.getExpression());
@@ -177,6 +185,13 @@ public class RulesModelTests {
         ScannerOutput<SwitchYardModel> output = scanner.scan(input);
         Assert.assertNull("Composite element should not be created if no components were found.", output.getModel()
                 .getComposite());
+    }
+
+    public static final class TestChannel implements Channel {
+        @Override
+        public void send(Object object) {
+            System.out.println(object);
+        }
     }
 
 }

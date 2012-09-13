@@ -39,7 +39,7 @@ public @interface Channel {
     public String name() default "";
 
     /** The channel class. */
-    public Class<?> value();
+    public Class<? extends org.drools.runtime.Channel> value();
 
     /** The service reference QName. */
     public String reference() default "";

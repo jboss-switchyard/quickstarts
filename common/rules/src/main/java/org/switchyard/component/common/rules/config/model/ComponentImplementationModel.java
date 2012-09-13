@@ -120,6 +120,19 @@ public interface ComponentImplementationModel extends org.switchyard.config.mode
     public ComponentImplementationModel setAudit(AuditModel audit);
 
     /**
+     * Gets the child event listener models.
+     * @return the child event listener models
+     */
+    public List<EventListenerModel> getEventListeners();
+
+    /**
+     * Adds a child event listener model.
+     * @param eventListener the child event listener model
+     * @return this ComponentImplementationModel (useful for chaining)
+     */
+    public ComponentImplementationModel addEventListener(EventListenerModel eventListener);
+
+    /**
      * Gets the child resource models.
      * @return the child resource models
      */

@@ -31,12 +31,14 @@ import junit.framework.Assert;
 
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.drools.event.DebugProcessEventListener;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.bpm.task.work.SwitchYardServiceTaskHandler;
+import org.switchyard.component.common.rules.config.model.EventListenerModel;
 import org.switchyard.component.common.rules.config.model.MappingModel;
 import org.switchyard.component.common.rules.expression.Expression;
 import org.switchyard.component.common.rules.expression.ExpressionFactory;
@@ -70,7 +72,8 @@ public class BPMModelTests {
 
     @Test
     public void testReadComplete() throws Exception {
-        SwitchYardModel switchyard = _puller.pull(COMPLETE_XML, getClass());
+        ClassLoader loader = getClass().getClassLoader();
+        SwitchYardModel switchyard = _puller.pull(COMPLETE_XML, loader);
         CompositeModel composite = switchyard.getComposite();
         ComponentModel component = composite.getComponents().get(0);
         ComponentImplementationModel implementation = component.getImplementation();
@@ -90,8 +93,10 @@ public class BPMModelTests {
         ResourceModel prm = bci.getResources().iterator().next();
         Assert.assertEquals("foobar.drl", prm.getLocation());
         Assert.assertSame(ResourceType.valueOf("DRL"), prm.getType());
+        EventListenerModel elm = bci.getEventListeners().iterator().next();
+        Assert.assertEquals(DebugProcessEventListener.class, elm.getClazz(loader));
         TaskHandlerModel th = bci.getTaskHandlers().iterator().next();
-        Assert.assertEquals(SwitchYardServiceTaskHandler.class, th.getClazz());
+        Assert.assertEquals(SwitchYardServiceTaskHandler.class, th.getClazz(loader));
         Assert.assertNull(th.getName());
         MappingModel pmm = bci.getParameters().getMappings().iterator().next();
         Assert.assertEquals("payload", pmm.getVariable());
@@ -123,6 +128,7 @@ public class BPMModelTests {
 
     @Test
     public void testScanForProcesses() throws Exception {
+        ClassLoader loader = getClass().getClassLoader();
         Scanner<SwitchYardModel> scanner = new BPMSwitchYardScanner();
         ScannerInput<SwitchYardModel> input = new ScannerInput<SwitchYardModel>().setName(getClass().getSimpleName());
         List<URL> urls = new ArrayList<URL>();
@@ -152,15 +158,16 @@ public class BPMModelTests {
                 rm = rm_iter.next();
                 Assert.assertEquals("path/to/my.dslr", rm.getLocation());
                 Assert.assertSame(ResourceType.valueOf("DSLR"), rm.getType());
+                Assert.assertEquals(DebugProcessEventListener.class, bci.getEventListeners().iterator().next().getClazz(loader));
                 Iterator<TaskHandlerModel> th_iter = bci.getTaskHandlers().iterator();
                 TaskHandlerModel th = th_iter.next();
-                Assert.assertEquals(SwitchYardServiceTaskHandler.class, th.getClazz());
+                Assert.assertEquals(SwitchYardServiceTaskHandler.class, th.getClazz(loader));
                 Assert.assertEquals(SwitchYardServiceTaskHandler.SWITCHYARD_SERVICE, th.getName());
                 th = th_iter.next();
-                Assert.assertEquals(ComplexProcess.My1stHandler.class, th.getClazz());
+                Assert.assertEquals(ComplexProcess.My1stHandler.class, th.getClazz(loader));
                 Assert.assertEquals("My1stHandler", th.getName());
                 th = th_iter.next();
-                Assert.assertEquals(ComplexProcess.My2ndHandler.class, th.getClazz());
+                Assert.assertEquals(ComplexProcess.My2ndHandler.class, th.getClazz(loader));
                 Assert.assertEquals("My2ndHandler", th.getName());
             } else {
                 Assert.fail(processId);

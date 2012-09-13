@@ -32,7 +32,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.drools.KnowledgeBase;
 import org.drools.agent.KnowledgeAgent;
 import org.drools.logger.KnowledgeRuntimeLogger;
@@ -66,6 +65,7 @@ import org.switchyard.component.common.rules.util.drools.Bases;
 import org.switchyard.component.common.rules.util.drools.ComponentImplementationConfig;
 import org.switchyard.component.common.rules.util.drools.Configs;
 import org.switchyard.component.common.rules.util.drools.Environments;
+import org.switchyard.component.common.rules.util.drools.Events;
 import org.switchyard.component.rules.RulesActionType;
 import org.switchyard.component.rules.channel.drools.SwitchYardChannel;
 import org.switchyard.component.rules.channel.drools.SwitchYardServiceChannel;
@@ -85,10 +85,9 @@ import org.switchyard.metadata.ServiceOperation;
  */
 public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
 
-    private static final Logger LOGGER = Logger.getLogger(DroolsRulesExchangeHandler.class);
-
     private final Lock _fireLock = new ReentrantLock();
     private final Lock _stateLock = new ReentrantLock();
+    private ComponentImplementationConfig _componentImplementationConfig;
     private String _targetNamespace;
     private ServiceDomain _domain;
     private KnowledgeAgent _kagent;
@@ -121,40 +120,34 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
         _domain = domain;
         ClassLoader loader = Classes.getClassLoader(getClass());
         ResourceType.install(loader);
-        ComponentImplementationConfig cic = new ComponentImplementationConfig(model, loader);
+        _componentImplementationConfig = new ComponentImplementationConfig(model, loader);
         if (model.isAgent()) {
-            _kagent = Agents.newAgent(cic);
+            _kagent = Agents.newAgent(_componentImplementationConfig);
             _kbase = _kagent.getKnowledgeBase();
         } else {
-            _kbase = Bases.newBase(cic);
+            _kbase = Bases.newBase(_componentImplementationConfig);
         }
-        _ksessionConfig = Configs.getSessionConfiguration(cic);
-        _environment = Environments.getEnvironment(cic);
+        _ksessionConfig = Configs.getSessionConfiguration(_componentImplementationConfig);
+        _environment = Environments.getEnvironment(_componentImplementationConfig);
         _audit = model.getAudit();
         for (RulesActionModel ram : model.getRulesActions()) {
             _actions.put(ram.getName(), ram);
         }
         for (ChannelModel cm : model.getChannels()) {
-            Class<?> clazz = Classes.forName(cm.getClazz(), loader);
+            Class<? extends org.drools.runtime.Channel> clazz = cm.getClazz(_componentImplementationConfig.getLoader());
             if (clazz == null) {
                 clazz = SwitchYardServiceChannel.class;
             }
-            if (Channel.class.isAssignableFrom(clazz)) {
-                @SuppressWarnings("unchecked")
-                Class<? extends Channel> channelClass = (Class<? extends Channel>)clazz;
-                Channel channel;
-                try {
-                    channel = channelClass.newInstance();
-                } catch (Exception e) {
-                    throw new SwitchYardException(e);
-                }
-                if (channel instanceof SwitchYardChannel) {
-                    ((SwitchYardChannel)channel).setModel(cm);
-                }
-                _channels.put(cm.getName(), channel);
-            } else {
-                LOGGER.warn(clazz.getName() + " does not implement " + Channel.class.getName());
+            Channel channel;
+            try {
+                channel = clazz.newInstance();
+            } catch (Exception e) {
+                throw new SwitchYardException(e);
             }
+            if (channel instanceof SwitchYardChannel) {
+                ((SwitchYardChannel)channel).setModel(cm);
+            }
+            _channels.put(cm.getName(), channel);
         }
         GlobalsModel globals = model.getGlobals();
         if (globals != null) {
@@ -384,6 +377,7 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
                 _kagent = null;
             }
         }
+        _componentImplementationConfig = null;
     }
 
     private StatelessKnowledgeSession getStatelessSession() {
@@ -393,6 +387,7 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
         } else {
             ksessionStateless = _kbase.newStatelessKnowledgeSession(_ksessionConfig);
         }
+        Events.addEventListeners(_componentImplementationConfig, ksessionStateless);
         return ksessionStateless;
     }
 
@@ -402,6 +397,7 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
             if (_ksession == null) {
                 _ksession = _kbase.newStatefulKnowledgeSession(_ksessionConfig, _environment);
                 _klogger = Audits.getLogger(_audit, _ksession);
+                Events.addEventListeners(_componentImplementationConfig, _ksession);
                 for (Entry<String,Channel> c : _channels.entrySet()) {
                     String name = c.getKey();
                     Channel channel = c.getValue();
