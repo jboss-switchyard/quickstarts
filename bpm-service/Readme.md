@@ -8,6 +8,12 @@ using an MVEL expression, and printed out via a BPMN onEntry-script of the Inven
 
 This example is invoked through a SOAP gateway binding.  
 
+If you would like to watch the process execution, uncomment this line in
+src/main/resources/META-INF/switchyard.xml:
+```
+<!-- <eventListener class="org.drools.event.DebugProcessEventListener"/> -->
+```
+
 ![BPM Service Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/bpm-service/bpm-service.jpg)
 
 

@@ -18,6 +18,7 @@
  */
 package org.switchyard.quickstarts.demos.helpdesk;
 
+//import org.jbpm.process.audit.JPAWorkingMemoryDbLogger;
 import org.switchyard.component.bpm.Process;
 import org.switchyard.component.bpm.task.work.jbpm.JBPMHumanTaskHandler;
 
@@ -29,5 +30,6 @@ import org.switchyard.component.bpm.task.work.jbpm.JBPMHumanTaskHandler;
     persistent=true,
     messageContentInName="ticket",
     messageContentOutName="ticketAck",
+    //eventListeners={JPAWorkingMemoryDbLogger.class},
     taskHandlers={JBPMHumanTaskHandler.class})
 public interface HelpDeskServiceProcess {}

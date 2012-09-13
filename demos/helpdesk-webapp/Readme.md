@@ -4,6 +4,13 @@ This quickstart is based on the Help Desk quickstart (please read: ../helpdesk/R
 The web application provides a form that allows two different people (krisv, a developer, and david, a user) to complete their work.
 Please refer to the Running the quickstart section below for more information on using the web application.
 
+If you would like to have BAM (Business Activity Monitoring) events from the process execution get stored in the database, uncomment these lines in
+src/main/java/org/switchyard/quickstarts/demos/helpdesk/HelpDeskServiceProcess.java:
+```
+//import org.jbpm.process.audit.JPAWorkingMemoryDbLogger;
+//eventListeners={JPAWorkingMemoryDbLogger.class},
+```
+
 ![Helpdesk Webapp Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/demos/helpdesk-webapp/helpdesk-webapp.jpg)
 
 
