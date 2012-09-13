@@ -22,6 +22,7 @@
   -->
 <module xmlns="urn:jboss:module:1.0" name="org.jbpm">
     <resources>
+        <resource-root path="jbpm-bam-${version.jbpm}.jar"/>
         <resource-root path="jbpm-bpmn2-${version.jbpm}.jar"/>
         <resource-root path="jbpm-flow-${version.jbpm}.jar"/>
         <resource-root path="jbpm-flow-builder-${version.jbpm}.jar"/>

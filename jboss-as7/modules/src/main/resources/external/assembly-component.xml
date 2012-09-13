@@ -286,6 +286,7 @@
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
+                <include>org.jbpm:jbpm-bam</include>
                 <include>org.jbpm:jbpm-bpmn2</include>
                 <include>org.jbpm:jbpm-flow</include>
                 <include>org.jbpm:jbpm-flow-builder</include>

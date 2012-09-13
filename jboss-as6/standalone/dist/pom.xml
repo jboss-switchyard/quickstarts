@@ -291,6 +291,11 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-bam</artifactId>
+                                    <version>${version.jbpm}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
                                     <artifactId>jbpm-bpmn2</artifactId>
                                     <version>${version.jbpm}</version>
                                 </artifactItem>
