@@ -37,7 +37,7 @@ public class HttpBindingQuickstartTest {
     }
 
     @Test
-    public void testOrders() throws Exception {
+    public void quoteService() throws Exception {
         HTTPMixIn httpMixIn = new HTTPMixIn();
 
         httpMixIn.initialize();
@@ -49,5 +49,28 @@ public class HttpBindingQuickstartTest {
         }
     }
 
+    @Test
+    public void headers() throws Exception {
+        HTTPMixIn httpMixIn = new HTTPMixIn();
+        httpMixIn.initialize();
+        try {
+            String response = httpMixIn.sendString(BASE_URL + "/symbol", "headers", HTTPMixIn.HTTP_POST);
+            Assert.assertEquals("content-type=text/xml;charset=UTF-8", response);
+        } finally {
+            httpMixIn.uninitialize();
+        }
+    }
+
+    @Test
+    public void requestInfo() throws Exception {
+        HTTPMixIn httpMixIn = new HTTPMixIn();
+        httpMixIn.initialize();
+        try {
+            String response = httpMixIn.sendString(BASE_URL + "/symbol", "requestInfo", HTTPMixIn.HTTP_POST);
+            Assert.assertTrue(response.indexOf("HttpRequestInfo [authType=null, characterEncoding=UTF-8, contentType=text/xml;charset=UTF-8, contextPath=/http-binding/symbol") == 0);
+        } finally {
+            httpMixIn.uninitialize();
+        }
+    }
     private static final String BASE_URL = "http://localhost:8080/http-binding";
 }
