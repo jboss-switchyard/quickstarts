@@ -19,6 +19,10 @@
  
 package org.switchyard.component.http.composer;
 
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.Reader;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.switchyard.Exchange;
@@ -45,8 +49,7 @@ public class HttpMessageComposer extends BaseMessageComposer<HttpBindingData> {
 
         getContextMapper().mapFrom(source, exchange.getContext());
 
-        final String requestBody = source.getBody();
-        message.setContent(requestBody);
+        message.setContent(source.getBody());
 
         return message;
     }
@@ -61,21 +64,20 @@ public class HttpMessageComposer extends BaseMessageComposer<HttpBindingData> {
             Object content = message.getContent();
             if (target instanceof HttpResponseBindingData) {
                 int status = HttpServletResponse.SC_OK;
-                setContent(content, target);
                 if (content == null) {
                     status = HttpServletResponse.SC_NO_CONTENT;
                 } else if (content instanceof HttpResponseBindingData) {
                     status = ((HttpResponseBindingData) content).getStatus();
-                } else if ((content instanceof String) || (content instanceof byte[])) {
+                } else if ((content instanceof String) || (content instanceof byte[]) 
+                            || (content instanceof InputStream) || (content instanceof Reader)) {
                     status = HttpServletResponse.SC_OK;
                 } else {
                     status = HttpServletResponse.SC_BAD_GATEWAY;
                 }
                 HttpResponseBindingData response = (HttpResponseBindingData) target;
                 response.setStatus(status);
-            } else {
-                setContent(content, target);
             }
+            setContent(content, target);
         }
 
         getContextMapper().mapTo(exchange.getContext(), target);
@@ -83,17 +85,17 @@ public class HttpMessageComposer extends BaseMessageComposer<HttpBindingData> {
         return target;
     }
 
-    private void setContent(final Object content, HttpBindingData message) {
+    private void setContent(final Object content, HttpBindingData message) throws IOException {
         if (content == null) {
             message.setBodyBytes(null);
-        } else if (content instanceof HttpBindingData) {
-            HttpBindingData httpMessage = (HttpBindingData) content;
-            message.setHeaders(httpMessage.getHeaders());
-            message.setBodyBytes(httpMessage.getBodyBytes());
         } else if (content instanceof String) {
             message.setBody((String) content);
         } else if (content instanceof byte[]) {
             message.setBodyBytes((byte[]) content);
+        } else if (content instanceof InputStream) {
+            message.setBodyFromStream((InputStream) content);
+        } else if (content instanceof Reader) {
+            message.setBodyFromReader((Reader) content);
         } else {
             message.setBody("" + content);
         }

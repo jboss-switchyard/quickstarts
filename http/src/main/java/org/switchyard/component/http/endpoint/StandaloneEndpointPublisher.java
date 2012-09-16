@@ -20,11 +20,16 @@
 package org.switchyard.component.http.endpoint;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.InetSocketAddress;
+import java.util.StringTokenizer;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.jboss.com.sun.net.httpserver.BasicAuthenticator;
 import org.jboss.com.sun.net.httpserver.HttpContext;
 import org.jboss.com.sun.net.httpserver.HttpExchange;
 import org.jboss.com.sun.net.httpserver.HttpHandler;
@@ -32,6 +37,7 @@ import org.jboss.com.sun.net.httpserver.HttpServer;
 import org.switchyard.component.http.ContentType;
 import org.switchyard.component.http.InboundHandler;
 import org.switchyard.component.http.composer.HttpRequestBindingData;
+import org.switchyard.component.http.composer.HttpRequestInfo;
 import org.switchyard.component.http.composer.HttpResponseBindingData;
 
 /**
@@ -81,32 +87,99 @@ public class StandaloneEndpointPublisher implements EndpointPublisher {
         }
 
         public void handle(HttpExchange exchange) {
-            HttpRequestBindingData httpRequest = new HttpRequestBindingData();
-            byte[] responseBody = null;
             try {
-                String contentType = exchange.getRequestHeaders().getFirst(CONTENT_TYPE);
-                httpRequest.setContentType(new ContentType(contentType));
-                httpRequest.setBodyFromStream(exchange.getRequestBody());
-                httpRequest.setHeaders(exchange.getRequestHeaders());
-            } catch (IOException e) {
-                LOGGER.error("Unexpected Exception while reading request", e);
-            }
-            HttpResponseBindingData httpResponse = _handler.invoke(httpRequest);
-            try {
-                if (httpResponse != null) {
-                    exchange.getResponseHeaders().putAll(httpResponse.getHeaders());
-                    if (httpResponse.getBodyBytes() != null) {
-                        exchange.sendResponseHeaders(httpResponse.getStatus(), httpResponse.getBodyBytes().length);
-                        httpResponse.writeBodyToStream(exchange.getResponseBody());
-                    } else {
-                        exchange.sendResponseHeaders(httpResponse.getStatus(), 0);
-                    }
-                } else {
-                    exchange.sendResponseHeaders(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 0);
+                HttpRequestBindingData httpRequest = new HttpRequestBindingData();
+                byte[] responseBody = null;
+                try {
+                    String contentTypeStr = exchange.getRequestHeaders().getFirst(CONTENT_TYPE);
+                    ContentType contentType = new ContentType(contentTypeStr);
+                    httpRequest.setContentType(contentType);
+                    httpRequest.setBodyFromStream(exchange.getRequestBody());
+                    httpRequest.setHeaders(exchange.getRequestHeaders());
+                    httpRequest.setRequestInfo(getRequestInfo(exchange, contentType));
+                } catch (IOException e) {
+                    LOGGER.error("Unexpected Exception while reading request", e);
                 }
-            } catch (IOException e) {
-                LOGGER.error("Unexpected Exception while writing response", e);
+                HttpResponseBindingData httpResponse = _handler.invoke(httpRequest);
+                try {
+                    if (httpResponse != null) {
+                        exchange.getResponseHeaders().putAll(httpResponse.getHeaders());
+                        if (httpResponse.getBodyBytes() != null) {
+                            exchange.sendResponseHeaders(httpResponse.getStatus(), httpResponse.getBodyBytes().available());
+                            httpResponse.writeBodyToStream(exchange.getResponseBody());
+                        } else {
+                            exchange.sendResponseHeaders(httpResponse.getStatus(), 0);
+                        }
+                    } else {
+                        exchange.sendResponseHeaders(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 0);
+                    }
+                } catch (IOException e) {
+                    LOGGER.error("Unexpected Exception while writing response", e);
+                }
+            } catch (Exception e) {
+                LOGGER.error("Unexpected Exception while handling http request", e);
             }
         }
+    }
+
+    /**
+     * Method for get request information from a http exchange.
+     *
+     * @param request HttpExchange
+     * @param type ContentType
+     * @return Request information from a http exchange
+     * @throws IOException when the request information could not be read
+     */
+    public static HttpRequestInfo getRequestInfo(HttpExchange request, ContentType type) throws IOException {
+        HttpRequestInfo requestInfo = new HttpRequestInfo();
+
+        if (request.getHttpContext().getAuthenticator() instanceof BasicAuthenticator) {
+            requestInfo.setAuthType(HttpServletRequest.BASIC_AUTH);
+        }
+        URI u = request.getRequestURI();
+        URI requestURI = null;
+        try {
+            requestURI = new URI(u.getScheme(), u.getUserInfo(), u.getHost(), u.getPort(), u.getPath(), null, null);
+        } catch (URISyntaxException e) {
+            // Strange that this could happen when copying from another URI.
+            LOGGER.debug(e);
+        }
+        requestInfo.setCharacterEncoding(type.getCharset());
+        requestInfo.setContentType(type.toString());
+        requestInfo.setContextPath(request.getHttpContext().getPath());
+        requestInfo.setLocalAddr(request.getLocalAddress().getAddress().getHostAddress());
+        requestInfo.setLocalName(request.getLocalAddress().getAddress().getHostName());
+        requestInfo.setMethod(request.getRequestMethod());
+        requestInfo.setProtocol(request.getProtocol());
+        requestInfo.setQueryString(u.getQuery());
+        requestInfo.setRemoteAddr(request.getRemoteAddress().getAddress().getHostAddress());
+        requestInfo.setRemoteHost(request.getRemoteAddress().getAddress().getHostName());
+        if (request.getHttpContext().getAuthenticator() instanceof BasicAuthenticator) {
+            requestInfo.setRemoteUser(request.getPrincipal().getUsername());
+        }
+        requestInfo.setContentLength(request.getRequestBody().available());
+        // requestInfo.setRequestSessionId(request.getRequestedSessionId());
+        if (requestURI != null) {
+            requestInfo.setRequestURI(requestURI.toString());
+        }
+        requestInfo.setScheme(u.getScheme());
+        requestInfo.setServerName(u.getHost());
+        requestInfo.setRequestPath(u.getPath());
+
+        // Http Query params...
+        if (requestInfo.getQueryString() != null) {
+            StringTokenizer params = new StringTokenizer(requestInfo.getQueryString(), "&");
+            while (params.hasMoreTokens()) {
+                String param = params.nextToken();
+                String[] nameValue = param.split("=");
+                requestInfo.addQueryParam(nameValue[0], nameValue[1]);
+            }
+        }
+
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace(requestInfo);
+        }
+
+        return requestInfo;
     }
 }

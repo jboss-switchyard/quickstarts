@@ -29,7 +29,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.Context;
+import org.switchyard.Exchange;
 import org.switchyard.Message;
+import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.http.config.model.HttpBindingModel;
 import org.switchyard.config.model.ModelPuller;
@@ -60,13 +63,18 @@ public class HttpGatewayTest {
     private ServiceDomain _domain;
     private HTTPMixIn httpMixIn;
 
-    @org.switchyard.test.ServiceOperation("{urn:resteasy:test:1.0}SampleHttpConsumerService")
+    @org.switchyard.test.ServiceOperation("{urn:http:test:1.0}SampleHttpConsumerService")
     private Invoker _consumerService;
+
+    @org.switchyard.test.ServiceOperation("{urn:http:test:1.0}InvalidHttpConsumerService")
+    private Invoker _consumerService2;
 
     private HttpBindingModel _config;
     private HttpBindingModel _configRef;
+    private HttpBindingModel _configRef2;
     private InboundHandler _httpInbound;
     private OutboundHandler _httpOutbound;
+    private OutboundHandler _httpOutbound2;
     private final MockHandler mockService = new MockHandler().forwardInToOut();
 
     @Before
@@ -88,16 +96,21 @@ public class HttpGatewayTest {
         _configRef = (HttpBindingModel)compositeReference.getBindings().get(0);
 
         _httpOutbound = new OutboundHandler(_configRef);
-        // Massive hack for Test Runner. Register both a service and a reference binding.
         _domain.registerService(_configRef.getServiceName(), new HelloInterface(), _httpOutbound);
-        _domain.registerServiceReference(_configRef.getServiceName(), new HelloInterface());
         _httpOutbound.start();
+
+        compositeReference = composite.getReferences().get(1);
+        _configRef2 = (HttpBindingModel)compositeReference.getBindings().get(0);
+        _httpOutbound2 = new OutboundHandler(_configRef2);
+        _domain.registerService(_configRef2.getServiceName(), new HelloInterface(), _httpOutbound2);
+        _httpOutbound2.start();
     }
 
     @After
     public void tearDown() throws Exception {
         _httpInbound.stop();
         _httpOutbound.stop();
+        _httpOutbound2.stop();
     }
 
     @Test
@@ -111,6 +124,29 @@ public class HttpGatewayTest {
     public void httpGatewayReferenceTest() throws Exception {
         Message responseMsg = _consumerService.operation("sayHello").sendInOut("magesh");
         Assert.assertEquals("magesh", responseMsg.getContent(String.class));
+    }
+
+    @Test
+    public void httpStatus() throws Exception {
+        MockHandler handler = new MockHandler();
+        Exchange ex = _consumerService.operation("sayHello").createExchange(handler);
+        Context ctx = ex.getContext();
+        ctx.setProperty("SomeRequestHeader", "BAR");
+        Message requestMsg = ex.createMessage().setContent("magesh");
+        ex.send(requestMsg);
+        handler.waitForOKMessage();
+        Assert.assertEquals(200, ctx.getProperty("status", Scope.IN).getValue());
+    }
+
+    @Test
+    public void httpFault() throws Exception {
+        MockHandler handler = new MockHandler();
+        Exchange ex = _consumerService2.operation("sayHello").createExchange(handler);
+        Context ctx = ex.getContext();
+        Message requestMsg = ex.createMessage().setContent("magesh");
+        ex.send(requestMsg);
+        handler.waitForOKMessage();
+        Assert.assertEquals(404, ctx.getProperty("status", Scope.IN).getValue());
     }
 
     private static class HelloInterface extends BaseService {

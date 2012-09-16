@@ -20,10 +20,12 @@
 package org.switchyard.component.http;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -32,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.switchyard.component.http.composer.HttpRequestBindingData;
+import org.switchyard.component.http.composer.HttpRequestInfo;
 import org.switchyard.component.http.composer.HttpResponseBindingData;
 
 /**
@@ -43,8 +46,20 @@ public class HttpGatewayServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(HttpGatewayServlet.class);
+    private static final Map<String,String> LOCALNAMEMAP = new ConcurrentHashMap<String,String>();
 
     private transient InboundHandler _handler;
+
+    // request.getLocalName() has proven expensive, so cache it
+    private static final String getLocalName(HttpServletRequest request) {
+        String localAddr = request.getLocalAddr();
+        String localName = LOCALNAMEMAP.get(localAddr);
+        if (localName == null) {
+            localName = request.getLocalName();
+            LOCALNAMEMAP.put(localAddr, localName);
+        }
+        return localName;
+    }
 
     /**
      * Set the SwitchYard component handler for this instance.
@@ -123,6 +138,7 @@ public class HttpGatewayServlet extends HttpServlet {
                         httpRequest.addHeader(name, value);
                     }
                 }
+                httpRequest.setRequestInfo(getRequestInfo(request));
             } catch (IOException e) {
                 LOGGER.error("Unexpected Exception while reading request", e);
             }
@@ -150,5 +166,63 @@ public class HttpGatewayServlet extends HttpServlet {
             } catch (IOException e) {
                 LOGGER.error("Unexpected Exception while writing response", e);
             }
+    }
+
+   /**
+     * Method for get request information from a servlet request.
+     *
+     * @param request ServletRequest
+     * @return Request information parsed by servlet container from a servlet request
+     */
+    @SuppressWarnings("unchecked")
+    public HttpRequestInfo getRequestInfo(HttpServletRequest request) {
+        HttpRequestInfo requestInfo = new HttpRequestInfo();
+
+        requestInfo.setAuthType(request.getAuthType());
+        requestInfo.setCharacterEncoding(request.getCharacterEncoding());
+        requestInfo.setContentType(request.getContentType());
+        requestInfo.setContextPath(request.getContextPath());
+        requestInfo.setLocalAddr(request.getLocalAddr());
+        requestInfo.setLocalName(getLocalName(request));
+        requestInfo.setMethod(request.getMethod());
+        requestInfo.setProtocol(request.getProtocol());
+        requestInfo.setQueryString(request.getQueryString());
+        requestInfo.setRemoteAddr(request.getRemoteAddr());
+        requestInfo.setRemoteHost(request.getRemoteHost());
+        requestInfo.setRemoteUser(request.getRemoteUser());
+        requestInfo.setContentLength(request.getContentLength());
+        requestInfo.setRequestSessionId(request.getRequestedSessionId());
+        requestInfo.setRequestURI(request.getRequestURI());
+        requestInfo.setScheme(request.getScheme());
+        requestInfo.setServerName(request.getServerName());
+        requestInfo.setRequestPath(request.getServletPath());
+
+        String pathInfo = request.getPathInfo();
+        requestInfo.setPathInfo(pathInfo);
+
+        if (pathInfo != null) {
+            List<String> pathInfoTokens = requestInfo.getPathInfoTokens();
+
+            pathInfoTokens.addAll(Arrays.asList(request.getPathInfo().split("/")));
+
+            // remove empty tokens...
+            Iterator<String> tokensIterator = pathInfoTokens.iterator();
+            while (tokensIterator.hasNext()) {
+                if (tokensIterator.next().trim().length() == 0) {
+                    tokensIterator.remove();
+                }
+            }
+        }
+
+        // Http Query params...
+        Map paramMap = request.getParameterMap();
+        if (paramMap != null) {
+            requestInfo.getQueryParams().putAll(paramMap);
+        }
+
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace(requestInfo);
+        }
+        return requestInfo;
     }
 }

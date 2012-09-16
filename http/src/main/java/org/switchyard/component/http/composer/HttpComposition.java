@@ -36,6 +36,12 @@ public final class HttpComposition {
     /** The "http_header" context property label. */
     public static final String HTTP_HEADER = "http_header";
 
+    /** The HTTP status code property name. */
+    public static final String HTTP_STATUS = "status";
+
+    /** The HTTP status code property name. */
+    public static final String HTTP_REQUEST_INFO = "request_info";
+
     /**
      * Uses the {@link Composition} class to create a HTTP-specific MessageComposer.
      * @return the MessageComposer

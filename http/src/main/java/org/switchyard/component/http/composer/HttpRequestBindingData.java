@@ -25,5 +25,19 @@ package org.switchyard.component.http.composer;
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
 public class HttpRequestBindingData extends HttpBindingData {
+    private HttpRequestInfo _requestInfo;
 
+    /**
+     * @return the requestInfo
+     */
+    public HttpRequestInfo getRequestInfo() {
+        return _requestInfo;
+    }
+
+    /**
+     * @param requestInfo the requestInfo to set
+     */
+    public void setRequestInfo(HttpRequestInfo requestInfo) {
+        _requestInfo = requestInfo;
+    }
 }

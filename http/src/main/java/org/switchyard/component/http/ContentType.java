@@ -92,4 +92,9 @@ public class ContentType {
     public void setCharset(String charset) {
         _charset = charset;
     }
+
+    @Override
+    public String toString() {
+        return _mimeType + ";" + CHARSET + "=" + _charset;
+    }
 }

@@ -19,10 +19,14 @@
  
 package org.switchyard.component.http.composer;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.OutputStream; 
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -43,6 +47,8 @@ public abstract class HttpBindingData implements BindingData {
     private Map<String, List<String>> _headers;
     private byte[] _body;
     private ContentType _contentType;
+    private ByteArrayInputStream _content;
+    private long _contentLength;
 
     /**
      * Get the HTTP headers map.
@@ -94,10 +100,25 @@ public abstract class HttpBindingData implements BindingData {
 
     /**
      * Get the HTTP body.
-     * @return the body
+     * @return the body as a StringReader
      * @throws UnsupportedEncodingException if content encoding is not supported
      */
-    public String getBody() throws UnsupportedEncodingException {
+    public StringReader getBody() throws UnsupportedEncodingException {
+        String body = null;
+        if ((_contentType != null) && (_contentType.getCharset() != null)) {
+            body = new String(_body, _contentType.getCharset());
+        } else {
+            body = new String(_body);
+        }
+        return new StringReader(body);
+    }
+
+    /**
+     * Get the HTTP body.
+     * @return the body as a String
+     * @throws UnsupportedEncodingException if content encoding is not supported
+     */
+    public String getBodyAsString() throws UnsupportedEncodingException {
         String body = null;
         if ((_contentType != null) && (_contentType.getCharset() != null)) {
             body = new String(_body, _contentType.getCharset());
@@ -111,9 +132,9 @@ public abstract class HttpBindingData implements BindingData {
      * Get the HTTP body as byte array.
      * @return the body
      */
-    public byte[] getBodyBytes() {
+    public ByteArrayInputStream getBodyBytes() {
         if (_body != null) {
-            return _body.clone();
+            return new ByteArrayInputStream(_body);
         } else {
             return null;
         }
@@ -134,6 +155,26 @@ public abstract class HttpBindingData implements BindingData {
             }
             _body = tmp.toByteArray();
             is.close();
+        } else {
+            _body = null;
+        }
+    }
+
+    /**
+     * Set the HTTP body using a reader.
+     * @param reader the body as Reader
+     * @throws IOException if content could not be read
+     */
+    public void setBodyFromReader(Reader reader) throws IOException {
+        if (reader != null) {
+            StringWriter tmp = new StringWriter();
+            char[] buff = new char[512];
+            int buffSize = 0;
+            while ((buffSize = reader.read(buff)) >= 0) {
+                tmp.write(buff, 0, buffSize);
+            }
+            _body = tmp.toString().getBytes();
+            reader.close();
         } else {
             _body = null;
         }

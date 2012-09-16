@@ -23,8 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.log4j.Logger;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -37,7 +35,7 @@ import org.apache.http.client.methods.HttpOptions;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
@@ -125,14 +123,14 @@ public class OutboundHandler extends BaseServiceHandler {
                 request = new HttpGet(_baseAddress);
             } else if (_httpMethod.equals(HTTP_POST)) {
                 request = new HttpPost(_baseAddress);
-                ((HttpPost) request).setEntity(new ByteArrayEntity(httpRequest.getBodyBytes()));
+                ((HttpPost) request).setEntity(new InputStreamEntity(httpRequest.getBodyBytes(), httpRequest.getBodyBytes().available()));
             } else if (_httpMethod.equals(HTTP_DELETE)) {
                 request = new HttpDelete(_baseAddress);
             } else if (_httpMethod.equals(HTTP_HEAD)) {
                 request = new HttpHead(_baseAddress);
             } else if (_httpMethod.equals(HTTP_PUT)) {
                 request = new HttpPut(_baseAddress);
-                ((HttpPut) request).setEntity(new ByteArrayEntity(httpRequest.getBodyBytes()));
+                ((HttpPut) request).setEntity(new InputStreamEntity(httpRequest.getBodyBytes(), httpRequest.getBodyBytes().available()));
             } else if (_httpMethod.equals(HTTP_OPTIONS)) {
                 request = new HttpOptions(_baseAddress);
             }
@@ -151,24 +149,27 @@ public class OutboundHandler extends BaseServiceHandler {
 
             HttpResponse response = httpclient.execute(request);
             int status = response.getStatusLine().getStatusCode();
-            if (status == HttpServletResponse.SC_OK) {
-                HttpEntity entity = response.getEntity();
-                HttpResponseBindingData httpResponse = new HttpResponseBindingData();
-                Header[] headers = response.getAllHeaders();
-                for (Header header : headers) {
-                    httpResponse.addHeader(header.getName(), header.getValue());
+
+            HttpEntity entity = response.getEntity();
+            HttpResponseBindingData httpResponse = new HttpResponseBindingData();
+            Header[] headers = response.getAllHeaders();
+            for (Header header : headers) {
+                httpResponse.addHeader(header.getName(), header.getValue());
+            }
+            if (entity != null) {
+                if (entity.getContentType() != null) {
+                    httpResponse.setContentType(new ContentType(entity.getContentType().getValue()));
+                } else {
+                    httpResponse.setContentType(new ContentType());
                 }
-                if (entity != null) {
-                    if (entity.getContentType() != null) {
-                        httpResponse.setContentType(new ContentType(entity.getContentType().getValue()));
-                    } else {
-                        httpResponse.setContentType(new ContentType());
-                    }
-                    httpResponse.setBodyFromStream(entity.getContent());
-                }
-                httpResponse.setStatus(status);
-                Message out = _messageComposer.compose(httpResponse, exchange, true);
+                httpResponse.setBodyFromStream(entity.getContent());
+            }
+            httpResponse.setStatus(status);
+            Message out = _messageComposer.compose(httpResponse, exchange, true);
+            if (httpResponse.getStatus() < 400) {
                 exchange.send(out);
+            } else {
+                exchange.sendFault(out);
             }
         } catch (Exception e) {
             throw new HandlerException("Unexpected exception handling HTTP Message", e);

@@ -55,7 +55,7 @@ public class HttpOperationSelector extends OperationSelector<HttpBindingData> {
 
     @Override
     protected String extractString(HttpBindingData content) throws Exception {
-        return content.getBody();
+        return content.getBodyAsString();
     }
 
 }
