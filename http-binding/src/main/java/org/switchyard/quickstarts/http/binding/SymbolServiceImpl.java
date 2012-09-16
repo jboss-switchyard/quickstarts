@@ -19,13 +19,16 @@
 
 package org.switchyard.quickstarts.http.binding;
 
-import static org.switchyard.Scope.IN;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import org.switchyard.Context;
 import org.switchyard.Property;
+import org.switchyard.Scope;
 import org.switchyard.component.bean.Service;
+import org.switchyard.component.http.composer.HttpComposition;
+import org.switchyard.component.http.composer.HttpRequestInfo;
 
 /**
  * A SymbolService implementation.
@@ -40,10 +43,26 @@ public class SymbolServiceImpl implements SymbolService {
 
     public String getSymbol(String companyName) {
         String symbol = "";
+        if (companyName.equals("headers")) {
+            StringBuffer headers = new StringBuffer();
+            for (Property property : context.getProperties(Scope.IN)) {
+                if (property.hasLabel(HttpComposition.HTTP_HEADER) && (property.getValue() instanceof String)) {
+                    headers.append(property.getName());
+                    headers.append("=");
+                    headers.append(property.getValue());
+                }
+            }
+            return headers.toString();
+        }
+        if (companyName.equals("requestInfo")) {
+            Property prop = context.getProperty(HttpComposition.HTTP_REQUEST_INFO, Scope.IN);
+            return ((HttpRequestInfo)prop.getValue()).toString();
+        }
+
         // Note the property becomes lower cased when executed on AS7
-        Property prop = context.getProperty("content-type", IN);
+        Property prop = context.getProperty("content-type", Scope.IN);
         if (prop == null) {
-            prop = context.getProperty("Content-type", IN);
+            prop = context.getProperty("Content-type", Scope.IN);
         }
         String contentType = (prop == null) ? null : (String)prop.getValue();
         if (contentType != null) {
