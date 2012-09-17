@@ -25,12 +25,12 @@ Running the quickstart
 4. Start JBoss AS 7 in standalone mode:
     ./standalone.sh
 5. Deploy the quickstart
-    cp target/switchyard-quickstart-demo-policy-security.jar ${AS7}/standalone/deployments
+    mvn jboss-as:deploy
 6. Execute the test
     See "Options" section below.
 7. Check the server console for output from the service.
 8. Undeploy the application
-    rm ${AS7}/standalone/deployments/switchyard-quickstart-demo-policy-security-{version}.jar.deployed
+    mvn jboss-as:undeploy
 
 
 Options

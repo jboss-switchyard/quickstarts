@@ -46,6 +46,13 @@
 				</archive>
 			</configuration>
 		</plugin>
+		<plugin>
+			<groupId>org.jboss.as.plugins</groupId>
+			<artifactId>jboss-as-maven-plugin</artifactId>
+			<configuration>
+				<filename>${project.build.finalName}.jar</filename>
+			</configuration>
+		</plugin>
 		</plugins>
 	</build>
 

@@ -27,7 +27,7 @@ JBoss AS 7
 2. Start JBoss AS 7 in standalone mode:
     ${AS}/bin/standalone.sh
 3. Deploy the Quickstart : 
-    cp target/switchyard-quickstart-bpm-service.jar ${AS7}/standalone/deployments
+    mvn jboss-as:deploy
 4. Submit a webservice request to invoke the SOAP gateway.  There are a number of ways to do this :
       - Submit a request with your preferred SOAP client - src/test/resources/xml contains sample 
         requests and the responses that you should see

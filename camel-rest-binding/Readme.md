@@ -31,7 +31,7 @@ JBoss AS 7
 </pre>
 3. Deploy the quickstart
 <pre>
-    cp target/switchyard-quickstarts-camel-rest-binding.jar ${AS7}/standalone/deployments
+    mvn jboss-as:deploy
 </pre>
 4. Open a console windows and type  
 <pre>

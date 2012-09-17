@@ -15,7 +15,7 @@ JBoss AS 7
 3. Start JBoss AS 7 in standalone-full mode:
     ${AS}/bin/standalone.sh --server-config=standalone-full.xml
 4. Deploy the quickstart
-    cp target/switchyard-quickstarts-camel-ftp-binding.jar ${AS7}/standalone/deployments
+    mvn jboss-as:deploy
 5. Create file on ftp server using standalone client
 6. Check the server console for output from the service.
 
