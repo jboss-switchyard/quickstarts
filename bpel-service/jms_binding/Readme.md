@@ -24,7 +24,7 @@ JBoss AS 7
 5. Deploy JMS Queue
     cp src/test/resources/switchyard-quickstart-bpel-jms-hornetq-jms.xml ${AS7}/standalone/deployments
 6. Deploy the quickstart
-    cp target/switchyard-quickstart-bpel-service-jms-binding.jar ${AS7}/standalone/deployments
+    mvn jboss-as:deploy
 7. Execute HornetQClient
     mvn exec:java
 8. Watch the command output for the reply message.

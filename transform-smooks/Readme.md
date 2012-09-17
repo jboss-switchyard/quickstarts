@@ -23,7 +23,7 @@ JBoss AS 7
 2. Start JBoss AS 7 in standalone mode:
     ./standalone
 3. Deploy the Quickstart : 
-    cp target/switchyard-quickstart-transform-smooks.jar ${AS7}/standalone/deployments
+    mvn jboss-as:deploy
 4. Run the test from Maven :
     mvn -Dtest=ServiceTransformationTest test
 

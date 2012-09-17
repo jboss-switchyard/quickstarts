@@ -21,7 +21,7 @@ JBoss AS 7
 2. Start JBoss AS 7 with the standalone-preview.xml :
     ./standalone.sh 
 3. Deploy the Quickstart :
-    cp target/switchyard-quickstart-transform-jaxb.jar ${AS7}/standalone/deployments
+    mvn jboss-as:deploy
 4. Submit a request with your preferred SOAP client - src/test/resources/xml contains sample 
    requests and the responses that you should see
 

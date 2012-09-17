@@ -21,8 +21,7 @@ JBoss AS 7
 2. Start JBoss AS 7 in standalone-xts mode:
     ${AS}/bin/standalone.sh --server-config=standalone-xts.xml
 3. Deploy the BPEL process and the Web service :
-    cp bpel/target/switchyard-quickstart-bpel-service-xts-wsat-bpel.jar ${AS7}/standalone/deployments
-    cp ws/target/switchyard-quickstart-bpel-service-xts-wsat-ws.jar ${AS7}/standalone/deployments
+    mvn jboss-as:deploy
 4. Submit a webservice requests to invoke the SOAP gateway.  There are a number of ways to do this :
       - Submit a request with your preferred SOAP client - bpel/src/test/resources/xml contains sample
         requests and the responses that you should see

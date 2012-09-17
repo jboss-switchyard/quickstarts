@@ -22,14 +22,14 @@ Running the quickstart
 5. Deploy JMS Queue
     cp src/test/resources/switchyard-quickstart-demo-policy-transaction-hornetq-jms.xml ${AS7}/standalone/deployments
 6. Deploy the quickstart
-    cp target/switchyard-quickstarts-policy-transaction.jar ${AS7}/standalone/deployments
+    mvn jboss-as:deploy
 7. Execute HornetQClient
     mvn exec:java
 8. Check the server console for output from the service.  With the default
    configuration of the quickstart, you should see the output below in the
    AS server.log.
 9. Undeploy the application
-    rm ${AS7}/standalone/deployments/switchyard-quickstart-demo-policy-transaction-{version}.jar.deployed
+    mvn jboss-as:undeploy
     rm ${AS7}/standalone/deployments/switchyard-quickstart-demo-policy-transaction-hornetq-jms.xml
 
 ```

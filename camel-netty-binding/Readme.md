@@ -13,7 +13,7 @@ JBoss AS 7
 2. Start JBoss AS 7 in standalone-full mode:
     ${AS}/bin/standalone.sh --server-config=standalone-full.xml
 3. Deploy the quickstart
-    cp target/switchyard-quickstarts-camel-netty-binding.jar ${AS7}/standalone/deployments
+    mvn jboss-as:deploy
 4. Execute client and send text message:
     a) for tcp test use: mvn exec:java
     b) for udp test use: mvn exec:java -Pudp

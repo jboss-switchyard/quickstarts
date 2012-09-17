@@ -20,7 +20,7 @@ JBoss AS 7
 5. Deploy JMS Queue
     cp src/test/resources/switchyard-quickstart-jca-outbound-hornetq-jms.xml ${AS7}/standalone/deployments
 6. Deploy the quickstart
-    cp target/switchyard-quickstart-jca-outbound-hornetq.jar ${AS7}/standalone/deployments
+    mvn jboss-as:deploy
 7. Execute HornetQClient
     mvn exec:java
 8. Check the output from the client.
