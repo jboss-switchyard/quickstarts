@@ -145,4 +145,11 @@ public class ServiceImpl implements Service {
         _providerMetadata = provider;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "Service [name=" + _name + ", interface=" + _interface
+                + ", domain=" + _domain + ", requires=" + _requires + "]";
+    }
+
 }

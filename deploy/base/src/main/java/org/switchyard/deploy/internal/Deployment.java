@@ -77,15 +77,6 @@ import org.switchyard.policy.PolicyFactory;
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public class Deployment extends AbstractDeployment {
-    /**
-     * Interface type used by a Java interface, e.g. "interface.java"
-     */
-    private static final String JAVA_INTERFACE = "java";
-
-    /**
-     * Interface type used by a WSDL interface, e.g. "interface.wsdl"
-     */
-    private static final String WSDL_INTERFACE = "wsdl";
 
     private static Logger _log = Logger.getLogger(Deployment.class);
 
@@ -474,7 +465,8 @@ public class Deployment extends AbstractDeployment {
                 // register any service promotions, avoiding duplicate service names
                 CompositeServiceModel promotion = servicePromotions.get(service);
                 if (promotion != null && !promotion.getQName().equals(service.getQName())) {
-                    getDomain().registerService(promotion.getQName(), serviceIntf, handler);
+                    Service promotedService = getDomain().registerService(promotion.getQName(), serviceIntf, handler);
+                    activation.addPromotion(promotedService);
                 }
                 
                 _services.add(activation);
@@ -531,6 +523,7 @@ public class Deployment extends AbstractDeployment {
                for (ServiceReference reference : activation.getReferences()) {
                    reference.unregister();
                }
+               
            }
        } finally {
            _serviceBindings.clear();
@@ -544,13 +537,17 @@ public class Deployment extends AbstractDeployment {
                 activation.getHandler().stop();
                 activation.getActivator().deactivateService(
                         activation.getName(), activation.getHandler());
-                
+
                 for (Service service : activation.getServices()) {
                     service.unregister();
                 }
-                
+
                 for (ServiceReference reference : activation.getReferences()) {
                     reference.unregister();
+                }
+
+                for (Service service : activation.getPromotions()) {
+                    service.unregister();
                 }
             }
         } finally {
@@ -663,6 +660,7 @@ class Activation {
     private QName _name;
     private ServiceHandler _handler;
     private List<Service> _services = new LinkedList<Service>();
+    private List<Service> _promotions = new LinkedList<Service>();
     private List<ServiceReference> _references = new LinkedList<ServiceReference>();
     
     Activation(Activator activator, QName name, ServiceHandler handler) {
@@ -698,11 +696,20 @@ class Activation {
         return this;
     }
     
+    Activation addPromotion(Service service) {
+        _promotions.add(service);
+        return this;
+    }
+    
     List<ServiceReference> getReferences() {
         return _references;
     }
-    
+
     List <Service> getServices() {
         return _services;
+    }
+
+    List <Service> getPromotions() {
+        return _promotions;
     }
 }

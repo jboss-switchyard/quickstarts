@@ -108,4 +108,10 @@ public class BaseService implements ServiceInterface {
     public String getType() {
         return _type;
     }
+
+    @Override
+    public String toString() {
+        return "BaseServiceInterface [type=" + _type + ", operations=" + _operations + "]";
+    }
+
 }

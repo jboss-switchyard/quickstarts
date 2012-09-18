@@ -285,4 +285,10 @@ public class DomainImpl implements ServiceDomain {
                     + target.getClass().getCanonicalName(), ex);
         }
     }
+
+    @Override
+    public String toString() {
+        return "ServiceDomain [name=" + _name + "]";
+    }
+
 }
