@@ -173,25 +173,10 @@
             <outputDirectory>/modules/batik/main</outputDirectory>
             <filtered>true</filtered>
         </file>
-        <file>
-            <source>src/main/resources/external/jettison/module.xml</source>
-            <outputDirectory>/modules/org/codehaus/jettison/main</outputDirectory>
-            <filtered>true</filtered>
-        </file>
         <!-- Temporary fix, will be removed in next upgrade to AS7 -->
         <file>
             <source>src/main/resources/external/weld-core/module.xml</source>
             <outputDirectory>/modules/org/jboss/weld/core/main</outputDirectory>
-            <filtered>true</filtered>
-        </file>
-        <file>
-            <source>src/main/resources/external/apache/commons/net/module.xml</source>
-            <outputDirectory>/modules/org/apache/commons/net/main</outputDirectory>
-            <filtered>true</filtered>
-        </file>
-        <file>
-            <source>src/main/resources/external/apache/commons/collections/module.xml</source>
-            <outputDirectory>/modules/org/apache/commons/collections/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
@@ -457,15 +442,6 @@
             </includes>
             <outputDirectory>/modules/batik/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${version.xml-apis}.${artifact.extension}
-            </outputFileNameMapping>
-        </dependencySet>
-        <dependencySet>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <includes>
-                <include>org.codehaus.jettison:jettison</include>
-            </includes>
-            <outputDirectory>/modules/org/codehaus/jettison/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${version.jettison}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
 

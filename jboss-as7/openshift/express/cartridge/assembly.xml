@@ -50,7 +50,6 @@
       </includes>
       <fileMode>755</fileMode>
     </fileSet>
-     End -->
     <fileSet>
       <directory>src/main/resources/hibernate-validator</directory>
       <outputDirectory>modules/org/hibernate/validator/main</outputDirectory>
@@ -59,5 +58,6 @@
       </includes>
       <fileMode>755</fileMode>
     </fileSet>
+     End -->
   </fileSets>
 </assembly>
