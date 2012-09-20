@@ -20,7 +20,6 @@ package org.switchyard.component.rules.config.model.v1;
 
 import javax.xml.namespace.QName;
 
-import org.drools.runtime.Channel;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.XMLHelper;
@@ -57,17 +56,16 @@ public class V1ChannelModel extends BaseNamedModel implements ChannelModel {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
-    public Class<? extends Channel> getClazz(ClassLoader loader) {
+    public Class<?> getClazz(ClassLoader loader) {
         String c = Strings.trimToNull(getModelAttribute("class"));
-        return c != null ? (Class<? extends Channel>)Classes.forName(c, loader) : null;
+        return c != null ? Classes.forName(c, loader) : null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ChannelModel setClazz(Class<? extends Channel> clazz) {
+    public ChannelModel setClazz(Class<?> clazz) {
         String c = clazz != null ? clazz.getName() : null;
         setModelAttribute("class", c);
         return this;

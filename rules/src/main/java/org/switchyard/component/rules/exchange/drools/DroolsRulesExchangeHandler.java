@@ -134,13 +134,15 @@ public class DroolsRulesExchangeHandler extends BaseRulesExchangeHandler {
             _actions.put(ram.getName(), ram);
         }
         for (ChannelModel cm : model.getChannels()) {
-            Class<? extends org.drools.runtime.Channel> clazz = cm.getClazz(_componentImplementationConfig.getLoader());
+            Class<?> clazz = cm.getClazz(_componentImplementationConfig.getLoader());
             if (clazz == null) {
                 clazz = SwitchYardServiceChannel.class;
+            } else if (!Channel.class.isAssignableFrom(clazz)) {
+                throw new IllegalArgumentException(Channel.class.getName() + " is not assignable from " + clazz.getName());
             }
             Channel channel;
             try {
-                channel = clazz.newInstance();
+                channel = (Channel)clazz.newInstance();
             } catch (Exception e) {
                 throw new SwitchYardException(e);
             }
