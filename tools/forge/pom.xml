@@ -55,6 +55,10 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-forge-http-plugin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
             <artifactId>switchyard-forge-plugin</artifactId>
         </dependency>
         <dependency>
@@ -98,6 +102,10 @@
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-validate</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-common</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>

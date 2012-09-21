@@ -48,6 +48,7 @@
               <!--
               <include>org.switchyard:switchyard-forge-clojure-plugin</include>
               -->
+              <include>org.switchyard:switchyard-forge-http-plugin</include>
               <include>org.switchyard:switchyard-forge-plugin</include>
               <include>org.switchyard:switchyard-forge-resteasy-plugin</include>
               <include>org.switchyard:switchyard-forge-rules-plugin</include>
@@ -63,6 +64,7 @@
             <includes>
               <include>org.switchyard:switchyard-api</include>
               <include>org.switchyard:switchyard-common</include>
+              <include>org.switchyard.components:switchyard-component-common</include>
               <include>org.switchyard.components:switchyard-component-common-rules</include>
               <include>org.switchyard:switchyard-config</include>
               <include>org.switchyard:switchyard-deploy</include>

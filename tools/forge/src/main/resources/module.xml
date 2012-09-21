@@ -9,6 +9,7 @@
 	<resource-root path="switchyard-forge-rules-plugin-${project.version}.jar"/>
 	<resource-root path="switchyard-forge-bpm-plugin-${project.version}.jar"/>
 	<resource-root path="switchyard-forge-camel-plugin-${project.version}.jar"/>
+	<resource-root path="switchyard-forge-http-plugin-${project.version}.jar"/>
   </resources>
   
   <dependencies>
