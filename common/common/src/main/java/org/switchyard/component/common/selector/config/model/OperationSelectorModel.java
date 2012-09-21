@@ -27,7 +27,7 @@ import org.switchyard.config.model.Model;
 public interface OperationSelectorModel extends Model {
 
     /** The default "selector" namespace. */
-    public static final String DEFAULT_NAMESPACE = "urn:switchyard-config:selector:1.0";
+    public static final String DEFAULT_NAMESPACE = "urn:switchyard-component-common-selector:config:1.0";
 
     /** operationSelector variable. */
     public static final String OPERATION_SELECTOR = "operationSelector";
