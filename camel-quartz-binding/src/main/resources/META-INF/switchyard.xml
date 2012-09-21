@@ -3,7 +3,7 @@
     xmlns:camel="urn:switchyard-component-camel:config:1.0"
     xmlns:bean="urn:switchyard-component-bean:config:1.0">
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-        name="camel-netty-binding" targetNamespace="urn:switchyard-quickstart:camel-quartz-binding:0.1.0">
+        name="camel-quartz-binding" targetNamespace="urn:switchyard-quickstart:camel-quartz-binding:0.1.0">
 
         <service name="GreetingService" promote="GreetingService">
             <camel:binding.quartz>
