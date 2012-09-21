@@ -23,6 +23,7 @@
         <module>resteasy</module>
         <module>rules</module>
         <module>bpm</module>
+        <module>http</module>
     </modules>
     
     <profiles>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.switchyard.components</groupId>
+    <artifactId>switchyard-forge-components</artifactId>
+    <version>0.6.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <groupId>org.switchyard</groupId>
+  <artifactId>switchyard-forge-http-plugin</artifactId>
+  <name>SwitchYard: HTTP Gateway Forge Plugin</name>
+  <description>HTTP Gateway Forge Support</description>
+  <url>http://switchyard.org</url>
+  <dependencies>
+    <dependency>
+      <groupId>org.switchyard.components</groupId>
+      <artifactId>switchyard-component-http</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-forge-bean-plugin</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.switchyard</groupId>
+      <artifactId>switchyard-forge-common</artifactId>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <artifactSet>
+                <includes>
+                  <include>org.switchyard.components:switchyard-component-http</include>
+                </includes>
+              </artifactSet>
+              <filters>
+                <filter>
+                  <artifact>org.switchyard.components:switchyard-component-http</artifact>
+                  <includes>
+                    <include>org/switchyard/config/**</include>
+                    <include>org/switchyard/component/http/config/model/**</include>
+                    <include>org/switchyard/component/http/config/model/v1/**</include>
+                  </includes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
