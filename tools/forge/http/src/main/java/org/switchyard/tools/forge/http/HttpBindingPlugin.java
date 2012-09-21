@@ -19,8 +19,6 @@
 
 package org.switchyard.tools.forge.http;
 
-import java.lang.reflect.Method;
-
 import javax.inject.Inject;
 
 import org.jboss.forge.project.Project;
@@ -37,7 +35,6 @@ import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
 import org.switchyard.component.common.selector.config.model.v1.V1StaticOperationSelectorModel;
 import org.switchyard.component.http.config.model.HttpBindingModel;
-import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;

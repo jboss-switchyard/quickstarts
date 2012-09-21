@@ -147,22 +147,21 @@ public abstract class BaseBPMExchangeHandler extends BaseHandler implements BPME
     }
 
     /**
-     * Gets the process event from the Exchange Context.
+     * Gets the process event from the Exchange Context, or if null, the Message content.
      * @param context the Exchange Context
      * @param message the Message
      * @return the process event
      */
     protected Object getProcessEvent(Context context, Message message) {
+        Object pe = null;
         Property property = context.getProperty(PROCESS_EVENT_VAR, EXCHANGE);
         if (property != null) {
-            Object value = property.getValue();
-            if (value != null) {
-                return value;
-            } else if (message != null) {
-                return message.getContent();
-            }
+            pe = property.getValue();
         }
-        return null;
+        if (pe == null && message != null) {
+            pe = message.getContent();
+        }
+        return pe;
     }
 
     /**
