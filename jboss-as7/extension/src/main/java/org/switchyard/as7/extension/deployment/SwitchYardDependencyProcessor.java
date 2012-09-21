@@ -46,6 +46,7 @@ public class SwitchYardDependencyProcessor implements DeploymentUnitProcessor {
     private static final ModuleIdentifier SWITCHYARD_API_ID = ModuleIdentifier.create("org.switchyard.api");
     private static final ModuleIdentifier SWITCHYARD_COMMON_ID = ModuleIdentifier.create("org.switchyard.common");
     private static final ModuleIdentifier SWITCHYARD_COMMON_CAMEL_ID = ModuleIdentifier.create("org.switchyard.common-camel");
+    private static final ModuleIdentifier SWITCHYARD_BUS_CAMEL = ModuleIdentifier.create("org.switchyard.bus.camel");
     private static final ModuleIdentifier SWITCHYARD_CONFIG_ID = ModuleIdentifier.create("org.switchyard.config");
     private static final ModuleIdentifier SWITCHYARD_RUNTIME_ID = ModuleIdentifier.create("org.switchyard.runtime");
     private static final ModuleIdentifier SWITCHYARD_TRANSFORM_ID = ModuleIdentifier.create("org.switchyard.transform");
@@ -78,7 +79,8 @@ public class SwitchYardDependencyProcessor implements DeploymentUnitProcessor {
         moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_API_ID, false, false, false, false));
         moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_COMMON_ID, false, false, false, false));
         moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, DELTASPIKE_ID, false, false, false, false));
-//        moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_COMMON_CAMEL_ID, false, false, false, false));
+        moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_BUS_CAMEL, false, false, false, false));
+        moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_COMMON_CAMEL_ID, false, false, false, false));
         moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_CONFIG_ID, false, false, false, false));
         ModuleDependency dep = new ModuleDependency(moduleLoader, SWITCHYARD_RUNTIME_ID, false, false, true, false);
         dep.addImportFilter(META_INF_FILTER, true);
@@ -89,7 +91,7 @@ public class SwitchYardDependencyProcessor implements DeploymentUnitProcessor {
         dep = new ModuleDependency(moduleLoader, SWITCHYARD_VALIDATE_ID, false, false, true, false);
         dep.addImportFilter(META_INF_FILTER, true);
         moduleSpecification.addSystemDependency(dep);
-        
+
         for (ModuleIdentifier moduleId : _componentModules) {
             dep = new ModuleDependency(moduleLoader, moduleId, false, false, true, false);
             dep.addImportFilter(META_INF_FILTER, true);
@@ -97,6 +99,7 @@ public class SwitchYardDependencyProcessor implements DeploymentUnitProcessor {
         }
     }
 
+    
     /* (non-Javadoc)
      * @see org.jboss.as.server.deployment.DeploymentUnitProcessor#undeploy(org.jboss.as.server.deployment.DeploymentUnit)
      */
