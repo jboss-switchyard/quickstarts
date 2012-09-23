@@ -50,6 +50,7 @@ import org.switchyard.config.model.composite.v1.V1CompositeModel;
 import org.switchyard.config.model.composite.v1.V1InterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
+import org.switchyard.policy.Policy.PolicyType;
 import org.switchyard.policy.SecurityPolicy;
 import org.switchyard.policy.TransactionPolicy;
 
@@ -109,16 +110,36 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             Requires requires = serviceClass.getAnnotation(Requires.class);
             if (requires != null) {
                 for (SecurityPolicy secPolicy : requires.security()) {
-                    serviceModel.addPolicyRequirement(secPolicy.getName());
+                    if (secPolicy.getType() == PolicyType.INTERACTION) {
+                        serviceModel.addPolicyRequirement(secPolicy.getName());
+                    } else if (secPolicy.getType() == PolicyType.IMPLEMENTATION) {
+                        beanModel.addPolicyRequirement(secPolicy.getName());
+                    } else {
+                        throw new IOException("Unknown policy: " + secPolicy);
+                    }
                 }
                 for (TransactionPolicy txPolicy : requires.transaction()) {
-                    serviceModel.addPolicyRequirement(txPolicy.getName());
+                    if (txPolicy.getType() == PolicyType.INTERACTION) {
+                        serviceModel.addPolicyRequirement(txPolicy.getName());
+                    } else if (txPolicy.getType() == PolicyType.IMPLEMENTATION) {
+                        beanModel.addPolicyRequirement(txPolicy.getName());
+                    } else {
+                        throw new IOException("Unknown policy: " + txPolicy);
+                    }
                 }
                 // Make sure we don't have conflicting policies
                 String ptx = TransactionPolicy.PROPAGATES_TRANSACTION.getName();
                 String stx = TransactionPolicy.SUSPENDS_TRANSACTION.getName();
                 if (serviceModel.hasPolicyRequirement(ptx) && serviceModel.hasPolicyRequirement(stx)) {
                     throw new IOException(String.format("TransactionPolicies %s and %s cannot co-exist on service %s", ptx, stx, name));
+                }
+                String gtx = TransactionPolicy.MANAGED_TRANSACTION_GLOBAL.getName();
+                String ltx = TransactionPolicy.MANAGED_TRANSACTION_LOCAL.getName();
+                String ntx = TransactionPolicy.NO_MANAGED_TRANSACTION.getName();
+                if (beanModel.hasPolicyRequirement(gtx) && beanModel.hasPolicyRequirement(ltx)
+                        || beanModel.hasPolicyRequirement(gtx) && beanModel.hasPolicyRequirement(ntx)
+                        || beanModel.hasPolicyRequirement(ltx) && beanModel.hasPolicyRequirement(ntx)) {
+                    throw new IOException(String.format("TransactionPolicies %s, %s and %s cannot co-exist on implementation %s", gtx, ltx, ntx, name));
                 }
             }
 
@@ -142,15 +163,27 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
                 
                 referenceModel.setInterface(interfaceModel);
                 interfaceModel.setInterface(reference.getCanonicalName());
-                // Add policy requirements to reference if specified in bean class
-                if (requires != null) {
-                    for (SecurityPolicy secPolicy : requires.security()) {
+                // Add policy requirements to reference if specified
+                Requires refRequires = field.getAnnotation(Requires.class);
+                if (refRequires != null) {
+                    for (SecurityPolicy secPolicy : refRequires.security()) {
+                        if (secPolicy.getType() != PolicyType.INTERACTION) {
+                            throw new IOException(String.format("Reference only could be marked with Interaction policy, but %s is not the one.", secPolicy));
+                        }
                         referenceModel.addPolicyRequirement(secPolicy.getName());
                     }
-                    for (TransactionPolicy txPolicy : requires.transaction()) {
+                    for (TransactionPolicy txPolicy : refRequires.transaction()) {
+                        if (txPolicy.getType() != PolicyType.INTERACTION) {
+                            throw new IOException(String.format("Reference only could be marked with Interaction policy, but %s is not the one.", txPolicy));
+                        }
                         referenceModel.addPolicyRequirement(txPolicy.getName());
                     }
-                    // conflicting policies are handled during first "requires" policy iteration above
+                    // Make sure we don't have conflicting policies
+                    String ptx = TransactionPolicy.PROPAGATES_TRANSACTION.getName();
+                    String stx = TransactionPolicy.SUSPENDS_TRANSACTION.getName();
+                    if (referenceModel.hasPolicyRequirement(ptx) && referenceModel.hasPolicyRequirement(stx)) {
+                        throw new IOException(String.format("TransactionPolicies %s and %s cannot co-exist on service %s", ptx, stx, name));
+                    }
                 }
                 
                 componentModel.addReference(referenceModel);

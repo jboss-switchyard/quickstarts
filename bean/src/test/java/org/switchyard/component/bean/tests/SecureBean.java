@@ -30,7 +30,7 @@ import org.switchyard.policy.SecurityPolicy;
 @Service(value = OneWay.class, name = "SecureService")
 public class SecureBean implements OneWay {
     
-    @Inject @Reference
+    @Inject @Reference @Requires(security = {SecurityPolicy.CLIENT_AUTHENTICATION, SecurityPolicy.CONFIDENTIALITY})
     private OneWay oneWay;
 
 	@Override

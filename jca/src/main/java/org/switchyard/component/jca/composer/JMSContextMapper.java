@@ -76,9 +76,9 @@ public class JMSContextMapper extends BaseRegexContextMapper<JMSBindingData> {
                     try {
                         // Context EXCHANGE properties -> JMS Message properties
                         message.setObjectProperty(name, value);
-                    } catch (JMSException pce) {
+                    } catch (Throwable t) {
                         // ignore and keep going (here just to keep checkstyle happy)
-                        pce.getMessage();
+                        t.getMessage();
                     }
                 }
             }

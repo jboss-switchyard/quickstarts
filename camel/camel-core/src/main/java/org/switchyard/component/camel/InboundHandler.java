@@ -138,7 +138,7 @@ public class InboundHandler extends BaseServiceHandler {
 
     private void addToCamelRegistry(final OperationSelector<CamelBindingData> selector) {
         final SimpleRegistry simpleRegistry = new SimpleRegistry();
-        simpleRegistry.put(_serviceName.getLocalPart() + OPERATION_SELECTOR_REF, selector);
+        simpleRegistry.put(_serviceName.toString() + OPERATION_SELECTOR_REF, selector);
         final PropertyPlaceholderDelegateRegistry delegateReg = (PropertyPlaceholderDelegateRegistry) _camelContext.getRegistry();
         final CompositeRegistry registry = (CompositeRegistry) delegateReg.getRegistry();
         registry.addRegistry(simpleRegistry);
@@ -166,11 +166,11 @@ public class InboundHandler extends BaseServiceHandler {
     }
 
     private String composeSwitchYardComponentName(final QName serviceName) {
-        return new StringBuilder()
-                    .append("switchyard://")
-                    .append(serviceName.getLocalPart())
-                    .toString();
-
+        final StringBuilder sb = new StringBuilder()
+                                        .append("switchyard://")
+                                        .append(serviceName.getLocalPart());
+        final String namespace = Strings.trimToNull(serviceName.getNamespaceURI());
+        return SwitchYardRouteDefinition.addNamespaceParameter(sb.toString(), namespace);
     }
 
     /**

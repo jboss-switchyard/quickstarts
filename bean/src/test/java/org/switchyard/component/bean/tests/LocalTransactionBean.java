@@ -30,7 +30,7 @@ import org.switchyard.policy.TransactionPolicy;
 @Service(value = OneWay.class, name = "LocalTransactionService")
 public class LocalTransactionBean implements OneWay {
     
-    @Inject @Reference
+    @Inject @Reference @Requires(transaction = TransactionPolicy.SUSPENDS_TRANSACTION)
     private OneWay oneWay;
 
 	@Override

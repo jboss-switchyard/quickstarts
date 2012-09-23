@@ -81,15 +81,14 @@ public class SwitchYardProducer extends DefaultProducer {
         ServiceDomain domain = (ServiceDomain)camelExchange.getContext().getRegistry().lookup(CamelActivator.SERVICE_DOMAIN);
         
         final ServiceReference serviceRef = lookupServiceReference(targetUri, domain);
-        final String serviceName = serviceRef.getName().getLocalPart();
+        final QName serviceName = serviceRef.getName();
         @SuppressWarnings("unchecked")
         OperationSelector<CamelBindingData> selector =
                 (OperationSelector<CamelBindingData>) camelExchange.getContext()
                                                                     .getRegistry()
-                                                                    .lookup(serviceName + InboundHandler.OPERATION_SELECTOR_REF);
+                                                                    .lookup(serviceName.toString() + InboundHandler.OPERATION_SELECTOR_REF);
         if (selector != null) {
             QName op = selector.selectOperation(new CamelBindingData(camelExchange.getIn()));
-            _namespace = op.getNamespaceURI();
             _operationName = op.getLocalPart();
         }
         
@@ -98,6 +97,7 @@ public class SwitchYardProducer extends DefaultProducer {
         // Set appropriate policy based on Camel exchange properties
         if (camelExchange.isTransacted()) {
             PolicyUtil.provide(switchyardExchange, TransactionPolicy.PROPAGATES_TRANSACTION);
+            PolicyUtil.provide(switchyardExchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL);
         }
         
         Message switchyardMessage = _messageComposer.compose(new CamelBindingData(camelExchange.getIn()), switchyardExchange, true);

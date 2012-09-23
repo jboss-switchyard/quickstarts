@@ -30,7 +30,7 @@ import org.switchyard.policy.TransactionPolicy;
 @Service(value = OneWay.class, name = "SharedTransactionService")
 public class SharedTransactionBean implements OneWay {
     
-    @Inject @Reference
+    @Inject @Reference @Requires(transaction = TransactionPolicy.PROPAGATES_TRANSACTION)
     private OneWay oneWay;
 
 	@Override

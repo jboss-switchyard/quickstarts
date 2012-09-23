@@ -200,8 +200,7 @@ public abstract class AbstractInflowEndpoint {
         Exchange exchange = _serviceRef.createExchange(operation, handler);
         if (_transacted) {
             PolicyUtil.provide(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
-        } else {
-            PolicyUtil.provide(exchange, TransactionPolicy.SUSPENDS_TRANSACTION);
+            PolicyUtil.provide(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL);
         }
         return exchange;
         
