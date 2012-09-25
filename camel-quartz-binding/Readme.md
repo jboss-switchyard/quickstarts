@@ -13,7 +13,7 @@ JBoss AS 7
 2. Start JBoss AS 7 in standalone-full mode:
     ${AS}/bin/standalone.sh --server-config=standalone-full.xml
 3. Deploy the quickstart
-    cp target/switchyard-quickstarts-camel-quartz-binding.jar ${AS7}/standalone/deployments
+    mvn jboss-as:deploy
 4. Check the server console for output from the service. By default after every second
    message should be printed
 

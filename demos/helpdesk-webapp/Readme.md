@@ -28,7 +28,7 @@ JBoss AS 7
 2. Start the application server:
     cd switchyard-as7-0.5/bin ; ./standalone.sh
 3. Deploy the web application:
-    cp target/switchyard-quickstart-demo-helpdesk-webapp.war <path-to>/switchyard-as7-0.5/standalone/deployments/
+    mvn jboss-as:deploy
 4. Start the Human Task server:
     mvn exec:java -Dexec.args="start.taskserver"
 5. In a web browser window, use the web application:

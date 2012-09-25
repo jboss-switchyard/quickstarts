@@ -23,7 +23,7 @@ JBoss AS 7
 3. Deploy the Web Service :
     cp target/ReverseService.war ${AS7}/standalone/deployments
 4. Deploy the Quickstart :
-    cp target/switchyard-quickstarts-camel-soap-proxy.jar ${AS7}/standalone/deployments
+    mvn jboss-as:deploy
 5. Using http://localhost:8080/proxy/ReverseService as the endpoint url, submit a request
    with your preferred SOAP client - src/test/resources/xml contains sample requests and
    the responses that you should see
