@@ -113,5 +113,12 @@ public class BaseService implements ServiceInterface {
     public String toString() {
         return "BaseServiceInterface [type=" + _type + ", operations=" + _operations + "]";
     }
+    
+    protected void setType(String type) {
+        _type = type;
+    }
 
+    protected void setOperations(Set<ServiceOperation> operations) {
+        _operations = operations;
+    }
 }

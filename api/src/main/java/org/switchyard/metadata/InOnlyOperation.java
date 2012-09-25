@@ -28,6 +28,10 @@ import org.switchyard.ExchangePattern;
  * operations.
  */
 public class InOnlyOperation extends BaseServiceOperation {
+    
+    protected InOnlyOperation() {
+        super(ExchangePattern.IN_OUT);
+    }
 
     /**
      * Create a new instance of an InOnly operation with a default message name.

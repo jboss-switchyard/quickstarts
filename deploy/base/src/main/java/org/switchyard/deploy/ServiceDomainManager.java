@@ -70,16 +70,18 @@ public class ServiceDomainManager {
     
     private static Logger _log = Logger.getLogger(ServiceDomainManager.class);
 
-    // Share the same service registry and event manager across domains
-    // to give visibility to registered services across application domains
+    // Share the same service registry and bus across domains to give visibility 
+    // to registered services across application domains
     private ServiceRegistry _registry = new DefaultServiceRegistry();
     private EventManager _eventManager = new EventManager();
-
+    
     /**
      * Constructs a new ServiceDomainManager.
      */
-    public ServiceDomainManager() {}
-
+    public ServiceDomainManager() {
+         
+    }
+    
     /**
      * Create a ServiceDomain instance.
      * <p/>

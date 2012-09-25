@@ -35,6 +35,10 @@ public class BaseServiceOperation implements ServiceOperation {
     private QName           _faultType;
     private String          _name;
     private ExchangePattern _pattern;
+    
+    protected BaseServiceOperation(ExchangePattern pattern) {
+        _pattern = pattern;
+    }
 
     /**
      * Constructor.
@@ -117,4 +121,17 @@ public class BaseServiceOperation implements ServiceOperation {
         return _name + " : " + _pattern + " : [" + getInputType() + ", " + getOutputType() + ", " + getFaultType() + "]";
     }
     
+    // Protected methods provide deserialization access for fields
+    
+    protected void setPattern(ExchangePattern pattern) {
+        _pattern = pattern;
+    }
+    
+    protected void setName(String name) {
+        _name = name;
+    }
+    
+    protected void setExchangePattern(ExchangePattern pattern) {
+        _pattern = pattern;
+    }
 }

@@ -24,6 +24,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.switchyard.ServiceDomain;
+import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.deploy.Activator;
 import org.switchyard.transform.TransformerRegistryLoader;
@@ -39,6 +40,12 @@ public abstract class AbstractDeployment {
      * Default classpath location for the switchyard configuration.
      */
     public static final String SWITCHYARD_XML = "/META-INF/switchyard.xml";
+
+    /**
+     * Deployment classloader property name.
+     */
+    public static final String CLASSLOADER_PROPERTY = "DeploymentClassloader";
+
     /**
      * Parent deployment.
      */
@@ -112,7 +119,7 @@ public abstract class AbstractDeployment {
         if (appServiceDomain == null) {
             throw new IllegalArgumentException("null 'appServiceDomain' argument.");
         }
-
+        
         // initialize deployment name
         if (getConfig() != null) {
             _name = getConfig().getQName();
@@ -125,6 +132,7 @@ public abstract class AbstractDeployment {
         }
         
         _serviceDomain = appServiceDomain;
+        _serviceDomain.getProperties().put(CLASSLOADER_PROPERTY, Classes.getTCCL());
         _transformerRegistryLoader = new TransformerRegistryLoader(appServiceDomain.getTransformerRegistry());
         _transformerRegistryLoader.loadOOTBTransforms();
         

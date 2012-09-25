@@ -28,6 +28,10 @@ import org.switchyard.ExchangePattern;
  * operations.
  */
 public class InOutOperation extends BaseServiceOperation {
+    
+    protected InOutOperation() {
+        super(ExchangePattern.IN_OUT);
+    }
 
     /**
      * Create a new instance of an InOut operation with a default message name.
