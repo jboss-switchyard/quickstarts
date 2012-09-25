@@ -19,73 +19,56 @@
 
 package org.switchyard.quickstarts.demo.policy.transaction;
 
-import javax.inject.Inject;
 import javax.naming.InitialContext;
-import javax.transaction.Status;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
 import org.switchyard.annotations.Requires;
-import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
 import org.switchyard.policy.TransactionPolicy;
 
 /**
  *  Transactional service implementation. To trigger a rollback on the 
- *  current transaction, pass <code>WorkService.ROLLBACK</code> as the command name.
+ *  current transaction, pass <code>TaskAServiceBean.ROLLBACK</code> as the command name.
  */
-@Service(WorkService.class)
-@Requires(transaction = TransactionPolicy.PROPAGATES_TRANSACTION)
-public class WorkServiceBean
-    implements org.switchyard.quickstarts.demo.policy.transaction.WorkService {
+@Service(TaskAService.class)
+@Requires(transaction = {TransactionPolicy.PROPAGATES_TRANSACTION,TransactionPolicy.MANAGED_TRANSACTION_GLOBAL})
+public class TaskAServiceBean implements TaskAService {
     
-    /** rollback command. */
-    public static final String ROLLBACK = "rollback";
+    /** rollback command for this subtask. */
+    public static final String ROLLBACK = WorkServiceBean.ROLLBACK + ".A";
 
     private static final String JNDI_TRANSACTION_MANAGER = "java:jboss/TransactionManager";
     
-    @Inject @Reference @Requires(transaction = TransactionPolicy.PROPAGATES_TRANSACTION)
-    private TaskAService _taskAService;
+    // counts the number of times a rollback has occurred
+    private int _rollbackCounter = 0;
     
-    @Inject @Reference @Requires(transaction = TransactionPolicy.SUSPENDS_TRANSACTION)
-    private TaskBService _taskBService;
-    
-    @Inject @Reference @Requires(transaction = TransactionPolicy.SUSPENDS_TRANSACTION)
-    private TaskCService _taskCService;
-
     @Override
-    public final void doWork(final String command) {
+    public final void doTask(final String command) {
         
         print("Received command =>  " + command);
-
         Transaction t = null;
         try {
             t = getCurrentTransaction();
         } catch (Exception e) {
             print("Failed to get current transcation");
-            return;
         }
         if (t == null) {
             print("No active transaction");
+            return;
         }
-        _taskAService.doTask(command);
-        _taskBService.doTask(command);
-        _taskCService.doTask(command);
 
-        try {
-            t = getCurrentTransaction();
-            if (t == null) {
-                print("No active transaction");
-                return;
-            } else if (t.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
-                print("transaction is marked as rollback only");
-            } else if (t.getStatus() == Status.STATUS_ACTIVE) {
-                print("transaction will be committed");
-            } else {
-                print("Invalid transaction status: " + t.getStatus());
+        if (command.contains(ROLLBACK)) {
+            try {
+                if (++_rollbackCounter % 4 != 0) {
+                    t.setRollbackOnly();
+                    print("Marked transaction to rollback!");
+                } else {
+                    print("Rollbacks completed - will be committed");
+                }
+            } catch (Exception ex) {
+                print("Failed to rollback transaction: " + ex.toString());
             }
-        } catch (Exception e) {
-            print("Failed to get current transaction status");
         }
     }
     
@@ -96,6 +79,6 @@ public class WorkServiceBean
     }
         
     private void print(String message) {
-        System.out.println(":: WorkService :: " + message);
+        System.out.println(":: TaskAService :: " + message);
     }
 }

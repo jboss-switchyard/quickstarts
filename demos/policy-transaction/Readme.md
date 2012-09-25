@@ -1,9 +1,17 @@
 Introduction
 ============
 This quickstart demonstrates how policy can be used to control the transactional characteristics
-of a service invocation.  The only service in the application is a Bean service called
-"WorkService".  The service accepts commands and can be instructed to rollback by sending a
-message containing the string "rollback".
+of a service invocation.  This application contains 4 Bean services, called "WorkService",
+"TaskAService", "TaskBService" and "TaskCService. The WorkService accepts commands and dispatch
+to other 3 services.
+TaskAService expects the global transaction to be propagated, and accepts the "rollback.A" command
+to set rollback only flag on that global transaction.
+TaskBService requires local transaction, so it suspends the propagated transaction and create new
+one. It accepts the "rollback.B" command to set rollback only flang on its local transaction.
+TaskCService requires no managed transaction, so it suspends the propagated transaction and run
+without managed transaction - i.e. this service never has a transaction to rollback, although it
+accepts "rollback.C" command. It simply prints the message saying no transaction when it gets that
+command.
 
 ![Policy Transaction Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/demos/policy-transaction/policy-transaction.jpg)
 
@@ -48,10 +56,10 @@ Scenarios
 You can test any of these transaction policy scenarios using this quickstart:
 
 1) Global transaction propagated to the bean service.  This is the default
-   configuration of the quickstart and requires the WorkServiceBean to be
+   configuration of the quickstart and requires the TaskAServiceBean to be
    annotated with @Requires(transaction=TransactionPolicy.PROPAGATES_TRANSACTION)
    and messages to be sent to the policyQSTransacted queue.
-
+   
 2) Policy violation - transaction required to be propagated, but no transaction
    provided by the gateway.  To exercise this scenario, send a message to the
    policyQSNonTransacted queue with TransactionPolicy.PROPAGATES_TRANSACTION
@@ -59,10 +67,19 @@ You can test any of these transaction policy scenarios using this quickstart:
 
 3) Suspend incoming transaction.  Change the WorkServiceBean transaction
    annotation type to TransactionPolicy.SUSPENDS_TRANSACTION and send a
-   message to the policyQSTransacted queue with the command "rollback".  Check
+   message to the policyQSTransacted queue with the command "rollback.A".  Check
    the output and note that the rollback does not impact the transaction used
    to receive the JMS message.
 
+4) A variety of Transaction implementation policy. Each of TaskAService,
+   TaskBService and TaskCService has different implementation policy.
+   You can see those behavior with passing combination of the "rollback.A",
+   "rollback.B" and "rollback.C". TaskAService accepts "rollback.A" and
+   set rollback only flag on global transaction, so the receiving from JMS
+   queue will be retried. TaskBService accepts "rollback.B" and set rollback
+   only flag on local transaction, but it doesn't impact the transaction used
+   to receive the JMS message. TaskCService accepts "rollback.C", but it doesn't
+   have any transaction to rollback, just print a message.
 
 Options
 =======

@@ -52,7 +52,7 @@ public final class HornetQClient {
     /**
      * The name of the file containing the message content.
      */
-    private static final String DEFAULT_PAYLOAD = "rollback";
+    private static final String DEFAULT_PAYLOAD = "rollback.A";
     
     /**
      * Private no-args constructor.
