@@ -20,13 +20,13 @@
 package org.switchyard.quickstarts.demo.policy.transaction;
 
 /**
- * WorkService.
+ * Subtask B Service.
  */
-public interface WorkService {
+public interface TaskBService {
     
     /**
-     * Does some work based on the command passed in.
+     * Does some subtask based on the command passed in.
      * @param command command
      */
-    void doWork(String command);
+    void doTask(String command);
 }
