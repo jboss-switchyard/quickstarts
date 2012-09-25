@@ -19,6 +19,7 @@
  
 package org.switchyard.as7.extension.util;
 
+import org.apache.catalina.connector.Connector;
 import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.as.web.VirtualHost;
 import org.jboss.as.web.WebSubsystemServices;
@@ -82,6 +83,15 @@ public final class ServerUtil {
      */
     public static VirtualHost getDefaultHost() {
         ServiceController<VirtualHost> service = (ServiceController<VirtualHost>)_registry.getService(WebSubsystemServices.JBOSS_WEB_HOST.append(_host));
+        return service != null ? service.getValue() : null;
+    }
+    
+    /**
+     * 
+     */
+    public static Connector getDefaultConnector() {
+        ServiceController<Connector> service = (ServiceController<Connector>)_registry.getService(
+                WebSubsystemServices.JBOSS_WEB_CONNECTOR.append("http"));
         return service != null ? service.getValue() : null;
     }
 }

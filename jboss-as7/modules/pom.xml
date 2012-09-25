@@ -147,6 +147,10 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-remote</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
             <artifactId>switchyard-runtime</artifactId>
         </dependency>
         <dependency>
@@ -229,6 +233,10 @@
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-resteasy</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-remote</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
@@ -600,6 +608,11 @@
         <dependency>
             <groupId>org.clojure</groupId>
             <artifactId>clojure</artifactId>
+        </dependency>
+        <!-- Remote Gateway -->
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-tree</artifactId>
         </dependency>
         <!-- misc external dependencies -->
         <dependency>

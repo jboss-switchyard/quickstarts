@@ -19,11 +19,13 @@
 
 package org.switchyard.as7.extension.services;
 
+import org.infinispan.Cache;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
+import org.jboss.msc.value.InjectedValue;
 import org.switchyard.deploy.ServiceDomainManager;
 
 /**
@@ -38,18 +40,26 @@ public class SwitchYardServiceDomainManagerService implements Service<ServiceDom
      */
     public final static ServiceName SERVICE_NAME = ServiceName.of(SwitchYardServiceDomainManagerService.class.getSimpleName());
 
-    private ServiceDomainManager _domainManager = new ServiceDomainManager();
+    private ServiceDomainManager _domainManager;
+
+    private final InjectedValue<Cache> _cache = new InjectedValue<Cache>();
 
     @Override
     public void start(StartContext startContext) throws StartException {
+        _domainManager = new ServiceDomainManager();
     }
 
     @Override
     public void stop(StopContext stopContext) {
+        //endpoint.stop();    
     }
 
     @Override
     public ServiceDomainManager getValue() throws IllegalStateException, IllegalArgumentException {
         return _domainManager;
+    }
+    
+    public InjectedValue<Cache> getCache() {
+        return _cache;
     }
 }

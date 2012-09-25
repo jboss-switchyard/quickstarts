@@ -74,6 +74,11 @@
         </file>
         -->
         <file>
+            <source>src/main/resources/external/jboss-as/clustering/module.xml</source>
+            <outputDirectory>/modules/org/jboss/as/clustering/infinispan/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
             <source>src/main/resources/external/jbpm/module.xml</source>
             <outputDirectory>/modules/org/jbpm/main</outputDirectory>
             <filtered>true</filtered>
@@ -187,6 +192,11 @@
         <file>
             <source>src/main/resources/external/jcraft/jsch/module.xml</source>
             <outputDirectory>/modules/com/jcraft/jsch/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
+            <source>src/main/resources/external/infinispan/module.xml</source>
+            <outputDirectory>/modules/org/infinispan/tree/main</outputDirectory>
             <filtered>true</filtered>
         </file>
     </files>
@@ -513,7 +523,14 @@
             <!--<outputFileNameMapping>${artifact.artifactId}-${version.clojure}.${artifact.extension}-->
             <!--</outputFileNameMapping>-->
         <!--</dependencySet>-->
-
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.infinispan:infinispan-tree</include>
+            </includes>
+            <outputDirectory>/modules/org/infinispan/tree/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.infinispan}.${artifact.extension}</outputFileNameMapping>
+        </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>

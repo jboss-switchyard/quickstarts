@@ -73,6 +73,11 @@
                 <module identifier="org.switchyard.component.hornetq" implClass="org.switchyard.component.hornetq.deploy.HornetQComponent"/>
                 <module identifier="org.switchyard.component.http" implClass="org.switchyard.component.http.deploy.HttpComponent"/>
                 <module identifier="org.switchyard.component.jca" implClass="org.switchyard.component.jca.deploy.JCAComponent"/>
+                <module identifier="org.switchyard.component.remote" implClass="org.switchyard.component.remote.deploy.RemoteComponent">
+                    <properties>
+                        <cache-name>cluster</cache-name>
+                    </properties>
+                </module>
                 <module identifier="org.switchyard.component.resteasy" implClass="org.switchyard.component.resteasy.deploy.RESTEasyComponent"/>
             </modules>
         </subsystem>

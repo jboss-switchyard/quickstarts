@@ -51,6 +51,11 @@
             <filtered>true</filtered>
         </file>
         <file>
+            <source>src/main/resources/switchyard/core/remote/module.xml</source>
+            <outputDirectory>/modules/org/switchyard/remote/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
             <source>src/main/resources/switchyard/core/runtime/module.xml</source>
             <outputDirectory>/modules/org/switchyard/runtime/main</outputDirectory>
             <filtered>true</filtered>
@@ -169,7 +174,16 @@
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
-         <dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.switchyard:switchyard-remote</include>
+            </includes>
+            <outputDirectory>/modules/org/switchyard/remote/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
                 <include>org.switchyard:switchyard-runtime</include>

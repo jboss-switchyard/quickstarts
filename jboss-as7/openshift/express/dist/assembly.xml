@@ -57,6 +57,9 @@
     <fileSet>
       <directory>${staging.jboss.dir}/modules</directory>
       <outputDirectory>${distro.root.dir}modules</outputDirectory>
+      <excludes>
+           <exclude>**/clustering/infinispan/main/module.xml</exclude>
+        </excludes>
     </fileSet>
     <fileSet>
       <directory>${staging.jboss.dir}/welcome-content</directory>
@@ -75,6 +78,28 @@
       <includes>
          <include>standalone.xml</include>
       </includes>
+    </fileSet>
+    <fileSet>
+      <directory>src/main/resources/jboss-as/clustering</directory>
+      <outputDirectory>${distro.root.dir}modules/org/jboss/as/clustering/infinispan/main</outputDirectory>
+      <filtered>true</filtered>
+      <includes>
+         <include>module.xml</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>${staging.jboss.dir}/standalone</directory>
+      <outputDirectory>${distro.root.dir}standalone</outputDirectory>
+      <excludes>
+         <exclude>**/standalone*.xml</exclude>
+      </excludes>
+    </fileSet>
+    <fileSet>
+      <directory>${staging.jboss.dir}/standalone</directory>
+      <outputDirectory>${distro.root.dir}standalone</outputDirectory>
+      <excludes>
+         <exclude>**/standalone*.xml</exclude>
+      </excludes>
     </fileSet>
     <fileSet>
       <directory>src/main/resources</directory>

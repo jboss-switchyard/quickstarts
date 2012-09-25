@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.infinispan.Cache;
+import org.jboss.as.clustering.infinispan.subsystem.CacheService;
 import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
@@ -41,6 +43,7 @@ import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
 import org.jboss.logging.Logger;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.msc.service.ServiceBuilder;
+import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
@@ -134,7 +137,11 @@ public final class SwitchYardSubsystemAdd extends AbstractBoottimeAddStepHandler
         newControllers.add(componentServiceBuilder.install());
 
         // Add the AS7 Service for the ServiceDomainManager...
-        newControllers.add(context.getServiceTarget().addService(SwitchYardServiceDomainManagerService.SERVICE_NAME, new SwitchYardServiceDomainManagerService()).install());
+        final SwitchYardServiceDomainManagerService serviceDomainManager = new SwitchYardServiceDomainManagerService();
+        newControllers.add(context.getServiceTarget()
+                .addService(SwitchYardServiceDomainManagerService.SERVICE_NAME, serviceDomainManager)
+                .addDependency(DependencyType.OPTIONAL, CacheService.getServiceName("cluster", null), Cache.class, serviceDomainManager.getCache())
+                .install());
 
         final SwitchYardAdminService adminService = new SwitchYardAdminService();
         newControllers.add(context.getServiceTarget().addService(SwitchYardAdminService.SERVICE_NAME, adminService)

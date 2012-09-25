@@ -20,6 +20,7 @@ package org.switchyard.as7.extension.deployment;
 
 import java.util.List;
 
+import org.jboss.as.clustering.infinispan.subsystem.CacheService;
 import org.jboss.as.ee.component.EEModuleDescription;
 import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.as.naming.deployment.JndiNamingDependencyProcessor;
@@ -31,6 +32,7 @@ import org.jboss.as.weld.WeldDeploymentMarker;
 import org.jboss.as.weld.services.BeanManagerService;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
+import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceTarget;
@@ -87,6 +89,8 @@ public class SwitchYardDeploymentProcessor implements DeploymentUnitProcessor {
             final ServiceName beanManagerServiceName = deploymentUnit.getServiceName().append(BeanManagerService.NAME);
             switchyardServiceBuilder.addDependency(beanManagerServiceName);
         }
+        
+        switchyardServiceBuilder.addDependency(DependencyType.OPTIONAL, CacheService.getServiceName("cluster", null));
 
         switchyardServiceBuilder.setInitialMode(Mode.ACTIVE);
         switchyardServiceBuilder.install();
