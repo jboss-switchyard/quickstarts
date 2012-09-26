@@ -12,10 +12,6 @@
   <name>Quickstart : BPEL Service : XTS Subordinate WSBA</name>
   <packaging>pom</packaging>
   
-  <properties>
-		<narayana.version>5.0.0.M1</narayana.version>
-	</properties>
-	
 	<modules>
 		<module>bpel</module>
 		<module>ws</module>

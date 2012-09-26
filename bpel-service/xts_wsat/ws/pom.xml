@@ -11,7 +11,7 @@
   <artifactId>switchyard-quickstart-bpel-service-xts-wsat-ws</artifactId>
   <name>Quickstart : BPEL Service : XTS WSAT : Airport Web Service</name>
   <packaging>ejb</packaging>
-  
+
   <dependencies>
 		<dependency>
 			<groupId>org.jboss.ejb3</groupId>
@@ -26,13 +26,12 @@
 			</exclusions>
 		</dependency>
 
-		<dependency>
-			<groupId>org.jboss.narayana.xts</groupId>
-			<artifactId>jbossxts</artifactId>
-			<version>${narayana.version}</version>
-		</dependency>
+                <dependency>
+                    <groupId>org.jboss.jbossts</groupId>
+                    <artifactId>jbossxts</artifactId>
+                </dependency>
 	</dependencies>
-	
+
 	<build>
 		<plugins>
 		<plugin>
