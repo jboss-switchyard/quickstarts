@@ -11,7 +11,7 @@
   <artifactId>switchyard-quickstart-bpel-service-xts-subordinate-wsba-ws</artifactId>
   <name>Quickstart : BPEL Service : XTS Subordinate WSBA : Airport Web Service</name>
   <packaging>ejb</packaging>
-  
+
   <dependencies>
 		<dependency>
 			<groupId>org.jboss.ejb3</groupId>
@@ -25,14 +25,8 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
-
-                <dependency>
-                    <groupId>org.jboss.jbossts</groupId>
-                    <artifactId>jbossxts</artifactId>
-                </dependency>
 	</dependencies>
-	
+
 	<build>
 		<plugins>
 		<plugin>
