@@ -17,6 +17,8 @@
        <module>jms_binding</module>
        <module>loan_approval</module>
        <module>simple_correlation</module>
+       <module>xts_subordinate_wsba</module>
+       <module>xts_wsat</module>
   </modules>
 
   <dependencies>
