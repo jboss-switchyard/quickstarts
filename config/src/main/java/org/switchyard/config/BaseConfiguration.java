@@ -19,6 +19,9 @@
 
 package org.switchyard.config;
 
+import static javax.xml.XMLConstants.XMLNS_ATTRIBUTE;
+import static javax.xml.XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -32,10 +35,12 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
+
+import org.switchyard.common.lang.Strings;
+import org.switchyard.common.xml.XMLHelper;
 
 /**
  * An abstract representation of a Configuration, containing default implementations for many of the defined methods.
@@ -44,34 +49,61 @@ import javax.xml.transform.stream.StreamSource;
  */
 public abstract class BaseConfiguration implements Configuration {
 
-    protected static final String DEFAULT_XMLNS_URI = XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
-    protected static final String DEFAULT_XMLNS_PFX = "ns0";
-    protected static final String NULL_NS_URI = XMLConstants.NULL_NS_URI;
-
     /**
      * {@inheritDoc}
      */
     @Override
     public Set<String> getNamespaces() {
         Set<String> set = new TreeSet<String>();
-        set.add(DEFAULT_XMLNS_URI);
-        String ns = getQName().getNamespaceURI();
-        if (ns != null && ns.length() > 0 && !set.contains(ns)) {
-            set.add(ns);
-        }
-        for (QName attr_qname : getAttributeQNames()) {
-            String attr_ns = attr_qname.getNamespaceURI();
-            if (attr_ns != null && attr_ns.length() > 0 && !set.contains(attr_ns)) {
-                set.add(attr_ns);
+        set.add(XMLNS_ATTRIBUTE_NS_URI);
+        Configuration config = this;
+        while (config != null) {
+            String ns = config.getQName().getNamespaceURI();
+            if (ns != null && ns.length() > 0) {
+                set.add(ns);
             }
-        }
-        for (Configuration child : getChildren()) {
-            Set<String> child_set = child.getNamespaces();
-            for (String child_ns : child_set) {
-                if (!set.contains(child_ns)) {
-                    set.add(child_ns);
+            for (QName attr_qname : config.getAttributeQNames()) {
+                String attr_ns = attr_qname.getNamespaceURI();
+                if (attr_ns != null && attr_ns.length() > 0) {
+                    set.add(attr_ns);
+                }
+                String attr_value = config.getAttribute(attr_qname);
+                if (attr_value != null) {
+                    String attr_lp = attr_qname.getLocalPart();
+                    if (XMLNS_ATTRIBUTE.equals(attr_lp) || XMLNS_ATTRIBUTE_NS_URI.equals(attr_ns) || "targetNamespace".equals(attr_lp)) {
+                        set.add(attr_value);
+                    } else {
+                        int pos = attr_value.indexOf(':');
+                        if (pos > -1) {
+                            String attr_value_pfx = Strings.trimToNull(attr_value.substring(0, pos));
+                            if (attr_value_pfx != null) {
+                                String attr_value_ns = lookupNamespaceURI(attr_value_pfx);
+                                if (attr_value_ns != null) {
+                                    set.add(attr_value_ns);
+                                }
+                            }
+                        }
+                    }
                 }
             }
+            config = config.getParent();
+        }
+        return set;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<String> getChildrenNamespaces() {
+        Set<String> set = new TreeSet<String>();
+        List<Configuration> children = getChildren();
+        if (children.size() > 0) {
+            for (Configuration child : children) {
+                set.addAll(child.getChildrenNamespaces());
+            }
+        } else {
+            set.addAll(getNamespaces());
         }
         return set;
     }
@@ -82,13 +114,20 @@ public abstract class BaseConfiguration implements Configuration {
     @Override
     public Map<String,String> getNamespacePrefixMap() {
         Map<String,String> map = new TreeMap<String,String>();
-        map.put(DEFAULT_XMLNS_URI, DEFAULT_XMLNS_PFX);
-        int i = 1;
+        map.put(XMLNS_ATTRIBUTE_NS_URI, XMLNS_ATTRIBUTE);
+        int i = 0;
         for (String ns : getNamespaces()) {
             if (!map.containsKey(ns)) {
-                map.put(ns, "ns" + i);
+                String pfx = lookupPrefix(ns);
+                if (pfx == null) {
+                    boolean unavailable = true;
+                    while (unavailable) {
+                        pfx = "ns" + i++;
+                        unavailable = lookupNamespaceURI(pfx) != null;
+                    }
+                }
+                map.put(ns, pfx);
             }
-            i++;
         }
         return map;
     }
@@ -108,6 +147,88 @@ public abstract class BaseConfiguration implements Configuration {
             }
         }
         return map;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public QName getAttributeAsQName(String name) {
+        return createAttributeQName(getAttribute(name));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public QName getAttributeAsQName(QName qname) {
+        return createAttributeQName(getAttribute(qname));
+    }
+
+    private QName createAttributeQName(String value) {
+        String ns = null;
+        String lp = null;
+        String pfx = null;
+        if (value != null) {
+            QName qvalue = QName.valueOf(value);
+            ns = qvalue.getNamespaceURI();
+            if (ns.length() > 0) {
+                lp = qvalue.getLocalPart();
+                pfx = lookupPrefix(ns);
+            } else {
+                int pos = value.indexOf(':');
+                if (pos > -1) {
+                    String[] split = value.split(":", 2);
+                    pfx = split.length > 0 ? split[0] : null;
+                    lp = split.length > 1 ? split[1] : null;
+                    if (pfx != null) {
+                        ns = lookupNamespaceURI(pfx);
+                    }
+                } else {
+                    lp = value;
+                }
+            }
+        }
+        return XMLHelper.createQName(ns, lp, pfx);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Configuration setAttributeAsQName(String name, QName value) {
+        return setAttribute(name, createAttributeValue(value));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Configuration setAttributeAsQName(QName qname, QName value) {
+        return setAttribute(qname, createAttributeValue(value));
+    }
+
+    private String createAttributeValue(QName value) {
+        if (value != null) {
+            String lp = value.getLocalPart();
+            String ns = value.getNamespaceURI();
+            String pfx = lookupPrefix(ns);
+            if (pfx != null) {
+                return pfx + ":" + lp;
+            } else {
+                pfx = value.getPrefix();
+                if (pfx.length() > 0) {
+                    if (lookupNamespaceURI(pfx) != null) {
+                        return pfx + ":" + lp;
+                    }
+                }
+                if (ns.length() > 0) {
+                    return value.toString();
+                }
+            }
+            return lp;
+        }
+        return null;
     }
 
     /**

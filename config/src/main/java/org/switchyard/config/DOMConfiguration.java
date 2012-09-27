@@ -18,6 +18,9 @@
  */
 package org.switchyard.config;
 
+import static javax.xml.XMLConstants.NULL_NS_URI;
+import static javax.xml.XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -106,6 +109,22 @@ public class DOMConfiguration extends BaseConfiguration {
     @Override
     public QName getQName() {
         return XMLHelper.createQName(_element);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String lookupNamespaceURI(String prefix) {
+        return _element.lookupNamespaceURI(prefix);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String lookupPrefix(String namespaceURI) {
+        return _element.lookupPrefix(namespaceURI);
     }
 
     /**
@@ -292,7 +311,7 @@ public class DOMConfiguration extends BaseConfiguration {
             } else {
                 attr.setValue(value);
             }
-        } else if (value != null && !DEFAULT_XMLNS_URI.equals(namespaceURI)) {
+        } else if (value != null && !XMLNS_ATTRIBUTE_NS_URI.equals(namespaceURI)) {
             attr = _element.getOwnerDocument().createAttributeNS(namespaceURI, localPart);
             String prefix = qname.getPrefix();
             if (prefix != null  && prefix.length() > 0) {

@@ -49,19 +49,39 @@ public interface Configuration {
     public QName getQName();
 
     /**
-     * Gets all namespaces contained by this config and all it's children.
+     * Lookup the namespace uri for the prefix.
+     * @param prefix the prefix
+     * @return the namespace uri
+     */
+    public String lookupNamespaceURI(String prefix);
+
+    /**
+     * Lookup the prefix for a namespace uri.
+     * @param namespaceURI the namespace uri
+     * @return the prefix
+     */
+    public String lookupPrefix(String namespaceURI);
+
+    /**
+     * Gets all namespaces contained by this config and it's recursive parent hierarchy.
      * @return the namespaces
      */
     public Set<String> getNamespaces();
 
     /**
-     * Gets a mapping of all namespaces to qname prefixes contained by this config and all it's children.
+     * Gets all namespaces contained by this config and it's recursive child hierarchy.
+     * @return the namespaces
+     */
+    public Set<String> getChildrenNamespaces();
+
+    /**
+     * Gets a mapping of all namespaces to qname prefixes contained by this config and it's recursive parent hierarchy.
      * @return the mapping
      */
     public Map<String,String> getNamespacePrefixMap();
 
     /**
-     * Gets a mapping of all qname prefixes to namespaces contained by this config and all it's children.
+     * Gets a mapping of all qname prefixes to namespaces contained by this config and it's recursive parent hierarchy.
      * @return the mapping
      */
     public Map<String,String> getPrefixNamespaceMap();
@@ -113,11 +133,25 @@ public interface Configuration {
     public String getAttribute(String name);
 
     /**
+     * Gets the specified attribute by name, as a qualified name.
+     * @param name the name of the attribute
+     * @return the attribute, as a qualified name, or null if it not present
+     */
+    public QName getAttributeAsQName(String name);
+
+    /**
      * Gets the specified attribute by qualified name.
      * @param qname the qualified name of the attribute
      * @return the attribute, or null if it not present
      */
     public String getAttribute(QName qname);
+
+    /**
+     * Gets the specified attribute by qualified name, as a qualified name.
+     * @param qname the qualified name of the attribute
+     * @return the attribute, as a qualified name, or null if it not present
+     */
+    public QName getAttributeAsQName(QName qname);
 
     /**
      * Sets the specified attribute by name.
@@ -128,12 +162,28 @@ public interface Configuration {
     public Configuration setAttribute(String name, String value);
 
     /**
+     * Sets the specified attribute by name, as a qualified name.
+     * @param name the name of the attribute
+     * @param value the value for the attribute, as a qualified name (a null value will remove the attribute)
+     * @return this Configuration (useful for chaining)
+     */
+    public Configuration setAttributeAsQName(String name, QName value);
+
+    /**
      * Sets the specified attribute by qualified name.
      * @param qname the qualified name of the attribute
      * @param value the value for the attribute (a null value will remove the attribute)
      * @return this Configuration (useful for chaining)
      */
     public Configuration setAttribute(QName qname, String value);
+
+    /**
+     * Sets the specified attribute by qualified name, as a qualified name.
+     * @param qname the qualified name of the attribute
+     * @param value the value for the attribute, as a qualified name (a null value will remove the attribute)
+     * @return this Configuration (useful for chaining)
+     */
+    public Configuration setAttributeAsQName(QName qname, QName value);
 
     /**
      * If this config has a parent config.

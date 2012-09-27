@@ -19,5 +19,6 @@ MA  02110-1301, USA.
 -->
 <one xmlns='http://a.org/a.xsd' xmlns:b='http://b.org/b.xsd' xmlns:c='http://c.org/c.xsd' foo='bar' targetNamespace='urn:test'>
     <b:two baz='whiz' c:boy='girl'>stuff</b:two>
-    <three toy='robot' b:man='woman'>junk</three>
+    <three toy='robot' b:man='woman'>metal</three>
+    <four b:nuts="b:bolts" pins="c:needles" pipes="rusted"/>
 </one>

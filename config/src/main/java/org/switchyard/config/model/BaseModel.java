@@ -100,6 +100,33 @@ public abstract class BaseModel implements Model {
     }
 
     /**
+     * Gets the wrapped config's value for an attribute with a specified qualified name.
+     * @param qname the attribute qualified name
+     * @return the attribute value
+     */
+    protected final String getModelAttribute(QName qname) {
+        return getModelConfiguration().getAttribute(qname);
+    }
+
+    /**
+     * Gets the wrapped config's value for an attribute with a specified name, as a qualified name.
+     * @param name the attribute name
+     * @return the attribute value, as a qualified name
+     */
+    protected final QName getModelAttributeAsQName(String name) {
+        return getModelConfiguration().getAttributeAsQName(name);
+    }
+
+    /**
+     * Gets the wrapped config's value for an attribute with a specified qualified name, as a qualified name.
+     * @param qname the attribute qualified name
+     * @return the attribute value, as a qualified name
+     */
+    protected final QName getModelAttributeAsQName(QName qname) {
+        return getModelConfiguration().getAttributeAsQName(qname);
+    }
+
+    /**
      * Sets the wrapped config's value for an attribute with a specified name.
      * @param name the attribute name
      * @param value the attribute value (null means "remove the attribute")
@@ -107,6 +134,39 @@ public abstract class BaseModel implements Model {
      */
     protected final Model setModelAttribute(String name, String value) {
         getModelConfiguration().setAttribute(name, value);
+        return this;
+    }
+
+    /**
+     * Sets the wrapped config's value for an attribute with a specified qualified name.
+     * @param qname the attribute qualified name
+     * @param value the attribute value (null means "remove the attribute")
+     * @return this model (useful for chaining)
+     */
+    protected final Model setModelAttribute(QName qname, String value) {
+        getModelConfiguration().setAttribute(qname, value);
+        return this;
+    }
+
+    /**
+     * Sets the wrapped config's value for an attribute with a specified name, as a qualified name.
+     * @param name the attribute name
+     * @param value the attribute value, as a qualified name (null means "remove the attribute")
+     * @return this model (useful for chaining)
+     */
+    protected final Model setModelAttributeAsQName(String name, QName value) {
+        getModelConfiguration().setAttributeAsQName(name, value);
+        return this;
+    }
+
+    /**
+     * Sets the wrapped config's value for an attribute with a specified qualified name, as a qualified name.
+     * @param qname the attribute qualified name
+     * @param value the attribute value, as a qualified name (null means "remove the attribute")
+     * @return this model (useful for chaining)
+     */
+    protected final Model setModelAttributeAsQName(QName qname, QName value) {
+        getModelConfiguration().setAttributeAsQName(qname, value);
         return this;
     }
 
@@ -186,26 +246,6 @@ public abstract class BaseModel implements Model {
     @Override
     public boolean isModelValid() {
         return validateModel().isValid();
-    }
-
-    /**
-     * Gets the wrapped config's value for an attribute with a specified qualified name.
-     * @param qname the attribute qualified name
-     * @return the attribute value
-     */
-    protected final String getModelAttribute(QName qname) {
-        return getModelConfiguration().getAttribute(qname);
-    }
-
-    /**
-     * Sets the wrapped config's value for an attribute with a specified qualified name.
-     * @param qname the attribute qualified name
-     * @param value the attribute value (null means "remove the attribute")
-     * @return this model (useful for chaining)
-     */
-    protected final Model setModelAttribute(QName qname, String value) {
-        getModelConfiguration().setAttribute(qname, value);
-        return this;
     }
 
     /**

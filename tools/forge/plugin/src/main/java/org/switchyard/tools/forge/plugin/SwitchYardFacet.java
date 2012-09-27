@@ -53,6 +53,7 @@ import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresPackagingType;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.version.Versions;
+import org.switchyard.config.OutputKey;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Models;
 import org.switchyard.config.model.composite.ComponentModel;
@@ -239,7 +240,7 @@ public class SwitchYardFacet extends AbstractFacet {
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(configFile.getUnderlyingResourceObject());
-            config.write(fos);
+            config.write(fos, OutputKey.PRETTY_PRINT);
         } catch (java.io.IOException ioEx) {
             _shell.println("Error while saving SwitchYard configuration: " + ioEx.getMessage());
         } finally {

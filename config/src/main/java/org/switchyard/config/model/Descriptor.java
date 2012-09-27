@@ -216,7 +216,7 @@ public final class Descriptor {
      */
     public Schema getSchema(Configuration config) {
         if (config != null) {
-            return getSchema(config.getNamespaces());
+            return getSchema(config.getChildrenNamespaces());
         }
         return null;
     }

@@ -116,26 +116,70 @@ public class ConfigurationTests {
     public void testNamespaceCollections() throws Exception {
         Configuration config = _cfg_puller.pull(NAMESPACES_XML, getClass());
         Set<String> n_set = config.getNamespaces();
-        Assert.assertEquals(4, n_set.size());
+        Assert.assertEquals(5, n_set.size());
         Map<String,String> np_map = config.getNamespacePrefixMap();
-        Assert.assertEquals(4, np_map.size());
+        Assert.assertEquals(5, np_map.size());
         Map<String,String> pn_map = config.getPrefixNamespaceMap();
-        Assert.assertEquals(4, pn_map.size());
+        Assert.assertEquals(5, pn_map.size());
     }
 
     @Test
     public void testNamespacesValues() throws Exception {
+        Configuration config_one = _cfg_puller.pull(NAMESPACES_XML, getClass());
+        Assert.assertEquals("urn:test", config_one.getAttribute("targetNamespace"));
+        Assert.assertEquals("http://a.org/a.xsd", config_one.getQName().getNamespaceURI());
+        Assert.assertEquals("bar", config_one.getAttribute("foo"));
+        Assert.assertEquals("stuff", config_one.getFirstChild("two").getValue());
+        Assert.assertEquals("stuff", config_one.getFirstChild(new QName("http://b.org/b.xsd", "two")).getValue());
+        Assert.assertEquals("whiz", config_one.getFirstChild("two").getAttribute("baz"));
+        Assert.assertEquals("girl", config_one.getFirstChild(new QName("http://b.org/b.xsd", "two")).getAttribute(new QName("http://c.org/c.xsd", "boy")));
+        Configuration config_three = config_one.getChildren().get(1);
+        Assert.assertEquals("metal", config_three.getValue());
+        Assert.assertEquals("woman", config_three.getAttribute(new QName("http://b.org/b.xsd", "man")));
+        Assert.assertEquals("robot", config_three.getAttribute("toy"));
+        Configuration config_four = config_one.getChildren().get(2);
+        QName nuts = config_four.getAttributeAsQName(new QName("http://b.org/b.xsd", "nuts"));
+        Assert.assertEquals("http://b.org/b.xsd", nuts.getNamespaceURI());
+        Assert.assertEquals("bolts", nuts.getLocalPart());
+        Assert.assertEquals("b", nuts.getPrefix());
+        QName pins = config_four.getAttributeAsQName("pins");
+        Assert.assertEquals("http://c.org/c.xsd", pins.getNamespaceURI());
+        Assert.assertEquals("needles", pins.getLocalPart());
+        Assert.assertEquals("c", pins.getPrefix());
+        QName pipes = config_four.getAttributeAsQName("pipes");
+        Assert.assertEquals("", pipes.getNamespaceURI());
+        Assert.assertEquals("rusted", pipes.getLocalPart());
+        Assert.assertEquals("", pipes.getPrefix());
+    }
+
+    @Test
+    public void testAttributeAsQName() throws Exception {
         Configuration config = _cfg_puller.pull(NAMESPACES_XML, getClass());
-        Assert.assertEquals("urn:test", config.getAttribute("targetNamespace"));
-        Assert.assertEquals("http://a.org/a.xsd", config.getQName().getNamespaceURI());
-        Assert.assertEquals("bar", config.getAttribute("foo"));
-        Assert.assertEquals("stuff", config.getFirstChild("two").getValue());
-        Assert.assertEquals("stuff", config.getFirstChild(new QName("http://b.org/b.xsd", "two")).getValue());
-        Assert.assertEquals("whiz", config.getFirstChild("two").getAttribute("baz"));
-        Assert.assertEquals("girl", config.getFirstChild(new QName("http://b.org/b.xsd", "two")).getAttribute(new QName("http://c.org/c.xsd", "boy")));
-        Assert.assertEquals("junk", config.getChildren().get(1).getValue());
-        Assert.assertEquals("woman", config.getChildren().get(1).getAttribute(new QName("http://b.org/b.xsd", "man")));
-        Assert.assertEquals("robot", config.getChildren().get(1).getAttribute("toy"));
+        config.setAttributeAsQName("testB", new QName("http://b.org/b.xsd", "B", "b"));
+        Assert.assertEquals("b:B", config.getAttribute("testB"));
+        QName testB = config.getAttributeAsQName("testB");
+        Assert.assertEquals("http://b.org/b.xsd", testB.getNamespaceURI());
+        Assert.assertEquals("B", testB.getLocalPart());
+        Assert.assertEquals("b", testB.getPrefix());
+        config.setAttribute("testB", "{http://b.org/b.xsd}B");
+        Assert.assertEquals("{http://b.org/b.xsd}B", config.getAttribute("testB"));
+        testB = config.getAttributeAsQName("testB");
+        Assert.assertEquals("http://b.org/b.xsd", testB.getNamespaceURI());
+        Assert.assertEquals("B", testB.getLocalPart());
+        Assert.assertEquals("b", testB.getPrefix());
+        QName qnameC = new QName("http://c.org/c.xsd", "testC", "c");
+        config.setAttributeAsQName(qnameC, new QName("", "C", "c"));
+        Assert.assertEquals("c:C", config.getAttribute(qnameC));
+        QName testC = config.getAttributeAsQName(qnameC);
+        Assert.assertEquals("http://c.org/c.xsd", testC.getNamespaceURI());
+        Assert.assertEquals("C", testC.getLocalPart());
+        Assert.assertEquals("c", testC.getPrefix());
+        config.setAttributeAsQName("testZ", new QName("http://z.org/z.xsd", "Z", ""));
+        Assert.assertEquals("{http://z.org/z.xsd}Z", config.getAttribute("testZ"));
+        QName testZ = config.getAttributeAsQName("testZ");
+        Assert.assertEquals("http://z.org/z.xsd", testZ.getNamespaceURI());
+        Assert.assertEquals("Z", testZ.getLocalPart());
+        Assert.assertEquals("", testZ.getPrefix());
     }
 
     @Test

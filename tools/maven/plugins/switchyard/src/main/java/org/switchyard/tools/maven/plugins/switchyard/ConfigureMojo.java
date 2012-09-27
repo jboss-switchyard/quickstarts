@@ -38,6 +38,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.switchyard.common.type.Classes;
+import org.switchyard.config.OutputKey;
 import org.switchyard.config.model.MergeScanner;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.ModelPullerScanner;
@@ -186,7 +187,7 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
             }
             getLog().info("Outputting SwitchYard configuration model to " + outputFile.getAbsolutePath());
             writer = new BufferedWriter(new FileWriter(outputFile));
-            model.write(writer);
+            model.write(writer, OutputKey.PRETTY_PRINT);
             writer.flush();
             // we write the output before we assert validity so that the user can compare the written XML to the validation error
             if (validate) {
