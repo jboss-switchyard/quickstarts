@@ -192,6 +192,15 @@ public class RiftsawServiceLocator implements ServiceLocator {
          * @param service The service
          */
         public void register(javax.wsdl.Definition wsdl, QName portType, QName service) {
+            
+            // RIFTSAW-476 (workaround)
+            // Check if wsdl defines a service, as this will be how
+            // the resolution is performed.
+            if (wsdl.getServices().size() == 0) {
+                throw new SwitchYardException("WSDL for referenced port type '"
+                        +portType+"' does not contain a Service");
+            }
+            
             _wsdls.add(wsdl);
             _portTypes.add(portType);
             _services.add(service);
