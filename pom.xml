@@ -888,6 +888,11 @@
          <version>${project.version}</version>
       </dependency>
       <dependency>
+          <groupId>org.switchyard.quickstarts</groupId>
+          <artifactId>switchyard-quickstart-camel-bus-cdi</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
          <groupId>org.switchyard.quickstarts</groupId>
          <artifactId>switchyard-quickstart-camel-ftp-binding</artifactId>
          <version>${project.version}</version>
