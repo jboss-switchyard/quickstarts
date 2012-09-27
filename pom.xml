@@ -76,7 +76,8 @@
         <module>demos/orders</module>
         <module>demos/webapp-deploy</module>
         <module>demos/multiApp</module>
-        <module>demos/policy-security</module>
+        <module>demos/policy-security-sslbasic</module>
+        <module>demos/policy-security-sslsaml</module>
         <module>demos/policy-transaction</module>
     </modules>
 

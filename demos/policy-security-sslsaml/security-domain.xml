@@ -1,0 +1,16 @@
+                <security-domain name="picketlink-sts" cache-type="default">
+                    <authentication>
+                        <login-module code="UsersRoles" flag="required">
+                            <module-option name="usersProperties" value="users.properties"/>
+                            <module-option name="rolesProperties" value="roles.properties"/>
+                        </login-module>
+                    </authentication>
+                </security-domain>
+                <security-domain name="saml-validate-token" cache-type="default">
+                    <authentication>
+                        <login-module code="org.picketlink.identity.federation.core.wstrust.auth.STSValidatingLoginModule" flag="required">
+                            <module-option name="configFile" value="../standalone/configuration/sts-client.properties"/>
+                            <module-option name="useOptionsCredentials" value="true"/>
+                        </login-module>
+                    </authentication>
+                </security-domain>
