@@ -1,8 +1,12 @@
 Introduction
 ============
-This quickstart demonstrates the usage of the BPEL component.  This example contains two examples - 
-say_hello and loan_approval, each which demonstrate a WS-BPEL business process exposed as a service 
-through a WSDL inteface. 
+This quickstart demonstrates the usage of the BPEL component. There are four examples:
+   * say_hello
+   * loan_approval
+   * jms_binding
+   * simple_correlation
+The first two demonstrate a WS-BPEL business process exposed as a service through a WSDL inteface. jms_binding demonstrates the use of a JMS binding for a BPEL service and simple_correlation demonstrates how two separate interactions can be correlated to the same BPEL process instance. For details on these latter two examples please see the respective Readme files.
+
 
 The first example, say_hello, demonstrates a BPEL process that reads a message passed as input and 
 replies to it with a "Hello, &lt;input&gt;" message.
@@ -24,15 +28,20 @@ Running the quickstart
 
 JBoss AS 7, say_hello
 ----------
-1. Build the quickstart:
+1. Change to the say_hello example directory.
+2. Build the quickstart:
     mvn clean install
-2. Start JBoss AS 7 in standalone mode:
+3. Start JBoss AS 7 in standalone mode:
     ${AS}/bin/standalone.sh
-3. Deploy the Quickstart : 
+4. Deploy the Quickstart :
     cp target/switchyard-quickstart-bpel-service-say-hello.jar ${AS7}/standalone/deployments
-4. Submit a webservice request to invoke the SOAP gateway.  There are a number of ways to do this :
+5. Submit a webservice request to invoke the SOAP gateway.  There are a number of ways to do this :
       - Submit a request with your preferred SOAP client - src/test/resources/xml contains sample 
         requests and the responses that you should see
+      - Use the simple bundled SOAP client and the sample request XML e.g.
+```
+    mvn exec:java
+```
       - SOAP-UI : Use the wsdl for this projects (src/main/resources/wsdl/) to create a soap-ui project.  
         Use the sample request (src/test/resources/xml/soap-request.xml) as an example of a sample 
         request.  The output below is the expected output :
@@ -52,8 +61,9 @@ Expected Output
 ```
 
 
-JBoss AS 7, loan_service
+JBoss AS 7, loan_approval
 ----------
+1. Change to the loan_approval example directory.
 1. Build the quickstart:
     mvn clean install
 2. Start JBoss AS 7 in standalone mode:
@@ -64,6 +74,10 @@ JBoss AS 7, loan_service
    number of ways to do this :
       - Submit a request with your preferred SOAP client - src/test/resources/xml contains sample requests 
         and the responses that you should see
+      - Use the simple bundled SOAP client and the sample request XML e.g.
+```
+    mvn exec:java
+```
       - SOAP-UI : Use the wsdl for this projects (src/main/resources/wsdl/) to create a soap-ui project.  Use the 
         sample request (src/test/resources/xml/soap-request.xml) as an example of a sample request.  The output 
         below is the expected output :
