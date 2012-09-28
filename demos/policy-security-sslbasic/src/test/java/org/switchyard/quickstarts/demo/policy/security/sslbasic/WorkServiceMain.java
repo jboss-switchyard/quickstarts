@@ -50,7 +50,7 @@ public final class WorkServiceMain {
         String soapRequest = new StringPuller().pull("/xml/soap-request.xml").replaceAll("WORK_CMD", "CMD-" + System.currentTimeMillis());
         HTTPMixIn http = new HTTPMixIn();
         if (userPass != null && userPass.length == 2) {
-            http.setRequestHeader("Authorization", "Basic " + Base64.encode(userPass[0] + ":" + userPass[1]));
+            http.setRequestHeader("Authorization", "Basic " + Base64.encodeFromString(userPass[0] + ":" + userPass[1]));
         }
         http.initialize();
         try {
