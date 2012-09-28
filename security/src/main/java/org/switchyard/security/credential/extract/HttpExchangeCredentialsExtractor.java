@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.jboss.com.sun.net.httpserver.HttpExchange;
+import org.switchyard.common.lang.Strings;
 import org.switchyard.security.credential.ConfidentialityCredential;
 import org.switchyard.security.credential.Credential;
 import org.switchyard.security.credential.PrincipalCredential;
@@ -61,8 +62,21 @@ public class HttpExchangeCredentialsExtractor implements CredentialsExtractor<Ht
                 credentials.add(new PrincipalCredential(new User(remoteUser), false)); // true?
             }
             */
-            String authorizationHeader = source.getRequestHeaders().getFirst("Authorization");
-            credentials.addAll(new AuthorizationHeaderCredentialsExtractor().extractCredentials(authorizationHeader));
+            String charsetName = null;
+            String contentType = source.getRequestHeaders().getFirst("Content-Type");
+            if (contentType != null) {
+                int pos = contentType.lastIndexOf("charset=");
+                if (pos > -1) {
+                    charsetName = Strings.trimToNull(contentType.substring(pos+8, contentType.length()));
+                }
+            }
+            AuthorizationHeaderCredentialsExtractor ahce;
+            if (charsetName != null) {
+                ahce = new AuthorizationHeaderCredentialsExtractor(charsetName);
+            } else {
+                ahce = new AuthorizationHeaderCredentialsExtractor();
+            }
+            credentials.addAll(ahce.extractCredentials(source.getRequestHeaders().getFirst("Authorization")));
         }
         return credentials;
     }

@@ -181,8 +181,8 @@ public class HTTPMixIn extends AbstractTestMixIn {
      */
     public String postFile(String endpointURL, String request) {
 
-        FileRequestEntity requestEntity = new FileRequestEntity
-            (new File(request), "text/xml; charset=utf-8");
+        FileRequestEntity requestEntity =
+            new FileRequestEntity(new File(request), "text/xml; charset=utf-8");
 
         if (_dumpMessages) {
             _logger.info("Sending a POST request to [" + endpointURL + "]");

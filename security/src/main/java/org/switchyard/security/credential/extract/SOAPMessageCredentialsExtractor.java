@@ -110,22 +110,22 @@ public class SOAPMessageCredentialsExtractor implements CredentialsExtractor<SOA
                                 String encodingType = stripNS(XMLHelper.valueOf(attributes.getNamedItem("EncodingType")));
                                 String valueType = stripNS(XMLHelper.valueOf(attributes.getNamedItem("ValueType")));
                                 String certString = XMLHelper.valueOf(securityTokenNode.getFirstChild());
-                                byte[] keyBytes = null;
+                                byte[] certBytes = null;
                                 if ("Base64Binary".equalsIgnoreCase(encodingType)) {
-                                    keyBytes = Base64.decode(certString).getBytes();
+                                    certBytes = Base64.decode(certString);
                                 } else {
-                                    keyBytes = certString.getBytes();
+                                    certBytes = certString.getBytes();
                                 }
                                 try {
                                     CertificateFactory factory = CertificateFactory.getInstance(certificateMatch(valueType));
-                                    InputStream in = new ByteArrayInputStream(keyBytes);
+                                    InputStream certStream = new ByteArrayInputStream(certBytes);
                                     if (X509PKIPATHV1.equals(valueType)) {
-                                        CertPath path = factory.generateCertPath(in);
+                                        CertPath path = factory.generateCertPath(certStream);
                                         for (Certificate certificate : path.getCertificates()) {
                                             credentials.add(new CertificateCredential(certificate));
                                         }
                                     } else if (X509V3.equals(valueType)) {
-                                        Certificate certificate = factory.generateCertificate(in);
+                                        Certificate certificate = factory.generateCertificate(certStream);
                                         credentials.add(new CertificateCredential(certificate));
                                     } else if (PKCS7.equals(valueType)) {
                                         throw new IllegalArgumentException(valueType + " not implemented (although recognized)");

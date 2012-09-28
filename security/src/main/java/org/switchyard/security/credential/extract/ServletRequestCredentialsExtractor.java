@@ -60,8 +60,14 @@ public class ServletRequestCredentialsExtractor implements CredentialsExtractor<
                 if (remoteUser != null) {
                     credentials.add(new PrincipalCredential(new User(remoteUser), true));
                 }
-                String authorizationHeader = request.getHeader("Authorization");
-                credentials.addAll(new AuthorizationHeaderCredentialsExtractor().extractCredentials(authorizationHeader));
+                String charsetName = source.getCharacterEncoding();
+                AuthorizationHeaderCredentialsExtractor ahce;
+                if (charsetName != null) {
+                    ahce = new AuthorizationHeaderCredentialsExtractor(charsetName);
+                } else {
+                    ahce = new AuthorizationHeaderCredentialsExtractor();
+                }
+                credentials.addAll(ahce.extractCredentials(request.getHeader("Authorization")));
             }
         }
         return credentials;

@@ -18,12 +18,14 @@
  */
 package org.switchyard.security.credential.extract;
 
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.switchyard.common.codec.Base64;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.security.credential.Credential;
@@ -37,10 +39,49 @@ import org.switchyard.security.credential.PasswordCredential;
  */
 public class AuthorizationHeaderCredentialsExtractor implements CredentialsExtractor<String> {
 
+    private static final Logger LOGGER = Logger.getLogger(AuthorizationHeaderCredentialsExtractor.class);
+
+    private final Charset _charset;
+
     /**
-     * Constructs a new AuthorizationHeaderCredentialsExtractor.
+     * Constructs a new AuthorizationHeaderCredentialsExtractor, with the platform-dependent charset.
      */
-    public AuthorizationHeaderCredentialsExtractor() {}
+    public AuthorizationHeaderCredentialsExtractor() {
+        _charset = Charset.defaultCharset();
+    }
+
+    /**
+     * Constructs a new AuthorizationHeaderCredentialsExtractor, with the specified charset name.
+     * @param charsetName the specified charset name
+     */
+    public AuthorizationHeaderCredentialsExtractor(String charsetName) {
+        if (charsetName != null) {
+            Charset charset;
+            try {
+                charset = Charset.forName(charsetName);
+            } catch (Throwable t) {
+                LOGGER.error("charsetName [" + charsetName + "] + is illegal or unsupported; using platform-default");
+                charset = Charset.defaultCharset();
+            }
+            _charset = charset;
+        } else {
+            LOGGER.warn("charsetName is null; using platform-default");
+            _charset = Charset.defaultCharset();
+        }
+    }
+
+    /**
+     * Constructs a new AuthorizationHeaderCredentialsExtractor, with the specified charset.
+     * @param charset the specified charset
+     */
+    public AuthorizationHeaderCredentialsExtractor(Charset charset) {
+        if (charset != null) {
+            _charset = charset;
+        } else {
+            LOGGER.warn("charset is null; using platform-default");
+            _charset = Charset.defaultCharset();
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -51,7 +92,7 @@ public class AuthorizationHeaderCredentialsExtractor implements CredentialsExtra
         if (source != null) {
             if (source.startsWith("Basic ")) {
                 String encoded = source.substring(6, source.length());
-                String decoded = Base64.decode(encoded);
+                String decoded = Base64.decodeToString(encoded, _charset);
                 if (decoded.indexOf(':') != -1) {
                     String[] split = decoded.split(":", 2);
                     String name = split.length > 0 ? split[0] : null;
