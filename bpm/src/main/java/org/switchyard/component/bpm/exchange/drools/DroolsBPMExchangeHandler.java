@@ -43,6 +43,7 @@ import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
+import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 import javax.xml.namespace.QName;
@@ -239,7 +240,7 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
         if (!ExchangePhase.IN.equals(exchange.getPhase())) {
             return;
         }
-        UserTransaction userTx = null;
+        TransactionHelper txHelper = new TransactionHelper();
         Context context = exchange.getContext();
         ServiceOperation serviceOperation = exchange.getContract().getProviderOperation();
         ProcessActionModel processActionModel = _actionModels.get(serviceOperation.getName());
@@ -253,7 +254,7 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
                 if (_processId != null) {
                     _processLock.lock();
                     try {
-                        userTx = beginUserTransaction();
+                        txHelper.beginUserTransaction();
                         final StatefulKnowledgeSession ksessionStateful = getStatefulSession(sessionId);
                         sessionId = Integer.valueOf(ksessionStateful.getId());
                         Map<String,Object> parameters = new HashMap<String,Object>();
@@ -272,9 +273,9 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
                         }
                         processInstance = ksessionStateful.startProcess(_processId, parameters);
                         processInstanceId = Long.valueOf(processInstance.getId());
-                        commitUserTransaction(userTx);
+                        txHelper.commitUserTransaction();
                     } catch (RuntimeException re) {
-                        rollbackUserTransaction(userTx);
+                        txHelper.rollbackUserTransaction();
                         throw re;
                     } finally {
                         _processLock.unlock();
@@ -290,13 +291,13 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
                 if (processInstanceId != null) {
                     _processLock.lock();
                     try {
-                        userTx = beginUserTransaction();
+                        txHelper.beginUserTransaction();
                         final StatefulKnowledgeSession ksessionStateful = getStatefulSession(sessionId);
                         sessionId = Integer.valueOf(ksessionStateful.getId());
                         ksessionStateful.signalEvent(processEventType, processEvent, processInstanceId.longValue());
-                        commitUserTransaction(userTx);
+                        txHelper.commitUserTransaction();
                     } catch (RuntimeException re) {
-                        rollbackUserTransaction(userTx);
+                        txHelper.rollbackUserTransaction();
                         throw re;
                     } finally {
                         _processLock.unlock();
@@ -310,13 +311,13 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
                 if (processInstanceId != null) {
                     _processLock.lock();
                     try {
-                        userTx = beginUserTransaction();
+                        txHelper.beginUserTransaction();
                         final StatefulKnowledgeSession ksessionStateful = getStatefulSession(sessionId);
                         sessionId = Integer.valueOf(ksessionStateful.getId());
                         ksessionStateful.abortProcessInstance(processInstanceId.longValue());
-                        commitUserTransaction(userTx);
+                        txHelper.commitUserTransaction();
                     } catch (RuntimeException re) {
-                        rollbackUserTransaction(userTx);
+                        txHelper.rollbackUserTransaction();
                         throw re;
                     } finally {
                         _processLock.unlock();
@@ -337,7 +338,7 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
                 Object messageContentOut = null;
                 _processLock.lock();
                 try {
-                    userTx = beginUserTransaction();
+                    txHelper.beginUserTransaction();
                     if (processInstance == null) {
                         final StatefulKnowledgeSession ksessionStateful = getStatefulSession(sessionId);
                         processInstance = ksessionStateful.getProcessInstance(processInstanceId.longValue());
@@ -345,9 +346,9 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
                     if (processInstance != null) {
                         messageContentOut = ((WorkflowProcessInstance)processInstance).getVariable(_messageContentOutName);
                     }
-                    commitUserTransaction(userTx);
+                    txHelper.commitUserTransaction();
                 } catch (RuntimeException re) {
-                    rollbackUserTransaction(userTx);
+                    txHelper.rollbackUserTransaction();
                     throw re;
                 } finally {
                     _processLock.unlock();
@@ -511,45 +512,59 @@ public class DroolsBPMExchangeHandler extends BaseBPMExchangeHandler {
         }
     }
 
-    private UserTransaction beginUserTransaction() throws HandlerException {
-        UserTransaction userTx = null;
-        if (_persistent) {
-            try {
-                userTx = AS7TransactionManagerLookup.getUserTransaction();
-                userTx.begin();
-            } catch (SystemException se) {
-                throw new HandlerException("UserTransaction begin failed", se);
-            } catch (NotSupportedException nse) {
-                throw new HandlerException("UserTransaction begin failed", nse);
+    private class TransactionHelper {
+        private UserTransaction _userTx = null;
+        private boolean _isInitiator = false;
+        
+        UserTransaction beginUserTransaction() throws HandlerException {
+            if (_persistent) {
+                try {
+                    _userTx = AS7TransactionManagerLookup.getUserTransaction();
+                    if (_userTx.getStatus() == Status.STATUS_NO_TRANSACTION) {
+                            _userTx.begin();
+                            _isInitiator = true;
+                    }
+                } catch (SystemException se) {
+                    throw new HandlerException("UserTransaction begin failed", se);
+                } catch (NotSupportedException nse) {
+                    throw new HandlerException("UserTransaction begin failed", nse);
+                }
+            }
+            return _userTx;
+        }
+        
+        void commitUserTransaction() throws HandlerException {
+            if (_isInitiator) {
+                try {
+                    _userTx.commit();
+                } catch (SystemException se) {
+                    throw new HandlerException("UserTransaction commit failed", se);
+                } catch (HeuristicRollbackException hre) {
+                    throw new HandlerException("UserTransaction commit failed", hre);
+                } catch (HeuristicMixedException hme) {
+                    throw new HandlerException("UserTransaction commit failed", hme);
+                } catch (RollbackException re) {
+                    throw new HandlerException("UserTransaction commit failed", re);
+                }
             }
         }
-        return userTx;
-    }
 
-    private void commitUserTransaction(UserTransaction userTx) throws HandlerException {
-        if (userTx != null) {
-            try {
-                userTx.commit();
-            } catch (SystemException se) {
-                throw new HandlerException("UserTransaction commit failed", se);
-            } catch (HeuristicRollbackException hre) {
-                throw new HandlerException("UserTransaction commit failed", hre);
-            } catch (HeuristicMixedException hme) {
-                throw new HandlerException("UserTransaction commit failed", hme);
-            } catch (RollbackException re) {
-                throw new HandlerException("UserTransaction commit failed", re);
+        void rollbackUserTransaction() throws HandlerException {
+            if (_isInitiator) {
+                try {
+                    _userTx.rollback();
+                } catch (SystemException se) {
+                    throw new HandlerException("UserTransaction rollback failed", se);
+                }
+            } else if (_userTx != null) {
+                try {
+                    _userTx.setRollbackOnly();
+                } catch (SystemException se) {
+                    throw new HandlerException("UserTransaction setRollbackOnly failed", se);
+                }
             }
         }
-    }
-
-    private void rollbackUserTransaction(UserTransaction userTx) throws HandlerException {
-        if (userTx != null) {
-            try {
-                userTx.rollback();
-            } catch (SystemException se) {
-                throw new HandlerException("UserTransaction rollback failed", se);
-            }
-        }
+        
     }
 
 }
