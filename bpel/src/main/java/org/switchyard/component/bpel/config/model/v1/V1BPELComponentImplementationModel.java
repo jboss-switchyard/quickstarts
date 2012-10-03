@@ -20,6 +20,8 @@ package org.switchyard.component.bpel.config.model.v1;
 
 import static org.switchyard.component.bpel.process.ProcessConstants.PROCESS;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.component.bpel.config.model.BPELComponentImplementationModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
@@ -53,6 +55,13 @@ public class V1BPELComponentImplementationModel extends V1ComponentImplementatio
      */
     public String getProcess() {
         return getModelAttribute(PROCESS);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public QName getProcessQName() {
+        return getModelConfiguration().getAttributeAsQName(PROCESS);
     }
 
     /**

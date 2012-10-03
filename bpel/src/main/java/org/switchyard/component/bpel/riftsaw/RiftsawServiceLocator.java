@@ -104,12 +104,13 @@ public class RiftsawServiceLocator implements ServiceLocator {
         // Currently need to just use the local part, without the version number, to
         // lookup the registry entry
         int index=processName.getLocalPart().indexOf('-');
-        QName localProcessName=new QName(null, processName.getLocalPart().substring(0, index));
+        QName localProcessName=new QName(processName.getNamespaceURI(),
+                    processName.getLocalPart().substring(0, index));
         
         RegistryEntry re=_registry.get(localProcessName);
         
         if (re == null) {
-            LOG.error("No service references found for process '"+processName+"'");
+            LOG.error("No service references found for process '"+localProcessName+"'");
             return (null);
         }
         
@@ -136,17 +137,7 @@ public class RiftsawServiceLocator implements ServiceLocator {
             BPELComponentImplementationModel impl=
                     (BPELComponentImplementationModel)crm.getComponent().getImplementation();
             
-            String local=impl.getProcess();
-            String ns=null;
-            int index=local.indexOf(':');
-            
-            if (index != -1) {
-                // TODO: For now ignore the namespace
-                //String prefix = local.substring(0, index);
-                local = local.substring(index+1);
-            }
-            
-            QName processName=new QName(ns, local);
+            QName processName=impl.getProcessQName();
             
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Register reference "+crm.getName()+" ("+crm.getQName()+") for process "+processName);

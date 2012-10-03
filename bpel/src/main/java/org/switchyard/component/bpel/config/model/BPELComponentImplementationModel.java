@@ -18,6 +18,8 @@
  */
 package org.switchyard.component.bpel.config.model;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 
 /**
@@ -42,6 +44,13 @@ public interface BPELComponentImplementationModel extends ComponentImplementatio
      * @return the "process" attribute
      */
     public String getProcess();
+
+    /**
+     * Gets the "process" attribute as a QName.
+     *
+     * @return the "process" attribute
+     */
+    public QName getProcessQName();
 
     /**
      * Sets the "process" attribute.
