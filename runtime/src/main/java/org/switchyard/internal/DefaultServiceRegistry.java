@@ -48,7 +48,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
             serviceList.addAll(services);
         }
 
-        return Collections.unmodifiableList(serviceList);
+        return serviceList;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
             return Collections.emptyList();
         }
 
-        return Collections.unmodifiableList(_services.get(serviceName));
+        return new LinkedList<Service>(_services.get(serviceName));
     }
 
     @Override
