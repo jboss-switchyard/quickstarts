@@ -51,6 +51,11 @@
         <module name="org.apache.commons.codec"/>
         <module name="org.apache.commons.logging"/>
         <module name="javax.api" />
+        <system>
+          <paths>
+            <path name="com/sun/image/codec/jpeg"/>
+          </paths>
+       </system>
     </dependencies>
 
 </module>
