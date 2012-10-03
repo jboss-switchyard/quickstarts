@@ -20,8 +20,11 @@ package org.switchyard.common.lang;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -32,7 +35,15 @@ import java.util.StringTokenizer;
  */
 public final class Strings {
 
-    private Strings() {}
+    /**
+     * Default regex replacements for cleansing Strings.
+     */
+    public static final Map<String, String> DEFAULT_CLEANSE_REGEX_REPLACEMENTS;
+    static {
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        map.put("[\\W_]", "-");
+        DEFAULT_CLEANSE_REGEX_REPLACEMENTS = Collections.unmodifiableMap(map);
+    }
 
     /**
      * Trims the specified String, and if after it is zero-length, return null.
@@ -47,6 +58,63 @@ public final class Strings {
             }
         }
         return str;
+    }
+
+    /**
+     * Cleanses a String using the default cleanse regex replacments.
+     * @param str the String
+     * @return the cleansed String
+     * @see {@link #DEFAULT_CLEANSE_REGEX_REPLACEMENTS}
+     */
+    public static String cleanse(String str) {
+        return cleanse(str, DEFAULT_CLEANSE_REGEX_REPLACEMENTS);
+    }
+
+    /**
+     * Cleanses a String using the specified regex replacements.
+     * @param str the String
+     * @param regexReplacements the regex replacements
+     * @return the cleansed String
+     */
+    public static String cleanse(String str, Map<String, String> regexReplacements) {
+        if (str != null) {
+            for (Entry<String, String> entry : regexReplacements.entrySet()) {
+                String regex = entry.getKey();
+                String replacement = entry.getValue();
+                str = str.replaceAll(regex, replacement);
+                String doubleReplacement = replacement + replacement;
+                while (str.contains(doubleReplacement)) {
+                    str = str.replaceAll(doubleReplacement, replacement);
+                }
+                if (str.startsWith(replacement)) {
+                    str = str.substring(replacement.length());
+                }
+                if (str.endsWith(replacement)) {
+                    str = str.substring(0, str.length()-1);
+                }
+            }
+        }
+        return str;
+    }
+
+    /**
+     * Cleanses a String using the default cleanse regex replacments, then calls {@link #trimToNull(String)} on the result.
+     * @param str the String
+     * @return the cleansed and trimmed-to-null String
+     * @see {@link #DEFAULT_CLEANSE_REGEX_REPLACEMENTS}
+     */
+    public static String cleanseTrimToNull(String str) {
+        return trimToNull(cleanse(str));
+    }
+
+    /**
+     * Cleanses a String using the specified cleanse regex replacments, then calls {@link #trimToNull(String)} on the result.
+     * @param str the String
+     * @param regexReplacements the regex replacements
+     * @return the cleansed and trimmed-to-null String
+     */
+    public static String cleanseTrimToNull(String str, Map<String, String> regexReplacements) {
+        return trimToNull(cleanse(str, regexReplacements));
     }
 
     /**
@@ -161,5 +229,7 @@ public final class Strings {
         }
         return null;
     }
+
+    private Strings() {}
 
 }

@@ -48,6 +48,22 @@ public class StringsTests {
     }
 
     @Test
+    public void testCleanseTrimToNull() throws Exception {
+        String[][] tests = new String[][]{
+            new String[]{"My Cool \n Project", "My-Cool-Project"},
+            new String[]{" the One     and  ___ONLY__*  ", "the-One-and-ONLY"},
+            new String[]{" --- _", null}
+        };
+        for (String[] test : tests) {
+            String original = test[0];
+            String expected = test[1];
+            String actual = Strings.cleanseTrimToNull(original);
+            //System.out.println("original=[" + original + "], expected=[" + expected + "], actual=[" + actual + "]");
+            assertEquals(expected, actual);
+        }
+    }
+
+    @Test
     public void testSplitTrimToNull() throws Exception {
         List<String> l = splitTrimToNull("foo// bar/ ", "/");
         assertEquals(2, l.size());

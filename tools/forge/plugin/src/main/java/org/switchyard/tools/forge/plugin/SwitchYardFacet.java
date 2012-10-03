@@ -43,14 +43,17 @@ import org.jboss.forge.maven.MavenPluginFacet;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.facets.DependencyFacet;
+import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.project.facets.PackagingFacet;
 import org.jboss.forge.project.packaging.PackagingType;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.Shell;
+import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresPackagingType;
+import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.version.Versions;
 import org.switchyard.config.OutputKey;
@@ -348,8 +351,7 @@ public class SwitchYardFacet extends AbstractFacet {
         installDependencies();
         addPluginRepository();
         
-        String appName = _shell.prompt("Application name (e.g. myApp)");
-        
+        String appName = promptApplicationName();
         try {
             MavenCoreFacet mvn = project.getFacet(MavenCoreFacet.class);
             Model pom = mvn.getPOM();
@@ -373,6 +375,25 @@ public class SwitchYardFacet extends AbstractFacet {
             return false;
         }
         return true;
+    }
+    
+    private String promptApplicationName() {
+        MetadataFacet metadataFacet = getProject().getFacet(MetadataFacet.class);
+        String projectName = Strings.cleanseTrimToNull(metadataFacet != null ? metadataFacet.getProjectName() : null);
+        String enteredName = null;
+        String cleansedName = null;
+        while (cleansedName == null) {
+            if (enteredName != null) {
+                _shell.println(ShellColor.RED, "Illegal Application name: " + enteredName);
+            }
+            if (projectName != null) {
+                enteredName = _shell.prompt("Application name", projectName);
+            } else {
+                enteredName = _shell.prompt("Application name (e.g. myApp)");
+            }
+            cleansedName = Strings.cleanseTrimToNull(enteredName);
+        }
+        return cleansedName;
     }
     
     // Creates a new OpenShift profile with correct SwitchYard
