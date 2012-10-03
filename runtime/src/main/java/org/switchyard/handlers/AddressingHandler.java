@@ -58,10 +58,7 @@ public class AddressingHandler extends BaseHandler {
             return;
         }
         
-        // TODO : This assumes an exact match between service reference name and service name.  
-        // We need to look for service wiring that might connect different names.
-        List<Service> services = _domain.getServices(exchange.getConsumer().getName());
-        
+        List<Service> services = _domain.getServices(exchange.getConsumer().getTargetServiceName());
         if (services == null || services.isEmpty()) {
             throw new SwitchYardException("No registered service found for " + exchange.getConsumer().getName());
         }

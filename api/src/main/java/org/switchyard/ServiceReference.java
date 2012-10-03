@@ -107,4 +107,18 @@ public interface ServiceReference {
       * @return consumer metadata
       */
      Registrant getConsumerMetadata();
+
+     /**
+     * Wire this service reference to a registered service.  The default wiring
+     * of a reference maps it to a service with the same name.  This method
+     * can be used to map references to services with a different name.
+     * @param serviceName service name to wire
+      */
+     void wire(QName serviceName);
+     
+     /**
+      * Returns the name of a service which is wired from this reference.
+      * @return wired service name
+      */
+     QName getTargetServiceName();
 }

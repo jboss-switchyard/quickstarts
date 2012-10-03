@@ -138,15 +138,6 @@ public interface ServiceDomain {
     List<Service> getServices(QName serviceName);
     
     /**
-     * Wire a service reference to a registered service.  The default wiring
-     * of a reference maps it to a service with the same name.  This method
-     * can be used to map references to services with a different name.
-     * @param reference service reference
-     * @param service service provider
-     */
-    void wireReference(ServiceReference reference, Service service);
-    
-    /**
      * Returns a reference to the service security for this domain.
      * @return service security instance
      */

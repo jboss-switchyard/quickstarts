@@ -52,6 +52,7 @@ public class ServiceReferenceImpl implements ServiceReference {
     private ExchangeHandler _handler;
     private Dispatcher _dispatcher;
     private Registrant _consumerMetadata;
+    private QName _targetServiceName;
     
     /**
      * Creates a new reference to a service.
@@ -88,6 +89,7 @@ public class ServiceReferenceImpl implements ServiceReference {
         _handler = handler;
         _domain = domain;
         _consumerMetadata = consumerMetadata;
+        _targetServiceName = name;
         
         if (provides != null) {
             _provides = provides;
@@ -219,6 +221,16 @@ public class ServiceReferenceImpl implements ServiceReference {
         return this;
     }
 
+    @Override
+    public void wire(QName serviceName) {
+        _targetServiceName = serviceName;
+    }
+    
+    @Override
+    public QName getTargetServiceName() {
+        return _targetServiceName;
+    }
+    
     @Override
     public String toString() {
         return "ServiceReference [name=" + _name + ", interface=" + _interface + ", domain=" + _domain + "]";

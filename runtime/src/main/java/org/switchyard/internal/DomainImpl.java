@@ -73,7 +73,7 @@ public class DomainImpl implements ServiceDomain {
     private Map<String, Object> _attachements = Collections.synchronizedMap(new LinkedHashMap<String, Object>());
     private Map<QName, ServiceReference> _references =
             new ConcurrentHashMap<QName, ServiceReference>();
-
+    
     /**
      * Create a new ServiceDomain.
      * @param name name
@@ -190,13 +190,6 @@ public class DomainImpl implements ServiceDomain {
         _eventManager.publish(new ReferenceUnregistrationEvent(reference));
     }
 
-    @Override
-    public void wireReference(ServiceReference reference,
-            org.switchyard.Service service) {
-        // TODO Auto-generated method stub
-        
-    }
-    
     @Override
     public QName getName() {
         return _name;

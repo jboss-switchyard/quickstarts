@@ -425,6 +425,16 @@ public class Deployment extends AbstractDeployment {
                 ServiceInterface refIntf = getComponentReferenceInterface(reference);
                 ServiceReference svcRef = getDomain().registerServiceReference(
                         reference.getQName(), refIntf, null, null, requires, impl);
+
+                // wire a reference if the name is different from promoted name
+                for (CompositeReferenceModel compositeReference : getConfig().getComposite().getReferences()) {
+                    ComponentReferenceModel componentReference = compositeReference.getComponentReference();
+                    if (componentReference != null && componentReference.equals(reference)) {
+                        if (!componentReference.getQName().equals(compositeReference.getQName())) {
+                            svcRef.wire(compositeReference.getQName());
+                        }
+                    }
+                }
                 references.add(svcRef);
             }
             
