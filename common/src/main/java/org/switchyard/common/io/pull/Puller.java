@@ -163,10 +163,10 @@ public abstract class Puller<R> {
 
     /**
      * Safely pulls a resource from an InputStream.
-     * @param is an InputStream of the resource
+     * @param stream an InputStream of the resource
      * @return the resource, or null if not found
      * @throws IOException if a problem occurred
      */
-    public abstract R pull(InputStream is) throws IOException;
+    public abstract R pull(InputStream stream) throws IOException;
 
 }

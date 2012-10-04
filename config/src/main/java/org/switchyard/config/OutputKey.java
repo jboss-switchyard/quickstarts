@@ -27,14 +27,14 @@ import org.switchyard.common.lang.Strings;
  */
 public enum OutputKey {
 
-    /** The include-ordering hint. */
-    INCLUDE_ORDERING("include-ordering"),
-
-    /** The exclude-normalization hint. */
-    EXCLUDE_NORMALIZATION("exclude-normalization"),
+    /** The normalize hint. */
+    NORMALIZE("normalize"),
 
     /** The omit-xml-declaration hint. */
     OMIT_XML_DECLARATION("omit-xml-declaration"),
+
+    /** The order-children hint. */
+    ORDER_CHILDREN("order-children"),
 
     /** The pretty-print hint. */
     PRETTY_PRINT("pretty-print");

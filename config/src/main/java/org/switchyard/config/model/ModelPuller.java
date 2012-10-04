@@ -43,14 +43,14 @@ public class ModelPuller<M extends Model> extends Puller<M> {
     private Descriptor _desc;
 
     /**
-     * Constructs a default ModelResource with a default Descriptor.
+     * Constructs a default ModelPuller (ignoring comments when parsing XML) with a default Descriptor.
      */
     public ModelPuller() {
         this(null);
     }
 
     /**
-     * Constructs a ModelResource with the specified Descriptor.
+     * Constructs a ModelPuller (ignoring comments when parsing XML) with the specified Descriptor.
      * @param desc the Descriptor
      */
     public ModelPuller(Descriptor desc) {
@@ -69,8 +69,8 @@ public class ModelPuller<M extends Model> extends Puller<M> {
      * {@inheritDoc}
      */
     @Override
-    public M pull(InputStream is) throws IOException {
-        return pull(new ElementPuller().pull(is));
+    public M pull(InputStream stream) throws IOException {
+        return pull(new ElementPuller().pull(stream));
     }
 
     /**
@@ -85,12 +85,12 @@ public class ModelPuller<M extends Model> extends Puller<M> {
 
     /**
      * Safely pulls a Model from an InputSource.
-     * @param is an InputSource of the Model
+     * @param source an InputSource of the Model
      * @return the Model, or null if not found
      * @throws IOException if a problem occurred
      */
-    public M pull(InputSource is) throws IOException {
-        return pull(new ElementPuller().pull(is));
+    public M pull(InputSource source) throws IOException {
+        return pull(new ElementPuller().pull(source));
     }
 
     /**

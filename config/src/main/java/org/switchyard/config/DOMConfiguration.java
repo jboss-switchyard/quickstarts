@@ -57,11 +57,6 @@ public class DOMConfiguration extends BaseConfiguration {
     private Element _parent_element;
     private DOMConfiguration _parent_config;
 
-    DOMConfiguration(Document document) {
-        _element = new ElementPuller().pull(document);
-        getParent(); // initializes parent
-    }
-
     DOMConfiguration(Element element) {
         _element = new ElementPuller().pull(element);
         getParent(); // initializes parent
@@ -72,12 +67,7 @@ public class DOMConfiguration extends BaseConfiguration {
         getParent(); // initializes parent
     }
 
-    DOMConfiguration(QName qname) {
-        _element = new ElementPuller().pull(qname);
-        getParent(); // initializes parent
-    }
-
-    DOMConfiguration(Configuration from) {
+    private DOMConfiguration(Configuration from) {
         DOMConfiguration config;
         if (from instanceof DOMConfiguration) {
             config = (DOMConfiguration)from;
@@ -708,18 +698,18 @@ public class DOMConfiguration extends BaseConfiguration {
     @Override
     public void write(Writer writer, OutputKey... keys) throws IOException {
         List<OutputKey> key_list = Arrays.asList(keys);
-        if (!key_list.contains(OutputKey.EXCLUDE_NORMALIZATION)) {
+        if (key_list.contains(OutputKey.NORMALIZE)) {
             normalize();
         }
-        if (key_list.contains(OutputKey.INCLUDE_ORDERING)) {
+        if (key_list.contains(OutputKey.ORDER_CHILDREN)) {
             orderChildren();
         }
         Map<String, String> outputProperties = new HashMap<String, String>();
-        if (key_list.contains(OutputKey.PRETTY_PRINT)) {
-            outputProperties.put(OutputKey.PRETTY_PRINT.hint(), "yes");
-        }
         if (key_list.contains(OutputKey.OMIT_XML_DECLARATION)) {
             outputProperties.put(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        }
+        if (key_list.contains(OutputKey.PRETTY_PRINT)) {
+            outputProperties.put(OutputKey.PRETTY_PRINT.hint(), "yes");
         }
         XMLHelper.write(_element, writer, outputProperties);
     }

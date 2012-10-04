@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ JBoss, Home of Professional Open Source.
-  ~ Copyright 2010, Red Hat, Inc., and individual contributors
+  ~ Copyright 2012, Red Hat, Inc., and individual contributors
   ~ as indicated by the @author tags. See the copyright.txt file in the
   ~ distribution for a full listing of individual contributors.
   ~
@@ -28,13 +28,11 @@
         <version>0.6.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-
     <artifactId>switchyard-bus-camel</artifactId>
     <packaging>jar</packaging>
     <name>SwitchYard: Camel Exchange Bus</name>
     <description>Bus provider using Camel Core</description>
     <url>http://switchyard.org</url>
-    
     <dependencies>
         <!-- internal dependencies -->
         <dependency>
@@ -49,14 +47,13 @@
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-runtime</artifactId>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-runtime</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-        
         <!-- external dependencies -->
         <dependency>
             <groupId>log4j</groupId>
@@ -67,9 +64,9 @@
             <artifactId>camel-core</artifactId>
         </dependency>
         <dependency>
-        	<groupId>org.slf4j</groupId>
-        	<artifactId>slf4j-simple</artifactId>
-        	<scope>test</scope>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

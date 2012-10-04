@@ -37,8 +37,8 @@ public class DescriptorPuller extends Puller<Descriptor> {
      * {@inheritDoc}
      */
     @Override
-    public Descriptor pull(InputStream is) throws IOException {
-        return pull(new PropertiesPuller().pull(is));
+    public Descriptor pull(InputStream stream) throws IOException {
+        return pull(new PropertiesPuller().pull(stream));
     }
 
     /**

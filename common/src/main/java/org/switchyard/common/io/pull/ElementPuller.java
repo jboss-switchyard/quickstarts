@@ -40,12 +40,29 @@ import org.xml.sax.SAXException;
  */
 public class ElementPuller extends Puller<Element> {
 
+    private final boolean _ignoringComments;
+
+    /**
+     * Constructs a new ElementPuller (ignoring comments when parsing XML).
+     */
+    public ElementPuller() {
+        _ignoringComments = true;
+    }
+
+    /**
+     * Constructs a new ElementPuller (optionally ignoring comments when parsing XML).
+     * @param ignoringComments whether comments should be ignored when parsing XML.
+     */
+    public ElementPuller(boolean ignoringComments) {
+        _ignoringComments = ignoringComments;
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public Element pull(InputStream is) throws IOException {
-        return pull(new InputSource(is));
+    public Element pull(InputStream stream) throws IOException {
+        return pull(new InputSource(stream));
     }
 
     /**
@@ -60,17 +77,17 @@ public class ElementPuller extends Puller<Element> {
 
     /**
      * Pulls an Element from an InputSource.
-     * @param is an InputSource of the element
+     * @param source an InputSource of the element
      * @return the element
      * @throws IOException if a problem occurred
      */
-    public Element pull(InputSource is) throws IOException {
+    public Element pull(InputSource source) throws IOException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setIgnoringComments(true);
+        factory.setIgnoringComments(_ignoringComments);
         factory.setNamespaceAware(true);
         factory.setValidating(false);
         try {
-            return pull(factory.newDocumentBuilder().parse(is));
+            return pull(factory.newDocumentBuilder().parse(source));
         } catch (ParserConfigurationException pce) {
             throw new IOException(pce);
         } catch (SAXException se) {

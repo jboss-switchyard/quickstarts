@@ -37,8 +37,8 @@ public class StringPuller extends Puller<String> {
      * {@inheritDoc}
      */
     @Override
-    public String pull(InputStream is) throws IOException {
-        return pull(new InputStreamReader(is));
+    public String pull(InputStream stream) throws IOException {
+        return pull(new InputStreamReader(stream));
     }
 
     /**

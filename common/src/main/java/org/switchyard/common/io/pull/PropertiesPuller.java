@@ -36,10 +36,10 @@ public class PropertiesPuller extends Puller<Properties> {
      * {@inheritDoc}
      */
     @Override
-    public Properties pull(InputStream is) throws IOException {
+    public Properties pull(InputStream stream) throws IOException {
         Properties props = new Properties();
-        if (is != null) {
-            props.load(is);
+        if (stream != null) {
+            props.load(stream);
         }
         return props;
     }

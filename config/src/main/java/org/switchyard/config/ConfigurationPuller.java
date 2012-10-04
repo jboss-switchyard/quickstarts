@@ -24,14 +24,12 @@ import java.io.InputStream;
 import java.io.Reader;
 
 import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
+import org.switchyard.common.io.pull.ElementPuller;
 import org.switchyard.common.io.pull.Puller;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  * Utility class to safely access ("pull") configs from various sources.
@@ -40,12 +38,29 @@ import org.xml.sax.SAXException;
  */
 public class ConfigurationPuller extends Puller<Configuration> {
 
+    private final ElementPuller _elementPuller;
+
+    /**
+     * Constructs a new ConfigurationPuller (ignoring comments when parsing XML).
+     */
+    public ConfigurationPuller() {
+        _elementPuller = new ElementPuller();
+    }
+
+    /**
+     * Constructs a new ConfigurationPuller (optionally ignoring comments when parsing XML).
+     * @param ignoringComments whether comments should be ignored when parsing XML.
+     */
+    public ConfigurationPuller(boolean ignoringComments) {
+        _elementPuller = new ElementPuller(ignoringComments);
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public Configuration pull(InputStream is) throws IOException {
-        return pull(new InputSource(is));
+    public Configuration pull(InputStream stream) throws IOException {
+        return pull(new InputSource(stream));
     }
 
     /**
@@ -60,22 +75,12 @@ public class ConfigurationPuller extends Puller<Configuration> {
 
     /**
      * Safely pulls a config from an InputSource.
-     * @param is an InputSource of the config
+     * @param source an InputSource of the config
      * @return the config, or null if not found
      * @throws IOException if a problem occurred
      */
-    public Configuration pull(InputSource is) throws IOException {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setIgnoringComments(true);
-        factory.setNamespaceAware(true);
-        factory.setValidating(false);
-        try {
-            return pull(factory.newDocumentBuilder().parse(is));
-        } catch (ParserConfigurationException pce) {
-            throw new IOException(pce);
-        } catch (SAXException se) {
-            throw new IOException(se);
-        }
+    public Configuration pull(InputSource source) throws IOException {
+        return new DOMConfiguration(_elementPuller.pull(source));
     }
 
     /**
@@ -84,7 +89,7 @@ public class ConfigurationPuller extends Puller<Configuration> {
      * @return the config, or null if the document is null
      */
     public Configuration pull(Document document) {
-        return new DOMConfiguration(document);
+        return new DOMConfiguration(_elementPuller.pull(document));
     }
 
     /**
@@ -93,7 +98,7 @@ public class ConfigurationPuller extends Puller<Configuration> {
      * @return the config, or null if the element is null
      */
     public Configuration pull(Element element) {
-        return new DOMConfiguration(element);
+        return new DOMConfiguration(_elementPuller.pull(element));
     }
 
     /**
@@ -102,7 +107,7 @@ public class ConfigurationPuller extends Puller<Configuration> {
      * @return the config, or null if the qualified name is null
      */
     public Configuration pull(QName qname) {
-        return new DOMConfiguration(qname);
+        return new DOMConfiguration(_elementPuller.pull(qname));
     }
 
 }

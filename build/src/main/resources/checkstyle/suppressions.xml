@@ -1,17 +1,7 @@
 <?xml version="1.0"?>
-
 <!DOCTYPE suppressions PUBLIC
     "-//Puppy Crawl//DTD Suppressions 1.1//EN"
     "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
-
 <suppressions>
-
-    <!-- ConfiguratorMojo.java has maven-style annotations in it which 
-	aren't real annotations, but javadoc, which checkstyle chokes on.  
-        Excusing ConfiguratorMojo.java from the checks to avoid checkstyle
-        choking and throwing an Exception -->	
-    <suppress checks="[a-zA-Z0-9]*"
-	files="org/switchyard/tools/maven/plugins/switchyard/ConfigureMojo.java"/>
-    <suppress checks="ParameterNumber"
-        files="org/switchyard/tools/forge/bpm/BPMServicePlugin.java"/>
+    <suppress checks="ParameterNumber" files="org/switchyard/tools/forge/bpm/BPMServicePlugin.java"/>
 </suppressions>
