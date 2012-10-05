@@ -145,7 +145,7 @@ public class HttpGatewayTest {
         Context ctx = ex.getContext();
         Message requestMsg = ex.createMessage().setContent("magesh");
         ex.send(requestMsg);
-        handler.waitForOKMessage();
+        handler.waitForFaultMessage();
         Assert.assertEquals(404, ctx.getProperty("status", Scope.IN).getValue());
     }
 
