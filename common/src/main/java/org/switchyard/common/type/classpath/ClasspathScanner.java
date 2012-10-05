@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
@@ -85,7 +86,15 @@ public class ClasspathScanner {
      * @throws IOException Unable to convert.
      */
     public static File toClassPathFile(URL classPathURL) throws IOException {
-        String urlPath = classPathURL.getFile();
+        String urlPath = null;
+        try {
+            // decode escape characters like %20
+            urlPath = classPathURL.toURI().getPath();
+        } catch (URISyntaxException use) {
+            // fall back to old logic if characters are already decoded
+            // for example a space in the URL will fail
+            urlPath = classPathURL.getFile();
+        }
         String urlRef = classPathURL.getRef();
 
         if (urlPath.startsWith("file:")) {
