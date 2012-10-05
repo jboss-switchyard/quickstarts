@@ -1,26 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JBoss, Home of Professional Open Source.
+  ~ Copyright 2012, Red Hat, Inc., and individual contributors
+  ~ as indicated by the @author tags. See the copyright.txt file in the
+  ~ distribution for a full listing of individual contributors.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
     <parent>
         <groupId>org.switchyard</groupId>
         <artifactId>switchyard-as7-openshift-express-parent</artifactId>
         <version>0.6.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
     <artifactId>switchyard-as7-openshift-express-dist</artifactId>
     <packaging>jar</packaging>
     <name>SwitchYard: AS7 OpenShift Express Distribution</name>
     <description>SwitchYard AS7 OpenShift Express Distribution</description>
-
     <properties>
         <staging.dir>${project.build.directory}/jboss-switchyard</staging.dir>
         <staging.jboss.dir>${staging.dir}/jboss-as-${version.jbossas.openshift}</staging.jboss.dir>
         <distro.root.dir>/switchyard-as7-${version.distro}/</distro.root.dir>
         <switchyard.jboss.home>${project.build.directory}${distro.root.dir}</switchyard.jboss.home>
     </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -58,7 +75,7 @@
                         <id>install-switchyard-cartridge</id>
                         <phase>generate-sources</phase>
                         <goals>
-                          <goal>unpack</goal>
+                            <goal>unpack</goal>
                         </goals>
                         <configuration>
                             <artifactItems>
@@ -76,7 +93,7 @@
                         <id>install-distribution-files</id>
                         <phase>generate-sources</phase>
                         <goals>
-                          <goal>unpack</goal>
+                            <goal>unpack</goal>
                         </goals>
                         <configuration>
                             <artifactItems>
@@ -94,7 +111,7 @@
                         <id>unzip-distro</id>
                         <phase>process-test-classes</phase>
                         <goals>
-                          <goal>unpack</goal>
+                            <goal>unpack</goal>
                         </goals>
                         <configuration>
                             <artifactItems>
@@ -149,7 +166,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <!-- Configure the Surefire plugin for running the tests.  Be sure to make these same setting if running in your IDE... -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -161,12 +177,12 @@
                     </environmentVariables>
                     <systemProperties>
                         <property>
-                          <name>jboss.home</name>
-                          <value>${switchyard.jboss.home}</value>
+                            <name>jboss.home</name>
+                            <value>${switchyard.jboss.home}</value>
                         </property>
                         <property>
-                          <name>module.path</name>
-                          <value>${switchyard.jboss.home}/modules</value>
+                            <name>module.path</name>
+                            <value>${switchyard.jboss.home}/modules</value>
                         </property>
                     </systemProperties>
                     <trimStackTrace>false</trimStackTrace>

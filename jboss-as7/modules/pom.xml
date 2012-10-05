@@ -1,42 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ JBoss, Home of Professional Open Source
-  ~ Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
-  ~ as indicated by the @author tags. All rights reserved.
-  ~ See the copyright.txt in the distribution for a
-  ~ full listing of individual contributors.
+  ~ JBoss, Home of Professional Open Source.
+  ~ Copyright 2012, Red Hat, Inc., and individual contributors
+  ~ as indicated by the @author tags. See the copyright.txt file in the
+  ~ distribution for a full listing of individual contributors.
   ~
-  ~ This copyrighted material is made available to anyone wishing to use,
-  ~ modify, copy, or redistribute it subject to the terms and conditions
-  ~ of the GNU Lesser General Public License, v. 2.1.
-  ~ This program is distributed in the hope that it will be useful, but WITHOUT A
-  ~ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-  ~ PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
-  ~ You should have received a copy of the GNU Lesser General Public License,
-  ~ v.2.1 along with this distribution; if not, write to the Free Software
-  ~ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-  ~ MA  02110-1301, USA.
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
     <parent>
         <groupId>org.switchyard</groupId>
         <artifactId>switchyard-as7-parent</artifactId>
         <version>0.6.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
     <artifactId>switchyard-as7-modules</artifactId>
     <name>SwitchYard: AS7 Modules</name>
     <description>SwitchYard AS7 Modules</description>
-
     <!-- Temporary fix, will be removed in next upgrade to AS7 -->
     <properties>
         <version.weld.core>1.1.6.Final</version.weld.core>
     </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -123,7 +121,6 @@
             </plugin>
         </plugins>
     </build>
-
     <dependencies>
         <!--
         SwitchYard...
@@ -176,7 +173,7 @@
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-validate</artifactId>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-deploy-jboss-as7</artifactId>
         </dependency>
@@ -196,11 +193,13 @@
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-camel</artifactId>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.switchyard.components</groupId>-->
-            <!--<artifactId>switchyard-component-clojure</artifactId>-->
-            <!--<version>${project.version}</version>-->
-        <!--</dependency>-->
+        <!--
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-clojure</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        -->
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-common</artifactId>
@@ -237,12 +236,11 @@
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-jca</artifactId>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.switchyard.console</groupId>
             <artifactId>switchyard-console-application</artifactId>
             <type>war</type>
         </dependency>
-
         <!--
         H2Database...
         -->
@@ -250,7 +248,6 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
         </dependency>
-
         <!--
         MySQL...
         <dependency>
@@ -258,19 +255,17 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
         -->
-
         <!--
         PicketLink...
         -->
         <dependency>
-           <groupId>org.picketlink</groupId>
-           <artifactId>picketlink-core</artifactId>
+            <groupId>org.picketlink</groupId>
+            <artifactId>picketlink-core</artifactId>
         </dependency>
         <dependency>
-           <groupId>org.picketlink.distribution</groupId>
-           <artifactId>picketlink-jbas7</artifactId>
+            <groupId>org.picketlink.distribution</groupId>
+            <artifactId>picketlink-jbas7</artifactId>
         </dependency>
-
         <!--
         Riftsaw...
         -->
@@ -338,10 +333,9 @@
             <groupId>org.jboss.soa.bpel</groupId>
             <artifactId>riftsaw-utils</artifactId>
         </dependency>
-
         <!--
         Batik ... (Required by BPEL console)
-         -->
+        -->
         <dependency>
             <groupId>batik</groupId>
             <artifactId>batik-dom</artifactId>
@@ -418,14 +412,13 @@
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
         </dependency>
-
         <!--
         BPM Console...
         -->
         <dependency>
             <groupId>org.riftsaw.console</groupId>
             <artifactId>riftsaw-bpel2svg</artifactId>
-        </dependency>      
+        </dependency>
         <dependency>
             <groupId>org.riftsaw.console</groupId>
             <artifactId>riftsaw-console-integration</artifactId>
@@ -446,7 +439,6 @@
             <groupId>org.codehaus.jettison</groupId>
             <artifactId>jettison</artifactId>
         </dependency>
-
         <!--
         Spring...
         -->
@@ -478,7 +470,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
         </dependency>
-
         <!--
         Camel/FuseSource...
         -->
@@ -522,12 +513,10 @@
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.apache.deltaspike.core</groupId>
             <artifactId>deltaspike-core-api</artifactId>
@@ -591,7 +580,6 @@
             <groupId>org.jboss.bpm</groupId>
             <artifactId>activity-monitor-model</artifactId>
         </dependency>
-
         <!--
         Clojure...
         -->
@@ -599,7 +587,6 @@
             <groupId>org.clojure</groupId>
             <artifactId>clojure</artifactId>
         </dependency>
-
         <!-- misc external dependencies -->
         <dependency>
             <groupId>com.google.protobuf</groupId>
@@ -622,8 +609,8 @@
             <artifactId>mina-core</artifactId>
         </dependency>
         <dependency>
-           <groupId>org.apache.xmlbeans</groupId>
-           <artifactId>xmlbeans</artifactId>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jdt.core.compiler</groupId>
@@ -645,7 +632,6 @@
             <groupId>wsdl4j</groupId>
             <artifactId>wsdl4j</artifactId>
         </dependency>
-
         <!-- Temporary fix, will be removed in next upgrade to AS7 -->
         <dependency>
             <groupId>org.jboss.weld</groupId>
