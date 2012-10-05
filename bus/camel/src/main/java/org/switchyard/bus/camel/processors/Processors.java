@@ -116,7 +116,7 @@ public enum Processors {
     CONSUMER_CALLBACK {
         @Override
         public Processor create(ServiceDomain domain) {
-            return new ConsumerCallbackProcessor(new TransformHandler(domain.getTransformerRegistry()));
+            return new ConsumerCallbackProcessor();
         }
     };
 
@@ -127,7 +127,7 @@ public enum Processors {
      * @return Processor instance.
      */
     public Processor create(ServiceDomain domain) {
-        throw new IllegalArgumentException();
+        throw new AbstractMethodError("Method must be overriden");
     }
 
     /**

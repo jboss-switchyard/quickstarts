@@ -38,18 +38,27 @@ import java.util.Map.Entry;
 
 import javax.xml.namespace.QName;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.model.ExpressionNode;
+import org.apache.camel.model.FilterDefinition;
+import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.log4j.Logger;
+import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.bus.camel.audit.AuditInterceptStrategy;
+import org.switchyard.bus.camel.audit.FaultInterceptStrategy;
 import org.switchyard.bus.camel.processors.Processors;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.exception.SwitchYardException;
+import org.switchyard.internal.ExchangeImpl;
+import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.spi.ExchangeBus;
 
@@ -59,8 +68,17 @@ import org.switchyard.spi.ExchangeBus;
  */
 public class CamelExchangeBus implements ExchangeBus {
 
-    private static final String IN_OUT_CHECK = 
-            "${property.SwitchYardExchange.contract.consumerOperation.exchangePattern} == 'IN_OUT'";
+    private static final Predicate IN_OUT_CHECK = new Predicate() {
+        @Override
+        public boolean matches(Exchange exchange) {
+            ExchangeImpl syEx = exchange.getProperty(ExchangeDispatcher.SY_EXCHANGE, ExchangeImpl.class);
+            ServiceOperation operation = syEx.getContract().getConsumerOperation();
+            return operation.getExchangePattern() == ExchangePattern.IN_OUT;
+        }
+        public String toString() {
+            return "IN_OUT_CHECK";
+        }
+    };
 
     private Logger _logger = Logger.getLogger(CamelExchangeBus.class);
 
@@ -134,6 +152,9 @@ public class CamelExchangeBus implements ExchangeBus {
 
                 // add default intercept strategy using @Audit annotation
                 definition.addInterceptStrategy(new AuditInterceptStrategy());
+                // fault handling & forwarding
+                definition.addInterceptStrategy(new FaultInterceptStrategy());
+
                 Map<String, InterceptStrategy> interceptStrategies = _camelContext.getRegistry().lookupByType(InterceptStrategy.class);
                 if (interceptStrategies != null) {
                     for (Entry<String, InterceptStrategy> interceptEntry : interceptStrategies.entrySet()) {
@@ -144,7 +165,21 @@ public class CamelExchangeBus implements ExchangeBus {
                     }
                 }
 
-                definition.onException(HandlerException.class).processRef(CONSUMER_CALLBACK.name()).handled(true).end()
+                final ExpressionNode filterDefinition = new FilterDefinition(IN_OUT_CHECK)
+                    .processRef(DOMAIN_HANDLERS.name())
+                    .processRef(VALIDATION.name())
+                    .processRef(TRANSFORMATION.name())
+                    .processRef(VALIDATION.name())
+                    .processRef(CONSUMER_CALLBACK.name());
+
+                OnExceptionDefinition onException = new OnExceptionDefinition(HandlerException.class);
+                onException.handled(true);
+                //onException.processRef(CONSUMER_CALLBACK.name());
+                onException.addOutput(filterDefinition);
+                // register exception closure
+                definition.addOutput(onException);
+
+                definition
                     .processRef(DOMAIN_HANDLERS.name())
                     .processRef(ADDRESSING.name())
                     .processRef(TRANSACTION_HANDLER.name())
@@ -155,12 +190,8 @@ public class CamelExchangeBus implements ExchangeBus {
                     .processRef(VALIDATION.name())
                     .processRef(PROVIDER_CALLBACK.name())
                     .processRef(TRANSACTION_HANDLER.name())
-                    .filter().simple(IN_OUT_CHECK)
-                        .processRef(DOMAIN_HANDLERS.name())
-                        .processRef(VALIDATION.name())
-                        .processRef(TRANSFORMATION.name())
-                        .processRef(VALIDATION.name())
-                        .processRef(CONSUMER_CALLBACK.name());
+                    .addOutput(filterDefinition);
+                
             }
         };
 

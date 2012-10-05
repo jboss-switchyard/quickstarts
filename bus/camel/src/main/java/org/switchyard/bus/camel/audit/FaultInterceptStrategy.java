@@ -19,28 +19,25 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.switchyard.bus.camel.processors;
+package org.switchyard.bus.camel.audit;
 
-import org.apache.camel.Exchange;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
-import org.switchyard.ExchangeState;
-import org.switchyard.bus.camel.ExchangeDispatcher;
-import org.switchyard.internal.ExchangeImpl;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.spi.InterceptStrategy;
 
 /**
- * Processor used to call reply chain.
+ * Intercept strategy catching exceptions and changing state of SwitchYard
+ * exchange to FAULT.
  */
-public class ConsumerCallbackProcessor implements Processor {
+public class FaultInterceptStrategy implements InterceptStrategy {
 
     @Override
-    public void process(Exchange ex) throws Exception {
-        ExchangeImpl syEx = ex.getProperty(ExchangeDispatcher.SY_EXCHANGE,
-            org.switchyard.internal.ExchangeImpl.class);
+    public Processor wrapProcessorInInterceptors(CamelContext context,
+        ProcessorDefinition<?> definition, Processor target,
+        Processor nextTarget) throws Exception {
 
-        if (syEx.getState() == ExchangeState.FAULT) {
-            syEx.getReplyHandler().handleFault(syEx);
-        } else {
-            syEx.getReplyHandler().handleMessage(syEx);
-        }
+        return new FaultProcessor(target);
     }
+
 }

@@ -32,10 +32,14 @@ public class ProviderProcessor implements Processor {
 
     @Override
     public void process(Exchange ex) throws Exception {
-        org.switchyard.Exchange syEx = ex.getProperty(
-                ExchangeDispatcher.SY_EXCHANGE, org.switchyard.Exchange.class);
-        syEx.getProvider().getProviderHandler().handleMessage(ex.getProperty(
-                ExchangeDispatcher.SY_EXCHANGE, org.switchyard.Exchange.class));
+        org.switchyard.Exchange syEx = ex.getProperty(ExchangeDispatcher.SY_EXCHANGE,
+            org.switchyard.Exchange.class);
+        syEx.getProvider().getProviderHandler().handleMessage(syEx);
+    }
+
+    @Override
+    public String toString() {
+        return "ProviderProcessor@" + System.identityHashCode(this);
     }
 
 }

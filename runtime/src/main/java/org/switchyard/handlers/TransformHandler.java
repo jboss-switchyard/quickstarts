@@ -31,6 +31,7 @@ import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
 import org.switchyard.Scope;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
+import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.TransformSequence;
 import org.switchyard.transform.Transformer;
@@ -144,8 +145,14 @@ public class TransformHandler extends BaseHandler {
     }
     
     private void initFaultTransformSequence(Exchange exchange) {
-        QName exceptionTypeName = exchange.getContract().getProviderOperation().getFaultType();
-        QName invokerFaultTypeName = exchange.getContract().getConsumerOperation().getFaultType();
+        QName exceptionTypeName = null;
+        ServiceOperation providerOperation = exchange.getContract().getProviderOperation();
+        ServiceOperation consumerOperation = exchange.getContract().getConsumerOperation();
+        QName invokerFaultTypeName = consumerOperation.getFaultType();
+
+        if (providerOperation != null) {
+            exceptionTypeName = providerOperation.getFaultType();
+        }
 
         Object content = exchange.getMessage().getContent();
         if (exceptionTypeName == null && content instanceof Exception) {

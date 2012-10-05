@@ -19,28 +19,47 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.switchyard.bus.camel.processors;
+package org.switchyard.bus.camel.audit;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.switchyard.ExchangeState;
+import org.switchyard.HandlerException;
 import org.switchyard.bus.camel.ExchangeDispatcher;
 import org.switchyard.internal.ExchangeImpl;
 
 /**
- * Processor used to call reply chain.
+ * Processor which catches {@link HandlerException} before calling processor.
+ * 
+ * If an exception occurs 
  */
-public class ConsumerCallbackProcessor implements Processor {
+public class FaultProcessor extends DelegateAsyncProcessor {
+
+    /**
+     * Creates new fault processor.
+     * 
+     * @param target Wrapped processor.
+     */
+    public FaultProcessor(Processor target) {
+        super(target);
+    }
 
     @Override
-    public void process(Exchange ex) throws Exception {
-        ExchangeImpl syEx = ex.getProperty(ExchangeDispatcher.SY_EXCHANGE,
-            org.switchyard.internal.ExchangeImpl.class);
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        HandlerException exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, HandlerException.class);
+        ExchangeImpl exc = exchange.getProperty(ExchangeDispatcher.SY_EXCHANGE, ExchangeImpl.class);
 
-        if (syEx.getState() == ExchangeState.FAULT) {
-            syEx.getReplyHandler().handleFault(syEx);
-        } else {
-            syEx.getReplyHandler().handleMessage(syEx);
+        if (exception != null && exc.getState() != ExchangeState.FAULT) {
+            // turn state of exchange from OK to FAULT and phase to OUT
+            exc.sendFault(exc.createMessage().setContent(exception.isWrapper() ? exception.getCause() : exception));
         }
+        return super.process(exchange,callback);
+    }
+
+    @Override
+    public String toString() {
+        return "FaultProcessor";
     }
 }

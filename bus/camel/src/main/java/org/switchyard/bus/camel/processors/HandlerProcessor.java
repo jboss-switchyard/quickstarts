@@ -27,6 +27,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.switchyard.ExchangeHandler;
+import org.switchyard.ExchangeState;
 import org.switchyard.bus.camel.ExchangeDispatcher;
 
 /**
@@ -56,9 +57,22 @@ public class HandlerProcessor implements Processor {
 
     @Override
     public void process(Exchange ex) throws Exception {
+        org.switchyard.Exchange exchange = ex.getProperty(ExchangeDispatcher.SY_EXCHANGE,
+            org.switchyard.Exchange.class);
+
         for (ExchangeHandler handler : _handlers) {
-            handler.handleMessage(ex.getProperty(ExchangeDispatcher.SY_EXCHANGE,
-                org.switchyard.Exchange.class));
+            if (exchange.getState() == ExchangeState.FAULT) {
+                // we don't have to throw exception to treat SY exchange as a fault one
+                handler.handleFault(exchange);
+            } else {
+                handler.handleMessage(exchange);
+            }
         }
     }
+
+    @Override
+    public String toString() {
+        return "HandlerProcessor [" + _handlers + "]";
+    }
+
 }
