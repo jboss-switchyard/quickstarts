@@ -130,8 +130,14 @@ public class ServiceReferenceImpl implements ServiceReference {
         ExchangeImpl ex = new ExchangeImpl(_domain, handler);
         ServiceOperation op = _interface.getOperation(operation);
         if (op == null) {
-            throw new SwitchYardException("Operation " + operation + " does not exist for service " + _name);
+            // try for a default operation
+            if (ServiceInterface.DEFAULT_TYPE.equals(_interface.getType())) {
+                op = _interface.getOperations().iterator().next();
+            } else {
+                throw new SwitchYardException("Operation " + operation + " does not exist for service " + _name);
+            }
         }
+
         ex.consumer(this, op);
         ex.setOutputDispatcher(_dispatcher);
         
