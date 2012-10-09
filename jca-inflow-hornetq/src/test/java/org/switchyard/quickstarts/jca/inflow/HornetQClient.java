@@ -55,8 +55,8 @@ public final class HornetQClient {
         HornetQMixIn hqMixIn = new HornetQMixIn(false)
                                     .setUser(USER)
                                     .setPassword(PASSWD);
-        if (args.length != 1) {
-            System.err.println("ERROR: Use -Dexec.args to pass a name value, e.g. -Dexec.args=\"Skippy\"");
+        if (args.length == 0) {
+            System.err.println("ERROR: Use -Dexec.args to pass a name and language value, e.g. -Dexec.args=\"Skippy english\"");
             return;
         }
         
@@ -66,7 +66,14 @@ public final class HornetQClient {
             final Session session = hqMixIn.createJMSSession();
             final MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(QUEUE));
             final TextMessage message = session.createTextMessage();
-            message.setText(args[0]);
+            String payload = TEMPLATE.replace("@name@", args[0]);
+            if (args.length == 2) {
+                payload = payload.replace("@lang@", args[1]);
+            } else {
+                payload = payload.replace("@lang@", "english");
+            }
+            System.out.println(payload);
+            message.setText(payload);
             producer.send(message);
         
             System.out.println("Sent message [" + message + "]");
@@ -75,4 +82,11 @@ public final class HornetQClient {
             hqMixIn.uninitialize();
         }
     }
+    
+    private static final String TEMPLATE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            + "<qs:person xmlns:qs=\"urn:switchyard-quickstart:jca-inflow-hornetq:0.1.0\">\n"
+            + "    <name>@name@</name>\n"
+            + "    <language>@lang@</language>\n"
+            + "</qs:person>\n";
+    
 }
