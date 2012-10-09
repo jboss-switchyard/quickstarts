@@ -1,183 +1,191 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
-  <!-- POM file generated with GWT webAppCreator -->
-  <parent>
-    <artifactId>switchyard-console-parent</artifactId>
-    <groupId>org.switchyard.console</groupId>
-    <version>0.6.0-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>switchyard-console-as7-core</artifactId>
-  <name>SwitchYard: AS7 Core Console Module</name>
-  <description>Bundles the core AS7 console as a GWT module.  Includes minor customizations to support extensions.</description>
-
-  <properties>
-    <asConsoleIncludesDirectory>${project.build.directory}/dependency/as-console</asConsoleIncludesDirectory>
-  </properties>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.jboss.ballroom</groupId>
-      <artifactId>widgets</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>validation-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-user</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.google.code</groupId>
-      <artifactId>gwt-visualization</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.google.code.gwt-log</groupId>
-      <artifactId>gwt-log</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.gwtplatform</groupId>
-      <artifactId>gwtp-mvp-client</artifactId>
-      <!-- this gets picked up as provided through dependencyManagement -->
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.inject</groupId>
-      <artifactId>guice</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.google.inject.extensions</groupId>
-      <artifactId>guice-assistedinject</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gwt.inject</groupId>
-      <artifactId>gin</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-dev</artifactId>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <plugins>
-      <!-- Dependencies from JBoss AS 7 Console -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>unpack-jboss-as-sources</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.jboss.as</groupId>
-                  <artifactId>jboss-as-console</artifactId>
-                  <version>${version.jbossas.console}</version>
-                  <classifier>sources</classifier>
-                  <type>jar</type>
-                  <excludes>org/jboss/as/console/client/Console.java,org/jboss/as/console/client/shared/SubsystemMetaData.java,org/jboss/as/console/client/domain/runtime/DomainRuntimeNavigation.java,org/jboss/as/console/client/standalone/runtime/StandaloneRuntimeNavigation.java,org/jboss/dmr/client/DataInput.java,org/jboss/dmr/client/IEEE754.java,org/jboss/as/console/client/shared/runtime/plain/PlainColumnView.java,META-INF/*.SF,META-INF/*.RSA,META-INF/*.DSA</excludes>
-                  <outputDirectory>${asConsoleIncludesDirectory}/java</outputDirectory>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-          <execution>
-            <id>unpack-jboss-as-resources</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.jboss.as</groupId>
-                  <artifactId>jboss-as-console</artifactId>
-                  <version>${version.jbossas.console}</version>
-                  <classifier>resources</classifier>
-                  <type>jar</type>
-                  <includes>images/**,App.html,index.html</includes>
-                  <outputDirectory>${asConsoleIncludesDirectory}/resources</outputDirectory>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <!-- Add JBoss AS 7 Console source to build path -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>add-source</id>
-            <phase>process-sources</phase>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${asConsoleIncludesDirectory}/java</source>
-              </sources>
-            </configuration>
-          </execution>
-          <execution>
-            <id>add-resources</id>
-            <phase>process-sources</phase>
-            <goals>
-              <goal>add-resource</goal>
-            </goals>
-            <configuration>
-              <resources>
-                <resource>
-                  <directory>${asConsoleIncludesDirectory}/resources</directory>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>package-gwt-module</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <descriptors>
-            <descriptor>src/main/assembly/module.xml</descriptor>
-          </descriptors>
-        </configuration>
-      </plugin>
-
-      <!-- Most of this code is from jbossas, so don't run checkstyle -->
-      <plugin>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+<!--
+  ~ JBoss, Home of Professional Open Source.
+  ~ Copyright 2012, Red Hat, Inc., and individual contributors
+  ~ as indicated by the @author tags. See the copyright.txt file in the
+  ~ distribution for a full listing of individual contributors.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <!-- POM file generated with GWT webAppCreator -->
+    <parent>
+        <artifactId>switchyard-console-parent</artifactId>
+        <groupId>org.switchyard.console</groupId>
+        <version>0.6.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>switchyard-console-as7-core</artifactId>
+    <name>SwitchYard: AS7 Core Console Module</name>
+    <description>Bundles the core AS7 console as a GWT module.  Includes minor customizations to support extensions.</description>
+    <properties>
+        <asConsoleIncludesDirectory>${project.build.directory}/dependency/as-console</asConsoleIncludesDirectory>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.jboss.ballroom</groupId>
+            <artifactId>widgets</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-user</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code</groupId>
+            <artifactId>gwt-visualization</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gwt-log</groupId>
+            <artifactId>gwt-log</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.gwtplatform</groupId>
+            <artifactId>gwtp-mvp-client</artifactId>
+            <!-- this gets picked up as provided through dependencyManagement -->
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-assistedinject</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gwt.inject</groupId>
+            <artifactId>gin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-dev</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <!-- Dependencies from JBoss AS 7 Console -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-jboss-as-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.jboss.as</groupId>
+                                    <artifactId>jboss-as-console</artifactId>
+                                    <version>${version.jbossas.console}</version>
+                                    <classifier>sources</classifier>
+                                    <type>jar</type>
+                                    <excludes>org/jboss/as/console/client/Console.java,org/jboss/as/console/client/shared/SubsystemMetaData.java,org/jboss/as/console/client/domain/runtime/DomainRuntimeNavigation.java,org/jboss/as/console/client/standalone/runtime/StandaloneRuntimeNavigation.java,org/jboss/dmr/client/DataInput.java,org/jboss/dmr/client/IEEE754.java,org/jboss/as/console/client/shared/runtime/plain/PlainColumnView.java,META-INF/*.SF,META-INF/*.RSA,META-INF/*.DSA</excludes>
+                                    <outputDirectory>${asConsoleIncludesDirectory}/java</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-jboss-as-resources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.jboss.as</groupId>
+                                    <artifactId>jboss-as-console</artifactId>
+                                    <version>${version.jbossas.console}</version>
+                                    <classifier>resources</classifier>
+                                    <type>jar</type>
+                                    <includes>images/**,App.html,index.html</includes>
+                                    <outputDirectory>${asConsoleIncludesDirectory}/resources</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Add JBoss AS 7 Console source to build path -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${asConsoleIncludesDirectory}/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-resources</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${asConsoleIncludesDirectory}/resources</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>package-gwt-module</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/module.xml</descriptor>
+                    </descriptors>
+                </configuration>
+            </plugin>
+            <!-- Most of this code is from jbossas, so don't run checkstyle -->
+            <plugin>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

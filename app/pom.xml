@@ -1,144 +1,153 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
-  <!-- POM file generated with GWT webAppCreator -->
-  <parent>
-    <artifactId>switchyard-console-parent</artifactId>
-    <groupId>org.switchyard.console</groupId>
-    <version>0.6.0-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>switchyard-console-application</artifactId>
-  <packaging>war</packaging>
-  <name>SwitchYard: Management Console Application</name>
-  <description>Integrated AS7 console application, which includes the SwitchYard extension.</description>
-
-  <properties>
-    <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
-  </properties>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.switchyard.console</groupId>
-      <artifactId>switchyard-console-extension</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- XXX: replace with proper AS dependency once console includes extension support. -->
-    <dependency>
-      <groupId>org.switchyard.console</groupId>
-      <artifactId>switchyard-console-as7-core</artifactId>
-      <classifier>module</classifier>
-      <scope>provided</scope>
-    </dependency>
-
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-dev</artifactId>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <!-- Generate compiled stuff in the folder used for developing mode -->
-    <outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
-
-    <plugins>
-      <!-- GWT Maven Plugin -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>gwt-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>compile</goal>
-              <goal>test</goal>
-            </goals>
-          </execution>
-        </executions>
-        <!-- Plugin configuration. There are many available options, see gwt-maven-plugin documentation at codehaus.org -->
-        <configuration>
-          <compileSourcesArtifacts>
-            <compileSourcesArtifact>javax.validation:validation-api</compileSourcesArtifact>
-          </compileSourcesArtifacts>
-          <compileReport>false</compileReport>
-          <hostedWebapp>${webappDirectory}</hostedWebapp>
-          <htmlunit>FF3,IE7</htmlunit>
-          <logLevel>TRACE</logLevel>
-          <mode>htmlunit</mode>
-          <runTarget>App.html</runTarget>
-          <module>org.switchyard.console.application.App</module>
-          <extraJvmArgs>-Xmx1024m</extraJvmArgs>
-          <localWorkers>2</localWorkers>
-        </configuration>
-      </plugin>
-
-      <!-- Copy static web files before executing gwt:run -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>exploded</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <failOnMissingWebXml>false</failOnMissingWebXml>
-          <packagingExcludes>WEB-INF/**</packagingExcludes>
-          <overlays>
-            <overlay>
-              <id>core-web-resources</id>
-              <groupId>org.switchyard.console</groupId>
-              <artifactId>switchyard-console-as7-core</artifactId>
-              <classifier>module</classifier>
-              <type>jar</type>
-              <includes>
-                <include>images/**</include>
-                <include>*.html</include>
-              </includes>
-            </overlay>
-          </overlays>
-        </configuration>
-      </plugin>
-
-      <!-- Remove GWT tests -->
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>**/GwtTest*.java</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
-  <profiles>
-    <profile>
-      <id>dev</id>
-      <build>
+<!--
+  ~ JBoss, Home of Professional Open Source.
+  ~ Copyright 2012, Red Hat, Inc., and individual contributors
+  ~ as indicated by the @author tags. See the copyright.txt file in the
+  ~ distribution for a full listing of individual contributors.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <!-- POM file generated with GWT webAppCreator -->
+    <parent>
+        <artifactId>switchyard-console-parent</artifactId>
+        <groupId>org.switchyard.console</groupId>
+        <version>0.6.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>switchyard-console-application</artifactId>
+    <packaging>war</packaging>
+    <name>SwitchYard: Management Console Application</name>
+    <description>Integrated AS7 console application, which includes the SwitchYard extension.</description>
+    <properties>
+        <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.switchyard.console</groupId>
+            <artifactId>switchyard-console-extension</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- XXX: replace with proper AS dependency once console includes extension support. -->
+        <dependency>
+            <groupId>org.switchyard.console</groupId>
+            <artifactId>switchyard-console-as7-core</artifactId>
+            <classifier>module</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-dev</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <!-- Generate compiled stuff in the folder used for developing mode -->
+        <outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
         <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>gwt-maven-plugin</artifactId>
-            <configuration>
-              <module>org.switchyard.console.application.Development_FF</module>
-              <style>PRETTY</style>
-            </configuration>
-          </plugin>
+            <!-- GWT Maven Plugin -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <!-- Plugin configuration. There are many available options, see gwt-maven-plugin documentation at codehaus.org -->
+                <configuration>
+                    <compileSourcesArtifacts>
+                        <compileSourcesArtifact>javax.validation:validation-api</compileSourcesArtifact>
+                    </compileSourcesArtifacts>
+                    <compileReport>false</compileReport>
+                    <hostedWebapp>${webappDirectory}</hostedWebapp>
+                    <htmlunit>FF3,IE7</htmlunit>
+                    <logLevel>TRACE</logLevel>
+                    <mode>htmlunit</mode>
+                    <runTarget>App.html</runTarget>
+                    <module>org.switchyard.console.application.App</module>
+                    <extraJvmArgs>-Xmx1024m</extraJvmArgs>
+                    <localWorkers>2</localWorkers>
+                </configuration>
+            </plugin>
+            <!-- Copy static web files before executing gwt:run -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exploded</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <packagingExcludes>WEB-INF/**</packagingExcludes>
+                    <overlays>
+                        <overlay>
+                            <id>core-web-resources</id>
+                            <groupId>org.switchyard.console</groupId>
+                            <artifactId>switchyard-console-as7-core</artifactId>
+                            <classifier>module</classifier>
+                            <type>jar</type>
+                            <includes>
+                                <include>images/**</include>
+                                <include>*.html</include>
+                            </includes>
+                        </overlay>
+                    </overlays>
+                </configuration>
+            </plugin>
+            <!-- Remove GWT tests -->
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/GwtTest*.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
         </plugins>
-      </build>
-    </profile>
-  </profiles>
+    </build>
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>gwt-maven-plugin</artifactId>
+                        <configuration>
+                            <module>org.switchyard.console.application.Development_FF</module>
+                            <style>PRETTY</style>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
