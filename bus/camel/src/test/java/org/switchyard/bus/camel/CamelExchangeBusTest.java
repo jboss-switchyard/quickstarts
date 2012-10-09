@@ -22,13 +22,18 @@
 
 package org.switchyard.bus.camel;
 
+import static org.junit.Assert.assertEquals;
+
 import javax.xml.namespace.QName;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.switchyard.Exchange;
+import org.switchyard.ExchangeState;
 import org.switchyard.MockDomain;
+import org.switchyard.MockHandler;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.internal.ServiceReferenceImpl;
@@ -40,13 +45,14 @@ public class CamelExchangeBusTest {
 
     private CamelExchangeBus _provider;
     private SwitchYardCamelContext _camelContext;
+	private MockDomain _domain;
 
     @Before
     public void setUp() throws Exception {
-        MockDomain mockDomain = new MockDomain();
+        _domain = new MockDomain();
         _camelContext = new SwitchYardCamelContext();
         _provider = new CamelExchangeBus(_camelContext);
-        _provider.init(mockDomain);
+        _provider.init(_domain);
         _camelContext.start();
     }
 
@@ -54,7 +60,7 @@ public class CamelExchangeBusTest {
     public void tearDown() throws Exception {
         _camelContext.stop();
     }
-    
+
     @Test
     public void testCreateDispatcher() throws Exception {
         // verify that dispatchers can be created for an InOnly service
@@ -67,7 +73,7 @@ public class CamelExchangeBusTest {
                 new QName("inOut"), new InOutService(), null);
         _provider.createDispatcher(inOut);
     }
-    
+
     @Test
     public void testGetDispatcher() throws Exception {
         ServiceReference ref = new ServiceReferenceImpl(
@@ -76,4 +82,24 @@ public class CamelExchangeBusTest {
         
         Assert.assertEquals(dispatch, _provider.getDispatcher(ref));
     }
+
+    /**
+     * Basic dispatcher test which verifies erroneous response from service.
+     */
+    @Test
+    public void testFault() {
+        ServiceReferenceImpl ref = new ServiceReferenceImpl(
+            new QName("inOut"), new InOutService(), _domain);
+        _domain.registerService(new QName("inOut"), new InOutService(), new ErrorExchangeHandler());
+        Dispatcher dispatch = _provider.createDispatcher(ref);
+        ref.setDispatcher(dispatch);
+
+        MockHandler handler = new MockHandler();
+        Exchange exchange = ref.createExchange(handler);
+        exchange.send(exchange.createMessage().setContent("Ola"));
+
+        assertEquals(ExchangeState.FAULT, exchange.getState());
+        System.out.println(exchange.getMessage().getContent());
+    }
+
 }

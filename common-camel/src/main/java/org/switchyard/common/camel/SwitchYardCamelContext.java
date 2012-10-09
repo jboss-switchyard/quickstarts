@@ -32,13 +32,13 @@ import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.deltaspike.core.api.provider.BeanManagerProvider;
 import org.apache.log4j.Logger;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.camel.event.CamelEventBridge;
-import org.switchyard.event.EventPublisher;
 
 /**
  * Extension of default camel context. Supports access to mutable registry and
@@ -63,6 +63,7 @@ public class SwitchYardCamelContext extends DefaultCamelContext {
     public SwitchYardCamelContext() {
         if (isEnableCdiIntegration()) {
             setInjector(new CdiInjector(getInjector()));
+            getManagementStrategy().addEventNotifier(new CamelEventBridge());
         } else {
             _logger.warn("CDI environment not detected, disabling Camel CDI integration");
         }
@@ -76,8 +77,11 @@ public class SwitchYardCamelContext extends DefaultCamelContext {
     public void setServiceDomain(ServiceDomain domain) {
         this._domain = domain;
 
-        EventPublisher eventPublisher = domain.getEventPublisher();
-        getManagementStrategy().addEventNotifier(new CamelEventBridge(eventPublisher));
+        for (EventNotifier notifier : getManagementStrategy().getEventNotifiers()) {
+            if (notifier instanceof CamelEventBridge) {
+                ((CamelEventBridge) notifier).setEventPublisher(domain.getEventPublisher());
+            }
+        }
 
         PackageScanClassResolver packageScanClassResolver = getPackageScanClassResolver();
         if (packageScanClassResolver != null) {

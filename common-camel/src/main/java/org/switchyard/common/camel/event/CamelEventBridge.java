@@ -26,19 +26,34 @@ import org.apache.camel.support.EventNotifierSupport;
 import org.switchyard.event.EventPublisher;
 
 /**
- * Event bridge, sends camel events trough SwitchYard {@link EventPublisher}.
+ * Event bridge, sends camel events through SwitchYard {@link EventPublisher}.
  */
 public class CamelEventBridge extends EventNotifierSupport {
 
-    private final EventPublisher _publisher;
+    private EventPublisher _publisher;
 
     /**
-     * Creates new event bridge from camel to switchyard.
+     * Creates new event bridge from camel to SwitchYard.
      * 
      * @param publisher Event publisher.
      */
     public CamelEventBridge(EventPublisher publisher) {
-        this._publisher = publisher;
+        _publisher = publisher;
+    }
+
+    /**
+     * Creates new event bridge without event publisher instance.
+     */
+    public CamelEventBridge() {
+    }
+
+    /**
+     * Sets event publisher for bridge.
+     * 
+     * @param publisher Event publisher to use.
+     */
+    public void setEventPublisher(EventPublisher publisher) {
+        _publisher = publisher;
     }
 
     @Override
@@ -48,7 +63,7 @@ public class CamelEventBridge extends EventNotifierSupport {
 
     @Override
     public boolean isEnabled(EventObject event) {
-        return true;
+        return _publisher != null;
     }
 
     @Override

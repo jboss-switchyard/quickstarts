@@ -150,10 +150,9 @@ public class CamelExchangeBus implements ExchangeBus {
                 RouteDefinition definition = from(endpoint);
                 definition.routeId(endpoint);
 
+                definition.addInterceptStrategy(new FaultInterceptStrategy());
                 // add default intercept strategy using @Audit annotation
                 definition.addInterceptStrategy(new AuditInterceptStrategy());
-                // fault handling & forwarding
-                definition.addInterceptStrategy(new FaultInterceptStrategy());
 
                 Map<String, InterceptStrategy> interceptStrategies = _camelContext.getRegistry().lookupByType(InterceptStrategy.class);
                 if (interceptStrategies != null) {
@@ -174,7 +173,6 @@ public class CamelExchangeBus implements ExchangeBus {
 
                 OnExceptionDefinition onException = new OnExceptionDefinition(HandlerException.class);
                 onException.handled(true);
-                //onException.processRef(CONSUMER_CALLBACK.name());
                 onException.addOutput(filterDefinition);
                 // register exception closure
                 definition.addOutput(onException);

@@ -62,12 +62,13 @@ public class ExchangeDispatcher implements Dispatcher {
     public void dispatch(final Exchange exchange) {
         if (exchange.getPhase().equals(ExchangePhase.IN)) {
             _producer.send("direct:" + exchange.getConsumer().getName(),
-                    new Processor() {
-                        public void process(org.apache.camel.Exchange ex) {
-                            ex.setProperty(SY_EXCHANGE, exchange);
-                            ex.getIn().setBody(exchange.getMessage().getContent());
-                        }
-                    });
+                new Processor() {
+                    public void process(org.apache.camel.Exchange ex) {
+                        ex.setProperty(SY_EXCHANGE, exchange);
+                        ex.getIn().setBody(exchange.getMessage().getContent());
+                    }
+                }
+            );
         }
     }
 }

@@ -19,24 +19,27 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.switchyard.bus.camel.audit;
+package org.switchyard.bus.camel;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Processor;
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.spi.InterceptStrategy;
+import org.switchyard.Exchange;
+import org.switchyard.ExchangeHandler;
+import org.switchyard.HandlerException;
+import org.switchyard.exception.SwitchYardException;
 
 /**
- * Intercept strategy catching exceptions and changing state of SwitchYard
- * exchange to FAULT.
+ * An exchange handler which throws exception during message handling and
+ * error handling.
  */
-public class FaultInterceptStrategy implements InterceptStrategy {
+public class ErrorExchangeHandler implements ExchangeHandler {
 
     @Override
-    public Processor wrapProcessorInInterceptors(CamelContext context,
-        ProcessorDefinition<?> definition, Processor target,
-        Processor nextTarget) throws Exception {
-        return new FaultProcessor(target);
+    public void handleMessage(Exchange exchange) throws HandlerException {
+        throw new HandlerException("Not implemented");
+    }
+
+    @Override
+    public void handleFault(Exchange exchange) {
+        throw new SwitchYardException("Also not implemented");
     }
 
 }

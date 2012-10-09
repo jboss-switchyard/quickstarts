@@ -49,17 +49,17 @@ public class FaultProcessor extends DelegateAsyncProcessor {
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         HandlerException exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, HandlerException.class);
-        ExchangeImpl exc = exchange.getProperty(ExchangeDispatcher.SY_EXCHANGE, ExchangeImpl.class);
+        final ExchangeImpl exc = exchange.getProperty(ExchangeDispatcher.SY_EXCHANGE, ExchangeImpl.class);
 
-        if (exception != null && exc.getState() != ExchangeState.FAULT) {
+        if (exception != null && exc.getState() == ExchangeState.OK) {
             // turn state of exchange from OK to FAULT and phase to OUT
             exc.sendFault(exc.createMessage().setContent(exception.isWrapper() ? exception.getCause() : exception));
         }
-        return super.process(exchange,callback);
+        return super.process(exchange, callback);
     }
 
     @Override
     public String toString() {
-        return "FaultProcessor";
+        return "FaultProcessor [" + getProcessor() + "]";
     }
 }

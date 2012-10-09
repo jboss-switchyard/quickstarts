@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.log4j.Logger;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangeState;
 import org.switchyard.bus.camel.ExchangeDispatcher;
@@ -35,6 +36,14 @@ import org.switchyard.bus.camel.ExchangeDispatcher;
  */
 public class HandlerProcessor implements Processor {
 
+    /**
+     * Logger.
+     */
+    private Logger _logger = Logger.getLogger(HandlerProcessor.class);
+
+    /**
+     * Wrapped handlers.
+     */
     private List<ExchangeHandler> _handlers;
 
     /**
@@ -63,7 +72,13 @@ public class HandlerProcessor implements Processor {
         for (ExchangeHandler handler : _handlers) {
             if (exchange.getState() == ExchangeState.FAULT) {
                 // we don't have to throw exception to treat SY exchange as a fault one
-                handler.handleFault(exchange);
+                try {
+                    handler.handleFault(exchange);
+                } catch (Exception e) {
+                    // exception thrown during handling FAULT state cannot be forwarded
+                    // anywhere, because we already have problem to handle
+                    _logger.error("Unexpected exception thrown during handling FAULT response", e);
+                }
             } else {
                 handler.handleMessage(exchange);
             }
