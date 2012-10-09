@@ -21,8 +21,8 @@
 	</acceptors>
 	
 	<queues>     
-        <queue name="jms.queue.GreetingServiceQueue">
-            <address>jms.queue.GreetingServiceQueue</address>
+        <queue name="jms.queue.JCAInflowGreetingServiceQueue">
+            <address>jms.queue.JCAInflowGreetingServiceQueue</address>
         </queue>
     </queues>
 	

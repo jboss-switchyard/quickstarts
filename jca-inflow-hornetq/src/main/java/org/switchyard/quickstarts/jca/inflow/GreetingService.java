@@ -27,9 +27,21 @@ package org.switchyard.quickstarts.jca.inflow;
  */
 public interface GreetingService {
     /**
-     * Prints a greeting message using the passed in name.
+     * Prints a greeting message in English using the passed in name.
      *
-     * @param name the name of the person to be greeted.
+     * @param person Person object
      */
-    void greet(String name);
+    void english(Person person);
+    
+    /**
+     * Prints a greeting message in Spanish using the passed in name.
+     * @param person Person object
+     */
+    void spanish(Person person);
+    
+    /**
+     * Prints a greeting message in Japanese using the passed in name.
+     * @param person Person object
+     */
+    void japanese(Person person);
 }

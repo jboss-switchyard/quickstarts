@@ -2,6 +2,12 @@ Introduction
 ============
 This quickstart demonstrates the usage of the JCA Component and it's service binding feature,
 by binding to a HornetQ Queue. When a message arrives in this queue the service will be invoked.
+This quickstart is using XPath dynamic operation selector which determines the service operation
+to be invoked by reading message content. If you pass the name and language parameters at step 7
+like following:
+    mvn exec:java -Dexec.args="Fernando spanish"
+then operation selector choose the spanish operation so you would get a spanish greeting like this:
+    Hola Fernando :-)
 
 JBoss AS 7
 ----------

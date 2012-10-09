@@ -31,7 +31,17 @@ import org.switchyard.component.bean.Service;
 public class GreetingServiceBean implements GreetingService {
 
     @Override
-    public final void greet(final String name) {
-        System.out.println("Hello there " + name + " :-) ");
+    public final void english(final Person person) {
+        System.out.println("Hello there " + person.getName() + " :-) ");
+    }
+
+    @Override
+    public void spanish(Person person) {
+        System.out.println("Hola " + person.getName() + " :-) ");
+    }
+
+    @Override
+    public void japanese(Person person) {
+        System.out.println("こんにちは " + person.getName() + " :-) ");
     }
 }

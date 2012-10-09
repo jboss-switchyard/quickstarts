@@ -66,20 +66,25 @@ public class JCAInflowBindingTest {
      */
     @Test
     public void triggerGreetingService() throws Exception {
-        final String payload = "dummy payload";
         // replace existing implementation for testing purposes
         _testKit.removeService("GreetingService");
         final MockHandler greetingService = _testKit.registerInOnlyService("GreetingService");
         
-        final MessageProducer producer = _hqMixIn.getJMSSession().createProducer(HornetQMixIn.getJMSQueue("GreetingServiceQueue"));
+        final MessageProducer producer = _hqMixIn.getJMSSession().createProducer(HornetQMixIn.getJMSQueue("JCAInflowGreetingServiceQueue"));
         final TextMessage message = _hqMixIn.getJMSSession().createTextMessage();
-        message.setText(payload);
+        message.setText(PAYLOAD);
         producer.send(message);
         
         Thread.sleep(1000);
         
         final Exchange recievedExchange = greetingService.getMessages().iterator().next();
-        Assert.assertEquals(payload, recievedExchange.getMessage().getContent(String.class));
+        Assert.assertEquals(PAYLOAD, recievedExchange.getMessage().getContent(String.class));
     }
+    
+    private static final String PAYLOAD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            + "<qs:person xmlnl:qs=\"urn:switchyard-quickstart:jca-inflow-hornetq:0.1.0\">\n"
+            + "    <qs:name>dummy</qs:name>\n"
+            + "    <qs:language>english</qs:language>\n"
+            + "</qs:person>\n";
     
 }
