@@ -20,9 +20,9 @@ package org.switchyard.test.quickstarts;
 
 import java.io.IOException;
 
-import javax.jms.BytesMessage;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -36,7 +36,7 @@ import org.switchyard.test.quickstarts.util.ResourceDeployer;
 @RunWith(Arquillian.class)
 public class JCAInflowHornetQQuickstartTest {
 
-    private static final String QUEUE = "GreetingServiceQueue";
+    private static final String QUEUE = "JCAInflowGreetingServiceQueue";
     private static final String USER = "guest";
     private static final String PASSWD = "guestp";
     
@@ -57,8 +57,8 @@ public class JCAInflowHornetQQuickstartTest {
         try {
             Session session = hqMixIn.getJMSSession();
             MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(QUEUE));
-            BytesMessage message = session.createBytesMessage();
-            message.writeBytes("Awoniyoshi".getBytes());
+            TextMessage message = session.createTextMessage();
+            message.setText(PAYLOAD);
             producer.send(message);
             Thread.sleep(1000);
         } finally {
@@ -67,4 +67,10 @@ public class JCAInflowHornetQQuickstartTest {
         }
     }
 
+    private static final String PAYLOAD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            + "<qs:person xmlns:qs=\"urn:switchyard-quickstart:jca-inflow-hornetq:0.1.0\">\n"
+            + "    <name>Fernando</name>\n"
+            + "    <language>spanish</language>\n"
+            + "</qs:person>\n";
+    
 }
