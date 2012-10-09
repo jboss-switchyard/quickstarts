@@ -1,20 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JBoss, Home of Professional Open Source.
+  ~ Copyright 2012, Red Hat, Inc., and individual contributors
+  ~ as indicated by the @author tags. See the copyright.txt file in the
+  ~ distribution for a full listing of individual contributors.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
     <parent>
         <groupId>org.switchyard.components</groupId>
         <artifactId>switchyard-components-parent</artifactId>
         <version>0.6.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.switchyard.components</groupId>
     <artifactId>switchyard-forge-components</artifactId>
     <packaging>pom</packaging>
     <name>SwitchYard: Components Forge Plugin</name>
     <description>SwitchYard Components Forge Plugin</description>
-
     <modules>
         <module>bean</module>
         <module>camel</module>
@@ -25,44 +43,42 @@
         <module>bpm</module>
         <module>http</module>
     </modules>
-    
     <profiles>
-       <profile>
-          <id>skipForgeTests</id>
-          <activation>
-              <activeByDefault>true</activeByDefault>
-          </activation>
-          <properties>
-             <maven.test.skip>true</maven.test.skip>
-          </properties>
-       </profile>
-       <profile>
-          <id>runForgeTests</id>
-       </profile>
+        <profile>
+            <id>skipForgeTests</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>runForgeTests</id>
+        </profile>
     </profiles>
-
     <dependencies>
         <dependency>
-           <groupId>org.apache.xalan</groupId>
-           <artifactId>serializer</artifactId>
+            <groupId>org.apache.xalan</groupId>
+            <artifactId>serializer</artifactId>
         </dependency>
         <dependency>
-           <groupId>org.apache.xalan</groupId>
-           <artifactId>xalan</artifactId>
+            <groupId>org.apache.xalan</groupId>
+            <artifactId>xalan</artifactId>
         </dependency>
         <dependency>
-           <groupId>org.jboss.forge</groupId>
-           <artifactId>forge-shell</artifactId>
-           <scope>test</scope>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-shell</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-           <groupId>org.jboss.forge</groupId>
-           <artifactId>forge-shell-api</artifactId>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-shell-api</artifactId>
         </dependency>
         <dependency>
-           <groupId>org.jboss.forge</groupId>
-           <artifactId>forge-test-harness</artifactId>
-           <scope>test</scope>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-test-harness</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
@@ -80,7 +96,7 @@
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-common</artifactId>
         </dependency>
-     </dependencies>
+    </dependencies>
     <build>
         <plugins>
             <plugin>

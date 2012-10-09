@@ -1,21 +1,38 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JBoss, Home of Professional Open Source.
+  ~ Copyright 2012, Red Hat, Inc., and individual contributors
+  ~ as indicated by the @author tags. See the copyright.txt file in the
+  ~ distribution for a full listing of individual contributors.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>org.switchyard.components</groupId>
         <artifactId>switchyard-components-parent</artifactId>
         <version>0.6.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-
     <artifactId>switchyard-component-clojure</artifactId>
     <packaging>jar</packaging>
-
     <name>SwitchYard: Clojure Component</name>
     <url>http://switchyard.org</url>
-
-	<build>
+    <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -29,32 +46,30 @@
                 </configuration>
             </plugin>
         </plugins>
-		<testResources>
-			<testResource>
-				<directory>src/test/resources</directory>
-				<includes>
-				    <include>**/*.xml</include>
-				    <include>**/*.clj</include>
-			    </includes>
-			</testResource>
-		</testResources>
-	</build>
-
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.clj</include>
+                </includes>
+            </testResource>
+        </testResources>
+    </build>
     <dependencies>
-        
-		<dependency>
-	        <groupId>org.switchyard</groupId>
-	        <artifactId>switchyard-config</artifactId>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-config</artifactId>
         </dependency>
         <dependency>
             <groupId>org.clojure</groupId>
             <artifactId>clojure</artifactId>
         </dependency>
-		<dependency>
-			<groupId>org.switchyard.components</groupId>
-			<artifactId>switchyard-component-bean</artifactId>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-bean</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-test</artifactId>
@@ -64,13 +79,11 @@
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
             <scope>test</scope>
-         </dependency>
+        </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <scope>test</scope>
-         </dependency>
-
+        </dependency>
     </dependencies>
-
 </project>
