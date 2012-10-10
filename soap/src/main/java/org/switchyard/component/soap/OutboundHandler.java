@@ -39,6 +39,7 @@ import org.switchyard.Message;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.soap.composer.SOAPBindingData;
 import org.switchyard.component.soap.composer.SOAPComposition;
+import org.switchyard.component.soap.composer.SOAPFaultInfo;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
@@ -140,13 +141,26 @@ public class OutboundHandler extends BaseServiceHandler {
             
             SOAPMessage response = invokeService(request);
             if (response != null) {
+                // This property vanishes once message composer processes this message
+                // so caching it here
+                Boolean hasFault = response.getSOAPBody().hasFault();
                 Message message;
                 try {
-                    message = _messageComposer.compose(new SOAPBindingData(response), exchange, true);
+                    SOAPBindingData bindingData = new SOAPBindingData(response);
+                    if (hasFault) {
+                        SOAPFaultInfo faultInfo = new SOAPFaultInfo();
+                        faultInfo.copyFaultInfo(response);
+                        bindingData.setSOAPFaultInfo(faultInfo);
+                    }
+                    message = _messageComposer.compose(bindingData, exchange, true);
                 } catch (Exception e) {
                     throw e instanceof SOAPException ? (SOAPException)e : new SOAPException(e);
                 }
-                exchange.send(message);
+                if (hasFault) {
+                    exchange.sendFault(message);
+                } else {
+                    exchange.send(message);
+                }
             }
             
             if (LOGGER.isTraceEnabled()) {

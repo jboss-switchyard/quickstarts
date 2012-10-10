@@ -41,6 +41,7 @@ public class SOAPBindingData implements SecurityBindingData {
 
     private final SOAPMessage _soapMessage;
     private final WebServiceContext _webServiceContext;
+    private SOAPFaultInfo _soapFaultInfo;
 
     /**
      * Constructs a new SOAP binding data with the specified SOAP message.
@@ -66,6 +67,22 @@ public class SOAPBindingData implements SecurityBindingData {
      */
     public SOAPMessage getSOAPMessage() {
         return _soapMessage;
+    }
+
+    /**
+     * Gets the SOAPFault information.
+     * @return the SOAPFaultInfo object
+     */
+    public SOAPFaultInfo getSOAPFaultInfo() {
+        return _soapFaultInfo;
+    }
+
+    /**
+     * Sets the SOAPFault information.
+     * @param faultInfo the SOAPFaultInfo object
+     */
+    public void setSOAPFaultInfo(SOAPFaultInfo faultInfo) {
+        _soapFaultInfo = faultInfo;
     }
 
     /**

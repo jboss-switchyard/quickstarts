@@ -18,14 +18,6 @@
  */
 package org.switchyard.component.soap.composer;
 
-import static org.switchyard.Scope.EXCHANGE;
-import static org.switchyard.Scope.IN;
-import static org.switchyard.Scope.OUT;
-import static org.switchyard.component.soap.composer.SOAPComposition.SOAP_MESSAGE_HEADER;
-import static org.switchyard.component.soap.composer.SOAPComposition.SOAP_MESSAGE_MIME_HEADER;
-import static org.switchyard.component.soap.composer.SOAPHeadersType.VALUE;
-import static org.switchyard.component.soap.composer.SOAPHeadersType.XML;
-
 import java.io.StringReader;
 import java.util.Iterator;
 
@@ -38,6 +30,7 @@ import javax.xml.soap.SOAPMessage;
 
 import org.switchyard.Context;
 import org.switchyard.Property;
+import org.switchyard.Scope;
 import org.switchyard.common.io.pull.ElementPuller;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
@@ -51,6 +44,7 @@ import org.w3c.dom.Node;
  * SOAPContextMapper.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
 public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
 
@@ -80,6 +74,11 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
     @Override
     public void mapFrom(SOAPBindingData source, Context context) throws Exception {
         SOAPMessage soapMessage = source.getSOAPMessage();
+
+        if (soapMessage.getSOAPBody().hasFault() && (source.getSOAPFaultInfo() != null)) {
+            context.setProperty(SOAPComposition.SOAP_FAULT_INFO, source.getSOAPFaultInfo(), Scope.IN).addLabels(SOAPComposition.SOAP_MESSAGE_HEADER);
+        }
+
         @SuppressWarnings("unchecked")
         Iterator<MimeHeader> mimeHeaders = soapMessage.getMimeHeaders().getAllHeaders();
         while (mimeHeaders.hasNext()) {
@@ -89,7 +88,7 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
                 String value = mimeHeader.getValue();
                 if (value != null) {
                     // SOAPMessage MIME headers -> Context IN properties
-                    context.setProperty(name, value, IN).addLabels(SOAP_MESSAGE_MIME_HEADER);
+                    context.setProperty(name, value, Scope.IN).addLabels(SOAPComposition.SOAP_MESSAGE_MIME_HEADER);
                 }
             }
         }
@@ -101,7 +100,7 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
             if (matches(qname)) {
                 // SOAPMessage SOAP headers -> Context EXCHANGE properties
                 final Object value;
-                switch (_soapHeadersType != null ? _soapHeadersType : VALUE) {
+                switch (_soapHeadersType != null ? _soapHeadersType : SOAPHeadersType.VALUE) {
                     case CONFIG:
                         value = new ConfigurationPuller().pull(soapHeader);
                         break;
@@ -119,7 +118,7 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
                 }
                 if (value != null) {
                     String name = qname.toString();
-                    context.setProperty(name, value, EXCHANGE).addLabels(SOAP_MESSAGE_HEADER);
+                    context.setProperty(name, value, Scope.EXCHANGE).addLabels(SOAPComposition.SOAP_MESSAGE_HEADER);
                 }
             }
         }
@@ -132,7 +131,7 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
     public void mapTo(Context context, SOAPBindingData target) throws Exception {
         SOAPMessage soapMessage = target.getSOAPMessage();
         MimeHeaders mimeHeaders = soapMessage.getMimeHeaders();
-        for (Property property : context.getProperties(OUT)) {
+        for (Property property : context.getProperties(Scope.OUT)) {
             String name = property.getName();
             if (matches(name)) {
                 Object value = property.getValue();
@@ -143,7 +142,7 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
             }
         }
         SOAPHeader soapHeader = soapMessage.getSOAPHeader();
-        for (Property property : context.getProperties(EXCHANGE)) {
+        for (Property property : context.getProperties(Scope.EXCHANGE)) {
             String name = property.getName();
             QName qname = XMLHelper.createQName(name);
             boolean qualifiedForSoapHeader = Strings.trimToNull(qname.getNamespaceURI()) != null;
@@ -159,7 +158,7 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
                     soapHeader.appendChild(configNode);
                 } else if (value != null) {
                     String v = String.valueOf(value);
-                    if (XML.equals(_soapHeadersType)) {
+                    if (SOAPHeadersType.XML.equals(_soapHeadersType)) {
                         Element xmlElement = new ElementPuller().pull(new StringReader(v));
                         Node xmlNode = soapHeader.getOwnerDocument().importNode(xmlElement, true);
                         soapHeader.appendChild(xmlNode);

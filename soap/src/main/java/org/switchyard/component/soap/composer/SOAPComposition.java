@@ -40,6 +40,9 @@ public final class SOAPComposition {
     /** The "soap_message_mime_header" context property label. */
     public static final String SOAP_MESSAGE_MIME_HEADER = "soap_message_mime_header";
 
+    /** The SOAP Fault details. */
+    public static final String SOAP_FAULT_INFO = "fault_info";
+
     /**
      * Uses the {@link Composition} class to create a SOAP-specific MessageComposer.
      * @return the MessageComposer
