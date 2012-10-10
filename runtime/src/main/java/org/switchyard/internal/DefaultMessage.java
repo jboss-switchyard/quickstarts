@@ -27,21 +27,16 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.Message;
 import org.switchyard.exception.SwitchYardException;
-import org.switchyard.io.Serialization.AccessType;
-import org.switchyard.io.Serialization.CoverageType;
-import org.switchyard.io.Serialization.Exclude;
-import org.switchyard.io.Serialization.Strategy;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 
 /**
- * Serializable implementation of <code>Message</code>.
+ * Implementation of <code>Message</code>.
  */
-@Strategy(access=AccessType.FIELD, coverage=CoverageType.INCLUSIVE)
 public class DefaultMessage implements Message {
 
-    @Exclude private TransformerRegistry _transformerRegistry;
+    private TransformerRegistry _transformerRegistry;
     private Object _content;
     private Map<String, DataSource> _attachments = 
         new HashMap<String, DataSource>();

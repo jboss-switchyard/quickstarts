@@ -335,14 +335,12 @@ public interface Configuration {
     /**
      * Orders the child configs based on {@link #getChildrenOrder()}.
      * Same as {@link #orderChildren(boolean)} with recursive as true.
-     * Note: The act of ordering children causes comments to be removed.
      * @return this config (useful for chaining)
      */
     public Configuration orderChildren();
 
     /**
      * Orders the child configs based on {@link #getChildrenOrder()}.
-     * Note: The act of ordering children causes comments to be removed.
      * @param recursive whether the children/grandchildren/great-grandchildren/etc should also be ordered
      * @return this config (useful for chaining)
      */

@@ -38,6 +38,9 @@
         <module>common-camel</module>
         <module>config</module>
         <module>api</module>
+        <module>serial/base</module>
+        <module>serial/jackson</module>
+        <module>serial/protostuff</module>
         <module>security</module>
         <module>extensions/wsdl</module>
         <module>transform</module>

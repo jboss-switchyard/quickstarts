@@ -19,19 +19,22 @@
 
 package org.switchyard.internal;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.switchyard.Context;
 import org.switchyard.Property;
 import org.switchyard.Scope;
-import org.switchyard.io.Serialization.AccessType;
-import org.switchyard.io.Serialization.CoverageType;
-import org.switchyard.io.Serialization.Strategy;
+import org.switchyard.internal.DefaultContext.DefaultContextMapper;
+import org.switchyard.internal.ScopedPropertyMap.ScopedPropertyMapMapper;
+import org.switchyard.serial.map.Mappable;
+import org.switchyard.serial.map.Mapper;
 
 /**
  * Base context implementation.
  */
-@Strategy(access=AccessType.FIELD, coverage=CoverageType.INCLUSIVE)
+@Mappable(DefaultContextMapper.class)
 public class DefaultContext implements Context {
     
     private ScopedPropertyMap _properties;
@@ -131,5 +134,25 @@ public class DefaultContext implements Context {
      */
     public DefaultContext copy() {
         return new DefaultContext(_properties.copy());
+    }
+    
+    /**
+     * A DefaultContext Mapper.
+     */
+    public static final class DefaultContextMapper implements Mapper<DefaultContext> {
+        private final ScopedPropertyMapMapper _spmm = new ScopedPropertyMapMapper();
+        @Override
+        public Map<String, Object> toMap(DefaultContext obj) {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("scopedPropertyMap", _spmm.toMap(obj._properties));
+            return map;
+        }
+        @Override
+        public DefaultContext toObject(Map<String, Object> map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> scm = (Map<String, Object>)map.get("scopedPropertyMap");
+            ScopedPropertyMap scopedPropertyMap = _spmm.toObject(scm);
+            return new DefaultContext(scopedPropertyMap);
+        }
     }
 }

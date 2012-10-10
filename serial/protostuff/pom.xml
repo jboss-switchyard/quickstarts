@@ -26,50 +26,47 @@
         <groupId>org.switchyard</groupId>
         <artifactId>switchyard-core-parent</artifactId>
         <version>0.6.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
-    <artifactId>switchyard-runtime</artifactId>
+    <artifactId>switchyard-serial-protostuff</artifactId>
     <packaging>jar</packaging>
-    <name>SwitchYard: Runtime</name>
-    <description>The core runtime library.</description>
+    <name>SwitchYard: Serial - Protostuff</name>
+    <description>The Protostuff serialization library.</description>
     <url>http://switchyard.org</url>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
     <dependencies>
         <!-- internal dependencies -->
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-api</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-common</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-serial-jackson</artifactId>
+            <artifactId>switchyard-serial</artifactId>
         </dependency>
         <!-- external dependencies -->
         <dependency>
-            <groupId>javax.transaction</groupId>
-            <artifactId>jta</artifactId>
+            <groupId>com.dyuproject.protostuff</groupId>
+            <artifactId>protostuff-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.dyuproject.protostuff</groupId>
+            <artifactId>protostuff-collectionschema</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.dyuproject.protostuff</groupId>
+            <artifactId>protostuff-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.dyuproject.protostuff</groupId>
+            <artifactId>protostuff-json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.dyuproject.protostuff</groupId>
+            <artifactId>protostuff-runtime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.dyuproject.protostuff</groupId>
+            <artifactId>protostuff-xml</artifactId>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
