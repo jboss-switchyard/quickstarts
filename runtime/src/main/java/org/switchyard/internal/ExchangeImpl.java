@@ -125,6 +125,7 @@ public class ExchangeImpl implements Exchange {
         
         _phase = ExchangePhase.OUT;
         _state = ExchangeState.FAULT;
+        initFaultContentType();
         
         sendInternal(message);
     }
@@ -289,6 +290,15 @@ public class ExchangeImpl implements Exchange {
         QName serviceOperationOutputType = _contract.getProviderOperation().getOutputType();
         if (serviceOperationOutputType != null) {
             _context.setProperty(Exchange.CONTENT_TYPE, serviceOperationOutputType, Scope.OUT);
+        }
+    }
+
+    private void initFaultContentType() {
+        if (_contract.getProviderOperation() != null) {
+            QName serviceOperationFaultType = _contract.getProviderOperation().getFaultType();
+            if (serviceOperationFaultType != null) {
+                _context.setProperty(Exchange.CONTENT_TYPE, serviceOperationFaultType, Scope.OUT);
+            }
         }
     }
     
