@@ -37,17 +37,20 @@ import org.junit.Test;
  */
 public class TransactionMixInTest {
 
-    private static TransactionMixIn mixin;
+    private static TransactionMixIn transactionMixIn;
+    private static NamingMixIn namingMixIn;
 
     @BeforeClass
     public static void setup() {
-        mixin = new TransactionMixIn();
-        mixin.initialize();
+        namingMixIn = new NamingMixIn();
+        namingMixIn.initialize();
+        transactionMixIn = new TransactionMixIn();
+        transactionMixIn.initialize();
     }
     
     @AfterClass
     public static void tearDown() {
-        mixin.uninitialize();
+        transactionMixIn.uninitialize();
     }
 
     @Test
@@ -60,7 +63,7 @@ public class TransactionMixInTest {
 
     @Test
     public void shouldUseSameInstance() throws Exception {
-        assertSame(getUserTransaction(), mixin.getUserTransaction());
+        assertSame(getUserTransaction(), transactionMixIn.getUserTransaction());
     }
 
     private UserTransaction getUserTransaction() throws NamingException {
