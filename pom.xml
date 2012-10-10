@@ -121,7 +121,7 @@
         <version.quartz>1.8.5</version.quartz>
         <version.picketlink>2.1.1.Final</version.picketlink>
         <version.protobuf>2.4.1</version.protobuf>
-        <version.protostuff>1.0.4</version.protostuff>
+        <version.protostuff>1.0.7</version.protostuff>
         <!-- Needed until AS7 is upgraded with this version -->
         <version.resteasy>2.3.4.Final</version.resteasy>
         <version.riftsaw.ode>3.0.0.20121008-M3</version.riftsaw.ode>
@@ -766,6 +766,21 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-serial</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-serial-jackson</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-serial-protostuff</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-transform</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1099,22 +1114,22 @@
             </dependency>
             <dependency>
                 <groupId>com.dyuproject.protostuff</groupId>
-                <artifactId>protostuff-core</artifactId>
-                <version>${version.protostuff}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.dyuproject.protostuff</groupId>
                 <artifactId>protostuff-collectionschema</artifactId>
                 <version>${version.protostuff}</version>
             </dependency>
             <dependency>
                 <groupId>com.dyuproject.protostuff</groupId>
-                <artifactId>protostuff-runtime</artifactId>
+                <artifactId>protostuff-core</artifactId>
                 <version>${version.protostuff}</version>
             </dependency>
             <dependency>
                 <groupId>com.dyuproject.protostuff</groupId>
                 <artifactId>protostuff-json</artifactId>
+                <version>${version.protostuff}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.dyuproject.protostuff</groupId>
+                <artifactId>protostuff-runtime</artifactId>
                 <version>${version.protostuff}</version>
             </dependency>
             <dependency>
