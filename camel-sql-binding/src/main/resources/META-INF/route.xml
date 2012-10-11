@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<route xmlns="http://camel.apache.org/schema/spring">
+    <from uri="switchyard://GreetingService"/>
+    <log message="Input: ${body}" />
+    <choice>
+        <when>
+            <simple>${body} == null</simple>
+            <log message="Retrieve" />
+            <to uri="switchyard://GreetingsDatabaseRetrieve"/>
+        </when>
+        <otherwise>
+            <log message="Store" />
+            <to uri="switchyard://GreetingsDatabaseStore"/>
+        </otherwise>
+    </choice>
+    <log message="Output: ${body}" />
+</route>

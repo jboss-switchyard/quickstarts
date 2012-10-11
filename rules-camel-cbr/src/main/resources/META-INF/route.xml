@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<route xmlns="http://camel.apache.org/schema/spring">
+    <from uri="switchyard://RoutingService"/>
+    <to uri="switchyard://DestinationService"/>
+    <choice>
+        <when>
+            <simple>${body.destination} == 'Red'</simple>
+            <to uri="switchyard://RedService"/>
+        </when>
+        <when>
+            <simple>${body.destination} == 'Green'</simple>
+            <to uri="switchyard://GreenService"/>
+        </when>
+        <when>
+            <simple>${body.destination} == 'Blue'</simple>
+            <to uri="switchyard://BlueService"/>
+        </when>
+        <otherwise>
+            <log message="Unknown Destination!"/>
+        </otherwise>
+    </choice>
+</route>

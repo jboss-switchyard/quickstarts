@@ -9,10 +9,7 @@
         </component>
         <component name="XMLComponent">
             <implementation.camel xmlns="urn:switchyard-component-camel:config:1.0">
-                <route xmlns="http://camel.apache.org/schema/spring">
-                    <log message="Inside XML Camel Route"/>
-                    <log message="[message] '${body}'"/>
-                </route>
+                <xml path="META-INF/route.xml"/>
             </implementation.camel>
             <service name="XMLService">
                 <swyd:interface.esb inputType="java:java.lang.String"/>
