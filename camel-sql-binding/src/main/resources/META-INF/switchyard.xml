@@ -13,21 +13,7 @@
             </service>
 
             <camel:implementation.camel>
-                <route xmlns="http://camel.apache.org/schema/spring">
-                    <log message="Input: ${body}" />
-                    <choice>
-                        <when>
-                            <simple>${body} == null</simple>
-                            <log message="Retrieve" />
-                            <to uri="switchyard://GreetingsDatabaseRetrieve"/>
-                        </when>
-                        <otherwise>
-                            <log message="Store" />
-                            <to uri="switchyard://GreetingsDatabaseStore"/>
-                        </otherwise>
-                    </choice>
-                    <log message="Output: ${body}" />
-                </route>
+                <camel:xml path="META-INF/route.xml"/>
             </camel:implementation.camel>
 
             <reference name="GreetingsDatabaseStore">

@@ -21,9 +21,7 @@
         </sca:reference>
         <sca:component name="ProxyService">
             <camel:implementation.camel>
-                <spring:route>
-                    <spring:to uri="switchyard://ReverseService"/>
-                </spring:route>
+                <camel:xml path="META-INF/route.xml"/>
             </camel:implementation.camel>
             <sca:service name="ProxyService">
                 <sca:interface.wsdl interface="META-INF/ReverseService.wsdl#wsdl.porttype(ReverseService)"/>

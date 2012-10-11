@@ -12,9 +12,7 @@
         </reference>
         <component name="OrderInputComponent">
             <implementation.camel xmlns="urn:switchyard-component-camel:config:1.0">
-                <route xmlns="http://camel.apache.org/schema/spring">
-                    <to uri="switchyard://OrderWebService"/>
-                </route>
+                <xml path="META-INF/route.xml"/>
             </implementation.camel>
             <service name="OrderInput">
                 <interface.wsdl interface="OrderService.wsdl#wsdl.porttype(OrderService)"/>
