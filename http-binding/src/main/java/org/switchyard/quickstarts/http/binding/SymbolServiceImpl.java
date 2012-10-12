@@ -19,8 +19,6 @@
 
 package org.switchyard.quickstarts.http.binding;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.switchyard.Context;

@@ -8,7 +8,7 @@
             
     <sca:composite name="jca-outbound-hornetq" targetNamespace="urn:switchyard-quickstart:jca-outbound-hornetq:0.1.0">
     
-        <sca:service name="OrderService" promote="OrderComponent/OrderService">
+        <sca:service name="OrderService" promote="OrderService/OrderService">
             <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
                <selector:operationSelector operationName="process"/>
                <inboundConnection>
@@ -27,7 +27,7 @@
             </binding.jca>
         </sca:service>
 
-        <sca:reference name="ShippingReference" promote="OrderComponent/ShippingReference" multiplicity="1..1">
+        <sca:reference name="ShippingReference" promote="OrderService/ShippingReference" multiplicity="1..1">
             <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
                <outboundConnection>
                    <resourceAdapter name="hornetq-ra.rar"/>
@@ -40,7 +40,7 @@
                </outboundInteraction>
             </binding.jca>
         </sca:reference>
-        <sca:reference name="FillingStockReference" promote="OrderComponent/FillingStockReference" multiplicity="1..1">
+        <sca:reference name="FillingStockReference" promote="OrderService/FillingStockReference" multiplicity="1..1">
             <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
                <outboundConnection>
                    <resourceAdapter name="hornetq-ra.rar"/>
@@ -53,18 +53,6 @@
                </outboundInteraction>
             </binding.jca>
         </sca:reference>
-        
-        <sca:component name="OrderComponent">
-            <bean:implementation.bean class="org.switchyard.quickstarts.jca.outbound.OrderServiceBean"/>
-            <sca:service name="OrderService">
-                <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.OrderService"/>
-            </sca:service>
-            <sca:reference name="ShippingReference">
-                <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.OrderService"/>
-            </sca:reference>
-            <sca:reference name="FillingStockReference">
-                <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.OrderService"/>
-            </sca:reference>
-        </sca:component>
+
     </sca:composite>
 </switchyard>

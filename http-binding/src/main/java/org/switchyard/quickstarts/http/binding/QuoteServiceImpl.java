@@ -19,8 +19,6 @@
 
 package org.switchyard.quickstarts.http.binding;
 
-import static org.switchyard.component.http.composer.HttpComposition.HTTP_HEADER;
-
 import javax.inject.Inject;
 
 import org.switchyard.component.bean.Reference;

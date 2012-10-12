@@ -74,9 +74,9 @@ public class JCAInflowBindingTest {
         final TextMessage message = _hqMixIn.getJMSSession().createTextMessage();
         message.setText(PAYLOAD);
         producer.send(message);
-        
-        Thread.sleep(1000);
-        
+
+        greetingService.waitForOKMessage();
+
         final Exchange recievedExchange = greetingService.getMessages().iterator().next();
         Assert.assertEquals(PAYLOAD, recievedExchange.getMessage().getContent(String.class));
     }
