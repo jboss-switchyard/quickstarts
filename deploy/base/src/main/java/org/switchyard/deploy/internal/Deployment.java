@@ -376,7 +376,7 @@ public class Deployment extends AbstractDeployment {
     }
     
     // Checks for invalid input/output/fault combinations on ESB interfaces.
-    private void validateEsbInterface(EsbInterfaceModel esbIntf) throws SwitchYardException {
+    private void validateEsbInterface(EsbInterfaceModel esbIntf)  {
         if (esbIntf.getInputType() == null) {
             throw new SwitchYardException("inputType required on ESB interface definition: " + esbIntf);
         }
@@ -425,11 +425,11 @@ public class Deployment extends AbstractDeployment {
                 List<Policy> requires = null;
                 try {
                     requires = getPolicyRequirements(reference);
-                    validatePolicy(requires, requiresImpl);
                 } catch (Exception e) {
-                    throw new SwitchYardException(e);
+                    throw new SwitchYardException("Unable to collect requirements for " + reference, e);
                 }
-                
+                validatePolicy(requires, requiresImpl);
+
                 ServiceInterface refIntf = getComponentReferenceInterface(reference);
                 ServiceReference svcRef = getDomain().registerServiceReference(
                         reference.getQName(), refIntf, null, null, requires, impl);
@@ -458,6 +458,8 @@ public class Deployment extends AbstractDeployment {
                 ServiceHandler handler = activator.activateService(service.getQName(), component);
                 Activation activation = new Activation(activator, service.getQName(), handler);
                 ServiceInterface serviceIntf = getComponentServiceInterface(service);
+                validateServiceRegistration(service.getQName());
+
                 Service svc = getDomain().registerService(service.getQName(), serviceIntf, handler, requires, impl);
                 activation.addService(svc);
                 activation.addReferences(references);
@@ -466,6 +468,7 @@ public class Deployment extends AbstractDeployment {
                 CompositeServiceModel promotion = servicePromotions.get(service);
                 if (promotion != null && !promotion.getQName().equals(service.getQName())) {
                     Service promotedService = getDomain().registerService(promotion.getQName(), serviceIntf, handler);
+                    validateServiceRegistration(promotion.getQName());
                     activation.addPromotion(promotedService);
                 }
                 
@@ -600,59 +603,65 @@ public class Deployment extends AbstractDeployment {
         return requires;
     }
 
-    private void validatePolicy(List<Policy> interaction, List<Policy> implementation) throws Exception {
+    private void validatePolicy(List<Policy> interaction, List<Policy> implementation) {
         for (int i=0; interaction != null && i<interaction.size(); i++) {
             if (interaction.get(i).getType() != PolicyType.INTERACTION) {
-                throw new Exception("Policy '" + interaction.get(i) + "' is not interaction policy, but " + interaction.get(i).getType() + ".");
+                throw new SwitchYardException("Policy '" + interaction.get(i) + "' is not interaction policy, but " + interaction.get(i).getType() + ".");
             }
 
             Policy required = interaction.get(i).getPolicyDependency();
             if (required != null) {
                 if (required.getType() == PolicyType.INTERACTION && !interaction.contains(required)) {
-                    throw new Exception("Interaction Policy '" + interaction.get(i) + "' should be requested with '" + required);
+                    throw new SwitchYardException("Interaction Policy '" + interaction.get(i) + "' should be requested with '" + required);
                     
                 } else if (required.getType() == PolicyType.IMPLEMENTATION && !implementation.contains(required)) {
-                    throw new Exception("Interaction Policy '" + interaction.get(i) + "' requires '" + required
+                    throw new SwitchYardException("Interaction Policy '" + interaction.get(i) + "' requires '" + required
                             + "' Implementation Policy, but it does not exist. " + implementation);
                 }
             }
             
             for (int j=i+1; j<interaction.size(); j++) {
                 if (!interaction.get(i).isCompatibleWith(interaction.get(j))) {
-                    throw new Exception("Interaction Policy '" + interaction.get(i) + "' and '" + interaction.get(j) + " are not compatible.");
+                    throw new SwitchYardException("Interaction Policy '" + interaction.get(i) + "' and '" + interaction.get(j) + " are not compatible.");
                 }
             }
         }
 
         for (int i=0; implementation != null && i<implementation.size(); i++) {
             if (implementation.get(i).getType() != PolicyType.IMPLEMENTATION) {
-                throw new Exception("Policy '" + implementation.get(i) + "' is not implementation policy, but " + implementation.get(i).getType() + ".");
+                throw new SwitchYardException("Policy '" + implementation.get(i) + "' is not implementation policy, but " + implementation.get(i).getType() + ".");
             }
             
             Policy required = implementation.get(i).getPolicyDependency();
             if (required != null) {
                 if (required.getType() == PolicyType.IMPLEMENTATION && !implementation.contains(required)) {
-                    throw new Exception("Implementation Policy '" + implementation.get(i) + "' should be requested with '" + required);
+                    throw new SwitchYardException("Implementation Policy '" + implementation.get(i) + "' should be requested with '" + required);
                 } else if (required.getType() == PolicyType.INTERACTION && !interaction.contains(required)) {
-                    throw new Exception("Implementation Policy '" + implementation.get(i) + "' requires '" + required
+                    throw new SwitchYardException("Implementation Policy '" + implementation.get(i) + "' requires '" + required
                             + "' Interaction Policy, but it does not exist. " + interaction);
                 }
             }
             
             for (int j=i+1; j<implementation.size(); j++) {
                 if (!implementation.get(i).isCompatibleWith(implementation.get(j))) {
-                    throw new Exception("Implementation Policy '" + implementation.get(i) + "' and '" + implementation.get(j) + " are not compatible.");
+                    throw new SwitchYardException("Implementation Policy '" + implementation.get(i) + "' and '" + implementation.get(j) + " are not compatible.");
                 }
             }
 
             for (int j=0; interaction != null && j<interaction.size(); j++) {
                 if (!implementation.get(i).isCompatibleWith(interaction.get(j))) {
-                    throw new Exception("Implementation Policy '" + implementation.get(i) + "' and Interaciton Policy'" + interaction.get(j) + " are not compatible.");
+                    throw new SwitchYardException("Implementation Policy '" + implementation.get(i) + "' and Interaciton Policy'" + interaction.get(j) + " are not compatible.");
                 }
             }
         }
     }
-    
+
+    private void validateServiceRegistration(QName name) {
+        List<Service> services = getDomain().getServices(name);
+        if (services != null && !services.isEmpty()) {
+            throw new SwitchYardException("Service registration with name " + name + " hides " + services);
+        }
+    }
 }
 
 class Activation {
