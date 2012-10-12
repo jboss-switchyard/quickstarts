@@ -19,9 +19,9 @@
     xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
     xmlns:bean="urn:switchyard-component-bean:config:1.0">
 
-    <sca:composite name="StockService" targetNamespace="urn:switchyard-quickstart:http-binding:1.0">
+    <sca:composite name="http-binding" targetNamespace="urn:switchyard-quickstart:http-binding:1.0">
 
-        <sca:service name="QuoteService" promote="StockService/QuoteService">
+        <sca:service name="QuoteService" promote="QuoteService/QuoteService">
             <http:binding.http>
                 <selector:operationSelector operationName="getPrice"/>
                 <http:contextPath>http-binding/quote</http:contextPath>
@@ -37,30 +37,13 @@
         </sca:service>
 
         <sca:reference name="Symbol" promote="StockService/SymbolService" multiplicity="1..1">
+            <!-- External reference which allows to call SymbolService using http client -->
             <http:binding.http>
                 <http:address>http://localhost:8080/http-binding/symbol</http:address>
                 <http:method>POST</http:method>
                 <http:contentType>text/plain</http:contentType>
             </http:binding.http>
         </sca:reference>
-
-        <sca:component name="StockService">
-            <bean:implementation.bean class="org.switchyard.quickstarts.http.binding.QuoteServiceImpl"/>
-            <sca:service name="QuoteService">
-                <sca:interface.java interface="org.switchyard.quickstarts.http.binding.QuoteService"/>
-            </sca:service>
-            <!-- If you set this interface same as the one in the other service then the SwitchYard Service will be invoked directly -->
-            <sca:reference name="SymbolService">
-                <sca:interface.java interface="org.switchyard.quickstarts.http.binding.Symbol"/>
-            </sca:reference>
-        </sca:component>
-
-        <sca:component name="SymbolService">
-            <bean:implementation.bean class="org.switchyard.quickstarts.http.binding.SymbolServiceImpl"/>
-            <sca:service name="SymbolService">
-                <sca:interface.java interface="org.switchyard.quickstarts.http.binding.SymbolService"/>
-            </sca:service>
-        </sca:component>
 
     </sca:composite>
 <!--

@@ -53,7 +53,7 @@ public class CamelNettyBindingTest {
 	private final static String PAYLOAD = "Keith";;
 
     @Test
-    public void sendTextMessageThroughTcp() throws Exception {    
+    public void sendTextMessageThroughTcp() throws Exception {
         // replace existing implementation for testing purposes
         _testKit.removeService("GreetingService");
         final MockHandler greetingService = _testKit.registerInOnlyService("GreetingService");
@@ -62,11 +62,12 @@ public class CamelNettyBindingTest {
         DataOutputStream outputStream = new DataOutputStream(clientSocket.getOutputStream());
         // lets write payload directly as bytes to avoid encoding mismatches
         outputStream.write(PAYLOAD.getBytes());
+        outputStream.flush();
 
         // sleep a bit to receive message on camel side
-        Thread.sleep(100);
         clientSocket.close();
 
+        greetingService.waitForOKMessage();
         final LinkedBlockingQueue<Exchange> recievedMessages = greetingService.getMessages();
         assertThat(recievedMessages, is(notNullValue()));
         final Exchange recievedExchange = recievedMessages.iterator().next();
@@ -86,9 +87,9 @@ public class CamelNettyBindingTest {
         clientSocket.send(packet);
 
         // sleep a bit to receive message on camel side
-        Thread.sleep(100);
         clientSocket.close();
 
+        greetingService.waitForOKMessage();
         final LinkedBlockingQueue<Exchange> recievedMessages = greetingService.getMessages();
         assertThat(recievedMessages, is(notNullValue()));
         final Exchange recievedExchange = recievedMessages.iterator().next();

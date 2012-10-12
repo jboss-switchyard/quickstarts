@@ -43,6 +43,8 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
 @RunWith(SwitchYardRunner.class)
 public class HttpBindingTest {
 
+    private static final String BASE_URL = "http://localhost:8080/http-binding";
+
     private HTTPMixIn http;
 
     /**
@@ -78,6 +80,4 @@ public class HttpBindingTest {
         String response = http.sendString(BASE_URL + "/symbol", "requestInfo", HTTPMixIn.HTTP_POST);
         Assert.assertTrue(response.indexOf("HttpRequestInfo [authType=null, characterEncoding=UTF-8, contentType=text/xml;charset=UTF-8, contextPath=/http-binding/symbol") == 0);
     }
-
-    private static final String BASE_URL = "http://localhost:8080/http-binding";
 }
