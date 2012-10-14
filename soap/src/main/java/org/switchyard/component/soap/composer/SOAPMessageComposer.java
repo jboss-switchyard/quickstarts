@@ -115,7 +115,7 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
         if (message != null) {
             // check to see if the payload is null or it's a full SOAP Message
             if (message.getContent() == null) {
-                throw new SOAPException("Null response from service");
+                throw new SOAPException("Unable to create SOAP Body due to null message content");
             }
             if (message.getContent() instanceof SOAPMessage) {
                 return new SOAPBindingData((SOAPMessage)message.getContent());
