@@ -19,6 +19,7 @@
 
 package org.switchyard.deploy.internal;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -275,4 +276,47 @@ public class DeploymentTest {
         }
     }
 
+    @Test
+    public void testDuplicateReference() throws Exception {
+        deployWithFail("/naming/duplicate-reference.xml");
+    }
+
+    @Test
+    public void testReferencePromotion() throws Exception {
+        deployWithoutFail("/naming/reference-promotion.xml");
+    }
+
+    @Test
+    public void testDuplicatePromotion() throws Exception {
+        deployWithFail("/naming/duplicate-promotion.xml");
+    }
+
+    @Test
+    public void testPromotedService() throws Exception {
+        deployWithoutFail("/naming/promoted-service.xml");
+    }
+
+    // helper methods
+    private void deployWithoutFail(String name) throws IOException {
+        InputStream swConfigStream = Classes.getResourceAsStream(name, getClass());
+        Deployment deployment = new Deployment(swConfigStream);
+        swConfigStream.close();
+
+        MockDomain serviceDomain = new MockDomain();
+        deployment.init(serviceDomain, ActivatorLoader.createActivators(serviceDomain));
+        deployment.start();
+        deployment.stop();
+    }
+
+    private void deployWithFail(String name) {
+        try {
+            deployWithoutFail(name);
+            Assert.fail("Unexpected success of deployment " + name);
+        } catch (IOException e) {
+            Assert.fail("Can not read configuration " + name);
+        } catch (SwitchYardException e) {
+            // this is expected
+            e.getMessage();
+        }
+    }
 }

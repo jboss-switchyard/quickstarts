@@ -275,6 +275,7 @@ public class Deployment extends AbstractDeployment {
                 Activation activation = new Activation(activator, reference.getQName(), handler);
                 ServiceInterface si = getCompositeReferenceInterface(reference);
                 Binding bindingMetadata = new Binding(binding);
+                validateServiceRegistration(refQName);
                 Service svc = getDomain().registerService(refQName, si, handler, null, bindingMetadata);
                 activation.addService(svc);
                 _referenceBindings.add(activation);
@@ -458,7 +459,6 @@ public class Deployment extends AbstractDeployment {
                 ServiceHandler handler = activator.activateService(service.getQName(), component);
                 Activation activation = new Activation(activator, service.getQName(), handler);
                 ServiceInterface serviceIntf = getComponentServiceInterface(service);
-                validateServiceRegistration(service.getQName());
 
                 Service svc = getDomain().registerService(service.getQName(), serviceIntf, handler, requires, impl);
                 activation.addService(svc);
@@ -467,8 +467,8 @@ public class Deployment extends AbstractDeployment {
                 // register any service promotions, avoiding duplicate service names
                 CompositeServiceModel promotion = servicePromotions.get(service);
                 if (promotion != null && !promotion.getQName().equals(service.getQName())) {
-                    Service promotedService = getDomain().registerService(promotion.getQName(), serviceIntf, handler);
                     validateServiceRegistration(promotion.getQName());
+                    Service promotedService = getDomain().registerService(promotion.getQName(), serviceIntf, handler);
                     activation.addPromotion(promotedService);
                 }
                 
@@ -657,9 +657,14 @@ public class Deployment extends AbstractDeployment {
     }
 
     private void validateServiceRegistration(QName name) {
-        List<Service> services = getDomain().getServices(name);
-        if (services != null && !services.isEmpty()) {
-            throw new SwitchYardException("Service registration with name " + name + " hides " + services);
+        for (ComponentModel component : getConfig().getComposite().getComponents()) {
+            for (ComponentServiceModel service : component.getServices()) {
+                System.out.println(service.getQName());
+                System.out.println(name);
+                if (service.getQName().equals(name)) {
+                    throw new SwitchYardException("Service registration with name " + name + " hides " + service);
+                }
+            }
         }
     }
 }
