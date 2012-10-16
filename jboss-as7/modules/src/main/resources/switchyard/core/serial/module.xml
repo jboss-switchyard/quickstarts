@@ -22,19 +22,21 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 
-<module xmlns="urn:jboss:module:1.0" name="org.switchyard.runtime">
+<module xmlns="urn:jboss:module:1.0" name="org.switchyard.serial">
 
     <resources>
-        <resource-root path="switchyard-runtime-${project.version}.jar"/>
+        <resource-root path="switchyard-serial-${project.version}.jar"/>
+        <resource-root path="switchyard-serial-jackson-${project.version}.jar"/>
+        <!--
+        <resource-root path="switchyard-serial-protostuff-${project.version}.jar"/>
+        -->
     </resources>
 
     <dependencies>
         <module name="javax.api"/>
-        <module name="javax.transaction.api"/>
-        <module name="org.apache.log4j"/>
-        <module name="org.switchyard.api"/>
         <module name="org.switchyard.common"/>
-        <module name="org.switchyard.security" export="true"/>
-        <module name="org.switchyard.serial"/>
+        <module name="org.apache.log4j"/>
+        <module name="org.codehaus.jackson.jackson-core-asl"/>
+        <module name="org.codehaus.jackson.jackson-mapper-asl"/>
     </dependencies>
 </module>

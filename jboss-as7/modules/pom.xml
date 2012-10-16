@@ -155,6 +155,20 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-serial</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-serial-jackson</artifactId>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-serial-protostuff</artifactId>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>org.switchyard</groupId>
             <artifactId>switchyard-bus-camel</artifactId>
         </dependency>
         <dependency>
