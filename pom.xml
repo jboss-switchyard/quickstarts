@@ -1592,11 +1592,6 @@
                 <version>${version.forge}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.naming</groupId>
-                <artifactId>jnpserver</artifactId>
-                <version>${version.naming}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.jboss.netty</groupId>
                 <artifactId>netty</artifactId>
                 <version>${version.netty}</version>
