@@ -71,4 +71,5 @@ public interface TestMixIn {
      * Performed after TesCase TestRunner has finished running all the TestCase test methods.
      */
     void uninitialize();
+
 }

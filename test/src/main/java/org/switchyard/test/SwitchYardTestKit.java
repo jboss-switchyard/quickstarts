@@ -32,9 +32,14 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -105,9 +110,8 @@ public class SwitchYardTestKit {
     /**
      * Test Mix-Ins.
      */
-    private List<Class<? extends TestMixIn>> _testMixIns;
-
-    private List<TestMixIn> _testMixInInstances = new ArrayList<TestMixIn>();
+    private Map<Class<? extends TestMixIn>, MixInEntry> _testMixInInstances =
+        new LinkedHashMap<Class<? extends TestMixIn>, MixInEntry>();
 
     private List<Activator> _activators;
 
@@ -157,7 +161,9 @@ public class SwitchYardTestKit {
                 // No MixIns...
                 _logger.debug("No TestMixIns for test.");
             } else {
-                _testMixIns = Arrays.asList(testMixIns);
+                for (Class<? extends TestMixIn> mixIn : testMixIns) {
+                    _testMixInInstances.put(mixIn, null);
+                }
             }
         }
         createMixInInstances();
@@ -465,7 +471,11 @@ public class SwitchYardTestKit {
      * @return The {@link TestMixIn} instances associated with this test instance.
      */
     public List<TestMixIn> getMixIns() {
-        return _testMixInInstances;
+        List<TestMixIn> mixins = new ArrayList<TestMixIn>();
+        for (MixInEntry entry : _testMixInInstances.values()) {
+            mixins.add(entry.getMixIn());
+        }
+        return Collections.unmodifiableList(mixins);
     }
 
     /**
@@ -478,19 +488,39 @@ public class SwitchYardTestKit {
      * @return The {@link TestMixIn} instance.
      */
     public <T extends TestMixIn> T getMixIn(Class<T> type) {
-        if (_testMixIns == null || _testMixIns.isEmpty()) {
+        if (_testMixInInstances == null || _testMixInInstances.isEmpty()) {
             Assert.fail("No TestMixIns specified on Test class instance.  Use the @TestMixIns annotation.");
         }
-        if (_testMixIns.size() != _testMixInInstances.size()) {
+        if (_testMixInInstances.size() != getMixIns().size()) {
             Assert.fail("TestMixIn instances only available during test method execution.");
         }
 
-        int indexOf = _testMixIns.indexOf(type);
-        if (indexOf == -1) {
+        MixInEntry mixIn = _testMixInInstances.get(type);
+        if (mixIn == null) {
             Assert.fail("Required TestMixIn '" + type.getName() + "' is not specified on TestCase '" + _testInstance.getClass().getName() + "'.");
         }
 
-        return type.cast(_testMixInInstances.get(indexOf));
+        return type.cast(mixIn.getMixIn());
+    }
+
+    /**
+     * Returns required mixin dependencies.
+     * 
+     * @param mixIn Mix in asking about dependencies.
+     * @return Dependencies which are mandatory for mixin
+     */
+    public Set<TestMixIn> getRequiredDependencies(TestMixIn mixIn) {
+        return Collections.unmodifiableSet(_testMixInInstances.get(mixIn.getClass()).getRequiredDeps());
+    }
+
+    /**
+     * Returns optional mixin dependencies.
+     * 
+     * @param mixIn Mix in asking about dependencies.
+     * @return Dependencies which are not mandatory for mixin
+     */
+    public Set<TestMixIn> getOptionalDependencies(TestMixIn mixIn) {
+        return Collections.unmodifiableSet(_testMixInInstances.get(mixIn.getClass()).getOptionalDeps());
     }
 
     /**
@@ -675,81 +705,89 @@ public class SwitchYardTestKit {
     }
 
     private void initializeMixIns() {
-        for (TestMixIn mixIn : _testMixInInstances) {
+        for (TestMixIn mixIn : getMixIns()) {
             mixIn.initialize();
         }
     }
 
     private void mixInBefore() {
-        for (TestMixIn mixIn : _testMixInInstances) {
+        for (TestMixIn mixIn : getMixIns()) {
             mixIn.before(_deployment);
         }
     }
 
     private void mixInAfter() {
         // Apply after MixIns in reverse order...
-        for (int i = _testMixInInstances.size() - 1; i >= 0; i--) {
-            _testMixInInstances.get(i).after(_deployment);
+        List<TestMixIn> mixins = new ArrayList<TestMixIn>(getMixIns());
+        Collections.reverse(mixins);
+        for (TestMixIn mixIn : mixins) {
+            mixIn.after(_deployment);
         }
     }
 
     private void cleanupMixIns() {
         // Destroy MixIns in reverse order...
-        for (int i = _testMixInInstances.size() - 1; i >= 0; i--) {
-            _testMixInInstances.get(i).uninitialize();
+        List<TestMixIn> mixins = new ArrayList<TestMixIn>(getMixIns());
+        Collections.reverse(mixins);
+        for (TestMixIn mixIn : mixins) {
+            mixIn.uninitialize();
         }
     }
 
     private void createMixInInstances() {
-        _testMixInInstances.clear();
-
-        if (_testMixIns == null || _testMixIns.isEmpty()) {
+        if (_testMixInInstances == null || _testMixInInstances.isEmpty()) {
             // No Mix-Ins...
             return;
         }
 
-        List<Class<? extends TestMixIn>> created = new ArrayList<Class<? extends TestMixIn>>();
-        for (Class<? extends TestMixIn> mixInType : _testMixIns) {
-                createMixInRecursively(mixInType, created);
-        }
-        
-        // update type list as well
-        _testMixIns = new ArrayList<Class<? extends TestMixIn>>();
-        for (TestMixIn mixin : _testMixInInstances) {
-            _testMixIns.add(mixin.getClass());
+        Set<Class<? extends TestMixIn>> mixinClasses = new LinkedHashSet<Class<? extends TestMixIn>>(
+            _testMixInInstances.keySet());
+        for (Class<? extends TestMixIn> mixInType : mixinClasses) {
+            createMixInRecursively(mixInType);
         }
     }
 
-    private <T extends TestMixIn> void createMixInRecursively(Class<T> mixInType, List<Class<? extends TestMixIn>> created) {
+    private MixInEntry createMixInRecursively(Class<? extends TestMixIn> mixInType) {
+        if (_testMixInInstances.containsKey(mixInType) && _testMixInInstances.get(mixInType) != null) {
+            return _testMixInInstances.get(mixInType);
+        }
+
+        Set<TestMixIn> requiredDeps = new LinkedHashSet<TestMixIn>();
+        Set<TestMixIn> optionalDeps = new LinkedHashSet<TestMixIn>();
+
         // create dependencies first
         MixInDependencies dependencies = mixInType.getAnnotation(MixInDependencies.class);
         if (dependencies != null) {
             Class<? extends TestMixIn>[] activeDependencies = dependencies.required();
             if (activeDependencies != null && activeDependencies[0] != NullMixIns.class) {
                 for (Class<? extends TestMixIn> mixin : activeDependencies) {
-                    createMixInRecursively(mixin, created);
+                    MixInEntry dependency = createMixInRecursively(mixin);
+                    requiredDeps.add(dependency.getMixIn());
+                    _testMixInInstances.put(mixin, dependency);
                 }
             }
             Class<? extends TestMixIn>[] passiveDependencies = dependencies.optional();
             if (passiveDependencies != null && passiveDependencies[0] != NullMixIns.class) {
                 for (Class<? extends TestMixIn> mixin : passiveDependencies) {
-                    if (_testMixIns.contains(mixin)) {
-                        createMixInRecursively(mixin, created);
+                    if (_testMixInInstances.containsKey(mixin)) {
+                        MixInEntry dependency = createMixInRecursively(mixin);
+                        optionalDeps.add(dependency.getMixIn());
+                        _testMixInInstances.put(mixin, dependency);
                     }
                 }
             }
         }
-        
-        if (created.contains(mixInType)) {
-            return;
-        }
-        
+
         TestMixIn testMixIn = newMixInInstance(mixInType, _testInstance);
         testMixIn.setTestKit(this);
-        _testMixInInstances.add(testMixIn);
-        created.add(mixInType);
+        MixInEntry entry = new MixInEntry(testMixIn, requiredDeps, optionalDeps);
+        // here is where whole trick is done - we must move created mixin after
+        // it's dependencies, so we remove entry and add same instance once again
+        _testMixInInstances.remove(mixInType);
+        _testMixInInstances.put(mixInType, entry);
+        return entry;
     }
-    
+
     protected static <T extends TestMixIn> T newMixInInstance(Class<T> mixInType, Object testInstance) {
         Class<? extends Object> testClass = testInstance.getClass();
         Method[] methods = testClass.getDeclaredMethods();
@@ -928,5 +966,35 @@ public class SwitchYardTestKit {
      * TestMixIns configuration for {@link SwitchYardTestCaseConfig}.
      */
     protected static final class NullMixIns extends AbstractTestMixIn {
+    }
+
+    /**
+     * Helper class to keep mixin and it's dependencies.
+     *
+     */
+    protected static class MixInEntry {
+
+        private final TestMixIn _mixin;
+        private Set<TestMixIn> _requiredDeps;
+        private Set<TestMixIn> _optionalDeps;
+
+        public MixInEntry(TestMixIn mixin, Set<TestMixIn> requiredDeps, Set<TestMixIn> optionalDeps) {
+            this._mixin = mixin;
+            this._requiredDeps = requiredDeps;
+            this._optionalDeps = optionalDeps;
+        }
+
+        public TestMixIn getMixIn() {
+            return _mixin;
+        }
+
+        public Set<TestMixIn> getRequiredDeps() {
+            return _requiredDeps;
+        }
+
+        public Set<TestMixIn> getOptionalDeps() {
+            return _optionalDeps;
+        }
+
     }
 }

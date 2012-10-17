@@ -28,23 +28,28 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.jboss.weld.bootstrap.api.Bootstrap;
+import org.jboss.weld.bootstrap.spi.Deployment;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.environment.se.events.ContainerInitialized;
+import org.jboss.weld.resources.spi.ResourceLoader;
 import org.junit.Assert;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.type.Classes;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.AbstractDeployment;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.test.MixInDependencies;
 import org.switchyard.test.SimpleTestDeployment;
+import org.switchyard.test.TestMixIn;
 
 /**
  * CDI Test Mix-In for deploying the Weld CDI Standalone Edition container.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-@MixInDependencies(required={NamingMixIn.class})
+@MixInDependencies(required={NamingMixIn.class}, optional = {TransactionMixIn.class})
 public class CDIMixIn extends AbstractTestMixIn {
     private static final String BINDING_CONTEXT = "java:comp";
     private static final String BEAN_MANAGER_NAME = "BeanManager";
@@ -58,7 +63,25 @@ public class CDIMixIn extends AbstractTestMixIn {
         super.initialize();
 
         // Deploy the weld container...
-        _weld = new Weld();
+        _weld = new Weld() {
+            @Override
+            protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
+                Deployment deployment = super.createDeployment(resourceLoader, bootstrap);
+                if (getTestKit() != null) {
+                    Set<TestMixIn> optionalDependencies = getTestKit().getOptionalDependencies(CDIMixIn.this);
+                    for (TestMixIn dependency : optionalDependencies) {
+                        if (dependency instanceof CDIMixInParticipant) {
+                           try {
+                               ((CDIMixInParticipant) dependency).participate(deployment);
+                            } catch (Exception e) {
+                                throw new SwitchYardException("Can not initialize Weld due CDIMixIn initialization error", e);
+                            }
+                        }
+                    }
+                }
+                return deployment;
+            }
+        };
         _weldContainer = _weld.initialize();
         _weldContainer.event().select(ContainerInitialized.class).fire(new ContainerInitialized());
 

@@ -20,25 +20,29 @@
  */
 package org.switchyard.test.mixins;
 
-import javax.naming.InitialContext;
+import java.util.Arrays;
+import java.util.HashSet;
+
 import javax.naming.NamingException;
 import javax.transaction.UserTransaction;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.switchyard.test.SwitchYardTestKit;
+import org.switchyard.test.TestMixIn;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
- * Unit test for {@link TransactionMixIn}.
- * 
- * @author Lukasz Dywicki
+ * Unit test which checks usage of {@link CDIMixIn} together with {@link TransactionMixIn}.
  */
-public class TransactionMixInTest {
+public class CDIMixInWithTransaction {
 
     private static TransactionMixIn transactionMixIn;
     private static NamingMixIn namingMixIn;
+    private static CDIMixIn cdiMixIn;
 
     @BeforeClass
     public static void setup() {
@@ -46,28 +50,37 @@ public class TransactionMixInTest {
         namingMixIn.initialize();
         transactionMixIn = new TransactionMixIn();
         transactionMixIn.initialize();
+        cdiMixIn = new CDIMixIn();
+
+        cdiMixIn.setTestKit(createMockTestKit());
+        cdiMixIn.initialize();
     }
-    
+
+    /**
+     * Creates mock to catch TestKit calls.
+     */
+    private static SwitchYardTestKit createMockTestKit() {
+        HashSet<TestMixIn> mixins = new HashSet<TestMixIn>(Arrays.<TestMixIn>asList(transactionMixIn));
+        SwitchYardTestKit testKitMock = mock(SwitchYardTestKit.class);
+        when(testKitMock.getOptionalDependencies(any(CDIMixIn.class))).thenReturn(mixins);
+        return testKitMock;
+    }
+
     @AfterClass
     public static void tearDown() {
+        verify(cdiMixIn.getTestKit());
+        cdiMixIn.uninitialize();
         transactionMixIn.uninitialize();
-    }
-
-    @Test
-    public void testTransaction() throws Exception {
-        UserTransaction transaction = getUserTransaction();
-        transaction.begin();
-
-        transaction.commit();
+        namingMixIn.uninitialize();
     }
 
     @Test
     public void shouldUseSameInstance() throws Exception {
-        assertSame(getUserTransaction(), transactionMixIn.getUserTransaction());
+        assertNotNull(getUserTransaction());
     }
 
     private UserTransaction getUserTransaction() throws NamingException {
-        return (UserTransaction) new InitialContext().lookup("java:jboss/UserTransaction");
+        return cdiMixIn.getObject(UserTransaction.class);
     }
 
 }

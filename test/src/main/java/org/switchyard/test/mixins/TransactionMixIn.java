@@ -18,14 +18,21 @@
  */
 package org.switchyard.test.mixins;
 
+import java.util.Iterator;
+
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.UserTransaction;
 
+import org.apache.log4j.Logger;
+import org.jboss.weld.bootstrap.spi.Deployment;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.test.MixInDependencies;
+import org.switchyard.test.TestMixIn;
+import org.switchyard.test.mixins.jca.JCAMixIn;
+import org.switchyard.test.mixins.transaction.LocalArjunaTransactionServices;
 
 import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 
@@ -34,29 +41,44 @@ import com.arjuna.ats.jta.common.JTAEnvironmentBean;
  * 
  * @author Lukasz Dywicki
  */
-@MixInDependencies(required={NamingMixIn.class})
-public class TransactionMixIn extends AbstractTestMixIn {
+@MixInDependencies(required={NamingMixIn.class}, optional={JCAMixIn.class})
+public class TransactionMixIn extends AbstractTestMixIn 
+    implements CDIMixInParticipant {
 
     /**
      * Location of persistent store for tx logs.
      */
     private String _storeDir = "target/tx-store";
     private JTAEnvironmentBean _jtaEnvironmentBean;
+    private Logger _logger = Logger.getLogger(TransactionMixIn.class);
 
     @Override
     public void initialize() {
-        super.initialize();
-
-        System.setProperty("ObjectStoreEnvironmentBean.objectStoreDir", _storeDir);
-        System.setProperty("com.arjuna.ats.arjuna.objectstore.objectStoreDir", _storeDir);
+        if (getTestKit() != null) {
+            Iterator<TestMixIn> dependencies = getTestKit().getOptionalDependencies(this).iterator();
+            while (_jtaEnvironmentBean == null && dependencies.hasNext()) {
+                TestMixIn testMixIn = dependencies.next();
+                if (testMixIn instanceof TransactionMixInParticipant) {
+                    try {
+                        _logger.debug("Trying to locate JTA environment using " + testMixIn);
+                        _jtaEnvironmentBean = ((TransactionMixInParticipant) testMixIn).locateEnvironmentBean();
+                    } catch (Throwable e) {
+                        throw new SwitchYardException("Exception during locating arjuna environment bean", e);
+                    }
+                }
+            }
+        }
 
         try {
-            InitialContext initialContext = new InitialContext();
-            _jtaEnvironmentBean = new JTAEnvironmentBean();
-
-            initialContext.bind("java:jboss/TransactionManager", _jtaEnvironmentBean.getTransactionManager());
-            initialContext.bind("java:jboss/UserTransaction", _jtaEnvironmentBean.getUserTransaction());
-            initialContext.bind("java:jboss/TransactionSynchronizationRegistry", _jtaEnvironmentBean.getTransactionSynchronizationRegistry());
+            if (_jtaEnvironmentBean == null) {
+                System.setProperty("ObjectStoreEnvironmentBean.objectStoreDir", _storeDir);
+                System.setProperty("com.arjuna.ats.arjuna.objectstore.objectStoreDir", _storeDir);
+                InitialContext initialContext = new InitialContext();
+                _jtaEnvironmentBean = new JTAEnvironmentBean();
+                initialContext.bind("java:jboss/TransactionManager", _jtaEnvironmentBean.getTransactionManager());
+                initialContext.bind("java:jboss/UserTransaction", _jtaEnvironmentBean.getUserTransaction());
+                initialContext.bind("java:jboss/TransactionSynchronizationRegistry", _jtaEnvironmentBean.getTransactionSynchronizationRegistry());
+            }
         } catch (NamingException e) {
             throw new SwitchYardException("Unable to bind transaction manager in JNDI", e);
         }
@@ -85,5 +107,20 @@ public class TransactionMixIn extends AbstractTestMixIn {
     public TransactionSynchronizationRegistry getTransactionSynchronizationRegistry() {
         return _jtaEnvironmentBean.getTransactionSynchronizationRegistry();
     }
+
+    /**
+     * Returns JTAEnvironmentBean used by the TransactionMixIn.
+     * @return JTAEnvironmentBean instance
+     */
+    public JTAEnvironmentBean getEnvironmentBean() {
+        return _jtaEnvironmentBean;
+    }
+
+    @Override
+    public void participate(Deployment deployment) throws Exception {
+        deployment.getServices().add(org.jboss.weld.transaction.spi.TransactionServices.class,
+            new LocalArjunaTransactionServices(_jtaEnvironmentBean));
+    }
+
 
 }

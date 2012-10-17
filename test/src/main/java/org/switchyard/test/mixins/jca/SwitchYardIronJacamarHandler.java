@@ -44,6 +44,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 import com.github.fungal.api.Kernel;
 import com.github.fungal.api.util.FileUtil;
 
@@ -157,7 +158,17 @@ public class SwitchYardIronJacamarHandler {
         _resourceAdapterRepository = _embedded.lookup(RESOURCE_ADAPTER_REPOSITORY_BEAN_NAME, ResourceAdapterRepository.class);
         return _resourceAdapterRepository;
     }
-    
+
+    /**
+     * Get {@link JTAEnvironmentBean}.
+     * 
+     * @return Instance of environment bean.
+     * @throws Throwable When lookup of JTAEnvironmentBean fails.
+     */
+    public JTAEnvironmentBean getEnvironmentBean() throws Throwable {
+        return _embedded.lookup("JTAEnvironmentBean", JTAEnvironmentBean.class);
+    }
+
     /**
      * Get ResourceAdapter uniqueId.
      * 

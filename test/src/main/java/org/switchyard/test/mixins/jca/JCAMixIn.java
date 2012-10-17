@@ -43,8 +43,11 @@ import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.test.MixInDependencies;
 import org.switchyard.test.ShrinkwrapUtil;
 import org.switchyard.test.mixins.AbstractTestMixIn;
-import org.switchyard.test.mixins.NamingMixIn;
 import org.switchyard.test.mixins.HornetQMixIn;
+import org.switchyard.test.mixins.NamingMixIn;
+import org.switchyard.test.mixins.TransactionMixInParticipant;
+
+import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 
 /**
  * JCA Test Mix In for deploying the IronJacamar Embedded.
@@ -53,7 +56,8 @@ import org.switchyard.test.mixins.HornetQMixIn;
  *
  */
 @MixInDependencies(required={NamingMixIn.class}, optional={HornetQMixIn.class})
-public class JCAMixIn extends AbstractTestMixIn {
+public class JCAMixIn extends AbstractTestMixIn implements TransactionMixInParticipant {
+
     private static final String JNDI_PREFIX = "java:jboss";
     private static final String JNDI_USER_TRANSACTION = JNDI_PREFIX + "/UserTransaction";
     private static final String HORNETQ_DEFAULT_CF_JNDI = "java:/JmsXA";
@@ -174,6 +178,11 @@ public class JCAMixIn extends AbstractTestMixIn {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public JTAEnvironmentBean locateEnvironmentBean() throws Throwable {
+        return _ironJacamar.getEnvironmentBean();
     }
 
     // TODO support arbitrary message listener interface for inflow
