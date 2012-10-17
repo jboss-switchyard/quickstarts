@@ -27,6 +27,7 @@
     </resources>
     <dependencies>
         <module name="com.google.protobuf"/>
+        <module name="com.thoughtworks.xstream"/>
         <module name="javax.api"/>
         <module name="org.antlr.antlr-runtime"/>
         <module name="org.eclipse.jdt.core.compiler.ecj"/>

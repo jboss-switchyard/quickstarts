@@ -26,6 +26,7 @@
     </resources>
     <dependencies>
         <module name="javax.api"/>
+        <module name="org.apache.commons.lang"/>
         <module name="org.apache.log4j"/>
         <module name="org.drools"/>
         <module name="org.mvel.mvel2"/>
