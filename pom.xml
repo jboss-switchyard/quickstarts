@@ -209,6 +209,11 @@
                     <artifactId>gwt-maven-plugin</artifactId>
                     <version>${version.maven.gwt.plugin}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>xml-maven-plugin</artifactId>
+                    <version>1.0</version>
+                </plugin>
                 <!-- address "quirks" in m2e 1.0 -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
@@ -273,6 +278,11 @@
                             </pluginExecutions>
                         </lifecycleMappingMetadata>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.jboss.as.plugins</groupId>
+                    <artifactId>jboss-as-maven-plugin</artifactId>
+                    <version>${version.jbossas}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.switchyard</groupId>
@@ -667,7 +677,7 @@
                 <version>${project.version}</version>
             </dependency>
             <!--
-            <dependency> 
+            <dependency>
                 <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-deploy-jboss-as6</artifactId>
                 <version>${project.version}</version>
@@ -1200,6 +1210,17 @@
                 <version>${version.javax.resource}</version>
             </dependency>
             -->
+            <dependency>
+                <groupId>org.jboss.ejb3</groupId>
+                <artifactId>jboss-ejb3-api</artifactId>
+                <version>3.1.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>jboss.jbossws</groupId>
+                        <artifactId>jboss-jaxrpc</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
             <dependency>
                 <groupId>org.jboss.spec.javax.resource</groupId>
                 <artifactId>jboss-connector-api_1.6_spec</artifactId>
