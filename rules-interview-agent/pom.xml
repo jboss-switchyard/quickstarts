@@ -31,30 +31,24 @@
     <artifactId>switchyard-quickstart-rules-interview-agent</artifactId>
     <name>Quickstart : Rules Interview Agent</name>
     <packaging>jar</packaging>
-    <properties>
-        <switchyard.version>0.6.0-SNAPSHOT</switchyard.version>
-    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-api</artifactId>
-            <version>${switchyard.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-plugin</artifactId>
-            <version>${switchyard.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-test</artifactId>
-            <version>${switchyard.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-rules</artifactId>
-            <version>${switchyard.version}</version>
         </dependency>
     </dependencies>
     <build>
@@ -121,7 +115,6 @@
             <plugin>
                 <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-plugin</artifactId>
-                <version>${switchyard.version}</version>
                 <executions>
                     <execution>
                         <goals>
