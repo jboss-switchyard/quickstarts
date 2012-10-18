@@ -31,9 +31,12 @@ public class CDIMixInStopStartTest {
 
     @Test
     public void test() {
-        CDIMixIn mixIn = new CDIMixIn();
+        NamingMixIn namingMixIn = new NamingMixIn();
+        CDIMixIn cdiMixIn = new CDIMixIn();
 
-        mixIn.initialize();
-        mixIn.uninitialize();
+        namingMixIn.initialize();
+        cdiMixIn.initialize();
+        cdiMixIn.uninitialize();
+        namingMixIn.uninitialize();
     }
 }
