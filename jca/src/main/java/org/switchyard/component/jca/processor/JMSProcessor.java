@@ -29,6 +29,7 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.naming.InitialContext;
 
+import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.component.common.composer.MessageComposer;
@@ -54,6 +55,7 @@ public class JMSProcessor extends AbstractOutboundProcessor {
     /** key for destination property. */
     public static final String KEY_DESTINATION = "destination";
 
+    private Logger _logger = Logger.getLogger(JMSProcessor.class);
     private String _userName;
     private String _password;
     private String _transacted;
@@ -128,10 +130,17 @@ public class JMSProcessor extends AbstractOutboundProcessor {
             throw new HandlerException("Failed to process JMS outbound interaction", e);
         } finally {
             try {
-                session.close();
-                connection.close();
+                if (session != null) {
+                    session.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
             } catch (JMSException e) {
-                e.getMessage(); // ignore
+                _logger.warn("Failed to close JMS session/connection: " + e.getMessage());
+                if (_logger.isDebugEnabled()) {
+                    e.printStackTrace();
+                }
             }
         }
     }
