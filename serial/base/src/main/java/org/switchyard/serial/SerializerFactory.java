@@ -20,7 +20,7 @@ package org.switchyard.serial;
 
 import org.switchyard.serial.compress.GZIPSerializer;
 import org.switchyard.serial.compress.ZIPSerializer;
-import org.switchyard.serial.map.MapperSerializer;
+import org.switchyard.serial.graph.GraphSerializer;
 import org.switchyard.serial.spi.SerializationProvider;
 
 /**
@@ -58,19 +58,19 @@ public final class SerializerFactory {
     }
 
     /**
-     * Creates a serializer of the specified format, compression, and mapping capability.
+     * Creates a serializer of the specified format, compression, and graph enabling.
      * @param format the format
      * @param compression the compression
-     * @param map if mapping should be enabled
+     * @param graph if graphing should be enabled
      * @return the serializer
      */
-    public static final Serializer create(FormatType format, CompressionType compression, boolean map) {
+    public static final Serializer create(FormatType format, CompressionType compression, boolean graph) {
         Serializer serializer = null;
         SerializationProvider provider = SerializationProvider.getPrimaryProvider(format);
         if (provider != null) {
             serializer = provider.newSerializer(format);
-            if (map) {
-                serializer = new MapperSerializer(serializer);
+            if (graph) {
+                serializer = new GraphSerializer(serializer);
             }
             if (compression != null) {
                 if (CompressionType.GZIP.equals(compression)) {

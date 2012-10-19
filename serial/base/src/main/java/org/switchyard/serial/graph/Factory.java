@@ -16,30 +16,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.serial.map;
-
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+package org.switchyard.serial.graph;
 
 /**
- * Marks a class as being mappable with a specified {@link Mapper}.
+ * The factory the AccessNode will use.
+ * 
+ * @param <T> the factory type
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-@Target(TYPE)
-@Retention(RUNTIME)
-@Documented
-public @interface Mappable {
+public interface Factory<T> {
 
     /**
-     * The {@link Mapper} to use.
-     * @return
+     * Creates a new object of the specified type.
+     * @param type the type
+     * @return the object
      */
-    @SuppressWarnings("rawtypes")
-    public Class<? extends Mapper> value();
+    public T create(Class<T> type);
 
 }

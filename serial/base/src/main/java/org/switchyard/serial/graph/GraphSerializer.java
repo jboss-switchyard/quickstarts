@@ -16,29 +16,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.serial.map;
+package org.switchyard.serial.graph;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Map;
 
-import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.serial.Serializer;
 import org.switchyard.serial.WrapperSerializer;
 
 /**
- * A wrapper serializer that attempts property mapping.
+ * A wrapper serializer that walks/handles object graphs before/after serialization/deserialization.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public final class MapperSerializer extends WrapperSerializer {
+public final class GraphSerializer extends WrapperSerializer {
 
     /**
      * Constructor with a serializer to wrap.
      * @param serializer the serializer to wrap
      */
-    public MapperSerializer(Serializer serializer) {
+    public GraphSerializer(Serializer serializer) {
         super(serializer);
     }
 
@@ -47,16 +45,9 @@ public final class MapperSerializer extends WrapperSerializer {
      */
     @Override
     public <T> int serialize(T obj, Class<T> type, OutputStream out) throws IOException {
+        Graph graph = new Graph(obj);
         try {
-            Mappable mappable = type.getAnnotation(Mappable.class);
-            if (mappable != null) {
-                @SuppressWarnings("unchecked")
-                Mapper<T> mapper = Construction.construct(mappable.value());
-                Map<String, Object> map = mapper.toMap(obj);
-                return getWrapped().serialize(new Mapped(map), Mapped.class, out);
-            } else {
-                return getWrapped().serialize(obj, type, out);
-            }
+            return getWrapped().serialize(graph, Graph.class, out);
         } finally {
             if (isCloseEnabled()) {
                 out.close();
@@ -68,17 +59,11 @@ public final class MapperSerializer extends WrapperSerializer {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T deserialize(InputStream in, Class<T> type) throws IOException {
         try {
-            Mappable mappable = type.getAnnotation(Mappable.class);
-            if (mappable != null) {
-                @SuppressWarnings("unchecked")
-                Mapper<T> mapper = Construction.construct(mappable.value());
-                Mapped mapped = getWrapped().deserialize(in, Mapped.class);
-                return mapper.toObject(mapped.getMap());
-            } else {
-                return getWrapped().deserialize(in, type);
-            }
+            Graph graph = getWrapped().deserialize(in, Graph.class);
+            return (T)graph.decomposeRoot();
         } finally {
             if (isCloseEnabled()) {
                 in.close();

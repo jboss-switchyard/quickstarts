@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @authors tag. All rights reserved.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.serial.protostuff;
+package org.switchyard.serial.jackson;
 
 import junit.framework.Assert;
 
@@ -25,19 +25,19 @@ import org.switchyard.serial.CompressionType;
 import org.switchyard.serial.FormatType;
 import org.switchyard.serial.Serializer;
 import org.switchyard.serial.SerializerFactory;
-import org.switchyard.serial.protostuff.ProtostuffSerializationData.Car;
-import org.switchyard.serial.protostuff.ProtostuffSerializationData.Person;
+import org.switchyard.serial.jackson.JacksonSerializationData.Car;
+import org.switchyard.serial.jackson.JacksonSerializationData.Person;
 
 /**
  * Tests various serializers, using both a passed in object, and a mapped object, uncompressed and compressed.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public final class ProtostuffSerializationTest {
+public final class JacksonComparisonSerializationTest {
 
     @Test
     public void testSerialization() throws Exception {
-        for (FormatType format : FormatType.values()) {
+        for (FormatType format : new FormatType[]{FormatType.JSON, FormatType.SER_OBJECT, FormatType.XML_BEAN}) {
             doTest(format);
         }
     }

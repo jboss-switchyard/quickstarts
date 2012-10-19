@@ -64,7 +64,12 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-serial</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
             <artifactId>switchyard-serial-jackson</artifactId>
+            <scope>test</scope>
         </dependency>
         <!-- external dependencies -->
         <dependency>

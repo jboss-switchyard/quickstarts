@@ -16,31 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.serial.map;
+package org.switchyard.serial.graph;
 
-import java.util.Map;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
- * Converts an object to a map and vice-versa.
- * 
- * @param <T> the type of object
- * 
+ * The strategy the AccessNode will use.
+ *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public interface Mapper<T> {
+@Target(TYPE)
+@Retention(RUNTIME)
+@Documented
+public @interface Strategy {
 
-    /**
-     * Convert the object to a map.
-     * @param obj the object
-     * @return the map
-     */
-    public Map<String, Object> toMap(T obj);
+    /** The tye of access. */
+    AccessType access() default AccessType.BEAN;
 
-    /**
-     * Convert the map to an object.
-     * @param map the map
-     * @return the object
-     */
-    public T toObject(Map<String, Object> map);
+    /** The type of coverage. */
+    CoverageType coverage() default CoverageType.INCLUSIVE;
+
+    /** The factory to create new objects. */
+    @SuppressWarnings("rawtypes")
+    Class<? extends Factory> factory() default DefaultFactory.class;
 
 }

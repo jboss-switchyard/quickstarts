@@ -20,22 +20,21 @@
 package org.switchyard.internal;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.switchyard.Property;
 import org.switchyard.Scope;
 import org.switchyard.common.lang.Strings;
-import org.switchyard.internal.ContextProperty.ContextPropertyMapper;
-import org.switchyard.serial.map.Mappable;
-import org.switchyard.serial.map.Mapper;
+import org.switchyard.internal.ContextProperty.ContextPropertyFactory;
+import org.switchyard.serial.graph.AccessType;
+import org.switchyard.serial.graph.Factory;
+import org.switchyard.serial.graph.Strategy;
 
 /**
  * Serializable implementation of <code>Context</code>.
  */
-@Mappable(ContextPropertyMapper.class)
+@Strategy(access=AccessType.FIELD, factory=ContextPropertyFactory.class)
 public class ContextProperty implements Property {
     
     private String _name;
@@ -168,30 +167,15 @@ public class ContextProperty implements Property {
     }
     
     /**
-     * A ContextProperty Mapper.
+     * The serialization factory for context properties.
      */
-    public static final class ContextPropertyMapper implements Mapper<ContextProperty> {
+    public static final class ContextPropertyFactory implements Factory<ContextProperty> {
+        /**
+         * {@inheritDoc}
+         */
         @Override
-        public Map<String, Object> toMap(ContextProperty obj) {
-            Map<String, Object> map = new LinkedHashMap<String, Object>();
-            map.put("name", obj._name);
-            map.put("scope", obj._scope);
-            map.put("value", obj._value);
-            map.put("labels", new TreeSet<String>(obj._labels));
-            return map;
-        }
-        @Override
-        public ContextProperty toObject(Map<String, Object> map) {
-            ContextProperty obj = new ContextProperty();
-            obj._name = (String)map.get("name");
-            obj._scope = (Scope)map.get("scope");
-            obj._value = map.get("value");
-            @SuppressWarnings("unchecked")
-            Set<String> labels = (Set<String>)map.get("labels");
-            if (labels != null) {
-                obj._labels.addAll(labels);
-            }
-            return obj;
+        public ContextProperty create(Class<ContextProperty> type) {
+            return new ContextProperty();
         }
     }
 }

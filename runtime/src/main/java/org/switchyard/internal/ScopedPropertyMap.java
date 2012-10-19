@@ -19,25 +19,21 @@
 
 package org.switchyard.internal;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.switchyard.Property;
 import org.switchyard.Scope;
-import org.switchyard.internal.ContextProperty.ContextPropertyMapper;
-import org.switchyard.internal.ScopedPropertyMap.ScopedPropertyMapMapper;
-import org.switchyard.serial.map.Mappable;
-import org.switchyard.serial.map.Mapper;
+import org.switchyard.serial.graph.AccessType;
+import org.switchyard.serial.graph.Strategy;
 
 /**
  * A simple container for a set of scoped property maps.  Properties that are 
  * put and get are done stored based on the scope of the property.
  */
-@Mappable(ScopedPropertyMapMapper.class)
+@Strategy(access=AccessType.FIELD)
 public class ScopedPropertyMap {
     private Map<Scope, Map<String, Property>> _props = 
         new HashMap<Scope, Map<String, Property>>();
@@ -129,39 +125,5 @@ public class ScopedPropertyMap {
             }
         }
         return props;
-    }
-    
-    /**
-     * A ScopedPropertyMap Mapper.
-     */
-    public static final class ScopedPropertyMapMapper implements Mapper<ScopedPropertyMap> {
-        private final ContextPropertyMapper _cpm = new ContextPropertyMapper();
-        @Override
-        public Map<String, Object> toMap(ScopedPropertyMap obj) {
-            Map<String, Object> map = new HashMap<String, Object>();
-            List<Map<String, Object>> properties = new ArrayList<Map<String, Object>>();
-            for (Property p : obj.get()) {
-                if (p instanceof ContextProperty) {
-                    ContextProperty cp = (ContextProperty)p;
-                    properties.add(_cpm.toMap(cp));
-                }
-            }
-            map.put("properties", properties);
-            return map;
-        }
-        @Override
-        public ScopedPropertyMap toObject(Map<String, Object> map) {
-            ScopedPropertyMap obj = new ScopedPropertyMap();
-            if (map != null) {
-                @SuppressWarnings("unchecked")
-                List<Map<String, Object>> properties = (List<Map<String, Object>>)map.get("properties");
-                if (properties != null) {
-                    for (Map<String, Object> p : properties) {
-                        obj.put(_cpm.toObject(p));
-                    }
-                }
-            }
-            return obj;
-        }
     }
 }

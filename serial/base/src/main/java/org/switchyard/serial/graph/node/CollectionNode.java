@@ -16,48 +16,71 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.serial.map;
+package org.switchyard.serial.graph.node;
 
-import java.io.Serializable;
-import java.util.Map;
+import java.util.Collection;
+import java.util.LinkedList;
+
+import org.switchyard.serial.graph.Graph;
 
 /**
- * Wrapper object for a map; required since many serializers need a concrete wrapper type.
+ * A node representing a Collection.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 @SuppressWarnings("serial")
-public class Mapped implements Serializable {
+public final class CollectionNode implements Node {
 
-    private Map<String, Object> _map;
+    private LinkedList<Integer> _ids;
 
     /**
      * Default constructor.
      */
-    public Mapped() {}
+    public CollectionNode() {}
 
     /**
-     * Constructor with a map.
-     * @param map the map
+     * Gets the ids.
+     * @return the ids
      */
-    public Mapped(Map<String, Object> map) {
-        setMap(map);
+    public LinkedList<Integer> getIds() {
+        return _ids;
     }
 
     /**
-     * Gets the map.
-     * @return the map
+     * Sets the ids.
+     * @param ids the ids
      */
-    public Map<String, Object> getMap() {
-        return _map;
+    public void setIds(LinkedList<Integer> ids) {
+        _ids = ids;
     }
 
     /**
-     * Sets the map.
-     * @param map the map
+     * {@inheritDoc}
      */
-    public void setMap(Map<String, Object> map) {
-        _map = map;
+    @Override
+    @SuppressWarnings("rawtypes")
+    public void compose(Object obj, Graph graph) {
+        _ids = new LinkedList<Integer>();
+        Collection coll = (Collection)obj;
+        for (Object o : coll) {
+            _ids.add(NodeBuilder.build(o, graph));
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public Object decompose(Graph graph) {
+        if (_ids != null) {
+            Collection coll = new LinkedList();
+            for (Integer id : _ids) {
+                coll.add(graph.decomposeReference(id));
+            }
+            return coll;
+        }
+        return null;
     }
 
 }

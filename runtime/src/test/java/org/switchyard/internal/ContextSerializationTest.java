@@ -93,6 +93,7 @@ public final class ContextSerializationTest {
         FormatType format = FormatType.JSON; //FormatType.XML_BEAN; //FormatType.SER_OBJECT;
         CompressionType compression = null; //CompressionType.ZIP; //CompressionType.GZIP;
         Serializer ser = SerializerFactory.create(format, compression, true);
+        //ser.setPrettyPrint(true);
         byte[] bytes = ser.serialize(obj, type);
         //System.out.println(new String(bytes));
         return ser.deserialize(bytes, type);
