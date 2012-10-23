@@ -45,6 +45,7 @@
     </properties>
     <modules>
         <module>common</module>
+        <module>remote</module>
         <module>bean</module>
         <module>rules</module>
         <module>bpm</module>
