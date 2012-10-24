@@ -88,6 +88,7 @@
         <version.hibernate.core>4.0.1.Final</version.hibernate.core>
         <version.hibernate.entitymanager>4.0.1.Final</version.hibernate.entitymanager>
         <version.hornetq>2.2.13.Final</version.hornetq>
+        <version.infinispan>5.1.2.FINAL</version.infinispan>
         <version.ironjacamar>1.0.9.Final</version.ironjacamar>
         <!-- Jaxen is imported from parent POM but properties are NOT imported -->
         <!-- and this property is required for release assembly. -->
@@ -766,6 +767,11 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-remote</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-runtime</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -847,6 +853,11 @@
             <dependency>
                 <groupId>org.switchyard.components</groupId>
                 <artifactId>switchyard-component-common-rules</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.components</groupId>
+                <artifactId>switchyard-component-remote</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -1545,6 +1556,11 @@
                 <artifactId>jboss-as-dist</artifactId>
                 <version>${version.jbossas}</version>
                 <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.infinispan</groupId>
+                <artifactId>infinispan-tree</artifactId>
+                <version>${version.infinispan}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.as</groupId>
