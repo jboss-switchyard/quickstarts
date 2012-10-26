@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:g="http://www.jboss.org/drools/flow/gpd" xmlns:tns="http://www.jboss.org/drools" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="Definition" expressionLanguage="http://www.mvel.org/2.0" targetNamespace="http://www.jboss.org/drools" typeLanguage="http://www.java.com/javaTypes">
+  <process id="FaultEventProcess" tns:packageName="org.switchyard.component.bpm" name="FaultEventProcess" isExecutable="true" processType="Private">
+    <extensionElements/>
+    <property id="faultEvent" itemSubjectRef="ItemDefinition_HandlerException"/>
+    <startEvent id="_1" name="StartProcess">
+      <outgoing>_1-_4</outgoing>
+    </startEvent>
+    <endEvent id="_3" name="EndProcess">
+      <incoming>SequenceFlow_4</incoming>
+      <terminateEventDefinition id="TerminateEventDefinition_1"/>
+    </endEvent>
+    <task id="_4" tns:taskName="SwitchYard Service" name="TestService">
+      <incoming>_1-_4</incoming>
+      <outgoing>SequenceFlow_8</outgoing>
+      <ioSpecification id="InputOutputSpecification_1">
+        <dataInput id="DataInput_ServiceName" name="ServiceName"/>
+        <dataInput id="DataInput_1" name="FaultEventType"/>
+        <inputSet id="InputSet_1">
+          <dataInputRefs>DataInput_ServiceName</dataInputRefs>
+          <dataInputRefs>DataInput_1</dataInputRefs>
+        </inputSet>
+        <outputSet id="OutputSet_1"/>
+      </ioSpecification>
+      <dataInputAssociation id="DataInputAssociation_1">
+        <targetRef>DataInput_ServiceName</targetRef>
+        <assignment id="Assignment_1">
+          <from xsi:type="tFormalExpression" id="FormalExpression_1">TestService</from>
+          <to xsi:type="tFormalExpression" id="FormalExpression_2">DataInput_ServiceName</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataInputAssociation id="DataInputAssociation_3">
+        <targetRef>DataInput_1</targetRef>
+        <assignment id="Assignment_3">
+          <from xsi:type="tFormalExpression" id="FormalExpression_4">FaultSignal</from>
+          <to xsi:type="tFormalExpression" id="FormalExpression_3">DataInput_1</to>
+        </assignment>
+      </dataInputAssociation>
+    </task>
+    <sequenceFlow id="_1-_4" sourceRef="_1" targetRef="_4"/>
+    <intermediateCatchEvent id="IntermediateCatchEvent_1" name="FaultEvent">
+      <outgoing>SequenceFlow_5</outgoing>
+      <dataOutput id="DataOutput_FaultEvent" itemSubjectRef="ItemDefinition_HandlerException" name="faultEvent"/>
+      <dataOutputAssociation id="DataOutputAssociation_2">
+        <sourceRef>DataOutput_FaultEvent</sourceRef>
+        <targetRef>faultEvent</targetRef>
+      </dataOutputAssociation>
+      <outputSet id="OutputSet_3">
+        <dataOutputRefs>DataOutput_FaultEvent</dataOutputRefs>
+      </outputSet>
+      <signalEventDefinition id="SignalEventDefinition_FaultSignal" signalRef="FaultSignal"/>
+    </intermediateCatchEvent>
+    <scriptTask id="FaultScript" name="FaultEventScript" scriptFormat="http://www.java.com/java">
+      <incoming>SequenceFlow_5</incoming>
+      <outgoing>SequenceFlow_12</outgoing>
+      <script>System.out.println(&quot;********** FaultEventProcess/FaultEventScript: &quot; + faultEvent + &quot; **********&quot;);</script>
+    </scriptTask>
+    <sequenceFlow id="SequenceFlow_5" tns:priority="1" name="" sourceRef="IntermediateCatchEvent_1" targetRef="FaultScript"/>
+    <scriptTask id="ScriptTask_1" name="SuccessScript" scriptFormat="http://www.java.com/java">
+      <incoming>SequenceFlow_8</incoming>
+      <outgoing>SequenceFlow_6</outgoing>
+      <script>System.out.println(&quot;********** FaultEventProcess/TestSuccessScript **********&quot;);</script>
+    </scriptTask>
+    <exclusiveGateway id="ExclusiveGateway_2" name="" gatewayDirection="Converging">
+      <incoming>SequenceFlow_6</incoming>
+      <incoming>SequenceFlow_12</incoming>
+      <outgoing>SequenceFlow_4</outgoing>
+    </exclusiveGateway>
+    <sequenceFlow id="SequenceFlow_4" tns:priority="1" name="" sourceRef="ExclusiveGateway_2" targetRef="_3"/>
+    <sequenceFlow id="SequenceFlow_6" tns:priority="1" name="" sourceRef="ScriptTask_1" targetRef="ExclusiveGateway_2"/>
+    <sequenceFlow id="SequenceFlow_12" tns:priority="1" name="" sourceRef="FaultScript" targetRef="ExclusiveGateway_2"/>
+    <sequenceFlow id="SequenceFlow_8" tns:priority="1" name="" sourceRef="_4" targetRef="ScriptTask_1"/>
+  </process>
+  <signal id="FaultSignal" name="FaultSignal"/>
+  <itemDefinition id="ItemDefinition_HandlerException" structureRef="org.switchyard.HandlerException"/>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1" name="FaultEventProcess">
+    <bpmndi:BPMNPlane id="BPMNPlane_Process_1" bpmnElement="TestService">
+      <bpmndi:BPMNShape id="BPMNShape_StartEvent_1" bpmnElement="_1">
+        <dc:Bounds height="48.0" width="48.0" x="16.0" y="16.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_1" bpmnElement="_3">
+        <dc:Bounds height="48.0" width="48.0" x="512.0" y="67.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_1" bpmnElement="_4">
+        <dc:Bounds height="48.0" width="127.0" x="96.0" y="16.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_2" bpmnElement="_1-_4" sourceElement="BPMNShape_StartEvent_1" targetElement="BPMNShape_Task_1">
+        <di:waypoint xsi:type="dc:Point" x="64.0" y="40.0"/>
+        <di:waypoint xsi:type="dc:Point" x="96.0" y="40.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_IntermediateCatchEvent_1" bpmnElement="IntermediateCatchEvent_1">
+        <dc:Bounds height="36.0" width="36.0" x="142.0" y="127.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_FaultScript" bpmnElement="FaultScript">
+        <dc:Bounds height="50.0" width="110.0" x="260.0" y="120.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_7" bpmnElement="SequenceFlow_5" sourceElement="BPMNShape_IntermediateCatchEvent_1" targetElement="BPMNShape_FaultScript">
+        <di:waypoint xsi:type="dc:Point" x="178.0" y="145.0"/>
+        <di:waypoint xsi:type="dc:Point" x="260.0" y="145.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_ScriptTask_1" bpmnElement="ScriptTask_1">
+        <dc:Bounds height="50.0" width="110.0" x="260.0" y="16.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_2" bpmnElement="ExclusiveGateway_2" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="418.0" y="66.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_5" bpmnElement="SequenceFlow_4" sourceElement="BPMNShape_ExclusiveGateway_2" targetElement="BPMNShape_EndEvent_1">
+        <di:waypoint xsi:type="dc:Point" x="469.0" y="91.0"/>
+        <di:waypoint xsi:type="dc:Point" x="512.0" y="91.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_6" bpmnElement="SequenceFlow_6" sourceElement="BPMNShape_ScriptTask_1" targetElement="BPMNShape_ExclusiveGateway_2">
+        <di:waypoint xsi:type="dc:Point" x="370.0" y="41.0"/>
+        <di:waypoint xsi:type="dc:Point" x="418.0" y="91.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_13" bpmnElement="SequenceFlow_12" sourceElement="BPMNShape_FaultScript" targetElement="BPMNShape_ExclusiveGateway_2">
+        <di:waypoint xsi:type="dc:Point" x="370.0" y="145.0"/>
+        <di:waypoint xsi:type="dc:Point" x="418.0" y="91.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_9" bpmnElement="SequenceFlow_8" sourceElement="BPMNShape_Task_1" targetElement="BPMNShape_ScriptTask_1">
+        <di:waypoint xsi:type="dc:Point" x="223.0" y="40.0"/>
+        <di:waypoint xsi:type="dc:Point" x="260.0" y="41.0"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

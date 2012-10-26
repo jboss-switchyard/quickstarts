@@ -73,4 +73,23 @@ public class DroolsTaskManager implements TaskManager {
         _processRuntime.getWorkItemManager().abortWorkItem(id.longValue());
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void signalEvent(String type, Object event) {
+        _processRuntime.signalEvent(type, event);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void signalEvent(String type, Object event, Long processInstanceId) {
+        if (processInstanceId == null) {
+            throw new IllegalArgumentException("null processInstanceId");
+        }
+        _processRuntime.signalEvent(type, event, processInstanceId.longValue());
+    }
+
 }

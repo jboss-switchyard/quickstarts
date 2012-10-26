@@ -33,6 +33,7 @@ import org.drools.builder.KnowledgeBuilderFactory;
 import org.drools.builder.ResourceType;
 import org.drools.io.ResourceFactory;
 import org.drools.runtime.StatefulKnowledgeSession;
+import org.drools.runtime.process.WorkflowProcessInstance;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,6 +54,7 @@ import org.switchyard.component.bpm.exchange.BPMExchangeHandlerFactory;
 import org.switchyard.component.bpm.task.work.SwitchYardServiceTaskHandler;
 import org.switchyard.config.model.resource.v1.V1ResourceModel;
 import org.switchyard.metadata.InOnlyService;
+import org.switchyard.metadata.InOutService;
 import org.switchyard.test.SwitchYardRunner;
 
 /**
@@ -65,6 +67,8 @@ public class BPMDroolsTests {
 
     private static final String TEST_CALL_SERVICE = "org/switchyard/component/bpm/drools/BPMDroolsTests-CallService.bpmn";
     private static final String TEST_CONTROL_PROCESS = "org/switchyard/component/bpm/drools/BPMDroolsTests-ControlProcess.bpmn";
+    private static final String TEST_FAULT_RESULT_PROCESS = "org/switchyard/component/bpm/drools/BPMDroolsTests-FaultResultProcess.bpmn";
+    private static final String TEST_FAULT_EVENT_PROCESS = "org/switchyard/component/bpm/drools/BPMDroolsTests-FaultEventProcess.bpmn";
     private static final String TEST_REUSE_HANDLER = "org/switchyard/component/bpm/drools/BPMDroolsTests-ReuseHandler.bpmn";
     private static final String TEST_RULES_FIRED = "org/switchyard/component/bpm/drools/BPMDroolsTests-RulesFired.bpmn";
 
@@ -127,6 +131,82 @@ public class BPMDroolsTests {
         handler.stop();
         handler.destroy();
         Assert.assertEquals("message handled", holder.getValue());
+    }
+
+    @Test
+    public void testFaultResultProcessSuccess() throws Exception {
+        runFaultResultProcess(false);
+    }
+
+    @Test
+    public void testFaultResultProcessFailure() throws Exception {
+        runFaultResultProcess(true);
+    }
+
+    private void runFaultResultProcess(final boolean bomb) throws Exception {
+        serviceDomain.registerService(new QName("TestService"), new InOnlyService(), new BaseHandler(){
+            public void handleMessage(Exchange exchange) throws HandlerException {
+                if (bomb) {
+                    throw new HandlerException("BOOM!");
+                }
+            }
+        });
+        serviceDomain.registerServiceReference(new QName("TestService"), new InOutService());
+        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
+        kbuilder.add(ResourceFactory.newClassPathResource(TEST_FAULT_RESULT_PROCESS), ResourceType.BPMN2);
+        KnowledgeBase kbase = kbuilder.newKnowledgeBase();
+        StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession();
+        SwitchYardServiceTaskHandler ssth = new SwitchYardServiceTaskHandler();
+        ssth.setServiceDomain(serviceDomain);
+        ksession.getWorkItemManager().registerWorkItemHandler(ssth.getName(), new DroolsWorkItemHandler(ssth, new DroolsTaskManager(ksession)));
+        WorkflowProcessInstance wpi = (WorkflowProcessInstance)ksession.startProcess("FaultResultProcess");
+        HandlerException he = (HandlerException)wpi.getVariable("faultResult");
+        if (bomb) {
+            Assert.assertNotNull(he);
+            Assert.assertEquals("BOOM!", he.getMessage());
+        } else {
+            Assert.assertNull(he);
+        }
+        ksession.halt();
+        ksession.dispose();
+    }
+
+    @Test
+    public void testFaultEventProcessSuccess() throws Exception {
+        runFaultEventProcess(false);
+    }
+
+    @Test
+    public void testFaultEventProcessFailure() throws Exception {
+        runFaultEventProcess(true);
+    }
+
+    private void runFaultEventProcess(final boolean bomb) throws Exception {
+        serviceDomain.registerService(new QName("TestService"), new InOnlyService(), new BaseHandler(){
+            public void handleMessage(Exchange exchange) throws HandlerException {
+                if (bomb) {
+                    throw new HandlerException("BOOM!");
+                }
+            }
+        });
+        serviceDomain.registerServiceReference(new QName("TestService"), new InOutService());
+        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
+        kbuilder.add(ResourceFactory.newClassPathResource(TEST_FAULT_EVENT_PROCESS), ResourceType.BPMN2);
+        KnowledgeBase kbase = kbuilder.newKnowledgeBase();
+        StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession();
+        SwitchYardServiceTaskHandler ssth = new SwitchYardServiceTaskHandler();
+        ssth.setServiceDomain(serviceDomain);
+        ksession.getWorkItemManager().registerWorkItemHandler(ssth.getName(), new DroolsWorkItemHandler(ssth, new DroolsTaskManager(ksession)));
+        WorkflowProcessInstance wpi = (WorkflowProcessInstance)ksession.startProcess("FaultEventProcess");
+        HandlerException he = (HandlerException)wpi.getVariable("faultEvent");
+        if (bomb) {
+            Assert.assertNotNull(he);
+            Assert.assertEquals("BOOM!", he.getMessage());
+        } else {
+            Assert.assertNull(he);
+        }
+        ksession.halt();
+        ksession.dispose();
     }
 
     @Test

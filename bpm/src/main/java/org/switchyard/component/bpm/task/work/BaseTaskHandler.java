@@ -18,6 +18,9 @@
  */
 package org.switchyard.component.bpm.task.work;
 
+import static org.switchyard.component.bpm.ProcessConstants.MESSAGE_CONTENT_IN;
+import static org.switchyard.component.bpm.ProcessConstants.MESSAGE_CONTENT_OUT;
+
 import org.switchyard.ServiceDomain;
 
 /**
@@ -28,8 +31,8 @@ import org.switchyard.ServiceDomain;
 public abstract class BaseTaskHandler implements TaskHandler {
 
     private String _name;
-    private String _messageContentInName;
-    private String _messageContentOutName;
+    private String _messageContentInName = MESSAGE_CONTENT_IN;
+    private String _messageContentOutName = MESSAGE_CONTENT_OUT;
     private String _targetNamespace;
     private ServiceDomain _serviceDomain;
 

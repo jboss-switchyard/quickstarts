@@ -34,7 +34,6 @@ import org.switchyard.ServiceReference;
 import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
-import org.switchyard.exception.DeliveryException;
 
 /**
  * Executes SwitchYard Services.
@@ -45,12 +44,18 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
 
     private static final Logger LOGGER = Logger.getLogger(SwitchYardServiceTaskHandler.class);
 
-    /** SwitchYard Service . */
+    /** SwitchYard Service. */
     public static final String SWITCHYARD_SERVICE = "SwitchYard Service";
-    /** ServiceName . */
+    /** ServiceName. */
     public static final String SERVICE_NAME = "ServiceName";
-    /** ServiceOperationName . */
+    /** ServiceOperationName. */
     public static final String SERVICE_OPERATION_NAME = "ServiceOperationName";
+    /** FaultResultName. */
+    public static final String FAULT_RESULT_NAME = "FaultResultName";
+    /** FaultEventType. */
+    public static final String FAULT_EVENT_TYPE = "FaultEventType";
+    /** CompleteAfterFault. */
+    public static final String COMPLETE_AFTER_FAULT = "CompleteAfterFault";
 
     /**
      * Constructs a new SwitchYardServiceTaskHandler with the default name ("SwitchYard Service").
@@ -72,65 +77,72 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
      */
     @Override
     public void executeTask(Task task, TaskManager manager) {
-        String problem = null;
         Map<String,Object> parameters = task.getParameters();
-        Map<String,Object> results = null;
-        QName serviceName = getServiceName(parameters);
-        if (serviceName != null) {
+        Map<String,Object> results = task.getResults();
+        if (results == null) {
+            results = new HashMap<String, Object>();
+        }
+        Object fault = null;
+        try {
+            QName serviceName = getServiceName(parameters);
+            if (serviceName == null) {
+                throw new IllegalStateException(SERVICE_NAME + " == null");
+            }
             ServiceReference serviceRef = getServiceDomain().getServiceReference(serviceName);
-            if (serviceRef != null) {
-                String operation = (String)parameters.get(SERVICE_OPERATION_NAME);
-                final Exchange exchangeIn;
-                SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
-                if (operation != null) {
-                    exchangeIn = serviceRef.createExchange(operation, inOutHandler);
-                } else {
-                    exchangeIn = serviceRef.createExchange(inOutHandler);
-                }
-                Context contextIn = exchangeIn.getContext();
-                for (Map.Entry<String,Object> entry : parameters.entrySet()) {
-                    contextIn.setProperty(entry.getKey(), entry.getValue(), Scope.IN);
-                }
-                Message messageIn = exchangeIn.createMessage();
-                String messageContentInName = getMessageContentInName();
-                Object messageContentIn = parameters.get(messageContentInName);
-                if (messageContentIn != null) {
-                    messageIn.setContent(messageContentIn);
-                }
-                if (inOutHandler != null && ExchangePattern.IN_OUT.equals(
-                        exchangeIn.getContract().getConsumerOperation().getExchangePattern())) {
-                    exchangeIn.send(messageIn);
-                    try {
-                        Exchange exchangeOut = inOutHandler.waitForOut();
-                        Message messageOut = exchangeOut.getMessage();
-                        Object messageContentOut = messageOut.getContent();
-                        results = task.getResults();
-                        if (results == null) {
-                            results = new HashMap<String,Object>();
-                        }
-                        String messageContentOutName = getMessageContentOutName();
-                        results.put(messageContentOutName, messageContentOut);
-                        Context contextOut = exchangeOut.getContext();
-                        for (Property property : contextOut.getProperties(Scope.OUT)) {
-                            results.put(property.getName(), property.getValue());
-                        }
-                    } catch (DeliveryException e) {
-                        problem = e.getMessage();
-                    }
-                } else {
-                    exchangeIn.send(messageIn);
+            if (serviceRef == null) {
+                throw new IllegalStateException("serviceRef (" + serviceName + ") == null");
+            }
+            String operation = (String)parameters.get(SERVICE_OPERATION_NAME);
+            final Exchange exchangeIn;
+            FaultHandler handler = new FaultHandler();
+            if (operation != null) {
+                exchangeIn = serviceRef.createExchange(operation, handler);
+            } else {
+                exchangeIn = serviceRef.createExchange(handler);
+            }
+            Context contextIn = exchangeIn.getContext();
+            for (Map.Entry<String,Object> entry : parameters.entrySet()) {
+                contextIn.setProperty(entry.getKey(), entry.getValue(), Scope.IN);
+            }
+            Message messageIn = exchangeIn.createMessage();
+            String messageContentInName = getMessageContentInName();
+            Object messageContentIn = parameters.get(messageContentInName);
+            if (messageContentIn != null) {
+                messageIn.setContent(messageContentIn);
+            }
+            if (ExchangePattern.IN_OUT.equals(exchangeIn.getContract().getConsumerOperation().getExchangePattern())) {
+                exchangeIn.send(messageIn);
+                Exchange exchangeOut = handler.waitForOut();
+                Message messageOut = exchangeOut.getMessage();
+                Object messageContentOut = messageOut.getContent();
+                String messageContentOutName = getMessageContentOutName();
+                results.put(messageContentOutName, messageContentOut);
+                Context contextOut = exchangeOut.getContext();
+                for (Property property : contextOut.getProperties(Scope.OUT)) {
+                    results.put(property.getName(), property.getValue());
                 }
             } else {
-                problem = "serviceRef (" + serviceName + ") == null";
+                exchangeIn.send(messageIn);
+            }
+            fault = handler.getFault();
+        } catch (Throwable t) {
+            LOGGER.error(t);
+            fault = t;
+        }
+        if (fault != null) {
+            String faultResultName = getFaultResultName(parameters);
+            if (faultResultName != null) {
+                results.put(faultResultName, fault);
+            }
+            String faultEventType = getFaultEventType(parameters);
+            if (faultEventType != null) {
+                manager.signalEvent(faultEventType, fault, task.getProcessInstanceId());
+            }
+            if (completeAfterFault(parameters)) {
+                manager.completeTask(task.getId(), results);
             }
         } else {
-            problem = SERVICE_NAME + " == null";
-        }
-        if (problem == null) {
             manager.completeTask(task.getId(), results);
-        } else {
-            LOGGER.error(problem);
-            manager.abortTask(task.getId());
         }
     }
 
@@ -150,4 +162,45 @@ public class SwitchYardServiceTaskHandler extends BaseTaskHandler {
         }
         return serviceName;
     }
+
+    private String getFaultResultName(Map<String, Object> parameters) {
+        Object p = parameters.get(FAULT_RESULT_NAME);
+        if (p != null) {
+            return Strings.trimToNull(String.valueOf(p));
+        }
+        return null;
+    }
+
+    private String getFaultEventType(Map<String, Object> parameters) {
+        Object p = parameters.get(FAULT_EVENT_TYPE);
+        if (p != null) {
+            return Strings.trimToNull(String.valueOf(p));
+        }
+        return null;
+    }
+
+    private boolean completeAfterFault(Map<String, Object> parameters) {
+        Object p = parameters.get(COMPLETE_AFTER_FAULT);
+        if (p != null) {
+            if (p instanceof Boolean) {
+                return ((Boolean)p).booleanValue();
+            } else if (p instanceof String) {
+                return Boolean.valueOf(((String)p).trim()).booleanValue();
+            }
+        }
+        return true;
+    }
+
+    private static final class FaultHandler extends SynchronousInOutHandler {
+        private Object _fault;
+        private Object getFault() {
+            return _fault;
+        }
+        @Override
+        public void handleFault(Exchange exchange) {
+            _fault = exchange.getMessage().getContent();
+            super.handleFault(exchange);
+        }
+    }
+
 }

@@ -46,4 +46,19 @@ public interface TaskManager {
      */
     public void abortTask(Long id);
 
+    /**
+     * Signals an event in any process instance.
+     * @param type the type of event
+     * @param event the event object
+     */
+    public void signalEvent(String type, Object event);
+
+    /**
+     * Signals an event in a specific process instance.
+     * @param type the type of event
+     * @param event the event object
+     * @param processInstanceId the id of the process instance to single
+     */
+    public void signalEvent(String type, Object event, Long processInstanceId);
+
 }
