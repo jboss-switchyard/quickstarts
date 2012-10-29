@@ -71,13 +71,15 @@ public class HandlerProcessor implements Processor {
 
         for (ExchangeHandler handler : _handlers) {
             if (exchange.getState() == ExchangeState.FAULT) {
-                // we don't have to throw exception to treat SY exchange as a fault one
                 try {
                     handler.handleFault(exchange);
                 } catch (Exception e) {
                     // exception thrown during handling FAULT state cannot be forwarded
                     // anywhere, because we already have problem to handle
-                    _logger.error("Unexpected exception thrown during handling FAULT response", e);
+                    _logger.error("Unexpected exception thrown during handling FAULT response. "
+                        + "This exception can not be handled, thus is only logged. "
+                        + "If you don't want see messages like this consider handling "
+                        + "exceptions in your handler logic", e);
                 }
             } else {
                 handler.handleMessage(exchange);

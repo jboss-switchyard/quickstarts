@@ -49,7 +49,6 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.log4j.Logger;
 import org.switchyard.ExchangePattern;
-import org.switchyard.HandlerException;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.bus.camel.audit.AuditInterceptStrategy;
@@ -171,7 +170,7 @@ public class CamelExchangeBus implements ExchangeBus {
                     .processRef(VALIDATION.name())
                     .processRef(CONSUMER_CALLBACK.name());
 
-                OnExceptionDefinition onException = new OnExceptionDefinition(HandlerException.class);
+                OnExceptionDefinition onException = new OnExceptionDefinition(Throwable.class);
                 onException.handled(true);
                 onException.addOutput(filterDefinition);
                 // register exception closure
@@ -189,7 +188,6 @@ public class CamelExchangeBus implements ExchangeBus {
                     .processRef(PROVIDER_CALLBACK.name())
                     .processRef(TRANSACTION_HANDLER.name())
                     .addOutput(filterDefinition);
-                
             }
         };
 

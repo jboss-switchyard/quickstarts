@@ -33,7 +33,8 @@ import org.switchyard.internal.ExchangeImpl;
 /**
  * Processor which catches {@link HandlerException} before calling processor.
  * 
- * If an exception occurs 
+ * If an exception occurs it's caught by this processor except exceptions reported
+ * during handling FAULT exchanges. These errors are handled in HandlerProcessor.
  */
 public class FaultProcessor extends DelegateAsyncProcessor {
 
@@ -48,14 +49,37 @@ public class FaultProcessor extends DelegateAsyncProcessor {
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        HandlerException exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, HandlerException.class);
-        final ExchangeImpl exc = exchange.getProperty(ExchangeDispatcher.SY_EXCHANGE, ExchangeImpl.class);
+        return super.process(exchange, new AsyncCallback() {
+            @Override
+            public void done(boolean doneSync) {
+                if (doneSync) { // verify exchange only if processing is done
+                    ExchangeImpl exc = exchange.getProperty(ExchangeDispatcher.SY_EXCHANGE, ExchangeImpl.class);
+                    handle(exchange.getException(), exc);
+                }
+                callback.done(doneSync);
+            }
+        });
+    }
 
-        if (exception != null && exc.getState() == ExchangeState.OK) {
-            // turn state of exchange from OK to FAULT and phase to OUT
-            exc.sendFault(exc.createMessage().setContent(exception.isWrapper() ? exception.getCause() : exception));
+    /**
+     * Method which tries to send FAULT if there is exception reported by processor
+     * and exchange state is still OK.
+     * 
+     * @param throwable Exception thrown by target processor.
+     * @param exchange SwitchYard exchange related to exception.
+     */
+    protected void handle(Throwable throwable, ExchangeImpl exchange) {
+        if (throwable != null && ExchangeState.OK == exchange.getState()) {
+            HandlerException content = detectHandlerException(throwable);
+            exchange.sendFault(exchange.createMessage().setContent(content));
         }
-        return super.process(exchange, callback);
+    }
+
+    private HandlerException detectHandlerException(Throwable throwable) {
+        if (throwable instanceof HandlerException) {
+            return (HandlerException) throwable;
+        }
+        return new HandlerException(throwable);
     }
 
     @Override

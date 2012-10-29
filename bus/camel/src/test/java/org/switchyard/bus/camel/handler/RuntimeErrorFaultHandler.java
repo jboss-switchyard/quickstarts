@@ -19,26 +19,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.switchyard.bus.camel;
+package org.switchyard.bus.camel.handler;
 
+import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
-import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
 
 /**
- * An exchange handler which throws exception during message handling and
- * error handling.
+ * Handler which throws standard exception during handling message and reports
+ * runtime exception during handling faults.
  */
-public class ErrorExchangeHandler implements ExchangeHandler {
+public class RuntimeErrorFaultHandler extends BaseHandler {
 
     @Override
     public void handleMessage(Exchange exchange) throws HandlerException {
-        throw new HandlerException("Service is not implemented");
+        throw new HandlerException("Standard processing exception");
     }
 
     @Override
     public void handleFault(Exchange exchange) {
-        // it's service handler this method will not be called
+        throw new RuntimeException("Fault processing error");
     }
 
 }
