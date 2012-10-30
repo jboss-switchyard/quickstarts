@@ -25,13 +25,13 @@
     <parent>
         <groupId>org.switchyard.quickstarts</groupId>
         <artifactId>switchyard-quickstart-parent</artifactId>
-        <version>0.6.0-SNAPSHOT</version>
+        <version>0.6.0.Beta2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-quickstart-camel-bus-cdi</artifactId>
     <name>Quickstart : Camel Exchange Bus CDI</name>
     <properties>
-        <switchyard.version>0.6.0-SNAPSHOT</switchyard.version>
+        <switchyard.version>0.6.0.Beta2</switchyard.version>
     </properties>
     <dependencies>
         <dependency>
