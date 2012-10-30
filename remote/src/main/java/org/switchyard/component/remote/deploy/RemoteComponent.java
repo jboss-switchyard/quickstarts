@@ -30,6 +30,7 @@ import org.switchyard.deploy.BaseComponent;
  */
 public class RemoteComponent extends BaseComponent {
     
+    private static final String CONTEXT_PATH = "switchyard-remote";
     private RemoteEndpointPublisher _endpointPublisher;
 
     /**
@@ -40,7 +41,7 @@ public class RemoteComponent extends BaseComponent {
         setName("RemoteComponent");
         try {
             _endpointPublisher = ServiceLoader.load(RemoteEndpointPublisher.class).iterator().next();
-            _endpointPublisher.init("remote");
+            _endpointPublisher.init(CONTEXT_PATH);
             _endpointPublisher.start();
         } catch (Exception ex) {
             ex.printStackTrace();
