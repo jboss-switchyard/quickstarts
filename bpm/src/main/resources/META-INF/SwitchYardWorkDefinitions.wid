@@ -21,10 +21,12 @@ import org.drools.process.core.datatype.impl.type.StringDataType;
         "name" : "SwitchYard Service",
         "parameters" : [
             "ServiceName" : new StringDataType(),
-            "ServiceOperationName" : new StringDataType()
+            "ServiceOperationName" : new StringDataType(),
+            "FaultResultName" : new StringDataType(),
+            "FaultEventType" : new StringDataType(),
+            "CompleteAfterFault" : new StringDataType()
         ],
         "displayName" : "SwitchYard Service",
         "icon" : "org/switchyard/component/bpm/SwitchYard-16x16.gif"
-        //,"customEditor" : "org.drools.eclipse.flow.common.editor.editpart.work.SampleCustomEditor"
     ]
 ]
