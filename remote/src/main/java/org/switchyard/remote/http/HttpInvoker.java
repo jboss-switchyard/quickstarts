@@ -26,9 +26,11 @@ import java.net.URL;
 import org.apache.log4j.Logger;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
+import org.switchyard.ExchangePattern;
 import org.switchyard.Message;
 import org.switchyard.Property;
 import org.switchyard.Scope;
+import org.switchyard.internal.DefaultContext;
 import org.switchyard.remote.RemoteInvoker;
 import org.switchyard.remote.RemoteMessage;
 import org.switchyard.serial.FormatType;
@@ -40,6 +42,11 @@ import org.switchyard.transform.TransformSequence;
  * Remote service invoker which uses HTTP as a transport.
  */
 public class HttpInvoker implements RemoteInvoker {
+    
+    /**
+     * HTTP header used to communicate the domain name for a service invocation.
+     */
+    public static final String SERVICE_HEADER = "switchyard-service";
 
     private static Logger _log = Logger.getLogger(HttpInvoker.class);
     private Serializer _serializer = SerializerFactory.create(FormatType.JSON, null, true);
@@ -76,8 +83,14 @@ public class HttpInvoker implements RemoteInvoker {
         
         try {
             RemoteMessage reply = invoke(request);
-            Message msg = exchange.getMessage().setContent(reply.getContent());
-            exchange.send(msg);
+            if (isInOut(exchange) && reply != null) {
+                Message msg = exchange.getMessage().setContent(reply.getContent());
+                if (reply.isFault()) {
+                    exchange.sendFault(msg);
+                } else {
+                    exchange.send(msg);
+                }
+            }
         } catch (java.io.IOException ioEx) {
             ioEx.printStackTrace();
             exchange.sendFault(exchange.createMessage().setContent(ioEx));
@@ -96,10 +109,13 @@ public class HttpInvoker implements RemoteInvoker {
         // Initialize HTTP connection
         conn = (HttpURLConnection)_endpoint.openConnection();
         conn.setDoOutput(true);
+        conn.addRequestProperty(SERVICE_HEADER, request.getService().toString());
         conn.connect();
         OutputStream os = conn.getOutputStream();
         
-        cleanContext(request.getContext());
+        // Sanitize context properties
+        Context ctx = cloneContext(request.getContext());
+        request.setContext(ctx);
         
         // Write the request message
         _serializer.serialize(request, RemoteMessage.class, os);
@@ -118,14 +134,28 @@ public class HttpInvoker implements RemoteInvoker {
     }
     
     // Remove troublesome context properties from remote message.
-    private void cleanContext(Context context) {
-        Property inTransform = context.getProperty(TransformSequence.class.getName(), Scope.IN);
-        Property outTransform = context.getProperty(TransformSequence.class.getName(), Scope.OUT);
+    private Context cloneContext(Context context) {
+        Context newCtx = new DefaultContext();
+        // return empty context if context to clone is null
+        if (context == null) {
+            return newCtx;
+        }
+        
+        newCtx.setProperties(context.getProperties());
+        Property inTransform = newCtx.getProperty(TransformSequence.class.getName(), Scope.IN);
+        Property outTransform = newCtx.getProperty(TransformSequence.class.getName(), Scope.OUT);
         if (inTransform != null) {
-            context.removeProperty(inTransform);
+            newCtx.removeProperty(inTransform);
         }
         if (outTransform != null) {
-            context.removeProperty(outTransform);
+            newCtx.removeProperty(outTransform);
         }
+        
+        return newCtx;
+    }
+    
+    private boolean isInOut(Exchange exchange) {
+        return ExchangePattern.IN_OUT.equals(
+                exchange.getContract().getConsumerOperation().getExchangePattern());
     }
 }

@@ -35,6 +35,7 @@ public class RemoteMessage {
     private QName _service;
     private QName _domain;
     private String _operation;
+    private boolean _fault;
     
     /**
      * Create an empty remote message.
@@ -141,5 +142,23 @@ public class RemoteMessage {
     public RemoteMessage setOperation(String operation) {
         _operation = operation;
         return this;
+    }
+    
+    /**
+     * Specifies whether this remote message represents a fault.
+     * @param isFault true if this is a fault, false otherwise
+     * @return a reference to this RemoteMessage
+     */
+    public RemoteMessage setFault(boolean isFault) {
+        _fault = isFault;
+        return this;
+    }
+    
+    /**
+     * Indicates whether this remote message represents a fault.
+     * @return true if this is a fault, false otherwise
+     */
+    public boolean isFault() {
+        return _fault;
     }
 }
