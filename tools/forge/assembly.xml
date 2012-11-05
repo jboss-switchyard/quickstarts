@@ -43,6 +43,7 @@
             </outputFileNameMapping>
 	    <includes>
               <include>org.switchyard:switchyard-forge-bean-plugin</include>
+              <include>org.switchyard:switchyard-forge-common-plugin</include>
               <include>org.switchyard:switchyard-forge-bpm-plugin</include>
               <include>org.switchyard:switchyard-forge-camel-plugin</include>
               <!--
@@ -53,6 +54,9 @@
               <include>org.switchyard:switchyard-forge-resteasy-plugin</include>
               <include>org.switchyard:switchyard-forge-rules-plugin</include>
               <include>org.switchyard:switchyard-forge-soap-plugin</include>
+              <include>org.switchyard:switchyard-forge-jca-plugin</include>
+              <include>org.switchyard:switchyard-forge-hornetq-plugin</include>
+              <include>org.switchyard:switchyard-forge-remote-plugin</include>
             </includes>
         </dependencySet>
         <dependencySet>

@@ -45,6 +45,10 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-forge-common-plugin</artifactId>
+        </dependency>
+         <dependency>
+            <groupId>org.switchyard</groupId>
             <artifactId>switchyard-forge-bpm-plugin</artifactId>
         </dependency>
         <dependency>
@@ -71,7 +75,19 @@
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-forge-soap-plugin</artifactId>
         </dependency>
-        <!-- dependencies -->
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-forge-jca-plugin</artifactId>
+        </dependency>
+         <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-forge-hornetq-plugin</artifactId>
+        </dependency>
+         <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-forge-remote-plugin</artifactId>
+        </dependency>
+         <!-- dependencies -->
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-api</artifactId>

@@ -4,12 +4,16 @@
 	<!-- core and component plugins -->
 	<resource-root path="switchyard-forge-plugin-${project.version}.jar"/>
 	<resource-root path="switchyard-forge-bean-plugin-${project.version}.jar"/>
+	<resource-root path="switchyard-forge-common-plugin-${project.version}.jar"/>
 	<resource-root path="switchyard-forge-soap-plugin-${project.version}.jar"/>
 	<resource-root path="switchyard-forge-resteasy-plugin-${project.version}.jar"/>
 	<resource-root path="switchyard-forge-rules-plugin-${project.version}.jar"/>
 	<resource-root path="switchyard-forge-bpm-plugin-${project.version}.jar"/>
 	<resource-root path="switchyard-forge-camel-plugin-${project.version}.jar"/>
 	<resource-root path="switchyard-forge-http-plugin-${project.version}.jar"/>
+	<resource-root path="switchyard-forge-jca-plugin-${project.version}.jar"/>
+	<resource-root path="switchyard-forge-hornetq-plugin-${project.version}.jar"/>
+	<resource-root path="switchyard-forge-remote-plugin-${project.version}.jar"/>
   </resources>
   
   <dependencies>
