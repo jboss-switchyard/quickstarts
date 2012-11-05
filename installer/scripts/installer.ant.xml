@@ -50,9 +50,13 @@
     <target name="download-sy-tools-check">
         <condition property="sy.tools.not.available">
           <and>
-            <isset property="installForge"/>
+            <or>
+              <isset property="installForge"/>
+              <isset property="installSYConsole"/>
+              <isset property="installBPELConsole"/>
+            </or>
             <not>
-	      <available file="res/switchyard-tools.zip"/>
+              <available file="res/switchyard-tools.zip"/>
             </not>
           </and>
         </condition>
@@ -221,6 +225,7 @@
         depends="download-sy-as7, get-jboss-path">
         <property name="AS7_PATH" value="${basedir}/jboss-as-${as7.version}"/>
         <property name="QUICKSTART_PATH" value="${basedir}"/>
+        <property name="INSTALL_PATH" value="${AS7_PATH}"/>
         <condition property="isAS7">
            <or>
             <available file="${AS7_PATH}/jboss-modules.jar" />
@@ -237,19 +242,19 @@
         </condition>
         <condition property="switchyardResourcesAlreadyInstalled">
           <or>
-            <available file="switchyard" filepath="${AS7_PATH}/modules/org" />
+            <available file="switchyard" filepath="${INSTALL_PATH}/modules/org" />
             <isset property="SKIP_AS7"/>
           </or>
         </condition>
         <condition property="switchyardConsoleAlreadyInstalled">
           <or>
-            <available file="switchyard-console-application.war" filepath="${AS7_PATH}/modules/org/jboss/as/console/main" />
+            <available file="switchyard-console-application.war" filepath="${INSTALL_PATH}/modules/org/jboss/as/console/main" />
             <isset property="SKIP_CONSOLE"/>
           </or>
         </condition>
         <condition property="BPELConsoleAlreadyInstalled">
           <or>
-            <available file="switchyard-bpel-console.war" filepath="${AS7_PATH}/standalone/deployments" />
+            <available file="switchyard-bpel-console.war" filepath="${INSTALL_PATH}/standalone/deployments" />
             <isset property="SKIP_BPEL_CONSOLE"/>
           </or>
         </condition>
@@ -273,7 +278,7 @@
 
     <target name="unzipSwitchyardResources" unless="switchyardResourcesAlreadyInstalled">
         <!-- Install into the AS7 install.... -->
-        <unzip src="res/switchyard-as7-bundle.zip" dest="${AS7_PATH}" overwrite="true">
+        <unzip src="res/switchyard-as7-bundle.zip" dest="${INSTALL_PATH}" overwrite="true">
             <patternset>
                 <include name="standalone/**" />
                 <include name="modules/**" />
@@ -282,15 +287,27 @@
         <xslt style="res/standalone.xsl"
               basedir="${AS7_PATH}/standalone/configuration"
               destdir="${AS7_PATH}/standalone/configuration"
-              includes="standalone.xml,standalone-preview.xml,standalone-full.xml"/>
+              includes="standalone.xml,standalone-preview.xml,standalone-full.xml,standalone-ha.xml"/>
         <move overwrite="true" todir="${AS7_PATH}/standalone/configuration">
           <filelist dir="${AS7_PATH}/standalone/configuration">
             <file name="standalone.html"/>
           </filelist>
           <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
         </move>
+        <move overwrite="true" todir="${AS7_PATH}/standalone/configuration">
+          <filelist dir="${AS7_PATH}/standalone/configuration">
+            <file name="standalone-full.html"/>
+          </filelist>
+          <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
+        <move overwrite="true" todir="${AS7_PATH}/standalone/configuration">
+          <filelist dir="${AS7_PATH}/standalone/configuration">
+            <file name="standalone-ha.html"/>
+          </filelist>
+          <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
         <!-- Allow this move to fail without error in case of 7.1.0.Beta1 -->
-        <move overwrite="true" todir="${AS7_PATH}/standalone/configuration"
+        <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration"
           failonerror="false">
           <filelist dir="${AS7_PATH}/standalone/configuration">
             <file name="standalone-preview.html"/>
@@ -369,17 +386,17 @@
     </target>
 
     <target name="install-sy-console" if="installSYConsole" depends="request-sy-console-install, download-sy-console">
-    	<copy todir="${AS7_PATH}/modules/org/jboss/as/console/main" overwrite="true" file="res/switchyard-console-application.war"/>
+    	<copy todir="${INSTALL_PATH}/modules/org/jboss/as/console/main" overwrite="true" file="res/switchyard-console-application.war"/>
 		<antcall target="transform-console-module" />
 		<antcall target="transform-hibernate-module" />
 	</target>
 
-	<target name="transform-console-module" depends="download-sy-tools">
+	<target name="transform-console-module">
         <xslt style="res/console_module.xsl"
               basedir="${AS7_PATH}/modules/org/jboss/as/console/main"
               destdir="${AS7_PATH}/modules/org/jboss/as/console/main"
               includes="module.xml"/>
-        <move overwrite="true" todir="${AS7_PATH}/modules/org/jboss/as/console/main">
+        <move overwrite="true" todir="${INSTALL_PATH}/modules/org/jboss/as/console/main">
           <filelist dir="${AS7_PATH}/modules/org/jboss/as/console/main">
             <file name="module.html"/>
           </filelist>
@@ -387,12 +404,12 @@
         </move>
     </target>
 
-	<target name="transform-hibernate-module" depends="download-sy-tools">
+	<target name="transform-hibernate-module">
         <xslt style="res/hibernate_module.xsl"
               basedir="${AS7_PATH}/modules/org/hibernate/main"
               destdir="${AS7_PATH}/modules/org/hibernate/main"
               includes="module.xml"/>
-        <move overwrite="true" todir="${AS7_PATH}/modules/org/hibernate/main">
+        <move overwrite="true" todir="${INSTALL_PATH}/modules/org/hibernate/main">
           <filelist dir="${AS7_PATH}/modules/org/hibernate/main">
             <file name="module.html"/>
           </filelist>
@@ -401,8 +418,8 @@
     </target>
 
     <target name="install-bpel-console" if="installBPELConsole" depends="request-bpel-console-install, download-bpel-console">
-    	<copy todir="${AS7_PATH}/standalone/deployments" overwrite="true" file="res/switchyard-bpel-console-server.war"/>
-        <copy todir="${AS7_PATH}/standalone/deployments" overwrite="true" file="res/switchyard-bpel-console.war"/>
+    	<copy todir="${INSTALL_PATH}/standalone/deployments" overwrite="true" file="res/switchyard-bpel-console-server.war"/>
+        <copy todir="${INSTALL_PATH}/standalone/deployments" overwrite="true" file="res/switchyard-bpel-console.war"/>
     </target>
 
     <target name="install-forge" if="installForge" depends="request-forge-install, request-forge-home, set-forge-home, validate-forge-home-version, download-sy-forge-module" unless="SKIP_FORGE">
@@ -492,8 +509,8 @@
     </target>
 
     <target name="install-jbpm-console" if="installJBPMConsole" depends="request-jbpm-console-install">
-    <copy todir="${AS7_PATH}/standalone/deployments" file="${basedir}/switchyard-jbpm-gwt-console-server.war"/>
-        <copy todir="${AS7_PATH}/standalone/deployments" file="${basedir}/jbpm-gwt-console.war"/>
+    <copy todir="${INSTALL_PATH}/standalone/deployments" file="${basedir}/switchyard-jbpm-gwt-console-server.war"/>
+        <copy todir="${INSTALL_PATH}/standalone/deployments" file="${basedir}/jbpm-gwt-console.war"/>
     </target>
 
     -->
