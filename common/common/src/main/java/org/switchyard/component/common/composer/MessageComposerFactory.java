@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 import org.apache.log4j.Logger;
+import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.composer.MessageComposerModel;
 
 /**
@@ -61,7 +62,7 @@ public abstract class MessageComposerFactory<D extends BindingData> {
         MessageComposer<D> messageComposer = null;
         MessageComposerFactory<D> messageComposerFactory = MessageComposerFactory.getMessageComposerFactory(getBindingDataClass());
         if (model != null) {
-            messageComposer = messageComposerFactory.newMessageComposer((Class<MessageComposer<D>>)model.getClazz());
+            messageComposer = messageComposerFactory.newMessageComposer((Class<MessageComposer<D>>)Classes.forName(model.getClazz()));
         } else {
             messageComposer = messageComposerFactory.newMessageComposerDefault();
         }

@@ -19,7 +19,6 @@
 
 package org.switchyard.tools.forge.camel;
 
-import java.lang.reflect.Method;
 import java.net.URI;
 
 import javax.inject.Inject;
@@ -36,18 +35,17 @@ import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
 import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
-import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
-import org.switchyard.config.model.selector.v1.V1StaticOperationSelectorModel;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
+import org.switchyard.tools.forge.common.CommonFacet;
 
 /**
  * Forge plugin for Camel binding commands.
  */
 @Alias("camel-binding")
 @RequiresProject
-@RequiresFacet({SwitchYardFacet.class, CamelFacet.class})
+@RequiresFacet({SwitchYardFacet.class, CommonFacet.class, CamelFacet.class})
 @Topic("SOA")
 @Help("Provides commands to manage Camel service bindings in SwitchYard.")
 public class CamelBindingPlugin implements Plugin {
@@ -59,7 +57,6 @@ public class CamelBindingPlugin implements Plugin {
      * Bind a promoted service using the Camel binding.
      * @param serviceName name of the service to bind
      * @param configURI camel endpoint URI
-     * @param operationName target operation name for the SwitchYard service
      * @param out shell output
      */
     @Command(value = "bind-service", help = "Add a Camel binding to a service.")
@@ -72,10 +69,6 @@ public class CamelBindingPlugin implements Plugin {
                     name = "configURI",
                     description = "The configuration URI") 
             final String configURI,
-            @Option(required = false,
-                    name = "operationName",
-                    description = "The operation name") 
-            final String operationName,
             final PipeOut out) {
 
         SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
@@ -88,21 +81,6 @@ public class CamelBindingPlugin implements Plugin {
         
         V1CamelBindingModel binding = new V1CamelBindingModel();
         binding.setConfigURI(URI.create(configURI));
-        
-        // Add an operation selector if an operation name has been specified
-        if (operationName != null) {
-            V1StaticOperationSelectorModel operation = new V1StaticOperationSelectorModel();
-            operation.setOperationName(operationName);
-            try {
-                Method setChildMethod = binding.getClass().getMethod("setChildModel", new Class[]{Model.class});
-                setChildMethod.setAccessible(true);
-                setChildMethod.invoke(binding, operation);
-                setChildMethod.setAccessible(false);
-            } catch (Exception e) {
-                out.println(out.renderColor(ShellColor.YELLOW, "Failed to set operationName: " + e.getMessage()));
-            }
-        }
-        
         service.addBinding(binding);
         switchYard.saveConfig();
         out.println("Added binding.camel to service " + serviceName);

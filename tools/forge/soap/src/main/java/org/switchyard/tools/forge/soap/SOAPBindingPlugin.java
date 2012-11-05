@@ -40,13 +40,14 @@ import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.InterfaceModel;
 import org.switchyard.config.model.composite.v1.V1InterfaceModel;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
+import org.switchyard.tools.forge.common.CommonFacet;
 
 /**
  * Forge commands related to SOAP bindings.
  */
 @Alias("soap-binding")
 @RequiresProject
-@RequiresFacet({SwitchYardFacet.class, SOAPFacet.class})
+@RequiresFacet({SwitchYardFacet.class, CommonFacet.class, SOAPFacet.class})
 @Topic("SOA")
 @Help("Provides commands to manage SOAP service bindings in SwitchYard.")
 public class SOAPBindingPlugin implements Plugin {

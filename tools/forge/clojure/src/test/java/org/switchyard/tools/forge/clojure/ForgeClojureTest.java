@@ -87,13 +87,13 @@ public class ForgeClojureTest extends GenericTestForge {
      * The single test containing some test cases.
      */
     @Test
-    public void test() {
+    public void test() throws Exception {
         try {
             //clojure-service create
             testCreateClojureService();
         } catch (Exception e) {
             System.out.println(getOutput());
-            e.printStackTrace();
+            throw e;
         }
     }
 

@@ -26,6 +26,7 @@ import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresPackagingType;
 import org.switchyard.tools.forge.AbstractFacet;
+import org.switchyard.tools.forge.common.CommonFacet;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 
 /**
@@ -34,7 +35,7 @@ import org.switchyard.tools.forge.plugin.SwitchYardFacet;
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
 @Alias("switchyard.rest")
-@RequiresFacet({ DependencyFacet.class, PackagingFacet.class, SwitchYardFacet.class })
+@RequiresFacet({ DependencyFacet.class, PackagingFacet.class, SwitchYardFacet.class, CommonFacet.class })
 @RequiresPackagingType(PackagingType.JAR)
 public class RESTEasyFacet extends AbstractFacet {
     

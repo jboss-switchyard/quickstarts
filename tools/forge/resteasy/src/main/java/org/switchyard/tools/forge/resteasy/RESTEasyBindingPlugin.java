@@ -37,6 +37,7 @@ import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
+import org.switchyard.tools.forge.common.CommonFacet;
 
 /**
  * Forge commands related to RESTEasy bindings.
@@ -45,7 +46,7 @@ import org.switchyard.tools.forge.plugin.SwitchYardFacet;
  */
 @Alias("rest-binding")
 @RequiresProject
-@RequiresFacet({SwitchYardFacet.class, RESTEasyFacet.class})
+@RequiresFacet({SwitchYardFacet.class, CommonFacet.class, RESTEasyFacet.class})
 @Topic("SOA")
 @Help("Provides commands to manage RESTEasy service bindings in SwitchYard.")
 public class RESTEasyBindingPlugin implements Plugin {

@@ -35,6 +35,7 @@
     <description>SwitchYard Components Forge Plugin</description>
     <modules>
         <module>bean</module>
+        <module>common</module>
         <module>camel</module>
         <module>clojure</module>
         <module>soap</module>
@@ -42,6 +43,9 @@
         <module>rules</module>
         <module>bpm</module>
         <module>http</module>
+        <module>jca</module>
+        <module>hornetq</module>
+        <module>remote</module>
     </modules>
     <profiles>
         <profile>

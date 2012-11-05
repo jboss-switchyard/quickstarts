@@ -36,8 +36,8 @@ import org.jboss.forge.shell.plugins.Topic;
 import org.switchyard.component.http.config.model.HttpBindingModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
-import org.switchyard.config.model.selector.v1.V1StaticOperationSelectorModel;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
+import org.switchyard.tools.forge.common.CommonFacet;
 
 /**
  * Forge commands related to HTTP bindings.
@@ -46,7 +46,7 @@ import org.switchyard.tools.forge.plugin.SwitchYardFacet;
  */
 @Alias("http-binding")
 @RequiresProject
-@RequiresFacet({SwitchYardFacet.class, HttpFacet.class})
+@RequiresFacet({SwitchYardFacet.class, CommonFacet.class, HttpFacet.class})
 @Topic("SOA")
 @Help("Provides commands to manage HTTP service bindings in SwitchYard.")
 public class HttpBindingPlugin implements Plugin {
@@ -58,7 +58,6 @@ public class HttpBindingPlugin implements Plugin {
      * Add a HTTP binding to a SwitchYard service.
      * @param serviceName name of the reference to bind
      * @param contextPath the context path where the HTTP endpoints will be hosted
-     * @param operationName target operation name for the SwitchYard service
      * @param out shell output
      */
     @Command(value = "bind-service", help = "Add a HTTP binding to a service.")
@@ -67,11 +66,7 @@ public class HttpBindingPlugin implements Plugin {
                     name = "serviceName",
                     description = "The service name") 
             final String serviceName,
-            @Option(required = true,
-                    name = "operationName",
-                    description = "The operation name") 
-            final String operationName,
-            @Option(required = true,
+            @Option(required = false,
                     name = "contextPath",
                     description = "The context root for this HTTP endpoint, defaults to [projectName]")
             final String contextPath,
@@ -91,12 +86,6 @@ public class HttpBindingPlugin implements Plugin {
             binding.setContextPath(contextPath);
         } else {
             binding.setContextPath(projectName);
-        }
-        // Add an operation selector if an operation name has been specified
-        if (operationName != null) {
-            V1StaticOperationSelectorModel operation = new V1StaticOperationSelectorModel();
-            operation.setOperationName(operationName);
-            binding.setOperationSelector(operation);
         }
         service.addBinding(binding);
 

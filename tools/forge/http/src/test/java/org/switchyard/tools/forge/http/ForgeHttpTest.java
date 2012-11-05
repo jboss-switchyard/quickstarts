@@ -26,6 +26,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.switchyard.tools.forge.GenericTestForge;
 import org.switchyard.tools.forge.bean.BeanFacet;
+import org.switchyard.tools.forge.common.CommonFacet;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 
 /**
@@ -57,6 +58,7 @@ public class ForgeHttpTest extends GenericTestForge {
         // and configuration files are added via Arquillian.
         JavaArchive archive = AbstractShellTest.getDeployment();
         archive.addPackages(true, SwitchYardFacet.class.getPackage());
+        archive.addPackages(true, CommonFacet.class.getPackage());
         archive.addPackages(true, HttpFacet.class.getPackage());
         archive.addPackages(true, BeanFacet.class.getPackage());
         return archive;
@@ -66,7 +68,7 @@ public class ForgeHttpTest extends GenericTestForge {
      * The single test containing some test cases.
      */
     @Test
-    public void test() {
+    public void test() throws Exception {
         try {
             //soap-binding bind-service
             testBindService();
@@ -74,7 +76,7 @@ public class ForgeHttpTest extends GenericTestForge {
             testBindReference();
         } catch (Exception e) {
             System.out.println(getOutput());
-            e.printStackTrace();
+            throw e;
         }
     }
     
@@ -96,7 +98,6 @@ public class ForgeHttpTest extends GenericTestForge {
         mavenBuildSkipTest();
 
         getShell().execute("switchyard promote-service --serviceName " + BEAN_SERVICE);
-        queueInputLines("operationName");
         getShell().execute("http-binding bind-service --serviceName " + BEAN_SERVICE);
         
         System.out.println(getOutput());
@@ -115,7 +116,7 @@ public class ForgeHttpTest extends GenericTestForge {
         getShell().execute("bean-reference create --beanName " + BEAN_SERVICE + " --referenceName " + BEAN_SERVICE_REFERENCEABLE + " --referenceBeanName " + BEAN_SERVICE_REFERENCEABLE);
         mavenBuildSkipTest();
         getShell().execute("switchyard promote-reference --referenceName " + BEAN_SERVICE_REFERENCEABLE);
-        getShell().execute("http-binding bind-reference --referenceName " + BEAN_SERVICE_REFERENCEABLE);
+        getShell().execute("http-binding bind-reference --address http://localhost:8080/http-binding/hello --referenceName " + BEAN_SERVICE_REFERENCEABLE);
         getShell().execute("switchyard show-config");
         
         System.out.println(getOutput());

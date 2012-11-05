@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 import org.apache.log4j.Logger;
+import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.composer.ContextMapperModel;
 
 /**
@@ -61,7 +62,7 @@ public abstract class ContextMapperFactory<D extends BindingData> {
         ContextMapper<D> contextMapper = null;
         ContextMapperFactory<D> contextMapperFactory = ContextMapperFactory.getContextMapperFactory(getBindingDataClass());
         if (model != null) {
-            contextMapper = contextMapperFactory.newContextMapper((Class<ContextMapper<D>>)model.getClazz());
+            contextMapper = contextMapperFactory.newContextMapper((Class<ContextMapper<D>>)Classes.forName(model.getClazz()));
             if (contextMapper instanceof RegexContextMapper) {
                 RegexContextMapper<D> regexContextMapper = (RegexContextMapper<D>)contextMapper;
                 regexContextMapper.setIncludes(model.getIncludes());

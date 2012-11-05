@@ -63,13 +63,13 @@ public class ForgeRulesTest extends GenericTestForge {
      * The single test containing some test cases.
      */
     @Test
-    public void test() {
+    public void test() throws Exception {
         try {
             //rules-service create
             testCreateRuleService();
         } catch (Exception e) {
             System.out.println(getOutput());
-            e.printStackTrace();
+            throw e;
         }
     }
     

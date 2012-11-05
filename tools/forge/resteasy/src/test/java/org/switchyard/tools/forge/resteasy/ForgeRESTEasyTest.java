@@ -26,6 +26,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.switchyard.tools.forge.GenericTestForge;
 import org.switchyard.tools.forge.bean.BeanFacet;
+import org.switchyard.tools.forge.common.CommonFacet;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 
 /**
@@ -57,6 +58,7 @@ public class ForgeRESTEasyTest extends GenericTestForge {
         // and configuration files are added via Arquillian.
         JavaArchive archive = AbstractShellTest.getDeployment();
         archive.addPackages(true, SwitchYardFacet.class.getPackage());
+        archive.addPackages(true, CommonFacet.class.getPackage());
         archive.addPackages(true, RESTEasyFacet.class.getPackage());
         archive.addPackages(true, BeanFacet.class.getPackage());
         return archive;
@@ -66,7 +68,7 @@ public class ForgeRESTEasyTest extends GenericTestForge {
      * The single test containing some test cases.
      */
     @Test
-    public void test() {
+    public void test() throws Exception {
         try {
             //rest-binding bind-service
             testBindService();
@@ -74,7 +76,7 @@ public class ForgeRESTEasyTest extends GenericTestForge {
             testBindReference();
         } catch (Exception e) {
             System.out.println(getOutput());
-            e.printStackTrace();
+            throw e;
         }
     }
     

@@ -37,6 +37,13 @@
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-http</artifactId>
+            <exclusions>
+                <!-- avoid conflicting with Eclipse JDT -->
+                <exclusion>
+                    <groupId>org.jboss.web</groupId>
+                    <artifactId>jasper-jdt</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
@@ -46,6 +53,10 @@
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-forge-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-forge-common-plugin</artifactId>
         </dependency>
     </dependencies>
     <build>
