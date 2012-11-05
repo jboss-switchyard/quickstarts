@@ -752,6 +752,26 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-forge-jca-plugin</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+             <dependency>
+                <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-forge-hornetq-plugin</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+             <dependency>
+                <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-forge-common-plugin</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+             <dependency>
+                <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-forge-remote-plugin</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+             <dependency>
+                <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
