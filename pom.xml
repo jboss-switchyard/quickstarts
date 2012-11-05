@@ -67,7 +67,6 @@
         <version.activity.monitor.model>1.2.1.Final</version.activity.monitor.model>
         <version.antlr>3.3</version.antlr>
         <version.axiom>1.2.8</version.axiom>
-        <version.ballroom>1.1.0.FINAL</version.ballroom>
         <version.batik>1.7</version.batik>
         <version.camel>2.10.0</version.camel>
         <version.cxf>2.6.1</version.cxf>
@@ -96,7 +95,7 @@
         <version.javax.jms>1.1</version.javax.jms>
         <version.jbpm>5.3.0.Final</version.jbpm>
         <version.jbossas>7.1.1.Final</version.jbossas>
-        <version.jbossas.console>1.1.0.FINAL</version.jbossas.console>
+        <version.jbossas.console>1.4.0.Final</version.jbossas.console>
         <!-- Override versions for OpenShift. May use the same version as AS but -->
         <!-- maintaining this override for future flexibility -->
         <version.jbossas.openshift>7.1.0.Final</version.jbossas.openshift>
@@ -561,7 +560,7 @@
             <!-- Import this to get the GWT dependencies -->
             <dependency>
                 <groupId>org.jboss.as</groupId>
-                <artifactId>jboss-as-console-parent</artifactId>
+                <artifactId>jboss-as-console-bom</artifactId>
                 <version>${version.jbossas.console}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -1721,11 +1720,6 @@
                 <groupId>org.jboss.as</groupId>
                 <artifactId>jboss-as-server</artifactId>
                 <version>${version.jbossas}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.ballroom</groupId>
-                <artifactId>widgets</artifactId>
-                <version>${version.ballroom}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.bpm</groupId>
