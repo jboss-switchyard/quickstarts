@@ -444,7 +444,11 @@ public class SwitchYardFacet extends AbstractFacet {
         }
         File backup = new File(asConfigPath + ".orig");
         if (backup.exists()) {
-            throw new Exception("backup standalone.xml already exists " + backup.getAbsolutePath());
+            if (_shell.promptBoolean("backup standalone.xml '" + backup.getAbsolutePath() + "' already exists: remove it?")) {
+                backup.delete();
+            } else {
+                throw new Exception("backup standalone.xml already exists " + backup.getAbsolutePath());
+            }
         }
         if (!orig.renameTo(backup)) {
             throw new Exception("Failed to create backup standalone.xml " + backup.getAbsolutePath());

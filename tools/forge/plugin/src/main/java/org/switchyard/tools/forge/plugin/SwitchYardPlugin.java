@@ -22,9 +22,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.inject.Inject;
+import javax.xml.namespace.QName;
 
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.MetadataFacet;
@@ -58,11 +62,39 @@ import org.switchyard.config.model.domain.HandlersModel;
 import org.switchyard.config.model.domain.v1.V1DomainModel;
 import org.switchyard.config.model.domain.v1.V1HandlerModel;
 import org.switchyard.config.model.domain.v1.V1HandlersModel;
+import org.switchyard.config.model.selector.JavaOperationSelectorModel;
+import org.switchyard.config.model.selector.OperationSelectorModel;
+import org.switchyard.config.model.selector.RegexOperationSelectorModel;
+import org.switchyard.config.model.selector.StaticOperationSelectorModel;
+import org.switchyard.config.model.selector.XPathOperationSelectorModel;
+import org.switchyard.config.model.selector.v1.V1JavaOperationSelectorModel;
+import org.switchyard.config.model.selector.v1.V1RegexOperationSelectorModel;
+import org.switchyard.config.model.selector.v1.V1StaticOperationSelectorModel;
+import org.switchyard.config.model.selector.v1.V1XPathOperationSelectorModel;
 import org.switchyard.config.model.switchyard.ArtifactModel;
 import org.switchyard.config.model.switchyard.ArtifactsModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1ArtifactModel;
 import org.switchyard.config.model.switchyard.v1.V1ArtifactsModel;
+import org.switchyard.config.model.transform.TransformModel;
+import org.switchyard.config.model.transform.v1.V1TransformsModel;
+import org.switchyard.config.model.validate.ValidateModel;
+import org.switchyard.config.model.validate.v1.V1ValidatesModel;
+import org.switchyard.policy.Policy;
+import org.switchyard.policy.PolicyFactory;
+import org.switchyard.transform.config.model.JavaTransformModel;
+import org.switchyard.transform.config.model.SmooksTransformModel;
+import org.switchyard.transform.config.model.XsltTransformModel;
+import org.switchyard.transform.config.model.v1.V1JAXBTransformModel;
+import org.switchyard.transform.config.model.v1.V1JSONTransformModel;
+import org.switchyard.transform.config.model.v1.V1JavaTransformModel;
+import org.switchyard.transform.config.model.v1.V1SmooksTransformModel;
+import org.switchyard.transform.config.model.v1.V1XsltTransformModel;
+import org.switchyard.validate.config.model.JavaValidateModel;
+import org.switchyard.validate.config.model.XmlSchemaType;
+import org.switchyard.validate.config.model.XmlValidateModel;
+import org.switchyard.validate.config.model.v1.V1JavaValidateModel;
+import org.switchyard.validate.config.model.v1.V1XmlValidateModel;
 
 /**
  * Project-level commands for SwitchYard applications.
@@ -533,6 +565,294 @@ public class SwitchYardPlugin implements Plugin {
         }
 
         switchYard.saveConfig();
+    }
+    
+    /**
+     * Add a Transformer.
+     * @param from Transform from (QName)
+     * @param to Transform to (QName)
+     * @param out shell output
+     */
+    @Command(value = "add-transformer", help = "Add a transformer definition.")
+    public void addTransformer(
+            @Option(required = true,
+                    name = "from",
+                    description = "Transform from (QName)") final String from,
+            @Option(required = true,
+                    name = "to",
+                    description = "Transform to (QName)") final String to,
+                    final PipeOut out) {
+        TransformModel transform = null;
+        TransformerTypes type = _shell.promptChoiceTyped("Choose transformer type", Arrays.asList(TransformerTypes.values()));
+
+        switch (type) {
+        case Java:
+            JavaTransformModel javaTransform = new V1JavaTransformModel();
+            String clazz = _shell.promptCommon("Transformer class name", PromptType.JAVA_CLASS);
+            javaTransform.setClazz(clazz);
+            transform = javaTransform;
+            break;
+            
+        case Smooks:
+            SmooksTransformModel smooksTransform = new V1SmooksTransformModel();
+            String config = _shell.promptCommon("Smooks resource file location", PromptType.ANY);
+            smooksTransform.setConfig(config);
+            String smtype = _shell.promptChoiceTyped("Transformation type", Arrays.asList(new String[]{"SMOOKS", "XML2JAVA", "JAVA2XML"}));
+            smooksTransform.setTransformType(smtype);
+            transform = smooksTransform;
+            break;
+            
+        case XSLT:
+            XsltTransformModel xsltTransform = new V1XsltTransformModel();
+            String xsltFile = _shell.promptCommon("XSLT file location", PromptType.ANY);
+            xsltTransform.setXsltFile(xsltFile);
+            boolean failOnWarn = _shell.promptBoolean("Fail on warning?");
+            xsltTransform.setFailOnWarning(failOnWarn);
+            transform = xsltTransform;
+            break;
+            
+        case JSON:
+            transform = new V1JSONTransformModel();
+            break;
+
+        case JAXB:
+            transform = new V1JAXBTransformModel();
+            break;
+
+        default:
+            out.println(out.renderColor(ShellColor.RED, "Unknown transformer type: " + type));
+            return;
+        }
+        transform.setFrom(QName.valueOf(from));
+        transform.setTo(QName.valueOf(to));
+
+        SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
+        if (switchYard.getSwitchYardConfig().getTransforms() == null) {
+            switchYard.getSwitchYardConfig().setTransforms(new V1TransformsModel());
+        }
+        switchYard.getSwitchYardConfig().getTransforms().addTransform(transform);
+        switchYard.saveConfig();
+        
+        //Notify user of success
+        out.println("Transformer successfully added [" + type + ": from=" + from + ", to=" + to + "]");
+        
+    }
+    
+    private enum TransformerTypes {
+        Java, Smooks, XSLT, JSON, JAXB
+    }
+    
+    /**
+     * Add a message validator.
+     * 
+     * @param type Type (QName) to be validated
+     * @param out shell output
+     */
+    @Command(value = "add-validator", help = "Add a message validator definition.")
+    public void addValidator(
+            @Option(required = true,
+                    name = "type",
+                    description = "Type (QName) to be validated") final String type,
+                    final PipeOut out) {
+        ValidateModel validate = null;
+        ValidatorTypes validatorType = _shell.promptChoiceTyped("Choose validator type", Arrays.asList(ValidatorTypes.values()));
+        
+        switch (validatorType) {
+        case Java:
+            JavaValidateModel javaValidate = new V1JavaValidateModel();
+            String clazz = _shell.promptCommon("Validator class name", PromptType.JAVA_CLASS);
+            javaValidate.setClazz(clazz);
+            validate = javaValidate;
+            break;
+            
+        case XML:
+            XmlValidateModel xmlValidate = new V1XmlValidateModel();
+            XmlSchemaType schemaType = _shell.promptChoiceTyped("Schema type", Arrays.asList(XmlSchemaType.values()));
+            xmlValidate.setSchemaType(schemaType);
+            String schemaFile = _shell.promptCommon("Schema file location", PromptType.ANY);
+            xmlValidate.setSchemaFile(schemaFile);
+            boolean failOnWarn = _shell.promptBoolean("Fail on warning?");
+            xmlValidate.setFailOnWarning(failOnWarn);
+            validate = xmlValidate;
+            break;
+            
+        default:
+            out.println(out.renderColor(ShellColor.RED, "Unknown validator type :" + type));
+            return;
+        }
+        validate.setName(QName.valueOf(type));
+        
+        SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
+        if (switchYard.getSwitchYardConfig().getValidates() == null) {
+            switchYard.getSwitchYardConfig().setValidates(new V1ValidatesModel());
+        }
+        switchYard.getSwitchYardConfig().getValidates().addValidate(validate);
+        switchYard.saveConfig();
+        
+        //Notify user of success
+        out.println("Message validator successfully added [" + validatorType + ": type=" + type + "]");
+        
+    }
+    
+    private enum ValidatorTypes {
+        Java, XML
+    }
+    
+    /**
+     * Add a required policy on component service/reference.
+     * @param componentName component name to be added
+     * @param out shell output
+     */
+    @Command(value = "add-required-policy", help = "Add a required policy on component service/reference or component implementation")
+    public void addPolicy(
+            @Option(required = true,
+                    name = "componentName",
+                    description = "Component name") final String componentName,
+            final PipeOut out) {
+        SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
+        ComponentModel component = null;
+        for (ComponentModel c : switchYard.getSwitchYardConfig().getComposite().getComponents()) {
+            if (c.getName().equals(componentName)) {
+                component = c;
+                break;
+            }
+        }
+        if (component == null) {
+            for (ComponentModel c : switchYard.getMergedSwitchYardConfig().getComposite().getComponents()) {
+                if (c.getName().equals(componentName)) {
+                    out.println(out.renderColor(ShellColor.YELLOW, "Component " + componentName + " is defined by annotation and not in switchyard.xml."));
+                    if (!_shell.promptBoolean("Put it into switchyard.xml so the policy could be added?")) {
+                        return;
+                    }
+                    switchYard.getSwitchYardConfig().getComposite().addComponent(c);
+                    component = c;
+                    break;
+                }
+            }
+            
+            if (component == null) {
+                out.println(out.renderColor(ShellColor.RED, "Component " + componentName + " could not be found"));
+                return;
+            }
+        }
+        
+        Policy p = null;
+        String target = null;
+        String where = _shell.promptChoiceTyped("Where to add a policy", Arrays.asList(new String[]{"Service", "Reference", "Implementation"}));
+
+        if (where.equals("Implementation")) {
+            p = _shell.promptChoiceTyped("Which policy to be added", Arrays.asList(PolicyFactory.getAvailableImplementationPolicies().toArray(new Policy[0])));
+            component.getImplementation().addPolicyRequirement(p.getName());
+            target = "Implementation";
+
+        } else if (where.equals("Service")) {
+            p = _shell.promptChoiceTyped("Which policy to be added", Arrays.asList(PolicyFactory.getAvailableInteractionPolicies().toArray(new Policy[0])));
+            // component service should be just one
+            ComponentServiceModel service = component.getServices().get(0);
+            service.addPolicyRequirement(p.getName());
+            target = service.getName();
+
+        } else if (where.equals("Reference")) {
+            if (component.getReferences().size() == 0) {
+                out.println(out.renderColor(ShellColor.YELLOW, "No reference is found in " + componentName));
+                return;
+            }
+
+            ComponentReferenceModel ref = _shell.promptChoiceTyped("Which reference", component.getReferences());
+            p = _shell.promptChoiceTyped("Which policy to be added", Arrays.asList(PolicyFactory.getAvailableInteractionPolicies().toArray(new Policy[0])));
+            ref.addPolicyRequirement(p.getName());
+            target = ref.getName();
+
+        } else {
+            out.println(out.renderColor(ShellColor.RED, "Unknown place " + where));
+            return;
+        }
+        
+        switchYard.saveConfig();
+
+        //Notify user of success
+        out.println("Policy " + p.getName() + " successfully added to " + componentName + "/" + target);
+    }
+    
+    /**
+     * Add a operation selector on a binding.
+     * @param serviceName composite service name to be added
+     * @param out shell output
+     */
+    @Command(value = "add-operation-selector", help = "Add a operation selector to a service binding.")
+    public void addOperationSelector(
+            @Option(required = true,
+                    name = "serviceName",
+                    description = "The service name") 
+            final String serviceName,
+            final PipeOut out) {
+        SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
+        CompositeServiceModel service = null;
+        for (CompositeServiceModel s : switchYard.getSwitchYardConfig().getComposite().getServices()) {
+            if (s.getName().equals(serviceName)) {
+                service = s;
+            }
+        }
+        if (service == null) {
+            out.println(out.renderColor(ShellColor.RED, "Service " + serviceName + " could not be found"));
+            return;
+        }
+
+        List<BindingModel> bindingList = service.getBindings(); 
+        if (bindingList.size() == 0) {
+            out.println(out.renderColor(ShellColor.YELLOW, "There is no binding which supports OperationSelector"));
+            return;
+        }
+        List<String> bindingDescList = new ArrayList<String>();
+        for (BindingModel binding : bindingList) {
+            bindingDescList.add(binding.getModelConfiguration().toString());
+        }
+        BindingModel binding = bindingList.get(_shell.promptChoice("Which binding to add", bindingDescList));
+        
+        OperationSelectorModel selector = null;
+        OperationSelectorType type = _shell.promptChoiceTyped("Type of operation selector", Arrays.asList(OperationSelectorType.values()));
+        switch (type) {
+        case Static:
+            StaticOperationSelectorModel staticSelector = new V1StaticOperationSelectorModel();
+            String op = _shell.promptCommon("Operation name", PromptType.ANY);
+            staticSelector.setOperationName(op);
+            selector = staticSelector;
+            break;
+
+        case XPath:
+            XPathOperationSelectorModel xpathSelector = new V1XPathOperationSelectorModel();
+            String xpath = _shell.promptCommon("XPath expression", PromptType.ANY);
+            xpathSelector.setExpression(xpath);
+            selector = xpathSelector;
+            break;
+
+        case Regex:
+            RegexOperationSelectorModel regexSelector = new V1RegexOperationSelectorModel();
+            String regex = _shell.promptCommon("Regular expression", PromptType.ANY);
+            regexSelector.setExpression(regex);
+            selector = regexSelector;
+            break;
+
+        case Java:
+            JavaOperationSelectorModel javaSelector = new V1JavaOperationSelectorModel();
+            String clazz = _shell.promptCommon("Class name", PromptType.JAVA_CLASS);
+            javaSelector.setClazz(clazz);
+            selector = javaSelector;
+            break;
+
+        default:
+            out.println(out.renderColor(ShellColor.RED, "Unknown operation selector type " + type));
+            return;
+        }
+        binding.setOperationSelector(selector);
+        switchYard.saveConfig();
+
+        //Notify user of success
+        out.println(type + " OperationSelector successfully added to " + serviceName);
+    }
+    
+    private enum OperationSelectorType {
+        Static, XPath, Regex, Java
     }
     
 }

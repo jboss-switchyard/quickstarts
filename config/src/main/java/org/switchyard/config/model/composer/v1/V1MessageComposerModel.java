@@ -22,7 +22,6 @@ package org.switchyard.config.model.composer.v1;
 import javax.xml.namespace.QName;
 
 import org.switchyard.common.lang.Strings;
-import org.switchyard.common.type.Classes;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
@@ -64,20 +63,16 @@ public class V1MessageComposerModel extends BaseModel implements MessageComposer
      * {@inheritDoc}
      */
     @Override
-    public Class<?> getClazz() {
-        String name = Strings.trimToNull(getModelAttribute("class"));
-        if (name != null) {
-            return Classes.forName(name, getClass());
-        }
-        return null;
+    public String getClazz() {
+        return Strings.trimToNull(getModelAttribute("class"));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public MessageComposerModel setClazz(Class<?> clazz) {
-        setModelAttribute("class", clazz != null ? clazz.getName() : null);
+    public MessageComposerModel setClazz(String clazz) {
+        setModelAttribute("class", clazz);
         return this;
     }
 

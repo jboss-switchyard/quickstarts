@@ -32,16 +32,16 @@ public interface MessageComposerModel extends Model {
     public static final String MESSAGE_COMPOSER = "messageComposer";
 
     /**
-     * Gets the type of ContextMapper.
-     * @return the type of ContextMapper
+     * Gets the fully qualified class name of ContextMapper.
+     * @return the fully qualified class name of ContextMapper
      */
-    public Class<?> getClazz();
+    public String getClazz();
 
     /**
-     * Sets the type of ContextMapper.
-     * @param clazz type of ContextMapper
+     * Sets the fully qualified class name of ContextMapper.
+     * @param clazz fully qualified class name of ContextMapper
      * @return this instance (useful for chaining)
      */
-    public MessageComposerModel setClazz(Class<?> clazz);
+    public MessageComposerModel setClazz(String clazz);
 
 }

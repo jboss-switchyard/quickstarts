@@ -85,4 +85,17 @@ public interface BindingModel extends TypedModel {
      */
     public MessageComposerModel getMessageComposer();
 
+    /**
+     * Sets the child context mapper model.
+     * @param model the context mapper model to set
+     * @return this BindingModel (useful for chaining)
+     */
+    public BindingModel setContextMapper(ContextMapperModel model);
+    
+    /**
+     * Sets the child message composer model.
+     * @param model the message composer model to set
+     * @return this BindingModel (useful for chaining)
+     */
+    public BindingModel setMessageComposer(MessageComposerModel model);
 }

@@ -21,8 +21,11 @@
 package org.switchyard.policy;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.switchyard.policy.Policy.PolicyType;
 
 /**
  * A factory class for the policies.
@@ -32,6 +35,7 @@ public final class PolicyFactory {
     private PolicyFactory() {}
     
     private static Set<Policy> _policies;
+
     static {
         _policies = new HashSet<Policy>();
         _policies.addAll(Arrays.asList(TransactionPolicy.values()));
@@ -51,5 +55,41 @@ public final class PolicyFactory {
             }
         }
         throw new Exception("Invalid policy name: '" + name + "' doesn't exist.");
+    }
+    
+    /**
+     * Returns a set of all available policies.
+     * @return policies
+     */
+    public static Set<Policy> getAllAvailablePolicies() {
+        return Collections.unmodifiableSet(_policies);
+    }
+    
+    /**
+     * Returns a set of available interaction policies.
+     * @return policies
+     */
+    public static Set<Policy> getAvailableInteractionPolicies() {
+        Set<Policy> interactions = new HashSet<Policy>();
+        for (Policy p : _policies) {
+            if (p.getType().equals(PolicyType.INTERACTION)) {
+                interactions.add(p);
+            }
+        }
+        return Collections.unmodifiableSet(interactions);
+    }
+    
+    /**
+     * Returns a set of available implementation policies.
+     * @return policies
+     */
+    public static Set<Policy> getAvailableImplementationPolicies() {
+        Set<Policy> implementations = new HashSet<Policy>();
+        for (Policy p : _policies) {
+            if (p.getType().equals(PolicyType.IMPLEMENTATION)) {
+                implementations.add(p);
+            }
+        }
+        return Collections.unmodifiableSet(implementations);
     }
 }

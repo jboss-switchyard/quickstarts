@@ -32,17 +32,17 @@ public interface ContextMapperModel extends Model {
     public static final String CONTEXT_MAPPER = "contextMapper";
 
     /**
-     * Gets the type of ContextMapper.
-     * @return the type of ContextMapper
+     * Gets the fully qualified class name of ContextMapper.
+     * @return the fully qualified class name of ContextMapper
      */
-    public Class<?> getClazz();
+    public String getClazz();
 
     /**
-     * Sets the type of ContextMapper.
-     * @param clazz the  the type of ContextMapper
+     * Sets the fully qualified class name of ContextMapper.
+     * @param clazz the fully qualified class name of ContextMapper
      * @return this instance (useful for chaining)
      */
-    public ContextMapperModel setClazz(Class<?> clazz);
+    public ContextMapperModel setClazz(String clazz);
 
     /**
      * Gets the comma-separated list of regex property includes.

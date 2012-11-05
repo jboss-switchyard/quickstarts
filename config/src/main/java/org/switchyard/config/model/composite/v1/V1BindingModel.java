@@ -146,6 +146,26 @@ public class V1BindingModel extends BaseTypedModel implements BindingModel {
         return _messageComposer;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BindingModel setContextMapper(ContextMapperModel model) {
+        _contextMapper = model;
+        setChildModel(model);
+        return this;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BindingModel setMessageComposer(MessageComposerModel model) {
+        _messageComposer = model;
+        setChildModel(model);
+        return this;
+    }
+    
     @Override
     public boolean isServiceBinding() {
         return (getModelParent() instanceof CompositeServiceModel);

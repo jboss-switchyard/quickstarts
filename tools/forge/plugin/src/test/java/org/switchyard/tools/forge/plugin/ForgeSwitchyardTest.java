@@ -22,12 +22,44 @@
 
 package org.switchyard.tools.forge.plugin;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.forge.test.AbstractShellTest;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
 import org.junit.Test;
+import org.switchyard.config.model.composite.BindingModel;
+import org.switchyard.config.model.composite.ComponentImplementationModel;
+import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.config.model.composite.ComponentReferenceModel;
+import org.switchyard.config.model.composite.ComponentServiceModel;
+import org.switchyard.config.model.composite.CompositeServiceModel;
+import org.switchyard.config.model.composite.v1.V1BindingModel;
+import org.switchyard.config.model.composite.v1.V1ComponentImplementationModel;
+import org.switchyard.config.model.composite.v1.V1ComponentModel;
+import org.switchyard.config.model.composite.v1.V1ComponentReferenceModel;
+import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
+import org.switchyard.config.model.composite.v1.V1CompositeServiceModel;
+import org.switchyard.config.model.selector.JavaOperationSelectorModel;
+import org.switchyard.config.model.selector.RegexOperationSelectorModel;
+import org.switchyard.config.model.selector.StaticOperationSelectorModel;
+import org.switchyard.config.model.selector.XPathOperationSelectorModel;
+import org.switchyard.config.model.transform.TransformModel;
+import org.switchyard.config.model.validate.ValidateModel;
+import org.switchyard.policy.Policy;
+import org.switchyard.policy.PolicyFactory;
 import org.switchyard.tools.forge.GenericTestForge;
+import org.switchyard.transform.config.model.JAXBTransformModel;
+import org.switchyard.transform.config.model.JSONTransformModel;
+import org.switchyard.transform.config.model.JavaTransformModel;
+import org.switchyard.transform.config.model.SmooksTransformModel;
+import org.switchyard.transform.config.model.XsltTransformModel;
+import org.switchyard.validate.config.model.JavaValidateModel;
+import org.switchyard.validate.config.model.XmlSchemaType;
+import org.switchyard.validate.config.model.XmlValidateModel;
 
 /**
  * Test for {@link SwitchyardFacet}.
@@ -74,16 +106,20 @@ public class ForgeSwitchyardTest extends GenericTestForge {
      * The single test containing some test cases.
      */
     @Test
-    public void runTest() {
+    public void runTest() throws Exception {
         try {
             createTestService();
             testTraceMessages();
             testGetVersion();
             testShowConfig();
+            testAddTransformer();
+            testAddValidator();
+            testAddPolicy();
+            testAddOperationSelector();
         
         } catch (Exception e) {
             System.out.println(getOutput());
-            e.printStackTrace();
+            throw e;
         }
     }
     
@@ -133,6 +169,154 @@ public class ForgeSwitchyardTest extends GenericTestForge {
         getShell().execute("switchyard show-config");
         System.out.println(getOutput());
         Assert.assertTrue(getOutput().contains(SHOW_CONFIG_MSG));
+    }
+    
+    public void testAddTransformer() throws Exception {
+        resetOutputStream();
+        SwitchYardFacet switchYard = getProject().getFacet(SwitchYardFacet.class);
+        String from = "\"{urn:switchyard:forge-test:0.1.0}order\"";
+        String to = "\"{urn:switchyard:forge-test:0.1.0}orderAck\"";
+
+        // Java
+        queueInputLines("1", this.getClass().getName());
+        getShell().execute("switchyard add-transformer --from " + from + " --to " + to);
+        // Smooks
+        queueInputLines("2", "/smooks/OrderXML.xml", "1");
+        getShell().execute("switchyard add-transformer --from " + from + " --to " + to);
+        // XSLT
+        queueInputLines("3", "xslt/order.xslt", "Y");
+        getShell().execute("switchyard add-transformer --from " + from + " --to " + to);
+        // JSON
+        queueInputLines("4");
+        getShell().execute("switchyard add-transformer --from " + from + " --to " + to);
+        // JAXB
+        queueInputLines("5");
+        getShell().execute("switchyard add-transformer --from " + from + " --to " + to);
+        
+        // Verify generated transformers
+        List<String> expected = new ArrayList<String>(Arrays.asList(new String[]{"Java", "Smooks", "XSLT", "JSON", "JAXB"}));
+        for (TransformModel transform : switchYard.getSwitchYardConfig().getTransforms().getTransforms()) {
+            if (transform instanceof JavaTransformModel) {
+                JavaTransformModel java = JavaTransformModel.class.cast(transform);
+                Assert.assertEquals(this.getClass().getName(), java.getClazz());
+                expected.remove("Java");
+            } else if (transform instanceof SmooksTransformModel) {
+                SmooksTransformModel smooks = SmooksTransformModel.class.cast(transform);
+                Assert.assertEquals("/smooks/OrderXML.xml", smooks.getConfig());
+                Assert.assertEquals("SMOOKS", smooks.getTransformType());
+                expected.remove("Smooks");
+            } else if (transform instanceof XsltTransformModel) {
+                XsltTransformModel xslt = XsltTransformModel.class.cast(transform);
+                Assert.assertEquals("xslt/order.xslt", xslt.getXsltFile());
+                Assert.assertEquals(true, xslt.failOnWarning());
+                expected.remove("XSLT");
+            } else if (transform instanceof JSONTransformModel) {
+                expected.remove("JSON");
+            } else if (transform instanceof JAXBTransformModel) {
+                expected.remove("JAXB");
+            } else {
+                Assert.fail("Unknown transformer detected " + transform);
+            }
+        }
+        System.out.println(getOutput());
+        Assert.assertEquals(0,  expected.size());
+    }
+    
+    public void testAddValidator() throws Exception {
+        resetOutputStream();
+        SwitchYardFacet switchYard = getProject().getFacet(SwitchYardFacet.class);
+        String type = "\"{urn:switchyard:forge-test:0.1.0}order\"";
+
+        // Java
+        queueInputLines("1", this.getClass().getName());
+        getShell().execute("switchyard add-validator --type" + type);
+        // XML
+        queueInputLines("2", "2", "/xsd/orders.xsd", "Y");
+        getShell().execute("switchyard add-validator --type" + type);
+
+        // Verify generated validators
+        List<String> expected = new ArrayList<String>(Arrays.asList(new String[]{"Java", "XML"}));
+        for (ValidateModel validate : switchYard.getSwitchYardConfig().getValidates().getValidates()) {
+            if (validate instanceof JavaValidateModel) {
+                JavaValidateModel java = JavaValidateModel.class.cast(validate);
+                Assert.assertEquals(this.getClass().getName(), java.getClazz());
+                expected.remove("Java");
+            } else if (validate instanceof XmlValidateModel) {
+                XmlValidateModel xml = XmlValidateModel.class.cast(validate);
+                Assert.assertEquals(XmlSchemaType.XML_SCHEMA, xml.getSchemaType());
+                Assert.assertEquals("/xsd/orders.xsd", xml.getSchemaFile());
+                Assert.assertEquals(true, xml.failOnWarning());
+                expected.remove("XML");
+            }
+        }
+        System.out.println(getOutput());
+        Assert.assertEquals(0, expected.size());
+    }
+    
+    public void testAddPolicy() throws Exception {
+        resetOutputStream();
+        SwitchYardFacet switchYard = getProject().getFacet(SwitchYardFacet.class);
+        ComponentModel component = new V1ComponentModel();
+        component.setName("TestComponent");
+        ComponentServiceModel service = new V1ComponentServiceModel();
+        service.setName("TestService");
+        component.addService(service);
+        ComponentReferenceModel reference = new V1ComponentReferenceModel();
+        reference.setName("TestReference");
+        component.addReference(reference);
+        ComponentImplementationModel implementation = new V1ComponentImplementationModel("bean");
+        component.setImplementation(implementation);
+        switchYard.getSwitchYardConfig().getComposite().addComponent(component);
+        switchYard.saveConfig();
+        
+        queueInputLines("1", "1");
+        getShell().execute("switchyard add-required-policy --componentName " + component.getName());
+        queueInputLines("2", "TestReference", "2");
+        getShell().execute("switchyard add-required-policy --componentName " + component.getName());
+        queueInputLines("3", "1");
+        getShell().execute("switchyard add-required-policy --componentName " + component.getName());
+        
+        // Verify generated policies
+        System.out.println(getOutput());
+        component = switchYard.getSwitchYardConfig().getComposite().getComponents().get(0);
+        Assert.assertEquals(PolicyFactory.getAvailableInteractionPolicies().toArray(new Policy[0])[0].getName(), component.getServices().get(0).getPolicyRequirements().iterator().next());
+        Assert.assertEquals(PolicyFactory.getAvailableImplementationPolicies().toArray(new Policy[0])[0].getName(), component.getImplementation().getPolicyRequirements().iterator().next());
+        Assert.assertEquals(PolicyFactory.getAvailableInteractionPolicies().toArray(new Policy[0])[1].getName(), component.getReferences().get(0).getPolicyRequirements().iterator().next());
+    }
+    
+    public void testAddOperationSelector() throws Exception {
+        SwitchYardFacet switchYard = getProject().getFacet(SwitchYardFacet.class);
+        String serviceName = "ForgeTestService";
+        CompositeServiceModel service = new V1CompositeServiceModel();
+        service.setName(serviceName);
+        service.addBinding(new V1BindingModel("bean"));
+        switchYard.getSwitchYardConfig().getComposite().addService(service);
+        switchYard.saveConfig();
+        
+        String operation = "myOperation";
+        queueInputLines("1", "1", operation);
+        getShell().execute("switchyard add-operation-selector --serviceName " + serviceName);
+        BindingModel model = service.getBindings().get(0);
+        StaticOperationSelectorModel staticSelector = StaticOperationSelectorModel.class.cast(model.getOperationSelector());
+        Assert.assertEquals(operation, staticSelector.getOperationName());
+        
+        String xpath = "//person/language";
+        queueInputLines("1", "2", xpath);
+        getShell().execute("switchyard add-operation-selector --serviceName " + serviceName);
+        XPathOperationSelectorModel xpathSelector = XPathOperationSelectorModel.class.cast(model.getOperationSelector());
+        Assert.assertEquals(xpath, xpathSelector.getExpression());
+        
+        String regex = "*";
+        queueInputLines("1", "3", regex);
+        getShell().execute("switchyard add-operation-selector --serviceName " + serviceName);
+        RegexOperationSelectorModel regexSelector = RegexOperationSelectorModel.class.cast(model.getOperationSelector());
+        Assert.assertEquals(regex, regexSelector.getExpression());
+
+        String clazz = this.getClass().getName();
+        queueInputLines("1", "4", clazz);
+        getShell().execute("switchyard add-operation-selector --serviceName " + serviceName);
+        JavaOperationSelectorModel javaSelector = JavaOperationSelectorModel.class.cast(model.getOperationSelector());
+        Assert.assertEquals(clazz, javaSelector.getClazz());
     }
     
 }
