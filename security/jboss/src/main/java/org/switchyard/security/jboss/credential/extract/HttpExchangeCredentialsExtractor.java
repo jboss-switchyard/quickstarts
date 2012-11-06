@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.security.credential.extract;
+package org.switchyard.security.jboss.credential.extract;
 
 import java.security.Principal;
 import java.util.HashSet;
@@ -27,6 +27,8 @@ import org.switchyard.common.lang.Strings;
 import org.switchyard.security.credential.ConfidentialityCredential;
 import org.switchyard.security.credential.Credential;
 import org.switchyard.security.credential.PrincipalCredential;
+import org.switchyard.security.credential.extract.AuthorizationHeaderCredentialsExtractor;
+import org.switchyard.security.credential.extract.CredentialsExtractor;
 
 /**
  * HttpExchangeCredentialsExtractor.

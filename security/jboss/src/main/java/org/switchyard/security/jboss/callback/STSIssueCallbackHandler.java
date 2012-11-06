@@ -16,12 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.security.callback;
+package org.switchyard.security.jboss.callback;
 
 import java.io.IOException;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
+
+import org.switchyard.security.callback.NamePasswordCallbackHandler;
+import org.switchyard.security.callback.SwitchYardCallbackHandler;
 
 /**
  * STSIssueCallbackHandler.

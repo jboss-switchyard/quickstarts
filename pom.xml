@@ -43,7 +43,8 @@
         <!--
         <module>serial/protostuff</module>
         -->
-        <module>security</module>
+        <module>security/base</module>
+        <module>security/jboss</module>
         <module>extensions/wsdl</module>
         <module>transform</module>
         <module>validate</module>
