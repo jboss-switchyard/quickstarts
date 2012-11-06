@@ -196,6 +196,7 @@
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
                 <include>org.switchyard:switchyard-security</include>
+                <include>org.switchyard:switchyard-security-jboss</include>
             </includes>
             <outputDirectory>/modules/org/switchyard/security/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}

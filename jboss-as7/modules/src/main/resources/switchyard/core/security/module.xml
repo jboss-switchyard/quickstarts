@@ -26,6 +26,7 @@
 
     <resources>
         <resource-root path="switchyard-security-${project.version}.jar"/>
+        <resource-root path="switchyard-security-jboss-${project.version}.jar"/>
     </resources>
 
     <dependencies>
