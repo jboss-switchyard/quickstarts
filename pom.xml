@@ -25,13 +25,13 @@
     <parent>
         <groupId>org.switchyard</groupId>
         <artifactId>switchyard-parent</artifactId>
-        <version>0.6.0.Beta2</version>
+        <version>0.6.0.Final</version>
         <relativePath>../parent</relativePath>
     </parent>
     <groupId>org.switchyard.components</groupId>
     <artifactId>switchyard-components-parent</artifactId>
     <name>SwitchYard: Components</name>
-    <version>0.6.0.Beta2</version>
+    <version>0.6.0.Final</version>
     <description>SwitchYard: Components</description>
     <url>http://switchyard.org</url>
     <packaging>pom</packaging>
