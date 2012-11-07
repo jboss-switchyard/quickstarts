@@ -39,7 +39,7 @@ import org.switchyard.component.http.InboundHandler;
 import org.switchyard.component.http.composer.HttpRequestBindingData;
 import org.switchyard.component.http.composer.HttpRequestInfo;
 import org.switchyard.component.http.composer.HttpResponseBindingData;
-import org.switchyard.security.credential.extract.HttpExchangeCredentialsExtractor;
+import org.switchyard.security.jboss.credential.extract.HttpExchangeCredentialsExtractor;
 
 /**
  * Publishes standalone HTTP endpoint.
