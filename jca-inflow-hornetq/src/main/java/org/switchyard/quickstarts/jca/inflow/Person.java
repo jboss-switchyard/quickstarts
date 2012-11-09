@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "_name",
-    "_language",
+    "_language"
 })
 @XmlRootElement(name = "person")
 public class Person {
