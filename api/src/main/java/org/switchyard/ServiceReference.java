@@ -38,6 +38,12 @@ public interface ServiceReference {
     QName getName();
     
     /**
+     * The domain in which this service reference is registered.
+     * @return service domain which created this service reference
+     */
+    ServiceDomain getDomain();
+    
+    /**
     * Interface metadata for the registered service.
     * @return the service interface
     */

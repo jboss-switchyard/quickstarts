@@ -50,8 +50,8 @@ public interface Service {
     void unregister();
 
     /**
-     * The domain in which this service reference is registered.
-     * @return service domain which created this service reference
+     * The domain in which this service is registered.
+     * @return service domain which created this service
      */
     ServiceDomain getDomain();
      

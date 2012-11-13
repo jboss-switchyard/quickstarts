@@ -189,6 +189,7 @@ public class ServiceReferenceImpl implements ServiceReference {
      * The domain in which this service reference is registered.
      * @return service domain which created this service reference
      */
+    @Override
     public ServiceDomain getDomain() {
         return _domain;
     }
