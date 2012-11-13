@@ -1,7 +1,6 @@
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0"
     xmlns:camel="urn:switchyard-component-camel:config:1.0"
     xmlns:swyd="urn:switchyard-config:switchyard:1.0"
-    xmlns:selector="urn:switchyard-component-common-selector:config:1.0"
     xmlns:bean="urn:switchyard-component-bean:config:1.0">
 
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
@@ -27,7 +26,7 @@
         <reference name="GreetingsDatabaseStore" multiplicity="0..1" promote="GreetingsDatabaseStore">
             <swyd:interface.esb inputType="java:java.lang.String" remotable="false" />
             <camel:binding.sql>
-                <selector:operationSelector operationName="store" />
+                <swyd:operationSelector operationName="store" />
                 <camel:query>INSERT INTO greetings (name) VALUES (#)</camel:query>
                 <camel:dataSourceRef>java:jboss/datasources/GreetDS</camel:dataSourceRef>
             </camel:binding.sql>
@@ -36,7 +35,7 @@
         <reference name="GreetingsDatabaseRetrieve" multiplicity="0..1" promote="GreetingsDatabaseRetrieve">
             <swyd:interface.esb inputType="java:java.lang.String" outputType="java:java.util.List" remotable="false" />
             <camel:binding.sql>
-                <selector:operationSelector operationName="retrieve" />
+                <swyd:operationSelector operationName="retrieve" />
                 <camel:query>SELECT * FROM greetings</camel:query>
                 <camel:dataSourceRef>java:jboss/datasources/GreetDS</camel:dataSourceRef>
             </camel:binding.sql>

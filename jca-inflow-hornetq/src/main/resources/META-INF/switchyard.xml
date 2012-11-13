@@ -1,7 +1,7 @@
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+            xmlns:swyd="urn:switchyard-config:switchyard:1.0"
             xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
             xmlns:jca="urn:switchyard-component-jca:config:1.0"
-            xmlns:selector="urn:switchyard-component-common-selector:config:1.0"
             xmlns:bean="urn:switchyard-component-bean:config:1.0">
 
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="jca-inflow-hornetq" targetNamespace="urn:switchyard-quickstart:jca-inflow-hornetq:0.1.0">
@@ -9,7 +9,7 @@
         <service name="GreetingService" promote="GreetingService/GreetingService">
             <interface.java interface="org.switchyard.quickstarts.jca.inflow.GreetingGateway"/>
             <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
-               <selector:operationSelector.xpath expression="//person/language"/>
+               <swyd:operationSelector.xpath expression="//person/language"/>
                <inboundConnection>
                    <resourceAdapter name="hornetq-ra.rar">
                    </resourceAdapter>
