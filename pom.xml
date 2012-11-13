@@ -121,6 +121,7 @@
         <!-- <version.javax.resource>1.6</version.javax.resource> -->
         <version.org.jboss.spec.javax.resource16>1.0.0.Final</version.org.jboss.spec.javax.resource16>
         <version.quartz>1.8.5</version.quartz>
+        <version.qpid>0.18</version.qpid>
         <version.picketlink>2.1.1.Final</version.picketlink>
         <version.protobuf>2.4.1</version.protobuf>
         <version.protostuff>1.0.7</version.protostuff>
@@ -908,6 +909,11 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard.components</groupId>
+                <artifactId>switchyard-component-test-mixin-amqp</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.components</groupId>
                 <artifactId>switchyard-component-test-mixin-bpm</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -974,6 +980,11 @@
             <dependency>
                 <groupId>org.switchyard.quickstarts</groupId>
                 <artifactId>switchyard-quickstart-camel-binding</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.quickstarts</groupId>
+                <artifactId>switchyard-quickstart-camel-amqp-binding</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -1370,6 +1381,17 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-amqp</artifactId>
+                <version>${version.camel}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-atom</artifactId>
                 <version>${version.camel}</version>
                 <exclusions>
@@ -1537,6 +1559,21 @@
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>${version.maven.plugin.plugin}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.qpid</groupId>
+                <artifactId>qpid-client</artifactId>
+                <version>${version.qpid}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.qpid</groupId>
+                <artifactId>qpid-common</artifactId>
+                <version>${version.qpid}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.qpid</groupId>
+                <artifactId>qpid-broker</artifactId>
+                <version>${version.qpid}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.commons.axiom</groupId>
