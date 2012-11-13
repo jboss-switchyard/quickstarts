@@ -36,6 +36,14 @@ import org.switchyard.config.model.domain.v1.V1PropertyModel;
 import org.switchyard.config.model.domain.v1.V1SecurityModel;
 import org.switchyard.config.model.resource.ResourceModel;
 import org.switchyard.config.model.resource.v1.V1ResourceModel;
+import org.switchyard.config.model.selector.JavaOperationSelectorModel;
+import org.switchyard.config.model.selector.OperationSelectorModel;
+import org.switchyard.config.model.selector.RegexOperationSelectorModel;
+import org.switchyard.config.model.selector.XPathOperationSelectorModel;
+import org.switchyard.config.model.selector.v1.V1JavaOperationSelectorModel;
+import org.switchyard.config.model.selector.v1.V1RegexOperationSelectorModel;
+import org.switchyard.config.model.selector.v1.V1StaticOperationSelectorModel;
+import org.switchyard.config.model.selector.v1.V1XPathOperationSelectorModel;
 import org.switchyard.config.model.switchyard.ArtifactModel;
 import org.switchyard.config.model.switchyard.ArtifactsModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
@@ -93,6 +101,16 @@ public class V1SwitchYardMarshaller extends BaseMarshaller {
             return new V1ResourceModel(config, desc);
         } else if (name.equals(ESB_INTERFACE)) {
             return new V1EsbInterfaceModel(config, desc);
+        } else if (name.startsWith(OperationSelectorModel.OPERATION_SELECTOR)) {
+            if (name.equals(OperationSelectorModel.OPERATION_SELECTOR)) {
+                return new V1StaticOperationSelectorModel(config, desc);
+            } else if (name.endsWith(XPathOperationSelectorModel.XPATH)) {
+                return new V1XPathOperationSelectorModel(config, desc);
+            } else if (name.endsWith(RegexOperationSelectorModel.REGEX)) {
+                return new V1RegexOperationSelectorModel(config, desc);
+            } else if (name.endsWith(JavaOperationSelectorModel.JAVA)) {
+                return new V1JavaOperationSelectorModel(config, desc);
+            }
         }
         return null;
     }

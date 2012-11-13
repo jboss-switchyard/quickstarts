@@ -64,6 +64,86 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
     
+    <element name="operationSelector" type="swyd:StaticOperationSelectorType" substitutionGroup="swyd:operationSelector.switchyard"/>
+    <complexType name="StaticOperationSelectorType">
+        <annotation>
+            <documentation xml:lang="en">
+                Static Operation Selector Configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="swyd:SwitchYardOperationSelectorType">
+                <attribute name="operationName" type="string" use="required">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            Operation name.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="operationSelector.xpath" type="swyd:XPathOperationSelectorType" substitutionGroup="swyd:operationSelector.switchyard"/>
+    <complexType name="XPathOperationSelectorType">
+        <annotation>
+            <documentation xml:lang="en">
+                XPath Operation Selector Configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="swyd:SwitchYardOperationSelectorType">
+                <attribute name="expression" type="string" use="required">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            XPath expression.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="operationSelector.regex" type="swyd:RegexOperationSelectorType" substitutionGroup="swyd:operationSelector.switchyard"/>
+    <complexType name="RegexOperationSelectorType">
+        <annotation>
+            <documentation xml:lang="en">
+                XPath Operation Selector Configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="swyd:SwitchYardOperationSelectorType">
+                <attribute name="expression" type="string" use="required">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            Regex expression.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="operationSelector.java" type="swyd:JavaOperationSelectorType" substitutionGroup="swyd:operationSelector.switchyard"/>
+    <complexType name="JavaOperationSelectorType">
+        <annotation>
+            <documentation xml:lang="en">
+                Java Operation Selector Configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="swyd:SwitchYardOperationSelectorType">
+                <attribute name="class" type="string" use="required">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            operation selector implementation class name.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <element name="transforms" type="swyd:TransformsType"/>
     <complexType name="TransformsType">
         <sequence>
