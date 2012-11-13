@@ -182,13 +182,12 @@ public class TransformerRegistryLoader {
 
         if (transformModel instanceof JavaTransformModel) {
             String className = ((JavaTransformModel) transformModel).getClazz();
-            try {
                 Class<?> transformClass = Classes.forName(className, TransformerUtil.class);
-
+                if (transformClass == null) {
+                    throw new SwitchYardException("Unable to load transformer class " + className);
+                }
                 transformers = TransformerUtil.newTransformers(transformClass, transformModel.getFrom(), transformModel.getTo());
-            } catch (Exception e) {
-                throw new SwitchYardException("Error constructing Transformer instance for class '" + className + "'.", e);
-            }
+            
         } else {
             TransformerFactory factory = getTransformerFactory(transformModel);
 

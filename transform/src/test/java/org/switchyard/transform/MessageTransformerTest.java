@@ -19,19 +19,20 @@
 
 package org.switchyard.transform;
 
+import java.io.IOException;
+
+import javax.xml.namespace.QName;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.internal.DefaultMessage;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 
-import javax.xml.namespace.QName;
-import java.io.IOException;
-
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public class MessageTransformerTest {
-
+    
     @Test
     public void test() throws IOException {
         final QName A = new QName("a");
