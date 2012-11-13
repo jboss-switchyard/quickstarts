@@ -20,6 +20,7 @@
  */
 package org.switchyard.component.camel.config.model.v1;
 
+import org.switchyard.component.camel.config.model.amqp.v1.V1CamelAmqpBindingModel;
 import org.switchyard.component.camel.config.model.atom.v1.V1CamelAtomBindingModel;
 import org.switchyard.component.camel.config.model.direct.v1.V1CamelDirectBindingModel;
 import org.switchyard.component.camel.config.model.file.v1.V1CamelFileBindingModel;
@@ -106,6 +107,8 @@ public class V1CamelModelMarshaller extends BaseMarshaller {
                 return new V1CamelMailBindingModel(config, getDescriptor());
             } else if (name.endsWith(V1CamelJpaBindingModel.JPA)) {
                 return new V1CamelJpaBindingModel(config, getDescriptor());
+            } else if (name.endsWith(V1CamelAmqpBindingModel.AMQP)) {
+                return new V1CamelAmqpBindingModel(config, getDescriptor());
             }
         }
 

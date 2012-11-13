@@ -20,16 +20,16 @@
  */
 package org.switchyard.component.camel.config.model.jms.v1;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.assertFalse;
-
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 import org.switchyard.component.camel.config.model.jms.CamelJmsBindingModel;
 import org.switchyard.component.camel.config.model.v1.V1BaseCamelModelTest;
 import org.switchyard.config.model.Validation;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * Test for {@link V1CamelJmsBindingModel}.
@@ -41,6 +41,7 @@ public class V1CamelJmsBindingModelTest extends V1BaseCamelModelTest<V1CamelJmsB
     private static final String CAMEL_XML = "switchyard-jms-binding-beans.xml";
     private static final String CAMEL_INVALID_XML = "switchyard-invalid-jms-binding-beans.xml";
 
+    private static final String QUEUE = "test_queue";
     private static String TOPIC = "esb_in_topic";
     private static String CONNECTION_FACTORY = "connFactory";
     private static String USERNAME = "camel";
@@ -66,8 +67,6 @@ public class V1CamelJmsBindingModelTest extends V1BaseCamelModelTest<V1CamelJmsB
         "concurrentConsumers=5&maxConcurrentConsumers=15&disableReplyTo=true&preserveMessageQos=true&" +
         "deliveryPersistent=false&priority=9&explicitQosEnabled=true&replyTo=esb_out&replyToType=Shared&" +
         "requestTimeout=300&selector=DEST='ESB'&timeToLive=3600&transacted=true";
-
-	private static final String QUEUE = "test_queue";
 
     @Test
     public void validateCamelBindingModelWithBeanElement() throws Exception {

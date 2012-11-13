@@ -119,6 +119,25 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-amqp</artifactId>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.qpid</groupId>
+                    <artifactId>qpid-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.qpid</groupId>
+                    <artifactId>qpid-common</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.qpid</groupId>
+                    <artifactId>qpid-broker</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
             <scope>compile</scope>
         </dependency>

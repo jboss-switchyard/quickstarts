@@ -34,6 +34,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modules>
+        <module>mixins/amqp</module>
         <module>mixins/bpm</module>
         <module>mixins/naming</module>
         <module>mixins/cdi</module>

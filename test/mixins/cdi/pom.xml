@@ -36,10 +36,6 @@
     <dependencies>
         <!-- internal dependencies -->
         <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-test</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-test-mixin-naming</artifactId>
         </dependency>

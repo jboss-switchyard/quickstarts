@@ -42,6 +42,7 @@ import org.switchyard.component.camel.composer.CamelBindingData;
 import org.switchyard.component.camel.composer.CamelComposition;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.component.camel.config.model.CamelComponentImplementationModel;
+import org.switchyard.component.camel.config.model.amqp.v1.V1CamelAmqpBindingModel;
 import org.switchyard.component.camel.config.model.atom.v1.V1CamelAtomBindingModel;
 import org.switchyard.component.camel.config.model.direct.v1.V1CamelDirectBindingModel;
 import org.switchyard.component.camel.config.model.file.v1.V1CamelFileBindingModel;
@@ -102,7 +103,8 @@ public class CamelActivator extends BaseActivator {
         V1CamelQuartzBindingModel.QUARTZ,
         V1CamelSqlBindingModel.SQL,
         V1CamelMailBindingModel.MAIL,
-        V1CamelJpaBindingModel.JPA
+        V1CamelJpaBindingModel.JPA,
+        V1CamelAmqpBindingModel.AMQP
     };
 
     private SwitchYardCamelContext _camelContext;
