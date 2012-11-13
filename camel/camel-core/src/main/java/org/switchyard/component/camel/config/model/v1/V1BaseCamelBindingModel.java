@@ -27,12 +27,12 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.switchyard.component.common.selector.config.model.v1.V1BindingModel;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.component.camel.config.model.QueryString;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Configurations;
 import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.composite.v1.V1BindingModel;
 
 /**
  * Version 1.0 implementation of a {@link CamelBindingModel}.

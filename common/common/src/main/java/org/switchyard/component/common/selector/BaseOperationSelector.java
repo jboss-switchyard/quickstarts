@@ -29,10 +29,11 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
-import org.switchyard.component.common.selector.config.model.OperationSelectorModel;
-import org.switchyard.component.common.selector.config.model.RegexOperationSelectorModel;
-import org.switchyard.component.common.selector.config.model.StaticOperationSelectorModel;
-import org.switchyard.component.common.selector.config.model.XPathOperationSelectorModel;
+import org.switchyard.config.model.selector.OperationSelectorModel;
+import org.switchyard.config.model.selector.RegexOperationSelectorModel;
+import org.switchyard.config.model.selector.StaticOperationSelectorModel;
+import org.switchyard.config.model.selector.XPathOperationSelectorModel;
+import org.switchyard.selector.OperationSelector;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -41,7 +42,7 @@ import org.w3c.dom.NodeList;
  * 
  * @param <T> the type of source object
  */
-public abstract class OperationSelector<T> {
+public abstract class BaseOperationSelector<T> implements OperationSelector<T> {
 
     private String _defaultNamespace;
     
@@ -51,20 +52,14 @@ public abstract class OperationSelector<T> {
      * Constructor.
      * @param model OperationSelectorModel
      */
-    public OperationSelector(OperationSelectorModel model) {
+    public BaseOperationSelector(OperationSelectorModel model) {
         _model = model;
     }
-    
-    /**
-     * Select a operation.
-     * 
-     * @param content message content to search for operation
-     * @return operation QName
-     * @throws Exception if failed to determine the operation
-     */
+
+    @Override
     public QName selectOperation(T content) throws Exception {
         QName operationQName = null;
-        
+
         if (_model instanceof StaticOperationSelectorModel) {
             StaticOperationSelectorModel staticModel = StaticOperationSelectorModel.class.cast(_model);
             operationQName = QName.valueOf(staticModel.getOperationName());
@@ -84,12 +79,13 @@ public abstract class OperationSelector<T> {
         }
         return operationQName;
     }
-    
-    /**
-     * Sets default namespace.
-     * @param namespace namespace
-     * @return this instance for chaining
-     */
+
+    @Override
+    public String getDefaultNamespace() {
+        return _defaultNamespace;
+    }
+
+    @Override
     public OperationSelector<T> setDefaultNamespace(String namespace) {
         _defaultNamespace = namespace;
         return this;

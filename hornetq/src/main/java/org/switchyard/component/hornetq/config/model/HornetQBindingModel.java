@@ -20,7 +20,7 @@
  */
 package org.switchyard.component.hornetq.config.model;
 
-import org.switchyard.component.common.selector.config.model.BindingModel;
+import org.switchyard.config.model.composite.BindingModel;
 
 /**
  * A binding definition for binding HornetQ to SwitchYard.

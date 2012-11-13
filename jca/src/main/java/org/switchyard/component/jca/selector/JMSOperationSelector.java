@@ -30,16 +30,16 @@ import javax.jms.TextMessage;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.switchyard.component.common.selector.OperationSelector;
-import org.switchyard.component.common.selector.config.model.OperationSelectorModel;
+import org.switchyard.component.common.selector.BaseOperationSelector;
 import org.switchyard.component.jca.composer.JMSBindingData;
+import org.switchyard.config.model.selector.OperationSelectorModel;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 /**
  * OperationSelector for JMS Message.
  */
-public class JMSOperationSelector extends OperationSelector<JMSBindingData> {
+public class JMSOperationSelector extends BaseOperationSelector<JMSBindingData> {
 
     /** key name for lookup the operation from map. */
     public static final String KEY = "operationSelector";

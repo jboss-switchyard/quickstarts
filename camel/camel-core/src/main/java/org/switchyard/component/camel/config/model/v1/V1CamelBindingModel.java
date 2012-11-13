@@ -36,7 +36,7 @@ import org.switchyard.config.model.Descriptor;
  * {@code
  *  <sca:service name="SimpleCamelService">
  *     <camel:binding.camel configURI="direct://input">
- *        <camel:operationSelector operationName="print"/>
+ *        <switchyard:operationSelector operationName="print"/>
  *     </camel:binding.camel>
  *  </sca:service>
  * }

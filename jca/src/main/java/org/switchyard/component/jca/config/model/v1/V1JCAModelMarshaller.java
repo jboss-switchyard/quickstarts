@@ -20,9 +20,9 @@
  */
 package org.switchyard.component.jca.config.model.v1;
 
-import org.switchyard.component.common.selector.config.model.v1.V1CommonBindingMarshaller;
 import org.switchyard.component.jca.JCAConstants;
 import org.switchyard.config.Configuration;
+import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composer.ContextMapperModel;
@@ -36,7 +36,7 @@ import org.switchyard.config.model.composer.v1.V1MessageComposerModel;
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  *
  */
-public class V1JCAModelMarshaller extends V1CommonBindingMarshaller {
+public class V1JCAModelMarshaller extends BaseMarshaller {
 
     /**
      * Constructor.
@@ -100,7 +100,7 @@ public class V1JCAModelMarshaller extends V1CommonBindingMarshaller {
         if (name.equals(JCAConstants.PROCESSOR)) {
             return new V1ProcessorModel(config, getDescriptor());
         }
-        return super.read(config);
+        return null;
     }
 
 }

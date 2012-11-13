@@ -20,9 +20,9 @@
  */
 package org.switchyard.component.jca.selector;
 
-import org.switchyard.component.common.selector.OperationSelector;
 import org.switchyard.component.common.selector.OperationSelectorFactory;
 import org.switchyard.component.jca.composer.JMSBindingData;
+import org.switchyard.selector.OperationSelector;
 
 /**
  * OperatoinSelectorFactory for JMS Message.

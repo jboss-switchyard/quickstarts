@@ -33,9 +33,8 @@ import org.switchyard.Exchange;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.common.composer.MessageComposer;
-import org.switchyard.component.hornetq.composer.HornetQBindingData;
-import org.switchyard.component.common.selector.OperationSelector;
 import org.switchyard.component.common.selector.OperationSelectorFactory;
+import org.switchyard.component.hornetq.composer.HornetQBindingData;
 import org.switchyard.component.hornetq.composer.HornetQComposition;
 import org.switchyard.component.hornetq.config.model.HornetQBindingModel;
 import org.switchyard.component.hornetq.config.model.HornetQConfigModel;
@@ -43,6 +42,7 @@ import org.switchyard.component.hornetq.internal.HornetQUtil;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceOperation;
+import org.switchyard.selector.OperationSelector;
 
 /**
  * A HornetQ inbound handler is a HornetQ MessageHandler that handles messages from a HornetQ

@@ -30,10 +30,9 @@ import java.net.URL;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.component.common.selector.config.model.OperationSelectorModel;
-import org.switchyard.component.common.selector.config.model.StaticOperationSelectorModel;
 import org.switchyard.component.hornetq.config.model.HornetQBindingModel;
 import org.switchyard.config.model.ModelPuller;
+import org.switchyard.config.model.selector.StaticOperationSelectorModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**

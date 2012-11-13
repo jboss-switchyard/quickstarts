@@ -25,8 +25,10 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 import org.apache.log4j.Logger;
-import org.switchyard.component.common.selector.config.model.JavaOperationSelectorModel;
-import org.switchyard.component.common.selector.config.model.OperationSelectorModel;
+import org.switchyard.common.type.Classes;
+import org.switchyard.config.model.selector.OperationSelectorModel;
+import org.switchyard.config.model.selector.JavaOperationSelectorModel;
+import org.switchyard.selector.OperationSelector;
 
 /**
  * A base OperationSelectorFactory which creates OperationSelector instance.
@@ -64,7 +66,7 @@ public abstract class OperationSelectorFactory<T> {
         OperationSelectorFactory<T> operationSelectorFactory = OperationSelectorFactory.getOperationSelectorFactory(getTargetClass());
         if (model instanceof JavaOperationSelectorModel) {
             JavaOperationSelectorModel javaModel = JavaOperationSelectorModel.class.cast(model);
-            return operationSelectorFactory.newOperationSelector((Class<OperationSelector<T>>) javaModel.getClazz(), javaModel);
+            return operationSelectorFactory.newOperationSelector((Class<OperationSelector<T>>)Classes.forName(javaModel.getClazz()), javaModel);
         } else {
             return operationSelectorFactory.newOperationSelector(operationSelectorFactory.getDefaultOperationSelectorClass(), model);
         }

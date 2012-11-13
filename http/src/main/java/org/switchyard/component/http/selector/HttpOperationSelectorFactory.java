@@ -20,9 +20,9 @@
  */
 package org.switchyard.component.http.selector;
 
-import org.switchyard.component.common.selector.OperationSelector;
 import org.switchyard.component.common.selector.OperationSelectorFactory;
 import org.switchyard.component.http.composer.HttpBindingData;
+import org.switchyard.selector.OperationSelector;
 
 /**
  * OperationSelectorFactory implementation for HTTP binding.

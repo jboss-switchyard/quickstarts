@@ -22,8 +22,8 @@
 package org.switchyard.component.camel.selector;
 
 import org.switchyard.component.camel.composer.CamelBindingData;
-import org.switchyard.component.common.selector.OperationSelector;
 import org.switchyard.component.common.selector.OperationSelectorFactory;
+import org.switchyard.selector.OperationSelector;
 
 /**
  * A OperationSelectorFactory implementation for camel Message.

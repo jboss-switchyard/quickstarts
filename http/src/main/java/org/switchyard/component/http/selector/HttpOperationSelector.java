@@ -25,16 +25,16 @@ import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.switchyard.component.common.selector.OperationSelector;
-import org.switchyard.component.common.selector.config.model.OperationSelectorModel;
+import org.switchyard.component.common.selector.BaseOperationSelector;
 import org.switchyard.component.http.composer.HttpBindingData;
+import org.switchyard.config.model.selector.OperationSelectorModel;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 /**
  * OperationSelector implementation for HTTP binding.
  */
-public class HttpOperationSelector extends OperationSelector<HttpBindingData> {
+public class HttpOperationSelector extends BaseOperationSelector<HttpBindingData> {
 
     /**
      * Constructor.

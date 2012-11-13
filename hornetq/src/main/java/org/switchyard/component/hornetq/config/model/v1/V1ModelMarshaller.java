@@ -20,12 +20,12 @@
  */
 package org.switchyard.component.hornetq.config.model.v1;
 
-import org.switchyard.component.common.selector.config.model.v1.V1CommonBindingMarshaller;
 import org.switchyard.component.hornetq.config.model.HornetQBindingModel;
 import org.switchyard.component.hornetq.config.model.HornetQConfigModel;
 import org.switchyard.component.hornetq.config.model.HornetQConnectorConfigModel;
 import org.switchyard.component.hornetq.config.model.HornetQDiscoveryGroupConfigModel;
 import org.switchyard.config.Configuration;
+import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composer.ContextMapperModel;
@@ -43,7 +43,7 @@ import org.switchyard.config.model.domain.v1.V1PropertyModel;
  * @author Daniel Bevenius
  *
  */
-public class V1ModelMarshaller extends V1CommonBindingMarshaller {
+public class V1ModelMarshaller extends BaseMarshaller {
 
     /**
      * Required constructor called via reflection.
@@ -90,7 +90,7 @@ public class V1ModelMarshaller extends V1CommonBindingMarshaller {
             return new V1MessageComposerModel(config, getDescriptor());
         }
         
-        return super.read(config);
+        return null;
     }
     
 

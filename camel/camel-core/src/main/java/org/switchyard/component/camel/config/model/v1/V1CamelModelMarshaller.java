@@ -36,8 +36,8 @@ import org.switchyard.component.camel.config.model.seda.v1.V1CamelSedaBindingMod
 import org.switchyard.component.camel.config.model.sftp.v1.V1CamelSftpBindingModel;
 import org.switchyard.component.camel.config.model.sql.v1.V1CamelSqlBindingModel;
 import org.switchyard.component.camel.config.model.timer.v1.V1CamelTimerBindingModel;
-import org.switchyard.component.common.selector.config.model.v1.V1CommonBindingMarshaller;
 import org.switchyard.config.Configuration;
+import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composer.ContextMapperModel;
@@ -54,7 +54,7 @@ import org.switchyard.config.model.composite.ComponentImplementationModel;
  * 
  * @author Daniel Bevenius
  */
-public class V1CamelModelMarshaller extends V1CommonBindingMarshaller {
+public class V1CamelModelMarshaller extends BaseMarshaller {
 
     /**
      * Sole constructor.
@@ -124,7 +124,7 @@ public class V1CamelModelMarshaller extends V1CommonBindingMarshaller {
             return new V1MessageComposerModel(config, getDescriptor());
         }
 
-        return super.read(config);
+        return null;
     }
 
 }

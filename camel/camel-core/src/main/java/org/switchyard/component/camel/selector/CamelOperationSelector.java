@@ -22,14 +22,14 @@
 package org.switchyard.component.camel.selector;
 
 import org.switchyard.component.camel.composer.CamelBindingData;
-import org.switchyard.component.common.selector.OperationSelector;
-import org.switchyard.component.common.selector.config.model.OperationSelectorModel;
+import org.switchyard.component.common.selector.BaseOperationSelector;
+import org.switchyard.config.model.selector.OperationSelectorModel;
 import org.w3c.dom.Document;
 
 /**
  * Camel OperationSelector implementation.
  */
-public class CamelOperationSelector extends OperationSelector<CamelBindingData> {
+public class CamelOperationSelector extends BaseOperationSelector<CamelBindingData> {
 
     /**
      * Constructor.

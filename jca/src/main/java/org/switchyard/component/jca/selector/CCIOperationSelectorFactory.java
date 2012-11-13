@@ -20,9 +20,9 @@
  */
 package org.switchyard.component.jca.selector;
 
-import org.switchyard.component.common.selector.OperationSelector;
 import org.switchyard.component.common.selector.OperationSelectorFactory;
 import org.switchyard.component.jca.composer.MappedRecordBindingData;
+import org.switchyard.selector.OperationSelector;
 
 /**
  * An example of OperationSelectorFactory implementation for CCI MappedRecord.

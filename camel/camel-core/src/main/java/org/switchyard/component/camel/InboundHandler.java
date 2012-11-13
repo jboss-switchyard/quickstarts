@@ -39,10 +39,10 @@ import org.switchyard.common.lang.Strings;
 import org.switchyard.component.camel.composer.CamelBindingData;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.component.camel.transaction.TransactionManagerFactory;
-import org.switchyard.component.common.selector.OperationSelector;
 import org.switchyard.component.common.selector.OperationSelectorFactory;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.exception.SwitchYardException;
+import org.switchyard.selector.OperationSelector;
 
 /**
  * An ExchangeHandler that acts as a gateway/entrypoint for Camel Components.

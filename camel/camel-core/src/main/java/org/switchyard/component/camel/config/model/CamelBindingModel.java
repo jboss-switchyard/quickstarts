@@ -23,7 +23,7 @@ package org.switchyard.component.camel.config.model;
 import java.net.URI;
 
 import org.switchyard.config.Configuration;
-import org.switchyard.component.common.selector.config.model.BindingModel;
+import org.switchyard.config.model.composite.BindingModel;
 
 /**
  * A binding definition that specifies how communication between Apache Camel
@@ -33,7 +33,7 @@ import org.switchyard.component.common.selector.config.model.BindingModel;
  * <pre>{
  *  <sca:service name="SimpleCamelService">
  *     <camel:binding.xyz>
- *        <camel:operationSelector operationName="print"/>
+ *        <switchyard:operationSelector operationName="print"/>
  *     </camel:binding.xyz>
  *  </sca:service>
  * }</pre>

@@ -11,7 +11,7 @@ This project deals with integrating Apache Camel with SwitchYard.
         <sca:composite>
             <sca:service name="SimpleCamelService">
                 <camel:binding.camel configURI="direct://input">
-                    <camel:operationSelector operationName="print"/>
+                    <operationSelector operationName="print"/>
                 </camel:binding.camel>
             </sca:service>
         

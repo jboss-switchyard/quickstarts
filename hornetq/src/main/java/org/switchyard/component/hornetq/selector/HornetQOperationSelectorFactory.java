@@ -20,9 +20,9 @@
  */
 package org.switchyard.component.hornetq.selector;
 
-import org.switchyard.component.common.selector.OperationSelector;
 import org.switchyard.component.common.selector.OperationSelectorFactory;
 import org.switchyard.component.hornetq.composer.HornetQBindingData;
+import org.switchyard.selector.OperationSelector;
 
 /**
  * A OperationSelectorFactory implementation for HornetQ ClientMessage.

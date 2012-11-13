@@ -28,7 +28,6 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.component.common.composer.MessageComposer;
-import org.switchyard.component.common.selector.OperationSelector;
 import org.switchyard.component.common.selector.OperationSelectorFactory;
 import org.switchyard.component.http.composer.HttpBindingData;
 import org.switchyard.component.http.composer.HttpComposition;
@@ -39,6 +38,7 @@ import org.switchyard.component.http.endpoint.Endpoint;
 import org.switchyard.component.http.endpoint.EndpointPublisherFactory;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.security.SecurityContext;
+import org.switchyard.selector.OperationSelector;
 
 /**
  * Hanldes HTTP requests to invoke a SwitchYard service.

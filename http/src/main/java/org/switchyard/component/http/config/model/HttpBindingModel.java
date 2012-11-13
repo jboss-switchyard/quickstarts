@@ -21,11 +21,11 @@ package org.switchyard.component.http.config.model;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.component.common.selector.config.model.v1.V1BindingModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Configurations;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.composite.v1.V1BindingModel;
 
 /**
  * A model that holds the HTTP gateway configuration.
@@ -77,6 +77,7 @@ public class HttpBindingModel extends V1BindingModel {
      */
     public HttpBindingModel(Configuration config, Descriptor desc) {
         super(config, desc);
+        setModelChildrenOrder(CONTEXT_PATH, ADDRESS, METHOD, CONTENT_TYPE);
     }
 
     /**

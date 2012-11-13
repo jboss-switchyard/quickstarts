@@ -33,13 +33,15 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
-import org.switchyard.component.common.selector.config.model.OperationSelectorModel;
-import org.switchyard.component.common.selector.config.model.RegexOperationSelectorModel;
-import org.switchyard.component.common.selector.config.model.StaticOperationSelectorModel;
-import org.switchyard.component.common.selector.config.model.XPathOperationSelectorModel;
-import org.switchyard.component.common.selector.config.model.v1.V1RegexOperationSelectorModel;
-import org.switchyard.component.common.selector.config.model.v1.V1StaticOperationSelectorModel;
-import org.switchyard.component.common.selector.config.model.v1.V1XPathOperationSelectorModel;
+import org.switchyard.component.common.selector.BaseOperationSelector;
+import org.switchyard.config.model.selector.OperationSelectorModel;
+import org.switchyard.config.model.selector.RegexOperationSelectorModel;
+import org.switchyard.config.model.selector.StaticOperationSelectorModel;
+import org.switchyard.config.model.selector.XPathOperationSelectorModel;
+import org.switchyard.config.model.selector.v1.V1RegexOperationSelectorModel;
+import org.switchyard.config.model.selector.v1.V1StaticOperationSelectorModel;
+import org.switchyard.config.model.selector.v1.V1XPathOperationSelectorModel;
+import org.switchyard.selector.OperationSelector;
 
 public class OperationSelectorTest {
 
@@ -102,7 +104,7 @@ public class OperationSelectorTest {
         Assert.assertEquals("regexOperation", operationQName.getLocalPart());
     }
     
-    public class MyOperationSelector extends OperationSelector<String> {
+    public class MyOperationSelector extends BaseOperationSelector<String> {
         public MyOperationSelector(OperationSelectorModel model) {
             super(model);
         }
@@ -115,7 +117,7 @@ public class OperationSelectorTest {
             InputSource is = new InputSource(new StringReader(extractString(content)));
             return builder.parse(is);
         }
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                
         @Override
         protected String extractString(String content) throws Exception {
             return content;

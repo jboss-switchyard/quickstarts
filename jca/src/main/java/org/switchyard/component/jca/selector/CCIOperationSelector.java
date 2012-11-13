@@ -26,16 +26,16 @@ import javax.resource.cci.MappedRecord;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.switchyard.component.common.selector.OperationSelector;
-import org.switchyard.component.common.selector.config.model.OperationSelectorModel;
+import org.switchyard.component.common.selector.BaseOperationSelector;
 import org.switchyard.component.jca.composer.MappedRecordBindingData;
+import org.switchyard.config.model.selector.OperationSelectorModel;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 /**
  * An example of OperationSelector implementation for CCI MappedRecord.
  */
-public class CCIOperationSelector extends OperationSelector<MappedRecordBindingData> {
+public class CCIOperationSelector extends BaseOperationSelector<MappedRecordBindingData> {
 
     /** key name for lookup the operation from map. */
     public static final String KEY = "operationSelector";

@@ -20,12 +20,12 @@
  */
 package org.switchyard.component.hornetq.config.model.v1;
 
-import org.switchyard.component.common.selector.config.model.v1.V1BindingModel;
 import org.switchyard.component.hornetq.config.model.HornetQBindingModel;
 import org.switchyard.component.hornetq.config.model.HornetQConfigModel;
 import org.switchyard.component.hornetq.config.model.HornetQConstants;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.composite.v1.V1BindingModel;
 
 /**
  * 
@@ -53,6 +53,7 @@ public class V1HornetQBindingModel extends V1BindingModel implements HornetQBind
      */
     public V1HornetQBindingModel(final Configuration config, final Descriptor desc) {
         super(config, desc);
+        setModelChildrenOrder(HornetQConfigModel.CONFIG);
     }
     
     @Override

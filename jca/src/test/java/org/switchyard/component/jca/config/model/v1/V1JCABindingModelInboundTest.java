@@ -27,9 +27,9 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.component.common.selector.config.model.StaticOperationSelectorModel;
 import org.switchyard.component.jca.config.model.JCABindingModel;
 import org.switchyard.config.model.ModelPuller;
+import org.switchyard.config.model.selector.StaticOperationSelectorModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
