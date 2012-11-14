@@ -44,6 +44,8 @@ public class V1CamelScheduledBatchPollConsumer extends V1CamelScheduledPollConsu
      */
     public V1CamelScheduledBatchPollConsumer(QName qname) {
         super(qname);
+
+        setModelChildrenOrder(MAX_MESSAGES_PER_POLL);
     }
 
     /**
@@ -54,8 +56,6 @@ public class V1CamelScheduledBatchPollConsumer extends V1CamelScheduledPollConsu
      */
     public V1CamelScheduledBatchPollConsumer(Configuration config, Descriptor desc) {
         super(config, desc);
-
-        setModelChildrenOrder(MAX_MESSAGES_PER_POLL);
     }
 
     @Override

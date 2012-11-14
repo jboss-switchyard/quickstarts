@@ -49,6 +49,7 @@ import org.switchyard.component.camel.config.model.file.v1.V1CamelFileBindingMod
 import org.switchyard.component.camel.config.model.ftp.v1.V1CamelFtpBindingModel;
 import org.switchyard.component.camel.config.model.ftps.v1.V1CamelFtpsBindingModel;
 import org.switchyard.component.camel.config.model.jms.v1.V1CamelJmsBindingModel;
+import org.switchyard.component.camel.config.model.mail.v1.V1CamelMailBindingModel;
 import org.switchyard.component.camel.config.model.mock.v1.V1CamelMockBindingModel;
 import org.switchyard.component.camel.config.model.netty.v1.V1CamelNettyTcpBindingModel;
 import org.switchyard.component.camel.config.model.netty.v1.V1CamelNettyUdpBindingModel;
@@ -99,7 +100,8 @@ public class CamelActivator extends BaseActivator {
         V1CamelTimerBindingModel.TIMER,
         V1CamelJmsBindingModel.JMS,
         V1CamelQuartzBindingModel.QUARTZ,
-        V1CamelSqlBindingModel.SQL
+        V1CamelSqlBindingModel.SQL,
+        V1CamelMailBindingModel.MAIL
     };
 
     private SwitchYardCamelContext _camelContext;

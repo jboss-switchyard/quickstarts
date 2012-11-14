@@ -23,7 +23,11 @@ import static org.switchyard.Exchange.OPERATION_NAME;
 import static org.switchyard.Exchange.SERVICE_NAME;
 
 import java.io.InputStream;
+import java.util.Map.Entry;
+import java.util.Set;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.xml.namespace.QName;
 
 import org.switchyard.Exchange;
@@ -61,6 +65,14 @@ public class CamelMessageComposer extends BaseMessageComposer<CamelBindingData> 
             content = sourceMessage.getBody(InputStream.class);
         }
         message.setContent(content);
+
+        Set<String> attachements = sourceMessage.getAttachmentNames();
+        if (!attachements.isEmpty()) {
+            for (Entry<String, DataHandler> entry : sourceMessage.getAttachments().entrySet()) {
+                message.addAttachment(entry.getKey(), entry.getValue().getDataSource());
+            }
+        }
+
         return message;
     }
 
@@ -71,17 +83,24 @@ public class CamelMessageComposer extends BaseMessageComposer<CamelBindingData> 
     public CamelBindingData decompose(Exchange exchange, CamelBindingData target) throws Exception {
         getContextMapper().mapTo(exchange.getContext(), target);
 
+        Message sourceMessage = exchange.getMessage();
         org.apache.camel.Message targetMessage = target.getMessage();
+
+        if (!sourceMessage.getAttachmentMap().isEmpty()) {
+            for (Entry<String, DataSource> entry : sourceMessage.getAttachmentMap().entrySet()) {
+                targetMessage.addAttachment(entry.getKey(), new DataHandler(entry.getValue()));
+            }
+        }
 
         ServiceOperation operation = exchange.getContract().getProviderOperation();
         targetMessage.setHeader(OPERATION_NAME, operation.getName());
         targetMessage.setHeader(FAULT_TYPE, operation.getFaultType());
         targetMessage.setHeader(SERVICE_NAME, exchange.getProvider().getName());
 
-        targetMessage.setBody(exchange.getMessage().getContent());
+        targetMessage.setBody(sourceMessage.getContent());
         return target;
     }
-    
+
     /**
      * Returns the current message type based on the state of the exchange.
      * @param exchange exchange to query

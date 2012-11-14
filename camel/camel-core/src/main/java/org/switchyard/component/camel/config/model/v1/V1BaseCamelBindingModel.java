@@ -27,12 +27,14 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.switchyard.component.camel.config.model.CamelBindingModel;
 import org.switchyard.component.camel.config.model.QueryString;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Configurations;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.v1.V1BindingModel;
+import org.switchyard.config.model.Model;
 
 /**
  * Version 1.0 implementation of a {@link CamelBindingModel}.
@@ -46,6 +48,16 @@ public abstract class V1BaseCamelBindingModel extends V1BindingModel implements
      * Camel endpoint type.
      */
     public static final String CAMEL = "camel";
+
+    /**
+     * Consume element. Optional.
+     */
+    public static final String CONSUME = "consume";
+
+    /**
+     * Produce element. Optional.
+     */
+    public static final String PRODUCE = "produce";
 
     private Configuration _environment = Configurations.emptyConfig();
 
@@ -115,7 +127,7 @@ public abstract class V1BaseCamelBindingModel extends V1BindingModel implements
                 }
 
                 if (child != null && child.getChildren().size() == 0) {
-                    queryString.add(child.getName(), child.getValue());
+                    queryString.add(child.getName(), UnsafeUriCharactersEncoder.encode(child.getValue()));
                 } else {
                     traverseConfiguration(child.getChildren(), queryString, excludes);
                 }
@@ -123,6 +135,21 @@ public abstract class V1BaseCamelBindingModel extends V1BindingModel implements
         }
     }
 
+    protected <T extends Model> T replaceChildren(String children, T model) {
+        Configuration config = getModelConfiguration().getFirstChild(children);
+        if (config != null) {
+            // set an existing config value
+            getModelConfiguration().removeChildren(children);
+            getModelConfiguration().addChild(model.getModelConfiguration());
+        } else {
+            setChildModel(model);
+        }
+        return model;
+    }
+
+    protected Configuration getFirstChild(String name) {
+        return getModelConfiguration().getFirstChild(name);
+    }
 
     protected final Integer getIntegerConfig(String configName) {
         String value = getConfig(configName);
@@ -169,6 +196,7 @@ public abstract class V1BaseCamelBindingModel extends V1BindingModel implements
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     protected <X extends V1BaseCamelBindingModel> X setConfig(String name, Object value) {
         String modelValue = String.valueOf(value);
         Configuration config = getModelConfiguration().getFirstChild(name);

@@ -169,6 +169,49 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
 
+    <element name="binding.mail" type="camel:CamelMailBindingType" substitutionGroup="swyd:binding.switchyard"/>
+    <complexType name="CamelMailBindingType">
+        <complexContent>
+            <extension base="camel:BaseCamelBinding">
+                <sequence>
+                    <element name="host" type="string" />
+                    <element name="port" type="int" minOccurs="0" maxOccurs="1"/>
+                    <element name="username" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="password" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="connectionTimeout" type="integer" minOccurs="0" maxOccurs="1"/>
+                    <element name="consume" type="camel:CamelMailConsumerType" minOccurs="0" maxOccurs="1"/>
+                    <element name="produce" type="camel:CamelMailProducerType" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+                <attribute name="secure" type="boolean"/>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="CamelMailProducerType">
+        <sequence>
+            <element name="subject" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="from" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="to" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="CC" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="BCC" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="replyTo" type="string" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+    <complexType name="CamelMailConsumerType">
+        <complexContent>
+            <extension base="camel:ScheduledBatchPollConsumerType">
+                <sequence>
+                    <element name="folderName" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="fetchSize" type="integer" minOccurs="0" maxOccurs="1"/>
+                    <element name="unseen" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="delete" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="copyTo" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="disconnect" type="boolean" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+                <attribute name="accountType" type="camel:MailConsumerAccountType" default="imap"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <element name="binding.mock" type="camel:CamelMockBindingType" substitutionGroup="swyd:binding.switchyard"/>
     <complexType name="CamelMockBindingType" >
         <complexContent>
@@ -443,6 +486,13 @@ MA  02110-1301, USA.
             <enumeration value="MINUTES" />
             <enumeration value="HOURS" />
             <enumeration value="DAYS" />
+        </restriction>
+    </simpleType>
+
+    <simpleType name="MailConsumerAccountType">
+        <restriction base="string">
+            <enumeration value="imap" />
+            <enumeration value="pop3" />
         </restriction>
     </simpleType>
 

@@ -93,6 +93,7 @@ public abstract class V1BaseCamelModel extends BaseModel {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     protected <X extends V1BaseCamelModel> X setConfig(String name, Object value) {
         String modelValue = String.valueOf(value);
         Configuration config = getModelConfiguration().getFirstChild(name);

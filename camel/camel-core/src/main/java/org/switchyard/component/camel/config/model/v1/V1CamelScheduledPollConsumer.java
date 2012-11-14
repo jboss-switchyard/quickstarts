@@ -64,6 +64,10 @@ public class V1CamelScheduledPollConsumer extends V1BaseCamelModel
      */
     public V1CamelScheduledPollConsumer(QName qname) {
         super(qname);
+
+        setModelChildrenOrder(INITIAL_DELAY, DELAY, USE_FIXED_DELAY,
+            TIME_UNIT, SEND_EMPTY_MESSAGE_WHEN_IDLE
+        );
     }
 
     /**
@@ -74,10 +78,6 @@ public class V1CamelScheduledPollConsumer extends V1BaseCamelModel
      */
     public V1CamelScheduledPollConsumer(Configuration config, Descriptor desc) {
         super(config, desc);
-
-        setModelChildrenOrder(INITIAL_DELAY, DELAY, USE_FIXED_DELAY,
-            TIME_UNIT, SEND_EMPTY_MESSAGE_WHEN_IDLE
-        );
     }
 
     /**

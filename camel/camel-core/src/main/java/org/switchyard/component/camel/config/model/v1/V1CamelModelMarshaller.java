@@ -23,11 +23,10 @@ package org.switchyard.component.camel.config.model.v1;
 import org.switchyard.component.camel.config.model.atom.v1.V1CamelAtomBindingModel;
 import org.switchyard.component.camel.config.model.direct.v1.V1CamelDirectBindingModel;
 import org.switchyard.component.camel.config.model.file.v1.V1CamelFileBindingModel;
-import org.switchyard.component.camel.config.model.file.v1.V1CamelFileConsumerBindingModel;
-import org.switchyard.component.camel.config.model.file.v1.V1CamelFileProducerBindingModel;
 import org.switchyard.component.camel.config.model.ftp.v1.V1CamelFtpBindingModel;
 import org.switchyard.component.camel.config.model.ftps.v1.V1CamelFtpsBindingModel;
 import org.switchyard.component.camel.config.model.jms.v1.V1CamelJmsBindingModel;
+import org.switchyard.component.camel.config.model.mail.v1.V1CamelMailBindingModel;
 import org.switchyard.component.camel.config.model.mock.v1.V1CamelMockBindingModel;
 import org.switchyard.component.camel.config.model.netty.v1.V1CamelNettyTcpBindingModel;
 import org.switchyard.component.camel.config.model.netty.v1.V1CamelNettyUdpBindingModel;
@@ -101,15 +100,9 @@ public class V1CamelModelMarshaller extends BaseMarshaller {
                 return new V1CamelQuartzBindingModel(config, getDescriptor());
             } else if (name.endsWith(V1CamelSqlBindingModel.SQL)) {
                 return new V1CamelSqlBindingModel(config, getDescriptor());
+            } else if (name.endsWith(V1CamelMailBindingModel.MAIL)) {
+                return new V1CamelMailBindingModel(config, getDescriptor());
             }
-        }
-
-        if (name.endsWith(V1CamelFileBindingModel.CONSUME)) {
-            return new V1CamelFileConsumerBindingModel(config, getDescriptor());
-        }
-
-        if (name.endsWith(V1CamelFileBindingModel.PRODUCE)) {
-            return new V1CamelFileProducerBindingModel(config, getDescriptor());
         }
 
         if (name.startsWith(ComponentImplementationModel.IMPLEMENTATION)) {
