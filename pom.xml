@@ -1563,11 +1563,6 @@
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.infinispan</groupId>
-                <artifactId>infinispan-tree</artifactId>
-                <version>${version.infinispan}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.jboss.as</groupId>
                 <artifactId>jboss-as-naming</artifactId>
                 <version>${version.jbossas}</version>
