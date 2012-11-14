@@ -1,39 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ JBoss, Home of Professional Open Source.
-  ~ Copyright 2012, Red Hat, Inc., and individual contributors
-  ~ as indicated by the @author tags. See the copyright.txt file in the
-  ~ distribution for a full listing of individual contributors.
-  ~
-  ~ This is free software; you can redistribute it and/or modify it
-  ~ under the terms of the GNU Lesser General Public License as
-  ~ published by the Free Software Foundation; either version 2.1 of
-  ~ the License, or (at your option) any later version.
-  ~
-  ~ This software is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-  ~ Lesser General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU Lesser General Public
-  ~ License along with this software; if not, write to the Free
-  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
-  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
-  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>org.switchyard.quickstarts</groupId>
         <artifactId>switchyard-quickstart-parent</artifactId>
+        <groupId>org.switchyard.quickstarts</groupId>
         <version>0.7.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>switchyard-quickstart-camel-netty-binding</artifactId>
-    <name>Quickstart : Camel Netty Binding</name>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>switchyard-quickstart-camel-amqp-binding</artifactId>
+    <name>Quickstart : Camel AMQP Binding</name>
     <properties>
-        <maven.exec.mainClass>org.switchyard.quickstarts.camel.netty.binding.TCPClient</maven.exec.mainClass>
+        <maven.exec.mainClass>org.switchyard.quickstarts.camel.amqp.binding.QpidServer</maven.exec.mainClass>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>org.apache.qpid</groupId>
+            <artifactId>qpid-client</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-api</artifactId>
@@ -51,8 +36,8 @@
             <artifactId>switchyard-component-bean</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-test</artifactId>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-test-mixin-amqp</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -66,9 +51,20 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <build>
+   <build>
         <finalName>${project.artifactId}</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Dependencies>org.apache.qpid</Dependencies>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
@@ -87,7 +83,6 @@
                         <configuration>
                             <scannerClassNames>
                                 <param>org.switchyard.component.bean.config.model.BeanSwitchYardScanner</param>
-                                <param>org.switchyard.transform.config.model.TransformSwitchYardScanner</param>
                             </scannerClassNames>
                         </configuration>
                     </execution>
@@ -104,12 +99,14 @@
             </plugin>
         </plugins>
     </build>
+
     <profiles>
         <profile>
-            <id>udp</id>
+            <id>client</id>
             <properties>
-                <maven.exec.mainClass>org.switchyard.quickstarts.camel.netty.binding.UDPClient</maven.exec.mainClass>
+                <maven.exec.mainClass>org.switchyard.quickstarts.camel.amqp.binding.QpidClient</maven.exec.mainClass>
             </properties>
         </profile>
     </profiles>
+
 </project>
