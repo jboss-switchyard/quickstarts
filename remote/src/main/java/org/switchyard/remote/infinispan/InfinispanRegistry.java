@@ -31,9 +31,6 @@ import org.infinispan.notifications.Listener;
 import org.infinispan.notifications.cachemanagerlistener.annotation.ViewChanged;
 import org.infinispan.notifications.cachemanagerlistener.event.ViewChangedEvent;
 import org.infinispan.remoting.transport.Address;
-import org.infinispan.tree.Node;
-import org.infinispan.tree.TreeCache;
-import org.infinispan.tree.TreeCacheFactory;
 import org.switchyard.remote.RemoteEndpoint;
 import org.switchyard.remote.RemoteRegistry;
 import org.switchyard.serial.FormatType;
@@ -41,7 +38,7 @@ import org.switchyard.serial.Serializer;
 import org.switchyard.serial.SerializerFactory;
 
 /**
- * Implementation of a distributed registry based on a replicated tree cache in Infinispan.
+ * Implementation of a distributed registry based on a replicated cache in Infinispan.
  * This class provides an implementation of the RemoteRegistry contract as well as a group
  * membership listener to detect node failures and remove endpoint registrations from that node.
  */
@@ -52,7 +49,7 @@ public class InfinispanRegistry implements RemoteRegistry {
     private static Logger _log = Logger.getLogger(InfinispanRegistry.class);
 
     private String _nodeName;
-    private TreeCache<String, String> _serviceCache;
+    private Cache<String, String> _serviceCache;
     private Serializer _serializer = SerializerFactory.create(FormatType.JSON, null, true);
     
     /**
@@ -60,7 +57,7 @@ public class InfinispanRegistry implements RemoteRegistry {
      * @param serviceCache the replicated cache to use
      */
     public InfinispanRegistry(Cache<String, String> serviceCache) {
-        _serviceCache = new TreeCacheFactory().createTreeCache(serviceCache);
+        _serviceCache = serviceCache;
         _serializer = SerializerFactory.create(FormatType.JSON, null, true);
     
         serviceCache.getCacheManager().addListener(new MemberDropListener());
@@ -69,24 +66,25 @@ public class InfinispanRegistry implements RemoteRegistry {
     
     @Override
     public void addEndpoint(RemoteEndpoint endpoint) {
-        if (_serviceCache.get(toFQN(ROOT_DOMAIN, endpoint.getServiceName()), _nodeName) != null) {
-            _log.info("Service " + endpoint.getServiceName() + " is already registered in the cache");
+        String cacheKey = createNodeKey(ROOT_DOMAIN, endpoint.getServiceName(), _nodeName);
+        if (_serviceCache.get(cacheKey) != null) {
+            _log.info("Remote endpoint " + cacheKey + " is already registered in the cache");
             return;
         }
         
         try {
             endpoint.setNode(_nodeName);
             String epStr = new String(_serializer.serialize(endpoint, RemoteEndpoint.class));
-            _serviceCache.put(toFQN(ROOT_DOMAIN, endpoint.getServiceName()), _nodeName, epStr);
+            _serviceCache.put(cacheKey, epStr);
         } catch (java.io.IOException ioEx) {
-            _log.warn("Failed to add service " + endpoint.getServiceName() + " to remote registry.", ioEx);
+            _log.warn("Failed to add remote endpoint " + cacheKey + " to registry.", ioEx);
         }
     }
 
     @Override
     public void removeEndpoint(RemoteEndpoint endpoint) {
         if (_nodeName != null) {
-            _serviceCache.remove(toFQN(ROOT_DOMAIN, endpoint.getServiceName()), _nodeName);
+            _serviceCache.remove(createNodeKey(ROOT_DOMAIN, endpoint.getServiceName(), _nodeName));
         }
     }
 
@@ -94,17 +92,20 @@ public class InfinispanRegistry implements RemoteRegistry {
     public List<RemoteEndpoint> getEndpoints(QName serviceName) {
         List<RemoteEndpoint> services = new LinkedList<RemoteEndpoint>();
         // add remotes and prune the local entry
-        String serviceFQN = toFQN(ROOT_DOMAIN, serviceName);
-        Set<String> nodes = _serviceCache.getKeys(serviceFQN);
+        String serviceKey = createServiceKey(ROOT_DOMAIN, serviceName);
+        Set<String> nodes = _serviceCache.keySet();
         if (nodes != null) {
             for (String node : nodes) {
-                String epStr = _serviceCache.get(serviceFQN, node);
-                if (epStr != null) {
-                    try {
-                        RemoteEndpoint ep = _serializer.deserialize(epStr.getBytes(), RemoteEndpoint.class);
-                        services.add(ep);
-                    } catch (java.io.IOException ioEx) {
-                        _log.warn("Failed to deserialize remote endpoint: " + epStr, ioEx);
+                if (node.startsWith(serviceKey)) {
+                    String epStr = _serviceCache.get(node);
+                    // Catch a race condition where entry has been removed since keySet list was built
+                    if (epStr != null) {
+                        try {
+                            RemoteEndpoint ep = _serializer.deserialize(epStr.getBytes(), RemoteEndpoint.class);
+                            services.add(ep);
+                        } catch (java.io.IOException ioEx) {
+                            _log.warn("Failed to deserialize remote endpoint: " + epStr, ioEx);
+                        }
                     }
                 }
             }
@@ -112,12 +113,12 @@ public class InfinispanRegistry implements RemoteRegistry {
         return services;
     }
     
-    private String toFQN(QName domain) {
-        return "/" + domain.toString();
+    private String createServiceKey(QName domain, QName service) {
+        return "/" + domain.toString() + "/" + service.toString();
     }
     
-    private String toFQN(QName domain, QName service) {
-        return toFQN(domain) + "/" + service.toString();
+    private String createNodeKey(QName domain, QName service, String node) {
+        return createServiceKey(domain, service) + "/" + node;
     }
     
     /**
@@ -139,10 +140,10 @@ public class InfinispanRegistry implements RemoteRegistry {
             }
         }
         
-        private void dropAllServices(Address address) {
-            for (Node<String, String> domainNode : _serviceCache.getRoot().getChildren()) {
-                for (Node<String, String> serviceNode : domainNode.getChildren()) {
-                    serviceNode.remove(address.toString());
+        void dropAllServices(Address address) {
+            for (String node : _serviceCache.keySet()) {
+                if (node.endsWith("/" + address.toString())) {
+                    _serviceCache.remove(node);
                 }
             }
         }

@@ -26,6 +26,7 @@ import org.infinispan.Cache;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
+import org.infinispan.remoting.transport.Address;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.remote.RemoteEndpoint;
@@ -64,6 +65,31 @@ public class InfinispanRegistryTest {
     }
     
     @Test
+    public void testNodeFailure() throws Exception {
+        RemoteEndpoint ep1 = new RemoteEndpoint()
+        .setDomainName(new QName("domain1"))
+        .setServiceName(new QName("service1"));
+        RemoteEndpoint ep2 = new RemoteEndpoint()
+        .setDomainName(new QName("domain1"))
+        .setServiceName(new QName("service2"));
+        
+        // nothing in the registry
+        Assert.assertEquals(0, _registry.getEndpoints(ep1.getServiceName()).size());
+        // add our endpoints on the same node
+        _registry.addEndpoint(ep1);
+        _registry.addEndpoint(ep2);
+        // signal that the node has failed
+        InfinispanRegistry.MemberDropListener dropListener = _registry.new MemberDropListener();
+        dropListener.dropAllServices(new FakeAddress(ep1.getNode()));
+
+        // check to make sure all endpoints were removed
+        Assert.assertEquals(0, _registry.getEndpoints(ep1.getServiceName()).size());
+        // check to make sure all endpoints were removed
+        Assert.assertEquals(0, _registry.getEndpoints(ep2.getServiceName()).size());
+        
+    }
+    
+    @Test
     public void addDuplicate() throws Exception {
         RemoteEndpoint ep1 = new RemoteEndpoint()
             .setDomainName(new QName("domain1"))
@@ -77,5 +103,19 @@ public class InfinispanRegistryTest {
         _registry.addEndpoint(ep1);
         // still just one in the registry
         Assert.assertEquals(1, _registry.getEndpoints(ep1.getServiceName()).size());
+    }
+}
+
+class FakeAddress implements Address {
+    
+    private String _address;
+    
+    public FakeAddress(String address) {
+        _address = address;
+    }
+    
+    @Override
+    public String toString() {
+        return _address;
     }
 }
