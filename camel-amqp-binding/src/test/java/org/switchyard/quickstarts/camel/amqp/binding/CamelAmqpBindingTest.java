@@ -28,11 +28,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-/**
- * @author: <a href="mailto:eduardo.devera@gmail.com">Eduardo de Vera</a>
- * Date: 11/11/12
- * Time: 4:52 PM
- */
 @SwitchYardTestCaseConfig(
         config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
         mixins = {AMQPMixIn.class},
@@ -63,7 +58,7 @@ public class CamelAmqpBindingTest {
         assertThat(receivedExchange.getMessage().getContent(String.class), is(equalTo(payload)));
     }
 
-    private void sentTextToQueue(String payload) {
+    private void sentTextToQueue(String payload) throws NamingException, JMSException {
         Connection connection = null;
         Session session = null;
         try {
@@ -84,10 +79,6 @@ public class CamelAmqpBindingTest {
             //message = (TextMessage)messageConsumer.receive();
             //System.out.println(message);
 
-        } catch (JMSException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (NamingException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } finally {
             if (connection != null) {
                 try { connection.close(); } catch (Exception e) {}
