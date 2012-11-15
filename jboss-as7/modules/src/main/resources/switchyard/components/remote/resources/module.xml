@@ -31,7 +31,6 @@
         <module name="javax.servlet.api"/>
         <module name="org.apache.log4j"/>
         <module name="org.infinispan"/>
-        <module name="org.infinispan.tree"/>
         <module name="org.switchyard.api"/>
         <module name="org.switchyard.common"/>
         <module name="org.switchyard.config"/>
