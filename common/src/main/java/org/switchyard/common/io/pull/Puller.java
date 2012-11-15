@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
@@ -38,7 +39,7 @@ import org.switchyard.common.type.Classes;
 public abstract class Puller<R> {
 
     /**
-     * Safely pulls a resource from a path using {@link org.switchyard.common.type.Classes#getResourceAsStream(String, Class)}.
+     * Safely pulls a resource from the class path using {@link org.switchyard.common.type.Classes#getResourceAsStream(String, Class)}.
      * @param resource the path to the resource
      * @return the resource, or null if not found
      * @throws IOException if a problem occurred
@@ -48,7 +49,7 @@ public abstract class Puller<R> {
     }
 
     /**
-     * Safely pulls a resource from a path using {@link org.switchyard.common.type.Classes#getResourceAsStream(String, Class)}.
+     * Safely pulls a resource from the class path using {@link org.switchyard.common.type.Classes#getResourceAsStream(String, Class)}.
      * @param resource the path to the resource
      * @param caller class calling this method, so we can also try it's classloader
      * @return the resource, or null if not found
@@ -67,7 +68,7 @@ public abstract class Puller<R> {
     }
 
     /**
-     * Safely pulls a resource from a path using {@link org.switchyard.common.type.Classes#getResourceAsStream(String, ClassLoader)}.
+     * Safely pulls a resource from the class path using {@link org.switchyard.common.type.Classes#getResourceAsStream(String, ClassLoader)}.
      * @param resource the path to the resource
      * @param loader the classloader we can also try to find the resource
      * @return the resource, or null if not found
@@ -168,5 +169,98 @@ public abstract class Puller<R> {
      * @throws IOException if a problem occurred
      */
     public abstract R pull(InputStream stream) throws IOException;
+
+    /**
+     * Known path types.
+     */
+    public enum PathType {
+        /** A class path. */
+        CLASS,
+        /** A file path. */
+        FILE,
+        /** A URI path. */
+        URI,
+        /** A URL path. */
+        URL
+    }
+
+    /**
+     * Safely pulls a resource from a path, iterating over the specified path types until it finds it.
+     * @param path the path
+     * @param pathTypes the types of paths to try
+     * @return the resource, or null if not found
+     */
+    public R pullPath(String path, PathType... pathTypes) {
+        return pullPath(path, getClass(), pathTypes);
+    }
+
+    /**
+     * Safely pulls a resource from a path, iterating over the specified path types until it finds it.
+     * @param path the path
+     * @param caller class calling this method, so we can also try it's classloader
+     * @param pathTypes the types of paths to try
+     * @return the resource, or null if not found
+     */
+    public R pullPath(String path, Class<?> caller, PathType... pathTypes) {
+        return pullPath(path, caller, null, true, pathTypes);
+    }
+
+    /**
+     * Safely pulls a resource from a path, iterating over the specified path types until it finds it.
+     * @param path the path
+     * @param loader the classloader we can also try to find the resource
+     * @param pathTypes the types of paths to try
+     * @return the resource, or null if not found
+     */
+    public R pullPath(String path, ClassLoader loader, PathType... pathTypes) {
+        return pullPath(path, null, loader, false, pathTypes);
+    }
+
+    private R pullPath(String path, Class<?> caller, ClassLoader loader, boolean callerOrLoader, PathType[] pathTypes) {
+        if (path == null) {
+            return null;
+        }
+        R r = null;
+        for (PathType pathType : pathTypes) {
+            if (pathType == null) {
+                continue;
+            }
+            try {
+                switch (pathType) {
+                    case CLASS:
+                        if (callerOrLoader) {
+                            r = pull(path, caller);
+                        } else {
+                            r = pull(path, loader);
+                        }
+                        break;
+                    case FILE:
+                        File file;
+                        try {
+                            file = new File(new URL(path).getFile());
+                        } catch (MalformedURLException mue) {
+                            file = new File(path);
+                        }
+                        if (file.exists() && file.isFile()) {
+                            r = pull(file);
+                        }
+                        break;
+                    case URI:
+                        r = pull(new URI(path));
+                        break;
+                    case URL:
+                        r = pull(new URL(path));
+                        break;
+                }
+            } catch (Throwable t) {
+                // keep checkstyle happy
+                t.getMessage();
+            }
+            if (r != null) {
+                break;
+            }
+        }
+        return r;
+    }
 
 }

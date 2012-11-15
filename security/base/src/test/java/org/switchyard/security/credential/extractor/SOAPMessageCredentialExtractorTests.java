@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.security.credential.extract;
+package org.switchyard.security.credential.extractor;
 
 import java.io.InputStream;
 import java.security.cert.Certificate;
@@ -38,13 +38,13 @@ import org.switchyard.security.credential.PasswordCredential;
 import org.w3c.dom.Element;
 
 /**
- * SOAPMessageCredentialsExtractor tests.
+ * SOAPMessageCredentialExtractor tests.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class SOAPMessageCredentialsExtractorTests {
+public class SOAPMessageCredentialExtractorTests {
 
-    private static final String BASE_PATH = "/org/switchyard/security/credential/extract/SOAPMessageCredentialsExtractorTests-";
+    private static final String BASE_PATH = "/org/switchyard/security/credential/extractor/SOAPMessageCredentialExtractorTests-";
     private static final String ASSERTION_XML = BASE_PATH + "Assertion.xml";
     private static final String USERNAME_TOKEN_XML = BASE_PATH + "UsernameToken.xml";
     private static final String BINARY_SECURITY_TOKEN_XML = BASE_PATH + "BinarySecurityToken.xml";
@@ -52,7 +52,7 @@ public class SOAPMessageCredentialsExtractorTests {
     @Test
     public void testAssertion() throws Exception {
         SOAPMessage source = createMessage(ASSERTION_XML);
-        Set<Credential> creds = new SOAPMessageCredentialsExtractor().extractCredentials(source);
+        Set<Credential> creds = new SOAPMessageCredentialExtractor().extract(source);
         boolean foundAssertion = false;
         for (Credential cred : creds) {
             if (cred instanceof AssertionCredential) {
@@ -69,7 +69,7 @@ public class SOAPMessageCredentialsExtractorTests {
     @Test
     public void testUsernameToken() throws Exception {
         SOAPMessage source = createMessage(USERNAME_TOKEN_XML);
-        Set<Credential> creds = new SOAPMessageCredentialsExtractor().extractCredentials(source);
+        Set<Credential> creds = new SOAPMessageCredentialExtractor().extract(source);
         boolean foundName = false;
         boolean foundPassword = false;
         for (Credential cred : creds) {
@@ -94,7 +94,7 @@ public class SOAPMessageCredentialsExtractorTests {
     @Test
     public void testBinarySecurityToken() throws Exception {
         SOAPMessage source = createMessage(BINARY_SECURITY_TOKEN_XML);
-        Set<Credential> creds = new SOAPMessageCredentialsExtractor().extractCredentials(source);
+        Set<Credential> creds = new SOAPMessageCredentialExtractor().extract(source);
         boolean foundCertificate = false;
         for (Credential cred : creds) {
             if (cred instanceof CertificateCredential) {

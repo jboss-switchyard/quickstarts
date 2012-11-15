@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.security.callback;
+package org.switchyard.security.callback.handler;
 
 import java.util.Map;
 import java.util.Set;
@@ -32,14 +32,14 @@ import org.switchyard.security.credential.Credential;
  */
 public abstract class SwitchYardCallbackHandler implements CallbackHandler {
 
-    private Map<String,String> _properties;
+    private Map<String, String> _properties;
     private Set<Credential> _credentials;
 
     /**
      * Gets the Properties.
      * @return the Properties
      */
-    public Map<String,String> getProperties() {
+    public Map<String, String> getProperties() {
         return _properties;
     }
 
@@ -59,7 +59,7 @@ public abstract class SwitchYardCallbackHandler implements CallbackHandler {
      * @return the property value
      */
     public String getProperty(String name, boolean required) {
-        Map<String,String> properties = getProperties();
+        Map<String, String> properties = getProperties();
         if (properties == null) {
             if (required) {
                 throw new IllegalStateException("properties not set");
@@ -79,7 +79,7 @@ public abstract class SwitchYardCallbackHandler implements CallbackHandler {
      * @param properties the Properties
      * @return this instance (useful for chaining)
      */
-    public SwitchYardCallbackHandler setProperties(Map<String,String> properties) {
+    public SwitchYardCallbackHandler setProperties(Map<String, String> properties) {
         _properties = properties;
         return this;
     }

@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.security.credential.extract;
+package org.switchyard.security.credential.extractor;
 
 import java.util.Set;
 
@@ -29,20 +29,20 @@ import org.switchyard.security.credential.NameCredential;
 import org.switchyard.security.credential.PasswordCredential;
 
 /**
- * AuthorizationHeaderCredentialsExtractor tests.
+ * AuthorizationHeaderCredentialExtractor tests.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class AuthorizationHeaderCredentialsExtractorTests {
+public class AuthorizationHeaderCredentialExtractorTests {
 
-    private static final String BASE_PATH = "/org/switchyard/security/credential/extract/AuthorizationHeaderCredentialsExtractorTests-";
+    private static final String BASE_PATH = "/org/switchyard/security/credential/extractor/AuthorizationHeaderCredentialExtractorTests-";
     private static final String BASIC_TXT = BASE_PATH + "Basic.txt";
     private static final String DIGEST_TXT = BASE_PATH + "Digest.txt";
 
     @Test
     public void testBasic() throws Exception {
-        String source = new StringPuller().pull(BASIC_TXT);
-        Set<Credential> creds = new AuthorizationHeaderCredentialsExtractor().extractCredentials(source);
+        String source = new StringPuller().pull(BASIC_TXT, AuthorizationHeaderCredentialExtractorTests.class);
+        Set<Credential> creds = new AuthorizationHeaderCredentialExtractor().extract(source);
         boolean foundName = false;
         boolean foundPassword = false;
         for (Credential cred : creds) {
@@ -66,8 +66,8 @@ public class AuthorizationHeaderCredentialsExtractorTests {
 
     @Test
     public void testDigest() throws Exception {
-        String source = new StringPuller().pull(DIGEST_TXT);
-        Set<Credential> creds = new AuthorizationHeaderCredentialsExtractor().extractCredentials(source);
+        String source = new StringPuller().pull(DIGEST_TXT, AuthorizationHeaderCredentialExtractorTests.class);
+        Set<Credential> creds = new AuthorizationHeaderCredentialExtractor().extract(source);
         boolean foundName = false;
         for (Credential cred : creds) {
             if (cred instanceof NameCredential) {

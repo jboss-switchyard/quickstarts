@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.security.credential.extract;
+package org.switchyard.security.credential.extractor;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -48,11 +48,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * SOAPMessageCredentialsExtractor.
+ * SOAPMessageCredentialExtractor.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class SOAPMessageCredentialsExtractor implements CredentialsExtractor<SOAPMessage> {
+public class SOAPMessageCredentialExtractor implements CredentialExtractor<SOAPMessage> {
 
     private static final String WSSE_NS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
     private static final String WSSE_NS2 = "http://schemas.xmlsoap.org/ws/2002/04/secext";
@@ -69,13 +69,13 @@ public class SOAPMessageCredentialsExtractor implements CredentialsExtractor<SOA
     /**
      * Constructs a new SOAPMessageCredentialsExtractor.
      */
-    public SOAPMessageCredentialsExtractor() {}
+    public SOAPMessageCredentialExtractor() {}
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Set<Credential> extractCredentials(SOAPMessage source) {
+    public Set<Credential> extract(SOAPMessage source) {
         Set<Credential> credentials = new HashSet<Credential>();
         if (source != null) {
             try {

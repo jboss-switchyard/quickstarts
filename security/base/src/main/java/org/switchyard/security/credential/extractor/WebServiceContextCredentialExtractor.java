@@ -16,41 +16,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.security.jboss.callback;
+package org.switchyard.security.credential.extractor;
 
-import java.io.IOException;
+import java.security.Principal;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.xml.ws.WebServiceContext;
 
-import org.switchyard.security.callback.NamePasswordCallbackHandler;
-import org.switchyard.security.callback.SwitchYardCallbackHandler;
+import org.switchyard.security.credential.Credential;
+import org.switchyard.security.credential.PrincipalCredential;
 
 /**
- * STSIssueCallbackHandler.
+ * WebServiceContextCredentialExtractor.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class STSIssueCallbackHandler extends SwitchYardCallbackHandler {
+public class WebServiceContextCredentialExtractor implements CredentialExtractor<WebServiceContext> {
 
     /**
-     * Constructs a new STSIssueCallbackHandler.
+     * Constructs a new WebServiceContextCredentialsExtractor.
      */
-    public STSIssueCallbackHandler() {}
+    public WebServiceContextCredentialExtractor() {}
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-        handle(callbacks, new NamePasswordCallbackHandler());
-        handle(callbacks, new STSTokenCallbackHandler());
-    }
-
-    private void handle(Callback[] callbacks, SwitchYardCallbackHandler handler) throws IOException, UnsupportedCallbackException {
-        handler.setProperties(getProperties());
-        handler.setCredentials(getCredentials());
-        handler.handle(callbacks);
+    public Set<Credential> extract(WebServiceContext source) {
+        Set<Credential> credentials = new HashSet<Credential>();
+        if (source != null) {
+            Principal userPrincipal = source.getUserPrincipal();
+            if (userPrincipal != null) {
+                credentials.add(new PrincipalCredential(userPrincipal, true));
+            }
+        }
+        return credentials;
     }
 
 }

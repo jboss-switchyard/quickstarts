@@ -16,26 +16,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.security.credential.extract;
+package org.switchyard.security.credential.extractor;
 
 import java.util.Set;
 
 import org.switchyard.security.credential.Credential;
 
 /**
- * CredentialsExtractor.
+ * CredentialExtractor.
  * 
  * @param <T> the type of the specified source
  * 
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public interface CredentialsExtractor<T> {
+public interface CredentialExtractor<T> {
 
     /**
      * Extracts Credentials from the specified source.
      * @param source the specified source
      * @return the Credentials
      */
-    public Set<Credential> extractCredentials(T source);
+    public Set<Credential> extract(T source);
 
 }

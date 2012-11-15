@@ -16,56 +16,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.security.callback;
+package org.switchyard.security.jboss.callback.handler;
 
 import java.io.IOException;
-import java.util.Set;
 
 import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import org.switchyard.security.credential.Credential;
-import org.switchyard.security.credential.NameCredential;
-import org.switchyard.security.credential.PasswordCredential;
+import org.switchyard.security.callback.handler.NamePasswordCallbackHandler;
+import org.switchyard.security.callback.handler.SwitchYardCallbackHandler;
 
 /**
- * NamePasswordCallbackHandler.
+ * STSIssueCallbackHandler.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class NamePasswordCallbackHandler extends SwitchYardCallbackHandler {
+public class STSIssueCallbackHandler extends SwitchYardCallbackHandler {
 
     /**
-     * Constructs a new NamePasswordCallbackHandler.
+     * Constructs a new STSIssueCallbackHandler.
      */
-    public NamePasswordCallbackHandler() {}
+    public STSIssueCallbackHandler() {}
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-        Set<Credential> credentials = getCredentials();
-        if (credentials == null) {
-            throw new IllegalStateException("Credentials not set");
-        }
-        for (Callback cb : callbacks) {
-            if (cb instanceof NameCallback) {
-                for (Credential cred : credentials) {
-                    if (cred instanceof NameCredential) {
-                        ((NameCallback)cb).setName(((NameCredential)cred).getName());
-                    }
-                }
-            } else if (cb instanceof PasswordCallback) {
-                for (Credential cred : credentials) {
-                    if (cred instanceof PasswordCredential) {
-                        ((PasswordCallback)cb).setPassword(((PasswordCredential)cred).getPassword());
-                    }
-                }
-            }
-        }
+        handle(callbacks, new NamePasswordCallbackHandler());
+        handle(callbacks, new STSTokenCallbackHandler());
+    }
+
+    private void handle(Callback[] callbacks, SwitchYardCallbackHandler handler) throws IOException, UnsupportedCallbackException {
+        handler.setProperties(getProperties());
+        handler.setCredentials(getCredentials());
+        handler.handle(callbacks);
     }
 
 }

@@ -77,7 +77,7 @@ public class JAXBTransformerTest extends AbstractTransformerTestCase {
     
     @Test
     public void test_configReadContextPath() throws IOException {
-        SwitchYardModel config = new ModelPuller<SwitchYardModel>().pull("org/switchyard/transform/jaxb/internal/switchyard-config-03.xml");
+        SwitchYardModel config = new ModelPuller<SwitchYardModel>().pull("org/switchyard/transform/jaxb/internal/switchyard-config-03.xml", JAXBTransformerTest.class);
         for (TransformModel tm : config.getTransforms().getTransforms()) {
             Assert.assertTrue(tm instanceof JAXBTransformModel);
             Assert.assertEquals("org.switchyard.transform.jaxb.internal", ((JAXBTransformModel)tm).getContextPath());

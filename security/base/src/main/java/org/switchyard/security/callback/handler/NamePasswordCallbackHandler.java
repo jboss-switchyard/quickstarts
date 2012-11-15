@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.security.jboss.callback;
+package org.switchyard.security.callback.handler;
 
 import java.io.IOException;
 import java.util.Set;
@@ -26,43 +26,42 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import org.jboss.security.auth.callback.ObjectCallback;
-import org.switchyard.security.callback.SwitchYardCallbackHandler;
-import org.switchyard.security.credential.CertificateCredential;
 import org.switchyard.security.credential.Credential;
+import org.switchyard.security.credential.NameCredential;
+import org.switchyard.security.credential.PasswordCredential;
 
 /**
- * CertificateCallbackHandler.
+ * NamePasswordCallbackHandler.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class CertificateCallbackHandler extends SwitchYardCallbackHandler {
+public class NamePasswordCallbackHandler extends SwitchYardCallbackHandler {
 
     /**
-     * Constructs a new CertificateCallbackHandler.
+     * Constructs a new NamePasswordCallbackHandler.
      */
-    public CertificateCallbackHandler() {}
+    public NamePasswordCallbackHandler() {}
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-        String alias = getProperty("alias", true);
-        String keyPassword = getProperty("keyPassword", true);
         Set<Credential> credentials = getCredentials();
         if (credentials == null) {
             throw new IllegalStateException("Credentials not set");
         }
         for (Callback cb : callbacks) {
             if (cb instanceof NameCallback) {
-                ((NameCallback)cb).setName(alias);
-            } else if (cb instanceof PasswordCallback) {
-                ((PasswordCallback)cb).setPassword(keyPassword.toCharArray());
-            } else if (cb instanceof ObjectCallback) {
                 for (Credential cred : credentials) {
-                    if (cred instanceof CertificateCredential) {
-                        ((ObjectCallback)cb).setCredential(((CertificateCredential)cred).getCertificate());
+                    if (cred instanceof NameCredential) {
+                        ((NameCallback)cb).setName(((NameCredential)cred).getName());
+                    }
+                }
+            } else if (cb instanceof PasswordCallback) {
+                for (Credential cred : credentials) {
+                    if (cred instanceof PasswordCredential) {
+                        ((PasswordCallback)cb).setPassword(((PasswordCredential)cred).getPassword());
                     }
                 }
             }

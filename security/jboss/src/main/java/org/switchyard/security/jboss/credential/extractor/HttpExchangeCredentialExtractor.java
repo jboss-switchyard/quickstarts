@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.security.jboss.credential.extract;
+package org.switchyard.security.jboss.credential.extractor;
 
 import java.security.Principal;
 import java.util.HashSet;
@@ -27,26 +27,26 @@ import org.switchyard.common.lang.Strings;
 import org.switchyard.security.credential.ConfidentialityCredential;
 import org.switchyard.security.credential.Credential;
 import org.switchyard.security.credential.PrincipalCredential;
-import org.switchyard.security.credential.extract.AuthorizationHeaderCredentialsExtractor;
-import org.switchyard.security.credential.extract.CredentialsExtractor;
+import org.switchyard.security.credential.extractor.AuthorizationHeaderCredentialExtractor;
+import org.switchyard.security.credential.extractor.CredentialExtractor;
 
 /**
- * HttpExchangeCredentialsExtractor.
+ * HttpExchangeCredentialExtractor.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class HttpExchangeCredentialsExtractor implements CredentialsExtractor<HttpExchange> {
+public class HttpExchangeCredentialExtractor implements CredentialExtractor<HttpExchange> {
 
     /**
      * Constructs a new HttpExchangeCredentialsExtractor.
      */
-    public HttpExchangeCredentialsExtractor() {}
+    public HttpExchangeCredentialExtractor() {}
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Set<Credential> extractCredentials(HttpExchange source) {
+    public Set<Credential> extract(HttpExchange source) {
         Set<Credential> credentials = new HashSet<Credential>();
         if (source != null) {
             String protocol = source.getProtocol();
@@ -72,13 +72,13 @@ public class HttpExchangeCredentialsExtractor implements CredentialsExtractor<Ht
                     charsetName = Strings.trimToNull(contentType.substring(pos+8, contentType.length()));
                 }
             }
-            AuthorizationHeaderCredentialsExtractor ahce;
+            AuthorizationHeaderCredentialExtractor ahce;
             if (charsetName != null) {
-                ahce = new AuthorizationHeaderCredentialsExtractor(charsetName);
+                ahce = new AuthorizationHeaderCredentialExtractor(charsetName);
             } else {
-                ahce = new AuthorizationHeaderCredentialsExtractor();
+                ahce = new AuthorizationHeaderCredentialExtractor();
             }
-            credentials.addAll(ahce.extractCredentials(source.getRequestHeaders().getFirst("Authorization")));
+            credentials.addAll(ahce.extract(source.getRequestHeaders().getFirst("Authorization")));
         }
         return credentials;
     }

@@ -27,8 +27,8 @@ import org.apache.log4j.Logger;
 import org.switchyard.ServiceSecurity;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.reflect.Construction;
-import org.switchyard.security.callback.NamePasswordCallbackHandler;
-import org.switchyard.security.callback.SwitchYardCallbackHandler;
+import org.switchyard.security.callback.handler.NamePasswordCallbackHandler;
+import org.switchyard.security.callback.handler.SwitchYardCallbackHandler;
 
 /**
  * JaasSecurityProvider.

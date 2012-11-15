@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.security.credential.extract;
+package org.switchyard.security.credential.extractor;
 
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -33,20 +33,20 @@ import org.switchyard.security.credential.NameCredential;
 import org.switchyard.security.credential.PasswordCredential;
 
 /**
- * AuthorizationHeaderCredentialsExtractor.
+ * AuthorizationHeaderCredentialExtractor.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class AuthorizationHeaderCredentialsExtractor implements CredentialsExtractor<String> {
+public class AuthorizationHeaderCredentialExtractor implements CredentialExtractor<String> {
 
-    private static final Logger LOGGER = Logger.getLogger(AuthorizationHeaderCredentialsExtractor.class);
+    private static final Logger LOGGER = Logger.getLogger(AuthorizationHeaderCredentialExtractor.class);
 
     private final Charset _charset;
 
     /**
      * Constructs a new AuthorizationHeaderCredentialsExtractor, with the platform-dependent charset.
      */
-    public AuthorizationHeaderCredentialsExtractor() {
+    public AuthorizationHeaderCredentialExtractor() {
         _charset = Charset.defaultCharset();
     }
 
@@ -54,7 +54,7 @@ public class AuthorizationHeaderCredentialsExtractor implements CredentialsExtra
      * Constructs a new AuthorizationHeaderCredentialsExtractor, with the specified charset name.
      * @param charsetName the specified charset name
      */
-    public AuthorizationHeaderCredentialsExtractor(String charsetName) {
+    public AuthorizationHeaderCredentialExtractor(String charsetName) {
         if (charsetName != null) {
             Charset charset;
             try {
@@ -74,7 +74,7 @@ public class AuthorizationHeaderCredentialsExtractor implements CredentialsExtra
      * Constructs a new AuthorizationHeaderCredentialsExtractor, with the specified charset.
      * @param charset the specified charset
      */
-    public AuthorizationHeaderCredentialsExtractor(Charset charset) {
+    public AuthorizationHeaderCredentialExtractor(Charset charset) {
         if (charset != null) {
             _charset = charset;
         } else {
@@ -87,7 +87,7 @@ public class AuthorizationHeaderCredentialsExtractor implements CredentialsExtra
      * {@inheritDoc}
      */
     @Override
-    public Set<Credential> extractCredentials(String source) {
+    public Set<Credential> extract(String source) {
         Set<Credential> credentials = new HashSet<Credential>();
         if (source != null) {
             if (source.startsWith("Basic ")) {
