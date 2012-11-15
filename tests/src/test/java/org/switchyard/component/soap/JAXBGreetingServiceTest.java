@@ -139,7 +139,7 @@ public class JAXBGreetingServiceTest {
     }
     
     private void registerTransformers() throws Exception {
-        SwitchYardModel config = new ModelPuller<SwitchYardModel>().pull("jaxb-transformers.xml");
+        SwitchYardModel config = new ModelPuller<SwitchYardModel>().pull("jaxb-transformers.xml", JAXBGreetingServiceTest.class);
         for (TransformModel tm : config.getTransforms().getTransforms()) {
             _testKit.registerTransformer(tm);
         }

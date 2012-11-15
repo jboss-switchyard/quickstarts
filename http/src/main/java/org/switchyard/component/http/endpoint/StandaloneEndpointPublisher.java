@@ -39,7 +39,7 @@ import org.switchyard.component.http.InboundHandler;
 import org.switchyard.component.http.composer.HttpRequestBindingData;
 import org.switchyard.component.http.composer.HttpRequestInfo;
 import org.switchyard.component.http.composer.HttpResponseBindingData;
-import org.switchyard.security.jboss.credential.extract.HttpExchangeCredentialsExtractor;
+import org.switchyard.security.jboss.credential.extractor.HttpExchangeCredentialExtractor;
 
 /**
  * Publishes standalone HTTP endpoint.
@@ -178,7 +178,7 @@ public class StandaloneEndpointPublisher implements EndpointPublisher {
         }
 
         // Credentials...
-        requestInfo.getCredentials().addAll(new HttpExchangeCredentialsExtractor().extractCredentials(request));
+        requestInfo.getCredentials().addAll(new HttpExchangeCredentialExtractor().extract(request));
 
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace(requestInfo);

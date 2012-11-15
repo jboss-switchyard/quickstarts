@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 import org.switchyard.component.http.composer.HttpRequestBindingData;
 import org.switchyard.component.http.composer.HttpRequestInfo;
 import org.switchyard.component.http.composer.HttpResponseBindingData;
-import org.switchyard.security.credential.extract.ServletRequestCredentialsExtractor;
+import org.switchyard.security.credential.extractor.ServletRequestCredentialExtractor;
 
 /**
  * Hanldes HTTP requests to invoke a SwitchYard service.
@@ -222,7 +222,7 @@ public class HttpGatewayServlet extends HttpServlet {
         }
 
         // Credentials...
-        requestInfo.getCredentials().addAll(new ServletRequestCredentialsExtractor().extractCredentials(request));
+        requestInfo.getCredentials().addAll(new ServletRequestCredentialExtractor().extract(request));
 
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace(requestInfo);

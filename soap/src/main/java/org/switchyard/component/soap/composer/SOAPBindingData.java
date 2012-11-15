@@ -28,9 +28,9 @@ import javax.xml.ws.handler.MessageContext;
 
 import org.switchyard.component.common.composer.SecurityBindingData;
 import org.switchyard.security.credential.Credential;
-import org.switchyard.security.credential.extract.SOAPMessageCredentialsExtractor;
-import org.switchyard.security.credential.extract.ServletRequestCredentialsExtractor;
-import org.switchyard.security.credential.extract.WebServiceContextCredentialsExtractor;
+import org.switchyard.security.credential.extractor.SOAPMessageCredentialExtractor;
+import org.switchyard.security.credential.extractor.ServletRequestCredentialExtractor;
+import org.switchyard.security.credential.extractor.WebServiceContextCredentialExtractor;
 
 /**
  * SOAP binding data.
@@ -99,9 +99,9 @@ public class SOAPBindingData implements SecurityBindingData {
     @Override
     public Set<Credential> extractCredentials() {
         Set<Credential> credentials = new HashSet<Credential>();
-        credentials.addAll(new SOAPMessageCredentialsExtractor().extractCredentials(getSOAPMessage()));
-        credentials.addAll(new WebServiceContextCredentialsExtractor().extractCredentials(getWebServiceContext()));
-        credentials.addAll(new ServletRequestCredentialsExtractor().extractCredentials(getServletRequest()));
+        credentials.addAll(new SOAPMessageCredentialExtractor().extract(getSOAPMessage()));
+        credentials.addAll(new WebServiceContextCredentialExtractor().extract(getWebServiceContext()));
+        credentials.addAll(new ServletRequestCredentialExtractor().extract(getServletRequest()));
         return credentials;
     }
 
