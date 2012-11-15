@@ -15,7 +15,6 @@
 <switchyard 
     xmlns="urn:switchyard-config:switchyard:1.0"
     xmlns:http="urn:switchyard-component-http:config:1.0" 
-    xmlns:selector="urn:switchyard-component-common-selector:config:1.0" 
     xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
     xmlns:bean="urn:switchyard-component-bean:config:1.0">
 
@@ -23,14 +22,14 @@
 
         <sca:service name="QuoteService" promote="QuoteService/QuoteService">
             <http:binding.http>
-                <selector:operationSelector operationName="getPrice"/>
+                <operationSelector operationName="getPrice"/>
                 <http:contextPath>http-binding/quote</http:contextPath>
             </http:binding.http>
         </sca:service>
 
         <sca:service name="SymbolService" promote="SymbolService/SymbolService">
             <http:binding.http>
-                <selector:operationSelector operationName="getSymbol"/>
+                <operationSelector operationName="getSymbol"/>
                 <http:contextMapper includes="[cC]ontent-type"/>
                 <http:contextPath>http-binding/symbol</http:contextPath>
             </http:binding.http>
