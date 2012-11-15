@@ -1,0 +1,15 @@
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+            xmlns:camel="urn:switchyard-component-camel:config:1.0">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-amqp-binding" targetNamespace="urn:switchyard-quickstart:camel-amqp-binding:0.1.0">
+
+        <service name="GreetingService" promote="GreetingService">
+            <camel:binding.amqp>
+                <camel:queue>ping</camel:queue>
+                <camel:connectionFactory>qpidConnectionFactory</camel:connectionFactory>
+                <camel:username>guest</camel:username>
+                <camel:password>guest</camel:password>
+            </camel:binding.amqp>
+        </service>
+
+    </composite>
+</switchyard>

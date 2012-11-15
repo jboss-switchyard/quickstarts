@@ -73,6 +73,7 @@
         <module>demos/policy-security-sslbasic</module>
         <module>demos/policy-security-sslsaml</module>
         <module>demos/policy-transaction</module>
+        <module>camel-amqp-binding</module>
     </modules>
     <!-- Conditionally include the assembly module.  It's not always present e.g. in the quickstarts distro. -->
     <profiles>
