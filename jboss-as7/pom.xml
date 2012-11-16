@@ -57,6 +57,11 @@
         Test dependencies...
         -->
         <dependency>
+            <groupId>org.jvnet.mock-javamail</groupId>
+            <artifactId>mock-javamail</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-release-testutil</artifactId>
             <scope>test</scope>
@@ -130,6 +135,11 @@
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-quickstart-camel-ftp-binding</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.quickstarts</groupId>
+            <artifactId>switchyard-quickstart-camel-mail-binding</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -124,6 +124,11 @@
             <filtered>true</filtered>
         </file>
         <file>
+            <source>src/main/resources/external/camel/mail/module.xml</source>
+            <outputDirectory>/modules/org/apache/camel/mail/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
             <source>src/main/resources/external/camel/netty/module.xml</source>
             <outputDirectory>/modules/org/apache/camel/netty/main</outputDirectory>
             <filtered>true</filtered>
@@ -374,6 +379,14 @@
                 <include>org.apache.camel:camel-netty</include>
             </includes>
             <outputDirectory>/modules/org/apache/camel/netty/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${version.camel}.${artifact.extension}</outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.apache.camel:camel-mail</include>
+            </includes>
+            <outputDirectory>/modules/org/apache/camel/mail/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${version.camel}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
