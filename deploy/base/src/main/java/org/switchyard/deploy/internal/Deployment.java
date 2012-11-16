@@ -659,8 +659,6 @@ public class Deployment extends AbstractDeployment {
     private void validateServiceRegistration(QName name) {
         for (ComponentModel component : getConfig().getComposite().getComponents()) {
             for (ComponentServiceModel service : component.getServices()) {
-                System.out.println(service.getQName());
-                System.out.println(name);
                 if (service.getQName().equals(name)) {
                     throw new SwitchYardException("Service registration with name " + name + " hides " + service);
                 }
