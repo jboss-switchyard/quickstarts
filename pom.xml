@@ -111,6 +111,7 @@
         <version.maven.plugin.plugin>3.1</version.maven.plugin.plugin>
         <version.mina>2.0.4</version.mina>
         <version.milyn>1.5.1</version.milyn>
+        <version.mock.javamail>1.9</version.mock.javamail>
         <version.mvel>2.1.0.drools16</version.mvel>
         <!--
         <version.mysql-connector-java>5.1.19</version.mysql-connector-java>
@@ -952,6 +953,11 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard.quickstarts</groupId>
+                <artifactId>switchyard-quickstart-camel-mail-binding</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.quickstarts</groupId>
                 <artifactId>switchyard-quickstart-camel-netty-binding</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1369,6 +1375,17 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-mail</artifactId>
+                <version>${version.camel}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-netty</artifactId>
                 <version>${version.camel}</version>
                 <exclusions>
@@ -1464,11 +1481,31 @@
                 <groupId>org.apache.ws.commons.axiom</groupId>
                 <artifactId>axiom-impl</artifactId>
                 <version>${version.axiom}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.geronimo.specs</groupId>
+                        <artifactId>geronimo-activation_1.1_spec</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.geronimo.specs</groupId>
+                        <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.commons.axiom</groupId>
                 <artifactId>axiom-api</artifactId>
                 <version>${version.axiom}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.geronimo.specs</groupId>
+                        <artifactId>geronimo-activation_1.1_spec</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.geronimo.specs</groupId>
+                        <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.xalan</groupId>
@@ -1812,6 +1849,11 @@
                 <groupId>org.jbpm</groupId>
                 <artifactId>jbpm-workitems</artifactId>
                 <version>${version.jbpm}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jvnet.mock-javamail</groupId>
+                <artifactId>mock-javamail</artifactId>
+                <version>${version.mock.javamail}</version>
             </dependency>
             <dependency>
                 <groupId>org.milyn</groupId>
