@@ -20,6 +20,7 @@ package org.switchyard.component.bpel.riftsaw;
 
 import javax.xml.namespace.QName;
 
+import org.apache.log4j.Logger;
 import org.switchyard.exception.SwitchYardException;
 import org.w3c.dom.Element;
 
@@ -29,6 +30,8 @@ import org.w3c.dom.Element;
  */
 public final class WSDLHelper {
 
+    private static final Logger LOG = Logger.getLogger(WSDLHelper.class);
+    
     private static final String WSDL_PORTTYPE_PREFIX = "#wsdl.porttype(";
 
     private WSDLHelper() {
@@ -167,7 +170,7 @@ public final class WSDLHelper {
      */
     public static org.w3c.dom.Element wrapRequestMessagePart(org.w3c.dom.Element content,
                         javax.wsdl.Operation operation) {
-        return (wrapMessagePart(content, operation, operation.getInput().getMessage().getParts()));
+        return (wrapMessagePart(content, operation, operation.getInput().getMessage().getParts(), false));
     }
 
     /**
@@ -179,7 +182,7 @@ public final class WSDLHelper {
      */
     public static org.w3c.dom.Element wrapResponseMessagePart(org.w3c.dom.Element content,
                         javax.wsdl.Operation operation) {
-        return (wrapMessagePart(content, operation, operation.getOutput().getMessage().getParts()));
+        return (wrapMessagePart(content, operation, operation.getOutput().getMessage().getParts(), false));
     }
 
     /**
@@ -226,7 +229,7 @@ public final class WSDLHelper {
             }
         }
         
-        return (wrapMessagePart(content, operation, parts));
+        return (wrapMessagePart(content, operation, parts, true));
     }
 
     /**
@@ -235,10 +238,11 @@ public final class WSDLHelper {
      * @param content The message
      * @param operation The operation
      * @param parts The parts map
+     * @param fault Whether dealing with a fault
      * @return The part wrapper associated with the operation
      */
     protected static org.w3c.dom.Element wrapMessagePart(org.w3c.dom.Element content,
-                    javax.wsdl.Operation operation, java.util.Map<?, ?> parts) {
+                    javax.wsdl.Operation operation, java.util.Map<?, ?> parts, boolean fault) {
         org.w3c.dom.Element ret=content.getOwnerDocument().createElement("message");
         String partName=null;
         
@@ -253,8 +257,18 @@ public final class WSDLHelper {
         }
         
         if (partName == null) {
-            throw new SwitchYardException("Unable to find part name for "
-                        +"operation '"+operation.getName()+"'");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No part found for operation: "+operation+" and content: "+content);
+            }
+            
+            if (!fault) {
+                throw new SwitchYardException("Unable to find part name for "
+                            +"operation '"+operation.getName()+"'");
+            }
+            
+            // Assume that this represents an undeclared fault, and therefore return as an
+            // element instead of a message (RIFTSAW-516)
+            return (content);
         }
         
         Element part=ret.getOwnerDocument().createElement(partName);
