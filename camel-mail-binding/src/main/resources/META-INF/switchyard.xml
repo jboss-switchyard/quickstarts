@@ -1,0 +1,34 @@
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+    xmlns:camel="urn:switchyard-component-camel:config:1.0"
+    xmlns:selector="urn:switchyard-component-common-selector:config:1.0"
+    xmlns:bean="urn:switchyard-component-bean:config:1.0">
+
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+        name="camel-mail-binding" targetNamespace="urn:switchyard-quickstart:camel-mail-binding:0.1.0">
+
+        <service name="PrintService" promote="PrintService/PrintService">
+            <camel:binding.mail>
+                <camel:host>localhost</camel:host>
+                <camel:username>camel</camel:username>
+                <camel:consume accountType="imap">
+                    <camel:initialDelay>0</camel:initialDelay>
+                    <camel:delay>100</camel:delay>
+                    <camel:copyTo>after-processing</camel:copyTo>
+                </camel:consume>
+            </camel:binding.mail>
+        </service>
+
+        <reference multiplicity="1..1" name="OutgoingPrintService" promote="PrintService/OutgoingPrintService">
+            <camel:binding.mail>
+                <camel:host>localhost</camel:host>
+                <camel:username>camel</camel:username>
+                <camel:produce>
+                    <camel:subject>Forwarded message</camel:subject>
+                    <camel:from>camel@localhost</camel:from>
+                    <camel:to>rider@camel</camel:to>
+                </camel:produce>
+            </camel:binding.mail>
+        </reference>
+    </composite>
+
+</switchyard>
