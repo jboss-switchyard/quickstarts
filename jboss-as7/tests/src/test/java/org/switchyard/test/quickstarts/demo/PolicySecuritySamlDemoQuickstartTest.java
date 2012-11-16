@@ -28,16 +28,16 @@ import org.junit.runner.RunWith;
 import org.switchyard.test.ArquillianUtil;
 
 /**
- * The policy-security-sslbasic demo quickstart test.
+ * The policy-security-saml demo quickstart test.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 @RunWith(Arquillian.class)
-public class PolicySecuritySslBasicDemoQuickstartTest {
+public class PolicySecuritySamlDemoQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarDemoDeployment("switchyard-quickstart-demo-policy-security-sslbasic");
+        return ArquillianUtil.createJarDemoDeployment("switchyard-quickstart-demo-policy-security-saml");
     }
 
     @Test

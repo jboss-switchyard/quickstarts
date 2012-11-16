@@ -261,12 +261,17 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
-            <artifactId>switchyard-quickstart-demo-policy-security-sslbasic</artifactId>
+            <artifactId>switchyard-quickstart-demo-policy-security-basic</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
-            <artifactId>switchyard-quickstart-demo-policy-security-sslsaml</artifactId>
+            <artifactId>switchyard-quickstart-demo-policy-security-cert</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.quickstarts.demos</groupId>
+            <artifactId>switchyard-quickstart-demo-policy-security-saml</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
