@@ -35,6 +35,7 @@ import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.SynchronousInOutHandler;
+import org.switchyard.component.bpel.BPELFault;
 import org.switchyard.component.bpel.config.model.BPELComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.exception.DeliveryException;
@@ -301,6 +302,14 @@ public class RiftsawServiceLocator implements ServiceLocator {
                            + operationName
                            + "' on service: "+_serviceReference.getName());
                 
+            }
+            
+            // Check for exception - but don't rethrow a BPEL
+            // fault as it will be converted to a message
+            // response
+            if (resp.getContent() instanceof Exception
+                    && !(resp.getContent() instanceof BPELFault)) {
+                throw (Exception)resp.getContent();
             }
             
             Element respelem=(Element)resp.getContent(Node.class);
