@@ -1,0 +1,8 @@
+                <security-domain name="policy-security-cert" cache-type="default">
+                    <authentication>
+                        <login-module code="org.switchyard.security.login.CertificateLoginModule" flag="required">
+                            <module-option name="keyStoreLocation" value="../standalone/configuration/policy-security-cert.keystore"/>
+                            <module-option name="keyStorePassword" value="storepassword"/>
+                        </login-module>
+                    </authentication>
+                </security-domain>

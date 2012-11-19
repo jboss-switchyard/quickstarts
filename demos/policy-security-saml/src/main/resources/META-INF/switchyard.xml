@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" name="policy-securty-saml">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="policy-security-saml" targetNamespace="urn:switchyard-quickstart-demo:policy-security-saml:0.1.0">
+        <service name="WorkService" promote="WorkService">
+            <interface.wsdl interface="META-INF/WorkService.wsdl#wsdl.porttype(WorkService)"/>
+            <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
+                <wsdl>META-INF/WorkService.wsdl</wsdl>
+                <contextPath>policy-security-saml</contextPath>
+            </binding.soap>
+        </service>
+    </composite>
+    <domain>
+        <!-- Uncomment this section to trace message exchange activity
+        <handlers>
+            <handler class="org.switchyard.handlers.MessageTrace" name="MessageTrace"/>
+        </handlers>
+        -->
+        <security moduleName="saml-validate-token" callbackHandler="org.switchyard.security.jboss.callback.handler.STSTokenCallbackHandler"/>
+    </domain>
+</switchyard>
