@@ -28,10 +28,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import javax.naming.InitialContext;
-import javax.naming.Name;
-import javax.naming.NamingException;
-
 import junit.framework.Assert;
 
 import org.h2.jdbcx.JdbcDataSource;
@@ -43,6 +39,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Message;
 import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
+import org.switchyard.quickstarts.camel.sql.binding.Greeting;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
@@ -65,7 +62,8 @@ public class CamelSqlBindingTest {
 
     private static Connection connection;
 
-    private final static String PAYLOAD = "Keith";
+    private final static String RECEIVER = "Keith";
+    private final static String SENDER = "David";
 
     @ServiceOperation("GreetingService")
     private Invoker invoker;
@@ -84,7 +82,8 @@ public class CamelSqlBindingTest {
 
         String createStatement = "CREATE TABLE greetings ("
             + "id INT PRIMARY KEY AUTO_INCREMENT, "
-            + "name VARCHAR(255) "
+            + "name VARCHAR(255), "
+            + "sender VARCHAR(255) "
         + ");";
 
         connection.createStatement().executeUpdate("DROP TABLE IF EXISTS greetings");
@@ -105,24 +104,26 @@ public class CamelSqlBindingTest {
     @Test
     @SuppressWarnings("unchecked")
     public void shouldRetrieveGreetings() throws Exception {
-        PreparedStatement statement = connection.prepareStatement("INSERT INTO greetings (name) VALUES (?)");
-        statement.setString(1, PAYLOAD);
+        PreparedStatement statement = connection.prepareStatement("INSERT INTO greetings (name, sender) VALUES (?,?)");
+        statement.setString(1, RECEIVER);
+        statement.setString(2, SENDER);
         assertEquals(1, statement.executeUpdate());
 
         Message message = invoker.operation("retrieve").sendInOut(null);
         List<Map<String, Object>> content = message.getContent(List.class);
 
         Map<String, Object> firstRow = content.iterator().next();
-        Assert.assertEquals(PAYLOAD, firstRow.get("name"));
+        Assert.assertEquals(RECEIVER, firstRow.get("name"));
+        Assert.assertEquals(SENDER, firstRow.get("sender"));
     }
 
     @Test
     public void shouldStoreGreet() throws Exception {
-        invoker.operation("store").sendInOnly(PAYLOAD);
+        invoker.operation("store").sendInOnly(new Greeting(RECEIVER, SENDER));
 
         ResultSet result = connection.createStatement().executeQuery("SELECT * FROM greetings");
         assertTrue(result.next());
-        assertEquals(PAYLOAD, result.getString("name"));
+        assertEquals(RECEIVER, result.getString("name"));
         result.close();
     }
 
