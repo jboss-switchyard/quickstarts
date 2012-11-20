@@ -28,7 +28,7 @@ import org.switchyard.component.bean.omservice.model.OrderResponse;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestKit;
-import org.switchyard.test.mixins.CDIMixIn;
+import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>

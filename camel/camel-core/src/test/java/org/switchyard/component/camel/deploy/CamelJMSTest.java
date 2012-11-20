@@ -44,8 +44,8 @@ import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.SwitchYardTestKit;
-import org.switchyard.test.mixins.CDIMixIn;
-import org.switchyard.test.mixins.HornetQMixIn;
+import org.switchyard.component.test.mixins.cdi.CDIMixIn;
+import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
 
 /**
  * Test using Camel's JMS Component in SwitchYard.

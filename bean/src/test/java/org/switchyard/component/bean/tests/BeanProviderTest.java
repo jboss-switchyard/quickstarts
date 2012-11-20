@@ -27,7 +27,7 @@ import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
-import org.switchyard.test.mixins.CDIMixIn;
+import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 
 /*
  * Assorted methods for testing a CDI bean providing a service in SwitchYard.

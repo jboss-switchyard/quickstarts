@@ -58,27 +58,23 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-soap</artifactId>
+            <artifactId>switchyard-component-test-mixin-cdi</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-test</artifactId>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-common</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.jbpm</groupId>
-                    <artifactId>jbpm-human-task-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jbpm</groupId>
-                    <artifactId>jbpm-human-task-mina</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.persistence</groupId>
-                    <artifactId>persistence-api</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-test-mixin-http</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-soap</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.riftsaw</groupId>

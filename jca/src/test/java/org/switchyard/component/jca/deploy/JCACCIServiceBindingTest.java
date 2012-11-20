@@ -33,11 +33,11 @@ import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.SwitchYardTestKit;
-import org.switchyard.test.mixins.CDIMixIn;
-import org.switchyard.test.mixins.jca.JCAMixIn;
-import org.switchyard.test.mixins.jca.MockRecordFactory;
-import org.switchyard.test.mixins.jca.MockResourceAdapter;
-import org.switchyard.test.mixins.jca.ResourceAdapterConfig;
+import org.switchyard.component.test.mixins.cdi.CDIMixIn;
+import org.switchyard.component.test.mixins.jca.JCAMixIn;
+import org.switchyard.component.test.mixins.jca.MockRecordFactory;
+import org.switchyard.component.test.mixins.jca.MockResourceAdapter;
+import org.switchyard.component.test.mixins.jca.ResourceAdapterConfig;
 
 /**
  * Functional test for {@link JCAActivator}.
@@ -51,7 +51,7 @@ public class JCACCIServiceBindingTest  {
     
     private static final String ADAPTER_NAME = "myeis-ra.rar";
     private static final String JNDI_CONNECTION_FACTORY = "java:jboss/MyEISConnectionFactory";
-    private static final String MCF_CLASS = "org.switchyard.test.mixins.jca.MockManagedConnectionFactory";
+    private static final String MCF_CLASS = "org.switchyard.component.test.mixins.jca.MockManagedConnectionFactory";
     
     private SwitchYardTestKit _testKit;
     private JCAMixIn _jcaMixIn;

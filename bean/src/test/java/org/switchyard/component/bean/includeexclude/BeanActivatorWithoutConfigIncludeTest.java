@@ -32,7 +32,7 @@ import org.switchyard.component.bean.deploy.BeanComponentActivator;
 import org.switchyard.internal.DomainImpl;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
-import org.switchyard.test.mixins.CDIMixIn;
+import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(mixins = CDIMixIn.class, include = BeanComponentActivator.BEAN_TYPE)

@@ -41,7 +41,7 @@ import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.MockHandler;
-import org.switchyard.test.mixins.HTTPMixIn;
+import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 /**
  * Contains tests for RESTEasy Gateway.

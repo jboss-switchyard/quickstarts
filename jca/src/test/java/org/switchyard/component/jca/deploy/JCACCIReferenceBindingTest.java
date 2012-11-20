@@ -38,12 +38,12 @@ import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
-import org.switchyard.test.mixins.CDIMixIn;
-import org.switchyard.test.mixins.jca.InteractionListener;
-import org.switchyard.test.mixins.jca.JCAMixIn;
-import org.switchyard.test.mixins.jca.MockConnectionFactory;
-import org.switchyard.test.mixins.jca.MockManagedConnectionFactory;
-import org.switchyard.test.mixins.jca.ResourceAdapterConfig;
+import org.switchyard.component.test.mixins.cdi.CDIMixIn;
+import org.switchyard.component.test.mixins.jca.InteractionListener;
+import org.switchyard.component.test.mixins.jca.JCAMixIn;
+import org.switchyard.component.test.mixins.jca.MockConnectionFactory;
+import org.switchyard.component.test.mixins.jca.MockManagedConnectionFactory;
+import org.switchyard.component.test.mixins.jca.ResourceAdapterConfig;
 
 /**
  * Functional test for {@link JCAActivator}.

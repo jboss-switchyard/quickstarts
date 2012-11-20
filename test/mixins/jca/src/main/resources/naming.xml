@@ -1,0 +1,3 @@
+<deployment>
+  <bean name="NamingServer" class="java.lang.Object" />
+</deployment>

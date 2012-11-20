@@ -43,7 +43,7 @@ import org.switchyard.component.hornetq.config.model.HornetQBindingModel;
 import org.switchyard.component.hornetq.config.model.v1.V1HornetQBindingModel;
 import org.switchyard.component.hornetq.config.model.v1.V1HornetQConfigModel;
 import org.switchyard.component.hornetq.internal.HornetQUtil;
-import org.switchyard.test.mixins.HornetQMixIn;
+import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
 
 /**
  * Unit test for {@link OutboundHandler}.

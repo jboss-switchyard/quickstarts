@@ -45,6 +45,7 @@
     </properties>
     <modules>
         <module>common</module>
+        <module>test</module>
         <module>remote</module>
         <module>bean</module>
         <module>rules</module>
@@ -52,7 +53,6 @@
         <module>resteasy</module>
         <module>soap</module>
         <module>bpel</module>
-        <module>tests</module>
         <module>camel/camel-core</module>
         <module>clojure</module>
         <module>hornetq</module>

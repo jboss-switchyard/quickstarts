@@ -55,8 +55,8 @@
             <artifactId>switchyard-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-test</artifactId>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-test-mixin-http</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

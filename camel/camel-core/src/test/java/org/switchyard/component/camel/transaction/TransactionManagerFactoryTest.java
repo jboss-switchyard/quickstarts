@@ -36,7 +36,7 @@ import org.junit.Test;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.switchyard.exception.SwitchYardException;
-import org.switchyard.test.mixins.NamingMixIn;
+import org.switchyard.component.test.mixins.naming.NamingMixIn;
 
 /**
  * Unit test for {@link TransactionManagerFactory}.

@@ -41,7 +41,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.switchyard.component.hornetq.internal.HornetQUtil;
-import org.switchyard.test.mixins.HornetQMixIn;
+import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
 
 /**
  * Functional test for for {@link HornetQConsumer}.
