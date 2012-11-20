@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @authors tag. All rights reserved.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -22,32 +22,33 @@ import java.io.File;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-
-import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
 
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.drools.event.rule.DebugWorkingMemoryEventListener;
-import org.drools.runtime.Channel;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.builder.ReleaseId;
+import org.kie.event.rule.DebugWorkingMemoryEventListener;
+import org.kie.runtime.Channel;
+import org.switchyard.Scope;
 import org.switchyard.common.io.pull.StringPuller;
-import org.switchyard.common.io.resource.Resource;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.type.Classes;
-import org.switchyard.component.common.rules.AuditType;
-import org.switchyard.component.common.rules.ClockType;
-import org.switchyard.component.common.rules.EventProcessingType;
-import org.switchyard.component.common.rules.config.model.AuditModel;
-import org.switchyard.component.common.rules.config.model.EventListenerModel;
-import org.switchyard.component.common.rules.config.model.MappingModel;
-import org.switchyard.component.common.rules.expression.Expression;
-import org.switchyard.component.common.rules.expression.ExpressionFactory;
-import org.switchyard.component.common.rules.expression.ExpressionType;
+import org.switchyard.component.common.knowledge.LoggerType;
+import org.switchyard.component.common.knowledge.config.model.ActionModel;
+import org.switchyard.component.common.knowledge.config.model.ChannelModel;
+import org.switchyard.component.common.knowledge.config.model.ContainerModel;
+import org.switchyard.component.common.knowledge.config.model.ListenerModel;
+import org.switchyard.component.common.knowledge.config.model.LoggerModel;
+import org.switchyard.component.common.knowledge.config.model.ManifestModel;
+import org.switchyard.component.common.knowledge.config.model.MappingModel;
+import org.switchyard.component.common.knowledge.expression.Expression;
+import org.switchyard.component.common.knowledge.expression.ExpressionFactory;
+import org.switchyard.component.common.knowledge.expression.ExpressionType;
 import org.switchyard.component.rules.RulesActionType;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Scanner;
@@ -56,17 +57,20 @@ import org.switchyard.config.model.ScannerOutput;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeModel;
+import org.switchyard.config.model.property.PropertyModel;
 import org.switchyard.config.model.resource.ResourceModel;
+import org.switchyard.config.model.resource.ResourcesModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * Tests Rules models.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 public class RulesModelTests {
 
-    private static final String COMPLETE_XML = "/org/switchyard/component/rules/config/model/RulesModelTests-Complete.xml";
+    private static final String CONTAINER_XML = "/org/switchyard/component/rules/config/model/RulesModelTests-Container.xml";
+    private static final String RESOURCES_XML = "/org/switchyard/component/rules/config/model/RulesModelTests-Resources.xml";
 
     private ModelPuller<SwitchYardModel> _puller;
 
@@ -75,66 +79,105 @@ public class RulesModelTests {
         _puller = new ModelPuller<SwitchYardModel>();
     }
 
+    @After
+    public void after() throws Exception {
+        _puller = null;
+    }
+
     @Test
-    public void testReadComplete() throws Exception {
+    public void testReadContainer() throws Exception {
+        doTestRead(CONTAINER_XML);
+    }
+
+    @Test
+    public void testReadResources() throws Exception {
+        doTestRead(RESOURCES_XML);
+    }
+
+    private void doTestRead(String xml) throws Exception {
         ClassLoader loader = getClass().getClassLoader();
-        SwitchYardModel switchyard = _puller.pull(COMPLETE_XML, loader);
+        doTestModel(_puller.pull(xml, loader), xml, loader);
+    }
+
+    private void doTestModel(SwitchYardModel switchyard, String xml, ClassLoader loader) throws Exception {
         CompositeModel composite = switchyard.getComposite();
         ComponentModel component = composite.getComponents().get(0);
         ComponentImplementationModel implementation = component.getImplementation();
         Assert.assertTrue(implementation instanceof RulesComponentImplementationModel);
-        RulesComponentImplementationModel rci = (RulesComponentImplementationModel)implementation;
-        Assert.assertEquals("rules", rci.getType());
-        Assert.assertTrue(rci.isAgent());
-        Assert.assertEquals(ClockType.PSEUDO, rci.getClock());
-        Assert.assertEquals(EventProcessingType.STREAM, rci.getEventProcessing());
-        Assert.assertEquals(Integer.valueOf(10), rci.getMaxThreads());
-        Assert.assertEquals(Boolean.TRUE, rci.getMultithreadEvaluation());
-        Iterator<RulesActionModel> ram_iter = rci.getRulesActions().iterator();
-        RulesActionModel ram = ram_iter.next();
-        Assert.assertEquals("processFoo", ram.getName());
-        Assert.assertEquals(RulesActionType.EXECUTE, ram.getType());
-        ram = ram_iter.next();
-        Assert.assertEquals("processMan", ram.getName());
-        Assert.assertEquals(RulesActionType.FIRE_ALL_RULES, ram.getType());
-        ram = ram_iter.next();
-        Assert.assertEquals("processBar", ram.getName());
-        Assert.assertEquals(RulesActionType.FIRE_UNTIL_HALT, ram.getType());
-        Assert.assertEquals("bars", ram.getEntryPoint());
-        EventListenerModel elm = rci.getEventListeners().iterator().next();
-        Assert.assertEquals(DebugWorkingMemoryEventListener.class, elm.getClazz(loader));
-        ChannelModel cm = rci.getChannels().iterator().next();
-        Assert.assertEquals(TestChannel.class, cm.getClazz(loader));
-        Assert.assertEquals(QName.valueOf("theInput"), cm.getInput());
-        Assert.assertEquals("theName", cm.getName());
-        Assert.assertEquals("theOperation", cm.getOperation());
-        Assert.assertEquals("theReference", cm.getReference());
-        AuditModel am = rci.getAudit();
-        Assert.assertNotNull(am);
-        Assert.assertEquals(Integer.valueOf(2000), am.getInterval());
-        Assert.assertEquals("foobar", am.getLog());
-        Assert.assertEquals(AuditType.CONSOLE, am.getType());
-        Iterator<ResourceModel> res_iter = rci.getResources().iterator();
-        Resource dsl = res_iter.next();
-        Assert.assertEquals("foo.dsl", dsl.getLocation());
-        Assert.assertSame(ResourceType.valueOf("DSL"), dsl.getType());
-        Resource dslr = res_iter.next();
-        Assert.assertEquals("bar.dslr", dslr.getLocation());
-        Assert.assertSame(ResourceType.valueOf("DSLR"), dslr.getType());
-        MappingModel gmm = rci.getGlobals().getMappings().iterator().next();
-        Assert.assertEquals("payload", gmm.getVariable());
-        Expression gex = ExpressionFactory.instance().create(gmm);
-        Assert.assertEquals("message.content", gex.getExpression());
-        Assert.assertEquals(ExpressionType.MVEL, gex.getType());
-        MappingModel fmm = rci.getFacts().getMappings().iterator().next();
-        Expression fex = ExpressionFactory.instance().create(fmm);
-        Assert.assertEquals("context['foobar']", fex.getExpression());
-        Assert.assertEquals(ExpressionType.MVEL, fex.getType());
+        RulesComponentImplementationModel rules = (RulesComponentImplementationModel)implementation;
+        Assert.assertEquals("rules", rules.getType());
+        ActionModel action = rules.getActions().getActions().get(0);
+        Assert.assertEquals("theId", action.getId());
+        Assert.assertEquals("process", action.getOperation());
+        Assert.assertEquals(RulesActionType.FIRE_UNTIL_HALT, action.getType());
+        MappingModel globalMapping = action.getGlobals().getMappings().get(0);
+        Expression globalExpression = ExpressionFactory.instance().create(globalMapping);
+        Assert.assertEquals("context['foobar']", globalExpression.getExpression());
+        Assert.assertEquals(ExpressionType.MVEL, globalExpression.getType());
+        Assert.assertTrue(globalMapping.getScope() == null || globalMapping.getScope().equals(Scope.EXCHANGE));
+        Assert.assertEquals("exchangeVar", globalMapping.getVariable());
+        MappingModel inputMapping = action.getInputs().getMappings().get(0);
+        Expression inputExpression = ExpressionFactory.instance().create(inputMapping);
+        Assert.assertEquals("message.content.nested", inputExpression.getExpression());
+        Assert.assertEquals(ExpressionType.MVEL, inputExpression.getType());
+        Assert.assertEquals(Scope.IN, inputMapping.getScope());
+        Assert.assertEquals("inputVar", inputMapping.getVariable());
+        MappingModel outputMapping = action.getOutputs().getMappings().get(0);
+        Expression outputExpression = ExpressionFactory.instance().create(outputMapping);
+        Assert.assertEquals("message.content", outputExpression.getExpression());
+        Assert.assertEquals(ExpressionType.MVEL, outputExpression.getType());
+        Assert.assertEquals(Scope.OUT, outputMapping.getScope());
+        Assert.assertEquals("outputVar", outputMapping.getVariable());
+        ChannelModel channel = rules.getChannels().getChannels().get(0);
+        Assert.assertEquals(TestChannel.class, channel.getClazz(loader));
+        Assert.assertEquals("theName", channel.getName());
+        Assert.assertEquals("theOperation", channel.getOperation());
+        Assert.assertEquals("theReference", channel.getReference());
+        ListenerModel listener = rules.getListeners().getListeners().get(0);
+        Assert.assertEquals(DebugWorkingMemoryEventListener.class, listener.getClazz(loader));
+        LoggerModel logger = rules.getLoggers().getLoggers().get(0);
+        Assert.assertEquals(Integer.valueOf(2000), logger.getInterval());
+        Assert.assertEquals("theLog", logger.getLog());
+        Assert.assertEquals(LoggerType.CONSOLE, logger.getType());
+        ManifestModel manifest = rules.getManifest();
+        Assert.assertEquals(true, manifest.isScan());
+        ContainerModel container = manifest.getContainer();
+        ResourcesModel resources = manifest.getResources();
+        Assert.assertTrue((container != null && resources == null) || (container == null && resources != null));
+        if (CONTAINER_XML.equals(xml)) {
+            ReleaseId rid = container.getReleaseId();
+            Assert.assertEquals("theGroupId", rid.getGroupId());
+            Assert.assertEquals("theArtifactId", rid.getArtifactId());
+            Assert.assertEquals("theVersion", rid.getVersion());
+            Assert.assertEquals("theBase", container.getBaseName());
+            Assert.assertEquals("theSession", container.getSessionName());
+            Assert.assertNull(resources);
+        } else if (RESOURCES_XML.equals(xml)) {
+            Assert.assertNull(container);
+            ResourceModel resource1 = resources.getResources().get(0);
+            Assert.assertEquals("foo.drl", resource1.getLocation());
+            Assert.assertEquals(ResourceType.valueOf("DRL"), resource1.getType());
+            ResourceModel resource2 = resources.getResources().get(1);
+            Assert.assertEquals("bar.dsl", resource2.getLocation());
+            Assert.assertEquals(ResourceType.valueOf("DSL"), resource2.getType());
+        }
+        PropertyModel property = rules.getProperties().getProperties().get(0);
+        Assert.assertEquals("foo", property.getName());
+        Assert.assertEquals("bar", property.getValue());
     }
 
     @Test
-    public void testWriteComplete() throws Exception {
-        String old_xml = new StringPuller().pull(COMPLETE_XML, getClass());
+    public void testWriteContainer() throws Exception {
+        doTestWrite(CONTAINER_XML);
+    }
+
+    @Test
+    public void testWriteResources() throws Exception {
+        doTestWrite(RESOURCES_XML);
+    }
+
+    private void doTestWrite(String xml) throws Exception {
+        String old_xml = new StringPuller().pull(xml, getClass());
         SwitchYardModel switchyard = _puller.pull(new StringReader(old_xml));
         String new_xml = switchyard.toString();
         XMLUnit.setIgnoreWhitespace(true);
@@ -143,13 +186,33 @@ public class RulesModelTests {
     }
 
     @Test
-    public void testValidation() throws Exception {
-        SwitchYardModel switchyard = _puller.pull(COMPLETE_XML, getClass());
-        switchyard.assertModelValid();
+    public void testValidateContainer() throws Exception {
+        doTestValidate(CONTAINER_XML);
     }
 
     @Test
-    public void testScanForRules() throws Exception {
+    public void testValidateResources() throws Exception {
+        doTestValidate(RESOURCES_XML);
+    }
+
+    private void doTestValidate(String xml) throws Exception {
+        SwitchYardModel switchyard = _puller.pull(xml, getClass());
+        switchyard.assertModelValid();
+    }
+
+    /*
+    @Test
+    public void testScanContainer() throws Exception {
+        doTestScan(CONTAINER_XML);
+    }
+    */
+
+    @Test
+    public void testScanResources() throws Exception {
+        doTestScan(RESOURCES_XML);
+    }
+
+    private void doTestScan(String xml) throws Exception {
         ClassLoader loader = getClass().getClassLoader();
         Scanner<SwitchYardModel> scanner = new RulesSwitchYardScanner();
         ScannerInput<SwitchYardModel> input = new ScannerInput<SwitchYardModel>().setName(getClass().getSimpleName());
@@ -160,31 +223,18 @@ public class RulesModelTests {
         urls.add(file.toURI().toURL());
         input.setURLs(urls);
         ScannerOutput<SwitchYardModel> output = scanner.scan(input);
-        CompositeModel composite = output.getModel().getComposite();
+        SwitchYardModel model = output.getModel();
+        CompositeModel composite = model.getComposite();
         Assert.assertEquals(getClass().getSimpleName(), composite.getName());
-        List<ComponentModel> cm_list = composite.getComponents();
-        Assert.assertEquals(1, cm_list.size());
-        for (ComponentModel c : cm_list) {
-            RulesComponentImplementationModel rci = (RulesComponentImplementationModel)c.getImplementation();
-            Iterator<ResourceModel> rm_iter = rci.getResources().iterator();
-            ResourceModel rm = rm_iter.next();
-            Assert.assertEquals("path/to/my.drl", rm.getLocation());
-            Assert.assertSame(ResourceType.valueOf("DRL"), rm.getType());
-            Assert.assertEquals(DebugWorkingMemoryEventListener.class, rci.getEventListeners().iterator().next().getClazz(loader));
-            MappingModel fmm = rci.getFacts().getMappings().iterator().next();
-            Expression fex = ExpressionFactory.instance().create(fmm);
-            Assert.assertEquals("context['foobar']", fex.getExpression());
-            Assert.assertEquals(ExpressionType.MVEL, fex.getType());
-        }
+        doTestModel(model, xml, loader);
     }
 
     @Test
-    public void testEmptyScan() throws Exception {
+    public void testScanEmpty() throws Exception {
         Scanner<SwitchYardModel> scanner = new RulesSwitchYardScanner();
         ScannerInput<SwitchYardModel> input = new ScannerInput<SwitchYardModel>();
         ScannerOutput<SwitchYardModel> output = scanner.scan(input);
-        Assert.assertNull("Composite element should not be created if no components were found.", output.getModel()
-                .getComposite());
+        Assert.assertNull("Composite element should not be created if no components were found.", output.getModel().getComposite());
     }
 
     public static final class TestChannel implements Channel {

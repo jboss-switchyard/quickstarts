@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -19,39 +19,36 @@
 package org.switchyard.component.bpm.config.model;
 
 import static org.switchyard.component.bpm.config.model.BPMComponentImplementationModel.DEFAULT_NAMESPACE;
+import static org.switchyard.component.common.knowledge.config.model.MappingsModel.GLOBALS;
+import static org.switchyard.component.common.knowledge.config.model.MappingsModel.INPUTS;
+import static org.switchyard.component.common.knowledge.config.model.MappingsModel.OUTPUTS;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.EventListener;
 import java.util.List;
 
-import org.switchyard.common.io.resource.ResourceType;
-import org.switchyard.common.io.resource.SimpleResource;
+import org.jbpm.process.workitem.wsht.AbstractHTWorkItemHandler;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.type.classpath.IsAnnotationPresentFilter;
-import org.switchyard.common.type.reflect.Construction;
-import org.switchyard.component.bpm.AbortProcessInstance;
-import org.switchyard.component.bpm.Process;
-import org.switchyard.component.bpm.ProcessActionType;
-import org.switchyard.component.bpm.SignalEvent;
-import org.switchyard.component.bpm.StartProcess;
+import org.switchyard.component.bpm.BPMActionType;
+import org.switchyard.component.bpm.annotation.AbortProcessInstance;
+import org.switchyard.component.bpm.annotation.BPM;
+import org.switchyard.component.bpm.annotation.SignalEvent;
+import org.switchyard.component.bpm.annotation.StartProcess;
+import org.switchyard.component.bpm.annotation.WorkItemHandler;
+import org.switchyard.component.bpm.config.model.v1.V1BPMActionModel;
 import org.switchyard.component.bpm.config.model.v1.V1BPMComponentImplementationModel;
-import org.switchyard.component.bpm.config.model.v1.V1ParametersModel;
-import org.switchyard.component.bpm.config.model.v1.V1ProcessActionModel;
-import org.switchyard.component.bpm.config.model.v1.V1ResultsModel;
-import org.switchyard.component.bpm.config.model.v1.V1TaskHandlerModel;
-import org.switchyard.component.bpm.task.work.SwitchYardServiceTaskHandler;
-import org.switchyard.component.bpm.task.work.TaskHandler;
-import org.switchyard.component.common.rules.Audit;
-import org.switchyard.component.common.rules.Mapping;
-import org.switchyard.component.common.rules.config.model.AuditModel;
-import org.switchyard.component.common.rules.config.model.MappingModel;
-import org.switchyard.component.common.rules.config.model.v1.V1AuditModel;
-import org.switchyard.component.common.rules.config.model.v1.V1EventListenerModel;
-import org.switchyard.component.common.rules.config.model.v1.V1MappingModel;
-import org.switchyard.config.model.Scanner;
+import org.switchyard.component.bpm.config.model.v1.V1WorkItemHandlerModel;
+import org.switchyard.component.bpm.config.model.v1.V1WorkItemHandlersModel;
+import org.switchyard.component.bpm.work.SwitchYardWorkItemHandler;
+import org.switchyard.component.bpm.work.WorkItemHandlers;
+import org.switchyard.component.common.knowledge.annotation.Mapping;
+import org.switchyard.component.common.knowledge.config.model.ActionModel;
+import org.switchyard.component.common.knowledge.config.model.ActionsModel;
+import org.switchyard.component.common.knowledge.config.model.KnowledgeSwitchYardScanner;
+import org.switchyard.component.common.knowledge.config.model.v1.V1ActionsModel;
 import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.ScannerOutput;
 import org.switchyard.config.model.composite.ComponentModel;
@@ -62,28 +59,23 @@ import org.switchyard.config.model.composite.v1.V1ComponentModel;
 import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeModel;
 import org.switchyard.config.model.composite.v1.V1InterfaceModel;
-import org.switchyard.config.model.resource.v1.V1ResourceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.metadata.java.JavaService;
 
 /**
- * A SwitchYardScanner which scans for @Process, @StartProcess, @SignalEvent and @AbortProcessInstance annotations.
+ * BPMSwitchYardScanner.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
+public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
 
     private static final IsAnnotationPresentFilter START_PROCESS_FILTER = new IsAnnotationPresentFilter(StartProcess.class);
     private static final IsAnnotationPresentFilter SIGNAL_EVENT_FILTER = new IsAnnotationPresentFilter(SignalEvent.class);
     private static final IsAnnotationPresentFilter ABORT_PROCESS_INSTANCE_FILTER = new IsAnnotationPresentFilter(AbortProcessInstance.class);
 
-    private static final String UNDEFINED = "";
-    private static final String INTERFACE_ERR_MSG = " is a class. @Process only allowed on interfaces.";
-    private static final String FILTER_ERR_MSG = " is in error. @StartProcess, @SignalEvent and @AbortProcessInstance cannot co-exist on the same method.";
-
-    private final IsAnnotationPresentFilter _processFilter = new IsAnnotationPresentFilter(Process.class);
+    private final IsAnnotationPresentFilter _bpmFilter = new IsAnnotationPresentFilter(BPM.class);
 
     /**
      * {@inheritDoc}
@@ -93,171 +85,147 @@ public class BPMSwitchYardScanner implements Scanner<SwitchYardModel> {
         SwitchYardModel switchyardModel = new V1SwitchYardModel();
         CompositeModel compositeModel = new V1CompositeModel();
         compositeModel.setName(input.getName());
-        ClasspathScanner processScanner = new ClasspathScanner(_processFilter);
+        ClasspathScanner bpmScanner = new ClasspathScanner(_bpmFilter);
         for (URL url : input.getURLs()) {
-            processScanner.scan(url);
+            bpmScanner.scan(url);
         }
-        List<Class<?>> processClasses = _processFilter.getMatchedTypes();
-        for (Class<?> processClass : processClasses) {
-            Process process = processClass.getAnnotation(Process.class);
-            Class<?> processInterface = process.value();
-            if (Process.UndefinedProcessInterface.class.equals(processInterface)) {
-                processInterface = processClass;
-            }
-            if (!processInterface.isInterface()) {
-                throw new IOException(processInterface.getName() + INTERFACE_ERR_MSG);
-            }
-            String processName = Strings.trimToNull(process.name());
-            if (processName == null) {
-                processName = processInterface.getSimpleName();
-            }
-            InterfaceModel csiModel = new V1InterfaceModel(InterfaceModel.JAVA);
-            csiModel.setInterface(processInterface.getName());
-            ComponentServiceModel serviceModel = new V1ComponentServiceModel();
-            serviceModel.setInterface(csiModel);
-            serviceModel.setName(processName);
-            ComponentModel componentModel = new V1ComponentModel();
-            componentModel.setName(processName);
-            componentModel.addService(serviceModel);
-            compositeModel.addComponent(componentModel);
-            BPMComponentImplementationModel bciModel = new V1BPMComponentImplementationModel();
-            String processDefinition = process.definition();
-            if (UNDEFINED.equals(processDefinition)) {
-                processDefinition = "META-INF/" + processName + ".bpmn";
-            }
-            SimpleResource procDefRes = new SimpleResource(processDefinition);
-            String procDefResType = process.definitionType();
-            if (!"".equals(procDefResType)) {
-                procDefRes.setType(ResourceType.valueOf(procDefResType));
-            }
-            bciModel.setProcessDefinition(procDefRes);
-            String processId = process.id();
-            if (UNDEFINED.equals(processId)) {
-                processId = processName;
-            }
-            bciModel.setProcessId(processId);
-            bciModel.setPersistent(process.persistent());
-            int sessionId = process.sessionId();
-            if (sessionId > -1) {
-                bciModel.setSessionId(Integer.valueOf(sessionId));
-            }
-            bciModel.setAgent(process.agent());
-            String messageContentInName = process.messageContentInName();
-            if (!UNDEFINED.equals(messageContentInName)) {
-                bciModel.setMessageContentInName(messageContentInName);
-            }
-            String messageContentOutName = process.messageContentOutName();
-            if (!UNDEFINED.equals(messageContentOutName)) {
-                bciModel.setMessageContentOutName(messageContentOutName);
-            }
-            JavaService javaService = JavaService.fromClass(processInterface);
-            for (Method method : processClass.getDeclaredMethods()) {
-                ProcessActionType pat = null;
-                String eventType = null;
-                if (START_PROCESS_FILTER.matches(method)) {
-                    if (SIGNAL_EVENT_FILTER.matches(method) || ABORT_PROCESS_INSTANCE_FILTER.matches(method)) {
-                        throw new IOException(method.getName() + " " + FILTER_ERR_MSG);
-                    }
-                    pat = ProcessActionType.START_PROCESS;
-                } else if (SIGNAL_EVENT_FILTER.matches(method)) {
-                    if (ABORT_PROCESS_INSTANCE_FILTER.matches(method)) {
-                        throw new IOException(method.getName() + " " + FILTER_ERR_MSG);
-                    }
-                    pat = ProcessActionType.SIGNAL_EVENT;
-                    eventType = method.getAnnotation(SignalEvent.class).value();
-                    if (SignalEvent.UNDEFINED_EVENT_TYPE.equals(eventType)) {
-                        eventType = method.getName();
-                    }
-                } else if (ABORT_PROCESS_INSTANCE_FILTER.matches(method)) {
-                    pat = ProcessActionType.ABORT_PROCESS_INSTANCE;
-                }
-                if (pat != null) {
-                    ServiceOperation srvOper = javaService.getOperation(method.getName());
-                    if (srvOper != null) {
-                        ProcessActionModel pam = new V1ProcessActionModel().setName(srvOper.getName()).setType(pat);
-                        if (eventType != null) {
-                            pam.setEventType(eventType);
-                        }
-                        bciModel.addProcessAction(pam);
-                    }
-                }
-            }
-            Audit audit = processClass.getAnnotation(Audit.class);
-            if (audit != null) {
-                AuditModel aModel = new V1AuditModel(DEFAULT_NAMESPACE);
-                aModel.setType(audit.type());
-                int interval = audit.interval();
-                if (interval != -1) {
-                    aModel.setInterval(Integer.valueOf(interval));
-                }
-                if (!UNDEFINED.equals(audit.log())) {
-                    aModel.setLog(audit.log());
-                }
-                bciModel.setAudit(aModel);
-            }
-            for (Class<? extends EventListener> elc : process.eventListeners()) {
-                bciModel.addEventListener(new V1EventListenerModel(DEFAULT_NAMESPACE).setClazz(elc));
-            }
-            bciModel.addTaskHandler(new V1TaskHandlerModel().setClazz(SwitchYardServiceTaskHandler.class).setName(SwitchYardServiceTaskHandler.SWITCHYARD_SERVICE));
-            for (Class<? extends TaskHandler> taskHandlerClass : process.taskHandlers()) {
-                if (Process.UndefinedTaskHandler.class.equals(taskHandlerClass) || SwitchYardServiceTaskHandler.class.equals(taskHandlerClass)) {
-                    continue;
-                }
-                TaskHandler taskHandler = Construction.construct(taskHandlerClass);
-                bciModel.addTaskHandler(new V1TaskHandlerModel().setClazz(taskHandlerClass).setName(taskHandler.getName()));
-            }
-            for (String location : process.resources()) {
-                if (UNDEFINED.equals(location)) {
-                    continue;
-                }
-                // setting the location will trigger deducing and setting the type
-                bciModel.addResource(new V1ResourceModel(DEFAULT_NAMESPACE).setLocation(location));
-            }
-            addMappings(process, bciModel);
-            componentModel.setImplementation(bciModel);
+        List<Class<?>> bpmClasses = _bpmFilter.getMatchedTypes();
+        for (Class<?> bpmClass : bpmClasses) {
+            compositeModel.addComponent(scan(bpmClass));
         }
-
         if (!compositeModel.getModelChildren().isEmpty()) {
             switchyardModel.setComposite(compositeModel);
         }
-
         return new ScannerOutput<SwitchYardModel>().setModel(switchyardModel);
     }
 
-    // Code here instead of in scan() because checkstyle complains when a method is longer than 150 lines.
-    private void addMappings(Process process, BPMComponentImplementationModel bciModel) {
-        ParametersModel parametersModel = null;
-        for (Mapping parameterMapping : process.parameters()) {
-            MappingModel mappingModel = new V1MappingModel(DEFAULT_NAMESPACE);
-            mappingModel.setContextScope(parameterMapping.contextScope());
-            mappingModel.setExpression(parameterMapping.expression());
-            mappingModel.setExpressionType(parameterMapping.expressionType());
-            String variable = parameterMapping.variable();
-            if (!UNDEFINED.equals(variable)) {
-                mappingModel.setVariable(variable);
-            }
-            if (parametersModel == null) {
-                parametersModel = new V1ParametersModel();
-                bciModel.setParameters(parametersModel);
-            }
-            parametersModel.addMapping(mappingModel);
+    /**
+     * Scans a class.
+     * @param bpmClass the class
+     * @return the component model
+     * @throws IOException oops
+     */
+    public ComponentModel scan(Class<?> bpmClass) throws IOException {
+        BPM bpm = bpmClass.getAnnotation(BPM.class);
+        if (bpm == null) {
+            throw new IOException(bpmClass.getName() + " is missing the @BPM annotation.");
         }
-        ResultsModel resultsModel = null;
-        for (Mapping resultMapping : process.results()) {
-            MappingModel mappingModel = new V1MappingModel(DEFAULT_NAMESPACE);
-            mappingModel.setContextScope(resultMapping.contextScope());
-            mappingModel.setExpression(resultMapping.expression());
-            mappingModel.setExpressionType(resultMapping.expressionType());
-            String variable = resultMapping.variable();
-            if (!UNDEFINED.equals(variable)) {
-                mappingModel.setVariable(variable);
-            }
-            if (resultsModel == null) {
-                resultsModel = new V1ResultsModel();
-                bciModel.setResults(resultsModel);
-            }
-            resultsModel.addMapping(mappingModel);
+        Class<?> bpmInterface = bpm.value();
+        if (BPM.UndefinedBPMInterface.class.equals(bpmInterface)) {
+            bpmInterface = bpmClass;
         }
+        if (!bpmInterface.isInterface()) {
+            throw new IOException(bpmInterface.getName() +  " is a class. @BPM only allowed on interfaces.");
+        }
+        String bpmName = Strings.trimToNull(bpm.name());
+        if (bpmName == null) {
+            bpmName = bpmInterface.getSimpleName();
+        }
+        ComponentModel componentModel = new V1ComponentModel();
+        componentModel.setName(bpmName);
+        BPMComponentImplementationModel componentImplementationModel = new V1BPMComponentImplementationModel();
+        boolean persistent = bpm.persistent();
+        if (persistent) {
+            componentImplementationModel.setPersistent(persistent);
+        }
+        String processId = bpm.processId();
+        if (UNDEFINED.equals(processId)) {
+            processId = bpmName;
+        }
+        componentImplementationModel.setProcessId(processId);
+        int sessionId = bpm.sessionId();
+        if (sessionId > -1) {
+            componentImplementationModel.setSessionId(sessionId);
+        }
+        ActionsModel actionsModel = new V1ActionsModel(DEFAULT_NAMESPACE);
+        JavaService javaService = JavaService.fromClass(bpmInterface);
+        for (Method method : bpmClass.getDeclaredMethods()) {
+            BPMActionType actionType = null;
+            String id = null;
+            Mapping[] globalMappingAnnotations = null;
+            Mapping[] inputMappingAnnotations = null;
+            Mapping[] outputMappingAnnotations = null;
+            if (START_PROCESS_FILTER.matches(method)) {
+                actionType = BPMActionType.START_PROCESS;
+                StartProcess startProcessAnnotation = method.getAnnotation(StartProcess.class);
+                globalMappingAnnotations = startProcessAnnotation.globals();
+                inputMappingAnnotations = startProcessAnnotation.inputs();
+                outputMappingAnnotations = startProcessAnnotation.outputs();
+            } else if (SIGNAL_EVENT_FILTER.matches(method)) {
+                actionType = BPMActionType.SIGNAL_EVENT;
+                SignalEvent signalEventAnnotation = method.getAnnotation(SignalEvent.class);
+                globalMappingAnnotations = signalEventAnnotation.globals();
+                inputMappingAnnotations = signalEventAnnotation.inputs();
+                outputMappingAnnotations = signalEventAnnotation.outputs();
+                id = Strings.trimToNull(signalEventAnnotation.id());
+            } else if (ABORT_PROCESS_INSTANCE_FILTER.matches(method)) {
+                actionType = BPMActionType.ABORT_PROCESS_INSTANCE;
+                AbortProcessInstance abortProcessInstanceAnnotation = method.getAnnotation(AbortProcessInstance.class);
+                globalMappingAnnotations = abortProcessInstanceAnnotation.globals();
+                inputMappingAnnotations = abortProcessInstanceAnnotation.inputs();
+                outputMappingAnnotations = abortProcessInstanceAnnotation.outputs();
+            }
+            if (actionType != null) {
+                ServiceOperation serviceOperation = javaService.getOperation(method.getName());
+                if (serviceOperation != null) {
+                    ActionModel actionModel = new V1BPMActionModel();
+                    actionModel.setId(id);
+                    actionModel.setOperation(serviceOperation.getName());
+                    actionModel.setType(actionType);
+                    actionModel.setGlobals(toMappingsModel(globalMappingAnnotations, DEFAULT_NAMESPACE, GLOBALS));
+                    actionModel.setInputs(toMappingsModel(inputMappingAnnotations, DEFAULT_NAMESPACE, INPUTS));
+                    actionModel.setOutputs(toMappingsModel(outputMappingAnnotations, DEFAULT_NAMESPACE, OUTPUTS));
+                    actionsModel.addAction(actionModel);
+                }
+            }
+        }
+        if (!actionsModel.getActions().isEmpty()) {
+            componentImplementationModel.setActions(actionsModel);
+        }
+        componentImplementationModel.setChannels(toChannelsModel(bpm.channels(), DEFAULT_NAMESPACE, componentModel));
+        componentImplementationModel.setListeners(toListenersModel(bpm.listeners(), DEFAULT_NAMESPACE));
+        componentImplementationModel.setLoggers(toLoggersModel(bpm.loggers(), DEFAULT_NAMESPACE));
+        componentImplementationModel.setManifest(toManifestModel(bpm.manifest(), DEFAULT_NAMESPACE));
+        componentImplementationModel.setProperties(toPropertiesModel(bpm.properties(), DEFAULT_NAMESPACE));
+        componentImplementationModel.setWorkItemHandlers(toWorkItemHandlersModel(bpm.workItemHandlers()));
+        componentModel.setImplementation(componentImplementationModel);
+        ComponentServiceModel componentServiceModel = new V1ComponentServiceModel();
+        InterfaceModel interfaceModel = new V1InterfaceModel(InterfaceModel.JAVA);
+        interfaceModel.setInterface(bpmInterface.getName());
+        componentServiceModel.setInterface(interfaceModel);
+        componentServiceModel.setName(bpmName);
+        componentModel.addService(componentServiceModel);
+        return componentModel;
+    }
+
+    private WorkItemHandlersModel toWorkItemHandlersModel(WorkItemHandler[] workItemHandlerAnnotations) {
+        if (workItemHandlerAnnotations == null || workItemHandlerAnnotations.length == 0) {
+            return null;
+        }
+        WorkItemHandlersModel workItemHandlersModel = new V1WorkItemHandlersModel();
+        for (WorkItemHandler workItemHandlerAnnotation : workItemHandlerAnnotations) {
+            WorkItemHandlerModel workItemHandlerModel = new V1WorkItemHandlerModel();
+            Class<? extends org.kie.runtime.process.WorkItemHandler> clazz = workItemHandlerAnnotation.value();
+            workItemHandlerModel.setClazz(clazz);
+            String name = workItemHandlerAnnotation.name();
+            if (UNDEFINED.equals(name)) {
+                org.kie.runtime.process.WorkItemHandler wih = WorkItemHandlers.newWorkItemHandler(clazz, null);
+                if (wih instanceof SwitchYardWorkItemHandler) {
+                    SwitchYardWorkItemHandler sywih = (SwitchYardWorkItemHandler)wih;
+                    if (sywih.getName() != null) {
+                        name = sywih.getName();
+                    }
+                } else if (wih instanceof AbstractHTWorkItemHandler) {
+                    name = "Human Task";
+                }
+            }
+            if (UNDEFINED.equals(name)) {
+                name = clazz.getSimpleName();
+            }
+            workItemHandlerModel.setName(name);
+            workItemHandlersModel.addWorkItemHandler(workItemHandlerModel);
+        }
+        return workItemHandlersModel;
     }
 
 }

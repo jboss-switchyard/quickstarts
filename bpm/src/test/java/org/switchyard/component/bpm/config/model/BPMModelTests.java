@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @authors tag. All rights reserved.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -22,28 +22,37 @@ import java.io.File;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-
-import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
 
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.drools.event.DebugProcessEventListener;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.builder.ReleaseId;
+import org.kie.runtime.Channel;
+import org.kie.runtime.process.WorkItem;
+import org.kie.runtime.process.WorkItemHandler;
+import org.kie.runtime.process.WorkItemManager;
+import org.switchyard.Scope;
 import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.type.Classes;
-import org.switchyard.component.bpm.task.work.SwitchYardServiceTaskHandler;
-import org.switchyard.component.common.rules.config.model.EventListenerModel;
-import org.switchyard.component.common.rules.config.model.MappingModel;
-import org.switchyard.component.common.rules.expression.Expression;
-import org.switchyard.component.common.rules.expression.ExpressionFactory;
-import org.switchyard.component.common.rules.expression.ExpressionType;
-import org.switchyard.config.Configuration;
+import org.switchyard.component.bpm.BPMActionType;
+import org.switchyard.component.common.knowledge.LoggerType;
+import org.switchyard.component.common.knowledge.config.model.ActionModel;
+import org.switchyard.component.common.knowledge.config.model.ChannelModel;
+import org.switchyard.component.common.knowledge.config.model.ContainerModel;
+import org.switchyard.component.common.knowledge.config.model.ListenerModel;
+import org.switchyard.component.common.knowledge.config.model.LoggerModel;
+import org.switchyard.component.common.knowledge.config.model.ManifestModel;
+import org.switchyard.component.common.knowledge.config.model.MappingModel;
+import org.switchyard.component.common.knowledge.expression.Expression;
+import org.switchyard.component.common.knowledge.expression.ExpressionFactory;
+import org.switchyard.component.common.knowledge.expression.ExpressionType;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
@@ -51,17 +60,20 @@ import org.switchyard.config.model.ScannerOutput;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeModel;
+import org.switchyard.config.model.property.PropertyModel;
 import org.switchyard.config.model.resource.ResourceModel;
+import org.switchyard.config.model.resource.ResourcesModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * Tests BPM models.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 public class BPMModelTests {
 
-    private static final String COMPLETE_XML = "/org/switchyard/component/bpm/config/model/BPMModelTests-Complete.xml";
+    private static final String CONTAINER_XML = "/org/switchyard/component/bpm/config/model/BPMModelTests-Container.xml";
+    private static final String RESOURCES_XML = "/org/switchyard/component/bpm/config/model/BPMModelTests-Resources.xml";
 
     private ModelPuller<SwitchYardModel> _puller;
 
@@ -70,49 +82,108 @@ public class BPMModelTests {
         _puller = new ModelPuller<SwitchYardModel>();
     }
 
+    @After
+    public void after() throws Exception {
+        _puller = null;
+    }
+
     @Test
-    public void testReadComplete() throws Exception {
+    public void testReadContainer() throws Exception {
+        doTestRead(CONTAINER_XML);
+    }
+
+    @Test
+    public void testReadResources() throws Exception {
+        doTestRead(RESOURCES_XML);
+    }
+
+    private void doTestRead(String xml) throws Exception {
         ClassLoader loader = getClass().getClassLoader();
-        SwitchYardModel switchyard = _puller.pull(COMPLETE_XML, loader);
+        doTestModel(_puller.pull(xml, loader), xml, loader);
+    }
+
+    private void doTestModel(SwitchYardModel switchyard, String xml, ClassLoader loader) throws Exception {
         CompositeModel composite = switchyard.getComposite();
         ComponentModel component = composite.getComponents().get(0);
         ComponentImplementationModel implementation = component.getImplementation();
         Assert.assertTrue(implementation instanceof BPMComponentImplementationModel);
-        BPMComponentImplementationModel bci = (BPMComponentImplementationModel)implementation;
-        Assert.assertEquals("bpm", bci.getType());
-        Assert.assertEquals("foobar.bpmn", bci.getProcessDefinition().getLocation());
-        Assert.assertSame(ResourceType.valueOf("BPMN2"), bci.getProcessDefinition().getType());
-        Assert.assertEquals("foobar", bci.getProcessId());
-        Assert.assertTrue(bci.isPersistent());
-        Assert.assertEquals(Integer.valueOf(3), bci.getSessionId());
-        Configuration config = bci.getModelConfiguration();
-        Assert.assertEquals("implementation.bpm", config.getName());
-        QName qname = config.getQName();
-        Assert.assertEquals("urn:switchyard-component-bpm:config:1.0", qname.getNamespaceURI());
-        Assert.assertEquals("implementation.bpm", qname.getLocalPart());
-        ResourceModel prm = bci.getResources().iterator().next();
-        Assert.assertEquals("foobar.drl", prm.getLocation());
-        Assert.assertSame(ResourceType.valueOf("DRL"), prm.getType());
-        EventListenerModel elm = bci.getEventListeners().iterator().next();
-        Assert.assertEquals(DebugProcessEventListener.class, elm.getClazz(loader));
-        TaskHandlerModel th = bci.getTaskHandlers().iterator().next();
-        Assert.assertEquals(SwitchYardServiceTaskHandler.class, th.getClazz(loader));
-        Assert.assertNull(th.getName());
-        MappingModel pmm = bci.getParameters().getMappings().iterator().next();
-        Assert.assertEquals("payload", pmm.getVariable());
-        Expression pexpr = ExpressionFactory.instance().create(pmm);
-        Assert.assertEquals("message.content", pexpr.getExpression());
-        Assert.assertEquals(ExpressionType.MVEL, pexpr.getType());
-        MappingModel rmm = bci.getResults().getMappings().iterator().next();
-        Assert.assertNull(rmm.getVariable());
-        Expression rexpr = ExpressionFactory.instance().create(rmm);
-        Assert.assertEquals("message.content = payload;", rexpr.getExpression());
-        Assert.assertEquals(ExpressionType.MVEL, rexpr.getType());
+        BPMComponentImplementationModel bpm = (BPMComponentImplementationModel)implementation;
+        Assert.assertEquals("bpm", bpm.getType());
+        Assert.assertTrue(bpm.isPersistent());
+        Assert.assertEquals("theProcessId", bpm.getProcessId());
+        Assert.assertEquals(42, bpm.getSessionId().intValue());
+        ActionModel action = bpm.getActions().getActions().get(0);
+        Assert.assertEquals("theId", action.getId());
+        Assert.assertEquals("process", action.getOperation());
+        Assert.assertEquals(BPMActionType.SIGNAL_EVENT, action.getType());
+        MappingModel globalMapping = action.getGlobals().getMappings().get(0);
+        Expression globalExpression = ExpressionFactory.instance().create(globalMapping);
+        Assert.assertEquals("context['foobar']", globalExpression.getExpression());
+        Assert.assertEquals(ExpressionType.MVEL, globalExpression.getType());
+        Assert.assertTrue(globalMapping.getScope() == null || globalMapping.getScope().equals(Scope.EXCHANGE));
+        Assert.assertEquals("exchangeVar", globalMapping.getVariable());
+        MappingModel inputMapping = action.getInputs().getMappings().get(0);
+        Expression inputExpression = ExpressionFactory.instance().create(inputMapping);
+        Assert.assertEquals("message.content.nested", inputExpression.getExpression());
+        Assert.assertEquals(ExpressionType.MVEL, inputExpression.getType());
+        Assert.assertEquals(Scope.IN, inputMapping.getScope());
+        Assert.assertEquals("inputVar", inputMapping.getVariable());
+        MappingModel outputMapping = action.getOutputs().getMappings().get(0);
+        Expression outputExpression = ExpressionFactory.instance().create(outputMapping);
+        Assert.assertEquals("message.content", outputExpression.getExpression());
+        Assert.assertEquals(ExpressionType.MVEL, outputExpression.getType());
+        Assert.assertEquals(Scope.OUT, outputMapping.getScope());
+        Assert.assertEquals("outputVar", outputMapping.getVariable());
+        ChannelModel channel = bpm.getChannels().getChannels().get(0);
+        Assert.assertEquals(TestChannel.class, channel.getClazz(loader));
+        Assert.assertEquals("theName", channel.getName());
+        Assert.assertEquals("theOperation", channel.getOperation());
+        Assert.assertEquals("theReference", channel.getReference());
+        ListenerModel listener = bpm.getListeners().getListeners().get(0);
+        Assert.assertEquals(DebugProcessEventListener.class, listener.getClazz(loader));
+        LoggerModel logger = bpm.getLoggers().getLoggers().get(0);
+        Assert.assertEquals(Integer.valueOf(2000), logger.getInterval());
+        Assert.assertEquals("theLog", logger.getLog());
+        Assert.assertEquals(LoggerType.CONSOLE, logger.getType());
+        ManifestModel manifest = bpm.getManifest();
+        Assert.assertEquals(true, manifest.isScan());
+        ContainerModel container = manifest.getContainer();
+        ResourcesModel resources = manifest.getResources();
+        Assert.assertTrue((container != null && resources == null) || (container == null && resources != null));
+        if (CONTAINER_XML.equals(xml)) {
+            ReleaseId rid = container.getReleaseId();
+            Assert.assertEquals("theGroupId", rid.getGroupId());
+            Assert.assertEquals("theArtifactId", rid.getArtifactId());
+            Assert.assertEquals("theVersion", rid.getVersion());
+            Assert.assertEquals("theBase", container.getBaseName());
+            Assert.assertEquals("theSession", container.getSessionName());
+            Assert.assertNull(resources);
+        } else if (RESOURCES_XML.equals(xml)) {
+            Assert.assertNull(container);
+            ResourceModel resource = resources.getResources().get(0);
+            Assert.assertEquals("foobar.bpmn", resource.getLocation());
+            Assert.assertEquals(ResourceType.valueOf("BPMN2"), resource.getType());
+        }
+        PropertyModel property = bpm.getProperties().getProperties().get(0);
+        Assert.assertEquals("foo", property.getName());
+        Assert.assertEquals("bar", property.getValue());
+        WorkItemHandlerModel workItemHandler = bpm.getWorkItemHandlers().getWorkItemHandlers().get(0);
+        Assert.assertEquals(TestWorkItemHandler.class, workItemHandler.getClazz(loader));
+        Assert.assertEquals("MyWIH", workItemHandler.getName());
     }
 
     @Test
-    public void testWriteComplete() throws Exception {
-        String old_xml = new StringPuller().pull(COMPLETE_XML, getClass());
+    public void testWriteContainer() throws Exception {
+        doTestWrite(CONTAINER_XML);
+    }
+
+    @Test
+    public void testWriteResources() throws Exception {
+        doTestWrite(RESOURCES_XML);
+    }
+
+    private void doTestWrite(String xml) throws Exception {
+        String old_xml = new StringPuller().pull(xml, getClass());
         SwitchYardModel switchyard = _puller.pull(new StringReader(old_xml));
         String new_xml = switchyard.toString();
         XMLUnit.setIgnoreWhitespace(true);
@@ -121,13 +192,33 @@ public class BPMModelTests {
     }
 
     @Test
-    public void testValidation() throws Exception {
-        SwitchYardModel switchyard = _puller.pull(COMPLETE_XML, getClass());
-        switchyard.assertModelValid();
+    public void testValidateContainer() throws Exception {
+        doTestValidate(CONTAINER_XML);
     }
 
     @Test
-    public void testScanForProcesses() throws Exception {
+    public void testValidateResources() throws Exception {
+        doTestValidate(RESOURCES_XML);
+    }
+
+    private void doTestValidate(String xml) throws Exception {
+        SwitchYardModel switchyard = _puller.pull(xml, getClass());
+        switchyard.assertModelValid();
+    }
+
+    /*
+    @Test
+    public void testScanContainer() throws Exception {
+        doTestScan(CONTAINER_XML);
+    }
+    */
+
+    @Test
+    public void testScanResources() throws Exception {
+        doTestScan(RESOURCES_XML);
+    }
+
+    private void doTestScan(String xml) throws Exception {
         ClassLoader loader = getClass().getClassLoader();
         Scanner<SwitchYardModel> scanner = new BPMSwitchYardScanner();
         ScannerInput<SwitchYardModel> input = new ScannerInput<SwitchYardModel>().setName(getClass().getSimpleName());
@@ -138,49 +229,38 @@ public class BPMModelTests {
         urls.add(file.toURI().toURL());
         input.setURLs(urls);
         ScannerOutput<SwitchYardModel> output = scanner.scan(input);
-        CompositeModel composite = output.getModel().getComposite();
+        SwitchYardModel model = output.getModel();
+        CompositeModel composite = model.getComposite();
         Assert.assertEquals(getClass().getSimpleName(), composite.getName());
-        List<ComponentModel> cm_list = composite.getComponents();
-        Assert.assertEquals(2, cm_list.size());
-        for (ComponentModel c : cm_list) {
-            BPMComponentImplementationModel bci = (BPMComponentImplementationModel)c.getImplementation();
-            String processId = bci.getProcessId();
-            if ("SimpleProcess".equals(processId)) {
-                Assert.assertEquals("META-INF/SimpleProcess.bpmn", bci.getProcessDefinition().getLocation());
-                Assert.assertSame(ResourceType.valueOf("BPMN"), bci.getProcessDefinition().getType());
-            } else if ("ComplexProcess".equals(processId)) {
-                Assert.assertEquals("path/to/my.bpmn", bci.getProcessDefinition().getLocation());
-                Assert.assertSame(ResourceType.valueOf("BPMN2"), bci.getProcessDefinition().getType());
-                Iterator<ResourceModel> rm_iter = bci.getResources().iterator();
-                ResourceModel rm = rm_iter.next();
-                Assert.assertEquals("path/to/my.dsl", rm.getLocation());
-                Assert.assertSame(ResourceType.valueOf("DSL"), rm.getType());
-                rm = rm_iter.next();
-                Assert.assertEquals("path/to/my.dslr", rm.getLocation());
-                Assert.assertSame(ResourceType.valueOf("DSLR"), rm.getType());
-                Assert.assertEquals(DebugProcessEventListener.class, bci.getEventListeners().iterator().next().getClazz(loader));
-                Iterator<TaskHandlerModel> th_iter = bci.getTaskHandlers().iterator();
-                TaskHandlerModel th = th_iter.next();
-                Assert.assertEquals(SwitchYardServiceTaskHandler.class, th.getClazz(loader));
-                Assert.assertEquals(SwitchYardServiceTaskHandler.SWITCHYARD_SERVICE, th.getName());
-                th = th_iter.next();
-                Assert.assertEquals(ComplexProcess.My1stHandler.class, th.getClazz(loader));
-                Assert.assertEquals("My1stHandler", th.getName());
-                th = th_iter.next();
-                Assert.assertEquals(ComplexProcess.My2ndHandler.class, th.getClazz(loader));
-                Assert.assertEquals("My2ndHandler", th.getName());
-            } else {
-                Assert.fail(processId);
-            }
-        }
+        doTestModel(model, xml, loader);
     }
 
     @Test
-    public void testEmptyScan() throws Exception {
+    public void testScanEmpty() throws Exception {
         Scanner<SwitchYardModel> scanner = new BPMSwitchYardScanner();
         ScannerInput<SwitchYardModel> input = new ScannerInput<SwitchYardModel>();
         ScannerOutput<SwitchYardModel> output = scanner.scan(input);
         Assert.assertNull("Composite element should not be created if no components were found.", output.getModel().getComposite());
+    }
+
+    public static final class TestChannel implements Channel {
+        @Override
+        public void send(Object object) {
+            System.out.println(object);
+        }
+    }
+
+    public static final class TestWorkItemHandler implements WorkItemHandler {
+        @Override
+        public void executeWorkItem(WorkItem workItem, WorkItemManager manager) {
+            System.out.println(workItem);
+            System.out.println(manager);
+        }
+        @Override
+        public void abortWorkItem(WorkItem workItem, WorkItemManager manager) {
+            System.out.println(workItem);
+            System.out.println(manager);
+        }
     }
 
 }

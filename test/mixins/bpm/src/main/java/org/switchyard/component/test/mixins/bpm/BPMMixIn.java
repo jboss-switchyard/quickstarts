@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -26,23 +26,26 @@ import java.util.Properties;
 
 import org.switchyard.common.io.pull.PropertiesPuller;
 import org.switchyard.common.lang.Strings;
-import org.switchyard.common.type.Classes;
+import org.switchyard.component.bpm.task.Task;
+import org.switchyard.component.bpm.task.TaskClient;
+import org.switchyard.component.bpm.task.TaskServer;
+import org.switchyard.component.bpm.task.TaskService;
+import org.switchyard.component.bpm.task.TaskStatus;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.test.mixins.AbstractTestMixIn;
 
 /**
  * BPM Test Mix In.
  * Helps with <a href="http://docs.jboss.org/jbpm/v5.2/userguide/ch.Human_Tasks.html">jBPM 5 Human Tasks</a>.
- * Note: Use of reflection is imposed by the fact that this mixin is in core and not components/bpm.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 public class BPMMixIn extends AbstractTestMixIn {
 
     private final boolean _managedLifecycle;
-    private Object _service = null;
-    private Object _server = null;
-    private Object _client = null;
+    private final TaskService _service;
+    private TaskServer _server = null;
+    private TaskClient _client = null;
     private String _host = "127.0.0.1";
     private int _port = 9123;
     private String _groupsPath = "/roles.properties";
@@ -62,6 +65,7 @@ public class BPMMixIn extends AbstractTestMixIn {
      */
     public BPMMixIn(boolean managedLifecycle) {
         _managedLifecycle = managedLifecycle;
+        _service = TaskService.instance();
     }
 
     /**
@@ -138,33 +142,15 @@ public class BPMMixIn extends AbstractTestMixIn {
         }
     }
 
-    private Object getService() {
-        if (_service == null) {
-            Class<?> serviceClass = Classes.forName("org.switchyard.component.bpm.task.service.TaskService", BPMMixIn.class);
-            try {
-                _service = serviceClass.getMethod("instance").invoke(null);
-            } catch (Throwable t) {
-                throw new SwitchYardException(t);
-            }
-        }
-        return _service;
-    }
-
     /**
      * Starts the task server.
      */
     public void startTaskServer() {
         if (_server == null) {
-            Object service = getService();
-            try {
-                _server = service.getClass().getMethod("newTaskServer").invoke(service);
-                Class<?> serverClass = _server.getClass();
-                serverClass.getMethod("setHost", String.class).invoke(_server, getHost());
-                serverClass.getMethod("setPort", int.class).invoke(_server, getPort());
-                serverClass.getMethod("start").invoke(_server);
-            } catch (Throwable t) {
-                throw new SwitchYardException(t);
-            }
+            _server = _service.newTaskServer();
+            _server.setHost(getHost());
+            _server.setPort(getPort());
+            _server.start();
         }
     }
 
@@ -174,9 +160,7 @@ public class BPMMixIn extends AbstractTestMixIn {
     public void stopTaskServer() {
         if (_server != null) {
             try {
-                _server.getClass().getMethod("stop").invoke(_server);
-            } catch (Throwable t) {
-                throw new SwitchYardException(t);
+                _server.stop();
             } finally {
                 _server = null;
             }
@@ -188,16 +172,10 @@ public class BPMMixIn extends AbstractTestMixIn {
      */
     public void connectTaskClient() {
         if (_client == null) {
-            Object service = getService();
-            try {
-                _client = service.getClass().getMethod("newTaskClient").invoke(service);
-                Class<?> clientClass = _client.getClass();
-                clientClass.getMethod("setHost", String.class).invoke(_client, getHost());
-                clientClass.getMethod("setPort", int.class).invoke(_client, getPort());
-                clientClass.getMethod("connect").invoke(_client);
-            } catch (Throwable t) {
-                throw new SwitchYardException(t);
-            }
+            _client = _service.newTaskClient();
+            _client.setHost(getHost());
+            _client.setPort(getPort());
+            _client.connect();
         }
     }
 
@@ -207,9 +185,7 @@ public class BPMMixIn extends AbstractTestMixIn {
     public void disconnectTaskClient() {
         if (_client != null) {
             try {
-                _client.getClass().getMethod("disconnect").invoke(_client);
-            } catch (Throwable t) {
-                throw new SwitchYardException(t);
+                _client.disconnect();
             } finally {
                 _client = null;
             }
@@ -275,29 +251,24 @@ public class BPMMixIn extends AbstractTestMixIn {
 
     private boolean doCompleteHumanTasks(Map<String,List<String>> usersGroups) {
         boolean keepWorking = false;
-        try {
-            final Class<?> taskClientClass = _client.getClass();
-            final Class<?> taskContentClass = Classes.forName("org.switchyard.component.bpm.task.service.TaskContent", BPMMixIn.class);
-            final Class<?> taskStatusClass = Classes.forName("org.switchyard.component.bpm.task.service.TaskStatus", BPMMixIn.class);
-            final Object completed = taskStatusClass.getDeclaredField("COMPLETED").get(null);
-            for (String userId : usersGroups.keySet()) {
-                List<String> groupIds = usersGroups.get(userId);
-                List<?> tasks = (List<?>)taskClientClass.getMethod("getTasksAssignedAsPotentialOwner", String.class, List.class).invoke(_client, userId, groupIds);
-                for (Object task : tasks) {
-                    Object status = task.getClass().getMethod("getStatus").invoke(task);
-                    if (completed.equals(status)) {
-                        continue;
-                    }
-                    Long taskId = (Long)task.getClass().getMethod("getId").invoke(task);
-                    taskClientClass.getMethod("claim", Long.class, String.class, List.class).invoke(_client, taskId, userId, groupIds);
-                    taskClientClass.getMethod("start", Long.class, String.class).invoke(_client, taskId, userId);
-                    taskClientClass.getMethod("complete", Long.class, String.class, taskContentClass).invoke(_client, taskId, userId, null);
-                    keepWorking = true;
+        for (String userId : usersGroups.keySet()) {
+            List<String> groupIds = usersGroups.get(userId);
+            List<Task> tasks = _client.getTasksAssignedAsPotentialOwner(userId, groupIds);
+            for (Task task : tasks) {
+                if (TaskStatus.COMPLETED.equals(task.getStatus())) {
+                    continue;
                 }
+                Long taskId = task.getId();
+                _client.claim(taskId, userId, groupIds);
+                _client.start(taskId, userId);
+                _client.complete(taskId, userId);
+                keepWorking = true;
             }
+        }
+        try {
             Thread.sleep(1000);
-        } catch (Throwable t) {
-            throw new SwitchYardException(t);
+        } catch (InterruptedException ie) {
+            throw new SwitchYardException(ie);
         }
         return keepWorking;
     }

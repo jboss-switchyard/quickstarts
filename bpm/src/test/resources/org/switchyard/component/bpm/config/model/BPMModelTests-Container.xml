@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+JBoss, Home of Professional Open Source
+Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+as indicated by the @authors tag. All rights reserved.
+See the copyright.txt in the distribution for a
+full listing of individual contributors.
+
+This copyrighted material is made available to anyone wishing to use,
+modify, copy, or redistribute it subject to the terms and conditions
+of the GNU Lesser General Public License, v. 2.1.
+This program is distributed in the hope that it will be useful, but WITHOUT A
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+You should have received a copy of the GNU Lesser General Public License,
+v.2.1 along with this distribution; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+MA  02110-1301, USA.
+-->
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="BPMModelTests" targetNamespace="urn:bpm:test:1.0">
+        <component name="DoStuffProcess">
+            <implementation.bpm xmlns="urn:switchyard-component-bpm:config:1.0" persistent="true" processId="theProcessId" sessionId="42">
+                <actions>
+                    <action id="theId" operation="process" type="SIGNAL_EVENT">
+                        <globals>
+                            <mapping expression="context['foobar']" scope="EXCHANGE" variable="exchangeVar"/>
+                        </globals>
+                        <inputs>
+                            <mapping expression="message.content.nested" scope="IN" variable="inputVar"/>
+                        </inputs>
+                        <outputs>
+                            <mapping expression="message.content" scope="OUT" variable="outputVar"/>
+                        </outputs>
+                    </action>
+                </actions>
+                <channels>
+                    <channel class="org.switchyard.component.bpm.config.model.BPMModelTests$TestChannel" name="theName" operation="theOperation" reference="theReference"/>
+                </channels>
+                <listeners>
+                    <listener class="org.drools.event.DebugProcessEventListener"/>
+                </listeners>
+                <loggers>
+                    <logger interval="2000" log="theLog" type="CONSOLE"/>
+                </loggers>
+                <manifest scan="true">
+                    <container baseName="theBase" releaseId="theGroupId:theArtifactId:theVersion" sessionName="theSession"/>
+                </manifest>
+                <properties>
+                    <property name="foo" value="bar"/>
+                </properties>
+                <workItemHandlers>
+                    <workItemHandler class="org.switchyard.component.bpm.config.model.BPMModelTests$TestWorkItemHandler" name="MyWIH"/>
+                </workItemHandlers>
+            </implementation.bpm>
+            <service name="DoStuffProcess">
+                <interface.java interface="org.switchyard.component.bpm.config.model.DoStuffProcess"/>
+            </service>
+        </component>
+    </composite>
+</switchyard>

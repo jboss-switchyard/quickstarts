@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -20,30 +20,28 @@ package org.switchyard.component.rules.config.model.v1;
 
 import static org.switchyard.component.rules.config.model.RulesComponentImplementationModel.DEFAULT_NAMESPACE;
 
-import javax.xml.namespace.QName;
-
+import org.switchyard.component.common.knowledge.ActionType;
+import org.switchyard.component.common.knowledge.config.model.v1.V1ActionModel;
 import org.switchyard.component.rules.RulesActionType;
-import org.switchyard.component.rules.config.model.RulesActionModel;
 import org.switchyard.config.Configuration;
-import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
 
 /**
- * The 1st version RulesActionModel.
+ * The 1st version RulesOperationModel.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class V1RulesActionModel extends BaseModel implements RulesActionModel {
+public class V1RulesActionModel extends V1ActionModel {
 
     /**
-     * Creates a new RulesActionModel in the default namespace.
+     * Creates a new V1RulesActionModel.
      */
     public V1RulesActionModel() {
-        super(new QName(DEFAULT_NAMESPACE, ACTION));
+        super(DEFAULT_NAMESPACE);
     }
 
     /**
-     * Creates a new RulesActionModel with the specified configuration and descriptor.
+     * Creates a new V1RulesActionModel with the specified configuration and descriptor.
      * @param config the configuration
      * @param desc the descriptor
      */
@@ -55,53 +53,9 @@ public class V1RulesActionModel extends BaseModel implements RulesActionModel {
      * {@inheritDoc}
      */
     @Override
-    public String getName() {
-        return getModelAttribute("name");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public RulesActionModel setName(String name) {
-        setModelAttribute("name", name);
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public RulesActionType getType() {
-        String rat = getModelAttribute("type");
-        return rat != null ? RulesActionType.valueOf(rat) : null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public RulesActionModel setType(RulesActionType type) {
-        String rat = type != null ? type.name() : null;
-        setModelAttribute("type", rat);
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getEntryPoint() {
-        return getModelAttribute("entryPoint");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public RulesActionModel setEntryPoint(String entryPoint) {
-        setModelAttribute("entryPoint", entryPoint);
-        return this;
+    public ActionType getType() {
+        String type = getModelAttribute("type");
+        return type != null ? RulesActionType.valueOf(type) : null;
     }
 
 }

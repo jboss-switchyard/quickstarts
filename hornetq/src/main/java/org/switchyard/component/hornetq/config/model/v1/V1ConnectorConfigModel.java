@@ -27,8 +27,8 @@ import org.switchyard.component.hornetq.config.model.HornetQConstants;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.domain.PropertiesModel;
-import org.switchyard.config.model.domain.PropertyModel;
+import org.switchyard.config.model.property.PropertiesModel;
+import org.switchyard.config.model.property.PropertyModel;
 
 /**
  * 

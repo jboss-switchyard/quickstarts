@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @authors tag. All rights reserved.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -18,40 +18,31 @@
  */
 package org.switchyard.component.rules.config.model.v1;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import static org.switchyard.component.common.knowledge.config.model.ActionsModel.ACTIONS;
+import static org.switchyard.component.common.knowledge.config.model.ChannelsModel.CHANNELS;
+import static org.switchyard.component.common.knowledge.config.model.ListenersModel.LISTENERS;
+import static org.switchyard.component.common.knowledge.config.model.LoggersModel.LOGGERS;
+import static org.switchyard.component.common.knowledge.config.model.ManifestModel.MANIFEST;
+import static org.switchyard.config.model.property.PropertiesModel.PROPERTIES;
 
-import org.switchyard.component.common.rules.config.model.AuditModel;
-import org.switchyard.component.common.rules.config.model.EventListenerModel;
-import org.switchyard.component.common.rules.config.model.v1.V1ComponentImplementationModel;
-import org.switchyard.component.rules.config.model.ChannelModel;
-import org.switchyard.component.rules.config.model.FactsModel;
-import org.switchyard.component.rules.config.model.GlobalsModel;
-import org.switchyard.component.rules.config.model.RulesActionModel;
+import org.switchyard.component.common.knowledge.config.model.v1.V1KnowledgeComponentImplementationModel;
 import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.resource.ResourceModel;
 
 /**
- * A "rules" implementation of a ComponentImplementationModel.
+ * A "rules" implementation of a KnowledgeComponentImplementationModel.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class V1RulesComponentImplementationModel extends V1ComponentImplementationModel implements RulesComponentImplementationModel {
-
-    private List<RulesActionModel> _rulesActions = new ArrayList<RulesActionModel>();
-    private List<ChannelModel> _channels = new ArrayList<ChannelModel>();
-    private GlobalsModel _globals = null;
-    private FactsModel _facts = null;
+public class V1RulesComponentImplementationModel extends V1KnowledgeComponentImplementationModel implements RulesComponentImplementationModel {
 
     /**
      * Default constructor for application use.
      */
     public V1RulesComponentImplementationModel() {
         super(RULES, DEFAULT_NAMESPACE);
-        setModelChildrenOrder(RulesActionModel.ACTION, AuditModel.AUDIT, EventListenerModel.EVENT_LISTENER, ChannelModel.CHANNEL, ResourceModel.RESOURCE, GlobalsModel.GLOBALS, FactsModel.FACTS);
+        setModelChildrenOrder(ACTIONS, CHANNELS, LISTENERS, LOGGERS, MANIFEST, PROPERTIES);
     }
 
     /**
@@ -62,95 +53,7 @@ public class V1RulesComponentImplementationModel extends V1ComponentImplementati
      */
     public V1RulesComponentImplementationModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        for (Configuration rulesAction_config : config.getChildren(RulesActionModel.ACTION)) {
-            RulesActionModel rulesAction = (RulesActionModel)readModel(rulesAction_config);
-            if (rulesAction != null) {
-                _rulesActions.add(rulesAction);
-            }
-        }
-        for (Configuration channel_config : config.getChildren(ChannelModel.CHANNEL)) {
-            ChannelModel channel = (ChannelModel)readModel(channel_config);
-            if (channel != null) {
-                _channels.add(channel);
-            }
-        }
-        setModelChildrenOrder(RulesActionModel.ACTION, AuditModel.AUDIT, EventListenerModel.EVENT_LISTENER, ChannelModel.CHANNEL, ResourceModel.RESOURCE, GlobalsModel.GLOBALS, FactsModel.FACTS);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<RulesActionModel> getRulesActions() {
-        return Collections.unmodifiableList(_rulesActions);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public RulesComponentImplementationModel addRulesAction(RulesActionModel rulesAction) {
-        addChildModel(rulesAction);
-        _rulesActions.add(rulesAction);
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<ChannelModel> getChannels() {
-        return Collections.unmodifiableList(_channels);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public RulesComponentImplementationModel addChannel(ChannelModel channel) {
-        addChildModel(channel);
-        _channels.add(channel);
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public GlobalsModel getGlobals() {
-        if (_globals == null) {
-            _globals = (GlobalsModel)getFirstChildModel(GlobalsModel.GLOBALS);
-        }
-        return _globals;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public RulesComponentImplementationModel setGlobals(GlobalsModel globals) {
-        setChildModel(globals);
-        _globals = globals;
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public FactsModel getFacts() {
-        if (_facts == null) {
-            _facts = (FactsModel)getFirstChildModel(FactsModel.FACTS);
-        }
-        return _facts;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public RulesComponentImplementationModel setFacts(FactsModel facts) {
-        setChildModel(facts);
-        _facts = facts;
-        return this;
+        setModelChildrenOrder(ACTIONS, CHANNELS, LISTENERS, LOGGERS, MANIFEST, PROPERTIES);
     }
 
 }

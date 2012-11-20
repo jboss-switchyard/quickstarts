@@ -41,16 +41,20 @@
         </dependency>
         <!-- external dependencies -->
         <dependency>
+            <groupId>org.jboss.ejb3</groupId>
+            <artifactId>jboss-ejb3-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.interceptor</groupId>
             <artifactId>jboss-interceptor-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jboss.weld.se</groupId>
-            <artifactId>weld-se-core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.spec.javax.resource</groupId>
             <artifactId>jboss-connector-api_1.6_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.weld.se</groupId>
+            <artifactId>weld-se-core</artifactId>
         </dependency>
     </dependencies>
 </project>

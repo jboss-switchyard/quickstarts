@@ -32,10 +32,10 @@ import org.switchyard.config.model.composer.ContextMapperModel;
 import org.switchyard.config.model.composer.MessageComposerModel;
 import org.switchyard.config.model.composer.v1.V1ContextMapperModel;
 import org.switchyard.config.model.composer.v1.V1MessageComposerModel;
-import org.switchyard.config.model.domain.PropertiesModel;
-import org.switchyard.config.model.domain.PropertyModel;
-import org.switchyard.config.model.domain.v1.V1PropertiesModel;
-import org.switchyard.config.model.domain.v1.V1PropertyModel;
+import org.switchyard.config.model.property.PropertiesModel;
+import org.switchyard.config.model.property.PropertyModel;
+import org.switchyard.config.model.property.v1.V1PropertiesModel;
+import org.switchyard.config.model.property.v1.V1PropertyModel;
 
 /**
  * A Version 1.0 Model Marshaller.

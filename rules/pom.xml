@@ -51,7 +51,7 @@
         <!-- internal dependencies -->
         <dependency>
             <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-common-rules</artifactId>
+            <artifactId>switchyard-component-common-knowledge</artifactId>
         </dependency>
         <!-- external dependencies -->
     </dependencies>

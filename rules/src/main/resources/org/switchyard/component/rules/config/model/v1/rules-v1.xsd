@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 JBoss, Home of Professional Open Source
-Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
 as indicated by the @authors tag. All rights reserved.
 See the copyright.txt in the distribution for a
 full listing of individual contributors.
@@ -20,27 +20,35 @@ MA  02110-1301, USA.
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
         xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
         xmlns:swyd="urn:switchyard-config:switchyard:1.0"
-        xmlns:common.rules="urn:switchyard-component-common-rules:config:1.0"
         xmlns:rules="urn:switchyard-component-rules:config:1.0"
         targetNamespace="urn:switchyard-component-rules:config:1.0"
         elementFormDefault="qualified">
 
     <import namespace="urn:switchyard-config:switchyard:1.0"/>
-    <import namespace="urn:switchyard-component-common-rules:config:1.0"/>
     <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
 
-    <element name="implementation.rules" type="rules:RulesImplementationType" substitutionGroup="common.rules:implementation.common.rules"/>
+    <element name="implementation.rules" type="rules:RulesImplementationType" substitutionGroup="sca:implementation"/>
     <complexType name="RulesImplementationType">
         <complexContent>
-            <extension base="common.rules:CommonImplementationType">
+            <extension base="sca:Implementation">
+                <sequence>
+                    <element ref="rules:actions" minOccurs="0" maxOccurs="1"/>
+                    <element ref="rules:channels" minOccurs="0" maxOccurs="1"/>
+                    <element ref="rules:listeners" minOccurs="0" maxOccurs="1"/>
+                    <element ref="rules:loggers" minOccurs="0" maxOccurs="1"/>
+                    <element ref="rules:manifest" minOccurs="0" maxOccurs="1"/>
+                    <element ref="rules:properties" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="actions" type="rules:ActionsType"/>
+    <complexType name="ActionsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
                 <sequence>
                     <element ref="rules:action" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="rules:audit" minOccurs="0" maxOccurs="1"/>
-                    <element ref="rules:eventListener" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="rules:channel" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="rules:resource" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="rules:globals" minOccurs="0" maxOccurs="1"/>
-                    <element ref="rules:facts" minOccurs="0" maxOccurs="1"/>
                 </sequence>
             </extension>
         </complexContent>
@@ -50,49 +58,25 @@ MA  02110-1301, USA.
     <complexType name="ActionType">
         <complexContent>
             <extension base="sca:CommonExtensionBase">
-                <attribute name="name" type="NCName" use="required"/>
+                <sequence>
+                    <element ref="rules:globals" minOccurs="0" maxOccurs="1"/>
+                    <element ref="rules:inputs" minOccurs="0" maxOccurs="1"/>
+                    <element ref="rules:outputs" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+                <attribute name="id" type="string" use="optional"/>
+                <attribute name="operation" type="string" use="required"/>
                 <attribute name="type" type="rules:actionType" use="required"/>
-                <attribute name="entryPoint" type="string" use="optional"/>
             </extension>
         </complexContent>
     </complexType>
 
-    <element name="audit" type="rules:AuditType" substitutionGroup="common.rules:audit"/>
-    <complexType name="AuditType">
-        <complexContent>
-            <extension base="common.rules:AuditType"/>
-        </complexContent>
-    </complexType>
+    <element name="globals" type="rules:MappingsType"/>
 
-    <element name="eventListener" type="rules:EventListenerType" substitutionGroup="common.rules:eventListener"/>
-    <complexType name="EventListenerType">
-        <complexContent>
-            <extension base="common.rules:EventListenerType"/>
-        </complexContent>
-    </complexType>
+    <element name="inputs" type="rules:MappingsType"/>
 
-   <element name="channel" type="rules:ChannelType"/>
-    <complexType name="ChannelType">
-        <complexContent>
-            <extension base="sca:CommonExtensionBase">
-                <attribute name="class" type="string" use="required"/>
-                <attribute name="input" type="string" use="optional"/>
-                <attribute name="name" type="NCName" use="optional"/>
-                <attribute name="operation" type="NCName" use="optional"/>
-                <attribute name="reference" type="string" use="optional"/>
-            </extension>
-        </complexContent>
-    </complexType>
+    <element name="outputs" type="rules:MappingsType"/>
 
-    <element name="resource" type="rules:ResourceType" substitutionGroup="swyd:resource"/>
-    <complexType name="ResourceType">
-        <complexContent>
-            <extension base="swyd:ResourceType"/>
-        </complexContent>
-    </complexType>
-
-    <element name="globals" type="rules:GlobalsType"/>
-    <complexType name="GlobalsType">
+    <complexType name="MappingsType">
         <complexContent>
             <extension base="sca:CommonExtensionBase">
                 <sequence>
@@ -102,23 +86,31 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
 
-    <element name="facts" type="rules:FactsType"/>
-    <complexType name="FactsType">
-        <complexContent>
-            <extension base="sca:CommonExtensionBase">
-                <sequence>
-                    <element ref="rules:mapping" minOccurs="0" maxOccurs="unbounded"/>
-                </sequence>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <element name="mapping" type="rules:MappingType" substitutionGroup="common.rules:mapping"/>
+    <element name="mapping" type="rules:MappingType"/>
     <complexType name="MappingType">
         <complexContent>
-            <extension base="common.rules:MappingType"/>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="expression" type="string" use="required"/>
+                <attribute name="expressionType" type="rules:expressionType" use="optional"/>
+                <attribute name="scope" type="rules:scopeType" use="optional"/>
+                <attribute name="variable" type="string" use="optional"/>
+            </extension>
         </complexContent>
     </complexType>
+
+    <simpleType name="expressionType">
+        <restriction base="string">
+            <enumeration value="MVEL"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="scopeType">
+        <restriction base="string">
+            <enumeration value="IN"/>
+            <enumeration value="OUT"/>
+            <enumeration value="EXCHANGE"/>
+        </restriction>
+    </simpleType>
 
     <simpleType name="actionType">
         <restriction base="string">
@@ -127,5 +119,146 @@ MA  02110-1301, USA.
             <enumeration value="FIRE_UNTIL_HALT"/>
         </restriction>
     </simpleType>
+
+    <element name="channels" type="rules:ChannelsType"/>
+    <complexType name="ChannelsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="rules:channel" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="channel" type="rules:ChannelType"/>
+    <complexType name="ChannelType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="class" type="string" use="required"/>
+                <attribute name="name" type="string" use="optional"/>
+                <attribute name="operation" type="string" use="optional"/>
+                <attribute name="reference" type="string" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="listeners" type="rules:ListenersType"/>
+    <complexType name="ListenersType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="rules:listener" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="listener" type="rules:ListenerType"/>
+    <complexType name="ListenerType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="class" type="string" use="required"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="loggers" type="rules:LoggersType"/>
+    <complexType name="LoggersType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="rules:logger" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="logger" type="rules:LoggerType"/>
+    <complexType name="LoggerType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="interval" type="integer" use="optional"/>
+                <attribute name="log" type="string" use="optional"/>
+                <attribute name="type" type="rules:loggerType" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <simpleType name="loggerType">
+        <restriction base="string">
+            <enumeration value="CONSOLE"/>
+            <enumeration value="FILE"/>
+            <enumeration value="THREADED_FILE"/>
+        </restriction>
+    </simpleType>
+
+    <element name="manifest" type="rules:ManifestType"/>
+        <complexType name="ManifestType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <choice>
+                        <element ref="rules:container" minOccurs="0" maxOccurs="1"/>
+                        <element ref="rules:resources" minOccurs="0" maxOccurs="1"/>
+                    </choice>
+                </sequence>
+                <attribute name="scan" type="boolean" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="container" type="rules:ContainerType"/>
+        <complexType name="ContainerType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="baseName" type="string" use="optional"/>
+                <attribute name="releaseId" type="string" use="optional"/>
+                <attribute name="sessionName" type="string" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="resources" type="rules:ResourcesType"/>
+    <complexType name="ResourcesType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="rules:resource" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="resource" type="rules:ResourceType"/>
+    <complexType name="ResourceType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="location" type="string" use="required"/>
+                <attribute name="type" type="string" use="required"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="properties" type="rules:PropertiesType"/>
+    <complexType name="PropertiesType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="rules:property" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="property" type="rules:PropertyType"/>
+    <complexType name="PropertyType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="name" type="string" use="required"/>
+                <attribute name="value" type="string" use="required"/>
+            </extension>
+        </complexContent>
+    </complexType>
 
 </schema>

@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -25,7 +25,6 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.exchange.BPMExchangeHandler;
-import org.switchyard.component.bpm.exchange.BPMExchangeHandlerFactory;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.deploy.BaseActivator;
 import org.switchyard.deploy.ServiceHandler;
@@ -33,16 +32,16 @@ import org.switchyard.deploy.ServiceHandler;
 /**
  * Activator for the BPM component.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 public class BPMActivator extends BaseActivator {
-    
+
     /**
      * BPM component activator type name.
      */
     public static final String BPM_TYPE = "bpm";
 
-    private Map<QName,BPMExchangeHandler> _handlers = new HashMap<QName,BPMExchangeHandler>();
+    private Map<QName, BPMExchangeHandler> _handlers = new HashMap<QName, BPMExchangeHandler>();
 
     /**
      * Constructs a new Activator of type "bpm".
@@ -56,9 +55,7 @@ public class BPMActivator extends BaseActivator {
      */
     @Override
     public ServiceHandler activateService(QName name, ComponentModel config) {
-        BPMExchangeHandler handler = BPMExchangeHandlerFactory.instance().newBPMExchangeHandler(getServiceDomain());
-        BPMComponentImplementationModel bciModel = (BPMComponentImplementationModel)config.getImplementation();
-        handler.init(name, bciModel);
+        BPMExchangeHandler handler = new BPMExchangeHandler((BPMComponentImplementationModel)config.getImplementation(), getServiceDomain());
         _handlers.put(name, handler);
         return handler;
     }
@@ -68,10 +65,7 @@ public class BPMActivator extends BaseActivator {
      */
     @Override
     public void deactivateService(QName name, ServiceHandler handler) {
-        try {
-            ((BPMExchangeHandler)handler).destroy();
-        } finally {
-            _handlers.remove(name);
-        }
+        _handlers.remove(name);
     }
+
 }

@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,8 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
 package org.switchyard.tools.forge.rules;
+
+import static org.switchyard.component.rules.config.model.RulesComponentImplementationModel.DEFAULT_NAMESPACE;
 
 import java.io.File;
 
@@ -40,8 +41,11 @@ import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
+import org.switchyard.common.io.resource.ResourceType;
+import org.switchyard.component.common.knowledge.config.model.ActionModel;
+import org.switchyard.component.common.knowledge.config.model.v1.V1ActionsModel;
+import org.switchyard.component.common.knowledge.config.model.v1.V1ManifestModel;
 import org.switchyard.component.rules.RulesActionType;
-import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
 import org.switchyard.component.rules.config.model.v1.V1RulesActionModel;
 import org.switchyard.component.rules.config.model.v1.V1RulesComponentImplementationModel;
 import org.switchyard.config.model.composite.InterfaceModel;
@@ -49,6 +53,7 @@ import org.switchyard.config.model.composite.v1.V1ComponentModel;
 import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
 import org.switchyard.config.model.composite.v1.V1InterfaceModel;
 import org.switchyard.config.model.resource.v1.V1ResourceModel;
+import org.switchyard.config.model.resource.v1.V1ResourcesModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 import org.switchyard.tools.forge.plugin.TemplateResource;
@@ -82,7 +87,7 @@ public class RulesServicePlugin implements Plugin {
      * @param out shell output
      * @param argInterfaceClass class name of Java service interface
      * @param argRuleFilePath path to the rule definition
-     * @param argAgent whether to use an agent
+     * @param argScan whether to use a scanner
      * @throws java.io.IOException error with file resources
      */
     @Command(value = "create", help = "Created a new service backed by business rules.")
@@ -100,10 +105,10 @@ public class RulesServicePlugin implements Plugin {
                      description = "The business rule definition") 
              final String argRuleFilePath,
              @Option(required = false,
-                     name = "agent",
-                     description = "Whether you want to use an agent to watch resources for changes (true|false)",
+                     name = "scan",
+                     description = "Whether you want to scan resources for changes (true|false)",
                      defaultValue = "false")
-             final Boolean argAgent,
+             final Boolean argScan,
              final PipeOut out)
     throws java.io.IOException {
       
@@ -142,10 +147,10 @@ public class RulesServicePlugin implements Plugin {
             out.println("Created rule definition [" + ruleDefinitionPath + "]");
         }
         
-        boolean agent = argAgent != null ? argAgent.booleanValue() : false;
+        boolean scan = argScan != null ? argScan.booleanValue() : false;
         
         // Add the SwitchYard config
-        createImplementationConfig(argServiceName, interfaceClass, ruleDefinitionPath, agent);
+        createImplementationConfig(argServiceName, interfaceClass, ruleDefinitionPath, scan);
           
         // Notify user of success
         out.println("Rule service " + argServiceName + " has been created.");
@@ -154,7 +159,7 @@ public class RulesServicePlugin implements Plugin {
     private void createImplementationConfig(String serviceName,
             String interfaceName,
             String rulesDefinition,
-            boolean agent) {
+            boolean scan) {
         
         SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
         // Create the component service model
@@ -169,12 +174,16 @@ public class RulesServicePlugin implements Plugin {
         
         // Create the Rules implementation model and add it to the component model
         V1RulesComponentImplementationModel rules = new V1RulesComponentImplementationModel();
-        rules.addResource(new V1ResourceModel(RulesComponentImplementationModel.DEFAULT_NAMESPACE)
-                .setLocation(rulesDefinition));
-        rules.addRulesAction(new V1RulesActionModel()
-            .setName("operation")
-            .setType(RulesActionType.EXECUTE));
-        rules.setAgent(agent);
+        V1ActionsModel actions = new V1ActionsModel(DEFAULT_NAMESPACE);
+        ActionModel action = new V1RulesActionModel().setOperation("operation").setType(RulesActionType.EXECUTE);
+        actions.addAction(action);
+        rules.setActions(actions);
+        V1ManifestModel manifest = new V1ManifestModel(DEFAULT_NAMESPACE);
+        V1ResourcesModel resources = new V1ResourcesModel(DEFAULT_NAMESPACE);
+        resources.addResource(new V1ResourceModel(DEFAULT_NAMESPACE).setLocation(rulesDefinition).setType(ResourceType.valueOf("DRL")));
+        manifest.setResources(resources);
+        manifest.setScan(scan);
+        rules.setManifest(manifest);
         component.setImplementation(rules);
         
         // Add the new component service to the application config

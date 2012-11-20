@@ -22,8 +22,10 @@ import org.drools.process.core.datatype.impl.type.StringDataType;
         "parameters" : [
             "ServiceName" : new StringDataType(),
             "ServiceOperationName" : new StringDataType(),
+            "ContentInputName" : new StringDataType(),
+            "ContentOutputName" : new StringDataType(),
             "FaultResultName" : new StringDataType(),
-            "FaultEventType" : new StringDataType(),
+            "FaultSignalId" : new StringDataType(),
             "CompleteAfterFault" : new StringDataType()
         ],
         "displayName" : "SwitchYard Service",

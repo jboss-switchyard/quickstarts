@@ -45,7 +45,7 @@ import org.switchyard.component.hornetq.config.model.HornetQDiscoveryGroupConfig
 import org.switchyard.config.OutputKey;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Validation;
-import org.switchyard.config.model.domain.PropertiesModel;
+import org.switchyard.config.model.property.PropertiesModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**

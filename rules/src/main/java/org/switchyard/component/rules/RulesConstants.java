@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -21,44 +21,24 @@ package org.switchyard.component.rules;
 import javax.xml.namespace.QName;
 
 /**
- * Various constants and context variables.
+ * Rules constants.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 public final class RulesConstants {
 
-    /**
-     * The default rules namespace.
-     */
+    /** urn:switchyard-component-rules:rules:1.0 . */
     public static final String RULES_NAMESPACE = "urn:switchyard-component-rules:rules:1.0";
-
-    /** actionType . */
-    public static final String ACTION_TYPE = "actionType";
-    /** {urn:switchyard-component-rules:rules:1.0}actionType . */
-    public static final String ACTION_TYPE_VAR = new QName(RULES_NAMESPACE, ACTION_TYPE).toString();
-    /** execute . */
-    public static final String EXECUTE = "execute";
-    /** fireAllRules . */
-    public static final String FIRE_ALL_RULES = "fireAllRules";
-    /** fireUntilHalt . */
-    public static final String FIRE_UNTIL_HALT = "fireUntilHalt";
 
     /** continue . */
     public static final String CONTINUE = "continue";
     /** {urn:switchyard-component-rules:rules:1.0}continue . */
-    public static final String CONTINUE_VAR = new QName(RULES_NAMESPACE, CONTINUE).toString();
+    public static final String CONTINUE_PROPERTY = new QName(RULES_NAMESPACE, CONTINUE).toString();
 
     /** dispose . */
     public static final String DISPOSE = "dispose";
     /** {urn:switchyard-component-rules:rules:1.0}dispose . */
-    public static final String DISPOSE_VAR = new QName(RULES_NAMESPACE, DISPOSE).toString();
-
-    /** exchange . */
-    public static final String EXCHANGE = "exchange";
-    /** context . */
-    public static final String CONTEXT = "context";
-    /** message . */
-    public static final String MESSAGE = "message";
+    public static final String DISPOSE_PROPERTY = new QName(RULES_NAMESPACE, DISPOSE).toString();
 
     private RulesConstants() {}
 

@@ -21,8 +21,8 @@
 package org.switchyard.component.hornetq.config.model;
 
 import org.switchyard.config.model.Model;
-import org.switchyard.config.model.domain.PropertiesModel;
-import org.switchyard.config.model.domain.PropertyModel;
+import org.switchyard.config.model.property.PropertiesModel;
+import org.switchyard.config.model.property.PropertyModel;
 
 /**
  * A HornetQConnectorConfigModel represents a connector configuration in HornetQ which

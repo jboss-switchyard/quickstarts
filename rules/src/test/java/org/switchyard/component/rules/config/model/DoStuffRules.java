@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -18,22 +18,44 @@
  */
 package org.switchyard.component.rules.config.model;
 
-import org.drools.event.rule.DebugWorkingMemoryEventListener;
-import org.switchyard.component.common.rules.Mapping;
-import org.switchyard.component.rules.Execute;
-import org.switchyard.component.rules.Rules;
+import org.kie.event.rule.DebugWorkingMemoryEventListener;
+import org.switchyard.Scope;
+import org.switchyard.component.common.knowledge.LoggerType;
+import org.switchyard.component.common.knowledge.annotation.Channel;
+import org.switchyard.component.common.knowledge.annotation.Listener;
+import org.switchyard.component.common.knowledge.annotation.Logger;
+import org.switchyard.component.common.knowledge.annotation.Manifest;
+import org.switchyard.component.common.knowledge.annotation.Mapping;
+import org.switchyard.component.common.knowledge.annotation.Property;
+import org.switchyard.component.common.knowledge.annotation.Resource;
+import org.switchyard.component.rules.annotation.FireUntilHalt;
+import org.switchyard.component.rules.annotation.Rules;
 
 /**
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 @Rules(
-    resources={"path/to/my.drl"},
-    eventListeners={DebugWorkingMemoryEventListener.class},
-    facts={@Mapping(expression="context['foobar']")})
+    channels=@Channel(name="theName", operation="theOperation", reference="theReference", value=RulesModelTests.TestChannel.class),
+    listeners=@Listener(DebugWorkingMemoryEventListener.class),
+    loggers=@Logger(interval=2000, log="theLog", type=LoggerType.CONSOLE),
+    manifest=@Manifest(
+        scan=true,
+        //container=@Container(baseName="theBase", releaseId="theGroupId:theArtifactId:theVersion", sessionName="theSession"),
+        resources={
+            @Resource(location="foo.drl", type="DRL"),
+            @Resource(location="bar.dsl", type="DSL")
+        }),
+    properties=@Property(name="foo", value="bar")
+)
 public interface DoStuffRules extends DoStuff {
 
     @Override
-    @Execute
-    public void doStuff(Object stuff);
+    @FireUntilHalt(
+        id="theId",
+        globals=@Mapping(expression="context['foobar']", scope=Scope.EXCHANGE, variable="exchangeVar"),
+        inputs=@Mapping(expression="message.content.nested", scope=Scope.IN, variable="inputVar"),
+        outputs=@Mapping(expression="message.content", scope=Scope.OUT, variable="outputVar")
+    )
+    public void process(Object stuff);
 
 }

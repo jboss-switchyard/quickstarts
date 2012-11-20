@@ -34,8 +34,8 @@ import org.switchyard.component.hornetq.config.model.HornetQConfigModel;
 import org.switchyard.component.hornetq.config.model.HornetQConnectorConfigModel;
 import org.switchyard.component.hornetq.config.model.HornetQDiscoveryGroupConfigModel;
 import org.switchyard.config.model.composite.BindingModel;
-import org.switchyard.config.model.domain.PropertiesModel;
-import org.switchyard.config.model.domain.PropertyModel;
+import org.switchyard.config.model.property.PropertiesModel;
+import org.switchyard.config.model.property.PropertyModel;
 import org.switchyard.deploy.BaseActivator;
 import org.switchyard.deploy.ServiceHandler;
 

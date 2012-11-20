@@ -1,35 +1,31 @@
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @authors tag. All rights reserved.
- * See the copyright.txt in the distribution for a
+/* 
+ * JBoss, Home of Professional Open Source 
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+ * as indicated by the @author tags. All rights reserved. 
+ * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
  *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * This copyrighted material is made available to anyone wishing to use, 
+ * modify, copy, or redistribute it subject to the terms and conditions 
+ * of the GNU Lesser General Public License, v. 2.1. 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A 
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details. 
+ * You should have received a copy of the GNU Lesser General Public License, 
+ * v.2.1 along with this distribution; if not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
 package org.switchyard.component.bpm.config.model;
 
-import java.util.List;
-
-import org.switchyard.common.io.resource.Resource;
-import org.switchyard.component.common.rules.config.model.ComponentImplementationModel;
+import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 
 /**
- * A "bpm" ComponentImplementationModel.
+ * BPMComponentImplementationModel.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public interface BPMComponentImplementationModel extends ComponentImplementationModel {
+public interface BPMComponentImplementationModel extends KnowledgeComponentImplementationModel {
 
     /**
      * The "bpm" namespace.
@@ -42,55 +38,10 @@ public interface BPMComponentImplementationModel extends ComponentImplementation
     public static final String BPM = "bpm";
 
     /**
-     * Gets the "processDefinition" resource.
-     *
-     * @return the "processDefinition" resource
-     */
-    public Resource getProcessDefinition();
-
-    /**
-     * Sets the "processDefinition" resource.
-     *
-     * @param processDefinition the "processDefinition" resource
-     * @return this instance (useful for chaining)
-     */
-    public BPMComponentImplementationModel setProcessDefinition(Resource processDefinition);
-
-    /**
-     * Gets the "processId" attribute.
-     *
-     * @return the "processId" attribute
-     */
-    public String getProcessId();
-
-    /**
-     * Sets the "processId" attribute.
-     *
-     * @param processId the "processId" attribute
-     * @return this instance (useful for chaining)
-     */
-    public BPMComponentImplementationModel setProcessId(String processId);
-
-    /**
      * Gets the "persistent" attribute.
-     * @return the "peristent" attribute
+     * @return the "persistent" attribute
      */
     public boolean isPersistent();
-
-    /**
-     * Gets the "sessionId" attribute.
-     *
-     * @return the "sessionId" attribute
-     */
-    public Integer getSessionId();
-
-    /**
-     * Sets the "sessionId" attribute.
-     *
-     * @param sessionId the "sessionId" attribute
-     * @return this instance (useful for chaining)
-     */
-    public BPMComponentImplementationModel setSessionId(Integer sessionId);
 
     /**
      * Sets the "persistent" attribute.
@@ -100,85 +51,42 @@ public interface BPMComponentImplementationModel extends ComponentImplementation
     public BPMComponentImplementationModel setPersistent(boolean persistent);
 
     /**
-     * Gets the "messageContentInName" attribute.
-     *
-     * @return the "messageContentInName" attribute
+     * Gets the "processId" attribute.
+     * @return the "processId" attribute
      */
-    public String getMessageContentInName();
+    public String getProcessId();
 
     /**
-     * Sets the "messageContentInName" attribute.
-     *
-     * @param messageContentInName the "messageContentInName" attribute
+     * Sets the "processId" attribute.
+     * @param processId the "processId" attribute
      * @return this instance (useful for chaining)
      */
-    public BPMComponentImplementationModel setMessageContentInName(String messageContentInName);
+    public BPMComponentImplementationModel setProcessId(String processId);
 
     /**
-     * Gets the "messageContentOutName" attribute.
-     *
-     * @return the "messageContentOutName" attribute
+     * Gets the "sessionId" attribute.
+     * @return the "sessionId" attribute
      */
-    public String getMessageContentOutName();
+    public Integer getSessionId();
 
     /**
-     * Sets the "messageContentOutName" attribute.
-     *
-     * @param messageContentOutName the "messageContentOutName" attribute
+     * Sets the "sessionId" attribute.
+     * @param sessionId the "sessionId" attribute
      * @return this instance (useful for chaining)
      */
-    public BPMComponentImplementationModel setMessageContentOutName(String messageContentOutName);
+    public BPMComponentImplementationModel setSessionId(Integer sessionId);
 
     /**
-     * Gets the child process action models.
-     * @return the child process action models
+     * Gets the child workItemHandlers model.
+     * @return the child workItemHandlers model
      */
-    public List<ProcessActionModel> getProcessActions();
+    public WorkItemHandlersModel getWorkItemHandlers();
 
     /**
-     * Adds a child process action model.
-     * @param processAction the child process action model
-     * @return this BPMComponentImplementationModel (useful for chaining)
+     * Sets the child workItemHandlers model.
+     * @param workItemHandlers the child workItemHandlers model
+     * @return this instance (useful for chaining)
      */
-    public BPMComponentImplementationModel addProcessAction(ProcessActionModel processAction);
-
-    /**
-     * Gets the child task handler models.
-     * @return the child task handler models
-     */
-    public List<TaskHandlerModel> getTaskHandlers();
-
-    /**
-     * Adds a child task handler model.
-     * @param taskHandler the child task handler model
-     * @return this BPMComponentImplementationModel (useful for chaining)
-     */
-    public BPMComponentImplementationModel addTaskHandler(TaskHandlerModel taskHandler);
-
-    /**
-     * Gets the child parameters model.
-     * @return the child parameters model
-     */
-    public ParametersModel getParameters();
-
-    /**
-     * Sets the child parameters model.
-     * @param parameters the child parameters model
-     * @return this BPMComponentImplementationModel (useful for chaining)
-     */
-    public BPMComponentImplementationModel setParameters(ParametersModel parameters);
-
-    /**
-     * Gets the child results model.
-     * @return the child results model
-     */
-    public ResultsModel getResults();
-
-    /**
-     * Sets the child results model.
-     * @param results the child results model
-     * @return this BPMComponentImplementationModel (useful for chaining)
-     */
-    public BPMComponentImplementationModel setResults(ResultsModel results);
+    public BPMComponentImplementationModel setWorkItemHandlers(WorkItemHandlersModel workItemHandlers);
 
 }

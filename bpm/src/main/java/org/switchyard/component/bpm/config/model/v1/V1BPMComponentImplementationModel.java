@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @authors tag. All rights reserved.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -18,45 +18,35 @@
  */
 package org.switchyard.component.bpm.config.model.v1;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import static org.switchyard.component.bpm.config.model.WorkItemHandlersModel.WORK_ITEM_HANDLERS;
+import static org.switchyard.component.common.knowledge.config.model.ActionsModel.ACTIONS;
+import static org.switchyard.component.common.knowledge.config.model.ChannelsModel.CHANNELS;
+import static org.switchyard.component.common.knowledge.config.model.ListenersModel.LISTENERS;
+import static org.switchyard.component.common.knowledge.config.model.LoggersModel.LOGGERS;
+import static org.switchyard.component.common.knowledge.config.model.ManifestModel.MANIFEST;
+import static org.switchyard.config.model.property.PropertiesModel.PROPERTIES;
 
-import org.switchyard.common.io.resource.Resource;
-import org.switchyard.common.io.resource.ResourceType;
-import org.switchyard.common.io.resource.SimpleResource;
-import org.switchyard.common.lang.Strings;
-import org.switchyard.component.bpm.ProcessConstants;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
-import org.switchyard.component.bpm.config.model.ParametersModel;
-import org.switchyard.component.bpm.config.model.ProcessActionModel;
-import org.switchyard.component.bpm.config.model.ResultsModel;
-import org.switchyard.component.bpm.config.model.TaskHandlerModel;
-import org.switchyard.component.common.rules.config.model.AuditModel;
-import org.switchyard.component.common.rules.config.model.EventListenerModel;
-import org.switchyard.component.common.rules.config.model.v1.V1ComponentImplementationModel;
+import org.switchyard.component.bpm.config.model.WorkItemHandlersModel;
+import org.switchyard.component.common.knowledge.config.model.v1.V1KnowledgeComponentImplementationModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.resource.ResourceModel;
 
 /**
- * A "bpm" implementation of a ComponentImplementationModel.
+ * A "bpm" implementation of a KnowledgeComponentImplementationModel.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class V1BPMComponentImplementationModel extends V1ComponentImplementationModel implements BPMComponentImplementationModel {
+public class V1BPMComponentImplementationModel extends V1KnowledgeComponentImplementationModel implements BPMComponentImplementationModel {
 
-    private List<ProcessActionModel> _processActions = new ArrayList<ProcessActionModel>();
-    private List<TaskHandlerModel> _taskHandlers = new ArrayList<TaskHandlerModel>();
-    private ParametersModel _parameters = null;
-    private ResultsModel _results = null;
+    private WorkItemHandlersModel _workItemHandlers;
 
     /**
      * Default constructor for application use.
      */
     public V1BPMComponentImplementationModel() {
         super(BPM, DEFAULT_NAMESPACE);
-        setModelChildrenOrder(ProcessActionModel.ACTION, AuditModel.AUDIT, EventListenerModel.EVENT_LISTENER, TaskHandlerModel.TASK_HANDLER, ResourceModel.RESOURCE, ParametersModel.PARAMETERS, ResultsModel.RESULTS);
+        setModelChildrenOrder(ACTIONS, CHANNELS, LISTENERS, LOGGERS, MANIFEST, PROPERTIES, WORK_ITEM_HANDLERS);
     }
 
     /**
@@ -67,42 +57,24 @@ public class V1BPMComponentImplementationModel extends V1ComponentImplementation
      */
     public V1BPMComponentImplementationModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        for (Configuration processAction_config : config.getChildren(ProcessActionModel.ACTION)) {
-            ProcessActionModel processAction = (ProcessActionModel)readModel(processAction_config);
-            if (processAction != null) {
-                _processActions.add(processAction);
-            }
-        }
-        for (Configuration taskHandler_config : config.getChildren(TaskHandlerModel.TASK_HANDLER)) {
-            TaskHandlerModel taskHandler = (TaskHandlerModel)readModel(taskHandler_config);
-            if (taskHandler != null) {
-                _taskHandlers.add(taskHandler);
-            }
-        }
-        setModelChildrenOrder(ProcessActionModel.ACTION, AuditModel.AUDIT, EventListenerModel.EVENT_LISTENER, TaskHandlerModel.TASK_HANDLER, ResourceModel.RESOURCE, ParametersModel.PARAMETERS, ResultsModel.RESULTS);
+        setModelChildrenOrder(ACTIONS, CHANNELS, LISTENERS, LOGGERS, MANIFEST, PROPERTIES, WORK_ITEM_HANDLERS);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Resource getProcessDefinition() {
-        String pd = getModelAttribute(ProcessConstants.PROCESS_DEFINITION);
-        if (pd != null) {
-            String pdt = getModelAttribute(ProcessConstants.PROCESS_DEFINITION_TYPE);
-            return new SimpleResource(pd, pdt != null ? ResourceType.valueOf(pdt) : null);
-        }
-        return null;
+    public boolean isPersistent() {
+        String p = getModelAttribute("persistent");
+        return p != null ? Boolean.parseBoolean(p) : false;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public BPMComponentImplementationModel setProcessDefinition(Resource processDefinition) {
-        setModelAttribute(ProcessConstants.PROCESS_DEFINITION, processDefinition != null ? processDefinition.getLocation() : null);
-        ResourceType pdt = processDefinition != null ? processDefinition.getType() : null;
-        setModelAttribute(ProcessConstants.PROCESS_DEFINITION_TYPE, pdt != null ? pdt.getName() : null);
+    public BPMComponentImplementationModel setPersistent(boolean persistent) {
+        setModelAttribute("persistent", String.valueOf(persistent));
         return this;
     }
 
@@ -111,7 +83,7 @@ public class V1BPMComponentImplementationModel extends V1ComponentImplementation
      */
     @Override
     public String getProcessId() {
-        return getModelAttribute(ProcessConstants.PROCESS_ID);
+        return getModelAttribute("processId");
     }
 
     /**
@@ -119,28 +91,7 @@ public class V1BPMComponentImplementationModel extends V1ComponentImplementation
      */
     @Override
     public BPMComponentImplementationModel setProcessId(String processId) {
-        setModelAttribute(ProcessConstants.PROCESS_ID, processId);
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isPersistent() {
-        String persistent = Strings.trimToNull(getModelAttribute(ProcessConstants.PERSISTENT));
-        if (persistent != null) {
-            return Boolean.valueOf(persistent).booleanValue();
-        }
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public BPMComponentImplementationModel setPersistent(boolean persistent) {
-        setModelAttribute(ProcessConstants.PERSISTENT, String.valueOf(persistent));
+        setModelAttribute("processId", processId);
         return this;
     }
 
@@ -149,8 +100,8 @@ public class V1BPMComponentImplementationModel extends V1ComponentImplementation
      */
     @Override
     public Integer getSessionId() {
-        String sessionId = getModelAttribute(ProcessConstants.SESSION_ID);
-        return sessionId != null ? Integer.valueOf(sessionId) : null;
+        String sid = getModelAttribute("sessionId");
+        return sid != null ? Integer.valueOf(sid) : null;
     }
 
     /**
@@ -158,7 +109,8 @@ public class V1BPMComponentImplementationModel extends V1ComponentImplementation
      */
     @Override
     public BPMComponentImplementationModel setSessionId(Integer sessionId) {
-        setModelAttribute(ProcessConstants.SESSION_ID, sessionId != null ? sessionId.toString() : null);
+        String sid = sessionId != null ? sessionId.toString() : null;
+        setModelAttribute("sessionId", sid);
         return this;
     }
 
@@ -166,111 +118,20 @@ public class V1BPMComponentImplementationModel extends V1ComponentImplementation
      * {@inheritDoc}
      */
     @Override
-    public String getMessageContentInName() {
-        return getModelAttribute(ProcessConstants.MESSAGE_CONTENT_IN_NAME);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public BPMComponentImplementationModel setMessageContentInName(String messageContentInName) {
-        setModelAttribute(ProcessConstants.MESSAGE_CONTENT_IN_NAME, messageContentInName);
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getMessageContentOutName() {
-        return getModelAttribute(ProcessConstants.MESSAGE_CONTENT_OUT_NAME);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public BPMComponentImplementationModel setMessageContentOutName(String messageContentOutName) {
-        setModelAttribute(ProcessConstants.MESSAGE_CONTENT_OUT_NAME, messageContentOutName);
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<ProcessActionModel> getProcessActions() {
-        return Collections.unmodifiableList(_processActions);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public BPMComponentImplementationModel addProcessAction(ProcessActionModel processAction) {
-        addChildModel(processAction);
-        _processActions.add(processAction);
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<TaskHandlerModel> getTaskHandlers() {
-        return Collections.unmodifiableList(_taskHandlers);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public BPMComponentImplementationModel addTaskHandler(TaskHandlerModel taskHandler) {
-        addChildModel(taskHandler);
-        _taskHandlers.add(taskHandler);
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ParametersModel getParameters() {
-        if (_parameters == null) {
-            _parameters = (ParametersModel)getFirstChildModel(ParametersModel.PARAMETERS);
+    public WorkItemHandlersModel getWorkItemHandlers() {
+        if (_workItemHandlers == null) {
+            _workItemHandlers = (WorkItemHandlersModel)getFirstChildModel(WORK_ITEM_HANDLERS);
         }
-        return _parameters;
+        return _workItemHandlers;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public BPMComponentImplementationModel setParameters(ParametersModel parameters) {
-        setChildModel(parameters);
-        _parameters = parameters;
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ResultsModel getResults() {
-        if (_results == null) {
-            _results = (ResultsModel)getFirstChildModel(ResultsModel.RESULTS);
-        }
-        return _results;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public BPMComponentImplementationModel setResults(ResultsModel results) {
-        setChildModel(results);
-        _results = results;
+    public BPMComponentImplementationModel setWorkItemHandlers(WorkItemHandlersModel workItemHandlers) {
+        setChildModel(workItemHandlers);
+        _workItemHandlers = workItemHandlers;
         return this;
     }
 

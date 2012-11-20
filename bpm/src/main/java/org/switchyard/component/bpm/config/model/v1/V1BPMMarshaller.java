@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @authors tag. All rights reserved.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -18,26 +18,23 @@
  */
 package org.switchyard.component.bpm.config.model.v1;
 
-import static org.switchyard.component.bpm.config.model.ParametersModel.PARAMETERS;
-import static org.switchyard.component.bpm.config.model.ProcessActionModel.ACTION;
-import static org.switchyard.component.bpm.config.model.ResultsModel.RESULTS;
-import static org.switchyard.component.bpm.config.model.TaskHandlerModel.TASK_HANDLER;
-import static org.switchyard.component.common.rules.config.model.EventListenerModel.EVENT_LISTENER;
+import static org.switchyard.component.bpm.config.model.WorkItemHandlerModel.WORK_ITEM_HANDLER;
+import static org.switchyard.component.bpm.config.model.WorkItemHandlersModel.WORK_ITEM_HANDLERS;
+import static org.switchyard.component.common.knowledge.config.model.ActionModel.ACTION;
 
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
-import org.switchyard.component.common.rules.config.model.v1.V1CommonRulesMarshaller;
-import org.switchyard.component.common.rules.config.model.v1.V1EventListenerModel;
+import org.switchyard.component.common.knowledge.config.model.v1.V1KnowledgeMarshaller;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 
 /**
- * A CompositeMarshaller which can also create BPMComponentImplementationModels, ResourceModels and TaskHandlerModels.
+ * A CompositeMarshaller which can also create knowledge models.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class V1BPMMarshaller extends V1CommonRulesMarshaller {
+public class V1BPMMarshaller extends V1KnowledgeMarshaller {
 
     /**
      * The complete local name ("implementation.bpm").
@@ -54,7 +51,7 @@ public class V1BPMMarshaller extends V1CommonRulesMarshaller {
     }
 
     /**
-     * Reads in the Configuration, looking for "implementation.bpm", "resource" or "taskHandler".
+     * Reads in the Configuration, looking for various knowledge models.
      * If not found, it falls back to the super class (V1CompositeMarshaller).
      *
      * @param config the Configuration
@@ -63,18 +60,15 @@ public class V1BPMMarshaller extends V1CommonRulesMarshaller {
     @Override
     public Model read(Configuration config) {
         String name = config.getName();
+        Descriptor desc = getDescriptor();
         if (IMPLEMENTATION_BPM.equals(name)) {
-            return new V1BPMComponentImplementationModel(config, getDescriptor());
+            return new V1BPMComponentImplementationModel(config, desc);
         } else if (ACTION.equals(name)) {
-            return new V1ProcessActionModel(config, getDescriptor());
-        } else if (EVENT_LISTENER.equals(name)) {
-            return new V1EventListenerModel(config, getDescriptor());
-        } else if (TASK_HANDLER.equals(name)) {
-            return new V1TaskHandlerModel(config, getDescriptor());
-        } else if (PARAMETERS.equals(name)) {
-            return new V1ParametersModel(config, getDescriptor());
-        } else if (RESULTS.equals(name)) {
-            return new V1ResultsModel(config, getDescriptor());
+            return new V1BPMActionModel(config, desc);
+        }  else if (WORK_ITEM_HANDLERS.equals(name)) {
+            return new V1WorkItemHandlersModel(config, desc);
+        } else if (WORK_ITEM_HANDLER.equals(name)) {
+            return new V1WorkItemHandlerModel(config, desc);
         }
         return super.read(config);
     }
