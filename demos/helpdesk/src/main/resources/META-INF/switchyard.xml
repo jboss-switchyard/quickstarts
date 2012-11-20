@@ -4,7 +4,7 @@
         <service name="HelpDeskService" promote="HelpDeskService">
             <interface.wsdl interface="META-INF/HelpDeskService.wsdl#wsdl.porttype(HelpDeskService)"/>
             <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
-                <contextMapper includeNamespaces="urn:switchyard-component-bpm:process:1.0"/>
+                <contextMapper includeNamespaces="urn:switchyard-component-bpm:bpm:1.0"/>
                 <wsdl>META-INF/HelpDeskService.wsdl</wsdl>
                 <socketAddr>:18001</socketAddr>
             </binding.soap>

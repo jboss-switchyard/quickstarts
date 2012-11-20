@@ -30,7 +30,7 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
 /**
  * HelpDeskMain.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 public final class HelpDeskMain {
 

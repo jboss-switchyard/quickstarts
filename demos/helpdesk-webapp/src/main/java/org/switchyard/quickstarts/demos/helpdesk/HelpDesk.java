@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -32,13 +32,13 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 
 import org.apache.log4j.Logger;
-import org.switchyard.component.bpm.task.service.Task;
-import org.switchyard.component.bpm.task.service.TaskClient;
-import org.switchyard.component.bpm.task.service.TaskContent;
-import org.switchyard.component.bpm.task.service.TaskService;
+import org.switchyard.component.bpm.task.Task;
+import org.switchyard.component.bpm.task.TaskClient;
+import org.switchyard.component.bpm.task.TaskContent;
+import org.switchyard.component.bpm.task.TaskService;
 
 /**
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 @ManagedBean(name="helpDesk")
 @SessionScoped
@@ -109,7 +109,7 @@ public class HelpDesk {
                 for (Task task : tasks) {
                     _userTasks.add(task);
                     TaskContent taskContent = _taskClient.getTaskContent(task.getTaskContentId());
-                    Map<String, Object> params = taskContent.getMap();
+                    Map<String, Object> params = taskContent.getVariableMap();
                     Ticket ticket = (Ticket)params.get(TICKET);
                     _userTickets.put(task.getProcessInstanceId(), ticket);
                 }
@@ -128,7 +128,7 @@ public class HelpDesk {
                         _taskClient.claim(task.getId(), _userId, USERS_GROUPS.get(_userId));
                         _taskClient.start(task.getId(), _userId);
                         TaskContent taskContent = _taskClient.getTaskContent(task.getTaskContentId());
-                        Map<String, Object> results = taskContent.getMap();
+                        Map<String, Object> results = taskContent.getVariableMap();
                         Ticket ticket = _userTickets.get(task.getProcessInstanceId());
                         results.put(TICKET, ticket);
                         _taskClient.complete(task.getId(), _userId, taskContent);

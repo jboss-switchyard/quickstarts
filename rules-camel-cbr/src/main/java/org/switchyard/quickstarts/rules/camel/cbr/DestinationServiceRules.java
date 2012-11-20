@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -18,23 +18,27 @@
  */
 package org.switchyard.quickstarts.rules.camel.cbr;
 
-//import org.drools.event.rule.DebugAgendaEventListener;
-//import org.drools.event.rule.DebugWorkingMemoryEventListener;
-import org.switchyard.component.common.rules.Mapping;
-import org.switchyard.component.rules.Execute;
-import org.switchyard.component.rules.Rules;
+import org.switchyard.component.common.knowledge.annotation.Manifest;
+import org.switchyard.component.common.knowledge.annotation.Mapping;
+import org.switchyard.component.common.knowledge.annotation.Resource;
+import org.switchyard.component.rules.annotation.Execute;
+import org.switchyard.component.rules.annotation.Rules;
 
 /**
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-@Rules(value=DestinationService.class,
-       resources={"/META-INF/DestinationServiceRules.drl"},
-       //eventListeners={DebugAgendaEventListener.class, DebugWorkingMemoryEventListener.class},
-       facts={@Mapping(expression="message.content.widget")})
+@Rules(
+        value=DestinationService.class,
+        //listeners={@Listener(DebugWorkingMemoryEventListener.class), @Listener(DebugAgendaEventListener.class)},
+        //loggers=@Logger(type=LoggerType.CONSOLE),
+        manifest=@Manifest(resources=@Resource(location="/META-INF/DestinationServiceRules.drl", type="DRL")))
 public interface DestinationServiceRules extends DestinationService {
 
     @Override
-    @Execute
+    @Execute(
+        globals=@Mapping(expression="exchange", variable="exchange"),
+        inputs=@Mapping(expression="message.content.widget")
+    )
     public void determineDestination(Box box);
 
 }
