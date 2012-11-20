@@ -58,7 +58,13 @@ public class SwitchYardRunner extends BlockJUnit4ClassRunner {
         for (TestMixIn mixIn : _testKit.getMixIns()) {
             set(mixIn, PropertyMatchResolution.EQUALS);
         }
-        _testKit.start();
+        
+        try {
+            _testKit.start();
+        } catch (Throwable t) {
+            _testKit.cleanup();
+            throw new Exception(t);
+        }
 
         set(_testKit, PropertyMatchResolution.EQUALS);
         set(_testKit.getDeployment(), PropertyMatchResolution.ASSIGNABLE);

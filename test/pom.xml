@@ -66,14 +66,6 @@
             <artifactId>weld-se-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>not-yet-commons-ssl</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
@@ -84,69 +76,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-ext</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-bam</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-bpmn2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-flow</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-flow-builder</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-human-task-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-human-task-mina</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-persistence-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-workitems</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.jms</groupId>
-            <artifactId>jms</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hornetq</groupId>
-            <artifactId>hornetq-ra</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hornetq</groupId>
-            <artifactId>hornetq-core-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hornetq</groupId>
-            <artifactId>hornetq-jms-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hornetq</groupId>
-            <artifactId>hornetq-core</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hornetq</groupId>
-            <artifactId>hornetq-jms</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.netty</groupId>
-            <artifactId>netty</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
@@ -179,55 +108,8 @@
             <artifactId>shrinkwrap-descriptors-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jboss.ironjacamar</groupId>
-            <artifactId>ironjacamar-core-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.ironjacamar</groupId>
-            <artifactId>ironjacamar-embedded</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.ironjacamar</groupId>
-            <artifactId>ironjacamar-deployers-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.ironjacamar</groupId>
-            <artifactId>ironjacamar-deployers-fungal</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.ironjacamar</groupId>
-            <artifactId>ironjacamar-common-impl-papaki</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.fungal</groupId>
-            <artifactId>fungal</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.as</groupId>
-            <artifactId>jboss-as-naming</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.as</groupId>
-            <artifactId>jboss-as-connector</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-        </dependency>
-        <!-- no 1.6 spec in the central. use JBoss one
-        <dependency>
-            <groupId>javax.resource</groupId>
-            <artifactId>connector-api</artifactId>
-        </dependency>
-        -->
-        <dependency>
             <groupId>org.jboss.spec.javax.resource</groupId>
             <artifactId>jboss-connector-api_1.6_spec</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
