@@ -76,7 +76,7 @@
         <version.commons.net>2.2</version.commons.net>
         <version.commons.ssl>0.3.9</version.commons.ssl>
         <version.deltaspike>0.2-incubating</version.deltaspike>
-        <version.drools>5.4.0.Final</version.drools>
+        <version.drools>6.0.0.Alpha6</version.drools>
         <version.ecj>3.5.1</version.ecj>
         <version.forge>1.0.2.Final</version.forge>
         <version.freemarker>2.3.15</version.freemarker>
@@ -89,20 +89,21 @@
         <version.hornetq>2.2.13.Final</version.hornetq>
         <version.infinispan>5.1.2.FINAL</version.infinispan>
         <version.ironjacamar>1.0.9.Final</version.ironjacamar>
+        <version.javax.jms>1.1</version.javax.jms>
         <!-- Jaxen is imported from parent POM but properties are NOT imported -->
         <!-- and this property is required for release assembly. -->
         <version.jaxen>1.1.3</version.jaxen>
-        <version.javax.jms>1.1</version.javax.jms>
-        <version.jbpm>5.3.0.Final</version.jbpm>
         <version.jbossas>7.1.1.Final</version.jbossas>
         <version.jbossas.console>1.4.0.Final</version.jbossas.console>
         <!-- Override versions for OpenShift. May use the same version as AS but -->
         <!-- maintaining this override for future flexibility -->
         <version.jbossas.openshift>7.1.0.Final</version.jbossas.openshift>
+        <version.jbpm>6.0.0.Alpha6</version.jbpm>
         <version.jettison>1.2</version.jettison>
         <version.jta>1.1</version.jta>
         <version.jsch>0.1.48</version.jsch>
         <version.junit>4.10</version.junit>
+        <version.kie>6.0.0.Alpha6</version.kie>
         <version.maven.archetype.plugin>2.0</version.maven.archetype.plugin>
         <version.maven.exec.plugin>1.2</version.maven.exec.plugin>
         <version.maven.gwt.plugin>2.3.0-1</version.maven.gwt.plugin>
@@ -111,7 +112,7 @@
         <version.mina>2.0.4</version.mina>
         <version.milyn>1.5.1</version.milyn>
         <version.mock.javamail>1.9</version.mock.javamail>
-        <version.mvel>2.1.0.drools16</version.mvel>
+        <version.mvel>2.1.3.Final</version.mvel>
         <!--
         <version.mysql-connector-java>5.1.19</version.mysql-connector-java>
         -->
@@ -944,12 +945,12 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard.components</groupId>
-                <artifactId>switchyard-component-common-rest</artifactId>
+                <artifactId>switchyard-component-common-knowledge</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.switchyard.components</groupId>
-                <artifactId>switchyard-component-common-rules</artifactId>
+                <artifactId>switchyard-component-common-rest</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -1615,15 +1616,21 @@
                 <version>${version.cxf}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.mina</groupId>
-                <artifactId>mina-core</artifactId>
-                <version>${version.mina}</version>
+                <groupId>org.apache.ftpserver</groupId>
+                <artifactId>ftpserver-core</artifactId>
+                <version>${version.ftpserver}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>${version.maven.plugin.plugin}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.mina</groupId>
+                <artifactId>mina-core</artifactId>
+                <version>${version.mina}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.qpid</groupId>
@@ -1716,16 +1723,6 @@
                 <version>${version.drools}</version>
             </dependency>
             <dependency>
-                <groupId>org.drools</groupId>
-                <artifactId>knowledge-api</artifactId>
-                <version>${version.drools}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.drools</groupId>
-                <artifactId>knowledge-internal-api</artifactId>
-                <version>${version.drools}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.eclipse.jdt.core.compiler</groupId>
                 <artifactId>ecj</artifactId>
                 <version>${version.ecj}</version>
@@ -1739,12 +1736,6 @@
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest-all</artifactId>
                 <version>${version.hamcrest}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.ftpserver</groupId>
-                <artifactId>ftpserver-core</artifactId>
-                <version>${version.ftpserver}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
@@ -2007,11 +1998,74 @@
                 <groupId>org.jbpm</groupId>
                 <artifactId>jbpm-workitems</artifactId>
                 <version>${version.jbpm}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.cxf</groupId>
+                        <artifactId>cxf-rt-frontend-jaxws</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.cxf</groupId>
+                        <artifactId>cxf-rt-databinding-jaxb</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.cxf</groupId>
+                        <artifactId>cxf-rt-transports-http</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.neethi</groupId>
+                        <artifactId>neethi</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.jvnet.mock-javamail</groupId>
                 <artifactId>mock-javamail</artifactId>
                 <version>${version.mock.javamail}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kie</groupId>
+                <artifactId>kie-api</artifactId>
+                <version>${version.kie}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kie</groupId>
+                <artifactId>kie-internal</artifactId>
+                <version>${version.kie}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kie.commons</groupId>
+                <artifactId>kie-commons-data</artifactId>
+                <version>${version.kie}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kie.commons</groupId>
+                <artifactId>kie-commons-io</artifactId>
+                <version>${version.kie}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kie.commons</groupId>
+                <artifactId>kie-commons-validation</artifactId>
+                <version>${version.kie}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kie.commons</groupId>
+                <artifactId>kie-nio2-api</artifactId>
+                <version>${version.kie}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kie.commons</groupId>
+                <artifactId>kie-nio2-fs</artifactId>
+                <version>${version.kie}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kie.commons</groupId>
+                <artifactId>kie-nio2-jgit</artifactId>
+                <version>${version.kie}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kie.commons</groupId>
+                <artifactId>kie-nio2-model</artifactId>
+                <version>${version.kie}</version>
             </dependency>
             <dependency>
                 <groupId>org.milyn</groupId>
