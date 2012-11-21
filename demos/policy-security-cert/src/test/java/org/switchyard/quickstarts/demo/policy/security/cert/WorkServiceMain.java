@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
 import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.policy.SecurityPolicy;
-import org.switchyard.test.mixins.HTTPMixIn;
+import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 /**
  * WorkServiceMain.

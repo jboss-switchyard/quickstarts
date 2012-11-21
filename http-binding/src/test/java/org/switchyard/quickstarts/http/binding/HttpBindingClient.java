@@ -21,7 +21,7 @@ package org.switchyard.quickstarts.http.binding;
 
 import java.io.IOException;
 
-import org.switchyard.test.mixins.HTTPMixIn;
+import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 /**
  * Client for HTTP binding.

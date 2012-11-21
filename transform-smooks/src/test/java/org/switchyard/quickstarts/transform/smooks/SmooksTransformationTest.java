@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
-import org.switchyard.test.mixins.SmooksMixIn;
+import org.switchyard.component.test.mixins.smooks.SmooksMixIn;
 
 /**
  * Transformation only tests.

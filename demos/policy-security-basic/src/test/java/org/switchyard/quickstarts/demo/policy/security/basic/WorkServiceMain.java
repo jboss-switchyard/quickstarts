@@ -29,7 +29,7 @@ import org.switchyard.common.codec.Base64;
 import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.policy.SecurityPolicy;
-import org.switchyard.test.mixins.HTTPMixIn;
+import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 /**
  * WorkServiceMain.

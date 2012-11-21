@@ -24,7 +24,7 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-import org.switchyard.test.mixins.HornetQMixIn;
+import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
 
 
 /**

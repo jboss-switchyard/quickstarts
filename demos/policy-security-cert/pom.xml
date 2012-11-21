@@ -47,6 +47,16 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-test-mixin-http</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>not-yet-commons-ssl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-bean</artifactId>
         </dependency>
         <dependency>

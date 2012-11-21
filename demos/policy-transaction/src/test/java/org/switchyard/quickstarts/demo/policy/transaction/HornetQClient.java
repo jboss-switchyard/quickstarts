@@ -23,7 +23,7 @@ package org.switchyard.quickstarts.demo.policy.transaction;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 
-import org.switchyard.test.mixins.HornetQMixIn;
+import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
 
 /**
  * HornetQ client that uses HornetQ API to connect to a remote server and
