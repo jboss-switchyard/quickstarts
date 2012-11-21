@@ -907,6 +907,41 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.switchyard.components</groupId>
+                <artifactId>switchyard-component-test-mixin-bpm</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.components</groupId>
+                <artifactId>switchyard-component-test-mixin-cdi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.components</groupId>
+                <artifactId>switchyard-component-test-mixin-hornetq</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.components</groupId>
+                <artifactId>switchyard-component-test-mixin-http</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.components</groupId>
+                <artifactId>switchyard-component-test-mixin-jca</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.components</groupId>
+                <artifactId>switchyard-component-test-mixin-naming</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.components</groupId>
+                <artifactId>switchyard-component-test-mixin-smooks</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.switchyard.quickstarts</groupId>
                 <artifactId>switchyard-quickstart-transform-xslt</artifactId>
                 <version>${project.version}</version>
