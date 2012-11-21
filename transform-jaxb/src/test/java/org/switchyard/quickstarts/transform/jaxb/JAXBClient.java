@@ -18,7 +18,7 @@
  */
 package org.switchyard.quickstarts.transform.jaxb;
 
-import org.switchyard.test.mixins.HTTPMixIn;
+import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 /**
  * Simple client to send a SOAP message.

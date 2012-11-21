@@ -23,7 +23,7 @@ package org.switchyard.quickstarts.hornetq;
 import org.hornetq.api.core.client.ClientMessage;
 import org.hornetq.api.core.client.ClientProducer;
 import org.hornetq.api.core.client.ClientSession;
-import org.switchyard.test.mixins.HornetQMixIn;
+import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
 
 
 /**

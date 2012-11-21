@@ -30,7 +30,7 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 import org.milyn.io.StreamUtils;
-import org.switchyard.test.mixins.HornetQMixIn;
+import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
 
 /**
  * JMS-based client for submitting orders to the OrderService.

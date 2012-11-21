@@ -36,7 +36,7 @@ import org.junit.runner.RunWith;
 import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
-import org.switchyard.test.mixins.CDIMixIn;
+import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 
 /**
  * SQL binding test - checks insert and retrieve operation.

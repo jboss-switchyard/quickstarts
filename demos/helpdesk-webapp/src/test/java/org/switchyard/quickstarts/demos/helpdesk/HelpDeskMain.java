@@ -24,8 +24,8 @@ import java.io.FileWriter;
 import org.apache.log4j.Logger;
 import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.common.lang.Strings;
-import org.switchyard.test.mixins.BPMMixIn;
-import org.switchyard.test.mixins.HTTPMixIn;
+import org.switchyard.component.test.mixins.bpm.BPMMixIn;
+import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 /**
  * HelpDeskMain.

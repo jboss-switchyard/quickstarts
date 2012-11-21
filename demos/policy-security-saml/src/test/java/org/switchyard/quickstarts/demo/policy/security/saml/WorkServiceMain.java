@@ -32,7 +32,7 @@ import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.policy.SecurityPolicy;
-import org.switchyard.test.mixins.HTTPMixIn;
+import org.switchyard.component.test.mixins.http.HTTPMixIn;
 import org.w3c.dom.Element;
 
 /**

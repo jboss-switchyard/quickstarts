@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
-import org.switchyard.test.mixins.CDIMixIn;
+import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 
 /* 
  * JBoss, Home of Professional Open Source 

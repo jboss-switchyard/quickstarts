@@ -31,7 +31,7 @@ import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.SwitchYardTestKit;
-import org.switchyard.test.mixins.CDIMixIn;
+import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 
 /**
  * Test JSON transformations around a service.
