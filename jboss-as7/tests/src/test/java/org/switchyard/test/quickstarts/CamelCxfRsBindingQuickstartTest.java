@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.test.ArquillianUtil;
 import org.switchyard.test.SwitchYardTestKit;
-import org.switchyard.test.mixins.HTTPMixIn;
+import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 /**
  * Tests for Camel CXFRS binding.

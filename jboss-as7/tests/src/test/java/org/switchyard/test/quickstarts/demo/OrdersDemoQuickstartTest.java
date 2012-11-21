@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.switchyard.test.ArquillianUtil;
-import org.switchyard.test.mixins.HTTPMixIn;
+import org.switchyard.component.test.mixins.http.HTTPMixIn;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;

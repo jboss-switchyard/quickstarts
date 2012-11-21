@@ -26,8 +26,8 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.test.ArquillianUtil;
-import org.switchyard.test.mixins.BPMMixIn;
-import org.switchyard.test.mixins.HTTPMixIn;
+import org.switchyard.component.test.mixins.bpm.BPMMixIn;
+import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 /**
  * The helpdesk demo quickstart test.

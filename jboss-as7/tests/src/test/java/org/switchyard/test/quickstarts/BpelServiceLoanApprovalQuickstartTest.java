@@ -31,7 +31,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.test.ArquillianUtil;
-import org.switchyard.test.mixins.HTTPMixIn;
+import org.switchyard.component.test.mixins.http.HTTPMixIn;
 import org.w3c.dom.NodeList;
 
 /**

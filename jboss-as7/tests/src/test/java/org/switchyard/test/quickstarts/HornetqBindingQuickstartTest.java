@@ -29,7 +29,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.test.ArquillianUtil;
-import org.switchyard.test.mixins.HornetQMixIn;
+import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
 import org.switchyard.test.quickstarts.util.ResourceDeployer;
 
 @RunWith(Arquillian.class)
