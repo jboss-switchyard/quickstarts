@@ -284,7 +284,7 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-common-rules</artifactId>
+            <artifactId>switchyard-component-common-knowledge</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
@@ -612,27 +612,19 @@
             <artifactId>deltaspike-core-api</artifactId>
         </dependency>
         <!--
-        Drools/jBPM...
+        KIE/Drools/jBPM...
         -->
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-core</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-compiler</artifactId>
         </dependency>
         <dependency>
             <groupId>org.drools</groupId>
+            <artifactId>drools-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
             <artifactId>drools-persistence-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>knowledge-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>knowledge-internal-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
@@ -665,6 +657,42 @@
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-workitems</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-internal</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kie.commons</groupId>
+            <artifactId>kie-commons-data</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kie.commons</groupId>
+            <artifactId>kie-commons-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kie.commons</groupId>
+            <artifactId>kie-commons-validation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kie.commons</groupId>
+            <artifactId>kie-nio2-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kie.commons</groupId>
+            <artifactId>kie-nio2-fs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kie.commons</groupId>
+            <artifactId>kie-nio2-jgit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kie.commons</groupId>
+            <artifactId>kie-nio2-model</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.bpm</groupId>

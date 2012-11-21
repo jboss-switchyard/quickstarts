@@ -10,7 +10,7 @@
     <resource-root path="switchyard-api-${project.version}.jar"/>
     <resource-root path="switchyard-common-${project.version}.jar"/>
     <resource-root path="switchyard-component-common-${project.version}.jar"/>
-    <resource-root path="switchyard-component-common-rules-${project.version}.jar"/>
+    <resource-root path="switchyard-component-common-knowledge-${project.version}.jar"/>
     <resource-root path="switchyard-config-${project.version}.jar"/>
     <resource-root path="switchyard-deploy-${project.version}.jar"/>
     <resource-root path="switchyard-forge-common-${project.version}.jar"/>

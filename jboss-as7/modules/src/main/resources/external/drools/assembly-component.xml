@@ -37,8 +37,15 @@
         <include>org.drools:drools-compiler</include>
         <include>org.drools:drools-core</include>
         <include>org.drools:drools-persistence-jpa</include>
-        <include>org.drools:knowledge-api</include>
-        <include>org.drools:knowledge-internal-api</include>
+        <include>org.kie:kie-api</include>
+        <include>org.kie:kie-internal</include>
+        <include>org.kie.commons:kie-commons-data</include>
+        <include>org.kie.commons:kie-commons-io</include>
+        <include>org.kie.commons:kie-commons-validation</include>
+        <include>org.kie.commons:kie-nio2-api</include>
+        <include>org.kie.commons:kie-nio2-fs</include>
+        <include>org.kie.commons:kie-nio2-jgit</include>
+        <include>org.kie.commons:kie-nio2-model</include>
       </includes>
       <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
       <useTransitiveDependencies>false</useTransitiveDependencies>

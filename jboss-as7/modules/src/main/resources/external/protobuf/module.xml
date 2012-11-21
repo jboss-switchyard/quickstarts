@@ -27,5 +27,6 @@
     </resources>
 
     <dependencies>
+        <module name="org.jbpm"/>
     </dependencies>
 </module>

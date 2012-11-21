@@ -20,9 +20,9 @@
   ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
-<module xmlns="urn:jboss:module:1.0" name="org.switchyard.component.common.rules">
+<module xmlns="urn:jboss:module:1.0" name="org.switchyard.component.common.knowledge">
     <resources>
-        <resource-root path="switchyard-component-common-rules-${project.version}.jar"/>
+        <resource-root path="switchyard-component-common-knowledge-${project.version}.jar"/>
     </resources>
     <dependencies>
         <module name="javax.api"/>
@@ -34,5 +34,6 @@
         <module name="org.switchyard.common"/>
         <module name="org.switchyard.config"/>
         <module name="org.switchyard.deploy"/>
+        <module name="org.switchyard.serial"/>
     </dependencies>
 </module>

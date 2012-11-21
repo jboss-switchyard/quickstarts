@@ -69,7 +69,7 @@
               <include>org.switchyard:switchyard-api</include>
               <include>org.switchyard:switchyard-common</include>
               <include>org.switchyard.components:switchyard-component-common</include>
-              <include>org.switchyard.components:switchyard-component-common-rules</include>
+              <include>org.switchyard.components:switchyard-component-common-knowledge</include>
               <include>org.switchyard:switchyard-config</include>
               <include>org.switchyard:switchyard-deploy</include>
               <include>org.switchyard:switchyard-forge-common</include>

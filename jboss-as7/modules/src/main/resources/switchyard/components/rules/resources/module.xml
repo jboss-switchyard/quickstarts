@@ -27,7 +27,7 @@
         <module name="org.drools" export="true"/>
         <module name="org.switchyard.api"/>
         <module name="org.switchyard.common"/>
-        <module name="org.switchyard.component.common.rules" export="true"/>
+        <module name="org.switchyard.component.common.knowledge" export="true"/>
         <module name="org.switchyard.config"/>
         <module name="org.switchyard.deploy"/>
     </dependencies>

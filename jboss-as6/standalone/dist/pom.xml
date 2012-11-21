@@ -235,9 +235,9 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.switchyard.components</groupId>
-                                    <artifactId>switchyard-component-camel-as6</artifactId>
-                                    <version>${project.version}</version>
+                                    <groupId>org.antlr</groupId>
+                                    <artifactId>antlr</artifactId>
+                                    <version>${version.antlr}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.apache.camel</groupId>
@@ -250,9 +250,8 @@
                                     <version>${version.camel}</version>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>org.drools</groupId>
-                                    <artifactId>drools-core</artifactId>
-                                    <version>${version.drools}</version>
+                                    <groupId>org.apache.mina</groupId>
+                                    <artifactId>mina-core</artifactId>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.drools</groupId>
@@ -261,33 +260,18 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.drools</groupId>
+                                    <artifactId>drools-core</artifactId>
+                                    <version>${version.drools}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.drools</groupId>
                                     <artifactId>drools-persistence-jpa</artifactId>
                                     <version>${version.drools}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.drools</groupId>
-                                    <artifactId>knowledge-api</artifactId>
-                                    <version>${version.drools}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.drools</groupId>
-                                    <artifactId>knowledge-internal-api</artifactId>
-                                    <version>${version.drools}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.antlr</groupId>
-                                    <artifactId>antlr</artifactId>
-                                    <version>${version.antlr}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.jdt.core.compiler</groupId>
                                     <artifactId>ecj</artifactId>
                                     <version>${version.ecj}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.mvel</groupId>
-                                    <artifactId>mvel2</artifactId>
-                                    <version>${version.mvel}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.jbpm</groupId>
@@ -312,10 +296,12 @@
                                 <artifactItem>
                                     <groupId>org.jbpm</groupId>
                                     <artifactId>jbpm-human-task-core</artifactId>
+                                    <version>${version.jbpm}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.jbpm</groupId>
                                     <artifactId>jbpm-human-task-mina</artifactId>
+                                    <version>${version.jbpm}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.jbpm</groupId>
@@ -328,8 +314,59 @@
                                     <version>${version.jbpm}</version>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>org.apache.mina</groupId>
-                                    <artifactId>mina-core</artifactId>
+                                    <groupId>org.kie</groupId>
+                                    <artifactId>kie-api</artifactId>
+                                    <version>${version.kie}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kie</groupId>
+                                    <artifactId>kie-internal</artifactId>
+                                    <version>${version.kie}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kie.commons</groupId>
+                                    <artifactId>kie-commons-data</artifactId>
+                                    <version>${version.kie}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kie.commons</groupId>
+                                    <artifactId>kie-commons-io</artifactId>
+                                    <version>${version.kie}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kie.commons</groupId>
+                                    <artifactId>kie-commons-validation</artifactId>
+                                    <version>${version.kie}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kie.commons</groupId>
+                                    <artifactId>kie-nio2-api</artifactId>
+                                    <version>${version.kie}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kie.commons</groupId>
+                                    <artifactId>kie-nio2-fs</artifactId>
+                                    <version>${version.kie}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kie.commons</groupId>
+                                    <artifactId>kie-nio2-jgit</artifactId>
+                                    <version>${version.kie}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kie.commons</groupId>
+                                    <artifactId>kie-nio2-model</artifactId>
+                                    <version>${version.kie}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.mvel</groupId>
+                                    <artifactId>mvel2</artifactId>
+                                    <version>${version.mvel}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.switchyard.components</groupId>
+                                    <artifactId>switchyard-component-camel-as6</artifactId>
+                                    <version>${project.version}</version>
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>${staging.jboss.home}/server/default/deployers/switchyard.deployer</outputDirectory>
