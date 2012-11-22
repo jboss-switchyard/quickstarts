@@ -164,6 +164,14 @@
                             <stylesheet>${staging.jboss.dir}/xsl/standalone.xsl</stylesheet>
                         </transformationSet>
                         <transformationSet>
+                            <dir>${staging.jboss.dir}/domain/configuration</dir>
+                            <includes>
+                                <include>domain*.xml</include>
+                            </includes>
+                            <outputDir>${staging.dir}</outputDir>
+                            <stylesheet>${staging.jboss.dir}/xsl/domain.xsl</stylesheet>
+                        </transformationSet>
+                        <transformationSet>
                             <dir>${staging.jboss.dir}/modules/org/jboss/as/console/main</dir>
                             <includes>
                                 <include>module.xml</include>

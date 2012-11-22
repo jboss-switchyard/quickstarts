@@ -18,8 +18,6 @@
  */
 package org.switchyard.as7.extension.deployment;
 
-import java.util.List;
-
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
@@ -35,7 +33,7 @@ import org.jboss.modules.filter.PathFilters;
 import org.switchyard.as7.extension.SwitchYardDeploymentMarker;
 
 /**
- * DU processor which adds a module dependencies for modules needed for SwitchYard deployments.
+ * DU processor which adds dependencies for runtime modules needed for SwitchYard deployments.
  * 
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
@@ -53,14 +51,10 @@ public class SwitchYardDependencyProcessor implements DeploymentUnitProcessor {
     private static final ModuleIdentifier SWITCHYARD_VALIDATE_ID = ModuleIdentifier.create("org.switchyard.validate");
     private static final ModuleIdentifier DELTASPIKE_ID = ModuleIdentifier.create("org.apache.deltaspike.core-api");
 
-    private List<ModuleIdentifier> _componentModules;
     /**
-     * Construct SwitchYard dependency processor with a list of component modules.
-     * 
-     * @param modules a list of component modules
+     * Construct SwitchYard dependency processor.
      */
-    public SwitchYardDependencyProcessor(List<ModuleIdentifier> modules) {
-        _componentModules = modules;
+    public SwitchYardDependencyProcessor() {
     }
 
     /* (non-Javadoc)
@@ -91,12 +85,6 @@ public class SwitchYardDependencyProcessor implements DeploymentUnitProcessor {
         dep = new ModuleDependency(moduleLoader, SWITCHYARD_VALIDATE_ID, false, false, true, false);
         dep.addImportFilter(META_INF_FILTER, true);
         moduleSpecification.addSystemDependency(dep);
-
-        for (ModuleIdentifier moduleId : _componentModules) {
-            dep = new ModuleDependency(moduleLoader, moduleId, false, false, true, false);
-            dep.addImportFilter(META_INF_FILTER, true);
-            moduleSpecification.addSystemDependency(dep);
-        }
     }
 
     

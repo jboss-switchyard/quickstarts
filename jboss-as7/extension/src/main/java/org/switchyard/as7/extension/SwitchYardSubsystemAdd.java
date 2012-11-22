@@ -18,14 +18,12 @@
  */
 package org.switchyard.as7.extension;
 
-import static org.switchyard.as7.extension.CommonAttributes.MODULES;
+import static org.switchyard.as7.extension.CommonAttributes.MODULE;
 import static org.switchyard.as7.extension.CommonAttributes.PROPERTIES;
 import static org.switchyard.as7.extension.CommonAttributes.SOCKET_BINDING;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.infinispan.Cache;
@@ -34,30 +32,27 @@ import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.ServiceVerificationHandler;
+import org.jboss.as.controller.registry.Resource;
 import org.jboss.as.network.SocketBinding;
 import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
-import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
 import org.jboss.logging.Logger;
-import org.jboss.modules.ModuleIdentifier;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
-import org.jboss.msc.service.ServiceName;
+import org.switchyard.admin.SwitchYard;
 import org.switchyard.as7.extension.deployment.SwitchYardCdiIntegrationProcessor;
 import org.switchyard.as7.extension.deployment.SwitchYardConfigDeploymentProcessor;
 import org.switchyard.as7.extension.deployment.SwitchYardConfigProcessor;
 import org.switchyard.as7.extension.deployment.SwitchYardDependencyProcessor;
 import org.switchyard.as7.extension.deployment.SwitchYardDeploymentProcessor;
 import org.switchyard.as7.extension.services.SwitchYardAdminService;
-import org.switchyard.as7.extension.services.SwitchYardComponentService;
 import org.switchyard.as7.extension.services.SwitchYardInjectorService;
 import org.switchyard.as7.extension.services.SwitchYardServiceDomainManagerService;
 import org.switchyard.as7.extension.util.ServerUtil;
-import org.switchyard.deploy.Component;
 import org.switchyard.deploy.ServiceDomainManager;
 
 /**
@@ -69,10 +64,6 @@ public final class SwitchYardSubsystemAdd extends AbstractBoottimeAddStepHandler
 
     private static final Logger LOG = Logger.getLogger("org.switchyard");
 
-    // TODO use ConnectorServices.RA_REPOSITORY_SERVICE instead once JBoss AS is updated to 7.1.1 or later
-    //private static final ServiceName RA_REPOSITORY_SERVICE_NAME = ConnectorServices.RA_REPOSITORY_SERVICE;
-    private static final ServiceName RA_REPOSITORY_SERVICE_NAME = ServiceName.JBOSS.append("rarepository");
-            
     static final SwitchYardSubsystemAdd INSTANCE = new SwitchYardSubsystemAdd();
 
     // Private to ensure a singleton.
@@ -80,36 +71,32 @@ public final class SwitchYardSubsystemAdd extends AbstractBoottimeAddStepHandler
     }
 
     @Override
+    protected void populateModel(final ModelNode operation, final Resource resource) throws OperationFailedException {
+        final ModelNode submodel = resource.getModel();
+        populateModel(operation, submodel);
+    }
+
+    @Override
     protected void populateModel(final ModelNode operation, final ModelNode submodel) throws OperationFailedException {
-        if (operation.has(SOCKET_BINDING)) {
-            submodel.get(SOCKET_BINDING).set(operation.get(SOCKET_BINDING));
+        if (operation.hasDefined(SOCKET_BINDING)) {
+            submodel.get(SOCKET_BINDING).set(operation.require(SOCKET_BINDING));
         }
-        if (operation.has(MODULES)) {
-            submodel.get(MODULES).set(operation.get(MODULES));
+        if (operation.hasDefined(PROPERTIES)) {
+            submodel.get(PROPERTIES).set(operation.require(PROPERTIES));
         }
-        if (operation.has(PROPERTIES)) {
-            submodel.get(PROPERTIES).set(operation.get(PROPERTIES));
-        }
+        submodel.get(MODULE).setEmptyObject();
     }
 
     @Override
     protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler, List<ServiceController<?>> newControllers) {
-        final List<ModuleIdentifier> modules = new ArrayList<ModuleIdentifier>();
-        if (operation.has(CommonAttributes.MODULES)) {
-            ModelNode opmodules = operation.get(CommonAttributes.MODULES);
-            Set<String> keys = opmodules.keys();
-            if (keys != null) {
-                for (String current : keys) {
-                    modules.add(ModuleIdentifier.fromString(current));
-                }
-            }
-        }
+        LOG.trace("Performing boot time operation " + operation);
         context.addStep(new AbstractDeploymentChainStep() {
             protected void execute(DeploymentProcessorTarget processorTarget) {
                 int priority = 0x4000;
                 processorTarget.addDeploymentProcessor(Phase.PARSE, priority++, new SwitchYardConfigDeploymentProcessor());
-                processorTarget.addDeploymentProcessor(Phase.DEPENDENCIES, priority++, new SwitchYardDependencyProcessor(modules));
-                processorTarget.addDeploymentProcessor(Phase.POST_MODULE, priority++, new SwitchYardCdiIntegrationProcessor());
+                processorTarget.addDeploymentProcessor(Phase.DEPENDENCIES, priority++, new SwitchYardDependencyProcessor());
+                priority = priority + 2;
+                processorTarget.addDeploymentProcessor(Phase.POST_MODULE, priority, new SwitchYardCdiIntegrationProcessor());
                 processorTarget.addDeploymentProcessor(Phase.POST_MODULE, priority++, new SwitchYardConfigProcessor());
                 processorTarget.addDeploymentProcessor(Phase.INSTALL, priority++, new SwitchYardDeploymentProcessor());
             }
@@ -129,13 +116,6 @@ public final class SwitchYardSubsystemAdd extends AbstractBoottimeAddStepHandler
         injectorServiceBuilder.setInitialMode(Mode.ACTIVE);
         newControllers.add(injectorServiceBuilder.install());
 
-        final SwitchYardComponentService componentService = new SwitchYardComponentService(operation);
-        final ServiceBuilder<List<Component>> componentServiceBuilder = context.getServiceTarget().addService(SwitchYardComponentService.SERVICE_NAME, componentService);
-        componentServiceBuilder.addDependency(SwitchYardInjectorService.SERVICE_NAME, Map.class, componentService.getInjectedValues())
-                .addDependency(RA_REPOSITORY_SERVICE_NAME, ResourceAdapterRepository.class, componentService.getResourceAdapterRepository());
-        componentServiceBuilder.setInitialMode(Mode.ACTIVE);
-        newControllers.add(componentServiceBuilder.install());
-
         // Add the AS7 Service for the ServiceDomainManager...
         final SwitchYardServiceDomainManagerService serviceDomainManager = new SwitchYardServiceDomainManagerService();
         newControllers.add(context.getServiceTarget()
@@ -144,8 +124,9 @@ public final class SwitchYardSubsystemAdd extends AbstractBoottimeAddStepHandler
                 .install());
 
         final SwitchYardAdminService adminService = new SwitchYardAdminService();
-        newControllers.add(context.getServiceTarget().addService(SwitchYardAdminService.SERVICE_NAME, adminService)
-                .addDependency(SwitchYardComponentService.SERVICE_NAME, List.class, adminService.getComponents())
+        final ServiceBuilder<SwitchYard> adminServiceBuilder = context.getServiceTarget().addService(SwitchYardAdminService.SERVICE_NAME, adminService);
+        adminServiceBuilder.setInitialMode(Mode.ACTIVE);
+        newControllers.add(adminServiceBuilder
                 .addDependency(SwitchYardInjectorService.SERVICE_NAME, Map.class, adminService.getSocketBindings())
                 .addDependency(SwitchYardServiceDomainManagerService.SERVICE_NAME, ServiceDomainManager.class, adminService.getServiceDomainManager())
                 .install());

@@ -7,14 +7,13 @@
         <format>zip</format>
     </formats>
 
-    <!-- We are not ready for domain config yet -->
     <fileSets>
         <fileSet>
             <directory>${staging.jboss.dir}</directory>
             <excludes>
                 <exclude>bin/**</exclude>
                 <exclude>standalone/**/standalone*.xml</exclude>
-                <exclude>domain/</exclude>
+                <exclude>domain/**/domain*.xml</exclude>
                 <exclude>META-INF/</exclude>
                 <exclude>xsl/</exclude>
                 <exclude>modules/org/jboss/as/console/main/jboss-as-console*-resources.jar</exclude>
@@ -27,7 +26,6 @@
         <fileSet>
             <directory>${staging.jboss.dir}/bin</directory>
             <excludes>
-                <exclude>domain.*</exclude>
                 <exclude>*.sh</exclude>
             </excludes>
             <fileMode>644</fileMode>
@@ -41,7 +39,6 @@
                 <include>*.sh</include>
             </includes>
             <excludes>
-                <exclude>domain.*</exclude>
             </excludes>
             <fileMode>755</fileMode>
             <lineEnding>keep</lineEnding>
@@ -52,6 +49,14 @@
             <outputDirectory>${distro.root.dir}standalone/configuration</outputDirectory>
             <includes>
                 <include>standalone*.xml</include>
+            </includes>
+            <fileMode>644</fileMode>
+        </fileSet>
+        <fileSet>
+            <directory>${staging.dir}</directory>
+            <outputDirectory>${distro.root.dir}domain/configuration</outputDirectory>
+            <includes>
+                <include>domain*.xml</include>
             </includes>
             <fileMode>644</fileMode>
         </fileSet>

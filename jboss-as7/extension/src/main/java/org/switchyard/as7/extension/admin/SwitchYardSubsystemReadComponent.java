@@ -20,14 +20,19 @@ package org.switchyard.as7.extension.admin;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.NAME;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.OperationStepHandler;
 import org.jboss.dmr.ModelNode;
 import org.jboss.msc.service.ServiceController;
 import org.switchyard.admin.Component;
-import org.switchyard.admin.SwitchYard;
-import org.switchyard.as7.extension.services.SwitchYardAdminService;
+import org.switchyard.admin.base.BaseComponent;
+import org.switchyard.config.Configuration;
+import org.switchyard.as7.extension.SwitchYardModuleAdd;
+import org.switchyard.as7.extension.services.SwitchYardComponentService;
 
 /**
  * SwitchYardSubsystemReadComponent
@@ -62,25 +67,35 @@ public final class SwitchYardSubsystemReadComponent implements OperationStepHand
             @Override
             public void execute(final OperationContext context, final ModelNode operation)
                     throws OperationFailedException {
-                final ServiceController<?> controller = context.getServiceRegistry(false).getRequiredService(
-                        SwitchYardAdminService.SERVICE_NAME);
 
                 final ModelNode components = context.getResult();
-                SwitchYard switchYard = SwitchYard.class.cast(controller.getService().getValue());
                 if (operation.hasDefined(NAME)) {
                     final String componentName = operation.get(NAME).asString();
-                    final Component component = switchYard.getComponent(componentName);
+                    final ServiceController<?> componentService = context.getServiceRegistry(false).getRequiredService(SwitchYardComponentService.SERVICE_NAME.append(componentName));
+                    org.switchyard.deploy.Component component = org.switchyard.deploy.Component.class.cast(componentService.getValue());
                     if (component != null) {
-                        components.add(ModelNodeCreationUtil.createComponentNode(component));
+                        final Component baseComponent = new BaseComponent(component.getName(), component.getActivationTypes(), convertConfiguration(component.getConfig()));
+                        components.add(ModelNodeCreationUtil.createComponentNode(baseComponent));
                     }
                 } else {
-                    for (Component component : switchYard.getComponents()) {
-                        components.add(ModelNodeCreationUtil.createComponentNode(component));
+                    for (String componentName : SwitchYardModuleAdd.getComponentNames()) {
+                        final ServiceController<?> componentService = context.getServiceRegistry(false).getRequiredService(SwitchYardComponentService.SERVICE_NAME.append(componentName));
+                        org.switchyard.deploy.Component component = org.switchyard.deploy.Component.class.cast(componentService.getValue());
+                        Component baseComponent = new BaseComponent(component.getName(), component.getActivationTypes(), convertConfiguration(component.getConfig()));
+                        components.add(ModelNodeCreationUtil.createComponentNode(baseComponent));
                     }
                 }
                 context.completeStep();
             }
         }, OperationContext.Stage.RUNTIME);
         context.completeStep();
+    }
+
+    private Map<String, String> convertConfiguration(Configuration config) {
+        Map<String, String> properties = new HashMap<String, String>();
+        for (Configuration property : config.getChildren()) {
+            properties.put(property.getName(), property.getValue());
+        }
+        return properties;
     }
 }

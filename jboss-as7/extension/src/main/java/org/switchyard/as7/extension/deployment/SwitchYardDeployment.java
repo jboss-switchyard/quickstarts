@@ -88,7 +88,7 @@ public class SwitchYardDeployment {
     /**
      * Start the application.
      * 
-     * @param components The list of components configured.
+     * @param components the list of components
      */
     public void start(final List<Component> components) {
         final Module module = _deployUnit.getAttachment(Attachments.MODULE);

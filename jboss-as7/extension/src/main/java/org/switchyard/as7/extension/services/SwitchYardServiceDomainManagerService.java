@@ -58,7 +58,12 @@ public class SwitchYardServiceDomainManagerService implements Service<ServiceDom
     public ServiceDomainManager getValue() throws IllegalStateException, IllegalArgumentException {
         return _domainManager;
     }
-    
+
+    /**
+     * Cache injection point.
+     * 
+     * @return injected Cache
+     */
     public InjectedValue<Cache> getCache() {
         return _cache;
     }

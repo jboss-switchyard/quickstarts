@@ -87,7 +87,8 @@ public final class ServerUtil {
     }
     
     /**
-     * 
+     * Get the JBoss container's DefaultConnector.
+     * @return the DefaultConnector
      */
     public static Connector getDefaultConnector() {
         ServiceController<Connector> service = (ServiceController<Connector>)_registry.getService(

@@ -22,41 +22,30 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.DESCRIBE;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
-import static org.jboss.as.controller.parsing.ParseUtils.missingRequired;
-import static org.jboss.as.controller.parsing.ParseUtils.requireNoAttributes;
-import static org.jboss.as.controller.parsing.ParseUtils.requireNoContent;
-import static org.jboss.as.controller.parsing.ParseUtils.requireNoNamespaceAttribute;
-import static org.jboss.as.controller.parsing.ParseUtils.unexpectedAttribute;
-import static org.jboss.as.controller.parsing.ParseUtils.unexpectedElement;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.REMOVE;
+import static org.switchyard.as7.extension.CommonAttributes.IDENTIFIER;
 import static org.switchyard.as7.extension.CommonAttributes.IMPLCLASS;
-import static org.switchyard.as7.extension.CommonAttributes.MODULES;
+import static org.switchyard.as7.extension.CommonAttributes.MODULE;
 import static org.switchyard.as7.extension.CommonAttributes.PROPERTIES;
 import static org.switchyard.as7.extension.CommonAttributes.SOCKET_BINDING;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
 
 import org.jboss.as.controller.Extension;
 import org.jboss.as.controller.ExtensionContext;
 import org.jboss.as.controller.PathElement;
+import org.jboss.as.controller.ReloadRequiredWriteAttributeHandler;
 import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.descriptions.DescriptionProvider;
 import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
+import org.jboss.as.controller.operations.validation.ModelTypeValidator;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
-import org.jboss.as.controller.persistence.SubsystemMarshallingContext;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.as.controller.registry.OperationEntry;
+import org.jboss.as.controller.registry.AttributeAccess.Storage;
 import org.jboss.dmr.ModelNode;
+import org.jboss.dmr.ModelType;
 import org.jboss.logging.Logger;
-import org.jboss.staxmapper.XMLElementReader;
-import org.jboss.staxmapper.XMLElementWriter;
-import org.jboss.staxmapper.XMLExtendedStreamReader;
-import org.jboss.staxmapper.XMLExtendedStreamWriter;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemGetVersion;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemListApplications;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemListComponents;
@@ -83,20 +72,28 @@ public class SwitchYardExtension implements Extension {
     /** Namespace for this subsystem. */
     public static final String NAMESPACE = "urn:jboss:domain:switchyard:1.0";
 
-    private static final SwitchYardSubsystemParser PARSER = new SwitchYardSubsystemParser();
-
     /** {@inheritDoc} */
     @Override
     public void initialize(final ExtensionContext context) {
         // log SwitchYard notification message (includes version information)
         LOGGER.info(Versions.getSwitchYardNotification());
 
-        final SubsystemRegistration subsystem = context.registerSubsystem(SUBSYSTEM_NAME,1,0);
-        //todo convert to ResourceDefinition
+        final SubsystemRegistration subsystem = context.registerSubsystem(SUBSYSTEM_NAME, 1, 0);
         final ManagementResourceRegistration registration = subsystem.registerSubsystemModel(SwitchYardSubsystemProviders.SUBSYSTEM_DESCRIBE);
-        registration.registerOperationHandler(ADD, SwitchYardSubsystemAdd.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_ADD, false);
+        registration.registerOperationHandler(ADD, SwitchYardSubsystemAdd.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_ADD_DESCRIBE, false);
+        registration.registerOperationHandler(REMOVE, SwitchYardSubsystemRemove.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_REMOVE_DESCRIBE, false);
         registration.registerOperationHandler(DESCRIBE, SwitchYardSubsystemDescribe.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_DESCRIBE, false, OperationEntry.EntryType.PRIVATE);
-        subsystem.registerXMLElementWriter(PARSER);
+        registration.registerReadWriteAttribute(SOCKET_BINDING, null, new ReloadRequiredWriteAttributeHandler(new ModelTypeValidator(ModelType.STRING)), Storage.CONFIGURATION);
+        registration.registerReadWriteAttribute(PROPERTIES, null, new ReloadRequiredWriteAttributeHandler(new ModelTypeValidator(ModelType.STRING)), Storage.CONFIGURATION);
+        subsystem.registerXMLElementWriter(SwitchYardSubsystemWriter.getInstance());
+
+        // SwitchYard modules
+        final ManagementResourceRegistration modules = registration.registerSubModel(PathElement.pathElement(MODULE), SwitchYardSubsystemProviders.MODULE_DESCRIBE);
+        modules.registerOperationHandler(ADD, SwitchYardModuleAdd.INSTANCE, SwitchYardSubsystemProviders.MODULE_ADD_DESCRIBE, false);
+        modules.registerOperationHandler(REMOVE, SwitchYardModuleRemove.INSTANCE, SwitchYardSubsystemProviders.MODULE_REMOVE_DESCRIBE, false);
+        modules.registerReadWriteAttribute(IDENTIFIER, null, new ReloadRequiredWriteAttributeHandler(new ModelTypeValidator(ModelType.STRING)), Storage.CONFIGURATION);
+        modules.registerReadWriteAttribute(IMPLCLASS, null, new ReloadRequiredWriteAttributeHandler(new ModelTypeValidator(ModelType.STRING)), Storage.CONFIGURATION);
+        modules.registerReadWriteAttribute(PROPERTIES, null, new ReloadRequiredWriteAttributeHandler(new ModelTypeValidator(ModelType.STRING)), Storage.CONFIGURATION);
 
         // register administrative functions
         registration.registerOperationHandler(SwitchYardModelConstants.GET_VERSION, SwitchYardSubsystemGetVersion.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_GET_VERSION, false);
@@ -123,208 +120,18 @@ public class SwitchYardExtension implements Extension {
     /** {@inheritDoc} */
     @Override
     public void initializeParsers(final ExtensionParsingContext context) {
-        context.setSubsystemXmlMapping(SUBSYSTEM_NAME, SwitchYardExtension.NAMESPACE, PARSER);
+        context.setSubsystemXmlMapping(SUBSYSTEM_NAME, SwitchYardExtension.NAMESPACE, SwitchYardSubsystemReader.getInstance());
     }
 
-    private static ModelNode createAddSubSystemOperation() {
+    /**
+     * Create an Add subsystem operation.
+     * 
+     * @return the operation node
+     */
+    public static ModelNode createAddSubsystemOperation() {
         final ModelNode subsystem = new ModelNode();
         subsystem.get(OP).set(ADD);
         subsystem.get(OP_ADDR).add(ModelDescriptionConstants.SUBSYSTEM, SUBSYSTEM_NAME);
         return subsystem;
     }
-
-    static class SwitchYardSubsystemParser implements XMLStreamConstants, XMLElementReader<List<ModelNode>>, XMLElementWriter<SubsystemMarshallingContext> {
-
-        /** {@inheritDoc} */
-        @Override
-        public void readElement(final XMLExtendedStreamReader reader, final List<ModelNode> list) throws XMLStreamException {
-            // Require no attributes
-            requireNoAttributes(reader);
-            ModelNode subsytem = createAddSubSystemOperation();
-            // Elements
-            while (reader.hasNext() && reader.nextTag() != END_ELEMENT) {
-                if (reader.getNamespaceURI().equals(SwitchYardExtension.NAMESPACE)) {
-                    final Element element = Element.forName(reader.getLocalName());
-                    switch (element) {
-                        case SOCKET_BINDING: 
-                            String sockets = null;
-                            final int count = reader.getAttributeCount();
-                            for (int i = 0; i < count; i++) {
-                                requireNoNamespaceAttribute(reader, i);
-                                final Attribute attribute = Attribute.forName(reader.getAttributeLocalName(i));
-                                switch (attribute) {
-                                    case NAMES:
-                                        sockets = reader.getAttributeValue(i);
-                                        break;
-                                    default:
-                                        throw unexpectedAttribute(reader, i);
-                                }
-                            }
-                            if (sockets != null) {
-                                subsytem.get(SOCKET_BINDING).set(sockets);
-                            }
-                            requireNoContent(reader);
-                            break;
-                        case MODULES: 
-                            ModelNode modules = parseModulesElement(reader);
-                            if (modules != null) {
-                                subsytem.get(MODULES).set(modules);
-                            }
-                            break;
-                        case PROPERTIES: 
-                            ModelNode properties = parsePropertiesElement("", reader);
-                            if (properties != null) {
-                                subsytem.get(PROPERTIES).set(properties);
-                            }
-                            break;
-                        default:
-                            throw unexpectedElement(reader);
-                    }
-                }
-            }
-
-            list.add(subsytem);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void writeContent(final XMLExtendedStreamWriter writer, final SubsystemMarshallingContext context) throws XMLStreamException {
-            context.startSubsystemElement(SwitchYardExtension.NAMESPACE, false);
-            ModelNode node = context.getModelNode();
-            if (has(node, SOCKET_BINDING)) {
-                ModelNode socketNames = node.get(SOCKET_BINDING);
-                writer.writeEmptyElement(Element.SOCKET_BINDING.getLocalName());
-                writer.writeAttribute(Attribute.NAMES.getLocalName(), socketNames.asString());
-            }
-            if (has(node, MODULES)) {
-                ModelNode modules = node.get(MODULES);
-                writer.writeStartElement(Element.MODULES.getLocalName());
-                Set<String> keys = modules.keys();
-                for (String current : keys) {
-                    writer.writeStartElement(Element.MODULE.getLocalName());
-                    writer.writeAttribute(Attribute.IDENTIFIER.getLocalName(), current);
-                    writer.writeAttribute(Attribute.IMPLCLASS.getLocalName(), modules.get(current).get(IMPLCLASS).asString());
-                    writeProperties(modules.get(current), writer);
-                    writer.writeEndElement();
-                }
-                writer.writeEndElement();
-            }
-            writeProperties(node, writer);
-            writer.writeEndElement();
-        }
-
-        public void writeProperties(final ModelNode node, final XMLExtendedStreamWriter writer) throws XMLStreamException {
-            if (has(node, PROPERTIES)) {
-                ModelNode properties = node.get(PROPERTIES);
-                writer.writeStartElement(Element.PROPERTIES.getLocalName());
-                Set<String> keys = properties.keys();
-                for (String current : keys) {
-                    writer.writeStartElement(current);
-                    writer.writeCharacters(properties.get(current).asString());
-                    writer.writeEndElement();
-                }
-                writer.writeEndElement();
-            }
-        }
-
-        private boolean has(ModelNode node, String name) {
-            return node.has(name) && node.get(name).isDefined();
-        }
-
-        ModelNode parseModulesElement(XMLExtendedStreamReader reader) throws XMLStreamException {
-
-            // Handle attributes
-            requireNoAttributes(reader);
-
-            ModelNode modules = null;
-
-            // Handle elements
-            while (reader.hasNext() && reader.nextTag() != END_ELEMENT) {
-                if (reader.getNamespaceURI().equals(SwitchYardExtension.NAMESPACE)) {
-                    final Element element = Element.forName(reader.getLocalName());
-                    if (element == Element.MODULE) {
-                        if (modules == null) {
-                            modules = new ModelNode();
-                        }
-                        String identifier = null;
-                        String implClass = null;
-                        final int count = reader.getAttributeCount();
-                        for (int i = 0; i < count; i++) {
-                            requireNoNamespaceAttribute(reader, i);
-                            final Attribute attribute = Attribute.forName(reader.getAttributeLocalName(i));
-                            switch (attribute) {
-                                case IDENTIFIER:
-                                    identifier = reader.getAttributeValue(i);
-                                    break;
-                                case IMPLCLASS:
-                                    implClass = reader.getAttributeValue(i);
-                                    break;
-                                default:
-                                    throw unexpectedAttribute(reader, i);
-                            }
-                        }
-                        if (identifier == null) {
-                            throw missingRequired(reader, Collections.singleton(Attribute.IDENTIFIER));
-                        }
-                        if (implClass == null) {
-                            throw missingRequired(reader, Collections.singleton(Attribute.IMPLCLASS));
-                        }
-                        if (modules.has(identifier)) {
-                            throw new XMLStreamException(element.getLocalName() + " already declared", reader.getLocation());
-                        }
-
-                        ModelNode module = new ModelNode();
-                        module.get(IMPLCLASS).set(implClass);
-                        while (reader.hasNext() && reader.nextTag() != END_ELEMENT) {
-                            final Element element1 = Element.forName(reader.getLocalName());
-                            switch (element1) {
-                                case PROPERTIES: 
-                                    ModelNode properties = parsePropertiesElement(identifier, reader);
-                                    if (properties != null) {
-                                        module.get(PROPERTIES).set(properties);
-                                    }
-                                    break;
-                                default:
-                                    throw unexpectedElement(reader);
-                            }
-                        }
-                        modules.get(identifier).set(module);
-                    } else {
-                        throw unexpectedElement(reader);
-                    }
-                }
-            }
-
-            return modules;
-        }
-
-        ModelNode parsePropertiesElement(String identifier, XMLExtendedStreamReader reader) throws XMLStreamException {
-
-            // Handle attributes
-            requireNoAttributes(reader);
-
-            ModelNode properties = new ModelNode();
-            StringBuffer configModel = new StringBuffer();
-
-            // Handle elements
-            while (reader.hasNext() && reader.nextTag() != END_ELEMENT) {
-                if (reader.getNamespaceURI().equals(SwitchYardExtension.NAMESPACE)) {
-                    final Element element = Element.forName(reader.getLocalName());
-                    String name = reader.getLocalName();
-                    String value = reader.getElementText();
-                    if (properties.has(name)) {
-                        throw new XMLStreamException(element.getLocalName() + " already declared", reader.getLocation());
-                    }
-
-                    ModelNode property = new ModelNode();
-                    property.set(value);
-                    properties.get(name).set(property);
-                    configModel.append(element.toString());
-                }
-            }
-
-            return properties;
-        }
-    }
-
 }

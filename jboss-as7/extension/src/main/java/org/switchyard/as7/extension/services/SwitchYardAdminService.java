@@ -18,8 +18,6 @@
  */
 package org.switchyard.as7.extension.services;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.jboss.msc.service.Service;
@@ -29,11 +27,8 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 import org.switchyard.admin.SwitchYard;
-import org.switchyard.admin.base.BaseComponent;
 import org.switchyard.admin.base.BaseSwitchYard;
 import org.switchyard.admin.base.SwitchYardBuilder;
-import org.switchyard.config.Configuration;
-import org.switchyard.deploy.Component;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.event.ApplicationDeployedEvent;
 import org.switchyard.deploy.event.ApplicationUndeployedEvent;
@@ -53,8 +48,6 @@ public class SwitchYardAdminService implements Service<SwitchYard> {
      */
     public final static ServiceName SERVICE_NAME = ServiceName.of("SwitchYardAdminService");
 
-    @SuppressWarnings("rawtypes")
-    private final InjectedValue<List> _components = new InjectedValue<List>();
     @SuppressWarnings("rawtypes")
     private final InjectedValue<Map> _socketBindings = new InjectedValue<Map>();
     private final InjectedValue<ServiceDomainManager> _serviceDomainManager = new InjectedValue<ServiceDomainManager>();
@@ -85,30 +78,12 @@ public class SwitchYardAdminService implements Service<SwitchYard> {
 
         // TODO: add in configured properties
         // _switchYard.addProperties(properties);
-
-        // add in the components and application settings
-        for (Component component : (List<Component>) _components.getValue()) {
-            _switchYard.addComponent(new BaseComponent(component.getName(), 
-                    component.getActivationTypes(), 
-                    convertConfiguration(component.getConfig())));
-        }
     }
 
     @Override
     public void stop(StopContext context) {
         _serviceDomainManager.getValue().getEventManager().removeObserver(_adminObserver);
         _switchYard = null;
-    }
-
-    /**
-     * Injection point for SwitchYard components.
-     * 
-     * @return injected components list.
-     * @see SwitchYardComponentService.
-     */
-    @SuppressWarnings("rawtypes")
-    public final InjectedValue<List> getComponents() {
-        return _components;
     }
 
     /**
@@ -129,13 +104,5 @@ public class SwitchYardAdminService implements Service<SwitchYard> {
      */
     public InjectedValue<ServiceDomainManager> getServiceDomainManager() {
         return _serviceDomainManager;
-    }
-
-    private Map<String, String> convertConfiguration(Configuration config) {
-        Map<String, String> properties = new HashMap<String, String>();
-        for (Configuration property : config.getChildren()) {
-            properties.put(property.getName(), property.getValue());
-        }
-        return properties;
     }
 }

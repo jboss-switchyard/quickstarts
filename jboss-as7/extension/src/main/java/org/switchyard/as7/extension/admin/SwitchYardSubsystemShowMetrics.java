@@ -64,7 +64,6 @@ public final class SwitchYardSubsystemShowMetrics implements OperationStepHandle
                     throws OperationFailedException {
                 final ServiceController<?> controller = context.getServiceRegistry(false).getRequiredService(
                         SwitchYardAdminService.SERVICE_NAME);
-                
                 SwitchYard switchYard = SwitchYard.class.cast(controller.getService().getValue());
                 if (operation.hasDefined(SERVICE_NAME)) {
                     final String serviceName = operation.get(SERVICE_NAME).asString();

@@ -58,7 +58,10 @@ public class RemoteEndpointListener implements RemoteEndpointPublisher {
     private String _contextName;
     private StandardContext _serverContext;
     private Map<QName, ServiceDomain> _services = new ConcurrentHashMap<QName, ServiceDomain>();
-    
+
+    /**
+     * Constructor.
+     */
     public RemoteEndpointListener() {
     }
 
@@ -127,7 +130,12 @@ public class RemoteEndpointListener implements RemoteEndpointPublisher {
             }
         }
     }
-    
+
+    /**
+     * Return the address.
+     * 
+     * @return An address string
+     */
     public String getAddress() {
         String hostAddress = null;
         Connector connector = ServerUtil.getDefaultConnector();
@@ -137,7 +145,7 @@ public class RemoteEndpointListener implements RemoteEndpointPublisher {
             hostAddress = address.getHostAddress();
          } else {
              _log.warn("Unable to determine host address from connector.  Using alias definition instead.");
-             hostAddress = ServerUtil.getDefaultHost().getHost().findAliases()[0] ;
+             hostAddress = ServerUtil.getDefaultHost().getHost().findAliases()[0];
          }
         
         return connector.getScheme() + "://" + hostAddress + ":" + connector.getPort() + "/" + _contextName;

@@ -30,6 +30,16 @@ public interface CommonAttributes {
     String MODULES = "modules";
 
     /**
+     * The component module attribute.
+     */
+    String MODULE = "module";
+
+    /**
+     * The component implementation identifier attribute.
+     */
+    String IDENTIFIER = "identifier";
+
+    /**
      * The component implementation class name attribute.
      */
     String IMPLCLASS = "implClass";

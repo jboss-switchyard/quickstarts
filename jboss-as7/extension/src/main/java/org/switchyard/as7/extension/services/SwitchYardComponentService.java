@@ -18,13 +18,6 @@
  */
 package org.switchyard.as7.extension.services;
 
-import static org.switchyard.as7.extension.CommonAttributes.DOLLAR;
-import static org.switchyard.as7.extension.CommonAttributes.IMPLCLASS;
-import static org.switchyard.as7.extension.CommonAttributes.MODULES;
-import static org.switchyard.as7.extension.CommonAttributes.PROPERTIES;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,17 +36,18 @@ import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
+import org.switchyard.as7.extension.CommonAttributes;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.ConfigurationPuller;
 import org.switchyard.config.Configurations;
 import org.switchyard.deploy.Component;
 
 /**
- * The SwitchYard Component initializer service.
+ * The SwitchYard Component service.
  * 
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
-public class SwitchYardComponentService implements Service<List<Component>> {
+public class SwitchYardComponentService implements Service<Component> {
 
     private static final Logger LOG = Logger.getLogger("org.switchyard");
 
@@ -64,58 +58,49 @@ public class SwitchYardComponentService implements Service<List<Component>> {
 
     private final InjectedValue<Map> _injectedValues = new InjectedValue<Map>();
     private final InjectedValue<ResourceAdapterRepository> _resourceAdapterRepository = new InjectedValue<ResourceAdapterRepository>();
-    
-    private ModelNode _operation;
-    private List<Component> _components = new ArrayList<Component>();
+
+    private String _moduleId;
+    private ModelNode _model;
+    private Component _component;
 
     /**
-     * Constructs a SwitchYard Component initializer service.
+     * Constructs a SwitchYard Component service.
      * 
-     * @param operation the Subsystem Add operation
+     * @param moduleId the module identifier
+     * @param model the Module's model operation
      */
-    public SwitchYardComponentService(ModelNode operation) {
-        _operation = operation;
+    public SwitchYardComponentService(String moduleId, ModelNode model) {
+        _moduleId = moduleId;
+        _model = model;
     }
 
     @Override
-    public List<Component> getValue() throws IllegalStateException,
+    public Component getValue() throws IllegalStateException,
             IllegalArgumentException {
-        return _components;
+        return _component;
     }
 
     @Override
     public void start(StartContext context) throws StartException {
-        if (_operation.has(MODULES)) {
-            ModelNode opmodules = _operation.get(MODULES);
-            Set<String> keys = opmodules.keys();
-            if (keys != null) {
-                for (String current : keys) {
-                    ModuleIdentifier moduleIdentifier = ModuleIdentifier.fromString(current);
-                    Class<?> componentClass;
-                    String className = opmodules.get(current).get(IMPLCLASS).asString();
-                    try {
-                        componentClass = Module.loadClassFromCallerModuleLoader(moduleIdentifier, className);
-                        Component component;
-                        try {
-                            component = (Component) componentClass.newInstance();
-                            ModelNode opmodule = opmodules.get(current);
-                            ModelNode properties = opmodule.has(PROPERTIES) ? opmodule.get(PROPERTIES) : null;
-                            component.init(createEnvironmentConfig(properties));
-                            LOG.debug("Initialized component " + component);
-                            component.addResourceDependency(_resourceAdapterRepository.getValue());
-                            _components.add(component);
-                        } catch (InstantiationException ie) {
-                            LOG.error("Unable to instantiate class " + className, ie);
-                        } catch (IllegalAccessException iae) {
-                            LOG.error("Unable to access constructor for " + className, iae);
-                        }
-                    } catch (ClassNotFoundException cnfe) {
-                        LOG.error("Unable to load class " + className, cnfe);
-                    } catch (ModuleLoadException mle) {
-                        LOG.error("Unable to load module " + moduleIdentifier, mle);
-                    }
-                }
+        Class<?> componentClass;
+        String className = _model.get(CommonAttributes.IMPLCLASS).asString();
+        try {
+            componentClass = Module.loadClassFromCallerModuleLoader(ModuleIdentifier.fromString(_moduleId), className);
+            try {
+                _component = (Component) componentClass.newInstance();
+                ModelNode properties = _model.hasDefined(CommonAttributes.PROPERTIES) ? _model.get(CommonAttributes.PROPERTIES) : null;
+                _component.init(createEnvironmentConfig(properties));
+                LOG.debug("Initialized component " + _component);
+                _component.addResourceDependency(_resourceAdapterRepository.getValue());
+            } catch (InstantiationException ie) {
+                LOG.error("Unable to instantiate class " + className, ie);
+            } catch (IllegalAccessException iae) {
+                LOG.error("Unable to access constructor for " + className, iae);
             }
+        } catch (ClassNotFoundException cnfe) {
+            LOG.error("Unable to load class " + className, cnfe);
+        } catch (ModuleLoadException mle) {
+            LOG.error("Unable to load module " + _moduleId, mle);
         }
     }
 
@@ -127,7 +112,7 @@ public class SwitchYardComponentService implements Service<List<Component>> {
                 for (String propertyName : propertyNames) {
                     Configuration propConfig = new ConfigurationPuller().pull(new QName(propertyName));
                     String value = properties.get(propertyName).asString();
-                    if (value.startsWith(DOLLAR)) {
+                    if (value.startsWith(CommonAttributes.DOLLAR)) {
                         String key = value.substring(1);
                         String injectedValue = (String) _injectedValues.getValue().get(key);
                         if (injectedValue != null) {
@@ -146,13 +131,11 @@ public class SwitchYardComponentService implements Service<List<Component>> {
 
     @Override
     public void stop(StopContext context) {
-        for (Component component : _components) {
-            LOG.info("Stopping SwitchYard component " + component.getName());
-            try {
-                component.destroy();
-            }  catch (Exception e) {
-                LOG.error("Unable to stop " + component.getName(), e);
-            }
+        LOG.info("Stopping SwitchYard component " + _component.getName());
+        try {
+            _component.destroy();
+        }  catch (Exception e) {
+            LOG.error("Unable to stop " + _component.getName(), e);
         }
     }
 

@@ -18,6 +18,7 @@
  */
 package org.switchyard.as7.extension.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.as.naming.context.NamespaceContextSelector;
@@ -29,6 +30,7 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 import org.switchyard.as7.extension.deployment.SwitchYardDeployment;
+import org.switchyard.deploy.Component;
 
 /**
  * The SwitchYard service associated with deployments.
@@ -45,8 +47,8 @@ public class SwitchYardService implements Service<SwitchYardDeployment> {
     public static final ServiceName SERVICE_NAME = ServiceName.of("SwitchYardService");
 
     private final InjectedValue<NamespaceContextSelector> _namespaceSelector = new InjectedValue<NamespaceContextSelector>();
-    @SuppressWarnings("rawtypes")
-    private final InjectedValue<List> _components = new InjectedValue<List>();
+
+    private final List<InjectedValue<Component>> _components = new ArrayList<InjectedValue<Component>>();
     private SwitchYardDeployment _switchyardDeployment;
 
     /**
@@ -69,7 +71,11 @@ public class SwitchYardService implements Service<SwitchYardDeployment> {
         try {
             NamespaceContextSelector.pushCurrentSelector(_namespaceSelector.getValue());
             LOG.info("Starting SwitchYard service");
-            _switchyardDeployment.start(_components.getValue());
+            List<Component> components = new ArrayList<Component>();
+            for (InjectedValue<Component> component : _components) {
+                components.add(component.getValue());
+            }
+            _switchyardDeployment.start(components);
         } catch (Exception e) {
             try {
                 _switchyardDeployment.stop();
@@ -97,13 +103,15 @@ public class SwitchYardService implements Service<SwitchYardDeployment> {
     }
 
     /**
-     * Injection point for Component List.
+     * Injection point for Component.
      * 
-     * @return the list of components
+     * @return the component added
      */
-    @SuppressWarnings("rawtypes")
-    public InjectedValue<List> getComponents() {
-        return _components;
+    public InjectedValue<Component> getComponent() {
+        InjectedValue<Component> component = new InjectedValue<Component>();
+        if (!_components.contains(component)) {
+            _components.add(component);
+        }
+        return component;
     }
-
 }

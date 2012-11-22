@@ -22,10 +22,7 @@ import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.OperationStepHandler;
 import org.jboss.dmr.ModelNode;
-import org.jboss.msc.service.ServiceController;
-import org.switchyard.admin.Component;
-import org.switchyard.admin.SwitchYard;
-import org.switchyard.as7.extension.services.SwitchYardAdminService;
+import org.switchyard.as7.extension.SwitchYardModuleAdd;
 
 /**
  * SwitchYardSubsystemListComponents
@@ -60,12 +57,8 @@ public final class SwitchYardSubsystemListComponents implements OperationStepHan
             public void execute(final OperationContext context, final ModelNode operation)
                     throws OperationFailedException {
                 final ModelNode components = context.getResult();
-                final ServiceController<?> controller = context.getServiceRegistry(false).getRequiredService(
-                        SwitchYardAdminService.SERVICE_NAME);
-
-                SwitchYard switchYard = SwitchYard.class.cast(controller.getService().getValue());
-                for (Component component : switchYard.getComponents()) {
-                    components.add(component.getName());
+                for (String componentName : SwitchYardModuleAdd.getComponentNames()) {
+                    components.add(componentName);
                 }
                 context.completeStep();
             }
