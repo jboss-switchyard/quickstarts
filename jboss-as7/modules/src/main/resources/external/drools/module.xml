@@ -29,6 +29,9 @@
         <module name="com.google.protobuf"/>
         <module name="com.thoughtworks.xstream"/>
         <module name="javax.api"/>
+        <module name="javax.persistence.api"/>
+        <module name="javax.transaction.api"/>
+        <module name="javax.validation.api"/>
         <module name="org.antlr.antlr-runtime"/>
         <module name="org.eclipse.jdt.core.compiler.ecj"/>
         <module name="org.hibernate"/>

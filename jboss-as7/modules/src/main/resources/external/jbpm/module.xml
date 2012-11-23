@@ -38,6 +38,9 @@
         <module name="org.apache.mina.mina-core"/>
         <module name="org.drools"/>
         <module name="org.hibernate"/>
+        <module name="javax.persistence.api"/>
+        <module name="javax.transaction.api"/>
+        <module name="javax.validation.api"/>
         <module name="org.javassist"/>
         <module name="org.mvel.mvel2"/>
         <module name="org.slf4j"/>
