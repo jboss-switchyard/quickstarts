@@ -1,0 +1,31 @@
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+            xmlns:camel="urn:switchyard-component-camel:config:1.0">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-jpa-binding" targetNamespace="urn:switchyard-quickstart:camel-jpa-binding:0.1.0">
+        <service name="GreetingService" promote="GreetingService/GreetingService" requires="propagatesTransaction">
+            <interface.java interface="org.switchyard.quickstarts.camel.jpa.binding.GreetingService" />
+            <camel:binding.jpa>
+                <camel:entityClassName>org.switchyard.quickstarts.camel.jpa.binding.domain.Greet</camel:entityClassName>
+                <camel:persistenceUnit>JpaEvents</camel:persistenceUnit>
+                <camel:transactionManager>#jtaTransactionManager</camel:transactionManager>
+                <camel:consume>
+                    <camel:initialDelay>1000</camel:initialDelay>
+                    <camel:delay>500</camel:delay>
+                    <camel:consumeDelete>true</camel:consumeDelete>
+                    <!-- Disable entity locking as it causes problems with transactions -->
+                    <camel:consumeLockEntity>false</camel:consumeLockEntity>
+                    <camel:consumer.transacted>true</camel:consumer.transacted>
+                </camel:consume>
+            </camel:binding.jpa>
+        </service>
+
+        <reference name="StoreService" multiplicity="0..1" promote="GreetingService/StoreService">
+            <interface.java interface="org.switchyard.quickstarts.camel.jpa.binding.StoreService" />
+            <camel:binding.jpa>
+                <camel:entityClassName>org.switchyard.quickstarts.camel.jpa.binding.domain.Greet</camel:entityClassName>
+                <camel:persistenceUnit>JpaEvents</camel:persistenceUnit>
+                <camel:transactionManager>#jtaTransactionManager</camel:transactionManager>
+            </camel:binding.jpa>
+        </reference>
+
+    </composite>
+</switchyard>
