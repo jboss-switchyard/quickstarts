@@ -54,6 +54,7 @@ public class SOAPBindingModel extends V1BindingModel {
     private static final String PORT = "wsdlPort";
     private static final String CONTEXT_PATH = "contextPath";
     private static final String SOCKET_ADDRESS = "socketAddr";
+    private static final String ENDPOINT_ADDRESS = "endpointAddress";
 
     private PortName _port;
     private String _wsdl;
@@ -61,6 +62,7 @@ public class SOAPBindingModel extends V1BindingModel {
     private SocketAddr _socketAddr;
     private String _contextPath;
     private Boolean _publishAsWS = false;
+    private String _endpointAddress;
     
     private Configuration _environment = Configurations.emptyConfig();
     /**
@@ -68,7 +70,7 @@ public class SOAPBindingModel extends V1BindingModel {
      */
     public SOAPBindingModel() {
         super(SOAP, DEFAULT_NAMESPACE);
-        setModelChildrenOrder(WSDL, PORT, SOCKET_ADDRESS);
+        setModelChildrenOrder(WSDL, PORT, SOCKET_ADDRESS, ENDPOINT_ADDRESS);
     }
 
     /**
@@ -259,6 +261,34 @@ public class SOAPBindingModel extends V1BindingModel {
      */
     public void setContextPath(String contextPath) {
         this._contextPath = contextPath;
+    }
+
+    /**
+     * Gets the target endpoint address of the WebService.
+     * 
+     * This is applicable only if publishAsWS is false.
+     * 
+     * @return the endpoint address
+     */
+    public String getEndpointAddress() {
+        if (_endpointAddress == null) {
+            Configuration childConfig = getModelConfiguration().getFirstChild(ENDPOINT_ADDRESS);
+            if (childConfig != null) {
+                _endpointAddress = childConfig.getValue();
+            }
+        }
+        return _endpointAddress;
+    }
+
+    /**
+     * Sets the target endpoint address of the WebService.
+     * 
+     * This is applicable only if publishAsWS is false. This overrides the address set inside the WSDL.
+     * 
+     * @param endpointAddress the endpoint address to set
+     */
+    public void setEndpointAddress(String endpointAddress) {
+        this._endpointAddress = endpointAddress;
     }
 
     /**

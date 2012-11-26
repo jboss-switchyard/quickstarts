@@ -90,6 +90,13 @@ MA  02110-1301, USA.
                             </documentation>
                         </annotation>
                     </element>
+                    <element name="endpointAddress" type="string" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>
+                                The enpoint address override
+                            </documentation>
+                        </annotation>
+                    </element>
                 </sequence>
             </extension>
         </complexContent>

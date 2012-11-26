@@ -98,6 +98,9 @@ public class OutboundHandler extends BaseServiceHandler {
 
                 // Defaulting to use soapAction property in request header
                 _dispatcher.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
+                if (_config.getEndpointAddress() != null) {
+                    _dispatcher.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, _config.getEndpointAddress());
+                }
 
             } catch (MalformedURLException e) {
                 throw new WebServiceConsumeException(e);
