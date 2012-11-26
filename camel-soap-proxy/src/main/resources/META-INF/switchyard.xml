@@ -17,6 +17,7 @@
             <soap:binding.soap>
                 <soap:contextMapper/>
                 <soap:wsdl>META-INF/ReverseService.wsdl</soap:wsdl>
+                <soap:endpointAddress>http://localhost:8080/ReverseService</soap:endpointAddress>
             </soap:binding.soap>
         </sca:reference>
         <sca:component name="ProxyService">
