@@ -1029,11 +1029,6 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard.quickstarts</groupId>
-                <artifactId>switchyard-quickstart-camel-jpa-binding</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard.quickstarts</groupId>
                 <artifactId>switchyard-quickstart-camel-rest-binding</artifactId>
                 <version>${project.version}</version>
             </dependency>
