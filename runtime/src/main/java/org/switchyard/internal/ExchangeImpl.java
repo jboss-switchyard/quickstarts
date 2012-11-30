@@ -127,6 +127,10 @@ public class ExchangeImpl implements Exchange {
         _state = ExchangeState.FAULT;
         initFaultContentType();
         
+        // set relatesTo header on OUT context
+        _context.setProperty(RELATES_TO, _context.getProperty(
+                MESSAGE_ID, Scope.IN).getValue(), Scope.OUT);
+
         sendInternal(message);
     }
 
