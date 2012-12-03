@@ -30,10 +30,10 @@ import com.google.gwt.core.client.GWT;
  */
 public class CoreUISingleton implements GinjectorSingleton {
 
-    private static final CoreUI INSTANCE = GWT.create(CoreUI.class);
+    private static final Composite INSTANCE = GWT.create(Composite.class);
 
     @Override
-    public CoreUI getCoreUI() {
+    public Composite getCoreUI() {
         return INSTANCE;
     }
 

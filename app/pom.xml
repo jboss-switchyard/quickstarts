@@ -50,6 +50,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>console-spi</artifactId>
+            <classifier>sources</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>

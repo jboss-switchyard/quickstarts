@@ -19,7 +19,6 @@
 
 <module rename-to="app">
 
-  <inherits name="org.jboss.as.console.App" />
   <inherits name="org.switchyard.console.SwitchYard" />
 
   <set-configuration-property name="gin.ginjector"

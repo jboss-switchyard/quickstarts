@@ -18,7 +18,7 @@
  */
 package org.switchyard.console.application.client;
 
-import org.jboss.as.console.client.core.gin.CoreUI;
+import org.jboss.as.console.client.core.gin.Composite;
 import org.switchyard.console.client.gin.SwitchYardGinjector;
 
 /**
@@ -29,6 +29,6 @@ import org.switchyard.console.client.gin.SwitchYardGinjector;
  * 
  * @author Rob Cernich
  */
-public interface AggregatedConsoleGinjector extends CoreUI, SwitchYardGinjector {
+public interface AggregatedConsoleGinjector extends Composite, SwitchYardGinjector {
 
 }

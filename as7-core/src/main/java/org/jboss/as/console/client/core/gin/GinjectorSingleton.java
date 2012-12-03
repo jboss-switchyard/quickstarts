@@ -47,5 +47,5 @@ public interface GinjectorSingleton {
     /**
      * @return the CoreUI Ginjector.
      */
-    CoreUI getCoreUI();
+    Composite getCoreUI();
 }

@@ -117,8 +117,6 @@ public class PlainColumnView implements Sampler {
         grid.getCellFormatter().setWidth(0, 2, "50%");
 
 
-        layout.add(grid);
-
         if(null==staticHelp && address!=null)
         {
             MetricHelpPanel helpPanel = new MetricHelpPanel(address, this.columns);
@@ -129,6 +127,8 @@ public class PlainColumnView implements Sampler {
         {
             layout.add(staticHelp.asWidget());
         }
+
+        layout.add(grid);
 
        return layout;
     }

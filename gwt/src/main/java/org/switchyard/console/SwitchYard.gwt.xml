@@ -19,8 +19,8 @@
 
 <module rename-to="SwitchYard">
 
-  <inherits name="org.jboss.as.console.App" />
   <inherits name="org.switchyard.console.Extensions" />
+  <inherits name="org.jboss.as.console.App" />
 
   <!-- Specify the paths for translatable code -->
   <source path='client' />

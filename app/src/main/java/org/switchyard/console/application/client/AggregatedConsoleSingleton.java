@@ -18,7 +18,7 @@
  */
 package org.switchyard.console.application.client;
 
-import org.jboss.as.console.client.core.gin.CoreUI;
+import org.jboss.as.console.client.core.gin.Composite;
 import org.jboss.as.console.client.core.gin.GinjectorSingleton;
 
 import com.google.gwt.core.client.GWT;
@@ -32,10 +32,10 @@ import com.google.gwt.core.client.GWT;
  */
 public class AggregatedConsoleSingleton implements GinjectorSingleton {
 
-    private static final CoreUI INSTANCE = GWT.create(AggregatedConsoleGinjector.class);
+    private static final Composite INSTANCE = GWT.create(AggregatedConsoleGinjector.class);
 
     @Override
-    public CoreUI getCoreUI() {
+    public Composite getCoreUI() {
         return INSTANCE;
     }
 
