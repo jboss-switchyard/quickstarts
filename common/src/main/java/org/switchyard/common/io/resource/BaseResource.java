@@ -77,6 +77,8 @@ public abstract class BaseResource implements Resource {
 
     private static final URL getURL(String location, Class<?> caller, ClassLoader loader) {
         if (location != null) {
+            // TODO: we don't want to depend on this library, so write our own property replacer?
+            //location = StrSubstitutor.replaceSystemProperties(location);
             try {
                 if (location.startsWith("http:") || location.startsWith("https:")) {
                     return new URL(location);

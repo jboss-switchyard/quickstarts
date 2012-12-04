@@ -16,16 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config.model.domain.v1;
+package org.switchyard.config.model.property.v1;
+
+import static org.switchyard.config.model.switchyard.SwitchYardModel.DEFAULT_NAMESPACE;
 
 import javax.xml.namespace.QName;
 
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.domain.PropertiesModel;
-import org.switchyard.config.model.domain.PropertyModel;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.property.PropertiesModel;
+import org.switchyard.config.model.property.PropertyModel;
 
 /**
  * Implementation of PropertyModel : v1.
@@ -33,16 +34,24 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
 public class V1PropertyModel extends BaseModel implements PropertyModel {
 
     /**
-     * Constructs a new V1PropertyModel.
+     * Creates a new PropertyModel in the default namespace.
      */
     public V1PropertyModel() {
-        super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, PropertyModel.PROPERTY));
+        this(DEFAULT_NAMESPACE);
     }
 
     /**
-     * Constructs a new V1PropertyModel with the specified Configuration and Descriptor.
-     * @param config the Configuration
-     * @param desc the Descriptor
+     * Creates a new PropertyModel in the specified namespace.
+     * @param namespace the specified namespace
+     */
+    public V1PropertyModel(String namespace) {
+        super(new QName(namespace, PROPERTY));
+    }
+
+    /**
+     * Creates a new PropertyModel with the specified configuration and descriptor.
+     * @param config the configuration
+     * @param desc the descriptor
      */
     public V1PropertyModel(Configuration config, Descriptor desc) {
         super(config, desc);
@@ -61,7 +70,7 @@ public class V1PropertyModel extends BaseModel implements PropertyModel {
      */
     @Override
     public String getName() {
-        return getModelAttribute(PropertyModel.NAME);
+        return getModelAttribute("name");
     }
 
     /**
@@ -69,7 +78,7 @@ public class V1PropertyModel extends BaseModel implements PropertyModel {
      */
     @Override
     public PropertyModel setName(String name) {
-        setModelAttribute(PropertyModel.NAME, name);
+        setModelAttribute("name", name);
         return this;
     }
 
@@ -78,7 +87,7 @@ public class V1PropertyModel extends BaseModel implements PropertyModel {
      */
     @Override
     public String getValue() {
-        return getModelAttribute(PropertyModel.VALUE);
+        return getModelAttribute("value");
     }
 
     /**
@@ -86,7 +95,7 @@ public class V1PropertyModel extends BaseModel implements PropertyModel {
      */
     @Override
     public PropertyModel setValue(String value) {
-        setModelAttribute(PropertyModel.VALUE, value);
+        setModelAttribute("value", value);
         return this;
     }
 

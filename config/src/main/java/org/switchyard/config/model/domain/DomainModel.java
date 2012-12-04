@@ -19,6 +19,7 @@
 package org.switchyard.config.model.domain;
 
 import org.switchyard.config.model.NamedModel;
+import org.switchyard.config.model.property.PropertiesModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**

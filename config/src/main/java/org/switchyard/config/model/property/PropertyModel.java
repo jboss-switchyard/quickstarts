@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config.model.domain;
+package org.switchyard.config.model.property;
 
 import org.switchyard.config.model.Model;
 
@@ -28,11 +28,11 @@ public interface PropertyModel extends Model {
     /** The "property" name. */
     public static final String PROPERTY = "property";
 
-    /** The "name" name. */
-    public static final String NAME = "name";
-
-    /** The "value" name. */
-    public static final String VALUE = "value";
+    /**
+     * Gets the parent properties model.
+     * @return the parent properties model.
+     */
+    public PropertiesModel getProperties();
 
     /**
      * Gets the name attribute.
@@ -59,12 +59,5 @@ public interface PropertyModel extends Model {
      * @return this PropertyModel (useful for chaining)
      */
     public PropertyModel setValue(String value);
-    
-    /**
-     * Gets the parent properties model.
-     * @return the parent properties model.
-     */
-    public PropertiesModel getProperties();
-
 
 }

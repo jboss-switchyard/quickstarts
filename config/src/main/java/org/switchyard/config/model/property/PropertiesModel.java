@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config.model.domain;
+package org.switchyard.config.model.property;
 
 import java.util.List;
 import java.util.Map;
@@ -41,7 +41,7 @@ public interface PropertiesModel extends Model {
     /**
      * Adds a child property model.
      * @param property the child property model to add
-     * @return this TransformsModel (useful for chaining)
+     * @return this PropertiesModel (useful for chaining)
      */
     public PropertiesModel addProperty(PropertyModel property);
     

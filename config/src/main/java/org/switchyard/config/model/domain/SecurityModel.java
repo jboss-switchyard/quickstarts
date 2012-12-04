@@ -19,6 +19,7 @@
 package org.switchyard.config.model.domain;
 
 import org.switchyard.config.model.Model;
+import org.switchyard.config.model.property.PropertiesModel;
 
 /**
  * A Security Model.

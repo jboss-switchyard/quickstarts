@@ -16,7 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.config.model.domain.v1;
+package org.switchyard.config.model.property.v1;
+
+import static org.switchyard.config.model.property.PropertyModel.PROPERTY;
+import static org.switchyard.config.model.switchyard.SwitchYardModel.DEFAULT_NAMESPACE;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,9 +33,8 @@ import javax.xml.namespace.QName;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.domain.PropertiesModel;
-import org.switchyard.config.model.domain.PropertyModel;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.property.PropertiesModel;
+import org.switchyard.config.model.property.PropertyModel;
 
 /**
  * A version 1 PropertiesModel.
@@ -42,27 +44,35 @@ public class V1PropertiesModel extends BaseModel implements PropertiesModel {
     private List<PropertyModel> _properties = new ArrayList<PropertyModel>();
 
     /**
-     * Constructs a new V1PropertiesModel.
+     * Creates a new PropertiesModel in the default namespace.
      */
     public V1PropertiesModel() {
-        super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, PropertiesModel.PROPERTIES));
-        setModelChildrenOrder(PropertyModel.PROPERTY);
+        this(DEFAULT_NAMESPACE);
     }
 
     /**
-     * Constructs a new V1PropertiesModel with the specified Configuration and Descriptor.
-     * @param config the Configuration
-     * @param desc the Descriptor
+     * Creates a new PropertiesModel in the specified namespace.
+     * @param namespace the specified namespace
+     */
+    public V1PropertiesModel(String namespace) {
+        super(new QName(namespace, PROPERTIES));
+        setModelChildrenOrder(PROPERTY);
+    }
+
+    /**
+     * Creates a new PropertiesModel with the specified configuration and descriptor.
+     * @param config the configuration
+     * @param desc the descriptor
      */
     public V1PropertiesModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        for (Configuration property_config : config.getChildrenStartsWith(PropertyModel.PROPERTY)) {
+        for (Configuration property_config : config.getChildren(PROPERTY)) {
             PropertyModel property = (PropertyModel)readModel(property_config);
             if (property != null) {
                 _properties.add(property);
             }
         }
-        setModelChildrenOrder(PropertyModel.PROPERTY);
+        setModelChildrenOrder(PROPERTY);
     }
 
     /**

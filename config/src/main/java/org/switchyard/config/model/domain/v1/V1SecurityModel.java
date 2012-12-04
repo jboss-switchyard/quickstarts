@@ -26,8 +26,8 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.domain.DomainModel;
-import org.switchyard.config.model.domain.PropertiesModel;
 import org.switchyard.config.model.domain.SecurityModel;
+import org.switchyard.config.model.property.PropertiesModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
