@@ -19,6 +19,8 @@
  
 package org.switchyard.component.http;
 
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
@@ -37,6 +39,8 @@ import org.switchyard.component.http.config.model.HttpBindingModel;
 import org.switchyard.component.http.endpoint.Endpoint;
 import org.switchyard.component.http.endpoint.EndpointPublisherFactory;
 import org.switchyard.deploy.BaseServiceHandler;
+import org.switchyard.exception.SwitchYardException;
+import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.security.SecurityContext;
 import org.switchyard.selector.OperationSelector;
 
@@ -52,7 +56,7 @@ public class InboundHandler extends BaseServiceHandler {
     private final HttpBindingModel _config;
 
     private ServiceDomain _domain;
-    private ServiceReference _service;
+    private ServiceReference _serviceRef;
     private MessageComposer<HttpBindingData> _messageComposer;
     private final OperationSelector<HttpBindingData> _operationSelector;
     private Endpoint _endpoint;
@@ -76,12 +80,8 @@ public class InboundHandler extends BaseServiceHandler {
      * @throws HttpPublishException If unable to publish the service
      */
     public void start() throws HttpPublishException {
-        if (_operationSelector == null) {
-            throw new HttpPublishException("operatoinSelector must be specified for HTTP service binding.");
-        }
-        
         try {
-            _service = _domain.getServiceReference(_config.getServiceName());
+            _serviceRef = _domain.getServiceReference(_config.getServiceName());
             String contextPath = _config.getContextPath();
             if (contextPath == null) {
                 contextPath = "/";
@@ -104,7 +104,7 @@ public class InboundHandler extends BaseServiceHandler {
         HttpResponseBindingData response = null;
         try {
             SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
-            Exchange exchange = _service.createExchange(_operationSelector.selectOperation(input).getLocalPart(), inOutHandler);
+            Exchange exchange = _serviceRef.createExchange(getOperationName(input), inOutHandler);
             Message message = _messageComposer.compose(input, exchange, true);
             SecurityContext.get().getCredentials().addAll(input.extractCredentials());
             if (exchange.getContract().getConsumerOperation().getExchangePattern() == ExchangePattern.IN_ONLY) {
@@ -138,5 +138,28 @@ public class InboundHandler extends BaseServiceHandler {
     @Override
     public void handleMessage(Exchange exchange) throws HandlerException {
         throw new IllegalStateException("Unexpected");
+    }
+
+    private String getOperationName(HttpRequestBindingData message) throws Exception {
+        String operationName = null;
+        if (_operationSelector != null) {
+            operationName = _operationSelector.selectOperation(message).getLocalPart();
+        }
+        
+        if (operationName == null) {
+            final Set<ServiceOperation> operations = _serviceRef.getInterface().getOperations();
+            if (operations.size() != 1) {
+                final StringBuilder msg = new StringBuilder();
+                msg.append("No operationSelector was configured for the Http Component and the Service Interface ");
+                msg.append("contains more than one operation: ").append(operations);
+                msg.append("Please add an operationSelector element.");
+                throw new SwitchYardException(msg.toString());
+            }
+            final ServiceOperation serviceOperation = operations.iterator().next();
+            operationName = serviceOperation.getName();
+        }
+        
+        return operationName;
+        
     }
 }
