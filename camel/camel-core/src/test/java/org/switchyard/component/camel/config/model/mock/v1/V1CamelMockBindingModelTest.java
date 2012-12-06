@@ -20,26 +20,19 @@
  */
 package org.switchyard.component.camel.config.model.mock.v1;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.ThroughputLogger;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Before;
-import org.junit.Test;
-import org.switchyard.component.camel.config.model.mock.CamelMockBindingModel;
-import org.switchyard.component.camel.config.model.v1.V1BaseCamelModelTest;
-import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
-import org.switchyard.config.model.Validation;
+import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
+import org.switchyard.component.camel.core.model.mock.v1.V1CamelMockBindingModel;
+import org.switchyard.component.camel.core.model.v1.V1CamelBindingModel;
 
 /**
  * Test for {@link V1CamelBindingModel}.
  *
  * @author Mario Antollini
  */
-public class V1CamelMockBindingModelTest extends V1BaseCamelModelTest<V1CamelMockBindingModel> {
+public class V1CamelMockBindingModelTest extends V1BaseCamelServiceBindingModelTest<V1CamelMockBindingModel, MockEndpoint> {
 
     private static final String CAMEL_XML = "switchyard-mock-binding-beans.xml";
 
@@ -48,66 +41,24 @@ public class V1CamelMockBindingModelTest extends V1BaseCamelModelTest<V1CamelMoc
 
     private static final String CAMEL_URI = "mock://fooMockName?reportGroup=999";
 
-    @Before
-    public void setUp() throws Exception {
+    public V1CamelMockBindingModelTest() {
+        super(MockEndpoint.class, CAMEL_XML);
     }
 
-    @Test
-    public void testConfigOverride() {
-        // Set a value on an existing config element
-        CamelMockBindingModel bindingModel = createMockModel();
-        assertEquals(NAME, bindingModel.getName());
-        bindingModel.setName("newFooMockName");
-        assertEquals("newFooMockName", bindingModel.getName());
-    }
-
-    @Test
-    public void testReadConfig() throws Exception {
-        final CamelMockBindingModel bindingModel = getFirstCamelBinding(CAMEL_XML);
-        final Validation validateModel = bindingModel.validateModel();
-        //Valid Model?
-        assertEquals(validateModel.isValid(), true);
-        //Camel Mock
-        assertEquals(bindingModel.getName(), NAME);
-        assertEquals(bindingModel.getReportGroup(), REPORT_GROUP);
-        //URI
-        assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
-    }
-
-    @Test
-    public void testWriteConfig() throws Exception {
-        CamelMockBindingModel bindingModel = createMockModel();
-        final Validation validateModel = bindingModel.validateModel();
-        //Valid Model?
-        assertEquals(validateModel.isValid(), true);
-        //Camel Mock
-        assertEquals(bindingModel.getName(), NAME);
-        assertEquals(bindingModel.getReportGroup(), REPORT_GROUP);
-        //URI
-        assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
-    }
-
-    @Test
-    public void compareWriteConfig() throws Exception {
-        String refXml = getFirstCamelBinding(CAMEL_XML).toString();
-        String newXml = createMockModel().toString();
-        XMLUnit.setIgnoreWhitespace(true);
-        Diff diff = XMLUnit.compareXML(refXml, newXml);
-        assertTrue(diff.toString(), diff.similar());
-    }
-
-    @Test
-    public void testCamelEndpoint() {
-        CamelMockBindingModel model = createMockModel();
-        MockEndpoint endpoint = getEndpoint(model, MockEndpoint.class);
-        //assertEquals(endpoint.getId(), NAME); //No way to get the endpoint name
-        ThroughputLogger logger = (ThroughputLogger)endpoint.getReporter();
-        assertEquals(logger.getGroupSize(), REPORT_GROUP);
-        assertEquals(endpoint.getEndpointUri().toString(), CAMEL_URI);
-    }
-
-    private CamelMockBindingModel createMockModel() {
+    @Override
+    protected V1CamelMockBindingModel createTestModel() {
         return new V1CamelMockBindingModel().setName(NAME).setReportGroup(REPORT_GROUP);
+    }
+
+    @Override
+    protected String createEndpointUri() {
+        return CAMEL_URI;
+    }
+
+    @Override
+    protected void createModelAssertions(V1CamelMockBindingModel model) {
+        assertEquals(NAME, model.getName());
+        assertEquals(REPORT_GROUP, model.getReportGroup());
     }
 
 }

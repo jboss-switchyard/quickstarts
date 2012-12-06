@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+JBoss, Home of Professional Open Source
+Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+as indicated by the @authors tag. All rights reserved.
+See the copyright.txt in the distribution for a
+full listing of individual contributors.
+
+This copyrighted material is made available to anyone wishing to use,
+modify, copy, or redistribute it subject to the terms and conditions
+of the GNU Lesser General Public License, v. 2.1.
+This program is distributed in the hope that it will be useful, but WITHOUT A
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+You should have received a copy of the GNU Lesser General Public License,
+v.2.1 along with this distribution; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+MA  02110-1301, USA.
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="urn:switchyard-component-camel-jpa:config:1.0"
+    xmlns:tns="urn:switchyard-component-camel-jpa:config:1.0"
+    xmlns:switchyard="urn:switchyard-config:switchyard:1.0"
+    elementFormDefault="qualified">
+
+    <import namespace="urn:switchyard-config:switchyard:1.0"/>
+    <include schemaLocation="camel-common-v1.xsd" />
+
+    <element name="binding.jpa" type="tns:CamelJpaBindingType" substitutionGroup="switchyard:binding.switchyard"/>
+    <complexType name="CamelJpaBindingType">
+        <complexContent>
+            <extension base="tns:BaseCamelBinding">
+                <sequence>
+                    <element name="entityClassName" type="string"/>
+                    <element name="persistenceUnit" type="string"/>
+                    <element name="transactionManager" type="string" minOccurs="0" maxOccurs="1"/>
+                    <choice minOccurs="0" maxOccurs="1">
+                        <element name="consume" type="tns:JpaConsumerType"/>
+                        <element name="produce" type="tns:JpaProducerType"/>
+                    </choice>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="JpaConsumerType">
+        <sequence>
+            <group ref="tns:ScheduledPollConsumerType" minOccurs="0" maxOccurs="unbounded" />
+            <group ref="tns:ScheduledBatchPollConsumerType" minOccurs="0" maxOccurs="unbounded" />
+
+            <element name="consumeDelete" type="boolean" minOccurs="0" maxOccurs="1" />
+            <element name="consumeLockEntity" type="boolean" minOccurs="0" maxOccurs="1" />
+            <element name="maximumResults" type="int" minOccurs="0" maxOccurs="1" />
+            <element name="consumer.query" type="string" minOccurs="0" maxOccurs="1" />
+            <element name="consumer.namedQuery" type="string" minOccurs="0" maxOccurs="1" />
+            <element name="consumer.nativeQuery" type="string" minOccurs="0" maxOccurs="1" />
+            <element name="consumer.resultClass" type="string" minOccurs="0" maxOccurs="1" />
+            <element name="consumer.transacted" type="boolean" minOccurs="0" maxOccurs="1" />
+        </sequence>
+    </complexType>
+
+    <complexType name="JpaProducerType">
+        <sequence>
+            <element name="flushOnSend" type="boolean" minOccurs="0" maxOccurs="1" />
+            <element name="usePersist" type="boolean" minOccurs="0" maxOccurs="1" />
+        </sequence>
+    </complexType>
+
+</schema>

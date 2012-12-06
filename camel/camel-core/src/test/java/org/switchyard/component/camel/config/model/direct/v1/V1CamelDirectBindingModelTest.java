@@ -21,24 +21,18 @@
 package org.switchyard.component.camel.config.model.direct.v1;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
 
 import org.apache.camel.component.direct.DirectEndpoint;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Before;
-import org.junit.Test;
-import org.switchyard.component.camel.config.model.direct.CamelDirectBindingModel;
-import org.switchyard.component.camel.config.model.v1.V1BaseCamelModelTest;
-import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
-import org.switchyard.config.model.Validation;
+import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
+import org.switchyard.component.camel.core.model.direct.v1.V1CamelDirectBindingModel;
+import org.switchyard.component.camel.core.model.v1.V1CamelBindingModel;
 
 /**
  * Test for {@link V1CamelBindingModel}.
  *
  * @author Mario Antollini
  */
-public class V1CamelDirectBindingModelTest extends V1BaseCamelModelTest<V1CamelDirectBindingModel> {
+public class V1CamelDirectBindingModelTest extends V1BaseCamelServiceBindingModelTest<V1CamelDirectBindingModel, DirectEndpoint> {
 
     private static final String CAMEL_XML = "switchyard-direct-binding-beans.xml";
 
@@ -46,60 +40,22 @@ public class V1CamelDirectBindingModelTest extends V1BaseCamelModelTest<V1CamelD
 
     private static final String CAMEL_URI = "direct://fooDirectName";
 
-    @Before
-    public void setUp() throws Exception {
+    public V1CamelDirectBindingModelTest() {
+        super(DirectEndpoint.class, CAMEL_XML);
     }
 
-    @Test
-    public void testConfigOverride() {
-        // Set a value on an existing config element
-        CamelDirectBindingModel bindingModel = createDirectModel();
-        assertEquals(NAME, bindingModel.getName());
-        bindingModel.setName("newFooDirectName");
-        assertEquals("newFooDirectName", bindingModel.getName());
+    @Override
+    protected String createEndpointUri() {
+        return CAMEL_URI;
     }
 
-    @Test
-    public void testReadConfig() throws Exception {
-        final CamelDirectBindingModel bindingModel = getFirstCamelBinding(CAMEL_XML);
-        final Validation validateModel = bindingModel.validateModel();
-        //Valid Model?
-        assertEquals(validateModel.isValid(), true);
-        //Camel Direct
-        assertEquals(bindingModel.getName(), NAME);
-        //URI
-        assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
+    @Override
+    protected void createModelAssertions(V1CamelDirectBindingModel model) {
+        assertEquals(NAME, model.getName());
     }
 
-    @Test
-    public void testWriteConfig() throws Exception {
-        CamelDirectBindingModel bindingModel = createDirectModel();
-        final Validation validateModel = bindingModel.validateModel();
-        //Valid Model?
-        assertEquals(validateModel.isValid(), true);
-        //Camel Direct
-        assertEquals(bindingModel.getName(), NAME);
-        //URI
-        assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
-    }
-
-    @Test
-    public void compareWriteConfig() throws Exception {
-        String refXml = getFirstCamelBinding(CAMEL_XML).toString();
-        String newXml = createDirectModel().toString();
-        XMLUnit.setIgnoreWhitespace(true);
-        Diff diff = XMLUnit.compareXML(refXml, newXml);
-        assertTrue(diff.toString(), diff.similar());
-    }
-
-    @Test
-    public void testCamelEndpoint() {
-        DirectEndpoint endpoint = getEndpoint(createDirectModel(), DirectEndpoint.class);
-        //assertEquals(endpoint.getId(), NAME);
-        assertEquals(endpoint.getEndpointUri().toString(), CAMEL_URI);
-    }
-
-    private CamelDirectBindingModel createDirectModel() {
+    @Override
+    protected V1CamelDirectBindingModel createTestModel() {
         return new V1CamelDirectBindingModel().setName(NAME);
     }
 

@@ -53,7 +53,7 @@
         <module>resteasy</module>
         <module>soap</module>
         <module>bpel</module>
-        <module>camel/camel-core</module>
+        <module>camel</module>
         <module>clojure</module>
         <module>hornetq</module>
         <module>http</module>

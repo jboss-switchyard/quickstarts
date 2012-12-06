@@ -34,7 +34,7 @@ import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
-import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
+import org.switchyard.component.camel.core.model.v1.V1CamelBindingModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;

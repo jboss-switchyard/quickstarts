@@ -34,6 +34,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modules>
+        <module>camel</module>
         <module>common</module>
         <module>rest</module>
         <module>rules</module>

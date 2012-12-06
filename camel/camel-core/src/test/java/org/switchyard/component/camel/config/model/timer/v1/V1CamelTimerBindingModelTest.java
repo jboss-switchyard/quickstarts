@@ -22,27 +22,22 @@
 package org.switchyard.component.camel.config.model.timer.v1;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.camel.component.timer.TimerEndpoint;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Before;
-import org.junit.Test;
-import org.switchyard.component.camel.config.model.timer.CamelTimerBindingModel;
-import org.switchyard.component.camel.config.model.v1.V1BaseCamelModelTest;
-import org.switchyard.component.camel.config.model.v1.V1CamelBindingModel;
-import org.switchyard.config.model.Validation;
+import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
+import org.switchyard.component.camel.core.model.timer.v1.V1CamelTimerBindingModel;
+import org.switchyard.component.camel.core.model.v1.V1CamelBindingModel;
 
 /**
  * Test for {@link V1CamelBindingModel}.
  * 
  * @author Mario Antollini
  */
-public class V1CamelTimerBindingModelTest extends V1BaseCamelModelTest<V1CamelTimerBindingModel> {
+public class V1CamelTimerBindingModelTest extends V1BaseCamelServiceBindingModelTest<V1CamelTimerBindingModel, TimerEndpoint> {
 
     private static final String CAMEL_XML = "switchyard-timer-binding-beans.xml";
 
@@ -57,83 +52,27 @@ public class V1CamelTimerBindingModelTest extends V1BaseCamelModelTest<V1CamelTi
         "timer://fooTimer?time=2011-01-01T12:00:00&pattern=yyyy-MM-dd'T'HH:mm:ss&" +
         "period=555&delay=100&fixedRate=true&daemon=false";
 
-    private static final String CAMEL_ENDPOINT_URI =
-        "timer://fooTimer?daemon=false&delay=100&fixedRate=true&pattern=yyyy-MM-dd%27T%27HH%3Amm%3Ass&" +
-        "period=555&time=2011-01-01T12%3A00%3A00";
-
     private Date referenceDate;
-    
-    @Before
-    public void setUp() throws Exception {
+
+    public V1CamelTimerBindingModelTest() throws ParseException {
+        super(TimerEndpoint.class, CAMEL_XML);
+
         referenceDate = new SimpleDateFormat(PATTERN).parse("2011-01-01T12:00:00");
     }
 
-    @Test
-    public void testConfigOverride() {
-        // Set a value on an existing config element
-        CamelTimerBindingModel bindingModel = createTimerModel();
-        assertEquals(DELAY, bindingModel.getDelay());
-        bindingModel.setDelay(new Long(999));
-        assertEquals(new Integer(999).toString(), bindingModel.getDelay().toString());
+    @Override
+    protected void createModelAssertions(V1CamelTimerBindingModel model) {
+        assertEquals(NAME, model.getName());
+        assertEquals(referenceDate.toString(), model.getTime().toString());
+        assertEquals(PATTERN, model.getPattern());
+        assertEquals(PERIOD, model.getPeriod());
+        assertEquals(DELAY, model.getDelay());
+        assertEquals(FIXED_RATE, model.isFixedRate());
+        assertEquals(DAEMON, model.isDaemon());
     }
 
-    @Test
-    public void testReadConfig() throws Exception {
-        final V1CamelTimerBindingModel bindingModel = getFirstCamelBinding(CAMEL_XML);
-        final Validation validateModel = bindingModel.validateModel();
-        //Valid Model?
-        assertEquals(validateModel.isValid(), true);
-        //Camel File
-        assertEquals(bindingModel.getName(), NAME);
-        assertEquals(bindingModel.getTime().toString(), referenceDate.toString());
-        assertEquals(bindingModel.getPattern(), PATTERN);
-        assertEquals(bindingModel.getPeriod(), PERIOD);
-        assertEquals(bindingModel.getDelay(), DELAY);
-        assertEquals(bindingModel.isFixedRate(), FIXED_RATE);
-        assertEquals(bindingModel.isDaemon(), DAEMON);
-        assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
-    }
-
-    @Test
-    public void testWriteConfig() throws Exception {
-        CamelTimerBindingModel bindingModel = createTimerModel();
-        final Validation validateModel = bindingModel.validateModel();
-        //Valid Model?
-        assertEquals(validateModel.isValid(), true);
-        //Camel File
-        assertEquals(bindingModel.getName(), NAME);
-        assertEquals(bindingModel.getTime().toString(), referenceDate.toString());
-        assertEquals(bindingModel.getPattern(), PATTERN);
-        assertEquals(bindingModel.getPeriod(), PERIOD);
-        assertEquals(bindingModel.getDelay(), DELAY);
-        assertEquals(bindingModel.isFixedRate(), FIXED_RATE);
-        assertEquals(bindingModel.isDaemon(), DAEMON);
-        assertEquals(bindingModel.getComponentURI().toString(), CAMEL_URI);
-    }
-
-    @Test
-    public void compareWriteConfig() throws Exception {
-        String refXml = getFirstCamelBinding(CAMEL_XML).toString();
-        String newXml = createTimerModel().toString();
-        XMLUnit.setIgnoreWhitespace(true);
-        Diff diff = XMLUnit.compareXML(refXml, newXml);
-        assertTrue(diff.toString(), diff.similar());
-    }
-
-    @Test
-    public void testCamelEndpoint() {
-        CamelTimerBindingModel model = createTimerModel();
-        TimerEndpoint endpoint = getEndpoint(model, TimerEndpoint.class);
-        assertEquals(endpoint.getTimerName(), NAME);
-        assertEquals(endpoint.getTime().toString(), referenceDate.toString());
-        assertEquals(endpoint.getPeriod(), PERIOD.longValue());
-        assertEquals(endpoint.getDelay(), DELAY.longValue());
-        assertEquals(endpoint.isFixedRate(), FIXED_RATE.booleanValue());
-        assertEquals(endpoint.isDaemon(), DAEMON.booleanValue());
-        assertEquals(endpoint.getEndpointUri(), CAMEL_ENDPOINT_URI);
-    }
-
-    private CamelTimerBindingModel createTimerModel() {
+    @Override
+    protected V1CamelTimerBindingModel createTestModel() {
         return new V1CamelTimerBindingModel().setName(NAME)
             .setTime(referenceDate)
             .setPattern(PATTERN)
@@ -141,6 +80,11 @@ public class V1CamelTimerBindingModelTest extends V1BaseCamelModelTest<V1CamelTi
             .setDelay(DELAY)
             .setFixedRate(FIXED_RATE)
             .setDaemon(DAEMON);
+    }
+
+    @Override
+    protected String createEndpointUri() {
+        return CAMEL_URI;
     }
 
 }
