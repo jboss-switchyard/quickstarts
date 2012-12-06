@@ -155,7 +155,7 @@ public class V1BindingModel extends BaseTypedModel implements BindingModel {
         setChildModel(model);
         return this;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -165,7 +165,7 @@ public class V1BindingModel extends BaseTypedModel implements BindingModel {
         setChildModel(model);
         return this;
     }
-    
+
     @Override
     public boolean isServiceBinding() {
         return (getModelParent() instanceof CompositeServiceModel);

@@ -62,6 +62,7 @@ public class SwitchYardRunner extends BlockJUnit4ClassRunner {
         try {
             _testKit.start();
         } catch (Throwable t) {
+            t.printStackTrace();
             _testKit.cleanup();
             throw new Exception(t);
         }

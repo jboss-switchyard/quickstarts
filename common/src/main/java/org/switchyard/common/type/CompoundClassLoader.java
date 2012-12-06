@@ -137,4 +137,8 @@ public class CompoundClassLoader extends ClassLoader {
         return loadClass(name);
     }
 
+    @Override
+    public String toString() {
+        return "CompoundClassLoader " + _loaders;
+    }
 }

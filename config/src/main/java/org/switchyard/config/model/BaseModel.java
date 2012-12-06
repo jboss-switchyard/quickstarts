@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -42,6 +43,10 @@ public abstract class BaseModel implements Model {
     private final Configuration _config;
     private final Descriptor _desc;
     private Model _parent;
+
+    protected BaseModel(String name, String namespace) {
+        this(new QName(namespace, name));
+    }
 
     protected BaseModel(QName qname) {
         this(new ConfigurationPuller().pull(qname));
@@ -70,6 +75,14 @@ public abstract class BaseModel implements Model {
     @Override
     public final Descriptor getModelDescriptor() {
         return _desc;
+    }
+
+    /**
+     * Gets the wrapped configuration namespace uri.
+     * @return Namespace uri of this model instance.
+     */
+    protected final String getNamespaceURI() {
+        return getModelConfiguration().getQName().getNamespaceURI();
     }
 
     /**
@@ -329,7 +342,15 @@ public abstract class BaseModel implements Model {
      * @return this model (useful for chaining)
      */
     protected Model setModelChildrenOrder(String... childrenOrder) {
-        _config.setChildrenOrder(childrenOrder);
+        String[] existingOrder = getModelChildrenOrder();
+        if (existingOrder != null && existingOrder.length > 0) {
+            List<String> orderList = new ArrayList<String>();
+            orderList.addAll(Arrays.asList(existingOrder));
+            orderList.addAll(Arrays.asList(childrenOrder));
+            _config.setChildrenOrder(orderList.toArray(new String[orderList.size()]));
+        } else {
+            _config.setChildrenOrder(childrenOrder);
+        }
         return this;
     }
 

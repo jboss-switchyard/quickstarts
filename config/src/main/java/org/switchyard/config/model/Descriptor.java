@@ -66,6 +66,9 @@ public final class Descriptor {
     /** The "schema" property. */
     public static final String SCHEMA = "schema";
 
+    /** The "noNamespaceSchema" property. */
+    public static final String NO_NAMESPACE_SCHEMA = "noNamespaceSchema";
+
     /** The "location" property. */
     public static final String LOCATION = "location";
 
@@ -75,8 +78,9 @@ public final class Descriptor {
     private Map<String,String> _all_properties_map = new TreeMap<String,String>();
     private Map<String,Map<String,String>> _prefix_config_map = new HashMap<String,Map<String,String>>();
     private Map<String,String> _namespace_prefix_map = new HashMap<String,String>();
+    private Map<String, String> _nonamespace_location_map = new HashMap<String, String>();
 
-    private Map<Set<String>,Schema> _namespaces_schema_map = new HashMap<Set<String>,Schema>();;
+    private Map<Set<String>,Schema> _namespaces_schema_map = new HashMap<Set<String>,Schema>();
     private Map<String,Marshaller> _namespace_marshaller_map = new HashMap<String,Marshaller>();
 
     /**
@@ -151,6 +155,8 @@ public final class Descriptor {
                 config.put(prop_suffix, prop_value);
                 if (NAMESPACE.equals(prop_suffix)) {
                     _namespace_prefix_map.put(prop_value, prop_prefix);
+                } else if (NO_NAMESPACE_SCHEMA.equals(prop_suffix)) {
+                    _nonamespace_location_map.put(prop_value, prop_prefix);
                 }
             }
         }
@@ -169,6 +175,12 @@ public final class Descriptor {
             if (config != null) {
                 return config.get(property);
             }
+        }
+
+        // try also find given namespace in prefix map
+        Map<String,String> config = _prefix_config_map.get(namespace);
+        if (config != null) {
+            return config.get(property);
         }
         return null;
     }
@@ -297,11 +309,14 @@ public final class Descriptor {
 
     private String getSchemaLocation(String namespace, String schema) {
         String schemaLocation = null;
+
         if (namespace != null) {
             if (schema == null) {
                 schema = getProperty(SCHEMA, namespace);
             }
-            String location = getLocation(namespace);
+            String location = _nonamespace_location_map.containsKey(schema)
+                ? getLocation(_nonamespace_location_map.get(schema))
+                : getLocation(namespace);
             if (location != null) {
                 schemaLocation = location + "/" + schema;
                 schemaLocation = schemaLocation.replaceAll("\\\\", "/").replaceAll("//", "/");
@@ -340,7 +355,7 @@ public final class Descriptor {
      * @return the appropriate Marshaller to use
      */
     public synchronized Marshaller getMarshaller(String namespace) {
-        return getMarshaller(namespace, null);
+        return getMarshaller(namespace, Classes.getClassLoader(Descriptor.class));
     }
     
     /**
@@ -357,8 +372,11 @@ public final class Descriptor {
         if (marshaller == null) {
             String typeName = getProperty(MARSHALLER, namespace);
             if (typeName != null) {
-                Class<?> type = loader != null ? Classes.forName(typeName, loader) : Classes.forName(typeName, Descriptor.class);
-                marshaller = (Marshaller)Construction.construct(type, new Class<?>[]{Descriptor.class}, new Object[]{this});
+                Class<?> type = Classes.forName(typeName, loader);
+                if (type == null) {
+                    throw new IllegalArgumentException("Can not find marshaller " + typeName + " for namespace " + namespace + " using classloader " + loader);
+                }
+                marshaller = (Marshaller) Construction.construct(type, new Class<?>[]{Descriptor.class}, new Object[]{this});
                 if (marshaller != null) {
                     _namespace_marshaller_map.put(namespace, marshaller);
                 }

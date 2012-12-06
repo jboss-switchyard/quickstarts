@@ -51,6 +51,7 @@ import org.w3c.dom.Text;
 public class DOMConfiguration extends BaseConfiguration {
 
     private static final String CHILDREN_ORDER_KEY = "childrenOrder";
+    private static final String CHILDREN_NAMESPACE_KEY = "childrenNamespace";
     private static final String CHILDREN_ORDER_DELIM = ",";
 
     private Element _element;

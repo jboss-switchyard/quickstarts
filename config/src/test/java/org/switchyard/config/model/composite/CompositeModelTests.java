@@ -18,11 +18,15 @@
  */
 package org.switchyard.config.model.composite;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.StringReader;
 
 import javax.xml.namespace.QName;
-
-import junit.framework.Assert;
 
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -35,6 +39,7 @@ import org.switchyard.config.model.Model;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Models;
 import org.switchyard.config.model.composite.test.bogus.BogusImplementationModel;
+import org.switchyard.config.model.composite.test.extension.ExtensionBindingModel;
 import org.switchyard.config.model.composite.test.soap.PortModel;
 import org.switchyard.config.model.composite.test.soap.SOAPBindingModel;
 import org.switchyard.config.model.composite.test.soap.WSDLModel;
@@ -52,6 +57,7 @@ public class CompositeModelTests {
     private static final String FRAGMENT_XML = "/org/switchyard/config/model/composite/CompositeModelTests-Fragment.xml";
     private static final String COMPLETE_XML = "/org/switchyard/config/model/composite/CompositeModelTests-Complete.xml";
     private static final String EXTENDED_XML = "/org/switchyard/config/model/composite/CompositeModelTests-Extended.xml";
+    private static final String EXTENSION_XML = "/org/switchyard/config/model/composite/CompositeModelTests-Extension.xml";
 
     private static ModelPuller<CompositeModel> _puller;
 
@@ -65,9 +71,9 @@ public class CompositeModelTests {
         String namespace = CompositeModel.DEFAULT_NAMESPACE;
         String name = CompositeModel.COMPOSITE;
         Model model = new ModelPuller<Model>().pull(XMLHelper.createQName(namespace, name));
-        Assert.assertTrue(model instanceof CompositeModel);
-        Assert.assertEquals(name, model.getModelConfiguration().getName());
-        Assert.assertEquals(new QName(namespace, name), model.getModelConfiguration().getQName());
+        assertTrue(model instanceof CompositeModel);
+        assertEquals(name, model.getModelConfiguration().getName());
+        assertEquals(new QName(namespace, name), model.getModelConfiguration().getQName());
     }
 
     @Test
@@ -79,7 +85,7 @@ public class CompositeModelTests {
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(complete_composite.toString(), merged_composite.toString());
         diff.overrideDifferenceListener(new SchemaLocationDifferenceListener());
-        Assert.assertTrue(diff.toString(), diff.identical());
+        assertTrue(diff.toString(), diff.identical());
     }
 
     @Test
@@ -87,13 +93,13 @@ public class CompositeModelTests {
         CompositeModel composite = _puller.pull(COMPLETE_XML, getClass());
         CompositeServiceModel compositeService = composite.getServices().get(0);
         BindingModel binding = compositeService.getBindings().get(0);
-        Assert.assertEquals("soap", binding.getType());
+        assertEquals("soap", binding.getType());
         Configuration port_config = binding.getModelConfiguration().getFirstChild(PortModel.PORT);
-        Assert.assertEquals("MyWebService/SOAPPort", port_config.getValue());
-        Assert.assertEquals("true", port_config.getAttribute(PortModel.SECURE));
+        assertEquals("MyWebService/SOAPPort", port_config.getValue());
+        assertEquals("true", port_config.getAttribute(PortModel.SECURE));
         Configuration wsdl_config = binding.getModelConfiguration().getFirstChild(WSDLModel.WSDL);
-        Assert.assertEquals("service.wsdl", wsdl_config.getValue());
-        Assert.assertEquals("foobar", wsdl_config.getAttribute(WSDLModel.DESCRIPTION));
+        assertEquals("service.wsdl", wsdl_config.getValue());
+        assertEquals("foobar", wsdl_config.getAttribute(WSDLModel.DESCRIPTION));
     }
 
     @Test
@@ -101,64 +107,64 @@ public class CompositeModelTests {
         CompositeModel composite = _puller.pull(COMPLETE_XML, getClass());
         CompositeServiceModel compositeService = composite.getServices().get(0);
         BindingModel binding = (BindingModel)compositeService.getBindings().get(0);
-        Assert.assertTrue(binding instanceof SOAPBindingModel);
+        assertTrue(binding instanceof SOAPBindingModel);
         SOAPBindingModel soap_binding = (SOAPBindingModel)compositeService.getBindings().get(0);
-        Assert.assertEquals("soap", binding.getType());
+        assertEquals("soap", binding.getType());
         PortModel port = soap_binding.getPort();
-        Assert.assertEquals("MyWebService/SOAPPort", port.getPort());
-        Assert.assertEquals(true, port.isSecure());
+        assertEquals("MyWebService/SOAPPort", port.getPort());
+        assertEquals(true, port.isSecure());
         WSDLModel wsdl = soap_binding.getWSDL();
-        Assert.assertEquals("service.wsdl", wsdl.getLocation());
-        Assert.assertEquals("foobar", wsdl.getDescription());
+        assertEquals("service.wsdl", wsdl.getLocation());
+        assertEquals("foobar", wsdl.getDescription());
     }
 
     @Test
     public void testReadComplete() throws Exception {
         CompositeModel composite = _puller.pull(COMPLETE_XML, getClass());
-        Assert.assertEquals(CompositeModel.DEFAULT_NAMESPACE, composite.getModelConfiguration().getQName().getNamespaceURI());
-        Assert.assertEquals("m1app", composite.getName());
+        assertEquals(CompositeModel.DEFAULT_NAMESPACE, composite.getModelConfiguration().getQName().getNamespaceURI());
+        assertEquals("m1app", composite.getName());
         CompositeServiceModel compositeService = composite.getServices().get(0);
-        Assert.assertEquals("M1AppService", compositeService.getName());
-        Assert.assertEquals("SimpleService", compositeService.getPromote());
+        assertEquals("M1AppService", compositeService.getName());
+        assertEquals("SimpleService", compositeService.getPromote());
         SOAPBindingModel binding1 = (SOAPBindingModel)compositeService.getBindings().get(0);
-        Assert.assertEquals("soap", binding1.getType());
+        assertEquals("soap", binding1.getType());
         PortModel port = binding1.getPort();
-        Assert.assertEquals("MyWebService/SOAPPort", port.getPort());
-        Assert.assertEquals(true, port.isSecure());
+        assertEquals("MyWebService/SOAPPort", port.getPort());
+        assertEquals(true, port.isSecure());
         WSDLModel wsdl1 = binding1.getWSDL();
-        Assert.assertEquals("service.wsdl", wsdl1.getLocation());
-        Assert.assertEquals("foobar", wsdl1.getDescription());
+        assertEquals("service.wsdl", wsdl1.getLocation());
+        assertEquals("foobar", wsdl1.getDescription());
         CompositeReferenceModel compositeReference = composite.getReferences().get(0);
-        Assert.assertEquals("SomeOtherService", compositeReference.getName());
-        Assert.assertEquals("SimpleService/AnotherService", compositeReference.getPromote());
+        assertEquals("SomeOtherService", compositeReference.getName());
+        assertEquals("SimpleService/AnotherService", compositeReference.getPromote());
         SOAPBindingModel binding2 = (SOAPBindingModel)compositeReference.getBindings().get(0);
-        Assert.assertEquals("soap", binding2.getType());
+        assertEquals("soap", binding2.getType());
         WSDLModel wsdl = binding2.getWSDL();
-        Assert.assertEquals("http://exmample.org:8080/services/SomeOtherService?wsdl", wsdl.getLocation());
+        assertEquals("http://exmample.org:8080/services/SomeOtherService?wsdl", wsdl.getLocation());
         ComponentModel component1 = composite.getComponents().get(0);
-        Assert.assertEquals(component1, compositeService.getComponent());
-        Assert.assertEquals("SimpleService", component1.getName());
+        assertEquals(component1, compositeService.getComponent());
+        assertEquals("SimpleService", component1.getName());
         ComponentImplementationModel implementation1 = component1.getImplementation();
-        Assert.assertEquals("bean", implementation1.getType());
+        assertEquals("bean", implementation1.getType());
         ComponentServiceModel componentService1 = component1.getServices().get(0);
-        Assert.assertEquals("SimpleService", componentService1.getName());
+        assertEquals("SimpleService", componentService1.getName());
         InterfaceModel interface1 = componentService1.getInterface();
-        Assert.assertEquals("java", interface1.getType());
-        Assert.assertEquals("org.switchyard.example.m1app.SimpleService", interface1.getInterface());
+        assertEquals("java", interface1.getType());
+        assertEquals("org.switchyard.example.m1app.SimpleService", interface1.getInterface());
         ComponentReferenceModel reference = component1.getReferences().get(0);
-        Assert.assertEquals("anotherService", reference.getName());
+        assertEquals("anotherService", reference.getName());
         InterfaceModel interface2 = reference.getInterface();
-        Assert.assertEquals("java", interface2.getType());
-        Assert.assertEquals("org.switchyard.example.m1app.AnotherService", interface2.getInterface());
+        assertEquals("java", interface2.getType());
+        assertEquals("org.switchyard.example.m1app.AnotherService", interface2.getInterface());
         ComponentModel component2 = composite.getComponents().get(1);
-        Assert.assertEquals("AnotherService", component2.getName());
+        assertEquals("AnotherService", component2.getName());
         ComponentImplementationModel implementation2 = component2.getImplementation();
-        Assert.assertEquals("bean", implementation2.getType());
+        assertEquals("bean", implementation2.getType());
         ComponentServiceModel componentService2 = component2.getServices().get(0);
-        Assert.assertEquals("AnotherService", componentService2.getName());
+        assertEquals("AnotherService", componentService2.getName());
         InterfaceModel interface3 = componentService2.getInterface();
-        Assert.assertEquals("java", interface3.getType());
-        Assert.assertEquals("org.switchyard.example.m1app.AnotherService", interface3.getInterface());
+        assertEquals("java", interface3.getType());
+        assertEquals("org.switchyard.example.m1app.AnotherService", interface3.getInterface());
     }
     
     @Test
@@ -166,16 +172,16 @@ public class CompositeModelTests {
         CompositeModel composite = _puller.pull(COMPLETE_XML, getClass());
         // Test service binding
         BindingModel serviceBinding = composite.getServices().get(0).getBindings().get(0);
-        Assert.assertTrue(serviceBinding.isServiceBinding());
-        Assert.assertFalse(serviceBinding.isReferenceBinding());
-        Assert.assertNotNull(serviceBinding.getService());
-        Assert.assertNull(serviceBinding.getReference());
+        assertTrue(serviceBinding.isServiceBinding());
+        assertFalse(serviceBinding.isReferenceBinding());
+        assertNotNull(serviceBinding.getService());
+        assertNull(serviceBinding.getReference());
         // Test reference binding
         BindingModel referenceBinding = composite.getReferences().get(0).getBindings().get(0);
-        Assert.assertTrue(referenceBinding.isReferenceBinding());
-        Assert.assertFalse(referenceBinding.isServiceBinding());
-        Assert.assertNotNull(referenceBinding.getReference());
-        Assert.assertNull(referenceBinding.getService());
+        assertTrue(referenceBinding.isReferenceBinding());
+        assertFalse(referenceBinding.isServiceBinding());
+        assertNotNull(referenceBinding.getReference());
+        assertNull(referenceBinding.getService());
     }
 
     @Test
@@ -185,21 +191,21 @@ public class CompositeModelTests {
         String new_xml = composite.toString();
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = XMLUnit.compareXML(old_xml, new_xml);
-        Assert.assertTrue(diff.toString(), diff.identical());
+        assertTrue(diff.toString(), diff.identical());
     }
 
     @Test
     public void testReadExtended() throws Exception {
         CompositeModel cm = _puller.pull(EXTENDED_XML, getClass());
         BogusImplementationModel bim = (BogusImplementationModel)cm.getComponents().get(0).getImplementation();
-        Assert.assertEquals("bar", bim.getFoo());
+        assertEquals("bar", bim.getFoo());
     }
-    
+
     @Test
     public void testReadExtendedWithService() throws Exception {
         CompositeModel cm = _puller.pull(EXTENDED_XML, getClass());
         ComponentModel component = cm.getComponents().get(0);
-        Assert.assertEquals(1, component.getServices().size());
+        assertEquals(1, component.getServices().size());
     }
 
     @Test
@@ -209,8 +215,8 @@ public class CompositeModelTests {
         SOAPBindingModel binding = (SOAPBindingModel)service_1.getBindings().get(0);
         CompositeServiceModel service_2 = binding.getService();
         CompositeModel composite_2 = service_2.getComposite();
-        Assert.assertEquals(service_1, service_2);
-        Assert.assertEquals(composite_1, composite_2);
+        assertEquals(service_1, service_2);
+        assertEquals(composite_1, composite_2);
     }
 
     @Test
@@ -223,7 +229,25 @@ public class CompositeModelTests {
     public void testVerifyQNameUponCreation() throws Exception {
         final String type = "customtype";
         final V1ComponentImplementationModel model = new V1ComponentImplementationModel(type);
-        Assert.assertEquals(type, model.getType());
+        assertEquals(type, model.getType());
+    }
+
+    @Test
+    public void testReadExtensionRefferingNoNamespacedSchema() throws Exception {
+        CompositeModel composite = _puller.pull(EXTENSION_XML, getClass());
+        CompositeServiceModel compositeService = composite.getServices().get(0);
+        BindingModel binding = compositeService.getBindings().get(0);
+
+        assertTrue(binding instanceof ExtensionBindingModel);
+        ExtensionBindingModel extension = (ExtensionBindingModel) binding;
+        assertEquals("extension", extension.getType());
+        assertEquals("Bar", extension.getGroup());
+        assertEquals("Foo", extension.getName());
+    }
+
+    @Test
+    public void testValidationOfExtensionRefferingNoNamespacedSchema() throws Exception {
+        _puller.pull(EXTENSION_XML, getClass()).assertModelValid();
     }
 
 }

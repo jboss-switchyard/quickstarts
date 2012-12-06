@@ -113,7 +113,7 @@ public class ModelPuller<M extends Model> extends Puller<M> {
         if (namespace != null) {
             Marshaller marshaller = _desc.getMarshaller(namespace);
             if (marshaller != null) {
-                return (M)marshaller.read(new ConfigurationPuller().pull(element));
+                return (M) marshaller.read(new ConfigurationPuller().pull(element));
             }
         }
         return null;
