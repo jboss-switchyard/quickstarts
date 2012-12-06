@@ -79,9 +79,13 @@ public class SwitchYardRemotingServlet extends HttpServlet {
             
             ServiceReference service = domain.getServiceReference(msg.getService());
             SynchronousInOutHandler replyHandler = new SynchronousInOutHandler();
-            Exchange ex = service.createExchange(replyHandler);
+            Exchange ex = msg.getOperation() == null
+                    ? service.createExchange(replyHandler)
+                    : service.createExchange(msg.getOperation(), replyHandler);
             Message m = ex.createMessage();
-            ex.getContext().setProperties(msg.getContext().getProperties());
+            if (msg.getContext() != null) {
+                ex.getContext().setProperties(msg.getContext().getProperties());
+            }
             m.setContent(msg.getContent());
             
             if (_log.isDebugEnabled()) {
