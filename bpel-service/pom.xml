@@ -62,7 +62,7 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-camel</artifactId>
+            <artifactId>switchyard-component-camel-jms</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -122,7 +122,7 @@
                             <configuration>
                                 <scannerClassNames>
                                     <param>org.switchyard.component.bean.config.model.BeanSwitchYardScanner</param>
-                                    <param>org.switchyard.component.camel.config.model.RouteScanner</param>
+                                    <param>org.switchyard.component.camel.model.RouteScanner</param>
                                     <param>org.switchyard.component.rules.config.model.RulesSwitchYardScanner</param>
                                     <param>org.switchyard.transform.config.model.TransformSwitchYardScanner</param>
                                 </scannerClassNames>

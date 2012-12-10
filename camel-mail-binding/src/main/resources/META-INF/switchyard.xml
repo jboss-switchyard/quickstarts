@@ -1,33 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JBoss, Home of Professional Open Source.
+  ~ Copyright 2012, Red Hat, Inc., and individual contributors
+  ~ as indicated by the @author tags. See the copyright.txt file in the
+  ~ distribution for a full listing of individual contributors.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0"
-    xmlns:camel="urn:switchyard-component-camel:config:1.0"
+    xmlns:mail="urn:switchyard-component-camel-mail:config:1.0"
     xmlns:selector="urn:switchyard-component-common-selector:config:1.0"
     xmlns:bean="urn:switchyard-component-bean:config:1.0">
 
-    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-        name="camel-mail-binding" targetNamespace="urn:switchyard-quickstart:camel-mail-binding:0.1.0">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-mail-binding"
+        targetNamespace="urn:switchyard-quickstart:camel-mail-binding:0.1.0">
 
         <service name="PrintService" promote="PrintService/PrintService">
-            <camel:binding.mail>
-                <camel:host>localhost</camel:host>
-                <camel:username>camel</camel:username>
-                <camel:consume accountType="imap">
-                    <camel:initialDelay>0</camel:initialDelay>
-                    <camel:delay>100</camel:delay>
-                    <camel:copyTo>after-processing</camel:copyTo>
-                </camel:consume>
-            </camel:binding.mail>
+            <mail:binding.mail>
+                <mail:host>localhost</mail:host>
+                <mail:username>camel</mail:username>
+                <mail:consume accountType="imap">
+                    <mail:initialDelay>0</mail:initialDelay>
+                    <mail:delay>100</mail:delay>
+                    <mail:copyTo>after-processing</mail:copyTo>
+                </mail:consume>
+            </mail:binding.mail>
         </service>
 
         <reference multiplicity="1..1" name="OutgoingPrintService" promote="PrintService/OutgoingPrintService">
-            <camel:binding.mail>
-                <camel:host>localhost</camel:host>
-                <camel:username>camel</camel:username>
-                <camel:produce>
-                    <camel:subject>Forwarded message</camel:subject>
-                    <camel:from>camel@localhost</camel:from>
-                    <camel:to>rider@camel</camel:to>
-                </camel:produce>
-            </camel:binding.mail>
+            <mail:binding.mail>
+                <mail:host>localhost</mail:host>
+                <mail:username>camel</mail:username>
+                <mail:produce>
+                    <mail:subject>Forwarded message</mail:subject>
+                    <mail:from>camel@localhost</mail:from>
+                    <mail:to>rider@camel</mail:to>
+                </mail:produce>
+            </mail:binding.mail>
         </reference>
     </composite>
 

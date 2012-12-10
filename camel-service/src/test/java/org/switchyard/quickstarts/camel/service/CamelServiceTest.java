@@ -1,13 +1,3 @@
-package org.switchyard.quickstarts.camel.service;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.switchyard.component.camel.config.model.RouteScanner;
-import org.switchyard.test.Invoker;
-import org.switchyard.test.ServiceOperation;
-import org.switchyard.test.SwitchYardRunner;
-import org.switchyard.test.SwitchYardTestCaseConfig;
-import org.switchyard.component.test.mixins.cdi.CDIMixIn;
-
 /* 
  * JBoss, Home of Professional Open Source 
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
@@ -26,6 +16,16 @@ import org.switchyard.component.test.mixins.cdi.CDIMixIn;
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
+package org.switchyard.quickstarts.camel.service;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.switchyard.component.camel.model.RouteScanner;
+import org.switchyard.component.test.mixins.cdi.CDIMixIn;
+import org.switchyard.test.Invoker;
+import org.switchyard.test.ServiceOperation;
+import org.switchyard.test.SwitchYardRunner;
+import org.switchyard.test.SwitchYardTestCaseConfig;
 
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(
@@ -34,7 +34,7 @@ import org.switchyard.component.test.mixins.cdi.CDIMixIn;
         scanners = RouteScanner.class
 )
 public class CamelServiceTest {
-    
+
     private static final String TEST_MESSAGE = "\n"
       + "bob: Hello there!\n"
       + "sally: I like cheese\n"

@@ -1,15 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  ~ JBoss, Home of Professional Open Source.
+  ~ Copyright 2012, Red Hat, Inc., and individual contributors
+  ~ as indicated by the @author tags. See the copyright.txt file in the
+  ~ distribution for a full listing of individual contributors.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0"
-            xmlns:camel="urn:switchyard-component-camel:config:1.0">
-    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-amqp-binding" targetNamespace="urn:switchyard-quickstart:camel-amqp-binding:0.1.0">
+    xmlns:amqp="urn:switchyard-component-camel-amqp:config:1.0">
 
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-amqp-binding"
+        targetNamespace="urn:switchyard-quickstart:camel-amqp-binding:0.1.0">
         <service name="GreetingService" promote="GreetingService">
-            <camel:binding.amqp>
-                <camel:queue>ping</camel:queue>
-                <camel:connectionFactory>qpidConnectionFactory</camel:connectionFactory>
-                <camel:username>guest</camel:username>
-                <camel:password>guest</camel:password>
-            </camel:binding.amqp>
+            <amqp:binding.amqp>
+                <amqp:queue>ping</amqp:queue>
+                <amqp:connectionFactory>qpidConnectionFactory</amqp:connectionFactory>
+                <amqp:username>guest</amqp:username>
+                <amqp:password>guest</amqp:password>
+            </amqp:binding.amqp>
         </service>
-
     </composite>
+
 </switchyard>
