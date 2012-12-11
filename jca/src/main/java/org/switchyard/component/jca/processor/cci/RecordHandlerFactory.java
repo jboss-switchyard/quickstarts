@@ -20,6 +20,7 @@ package org.switchyard.component.jca.processor.cci;
 
 import javax.resource.cci.IndexedRecord;
 import javax.resource.cci.MappedRecord;
+import javax.resource.cci.Streamable;
 
 import org.switchyard.component.jca.composer.RecordBindingData;
 import org.switchyard.exception.SwitchYardException;
@@ -47,6 +48,8 @@ public final class RecordHandlerFactory {
             return new MappedRecordHandler();
         } else if (recordType.equals(IndexedRecord.class)) {
             return new IndexedRecordHandler();
+        } else if (recordType.equals(Streamable.class)) {
+            return new StreamableRecordHandler();
         } else {
             try {
                 Class<?> clazz = loader.loadClass(RecordHandlerFactory.class.getPackage().getName() + "." + recordType.getSimpleName() + "RecordHandler");

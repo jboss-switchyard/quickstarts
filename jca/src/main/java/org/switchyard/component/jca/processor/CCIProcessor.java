@@ -95,9 +95,13 @@ public class CCIProcessor extends AbstractOutboundProcessor {
 
             InitialContext ic = new InitialContext();
             _connectionFactory = (ConnectionFactory) ic.lookup(getConnectionFactoryJNDIName());
-            _recordFactory = _connectionFactory.getRecordFactory();
         } catch (Exception e) {
             throw new SwitchYardException("Failed to initialize " + this.getClass().getName(), e);
+        }
+        try {
+            _recordFactory = _connectionFactory.getRecordFactory();
+        } catch (ResourceException e) {
+            _logger.warn("Failed to get RecordFactory: " + e.getMessage());
         }
     }
 

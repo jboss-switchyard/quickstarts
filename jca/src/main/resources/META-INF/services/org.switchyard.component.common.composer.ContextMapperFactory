@@ -17,4 +17,5 @@
 #
 org.switchyard.component.jca.composer.MappedRecordContextMapperFactory
 org.switchyard.component.jca.composer.IndexedRecordContextMapperFactory
+org.switchyard.component.jca.composer.StreamableRecordContextMapperFactory
 org.switchyard.component.jca.composer.JMSContextMapperFactory

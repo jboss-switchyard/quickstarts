@@ -17,4 +17,5 @@
 #
 org.switchyard.component.jca.composer.MappedRecordMessageComposerFactory
 org.switchyard.component.jca.composer.IndexedRecordMessageComposerFactory
+org.switchyard.component.jca.composer.StreamableRecordMessageComposerFactory
 org.switchyard.component.jca.composer.JMSMessageComposerFactory
