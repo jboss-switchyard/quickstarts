@@ -60,6 +60,7 @@ public class OutboundHandler extends BaseServiceHandler {
     private Dispatch<SOAPMessage> _dispatcher;
     private Port _wsdlPort;
     private String _bindingId;
+    private Boolean _documentStyle;
 
     /**
      * Constructor.
@@ -85,6 +86,9 @@ public class OutboundHandler extends BaseServiceHandler {
                 portName.setName(_wsdlPort.getName());
 
                 _bindingId = WSDLUtil.getBindingId(_wsdlPort);
+                String style = WSDLUtil.getStyle(_wsdlPort);
+                _documentStyle = style.equals("document") ? true : false;
+
                 _messageComposer = SOAPComposition.getMessageComposer(_config, _wsdlPort);
 
                 URL wsdlUrl = WSDLUtil.getURL(_config.getWsdl());
@@ -137,7 +141,6 @@ public class OutboundHandler extends BaseServiceHandler {
             } catch (Exception e) {
                 throw e instanceof SOAPException ? (SOAPException)e : new SOAPException(e);
             }
-            
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("Request:[" + SOAPUtil.soapMessageToString(request) + "]");
             }

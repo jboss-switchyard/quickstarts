@@ -73,6 +73,7 @@ public class InboundHandler extends BaseServiceHandler {
     private WSEndpoint _endpoint;
     private Port _wsdlPort;
     private String _bindingId;
+    private Boolean _documentStyle = false;
 
     /**
      * Constructor.
@@ -98,8 +99,10 @@ public class InboundHandler extends BaseServiceHandler {
             portName.setServiceQName(wsdlService.getQName());
             portName.setName(_wsdlPort.getName());
             _bindingId = WSDLUtil.getBindingId(_wsdlPort);
+            String style = WSDLUtil.getStyle(_wsdlPort);
+            _documentStyle = style.equals(WSDLUtil.DOCUMENT) ? true : false;
             _endpoint = EndpointPublisherFactory.getEndpointPublisher().publish(_config, _bindingId, this);
-            
+
             // Create and configure the SOAP message composer
             _messageComposer = SOAPComposition.getMessageComposer(_config, _wsdlPort);
         } catch (WSDLException e) {
@@ -158,7 +161,11 @@ public class InboundHandler extends BaseServiceHandler {
         }
         try {
             firstBodyElement = SOAPUtil.getFirstBodyElement(soapMessage);
-            operation = WSDLUtil.getOperationByElement(_wsdlPort, firstBodyElement);
+            if (_documentStyle) {
+                operation = WSDLUtil.getOperationByElement(_wsdlPort, firstBodyElement);
+            } else {
+                operation = WSDLUtil.getOperationByName(_wsdlPort, firstBodyElement);
+            }
             if (operation != null) {
                 operationName = operation.getName();
                 oneWay = WSDLUtil.isOneWay(operation);
@@ -198,7 +205,6 @@ public class InboundHandler extends BaseServiceHandler {
             exchange.getContext().setProperty(MESSAGE_NAME, 
                     operation.getInput().getMessage().getQName().getLocalPart(),
                     Scope.IN);
-
 
             if (oneWay) {
                 exchange.send(message);
@@ -259,6 +265,9 @@ public class InboundHandler extends BaseServiceHandler {
         QName expectedPayloadType = part.getElementName();
         String expectedNS = expectedPayloadType.getNamespaceURI();
         String expectedLN = expectedPayloadType.getLocalPart();
+        if (!_documentStyle) {
+            expectedLN = operation.getName();
+        }
 
         if (expectedNS != null && !expectedNS.equals(actualNS)) {
             throw new SOAPException("Invalid input SOAP payload namespace for service operation '" + operation.getName() + "' (service '" + _service.getName()
