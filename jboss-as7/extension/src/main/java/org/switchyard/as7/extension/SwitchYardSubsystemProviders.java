@@ -31,7 +31,6 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.NAM
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.NAMESPACE;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.NILLABLE;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OPERATION_NAME;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.PROPERTIES;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.REMOVE;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.REPLY_PROPERTIES;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.REQUEST_PROPERTIES;
@@ -39,7 +38,6 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.REQ
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.TAIL_COMMENT_ALLOWED;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.TYPE;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.VALUE_TYPE;
-import static org.switchyard.as7.extension.SwitchYardModelConstants.ACTIVATION_TYPES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.APPLICATION;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.APPLICATION_NAME;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.ARTIFACTS;
@@ -53,13 +51,11 @@ import static org.switchyard.as7.extension.SwitchYardModelConstants.GET_VERSION;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.IMPLEMENTATION;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.IMPLEMENTATION_CONFIGURATION;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.LIST_APPLICATIONS;
-import static org.switchyard.as7.extension.SwitchYardModelConstants.LIST_COMPONENTS;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.LIST_SERVICES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.MAX_TIME;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.MIN_TIME;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.PROMOTED_SERVICE;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.READ_APPLICATION;
-import static org.switchyard.as7.extension.SwitchYardModelConstants.READ_COMPONENT;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.READ_SERVICE;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.REFERENCES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.SERVICES;
@@ -165,13 +161,6 @@ final class SwitchYardSubsystemProviders {
         }
     };
 
-    static final DescriptionProvider SUBSYSTEM_LIST_COMPONENTS = new DescriptionProvider() {
-
-        public ModelNode getModelDescription(final Locale locale) {
-            return Descriptions.getSubsystemListComponents(locale);
-        }
-    };
-
     static final DescriptionProvider SUBSYSTEM_LIST_SERVICES = new DescriptionProvider() {
 
         public ModelNode getModelDescription(final Locale locale) {
@@ -183,13 +172,6 @@ final class SwitchYardSubsystemProviders {
 
         public ModelNode getModelDescription(final Locale locale) {
             return Descriptions.getSubsystemReadApplication(locale);
-        }
-    };
-
-    static final DescriptionProvider SUBSYSTEM_READ_COMPONENT = new DescriptionProvider() {
-
-        public ModelNode getModelDescription(final Locale locale) {
-            return Descriptions.getSubsystemReadComponent(locale);
         }
     };
 
@@ -369,21 +351,6 @@ final class SwitchYardSubsystemProviders {
             return op;
         }
 
-        static ModelNode getSubsystemListComponents(Locale locale) {
-            final ResourceBundle bundle = getResourceBundle(locale);
-
-            final ModelNode op = new ModelNode();
-
-            op.get(OPERATION_NAME).set(LIST_COMPONENTS);
-            op.get(DESCRIPTION).set(bundle.getString("switchyard.list-components"));
-
-            op.get(REPLY_PROPERTIES, TYPE).set(ModelType.LIST);
-            op.get(REPLY_PROPERTIES, DESCRIPTION).set(bundle.getString("switchyard.list-components.reply"));
-            op.get(REPLY_PROPERTIES, VALUE_TYPE).set(ModelType.STRING);
-
-            return op;
-        }
-
         static ModelNode getSubsystemListServices(Locale locale) {
             final ResourceBundle bundle = getResourceBundle(locale);
 
@@ -452,36 +419,6 @@ final class SwitchYardSubsystemProviders {
             op.get(REPLY_PROPERTIES, VALUE_TYPE, VALIDATORS, DESCRIPTION).set(
                     bundle.getString("switchyard.read-application.reply.validators"));
             populateValidatorValueTypeNode(op.get(REPLY_PROPERTIES, VALUE_TYPE, VALIDATORS), locale);
-
-            return op;
-        }
-
-        static ModelNode getSubsystemReadComponent(Locale locale) {
-            final ResourceBundle bundle = getResourceBundle(locale);
-
-            final ModelNode op = new ModelNode();
-
-            op.get(OPERATION_NAME).set(READ_COMPONENT);
-            op.get(DESCRIPTION).set(bundle.getString("switchyard.read-component"));
-
-            op.get(REQUEST_PROPERTIES, NAME, TYPE).set(ModelType.STRING);
-            op.get(REQUEST_PROPERTIES, NAME, DESCRIPTION).set(bundle.getString("switchyard.read-component.param.name"));
-            op.get(REQUEST_PROPERTIES, NAME, NILLABLE).set(true);
-
-            op.get(REPLY_PROPERTIES, TYPE).set(ModelType.LIST);
-            op.get(REPLY_PROPERTIES, DESCRIPTION).set(bundle.getString("switchyard.read-component.reply"));
-            op.get(REPLY_PROPERTIES, VALUE_TYPE, NAME, TYPE).set(ModelType.STRING);
-            op.get(REPLY_PROPERTIES, VALUE_TYPE, NAME, DESCRIPTION).set(
-                    bundle.getString("switchyard.read-component.reply.name"));
-            op.get(REPLY_PROPERTIES, VALUE_TYPE, ACTIVATION_TYPES, TYPE).set(ModelType.LIST);
-            op.get(REPLY_PROPERTIES, VALUE_TYPE, ACTIVATION_TYPES, DESCRIPTION).set(
-                    bundle.getString("switchyard.read-component.reply.types"));
-            op.get(REPLY_PROPERTIES, VALUE_TYPE, ACTIVATION_TYPES, VALUE_TYPE, TYPE).set(ModelType.STRING);
-
-            op.get(REPLY_PROPERTIES, VALUE_TYPE, PROPERTIES, TYPE).set(ModelType.LIST);
-            op.get(REPLY_PROPERTIES, VALUE_TYPE, PROPERTIES, DESCRIPTION).set(
-                    bundle.getString("switchyard.read-component.reply.properties"));
-            op.get(REPLY_PROPERTIES, VALUE_TYPE, PROPERTIES, VALUE_TYPE, TYPE).set(ModelType.PROPERTY);
 
             return op;
         }

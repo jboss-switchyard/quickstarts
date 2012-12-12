@@ -29,6 +29,7 @@ import static org.switchyard.as7.extension.CommonAttributes.MODULE;
 import static org.switchyard.as7.extension.CommonAttributes.PROPERTIES;
 import static org.switchyard.as7.extension.CommonAttributes.SOCKET_BINDING;
 
+import java.util.EnumSet;
 import java.util.Locale;
 
 import org.jboss.as.controller.Extension;
@@ -48,10 +49,8 @@ import org.jboss.dmr.ModelType;
 import org.jboss.logging.Logger;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemGetVersion;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemListApplications;
-import org.switchyard.as7.extension.admin.SwitchYardSubsystemListComponents;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemListServices;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemReadApplication;
-import org.switchyard.as7.extension.admin.SwitchYardSubsystemReadComponent;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemReadService;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemShowMetrics;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemUsesArtifact;
@@ -96,15 +95,13 @@ public class SwitchYardExtension implements Extension {
         modules.registerReadWriteAttribute(PROPERTIES, null, new ReloadRequiredWriteAttributeHandler(new ModelTypeValidator(ModelType.STRING)), Storage.CONFIGURATION);
 
         // register administrative functions
-        registration.registerOperationHandler(SwitchYardModelConstants.GET_VERSION, SwitchYardSubsystemGetVersion.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_GET_VERSION, false);
-        registration.registerOperationHandler(SwitchYardModelConstants.LIST_APPLICATIONS, SwitchYardSubsystemListApplications.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_LIST_APPLICATIONS, false);
-        registration.registerOperationHandler(SwitchYardModelConstants.LIST_COMPONENTS, SwitchYardSubsystemListComponents.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_LIST_COMPONENTS, false);
-        registration.registerOperationHandler(SwitchYardModelConstants.LIST_SERVICES, SwitchYardSubsystemListServices.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_LIST_SERVICES, false);
-        registration.registerOperationHandler(SwitchYardModelConstants.READ_APPLICATION, SwitchYardSubsystemReadApplication.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_READ_APPLICATION, false);
-        registration.registerOperationHandler(SwitchYardModelConstants.READ_COMPONENT, SwitchYardSubsystemReadComponent.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_READ_COMPONENT, false);
-        registration.registerOperationHandler(SwitchYardModelConstants.READ_SERVICE, SwitchYardSubsystemReadService.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_READ_SERVICE, false);
-        registration.registerOperationHandler(SwitchYardModelConstants.USES_ARTIFACT, SwitchYardSubsystemUsesArtifact.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_USES_ARTIFACT, false);
-        registration.registerOperationHandler(SwitchYardModelConstants.SHOW_METRICS, SwitchYardSubsystemShowMetrics.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_SHOW_METRICS, false);
+        registration.registerOperationHandler(SwitchYardModelConstants.GET_VERSION, SwitchYardSubsystemGetVersion.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_GET_VERSION, false, EnumSet.of(OperationEntry.Flag.READ_ONLY));
+        registration.registerOperationHandler(SwitchYardModelConstants.LIST_APPLICATIONS, SwitchYardSubsystemListApplications.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_LIST_APPLICATIONS, false, EnumSet.of(OperationEntry.Flag.READ_ONLY, OperationEntry.Flag.RUNTIME_ONLY));
+        registration.registerOperationHandler(SwitchYardModelConstants.LIST_SERVICES, SwitchYardSubsystemListServices.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_LIST_SERVICES, false, EnumSet.of(OperationEntry.Flag.READ_ONLY, OperationEntry.Flag.RUNTIME_ONLY));
+        registration.registerOperationHandler(SwitchYardModelConstants.READ_APPLICATION, SwitchYardSubsystemReadApplication.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_READ_APPLICATION, false, EnumSet.of(OperationEntry.Flag.READ_ONLY, OperationEntry.Flag.RUNTIME_ONLY));
+        registration.registerOperationHandler(SwitchYardModelConstants.READ_SERVICE, SwitchYardSubsystemReadService.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_READ_SERVICE, false, EnumSet.of(OperationEntry.Flag.READ_ONLY, OperationEntry.Flag.RUNTIME_ONLY));
+        registration.registerOperationHandler(SwitchYardModelConstants.USES_ARTIFACT, SwitchYardSubsystemUsesArtifact.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_USES_ARTIFACT, false, EnumSet.of(OperationEntry.Flag.READ_ONLY, OperationEntry.Flag.RUNTIME_ONLY));
+        registration.registerOperationHandler(SwitchYardModelConstants.SHOW_METRICS, SwitchYardSubsystemShowMetrics.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_SHOW_METRICS, false, EnumSet.of(OperationEntry.Flag.READ_ONLY, OperationEntry.Flag.RUNTIME_ONLY));
 
         DescriptionProvider nullDescriptionProvider = new DescriptionProvider() {
             @Override

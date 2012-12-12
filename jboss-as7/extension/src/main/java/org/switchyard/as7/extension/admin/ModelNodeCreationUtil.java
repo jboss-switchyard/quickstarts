@@ -20,9 +20,7 @@ package org.switchyard.as7.extension.admin;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.INTERFACE;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.NAME;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.PROPERTIES;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.TYPE;
-import static org.switchyard.as7.extension.SwitchYardModelConstants.ACTIVATION_TYPES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.APPLICATION;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.ARTIFACTS;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.AVERAGE_TIME;
@@ -47,13 +45,9 @@ import static org.switchyard.as7.extension.SwitchYardModelConstants.TRANSFORMERS
 import static org.switchyard.as7.extension.SwitchYardModelConstants.URL;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.VALIDATORS;
 
-import java.util.Map;
-import java.util.Set;
-
 import org.jboss.dmr.ModelNode;
 import org.switchyard.admin.Application;
 import org.switchyard.admin.Binding;
-import org.switchyard.admin.Component;
 import org.switchyard.admin.ComponentReference;
 import org.switchyard.admin.ComponentService;
 import org.switchyard.admin.MessageMetrics;
@@ -304,42 +298,6 @@ final public class ModelNodeCreationUtil {
         serviceNode.get(APPLICATION).set(service.getApplication().getName().toString());
 
         return serviceNode;
-    }
-
-    /**
-     * Creates a new {@link ModelNode} tree from the {@link Component}. The tree
-     * has the form: <br>
-     * <code><pre>
-     *      "name" =&gt; "componentName"
-     *      "activationTypes" =&gt; ["soap"]
-     *      "configSchema" =&gt; "&lt;?xml ..."
-     * </pre></code>
-     * 
-     * @param component the {@link Component} used to populate the node.
-     * @return a new {@link ModelNode}
-     */
-    public static ModelNode createComponentNode(Component component) {
-        ModelNode componentNode = new ModelNode();
-        componentNode.get(NAME).set(component.getName());
-
-        Set<String> types = component.getTypes();
-        if (types == null || types.isEmpty()) {
-            componentNode.get(ACTIVATION_TYPES).addEmptyList();
-        } else {
-            for (String type : types) {
-                componentNode.get(ACTIVATION_TYPES).add(type);
-            }
-        }
-
-        Map<String, String> properties = component.getProperties();
-        if (properties == null || properties.isEmpty()) {
-            componentNode.get(PROPERTIES);
-        } else {
-            for (Map.Entry<String, String> property : properties.entrySet()) {
-                componentNode.get(PROPERTIES).get(property.getKey()).set(property.getValue());
-            }
-        }
-        return componentNode;
     }
 
     /**

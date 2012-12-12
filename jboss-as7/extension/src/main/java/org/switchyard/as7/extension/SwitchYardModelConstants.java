@@ -37,10 +37,6 @@ public final class SwitchYardModelConstants {
      */
     public static final String LIST_APPLICATIONS = "list-applications";
     /**
-     * Constant for /subsystem=switchyard/:list-components operation.
-     */
-    public static final String LIST_COMPONENTS = "list-components";
-    /**
      * Constant for /subsystem=switchyard/:list-services operation.
      */
     public static final String LIST_SERVICES = "list-services";
@@ -48,10 +44,6 @@ public final class SwitchYardModelConstants {
      * Constant for /subsystem=switchyard/:read-application operation.
      */
     public static final String READ_APPLICATION = "read-application";
-    /**
-     * Constant for /subsystem=switchyard/:read-component operation.
-     */
-    public static final String READ_COMPONENT = "read-component";
     /**
      * Constant for /subsystem=switchyard/:read-service operation.
      */
@@ -66,10 +58,6 @@ public final class SwitchYardModelConstants {
     public static final String SHOW_METRICS = "show-metrics";
     
     // nodes
-    /**
-     * Constant for model key: activationTypes.
-     */
-    public static final String ACTIVATION_TYPES = "activationTypes";
     /**
      * Constant for model key: application.
      */

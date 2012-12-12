@@ -22,9 +22,7 @@ import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.OperationStepHandler;
 import org.jboss.dmr.ModelNode;
-import org.jboss.msc.service.ServiceController;
-import org.switchyard.admin.SwitchYard;
-import org.switchyard.as7.extension.services.SwitchYardAdminService;
+import org.switchyard.common.version.Versions;
 
 /**
  * SwitchYardSubsystemGetVersion
@@ -58,11 +56,7 @@ public final class SwitchYardSubsystemGetVersion implements OperationStepHandler
             @Override
             public void execute(final OperationContext context, final ModelNode operation)
                     throws OperationFailedException {
-                final ServiceController<?> controller = context.getServiceRegistry(false).getRequiredService(
-                        SwitchYardAdminService.SERVICE_NAME);
-
-                SwitchYard switchYard = SwitchYard.class.cast(controller.getService().getValue());
-                context.getResult().get("version").set(switchYard.getVersion());
+                context.getResult().get("version").set(Versions.getSwitchYardVersion());
                 context.completeStep();
             }
         }, OperationContext.Stage.RUNTIME);
