@@ -26,6 +26,7 @@ import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.ui.application.ApplicationPresenter;
 import org.switchyard.console.client.ui.artifacts.ArtifactPresenter;
 import org.switchyard.console.client.ui.config.ConfigPresenter;
+import org.switchyard.console.client.ui.metrics.MetricsPresenter;
 import org.switchyard.console.client.ui.runtime.RuntimePresenter;
 import org.switchyard.console.client.ui.service.ServicePresenter;
 
@@ -40,11 +41,9 @@ import com.google.gwt.inject.client.Ginjector;
  * 
  * @author Rob Cernich
  */
-@SubsystemExtension(subsystem = "switchyard", groups = @SubsystemGroupDefinition(name = "SwitchYard", items = {
-        @SubsystemItemDefinition(presenter = NameTokens.APPLICATIONS_PRESENTER, name = NameTokens.APPLICATIONS_TEXT),
-        @SubsystemItemDefinition(presenter = NameTokens.SERVICES_PRESENTER, name = NameTokens.SERVICES_TEXT),
-        @SubsystemItemDefinition(presenter = NameTokens.ARTIFACTS_PRESENTER, name = NameTokens.ARTIFACT_REFERENCES_TEXT),
-        @SubsystemItemDefinition(presenter = NameTokens.SYSTEM_CONFIG_PRESENTER, name = NameTokens.SYSTEM_CONFIG_TEXT) }), runtime = @SubsystemItemDefinition(presenter = NameTokens.RUNTIME_PRESENTER, name = NameTokens.RUNTIME_TEXT))
+@SubsystemExtension(subsystem = "switchyard", groups = @SubsystemGroupDefinition(name = "SwitchYard", items =
+
+@SubsystemItemDefinition(presenter = NameTokens.SYSTEM_CONFIG_PRESENTER, name = NameTokens.SYSTEM_CONFIG_TEXT)), runtime = @SubsystemItemDefinition(presenter = NameTokens.RUNTIME_OPERATIONS_PRESENTER, name = NameTokens.RUNTIME_TEXT), metrics = @SubsystemItemDefinition(presenter = NameTokens.METRICS_PRESENTER, name = NameTokens.RUNTIME_TEXT))
 @GinModules(SwitchYardClientModule.class)
 public interface SwitchYardGinjector extends Ginjector {
 
@@ -67,6 +66,11 @@ public interface SwitchYardGinjector extends Ginjector {
      * @return the ServicePresenter configured for the module.
      */
     AsyncProvider<ServicePresenter> getServicePresenter();
+
+    /**
+     * @return the MetricsPresenter configured for the module.
+     */
+    AsyncProvider<MetricsPresenter> getSwitchYardMetricsPresenter();
 
     /**
      * @return the RuntimePresenter configured for the module.

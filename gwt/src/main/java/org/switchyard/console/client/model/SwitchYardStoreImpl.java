@@ -18,9 +18,13 @@
  */
 package org.switchyard.console.client.model;
 
+import static org.jboss.dmr.client.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.dmr.client.ModelDescriptionConstants.NAME;
 import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
 import static org.jboss.dmr.client.ModelDescriptionConstants.OP_ADDR;
+import static org.jboss.dmr.client.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.dmr.client.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.dmr.client.ModelDescriptionConstants.RECURSIVE;
 import static org.jboss.dmr.client.ModelDescriptionConstants.RESULT;
 import static org.jboss.dmr.client.ModelDescriptionConstants.SUBSYSTEM;
 
@@ -35,6 +39,8 @@ import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.dmr.client.ModelNode;
 import org.switchyard.console.client.BeanFactory;
 import org.switchyard.console.components.client.model.Component;
@@ -56,10 +62,9 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
     private static final String APPLICATION_NAME = "application-name";
     private static final String GET_VERSION = "get-version";
     private static final String LIST_APPLICATIONS = "list-applications";
-    private static final String LIST_COMPONENTS = "list-components";
     private static final String LIST_SERVICES = "list-services";
+    private static final String MODULE = "module";
     private static final String READ_APPLICATION = "read-application";
-    private static final String READ_COMPONENT = "read-component";
     private static final String READ_SERVICE = "read-service";
     private static final String SERVICE_NAME = "service-name";
     private static final String SHOW_METRICS = "show-metrics";
@@ -70,8 +75,6 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
     private final BeanFactory _factory;
 
     private final ApplicationProperties _bootstrap;
-
-    private final boolean _isStandalone;
 
     /**
      * Create a new SwitchYardStoreImpl.
@@ -85,7 +88,6 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         this._dispatcher = dispatcher;
         this._factory = factory;
         this._bootstrap = bootstrap;
-        this._isStandalone = bootstrap.getProperty(ApplicationProperties.STANDALONE).equals("true");
     }
 
     @Override
@@ -97,7 +99,9 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
     public void loadSystemDetails(final AsyncCallback<SystemDetails> callback) {
         // /subsystem=switchyard:get-version()
         final ModelNode operation = new ModelNode();
-        operation.get(OP_ADDR, SUBSYSTEM).set(SWITCHYARD);
+        final ModelNode address = Baseadress.get();
+        address.add(SUBSYSTEM, SWITCHYARD);
+        operation.get(OP_ADDR).set(address);
         operation.get(OP).set(GET_VERSION);
 
         _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
@@ -126,7 +130,9 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         final List<Application> applications = new ArrayList<Application>();
 
         final ModelNode operation = new ModelNode();
-        operation.get(OP_ADDR, SUBSYSTEM).set(SWITCHYARD);
+        final ModelNode address = RuntimeBaseAddress.get();
+        address.add(SUBSYSTEM, SWITCHYARD);
+        operation.get(OP_ADDR).set(address);
         operation.get(OP).set(LIST_APPLICATIONS);
 
         _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
@@ -162,8 +168,10 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         // /subsystem=switchyard:read-application(name=applicationName)
 
         final ModelNode operation = new ModelNode();
+        final ModelNode address = RuntimeBaseAddress.get();
         operation.get(OP).set(READ_APPLICATION);
-        operation.get(OP_ADDR, SUBSYSTEM).set(SWITCHYARD);
+        address.add(SUBSYSTEM, SWITCHYARD);
+        operation.get(OP_ADDR).set(address);
         operation.get(NAME).set(applicationName);
 
         _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
@@ -190,12 +198,15 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
 
     @Override
     public void loadComponents(final AsyncCallback<List<Component>> callback) {
-        // /subsystem=switchyard:list-components
+        // /subsystem=switchyard:read-children-names(child-type=module)
         final List<Component> components = new ArrayList<Component>();
 
         final ModelNode operation = new ModelNode();
-        operation.get(OP).set(LIST_COMPONENTS);
-        operation.get(OP_ADDR).add(SUBSYSTEM, "switchyard");
+        final ModelNode address = Baseadress.get();
+        operation.get(OP).set(READ_CHILDREN_NAMES_OPERATION);
+        operation.get(CHILD_TYPE).set(MODULE);
+        address.add(SUBSYSTEM, SWITCHYARD);
+        operation.get(OP_ADDR).set(address);
 
         _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
@@ -227,11 +238,15 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
 
     @Override
     public void loadComponent(final String componentName, final AsyncCallback<Component> callback) {
-        // /subsystem=switchyard:read-component(name=componentName)
+        // /subsystem=switchyard/module=componentName:read-resource(recursive=true)
 
         final ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_COMPONENT);
-        operation.get(OP_ADDR, SUBSYSTEM).set(SWITCHYARD);
+        final ModelNode address = Baseadress.get();
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(RECURSIVE).set(true);
+        address.add(SUBSYSTEM, SWITCHYARD);
+        address.add(MODULE, componentName);
+        operation.get(OP_ADDR).set(address);
         operation.get(NAME).set(componentName);
 
         _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
@@ -245,8 +260,10 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
             public void onSuccess(DMRResponse result) {
                 final ModelNode response = result.get();
                 if (response.hasDefined(RESULT)) {
-                    final Component component = createComponent(response.get(RESULT).asList().get(0));
+                    final Component component = createComponent(response.get(RESULT));
                     if (component != null) {
+                        // HACK
+                        component.setName(componentName);
                         callback.onSuccess(component);
                         return;
                     }
@@ -262,7 +279,9 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         final List<Service> services = new ArrayList<Service>();
 
         final ModelNode operation = new ModelNode();
-        operation.get(OP_ADDR, SUBSYSTEM).set(SWITCHYARD);
+        final ModelNode address = RuntimeBaseAddress.get();
+        address.add(SUBSYSTEM, SWITCHYARD);
+        operation.get(OP_ADDR).set(address);
         operation.get(OP).set(LIST_SERVICES);
 
         _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
@@ -297,8 +316,10 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         // application-name=applicationName)
 
         final ModelNode operation = new ModelNode();
+        final ModelNode address = RuntimeBaseAddress.get();
         operation.get(OP).set(READ_SERVICE);
-        operation.get(OP_ADDR, SUBSYSTEM).set(SWITCHYARD);
+        address.add(SUBSYSTEM, SWITCHYARD);
+        operation.get(OP_ADDR).set(address);
         operation.get(SERVICE_NAME).set(serviceName);
         operation.get(APPLICATION_NAME).set(applicationName);
 
@@ -330,8 +351,10 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         // /subsystem=switchyard:show-metrics(service-name=serviceName)
 
         final ModelNode operation = new ModelNode();
+        final ModelNode address = RuntimeBaseAddress.get();
         operation.get(OP).set(SHOW_METRICS);
-        operation.get(OP_ADDR, SUBSYSTEM).set(SWITCHYARD);
+        address.add(SUBSYSTEM, SWITCHYARD);
+        operation.get(OP_ADDR).set(address);
         operation.get(SERVICE_NAME).set(serviceName);
 
         _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
@@ -361,8 +384,10 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         // /subsystem=switchyard:show-metrics(service-name=*)
 
         final ModelNode operation = new ModelNode();
+        final ModelNode address = RuntimeBaseAddress.get();
         operation.get(OP).set(SHOW_METRICS);
-        operation.get(OP_ADDR, SUBSYSTEM).set(SWITCHYARD);
+        address.add(SUBSYSTEM, SWITCHYARD);
+        operation.get(OP_ADDR).set(address);
         operation.get(SERVICE_NAME).set("*");
 
         _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
@@ -392,8 +417,10 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         // /subsystem=switchyard:show-metrics()
 
         final ModelNode operation = new ModelNode();
+        final ModelNode address = RuntimeBaseAddress.get();
         operation.get(OP).set(SHOW_METRICS);
-        operation.get(OP_ADDR, SUBSYSTEM).set(SWITCHYARD);
+        address.add(SUBSYSTEM, SWITCHYARD);
+        operation.get(OP_ADDR).set(address);
 
         _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
@@ -422,8 +449,10 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         // /subsystem=switchyard:read-application()
 
         final ModelNode operation = new ModelNode();
+        final ModelNode address = Baseadress.get();
         operation.get(OP).set(READ_APPLICATION);
-        operation.get(OP_ADDR, SUBSYSTEM).set(SWITCHYARD);
+        address.add(SUBSYSTEM, SWITCHYARD);
+        operation.get(OP_ADDR).set(address);
 
         _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 

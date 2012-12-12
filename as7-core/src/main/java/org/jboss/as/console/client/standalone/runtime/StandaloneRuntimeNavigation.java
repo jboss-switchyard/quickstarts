@@ -81,7 +81,7 @@ public class StandaloneRuntimeNavigation {
         metricPredicates.add(new Predicate("transactions", tx));
         metricPredicates.add(new Predicate("jpa", jpa));
 
-        metricPredicates.addAll(SubsystemMetaData.getRuntimeExtensions());
+        metricPredicates.addAll(SubsystemMetaData.getRuntimeMetricsExtensions());
 
         DisclosurePanel metricPanel  = new DisclosureStackPanel("Subsystem Metrics").asWidget();
         metricPanel.setContent(metricTree);
@@ -94,6 +94,8 @@ public class StandaloneRuntimeNavigation {
         LHSNavTreeItem osgi = new LHSNavTreeItem("OSGi", NameTokens.OSGiRuntimePresenter);
 
         runtimePredicates.add(new Predicate("osgi", osgi));
+
+        runtimePredicates.addAll(SubsystemMetaData.getRuntimeOperationsExtensions());
 
         DisclosurePanel runtimeOpPanel  = new DisclosureStackPanel("Runtime Operations").asWidget();
         runtimeOpPanel.setContent(runtimeOpTree);

@@ -113,7 +113,8 @@ public class SubsystemExtensionProcessorGenerator extends Generator {
 
         // fields
         sw.println("private final Map<String, SubsystemGroup> extensionGroups = new LinkedHashMap<String, SubsystemGroup>();");
-        sw.println("private final List<Predicate> _runtimeExtensions = new ArrayList<Predicate>();");
+        sw.println("private final List<Predicate> _runtimeMetricsExtensions = new ArrayList<Predicate>();");
+        sw.println("private final List<Predicate> _runtimeOperationsExtensions = new ArrayList<Predicate>();");
 
         // constructor
         sw.println("public " + className + "() {");
@@ -134,8 +135,12 @@ public class SubsystemExtensionProcessorGenerator extends Generator {
                             extension.subsystem(), itemDef.presenter());
                 }
             }
+            for (SubsystemItemDefinition runtimeItemDef : extension.metrics()) {
+                sw.println("_runtimeMetricsExtensions.add(new Predicate(\"%s\", new LHSNavTreeItem(\"%s\", \"%s\")));",
+                        extension.subsystem(), runtimeItemDef.name(), runtimeItemDef.presenter());
+            }
             for (SubsystemItemDefinition runtimeItemDef : extension.runtime()) {
-                sw.println("_runtimeExtensions.add(new Predicate(\"%s\", new LHSNavTreeItem(\"%s\", \"%s\")));",
+                sw.println("_runtimeOperationsExtensions.add(new Predicate(\"%s\", new LHSNavTreeItem(\"%s\", \"%s\")));",
                         extension.subsystem(), runtimeItemDef.name(), runtimeItemDef.presenter());
             }
         }
@@ -164,9 +169,14 @@ public class SubsystemExtensionProcessorGenerator extends Generator {
         sw.outdent();
         sw.println("}");
 
-        // getRuntimeExtensions
-        sw.println("public List<Predicate> getRuntimeExtensions() {");
-        sw.indentln("return _runtimeExtensions;");
+        // getRuntimeMetricsExtensions
+        sw.println("public List<Predicate> getRuntimeMetricsExtensions() {");
+        sw.indentln("return _runtimeMetricsExtensions;");
+        sw.println("}");
+
+        // getRuntimeOperationsExtensions
+        sw.println("public List<Predicate> getRuntimeOperationsExtensions() {");
+        sw.indentln("return _runtimeOperationsExtensions;");
         sw.println("}");
 
         // close it out

@@ -29,7 +29,7 @@ import org.switchyard.console.components.client.ui.ComponentConfigurationPresent
  * 
  * @author Rob Cernich
  */
-@ComponentExtension(displayName = "SOAP", componentName = "SOAPComponent", activationTypes = "soap")
+@ComponentExtension(displayName = "SOAP", componentName = "org.switchyard.component.soap", activationTypes = "soap")
 public class SOAPComponentProvider extends BaseComponentProvider {
 
     @Override

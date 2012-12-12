@@ -30,7 +30,7 @@ import org.switchyard.console.components.client.ui.ComponentConfigurationPresent
  * 
  * @author Rob Cernich
  */
-@ComponentExtension(displayName = "Camel", componentName = "CamelComponent", activationTypes = { "camel", "direct",
+@ComponentExtension(displayName = "Camel", componentName = "org.switchyard.component.camel", activationTypes = { "camel", "direct",
         "file" })
 public class CamelComponentProvider extends BaseComponentProvider {
 

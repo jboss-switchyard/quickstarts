@@ -51,7 +51,6 @@ import com.gwtplatform.mvp.client.ViewImpl;
 public class BaseComponentConfigurationView extends ViewImpl implements ComponentConfigurationView {
 
     private Label _componentNameLabel;
-    private Label _componentTypeLabel;
     private Widget _widget;
     private ComponentConfigurationPresenter _presenter;
     private Component _component;
@@ -66,10 +65,6 @@ public class BaseComponentConfigurationView extends ViewImpl implements Componen
             _componentNameLabel = createComponentNameLabel();
             if (_componentNameLabel != null) {
                 layout.add(_componentNameLabel);
-            }
-            _componentTypeLabel = createComponentTypeLabel();
-            if (_componentTypeLabel != null) {
-                layout.add(_componentTypeLabel);
             }
 
             Widget details = createComponentDetailsWidget();
@@ -162,7 +157,6 @@ public class BaseComponentConfigurationView extends ViewImpl implements Componen
      */
     protected void updateControls() {
         updateComponentName();
-        updateComponentActivationTypes();
         updateComponentDetails();
     }
 
@@ -174,16 +168,6 @@ public class BaseComponentConfigurationView extends ViewImpl implements Componen
             return;
         }
         _componentNameLabel.setText(getComponentNameLabelText());
-    }
-
-    /**
-     * Update the activation types controls.
-     */
-    protected void updateComponentActivationTypes() {
-        if (_componentTypeLabel == null) {
-            return;
-        }
-        _componentTypeLabel.setText(getComponentActivationTypesLabelText());
     }
 
     /**
@@ -216,19 +200,6 @@ public class BaseComponentConfigurationView extends ViewImpl implements Componen
 
     private String getComponentNameLabelText() {
         return "Name: " + getComponentName();
-    }
-
-    /**
-     * @return the text to be displayed in the activation types control.
-     */
-    protected String getComponentActivationTypesLabelText() {
-        String types;
-        if (getComponent() == null || getComponent().getActivationTypes() == null) {
-            types = "[]";
-        } else {
-            types = getComponent().getActivationTypes().toString();
-        }
-        return "Activation Types: " + types;
     }
 
 }

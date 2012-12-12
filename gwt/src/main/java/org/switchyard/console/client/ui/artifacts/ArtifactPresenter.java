@@ -28,6 +28,7 @@ import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.model.Application;
 import org.switchyard.console.client.model.ArtifactReference;
 import org.switchyard.console.client.model.SwitchYardStore;
+import org.switchyard.console.client.ui.runtime.RuntimePresenter;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
@@ -38,10 +39,11 @@ import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.Place;
+import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.Proxy;
+import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 /**
  * ArtifactPresenter
@@ -59,7 +61,8 @@ public class ArtifactPresenter extends Presenter<ArtifactPresenter.MyView, Artif
      */
     @ProxyCodeSplit
     @NameToken(NameTokens.ARTIFACTS_PRESENTER)
-    public interface MyProxy extends Proxy<ArtifactPresenter>, Place {
+    @TabInfo(container = RuntimePresenter.class, label = "Artifacts", priority = 3)
+    public interface MyProxy extends TabContentProxyPlace<ArtifactPresenter> {
     }
 
     /**
@@ -146,8 +149,7 @@ public class ArtifactPresenter extends Presenter<ArtifactPresenter.MyView, Artif
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
-                fireEvent(new LHSHighlightEvent("unused", NameTokens.ARTIFACT_REFERENCES_TEXT,
-                        NameTokens.SUBSYSTEM_TREE_CATEGORY));
+                fireEvent(new LHSHighlightEvent(NameTokens.RUNTIME_OPERATIONS_PRESENTER));
             }
         });
     }
@@ -160,7 +162,7 @@ public class ArtifactPresenter extends Presenter<ArtifactPresenter.MyView, Artif
 
     @Override
     protected void revealInParent() {
-        _revealStrategy.revealInParent(this);
+        RevealContentEvent.fire(this, RuntimePresenter.TYPE_SET_TAB_CONTENT, this);
     }
 
     private void loadArtifactReferences() {

@@ -16,10 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.console.client.ui.runtime;
+package org.switchyard.console.client.ui.metrics;
 
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-import org.switchyard.console.client.model.MessageMetrics;
+import org.switchyard.console.client.model.OperationMetrics;
 import org.switchyard.console.client.model.ServiceMetrics;
 import org.switchyard.console.client.ui.common.AbstractDataTable;
 import org.switchyard.console.client.ui.common.PercentageBarCell;
@@ -32,100 +32,92 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 
 /**
- * ServiceReferenceMetricsList
+ * ServiceOperationMetricsList
  * 
  * Wraps a table control for displaying metrics for services referenced by a
  * service.
  * 
  * @author Rob Cernich
  */
-public class ServiceMetricsList extends AbstractDataTable<ServiceMetrics> {
+public class ServiceOperationMetricsList extends AbstractDataTable<OperationMetrics> {
 
-    private static final ProvidesKey<ServiceMetrics> KEY_PROVIDER = new ProvidesKey<ServiceMetrics>() {
+    private static final ProvidesKey<OperationMetrics> KEY_PROVIDER = new ProvidesKey<OperationMetrics>() {
         @Override
-        public Object getKey(ServiceMetrics item) {
+        public Object getKey(OperationMetrics item) {
             return item.getName();
         }
     };
 
-    private MessageMetrics _systemMetrics;
+    private ServiceMetrics _serviceMetrics;
 
     /**
      * Create a new ServiceReferenceMetricsList.
      */
-    public ServiceMetricsList() {
-        super("Service Metrics");
+    public ServiceOperationMetricsList() {
+        super("Service Operation Metrics");
     }
 
     @Override
-    protected void createColumns(DefaultCellTable<ServiceMetrics> table, ListDataProvider<ServiceMetrics> dataProvider) {
-        final TextColumn<ServiceMetrics> nameColumn = new TextColumn<ServiceMetrics>() {
+    protected void createColumns(DefaultCellTable<OperationMetrics> table,
+            ListDataProvider<OperationMetrics> dataProvider) {
+        final TextColumn<OperationMetrics> nameColumn = new TextColumn<OperationMetrics>() {
             @Override
-            public String getValue(ServiceMetrics metrics) {
-                return metrics.localName();
+            public String getValue(OperationMetrics metrics) {
+                return metrics.getName();
             }
         };
         nameColumn.setSortable(true);
 
-        final TextColumn<ServiceMetrics> namespaceColumn = new TextColumn<ServiceMetrics>() {
+        final Column<OperationMetrics, Number> countColumn = new Column<OperationMetrics, Number>(new NumberCell()) {
             @Override
-            public String getValue(ServiceMetrics service) {
-                return service.namespace();
-            }
-        };
-        namespaceColumn.setSortable(true);
-
-        final Column<ServiceMetrics, Number> countColumn = new Column<ServiceMetrics, Number>(new NumberCell()) {
-            @Override
-            public Number getValue(ServiceMetrics metrics) {
+            public Number getValue(OperationMetrics metrics) {
                 return metrics.getTotalCount();
             }
         };
         countColumn.setSortable(true);
 
-        final Column<ServiceMetrics, Number> averageTimeColumn = new Column<ServiceMetrics, Number>(new NumberCell()) {
+        final Column<OperationMetrics, Number> averageTimeColumn = new Column<OperationMetrics, Number>(
+                new NumberCell()) {
             @Override
-            public Number getValue(ServiceMetrics metrics) {
+            public Number getValue(OperationMetrics metrics) {
                 return metrics.getAverageProcessingTime();
             }
         };
         averageTimeColumn.setSortable(true);
 
-        final Column<ServiceMetrics, Double> totalTimePercentageColumn = new Column<ServiceMetrics, Double>(
+        final Column<OperationMetrics, Double> totalTimePercentageColumn = new Column<OperationMetrics, Double>(
                 new PercentageBarCell()) {
             @Override
-            public Double getValue(ServiceMetrics metrics) {
-                if (_systemMetrics == null || _systemMetrics.getTotalProcessingTime() == 0) {
+            public Double getValue(OperationMetrics metrics) {
+                if (_serviceMetrics == null || _serviceMetrics.getTotalProcessingTime() == 0) {
                     return 0.0;
                 }
-                return metrics.getTotalProcessingTime() / (double) _systemMetrics.getTotalProcessingTime();
+                return metrics.getTotalProcessingTime() / (double) _serviceMetrics.getTotalProcessingTime();
             }
         };
         totalTimePercentageColumn.setSortable(true);
 
-        final Column<ServiceMetrics, Double> faultPercentageColumn = new Column<ServiceMetrics, Double>(
+        final Column<OperationMetrics, Double> faultPercentageColumn = new Column<OperationMetrics, Double>(
                 new PercentageBarCell()) {
             @Override
-            public Double getValue(ServiceMetrics metrics) {
-                if (_systemMetrics == null || _systemMetrics.getFaultCount() == 0) {
+            public Double getValue(OperationMetrics metrics) {
+                if (metrics.getTotalCount() == 0) {
                     return 0.0;
                 }
-                return metrics.getFaultCount() / (double) _systemMetrics.getFaultCount();
+                return metrics.getFaultCount() / (double) metrics.getTotalCount();
             }
         };
         faultPercentageColumn.setSortable(true);
 
-        ColumnSortEvent.ListHandler<ServiceMetrics> sortHandler = new ColumnSortEvent.ListHandler<ServiceMetrics>(
+        ColumnSortEvent.ListHandler<OperationMetrics> sortHandler = new ColumnSortEvent.ListHandler<OperationMetrics>(
                 dataProvider.getList());
         sortHandler.setComparator(nameColumn, createColumnCommparator(nameColumn));
-        sortHandler.setComparator(namespaceColumn, createColumnCommparator(namespaceColumn));
         sortHandler.setComparator(countColumn, createNumberColumnCommparator(countColumn));
         sortHandler.setComparator(averageTimeColumn, createNumberColumnCommparator(averageTimeColumn));
         sortHandler.setComparator(totalTimePercentageColumn, createNumberColumnCommparator(totalTimePercentageColumn));
         sortHandler.setComparator(faultPercentageColumn, createNumberColumnCommparator(faultPercentageColumn));
 
         table.addColumn(nameColumn, "Name");
-        table.addColumn(namespaceColumn, "Target Namespace");
         table.addColumn(countColumn, "Message Count");
         table.addColumn(averageTimeColumn, "Average Time");
         table.addColumn(totalTimePercentageColumn, "Time %");
@@ -134,23 +126,26 @@ public class ServiceMetricsList extends AbstractDataTable<ServiceMetrics> {
         table.addColumnSortHandler(sortHandler);
         table.getColumnSortList().push(averageTimeColumn);
         table.getColumnSortList().push(countColumn);
+        table.getColumnSortList().push(totalTimePercentageColumn);
         table.getColumnSortList().push(faultPercentageColumn);
-        table.getColumnSortList().push(namespaceColumn);
         table.getColumnSortList().push(nameColumn);
-        // insert twice for descending
-        table.getColumnSortList().push(totalTimePercentageColumn);
-        table.getColumnSortList().push(totalTimePercentageColumn);
     }
 
     /**
-     * @param systemMetrics the system metrics.
+     * @param serviceMetrics the parent service's metrics, containing a list of
+     *            reference metrics.
      */
-    public void setSystemMetrics(MessageMetrics systemMetrics) {
-        _systemMetrics = systemMetrics;
+    public void setServiceMetrics(ServiceMetrics serviceMetrics) {
+        _serviceMetrics = serviceMetrics;
+        if (serviceMetrics == null) {
+            setData(null);
+        } else {
+            setData(serviceMetrics.getOperations());
+        }
     }
 
     @Override
-    protected ProvidesKey<ServiceMetrics> createKeyProvider() {
+    protected ProvidesKey<OperationMetrics> createKeyProvider() {
         return KEY_PROVIDER;
     }
 

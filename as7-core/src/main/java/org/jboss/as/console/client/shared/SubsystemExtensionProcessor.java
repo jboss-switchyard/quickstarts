@@ -40,10 +40,18 @@ public interface SubsystemExtensionProcessor {
     public void processProfileExtensions(Map<String, SubsystemGroup> groups);
 
     /**
-     * Retrieves runtime predicates registered by subsystem extensions.
+     * Retrieves runtime metrics predicates registered by subsystem extensions.
      * 
      * @return predicates registered by subsystem extensions.
      */
-    public List<Predicate> getRuntimeExtensions();
+    public List<Predicate> getRuntimeMetricsExtensions();
+
+    /**
+     * Retrieves runtime operations predicates registered by subsystem
+     * extensions.
+     * 
+     * @return predicates registered by subsystem extensions.
+     */
+    public List<Predicate> getRuntimeOperationsExtensions();
 
 }

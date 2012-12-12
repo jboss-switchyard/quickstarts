@@ -22,11 +22,11 @@ package org.switchyard.console.client.ui.service;
 import java.util.List;
 
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.model.SwitchYardStore;
+import org.switchyard.console.client.ui.runtime.RuntimePresenter;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
@@ -37,10 +37,11 @@ import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.Place;
+import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.Proxy;
+import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 /**
  * ServicePresenter
@@ -58,7 +59,8 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
      */
     @ProxyCodeSplit
     @NameToken(NameTokens.SERVICES_PRESENTER)
-    public interface MyProxy extends Proxy<ServicePresenter>, Place {
+    @TabInfo(container = RuntimePresenter.class, label = "Services", priority = 2)
+    public interface MyProxy extends TabContentProxyPlace<ServicePresenter> {
     }
 
     /**
@@ -84,7 +86,6 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
     }
 
     private final PlaceManager _placeManager;
-    private final RevealStrategy _revealStrategy;
     private final SwitchYardStore _switchYardStore;
     private String _applicationName;
     private String _serviceName;
@@ -96,16 +97,14 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
      * @param view the injected MyView.
      * @param proxy the injected MyProxy.
      * @param placeManager the injected PlaceManager.
-     * @param revealStrategy the RevealStrategy
      * @param switchYardStore the injected SwitchYardStore.
      */
     @Inject
     public ServicePresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager placeManager,
-            RevealStrategy revealStrategy, SwitchYardStore switchYardStore) {
+            SwitchYardStore switchYardStore) {
         super(eventBus, view, proxy);
 
         _placeManager = placeManager;
-        _revealStrategy = revealStrategy;
         _switchYardStore = switchYardStore;
     }
 
@@ -154,7 +153,7 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
-                fireEvent(new LHSHighlightEvent("unused", NameTokens.SERVICES_TEXT, NameTokens.SUBSYSTEM_TREE_CATEGORY));
+                fireEvent(new LHSHighlightEvent(NameTokens.RUNTIME_OPERATIONS_PRESENTER));
             }
         });
     }
@@ -169,7 +168,7 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
 
     @Override
     protected void revealInParent() {
-        _revealStrategy.revealInParent(this);
+        RevealContentEvent.fire(this, RuntimePresenter.TYPE_SET_TAB_CONTENT, this);
     }
 
     private void loadServicesList() {
@@ -186,6 +185,7 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
         });
     }
 
+    @SuppressWarnings("deprecation")
     private void loadService() {
         if (_serviceName == null || _applicationName == null) {
             getView().setService(_switchYardStore.getBeanFactory().service().as());

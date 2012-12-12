@@ -42,7 +42,8 @@ import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 public class SubsystemExtensionProcessorImpl implements SubsystemExtensionProcessor {
 
     private final Map<String, SubsystemGroup> _extensionGroups = new LinkedHashMap<String, SubsystemGroup>();
-    private final List<Predicate> _runtimeExtensions = new ArrayList<Predicate>();
+    private final List<Predicate> _runtimeMetricsExtensions = new ArrayList<Predicate>();
+    private final List<Predicate> _runtimeOperationsExtensions = new ArrayList<Predicate>();
 
     /**
      * Create a new SubsystemExtensionProcessorImpl.
@@ -64,9 +65,13 @@ public class SubsystemExtensionProcessorImpl implements SubsystemExtensionProces
             }
         }
 
+        for (SubsystemItemDefinition runtimeItemDef : extension.metrics()) {
+            _runtimeMetricsExtensions.add(new Predicate(extension.subsystem(), new LHSNavTreeItem(
+                    runtimeItemDef.name(), runtimeItemDef.presenter())));
+        }
         for (SubsystemItemDefinition runtimeItemDef : extension.runtime()) {
-            _runtimeExtensions.add(new Predicate(extension.subsystem(), new LHSNavTreeItem(runtimeItemDef.name(),
-                    runtimeItemDef.presenter())));
+            _runtimeOperationsExtensions.add(new Predicate(extension.subsystem(), new LHSNavTreeItem(runtimeItemDef
+                    .name(), runtimeItemDef.presenter())));
         }
     }
 
@@ -84,8 +89,13 @@ public class SubsystemExtensionProcessorImpl implements SubsystemExtensionProces
     }
 
     @Override
-    public List<Predicate> getRuntimeExtensions() {
-        return _runtimeExtensions;
+    public List<Predicate> getRuntimeMetricsExtensions() {
+        return _runtimeMetricsExtensions;
+    }
+
+    @Override
+    public List<Predicate> getRuntimeOperationsExtensions() {
+        return _runtimeOperationsExtensions;
     }
 
 }

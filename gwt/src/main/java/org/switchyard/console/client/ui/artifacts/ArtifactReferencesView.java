@@ -68,6 +68,7 @@ public class ArtifactReferencesView extends DisposableViewImpl implements MyView
         });
 
         SimpleLayout layout = new SimpleLayout()
+                .setPlain(true)
                 .setTitle("SwitchYard Artifact References")
                 .setHeadline("Artifact References")
                 .setDescription(

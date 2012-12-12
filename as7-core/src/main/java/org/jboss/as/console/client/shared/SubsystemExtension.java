@@ -72,9 +72,14 @@ public @interface SubsystemExtension {
     SubsystemGroupDefinition[] groups();
 
     /**
-     * A runtime item provided by the subsystem.
+     * A runtime operations group item provided by the subsystem.
      */
-    SubsystemItemDefinition[] runtime();
+    SubsystemItemDefinition[] runtime() default {};
+
+    /**
+     * A runtime metrics group item provided by the subsystem.
+     */
+    SubsystemItemDefinition[] metrics() default {};
 
     /**
      * The subsystem name for the item. Must match the name used to identify the

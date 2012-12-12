@@ -37,7 +37,8 @@ import com.google.gwt.core.client.GWT;
 public class SubsystemMetaData {
 
     static Map<String, SubsystemGroup> groups = new LinkedHashMap<String, SubsystemGroup>();
-    static List<Predicate> runtimeExtensions;
+    static List<Predicate> runtimeMetricsExtensions;
+    static List<Predicate> runtimeOperationsExtensions;
 
     private static final String CONNECTOR = "Connector";
 
@@ -121,7 +122,8 @@ public class SubsystemMetaData {
 
         SubsystemExtensionProcessor extensionProcessor = GWT.create(SubsystemExtensionProcessor.class);
         extensionProcessor.processProfileExtensions(groups);
-        runtimeExtensions = extensionProcessor.getRuntimeExtensions();
+        runtimeMetricsExtensions = extensionProcessor.getRuntimeMetricsExtensions();
+        runtimeOperationsExtensions = extensionProcessor.getRuntimeOperationsExtensions();
     }
 
     public static Map<String, SubsystemGroup> getGroups() {
@@ -131,8 +133,15 @@ public class SubsystemMetaData {
     /**
      * @return the runtime extensions
      */
-    public static List<Predicate> getRuntimeExtensions() {
-        return runtimeExtensions;
+    public static List<Predicate> getRuntimeMetricsExtensions() {
+        return runtimeMetricsExtensions;
+    }
+
+    /**
+     * @return the runtime extensions
+     */
+    public static List<Predicate> getRuntimeOperationsExtensions() {
+        return runtimeOperationsExtensions;
     }
 
     public static SubsystemGroup getGroupForKey(String subsysKey)

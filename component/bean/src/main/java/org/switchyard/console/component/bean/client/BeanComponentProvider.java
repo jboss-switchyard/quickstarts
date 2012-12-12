@@ -30,7 +30,7 @@ import org.switchyard.console.components.client.ui.ComponentConfigurationPresent
  * 
  * @author Rob Cernich
  */
-@ComponentExtension(displayName = "Bean", componentName = "BeanComponent", activationTypes = "bean")
+@ComponentExtension(displayName = "Bean", componentName = "org.switchyard.component.bean", activationTypes = "bean")
 public class BeanComponentProvider extends BaseComponentProvider {
 
     @Override

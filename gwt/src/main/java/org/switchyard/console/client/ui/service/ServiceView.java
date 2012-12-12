@@ -58,6 +58,7 @@ public class ServiceView extends DisposableViewImpl implements ServicePresenter.
         _serviceEditor = new ServiceEditor(_presenter);
 
         SimpleLayout layout = new SimpleLayout()
+                .setPlain(true)
                 .setTitle("SwitchYard Services")
                 .setHeadline("Services")
                 .setDescription(

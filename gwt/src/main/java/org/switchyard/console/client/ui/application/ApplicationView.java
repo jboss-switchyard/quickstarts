@@ -105,6 +105,7 @@ public class ApplicationView extends DisposableViewImpl implements ApplicationPr
         formWidget.getParent().setStyleName("fill-layout-width");
 
         SimpleLayout layout = new SimpleLayout()
+                .setPlain(true)
                 .setTitle("SwitchYard Applications")
                 .setHeadline("Applications")
                 .setDescription(

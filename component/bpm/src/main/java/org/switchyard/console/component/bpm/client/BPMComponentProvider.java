@@ -30,7 +30,7 @@ import org.switchyard.console.components.client.ui.ComponentConfigurationPresent
  * 
  * @author Rob Cernich
  */
-@ComponentExtension(displayName = "BPM", componentName = "BPMComponent", activationTypes = "bpm")
+@ComponentExtension(displayName = "BPM", componentName = "org.switchyard.component.bpm", activationTypes = "bpm")
 public class BPMComponentProvider extends BaseComponentProvider {
 
     @Override

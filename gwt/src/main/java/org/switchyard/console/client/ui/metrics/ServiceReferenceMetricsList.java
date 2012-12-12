@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.console.client.ui.runtime;
+package org.switchyard.console.client.ui.metrics;
 
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.switchyard.console.client.model.ServiceMetrics;
