@@ -38,7 +38,7 @@ import javax.ws.rs.QueryParam;
 public interface WarehouseResource {
 
     @GET
-    @Path("{itemId}")
+    @Path("/item/{itemId}")
     @Produces({"application/xml","application/json"})
     public Item getItem(@PathParam("itemId") Integer itemId);
 

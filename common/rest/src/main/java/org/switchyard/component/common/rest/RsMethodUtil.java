@@ -233,11 +233,15 @@ public final class RsMethodUtil {
     public static String getPath(RsMethod restMethod, Exchange exchange) {
         String path = restMethod.getPath();
         if (restMethod.hasPathParam()) {
-            path = restMethod.getPath() + "/" + exchange.getMessage().getContent();
+            if (path.endsWith("/")) {
+                path = path + exchange.getMessage().getContent();
+            } else {
+                path = path + "/" + exchange.getMessage().getContent();
+            }
         } else if (restMethod.hasQueryParam()) {
-            path = restMethod.getPath() + "?" + restMethod.getParamName() + "=" + exchange.getMessage().getContent();
+            path = path + "?" + restMethod.getParamName() + "=" + exchange.getMessage().getContent();
         } else if (restMethod.hasMatrixParam()) {
-            path = restMethod.getPath() + ";" + restMethod.getParamName() + "=" + exchange.getMessage().getContent();
+            path = path + ";" + restMethod.getParamName() + "=" + exchange.getMessage().getContent();
         }
         return path;
     }

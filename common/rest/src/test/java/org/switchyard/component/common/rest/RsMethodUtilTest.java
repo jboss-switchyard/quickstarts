@@ -64,7 +64,7 @@ public class RsMethodUtilTest {
         Assert.assertTrue(method.getProduces().contains(MediaType.APPLICATION_XML_TYPE));
         Assert.assertTrue(method.getProduces().contains(MediaType.APPLICATION_JSON_TYPE));
         Assert.assertTrue(method.getConsumes().contains(MediaType.TEXT_PLAIN_TYPE));
-        Assert.assertEquals("/warehouse/param", RsMethodUtil.getPath(method, new MockExchange()));
+        Assert.assertEquals("/warehouse/item/param", RsMethodUtil.getPath(method, new MockExchange()));
 
         Assert.assertTrue(parsedResources.containsKey(GET_ITEM_COUNT));
         method = parsedResources.get(GET_ITEM_COUNT);
