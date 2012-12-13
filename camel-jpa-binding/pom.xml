@@ -1,4 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JBoss, Home of Professional Open Source.
+  ~ Copyright 2012, Red Hat, Inc., and individual contributors
+  ~ as indicated by the @author tags. See the copyright.txt file in the
+  ~ distribution for a full listing of individual contributors.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
@@ -16,21 +37,25 @@
   <dependencies>
     <dependency>
       <groupId>org.switchyard.components</groupId>
-      <artifactId>switchyard-component-camel</artifactId>
+      <artifactId>switchyard-component-bean</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.switchyard.components</groupId>
+      <artifactId>switchyard-component-camel-jpa</artifactId>
+    </dependency>
+    <dependency>
+       <groupId>org.hibernate</groupId>
+       <artifactId>hibernate-core</artifactId>
+    </dependency>
+    <dependency>
+       <groupId>org.hibernate</groupId>
+       <artifactId>hibernate-entitymanager</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.switchyard</groupId>
       <artifactId>switchyard-test</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.jbpm</groupId>
-          <artifactId>jbpm-persistence-jpa</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jbpm</groupId>
-          <artifactId>jbpm-human-task</artifactId>
-        </exclusion>
-      </exclusions>
+      <scope>test</scope>
     </dependency>
     <dependency>
        <groupId>org.hamcrest</groupId>
@@ -40,14 +65,7 @@
     <dependency>
        <groupId>com.h2database</groupId>
        <artifactId>h2</artifactId>
-    </dependency>
-    <dependency>
-       <groupId>org.hibernate</groupId>
-       <artifactId>hibernate-core</artifactId>
-    </dependency>
-    <dependency>
-       <groupId>org.hibernate</groupId>
-       <artifactId>hibernate-entitymanager</artifactId>
+       <scope>test</scope>
     </dependency>
     <dependency>
        <groupId>org.mockito</groupId>

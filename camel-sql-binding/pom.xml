@@ -48,6 +48,10 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-camel-sql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-bean</artifactId>
         </dependency>
         <dependency>

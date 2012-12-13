@@ -1,14 +1,3 @@
-package org.switchyard.quickstarts.camel.binding;
-
-import java.io.File;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.switchyard.test.SwitchYardRunner;
-import org.switchyard.test.SwitchYardTestCaseConfig;
-import org.switchyard.component.test.mixins.cdi.CDIMixIn;
-
 /* 
  * JBoss, Home of Professional Open Source 
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
@@ -27,11 +16,23 @@ import org.switchyard.component.test.mixins.cdi.CDIMixIn;
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
+package org.switchyard.quickstarts.camel.binding;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.switchyard.component.test.mixins.cdi.CDIMixIn;
+import org.switchyard.test.SwitchYardRunner;
+import org.switchyard.test.SwitchYardTestCaseConfig;
 
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(config = SwitchYardTestCaseConfig.SWITCHYARD_XML, mixins = CDIMixIn.class)
 public class CamelBindingTest {
-    
+
     private static String SOURCE_FILE = "target/test-classes/test.txt";
     private static String DEST_FILE = "target/input/test.txt";
 
@@ -44,12 +45,12 @@ public class CamelBindingTest {
             destFile.getParentFile().mkdirs();
         }
         srcFile.renameTo(destFile);
-        
-        Assert.assertTrue(destFile.exists());
+
+        assertTrue(destFile.exists());
         // Wait a spell so that the file component polls and picks up the file
         Thread.sleep(500);
-        
+
         // File should have been picked up and output displayed via the console
-        Assert.assertFalse(destFile.exists());
+        assertFalse(destFile.exists());
     }
 }

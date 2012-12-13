@@ -44,7 +44,7 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-camel</artifactId>
+            <artifactId>switchyard-component-camel-ftp</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
@@ -95,6 +95,7 @@
                             <goal>configure</goal>
                         </goals>
                         <configuration>
+                            <validate>false</validate>
                             <scannerClassNames>
                                 <param>org.switchyard.component.bean.config.model.BeanSwitchYardScanner</param>
                                 <param>org.switchyard.transform.config.model.TransformSwitchYardScanner</param>
