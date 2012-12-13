@@ -286,19 +286,10 @@
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:weld:1.0" />
         <subsystem xmlns="urn:jboss:domain:switchyard:1.0">
-            <socket-binding names="switchyard-ws"/>
             <modules>
                 <module identifier="org.switchyard.component.bean" implClass="org.switchyard.component.bean.deploy.BeanComponent"/>
-                <module identifier="org.switchyard.component.soap" implClass="org.switchyard.component.soap.deploy.SOAPComponent">
-                    <properties>
-                        <socketAddr>$switchyard-ws</socketAddr>
-                    </properties>
-                </module>
-                <module identifier="org.switchyard.component.camel" implClass="org.switchyard.component.camel.deploy.CamelComponent">
-                    <properties>
-                        <socketAddr>$switchyard-ws</socketAddr>
-                    </properties>
-                </module>
+                <module identifier="org.switchyard.component.soap" implClass="org.switchyard.component.soap.deploy.SOAPComponent"/>
+                <module identifier="org.switchyard.component.camel" implClass="org.switchyard.component.camel.deploy.CamelComponent"/>
                 <module identifier="org.switchyard.component.rules" implClass="org.switchyard.component.rules.deploy.RulesComponent"/>
                 <module identifier="org.switchyard.component.bpm" implClass="org.switchyard.component.bpm.deploy.BPMComponent"/>
                 <module identifier="org.switchyard.component.bpel" implClass="org.switchyard.component.bpel.deploy.BPELComponent"/>
@@ -327,7 +318,6 @@
         <socket-binding name="remoting" port="4447"/>
         <socket-binding name="txn-recovery-environment" port="4712"/>
         <socket-binding name="txn-status-manager" port="4713"/>
-        <socket-binding name="switchyard-ws" port="18001"/>
         <outbound-socket-binding name="mail-smtp">
             <remote-destination host="localhost" port="25"/>
         </outbound-socket-binding>
