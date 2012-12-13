@@ -45,5 +45,13 @@
         <module name="org.switchyard.component.common.rest"/>
         <module name="org.switchyard.deploy"/>
         <module name="org.switchyard.jaxb-impl"/>
+        <!-- Remove these when RESTEaay exports them -->
+        <module name="org.codehaus.jackson.jackson-core-asl" export="true"/>
+        <module name="org.codehaus.jackson.jackson-jaxrs" export="true"/>
+        <module name="org.codehaus.jackson.jackson-mapper-asl" export="true"/>
+        <module name="org.codehaus.jackson.jackson-xc" export="true"/>
+        <module name="org.codehaus.jettison" export="true"/>
+        <module name="org.yaml.snakeyaml" export="true"/>
+        <!-- End remove -->
     </dependencies>
 </module>
