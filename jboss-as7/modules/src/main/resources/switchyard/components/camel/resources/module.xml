@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
   ~ JBoss, Home of Professional Open Source.
   ~ Copyright 2010, Red Hat, Inc., and individual contributors
@@ -21,7 +20,6 @@
   ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
-
 <module xmlns="urn:jboss:module:1.0" name="org.switchyard.component.camel">
 
     <resources>
@@ -30,101 +28,32 @@
 
     <dependencies>
         <module name="javax.api"/>
-        <module name="javax.enterprise.api"/>
-        <module name="javax.ws.rs.api"/>
-        <module name="org.apache.log4j"/>
-        <module name="org.apache.camel.core" services="export" export="true"/>
-        <module name="org.apache.camel.cdi" services="export" export="true" />
-        <module name="org.apache.camel.spring" services="export" export="true">
-            <imports>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </imports>
-            <exports>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </exports>
-        </module>
-        <module name="org.apache.camel.jms" export="true" optional="true">
-            <imports>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </imports>
-            <exports>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </exports>
-        </module>
-        <module name="org.apache.camel.jpa" services="export" export="true">
-            <imports>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </imports>
-            <exports>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </exports>
-        </module>
-        <module name="org.apache.camel.cxf" export="true" optional="true">
-            <imports>
-                <include path="META-INF/cxf"/>
-                <include path="META-INF/services/org/apache/camel"/>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </imports>
-            <exports>
-                <include path="META-INF/cxf"/>
-                <include path="META-INF/services/org/apache/camel"/>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </exports>
-        </module>
-        <module name="org.apache.camel.ftp" services="export" export="true">
-            <imports>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </imports>
-            <exports>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </exports>
-        </module>
-        <module name="org.apache.camel.netty" services="export" export="true">
-            <imports>
-                <include path="META-INF/services/org/apache/camel"/>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </imports>
-            <exports>
-                <include path="META-INF/services/org/apache/camel"/>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </exports>
-        </module>
-        <module name="org.apache.camel.mail" services="export" export="true">
-            <imports>
-                <include path="META-INF/services/org/apache/camel"/>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </imports>
-            <exports>
-                <include path="META-INF/services/org/apache/camel"/>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </exports>
-        </module>
-        <module name="org.apache.camel.quartz" services="export" export="true">
-            <imports>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </imports>
-            <exports>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </exports>
-        </module>
-        <module name="org.apache.camel.sql" services="export" export="true">
-            <imports>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </imports>
-            <exports>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </exports>
-        </module>
-        <module name="org.jboss.as.naming" export="true"/>
         <module name="org.switchyard.api"/>
         <module name="org.switchyard.common"/>
         <module name="org.switchyard.common-camel"/>
         <module name="org.switchyard.config"/>
         <module name="org.switchyard.deploy"/>
         <module name="org.switchyard.jaxb-impl"/>
-        <module name="org.switchyard.component.bean" />
-        <module name="org.switchyard.component.common" />
-        <module name="org.switchyard.component.common.rest"/>
-        <module name="org.springframework" />
+        <module name="org.switchyard.api"/>
+        <module name="org.switchyard.common-camel"/>
+        <module name="org.switchyard.config"/>
+        <module name="org.apache.camel.core" export="true" />
+        <module name="org.switchyard.component.camel.switchyard" export="true">
+            <imports>
+                <include path="META-INF/services/org/apache/camel/component"/>
+            </imports>
+            <exports>
+                <include path="META-INF/services/org/apache/camel/component"/>
+            </exports>
+        </module>
+        <module name="org.switchyard.component.common.camel">
+            <imports>
+                <include path="META-INF/services" />
+            </imports>
+            <exports>
+                <include path="META-INF/services" />
+            </exports>
+        </module>
     </dependencies>
+
 </module>

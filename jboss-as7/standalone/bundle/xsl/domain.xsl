@@ -67,6 +67,17 @@
                         <socketAddr>:18001</socketAddr>
                     </properties>
                 </module>
+                <module identifier="org.switchyard.component.camel.amqp" implClass="org.switchyard.component.camel.amqp.deploy.CamelAmqpComponent"/>
+                <module identifier="org.switchyard.component.camel.atom" implClass="org.switchyard.component.camel.atom.deploy.CamelAtomComponent"/>
+                <module identifier="org.switchyard.component.camel.core" implClass="org.switchyard.component.camel.core.deploy.CamelCoreComponent"/>
+                <module identifier="org.switchyard.component.camel.file" implClass="org.switchyard.component.camel.file.deploy.CamelFileComponent"/>
+                <module identifier="org.switchyard.component.camel.ftp" implClass="org.switchyard.component.camel.ftp.deploy.CamelFtpComponent"/>
+                <module identifier="org.switchyard.component.camel.jms" implClass="org.switchyard.component.camel.jms.deploy.CamelJmsComponent"/>
+                <module identifier="org.switchyard.component.camel.jpa" implClass="org.switchyard.component.camel.jpa.deploy.CamelJpaComponent"/>
+                <module identifier="org.switchyard.component.camel.mail" implClass="org.switchyard.component.camel.mail.deploy.CamelMailComponent"/>
+                <module identifier="org.switchyard.component.camel.netty" implClass="org.switchyard.component.camel.netty.deploy.CamelNettyComponent"/>
+                <module identifier="org.switchyard.component.camel.quartz" implClass="org.switchyard.component.camel.quartz.deploy.CamelQuartzComponent"/>
+                <module identifier="org.switchyard.component.camel.sql" implClass="org.switchyard.component.camel.sql.deploy.CamelSqlComponent"/>
                 <module identifier="org.switchyard.component.rules" implClass="org.switchyard.component.rules.deploy.RulesComponent"/>
                 <module identifier="org.switchyard.component.bpm" implClass="org.switchyard.component.bpm.deploy.BPMComponent"/>
                 <module identifier="org.switchyard.component.bpel" implClass="org.switchyard.component.bpel.deploy.BPELComponent"/>

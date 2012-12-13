@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
   ~ JBoss, Home of Professional Open Source.
   ~ Copyright 2010, Red Hat, Inc., and individual contributors
@@ -21,7 +20,6 @@
   ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
-
 <module xmlns="urn:jboss:module:1.0" name="org.apache.camel.sql">
 
     <resources>

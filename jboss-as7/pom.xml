@@ -36,8 +36,6 @@
         <module>modules</module>
         <module>tests</module>
         <module>extension</module>
-        <module>standalone</module>
-        <module>openshift</module>
     </modules>
     <dependencies>
         <dependency>
@@ -280,4 +278,28 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>standalone</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+
+            <modules>
+                <module>standalone</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>openshift</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+
+            <modules>
+                <module>openshift</module>
+            </modules>
+        </profile>
+    </profiles>
+
 </project>

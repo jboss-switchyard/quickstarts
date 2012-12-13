@@ -69,6 +69,7 @@ public class SwitchYardDependencyProcessor implements DeploymentUnitProcessor {
         }
 
         final ModuleLoader moduleLoader = Module.getBootModuleLoader();
+
         moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_ID, false, false, true, false));
         moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_API_ID, false, false, false, false));
         moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, SWITCHYARD_COMMON_ID, false, false, false, false));

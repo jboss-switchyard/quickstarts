@@ -215,6 +215,54 @@
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-camel</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-camel-amqp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-camel-atom</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-camel-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-camel-file</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-camel-ftp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-camel-jms</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-camel-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-camel-mail</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-camel-netty</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-camel-quartz</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-camel-sql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-camel-switchyard</artifactId>
+        </dependency>
         <!--
         <dependency>
             <groupId>org.switchyard.components</groupId>
@@ -225,6 +273,10 @@
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-common-camel</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
