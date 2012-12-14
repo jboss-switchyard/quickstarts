@@ -72,6 +72,8 @@ public class V1JCABindingModelInboundTest {
         Assert.assertEquals("org.switchyard.component.jca.endpoint.JMSEndpoint", jbm.getInboundInteraction().getEndpoint().getEndpointClassName());
         Assert.assertEquals("value2", jbm.getInboundInteraction().getEndpoint().getProperty("prop2"));
         Assert.assertEquals(true, jbm.getInboundInteraction().isTransacted());
+        Assert.assertEquals(5, jbm.getInboundInteraction().getBatchCommit().getBatchSize());
+        Assert.assertEquals(5000, jbm.getInboundInteraction().getBatchCommit().getBatchTimeout());
     }
     
 }

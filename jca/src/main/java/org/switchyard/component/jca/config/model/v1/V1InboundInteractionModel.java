@@ -23,6 +23,7 @@ package org.switchyard.component.jca.config.model.v1;
 import javax.xml.namespace.QName;
 
 import org.switchyard.component.jca.JCAConstants;
+import org.switchyard.component.jca.config.model.BatchCommitModel;
 import org.switchyard.component.jca.config.model.EndpointModel;
 import org.switchyard.component.jca.config.model.InboundInteractionModel;
 import org.switchyard.component.jca.config.model.ListenerModel;
@@ -43,7 +44,7 @@ public class V1InboundInteractionModel extends BaseModel implements InboundInter
      */
     public V1InboundInteractionModel() {
         super(new QName(JCAConstants.DEFAULT_NAMESPACE, JCAConstants.INBOUND_INTERACTION));
-        setModelChildrenOrder(JCAConstants.LISTENER, JCAConstants.ENDPOINT, JCAConstants.TRANSACTED);
+        setModelChildrenOrder(JCAConstants.LISTENER, JCAConstants.ENDPOINT, JCAConstants.TRANSACTED, JCAConstants.BATCH_COMMIT);
     }
     
     /**
@@ -94,6 +95,17 @@ public class V1InboundInteractionModel extends BaseModel implements InboundInter
             model.setValue(Boolean.toString(transacted));
             setChildModel(model);
         }
+        return this;
+    }
+
+    @Override
+    public BatchCommitModel getBatchCommit() {
+        return (BatchCommitModel) getFirstChildModel(JCAConstants.BATCH_COMMIT);
+    }
+
+    @Override
+    public InboundInteractionModel setBatchCommit(BatchCommitModel batchCommit) {
+        setChildModel(batchCommit);
         return this;
     }
 

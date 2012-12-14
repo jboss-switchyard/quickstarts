@@ -20,6 +20,11 @@ package org.switchyard.component.jca;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationHandler;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.transaction.Status;
 import javax.transaction.Transaction;
@@ -30,6 +35,7 @@ import javax.resource.spi.endpoint.MessageEndpoint;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
 
 import org.apache.log4j.Logger;
+import org.switchyard.component.jca.deploy.JCAInflowDeploymentMetaData;
 import org.switchyard.component.jca.endpoint.AbstractInflowEndpoint;
 
 /**
@@ -59,25 +65,30 @@ public class EndpointProxy implements InvocationHandler, MessageEndpoint {
     private boolean _beforeDeliveryInvoked;
     private ClassLoader _origClassLoader;
     
+    private boolean _useBatchCommit;
+    private int _batchSize;
+    private long _batchTimeout;
+    private static ThreadLocal<BatchTransactionHelper> _batchHelper = new ThreadLocal<BatchTransactionHelper>();
+        
+    private ReentrantLock _deliveryThreadLock = new ReentrantLock();
+    private ScheduledExecutorService _scheduler = Executors.newScheduledThreadPool(1);
+
     /**
      * Constructor.
      * 
+     * @param metadata {@link JCAInflowDeploymentMetaData}
      * @param factory {@link MessageEndpointFactory}
-     * @param endpoint concrete subclass of {@link AbstractInflowEndpoint}
-     * @param tm {@link TransactionManager}
      * @param xaResource {@link XAResource}
-     * @param appLoader {@link ClassLoader} for this application
      */
-    public EndpointProxy(MessageEndpointFactory factory,
-                                AbstractInflowEndpoint endpoint,
-                                TransactionManager tm,
-                                XAResource xaResource,
-                                ClassLoader appLoader) {
+    public EndpointProxy(JCAInflowDeploymentMetaData metadata,MessageEndpointFactory factory, XAResource xaResource) {
         _messageEndpointFactory = factory;
-        _delegate = endpoint;
-        _transactionManager = tm;
+        _delegate = metadata.getMessageEndpoint();
+        _transactionManager = metadata.getTransactionManager();
         _xaResource = xaResource;
-        _appClassLoader = appLoader;
+        _appClassLoader = metadata.getApplicationClassLoader();
+        _useBatchCommit = metadata.useBatchCommit();
+        _batchSize = metadata.getBatchSize();
+        _batchTimeout = metadata.getBatchTimeout();
     }
     
     @Override
@@ -204,20 +215,40 @@ public class EndpointProxy implements InvocationHandler, MessageEndpoint {
     }
     
     private void acquireThreadLock() {
-        Thread currentThread = Thread.currentThread();
-        if (_inUseThread != null && !_inUseThread.equals(currentThread)) {
-           throw new IllegalStateException("This message endpoint + " + _delegate + " is already in use by another thread " + _inUseThread);
+        if (_deliveryThreadLock.isHeldByCurrentThread()) {
+            return;
         }
-        _inUseThread = currentThread;
+        
+        if (_inUseThread != null && !_inUseThread.equals(Thread.currentThread())) {
+            throw new IllegalStateException("This message endpoint + " + _delegate + " is already in use by another thread " + _inUseThread);
+        }
+        _deliveryThreadLock.lock();
+        _inUseThread = Thread.currentThread();
     }
 
     private void releaseThreadLock() {
         _inUseThread = null;
+        _deliveryThreadLock.unlock();
     }
     
     private void startTransaction(Method method) throws Exception {
         boolean endpointRequiresTx = _messageEndpointFactory.isDeliveryTransacted(method);
         boolean hasSourceManagedTx;
+        
+        if (_logger.isDebugEnabled()) {
+            _logger.debug(Thread.currentThread().getName() + " is invoking startTransaction: currentTx=" + _transactionManager.getTransaction()
+                + ", _startedTx=" + _startedTx);
+        }
+        
+        if (_useBatchCommit) {
+            BatchTransactionHelper helper = _batchHelper.get();
+            if (helper != null && helper.isTransactionActive()) {
+                // under batch processing ... just continue with existing transaction
+                _startedTx = helper.getAssociatedTransaction();
+                return;
+            }
+        }
+        
         int txStatus = _transactionManager.getStatus();
         switch (txStatus) {
         case Status.STATUS_ACTIVE:
@@ -226,17 +257,31 @@ public class EndpointProxy implements InvocationHandler, MessageEndpoint {
         case Status.STATUS_NO_TRANSACTION:
             hasSourceManagedTx = false;
             break;
+        case Status.STATUS_COMMITTED:
+            hasSourceManagedTx = false;
+            // possibly the one which has been commited by reaper thread. try to disassociate...
+            _transactionManager.suspend();
+            break;
         default:
             throw new IllegalStateException(method
                     + ": New transaction couldn't be started due to the status of existing transaction. Status code="
                     + txStatus + ". See javax.transaction.Status");
         }
         
+        if (hasSourceManagedTx && _useBatchCommit) {
+            throw new IllegalStateException("Batch commit mode cannot be used with source managed transaction. Please turn off the batch commit.");
+        }
+
         // JCA1.6 SPEC 13.5.9
         if (endpointRequiresTx && !hasSourceManagedTx) {
             _transactionManager.begin();
             _startedTx = _transactionManager.getTransaction();
             _startedTx.enlistResource(_xaResource);
+            if (_useBatchCommit) {
+                BatchTransactionHelper helper = new BatchTransactionHelper(_startedTx);
+                helper.scheduleReaperThread(_scheduler, _batchTimeout, TimeUnit.MILLISECONDS);
+                _batchHelper.set(helper);
+            }
         } else if (!endpointRequiresTx && hasSourceManagedTx) {
             _suspendedTx = _transactionManager.suspend();
         }
@@ -245,6 +290,11 @@ public class EndpointProxy implements InvocationHandler, MessageEndpoint {
     private void endTransaction(boolean commit) throws Exception {
         Transaction currentTx = null;
         try {
+            if (_logger.isDebugEnabled()) {
+                _logger.debug(Thread.currentThread().getName() + " is invoking endTransaction: currentTx=" + _transactionManager.getTransaction()
+                    + ", _startedTx=" + _startedTx);
+            }
+            
             // If we started the transaction, commit it
             if (_startedTx != null) {
                 // Suspend any bad transaction - there is bug somewhere, but we will try to tidy things up
@@ -257,13 +307,28 @@ public class EndpointProxy implements InvocationHandler, MessageEndpoint {
                     currentTx = null;
                 }
 
+                BatchTransactionHelper helper = _batchHelper.get();
                 // Commit or rollback depending on the status
                 if (!commit || _startedTx.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
                     _transactionManager.rollback();
+                    if (_useBatchCommit) {
+                        helper.cancelScheduledReaperThread();
+                    }
                 } else {
-                    _transactionManager.commit();
+                    if (_useBatchCommit) {
+                        if (helper.getCounter() + 1 < _batchSize) {
+                            // keep the transaction active for next message
+                            helper.setCounter(helper.getCounter()+1);
+                        } else {
+                            _transactionManager.commit();
+                            helper.cancelScheduledReaperThread();
+                        }
+                        _startedTx = null;
+                        return;
+                    } else {
+                        _transactionManager.commit();
+                    }
                 }
-                
                 _startedTx = null;
             }
 
@@ -287,4 +352,60 @@ public class EndpointProxy implements InvocationHandler, MessageEndpoint {
         }
     }
         
+    private class BatchTransactionHelper extends Thread {
+        private Transaction _transaction;
+        private int _counter = 0;
+        private ScheduledFuture<?> _future;
+        
+        public BatchTransactionHelper(Transaction tx) {
+            _transaction = tx;
+        }
+        
+        public void setCounter(int counter) {
+            _counter = counter;
+        }
+        
+        public int getCounter() {
+            return _counter;
+        }
+        
+        public boolean isTransactionActive() {
+            try {
+                return _transaction.getStatus() == Status.STATUS_ACTIVE;
+            } catch (Exception e) {
+                _logger.warn("Failed to retrieve transaction status", e);
+                return false;
+            }
+        }
+        
+        public Transaction getAssociatedTransaction() {
+            return _transaction;
+        }
+        
+        public void scheduleReaperThread(ScheduledExecutorService service, long delay, TimeUnit unit) {
+            _future = service.schedule(this, delay, unit);
+        }
+        
+        public void cancelScheduledReaperThread() {
+            if (_future != null) {
+                _future.cancel(true);
+            }
+        }
+        
+         public void run() {
+             _deliveryThreadLock.lock();
+             try {
+                 if (_transaction.getStatus() == Status.STATUS_ACTIVE) {
+                     _transactionManager.resume(_transaction);
+                     _transactionManager.commit();
+                     _logger.info("Transaction has been committed by reaper thread [" + _counter + "]");
+                     _counter = 0;
+                 }
+             } catch (Exception e) {
+                     _logger.error("Failed to commit expiring transaction", e);
+             } finally {
+                 _deliveryThreadLock.unlock();
+             }
+         }
+    }
 }

@@ -31,6 +31,7 @@ import javax.resource.spi.ResourceAdapter;
 import javax.transaction.TransactionManager;
 
 import org.switchyard.component.jca.JCAConstants;
+import org.switchyard.component.jca.config.model.BatchCommitModel;
 import org.switchyard.component.jca.config.model.JCABindingModel;
 import org.switchyard.component.jca.endpoint.AbstractInflowEndpoint;
 import org.switchyard.component.jca.processor.AbstractOutboundProcessor;
@@ -184,6 +185,14 @@ public class JCAActivator extends BaseActivator {
                                                         .setResourceAdapter(resourceAdapter)
                                                         .setTransactionManager(_transactionManager)
                                                         .setDeliveryTransacted(transacted);
+
+        BatchCommitModel batchCommit = jcaconfig.getInboundInteraction().getBatchCommit();
+        if (transacted && batchCommit != null) {
+            inflowMetaData.setUseBatchCommit(true);
+            inflowMetaData.setBatchTimeout(batchCommit.getBatchTimeout());
+            inflowMetaData.setBatchSize(batchCommit.getBatchSize());
+        }
+
         return new InboundHandler(inflowMetaData);
         
     }

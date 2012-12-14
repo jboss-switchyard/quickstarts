@@ -100,6 +100,9 @@ public class V1JCAModelMarshaller extends BaseMarshaller {
         if (name.equals(JCAConstants.PROCESSOR)) {
             return new V1ProcessorModel(config, getDescriptor());
         }
+        if (name.equals(JCAConstants.BATCH_COMMIT)) {
+            return new V1BatchCommitModel(config, getDescriptor());
+        }
         return null;
     }
 

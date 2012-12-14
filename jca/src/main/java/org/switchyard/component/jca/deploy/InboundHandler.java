@@ -24,16 +24,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 import javax.resource.ResourceException;
-import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.UnavailableException;
 import javax.resource.spi.endpoint.MessageEndpoint;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
-import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAResource;
 
 import org.switchyard.component.jca.EndpointProxy;
-import org.switchyard.component.jca.endpoint.AbstractInflowEndpoint;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.exception.SwitchYardException;
 
@@ -45,13 +41,7 @@ import org.switchyard.exception.SwitchYardException;
  */
 public class InboundHandler extends BaseServiceHandler implements MessageEndpointFactory {
     
-    private final ResourceAdapter _resourceAdapter;
-    private final ActivationSpec _activationSpec;
-    private final Class<?> _interface;
-    private final AbstractInflowEndpoint _delegate;
-    private final TransactionManager _transactionManager;
-    private final ClassLoader _appClassLoader;
-    private final boolean _transacted;
+    private final JCAInflowDeploymentMetaData _metadata;
     
     /**
      * Constructor.
@@ -59,22 +49,16 @@ public class InboundHandler extends BaseServiceHandler implements MessageEndpoin
      * @param metadata {@link JCAInflowDeploymentMetaData}
      */
     public InboundHandler(JCAInflowDeploymentMetaData metadata) {
-        _interface = metadata.getListenerInterface();
-        _resourceAdapter = metadata.getResourceAdapter();
-        _activationSpec = metadata.getActivationSpec();
-        _delegate = metadata.getMessageEndpoint();
-        _transactionManager = metadata.getTransactionManager();
-        _appClassLoader = metadata.getApplicationClassLoader();
-        _transacted = metadata.isDeliveryTransacted();
+        _metadata = metadata;
     }
     
     /**
      * Activate JCA message inflow endpoint.
      */
     public void start() {
-        _delegate.initialize();
+        _metadata.getMessageEndpoint().initialize();
         try {
-            _resourceAdapter.endpointActivation(this, _activationSpec);
+            _metadata.getResourceAdapter().endpointActivation(this, _metadata.getActivationSpec());
         } catch (ResourceException e) {
             throw new SwitchYardException(e);
         }
@@ -82,16 +66,16 @@ public class InboundHandler extends BaseServiceHandler implements MessageEndpoin
     
     @Override
     public void stop() {
-        _resourceAdapter.endpointDeactivation(this, _activationSpec);
-        _delegate.uninitialize();
+        _metadata.getResourceAdapter().endpointDeactivation(this, _metadata.getActivationSpec());
+        _metadata.getMessageEndpoint().uninitialize();
     }
 
     @Override
     public MessageEndpoint createEndpoint(XAResource xaResource, long timeout)
             throws UnavailableException {
-        EndpointProxy handler = new EndpointProxy(this, _delegate, _transactionManager, xaResource, _appClassLoader);
+        EndpointProxy handler = new EndpointProxy(_metadata, this, xaResource);
         return (MessageEndpoint) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                                                        new Class<?>[] {_interface,MessageEndpoint.class},
+                                                        new Class<?>[] {_metadata.getListenerInterface(),MessageEndpoint.class},
                                                         handler);
     }
 
@@ -104,7 +88,7 @@ public class InboundHandler extends BaseServiceHandler implements MessageEndpoin
     @Override
     public boolean isDeliveryTransacted(Method arg0)
             throws NoSuchMethodException {
-        return _transacted;
+        return _metadata.isDeliveryTransacted();
     }
 
 }

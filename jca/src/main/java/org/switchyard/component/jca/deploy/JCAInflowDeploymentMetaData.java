@@ -45,6 +45,12 @@ public class JCAInflowDeploymentMetaData {
 
     private boolean _transacted = false;
     
+    private boolean _useBatchCommit = false;
+    
+    private int _batchSize = 0;
+    
+    private long _batchTimeout = 0;
+    
     /**
      * get listener interface.
      * 
@@ -184,4 +190,53 @@ public class JCAInflowDeploymentMetaData {
         _transacted = transacted;
         return this;
     }
+    
+    /**
+     * get if bacth commit is enabled.
+     * @return true if bactch commit is enabled
+     */
+    public boolean useBatchCommit() {
+        return _useBatchCommit;
+    }
+
+    /**
+     * set if batch commit is enabled.
+     * @param useBatchCommit true if batch commit should be enabled
+     */
+    public void setUseBatchCommit(boolean useBatchCommit) {
+        this._useBatchCommit = useBatchCommit;
+    }
+
+    /**
+     * get batch size.
+     * @return batch size
+     */
+    public int getBatchSize() {
+        return _batchSize;
+    }
+
+    /**
+     * set batch size.
+     * @param batchSize batch size
+     */
+    public void setBatchSize(int batchSize) {
+        this._batchSize = batchSize;
+    }
+
+    /**
+     * get batch timeout.
+     * @return batch timeout in milliseconds
+     */
+    public long getBatchTimeout() {
+        return _batchTimeout;
+    }
+
+    /**
+     * set batch timeout.
+     * @param batchTimeout batch timeout in milliseconds 
+     */
+    public void setBatchTimeout(long batchTimeout) {
+        this._batchTimeout = batchTimeout;
+    }
+
 }

@@ -74,4 +74,17 @@ public interface InboundInteractionModel extends Model {
      * @return {@link InboundInteractionModel} to suport method chaining
      */
     InboundInteractionModel setTransacted(boolean transacted);
+    
+    /**
+     * get BatchCommitModel.
+     * @return {@link BatchCommitModel}
+     */
+    BatchCommitModel getBatchCommit();
+    
+    /**
+     * set BatchCommitModel.
+     * @param batchCommit {@link BatchCommitModel} to set
+     * @return {@link InboundInteractionModel} to support method chaining
+     */
+    InboundInteractionModel setBatchCommit(final BatchCommitModel batchCommit);
 }

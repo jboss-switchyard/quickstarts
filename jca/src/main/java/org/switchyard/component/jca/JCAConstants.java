@@ -69,6 +69,13 @@ public final class JCAConstants {
     /** processor. */
     public static final String PROCESSOR = "processor";
 
+    /** batch commit. */
+    public static final String BATCH_COMMIT = "batchCommit";
+    /** delay limit. */
+    public static final String BATCH_TIMEOUT = "batchTimeout";
+    /** batch size. */
+    public static final String BATCH_SIZE = "batchSize";
+    
     /** property. */
     public static final String PROPERTY = "property";
     /** name. */

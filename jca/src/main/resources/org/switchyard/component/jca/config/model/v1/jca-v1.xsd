@@ -89,6 +89,7 @@
          <element name="listener" type="string" minOccurs="0" />
          <element name="endpoint" type="jca:Endpoint" minOccurs="0" />
          <element name="transacted" type="boolean" minOccurs="0" />
+         <element name="batchCommit" type="jca:batchCommit" minOccurs="0"/>
          <any namespace="##other" processContents="lax" minOccurs="0"
               maxOccurs="unbounded" />
       </sequence>
@@ -179,6 +180,10 @@
       </sequence>
       <attribute name="type" type="NMTOKEN" use="required" />
       <anyAttribute namespace="##other" processContents="lax" />
+   </complexType>
+   <complexType name="batchCommit">
+      <attribute name="batchSize" type="positiveInteger" use="required"/>
+      <attribute name="batchTimeout" type="positiveInteger" use="required"/>
    </complexType>
    <complexType name="Processor">
       <sequence>
