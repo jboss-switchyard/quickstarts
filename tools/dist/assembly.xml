@@ -48,8 +48,8 @@
             <includes>
                 <include>org.riftsaw.console:switchyard-bpel-console</include>
             </includes>
-            <outputDirectory>${tools.root.dir}</outputDirectory>
-            <outputFileNameMapping>switchyard-bpel-console.war</outputFileNameMapping>
+            <unpack>true</unpack>
+            <outputDirectory>${tools.root.dir}/switchyard-bpel-console.war</outputDirectory>
         </dependencySet>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>

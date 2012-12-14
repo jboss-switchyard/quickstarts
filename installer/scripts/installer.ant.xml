@@ -130,7 +130,7 @@
         <condition property="bpel.console.not.available">
            <and>
              <not>
-               <available file="res/switchyard-bpel-console.war"/>
+               <available file="res/switchyard-bpel-console-server.war"/>
              </not>
              <isset property="installBPELConsole"/>
            </and>
@@ -404,7 +404,10 @@
 
     <target name="install-bpel-console" if="installBPELConsole" depends="request-bpel-console-install, download-bpel-console">
     	<copy todir="${INSTALL_PATH}/standalone/deployments" overwrite="true" file="res/switchyard-bpel-console-server.war"/>
-        <copy todir="${INSTALL_PATH}/standalone/deployments" overwrite="true" file="res/switchyard-bpel-console.war"/>
+      <copy todir="${INSTALL_PATH}/standalone/deployments/switchyard-bpel-console.war">
+        <fileset dir="res/switchyard-bpel-console.war" />
+      </copy>
+      <touch file="${INSTALL_PATH}/standalone/deployments/switchyard-bpel-console.war.dodeploy" />
     </target>
 
     <target name="install-forge" if="installForge" depends="request-forge-install, request-forge-home, set-forge-home, validate-forge-home-version, download-sy-forge-module" unless="SKIP_FORGE">
