@@ -27,6 +27,7 @@
     </resources>
 
     <dependencies>
+        <module name="javax.api"/>
         <module name="org.slf4j"/>
         <module name="org.springframework"/>
         <module name="org.apache.camel.core"/>

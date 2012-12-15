@@ -57,6 +57,7 @@
         <module name="org.switchyard.runtime"/>
         <module name="org.switchyard.serial"/>
         <module name="org.switchyard.security" export="true"/>
+        <module name="org.switchyard.component.common" export="true"/>
         <module name="org.switchyard.component.http"/>
         <module name="org.switchyard.component.remote"/>
         <module name="org.switchyard.component.resteasy"/>
