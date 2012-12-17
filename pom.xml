@@ -126,8 +126,8 @@
         <version.protostuff>1.0.7</version.protostuff>
         <!-- Needed until AS7 is upgraded with this version -->
         <version.resteasy>2.3.4.Final</version.resteasy>
-        <version.riftsaw.ode>3.0.0-SNAPSHOT</version.riftsaw.ode>
-        <version.riftsaw.engine>3.0.0-SNAPSHOT</version.riftsaw.engine>
+        <version.riftsaw.ode>3.0.0.20121217-M4</version.riftsaw.ode>
+        <version.riftsaw.engine>3.0.0.20121217-M4</version.riftsaw.engine>
         <version.riftsaw.console>2.4.1.Final</version.riftsaw.console>
         <version.saxon>9.2.1.5</version.saxon>
         <version.servlet>2.5</version.servlet>
