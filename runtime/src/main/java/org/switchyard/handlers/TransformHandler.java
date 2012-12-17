@@ -29,6 +29,7 @@ import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
+import org.switchyard.Property;
 import org.switchyard.Scope;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.metadata.ServiceOperation;
@@ -99,7 +100,7 @@ public class TransformHandler extends BaseHandler {
         }
 
         // Replace the CONTENT_TYPE property to indicate current content type after transform
-        exchange.getContext().setProperty(Exchange.CONTENT_TYPE, TransformSequence.getCurrentMessageType(exchange), Scope.activeScope(exchange));
+        setContentType(exchange);
     }
 
     @Override
@@ -117,7 +118,20 @@ public class TransformHandler extends BaseHandler {
         }
 
         // Replace the CONTENT_TYPE property to indicate current content type after transform
-        exchange.getContext().setProperty(Exchange.CONTENT_TYPE, TransformSequence.getCurrentMessageType(exchange), Scope.activeScope(exchange));
+        setContentType(exchange);
+    }
+    
+    private void setContentType(Exchange exchange) {
+        QName currentType = TransformSequence.getCurrentMessageType(exchange);
+        if (currentType != null) {
+            exchange.getContext().setProperty(Exchange.CONTENT_TYPE, currentType, Scope.activeScope(exchange));
+        } else {
+            // make sure no property is used for current scope
+            Property p = exchange.getContext().getProperty(Exchange.CONTENT_TYPE, Scope.activeScope(exchange));
+            if (p != null) {
+                exchange.getContext().removeProperty(p);
+            }
+        }
     }
 
     private void initInTransformSequence(Exchange exchange) {
