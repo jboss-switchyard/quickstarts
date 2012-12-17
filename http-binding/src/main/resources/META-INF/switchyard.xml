@@ -35,7 +35,7 @@
             </http:binding.http>
         </sca:service>
 
-        <sca:reference name="Symbol" promote="StockService/SymbolService" multiplicity="1..1">
+        <sca:reference name="Symbol" promote="QuoteService/Symbol" multiplicity="1..1">
             <!-- External reference which allows to call SymbolService using http client -->
             <http:binding.http>
                 <http:address>http://localhost:8080/http-binding/symbol</http:address>
