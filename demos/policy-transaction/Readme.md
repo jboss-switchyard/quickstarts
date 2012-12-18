@@ -23,20 +23,18 @@ Running the quickstart
     mvn clean install
 2. Start JBoss AS 7 in standalone-full mode:
     ./standalone --server-config=standalone-full.xml
-3. Add JMS user using add-user.sh with username=guest, password=guestp, Realm=ApplicationRealm
+3. Add JMS user using add-user.sh with username=guest, password=guestp, Realm=ApplicationRealm, role=guest
     ./add-user.sh
-4. Add a guest role to the user "guest"
-   echo "guest=guest" >> ${AS7}/standalone/configuration/application-roles.properties
-5. Deploy JMS Queue
+4. Deploy JMS Queue
     cp src/test/resources/switchyard-quickstart-demo-policy-transaction-hornetq-jms.xml ${AS7}/standalone/deployments
-6. Deploy the quickstart
+5. Deploy the quickstart
     mvn jboss-as:deploy
-7. Execute HornetQClient
+6. Execute HornetQClient
     mvn exec:java
-8. Check the server console for output from the service.  With the default
+7. Check the server console for output from the service.  With the default
    configuration of the quickstart, you should see the output below in the
    AS server.log.
-9. Undeploy the application
+8. Undeploy the application
     mvn jboss-as:undeploy
     rm ${AS7}/standalone/deployments/switchyard-quickstart-demo-policy-transaction-hornetq-jms.xml
 

@@ -36,7 +36,7 @@ import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
  */
 public final class HornetQClient {
     
-    private static final String QUEUE = "GreetingServiceQueue";
+    private static final String QUEUE = "JCAInflowGreetingServiceQueue";
     private static final String USER = "guest";
     private static final String PASSWD = "guestp";
     

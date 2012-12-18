@@ -19,11 +19,13 @@
 
 package org.switchyard.quickstarts.demo.policy.transaction;
 
+import javax.inject.Inject;
 import javax.naming.InitialContext;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
 import org.switchyard.annotations.Requires;
+import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
 import org.switchyard.policy.TransactionPolicy;
 
@@ -40,6 +42,9 @@ public class TaskCServiceBean implements TaskCService {
 
     private static final String JNDI_TRANSACTION_MANAGER = "java:jboss/TransactionManager";
     
+    @Inject @Reference("StoreCService")
+    private StoreService _storeC;
+    
     @Override
     public final void doTask(final String command) {
         
@@ -51,6 +56,8 @@ public class TaskCServiceBean implements TaskCService {
             print("Failed to get current transcation");
         }
 
+        _storeC.store(command);
+        
         if (t == null) {
             print("No active transaction");
         } else {

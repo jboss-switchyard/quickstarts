@@ -19,11 +19,13 @@
 
 package org.switchyard.quickstarts.demo.policy.transaction;
 
+import javax.inject.Inject;
 import javax.naming.InitialContext;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
 import org.switchyard.annotations.Requires;
+import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
 import org.switchyard.policy.TransactionPolicy;
 
@@ -43,6 +45,9 @@ public class TaskAServiceBean implements TaskAService {
     // counts the number of times a rollback has occurred
     private int _rollbackCounter = 0;
     
+    @Inject @Reference("StoreAService") @Requires(transaction=TransactionPolicy.PROPAGATES_TRANSACTION)
+    private StoreService _storeA;
+    
     @Override
     public final void doTask(final String command) {
         
@@ -58,6 +63,8 @@ public class TaskAServiceBean implements TaskAService {
             return;
         }
 
+        _storeA.store(command);
+        
         if (command.contains(ROLLBACK)) {
             try {
                 if (++_rollbackCounter % 4 != 0) {
