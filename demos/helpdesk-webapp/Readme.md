@@ -8,7 +8,8 @@ If you would like to have BAM (Business Activity Monitoring) events from the pro
 src/main/java/org/switchyard/quickstarts/demos/helpdesk/HelpDeskServiceProcess.java:
 ```
 //import org.jbpm.process.audit.JPAWorkingMemoryDbLogger;
-//eventListeners={JPAWorkingMemoryDbLogger.class},
+//import org.switchyard.component.common.knowledge.annotation.Listener;
+//listeners={@Listener(JPAWorkingMemoryDbLogger.class)},
 ```
 
 ![Helpdesk Webapp Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/demos/helpdesk-webapp/helpdesk-webapp.jpg)
@@ -53,11 +54,11 @@ JBoss AS 7
 
 Expected TaskServer Output:
 ===========================
-INFO  [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskServer] Starting jBPM TaskServer on 127.0.0.1:9123...
-INFO  [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskServer] jBPM TaskServer started on 127.0.0.1:9123.
+INFO  [org.switchyard.component.bpm.task.impl.TaskServerImpl] Starting jBPM TaskServer on 127.0.0.1:9123...
+INFO  [org.switchyard.component.bpm.task.impl.TaskServerImpl] jBPM TaskServer started on 127.0.0.1:9123.
 INFO  [org.switchyard.quickstarts.demos.helpdesk.HelpDeskTests] ********** IMPORTANT: To CLEANLY stop the TaskServer, in another window either run mvn exec:java -Dexec.args="stop.taskserver" or simply delete the .../switchyard-quickstarts/demos/helpdesk-webapp/target/taskserver.rm2stop file. Do not use Ctrl-C!  **********
-INFO  [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskServer] Stopping jBPM TaskServer on 127.0.0.1:9123...
-INFO  [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskServer] jBPM TaskServer on 127.0.0.1:9123 stopped.
+INFO  [org.switchyard.component.bpm.task.impl.TaskServerImpl] Stopping jBPM TaskServer on 127.0.0.1:9123...
+INFO  [org.switchyard.component.bpm.task.impl.TaskServerImpl] jBPM TaskServer on 127.0.0.1:9123 stopped.
 
 Expected Application Server Output:
 ===================================

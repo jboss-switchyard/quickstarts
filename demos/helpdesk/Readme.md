@@ -31,44 +31,44 @@ Expected Output:
 (Note: Remember that the review has a random outcome, thus your output might differ from below.)
 ```
 Running org.switchyard.quickstarts.demos.helpdesk.HelpDeskTests
-INFO  [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskServer] Starting jBPM TaskServer on 127.0.0.1:9123...
-INFO  [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskServer] jBPM TaskServer started on 127.0.0.1:9123.
+INFO  [org.switchyard.component.bpm.task.impl.TaskServerImpl] Starting jBPM TaskServer on 127.0.0.1:9123...
+INFO  [org.switchyard.component.bpm.task.impl.TaskServerImpl] jBPM TaskServer started on 127.0.0.1:9123.
 INFO  [org.switchyard.component.soap.InboundHandler] Publishing WebService at http://127.0.0.1:18001/HelpDeskService
 INFO  [org.switchyard.quickstarts.demos.helpdesk.TicketManagementServiceBean] ********** opening ticket **********
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Connecting jBPM TaskClient to 127.0.0.1:9123...
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] jBPM TaskClient connected to 127.0.0.1:9123.
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Found 0 tasks for david.
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Found 1 task for krisv.
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Task 1 claimed by krisv.
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Task 1 started by krisv.
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Task 1 completed by krisv.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Connecting jBPM TaskClient to 127.0.0.1:9123...
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] jBPM TaskClient connected to 127.0.0.1:9123.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Found 0 tasks for david.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Found 1 task for krisv.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 1 claimed by krisv.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 1 started by krisv.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 1 completed by krisv.
 ********** after (random for test purpose) review, ticket status set to requested **********
 INFO  [org.switchyard.quickstarts.demos.helpdesk.TicketManagementServiceBean] ********** requesting details **********
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Found 1 task for david.
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Task 2 claimed by david.
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Task 2 started by david.
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Task 2 completed by david.
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Found 0 tasks for krisv.
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Found 0 tasks for david.
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Found 1 task for krisv.
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Task 3 claimed by krisv.
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Task 3 started by krisv.
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Task 3 completed by krisv.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Found 1 task for david.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 2 claimed by david.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 2 started by david.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 2 completed by david.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Found 0 tasks for krisv.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Found 0 tasks for david.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Found 1 task for krisv.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 3 claimed by krisv.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 3 started by krisv.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 3 completed by krisv.
 ********** after (random for test purpose) review, ticket status set to approved **********
 INFO  [org.switchyard.quickstarts.demos.helpdesk.TicketManagementServiceBean] ********** approving ticket **********
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Found 0 tasks for david.
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Found 1 task for krisv.
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Task 4 claimed by krisv.
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Task 4 started by krisv.
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Task 4 completed by krisv.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Found 0 tasks for david.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Found 1 task for krisv.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 4 claimed by krisv.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 4 started by krisv.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 4 completed by krisv.
 INFO  [org.switchyard.quickstarts.demos.helpdesk.TicketManagementServiceBean] ********** closing ticket **********
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Found 0 tasks for david.
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Found 0 tasks for krisv.
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] Disconnecting jBPM TaskClient from 127.0.0.1:9123...
-DEBUG [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient] jBPM TaskClient disconnected from 127.0.0.1:9123.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Found 0 tasks for david.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Found 0 tasks for krisv.
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Disconnecting jBPM TaskClient from 127.0.0.1:9123...
+DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] jBPM TaskClient disconnected from 127.0.0.1:9123.
 INFO  [org.switchyard.component.soap.InboundHandler] WebService {urn:switchyard-quickstart-demo:helpdesk:1.0}HelpDeskService:HelpDeskServicePort stopped.
-INFO  [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskServer] Stopping jBPM TaskServer on 127.0.0.1:9123...
-INFO  [org.switchyard.component.bpm.task.service.jbpm.JBPMTaskServer] jBPM TaskServer on 127.0.0.1:9123 stopped.
+INFO  [org.switchyard.component.bpm.task.impl.TaskServerImpl] Stopping jBPM TaskServer on 127.0.0.1:9123...
+INFO  [org.switchyard.component.bpm.task.impl.TaskServerImpl] jBPM TaskServer on 127.0.0.1:9123 stopped.
 ```
 
 ## Further Reading

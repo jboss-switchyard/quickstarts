@@ -18,6 +18,9 @@
  */
 package org.switchyard.quickstarts.rules.camel.cbr;
 
+//import org.kie.event.rule.DebugAgendaEventListener;
+//import org.kie.event.rule.DebugWorkingMemoryEventListener;
+//import org.switchyard.component.common.knowledge.annotation.Listener;
 import org.switchyard.component.common.knowledge.annotation.Manifest;
 import org.switchyard.component.common.knowledge.annotation.Mapping;
 import org.switchyard.component.common.knowledge.annotation.Resource;
@@ -30,7 +33,6 @@ import org.switchyard.component.rules.annotation.Rules;
 @Rules(
         value=DestinationService.class,
         //listeners={@Listener(DebugWorkingMemoryEventListener.class), @Listener(DebugAgendaEventListener.class)},
-        //loggers=@Logger(type=LoggerType.CONSOLE),
         manifest=@Manifest(resources=@Resource(location="/META-INF/DestinationServiceRules.drl", type="DRL")))
 public interface DestinationServiceRules extends DestinationService {
 

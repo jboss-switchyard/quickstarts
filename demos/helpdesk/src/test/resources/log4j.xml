@@ -45,10 +45,10 @@
     <logger name="org.jboss.interceptor">
         <level value="ERROR"/>
     </logger>
-    <logger name="org.switchyard.component.bpm.task.service.jbpm.JBPMTaskClient">
+    <logger name="org.switchyard.component.bpm.task.impl.TaskClientImpl">
         <level value="DEBUG"/>
     </logger>
-    <logger name="org.switchyard.component.bpm.task.service.jbpm.JBPMTaskServer">
+    <logger name="org.switchyard.component.bpm.task.impl.TaskServerImpl">
         <level value="DEBUG"/>
     </logger>
 

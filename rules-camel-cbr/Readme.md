@@ -8,9 +8,10 @@ Then, a Camel route looks at the destination set on the Box for each Widget, and
 If you would like to watch the rules execution, uncomment these lines in
 src/main/java/org/switchyard/quickstarts/rules/camel/cbr/DestinationServiceRules.java
 ```
-//import org.drools.event.rule.DebugAgendaEventListener;
-//import org.drools.event.rule.DebugWorkingMemoryEventListener;
-//eventListeners={DebugAgendaEventListener.class, DebugWorkingMemoryEventListener.class},
+//import org.kie.event.rule.DebugAgendaEventListener;
+//import org.kie.event.rule.DebugWorkingMemoryEventListener;
+//import org.switchyard.component.common.knowledge.annotation.Listener;
+//listeners={@Listener(DebugWorkingMemoryEventListener.class), @Listener(DebugAgendaEventListener.class)},
 ```
 
 ![Rules Camel CBR Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/rules-camel-cbr/rules-camel-cbr.jpg)
