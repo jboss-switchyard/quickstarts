@@ -18,23 +18,12 @@
  */
 package org.switchyard.component.common.knowledge.util;
 
-import java.util.Map;
-import java.util.Properties;
-
-import org.drools.persistence.jpa.KnowledgeStoreServiceImpl;
-import org.kie.KieBase;
 import org.kie.KieServices;
 import org.kie.builder.ReleaseId;
-import org.kie.persistence.jpa.KieStoreServices;
-import org.kie.runtime.Environment;
 import org.kie.runtime.KieContainer;
-import org.kie.runtime.KieSession;
-import org.kie.runtime.KieSessionConfiguration;
-import org.kie.runtime.StatelessKieSession;
 import org.switchyard.component.common.knowledge.config.model.ContainerModel;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.component.common.knowledge.config.model.ManifestModel;
-import org.switchyard.exception.SwitchYardException;
 
 /**
  * Container functions.
@@ -60,109 +49,31 @@ public final class Containers {
     }
 
     /**
-     * Creates a new stateless session.
-     * @param model the model
-     * @param propertiesOverrides any property overrides
-     * @return the stateless session
+     * Gets a ContainerModel for the specified KnowledgeComponentImplementationModel.
+     * @param model the specified KnowledgeComponentImplementationModel
+     * @return the ContainerModel
      */
-    public static StatelessKieSession newStatelessSession(KnowledgeComponentImplementationModel model, Properties propertiesOverrides) {
+    public static ContainerModel getContainerModel(KnowledgeComponentImplementationModel model) {
         if (model != null) {
             ManifestModel manifestModel = model.getManifest();
             if (manifestModel != null) {
-                ContainerModel containerModel = manifestModel.getContainer();
-                if (containerModel != null) {
-                    KieContainer kieContainer = getContainer(containerModel);
-                    String sessionName = containerModel.getSessionName();
-                    if (sessionName != null) {
-                        return kieContainer.newStatelessKieSession(sessionName);
-                    }
-                    String baseName = containerModel.getBaseName();
-                    if (baseName != null) {
-                        KieSessionConfiguration sessionConfiguration = Configurations.getSessionConfiguration(model, propertiesOverrides);
-                        return kieContainer.getKieBase(baseName).newStatelessKieSession(sessionConfiguration);
-                    }
-                    return kieContainer.newStatelessKieSession();
-                }
+                return manifestModel.getContainer();
             }
         }
-        return getContainer(null).newStatelessKieSession();
+        return null;
     }
 
     /**
-     * Creates a new stateful session.
-     * @param model the model
-     * @param propertiesOverrides any property overrides
-     * @param environmentOverrides any environment overrides
-     * @return the stateful session
+     * Gets a KieContainer for the specified ContainerModel.
+     * @param model the specified ContainerModel
+     * @return the KieContainer
      */
-    public static KieSession newStatefulSession(KnowledgeComponentImplementationModel model, Properties propertiesOverrides, Map<String, Object> environmentOverrides) {
-        Environment environment = Environments.getEnvironment(environmentOverrides);
-        if (model != null) {
-            ManifestModel manifestModel = model.getManifest();
-            if (manifestModel != null) {
-                ContainerModel containerModel = manifestModel.getContainer();
-                if (containerModel != null) {
-                    KieContainer kieContainer = getContainer(containerModel);
-                    String sessionName = containerModel.getSessionName();
-                    if (sessionName != null) {
-                        return kieContainer.newKieSession(sessionName, environment);
-                    }
-                    String baseName = containerModel.getBaseName();
-                    if (baseName != null) {
-                        KieSessionConfiguration sessionConfiguration = Configurations.getSessionConfiguration(model, propertiesOverrides);
-                        return kieContainer.getKieBase(baseName).newKieSession(sessionConfiguration, environment);
-                    }
-                    return kieContainer.newKieSession(environment);
-                }
-            }
-        }
-        return getContainer(null).newKieSession(environment);
-    }
-
-    /**
-     * Gets a persistent session.
-     * @param model the model
-     * @param propertiesOverrides any property overrides
-     * @param environmentOverrides any environment overrides
-     * @param sessionId the session id
-     * @return the persistent session.
-     */
-    public static KieSession getPersistentSession(KnowledgeComponentImplementationModel model, Properties propertiesOverrides, Map<String, Object> environmentOverrides, Integer sessionId) {
-        if (model != null) {
-            ManifestModel manifestModel = model.getManifest();
-            if (manifestModel != null) {
-                ContainerModel containerModel = manifestModel.getContainer();
-                if (containerModel != null) {
-                    KieContainer kieContainer = getContainer(containerModel);
-                    String baseName = containerModel.getBaseName();
-                    if (baseName != null) {
-                        // TODO: change back once KieServicesImpl.getStoreServices() stops failing trying to get an UNREGISTERED KieStoreServices.
-                        //KieStoreServices kieStoreServices = KieServices.Factory.get().getStoreServices();
-                        KieStoreServices kieStoreServices = new KnowledgeStoreServiceImpl();
-                        KieBase base = kieContainer.getKieBase(baseName);
-                        KieSessionConfiguration sessionConfiguration = Configurations.getSessionConfiguration(model, propertiesOverrides);
-                        Environment environment = Environments.getEnvironment(environmentOverrides);
-                        KieSession session = null;
-                        if (sessionId != null) {
-                            session = kieStoreServices.loadKieSession(sessionId, base, sessionConfiguration, environment);
-                        }
-                        if (session == null) {
-                            session = kieStoreServices.newKieSession(base, sessionConfiguration, environment);
-                        }
-                        return session;
-                    }
-                }
-            }
-        }
-        throw new SwitchYardException("manifest container baseName required in configuration for persistent sessions");
-    }
-
-    private static KieContainer getContainer(ContainerModel containerModel) {
+    public static KieContainer getContainer(ContainerModel model) {
         KieServices kieServices = KieServices.Factory.get();
-        if (containerModel != null) {
-            ReleaseId rid = containerModel.getReleaseId();
-            if (rid != null) {
-                return kieServices.newKieContainer(rid);
+        if (model != null) {
+            ReleaseId releaseId = model.getReleaseId();
+            if (releaseId != null) {
+                return kieServices.newKieContainer(releaseId);
             }
         }
         return kieServices.getKieClasspathContainer();

@@ -62,24 +62,6 @@ public class V1ManifestModel extends BaseModel implements ManifestModel {
      * {@inheritDoc}
      */
     @Override
-    public boolean isScan() {
-        String scan = getModelAttribute("scan");
-        return scan != null ? Boolean.parseBoolean(scan) : false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ManifestModel setScan(boolean scan) {
-        setModelAttribute("scan", String.valueOf(scan));
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public ContainerModel getContainer() {
         if (_container == null) {
             _container = (ContainerModel)getFirstChildModel(CONTAINER);

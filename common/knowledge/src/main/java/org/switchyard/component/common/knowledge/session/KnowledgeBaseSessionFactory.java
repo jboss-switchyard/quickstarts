@@ -23,6 +23,12 @@ import java.util.Properties;
 
 import org.drools.persistence.jpa.KnowledgeStoreServiceImpl;
 import org.kie.KieBase;
+import org.kie.KieBaseConfiguration;
+import org.kie.KnowledgeBase;
+import org.kie.KnowledgeBaseFactory;
+import org.kie.builder.KnowledgeBuilder;
+import org.kie.builder.KnowledgeBuilderConfiguration;
+import org.kie.builder.KnowledgeBuilderFactory;
 import org.kie.persistence.jpa.KieStoreServices;
 import org.kie.runtime.Environment;
 import org.kie.runtime.KieSession;
@@ -30,12 +36,12 @@ import org.kie.runtime.KieSessionConfiguration;
 import org.kie.runtime.StatelessKieSession;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
-import org.switchyard.component.common.knowledge.util.Bases;
 import org.switchyard.component.common.knowledge.util.Channels;
 import org.switchyard.component.common.knowledge.util.Configurations;
 import org.switchyard.component.common.knowledge.util.Environments;
 import org.switchyard.component.common.knowledge.util.Listeners;
 import org.switchyard.component.common.knowledge.util.Loggers;
+import org.switchyard.component.common.knowledge.util.Resources;
 
 /**
  * A Base-based KnowledgeSessionFactory.
@@ -49,7 +55,7 @@ class KnowledgeBaseSessionFactory extends KnowledgeSessionFactory {
 
     KnowledgeBaseSessionFactory(KnowledgeComponentImplementationModel model, ClassLoader loader, ServiceDomain domain, Properties propertyOverrides) {
         super(model, loader, domain, propertyOverrides);
-        _base = Bases.newBase(getModel(), getPropertyOverrides(), getLoader());
+        _base = newBase(getModel(), getPropertyOverrides(), getLoader());
         _sessionConfiguration = Configurations.getSessionConfiguration(getModel(), getPropertyOverrides());
     }
 
@@ -99,6 +105,15 @@ class KnowledgeBaseSessionFactory extends KnowledgeSessionFactory {
         // channels are only meaningful for stateful sessions
         Channels.registerChannels(getModel(), getLoader(), stateful, getDomain());
         return new KnowledgeSession(stateful, true, loggersDisposal);
+    }
+
+    private KieBase newBase(KnowledgeComponentImplementationModel model, Properties overrides, ClassLoader loader) {
+        KieBaseConfiguration baseConfiguration = Configurations.getBaseConfiguration(model, overrides, loader);
+        KnowledgeBase base = KnowledgeBaseFactory.newKnowledgeBase(baseConfiguration);
+        KnowledgeBuilderConfiguration builderConfiguration = Configurations.getBuilderConfiguration(model, overrides, loader);
+        KnowledgeBuilder builder = KnowledgeBuilderFactory.newKnowledgeBuilder(base, builderConfiguration);
+        Resources.addResources(model, loader, builder);
+        return builder.newKnowledgeBase();
     }
 
 }

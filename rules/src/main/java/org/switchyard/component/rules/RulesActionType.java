@@ -29,6 +29,8 @@ public enum RulesActionType implements ActionType {
 
     /** The execute type. */
     EXECUTE,
+    /** The insert type. */
+    INSERT,
     /** The fire all rules type. */
     FIRE_ALL_RULES,
     /** The fire until halt type. */

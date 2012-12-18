@@ -19,8 +19,6 @@
 package org.switchyard.component.rules.deploy;
 
 import org.switchyard.ServiceDomain;
-import org.switchyard.component.common.knowledge.system.ResourceChangeService;
-import org.switchyard.config.Configuration;
 import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.BaseComponent;
 
@@ -37,24 +35,6 @@ public class RulesComponent extends BaseComponent {
     public RulesComponent() {
         super(RulesActivator.RULES_TYPE);
         setName("RulesComponent");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void init(Configuration config) {
-        super.init(config);
-        ResourceChangeService.start(this);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void destroy() {
-        ResourceChangeService.stop(this);
-        super.destroy();
     }
 
     /**

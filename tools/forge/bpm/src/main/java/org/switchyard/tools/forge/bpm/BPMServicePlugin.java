@@ -95,7 +95,6 @@ public class BPMServicePlugin implements Plugin {
      * @param argProcessId business process id
      * @param argPersistent persistent flag
      * @param argSessionId session id
-     * @param argScan whether to use an agent
      * @param out shell output
      * @throws java.io.IOException error with file resources
      */
@@ -125,11 +124,6 @@ public class BPMServicePlugin implements Plugin {
             name = SESSION_ID,
             description = "The session id")
             final Integer argSessionId,
-            @Option(required = false,
-                    name = "scan",
-                    description = "Whether you want to scan resources for changes (true|false)",
-                    defaultValue = "false")
-            final Boolean argScan,
             final PipeOut out)
     throws java.io.IOException {
       
@@ -178,10 +172,8 @@ public class BPMServicePlugin implements Plugin {
             out.println("Created process definition [" + processDefinitionPath + "]");
         }
         
-        boolean scan = argScan != null ? argScan.booleanValue() : false;
-        
         // Add the SwitchYard config
-        createImplementationConfig(argServiceName, interfaceClass, processId, argPersistent, argSessionId, processDefinitionPath, scan);
+        createImplementationConfig(argServiceName, interfaceClass, processId, argPersistent, argSessionId, processDefinitionPath);
           
         // Notify user of success
         out.println("Process service " + argServiceName + " has been created.");
@@ -192,8 +184,7 @@ public class BPMServicePlugin implements Plugin {
             String processId,
             boolean persistent,
             Integer sessionId,
-            String processDefinition,
-            boolean scan) {
+            String processDefinition) {
         
         SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
         // Create the component service model
@@ -221,7 +212,6 @@ public class BPMServicePlugin implements Plugin {
         V1ResourcesModel resources = new V1ResourcesModel(DEFAULT_NAMESPACE);
         resources.addResource(new V1ResourceModel(DEFAULT_NAMESPACE).setLocation(processDefinition).setType(ResourceType.valueOf("BPMN2")));
         manifest.setResources(resources);
-        manifest.setScan(scan);
         bpm.setManifest(manifest);
         V1WorkItemHandlerModel sswih = new V1WorkItemHandlerModel();
         sswih.setName(SwitchYardServiceWorkItemHandler.SWITCHYARD_SERVICE);

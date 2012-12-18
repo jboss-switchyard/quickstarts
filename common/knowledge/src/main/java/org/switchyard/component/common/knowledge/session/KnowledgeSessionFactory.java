@@ -119,11 +119,7 @@ public abstract class KnowledgeSessionFactory extends KnowledgeDisposer {
             if (manifestModel.getContainer() == null) {
                 ResourcesModel resourcesModel = manifestModel.getResources();
                 if (resourcesModel != null) {
-                    if (manifestModel.isScan()) {
-                        return new KnowledgeAgentSessionFactory(model, loader, domain, propertyOverrides);
-                    } else {
-                        return new KnowledgeBaseSessionFactory(model, loader, domain, propertyOverrides);
-                    }
+                    return new KnowledgeBaseSessionFactory(model, loader, domain, propertyOverrides);
                 }
             }
         }

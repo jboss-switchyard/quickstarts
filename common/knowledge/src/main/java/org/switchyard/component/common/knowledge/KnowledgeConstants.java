@@ -16,38 +16,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.common.knowledge.annotation;
-
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+package org.switchyard.component.common.knowledge;
 
 /**
- * Container.
+ * Rules constants.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-@Target(TYPE)
-@Retention(RUNTIME)
-@Documented
-public @interface Container {
+public final class KnowledgeConstants {
 
-    /** Base name. */
-    public String baseName() default "";
+    /** default. */
+    public static final String DEFAULT = "default";
 
-    /** ReleaseId. */
-    public String releaseId() default "";
+    /** exchange. */
+    public static final String EXCHANGE = "exchange";
+    /** context. */
+    public static final String CONTEXT = "context";
+    /** message. */
+    public static final String MESSAGE = "message";
 
-    /** Scan. */
-    public boolean scan() default false;
+    /** contentInput. */
+    public static final String CONTENT_INPUT = "contentInput";
+    /** contentOutput. */
+    public static final String CONTENT_OUTPUT = "contentOutput";
 
-    /** ScanInterval. */
-    public long scanInterval() default -1;
-
-    /** Session name. */
-    public String sessionName() default "";
+    private KnowledgeConstants() {}
 
 }

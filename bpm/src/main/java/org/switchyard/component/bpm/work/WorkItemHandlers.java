@@ -30,6 +30,7 @@ import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.WorkItemHandlerModel;
 import org.switchyard.component.bpm.config.model.WorkItemHandlersModel;
+import org.switchyard.exception.SwitchYardException;
 
 /**
  * WorkItemHandler functions.
@@ -38,7 +39,12 @@ import org.switchyard.component.bpm.config.model.WorkItemHandlersModel;
  */
 public final class WorkItemHandlers {
 
-    private static final Class<?>[] WIH_CNSTR_ARG_CLASSES = new Class<?>[]{ProcessRuntime.class, KieRuntime.class, KnowledgeRuntime.class};
+    private static final Class<?>[][] PARAMETER_TYPES = new Class<?>[][]{
+        new Class<?>[]{ProcessRuntime.class},
+        new Class<?>[]{KieRuntime.class},
+        new Class<?>[]{KnowledgeRuntime.class},
+        new Class<?>[0]
+    };
  
     /**
      * Registers work item handlers.
@@ -52,69 +58,67 @@ public final class WorkItemHandlers {
         if (workItemHandlersModel != null) {
             String tns = model.getComponent().getTargetNamespace();
             for (WorkItemHandlerModel workItemHandlerModel : workItemHandlersModel.getWorkItemHandlers()) {
-                Class<? extends WorkItemHandler> wih_class = workItemHandlerModel.getClazz(loader);
-                String name = workItemHandlerModel.getName();
-                Constructor<? extends WorkItemHandler> wih_cnstr = getConstructor(wih_class);
-                if (wih_cnstr != null) {
-                    WorkItemHandler wih = newWorkItemHandler(wih_class, runtime);
-                    if (wih != null) {
-                        if (wih instanceof SwitchYardWorkItemHandler) {
-                            SwitchYardWorkItemHandler sywih = (SwitchYardWorkItemHandler)wih;
-                            if (name != null) {
-                                sywih.setName(name);
-                            } else {
-                                name = sywih.getName();
-                            }
-                            sywih.setTargetNamespace(tns);
-                            sywih.setServiceDomain(domain);
-                            sywih.setProcessRuntime(runtime);
-                        }
-                        if (name == null && wih instanceof AbstractHTWorkItemHandler) {
-                            name = "Human Task";
-                        }
-                        if (name != null) {
-                            runtime.getWorkItemManager().registerWorkItemHandler(name, wih);
-                        }
-                    }
+                Class<? extends WorkItemHandler> workItemHandlerClass = workItemHandlerModel.getClazz(loader);
+                if (workItemHandlerClass == null) {
+                    throw new SwitchYardException("Could not load workItemHandler class: " + workItemHandlerModel.getModelConfiguration().getAttribute("class"));
                 }
+                WorkItemHandler workItemHandler = newWorkItemHandler(workItemHandlerClass, runtime);
+                String name = workItemHandlerModel.getName();
+                if (workItemHandler instanceof SwitchYardWorkItemHandler) {
+                    SwitchYardWorkItemHandler sywih = (SwitchYardWorkItemHandler)workItemHandler;
+                    if (name != null) {
+                        sywih.setName(name);
+                    } else {
+                        name = sywih.getName();
+                    }
+                    sywih.setTargetNamespace(tns);
+                    sywih.setServiceDomain(domain);
+                    sywih.setProcessRuntime(runtime);
+                }
+                if (name == null && workItemHandler instanceof AbstractHTWorkItemHandler) {
+                    name = "Human Task";
+                }
+                if (name == null) {
+                    throw new SwitchYardException("Could not use null name to register workItemHandler: " + workItemHandler.getClass().getName());
+                }
+                runtime.getWorkItemManager().registerWorkItemHandler(name, workItemHandler);
             }
         }
     }
 
     /**
      * Creates a new work item hander.
-     * @param wihClass the class
+     * @param workItemHandlerClass the class
      * @param runtime the process runtime
      * @return the work item handler
      */
-    public static WorkItemHandler newWorkItemHandler(Class<? extends WorkItemHandler> wihClass, ProcessRuntime runtime) {
-        WorkItemHandler wih = null;
-        Constructor<? extends WorkItemHandler> wih_cnstr = getConstructor(wihClass);
-        if (wih_cnstr != null) {
-            Class<?>[] wih_param_types = wih_cnstr.getParameterTypes();
-            if (wih_param_types.length == 0) {
-                wih = Construction.construct(wihClass);
-            } else if (wih_param_types.length == 1) {
-                wih = Construction.construct(wihClass, wih_param_types, new Object[]{runtime});
+    public static WorkItemHandler newWorkItemHandler(Class<? extends WorkItemHandler> workItemHandlerClass, ProcessRuntime runtime) {
+        WorkItemHandler workItemHandler = null;
+        Constructor<? extends WorkItemHandler> constructor = getConstructor(workItemHandlerClass);
+        Class<?>[] parameterTypes = constructor != null ? constructor.getParameterTypes() : new Class<?>[0];
+        try {
+            if (parameterTypes.length == 0) {
+                workItemHandler = Construction.construct(workItemHandlerClass);
+            } else if (parameterTypes.length == 1) {
+                workItemHandler = Construction.construct(workItemHandlerClass, parameterTypes, new Object[]{runtime});
             }
+        } catch (Throwable t) {
+            throw new SwitchYardException("Could not instantiate workItemHandler class: " + workItemHandlerClass.getName());
         }
-        return wih;
+        return workItemHandler;
     }
 
-    private static Constructor<? extends WorkItemHandler> getConstructor(Class<? extends WorkItemHandler> wihClass) {
+    private static Constructor<? extends WorkItemHandler> getConstructor(Class<? extends WorkItemHandler> workItemHandlerClass) {
         Constructor<? extends WorkItemHandler> constructor = null;
-        for (Class<?> wihCnstrArgClass : WIH_CNSTR_ARG_CLASSES) {
+        for (Class<?>[] parameterTypes : PARAMETER_TYPES) {
             try {
-                constructor = wihClass.getDeclaredConstructor(wihCnstrArgClass);
+                constructor = workItemHandlerClass.getConstructor(parameterTypes);
+                if (constructor != null) {
+                    break;
+                }
             } catch (Throwable t) {
-                constructor = null;
-            }
-        }
-        if (constructor == null) {
-            try {
-                constructor = wihClass.getConstructor();
-            } catch (Throwable t) {
-                constructor = null;
+                // keep checkstyle happy ("at least one statement")
+                t.getMessage();
             }
         }
         return constructor;

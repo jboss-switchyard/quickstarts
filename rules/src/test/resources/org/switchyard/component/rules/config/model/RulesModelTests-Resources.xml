@@ -43,7 +43,7 @@ MA  02110-1301, USA.
                 <loggers>
                     <logger interval="2000" log="theLog" type="CONSOLE"/>
                 </loggers>
-                <manifest scan="true">
+                <manifest>
                     <resources>
                         <resource location="foo.drl" type="DRL"/>
                         <resource location="bar.dsl" type="DSL"/>

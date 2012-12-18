@@ -27,8 +27,26 @@ import org.switchyard.ServiceReference;
  */
 public abstract class BaseSwitchYardChannel implements SwitchYardChannel {
 
+    private String _name;
     private String _operation;
     private ServiceReference _reference;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getName() {
+        return _name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SwitchYardChannel setName(String name) {
+        _name = name;
+        return this;
+    }
 
     /**
      * {@inheritDoc}

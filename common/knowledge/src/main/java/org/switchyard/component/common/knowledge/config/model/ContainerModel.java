@@ -58,6 +58,32 @@ public interface ContainerModel extends Model {
     public ContainerModel setReleaseId(ReleaseId releaseId);
 
     /**
+     * Gets the scan attribute.
+     * @return the scan attribute
+     */
+    public boolean isScan();
+
+    /**
+     * Sets the scan attribute.
+     * @param scan the scan attribute
+     * @return this ContainerModel (useful for chaining)
+     */
+    public ContainerModel setScan(boolean scan);
+
+    /**
+     * Gets the scanInterval attribute.
+     * @return the scanInterval attribute
+     */
+    public Long getScanInterval();
+
+    /**
+     * Sets the scanInterval attribute.
+     * @param scanInterval the scanInterval attribute
+     * @return this ContainerModel (useful for chaining)
+     */
+    public ContainerModel setScanInterval(Long scanInterval);
+
+    /**
      * Gets the sessionName attribute.
      * @return the sessionName attribute
      */

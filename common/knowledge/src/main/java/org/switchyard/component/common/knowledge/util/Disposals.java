@@ -24,6 +24,7 @@ import javax.persistence.EntityManagerFactory;
 
 import org.apache.log4j.Logger;
 import org.kie.agent.KnowledgeAgent;
+import org.kie.builder.KieScanner;
 import org.kie.logger.KieRuntimeLogger;
 import org.kie.runtime.KieSession;
 import org.switchyard.component.common.knowledge.session.KnowledgeDisposal;
@@ -77,6 +78,26 @@ public final class Disposals {
                         }
                     }
                     kieRuntimeLoggers.clear();
+                }
+            }
+        };
+    }
+
+    /**
+     * Creates a new KieScanner disposal.
+     * @param kieScanner the scanner
+     * @return the disposal
+     */
+    public static KnowledgeDisposal newDisposal(final KieScanner kieScanner) {
+        return new KnowledgeDisposal() {
+            @Override
+            public void dispose() {
+                try {
+                    if (kieScanner != null) {
+                        kieScanner.stop();
+                    }
+                } catch (Throwable t) {
+                    LOGGER.warn("problem stoppping KieScanner: " + t.getMessage());
                 }
             }
         };

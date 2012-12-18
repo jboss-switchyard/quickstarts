@@ -39,8 +39,7 @@ import org.switchyard.component.rules.annotation.Rules;
     listeners=@Listener(DebugWorkingMemoryEventListener.class),
     loggers=@Logger(interval=2000, log="theLog", type=LoggerType.CONSOLE),
     manifest=@Manifest(
-        scan=true,
-        //container=@Container(baseName="theBase", releaseId="theGroupId:theArtifactId:theVersion", sessionName="theSession"),
+        //container=@Container(baseName="theBase", scan=true, scanInterval=1000, releaseId="theGroupId:theArtifactId:theVersion", sessionName="theSession"),
         resources={
             @Resource(location="foo.drl", type="DRL"),
             @Resource(location="bar.dsl", type="DSL")

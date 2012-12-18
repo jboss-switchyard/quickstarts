@@ -28,6 +28,16 @@ import org.switchyard.Message;
  */
 public class SwitchYardServiceChannel extends BaseSwitchYardChannel {
 
+    /** service. */
+    public static final String SERVICE = "service";
+
+    /**
+     * Constructs a new SwitchYardServiceChannel with the name "service".
+     */
+    public SwitchYardServiceChannel() {
+        setName(SERVICE);
+    }
+
     /**
      * {@inheritDoc}
      */

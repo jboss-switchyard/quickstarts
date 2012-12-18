@@ -53,6 +53,7 @@ import org.switchyard.component.rules.config.model.RulesComponentImplementationM
 public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponentImplementationModel> {
 
     private static final AtomicInteger FIRE_UNTIL_HALT_COUNT = new AtomicInteger();
+    private static final KnowledgeAction DEFAULT_ACTION = new KnowledgeAction(null, RulesActionType.EXECUTE);
 
     private Thread _fireUntilHaltThread = null;
 
@@ -69,6 +70,14 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
      * {@inheritDoc}
      */
     @Override
+    public KnowledgeAction getDefaultAction() {
+        return DEFAULT_ACTION;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void handleAction(Exchange exchange, KnowledgeAction action) throws HandlerException {
         RulesActionType actionType = (RulesActionType)action.getType();
         switch (actionType) {
@@ -79,6 +88,7 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
                 session.getStateless().execute(input);
                 break;
             }
+            case INSERT:
             case FIRE_ALL_RULES: {
                 /*
                 if (!isContinue(exchange)) {
@@ -91,7 +101,9 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
                 for (Object fact : input) {
                     session.getStateful().insert(fact);
                 }
-                session.getStateful().fireAllRules();
+                if (RulesActionType.FIRE_ALL_RULES.equals(actionType)) {
+                    session.getStateful().fireAllRules();
+                }
                 if (isDispose(exchange)) {
                     disposeStatefulSession();
                 }

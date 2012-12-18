@@ -64,8 +64,8 @@ MA  02110-1301, USA.
                     <element ref="rules:outputs" minOccurs="0" maxOccurs="1"/>
                 </sequence>
                 <attribute name="id" type="string" use="optional"/>
-                <attribute name="operation" type="string" use="required"/>
-                <attribute name="type" type="rules:actionType" use="required"/>
+                <attribute name="operation" type="string" use="optional"/>
+                <attribute name="type" type="rules:actionType" use="optional"/>
             </extension>
         </complexContent>
     </complexType>
@@ -115,6 +115,7 @@ MA  02110-1301, USA.
     <simpleType name="actionType">
         <restriction base="string">
             <enumeration value="EXECUTE"/>
+            <enumeration value="INSERT"/>
             <enumeration value="FIRE_ALL_RULES"/>
             <enumeration value="FIRE_UNTIL_HALT"/>
         </restriction>
@@ -203,7 +204,6 @@ MA  02110-1301, USA.
                         <element ref="rules:resources" minOccurs="0" maxOccurs="1"/>
                     </choice>
                 </sequence>
-                <attribute name="scan" type="boolean" use="optional"/>
             </extension>
         </complexContent>
     </complexType>
@@ -214,6 +214,8 @@ MA  02110-1301, USA.
             <extension base="sca:CommonExtensionBase">
                 <attribute name="baseName" type="string" use="optional"/>
                 <attribute name="releaseId" type="string" use="optional"/>
+                <attribute name="scan" type="boolean" use="optional"/>
+                <attribute name="scanInterval" type="long" use="optional"/>
                 <attribute name="sessionName" type="string" use="optional"/>
             </extension>
         </complexContent>

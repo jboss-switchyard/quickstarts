@@ -33,11 +33,14 @@ import org.drools.impl.StatelessKnowledgeSessionImpl;
 import org.drools.reteoo.ReteooWorkingMemoryInterface;
 import org.drools.runtime.process.InternalProcessRuntime;
 import org.kie.event.KieRuntimeEventManager;
+import org.kie.event.KnowledgeRuntimeEventManager;
 import org.kie.event.kiebase.KieBaseEventListener;
 import org.kie.event.process.ProcessEventListener;
 import org.kie.event.rule.DefaultAgendaEventListener;
 import org.kie.event.rule.RuleFlowGroupActivatedEvent;
+import org.kie.runtime.KieRuntime;
 import org.kie.runtime.KieSession;
+import org.kie.runtime.KnowledgeRuntime;
 import org.kie.runtime.StatefulKnowledgeSession;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
@@ -51,6 +54,14 @@ import org.switchyard.exception.SwitchYardException;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 public final class Listeners {
+
+    private static final Class<?>[][] PARMAMETER_TYPES = new Class<?>[][]{
+        new Class<?>[]{KieRuntimeEventManager.class},
+        new Class<?>[]{KieRuntime.class},
+        new Class<?>[]{KnowledgeRuntimeEventManager.class},
+        new Class<?>[]{KnowledgeRuntime.class},
+        new Class<?>[0]
+    };
 
     /**
      * Registers listeners.
@@ -71,28 +82,46 @@ public final class Listeners {
         if (listenersModel != null) {
             for (ListenerModel listenerModel : listenersModel.getListeners()) {
                 Class<? extends EventListener> listenerClass = listenerModel.getClazz(loader);
-                EventListener listener;
-                try {
-                    @SuppressWarnings("unused")
-                    Constructor<? extends EventListener> cnstr = listenerClass.getDeclaredConstructor(KieRuntimeEventManager.class);
-                    // automatic registration
-                    listener = Construction.construct(listenerClass, new Class[]{KieRuntimeEventManager.class}, new Object[]{runtimeEventManager});
-                } catch (NoSuchMethodException nsme1) {
-                    try {
-                        @SuppressWarnings("unused")
-                        Constructor<? extends EventListener> cnstr = listenerClass.getDeclaredConstructor();
-                        listener = Construction.construct(listenerClass);
-                        // manual registration
-                        registerListener(listener, runtimeEventManager);
-                    } catch (NoSuchMethodException nsme2) {
-                        listener = null;
-                    }
+                if (listenerClass == null) {
+                    throw new SwitchYardException("Could not load listener class: " + listenerModel.getModelConfiguration().getAttribute("class"));
                 }
-                if (listener == null) {
-                    throw new SwitchYardException("Could not find appropriate constructor in class " + listenerClass.getName());
-                }
+                registerListener(listenerClass, runtimeEventManager);
             }
         }
+    }
+
+    private static void registerListener(Class<? extends EventListener> listenerClass, KieRuntimeEventManager runtimeEventManager) {
+        Constructor<? extends EventListener> constructor = getConstructor(listenerClass);
+        Class<?>[] parameterTypes = constructor != null ? constructor.getParameterTypes() : new Class<?>[0];
+        try {
+            EventListener listener;
+            if (parameterTypes.length == 0) {
+                listener = Construction.construct(listenerClass);
+                // manual registration
+                registerListener(listener, runtimeEventManager);
+            } else if (parameterTypes.length == 1) {
+                // automatic registration
+                listener = Construction.construct(listenerClass, parameterTypes, new Object[]{runtimeEventManager});
+            }
+        } catch (Throwable t) {
+            throw new SwitchYardException("Could not instantiate listener class: " + listenerClass.getName());
+        }
+    }
+
+    private static Constructor<? extends EventListener> getConstructor(Class<? extends EventListener> listenerClass) {
+        Constructor<? extends EventListener> constructor = null;
+        for (Class<?>[] parameterTypes : PARMAMETER_TYPES) {
+            try {
+                constructor = listenerClass.getConstructor(parameterTypes);
+                if (constructor != null) {
+                    break;
+                }
+            } catch (Throwable t) {
+                // keep checkstyle happy ("at least one statement")
+                t.getMessage();
+            }
+        }
+        return constructor;
     }
 
     private static void registerListener(EventListener listener, KieRuntimeEventManager runtimeEventManager) {

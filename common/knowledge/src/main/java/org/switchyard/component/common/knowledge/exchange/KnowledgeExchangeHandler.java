@@ -18,6 +18,8 @@
  */
 package org.switchyard.component.common.knowledge.exchange;
 
+import static org.switchyard.component.common.knowledge.KnowledgeConstants.DEFAULT;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -173,7 +175,7 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
     public void start() {
         _loader = Classes.getClassLoader(getClass());
         Resources.installTypes(_loader);
-        Mappings.registerActionMappings(_model, _actions);
+        Mappings.registerActionMappings(_model, _actions, getDefaultAction());
         _sessionFactory = KnowledgeSessionFactory.newSessionFactory(_model, _loader, _domain, getPropertyOverrides());
     }
 
@@ -192,6 +194,12 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
     }
 
     /**
+     * Gets the default knowledge action.
+     * @return the default knowledge action
+     */
+    public abstract KnowledgeAction getDefaultAction();
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -208,12 +216,14 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
                     operationName = Strings.trimToNull(providerOperation.getName());
                 }
             }
+            KnowledgeAction action = null;
             if (operationName != null) {
-                KnowledgeAction action = _actions.get(operationName);
-                if (action != null) {
-                    handleAction(exchange, action);
-                }
+                action = _actions.get(operationName);
             }
+            if (action == null) {
+                action = _actions.get(DEFAULT);
+            }
+            handleAction(exchange, action);
         }
     }
 

@@ -48,12 +48,12 @@ import org.switchyard.component.bpm.BPMConstants;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.transaction.AS7TransactionHelper;
 import org.switchyard.component.bpm.work.WorkItemHandlers;
+import org.switchyard.component.common.knowledge.KnowledgeConstants;
 import org.switchyard.component.common.knowledge.exchange.KnowledgeAction;
 import org.switchyard.component.common.knowledge.exchange.KnowledgeExchangeHandler;
 import org.switchyard.component.common.knowledge.session.KnowledgeSession;
 import org.switchyard.component.common.knowledge.util.Disposals;
 import org.switchyard.component.common.knowledge.util.Environments;
-import org.switchyard.component.common.knowledge.util.Mappings;
 
 /**
  * A "bpm" implementation of a KnowledgeExchangeHandler.
@@ -61,6 +61,8 @@ import org.switchyard.component.common.knowledge.util.Mappings;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImplementationModel> {
+
+    private static final KnowledgeAction DEFAULT_ACTION = new KnowledgeAction(null, BPMActionType.START_PROCESS);
 
     private final boolean _persistent;
     private final String _processId;
@@ -131,6 +133,14 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
             return env;
         }
         return super.getEnvironmentOverrides();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public KnowledgeAction getDefaultAction() {
+        return DEFAULT_ACTION;
     }
 
     /**
@@ -257,7 +267,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
             Object value = entry.getValue();
             if (value != null) {
                 String key = entry.getKey();
-                if (Mappings.CONTENT_OUTPUT.equals(key)) {
+                if (KnowledgeConstants.CONTENT_OUTPUT.equals(key)) {
                     outputMessage.setContent(value);
                 } else {
                     context.setProperty(key, value, Scope.EXCHANGE);

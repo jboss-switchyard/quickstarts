@@ -20,6 +20,7 @@ package org.switchyard.component.common.knowledge.config.model;
 
 import org.switchyard.Scope;
 import org.switchyard.common.io.resource.ResourceType;
+import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.component.common.knowledge.LoggerType;
 import org.switchyard.component.common.knowledge.annotation.Channel;
 import org.switchyard.component.common.knowledge.annotation.Container;
@@ -29,6 +30,7 @@ import org.switchyard.component.common.knowledge.annotation.Manifest;
 import org.switchyard.component.common.knowledge.annotation.Mapping;
 import org.switchyard.component.common.knowledge.annotation.Property;
 import org.switchyard.component.common.knowledge.annotation.Resource;
+import org.switchyard.component.common.knowledge.channel.SwitchYardChannel;
 import org.switchyard.component.common.knowledge.channel.SwitchYardServiceChannel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1ChannelModel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1ChannelsModel;
@@ -89,6 +91,15 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
             channelModel.setClazz(clazz);
             String name = channelAnnotation.name();
             if (UNDEFINED.equals(name)) {
+                org.kie.runtime.Channel c = Construction.construct(clazz);
+                if (c instanceof SwitchYardChannel) {
+                    SwitchYardChannel syc = (SwitchYardChannel)c;
+                    if (syc.getName() != null) {
+                        name = syc.getName();
+                    }
+                }
+            }
+            if (UNDEFINED.equals(name)) {
                 name = clazz.getSimpleName();
             }
             channelModel.setName(name);
@@ -132,6 +143,14 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
         String releaseId = containerAnnotation.releaseId();
         if (!UNDEFINED.equals(releaseId)) {
             containerModel.setReleaseId(Containers.toReleaseId(releaseId));
+        }
+        boolean scan = containerAnnotation.scan();
+        if (scan) {
+            containerModel.setScan(scan);
+        }
+        long scanInterval = containerAnnotation.scanInterval();
+        if (scanInterval > 0) {
+            containerModel.setScanInterval(Long.valueOf(scanInterval));
         }
         String sessionName = containerAnnotation.sessionName();
         if (!UNDEFINED.equals(sessionName)) {
@@ -201,10 +220,6 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
         }
         Manifest manifestAnnotation = manifestAnnotations[0];
         ManifestModel manifestModel = new V1ManifestModel(namespace);
-        boolean scan = manifestAnnotation.scan();
-        if (scan) {
-            manifestModel.setScan(scan);
-        }
         Container[] container = manifestAnnotation.container();
         if (container != null && container.length > 0) {
             manifestModel.setContainer(toContainerModel(container[0], namespace));

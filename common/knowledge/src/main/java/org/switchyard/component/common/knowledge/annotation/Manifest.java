@@ -35,9 +35,6 @@ import java.lang.annotation.Target;
 @Documented
 public @interface Manifest {
 
-    /** Scan. */
-    public boolean scan() default false;
-
     /** Container. */
     public Container[] container() default {};
 

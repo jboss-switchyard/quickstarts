@@ -87,7 +87,6 @@ public class RulesServicePlugin implements Plugin {
      * @param out shell output
      * @param argInterfaceClass class name of Java service interface
      * @param argRuleFilePath path to the rule definition
-     * @param argScan whether to use a scanner
      * @throws java.io.IOException error with file resources
      */
     @Command(value = "create", help = "Created a new service backed by business rules.")
@@ -104,11 +103,6 @@ public class RulesServicePlugin implements Plugin {
                      name = "ruleDefinition",
                      description = "The business rule definition") 
              final String argRuleFilePath,
-             @Option(required = false,
-                     name = "scan",
-                     description = "Whether you want to scan resources for changes (true|false)",
-                     defaultValue = "false")
-             final Boolean argScan,
              final PipeOut out)
     throws java.io.IOException {
       
@@ -147,10 +141,8 @@ public class RulesServicePlugin implements Plugin {
             out.println("Created rule definition [" + ruleDefinitionPath + "]");
         }
         
-        boolean scan = argScan != null ? argScan.booleanValue() : false;
-        
         // Add the SwitchYard config
-        createImplementationConfig(argServiceName, interfaceClass, ruleDefinitionPath, scan);
+        createImplementationConfig(argServiceName, interfaceClass, ruleDefinitionPath);
           
         // Notify user of success
         out.println("Rule service " + argServiceName + " has been created.");
@@ -158,8 +150,7 @@ public class RulesServicePlugin implements Plugin {
     
     private void createImplementationConfig(String serviceName,
             String interfaceName,
-            String rulesDefinition,
-            boolean scan) {
+            String rulesDefinition) {
         
         SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
         // Create the component service model
@@ -182,7 +173,6 @@ public class RulesServicePlugin implements Plugin {
         V1ResourcesModel resources = new V1ResourcesModel(DEFAULT_NAMESPACE);
         resources.addResource(new V1ResourceModel(DEFAULT_NAMESPACE).setLocation(rulesDefinition).setType(ResourceType.valueOf("DRL")));
         manifest.setResources(resources);
-        manifest.setScan(scan);
         rules.setManifest(manifest);
         component.setImplementation(rules);
         

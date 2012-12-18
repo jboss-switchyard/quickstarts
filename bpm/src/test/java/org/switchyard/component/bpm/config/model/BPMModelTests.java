@@ -152,7 +152,6 @@ public class BPMModelTests {
         Assert.assertEquals("theLog", logger.getLog());
         Assert.assertEquals(LoggerType.CONSOLE, logger.getType());
         ManifestModel manifest = bpm.getManifest();
-        Assert.assertEquals(true, manifest.isScan());
         ContainerModel container = manifest.getContainer();
         ResourcesModel resources = manifest.getResources();
         Assert.assertTrue((container != null && resources == null) || (container == null && resources != null));
@@ -163,6 +162,8 @@ public class BPMModelTests {
             Assert.assertEquals("theVersion", rid.getVersion());
             Assert.assertEquals("theBase", container.getBaseName());
             Assert.assertEquals("theSession", container.getSessionName());
+            Assert.assertTrue(container.isScan());
+            Assert.assertEquals(Long.valueOf(1000), container.getScanInterval());
             Assert.assertNull(resources);
         } else if (RESOURCES_XML.equals(xml)) {
             Assert.assertNull(container);

@@ -16,38 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.common.knowledge.annotation;
+package org.switchyard.component.rules.annotation;
 
-import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import org.switchyard.component.common.knowledge.annotation.Mapping;
+
 /**
- * Container.
+ * Insert.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-@Target(TYPE)
+@Target(METHOD)
 @Retention(RUNTIME)
 @Documented
-public @interface Container {
+public @interface Insert {
 
-    /** Base name. */
-    public String baseName() default "";
+    /** Globals. */
+    public Mapping[] globals() default {};
 
-    /** ReleaseId. */
-    public String releaseId() default "";
+    /** Inputs. */
+    public Mapping[] inputs() default {};
 
-    /** Scan. */
-    public boolean scan() default false;
-
-    /** ScanInterval. */
-    public long scanInterval() default -1;
-
-    /** Session name. */
-    public String sessionName() default "";
+    /** Outputs. */
+    public Mapping[] outputs() default {};
 
 }

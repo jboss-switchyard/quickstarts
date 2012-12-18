@@ -43,8 +43,8 @@ MA  02110-1301, USA.
                 <loggers>
                     <logger interval="2000" log="theLog" type="CONSOLE"/>
                 </loggers>
-                <manifest scan="true">
-                    <container baseName="theBase" releaseId="theGroupId:theArtifactId:theVersion" sessionName="theSession"/>
+                <manifest>
+                    <container baseName="theBase" releaseId="theGroupId:theArtifactId:theVersion" scan="true" scanInterval="1000" sessionName="theSession"/>
                 </manifest>
                 <properties>
                     <property name="foo" value="bar"/>

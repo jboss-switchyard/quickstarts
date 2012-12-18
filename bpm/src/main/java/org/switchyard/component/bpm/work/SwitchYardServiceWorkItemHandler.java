@@ -18,6 +18,9 @@
  */
 package org.switchyard.component.bpm.work;
 
+import static org.switchyard.component.common.knowledge.KnowledgeConstants.CONTENT_INPUT;
+import static org.switchyard.component.common.knowledge.KnowledgeConstants.CONTENT_OUTPUT;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +39,6 @@ import org.switchyard.ServiceReference;
 import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
-import org.switchyard.component.common.knowledge.util.Mappings;
 
 /**
  * A WorkItemHandler that can send to a SwitchYard Service.
@@ -171,11 +173,11 @@ public class SwitchYardServiceWorkItemHandler extends BaseSwitchYardWorkItemHand
     }
 
     private String getContentInputName(Map<String, Object> parameters) {
-        return getString(CONTENT_INPUT_NAME, parameters, Mappings.CONTENT_INPUT);
+        return getString(CONTENT_INPUT_NAME, parameters, CONTENT_INPUT);
     }
 
     private String getContentOutputName(Map<String, Object> parameters) {
-        return getString(CONTENT_OUTPUT_NAME, parameters, Mappings.CONTENT_OUTPUT);
+        return getString(CONTENT_OUTPUT_NAME, parameters, CONTENT_OUTPUT);
     }
 
     private String getFaultResultName(Map<String, Object> parameters) {

@@ -31,6 +31,7 @@ import org.switchyard.component.common.knowledge.channel.SwitchYardServiceChanne
 import org.switchyard.component.common.knowledge.config.model.ChannelModel;
 import org.switchyard.component.common.knowledge.config.model.ChannelsModel;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
+import org.switchyard.exception.SwitchYardException;
 
 /**
  * Channel functions.
@@ -51,22 +52,28 @@ public final class Channels {
         if (channelsModel != null) {
             String tns = model.getComponent().getTargetNamespace();
             for (ChannelModel channelModel : channelsModel.getChannels()) {
-                String channelName = channelModel.getName();
-                if (channelName != null) {
-                    Class<? extends Channel> channelClass = channelModel.getClazz(loader);
-                    if (channelClass == null) {
-                        channelClass = SwitchYardServiceChannel.class;
-                    }
-                    Channel channel = Construction.construct(channelClass);
-                    if (channel instanceof SwitchYardChannel) {
-                        SwitchYardChannel syc = (SwitchYardChannel)channel;
-                        syc.setOperation(channelModel.getOperation());
-                        QName qname = XMLHelper.createQName(tns, channelModel.getReference());
-                        ServiceReference reference = domain.getServiceReference(qname);
-                        syc.setReference(reference);
-                    }
-                    runtime.registerChannel(channelName, channel);
+                Class<? extends Channel> channelClass = channelModel.getClazz(loader);
+                if (channelClass == null) {
+                    channelClass = SwitchYardServiceChannel.class;
                 }
+                Channel channel = Construction.construct(channelClass);
+                String name = channelModel.getName();
+                if (channel instanceof SwitchYardChannel) {
+                    SwitchYardChannel syc = (SwitchYardChannel)channel;
+                    if (name != null) {
+                        syc.setName(name);
+                    } else {
+                        name = syc.getName();
+                    }
+                    syc.setOperation(channelModel.getOperation());
+                    QName qname = XMLHelper.createQName(tns, channelModel.getReference());
+                    ServiceReference reference = domain.getServiceReference(qname);
+                    syc.setReference(reference);
+                }
+                if (name == null) {
+                    throw new SwitchYardException("Could not use null name to register channel: " + channel.getClass().getName());
+                }
+                runtime.registerChannel(name, channel);
             }
         }
     }

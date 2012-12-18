@@ -18,6 +18,13 @@
  */
 package org.switchyard.component.common.knowledge.util;
 
+import static org.switchyard.component.common.knowledge.KnowledgeConstants.CONTENT_INPUT;
+import static org.switchyard.component.common.knowledge.KnowledgeConstants.CONTENT_OUTPUT;
+import static org.switchyard.component.common.knowledge.KnowledgeConstants.CONTEXT;
+import static org.switchyard.component.common.knowledge.KnowledgeConstants.DEFAULT;
+import static org.switchyard.component.common.knowledge.KnowledgeConstants.EXCHANGE;
+import static org.switchyard.component.common.knowledge.KnowledgeConstants.MESSAGE;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +35,7 @@ import org.kie.runtime.Globals;
 import org.switchyard.Exchange;
 import org.switchyard.Scope;
 import org.switchyard.common.lang.Strings;
+import org.switchyard.component.common.knowledge.ActionType;
 import org.switchyard.component.common.knowledge.config.model.ActionModel;
 import org.switchyard.component.common.knowledge.config.model.ActionsModel;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
@@ -39,6 +47,7 @@ import org.switchyard.component.common.knowledge.expression.Expression;
 import org.switchyard.component.common.knowledge.expression.ExpressionFactory;
 import org.switchyard.component.common.knowledge.expression.ExpressionMapping;
 import org.switchyard.component.common.knowledge.session.KnowledgeSession;
+import org.switchyard.exception.SwitchYardException;
 
 /**
  * Mapping functions.
@@ -47,31 +56,40 @@ import org.switchyard.component.common.knowledge.session.KnowledgeSession;
  */
 public final class Mappings {
 
-    private static final String EXCHANGE = "exchange";
-    private static final String CONTEXT = "context";
-    private static final String MESSAGE = "message";
-
-    /** contentInput. */
-    public static final String CONTENT_INPUT = "contentInput";
-    /** contentOutput. */
-    public static final String CONTENT_OUTPUT = "contentOutput";
-
     /**
      * Registers action mappings.
      * @param model the model
      * @param actions the actions
+     * @param defaultAction the default action
      */
-    public static void registerActionMappings(KnowledgeComponentImplementationModel model, Map<String, KnowledgeAction> actions) {
-        ActionsModel operationsModel = model.getActions();
-        if (operationsModel != null) {
-            for (ActionModel actionModel : operationsModel.getActions()) {
-                String operation = actionModel.getOperation();
-                KnowledgeAction action = new KnowledgeAction(actionModel.getId(), actionModel.getType());
+    public static void registerActionMappings(KnowledgeComponentImplementationModel model, Map<String, KnowledgeAction> actions, KnowledgeAction defaultAction) {
+        ActionsModel actionsModel = model.getActions();
+        if (actionsModel != null) {
+            for (ActionModel actionModel : actionsModel.getActions()) {
+                String operation = Strings.trimToNull(actionModel.getOperation());
+                if (operation == null) {
+                    operation = DEFAULT;
+                }
+                String id = actionModel.getId();
+                if (id == null) {
+                    id = defaultAction.getId();
+                }
+                ActionType type = actionModel.getType();
+                if (type == null) {
+                    type = defaultAction.getType();
+                }
+                KnowledgeAction action = new KnowledgeAction(id, type);
                 registerExpressionMappings(actionModel.getGlobals(), action.getGlobalExpressionMappings(), Scope.EXCHANGE);
                 registerExpressionMappings(actionModel.getInputs(), action.getInputExpressionMappings(), Scope.IN);
                 registerExpressionMappings(actionModel.getOutputs(), action.getOutputExpressionMappings(), Scope.OUT);
+                if (actions.containsKey(operation)) {
+                    throw new SwitchYardException(String.format("cannot register %s action due to duplicate operation: %s", type, operation));
+                }
                 actions.put(operation, action);
             }
+        }
+        if (!actions.containsKey(DEFAULT)) {
+            actions.put(DEFAULT, defaultAction);
         }
     }
 
@@ -189,10 +207,7 @@ public final class Mappings {
         if (inputs.size() > 0) {
             list.addAll(getList(exchange, inputs));
         } else {
-            Object content = exchange.getMessage().getContent();
-            if (content != null) {
-                list.add(content);
-            }
+            expand(exchange.getMessage().getContent(), list);
         }
         return list;
     }

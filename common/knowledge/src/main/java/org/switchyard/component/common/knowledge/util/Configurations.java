@@ -22,8 +22,6 @@ import java.util.Properties;
 
 import org.kie.KieBaseConfiguration;
 import org.kie.KnowledgeBaseFactory;
-import org.kie.agent.KnowledgeAgentConfiguration;
-import org.kie.agent.KnowledgeAgentFactory;
 import org.kie.builder.KnowledgeBuilderConfiguration;
 import org.kie.builder.KnowledgeBuilderFactory;
 import org.kie.runtime.KieSessionConfiguration;
@@ -35,16 +33,6 @@ import org.switchyard.component.common.knowledge.config.model.KnowledgeComponent
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 public final class Configurations {
-
-    /**
-     * Gets an agent configuration.
-     * @param model the model
-     * @param overrides any overrides
-     * @return the agent configuration
-     */
-    public static KnowledgeAgentConfiguration getAgentConfiguration(KnowledgeComponentImplementationModel model, Properties overrides) {
-        return KnowledgeAgentFactory.newKnowledgeAgentConfiguration(Propertys.getProperties(model, overrides));
-    }
 
     /**
      * Gets a base configuration.

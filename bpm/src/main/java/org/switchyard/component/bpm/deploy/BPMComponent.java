@@ -19,8 +19,6 @@
 package org.switchyard.component.bpm.deploy;
 
 import org.switchyard.ServiceDomain;
-import org.switchyard.component.common.knowledge.system.ResourceChangeService;
-import org.switchyard.config.Configuration;
 import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.BaseComponent;
 
@@ -37,24 +35,6 @@ public class BPMComponent extends BaseComponent {
     public BPMComponent() {
         super(BPMActivator.BPM_TYPE);
         setName("BPMComponent");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void init(Configuration config) {
-        super.init(config);
-        ResourceChangeService.start(this);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void destroy() {
-        ResourceChangeService.stop(this);
-        super.destroy();
     }
 
     /**

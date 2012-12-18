@@ -32,19 +32,6 @@ public interface ManifestModel extends Model {
     public static final String MANIFEST = "manifest";
 
     /**
-     * Gets the scan attribute.
-     * @return the scan attribute
-     */
-    public boolean isScan();
-
-    /**
-     * Sets the scan attribute.
-     * @param scan the scan attribute
-     * @return this ManifestModel (useful for chaining)
-     */
-    public ManifestModel setScan(boolean scan);
-
-    /**
      * Gets the child container model.
      * @return the child container model
      */

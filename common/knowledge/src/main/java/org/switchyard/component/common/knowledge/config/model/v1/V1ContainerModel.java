@@ -89,6 +89,43 @@ public class V1ContainerModel extends BaseModel implements ContainerModel {
      * {@inheritDoc}
      */
     @Override
+    public boolean isScan() {
+        String scan = getModelAttribute("scan");
+        return scan != null ? Boolean.parseBoolean(scan) : false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ContainerModel setScan(boolean scan) {
+        setModelAttribute("scan", String.valueOf(scan));
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long getScanInterval() {
+        String scanInterval = getModelAttribute("scanInterval");
+        return scanInterval != null ? Long.valueOf(scanInterval) : null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ContainerModel setScanInterval(Long scanInterval) {
+        String si = scanInterval != null ? scanInterval.toString() : null;
+        setModelAttribute("scanInterval", si);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getSessionName() {
         return getModelAttribute("sessionName");
     }

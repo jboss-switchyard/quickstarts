@@ -29,6 +29,19 @@ import org.switchyard.ServiceReference;
 public interface SwitchYardChannel extends Channel {
 
     /**
+     * Gets the name.
+     * @return the name
+     */
+    public String getName();
+
+    /**
+     * Sets the name.
+     * @param name the name
+     * @return this SwitchYardWorkItemHandler (useful for chaining)
+     */
+    public SwitchYardChannel setName(String name);
+
+    /**
      * Gets the operation.
      * @return the operation
      */

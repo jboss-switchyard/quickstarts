@@ -40,6 +40,7 @@ import org.switchyard.component.rules.RulesActionType;
 import org.switchyard.component.rules.annotation.Execute;
 import org.switchyard.component.rules.annotation.FireAllRules;
 import org.switchyard.component.rules.annotation.FireUntilHalt;
+import org.switchyard.component.rules.annotation.Insert;
 import org.switchyard.component.rules.annotation.Rules;
 import org.switchyard.component.rules.config.model.v1.V1RulesActionModel;
 import org.switchyard.component.rules.config.model.v1.V1RulesComponentImplementationModel;
@@ -66,6 +67,7 @@ import org.switchyard.metadata.java.JavaService;
 public class RulesSwitchYardScanner extends KnowledgeSwitchYardScanner {
 
     private static final IsAnnotationPresentFilter EXECUTE_FILTER = new IsAnnotationPresentFilter(Execute.class);
+    private static final IsAnnotationPresentFilter INSERT_FILTER = new IsAnnotationPresentFilter(Insert.class);
     private static final IsAnnotationPresentFilter FIRE_ALL_RULES_FILTER = new IsAnnotationPresentFilter(FireAllRules.class);
     private static final IsAnnotationPresentFilter FIRE_UNTIL_HALT_FILTER = new IsAnnotationPresentFilter(FireUntilHalt.class);
 
@@ -129,6 +131,12 @@ public class RulesSwitchYardScanner extends KnowledgeSwitchYardScanner {
                 globalMappingAnnotations = executeAnnotation.globals();
                 inputMappingAnnotations = executeAnnotation.inputs();
                 outputMappingAnnotations = executeAnnotation.outputs();
+            } else if (INSERT_FILTER.matches(method)) {
+                actionType = RulesActionType.INSERT;
+                Insert insertAnnotation = method.getAnnotation(Insert.class);
+                globalMappingAnnotations = insertAnnotation.globals();
+                inputMappingAnnotations = insertAnnotation.inputs();
+                outputMappingAnnotations = insertAnnotation.outputs();
             } else if (FIRE_ALL_RULES_FILTER.matches(method)) {
                 actionType = RulesActionType.FIRE_ALL_RULES;
                 FireAllRules fireAllRulesAnnotation = method.getAnnotation(FireAllRules.class);
