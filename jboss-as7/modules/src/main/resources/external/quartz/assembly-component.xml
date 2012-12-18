@@ -36,7 +36,7 @@
       <includes>
         <include>org.quartz-scheduler:quartz</include>
       </includes>
-      <outputFileNameMapping>${artifact.artifactId}-${version.quartz}.${artifact.extension}</outputFileNameMapping>
+      <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
       <useTransitiveDependencies>false</useTransitiveDependencies>
     </dependencySet>
   </dependencySets>

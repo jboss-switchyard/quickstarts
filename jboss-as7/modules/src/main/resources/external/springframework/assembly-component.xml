@@ -43,7 +43,7 @@
         <include>org.springframework:spring-jdbc</include>
         <include>org.springframework:spring-orm</include>
       </includes>
-      <outputFileNameMapping>${artifact.artifactId}-${version.spring}.${artifact.extension}</outputFileNameMapping>
+      <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
       <useTransitiveDependencies>false</useTransitiveDependencies>
     </dependencySet>
   </dependencySets>

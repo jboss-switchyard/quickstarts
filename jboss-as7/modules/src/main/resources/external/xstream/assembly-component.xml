@@ -36,7 +36,7 @@
       <includes>
         <include>com.thoughtworks.xstream:xstream</include>
       </includes>
-      <outputFileNameMapping>${artifact.artifactId}-${version.xstream}.${artifact.extension}</outputFileNameMapping>
+      <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
       <useTransitiveDependencies>false</useTransitiveDependencies>
     </dependencySet>
   </dependencySets>

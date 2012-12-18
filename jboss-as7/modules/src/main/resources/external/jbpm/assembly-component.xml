@@ -47,7 +47,7 @@
         <include>org.jbpm:jbpm-persistence-jpa</include>
         <include>org.jbpm:jbpm-workitems</include>
       </includes>
-      <outputFileNameMapping>${artifact.artifactId}-${version.jbpm}.${artifact.extension}</outputFileNameMapping>
+      <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
       <useTransitiveDependencies>false</useTransitiveDependencies>
     </dependencySet>
   </dependencySets>

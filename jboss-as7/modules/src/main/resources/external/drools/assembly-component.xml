@@ -40,7 +40,7 @@
         <include>org.drools:knowledge-api</include>
         <include>org.drools:knowledge-internal-api</include>
       </includes>
-      <outputFileNameMapping>${artifact.artifactId}-${version.drools}.${artifact.extension}</outputFileNameMapping>
+      <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
       <useTransitiveDependencies>false</useTransitiveDependencies>
     </dependencySet>
   </dependencySets>

@@ -37,7 +37,7 @@
                 <include>org.antlr:antlr-runtime</include>
             </includes>
             <outputDirectory>/modules/org/antlr/antlr-runtime/main</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}-${version.antlr}.${artifact.extension}</outputFileNameMapping>
+            <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
     </dependencySets>
 </component>

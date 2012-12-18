@@ -36,7 +36,7 @@
       <includes>
         <include>net.sourceforge.saxon:saxonhe</include>
       </includes>
-      <outputFileNameMapping>${artifact.artifactId}-${version.saxon}.${artifact.extension}</outputFileNameMapping>
+      <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
       <useTransitiveDependencies>false</useTransitiveDependencies>
     </dependencySet>
   </dependencySets>

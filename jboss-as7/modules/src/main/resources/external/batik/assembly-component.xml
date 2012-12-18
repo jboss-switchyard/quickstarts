@@ -50,7 +50,7 @@
         <include>batik:batik-util</include>
         <include>batik:batik-xml</include>
       </includes>
-      <outputFileNameMapping>${artifact.artifactId}-${version.batik}.${artifact.extension}</outputFileNameMapping>
+      <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
       <useTransitiveDependencies>false</useTransitiveDependencies>
     </dependencySet>
     <dependencySet>
@@ -59,7 +59,7 @@
         <include>org.apache.ws.commons.axiom:axiom-api</include>
         <include>org.apache.ws.commons.axiom:axiom-impl</include>
       </includes>
-      <outputFileNameMapping>${artifact.artifactId}-${version.axiom}.${artifact.extension}</outputFileNameMapping>
+      <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
       <useTransitiveDependencies>false</useTransitiveDependencies>
     </dependencySet>
     <dependencySet>
@@ -68,7 +68,7 @@
         <include>xml-apis:xml-apis</include>
         <include>xml-apis:xml-apis-ext</include>
       </includes>
-      <outputFileNameMapping>${artifact.artifactId}-${version.xml-apis}.${artifact.extension}</outputFileNameMapping>
+      <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
       <useTransitiveDependencies>false</useTransitiveDependencies>
     </dependencySet>
   </dependencySets>
