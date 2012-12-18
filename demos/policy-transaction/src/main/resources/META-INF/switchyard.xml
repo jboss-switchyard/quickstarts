@@ -21,15 +21,86 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0"
-    xmlns:core="urn:switchyard-component-camel-core:config:1.0">
+    xmlns:swyd="urn:switchyard-config:switchyard:1.0"
+    xmlns:camel="urn:switchyard-component-camel-core:config:1.0">
 
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="policy-transaction" targetNamespace="urn:switchyard-quickstart-demo:policy-transaction:0.1.0">
         <service name="WorkService" promote="WorkService">
             <!-- This binding provides an inbound transaction, satisfying a service requirement for a propagated transaction. -->
-            <core:binding.uri configURI="jms://policyQSTransacted?connectionFactory=%23JmsXA&amp;transactionManager=%23jtaTransactionManager&amp;transacted=true"/>
+            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
+               <inboundConnection>
+                   <resourceAdapter name="hornetq-ra.rar">
+                   </resourceAdapter>
+                   <activationSpec>
+                       <property name="destinationType" value="javax.jms.Queue"/>
+                       <property name="destination" value="policyQSTransacted"/>
+                   </activationSpec>
+               </inboundConnection>
+               <inboundInteraction>
+                   <listener>javax.jms.MessageListener</listener>
+                   <endpoint type="org.switchyard.component.jca.endpoint.JMSEndpoint"/>
+                   <transacted>true</transacted>
+               </inboundInteraction>
+            </binding.jca>
             <!-- This binding does *not* provide an inbound transaction, violating a service requirement for a propagated transaction. -->
-            <core:binding.uri configURI="jms://policyQSNonTransacted?connectionFactory=#ConnectionFactory"/>
+            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
+               <inboundConnection>
+                   <resourceAdapter name="hornetq-ra.rar">
+                   </resourceAdapter>
+                   <activationSpec>
+                       <property name="destinationType" value="javax.jms.Queue"/>
+                       <property name="destination" value="policyQSNonTransacted"/>
+                   </activationSpec>
+               </inboundConnection>
+               <inboundInteraction>
+                   <listener>javax.jms.MessageListener</listener>
+                   <endpoint type="org.switchyard.component.jca.endpoint.JMSEndpoint"/>
+                   <transacted>false</transacted>
+               </inboundInteraction>
+            </binding.jca>
         </service>
+        
+        <reference name="StoreAService" multiplicity="0..1" promote="TaskAService/StoreAService">
+            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
+               <outboundConnection>
+                   <resourceAdapter name="hornetq-ra.rar"/>
+                   <connection jndiName="java:/JmsXA"/>
+               </outboundConnection>
+               <outboundInteraction>
+                   <processor type="org.switchyard.component.jca.processor.JMSProcessor">
+                       <property name="destination" value="queueA"/>
+                   </processor>
+               </outboundInteraction>
+            </binding.jca>
+        </reference>
+
+        <reference name="StoreBService" multiplicity="0..1" promote="TaskBService/StoreBService">
+            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
+               <outboundConnection>
+                   <resourceAdapter name="hornetq-ra.rar"/>
+                   <connection jndiName="java:/JmsXA"/>
+               </outboundConnection>
+               <outboundInteraction>
+                   <processor type="org.switchyard.component.jca.processor.JMSProcessor">
+                       <property name="destination" value="queueB"/>
+                   </processor>
+               </outboundInteraction>
+            </binding.jca>
+        </reference>
+
+        <reference name="StoreCService" multiplicity="0..1" promote="TaskCService/StoreCService">
+            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
+               <outboundConnection>
+                   <resourceAdapter name="hornetq-ra.rar"/>
+                   <connection jndiName="java:/JmsXA"/>
+               </outboundConnection>
+               <outboundInteraction>
+                   <processor type="org.switchyard.component.jca.processor.JMSProcessor">
+                       <property name="destination" value="queueC"/>
+                   </processor>
+               </outboundInteraction>
+            </binding.jca>
+        </reference>
     </composite>
 
     <!-- Uncomment this section to trace message exchange activity
