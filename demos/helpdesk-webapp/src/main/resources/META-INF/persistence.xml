@@ -23,10 +23,7 @@
       <property name="hibernate.listeners.envers.autoRegister" value="false"/>
       <property name="hibernate.max_fetch_depth" value="3"/>
       <property name="hibernate.show_sql" value="false"/>
-      <property name="hibernate.transaction.manager_lookup_class" value="org.switchyard.component.bpm.jta.hibernate.AS7TransactionManagerLookup"/>
-      <!--
-      <property name="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.JBossAppServerJtaPlatform"/>
-      -->
+      <property name="hibernate.transaction.jta.platform" value="org.switchyard.component.bpm.transaction.AS7JtaPlatform"/>
     </properties>
   </persistence-unit>
 </persistence>

@@ -10,12 +10,28 @@
             </binding.soap>
         </service>
         <component name="ProcessOrder">
-            <implementation.bpm xmlns="urn:switchyard-component-bpm:config:1.0" processDefinition="META-INF/ProcessOrder.bpmn" processId="ProcessOrder">
-                <!-- <eventListener class="org.drools.event.DebugProcessEventListener"/> -->
-                <taskHandler class="org.switchyard.component.bpm.task.work.SwitchYardServiceTaskHandler" name="SwitchYard Service"/>
-                <parameters>
-                    <mapping expression="context['org.switchyard.messageId']" variable="messageId"/>
-                </parameters>
+            <implementation.bpm xmlns="urn:switchyard-component-bpm:config:1.0" processId="ProcessOrder">
+                <actions>
+                    <action operation="submitOrder" type="START_PROCESS">
+                        <inputs>
+                            <mapping expression="context['org.switchyard.messageId']" variable="messageId"/>
+                            <mapping expression="message.content" variable="contentInput"/>
+                        </inputs>
+                    </action>
+                </actions>
+                <!--
+                <listeners>
+                    <listener class="org.drools.event.DebugProcessEventListener"/>
+                </listeners>
+                -->
+                <manifest>
+                    <resources>
+                        <resource location="META-INF/ProcessOrder.bpmn" type="BPMN2"/>
+                    </resources>
+                </manifest>
+                <workItemHandlers>
+                    <workItemHandler class="org.switchyard.component.bpm.work.SwitchYardServiceWorkItemHandler" name="SwitchYard Service"/>
+                </workItemHandlers>
             </implementation.bpm>
             <service name="ProcessOrder">
                 <interface.java interface="org.switchyard.quickstarts.bpm.service.ProcessOrder"/>

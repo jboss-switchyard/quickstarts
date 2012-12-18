@@ -1,476 +1,554 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:g="http://www.jboss.org/drools/flow/gpd" xmlns:tns="http://www.jboss.org/drools" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="Definition" expressionLanguage="http://www.mvel.org/2.0" targetNamespace="http://www.jboss.org/drools" typeLanguage="http://www.java.com/javaTypes">
-  <itemDefinition id="_ticketItem" structureRef="org.switchyard.quickstarts.demos.helpdesk.Ticket"/>
-  <itemDefinition id="_ticketAckItem" structureRef="org.switchyard.quickstarts.demos.helpdesk.TicketAck"/>
-  <process id="HelpDeskService" tns:packageName="org.switchyard.quickstarts.demos.helpdesk" name="Help Desk Service" isExecutable="true" processType="Private">
+<?xml version="1.0" encoding="UTF-8"?> 
+<definitions id="Definition"
+             targetNamespace="http://www.jboss.org/drools"
+             typeLanguage="http://www.java.com/javaTypes"
+             expressionLanguage="http://www.mvel.org/2.0"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd"
+             xmlns:g="http://www.jboss.org/drools/flow/gpd"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:tns="http://www.jboss.org/drools">
+
+  <itemDefinition id="_ticketItem" structureRef="org.switchyard.quickstarts.demos.helpdesk.Ticket" />
+  <itemDefinition id="_ticketAckItem" structureRef="org.switchyard.quickstarts.demos.helpdesk.TicketAck" />
+
+  <itemDefinition id="_4-ticketItem" structureRef="org.switchyard.quickstarts.demos.helpdesk.Ticket" />
+  <itemDefinition id="_4-ticketAckItem" structureRef="org.switchyard.quickstarts.demos.helpdesk.TicketAck" />
+
+  <itemDefinition id="_5-ticketItem" structureRef="org.switchyard.quickstarts.demos.helpdesk.Ticket" />
+  <itemDefinition id="_5-ticketAckItem" structureRef="org.switchyard.quickstarts.demos.helpdesk.TicketAck" />
+
+  <itemDefinition id="_8-ticketItem" structureRef="org.switchyard.quickstarts.demos.helpdesk.Ticket" />
+  <itemDefinition id="_8-ticketAckItem" structureRef="org.switchyard.quickstarts.demos.helpdesk.TicketAck" />
+
+  <itemDefinition id="_10-ticketItem" structureRef="org.switchyard.quickstarts.demos.helpdesk.Ticket" />
+  <itemDefinition id="_10-ticketAckItem" structureRef="org.switchyard.quickstarts.demos.helpdesk.TicketAck" />
+
+  <itemDefinition id="_12-ticketItem" structureRef="org.switchyard.quickstarts.demos.helpdesk.Ticket" />
+  <itemDefinition id="_12-ticketAckItem" structureRef="org.switchyard.quickstarts.demos.helpdesk.TicketAck" />
+
+  <itemDefinition id="_13-ticketItem" structureRef="org.switchyard.quickstarts.demos.helpdesk.Ticket" />
+  <itemDefinition id="_13-ticketAckItem" structureRef="org.switchyard.quickstarts.demos.helpdesk.TicketAck" />
+
+  <itemDefinition id="_14-ticketItem" structureRef="org.switchyard.quickstarts.demos.helpdesk.Ticket" />
+  <itemDefinition id="_14-ticketAckItem" structureRef="org.switchyard.quickstarts.demos.helpdesk.TicketAck" />
+
+  <itemDefinition id="_16-ticketItem" structureRef="org.switchyard.quickstarts.demos.helpdesk.Ticket" />
+  <itemDefinition id="_16-ticketAckItem" structureRef="org.switchyard.quickstarts.demos.helpdesk.TicketAck" />
+
+  <process processType="Private" isExecutable="true" id="HelpDeskService" name="Help Desk Service" tns:packageName="org.switchyard.quickstarts.demos.helpdesk" >
+
     <extensionElements>
-      <tns:import name="java.util.Random"/>
+     <tns:import name="java.util.Random" />
     </extensionElements>
+    <!-- process variables -->
     <property id="ticket" itemSubjectRef="_ticketItem"/>
     <property id="ticketAck" itemSubjectRef="_ticketAckItem"/>
-    <startEvent id="_1" name="StartProcess">
-      <outgoing>_1-_4</outgoing>
-    </startEvent>
-    <task id="_4" tns:taskName="SwitchYard Service" name="Open Ticket">
-      <incoming>_1-_4</incoming>
-      <outgoing>_4-_7</outgoing>
-      <ioSpecification id="InputOutputSpecification_1">
-        <dataInput id="_4_ticketInput" name="ticket"/>
-        <dataInput id="_4_ServiceNameInput" name="ServiceName"/>
-        <dataInput id="_4_ServiceOperationNameInput" name="ServiceOperationName"/>
-        <dataOutput id="_4_ticketAckOutput" name="ticketAck"/>
-        <inputSet id="InputSet_1">
+
+    <!-- nodes -->
+    <startEvent id="_1" name="StartProcess" />
+    <task id="_4" name="Open Ticket" tns:taskName="SwitchYard Service" >
+      <ioSpecification>
+        <dataInput id="_4_ticketInput" name="ticket" />
+        <dataInput id="_4_ContentInputNameInput" name="ContentInputName" />
+        <dataInput id="_4_ServiceNameInput" name="ServiceName" />
+        <dataInput id="_4_ServiceOperationNameInput" name="ServiceOperationName" />
+        <dataInput id="_4_ContentOutputNameInput" name="ContentOutputName" />
+        <dataOutput id="_4_ticketAckOutput" name="ticketAck" />
+        <inputSet>
           <dataInputRefs>_4_ticketInput</dataInputRefs>
+          <dataInputRefs>_4_ContentInputNameInput</dataInputRefs>
           <dataInputRefs>_4_ServiceNameInput</dataInputRefs>
           <dataInputRefs>_4_ServiceOperationNameInput</dataInputRefs>
+          <dataInputRefs>_4_ContentOutputNameInput</dataInputRefs>
         </inputSet>
-        <outputSet id="OutputSet_1">
+        <outputSet>
           <dataOutputRefs>_4_ticketAckOutput</dataOutputRefs>
         </outputSet>
       </ioSpecification>
-      <dataInputAssociation id="DataInputAssociation_1">
+      <dataInputAssociation>
         <sourceRef>ticket</sourceRef>
         <targetRef>_4_ticketInput</targetRef>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_2">
+      <dataInputAssociation>
+        <targetRef>_4_ContentInputNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">ticket</from>
+          <to xsi:type="tFormalExpression">_4_ContentInputNameInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataInputAssociation>
         <targetRef>_4_ServiceNameInput</targetRef>
-        <assignment id="Assignment_1">
-          <from xsi:type="tFormalExpression" id="FormalExpression_1">TicketManagementService</from>
-          <to xsi:type="tFormalExpression" id="FormalExpression_2">_4_ServiceNameInput</to>
+        <assignment>
+          <from xsi:type="tFormalExpression">TicketManagementService</from>
+          <to xsi:type="tFormalExpression">_4_ServiceNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_3">
+      <dataInputAssociation>
         <targetRef>_4_ServiceOperationNameInput</targetRef>
-        <assignment id="Assignment_2">
-          <from xsi:type="tFormalExpression" id="FormalExpression_3">openTicket</from>
-          <to xsi:type="tFormalExpression" id="FormalExpression_4">_4_ServiceOperationNameInput</to>
+        <assignment>
+          <from xsi:type="tFormalExpression">openTicket</from>
+          <to xsi:type="tFormalExpression">_4_ServiceOperationNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataOutputAssociation id="DataOutputAssociation_1">
+      <dataInputAssociation>
+        <targetRef>_4_ContentOutputNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">ticketAck</from>
+          <to xsi:type="tFormalExpression">_4_ContentOutputNameInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataOutputAssociation>
         <sourceRef>_4_ticketAckOutput</sourceRef>
         <targetRef>ticketAck</targetRef>
       </dataOutputAssociation>
     </task>
-    <task id="_5" tns:taskName="SwitchYard Service" name="Reject Ticket">
-      <incoming>_11-_5</incoming>
-      <outgoing>_5-_6</outgoing>
-      <ioSpecification id="InputOutputSpecification_2">
-        <dataInput id="_5_ticketInput" name="ticket"/>
-        <dataInput id="_5_ServiceNameInput" name="ServiceName"/>
-        <dataInput id="_5_ServiceOperationNameInput" name="ServiceOperationName"/>
-        <inputSet id="InputSet_2">
+    <task id="_5" name="Reject Ticket" tns:taskName="SwitchYard Service" >
+      <ioSpecification>
+        <dataInput id="_5_ticketInput" name="ticket" />
+        <dataInput id="_5_ContentInputNameInput" name="ContentInputName" />
+        <dataInput id="_5_ServiceNameInput" name="ServiceName" />
+        <dataInput id="_5_ServiceOperationNameInput" name="ServiceOperationName" />
+        <inputSet>
           <dataInputRefs>_5_ticketInput</dataInputRefs>
+          <dataInputRefs>_5_ContentInputNameInput</dataInputRefs>
           <dataInputRefs>_5_ServiceNameInput</dataInputRefs>
           <dataInputRefs>_5_ServiceOperationNameInput</dataInputRefs>
         </inputSet>
-        <outputSet id="OutputSet_2"/>
+        <outputSet>
+        </outputSet>
       </ioSpecification>
-      <dataInputAssociation id="DataInputAssociation_4">
+      <dataInputAssociation>
         <sourceRef>ticket</sourceRef>
         <targetRef>_5_ticketInput</targetRef>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_5">
-        <targetRef>_5_ServiceNameInput</targetRef>
-        <assignment id="Assignment_3">
-          <from xsi:type="tFormalExpression" id="FormalExpression_5">TicketManagementService</from>
-          <to xsi:type="tFormalExpression" id="FormalExpression_6">_5_ServiceNameInput</to>
+      <dataInputAssociation>
+        <targetRef>_5_ContentInputNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">ticket</from>
+          <to xsi:type="tFormalExpression">_5_ContentInputNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_6">
+      <dataInputAssociation>
+        <targetRef>_5_ServiceNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">TicketManagementService</from>
+          <to xsi:type="tFormalExpression">_5_ServiceNameInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataInputAssociation>
         <targetRef>_5_ServiceOperationNameInput</targetRef>
-        <assignment id="Assignment_4">
-          <from xsi:type="tFormalExpression" id="FormalExpression_7">rejectTicket</from>
-          <to xsi:type="tFormalExpression" id="FormalExpression_8">_5_ServiceOperationNameInput</to>
+        <assignment>
+          <from xsi:type="tFormalExpression">rejectTicket</from>
+          <to xsi:type="tFormalExpression">_5_ServiceOperationNameInput</to>
         </assignment>
       </dataInputAssociation>
     </task>
-    <endEvent id="_6" name="End">
-      <incoming>_5-_6</incoming>
-      <terminateEventDefinition id="TerminateEventDefinition_1"/>
+    <endEvent id="_6" name="End" >
+        <terminateEventDefinition/>
     </endEvent>
-    <exclusiveGateway id="_7" name="Gateway" gatewayDirection="Converging">
-      <incoming>_4-_7</incoming>
-      <incoming>_8-_7</incoming>
-      <outgoing>_7-_10</outgoing>
-    </exclusiveGateway>
-    <userTask id="_8" name="Provide Details">
-      <incoming>_16-_8</incoming>
-      <outgoing>_8-_7</outgoing>
-      <ioSpecification id="InputOutputSpecification_3">
-        <dataInput id="_8_ticketInput" name="ticket"/>
-        <dataInput id="_8_SkippableInput" name="Skippable"/>
-        <dataInput id="_8_TaskNameInput" name="TaskName"/>
-        <dataInput id="_8_GroupIdInput" name="GroupId"/>
-        <inputSet id="InputSet_3">
+    <exclusiveGateway id="_7" name="Gateway" gatewayDirection="Converging" />
+    <userTask id="_8" name="Provide Details" >
+      <ioSpecification>
+        <dataInput id="_8_ticketInput" name="ticket" />
+        <dataInput id="_8_SkippableInput" name="Skippable" />
+        <dataInput id="_8_TaskNameInput" name="TaskName" />
+        <dataInput id="_8_GroupIdInput" name="GroupId" />
+        <inputSet>
           <dataInputRefs>_8_ticketInput</dataInputRefs>
           <dataInputRefs>_8_SkippableInput</dataInputRefs>
           <dataInputRefs>_8_TaskNameInput</dataInputRefs>
           <dataInputRefs>_8_GroupIdInput</dataInputRefs>
         </inputSet>
-        <outputSet id="OutputSet_3"/>
+        <outputSet>
+        </outputSet>
       </ioSpecification>
-      <dataInputAssociation id="DataInputAssociation_7">
+      <dataInputAssociation>
         <sourceRef>ticket</sourceRef>
         <targetRef>_8_ticketInput</targetRef>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_8">
+      <dataInputAssociation>
         <targetRef>_8_SkippableInput</targetRef>
-        <assignment id="Assignment_5">
-          <from xsi:type="tFormalExpression" id="FormalExpression_9">false</from>
-          <to xsi:type="tFormalExpression" id="FormalExpression_10">_8_SkippableInput</to>
+        <assignment>
+          <from xsi:type="tFormalExpression">false</from>
+          <to xsi:type="tFormalExpression">_8_SkippableInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_9">
+      <dataInputAssociation>
         <targetRef>_8_TaskNameInput</targetRef>
-        <assignment id="Assignment_6">
-          <from xsi:type="tFormalExpression" id="FormalExpression_11">ProvideDetails</from>
-          <to xsi:type="tFormalExpression" id="FormalExpression_12">_8_TaskNameInput</to>
+        <assignment>
+          <from xsi:type="tFormalExpression">ProvideDetails</from>
+          <to xsi:type="tFormalExpression">_8_TaskNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_10">
+      <dataInputAssociation>
         <targetRef>_8_GroupIdInput</targetRef>
-        <assignment id="Assignment_7">
-          <from xsi:type="tFormalExpression" id="FormalExpression_13">users</from>
-          <to xsi:type="tFormalExpression" id="FormalExpression_14">_8_GroupIdInput</to>
+        <assignment>
+          <from xsi:type="tFormalExpression">users</from>
+          <to xsi:type="tFormalExpression">_8_GroupIdInput</to>
         </assignment>
       </dataInputAssociation>
-      <potentialOwner id="PotentialOwner_1">
-        <resourceAssignmentExpression id="ResourceAssignmentExpression_1">
-          <formalExpression id="FormalExpression_15"/>
+      <potentialOwner>
+        <resourceAssignmentExpression>
+          <formalExpression></formalExpression>
         </resourceAssignmentExpression>
       </potentialOwner>
     </userTask>
-    <userTask id="_10" name="Review Ticket">
+    <userTask id="_10" name="Review Ticket" >
       <extensionElements>
         <tns:onExit-script>
-          <tns:script></tns:script>
+          <script></script>
         </tns:onExit-script>
-        <tns:onExit-script tns:scriptFormat="http://www.java.com/java">
-          <tns:script>String status;
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <script>String status;
 switch (new Random().nextInt(3)) {
-    case 0: status = &quot;approved&quot;; break;
-    case 1: status = &quot;rejected&quot;; break;
-    default: status = &quot;requested&quot;;
+    case 0: status = "approved"; break;
+    case 1: status = "rejected"; break;
+    default: status = "requested";
 }
 ticket.setStatus(status);
-System.out.println(&quot;********** after (random for test purpose) review, ticket status set to &quot; + status + &quot; **********&quot;);</tns:script>
+System.out.println("********** after (random for test purpose) review, ticket status set to " + status + " **********");</script>
         </tns:onExit-script>
       </extensionElements>
-      <incoming>_7-_10</incoming>
-      <outgoing>_10-_11</outgoing>
-      <ioSpecification id="InputOutputSpecification_4">
-        <dataInput id="_10_ticketInput" name="ticket"/>
-        <dataInput id="_10_SkippableInput" name="Skippable"/>
-        <dataInput id="_10_TaskNameInput" name="TaskName"/>
-        <dataInput id="_10_GroupIdInput" name="GroupId"/>
-        <inputSet id="InputSet_4">
+      <ioSpecification>
+        <dataInput id="_10_ticketInput" name="ticket" />
+        <dataInput id="_10_SkippableInput" name="Skippable" />
+        <dataInput id="_10_TaskNameInput" name="TaskName" />
+        <dataInput id="_10_GroupIdInput" name="GroupId" />
+        <inputSet>
           <dataInputRefs>_10_ticketInput</dataInputRefs>
           <dataInputRefs>_10_SkippableInput</dataInputRefs>
           <dataInputRefs>_10_TaskNameInput</dataInputRefs>
           <dataInputRefs>_10_GroupIdInput</dataInputRefs>
         </inputSet>
-        <outputSet id="OutputSet_4"/>
+        <outputSet>
+        </outputSet>
       </ioSpecification>
-      <dataInputAssociation id="DataInputAssociation_11">
+      <dataInputAssociation>
         <sourceRef>ticket</sourceRef>
         <targetRef>_10_ticketInput</targetRef>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_12">
+      <dataInputAssociation>
         <targetRef>_10_SkippableInput</targetRef>
-        <assignment id="Assignment_8">
-          <from xsi:type="tFormalExpression" id="FormalExpression_16">false</from>
-          <to xsi:type="tFormalExpression" id="FormalExpression_17">_10_SkippableInput</to>
+        <assignment>
+          <from xsi:type="tFormalExpression">false</from>
+          <to xsi:type="tFormalExpression">_10_SkippableInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_13">
+      <dataInputAssociation>
         <targetRef>_10_TaskNameInput</targetRef>
-        <assignment id="Assignment_9">
-          <from xsi:type="tFormalExpression" id="FormalExpression_18">ReviewTicket</from>
-          <to xsi:type="tFormalExpression" id="FormalExpression_19">_10_TaskNameInput</to>
+        <assignment>
+          <from xsi:type="tFormalExpression">ReviewTicket</from>
+          <to xsi:type="tFormalExpression">_10_TaskNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_14">
+      <dataInputAssociation>
         <targetRef>_10_GroupIdInput</targetRef>
-        <assignment id="Assignment_10">
-          <from xsi:type="tFormalExpression" id="FormalExpression_20">developers</from>
-          <to xsi:type="tFormalExpression" id="FormalExpression_21">_10_GroupIdInput</to>
+        <assignment>
+          <from xsi:type="tFormalExpression">developers</from>
+          <to xsi:type="tFormalExpression">_10_GroupIdInput</to>
         </assignment>
       </dataInputAssociation>
-      <potentialOwner id="PotentialOwner_2">
-        <resourceAssignmentExpression id="ResourceAssignmentExpression_2">
-          <formalExpression id="FormalExpression_22"/>
+      <potentialOwner>
+        <resourceAssignmentExpression>
+          <formalExpression></formalExpression>
         </resourceAssignmentExpression>
       </potentialOwner>
     </userTask>
-    <exclusiveGateway id="_11" name="Gateway" gatewayDirection="Diverging">
-      <incoming>_10-_11</incoming>
-      <outgoing>_11-_5</outgoing>
-      <outgoing>_11-_12</outgoing>
-      <outgoing>_11-_16</outgoing>
-    </exclusiveGateway>
-    <task id="_12" tns:taskName="SwitchYard Service" name="Approve Ticket">
-      <incoming>_11-_12</incoming>
-      <outgoing>_12-_13</outgoing>
-      <ioSpecification id="InputOutputSpecification_5">
-        <dataInput id="_12_ticketInput" name="ticket"/>
-        <dataInput id="_12_ServiceNameInput" name="ServiceName"/>
-        <dataInput id="_12_ServiceOperationNameInput" name="ServiceOperationName"/>
-        <inputSet id="InputSet_5">
+    <exclusiveGateway id="_11" name="Gateway" gatewayDirection="Diverging" />
+    <task id="_12" name="Approve Ticket" tns:taskName="SwitchYard Service" >
+      <ioSpecification>
+        <dataInput id="_12_ticketInput" name="ticket" />
+        <dataInput id="_12_ContentInputNameInput" name="ContentInputName" />
+        <dataInput id="_12_ServiceNameInput" name="ServiceName" />
+        <dataInput id="_12_ServiceOperationNameInput" name="ServiceOperationName" />
+        <inputSet>
           <dataInputRefs>_12_ticketInput</dataInputRefs>
+          <dataInputRefs>_12_ContentInputNameInput</dataInputRefs>
           <dataInputRefs>_12_ServiceNameInput</dataInputRefs>
           <dataInputRefs>_12_ServiceOperationNameInput</dataInputRefs>
         </inputSet>
-        <outputSet id="OutputSet_5"/>
+        <outputSet>
+        </outputSet>
       </ioSpecification>
-      <dataInputAssociation id="DataInputAssociation_15">
+      <dataInputAssociation>
         <sourceRef>ticket</sourceRef>
         <targetRef>_12_ticketInput</targetRef>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_16">
-        <targetRef>_12_ServiceNameInput</targetRef>
-        <assignment id="Assignment_11">
-          <from xsi:type="tFormalExpression" id="FormalExpression_23">TicketManagementService</from>
-          <to xsi:type="tFormalExpression" id="FormalExpression_24">_12_ServiceNameInput</to>
+      <dataInputAssociation>
+        <targetRef>_12_ContentInputNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">ticket</from>
+          <to xsi:type="tFormalExpression">_12_ContentInputNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_17">
+      <dataInputAssociation>
+        <targetRef>_12_ServiceNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">TicketManagementService</from>
+          <to xsi:type="tFormalExpression">_12_ServiceNameInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataInputAssociation>
         <targetRef>_12_ServiceOperationNameInput</targetRef>
-        <assignment id="Assignment_12">
-          <from xsi:type="tFormalExpression" id="FormalExpression_25">approveTicket</from>
-          <to xsi:type="tFormalExpression" id="FormalExpression_26">_12_ServiceOperationNameInput</to>
+        <assignment>
+          <from xsi:type="tFormalExpression">approveTicket</from>
+          <to xsi:type="tFormalExpression">_12_ServiceOperationNameInput</to>
         </assignment>
       </dataInputAssociation>
     </task>
-    <userTask id="_13" name="Resolve Ticket">
-      <incoming>_12-_13</incoming>
-      <outgoing>_13-_14</outgoing>
-      <ioSpecification id="InputOutputSpecification_6">
-        <dataInput id="_13_ticketInput" name="ticket"/>
-        <dataInput id="_13_SkippableInput" name="Skippable"/>
-        <dataInput id="_13_TaskNameInput" name="TaskName"/>
-        <dataInput id="_13_GroupIdInput" name="GroupId"/>
-        <inputSet id="InputSet_6">
+    <userTask id="_13" name="Resolve Ticket" >
+      <ioSpecification>
+        <dataInput id="_13_ticketInput" name="ticket" />
+        <dataInput id="_13_SkippableInput" name="Skippable" />
+        <dataInput id="_13_TaskNameInput" name="TaskName" />
+        <dataInput id="_13_GroupIdInput" name="GroupId" />
+        <inputSet>
           <dataInputRefs>_13_ticketInput</dataInputRefs>
           <dataInputRefs>_13_SkippableInput</dataInputRefs>
           <dataInputRefs>_13_TaskNameInput</dataInputRefs>
           <dataInputRefs>_13_GroupIdInput</dataInputRefs>
         </inputSet>
-        <outputSet id="OutputSet_6"/>
+        <outputSet>
+        </outputSet>
       </ioSpecification>
-      <dataInputAssociation id="DataInputAssociation_18">
+      <dataInputAssociation>
         <sourceRef>ticket</sourceRef>
         <targetRef>_13_ticketInput</targetRef>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_19">
+      <dataInputAssociation>
         <targetRef>_13_SkippableInput</targetRef>
-        <assignment id="Assignment_13">
-          <from xsi:type="tFormalExpression" id="FormalExpression_27">false</from>
-          <to xsi:type="tFormalExpression" id="FormalExpression_28">_13_SkippableInput</to>
+        <assignment>
+          <from xsi:type="tFormalExpression">false</from>
+          <to xsi:type="tFormalExpression">_13_SkippableInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_20">
+      <dataInputAssociation>
         <targetRef>_13_TaskNameInput</targetRef>
-        <assignment id="Assignment_14">
-          <from xsi:type="tFormalExpression" id="FormalExpression_29">ResolveTicket</from>
-          <to xsi:type="tFormalExpression" id="FormalExpression_30">_13_TaskNameInput</to>
+        <assignment>
+          <from xsi:type="tFormalExpression">ResolveTicket</from>
+          <to xsi:type="tFormalExpression">_13_TaskNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_21">
+      <dataInputAssociation>
         <targetRef>_13_GroupIdInput</targetRef>
-        <assignment id="Assignment_15">
-          <from xsi:type="tFormalExpression" id="FormalExpression_31">developers</from>
-          <to xsi:type="tFormalExpression" id="FormalExpression_32">_13_GroupIdInput</to>
+        <assignment>
+          <from xsi:type="tFormalExpression">developers</from>
+          <to xsi:type="tFormalExpression">_13_GroupIdInput</to>
         </assignment>
       </dataInputAssociation>
-      <potentialOwner id="PotentialOwner_3">
-        <resourceAssignmentExpression id="ResourceAssignmentExpression_3">
-          <formalExpression id="FormalExpression_33"/>
+      <potentialOwner>
+        <resourceAssignmentExpression>
+          <formalExpression></formalExpression>
         </resourceAssignmentExpression>
       </potentialOwner>
     </userTask>
-    <task id="_14" tns:taskName="SwitchYard Service" name="Close Ticket">
-      <incoming>_13-_14</incoming>
-      <outgoing>_14-_15</outgoing>
-      <ioSpecification id="InputOutputSpecification_7">
-        <dataInput id="_14_ticketInput" name="ticket"/>
-        <dataInput id="_14_ServiceNameInput" name="ServiceName"/>
-        <dataInput id="_14_ServiceOperationNameInput" name="ServiceOperationName"/>
-        <inputSet id="InputSet_7">
+    <task id="_14" name="Close Ticket" tns:taskName="SwitchYard Service" >
+      <ioSpecification>
+        <dataInput id="_14_ticketInput" name="ticket" />
+        <dataInput id="_14_ContentInputNameInput" name="ContentInputName" />
+        <dataInput id="_14_ServiceNameInput" name="ServiceName" />
+        <dataInput id="_14_ServiceOperationNameInput" name="ServiceOperationName" />
+        <inputSet>
           <dataInputRefs>_14_ticketInput</dataInputRefs>
+          <dataInputRefs>_14_ContentInputNameInput</dataInputRefs>
           <dataInputRefs>_14_ServiceNameInput</dataInputRefs>
           <dataInputRefs>_14_ServiceOperationNameInput</dataInputRefs>
         </inputSet>
-        <outputSet id="OutputSet_7"/>
+        <outputSet>
+        </outputSet>
       </ioSpecification>
-      <dataInputAssociation id="DataInputAssociation_22">
+      <dataInputAssociation>
         <sourceRef>ticket</sourceRef>
         <targetRef>_14_ticketInput</targetRef>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_23">
-        <targetRef>_14_ServiceNameInput</targetRef>
-        <assignment id="Assignment_16">
-          <from xsi:type="tFormalExpression" id="FormalExpression_34">TicketManagementService</from>
-          <to xsi:type="tFormalExpression" id="FormalExpression_35">_14_ServiceNameInput</to>
+      <dataInputAssociation>
+        <targetRef>_14_ContentInputNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">ticket</from>
+          <to xsi:type="tFormalExpression">_14_ContentInputNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_24">
+      <dataInputAssociation>
+        <targetRef>_14_ServiceNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">TicketManagementService</from>
+          <to xsi:type="tFormalExpression">_14_ServiceNameInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataInputAssociation>
         <targetRef>_14_ServiceOperationNameInput</targetRef>
-        <assignment id="Assignment_17">
-          <from xsi:type="tFormalExpression" id="FormalExpression_36">closeTicket</from>
-          <to xsi:type="tFormalExpression" id="FormalExpression_37">_14_ServiceOperationNameInput</to>
+        <assignment>
+          <from xsi:type="tFormalExpression">closeTicket</from>
+          <to xsi:type="tFormalExpression">_14_ServiceOperationNameInput</to>
         </assignment>
       </dataInputAssociation>
     </task>
-    <endEvent id="_15" name="End">
-      <incoming>_14-_15</incoming>
-      <terminateEventDefinition id="TerminateEventDefinition_2"/>
+    <endEvent id="_15" name="End" >
+        <terminateEventDefinition/>
     </endEvent>
-    <task id="_16" tns:taskName="SwitchYard Service" name="Request Details">
-      <incoming>_11-_16</incoming>
-      <outgoing>_16-_8</outgoing>
-      <ioSpecification id="InputOutputSpecification_8">
-        <dataInput id="_16_ticketInput" name="ticket"/>
-        <dataInput id="_16_ServiceNameInput" name="ServiceName"/>
-        <dataInput id="_16_ServiceOperationNameInput" name="ServiceOperationName"/>
-        <inputSet id="InputSet_8">
+    <task id="_16" name="Request Details" tns:taskName="SwitchYard Service" >
+      <ioSpecification>
+        <dataInput id="_16_ticketInput" name="ticket" />
+        <dataInput id="_16_ContentInputNameInput" name="ContentInputName" />
+        <dataInput id="_16_ServiceNameInput" name="ServiceName" />
+        <dataInput id="_16_ServiceOperationNameInput" name="ServiceOperationName" />
+        <inputSet>
           <dataInputRefs>_16_ticketInput</dataInputRefs>
+          <dataInputRefs>_16_ContentInputNameInput</dataInputRefs>
           <dataInputRefs>_16_ServiceNameInput</dataInputRefs>
           <dataInputRefs>_16_ServiceOperationNameInput</dataInputRefs>
         </inputSet>
-        <outputSet id="OutputSet_8"/>
+        <outputSet>
+        </outputSet>
       </ioSpecification>
-      <dataInputAssociation id="DataInputAssociation_25">
+      <dataInputAssociation>
         <sourceRef>ticket</sourceRef>
         <targetRef>_16_ticketInput</targetRef>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_26">
-        <targetRef>_16_ServiceNameInput</targetRef>
-        <assignment id="Assignment_18">
-          <from xsi:type="tFormalExpression" id="FormalExpression_38">TicketManagementService</from>
-          <to xsi:type="tFormalExpression" id="FormalExpression_39">_16_ServiceNameInput</to>
+      <dataInputAssociation>
+        <targetRef>_16_ContentInputNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">ticket</from>
+          <to xsi:type="tFormalExpression">_16_ContentInputNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_27">
+      <dataInputAssociation>
+        <targetRef>_16_ServiceNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">TicketManagementService</from>
+          <to xsi:type="tFormalExpression">_16_ServiceNameInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataInputAssociation>
         <targetRef>_16_ServiceOperationNameInput</targetRef>
-        <assignment id="Assignment_19">
-          <from xsi:type="tFormalExpression" id="FormalExpression_40">requestDetails</from>
-          <to xsi:type="tFormalExpression" id="FormalExpression_41">_16_ServiceOperationNameInput</to>
+        <assignment>
+          <from xsi:type="tFormalExpression">requestDetails</from>
+          <to xsi:type="tFormalExpression">_16_ServiceOperationNameInput</to>
         </assignment>
       </dataInputAssociation>
     </task>
-    <sequenceFlow id="_1-_4" sourceRef="_1" targetRef="_4"/>
-    <sequenceFlow id="_11-_5" tns:priority="1" name="reject" sourceRef="_11" targetRef="_5">
-      <conditionExpression xsi:type="tFormalExpression" id="FormalExpression_42" language="http://www.java.com/java">return ticket.getStatus().equals(&quot;rejected&quot;);</conditionExpression>
+
+    <!-- connections -->
+    <sequenceFlow id="_1-_4" sourceRef="_1" targetRef="_4" />
+    <sequenceFlow id="_11-_5" sourceRef="_11" targetRef="_5" name="reject" tns:priority="1" >
+      <conditionExpression xsi:type="tFormalExpression" language="http://www.java.com/java" >return ticket.getStatus().equals("rejected");</conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="_5-_6" sourceRef="_5" targetRef="_6"/>
-    <sequenceFlow id="_4-_7" sourceRef="_4" targetRef="_7"/>
-    <sequenceFlow id="_8-_7" sourceRef="_8" targetRef="_7"/>
-    <sequenceFlow id="_16-_8" sourceRef="_16" targetRef="_8"/>
-    <sequenceFlow id="_7-_10" sourceRef="_7" targetRef="_10"/>
-    <sequenceFlow id="_10-_11" sourceRef="_10" targetRef="_11"/>
-    <sequenceFlow id="_11-_12" tns:priority="1" name="approve" sourceRef="_11" targetRef="_12">
-      <conditionExpression xsi:type="tFormalExpression" id="FormalExpression_43" language="http://www.java.com/java">return ticket.getStatus().equals(&quot;approved&quot;);</conditionExpression>
+    <sequenceFlow id="_5-_6" sourceRef="_5" targetRef="_6" />
+    <sequenceFlow id="_4-_7" sourceRef="_4" targetRef="_7" />
+    <sequenceFlow id="_8-_7" sourceRef="_8" targetRef="_7" />
+    <sequenceFlow id="_16-_8" sourceRef="_16" targetRef="_8" />
+    <sequenceFlow id="_7-_10" sourceRef="_7" targetRef="_10" />
+    <sequenceFlow id="_10-_11" sourceRef="_10" targetRef="_11" />
+    <sequenceFlow id="_11-_12" sourceRef="_11" targetRef="_12" name="approve" tns:priority="1" >
+      <conditionExpression xsi:type="tFormalExpression" language="http://www.java.com/java" >return ticket.getStatus().equals("approved");</conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="_12-_13" sourceRef="_12" targetRef="_13"/>
-    <sequenceFlow id="_13-_14" sourceRef="_13" targetRef="_14"/>
-    <sequenceFlow id="_14-_15" sourceRef="_14" targetRef="_15"/>
-    <sequenceFlow id="_11-_16" tns:priority="1" name="request" sourceRef="_11" targetRef="_16">
-      <conditionExpression xsi:type="tFormalExpression" id="FormalExpression_44" language="http://www.java.com/java">return ticket.getStatus().equals(&quot;requested&quot;);</conditionExpression>
+    <sequenceFlow id="_12-_13" sourceRef="_12" targetRef="_13" />
+    <sequenceFlow id="_13-_14" sourceRef="_13" targetRef="_14" />
+    <sequenceFlow id="_14-_15" sourceRef="_14" targetRef="_15" />
+    <sequenceFlow id="_11-_16" sourceRef="_11" targetRef="_16" name="request" tns:priority="1" >
+      <conditionExpression xsi:type="tFormalExpression" language="http://www.java.com/java" >return ticket.getStatus().equals("requested");</conditionExpression>
     </sequenceFlow>
+
   </process>
-  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_Process_1" bpmnElement="HelpDeskService">
-      <bpmndi:BPMNShape id="BPMNShape_StartEvent_1" bpmnElement="_1">
-        <dc:Bounds height="48.0" width="48.0" x="16.0" y="16.0"/>
+
+  <bpmndi:BPMNDiagram>
+    <bpmndi:BPMNPlane bpmnElement="HelpDeskService" >
+      <bpmndi:BPMNShape bpmnElement="_1" >
+        <dc:Bounds x="16" y="16" width="48" height="48" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_Task_1" bpmnElement="_4">
-        <dc:Bounds height="48.0" width="123.0" x="88.0" y="17.0"/>
+      <bpmndi:BPMNShape bpmnElement="_4" >
+        <dc:Bounds x="88" y="17" width="123" height="48" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_Task_2" bpmnElement="_5">
-        <dc:Bounds height="48.0" width="129.0" x="202.0" y="331.0"/>
+      <bpmndi:BPMNShape bpmnElement="_5" >
+        <dc:Bounds x="202" y="331" width="129" height="48" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_EndEvent_1" bpmnElement="_6">
-        <dc:Bounds height="48.0" width="48.0" x="243.0" y="403.0"/>
+      <bpmndi:BPMNShape bpmnElement="_6" >
+        <dc:Bounds x="243" y="403" width="48" height="48" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_1" bpmnElement="_7" isMarkerVisible="true">
-        <dc:Bounds height="48.0" width="48.0" x="125.0" y="88.0"/>
+      <bpmndi:BPMNShape bpmnElement="_7" >
+        <dc:Bounds x="125" y="88" width="48" height="48" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_UserTask_1" bpmnElement="_8">
-        <dc:Bounds height="48.0" width="119.0" x="279.0" y="89.0"/>
+      <bpmndi:BPMNShape bpmnElement="_8" >
+        <dc:Bounds x="279" y="89" width="119" height="48" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_UserTask_2" bpmnElement="_10">
-        <dc:Bounds height="48.0" width="119.0" x="90.0" y="162.0"/>
+      <bpmndi:BPMNShape bpmnElement="_10" >
+        <dc:Bounds x="90" y="162" width="119" height="48" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_2" bpmnElement="_11" isMarkerVisible="true">
-        <dc:Bounds height="48.0" width="48.0" x="125.0" y="241.0"/>
+      <bpmndi:BPMNShape bpmnElement="_11" >
+        <dc:Bounds x="125" y="241" width="48" height="48" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_Task_3" bpmnElement="_12">
-        <dc:Bounds height="48.0" width="132.0" x="31.0" y="331.0"/>
+      <bpmndi:BPMNShape bpmnElement="_12" >
+        <dc:Bounds x="31" y="331" width="132" height="48" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_UserTask_3" bpmnElement="_13">
-        <dc:Bounds height="48.0" width="136.0" x="30.0" y="406.0"/>
+      <bpmndi:BPMNShape bpmnElement="_13" >
+        <dc:Bounds x="30" y="406" width="136" height="48" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_Task_4" bpmnElement="_14">
-        <dc:Bounds height="48.0" width="126.0" x="36.0" y="482.0"/>
+      <bpmndi:BPMNShape bpmnElement="_14" >
+        <dc:Bounds x="36" y="482" width="126" height="48" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_EndEvent_2" bpmnElement="_15">
-        <dc:Bounds height="48.0" width="48.0" x="76.0" y="552.0"/>
+      <bpmndi:BPMNShape bpmnElement="_15" >
+        <dc:Bounds x="76" y="552" width="48" height="48" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_Task_5" bpmnElement="_16">
-        <dc:Bounds height="48.0" width="145.0" x="266.0" y="242.0"/>
+      <bpmndi:BPMNShape bpmnElement="_16" >
+        <dc:Bounds x="266" y="242" width="145" height="48" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_1" bpmnElement="_1-_4" sourceElement="BPMNShape_StartEvent_1" targetElement="BPMNShape_Task_1">
-        <di:waypoint xsi:type="dc:Point" x="64.0" y="40.0"/>
-        <di:waypoint xsi:type="dc:Point" x="88.0" y="41.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_1-_4" >
+        <di:waypoint x="40" y="40" />
+        <di:waypoint x="149" y="41" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_2" bpmnElement="_11-_5" sourceElement="BPMNShape_ExclusiveGateway_2" targetElement="BPMNShape_Task_2">
-        <di:waypoint xsi:type="dc:Point" x="149.0" y="290.0"/>
-        <di:waypoint xsi:type="dc:Point" x="202.0" y="355.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_11-_5" >
+        <di:waypoint x="149" y="265" />
+        <di:waypoint x="266" y="355" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_3" bpmnElement="_5-_6" sourceElement="BPMNShape_Task_2" targetElement="BPMNShape_EndEvent_1">
-        <di:waypoint xsi:type="dc:Point" x="266.0" y="379.0"/>
-        <di:waypoint xsi:type="dc:Point" x="267.0" y="403.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_5-_6" >
+        <di:waypoint x="266" y="355" />
+        <di:waypoint x="267" y="427" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_4" bpmnElement="_4-_7" sourceElement="BPMNShape_Task_1" targetElement="BPMNShape_ExclusiveGateway_1">
-        <di:waypoint xsi:type="dc:Point" x="149.0" y="65.0"/>
-        <di:waypoint xsi:type="dc:Point" x="149.0" y="88.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_4-_7" >
+        <di:waypoint x="149" y="41" />
+        <di:waypoint x="149" y="112" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_5" bpmnElement="_8-_7" sourceElement="BPMNShape_UserTask_1" targetElement="BPMNShape_ExclusiveGateway_1">
-        <di:waypoint xsi:type="dc:Point" x="279.0" y="113.0"/>
-        <di:waypoint xsi:type="dc:Point" x="174.0" y="112.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_8-_7" >
+        <di:waypoint x="338" y="113" />
+        <di:waypoint x="149" y="112" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_6" bpmnElement="_16-_8" sourceElement="BPMNShape_Task_5" targetElement="BPMNShape_UserTask_1">
-        <di:waypoint xsi:type="dc:Point" x="338.0" y="242.0"/>
-        <di:waypoint xsi:type="dc:Point" x="338.0" y="137.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_16-_8" >
+        <di:waypoint x="338" y="266" />
+        <di:waypoint x="338" y="113" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_7" bpmnElement="_7-_10" sourceElement="BPMNShape_ExclusiveGateway_1" targetElement="BPMNShape_UserTask_2">
-        <di:waypoint xsi:type="dc:Point" x="149.0" y="137.0"/>
-        <di:waypoint xsi:type="dc:Point" x="149.0" y="162.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_7-_10" >
+        <di:waypoint x="149" y="112" />
+        <di:waypoint x="149" y="186" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_8" bpmnElement="_10-_11" sourceElement="BPMNShape_UserTask_2" targetElement="BPMNShape_ExclusiveGateway_2">
-        <di:waypoint xsi:type="dc:Point" x="149.0" y="210.0"/>
-        <di:waypoint xsi:type="dc:Point" x="149.0" y="241.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_10-_11" >
+        <di:waypoint x="149" y="186" />
+        <di:waypoint x="149" y="265" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_9" bpmnElement="_11-_12" sourceElement="BPMNShape_ExclusiveGateway_2" targetElement="BPMNShape_Task_3">
-        <di:waypoint xsi:type="dc:Point" x="149.0" y="290.0"/>
-        <di:waypoint xsi:type="dc:Point" x="97.0" y="331.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_11-_12" >
+        <di:waypoint x="149" y="265" />
+        <di:waypoint x="97" y="355" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_10" bpmnElement="_12-_13" sourceElement="BPMNShape_Task_3" targetElement="BPMNShape_UserTask_3">
-        <di:waypoint xsi:type="dc:Point" x="97.0" y="379.0"/>
-        <di:waypoint xsi:type="dc:Point" x="98.0" y="406.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_12-_13" >
+        <di:waypoint x="97" y="355" />
+        <di:waypoint x="98" y="430" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_11" bpmnElement="_13-_14" sourceElement="BPMNShape_UserTask_3" targetElement="BPMNShape_Task_4">
-        <di:waypoint xsi:type="dc:Point" x="98.0" y="454.0"/>
-        <di:waypoint xsi:type="dc:Point" x="99.0" y="482.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_13-_14" >
+        <di:waypoint x="98" y="430" />
+        <di:waypoint x="99" y="506" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_12" bpmnElement="_14-_15" sourceElement="BPMNShape_Task_4" targetElement="BPMNShape_EndEvent_2">
-        <di:waypoint xsi:type="dc:Point" x="99.0" y="530.0"/>
-        <di:waypoint xsi:type="dc:Point" x="100.0" y="552.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_14-_15" >
+        <di:waypoint x="99" y="506" />
+        <di:waypoint x="100" y="576" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_13" bpmnElement="_11-_16" sourceElement="BPMNShape_ExclusiveGateway_2" targetElement="BPMNShape_Task_5">
-        <di:waypoint xsi:type="dc:Point" x="174.0" y="265.0"/>
-        <di:waypoint xsi:type="dc:Point" x="266.0" y="266.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_11-_16" >
+        <di:waypoint x="149" y="265" />
+        <di:waypoint x="338" y="266" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
+
 </definitions>

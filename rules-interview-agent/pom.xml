@@ -76,7 +76,7 @@
                             <goal>java</goal>
                         </goals>
                         <configuration>
-                            <mainClass>org.switchyard.component.common.rules.util.drools.Packages</mainClass>
+                            <mainClass>org.switchyard.component.common.knowledge.util.Packages</mainClass>
                             <arguments>
                                 <argument>write</argument>
                                 <argument>${basedir}/src/main/resources/org/switchyard/quickstarts/rules/interview/Interview.drl</argument>
@@ -91,7 +91,7 @@
                             <goal>java</goal>
                         </goals>
                         <configuration>
-                            <mainClass>org.switchyard.component.common.rules.util.drools.Packages</mainClass>
+                            <mainClass>org.switchyard.component.common.knowledge.util.Packages</mainClass>
                             <arguments>
                                 <argument>write</argument>
                                 <argument>${basedir}/src/main/resources/org/switchyard/quickstarts/rules/interview/Interview-18.drl</argument>
@@ -106,7 +106,7 @@
                             <goal>java</goal>
                         </goals>
                         <configuration>
-                            <mainClass>org.switchyard.component.common.rules.util.drools.Packages</mainClass>
+                            <mainClass>org.switchyard.component.common.knowledge.util.Packages</mainClass>
                             <arguments>
                                 <argument>write</argument>
                                 <argument>${basedir}/src/main/resources/org/switchyard/quickstarts/rules/interview/Interview-21.drl</argument>

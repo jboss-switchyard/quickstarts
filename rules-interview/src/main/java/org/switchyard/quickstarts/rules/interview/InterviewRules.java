@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -18,20 +18,21 @@
  */
 package org.switchyard.quickstarts.rules.interview;
 
-import org.switchyard.component.common.rules.Mapping;
-import org.switchyard.component.rules.Execute;
-import org.switchyard.component.rules.Rules;
+import org.switchyard.component.common.knowledge.annotation.Manifest;
+import org.switchyard.component.common.knowledge.annotation.Mapping;
+import org.switchyard.component.common.knowledge.annotation.Resource;
+import org.switchyard.component.rules.annotation.Execute;
+import org.switchyard.component.rules.annotation.Rules;
 
 /**
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 @Rules(value=Interview.class,
-       resources={"/org/switchyard/quickstarts/rules/interview/Interview.drl"},
-       globals={@Mapping(expression="exchange.provider.name.localPart", variable="service")})
+    manifest=@Manifest(resources={@Resource(location="org/switchyard/quickstarts/rules/interview/Interview.drl", type="DRL")}))
 public interface InterviewRules extends Interview {
 
     @Override
-    @Execute
+    @Execute(globals=@Mapping(expression="exchange.provider.name.localPart", variable="service"))
     public void verify(Applicant applicant);
 
 }
