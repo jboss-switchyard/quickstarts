@@ -21,9 +21,10 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+    xmlns:quartz="urn:switchyard-component-camel-quartz:config:1.0"
     xmlns:jpa="urn:switchyard-component-camel-jpa:config:1.0">
 
-    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-jpa-binding"
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-jpa-retrieve-binding"
         targetNamespace="urn:switchyard-quickstart:camel-jpa-binding:0.1.0">
         <service name="GreetingService" promote="GreetingService/GreetingService" requires="propagatesTransaction">
             <interface.java interface="org.switchyard.quickstarts.camel.jpa.binding.GreetingService" />
@@ -42,7 +43,15 @@
             </jpa:binding.jpa>
         </service>
 
-        <reference name="StoreService" multiplicity="0..1" promote="GreetingService/StoreService">
+        <service name="PeriodicService" promote="PeriodicService/PeriodicService">
+            <interface.java interface="org.switchyard.quickstarts.camel.jpa.binding.StoreService" />
+            <quartz:binding.quartz>
+                <quartz:name>EveryFiveSecondsJob</quartz:name>
+                <quartz:cron>*/5 * * * * ?</quartz:cron>
+            </quartz:binding.quartz>
+        </service>
+
+        <reference name="StoreReference" multiplicity="0..1" promote="PeriodicService/StoreReference">
             <interface.java interface="org.switchyard.quickstarts.camel.jpa.binding.StoreService" />
             <jpa:binding.jpa>
                 <jpa:entityClassName>org.switchyard.quickstarts.camel.jpa.binding.domain.Greet</jpa:entityClassName>

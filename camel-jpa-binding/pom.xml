@@ -44,6 +44,10 @@
       <artifactId>switchyard-component-camel-jpa</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.switchyard.components</groupId>
+      <artifactId>switchyard-component-camel-quartz</artifactId>
+    </dependency>
+    <dependency>
        <groupId>org.hibernate</groupId>
        <artifactId>hibernate-core</artifactId>
     </dependency>

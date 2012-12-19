@@ -49,7 +49,7 @@ public class CamelJpaBindingReceiveTest extends CamelJpaBindingTest {
     @Test
     public void receiveEntity() throws Exception {
         _testKit.removeService("GreetingService");
-        _testKit.removeService("StoreService");
+        _testKit.removeService("StoreReference");
         service = _testKit.registerInOnlyService("GreetingService");
 
         PreparedStatement statement = connection.prepareStatement("insert into events (createdAt,sender,receiver) values(now(), ?, ?)");
