@@ -18,15 +18,13 @@
  */
 package org.switchyard.component.remote;
 
-import java.util.List;
-
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.component.remote.config.model.RemoteBindingModel;
 import org.switchyard.deploy.BaseServiceHandler;
-import org.switchyard.remote.RemoteEndpoint;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.remote.RemoteRegistry;
-import org.switchyard.remote.http.HttpInvoker;
+import org.switchyard.remote.cluster.ClusteredInvoker;
 
 /**
  * Handles outbound communication to a remote service endpoint.
@@ -34,7 +32,7 @@ import org.switchyard.remote.http.HttpInvoker;
 public class RemoteServiceHandler extends BaseServiceHandler {
     
     private RemoteBindingModel _config;
-    private RemoteRegistry _registry;
+    private ClusteredInvoker _invoker;
     
     /**
      * Create a new RemoteServiceHandler.
@@ -43,20 +41,15 @@ public class RemoteServiceHandler extends BaseServiceHandler {
      */
     public RemoteServiceHandler(RemoteBindingModel config, RemoteRegistry registry) {
         _config = config;
-        _registry = registry;
+         _invoker = new ClusteredInvoker(registry);
     }
     
     @Override
     public void handleMessage(Exchange exchange) throws HandlerException {
-        List<RemoteEndpoint> endpoints = _registry.getEndpoints(exchange.getProvider().getName());
-        if (endpoints.isEmpty()) {
-            throw new HandlerException(
-                    "No remote endpoints found for service " + exchange.getProvider().getName());
+        try {
+            _invoker.invoke(exchange);
+        } catch (SwitchYardException syEx) {
+            throw new HandlerException(syEx.getMessage());
         }
-        
-        // Add load-balancing logic here - picking the first one for now
-        HttpInvoker invoker = new HttpInvoker(endpoints.get(0).getEndpoint());
-        invoker.invoke(exchange);
-        
     }
 }
