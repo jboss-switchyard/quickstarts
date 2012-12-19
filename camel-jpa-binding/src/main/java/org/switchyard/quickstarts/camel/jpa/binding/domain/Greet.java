@@ -100,4 +100,9 @@ public class Greet {
         this._createdAt = createdAt;
     }
 
+    @Override
+    public String toString() {
+        return "Greet [" + _id + ", from " + _sender + ", to " + _receiver + ", created on " + _createdAt.getTime() + "]";
+    }
+
 }

@@ -53,7 +53,7 @@ public class CamelJpaBindingStoreTest extends CamelJpaBindingTest {
         event.setSender(SENDER);
         event.setCreatedAt(createdAt);
 
-        _testKit.newInvoker("StoreService").sendInOnly(event);
+        _testKit.newInvoker("StoreReference").sendInOnly(event);
 
         PreparedStatement statement = connection.prepareStatement("select createdAt, sender, receiver from events");
         ResultSet resultSet = statement.executeQuery();
