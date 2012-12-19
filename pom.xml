@@ -49,7 +49,6 @@
         <module>camel-netty-binding</module>
         <module>camel-quartz-binding</module>
         <module>camel-jpa-binding</module>
-        <module>camel-rest-binding</module>
         <module>camel-sql-binding</module>
         <module>camel-mail-binding</module>
         <module>camel-service</module>
