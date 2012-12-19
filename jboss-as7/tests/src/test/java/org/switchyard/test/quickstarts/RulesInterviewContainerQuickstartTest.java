@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @authors tag. All rights reserved.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -27,19 +27,20 @@ import org.junit.runner.RunWith;
 import org.switchyard.test.ArquillianUtil;
 
 /**
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 @RunWith(Arquillian.class)
-public class RulesInterviewAgentQuickstartTest {
+public class RulesInterviewContainerQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-rules-interview-agent");
+        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-rules-interview-container");
     }
 
     @Test
     public void testDeployment() {
-        Assert.assertNotNull("Dummy not null", "");
+        // Only testing that deployment is successful at this point.
+        Assert.assertTrue(true);
     }
 
 }

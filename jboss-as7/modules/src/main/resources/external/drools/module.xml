@@ -26,6 +26,7 @@
         <resource-root path="drools-core-${version.drools}.jar"/>
         <resource-root path="drools-persistence-jpa-${version.drools}.jar"/>
         <resource-root path="kie-api-${version.kie}.jar"/>
+        <resource-root path="kie-ci-${version.kie}.jar"/>
         <resource-root path="kie-internal-${version.kie}.jar"/>
         <resource-root path="kie-commons-data-${version.kie}.jar"/>
         <resource-root path="kie-commons-io-${version.kie}.jar"/>

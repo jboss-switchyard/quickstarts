@@ -197,7 +197,7 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-rules-interview-agent</artifactId>
+            <artifactId>switchyard-quickstart-rules-interview-container</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
