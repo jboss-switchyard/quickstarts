@@ -162,11 +162,6 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-camel-rest-binding</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-quickstart-camel-soap-proxy</artifactId>
             <scope>test</scope>
         </dependency>

@@ -68,7 +68,6 @@
       <componentDescriptor>src/main/resources/external/antlr/antlr-runtime/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/apache/commons/collections/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/apache/commons/net/assembly-component.xml</componentDescriptor>
-      <componentDescriptor>src/main/resources/external/apache/cxf/jaxrs/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/apache/deltaspike/core-api/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/apache/mina/mina-core/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/batik/assembly-component.xml</componentDescriptor>
