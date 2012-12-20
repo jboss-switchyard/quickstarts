@@ -76,6 +76,9 @@
     <!-- Number transforms... -->
     <trfm:transform.java from="java:java.lang.Number" to="*" class="org.switchyard.transform.ootb.lang.NumberTransforms" />
 
+    <!-- Exception transforms... -->
+    <trfm:transform.java from="java:java.lang.Throwable" to="java:java.lang.String" class="org.switchyard.transform.ootb.lang.ExceptionTransforms" />
+
     <!-- Reader transforms... -->
     <trfm:transform.java from="java:java.io.Reader" to="*" class="org.switchyard.transform.ootb.io.ReaderTransforms" />
 
