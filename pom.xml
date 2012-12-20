@@ -1100,11 +1100,6 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard.quickstarts</groupId>
-                <artifactId>switchyard-quickstart-camel-rest-binding</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard.quickstarts</groupId>
                 <artifactId>switchyard-quickstart-camel-soap-proxy</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1609,11 +1604,6 @@
                         <artifactId>jaxb-impl</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-                <version>${version.cxf}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.ftpserver</groupId>
