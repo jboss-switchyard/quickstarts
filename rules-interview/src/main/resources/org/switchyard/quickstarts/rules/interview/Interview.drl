@@ -32,6 +32,6 @@ rule "Is not of valid age"
         $a : Applicant( age < 18 )
     then
         $a.setValid( false );
-        System.err.println("********** " + service + ": " + $a.getName() + " is not a valid applicant. **********");
+        System.err.println("********** " + service + ": " + $a.getName() + " is NOT a valid applicant. **********");
 end
 

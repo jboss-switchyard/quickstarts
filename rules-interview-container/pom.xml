@@ -28,8 +28,8 @@
         <version>0.7.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>switchyard-quickstart-rules-interview-agent</artifactId>
-    <name>Quickstart : Rules Interview Agent</name>
+    <artifactId>switchyard-quickstart-rules-interview-container</artifactId>
+    <name>Quickstart : Rules Interview Container</name>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
@@ -64,57 +64,6 @@
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>drl2pkg</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>org.switchyard.component.common.knowledge.util.Packages</mainClass>
-                            <arguments>
-                                <argument>write</argument>
-                                <argument>${basedir}/src/main/resources/org/switchyard/quickstarts/rules/interview/Interview.drl</argument>
-                                <argument>${basedir}/target/classes/org/switchyard/quickstarts/rules/interview/Interview.pkg</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>drl2pkg-18</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>org.switchyard.component.common.knowledge.util.Packages</mainClass>
-                            <arguments>
-                                <argument>write</argument>
-                                <argument>${basedir}/src/main/resources/org/switchyard/quickstarts/rules/interview/Interview-18.drl</argument>
-                                <argument>${basedir}/target/classes/org/switchyard/quickstarts/rules/interview/Interview-18.pkg</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>drl2pkg-21</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>org.switchyard.component.common.knowledge.util.Packages</mainClass>
-                            <arguments>
-                                <argument>write</argument>
-                                <argument>${basedir}/src/main/resources/org/switchyard/quickstarts/rules/interview/Interview-21.drl</argument>
-                                <argument>${basedir}/target/classes/org/switchyard/quickstarts/rules/interview/Interview-21.pkg</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.switchyard</groupId>
