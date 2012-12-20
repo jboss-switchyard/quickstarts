@@ -104,7 +104,13 @@ public class BPMModelTests {
 
     private void doTestModel(SwitchYardModel switchyard, String xml, ClassLoader loader) throws Exception {
         CompositeModel composite = switchyard.getComposite();
-        ComponentModel component = composite.getComponents().get(0);
+        ComponentModel component = null;
+        for (ComponentModel c : composite.getComponents()) {
+            if (DoStuffProcess.class.getSimpleName().equals(c.getName())) {
+                component = c;
+                break;
+            }
+        }
         ComponentImplementationModel implementation = component.getImplementation();
         Assert.assertTrue(implementation instanceof BPMComponentImplementationModel);
         BPMComponentImplementationModel bpm = (BPMComponentImplementationModel)implementation;
