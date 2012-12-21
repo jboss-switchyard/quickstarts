@@ -129,10 +129,9 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
      * Gets the persistent knowledge session
      * @return the persistent knowledge session
      */
-    protected KnowledgeSession getPersistentSession(Exchange exchange, String sessionIdProperty) {
-        Integer sessionId = getInteger(exchange, sessionIdProperty);
+    protected KnowledgeSession getPersistentSession(Integer sessionId) {
         if (_statefulSession != null) {
-            if (!_statefulSession.isPersistent() || sessionId == null || !sessionId.equals(_statefulSession.getId())) {
+            if (!_statefulSession.isPersistent() || (sessionId != null && !sessionId.equals(_statefulSession.getId()))) {
                 disposeStatefulSession();
             }
         }

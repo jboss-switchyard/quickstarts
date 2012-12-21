@@ -55,7 +55,7 @@ class KnowledgeBaseSessionFactory extends KnowledgeSessionFactory {
 
     KnowledgeBaseSessionFactory(KnowledgeComponentImplementationModel model, ClassLoader loader, ServiceDomain domain, Properties propertyOverrides) {
         super(model, loader, domain, propertyOverrides);
-        _base = newBase(getModel(), getPropertyOverrides(), getLoader());
+        _base = newBase();
         _sessionConfiguration = Configurations.getSessionConfiguration(getModel(), getPropertyOverrides());
     }
 
@@ -107,12 +107,12 @@ class KnowledgeBaseSessionFactory extends KnowledgeSessionFactory {
         return new KnowledgeSession(stateful, true, loggersDisposal);
     }
 
-    private KieBase newBase(KnowledgeComponentImplementationModel model, Properties overrides, ClassLoader loader) {
-        KieBaseConfiguration baseConfiguration = Configurations.getBaseConfiguration(model, overrides, loader);
+    private KieBase newBase() {
+        KieBaseConfiguration baseConfiguration = Configurations.getBaseConfiguration(getModel(), getPropertyOverrides(), getLoader());
         KnowledgeBase base = KnowledgeBaseFactory.newKnowledgeBase(baseConfiguration);
-        KnowledgeBuilderConfiguration builderConfiguration = Configurations.getBuilderConfiguration(model, overrides, loader);
+        KnowledgeBuilderConfiguration builderConfiguration = Configurations.getBuilderConfiguration(getModel(), getPropertyOverrides(), getLoader());
         KnowledgeBuilder builder = KnowledgeBuilderFactory.newKnowledgeBuilder(base, builderConfiguration);
-        Resources.addResources(model, loader, builder);
+        Resources.addResources(getModel(), getLoader(), builder);
         return builder.newKnowledgeBase();
     }
 
