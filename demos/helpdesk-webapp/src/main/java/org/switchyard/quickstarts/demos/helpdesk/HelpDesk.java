@@ -62,6 +62,7 @@ public class HelpDesk {
         _taskClient = TaskService.instance().newTaskClient();
         _userTasks = Collections.synchronizedList(new ArrayList<Task>());
         _userTickets = Collections.synchronizedMap(new LinkedHashMap<Long, Ticket>());
+        _userId = "krisv";
     }
 
     public String getUserId() {
