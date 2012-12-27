@@ -132,7 +132,7 @@ public class SwitchYardRemotingServlet extends HttpServlet {
         _endpointPublisher = endpointPublisher;
     }
     
-    private RemoteMessage createReplyMessage(Exchange exchange) {
+    RemoteMessage createReplyMessage(Exchange exchange) {
         RemoteMessage reply = new RemoteMessage();
         cleanContext(exchange);
         reply.setContext(exchange.getContext())
@@ -140,7 +140,12 @@ public class SwitchYardRemotingServlet extends HttpServlet {
             .setOperation(exchange.getContract().getConsumerOperation().getName())
             .setService(exchange.getConsumer().getName());
         if (exchange.getMessage() != null) {
-            reply.setContent(exchange.getMessage().getContent());
+            Object content = exchange.getMessage().getContent();
+            if (content != null && Throwable.class.isAssignableFrom(content.getClass())) {
+                // SWITCHYARD-1228 Avoid serialization errors by converting to String
+                content = exchange.getMessage().getContent(String.class);
+            }
+            reply.setContent(content);
         }
         if (exchange.getState().equals(ExchangeState.FAULT)) {
             reply.setFault(true);
