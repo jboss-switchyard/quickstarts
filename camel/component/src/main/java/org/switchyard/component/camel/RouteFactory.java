@@ -79,10 +79,6 @@ public final class RouteFactory {
                 + " must extend " + RouteBuilder.class.getName());
         }
 
-        if (!routeClass.isAnnotationPresent(Route.class)) {
-            throw new SwitchYardException("@Route annotation not found on class " + routeClass.getName());
-        }
-
         // Create the route and tell it to create a route
         RouteBuilder builder;
         RouteDefinition route = null;

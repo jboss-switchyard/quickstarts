@@ -39,16 +39,6 @@ public class RouteFactoryTest {
     }
 
     @Test
-    public void noRouteAnnotation() {
-        try {
-            RouteFactory.createRoute(NoRouteAnnotation.class.getName());
-            Assert.fail("No route annotation on " + NoRouteAnnotation.class.getName());
-        } catch (RuntimeException ex) {
-            System.err.println("Route without annotation was rejected: " + ex.toString());
-        }
-    }
-
-    @Test
     public void doesntExtendRouteBuilder() {
         try {
             RouteFactory.createRoute(DoesntExtendRouteBuilder.class.getName());
