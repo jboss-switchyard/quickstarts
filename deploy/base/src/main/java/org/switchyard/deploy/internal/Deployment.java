@@ -392,15 +392,6 @@ public class Deployment extends AbstractDeployment {
     }
     
     private void deployImplementations() {
-        // discover any service promotions
-        Map<ComponentServiceModel,CompositeServiceModel> servicePromotions = 
-                new HashMap<ComponentServiceModel,CompositeServiceModel>();
-        for (CompositeServiceModel compositeService : getConfig().getComposite().getServices()) {
-            ComponentServiceModel componentService = compositeService.getComponentService();
-            if (componentService != null) {
-                servicePromotions.put(componentService, compositeService);
-            }
-        }
         
         for (ComponentModel component : getConfig().getComposite().getComponents()) {
             Activator activator = findActivator(component);
@@ -464,12 +455,18 @@ public class Deployment extends AbstractDeployment {
                 activation.addService(svc);
                 activation.addReferences(references);
                 
-                // register any service promotions, avoiding duplicate service names
-                CompositeServiceModel promotion = servicePromotions.get(service);
-                if (promotion != null && !promotion.getQName().equals(service.getQName())) {
-                    validateServiceRegistration(promotion.getQName());
-                    Service promotedService = getDomain().registerService(promotion.getQName(), serviceIntf, handler);
-                    activation.addPromotion(promotedService);
+                // register any service promotions
+                for (CompositeServiceModel compositeService : getConfig().getComposite().getServices()) {
+                    ComponentServiceModel componentService = compositeService.getComponentService();
+                    if (componentService != null && componentService.equals(service)) {
+                        // avoid duplicates
+                        if (!service.getQName().equals(compositeService.getQName())) {
+                            validateServiceRegistration(compositeService.getQName());
+                            Service promotedService = getDomain().registerService(
+                                    compositeService.getQName(), serviceIntf, handler);
+                            activation.addPromotion(promotedService);
+                        }
+                    }
                 }
                 
                 _services.add(activation);

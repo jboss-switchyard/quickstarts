@@ -275,6 +275,30 @@ public class DeploymentTest {
             Assert.assertEquals("Failed to load Service interface class 'org.acme.Blah'.", e.getMessage());
         }
     }
+    
+    @Test
+    public void componentServiceMultiplePromotions() throws Exception {
+        InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-multiple-promotions.xml", getClass());
+        Deployment deployment = new Deployment(swConfigStream);
+        swConfigStream.close();
+
+        MockDomain serviceDomain = new MockDomain();
+        deployment.init(serviceDomain, ActivatorLoader.createActivators(serviceDomain));
+        deployment.start();
+        
+        // verify that two promotions with different names have been registered
+        List<Service> test1svcs = deployment.getDomain().getServices(
+                new QName("urn:test:config-mock-binding:1.0", "Test1"));
+        Assert.assertEquals(1, test1svcs.size());
+        List<Service> test2svcs = deployment.getDomain().getServices(
+                new QName("urn:test:config-mock-binding:1.0", "Test2"));
+        Assert.assertEquals(1, test2svcs.size());
+        
+        // make sure there's only one registration when component service name equals composite service name
+        List<Service> testsvcs = deployment.getDomain().getServices(
+                new QName("urn:test:config-mock-binding:1.0", "TestService"));
+        Assert.assertEquals(1, testsvcs.size());
+    }
 
     @Test
     public void testDuplicateReference() throws Exception {
