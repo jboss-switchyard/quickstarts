@@ -37,14 +37,15 @@ public class PojoIterator implements Iterator<Object> {
 
     @Override
     public boolean hasNext() {
-        return _pointer < 2;
+        return _pointer < 3;
     }
 
     @Override
     public Object next() {
         switch (_pointer++) {
-        case 0: return _greeting.getName();
+        case 0: return _greeting.getReceiver();
         case 1: return _greeting.getSender();
+        case 2: return _greeting.getId();
         }
         return null;
     }
