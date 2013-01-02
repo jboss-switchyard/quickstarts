@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ JBoss, Home of Professional Open Source.
-  ~ Copyright 2012, Red Hat, Inc., and individual contributors
+  ~ Copyright 2013, Red Hat, Inc., and individual contributors
   ~ as indicated by the @author tags. See the copyright.txt file in the
   ~ distribution for a full listing of individual contributors.
   ~
@@ -25,12 +25,11 @@
     <parent>
         <groupId>org.switchyard.components</groupId>
         <artifactId>switchyard-component-camel-parent</artifactId>
-        <version>0.7.0-SNAPSHOT</version>
+        <version>0.7.0.Final</version>
     </parent>
     <artifactId>switchyard-component-camel-atom</artifactId>
     <name>SwitchYard: Camel Component :: Atom Binding</name>
     <url>http://switchyard.org</url>
-
     <dependencies>
         <!--
         This dependency provides also dependency to component-common-camel and it's
@@ -41,7 +40,6 @@
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-camel-switchyard</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-atom</artifactId>
@@ -61,7 +59,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-camel-test</artifactId>

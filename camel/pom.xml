@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ JBoss, Home of Professional Open Source.
-  ~ Copyright 2012, Red Hat, Inc., and individual contributors
+  ~ Copyright 2013, Red Hat, Inc., and individual contributors
   ~ as indicated by the @author tags. See the copyright.txt file in the
   ~ distribution for a full listing of individual contributors.
   ~
@@ -22,23 +22,19 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>switchyard-component-camel-parent</artifactId>
     <packaging>pom</packaging>
     <name>SwitchYard: Component Camel Parent</name>
     <description>The parent for SwitchYard component camel modules</description>
     <url>http://switchyard.org</url>
-
     <parent>
         <groupId>org.switchyard.components</groupId>
         <artifactId>switchyard-components-parent</artifactId>
-        <version>0.7.0-SNAPSHOT</version>
+        <version>0.7.0.Final</version>
     </parent>
-
     <modules>
         <module>component</module>
         <module>camel-switchyard</module>
-
         <module>camel-amqp</module>
         <module>camel-atom</module>
         <module>camel-core</module>
@@ -52,7 +48,6 @@
         <module>camel-sql</module>
         <module>camel-test</module>
     </modules>
-
     <dependencies>
         <!-- external dependencies -->
         <dependency>
