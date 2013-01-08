@@ -35,6 +35,7 @@ import org.switchyard.component.camel.ComponentNameComposer;
 import org.switchyard.component.camel.RouteFactory;
 import org.switchyard.component.camel.SwitchYardConsumer;
 import org.switchyard.component.camel.SwitchYardEndpoint;
+import org.switchyard.component.camel.common.CamelConstants;
 import org.switchyard.component.camel.common.composer.CamelComposition;
 import org.switchyard.component.camel.common.deploy.BaseBindingActivator;
 import org.switchyard.component.camel.model.CamelComponentImplementationModel;
@@ -103,7 +104,7 @@ public class CamelActivator extends BaseBindingActivator {
             if (processorDef instanceof ToDefinition) {
                 final ToDefinition to = (ToDefinition) processorDef;
                 final URI componentUri = URI.create(to.getUri());
-                if (componentUri.getScheme().equals(ComponentNameComposer.SWITCHYARD_COMPONENT_NAME)) {
+                if (componentUri.getScheme().equals(CamelConstants.SWITCHYARD_COMPONENT_NAME)) {
                     final String serviceName = componentUri.getHost();
                     final String namespace = ComponentNameComposer.getNamespaceFromURI(componentUri);
                     final QName refServiceName = new QName(namespace, serviceName);

@@ -18,6 +18,8 @@
  */
 package org.switchyard.component.camel;
 
+import static org.switchyard.component.camel.ComponentNameComposer.composeSwitchYardServiceName;
+
 import java.util.Set;
 
 import javax.xml.namespace.QName;
@@ -30,15 +32,12 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.camel.common.CamelConstants;
 import org.switchyard.component.camel.common.composer.CamelBindingData;
-import org.switchyard.component.camel.common.handler.InboundHandler;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.TransactionPolicy;
 import org.switchyard.selector.OperationSelector;
-
-import static org.switchyard.component.camel.ComponentNameComposer.composeSwitchYardServiceName;
 
 /**
  * A Camel producer that is capable of calling SwitchYard services from a Camel route.
@@ -81,10 +80,9 @@ public class SwitchYardProducer extends DefaultProducer {
         ServiceDomain domain = (ServiceDomain) camelExchange.getContext().getRegistry().lookup(CamelConstants.SERVICE_DOMAIN);
 
         final ServiceReference serviceRef = lookupServiceReference(targetUri, domain);
-        final QName serviceName = serviceRef.getName();
         @SuppressWarnings("unchecked")
-        OperationSelector<CamelBindingData> selector = (OperationSelector<CamelBindingData>) camelExchange.getContext()
-            .getRegistry().lookup(serviceName.toString() + InboundHandler.OPERATION_SELECTOR_REF);
+        OperationSelector<CamelBindingData> selector = (OperationSelector<CamelBindingData>) camelExchange.getIn().getHeader(
+           CamelConstants.OPERATION_SELETOR_HEADER, OperationSelector.class);
 
         if (selector != null) {
             QName op = selector.selectOperation(new CamelBindingData(camelExchange.getIn()));

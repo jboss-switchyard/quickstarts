@@ -32,15 +32,12 @@ import org.apache.camel.util.URISupport;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.switchyard.Exchange;
 import org.switchyard.common.camel.SwitchYardCamelContext;
-import org.switchyard.common.lang.Strings;
+import org.switchyard.component.camel.common.CamelConstants;
 import org.switchyard.component.camel.common.SwitchYardRouteDefinition;
-import org.switchyard.component.camel.common.composer.CamelBindingData;
 import org.switchyard.component.camel.common.model.CamelBindingModel;
 import org.switchyard.component.camel.common.transaction.TransactionManagerFactory;
-import org.switchyard.component.common.selector.OperationSelectorFactory;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.exception.SwitchYardException;
-import org.switchyard.selector.OperationSelector;
 
 /**
  * An ExchangeHandler that acts as a gateway/entrypoint for Camel Components.
@@ -62,7 +59,6 @@ public class InboundHandler extends BaseServiceHandler {
     private static TransactionManagerFactory TM_FACTORY = TransactionManagerFactory.getInstance();
     private final CamelBindingModel _camelBindingModel;
     private final SwitchYardCamelContext _camelContext;
-    private RouteDefinition _routeDefinition;
     private QName _serviceName;
 
     /**
@@ -75,30 +71,55 @@ public class InboundHandler extends BaseServiceHandler {
     public InboundHandler(final CamelBindingModel camelBindingModel, final SwitchYardCamelContext camelContext, final QName serviceName) {
         _camelBindingModel = camelBindingModel;
         _camelContext = camelContext;
-        _routeDefinition = createRouteDefinition(serviceName);
         _serviceName = serviceName;
-        OperationSelector<CamelBindingData> selector = OperationSelectorFactory
-                                                        .getOperationSelectorFactory(CamelBindingData.class)
-                                                        .newOperationSelector(camelBindingModel.getOperationSelector());
-        if (selector != null) {
-            selector.setDefaultNamespace(Strings.trimToNull(serviceName.getNamespaceURI()));
-            addToCamelRegistry(selector);
-        }
 
         try {
-            _camelContext.addRouteDefinition(_routeDefinition);
+            _camelContext.addRouteDefinition(createRouteDefinition());
         } catch (final Exception e) {
             throw new SwitchYardException(e);
         }
     }
 
-    private RouteDefinition createRouteDefinition(final QName serviceName) {
-        final RouteDefinition route = new SwitchYardRouteDefinition(serviceName.getNamespaceURI());
-        final String routeId = serviceName.toString() + "-[" +_camelBindingModel.getComponentURI() + "]";
-        final URI componentURI = uriFromBindingModel();
+    /**
+     * Creates route definition applicable for actual camel binding model.
+     * 
+     * @return Route definition handling given binding.
+     */
+    protected RouteDefinition createRouteDefinition() {
+        final RouteDefinition route = new SwitchYardRouteDefinition(getServiceName().getNamespaceURI());
+        final URI componentURI = getBindingModel().getComponentURI();
 
-        route.routeId(routeId).from(componentURI.toString());
+        route.routeId(getRouteId()).from(componentURI.toString());
+        addTransactionPolicy(route, componentURI);
 
+        return route.process(new OperationSelectorProcessor(getServiceName(), getBindingModel()))
+            .to(CamelConstants.SWITCHYARD_COMPONENT_NAME +"://" + getServiceName().getLocalPart());
+    }
+
+    /**
+     * Get route id for given binding.
+     * 
+     * @param serviceName Service name.
+     * @return Camel route id.
+     */
+    protected String getRouteId() {
+        return getServiceName().toString() + "-[" + getBindingModel().getComponentURI() + "]";
+    }
+
+    protected QName getServiceName() {
+        return _serviceName;
+    }
+
+    /**
+     * Add transacted DSL element to route if necessary.
+     * 
+     * This method checks if component uri contains transaction manager reference
+     * and puts 
+     * 
+     * @param route Route definition.
+     * @param componentURI Component uri.
+     */
+    protected void addTransactionPolicy(final RouteDefinition route, final URI componentURI) {
         if (hasTransactionManager(componentURI.toString())) {
             final String tmName = getTransactionManagerName(componentURI);
             if (!isRegisteredInCamelRegistry(tmName) && isDefaultJtaTransactionName(tmName)) {
@@ -106,12 +127,8 @@ public class InboundHandler extends BaseServiceHandler {
                 addToCamelRegistry(tm, tmName);
             }
             // Tell Camel the route is transacted
-            route.transacted(TRANSACTED_REF).to(composeSwitchYardComponentName(serviceName));
-        } else {
-            route.to(composeSwitchYardComponentName(serviceName));
+            route.transacted(TRANSACTED_REF);
         }
-
-        return route;
     }
 
     private boolean isDefaultJtaTransactionName(final String tmName) {
@@ -129,15 +146,11 @@ public class InboundHandler extends BaseServiceHandler {
         _camelContext.getWritebleRegistry().put(TRANSACTED_REF, new SpringTransactionPolicy(tm));
     }
 
-    private void addToCamelRegistry(final OperationSelector<CamelBindingData> selector) {
-        _camelContext.getWritebleRegistry().put(_serviceName.toString() + OPERATION_SELECTOR_REF, selector);
-    }
-
-    private boolean hasTransactionManager(final String componentURI) {
+    protected boolean hasTransactionManager(final String componentURI) {
         return componentURI.contains("transactionManager");
     }
 
-    String getTransactionManagerName(final URI componentURI) {
+    protected String getTransactionManagerName(final URI componentURI) {
         try {
             final Map<String, Object> parseParameters = URISupport.parseParameters(componentURI);
             String name = (String) parseParameters.get("transactionManager");
@@ -150,16 +163,8 @@ public class InboundHandler extends BaseServiceHandler {
         }
     }
 
-    private URI uriFromBindingModel() {
-        return _camelBindingModel.getComponentURI();
-    }
-
-    private String composeSwitchYardComponentName(final QName serviceName) {
-        final StringBuilder sb = new StringBuilder()
-                                        .append("switchyard://")
-                                        .append(serviceName.getLocalPart());
-        final String namespace = Strings.trimToNull(serviceName.getNamespaceURI());
-        return SwitchYardRouteDefinition.addNamespaceParameter(sb.toString(), namespace);
+    protected CamelBindingModel getBindingModel() {
+        return _camelBindingModel;
     }
 
     /**
@@ -168,8 +173,9 @@ public class InboundHandler extends BaseServiceHandler {
     @Override
     public void start() {
         try {
-            if (_routeDefinition.getStatus(_camelContext).isStartable()) {
-                _camelContext.startRoute(_routeDefinition.getId());
+            RouteDefinition route = _camelContext.getRouteDefinition(getRouteId());
+            if (route.isStartable(_camelContext)) {
+                _camelContext.startRoute(getRouteId());
             }
         } catch (Exception ex) {
             throw new SwitchYardException("Failed to start route for service " + _serviceName, ex);
@@ -181,10 +187,9 @@ public class InboundHandler extends BaseServiceHandler {
      */
     @Override
     public void stop() {
-        final String routeId = _routeDefinition.getId();
         try {
-            _camelContext.stopRoute(routeId);
-            _camelContext.removeRoute(routeId);
+            _camelContext.stopRoute(getRouteId());
+            _camelContext.removeRoute(getRouteId());
         } catch (Exception ex) {
             throw new SwitchYardException("Failed to stop route for service " + _serviceName, ex);
         }

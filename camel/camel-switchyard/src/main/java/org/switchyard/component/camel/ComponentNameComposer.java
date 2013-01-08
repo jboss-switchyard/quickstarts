@@ -29,6 +29,8 @@ import javax.xml.namespace.QName;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.camel.common.SwitchYardRouteDefinition;
 
+import static org.switchyard.component.camel.common.CamelConstants.SWITCHYARD_COMPONENT_NAME;
+
 /**
  * Utility class that takes care of creating Camel component uris for 
  * SwitchYard services.
@@ -36,11 +38,6 @@ import org.switchyard.component.camel.common.SwitchYardRouteDefinition;
  * @author Daniel Bevenius
  */
 public final class ComponentNameComposer {
-
-    /**
-     *Component name used for endpoint URIs.
-     */
-    public static final String SWITCHYARD_COMPONENT_NAME = "switchyard";
 
     private ComponentNameComposer() {
     }

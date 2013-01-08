@@ -57,6 +57,7 @@ public abstract class BaseOperationSelector<T> implements OperationSelector<T> {
     }
 
     @Override
+
     public QName selectOperation(T content) throws Exception {
         QName operationQName = null;
 

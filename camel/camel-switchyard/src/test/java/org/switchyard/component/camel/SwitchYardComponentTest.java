@@ -35,6 +35,7 @@ import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
+import org.switchyard.component.camel.common.CamelConstants;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
@@ -96,7 +97,7 @@ public class SwitchYardComponentTest extends CamelTestSupport {
     @Override 
     protected JndiRegistry createRegistry() {
         JndiRegistry reg = new JndiRegistry();
-        reg.bind(SwitchYardComponent.SERVICE_DOMAIN, _serviceDomain);
+        reg.bind(CamelConstants.SERVICE_DOMAIN, _serviceDomain);
         return reg;
     }
 

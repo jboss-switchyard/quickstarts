@@ -26,9 +26,19 @@ package org.switchyard.component.camel.common;
 public interface CamelConstants {
 
     /**
+     * SwitchYard component scheme.
+     */
+    String SWITCHYARD_COMPONENT_NAME = "switchyard";
+
+    /**
      * Property added to each Camel Context so that code initialized inside 
      * Camel can access the SY service domain.
      */
     String SERVICE_DOMAIN = "org.switchyard.camel.serviceDomain";
+
+    /**
+     * Name of message header where operation selector is stored.
+     */
+    String OPERATION_SELETOR_HEADER = "org.switchyard.operationSelector";
 
 }

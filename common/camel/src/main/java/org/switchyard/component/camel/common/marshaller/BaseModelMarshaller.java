@@ -2,7 +2,6 @@ package org.switchyard.component.camel.common.marshaller;
 
 import static org.switchyard.config.model.composer.ContextMapperModel.CONTEXT_MAPPER;
 import static org.switchyard.config.model.composer.MessageComposerModel.MESSAGE_COMPOSER;
-import static org.switchyard.config.model.switchyard.SwitchYardModel.DEFAULT_NAMESPACE;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,23 +33,6 @@ public class BaseModelMarshaller extends BaseMarshaller {
      */
     private String _namespace;
 
-    private BaseModelMarshaller(Descriptor desc) {
-        super(desc);
-
-        register(DEFAULT_NAMESPACE, CONTEXT_MAPPER, new ModelCreator<Model>() {
-            @Override
-            public V1ContextMapperModel create(Configuration config, Descriptor descriptor) {
-                return new V1ContextMapperModel(config, descriptor);
-            }
-        });
-        register(DEFAULT_NAMESPACE, MESSAGE_COMPOSER, new ModelCreator<Model>() {
-            @Override
-            public V1MessageComposerModel create(Configuration config, Descriptor descriptor) {
-                return new V1MessageComposerModel(config, descriptor);
-            }
-        });
-    }
-
     /**
      * Creates marshaller with given descriptor and bounds by default bindings
      * and other elements to given namespace.
@@ -59,9 +41,21 @@ public class BaseModelMarshaller extends BaseMarshaller {
      * @param defaultNamespace Default namespace of model elements.
      */
     protected BaseModelMarshaller(Descriptor desc, String defaultNamespace) {
-        this(desc);
-
+        super(desc);
         _namespace = defaultNamespace;
+
+        register(_namespace, CONTEXT_MAPPER, new ModelCreator<Model>() {
+            @Override
+            public V1ContextMapperModel create(Configuration config, Descriptor descriptor) {
+                return new V1ContextMapperModel(config, descriptor);
+            }
+        });
+        register(_namespace, MESSAGE_COMPOSER, new ModelCreator<Model>() {
+            @Override
+            public V1MessageComposerModel create(Configuration config, Descriptor descriptor) {
+                return new V1MessageComposerModel(config, descriptor);
+            }
+        });
     }
 
     @Override

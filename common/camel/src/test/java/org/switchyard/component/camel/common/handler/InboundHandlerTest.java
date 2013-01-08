@@ -23,27 +23,17 @@ package org.switchyard.component.camel.common.handler;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
 
 import java.net.URI;
 
-import javax.xml.namespace.QName;
-
 import org.junit.Test;
-import org.switchyard.common.camel.SwitchYardCamelContext;
-import org.switchyard.component.camel.common.model.v1.V1BaseCamelBindingModel;
-import org.switchyard.config.Configuration;
-import org.switchyard.config.model.Descriptor;
 
 /**
  * Unit test for {@link InboundHandler}.
  * 
  * @author Daniel Bevenius
  */
-public class InboundHandlerTest {
-
-    final SwitchYardCamelContext _camelContext = new SwitchYardCamelContext();
-    final Configuration _configuration = mock(Configuration.class);
+public class InboundHandlerTest extends InboundHandlerTestBase {
 
     @Test
     public void reflexive() {
@@ -55,6 +45,7 @@ public class InboundHandlerTest {
     public void symmetric() {
         final InboundHandler x = createInboundHandler("direct://symmetric");
         final InboundHandler y = createInboundHandler("direct://symmetric");
+
         assertThat(x.equals(y), is(true));
         assertThat(y.equals(x), is(true));
     }
@@ -63,7 +54,7 @@ public class InboundHandlerTest {
     public void nonSymmetric() {
         final InboundHandler x = createInboundHandler("direct://symmetric");
         final InboundHandler y = createInboundHandler("direct://nonsymmetric");
-        
+
         assertThat(x.equals(y), is(false));
         assertThat(y.equals(x), is(false));
     }
@@ -119,16 +110,6 @@ public class InboundHandlerTest {
         assertThat(transactedRef, is(equalTo("jtaTransactionMgr")));
         transactedRef = handler.getTransactionManagerName(URI.create("jms://GreetingServiceQueue?connectionFactory=%23&JmsXA&transactionManager=%23jtaTransactionManager"));
         assertThat(transactedRef, is(equalTo("jtaTransactionManager")));
-    }
-
-    private InboundHandler createInboundHandler(final String uri) {
-        final V1BaseCamelBindingModel camelBindingModel = new V1BaseCamelBindingModel(_configuration, new Descriptor()) {
-            @Override
-            public URI getComponentURI() {
-                return URI.create(uri);
-            }
-        };
-        return new InboundHandler(camelBindingModel, _camelContext, new QName("dummyService"));
     }
 
 }

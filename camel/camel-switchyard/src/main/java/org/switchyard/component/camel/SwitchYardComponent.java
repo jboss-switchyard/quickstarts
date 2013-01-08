@@ -39,12 +39,6 @@ import org.apache.camel.impl.DefaultComponent;
  */
 public class SwitchYardComponent extends DefaultComponent {
 
-    /**
-     * Property added to each Camel Context so that code initialized inside 
-     * Camel can access the SY service domain.
-     */
-    public static final String SERVICE_DOMAIN = "org.switchyard.camel.serviceDomain";
-
     @Override
     protected Endpoint createEndpoint(final String uri, final String path, final Map<String, Object> parameters) throws Exception {
         final String namespace = (String) parameters.remove("namespace");
