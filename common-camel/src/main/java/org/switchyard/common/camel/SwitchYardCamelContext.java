@@ -58,9 +58,23 @@ public class SwitchYardCamelContext extends DefaultCamelContext {
     private AtomicInteger _count = new AtomicInteger();
 
     /**
+     * Flag to turn on/off cdi integration.
+     */
+    private boolean _cdiIntegration;
+
+    /**
      * Creates new camel context.
      */
     public SwitchYardCamelContext() {
+        this(true);
+    }
+
+    /**
+     * Creates new camel context.
+     * @param autoDetectCdi Should cdi integration be auto detected and enabled.
+     */
+    public SwitchYardCamelContext(boolean autoDetectCdi) {
+        _cdiIntegration = autoDetectCdi;
         if (isEnableCdiIntegration()) {
             setInjector(new CdiInjector(getInjector()));
             getManagementStrategy().addEventNotifier(new CamelEventBridge());
@@ -149,7 +163,10 @@ public class SwitchYardCamelContext extends DefaultCamelContext {
      * 
      * @return True if CDI runtime is detected.
      */
-    private boolean isEnableCdiIntegration() {
+    public boolean isEnableCdiIntegration() {
+        if (!_cdiIntegration) {
+            return false;
+        }
         try {
             BeanManagerProvider.getInstance();
             return true;

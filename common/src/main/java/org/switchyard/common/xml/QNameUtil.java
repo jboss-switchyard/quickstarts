@@ -19,9 +19,13 @@
 
 package org.switchyard.common.xml;
 
-import org.switchyard.common.type.Classes;
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.xml.namespace.QName;
+
+import org.switchyard.common.type.Classes;
 
 /**
  * QName utility methods.
@@ -37,11 +41,18 @@ public final class QNameUtil {
      *  Java message type.
      */
     public static final String JAVA_TYPE = "java";
+
     /**
      * Java Type prefix.
      */
     private static final String JAVA_TYPE_PREFIX = JAVA_TYPE + ":";
 
+    /**
+     * Primitive array types.
+     */
+    private static final List<String> PRIMITIVES = Arrays.asList(
+        "byte[]", "short[]", "int[]", "long[]", "float[]", "double[]", "boolean[]", "char[]"
+    );
 
     /**
      * Is the specified message type QName a Java message type.
@@ -63,6 +74,10 @@ public final class QNameUtil {
         }
 
         String className = name.getLocalPart().substring(JAVA_TYPE_PREFIX.length());
+        if (!PRIMITIVES.contains(className) && className.contains("[]")) {
+            className = className.substring(0, className.length() - 2);
+            return Array.newInstance(Classes.forName(className), 0).getClass();
+        }
         return Classes.forName(className);
     }
 }
