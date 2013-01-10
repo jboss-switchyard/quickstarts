@@ -36,6 +36,9 @@ MA  02110-1301, USA.
                     <element name="batch" type="boolean" minOccurs="0" maxOccurs="1"/>
                     <element name="placeholder" type="string" minOccurs="0" maxOccurs="1"/>
                 </sequence>
+                <attribute name="timerName" type="string" />
+                <attribute name="period" type="string" />
+                <attribute name="initialDelay" type="long" />
             </extension>
         </complexContent>
     </complexType>

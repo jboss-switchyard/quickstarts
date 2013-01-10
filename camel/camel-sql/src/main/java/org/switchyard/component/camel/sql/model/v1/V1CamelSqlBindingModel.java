@@ -46,6 +46,9 @@ public class V1CamelSqlBindingModel extends V1BaseCamelBindingModel
     private static final String DATA_SOURCE_REF = "dataSourceRef";
     private static final String BATCH = "batch";
     private static final String PLACEHOLDER = "placeholder";
+    // timer related attributes
+    private static final String PERIOD = "period";
+    private static final String INITIAL_DELAY = "initialDelay";
 
     /**
      * Create a new CamelSqlBindingModel.
@@ -104,6 +107,37 @@ public class V1CamelSqlBindingModel extends V1BaseCamelBindingModel
     @Override
     public V1CamelSqlBindingModel setPlaceholder(String placeholder) {
         return setConfig(PLACEHOLDER, placeholder);
+    }
+
+    @Override
+    public String getPeriod() {
+        return getModelAttribute(PERIOD);
+    }
+
+    @Override
+    public V1CamelSqlBindingModel setPeriod(String schedule) {
+        setModelAttribute(PERIOD, schedule);
+        return this;
+    }
+
+    @Override
+    public V1CamelSqlBindingModel setInitialDelay(Long initialDelay) {
+        setModelAttribute(INITIAL_DELAY, Long.toString(initialDelay));
+        return this;
+    }
+
+    @Override
+    public Long getInitialDelay() {
+        String value = getModelAttribute(INITIAL_DELAY);
+        return value == null ? null : Long.valueOf(value);
+    }
+
+    @Override
+    public String getTimerURI(String name) {
+        QueryString queryStr = new QueryString();
+        queryStr.add("period", getPeriod());
+        queryStr.add("delay", getInitialDelay());
+        return UnsafeUriCharactersEncoder.encode("timer://" + name + queryStr);
     }
 
     @Override

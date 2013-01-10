@@ -18,26 +18,32 @@
  */
 package org.switchyard.component.camel.sql.deploy;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.component.camel.common.deploy.BaseBindingActivator;
-import org.switchyard.component.camel.common.deploy.BaseBindingComponent;
-import org.switchyard.component.camel.sql.model.v1.V1CamelSqlBindingModel;
+import org.switchyard.component.camel.common.handler.InboundHandler;
+import org.switchyard.component.camel.common.model.CamelBindingModel;
+import org.switchyard.component.camel.sql.model.CamelSqlBindingModel;
 
 /**
- * Sql binding component.
+ * Camel sql activator.
  */
-public class CamelSqlComponent extends BaseBindingComponent {
+public class CamelSqlActivator extends BaseBindingActivator {
 
     /**
-     * Creates new component.
+     * Creates new activator instance.
+     * 
+     * @param context Camel context.
+     * @param types Activation types.
      */
-    public CamelSqlComponent() {
-        super("CamelSqlComponent", V1CamelSqlBindingModel.SQL);
+    public CamelSqlActivator(SwitchYardCamelContext context, String[] types) {
+        super(context, types);
     }
 
-    @Override
-    protected BaseBindingActivator createActivator(SwitchYardCamelContext context, String... types) {
-        return new CamelSqlActivator(context, types);
+    @SuppressWarnings("unchecked")
+    protected <T extends CamelBindingModel> InboundHandler<T> createInboundHandler(QName serviceName, T binding) {
+        return (InboundHandler<T>) new CamelSqlInboundHandler((CamelSqlBindingModel) binding, getCamelContext(), serviceName);
     }
 
 }

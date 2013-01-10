@@ -87,4 +87,42 @@ public interface CamelSqlBindingModel extends CamelBindingModel {
      */
     CamelSqlBindingModel setPlaceholder(String placeholder);
 
+    /**
+     * Period between polls.
+     * 
+     * @return Period between polls.
+     */
+    String getPeriod();
+
+    /**
+     * Specifies delays between pools. Possible values are long (millis) and string, eg: 1s, 1m.
+     * 
+     * @param period Period between polls.
+     * @return a reference to this Camel binding model
+     */
+    CamelSqlBindingModel setPeriod(String period);
+
+    /**
+     * Specifies delay in millis before first poll.
+     * 
+     * @param initialDelay First poll delay.
+     * @return a reference to this Camel binding model
+     */
+    CamelSqlBindingModel setInitialDelay(Long initialDelay);
+
+    /**
+     * Get first poll delay.
+     * 
+     * @return First poll delay.
+     */
+    Long getInitialDelay();
+
+    /**
+     * Returns timer uri used to call component uri.
+     * 
+     * @param timerId Name of timer endpoint.
+     * @return Camel timer uri.
+     */
+    String getTimerURI(String timerId);
+
 }
