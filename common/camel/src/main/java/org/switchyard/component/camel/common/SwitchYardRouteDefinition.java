@@ -22,6 +22,8 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
 
+import javax.xml.namespace.QName;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.model.FromDefinition;
@@ -46,8 +48,15 @@ public final class SwitchYardRouteDefinition extends RouteDefinition {
      * @param namespace the specified namespace
      */
     public SwitchYardRouteDefinition(String namespace) {
-        super();
         _namespace = namespace;
+    }
+
+    /**
+     * Constructs a new SwitchYardRouteDefinition with the specified namespace obtained from QName.
+     * @param namespace the specified namespace
+     */
+    public SwitchYardRouteDefinition(QName namespace) {
+        this(namespace.getNamespaceURI());
     }
 
     /**

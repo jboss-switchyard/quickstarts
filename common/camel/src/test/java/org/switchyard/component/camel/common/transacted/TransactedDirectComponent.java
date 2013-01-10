@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,34 +16,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.camel.common;
+package org.switchyard.component.camel.common.transacted;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.component.direct.DirectComponent;
+import org.apache.camel.component.direct.DirectConsumer;
 
 /**
- * Constants used by Camel component.
- *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
+ * An extension of {@link DirectComponent} for testing Transaction Manager injection.
  */
-public interface CamelConstants {
+public class TransactedDirectComponent extends DirectComponent {
 
-    /**
-     * SwitchYard component scheme.
-     */
-    String SWITCHYARD_COMPONENT_NAME = "switchyard";
+    private final Map<String, DirectConsumer> consumers = new HashMap<String, DirectConsumer>();
 
-    /**
-     * Property added to each Camel Context so that code initialized inside 
-     * Camel can access the SY service domain.
-     */
-    String SERVICE_DOMAIN = "org.switchyard.camel.serviceDomain";
-
-    /**
-     * Name of message header where operation selector is stored.
-     */
-    String OPERATION_SELETOR_HEADER = "org.switchyard.operationSelector";
-
-    /**
-     * Name of Spring SPI transaction policy bean.
-     */
-    String TRANSACTED_REF = "transactionPolicy";
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        Endpoint endpoint = new TransactedDirectEndpoint(uri, this, consumers);
+        setProperties(endpoint, parameters);
+        return endpoint;
+    }
 
 }

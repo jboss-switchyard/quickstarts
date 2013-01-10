@@ -27,6 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.switchyard.component.camel.common.CamelConstants;
 import org.switchyard.config.model.selector.v1.V1StaticOperationSelectorModel;
 import org.switchyard.selector.OperationSelector;
 
@@ -49,8 +50,8 @@ public class OperationSelectorTest extends InboundHandlerTestBase {
     public void operationSelectorProcessor() throws Exception {
         _camelContext.addComponent("switchyard", new MockComponent());
         ProducerTemplate producer = _camelContext.createProducerTemplate();
-        InboundHandler handler1 = createInboundHandler("direct://foo", new V1StaticOperationSelectorModel().setOperationName("foo"));
-        InboundHandler handler2 = createInboundHandler("direct://bar", new V1StaticOperationSelectorModel().setOperationName("bar"));
+        InboundHandler<?> handler1 = createInboundHandler("direct://foo", new V1StaticOperationSelectorModel().setOperationName("foo"));
+        InboundHandler<?> handler2 = createInboundHandler("direct://bar", new V1StaticOperationSelectorModel().setOperationName("bar"));
 
         handler1.start();
         handler2.start();
@@ -62,9 +63,9 @@ public class OperationSelectorTest extends InboundHandlerTestBase {
         producer.sendBody("direct://bar", "BarOperationPayload");
         mockEndpoint.assertIsSatisfied();
         List<Exchange> exchanges = mockEndpoint.getReceivedExchanges();
-        mockEndpoint.message(0).header(InboundHandler.OPERATION_SELECTOR_REF)
+        mockEndpoint.message(0).header(CamelConstants.OPERATION_SELETOR_HEADER)
             .isInstanceOf(OperationSelector.class).matches(exchanges.get(0));
-        mockEndpoint.message(1).header(InboundHandler.OPERATION_SELECTOR_REF)
+        mockEndpoint.message(1).header(CamelConstants.OPERATION_SELETOR_HEADER)
             .isInstanceOf(OperationSelector.class).matches(exchanges.get(1));
 
         handler1.stop();

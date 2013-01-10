@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,34 +16,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.camel.common;
+package org.switchyard.component.camel.common.transacted;
 
-/**
- * Constants used by Camel component.
- *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
- */
-public interface CamelConstants {
+import java.util.Map;
 
-    /**
-     * SwitchYard component scheme.
-     */
-    String SWITCHYARD_COMPONENT_NAME = "switchyard";
+import org.apache.camel.component.direct.DirectConsumer;
+import org.apache.camel.component.direct.DirectEndpoint;
+import org.springframework.transaction.PlatformTransactionManager;
 
-    /**
-     * Property added to each Camel Context so that code initialized inside 
-     * Camel can access the SY service domain.
-     */
-    String SERVICE_DOMAIN = "org.switchyard.camel.serviceDomain";
+public class TransactedDirectEndpoint extends DirectEndpoint {
 
-    /**
-     * Name of message header where operation selector is stored.
-     */
-    String OPERATION_SELETOR_HEADER = "org.switchyard.operationSelector";
+    private PlatformTransactionManager manager;
 
-    /**
-     * Name of Spring SPI transaction policy bean.
-     */
-    String TRANSACTED_REF = "transactionPolicy";
+    public TransactedDirectEndpoint(String uri, TransactedDirectComponent component, Map<String, DirectConsumer> consumers) {
+        super(uri, component, consumers);
+    }
+
+    public void setTransactionManager(PlatformTransactionManager manager) {
+        this.manager = manager;
+    }
+
+    public PlatformTransactionManager getTransactionManager() {
+        return manager;
+    }
 
 }

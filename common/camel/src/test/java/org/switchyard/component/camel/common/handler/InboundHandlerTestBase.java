@@ -24,8 +24,12 @@ import java.net.URI;
 
 import javax.xml.namespace.QName;
 
+import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.junit.Before;
+import org.mockito.Mockito;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.switchyard.common.camel.SwitchYardCamelContext;
+import org.switchyard.component.camel.common.CamelConstants;
 import org.switchyard.component.camel.common.model.v1.V1BaseCamelBindingModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
@@ -45,11 +49,11 @@ public abstract class InboundHandlerTestBase {
         _configuration = mock(Configuration.class);
     }
 
-    protected InboundHandler createInboundHandler(final String uri) {
+    protected InboundHandler<?> createInboundHandler(final String uri) {
         return createInboundHandler(uri, null);
     }
 
-    protected InboundHandler createInboundHandler(final String uri, final OperationSelectorModel selectorModel) {
+    protected InboundHandler<?> createInboundHandler(final String uri, final OperationSelectorModel selectorModel) {
         final V1BaseCamelBindingModel camelBindingModel = new V1BaseCamelBindingModel(_configuration, new Descriptor()) {
             @Override
             public URI getComponentURI() {
@@ -60,7 +64,12 @@ public abstract class InboundHandlerTestBase {
                 return selectorModel;
             }
         };
-        return new InboundHandler(camelBindingModel, _camelContext, new QName("urn:foo", "dummyService"));
+        return new InboundHandler<V1BaseCamelBindingModel>(camelBindingModel, _camelContext, new QName("urn:foo", "dummyService"));
     }
 
+    protected void mockTransaction(String manager) {
+        PlatformTransactionManager transactionManager = Mockito.mock(PlatformTransactionManager.class);
+        _camelContext.getWritebleRegistry().put(manager, transactionManager);
+        _camelContext.getWritebleRegistry().put(CamelConstants.TRANSACTED_REF, new SpringTransactionPolicy(transactionManager));
+    }
 }

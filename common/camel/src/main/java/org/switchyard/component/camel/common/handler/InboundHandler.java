@@ -49,17 +49,15 @@ import org.switchyard.exception.SwitchYardException;
  * </pre>
  * 
  * @author Daniel Bevenius
+ * 
+ * @param <T> Type of the binding.
  */
-public class InboundHandler extends BaseServiceHandler {
+public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHandler {
 
-    /** operation selector ref. */
-    public static final String OPERATION_SELECTOR_REF = "_operatoinSelector";
-
-    private static final String TRANSACTED_REF = "transactionPolicy";
     private static TransactionManagerFactory TM_FACTORY = TransactionManagerFactory.getInstance();
-    private final CamelBindingModel _camelBindingModel;
+    private final T _camelBindingModel;
     private final SwitchYardCamelContext _camelContext;
-    private QName _serviceName;
+    private final QName _serviceName;
 
     /**
      * Sole constructor.
@@ -68,7 +66,7 @@ public class InboundHandler extends BaseServiceHandler {
      * @param camelContext The camel context instance.
      * @param serviceName The target service name.
      */
-    public InboundHandler(final CamelBindingModel camelBindingModel, final SwitchYardCamelContext camelContext, final QName serviceName) {
+    public InboundHandler(final T camelBindingModel, final SwitchYardCamelContext camelContext, final QName serviceName) {
         _camelBindingModel = camelBindingModel;
         _camelContext = camelContext;
         _serviceName = serviceName;
@@ -86,24 +84,20 @@ public class InboundHandler extends BaseServiceHandler {
      * @return Route definition handling given binding.
      */
     protected RouteDefinition createRouteDefinition() {
-        final RouteDefinition route = new SwitchYardRouteDefinition(getServiceName().getNamespaceURI());
-        final URI componentURI = getBindingModel().getComponentURI();
+        final SwitchYardRouteDefinition route = new SwitchYardRouteDefinition(getServiceName());
 
-        route.routeId(getRouteId()).from(componentURI.toString());
-        addTransactionPolicy(route, componentURI);
-
-        return route.process(new OperationSelectorProcessor(getServiceName(), getBindingModel()))
-            .to(CamelConstants.SWITCHYARD_COMPONENT_NAME +"://" + getServiceName().getLocalPart());
+        route.routeId(getRouteId()).from(getComponentUri().toString())
+            .process(new OperationSelectorProcessor(getServiceName(), getBindingModel()));
+        return addTransactionPolicy(route);
     }
 
     /**
      * Get route id for given binding.
      * 
-     * @param serviceName Service name.
      * @return Camel route id.
      */
-    protected String getRouteId() {
-        return getServiceName().toString() + "-[" + getBindingModel().getComponentURI() + "]";
+    public String getRouteId() {
+        return getBindingModel().getClass().getSimpleName() + "/" + getServiceName().getLocalPart() + "@" + getBindingModel().getComponentURI().hashCode();
     }
 
     protected QName getServiceName() {
@@ -118,17 +112,34 @@ public class InboundHandler extends BaseServiceHandler {
      * 
      * @param route Route definition.
      * @param componentURI Component uri.
+     * @return 
      */
-    protected void addTransactionPolicy(final RouteDefinition route, final URI componentURI) {
-        if (hasTransactionManager(componentURI.toString())) {
-            final String tmName = getTransactionManagerName(componentURI);
-            if (!isRegisteredInCamelRegistry(tmName) && isDefaultJtaTransactionName(tmName)) {
-                final PlatformTransactionManager tm = TM_FACTORY.create();
-                addToCamelRegistry(tm, tmName);
-            }
-            // Tell Camel the route is transacted
-            route.transacted(TRANSACTED_REF);
+    protected RouteDefinition addTransactionPolicy(final SwitchYardRouteDefinition route) {
+        if (!hasTransactionManager()) {
+            // namespace will be added by SwitchYardRouteDefinition
+            return route.to(getSwitchyardEndpointUri());
         }
+
+        final String tmName = getTransactionManagerName();
+        if (!isRegisteredInCamelRegistry(tmName) && isDefaultJtaTransactionName(tmName)) {
+            final PlatformTransactionManager tm = TM_FACTORY.create();
+            addToCamelRegistry(tm, tmName);
+        }
+
+        // Tell Camel the route is transacted
+        route.transacted(CamelConstants.TRANSACTED_REF).to(getSwitchyardEndpointUri());
+        // as we have 'transacted' element we need to process route outputs and
+        // put namespace attribute for switchyard:// endpoint
+        SwitchYardRouteDefinition.addNamespaceParameter(route, getServiceName().getNamespaceURI());
+        return route;
+    }
+
+    protected URI getComponentUri() {
+        return getBindingModel().getComponentURI();
+    }
+
+    protected String getSwitchyardEndpointUri() {
+        return CamelConstants.SWITCHYARD_COMPONENT_NAME + "://" + getServiceName().getLocalPart();
     }
 
     private boolean isDefaultJtaTransactionName(final String tmName) {
@@ -143,16 +154,16 @@ public class InboundHandler extends BaseServiceHandler {
         // Add the transaction manager
         _camelContext.getWritebleRegistry().put(tmName, tm);
         // Add a policy ref bean pointing to the transaction manager
-        _camelContext.getWritebleRegistry().put(TRANSACTED_REF, new SpringTransactionPolicy(tm));
+        _camelContext.getWritebleRegistry().put(CamelConstants.TRANSACTED_REF, new SpringTransactionPolicy(tm));
     }
 
-    protected boolean hasTransactionManager(final String componentURI) {
-        return componentURI.contains("transactionManager");
+    protected boolean hasTransactionManager() {
+        return getComponentUri().toString().contains("transactionManager");
     }
 
-    protected String getTransactionManagerName(final URI componentURI) {
+    protected String getTransactionManagerName() {
         try {
-            final Map<String, Object> parseParameters = URISupport.parseParameters(componentURI);
+            final Map<String, Object> parseParameters = URISupport.parseParameters(getComponentUri());
             String name = (String) parseParameters.get("transactionManager");
             if (name != null) {
                 name = name.replace("#", "");
@@ -163,7 +174,7 @@ public class InboundHandler extends BaseServiceHandler {
         }
     }
 
-    protected CamelBindingModel getBindingModel() {
+    protected T getBindingModel() {
         return _camelBindingModel;
     }
 
@@ -231,7 +242,7 @@ public class InboundHandler extends BaseServiceHandler {
             return false;
         }
         
-        final InboundHandler other = (InboundHandler) obj;
+        final InboundHandler<?> other = (InboundHandler<?>) obj;
         if (_camelBindingModel == null) {
             if (other._camelBindingModel != null) {
                 return false;

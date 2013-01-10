@@ -60,11 +60,15 @@ public class BaseBindingActivator extends BaseActivator {
         binding.setEnvironment(_environment);
 
         if (binding.isServiceBinding()) {
-            return new InboundHandler(binding, _camelContext, serviceName);
+            return createInboundHandler(serviceName, binding);
         } else {
             return new OutboundHandler(binding.getComponentURI().toString(), _camelContext, CamelComposition
                 .getMessageComposer(binding));
         }
+    }
+
+    protected <T extends CamelBindingModel> InboundHandler<T> createInboundHandler(QName serviceName, T binding) {
+        return new InboundHandler<T>(binding, _camelContext, serviceName);
     }
 
     @Override

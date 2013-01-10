@@ -24,8 +24,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import java.net.URI;
-
+import org.apache.camel.component.mock.MockComponent;
 import org.junit.Test;
 
 /**
@@ -37,14 +36,14 @@ public class InboundHandlerTest extends InboundHandlerTestBase {
 
     @Test
     public void reflexive() {
-        final InboundHandler x = createInboundHandler("direct://reflexive");
+        final InboundHandler<?> x = createInboundHandler("direct://reflexive");
         assertThat(x.equals(x), is(true));
     }
 
     @Test
     public void symmetric() {
-        final InboundHandler x = createInboundHandler("direct://symmetric");
-        final InboundHandler y = createInboundHandler("direct://symmetric");
+        final InboundHandler<?> x = createInboundHandler("direct://symmetric");
+        final InboundHandler<?> y = createInboundHandler("direct://symmetric");
 
         assertThat(x.equals(y), is(true));
         assertThat(y.equals(x), is(true));
@@ -52,8 +51,8 @@ public class InboundHandlerTest extends InboundHandlerTestBase {
 
     @Test
     public void nonSymmetric() {
-        final InboundHandler x = createInboundHandler("direct://symmetric");
-        final InboundHandler y = createInboundHandler("direct://nonsymmetric");
+        final InboundHandler<?> x = createInboundHandler("direct://symmetric");
+        final InboundHandler<?> y = createInboundHandler("direct://nonsymmetric");
 
         assertThat(x.equals(y), is(false));
         assertThat(y.equals(x), is(false));
@@ -61,9 +60,9 @@ public class InboundHandlerTest extends InboundHandlerTestBase {
 
     @Test
     public void transitive() {
-        final InboundHandler x = createInboundHandler("direct://transitive");
-        final InboundHandler y = createInboundHandler("direct://transitive");
-        final InboundHandler z = createInboundHandler("direct://transitive");
+        final InboundHandler<?> x = createInboundHandler("direct://transitive");
+        final InboundHandler<?> y = createInboundHandler("direct://transitive");
+        final InboundHandler<?> z = createInboundHandler("direct://transitive");
 
         assertThat(x.equals(y), is(true));
         assertThat(y.equals(z), is(true));
@@ -72,9 +71,9 @@ public class InboundHandlerTest extends InboundHandlerTestBase {
 
     @Test
     public void nonTransitive() {
-        final InboundHandler x = createInboundHandler("direct://transitive");
-        final InboundHandler y = createInboundHandler("direct://nontransitive");
-        final InboundHandler z = createInboundHandler("direct://transitive");
+        final InboundHandler<?> x = createInboundHandler("direct://transitive");
+        final InboundHandler<?> y = createInboundHandler("direct://nontransitive");
+        final InboundHandler<?> z = createInboundHandler("direct://transitive");
 
         assertThat(x.equals(y), is(false));
         assertThat(y.equals(z), is(false));
@@ -83,33 +82,49 @@ public class InboundHandlerTest extends InboundHandlerTestBase {
 
     @Test
     public void verifyEqualHashCode() {
-        final InboundHandler x = createInboundHandler("direct://hashcode");
-        final InboundHandler y = createInboundHandler("direct://hashcode");
+        final InboundHandler<?> x = createInboundHandler("direct://hashcode");
+        final InboundHandler<?> y = createInboundHandler("direct://hashcode");
         
         assertThat(x.hashCode(), is(y.hashCode()));
     }
 
     @Test
     public void verifyUnEqualHashCode() {
-        final InboundHandler x = createInboundHandler("direct://hashcode");
-        final InboundHandler y = createInboundHandler("direct://unEqualhashcode");
+        final InboundHandler<?> x = createInboundHandler("direct://hashcode");
+        final InboundHandler<?> y = createInboundHandler("direct://unEqualhashcode");
 
         assertThat(x.hashCode() == y.hashCode(), is(false));
     }
 
     @Test
     public void nullCheckForEqualsMethod() {
-        final InboundHandler x = createInboundHandler("direct://hashcode");
+        final InboundHandler<?> x = createInboundHandler("direct://hashcode");
         assertThat(x.equals(null), is(false));
     }
 
     @Test
     public void hasTransactionManagerConfigured() {
-        final InboundHandler handler = createInboundHandler("direct://dummy");
-        String transactedRef = handler.getTransactionManagerName(URI.create("jms://queue?transactionManager=%23jtaTransactionMgr"));
+        mockTransaction("jtaTransactionMgr");
+        mockTransaction("jtaTransactionManager");
+        InboundHandler<?> handler = createInboundHandler("jms://queue?transactionManager=%23jtaTransactionMgr");
+        String transactedRef = handler.getTransactionManagerName();
         assertThat(transactedRef, is(equalTo("jtaTransactionMgr")));
-        transactedRef = handler.getTransactionManagerName(URI.create("jms://GreetingServiceQueue?connectionFactory=%23&JmsXA&transactionManager=%23jtaTransactionManager"));
+        handler = createInboundHandler("jms://GreetingServiceQueue?connectionFactory=%23&JmsXA&transactionManager=%23jtaTransactionManager");
+        transactedRef = handler.getTransactionManagerName();
         assertThat(transactedRef, is(equalTo("jtaTransactionManager")));
+    }
+
+    /**
+     * Test covering a case when transaction manager is specified - tests route definition.
+     * @throws Exception If route startup or shutdown fails.
+     */
+    @Test
+    public void hasTransactionManager() throws Exception {
+        mockTransaction("jtaTransactionManager");
+        _camelContext.addComponent("switchyard", new MockComponent());
+        createInboundHandler("transaction://foo?transactionManager=#jtaTransactionManager");
+        _camelContext.start();
+        _camelContext.stop();
     }
 
 }
