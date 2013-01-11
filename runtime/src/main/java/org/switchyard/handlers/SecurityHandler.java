@@ -61,7 +61,7 @@ public class SecurityHandler extends BaseHandler {
     @Override
     public void handleMessage(Exchange exchange) throws HandlerException {
         if (IN.equals(exchange.getPhase())) {
-            SecurityContext securityContext = SecurityContext.get();
+            SecurityContext securityContext = SecurityContext.get(exchange);
             if (isRequired(exchange, CLIENT_AUTHENTICATION) && !isProvided(exchange, CLIENT_AUTHENTICATION)) {
                 if (isClientAuthenticationProvided(securityContext)) {
                     provide(exchange, CLIENT_AUTHENTICATION);

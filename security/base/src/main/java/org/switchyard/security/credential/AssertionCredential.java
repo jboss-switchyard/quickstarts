@@ -27,8 +27,6 @@ import org.w3c.dom.Element;
  */
 public class AssertionCredential implements Credential {
 
-    private static final long serialVersionUID = 1974191886262537205L;
-
     private final Element _assertion;
 
     /**

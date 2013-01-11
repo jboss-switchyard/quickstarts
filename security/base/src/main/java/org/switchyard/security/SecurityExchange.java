@@ -16,11 +16,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.security.credential;
+package org.switchyard.security;
+
+import org.switchyard.Exchange;
 
 /**
- * Credential.
+ * SecurityExchange.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public interface Credential {}
+public interface SecurityExchange extends Exchange {
+
+    /**
+     * Gets the security context.
+     * @return the security context
+     */
+    public SecurityContext getSecurityContext();
+
+}

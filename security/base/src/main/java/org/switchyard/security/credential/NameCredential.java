@@ -25,8 +25,6 @@ package org.switchyard.security.credential;
  */
 public class NameCredential implements Credential {
 
-    private static final long serialVersionUID = -7338252991548626868L;
-
     private final String _name;
 
     /**

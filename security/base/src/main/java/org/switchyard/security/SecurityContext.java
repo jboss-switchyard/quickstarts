@@ -18,7 +18,6 @@
  */
 package org.switchyard.security;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,6 +26,7 @@ import java.util.Set;
 
 import javax.security.auth.Subject;
 
+import org.switchyard.Exchange;
 import org.switchyard.security.credential.Credential;
 
 /**
@@ -34,15 +34,15 @@ import org.switchyard.security.credential.Credential;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public final class SecurityContext implements Serializable {
-
-    private static final long serialVersionUID = -3501287028169238578L;
-    private static final ThreadLocal<SecurityContext> THREAD_LOCAL = new ThreadLocal<SecurityContext>();
+public final class SecurityContext {
 
     private final Set<Credential> _credentials = Collections.synchronizedSet(new HashSet<Credential>());
     private final Map<String,Subject> _domainsToSubjects = Collections.synchronizedMap(new HashMap<String,Subject>());
 
-    private SecurityContext() {}
+    /**
+     * Constructs a new SecurityContext.
+     */
+    public SecurityContext() {}
 
     /**
      * Gets the Credentials.
@@ -103,6 +103,18 @@ public final class SecurityContext implements Serializable {
     */
 
     /**
+     * Clears any and all contained state.
+     */
+    public synchronized void clear() {
+        synchronized (_credentials) {
+            _credentials.clear();
+        }
+        synchronized (_domainsToSubjects) {
+            _domainsToSubjects.clear();
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -111,32 +123,15 @@ public final class SecurityContext implements Serializable {
     }
 
     /**
-     * Gets the ThreadLocal SecurityContext, creating it doesn't already exist.
-     * @return the ThreadLocal SecurityContext
+     * Gets the security context from the exchange.
+     * @param exchange the exchange
+     * @return the security context
      */
-    public static SecurityContext get() {
-        return get(true);
-    }
-
-    /**
-     * Gets the ThreadLocal SecurityContext, optionally creating if it doesn't already exist.
-     * @param create should it be created if it doesn't already exist?
-     * @return the ThreadLocal SecurityContext
-     */
-    public synchronized static SecurityContext get(boolean create) {
-        SecurityContext securityCtx = THREAD_LOCAL.get();
-        if (securityCtx == null && create) {
-            securityCtx = new SecurityContext();
-            THREAD_LOCAL.set(securityCtx);
+    public static SecurityContext get(Exchange exchange) {
+        if (exchange instanceof SecurityExchange) {
+            return ((SecurityExchange)exchange).getSecurityContext();
         }
-        return securityCtx;
-    }
-
-    /**
-     * Clears the ThreadLocal holding the SecurityContext.
-     */
-    public static void clear() {
-        THREAD_LOCAL.set(null);
+        throw new IllegalArgumentException("Exchange: " + exchange + " is not a SecurityExchange!");
     }
 
 }

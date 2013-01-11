@@ -41,12 +41,14 @@ import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
+import org.switchyard.security.SecurityContext;
+import org.switchyard.security.SecurityExchange;
 import org.switchyard.spi.Dispatcher;
 
 /**
  * Implementation of Exchange.
  */
-public class ExchangeImpl implements Exchange {
+public class ExchangeImpl implements SecurityExchange {
 
     private static Logger _log = Logger.getLogger(ExchangeImpl.class);
 
@@ -57,6 +59,7 @@ public class ExchangeImpl implements Exchange {
     private ExchangeHandler         _replyHandler;
     private ServiceDomain           _domain;
     private Long                    _startTime;
+    private SecurityContext         _securityContext = new SecurityContext();
     private Context                 _context;
     private ServiceReference        _consumer;
     private Service                 _provider;
@@ -80,6 +83,11 @@ public class ExchangeImpl implements Exchange {
         _domain = domain;
         _replyHandler = replyHandler;
         _context = new DefaultContext();
+    }
+
+    @Override
+    public SecurityContext getSecurityContext() {
+        return _securityContext;
     }
 
     @Override
@@ -200,7 +208,11 @@ public class ExchangeImpl implements Exchange {
             }
             _log.warn("Fault generated during exchange without a handler: " + faultContent);
         } else {
-            _dispatch.dispatch(this);
+            try {
+                _dispatch.dispatch(this);
+            } finally {
+                _securityContext.clear();
+            }
         }
         
         // Notify exchange completion

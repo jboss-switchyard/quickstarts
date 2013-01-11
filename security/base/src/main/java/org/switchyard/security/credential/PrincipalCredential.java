@@ -26,8 +26,6 @@ import java.security.Principal;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 public class PrincipalCredential implements Credential {
-
-    private static final long serialVersionUID = -9017891993542902618L;
     
     private final Principal _principal;
     private final boolean _trusted;

@@ -27,8 +27,6 @@ import java.util.Arrays;
  */
 public class PasswordCredential implements Credential {
 
-    private static final long serialVersionUID = -1658535054514139088L;
-
     private final char[] _password;
 
     /**

@@ -25,8 +25,6 @@ package org.switchyard.security.credential;
  */
 public class ConfidentialityCredential implements Credential {
 
-    private static final long serialVersionUID = 8954536627394490993L;
-
     private final boolean _confidential;
 
     /**

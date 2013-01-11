@@ -27,8 +27,6 @@ import java.security.cert.Certificate;
  */
 public class CertificateCredential implements Credential {
 
-    private static final long serialVersionUID = -1994077895853013091L;
-
     private final Certificate _certificate;
 
     /**
