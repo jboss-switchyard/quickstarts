@@ -101,7 +101,7 @@ public class SwitchYardRemotingServlet extends HttpServlet {
                 if (_log.isDebugEnabled()) {
                     _log.debug("Writing reply message to HTTP response stream " + msg.getService());
                 }
-                _serializer.serialize(reply, RemoteMessage.class, response.getOutputStream());
+                _serializer.serialize(reply, RemoteMessage.class, out);
                 out.flush();
             } else {
                 if (_log.isDebugEnabled()) {
@@ -140,12 +140,7 @@ public class SwitchYardRemotingServlet extends HttpServlet {
             .setOperation(exchange.getContract().getConsumerOperation().getName())
             .setService(exchange.getConsumer().getName());
         if (exchange.getMessage() != null) {
-            Object content = exchange.getMessage().getContent();
-            if (content != null && Throwable.class.isAssignableFrom(content.getClass())) {
-                // SWITCHYARD-1228 Avoid serialization errors by converting to String
-                content = exchange.getMessage().getContent(String.class);
-            }
-            reply.setContent(content);
+            reply.setContent(exchange.getMessage().getContent());
         }
         if (exchange.getState().equals(ExchangeState.FAULT)) {
             reply.setFault(true);
