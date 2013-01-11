@@ -99,25 +99,6 @@ public class V1BPMComponentImplementationModel extends V1KnowledgeComponentImple
      * {@inheritDoc}
      */
     @Override
-    public Integer getSessionId() {
-        String sid = getModelAttribute("sessionId");
-        return sid != null ? Integer.valueOf(sid) : null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public BPMComponentImplementationModel setSessionId(Integer sessionId) {
-        String sid = sessionId != null ? sessionId.toString() : null;
-        setModelAttribute("sessionId", sid);
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public WorkItemHandlersModel getWorkItemHandlers() {
         if (_workItemHandlers == null) {
             _workItemHandlers = (WorkItemHandlersModel)getFirstChildModel(WORK_ITEM_HANDLERS);

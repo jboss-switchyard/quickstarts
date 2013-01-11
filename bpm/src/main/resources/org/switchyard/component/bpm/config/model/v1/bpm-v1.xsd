@@ -42,7 +42,6 @@ MA  02110-1301, USA.
                 </sequence>
                 <attribute name="persistent" type="boolean" use="optional"/>
                 <attribute name="processId" type="string" use="optional"/>
-                <attribute name="sessionId" type="integer" use="optional"/>
             </extension>
         </complexContent>
     </complexType>

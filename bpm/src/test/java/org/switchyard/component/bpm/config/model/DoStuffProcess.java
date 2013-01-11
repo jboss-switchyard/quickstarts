@@ -38,7 +38,6 @@ import org.switchyard.component.common.knowledge.annotation.Resource;
 @BPM(
     persistent=true,
     processId="theProcessId",
-    sessionId=42,
     channels=@Channel(name="theName", operation="theOperation", reference="theReference", value=BPMModelTests.TestChannel.class),
     listeners=@Listener(DebugProcessEventListener.class),
     loggers=@Logger(interval=2000, log="theLog", type=LoggerType.CONSOLE),

@@ -53,9 +53,6 @@ public @interface BPM {
     /** Process id. */
     public String processId() default "";
 
-    /** Session id. */
-    public int sessionId() default -1;
-
     /** Channels. */
     public Channel[] channels() default {};
 

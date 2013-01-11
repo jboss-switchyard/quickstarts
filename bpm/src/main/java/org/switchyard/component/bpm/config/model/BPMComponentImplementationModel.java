@@ -64,19 +64,6 @@ public interface BPMComponentImplementationModel extends KnowledgeComponentImple
     public BPMComponentImplementationModel setProcessId(String processId);
 
     /**
-     * Gets the "sessionId" attribute.
-     * @return the "sessionId" attribute
-     */
-    public Integer getSessionId();
-
-    /**
-     * Sets the "sessionId" attribute.
-     * @param sessionId the "sessionId" attribute
-     * @return this instance (useful for chaining)
-     */
-    public BPMComponentImplementationModel setSessionId(Integer sessionId);
-
-    /**
      * Gets the child workItemHandlers model.
      * @return the child workItemHandlers model
      */

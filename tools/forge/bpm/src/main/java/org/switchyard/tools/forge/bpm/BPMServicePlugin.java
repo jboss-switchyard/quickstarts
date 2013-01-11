@@ -18,7 +18,6 @@
  */
 package org.switchyard.tools.forge.bpm;
 
-import static org.switchyard.component.bpm.BPMConstants.SESSION_ID;
 import static org.switchyard.component.bpm.config.model.BPMComponentImplementationModel.DEFAULT_NAMESPACE;
 
 import java.io.File;
@@ -94,7 +93,6 @@ public class BPMServicePlugin implements Plugin {
      * @param argProcessFilePath path to the BPMN process definition
      * @param argProcessId business process id
      * @param argPersistent persistent flag
-     * @param argSessionId session id
      * @param out shell output
      * @throws java.io.IOException error with file resources
      */
@@ -120,10 +118,6 @@ public class BPMServicePlugin implements Plugin {
             name = "persistent",
             description = "The persistent flag")
             final boolean argPersistent,
-            @Option(required = false,
-            name = SESSION_ID,
-            description = "The session id")
-            final Integer argSessionId,
             final PipeOut out)
     throws java.io.IOException {
       
@@ -173,7 +167,7 @@ public class BPMServicePlugin implements Plugin {
         }
         
         // Add the SwitchYard config
-        createImplementationConfig(argServiceName, interfaceClass, processId, argPersistent, argSessionId, processDefinitionPath);
+        createImplementationConfig(argServiceName, interfaceClass, processId, argPersistent, processDefinitionPath);
           
         // Notify user of success
         out.println("Process service " + argServiceName + " has been created.");
@@ -183,7 +177,6 @@ public class BPMServicePlugin implements Plugin {
             String interfaceName,
             String processId,
             boolean persistent,
-            Integer sessionId,
             String processDefinition) {
         
         SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
@@ -201,9 +194,6 @@ public class BPMServicePlugin implements Plugin {
         V1BPMComponentImplementationModel bpm = new V1BPMComponentImplementationModel();
         bpm.setProcessId(processId);
         bpm.setPersistent(persistent);
-        if (sessionId != null && sessionId.intValue() > -1) {
-            bpm.setSessionId(sessionId);
-        }
         V1ActionsModel actions = new V1ActionsModel(DEFAULT_NAMESPACE);
         ActionModel action = new V1BPMActionModel().setOperation("operation").setType(BPMActionType.START_PROCESS);
         actions.addAction(action);

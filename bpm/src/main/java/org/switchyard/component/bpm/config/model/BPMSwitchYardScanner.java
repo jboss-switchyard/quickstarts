@@ -133,10 +133,6 @@ public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
             processId = bpmName;
         }
         componentImplementationModel.setProcessId(processId);
-        int sessionId = bpm.sessionId();
-        if (sessionId > -1) {
-            componentImplementationModel.setSessionId(sessionId);
-        }
         ActionsModel actionsModel = new V1ActionsModel(DEFAULT_NAMESPACE);
         JavaService javaService = JavaService.fromClass(bpmInterface);
         for (Method method : bpmClass.getDeclaredMethods()) {

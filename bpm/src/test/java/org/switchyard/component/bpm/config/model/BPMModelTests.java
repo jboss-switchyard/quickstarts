@@ -117,7 +117,6 @@ public class BPMModelTests {
         Assert.assertEquals("bpm", bpm.getType());
         Assert.assertTrue(bpm.isPersistent());
         Assert.assertEquals("theProcessId", bpm.getProcessId());
-        Assert.assertEquals(42, bpm.getSessionId().intValue());
         ActionModel action = bpm.getActions().getActions().get(0);
         Assert.assertEquals("theId", action.getId());
         Assert.assertEquals("process", action.getOperation());

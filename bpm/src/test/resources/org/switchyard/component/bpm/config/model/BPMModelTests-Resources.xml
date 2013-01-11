@@ -20,7 +20,7 @@ MA  02110-1301, USA.
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0">
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="BPMModelTests" targetNamespace="urn:bpm:test:1.0">
         <component name="DoStuffProcess">
-            <implementation.bpm xmlns="urn:switchyard-component-bpm:config:1.0" persistent="true" processId="theProcessId" sessionId="42">
+            <implementation.bpm xmlns="urn:switchyard-component-bpm:config:1.0" persistent="true" processId="theProcessId">
                 <actions>
                     <action id="theId" operation="process" type="SIGNAL_EVENT">
                         <globals>

@@ -66,7 +66,6 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
 
     private final boolean _persistent;
     private final String _processId;
-    private final Integer _sessionId;
     private EntityManagerFactory _entityManagerFactory;
 
     /**
@@ -78,7 +77,6 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
         super(model, domain);
         _persistent = model.isPersistent();
         _processId = model.getProcessId();
-        _sessionId = model.getSessionId();
     }
 
     /**
@@ -222,9 +220,6 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
         KnowledgeSession session;
         if (_persistent) {
             Integer sessionId = getInteger(exchange, BPMConstants.SESSION_ID_PROPERTY);
-            if (sessionId == null) {
-                sessionId = _sessionId;
-            }
             session = getPersistentSession(sessionId);
         } else {
             session = getStatefulSession();
