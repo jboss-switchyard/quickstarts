@@ -188,7 +188,7 @@ public class InboundHandler extends BaseServiceHandler {
             Exchange exchange = _service.createExchange(operationName, inOutHandler);
 
             SOAPBindingData soapBindingData = new SOAPBindingData(soapMessage, wsContext);
-            SecurityContext.get().getCredentials().addAll(soapBindingData.extractCredentials());
+            SecurityContext.get(exchange).getCredentials().addAll(soapBindingData.extractCredentials());
 
             Message message;
             try {
@@ -243,8 +243,6 @@ public class InboundHandler extends BaseServiceHandler {
             }
         } catch (SOAPException se) {
             return handleException(oneWay, se);
-        } finally {
-            SecurityContext.clear();
         }
     }
 

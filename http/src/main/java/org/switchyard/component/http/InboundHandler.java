@@ -106,7 +106,7 @@ public class InboundHandler extends BaseServiceHandler {
             SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
             Exchange exchange = _serviceRef.createExchange(getOperationName(input), inOutHandler);
             Message message = _messageComposer.compose(input, exchange, true);
-            SecurityContext.get().getCredentials().addAll(input.extractCredentials());
+            SecurityContext.get(exchange).getCredentials().addAll(input.extractCredentials());
             if (exchange.getContract().getConsumerOperation().getExchangePattern() == ExchangePattern.IN_ONLY) {
                 exchange.send(message);
                 response = new HttpResponseBindingData();
@@ -117,8 +117,6 @@ public class InboundHandler extends BaseServiceHandler {
             }
         } catch (Exception e) {
             LOGGER.error(e, e);
-        } finally {
-            SecurityContext.clear();
         }
         return response;
     }
