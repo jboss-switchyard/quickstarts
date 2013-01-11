@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.switchyard</groupId>
         <artifactId>switchyard-core-parent</artifactId>
-        <version>0.6.0.Final</version>
+        <version>0.8.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-serial-protostuff</artifactId>
@@ -35,10 +35,6 @@
     <url>http://switchyard.org</url>
     <dependencies>
         <!-- internal dependencies -->
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-common</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-serial</artifactId>
@@ -67,10 +63,6 @@
         <dependency>
             <groupId>com.dyuproject.protostuff</groupId>
             <artifactId>protostuff-xml</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
         </dependency>
     </dependencies>
 </project>

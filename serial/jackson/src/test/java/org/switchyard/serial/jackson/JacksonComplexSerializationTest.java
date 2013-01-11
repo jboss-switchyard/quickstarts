@@ -18,6 +18,7 @@
  */
 package org.switchyard.serial.jackson;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -26,6 +27,8 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.switchyard.common.io.pull.ElementPuller;
+import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.serial.FormatType;
 import org.switchyard.serial.Serializer;
 import org.switchyard.serial.SerializerFactory;
@@ -34,6 +37,7 @@ import org.switchyard.serial.jackson.JacksonSerializationData.CustomPart;
 import org.switchyard.serial.jackson.JacksonSerializationData.Part;
 import org.switchyard.serial.jackson.JacksonSerializationData.Person;
 import org.switchyard.serial.jackson.JacksonSerializationData.Wheel;
+import org.w3c.dom.Element;
 
 /**
  * Tests more complex de/serialization scenarios.
@@ -111,6 +115,35 @@ public final class JacksonComplexSerializationTest {
         Assert.assertSame(dad, dad.getBestFriend().getBestFriend());
         Assert.assertSame(me, mom.getRelatives().iterator().next());
         Assert.assertSame(me, dad.getRelatives().iterator().next());
+    }
+
+    @Test
+    public void testDOM() throws Exception {
+        final String expectedXML = "<inspection code=\"123\"><state>NY</state></inspection>";
+        final Element expectedDOM = new ElementPuller().pull(new StringReader(expectedXML));
+        Car car = new Car();
+        car.setInspection(expectedDOM);
+        car = serDeser(car, Car.class);
+        final Element actualDOM = car.getInspection();
+        final String actualXML = XMLHelper.toString(actualDOM);
+        Assert.assertEquals(expectedXML, actualXML);
+    }
+
+    @Test
+    public void testThrowable() throws Exception {
+        final Throwable expectedCause = new IllegalStateException("illegal");
+        expectedCause.fillInStackTrace();
+        final Exception expectedProblem = new Exception("problem", expectedCause);
+        expectedProblem.fillInStackTrace();
+        Car car = new Car();
+        car.setProblem(expectedProblem);
+        car = serDeser(car, Car.class);
+        final Exception actualProblem = car.getProblem();
+        final Throwable actualCause = actualProblem.getCause();
+        Assert.assertEquals(expectedProblem.getMessage(), actualProblem.getMessage());
+        Assert.assertEquals(expectedCause.getMessage(), actualCause.getMessage());
+        Assert.assertEquals(expectedProblem.getStackTrace().length, actualProblem.getStackTrace().length);
+        Assert.assertEquals(expectedCause.getStackTrace().length, actualCause.getStackTrace().length);
     }
 
 }

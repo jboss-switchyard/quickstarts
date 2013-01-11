@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.w3c.dom.Element;
+
 public final class ProtostuffSerializationData {
 
     @SuppressWarnings("serial")
@@ -45,6 +47,8 @@ public final class ProtostuffSerializationData {
         private Person[] _passengers;
         private Part[] _cheapParts;
         private Collection<Part> _expensiveParts;
+        private Element _inspection;
+        private Exception _problem;
         public Car() {}
         public Car(Person driver) {
             setDriver(driver);
@@ -73,8 +77,20 @@ public final class ProtostuffSerializationData {
         public void setExpensiveParts(Collection<Part> expensiveParts) {
             _expensiveParts = expensiveParts;
         }
+        public Element getInspection() {
+            return _inspection;
+        }
+        public void setInspection(Element inspection) {
+            _inspection = inspection;
+        }
+        public Exception getProblem() {
+            return _problem;
+        }
+        public void setProblem(Exception problem) {
+            _problem = problem;
+        }
         public String toString() {
-            return "Car(driver=" + getDriver() + ", passengers=" + Arrays.toString(getPassengers()) + ", cheapParts=" + Arrays.toString(getCheapParts()) + ", expensiveParts=" + getExpensiveParts() + ")";
+            return "Car(driver=" + getDriver() + ", passengers=" + Arrays.toString(getPassengers()) + ", cheapParts=" + Arrays.toString(getCheapParts()) + ", expensiveParts=" + getExpensiveParts() + ", inspection=" + getInspection() + ", problem=" + getProblem() + ")";
         }
     }
 

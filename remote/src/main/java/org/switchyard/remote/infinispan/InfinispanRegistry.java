@@ -50,7 +50,7 @@ public class InfinispanRegistry implements RemoteRegistry {
 
     private String _nodeName;
     private Cache<String, String> _serviceCache;
-    private Serializer _serializer = SerializerFactory.create(FormatType.JSON, null, true);
+    private Serializer _serializer;
     
     /**
      * Create a new InfinispanRegistry using the specified replicated cache.

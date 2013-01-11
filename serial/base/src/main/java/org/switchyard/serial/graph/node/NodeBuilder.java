@@ -79,6 +79,10 @@ public final class NodeBuilder {
             Node node = new MapNode();
             graph.putReference(id, node);
             node.compose(obj, graph);
+        } else if (isDOM(clazz)) {
+            Node node = new DOMNode();
+            graph.putReference(id, node);
+            node.compose(obj, graph);
         } else if (isQName(clazz)) {
             Node node = new QNameNode();
             graph.putReference(id, node);
@@ -89,6 +93,14 @@ public final class NodeBuilder {
             node.compose(obj, graph);
         } else if (isInputStream(clazz)) {
             Node node = new InputStreamNode();
+            graph.putReference(id, node);
+            node.compose(obj, graph);
+        } else if (isThrowable(clazz)) {
+            Node node = new ThrowableNode();
+            graph.putReference(id, node);
+            node.compose(obj, graph);
+        } else if (isStackTraceElement(clazz)) {
+            Node node = new StackTraceElementNode();
             graph.putReference(id, node);
             node.compose(obj, graph);
         } else {
@@ -115,6 +127,10 @@ public final class NodeBuilder {
         return DataSource.class.isAssignableFrom(clazz);
     }
 
+    static boolean isDOM(Class<?> clazz) {
+        return org.w3c.dom.Node.class.isAssignableFrom(clazz);
+    }
+
     static boolean isInputStream(Class<?> clazz) {
         return InputStream.class.isAssignableFrom(clazz);
     }
@@ -137,6 +153,14 @@ public final class NodeBuilder {
             }
         }
         return false;
+    }
+
+    static boolean isStackTraceElement(Class<?> clazz) {
+        return StackTraceElement.class.isAssignableFrom(clazz);
+    }
+
+    static boolean isThrowable(Class<?> clazz) {
+        return Throwable.class.isAssignableFrom(clazz);
     }
 
     private NodeBuilder() {}
