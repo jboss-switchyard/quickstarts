@@ -18,121 +18,71 @@
  */
 package org.switchyard.quickstarts.camel.sql;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
 
-import junit.framework.Assert;
+import javax.naming.InitialContext;
+import javax.naming.NameAlreadyBoundException;
+import javax.sql.DataSource;
 
 import org.h2.jdbcx.JdbcDataSource;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.Message;
-import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
-import org.switchyard.quickstarts.camel.sql.binding.Greeting;
-import org.switchyard.test.Invoker;
-import org.switchyard.test.ServiceOperation;
-import org.switchyard.test.SwitchYardRunner;
-import org.switchyard.test.SwitchYardTestCaseConfig;
-import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.component.test.mixins.naming.NamingMixIn;
+import org.switchyard.test.SwitchYardRunner;
 
 /**
- * SQL binding test - checks insert and retrieve operation.
+ * Base class for SQL binding tests.
  * 
  * @author Lukasz Dywicki
  */
-@SwitchYardTestCaseConfig(
-    config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
-    mixins = {CDIMixIn.class},
-    scanners = BeanSwitchYardScanner.class
-)
 @RunWith(SwitchYardRunner.class)
-public class CamelSqlBindingTest {
+public abstract class CamelSqlBindingTest {
 
-    private static Connection connection;
+    private static JdbcDataSource dataSource;
+    protected static Connection connection;
 
-    private final static String RECEIVER = "Keith";
-    private final static String SENDER = "David";
-
-    @ServiceOperation("GreetingService")
-    private Invoker invoker;
-
-    private NamingMixIn mixin;
-
-	private static JdbcDataSource dataSource;
+    protected final static String RECEIVER = "Keith";
+    protected final static String SENDER = "David";
+    private static NamingMixIn namingMixIn;
 
     @BeforeClass
     public static void startUp() throws Exception {
         dataSource = new JdbcDataSource();
-        dataSource.setURL("jdbc:h2:target/camel-sql-quickstart");
+        dataSource.setURL("jdbc:h2:mem:test");
         dataSource.setUser("sa");
         dataSource.setPassword("sa");
         connection = dataSource.getConnection();
 
         String createStatement = "CREATE TABLE greetings ("
             + "id INT PRIMARY KEY AUTO_INCREMENT, "
-            + "name VARCHAR(255), "
+            + "receiver VARCHAR(255), "
             + "sender VARCHAR(255) "
         + ");";
 
         connection.createStatement().executeUpdate("DROP TABLE IF EXISTS greetings");
         connection.createStatement().executeUpdate(createStatement);
+
+        namingMixIn = new NamingMixIn();
+        namingMixIn.initialize();
+        bindDataSource(namingMixIn.getInitialContext(), "java:jboss/datasources/ExampleDS", dataSource);
     }
 
-    @Before
-    public void before() throws Exception {
-        connection.createStatement().execute("TRUNCATE TABLE greetings");
-        mixin.getInitialContext().bind("java:jboss/datasources/GreetDS", dataSource);
+    private static void bindDataSource(InitialContext context, String name, DataSource ds) throws Exception {
+        try {
+            context.bind(name, ds);
+        } catch (NameAlreadyBoundException e) {
+            e.getMessage(); // ignore
+        }
     }
-
-    @After
-    public void after() throws Exception {
-        mixin.getInitialContext().unbind("java:jboss/datasources/GreetDS");
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void shouldRetrieveGreetings() throws Exception {
-        PreparedStatement statement = connection.prepareStatement("INSERT INTO greetings (name, sender) VALUES (?,?)");
-        statement.setString(1, RECEIVER);
-        statement.setString(2, SENDER);
-        assertEquals(1, statement.executeUpdate());
-
-        Message message = invoker.operation("retrieve").sendInOut(null);
-        List<Map<String, Object>> content = message.getContent(List.class);
-
-        Map<String, Object> firstRow = content.iterator().next();
-        Assert.assertEquals(RECEIVER, firstRow.get("name"));
-        Assert.assertEquals(SENDER, firstRow.get("sender"));
-    }
-
-    @Test
-    public void shouldStoreGreet() throws Exception {
-        invoker.operation("store").sendInOnly(new Greeting(RECEIVER, SENDER));
-
-        ResultSet result = connection.createStatement().executeQuery("SELECT * FROM greetings");
-        assertTrue(result.next());
-        assertEquals(RECEIVER, result.getString("name"));
-        result.close();
-    }
-
 
     @AfterClass
     public static void shutDown() throws SQLException {
         if (!connection.isClosed()) {
             connection.close();
         }
+        namingMixIn.uninitialize();
     }
 
 }

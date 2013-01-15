@@ -27,7 +27,7 @@
         </layout>
     </appender>
 
-    <logger name="org.apache.camel.component.sql">
+    <logger name="org.apache.camel.component.sql.SqlProducer">
         <level value="TRACE"/>
     </logger>
 

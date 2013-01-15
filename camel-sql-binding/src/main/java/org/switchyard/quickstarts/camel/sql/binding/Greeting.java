@@ -15,7 +15,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
+ * License aInteger with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
@@ -26,17 +26,39 @@ package org.switchyard.quickstarts.camel.sql.binding;
  */
 public class Greeting {
 
-    private String _name;
+    private Integer _id;
+    private String _receiver;
     private String _sender;
 
     /**
      * Creates greeting.
      * 
-     * @param name Person to receive greet.
+     * @param id Greeting id.
+     * @param receiver Person to receive greet.
      * @param sender Greeting sender.
      */
-    public Greeting(String name, String sender) {
-        this._name = name;
+    public Greeting(Integer id, String receiver, String sender) {
+        this._id = id;
+        this._receiver = receiver;
+        this._sender = sender;
+    }
+
+    /**
+     * Gets greet id.
+     * @return Greeting id.
+     */
+    public Integer getId() {
+        return _id;
+    }
+
+    /**
+     * Creates greeting.
+     * 
+     * @param receiver Person to receive greet.
+     * @param sender Greeting sender.
+     */
+    public Greeting(String receiver, String sender) {
+        this._receiver = receiver;
         this._sender = sender;
     }
 
@@ -44,16 +66,16 @@ public class Greeting {
      * Gets receiver name.
      * @return Receiver name.
      */
-    public String getName() {
-        return _name;
+    public String getReceiver() {
+        return _receiver;
     }
 
     /**
      * Sets receiver name.
      * @param name Name of the receiver.
      */
-    public void setName(String name) {
-        this._name = name;
+    public void setReceiver(String name) {
+        this._receiver = name;
     }
 
     /**
@@ -64,8 +86,17 @@ public class Greeting {
         return _sender;
     }
 
+    /**
+     * Sets sender name.
+     * @param sender Sender name
+     */
     public void setSender(String sender) {
         this._sender = sender;
+    }
+
+    @Override
+    public String toString() {
+        return "Greeting [id=" + _id + ", sender=" + _sender + ", receiver = " + _receiver + "]";
     }
 
 }

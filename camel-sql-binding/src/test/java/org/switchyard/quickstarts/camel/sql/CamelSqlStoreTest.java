@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,62 +16,58 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.quickstarts.camel.jpa.binding;
+package org.switchyard.quickstarts.camel.sql;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Calendar;
 
 import org.apache.camel.component.quartz.QuartzComponent;
+import org.apache.camel.component.timer.TimerComponent;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
-import org.switchyard.component.test.mixins.transaction.TransactionMixIn;
-import org.switchyard.quickstarts.camel.jpa.binding.domain.Greet;
-import org.switchyard.test.SwitchYardRunner;
+import org.switchyard.quickstarts.camel.sql.binding.Greeting;
+import org.switchyard.test.Invoker;
+import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardTestCaseConfig;
-import org.switchyard.test.SwitchYardTestKit;
+import org.switchyard.transform.config.model.TransformSwitchYardScanner;
 
 @SwitchYardTestCaseConfig(
-    config = SwitchYardTestCaseConfig.SWITCHYARD_XML, 
-    mixins = {CDIMixIn.class, TransactionMixIn.class},
-    scanners = BeanSwitchYardScanner.class)
-@RunWith(SwitchYardRunner.class)
-public class CamelJpaBindingStoreTest extends CamelJpaBindingTest {
-
-    private SwitchYardTestKit _testKit;
+    config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
+    mixins = {CDIMixIn.class},
+    scanners = {BeanSwitchYardScanner.class, TransformSwitchYardScanner.class}
+)
+public class CamelSqlStoreTest extends CamelSqlBindingTest {
 
     private SwitchYardCamelContext _context;
 
+    @ServiceOperation("GreetingService")
+    protected Invoker invoker;
+
+    /**
+     * Suspend quartz polling.
+     * 
+     * @throws Exception Anything.
+     */
     @Before
-    public void startUp() throws Exception {
+    public void before() throws Exception {
         _context.getComponent("quartz", QuartzComponent.class).getScheduler().pauseAll();
+        _context.getComponent("timer", TimerComponent.class).stop();
     }
 
     @Test
-    public void storeEntity() throws Exception {
-        Calendar createdAt = Calendar.getInstance();
+    public void shouldStoreGreet() throws Exception {
+        invoker.operation("store").sendInOnly(new Greeting(RECEIVER, SENDER));
 
-        Greet event = new Greet();
-        event.setReceiver(RECEIVER);
-        event.setSender(SENDER);
-        event.setCreatedAt(createdAt);
-
-        _testKit.newInvoker("StoreReference").sendInOnly(event);
-
-        PreparedStatement statement = connection.prepareStatement("select createdAt, sender, receiver from events");
-        ResultSet resultSet = statement.executeQuery();
-
-        assertTrue(resultSet.next());
-        assertEquals(SENDER, resultSet.getString("sender"));
-        assertEquals(RECEIVER, resultSet.getString("receiver"));
-        assertEquals(createdAt.getTimeInMillis(), resultSet.getTimestamp("createdAt").getTime());
+        ResultSet result = connection.createStatement().executeQuery("SELECT * FROM greetings");
+        assertTrue(result.next());
+        assertEquals(RECEIVER, result.getString("receiver"));
+        assertEquals(SENDER, result.getString("sender"));
+        result.close();
     }
 
 }

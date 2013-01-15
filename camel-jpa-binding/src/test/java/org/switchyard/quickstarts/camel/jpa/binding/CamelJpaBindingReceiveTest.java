@@ -24,9 +24,12 @@ import static org.junit.Assert.assertNotNull;
 import java.sql.PreparedStatement;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.camel.component.quartz.QuartzComponent;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Exchange;
+import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.component.test.mixins.transaction.TransactionMixIn;
@@ -45,6 +48,12 @@ public class CamelJpaBindingReceiveTest extends CamelJpaBindingTest {
 
     private SwitchYardTestKit _testKit;
     private MockHandler service;
+    private SwitchYardCamelContext _context;
+
+    @Before
+    public void startUp() throws Exception {
+        _context.getComponent("quartz", QuartzComponent.class).getScheduler().pauseAll();
+    }
 
     @Test
     public void receiveEntity() throws Exception {

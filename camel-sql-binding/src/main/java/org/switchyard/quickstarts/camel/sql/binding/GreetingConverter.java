@@ -22,6 +22,8 @@
 package org.switchyard.quickstarts.camel.sql.binding;
 
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Converter;
 
@@ -40,6 +42,20 @@ public class GreetingConverter {
     @Converter
     public static Iterator<Object> from(Greeting greeting) {
         return new PojoIterator(greeting);
+    }
+
+    @Converter
+    public static Greeting[] from(List<Map<String, Object>> objects) {
+        Greeting[] greetings = new Greeting[objects.size()];
+        int position = 0;
+        for (Map<String, Object> greeting : objects) {
+            greetings[position++] = new Greeting(
+                (Integer) greeting.get("id"),
+                (String) greeting.get("receiver"),
+                (String) greeting.get("sender")
+            );
+        }
+        return greetings;
     }
 
 }
