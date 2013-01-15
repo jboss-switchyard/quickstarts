@@ -19,6 +19,9 @@
 
 package org.switchyard.test;
 
+import java.lang.reflect.Field;
+
+import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunListener;
@@ -27,8 +30,6 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 
-import java.lang.reflect.Field;
-
 /**
  * SwitchYard test runner.
  *
@@ -36,6 +37,7 @@ import java.lang.reflect.Field;
  */
 public class SwitchYardRunner extends BlockJUnit4ClassRunner {
 
+    private static Logger LOG = Logger.getLogger(SwitchYardRunner.class);
     private SwitchYardTestKit _testKit;
     private Object _testInstance;
 
@@ -58,11 +60,11 @@ public class SwitchYardRunner extends BlockJUnit4ClassRunner {
         for (TestMixIn mixIn : _testKit.getMixIns()) {
             set(mixIn, PropertyMatchResolution.EQUALS);
         }
-        
+
         try {
             _testKit.start();
         } catch (Throwable t) {
-            t.printStackTrace();
+            LOG.error("Error while test kit startup", t);
             _testKit.cleanup();
             throw new Exception(t);
         }
@@ -75,7 +77,7 @@ public class SwitchYardRunner extends BlockJUnit4ClassRunner {
         set(_testKit.getServiceDomain().getProperties().get(SwitchYardCamelContext.CAMEL_CONTEXT_PROPERTY), PropertyMatchResolution.ASSIGNABLE);
 
         setInvokers();
-        
+
         return _testInstance;
     }
 
@@ -100,27 +102,44 @@ public class SwitchYardRunner extends BlockJUnit4ClassRunner {
     }
 
     private enum PropertyMatchResolution {
-        ASSIGNABLE,
-        EQUALS
-    }
-
-    private void set(Object propertyValue, PropertyMatchResolution matchRes) throws IllegalAccessException {
-        Field[] fields = _testInstance.getClass().getDeclaredFields();
-
-        for (Field field : fields) {
-            if (matchRes == PropertyMatchResolution.ASSIGNABLE) {
-                if (field.getType().isInstance(propertyValue)) {
-                    set(field, propertyValue);
-                }
-            } else if (matchRes == PropertyMatchResolution.EQUALS) {
-                if (field.getType() == propertyValue.getClass()) {
-                    set(field, propertyValue);
-                }
+        ASSIGNABLE {
+            @Override
+            public boolean matches(Field field, Object propertyValue) {
+                return field.getType().isInstance(propertyValue);
             }
+        },
+        EQUALS {
+            @Override
+            public boolean matches(Field field, Object propertyValue) {
+                return field.getType() == propertyValue.getClass();
+            }
+        };
+        public boolean matches(Field field, Object propertyValue) {
+            throw new AbstractMethodError();
         }
     }
 
-    private void set(Field field, Object propertyValue) throws IllegalAccessException {
+    private void set(Object propertyValue, PropertyMatchResolution matchRes) throws IllegalAccessException {
+        // check whole class hierarchy recursive
+        set(_testInstance.getClass(), propertyValue, matchRes);
+    }
+
+    private void set(Class<?> clazz, Object propertyValue, PropertyMatchResolution matchRes) throws IllegalAccessException {
+        if (Object.class.equals(clazz) || clazz == null) {
+            return;
+        }
+
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            if (matchRes.matches(field, propertyValue)) {
+                setValue(field, propertyValue);
+            }
+        }
+        // check parent class fields
+        set(clazz.getSuperclass(), propertyValue, matchRes);
+    }
+
+    private void setValue(Field field, Object propertyValue) throws IllegalAccessException {
         boolean accessible = field.isAccessible();
         field.setAccessible(true);
         try {
@@ -131,8 +150,15 @@ public class SwitchYardRunner extends BlockJUnit4ClassRunner {
     }
 
     private void setInvokers() throws IllegalAccessException {
-        Field[] fields = _testInstance.getClass().getDeclaredFields();
+        setInvokers(_testInstance.getClass());
+    }
 
+    private void setInvokers(Class<?> clazz) throws IllegalAccessException {
+        if (Object.class.equals(clazz) || clazz == null) {
+            return;
+        }
+
+        Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             if (field.getType() == Invoker.class) {
                 ServiceOperation serviceOp = field.getAnnotation(ServiceOperation.class);
@@ -147,8 +173,9 @@ public class SwitchYardRunner extends BlockJUnit4ClassRunner {
                     Assert.fail("Invoker property '" + field.getName() + "' on test class '" + _testInstance.getClass().getName() + "' contains an a @ServiceOperation defining an unknown Service Operation value '" + serviceOp.value() + "'.");
                 }
 
-                set(field, invoker);
+                setValue(field, invoker);
             }
         }
+        setInvokers(clazz.getSuperclass());
     }
 }
