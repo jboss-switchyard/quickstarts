@@ -71,7 +71,7 @@ public final class Containers {
     public static KieContainer getContainer(ContainerModel model) {
         KieServices kieServices = KieServices.Factory.get();
         if (model != null) {
-            ReleaseId releaseId = model.getReleaseId();
+            ReleaseId releaseId = toReleaseId(model.getReleaseId());
             if (releaseId != null) {
                 return kieServices.newKieContainer(releaseId);
             }

@@ -47,7 +47,6 @@ import org.switchyard.component.bpm.config.model.v1.V1BPMActionModel;
 import org.switchyard.component.bpm.config.model.v1.V1BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.v1.V1WorkItemHandlerModel;
 import org.switchyard.component.bpm.config.model.v1.V1WorkItemHandlersModel;
-import org.switchyard.component.bpm.work.SwitchYardServiceWorkItemHandler;
 import org.switchyard.component.common.knowledge.config.model.ActionModel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1ActionsModel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1ManifestModel;
@@ -204,8 +203,8 @@ public class BPMServicePlugin implements Plugin {
         manifest.setResources(resources);
         bpm.setManifest(manifest);
         V1WorkItemHandlerModel sswih = new V1WorkItemHandlerModel();
-        sswih.setName(SwitchYardServiceWorkItemHandler.SWITCHYARD_SERVICE);
-        sswih.setClazz(SwitchYardServiceWorkItemHandler.class);
+        sswih.setName("SwitchYard Service");
+        sswih.getModelConfiguration().setAttribute("class", "org.switchyard.component.bpm.work.SwitchYardServiceWorkItemHandler");
         V1WorkItemHandlersModel wihs = new V1WorkItemHandlersModel();
         wihs.addWorkItemHandler(sswih);
         bpm.setWorkItemHandlers(wihs);

@@ -49,6 +49,7 @@ import org.switchyard.component.common.knowledge.config.model.MappingModel;
 import org.switchyard.component.common.knowledge.expression.Expression;
 import org.switchyard.component.common.knowledge.expression.ExpressionFactory;
 import org.switchyard.component.common.knowledge.expression.ExpressionType;
+import org.switchyard.component.common.knowledge.util.Containers;
 import org.switchyard.component.rules.RulesActionType;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Scanner;
@@ -150,7 +151,7 @@ public class RulesModelTests {
         ResourcesModel resources = manifest.getResources();
         Assert.assertTrue((container != null && resources == null) || (container == null && resources != null));
         if (CONTAINER_XML.equals(xml)) {
-            ReleaseId rid = container.getReleaseId();
+            ReleaseId rid = Containers.toReleaseId(container.getReleaseId());
             Assert.assertEquals("theGroupId", rid.getGroupId());
             Assert.assertEquals("theArtifactId", rid.getArtifactId());
             Assert.assertEquals("theVersion", rid.getVersion());

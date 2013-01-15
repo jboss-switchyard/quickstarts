@@ -43,7 +43,6 @@ import org.switchyard.component.common.knowledge.config.model.v1.V1ManifestModel
 import org.switchyard.component.common.knowledge.config.model.v1.V1MappingModel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1MappingsModel;
 import org.switchyard.component.common.knowledge.expression.ExpressionType;
-import org.switchyard.component.common.knowledge.util.Containers;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
@@ -142,7 +141,7 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
         }
         String releaseId = containerAnnotation.releaseId();
         if (!UNDEFINED.equals(releaseId)) {
-            containerModel.setReleaseId(Containers.toReleaseId(releaseId));
+            containerModel.setReleaseId(releaseId);
         }
         boolean scan = containerAnnotation.scan();
         if (scan) {

@@ -52,7 +52,8 @@ public final class Channels {
         if (channelsModel != null) {
             String tns = model.getComponent().getTargetNamespace();
             for (ChannelModel channelModel : channelsModel.getChannels()) {
-                Class<? extends Channel> channelClass = channelModel.getClazz(loader);
+                @SuppressWarnings("unchecked")
+                Class<? extends Channel> channelClass = (Class<? extends Channel>)channelModel.getClazz(loader);
                 if (channelClass == null) {
                     channelClass = SwitchYardServiceChannel.class;
                 }

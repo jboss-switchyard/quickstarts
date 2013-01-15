@@ -81,7 +81,8 @@ public final class Listeners {
         ListenersModel listenersModel = model.getListeners();
         if (listenersModel != null) {
             for (ListenerModel listenerModel : listenersModel.getListeners()) {
-                Class<? extends EventListener> listenerClass = listenerModel.getClazz(loader);
+                @SuppressWarnings("unchecked")
+                Class<? extends EventListener> listenerClass = (Class<? extends EventListener>)listenerModel.getClazz(loader);
                 if (listenerClass == null) {
                     throw new SwitchYardException("Could not load listener class: " + listenerModel.getModelConfiguration().getAttribute("class"));
                 }

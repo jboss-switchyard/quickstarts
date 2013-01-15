@@ -18,10 +18,8 @@
  */
 package org.switchyard.component.common.knowledge.config.model.v1;
 
-import org.kie.builder.ReleaseId;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.common.knowledge.config.model.ContainerModel;
-import org.switchyard.component.common.knowledge.util.Containers;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
@@ -71,17 +69,16 @@ public class V1ContainerModel extends BaseModel implements ContainerModel {
      * {@inheritDoc}
      */
     @Override
-    public ReleaseId getReleaseId() {
-        return Containers.toReleaseId(getModelAttribute("releaseId"));
+    public String getReleaseId() {
+        return getModelAttribute("releaseId");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ContainerModel setReleaseId(ReleaseId releaseId) {
-        String rid = releaseId != null ? releaseId.toExternalForm() : null;
-        setModelAttribute("releaseId", rid);
+    public ContainerModel setReleaseId(String releaseId) {
+        setModelAttribute("releaseId", releaseId);
         return this;
     }
 

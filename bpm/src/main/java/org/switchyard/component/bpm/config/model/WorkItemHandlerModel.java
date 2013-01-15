@@ -18,7 +18,6 @@
  */
 package org.switchyard.component.bpm.config.model;
 
-import org.kie.runtime.process.WorkItemHandler;
 import org.switchyard.config.model.NamedModel;
 
 /**
@@ -38,13 +37,13 @@ public interface WorkItemHandlerModel extends NamedModel {
      * @param loader the ClassLoader to use
      * @return the WorkItemHandler class
      */
-    public Class<? extends WorkItemHandler> getClazz(ClassLoader loader);
+    public Class<?> getClazz(ClassLoader loader);
 
     /**
      * Sets the WorkItemHandler class.
      * @param clazz the WorkItemHandler class
      * @return this WorkItemHandlerModel (useful for chaining)
      */
-    public WorkItemHandlerModel setClazz(Class<? extends WorkItemHandler> clazz);
+    public WorkItemHandlerModel setClazz(Class<?> clazz);
 
 }

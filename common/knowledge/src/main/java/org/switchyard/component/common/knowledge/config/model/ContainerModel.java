@@ -18,7 +18,6 @@
  */
 package org.switchyard.component.common.knowledge.config.model;
 
-import org.kie.builder.ReleaseId;
 import org.switchyard.config.model.Model;
 
 /**
@@ -40,7 +39,7 @@ public interface ContainerModel extends Model {
     /**
      * Sets the baseName attribute.
      * @param baseName the baseName attribute
-     * @return this ModuleModel (useful for chaining)
+     * @return this ContainerModel (useful for chaining)
      */
     public ContainerModel setBaseName(String baseName);
 
@@ -48,14 +47,14 @@ public interface ContainerModel extends Model {
      * Gets the releaseId attribute.
      * @return the releaseId attribute
      */
-    public ReleaseId getReleaseId();
+    public String getReleaseId();
 
     /**
      * Sets the releaseId attribute.
      * @param releaseId the releaseId attribute
-     * @return this ModuleModel (useful for chaining)
+     * @return this ContainerModel (useful for chaining)
      */
-    public ContainerModel setReleaseId(ReleaseId releaseId);
+    public ContainerModel setReleaseId(String releaseId);
 
     /**
      * Gets the scan attribute.
@@ -92,7 +91,7 @@ public interface ContainerModel extends Model {
     /**
      * Sets the sessionName attribute.
      * @param sessionName the baseName attribute
-     * @return this ModuleModel (useful for chaining)
+     * @return this ContainerModel (useful for chaining)
      */
     public ContainerModel setSessionName(String sessionName);
 

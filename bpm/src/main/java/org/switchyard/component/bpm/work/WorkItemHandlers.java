@@ -45,7 +45,7 @@ public final class WorkItemHandlers {
         new Class<?>[]{KnowledgeRuntime.class},
         new Class<?>[0]
     };
- 
+
     /**
      * Registers work item handlers.
      * @param model the model
@@ -58,7 +58,8 @@ public final class WorkItemHandlers {
         if (workItemHandlersModel != null) {
             String tns = model.getComponent().getTargetNamespace();
             for (WorkItemHandlerModel workItemHandlerModel : workItemHandlersModel.getWorkItemHandlers()) {
-                Class<? extends WorkItemHandler> workItemHandlerClass = workItemHandlerModel.getClazz(loader);
+                @SuppressWarnings("unchecked")
+                Class<? extends WorkItemHandler> workItemHandlerClass = (Class<? extends WorkItemHandler>)workItemHandlerModel.getClazz(loader);
                 if (workItemHandlerClass == null) {
                     throw new SwitchYardException("Could not load workItemHandler class: " + workItemHandlerModel.getModelConfiguration().getAttribute("class"));
                 }

@@ -20,7 +20,6 @@ package org.switchyard.component.bpm.config.model.v1;
 
 import static org.switchyard.component.bpm.config.model.BPMComponentImplementationModel.DEFAULT_NAMESPACE;
 
-import org.kie.runtime.process.WorkItemHandler;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.bpm.config.model.WorkItemHandlerModel;
@@ -55,17 +54,16 @@ public class V1WorkItemHandlerModel extends BaseNamedModel implements WorkItemHa
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
-    public Class<? extends WorkItemHandler> getClazz(ClassLoader loader) {
+    public Class<?> getClazz(ClassLoader loader) {
         String c = getModelAttribute("class");
-        return c != null ? (Class<? extends WorkItemHandler>)Classes.forName(c, loader) : null;
+        return c != null ? Classes.forName(c, loader) : null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public WorkItemHandlerModel setClazz(Class<? extends WorkItemHandler> clazz) {
+    public WorkItemHandlerModel setClazz(Class<?> clazz) {
         String c = clazz != null ? clazz.getName() : null;
         setModelAttribute("class", c);
         return this;

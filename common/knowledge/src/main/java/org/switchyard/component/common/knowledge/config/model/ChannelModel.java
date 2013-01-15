@@ -18,7 +18,6 @@
  */
 package org.switchyard.component.common.knowledge.config.model;
 
-import org.kie.runtime.Channel;
 import org.switchyard.config.model.NamedModel;
 
 /**
@@ -38,14 +37,14 @@ public interface ChannelModel extends NamedModel {
      * @param loader the ClassLoader to use
      * @return the Channel class
      */
-    public Class<? extends Channel> getClazz(ClassLoader loader);
+    public Class<?> getClazz(ClassLoader loader);
 
     /**
      * Sets the Channel class.
      * @param clazz the Channel class
      * @return this ChannelModel (useful for chaining)
      */
-    public ChannelModel setClazz(Class<? extends Channel> clazz);
+    public ChannelModel setClazz(Class<?> clazz);
 
     /**
      * Gets the operation attribute.

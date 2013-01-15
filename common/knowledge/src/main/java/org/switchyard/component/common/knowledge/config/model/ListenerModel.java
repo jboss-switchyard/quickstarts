@@ -18,8 +18,6 @@
  */
 package org.switchyard.component.common.knowledge.config.model;
 
-import java.util.EventListener;
-
 import org.switchyard.config.model.Model;
 
 /**
@@ -39,13 +37,13 @@ public interface ListenerModel extends Model {
      * @param loader the ClassLoader to use
      * @return the Listener class
      */
-    public Class<? extends EventListener> getClazz(ClassLoader loader);
+    public Class<?> getClazz(ClassLoader loader);
 
     /**
      * Sets the Listener class.
      * @param clazz the Listener class
      * @return this ListenerModel (useful for chaining)
      */
-    public ListenerModel setClazz(Class<? extends EventListener> clazz);
+    public ListenerModel setClazz(Class<?> clazz);
 
 }

@@ -18,8 +18,6 @@
  */
 package org.switchyard.component.common.knowledge.config.model.v1;
 
-import java.util.EventListener;
-
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.common.knowledge.config.model.ListenerModel;
@@ -55,17 +53,16 @@ public class V1ListenerModel extends BaseModel implements ListenerModel {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
-    public Class<? extends EventListener> getClazz(ClassLoader loader) {
+    public Class<?> getClazz(ClassLoader loader) {
         String c = getModelAttribute("class");
-        return c != null ? (Class<? extends EventListener>)Classes.forName(c, loader) : null;
+        return c != null ? Classes.forName(c, loader) : null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ListenerModel setClazz(Class<? extends EventListener> clazz) {
+    public ListenerModel setClazz(Class<?> clazz) {
         String c = clazz != null ? clazz.getName() : null;
         setModelAttribute("class", c);
         return this;
