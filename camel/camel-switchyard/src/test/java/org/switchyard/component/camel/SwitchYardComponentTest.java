@@ -26,16 +26,12 @@ import static org.hamcrest.CoreMatchers.is;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
-import org.switchyard.ServiceDomain;
-import org.switchyard.component.camel.common.CamelConstants;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
@@ -50,21 +46,19 @@ import org.switchyard.test.SwitchYardTestCaseConfig;
  */
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
-public class SwitchYardComponentTest extends CamelTestSupport {
+public class SwitchYardComponentTest extends SwitchYardComponentTestBase {
 
-    private String _serviceName = "testServiceName";
-
-    private ServiceDomain _serviceDomain;
+    protected String _serviceName = "testServiceName";
 
     @Test
     public void sendToSwitchyardInOut() throws Exception {
         final String expectedResponse = "replacedContent";
         final String payload = "bajja";
-        
+
         _serviceDomain.registerService(new QName(_serviceName), new InOutService(), 
-                new ResponseService(expectedResponse));
+            new ResponseService(expectedResponse));
         _serviceDomain.registerServiceReference(new QName(_serviceName), new InOutService("process"));
-        
+
         final String response = (String) template.requestBody("direct:input", payload);
         assertThat(response, is(equalTo(expectedResponse)));
     }
@@ -92,13 +86,6 @@ public class SwitchYardComponentTest extends CamelTestSupport {
                 .to("mock:result");
             }
         };
-    }
-
-    @Override 
-    protected JndiRegistry createRegistry() {
-        JndiRegistry reg = new JndiRegistry();
-        reg.bind(CamelConstants.SERVICE_DOMAIN, _serviceDomain);
-        return reg;
     }
 
     private static class ResponseService extends BaseHandler {

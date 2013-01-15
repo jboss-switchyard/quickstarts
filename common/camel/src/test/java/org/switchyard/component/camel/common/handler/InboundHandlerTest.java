@@ -24,7 +24,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.apache.camel.component.mock.MockComponent;
 import org.junit.Test;
 
 /**
@@ -121,7 +120,6 @@ public class InboundHandlerTest extends InboundHandlerTestBase {
     @Test
     public void hasTransactionManager() throws Exception {
         mockTransaction("jtaTransactionManager");
-        _camelContext.addComponent("switchyard", new MockComponent());
         createInboundHandler("transaction://foo?transactionManager=#jtaTransactionManager");
         _camelContext.start();
         _camelContext.stop();

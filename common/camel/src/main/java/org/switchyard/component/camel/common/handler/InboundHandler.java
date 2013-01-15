@@ -87,6 +87,7 @@ public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHand
         final SwitchYardRouteDefinition route = new SwitchYardRouteDefinition(getServiceName());
 
         route.routeId(getRouteId()).from(getComponentUri().toString())
+            .process(new MessageComposerProcessor(getBindingModel()))
             .process(new OperationSelectorProcessor(getServiceName(), getBindingModel()));
         return addTransactionPolicy(route);
     }

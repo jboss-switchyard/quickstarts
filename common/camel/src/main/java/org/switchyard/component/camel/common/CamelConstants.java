@@ -42,6 +42,11 @@ public interface CamelConstants {
     String OPERATION_SELETOR_HEADER = "org.switchyard.operationSelector";
 
     /**
+     * Name of message header where message composer is stored.
+     */
+    String MESSAGE_COMPOSER_HEADER = "org.switchyard.messageComposer";
+
+    /**
      * Name of Spring SPI transaction policy bean.
      */
     String TRANSACTED_REF = "transactionPolicy";

@@ -80,16 +80,9 @@ public class SwitchYardProducer extends DefaultProducer {
         ServiceDomain domain = (ServiceDomain) camelExchange.getContext().getRegistry().lookup(CamelConstants.SERVICE_DOMAIN);
 
         final ServiceReference serviceRef = lookupServiceReference(targetUri, domain);
-        @SuppressWarnings("unchecked")
-        OperationSelector<CamelBindingData> selector = (OperationSelector<CamelBindingData>) camelExchange.getIn().getHeader(
-           CamelConstants.OPERATION_SELETOR_HEADER, OperationSelector.class);
+        MessageComposer<CamelBindingData> composer = getMessageComposer(camelExchange);
 
-        if (selector != null) {
-            QName op = selector.selectOperation(new CamelBindingData(camelExchange.getIn()));
-            _operationName = op.getLocalPart();
-        }
-
-        final Exchange switchyardExchange = createSwitchyardExchange(camelExchange, serviceRef);
+        final Exchange switchyardExchange = createSwitchyardExchange(camelExchange, serviceRef, composer);
 
         // Set appropriate policy based on Camel exchange properties
         if (camelExchange.isTransacted()) {
@@ -97,8 +90,28 @@ public class SwitchYardProducer extends DefaultProducer {
             PolicyUtil.provide(switchyardExchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL);
         }
 
-        Message switchyardMessage = _messageComposer.compose(new CamelBindingData(camelExchange.getIn()), switchyardExchange, true);
+        Message switchyardMessage = composer.compose(new CamelBindingData(camelExchange.getIn()), switchyardExchange, true);
         switchyardExchange.send(switchyardMessage);
+    }
+
+    @SuppressWarnings("unchecked")
+    private String getOperationName(org.apache.camel.Exchange exchange) {
+        OperationSelector<CamelBindingData> selector = exchange.getIn().getHeader(CamelConstants.OPERATION_SELETOR_HEADER, OperationSelector.class);
+        if (selector == null) {
+            return _operationName;
+        }
+        try {
+            return selector.selectOperation(new CamelBindingData(exchange.getIn())).getLocalPart();
+        } catch (Exception e) {
+            log.error("Can not lookup operation using custom operation selector. Returning empty name", e);
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private MessageComposer<CamelBindingData> getMessageComposer(org.apache.camel.Exchange exchange) {
+         MessageComposer<CamelBindingData> composer = exchange.getIn().getHeader(CamelConstants.MESSAGE_COMPOSER_HEADER, MessageComposer.class);
+        return composer == null ? _messageComposer : composer;
     }
 
     private ServiceReference lookupServiceReference(final String targetUri, ServiceDomain domain) {
@@ -110,9 +123,10 @@ public class SwitchYardProducer extends DefaultProducer {
         return serviceRef;
     }
 
-    private Exchange createSwitchyardExchange(final org.apache.camel.Exchange camelExchange, final ServiceReference serviceRef) {
+    private Exchange createSwitchyardExchange(final org.apache.camel.Exchange camelExchange, final ServiceReference serviceRef,
+        MessageComposer<CamelBindingData> messageComposer) {
         String opName = lookupOperationNameFor(camelExchange, serviceRef);
-        CamelResponseHandler handler = new CamelResponseHandler(camelExchange, serviceRef, _messageComposer);
+        CamelResponseHandler handler = new CamelResponseHandler(camelExchange, serviceRef, messageComposer);
 
         if (opName != null) {
             return serviceRef.createExchange(opName, handler);
@@ -126,11 +140,7 @@ public class SwitchYardProducer extends DefaultProducer {
         // For CXFRS exchanges
         String operationName = (String) camelExchange.getIn().getHeader("operationName");
 
-        // From operationSelector
-        // Override header value with operationSelector, that's what user wants
-        if (_operationName != null) {
-            operationName = _operationName;
-        }
+        operationName = getOperationName(camelExchange);
 
         // From Service Interface
         if (operationName == null) {

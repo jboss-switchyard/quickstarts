@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.After;
 import org.junit.Before;
@@ -48,7 +47,6 @@ public class OperationSelectorTest extends InboundHandlerTestBase {
 
     @Test
     public void operationSelectorProcessor() throws Exception {
-        _camelContext.addComponent("switchyard", new MockComponent());
         ProducerTemplate producer = _camelContext.createProducerTemplate();
         InboundHandler<?> handler1 = createInboundHandler("direct://foo", new V1StaticOperationSelectorModel().setOperationName("foo"));
         InboundHandler<?> handler2 = createInboundHandler("direct://bar", new V1StaticOperationSelectorModel().setOperationName("bar"));
