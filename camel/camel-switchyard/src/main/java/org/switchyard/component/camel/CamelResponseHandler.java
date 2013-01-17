@@ -73,19 +73,36 @@ public class CamelResponseHandler implements ExchangeHandler {
     @Override
     public void handleMessage(final Exchange switchYardExchange) throws HandlerException {
         try {
-            Message camelMsg = _camelExchange.getPattern().equals(ExchangePattern.InOnly)
-                    ? _camelExchange.getIn() : _camelExchange.getOut();
+            Message camelMsg = getCamelMessage();
             _messageComposer.decompose(switchYardExchange, new CamelBindingData(camelMsg));
         } catch (Exception e) {
             throw new HandlerException(e);
         }
     }
 
+    private Message getCamelMessage() {
+        return isInOnly() ? _camelExchange.getIn() : _camelExchange.getOut();
+    }
+
+    private boolean isInOnly() {
+        return _camelExchange.getPattern().equals(ExchangePattern.InOnly);
+    }
+
     @Override
     public void handleFault(final Exchange exchange) {
         final Object content = exchange.getMessage().getContent();
+
         if (content instanceof Throwable) {
-            _camelExchange.setException((Throwable)content);
+            _camelExchange.setException((Throwable) content);
+            return;
+        }
+
+        try {
+            Message message = getCamelMessage();
+            _messageComposer.decompose(exchange, new CamelBindingData(message));
+            message.setFault(true);
+        } catch (Exception e) {
+            _camelExchange.setException(e);
         }
     }
 

@@ -99,11 +99,6 @@ public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandle
         if (camelException != null) {
             throw new HandlerException(camelException);
         }
-
-        final org.apache.camel.Message message = camelExchange.getOut();
-        if (message.isFault()) {
-            throw new HandlerException(message.getBody(String.class));
-        }
     }
 
     private org.apache.camel.Exchange createCamelExchange(final Exchange switchyardExchange) {

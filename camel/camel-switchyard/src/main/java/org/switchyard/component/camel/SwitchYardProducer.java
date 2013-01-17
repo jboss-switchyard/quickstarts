@@ -76,7 +76,7 @@ public class SwitchYardProducer extends DefaultProducer {
 
     @Override
     public void process(final org.apache.camel.Exchange camelExchange) throws Exception {
-        final String targetUri = (String) camelExchange.getProperty("CamelToEndpoint");
+        final String targetUri = (String) camelExchange.getProperty(org.apache.camel.Exchange.TO_ENDPOINT);
         ServiceDomain domain = (ServiceDomain) camelExchange.getContext().getRegistry().lookup(CamelConstants.SERVICE_DOMAIN);
 
         final ServiceReference serviceRef = lookupServiceReference(targetUri, domain);
@@ -110,7 +110,7 @@ public class SwitchYardProducer extends DefaultProducer {
 
     @SuppressWarnings("unchecked")
     private MessageComposer<CamelBindingData> getMessageComposer(org.apache.camel.Exchange exchange) {
-         MessageComposer<CamelBindingData> composer = exchange.getIn().getHeader(CamelConstants.MESSAGE_COMPOSER_HEADER, MessageComposer.class);
+        MessageComposer<CamelBindingData> composer = exchange.getIn().getHeader(CamelConstants.MESSAGE_COMPOSER_HEADER, MessageComposer.class);
         return composer == null ? _messageComposer : composer;
     }
 

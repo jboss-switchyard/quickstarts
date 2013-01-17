@@ -26,6 +26,7 @@ import static org.hamcrest.CoreMatchers.is;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.BaseHandler;
@@ -75,6 +76,26 @@ public class SwitchYardComponentTest extends SwitchYardComponentTestBase {
         assertThat(mockService.getMessages().size(), is(1));
         final String actualPayload = mockService.getMessages().iterator().next().getMessage().getContent(String.class);
         assertThat(actualPayload, is(equalTo(payload)));
+    }
+
+
+    @Test
+    public void sendToSwitchyardInOnlyFault() throws Exception {
+        final String payload = "bajja";
+
+        MockEndpoint endpoint = getMockEndpoint("mock:result");
+        endpoint.expectedBodiesReceived(payload);
+        final MockHandler mockService = new MockHandler().forwardInToOut();
+        _serviceDomain.registerService(new QName(_serviceName), new InOnlyService(), mockService);
+        _serviceDomain.registerServiceReference(new QName(_serviceName), new InOnlyService("process"));
+
+        template.sendBody("direct:input", payload);
+
+        assertThat(mockService.getMessages().size(), is(1));
+        final String actualPayload = mockService.getMessages().iterator().next().getMessage().getContent(String.class);
+        assertThat(actualPayload, is(equalTo(payload)));
+        endpoint.assertIsSatisfied();
+        // endpoint.allMessages().
     }
 
     @Override

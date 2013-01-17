@@ -23,13 +23,16 @@ package org.switchyard.component.camel;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import javax.xml.namespace.QName;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
+import org.apache.camel.impl.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.HandlerException;
@@ -68,9 +71,16 @@ public class CamelResponseHandlerTest {
 
     @Test
     public void handleMessageWithOutputType() throws HandlerException {
-        final Exchange camelExchange = createMockCamelExchange();
+        final Exchange camelExchange = createCamelExchange();
         final ServiceReference serviceReference = createMockServiceRef();
-        final org.switchyard.Exchange switchYardExchange = createMockExchangeWithBody(10);
+        final org.switchyard.Exchange switchYardExchange = createMockExchangeWithBody(new MessageCreator() {
+            @Override
+            public Message create() {
+                Message message = mock(Message.class);
+                when(message.getContent(Integer.class)).thenReturn(10);
+                return message;
+            }
+        });
         final CamelResponseHandler responseHandler = new CamelResponseHandler(camelExchange, serviceReference, _messageComposer);
 
         responseHandler.handleMessage(switchYardExchange);
@@ -78,13 +88,48 @@ public class CamelResponseHandlerTest {
         assertThat(switchYardExchange.getMessage().getContent(Integer.class), is(equalTo(new Integer(10))));
     }
 
-    private Exchange createMockCamelExchange() {
-        final Exchange camelExchange = mock(Exchange.class);
-        final org.apache.camel.Message camelMessage = mock(org.apache.camel.Message.class);
-        when(camelExchange.getPattern()).thenReturn(ExchangePattern.InOut);
-        when(camelExchange.getIn()).thenReturn(camelMessage);
-        when(camelExchange.getOut()).thenReturn(camelMessage);
-        return camelExchange;
+    @Test
+    public void fault() throws HandlerException {
+        final String fault = "some fault";
+        final Exchange camelExchange = createCamelExchange();
+        final ServiceReference serviceReference = createMockServiceRef();
+        final org.switchyard.Exchange switchYardExchange = createMockExchangeWithBody(new MessageCreator() {
+            @Override
+            public Message create() {
+                Message message = mock(Message.class);
+                when(message.getContent()).thenReturn(fault);
+                return message;
+            }
+        });
+        final CamelResponseHandler responseHandler = new CamelResponseHandler(camelExchange, serviceReference, _messageComposer);
+
+        responseHandler.handleFault(switchYardExchange);
+
+        assertTrue(camelExchange.getIn().isFault());
+        assertSame(fault, camelExchange.getIn().getBody());
+    }
+
+    @Test
+    public void exception() throws HandlerException {
+        final IllegalArgumentException exception = new IllegalArgumentException();
+        final Exchange camelExchange = createCamelExchange();
+        final ServiceReference serviceReference = createMockServiceRef();
+        final org.switchyard.Exchange switchYardExchange = createMockExchangeWithBody(new MessageCreator() {
+            @Override
+            public Message create() {
+                Message message = mock(Message.class);
+                when(message.getContent()).thenReturn(exception);
+                return message;
+            }
+        });
+        final CamelResponseHandler responseHandler = new CamelResponseHandler(camelExchange, serviceReference, _messageComposer);
+
+        responseHandler.handleFault(switchYardExchange);
+        assertSame(exception, camelExchange.getException());
+    }
+
+    private Exchange createCamelExchange() {
+        return new DefaultExchange((CamelContext) null);
     }
 
     private ServiceReference createMockServiceRef() {
@@ -93,7 +138,7 @@ public class CamelResponseHandlerTest {
         return serviceReference;
     }
 
-    private org.switchyard.Exchange createMockExchangeWithBody(final Integer payload) {
+    private org.switchyard.Exchange createMockExchangeWithBody(MessageCreator creator) {
         final org.switchyard.Exchange switchYardExchange = mock(org.switchyard.Exchange.class);
         final org.switchyard.Context switchYardContext = mock(org.switchyard.Context.class);
         final ExchangeContract exchangeContract = mock(ExchangeContract.class);
@@ -101,12 +146,12 @@ public class CamelResponseHandlerTest {
         final ServiceOperation referenceOperation = mock(ServiceOperation.class);
         final Service provider = mock(Service.class);
 
-        final Message message = mock(Message.class);
+        final Message message = creator.create();
+        when(switchYardExchange.getMessage()).thenReturn(message);
+
         when(provider.getName()).thenReturn(SERVICE_QNAME);
         when(switchYardExchange.getProvider()).thenReturn(provider);
-        when(message.getContent(Integer.class)).thenReturn(payload);
         when(switchYardExchange.getContext()).thenReturn(switchYardContext);
-        when(switchYardExchange.getMessage()).thenReturn(message);
         when(referenceOperation.getOutputType()).thenReturn(JAVA_STRING_QNAME);
         when(exchangeContract.getProviderOperation()).thenReturn(serviceOperation);
         when(serviceOperation.getInputType()).thenReturn(JAVA_STRING_QNAME);
@@ -116,13 +161,19 @@ public class CamelResponseHandlerTest {
         when(switchYardExchange.getContract()).thenReturn(exchangeContract);
 
         return switchYardExchange;
-        
     }
 
     private class MockService {
         @SuppressWarnings("unused")
         public void print(final String msg) {
         }
+    }
+
+    /**
+     * Interface which let populate mock message.
+     */
+    interface MessageCreator {
+        Message create();
     }
 
 }
