@@ -19,18 +19,21 @@
 
 package org.switchyard.component.bean.tests;
 
+import static org.switchyard.policy.SecurityPolicy.AUTHORIZATION;
+import static org.switchyard.policy.SecurityPolicy.CLIENT_AUTHENTICATION;
+import static org.switchyard.policy.SecurityPolicy.CONFIDENTIALITY;
+
 import javax.inject.Inject;
 
 import org.switchyard.annotations.Requires;
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
-import org.switchyard.policy.SecurityPolicy;
 
-@Requires(security = {SecurityPolicy.CLIENT_AUTHENTICATION, SecurityPolicy.CONFIDENTIALITY})
+@Requires(security = {AUTHORIZATION, CLIENT_AUTHENTICATION, CONFIDENTIALITY})
 @Service(value = OneWay.class, name = "SecureService")
 public class SecureBean implements OneWay {
     
-    @Inject @Reference @Requires(security = {SecurityPolicy.CLIENT_AUTHENTICATION, SecurityPolicy.CONFIDENTIALITY})
+    @Inject @Reference @Requires(security = {AUTHORIZATION, CLIENT_AUTHENTICATION, CONFIDENTIALITY})
     private OneWay oneWay;
 
 	@Override

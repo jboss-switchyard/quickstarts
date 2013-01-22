@@ -68,9 +68,11 @@ public class RequiredPoliciesTest {
         for(ComponentModel component : components) {
             if(component.getName().equals("SecureService")) {
                 ComponentServiceModel svc = component.getServices().get(0);
+                Assert.assertTrue(svc.hasPolicyRequirement(SecurityPolicy.AUTHORIZATION.getName()));
                 Assert.assertTrue(svc.hasPolicyRequirement(SecurityPolicy.CLIENT_AUTHENTICATION.getName()));
                 Assert.assertTrue(svc.hasPolicyRequirement(SecurityPolicy.CONFIDENTIALITY.getName()));
                 ComponentReferenceModel ref = component.getReferences().get(0);
+                Assert.assertTrue(ref.hasPolicyRequirement(SecurityPolicy.AUTHORIZATION.getName()));
                 Assert.assertTrue(ref.hasPolicyRequirement(SecurityPolicy.CLIENT_AUTHENTICATION.getName()));
                 Assert.assertTrue(ref.hasPolicyRequirement(SecurityPolicy.CONFIDENTIALITY.getName()));
                 ssFound = true;
