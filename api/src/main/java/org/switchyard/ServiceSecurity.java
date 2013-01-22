@@ -19,6 +19,7 @@
 package org.switchyard;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * ServiceSecurity.
@@ -39,10 +40,17 @@ public interface ServiceSecurity {
      */
     public Class<?> getCallbackHandler();
 
-    /*
-    public String getRunAs();
+    /**
+     * Gets the roles allowed.
+     * @return the roles allowed
+     */
     public Set<String> getRolesAllowed();
-    */
+
+    /**
+     * Gets the run as.
+     * @return the run as
+     */
+    public String getRunAs();
 
     /**
      * Gets the properties.

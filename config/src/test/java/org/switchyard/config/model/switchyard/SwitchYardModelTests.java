@@ -19,6 +19,8 @@
 package org.switchyard.config.model.switchyard;
 
 import java.io.StringReader;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 
@@ -147,6 +149,11 @@ public class SwitchYardModelTests {
         Assert.assertEquals(domain, security.getDomain());
         Assert.assertEquals(Object.class, security.getCallbackHandler(getClass().getClassLoader()));
         Assert.assertEquals("other", security.getModuleName());
+        Set<String> rolesAllowed = new LinkedHashSet<String>();
+        rolesAllowed.add("administrator");
+        rolesAllowed.add("user");
+        Assert.assertEquals(rolesAllowed, security.getRolesAllowed());
+        Assert.assertEquals("leader", security.getRunAs());
         Assert.assertEquals("iam", security.getProperties().toProperties().getProperty("will"));
         Assert.assertEquals("iam", security.getProperties().toMap().get("will"));
     }

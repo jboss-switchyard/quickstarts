@@ -27,6 +27,7 @@ public class PolicyFactoryTest {
 
     @Test
     public void testFactory() throws Exception {
+        // TransactionPolicy
         Policy p = PolicyFactory.getPolicy("managedTransaction.Global");
         Assert.assertEquals(TransactionPolicy.MANAGED_TRANSACTION_GLOBAL, p);
         Assert.assertEquals(PolicyType.IMPLEMENTATION, p.getType());
@@ -42,7 +43,10 @@ public class PolicyFactoryTest {
         p = PolicyFactory.getPolicy("suspendsTransaction");
         Assert.assertEquals(TransactionPolicy.SUSPENDS_TRANSACTION, p);
         Assert.assertEquals(PolicyType.INTERACTION, p.getType());
-
+        // SecurityPolicy
+        p = PolicyFactory.getPolicy("authorization");
+        Assert.assertEquals(SecurityPolicy.AUTHORIZATION, p);
+        Assert.assertEquals(PolicyType.INTERACTION, p.getType());
         p = PolicyFactory.getPolicy("clientAuthentication");
         Assert.assertEquals(SecurityPolicy.CLIENT_AUTHENTICATION, p);
         Assert.assertEquals(PolicyType.INTERACTION, p.getType());
@@ -50,5 +54,5 @@ public class PolicyFactoryTest {
         Assert.assertEquals(SecurityPolicy.CONFIDENTIALITY, p);
         Assert.assertEquals(PolicyType.INTERACTION, p.getType());
     }
-    
+
 }

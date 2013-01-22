@@ -18,6 +18,8 @@
  */
 package org.switchyard.config.model.domain;
 
+import java.util.Set;
+
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.property.PropertiesModel;
 
@@ -66,12 +68,31 @@ public interface SecurityModel extends Model {
      */
     public SecurityModel setModuleName(String moduleName);
 
-    /*
+    /**
+     * Gets the roles allowed.
+     * @return the roles allowed
+     */
     public Set<String> getRolesAllowed();
+
+    /**
+     * Sets the roles allowed.
+     * @param rolesAllowed the roles allowed
+     * @return this SecurityModel (useful for chaining)
+     */
     public SecurityModel setRolesAllowed(Set<String> rolesAllowed);
+
+    /**
+     * Gets the run as.
+     * @return the run as
+     */
     public String getRunAs();
+
+    /**
+     * Sets the run as.
+     * @param runAs the run as
+     * @return this SecurityModel (useful for chaining)
+     */
     public SecurityModel setRunAs(String runAs);
-    */
 
     /**
      * Gets the properties.

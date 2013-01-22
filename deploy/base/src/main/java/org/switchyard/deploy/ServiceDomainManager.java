@@ -128,10 +128,8 @@ public class ServiceDomainManager {
                     serviceSecurity
                         .setModuleName(config.getModuleName())
                         .setCallbackHandler(config.getCallbackHandler(getClass().getClassLoader()))
-                        /*
+                        .setRolesAllowed(config.getRolesAllowed())
                         .setRunAs(config.getRunAs())
-                        .setRolesAllowed(config.getRolesAllowed());
-                        */
                         .setProperties(properties != null ? properties.toMap() : null);
                 }
             }

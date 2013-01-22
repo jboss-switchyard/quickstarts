@@ -22,6 +22,7 @@ import static org.switchyard.ExchangePhase.IN;
 import static org.switchyard.policy.PolicyUtil.isProvided;
 import static org.switchyard.policy.PolicyUtil.isRequired;
 import static org.switchyard.policy.PolicyUtil.provide;
+import static org.switchyard.policy.SecurityPolicy.AUTHORIZATION;
 import static org.switchyard.policy.SecurityPolicy.CLIENT_AUTHENTICATION;
 import static org.switchyard.policy.SecurityPolicy.CONFIDENTIALITY;
 
@@ -62,6 +63,11 @@ public class SecurityHandler extends BaseHandler {
     public void handleMessage(Exchange exchange) throws HandlerException {
         if (IN.equals(exchange.getPhase())) {
             SecurityContext securityContext = SecurityContext.get(exchange);
+            if (isRequired(exchange, CONFIDENTIALITY) && !isProvided(exchange, CONFIDENTIALITY)) {
+                if (isConfidentialityProvided(securityContext)) {
+                    provide(exchange, CONFIDENTIALITY);
+                }
+            }
             if (isRequired(exchange, CLIENT_AUTHENTICATION) && !isProvided(exchange, CLIENT_AUTHENTICATION)) {
                 if (isClientAuthenticationProvided(securityContext)) {
                     provide(exchange, CLIENT_AUTHENTICATION);
@@ -72,12 +78,22 @@ public class SecurityHandler extends BaseHandler {
                     }
                 }
             }
-            if (isRequired(exchange, CONFIDENTIALITY) && !isProvided(exchange, CONFIDENTIALITY)) {
-                if (isConfidentialityProvided(securityContext)) {
-                    provide(exchange, CONFIDENTIALITY);
+            if (isRequired(exchange, AUTHORIZATION) && !isProvided(exchange, AUTHORIZATION)) {
+                if (isAuthorizationProvided(securityContext)) {
+                    provide(exchange, AUTHORIZATION);
                 }
             }
         }
+    }
+
+    private boolean isConfidentialityProvided(SecurityContext securityContext) {
+        Set<ConfidentialityCredential> creds = securityContext.getCredentials(ConfidentialityCredential.class);
+        for (ConfidentialityCredential cred : creds) {
+            if (cred.isConfidential()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean isClientAuthenticationProvided(SecurityContext securityContext) {
@@ -90,14 +106,8 @@ public class SecurityHandler extends BaseHandler {
         return false;
     }
 
-    private boolean isConfidentialityProvided(SecurityContext securityContext) {
-        Set<ConfidentialityCredential> creds = securityContext.getCredentials(ConfidentialityCredential.class);
-        for (ConfidentialityCredential cred : creds) {
-            if (cred.isConfidential()) {
-                return true;
-            }
-        }
-        return false;
+    private boolean isAuthorizationProvided(SecurityContext securityContext) {
+        return _securityProvider.checkRolesAllowed(_serviceSecurity, securityContext);
     }
 
 }

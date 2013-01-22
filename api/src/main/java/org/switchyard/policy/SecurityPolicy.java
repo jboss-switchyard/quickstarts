@@ -26,6 +26,16 @@ package org.switchyard.policy;
 public enum SecurityPolicy implements Policy {
 
     /**
+     * Ensure that the client is authorized to use the service.
+     */
+    AUTHORIZATION("authorization") {
+        @Override
+        public PolicyType getType() {
+            return PolicyType.INTERACTION;
+        }
+    },
+
+    /**
      * Ensure that the client is authenticated by the server.
      */
     CLIENT_AUTHENTICATION("clientAuthentication") {
@@ -34,7 +44,7 @@ public enum SecurityPolicy implements Policy {
             return PolicyType.INTERACTION;
         }
     },
-    
+
     /**
      * Ensure that only authorized entities can view the contents of a message.
      */
@@ -82,4 +92,5 @@ public enum SecurityPolicy implements Policy {
     public Policy getPolicyDependency() {
         return null;
     }
+
 }

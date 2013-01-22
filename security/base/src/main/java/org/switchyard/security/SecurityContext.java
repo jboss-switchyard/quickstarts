@@ -18,7 +18,12 @@
  */
 package org.switchyard.security;
 
+import static org.switchyard.security.principal.Group.ROLES;
+
+import java.security.Principal;
+import java.security.acl.Group;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -82,12 +87,17 @@ public final class SecurityContext {
         return subject;
     }
 
-    /*
+    /**
+     * Is the caller in the role for the domain.
+     * @param roleName the role
+     * @param domain the domain
+     * @return successful check
+     */
     public boolean isCallerInRole(String roleName, String domain) {
         for (Principal principal : getSubject(domain).getPrincipals()) {
             if (principal instanceof Group) {
                 Group group = (Group)principal;
-                if (group.getName().equalsIgnoreCase(ROLES_GROUP_NAME)) {
+                if (group.getName().equalsIgnoreCase(ROLES)) {
                     Enumeration<? extends Principal> roles = group.members();
                     while (roles.hasMoreElements()) {
                         Principal role = roles.nextElement();
@@ -100,7 +110,6 @@ public final class SecurityContext {
         }
         return false;
     }
-    */
 
     /**
      * Clears any and all contained state.

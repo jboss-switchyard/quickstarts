@@ -20,6 +20,7 @@ package org.switchyard.security.principal;
 
 import java.io.Serializable;
 import java.security.Principal;
+
 /**
  * User.
  *

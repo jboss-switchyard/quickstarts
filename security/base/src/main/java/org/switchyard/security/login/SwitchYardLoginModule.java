@@ -25,6 +25,8 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
+import org.switchyard.common.lang.Strings;
+
 /**
  * SwitchYardLoginModule.
  *
@@ -92,10 +94,11 @@ public abstract class SwitchYardLoginModule implements LoginModule {
             }
         } else {
             Object value = options.get(name);
-            if (value == null && required) {
+            if (value != null) {
+                return Strings.replaceSystemProperties(String.valueOf(value));
+            } else if (required) {
                 throw new IllegalStateException("option [" + name + "] not set");
             }
-            return value != null ? String.valueOf(value) : null;
         }
         return null;
     }

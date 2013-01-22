@@ -18,6 +18,8 @@
  */
 package org.switchyard.config.model.domain.v1;
 
+import java.util.Set;
+
 import javax.xml.namespace.QName;
 
 import org.switchyard.common.lang.Strings;
@@ -39,10 +41,8 @@ public class V1SecurityModel extends BaseModel implements SecurityModel {
 
     private static final String CALLBACK_HANDLER = "callbackHandler";
     private static final String MODULE_NAME = "moduleName";
-    /*
-    private static final String RUN_AS = "runAs";
     private static final String ROLES_ALLOWED = "rolesAllowed";
-    */
+    private static final String RUN_AS = "runAs";
 
     private PropertiesModel _properties;
 
@@ -108,13 +108,18 @@ public class V1SecurityModel extends BaseModel implements SecurityModel {
         return this;
     }
 
-    /*
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<String> getRolesAllowed() {
         String ra = getModelAttribute(ROLES_ALLOWED);
         return Strings.uniqueSplitTrimToNull(ra, ",");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SecurityModel setRolesAllowed(Set<String> rolesAllowed) {
         String[] ra = rolesAllowed != null ? rolesAllowed.toArray(new String[rolesAllowed.size()]) : null;
@@ -122,17 +127,22 @@ public class V1SecurityModel extends BaseModel implements SecurityModel {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getRunAs() {
         return getModelAttribute(RUN_AS);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SecurityModel setRunAs(String runAs) {
         setModelAttribute(RUN_AS, runAs);
         return this;
     }
-    */
 
     /**
      * {@inheritDoc}

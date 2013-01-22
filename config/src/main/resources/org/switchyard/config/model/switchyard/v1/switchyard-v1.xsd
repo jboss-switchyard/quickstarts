@@ -233,10 +233,8 @@ MA  02110-1301, USA.
         </sequence>
         <attribute name="callbackHandler" type="string" use="optional"/>
         <attribute name="moduleName" type="string" use="optional"/>
-        <!--
         <attribute name="rolesAllowed" type="string" use="optional"/>
         <attribute name="runAs" type="string" use="optional"/>
-        -->
     </complexType>
 
     <element name="interface.esb" type="swyd:EsbInterface" substitutionGroup="sca:interface"/>

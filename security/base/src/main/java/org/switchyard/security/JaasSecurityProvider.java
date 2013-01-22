@@ -18,6 +18,8 @@
  */
 package org.switchyard.security;
 
+import java.util.Set;
+
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginContext;
@@ -29,6 +31,8 @@ import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.security.callback.handler.NamePasswordCallbackHandler;
 import org.switchyard.security.callback.handler.SwitchYardCallbackHandler;
+import org.switchyard.security.principal.Group;
+import org.switchyard.security.principal.Role;
 
 /**
  * JaasSecurityProvider.
@@ -60,19 +64,61 @@ public class JaasSecurityProvider extends SecurityProvider {
             sych.setProperties(serviceSecurity.getProperties());
             sych.setCredentials(securityContext.getCredentials());
         }
-        String domain = Strings.trimToNull(serviceSecurity.getModuleName());
-        if (domain == null) {
-            domain = "other";
-        }
+        String domain = getDomain(serviceSecurity);
         Subject subject = securityContext.getSubject(domain);
         try {
             new LoginContext(domain, subject, ch).login();
-            //SecurityUtil.addRunAs(serviceSecurity.getRunAs(), subject);
+            addRunAs(serviceSecurity.getRunAs(), subject);
             success = true;
         } catch (LoginException le) {
             LOGGER.error("authenticate LoginException: " + le.getMessage(), le);
         }
         return success;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean checkRolesAllowed(ServiceSecurity serviceSecurity, SecurityContext securityContext) {
+        Set<String> rolesAllowed = serviceSecurity.getRolesAllowed();
+        if (rolesAllowed.isEmpty()) {
+            return true;
+        }
+        String domain = getDomain(serviceSecurity);
+        for (String roleName : rolesAllowed) {
+            boolean isInRole = securityContext.isCallerInRole(roleName, domain);
+            if (isInRole) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void addRunAs(String runAs, Subject subject) {
+        if (runAs != null) {
+            Role runAsRole = new Role(runAs);
+            Set<Group> groups = subject.getPrincipals(Group.class);
+            if (groups.isEmpty()) {
+                Group rolesGroup = new Group(Group.ROLES);
+                rolesGroup.addMember(runAsRole);
+                subject.getPrincipals().add(rolesGroup);
+            } else {
+                for (Group group : groups) {
+                    if (Group.ROLES.equals(group.getName())) {
+                        group.addMember(runAsRole);
+                    }
+                }
+            }
+        }
+    }
+
+    private String getDomain(ServiceSecurity serviceSecurity) {
+        String domain = Strings.trimToNull(serviceSecurity.getModuleName());
+        if (domain == null) {
+            domain = "other";
+        }
+        return domain;
     }
 
 }

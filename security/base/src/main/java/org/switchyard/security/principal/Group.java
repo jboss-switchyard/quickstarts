@@ -34,7 +34,10 @@ public class Group implements java.security.acl.Group, Serializable {
 
     private static final long serialVersionUID = -909127780618924905L;
 
-    //public static final String ROLES_GROUP_NAME = "Roles";
+    /**
+     * The "Roles" group name.
+     */
+    public static final String ROLES = "Roles";
 
     private final String _name;
     private final Set<Principal> _members = new HashSet<Principal>();

@@ -19,6 +19,7 @@
 package org.switchyard.internal;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.switchyard.ServiceSecurity;
 
@@ -31,10 +32,8 @@ public class DefaultServiceSecurity implements ServiceSecurity {
 
     private String _moduleName;
     private Class<?> _callbackHandler;
-    /*
-    private String _runAs;
     private Set<String> _rolesAllowed;
-    */
+    private String _runAs;
     private Map<String,String> _properties;
 
     /**
@@ -78,28 +77,41 @@ public class DefaultServiceSecurity implements ServiceSecurity {
         return this;
     }
 
-
-    /*
-    @Override
-    public String getRunAs() {
-        return _runAs;
-    }
-
-    public DefaultServiceSecurity setRunAs(String runAs) {
-        _runAs = runAs;
-        return this;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<String> getRolesAllowed() {
         return _rolesAllowed;
     }
 
+    /**
+     * Sets the roles allowed.
+     * @param rolesAllowed the roles allowed
+     * @return this instance (useful for chaining)
+     */
     public DefaultServiceSecurity setRolesAllowed(Set<String> rolesAllowed) {
         _rolesAllowed = rolesAllowed;
         return this;
     }
-    */
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getRunAs() {
+        return _runAs;
+    }
+
+    /**
+     * Sets the run as.
+     * @param runAs the run as
+     * @return this instance (useful for chaining)
+     */
+    public DefaultServiceSecurity setRunAs(String runAs) {
+        _runAs = runAs;
+        return this;
+    }
 
     /**
      * {@inheritDoc}

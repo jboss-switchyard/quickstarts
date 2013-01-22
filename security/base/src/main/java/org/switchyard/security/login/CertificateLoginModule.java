@@ -24,6 +24,7 @@ import java.security.KeyStoreException;
 import java.security.Principal;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.security.auth.callback.Callback;
@@ -31,8 +32,12 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
 
+import org.switchyard.common.io.pull.PropertiesPuller;
 import org.switchyard.common.io.pull.Puller.PathType;
+import org.switchyard.common.lang.Strings;
 import org.switchyard.security.callback.CertificateCallback;
+import org.switchyard.security.principal.Group;
+import org.switchyard.security.principal.Role;
 import org.switchyard.security.principal.User;
 import org.switchyard.security.pull.KeyStorePuller;
 
@@ -94,13 +99,31 @@ public class CertificateLoginModule extends SwitchYardLoginModule {
             return false;
         } else {
             Set<Principal> principals = getSubject().getPrincipals();
-            String name = _verifiedCallerCertificate.getSubjectX500Principal().getName();
+            String userName = _verifiedCallerCertificate.getSubjectX500Principal().getName();
             // get the CN from the DN.
-            name = name.substring(name.indexOf('=') + 1, name.indexOf(','));
-            User authenticatedPrincipal = new User(name);
+            userName = userName.substring(userName.indexOf('=') + 1, userName.indexOf(','));
+            User authenticatedPrincipal = new User(userName);
             principals.add(authenticatedPrincipal);
-            // TODO: when authorization support is added to SwitchYard
-            //addRoles(getSubject(), authenticatedPrincipal, _verifiedCallerCertificate, getOptions());
+            // maybe add roles
+            Properties rolesProperties = getRolesProperties();
+            if (rolesProperties != null) {
+                Set<Group> groups = getSubject().getPrincipals(Group.class);
+                Set<String> roleNames = Strings.uniqueSplitTrimToNull(rolesProperties.getProperty(userName), ",");
+                for (String roleName : roleNames) {
+                    Role role = new Role(roleName);
+                    if (groups.isEmpty()) {
+                        Group rolesGroup = new Group(Group.ROLES);
+                        rolesGroup.addMember(role);
+                        getSubject().getPrincipals().add(rolesGroup);
+                    } else {
+                        for (Group group : groups) {
+                            if (Group.ROLES.equals(group.getName())) {
+                                group.addMember(role);
+                            }
+                        }
+                    }
+                }
+            }
             return true;
         }
     }
@@ -134,6 +157,14 @@ public class CertificateLoginModule extends SwitchYardLoginModule {
         String keyStorePassword = getOption("keyStorePassword", false);
         KeyStorePuller keyStorePuller = new KeyStorePuller(keyStoreType, keyStorePassword != null ? keyStorePassword.toCharArray() : null);
         return keyStorePuller.pullPath(keyStoreLocation, getClass(), PathType.values());
+    }
+
+    private Properties getRolesProperties() {
+        String rolesPropertiesFile = getOption("rolesProperties", false);
+        if (rolesPropertiesFile != null) {
+            return new PropertiesPuller().pullPath(rolesPropertiesFile, getClass(), PathType.values());
+        }
+        return null;
     }
 
 }

@@ -44,6 +44,14 @@ public abstract class SecurityProvider {
    public abstract boolean authenticate(ServiceSecurity serviceSecurity, SecurityContext securityContext);
 
    /**
+    * Checks if the Subject associated in the SecurityContext has at least one of the allowed roles in the ServiceSecurity.
+    * @param serviceSecurity the ServiceSecurity
+    * @param securityContext the SecurityContext
+    * @return successful roles allowed check
+    */
+   public abstract boolean checkRolesAllowed(ServiceSecurity serviceSecurity, SecurityContext securityContext);
+
+   /**
     * Gets the singleton instance of the SecurityProvider.
     * @return the singleton instance of the SecurityProvider
     */
