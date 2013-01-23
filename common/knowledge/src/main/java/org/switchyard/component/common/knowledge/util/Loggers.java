@@ -21,7 +21,6 @@ package org.switchyard.component.common.knowledge.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.text.StrSubstitutor;
 import org.kie.KieServices;
 import org.kie.event.KieRuntimeEventManager;
 import org.kie.logger.KieLoggers;
@@ -82,7 +81,9 @@ public final class Loggers {
                     loggerType = LoggerType.THREADED_FILE;
                 }
                 String log = Strings.trimToNull(loggerModel.getLog());
-                log = log != null ? StrSubstitutor.replaceSystemProperties(log) : "event";
+                if (log == null) {
+                    log = "event";
+                }
                 final KieRuntimeLogger logger;
                 switch (loggerType) {
                     case CONSOLE:
