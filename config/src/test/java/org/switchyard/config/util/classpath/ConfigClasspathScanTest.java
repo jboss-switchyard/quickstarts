@@ -19,21 +19,17 @@
 
 package org.switchyard.config.util.classpath;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.type.classpath.InstanceOfFilter;
-import org.switchyard.common.type.classpath.ResourceExistsFilter;
 import org.switchyard.config.BaseConfiguration;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.DOMConfiguration;
-
-import javax.activation.CommandMap;
-import javax.activation.MailcapCommandMap;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>

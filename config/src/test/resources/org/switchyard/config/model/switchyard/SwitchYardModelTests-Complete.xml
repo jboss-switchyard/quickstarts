@@ -38,7 +38,7 @@ MA  02110-1301, USA.
         <sca:service name="M1AppService" promote="SimpleService">
             <soap:binding.soap>
                 <soap:port secure="true">MyWebService/SOAPPort</soap:port>
-                <soap:wsdl description="foobar">service.wsdl</soap:wsdl>
+                <soap:wsdl description="foobar">${soapWsdlName}.wsdl</soap:wsdl>
             </soap:binding.soap>
         </sca:service>
         <sca:component name="SimpleService">
@@ -60,7 +60,7 @@ MA  02110-1301, USA.
     <transforms>
         <java:transform.java from="msgA" to="msgB" class="org.examples.transform.AtoBTransform"/>
         <smooks:transform.smooks from="msgC" to="msgD">
-            <smooks:config>stuff</smooks:config>
+            <smooks:config>${smooksConfig}</smooks:config>
         </smooks:transform.smooks>
     </transforms>
     <validates>
@@ -77,13 +77,18 @@ MA  02110-1301, USA.
         <properties>
             <property name="foo" value="bar"/>
             <property name="tuna" value="fish"/>
+            <property name="userName" value="${user.name}"/>
+            <property name="osName" value="${os.name}"/>
+            <property name="whoIsWill" value="iam"/>
+            <property name="smooksConfig" value="stuff"/>
+            <property name="soapWsdlName" value="service"/>
         </properties>
         <handlers>
             <handler name="handler1" class="org.switchyard.handlers.TestHandler"/>
         </handlers>
         <security callbackHandler="java.lang.Object" moduleName="other">
             <properties>
-                <property name="will" value="iam"/>
+                <property name="will" value="${whoIsWill}"/>
             </properties>
         </security>
     </domain>

@@ -20,11 +20,15 @@ package org.switchyard.config.model.switchyard.v1;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.common.property.CompoundPropertyResolver;
+import org.switchyard.common.property.PropertyResolver;
+import org.switchyard.common.property.SystemPropertiesPropertyResolver;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.domain.DomainModel;
+import org.switchyard.config.model.property.PropertiesModel;
 import org.switchyard.config.model.switchyard.ArtifactsModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
@@ -49,6 +53,7 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
     public V1SwitchYardModel() {
         super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, SwitchYardModel.SWITCHYARD));
         setModelChildrenOrder(CompositeModel.COMPOSITE, TransformsModel.TRANSFORMS, ValidatesModel.VALIDATES, DomainModel.DOMAIN, ArtifactsModel.ARTIFACTS);
+        setDomainPropertyResolver();
     }
 
     /**
@@ -59,6 +64,7 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
     public V1SwitchYardModel(Configuration config, Descriptor desc) {
         super(config, desc);
         setModelChildrenOrder(CompositeModel.COMPOSITE, TransformsModel.TRANSFORMS, ValidatesModel.VALIDATES, DomainModel.DOMAIN, ArtifactsModel.ARTIFACTS);
+        setDomainPropertyResolver();
     }
 
     /**
@@ -163,7 +169,23 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
     public SwitchYardModel setDomain(DomainModel domain) {
         setChildModel(domain);
         _domain = domain;
+        setDomainPropertyResolver();
         return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setDomainPropertyResolver() {
+        DomainModel domain = getDomain();
+        if (domain != null) {
+            PropertiesModel properties = domain.getProperties();
+            if (properties != null) {
+                PropertyResolver pr = new CompoundPropertyResolver(SystemPropertiesPropertyResolver.instance(), properties);
+                getModelConfiguration().setPropertyResolver(pr);
+            }
+        }
     }
 
 }

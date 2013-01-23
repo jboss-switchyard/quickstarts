@@ -34,6 +34,8 @@ import javax.xml.transform.OutputKeys;
 
 import org.switchyard.common.io.pull.ElementPuller;
 import org.switchyard.common.lang.Strings;
+import org.switchyard.common.property.PropertyResolver;
+import org.switchyard.common.property.SystemPropertiesPropertyResolver;
 import org.switchyard.common.xml.XMLHelper;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -51,8 +53,8 @@ import org.w3c.dom.Text;
 public class DOMConfiguration extends BaseConfiguration {
 
     private static final String CHILDREN_ORDER_KEY = "childrenOrder";
-    private static final String CHILDREN_NAMESPACE_KEY = "childrenNamespace";
     private static final String CHILDREN_ORDER_DELIM = ",";
+    private static final String PROPERTY_RESOLVER_KEY = "propertyResolver";
 
     private Element _element;
     private Element _parent_element;
@@ -124,10 +126,14 @@ public class DOMConfiguration extends BaseConfiguration {
     @Override
     public String getValue() {
         Node text_node = getTextNode(false);
+        String value = null;
         if (text_node instanceof Text) {
-            return ((Text)text_node).getWholeText();
+            value = ((Text)text_node).getWholeText();
         } else if (text_node != null) {
-            return text_node.getNodeValue();
+            value = text_node.getNodeValue();
+        }
+        if (value != null) {
+            return Strings.replaceProperties(value, getPropertyResolver());
         }
         return null;
     }
@@ -243,7 +249,7 @@ public class DOMConfiguration extends BaseConfiguration {
     public String getAttribute(String name) {
         if (name != null) {
             String value = _element.getAttribute(name);
-            return "".equals(value) ? null : value;
+            return "".equals(value) ? null : Strings.replaceProperties(value, getPropertyResolver());
         }
         return null;
     }
@@ -260,7 +266,7 @@ public class DOMConfiguration extends BaseConfiguration {
                 Attr attr = _element.getAttributeNodeNS(namespaceURI, localPart);
                 if (attr != null) {
                     String value = attr.getValue();
-                    return "".equals(value) ? null : value;
+                    return "".equals(value) ? null : Strings.replaceProperties(value, getPropertyResolver());
                 }
             } else {
                 return getAttribute(localPart);
@@ -327,7 +333,7 @@ public class DOMConfiguration extends BaseConfiguration {
      */
     @Override
     public Configuration getParent() {
-        Node node =_element.getParentNode();
+        Node node = _element.getParentNode();
         if (node instanceof Element) {
             Element e = (Element)node;
             if (_parent_element != null && _parent_element != e) {
@@ -670,6 +676,28 @@ public class DOMConfiguration extends BaseConfiguration {
     public Configuration setChildrenOrder(String... childrenOrder) {
         String co = Strings.concat(CHILDREN_ORDER_DELIM, childrenOrder);
         _element.setUserData(CHILDREN_ORDER_KEY, co, null);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PropertyResolver getPropertyResolver() {
+        PropertyResolver propertyResolver = (PropertyResolver)_element.getUserData(PROPERTY_RESOLVER_KEY);
+        if (propertyResolver == null) {
+            Configuration parent = getParent();
+            propertyResolver = parent != null ? parent.getPropertyResolver() : SystemPropertiesPropertyResolver.instance();
+        }
+        return propertyResolver;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Configuration setPropertyResolver(PropertyResolver propertyResolver) {
+        _element.setUserData(PROPERTY_RESOLVER_KEY, propertyResolver, null);
         return this;
     }
 

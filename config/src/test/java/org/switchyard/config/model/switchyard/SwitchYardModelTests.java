@@ -102,6 +102,7 @@ public class SwitchYardModelTests {
         SOAPBindingModel binding = (SOAPBindingModel)service.getBindings().get(0);
         PortModel port = binding.getPort();
         Assert.assertEquals("MyWebService/SOAPPort", port.getPort());
+        Assert.assertEquals("service.wsdl", binding.getWSDL().getLocation());
         String name = port.getBinding().getService().getComposite().getComponents().get(0).getName();
         Assert.assertEquals("SimpleService", name);
         // Verify transform configuration
@@ -120,9 +121,14 @@ public class SwitchYardModelTests {
         Assert.assertEquals("TestDomain", domain.getName());
         // Verify property configuration
         PropertiesModel props = domain.getProperties();
-        Assert.assertEquals(2, props.getProperties().size());
+        Assert.assertEquals(7, props.getProperties().size());
         Assert.assertEquals("bar", props.getProperty("foo").getValue());
         Assert.assertEquals("fish", props.getProperty("tuna").getValue());
+        Assert.assertEquals(System.getProperty("user.name"), props.getProperty("userName").getValue());
+        Assert.assertEquals(System.getProperty("os.name"), props.getProperty("osName").getValue());
+        Assert.assertEquals("iam", props.getProperty("whoIsWill").getValue());
+        Assert.assertEquals("stuff", props.getProperty("smooksConfig").getValue());
+        Assert.assertEquals("service", props.getProperty("soapWsdlName").getValue());
         Assert.assertEquals(switchyard, domain.getSwitchYard());
         // Verify handler configuration
         Assert.assertEquals(1, domain.getHandlers().getHandlers().size());

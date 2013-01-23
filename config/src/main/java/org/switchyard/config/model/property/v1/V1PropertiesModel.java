@@ -156,4 +156,13 @@ public class V1PropertiesModel extends BaseModel implements PropertiesModel {
         return map;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String resolveProperty(String key) {
+        PropertyModel property = getProperty(key);
+        return property != null ? property.getValue() : null;
+    }
+
 }

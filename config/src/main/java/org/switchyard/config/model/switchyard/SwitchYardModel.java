@@ -101,6 +101,10 @@ public interface SwitchYardModel extends NamedModel {
      * @return this SwitchyardModel (useful for chaining)
      */
     public SwitchYardModel setDomain(DomainModel domain);
-    
-    
+
+    /**
+     * Sets the domain property resolver based on the curren state of the model.
+     */
+    public void setDomainPropertyResolver();
+
 }

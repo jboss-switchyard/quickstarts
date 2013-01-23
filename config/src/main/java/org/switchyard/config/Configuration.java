@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
 package org.switchyard.config;
 
 import java.io.IOException;
@@ -28,6 +27,8 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
+
+import org.switchyard.common.property.PropertyResolver;
 
 /**
  * The central and most important interface of the Configuration API.
@@ -345,6 +346,19 @@ public interface Configuration {
      * @return this config (useful for chaining)
      */
     public Configuration orderChildren(boolean recursive);
+
+    /**
+     * Gets the PropertyResolver.
+     * @return the PropertyResolver
+     */
+    public PropertyResolver getPropertyResolver();
+
+    /**
+     * Sets the PropertyResolver.
+     * @param propertyResolver the PropertyResolver.
+     * @return this config (useful for chaining)
+     */
+    public Configuration setPropertyResolver(PropertyResolver propertyResolver);
 
     /**
      * Copies this config.

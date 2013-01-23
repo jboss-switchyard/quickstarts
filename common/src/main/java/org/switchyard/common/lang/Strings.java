@@ -28,6 +28,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.switchyard.common.property.PropertyResolver;
+import org.switchyard.common.property.SystemPropertiesPropertyResolver;
+
 /**
  * Common String Utilities.
  *
@@ -228,6 +231,47 @@ public final class Strings {
             return sb.toString();
         }
         return null;
+    }
+
+    /**
+     * Replaces system properties.
+     * @param str the original string
+     * @return the modified string
+     */
+    public static String replaceSystemProperties(String str) {
+        return replaceProperties(str, SystemPropertiesPropertyResolver.instance());
+    }
+
+    /**
+     * Replaces properties per the given property resolver.
+     * @param str the original string
+     * @param resolver the property resolver
+     * @return the modified string
+     */
+    public static String replaceProperties(String str, PropertyResolver resolver) {
+        if (str != null && resolver != null) {
+            int l_pos = str.indexOf("${", 0);
+            while (l_pos != -1) {
+                int r_pos = str.indexOf('}', l_pos + 2);
+                if (r_pos == -1) {
+                    break;
+                }
+                String key = str.substring(l_pos + 2, r_pos);
+                String value = resolver.resolveProperty(key);
+                if (value != null) {
+                    String begin = str.substring(0, l_pos);
+                    str = new StringBuilder()
+                        .append(begin)
+                        .append(value)
+                        .append(str.substring(r_pos + 1, str.length()))
+                        .toString();
+                    l_pos = str.indexOf("${", begin.length() + value.length());
+                } else {
+                    l_pos = str.indexOf("${", l_pos + 2);
+                }
+            }
+        }
+        return str;
     }
 
     private Strings() {}

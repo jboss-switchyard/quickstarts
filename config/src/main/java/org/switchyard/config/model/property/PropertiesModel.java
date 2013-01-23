@@ -22,12 +22,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.config.model.Model;
 
 /**
  * The "properties" configuration model.
  */
-public interface PropertiesModel extends Model {
+public interface PropertiesModel extends Model, PropertyResolver {
 
     /** The "properties" name. */
     public static final String PROPERTIES = "properties";

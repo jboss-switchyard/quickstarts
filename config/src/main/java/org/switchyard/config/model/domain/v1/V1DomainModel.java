@@ -75,6 +75,10 @@ public class V1DomainModel extends BaseNamedModel implements DomainModel {
     public DomainModel setProperties(PropertiesModel properties) {
         setChildModel(properties);
         _properties = properties;
+        SwitchYardModel switchyard = getSwitchYard();
+        if (switchyard != null) {
+            switchyard.setDomainPropertyResolver();
+        }
         return this;
     }
 

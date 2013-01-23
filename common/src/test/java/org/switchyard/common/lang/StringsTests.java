@@ -29,9 +29,15 @@ import static org.switchyard.common.lang.Strings.uniqueSplitTrimToNullArray;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
+import org.junit.Assert;
 import org.junit.Test;
+import org.switchyard.common.property.CompoundPropertyResolver;
+import org.switchyard.common.property.PropertiesPropertyResolver;
+import org.switchyard.common.property.PropertyResolver;
+import org.switchyard.common.property.SystemPropertiesPropertyResolver;
 
 /**
  * StringsTests.
@@ -95,6 +101,35 @@ public class StringsTests {
         assertEquals(2, s.length);
         assertEquals("foo", s[0]);
         assertEquals("bar", s[1]);
+    }
+
+    @Test
+    public void testReplaceSystemProperties() {
+        final String original = "Hello ${user.name} using ${os.name} skipping ${unknown.property}!";
+        final String expected = "Hello " + System.getProperty("user.name") + " using " + System.getProperty("os.name") + " skipping ${unknown.property}!";
+        final String actual = Strings.replaceSystemProperties(original);
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testReplaceCustomProperties() {
+        Properties custom = new Properties();
+        custom.setProperty("foo", "bar");
+        final String original = "I have a ${foo}.";
+        final String expected = "I have a bar.";
+        final String actual = Strings.replaceProperties(original, new PropertiesPropertyResolver(custom));
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testReplaceCompoundProperties() {
+        Properties custom = new Properties();
+        custom.setProperty("foo", "bar");
+        final String original = "${user.name} has a ${foo}.";
+        final String expected = System.getProperty("user.name") + " has a bar.";
+        PropertyResolver resolver = new CompoundPropertyResolver(SystemPropertiesPropertyResolver.instance(), new PropertiesPropertyResolver(custom));
+        final String actual = Strings.replaceProperties(original, resolver);
+        Assert.assertEquals(expected, actual);
     }
 
 }

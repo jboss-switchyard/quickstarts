@@ -27,7 +27,7 @@ MA  02110-1301, USA.
         <sca:service name="M1AppService" promote="SimpleService">
             <soap:binding.soap>
                 <soap:port secure="true">MyWebService/SOAPPort</soap:port>
-                <soap:wsdl description="foobar">service.wsdl</soap:wsdl>
+                <soap:wsdl description="foobar">${soapWsdlName}.wsdl</soap:wsdl>
             </soap:binding.soap>
         </sca:service>
     </sca:composite>
