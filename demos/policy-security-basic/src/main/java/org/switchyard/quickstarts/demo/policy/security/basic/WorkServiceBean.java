@@ -18,12 +18,15 @@
  */
 package org.switchyard.quickstarts.demo.policy.security.basic;
 
+import static org.switchyard.policy.SecurityPolicy.AUTHORIZATION;
+import static org.switchyard.policy.SecurityPolicy.CLIENT_AUTHENTICATION;
+import static org.switchyard.policy.SecurityPolicy.CONFIDENTIALITY;
+
 import org.apache.log4j.Logger;
 import org.switchyard.annotations.Requires;
 import org.switchyard.component.bean.Service;
-import org.switchyard.policy.SecurityPolicy;
 
-@Requires(security = {SecurityPolicy.CLIENT_AUTHENTICATION, SecurityPolicy.CONFIDENTIALITY})
+@Requires(security = {CONFIDENTIALITY, CLIENT_AUTHENTICATION, AUTHORIZATION})
 @Service(WorkService.class)
 public class WorkServiceBean implements WorkService {
 

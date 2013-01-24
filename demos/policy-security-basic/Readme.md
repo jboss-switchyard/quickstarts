@@ -12,13 +12,13 @@ Running the quickstart
     mvn clean install
 2. Create a keystore to support SSL:
     cd ${AS7}/standalone/configuration
-    keytool -genkey -alias tomcat -keyalg RSA -keypass changeit -keystore tomcat.keystore
+    keytool -genkey -alias tomcat -keyalg RSA -keypass changeit -keystore tomcat.jks
     (password is "changeit")
 3. Add the required https connector to the web subsystem in standalone.xml to support SSL. (include contents of connector.xml)
 4. Create an application user:
     cd ${AS7}/bin
 	sh ./add-user.sh
-	Add username of "kermit" and password of "thefrog". No roles are required for this example.
+	Add username "kermit", password "thefrog", and role "analysts".
 6. Deploy the quickstart
     cp target/switchyard-quickstart-demo-policy-security-basic.jar ${AS7}/standalone/deployments
 7. Start JBoss AS 7 in standalone mode:
@@ -39,13 +39,13 @@ When running with no options:
 
 , you will be hitting the http (non-SSL) URL, and see this in your log:
 
-    Caused by: org.switchyard.exception.SwitchYardException: Required policies have not been provided: clientAuthentication confidentiality
+    Caused by: org.switchyard.exception.SwitchYardException: Required policies have not been provided: authorization clientAuthentication confidentiality
 
 When running with this option:
 
     mvn exec:java -Dexec.args="confidentiality clientAuthentication"
 
-, you will be hitting the https (SSL) URL and providing an Authorization header for basic authentication, and see this in your log:
+, you will be hitting the https (SSL) URL and providing authentication information, and see this in your log:
 
     INFO  [org.switchyard.quickstarts.demo.policy.security.basic.WorkServiceBean] (http--127.0.0.1-8443-1) :: WorkService :: Received work command => CMD-1345738943385
 

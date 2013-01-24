@@ -27,8 +27,8 @@ import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 import org.apache.log4j.Logger;
 import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.common.lang.Strings;
-import org.switchyard.policy.SecurityPolicy;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
+import org.switchyard.policy.SecurityPolicy;
 
 /**
  * WorkServiceMain.
@@ -39,11 +39,11 @@ public final class WorkServiceMain {
 
     private static final Logger LOGGER = Logger.getLogger(WorkServiceMain.class);
 
-    private static final String CLIENT_AUTHENTICATION = SecurityPolicy.CLIENT_AUTHENTICATION.getName();
     private static final String CONFIDENTIALITY = SecurityPolicy.CONFIDENTIALITY.getName();
+    private static final String CLIENT_AUTHENTICATION = SecurityPolicy.CLIENT_AUTHENTICATION.getName();
     private static final String HELP = "help";
 
-    private static final String MAVEN_USAGE = String.format("Maven Usage: mvn exec:java -Dexec.args=\"%s %s %s\"", CLIENT_AUTHENTICATION, CONFIDENTIALITY, HELP);
+    private static final String MAVEN_USAGE = String.format("Maven Usage: mvn exec:java -Dexec.args=\"%s %s %s\"", CONFIDENTIALITY, CLIENT_AUTHENTICATION, HELP);
 
     private static void invokeWorkService(String scheme, int port, String binarySecurityToken) throws Exception {
         String soapRequest = new StringPuller().pull("/xml/soap-request.xml").replaceAll("WORK_CMD", "CMD-" + System.currentTimeMillis());
@@ -71,7 +71,7 @@ public final class WorkServiceMain {
         for (String arg : args) {
             arg = Strings.trimToNull(arg);
             if (arg != null) {
-                if (arg.equals(CLIENT_AUTHENTICATION) || arg.equals(CONFIDENTIALITY) || arg.equals(HELP)) {
+                if (arg.equals(CONFIDENTIALITY) || arg.equals(CLIENT_AUTHENTICATION) || arg.equals(HELP)) {
                     policies.add(arg);
                 } else {
                     LOGGER.error(MAVEN_USAGE);

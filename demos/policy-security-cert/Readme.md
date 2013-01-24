@@ -12,20 +12,22 @@ Running the quickstart
     mvn clean install
 2. Create a keystore to support SSL:
     cd ${AS7}/standalone/configuration
-    keytool -genkey -alias tomcat -keyalg RSA -keypass changeit -keystore tomcat.keystore
+    keytool -genkey -alias tomcat -keyalg RSA -keypass changeit -keystore tomcat.jks
     (password is "changeit")
 3. Add the required https connector to the web subsystem in standalone.xml to support SSL. (include contents of connector.xml)
 4. Add the required security-domain sections to the security subsystem in standalone.xml to support SSL. (include contents of security-domain.xml)
-5. Copy the certificate keystore file:
-    cp policy-security-cert.keystore ${AS7}/standalone/configuration
-6. Deploy the quickstart
+5. Copy the users keystore file:
+    cp users.jks ${AS7}/standalone/configuration
+6. Copy the roles properties file:
+    cp roles.properties ${AS7}/standalone/configuration
+7. Deploy the quickstart
     cp target/switchyard-quickstart-demo-policy-security-cert.jar ${AS7}/standalone/deployments
-7. Start JBoss AS 7 in standalone mode:
+8. Start JBoss AS 7 in standalone mode:
     sh ./standalone.sh
-8. Execute the test
+9. Execute the test
     See "Options" section below.
-9. Check the server console for output from the service.
-10. Undeploy the application
+10. Check the server console for output from the service.
+11. Undeploy the application
     rm ${AS7}/standalone/deployments/switchyard-quickstart-demo-policy-security-cert-{version}.jar
 
 
@@ -38,13 +40,13 @@ When running with no options:
 
 , you will be hitting the http (non-SSL) URL, and see this in your log:
 
-    Caused by: org.switchyard.exception.SwitchYardException: Required policies have not been provided: clientAuthentication confidentiality
+    Caused by: org.switchyard.exception.SwitchYardException: Required policies have not been provided: authorization clientAuthentication confidentiality
 
 When running with this option:
 
     mvn exec:java -Dexec.args="confidentiality clientAuthentication"
 
-, you will be hitting the https (SSL) URL and providing a BinarySecurityToken header for certificate authentication, and see this in your log:
+, you will be hitting the https (SSL) URL and providing authentication information, and see this in your log:
 
     INFO  [org.switchyard.quickstarts.demo.policy.security.cert.WorkServiceBean] (http--127.0.0.1-8443-1) :: WorkService :: Received work command => CMD-1345738943385
 
