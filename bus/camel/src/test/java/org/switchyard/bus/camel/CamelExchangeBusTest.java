@@ -27,10 +27,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.xml.namespace.QName;
 
+import org.apache.camel.Processor;
+import org.apache.camel.builder.NoErrorHandlerBuilder;
+import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.spi.RouteContext;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.Exchange;
@@ -50,7 +55,6 @@ import org.switchyard.internal.ServiceReferenceImpl;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.spi.Dispatcher;
-
 
 public class CamelExchangeBusTest {
 
@@ -78,22 +82,22 @@ public class CamelExchangeBusTest {
     public void testCreateDispatcher() throws Exception {
         // verify that dispatchers can be created for an InOnly service
         ServiceReference inOnly = new ServiceReferenceImpl(
-                new QName("inOnly"), new InOnlyService(), null);
-        _provider.createDispatcher(inOnly);
+            new QName("inOnly"), new InOnlyService(), _domain);
+        assertNotNull(_provider.createDispatcher(inOnly));
 
         // verify that dispatchers can be created for an InOut service
         ServiceReference inOut = new ServiceReferenceImpl(
-                new QName("inOut"), new InOutService(), null);
-        _provider.createDispatcher(inOut);
+            new QName("inOut"), new InOutService(), _domain);
+        assertNotNull(_provider.createDispatcher(inOut));
     }
 
     @Test
     public void testGetDispatcher() throws Exception {
         ServiceReference ref = new ServiceReferenceImpl(
-                new QName("testGetDispatcher"), new InOnlyService(), null);
+            new QName("testGetDispatcher"), new InOnlyService(), null);
         Dispatcher dispatch = _provider.createDispatcher(ref);
-        
-        Assert.assertEquals(dispatch, _provider.getDispatcher(ref));
+
+        assertEquals(dispatch, _provider.getDispatcher(ref));
     }
 
     /**
@@ -169,6 +173,46 @@ public class CamelExchangeBusTest {
         Exchange exchange = sendMessage(ref, TEST_CONTENT);
 
         assertNoCause("Standard processing exception", exchange);
+    }
+
+    @Test
+    public void testErrorHandlerHandling() throws InterruptedException {
+        final AtomicBoolean fired = new AtomicBoolean();
+        ErrorListener listener = new ErrorListener() {
+            @Override
+            public void notify(Exchange ex, Throwable e) {
+                fired.compareAndSet(false, true);
+            }
+        };
+        _camelContext.getWritebleRegistry().put("custom error listener", listener);
+        ServiceReference ref = registerInOutService("inOut", new RuntimeErrorInHandler());
+        Exchange exchange = sendMessage(ref, TEST_CONTENT);
+
+        assertTrue(fired.get());
+        assertCause("Runtime error", exchange);
+    }
+
+    @Test
+    public void testCustomErrorHandler() throws InterruptedException {
+        final AtomicBoolean fired = new AtomicBoolean();
+        _camelContext.getWritebleRegistry().put("custom error handler", new NoErrorHandlerBuilder() {
+            @Override
+            public Processor createErrorHandler(RouteContext routeContext, Processor processor) {
+                return new DelegateProcessor(processor) {
+                    @Override
+                    public void process(org.apache.camel.Exchange exchange) throws Exception {
+                        super.process(exchange);
+                        fired.compareAndSet(false, true);
+                    }
+                };
+            }
+        });
+
+        ServiceReference ref = registerInOutService("inOut", new RuntimeErrorInHandler());
+        Exchange exchange = sendMessage(ref, TEST_CONTENT);
+
+        assertTrue(fired.get());
+        assertCause("Runtime error", exchange);
     }
 
     protected static void assertNoCause(String message, Exchange exchange) {

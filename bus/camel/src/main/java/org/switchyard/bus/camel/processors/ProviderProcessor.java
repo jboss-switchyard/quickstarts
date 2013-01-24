@@ -23,8 +23,7 @@ package org.switchyard.bus.camel.processors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.switchyard.HandlerException;
-import org.switchyard.bus.camel.ExchangeDispatcher;
+import org.switchyard.bus.camel.CamelHelper;
 
 /**
  * Processor calling service provider.
@@ -33,13 +32,8 @@ public class ProviderProcessor implements Processor {
 
     @Override
     public void process(Exchange ex) throws Exception {
-        org.switchyard.Exchange syEx = ex.getProperty(ExchangeDispatcher.SY_EXCHANGE,
-            org.switchyard.Exchange.class);
-        try {
-            syEx.getProvider().getProviderHandler().handleMessage(syEx);
-        } catch (HandlerException e) {
-            syEx.sendFault(syEx.createMessage().setContent(e.isWrapper() ? e.getCause() : e));
-        }
+        org.switchyard.Exchange syEx = CamelHelper.getSwitchYardExchange(ex);
+        syEx.getProvider().getProviderHandler().handleMessage(syEx);
     }
 
     @Override

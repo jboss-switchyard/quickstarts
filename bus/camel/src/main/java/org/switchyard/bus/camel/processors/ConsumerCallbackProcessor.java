@@ -24,7 +24,7 @@ package org.switchyard.bus.camel.processors;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.switchyard.ExchangeState;
-import org.switchyard.bus.camel.ExchangeDispatcher;
+import org.switchyard.bus.camel.CamelHelper;
 import org.switchyard.internal.ExchangeImpl;
 
 /**
@@ -34,8 +34,7 @@ public class ConsumerCallbackProcessor implements Processor {
 
     @Override
     public void process(Exchange ex) throws Exception {
-        ExchangeImpl syEx = ex.getProperty(ExchangeDispatcher.SY_EXCHANGE,
-            org.switchyard.internal.ExchangeImpl.class);
+        ExchangeImpl syEx = (ExchangeImpl) CamelHelper.getSwitchYardExchange(ex);
 
         if (syEx.getState() == ExchangeState.FAULT) {
             syEx.getReplyHandler().handleFault(syEx);

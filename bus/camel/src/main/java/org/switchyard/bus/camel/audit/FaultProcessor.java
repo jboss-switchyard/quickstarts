@@ -21,14 +21,20 @@
  */
 package org.switchyard.bus.camel.audit;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.DelegateAsyncProcessor;
+import org.apache.camel.util.ExchangeHelper;
+import org.apache.log4j.Logger;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
-import org.switchyard.bus.camel.ExchangeDispatcher;
-import org.switchyard.internal.ExchangeImpl;
+import org.switchyard.bus.camel.CamelHelper;
+import org.switchyard.bus.camel.ErrorListener;
 
 /**
  * Processor which catches {@link HandlerException} before calling processor.
@@ -37,6 +43,8 @@ import org.switchyard.internal.ExchangeImpl;
  * during handling FAULT exchanges. These errors are handled in HandlerProcessor.
  */
 public class FaultProcessor extends DelegateAsyncProcessor {
+
+    private Logger _logger = Logger.getLogger(FaultProcessor.class);
 
     /**
      * Creates new fault processor.
@@ -53,8 +61,10 @@ public class FaultProcessor extends DelegateAsyncProcessor {
             @Override
             public void done(boolean doneSync) {
                 if (doneSync) { // verify exchange only if processing is done
-                    ExchangeImpl exc = exchange.getProperty(ExchangeDispatcher.SY_EXCHANGE, ExchangeImpl.class);
-                    handle(exchange.getException(), exc);
+                    org.switchyard.Exchange exc = CamelHelper.getSwitchYardExchange(exchange);
+                    if (exchange.getException() != null) {
+                        handle(exchange.getException(), exchange, exc);
+                    }
                 }
                 callback.done(doneSync);
             }
@@ -66,16 +76,39 @@ public class FaultProcessor extends DelegateAsyncProcessor {
      * and exchange state is still OK.
      * 
      * @param throwable Exception thrown by target processor.
+     * @param camel Camel exchange. 
      * @param exchange SwitchYard exchange related to exception.
      */
-    protected void handle(Throwable throwable, ExchangeImpl exchange) {
-        if (throwable != null && ExchangeState.OK == exchange.getState()) {
-            HandlerException content = detectHandlerException(throwable);
+    protected void handle(Throwable throwable, Exchange camel, org.switchyard.Exchange exchange) {
+        if (ExchangeState.OK == exchange.getState()) {
+            notifyListeners(camel.getContext(), exchange, throwable);
+            Throwable content = detectHandlerException(throwable);
             exchange.sendFault(exchange.createMessage().setContent(content));
+        } else {
+            // exception thrown during handling FAULT state cannot be forwarded
+            // anywhere, because we already have problem to handle
+            _logger.error("Unexpected exception thrown during handling FAULT response. "
+                + "This exception can not be handled, thus it's marked as handled and only logged. "
+                + "If you don't want see messages like this consider handling "
+                + "exceptions in your handler logic", throwable);
+            ExchangeHelper.setFailureHandled(camel);
         }
     }
 
-    private HandlerException detectHandlerException(Throwable throwable) {
+    protected void notifyListeners(CamelContext context, org.switchyard.Exchange exchange, Throwable exception) {
+        Map<String, ErrorListener> listeners = context.getRegistry().lookupByType(ErrorListener.class);
+        if (listeners != null && listeners.size() > 0) {
+            for (Entry<String, ErrorListener> entry : listeners.entrySet()) {
+                try {
+                    entry.getValue().notify(exchange, exception);
+                } catch (Exception e) {
+                    _logger.error("Error listener " + entry.getKey() + " failed to handle exception " + exception.getClass());
+                }
+            }
+        }
+    }
+
+    private Throwable detectHandlerException(Throwable throwable) {
         if (throwable instanceof HandlerException) {
             return (HandlerException) throwable;
         }
