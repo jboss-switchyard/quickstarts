@@ -53,10 +53,10 @@
         </sca:component>
     </sca:composite>
     <!-- 
-    <swyd:domain>
-        <swyd:handlers>
-            <swyd:handler class="org.switchyard.handlers.MessageTrace" name="MessageTrace"/>
-        </swyd:handlers>
-    </swyd:domain>
+    <domain>
+        <handlers>
+            <handler class="org.switchyard.handlers.MessageTrace" name="MessageTrace"/>
+        </handlers>
+    </domain>
      -->
 </switchyard>
