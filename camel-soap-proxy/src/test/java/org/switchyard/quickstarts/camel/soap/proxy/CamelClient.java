@@ -25,7 +25,7 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
  */
 public final class CamelClient {
 
-    private static final String URL = "http://localhost:8080/ReverseService/ReverseService";
+    private static final String URL = "http://localhost:8080/proxy/ReverseService";
     private static final String XML = "src/test/resources/xml/soap-request.xml";
 
     /**
