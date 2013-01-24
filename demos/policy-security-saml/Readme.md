@@ -12,7 +12,7 @@ Running the quickstart
     mvn clean install
 2. Create a keystore to support SSL:
     cd ${AS7}/standalone/configuration
-    keytool -genkey -alias tomcat -keyalg RSA -keypass changeit -keystore tomcat.keystore
+    keytool -genkey -alias tomcat -keyalg RSA -keypass changeit -keystore tomcat.jks
     (password is "changeit")
 3. Add the required https connector to the web subsystem in standalone.xml to support SSL. (include contents of connector.xml)
 4. Add the required security-domain sections to the security subsystem in standalone.xml to support SSL. (include contents of security-domain.xml)
@@ -46,7 +46,7 @@ When running with this option:
 
     mvn exec:java -Dexec.args="confidentiality clientAuthentication"
 
-, you will be hitting the https (SSL) URL and providing an Authorization header for basic authentication, and see this in your log:
+, you will be hitting the https (SSL) URL and providing authentication information, and see this in your log:
 
     INFO  [org.switchyard.quickstarts.demo.policy.security.saml.WorkServiceBean] (http--127.0.0.1-8443-1) :: WorkService :: Received work command => CMD-1345738943385
 

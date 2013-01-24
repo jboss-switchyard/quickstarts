@@ -1,8 +1,9 @@
                 <security-domain name="policy-security-cert" cache-type="default">
                     <authentication>
                         <login-module code="org.switchyard.security.login.CertificateLoginModule" flag="required">
-                            <module-option name="keyStoreLocation" value="../standalone/configuration/policy-security-cert.keystore"/>
-                            <module-option name="keyStorePassword" value="storepassword"/>
+                            <module-option name="keyStoreLocation" value="${jboss.server.config.dir}/users.jks"/>
+                            <module-option name="keyStorePassword" value="changeit"/>
+                            <module-option name="rolesProperties" value="${jboss.server.config.dir}/roles.properties"/>
                         </login-module>
                     </authentication>
                 </security-domain>

@@ -15,9 +15,9 @@
             <handler class="org.switchyard.handlers.MessageTrace" name="MessageTrace"/>
         </handlers>
         -->
-        <security moduleName="policy-security-cert" callbackHandler="org.switchyard.security.callback.handler.CertificateCallbackHandler">
+        <security callbackHandler="org.switchyard.security.callback.handler.CertificateCallbackHandler" moduleName="policy-security-cert" rolesAllowed="analysts">
             <properties>
-                <property name="alias" value="certtest"/>
+                <property name="alias" value="users"/>
             </properties>
         </security>
     </domain>
