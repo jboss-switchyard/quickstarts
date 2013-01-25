@@ -51,6 +51,7 @@ public class CamelSqlRetrieveTest extends CamelSqlBindingTest {
     public void shouldRetrieveGreetings() throws Exception {
         _testKit.removeService("GreetingService");
         MockHandler handler = new MockHandler();
+
         ServiceInterface metadata = JavaService.fromClass(GreetingService.class);
         _testKit.getServiceDomain().registerService(_testKit.createQName("GreetingService"), metadata, handler);
         PreparedStatement statement = connection.prepareStatement("INSERT INTO greetings (receiver, sender) VALUES (?,?)");
@@ -65,15 +66,18 @@ public class CamelSqlRetrieveTest extends CamelSqlBindingTest {
 
     // method which is capable to hold execution of test until some records pulled from database
     private List<Greeting> getContents(MockHandler handler) {
-        handler.waitForOKMessage();
+        handler.waitForOKMessage(); // first execution of poll done
         List<Greeting> greetings = new ArrayList<Greeting>();
-        for (Exchange exchange : handler.getMessages()) {
-            Greeting[] content = exchange.getMessage().getContent(Greeting[].class);
-            if (content != null) {
-                greetings.addAll(Arrays.asList(content));
+
+        while (greetings.isEmpty()) {
+            for (Exchange exchange : handler.getMessages()) {
+                Greeting[] content = exchange.getMessage().getContent(Greeting[].class);
+                if (content != null) {
+                    greetings.addAll(Arrays.asList(content));
+                }
             }
         }
-        return greetings.size() == 0 ? getContents(handler) : greetings;
+        return greetings;
     }
 
 }
