@@ -23,7 +23,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Message;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.component.bean.BeanComponentException;
 import org.switchyard.test.InvocationFaultException;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
@@ -79,10 +79,10 @@ public class BeanConsumerTest {
             // if we got here, then our negative test failed
             Assert.fail("Exception thrown by bean but not turned into fault!");
         } catch (InvocationFaultException infEx) {
+            System.out.println(infEx.getFaultMessage().getContent());
             Message faultMsg = infEx.getFaultMessage();
-            Assert.assertTrue(faultMsg.getContent() instanceof ConsumerException);
-            Assert.assertTrue(infEx.isType(ConsumerException.class));
-            Assert.assertEquals("remote-exception-received", faultMsg.getContent(Exception.class).getMessage());
+            Assert.assertTrue(faultMsg.getContent() instanceof BeanComponentException);
+            Assert.assertEquals("remote-exception-received", faultMsg.getContent(BeanComponentException.class).getCause().getMessage());
         }
     }
 }
