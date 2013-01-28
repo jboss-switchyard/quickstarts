@@ -31,6 +31,7 @@
     <dependencies>
         <module name="javax.api"/>
         <module name="javax.transaction.api"/>
+        <module name="org.slf4j"/>
         <module name="org.apache.log4j"/>
         <module name="org.apache.camel.core"/>
         <module name="org.switchyard.api"/>
