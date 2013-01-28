@@ -51,20 +51,21 @@ public class SwitchYardServiceWorkItemHandler extends BaseSwitchYardWorkItemHand
 
     /** SwitchYard Service. */
     public static final String SWITCHYARD_SERVICE = "SwitchYard Service";
-    /** Service Name. */
+
+    /** ServiceName. */
     public static final String SERVICE_NAME = "ServiceName";
-    /** Service Operation Name. */
+    /** ServiceOperationName. */
     public static final String SERVICE_OPERATION_NAME = "ServiceOperationName";
-    /** Content Input Name. */
+    /** ContentInputName. */
     public static final String CONTENT_INPUT_NAME = "ContentInputName";
-    /** Content Output Name. */
+    /** ContentOutputName. */
     public static final String CONTENT_OUTPUT_NAME = "ContentOutputName";
-    /** Fault Result Name. */
+    /** FaultResultName. */
     public static final String FAULT_RESULT_NAME = "FaultResultName";
-    /** Fault Signal Id. */
+    /** FaultSignalId. */
     public static final String FAULT_SIGNAL_ID = "FaultSignalId";
-    /** Complete After Fault. */
-    public static final String COMPLETE_AFTER_FAULT = "CompleteAfterFault";
+    /** FaultWorkItemAction. */
+    public static final String FAULT_WORK_ITEM_ACTION = "FaultWorkItemAction";
 
     /**
      * Constructs a new SwitchYardServiceWorkItemHandler with the name "SwitchYard Service".
@@ -131,10 +132,17 @@ public class SwitchYardServiceWorkItemHandler extends BaseSwitchYardWorkItemHand
             }
             fault = handler.getFault();
         } catch (Throwable t) {
-            LOGGER.error(t);
             fault = t;
         }
-        if (fault != null) {
+        if (fault == null) {
+            manager.completeWorkItem(workItem.getId(), results);
+        } else {
+            if (fault instanceof Throwable) {
+                Throwable t = (Throwable)fault;
+                LOGGER.error("Fault encountered: " + t.getMessage(), t);
+            } else {
+                LOGGER.error("Fault encountered: " + fault);
+            }
             String faultResultName = getFaultResultName(parameters);
             if (faultResultName != null) {
                 results.put(faultResultName, fault);
@@ -143,11 +151,17 @@ public class SwitchYardServiceWorkItemHandler extends BaseSwitchYardWorkItemHand
             if (faultSignalId != null) {
                 getProcessRuntime().signalEvent(faultSignalId, fault, workItem.getProcessInstanceId());
             }
-            if (completeAfterFault(parameters)) {
-                manager.completeWorkItem(workItem.getId(), results);
+            FaultWorkItemAction faultWorkItemAction = getFaultWorkItemAction(parameters);
+            if (faultWorkItemAction != null) {
+                switch (faultWorkItemAction) {
+                    case ABORT:
+                        manager.abortWorkItem(workItem.getId());
+                        break;
+                    case COMPLETE:
+                        manager.completeWorkItem(workItem.getId(), results);
+                        break;
+                }
             }
-        } else {
-            manager.completeWorkItem(workItem.getId(), results);
         }
     }
 
@@ -188,6 +202,18 @@ public class SwitchYardServiceWorkItemHandler extends BaseSwitchYardWorkItemHand
         return getString(FAULT_SIGNAL_ID, parameters, null);
     }
 
+    private FaultWorkItemAction getFaultWorkItemAction(Map<String, Object> parameters) {
+        String s = getString(FAULT_WORK_ITEM_ACTION, parameters, null);
+        if (s != null) {
+            try {
+                return FaultWorkItemAction.valueOf(s.toUpperCase());
+            } catch (IllegalArgumentException iae) {
+                LOGGER.warn(String.format("Unknown %s: %s", FaultWorkItemAction.class.getSimpleName(), iae.getMessage()));
+            }
+        }
+        return null;
+    }
+
     private String getString(String name, Map<String, Object> parameters, String defaultValue) {
         String value = null;
         Object p = parameters.get(name);
@@ -200,18 +226,6 @@ public class SwitchYardServiceWorkItemHandler extends BaseSwitchYardWorkItemHand
         return value;
     }
 
-    private boolean completeAfterFault(Map<String, Object> parameters) {
-        Object p = parameters.get(COMPLETE_AFTER_FAULT);
-        if (p != null) {
-            if (p instanceof Boolean) {
-                return ((Boolean)p).booleanValue();
-            } else if (p instanceof String) {
-                return Boolean.valueOf(((String)p).trim()).booleanValue();
-            }
-        }
-        return true;
-    }
-
     private static final class FaultHandler extends SynchronousInOutHandler {
         private Object _fault;
         private Object getFault() {
@@ -222,6 +236,11 @@ public class SwitchYardServiceWorkItemHandler extends BaseSwitchYardWorkItemHand
             _fault = exchange.getMessage().getContent();
             super.handleFault(exchange);
         }
+    }
+
+    private static enum FaultWorkItemAction {
+        ABORT,
+        COMPLETE;
     }
 
 }

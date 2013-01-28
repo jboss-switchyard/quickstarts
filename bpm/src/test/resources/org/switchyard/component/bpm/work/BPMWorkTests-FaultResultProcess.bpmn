@@ -16,10 +16,12 @@
       <ioSpecification id="InputOutputSpecification_1">
         <dataInput id="DataInput_ServiceName" name="ServiceName"/>
         <dataInput id="DataInput_FaultResultName" name="FaultResultName"/>
+        <dataInput id="DataInput_1" name="FaultWorkItemAction"/>
         <dataOutput id="DataOutput_FaultResult" itemSubjectRef="ItemDefinition_HandlerException" name="faultResult"/>
         <inputSet id="InputSet_1">
           <dataInputRefs>DataInput_ServiceName</dataInputRefs>
           <dataInputRefs>DataInput_FaultResultName</dataInputRefs>
+          <dataInputRefs>DataInput_1</dataInputRefs>
         </inputSet>
         <outputSet id="OutputSet_1">
           <dataOutputRefs>DataOutput_FaultResult</dataOutputRefs>
@@ -37,6 +39,13 @@
         <assignment id="Assignment_2">
           <from xsi:type="tFormalExpression" id="FormalExpression_5">faultResult</from>
           <to xsi:type="tFormalExpression" id="FormalExpression_3">DataInput_FaultResultName</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataInputAssociation id="DataInputAssociation_3">
+        <targetRef>DataInput_1</targetRef>
+        <assignment id="Assignment_3">
+          <from xsi:type="tFormalExpression" id="FormalExpression_4">complete</from>
+          <to xsi:type="tFormalExpression">DataInput_1</to>
         </assignment>
       </dataInputAssociation>
       <dataOutputAssociation id="_DataOutputAssociation_3">

@@ -26,7 +26,7 @@ import org.drools.process.core.datatype.impl.type.StringDataType;
             "ContentOutputName" : new StringDataType(),
             "FaultResultName" : new StringDataType(),
             "FaultSignalId" : new StringDataType(),
-            "CompleteAfterFault" : new StringDataType()
+            "FaultWorkItemAction" : new StringDataType()
         ],
         "displayName" : "SwitchYard Service",
         "icon" : "org/switchyard/component/bpm/SwitchYard-16x16.gif"
