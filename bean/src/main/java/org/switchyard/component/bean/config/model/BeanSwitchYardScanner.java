@@ -190,7 +190,7 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             }
 
             compositeModel.addComponent(componentModel);
-            componentModel.setName(name);
+            componentModel.setName(getComponentName(name, service));
             compositeModel.addComponent(componentModel);
         }
 
@@ -201,6 +201,13 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
         return new ScannerOutput<SwitchYardModel>().setModel(switchyardModel);
     }
 
+    private String getComponentName(String serviceName, Service service) {
+        if (service == null) {
+            return serviceName;
+        }
+        String componentName = service.componentName();
+        return Service.EMPTY.equals(componentName) ? serviceName : componentName;
+    }
     private List<Class<?>> scanForServiceBeans(List<URL> urls) throws IOException {
         IsAnnotationPresentFilter filter = new IsAnnotationPresentFilter(Service.class);
         filter.addType(Reference.class);

@@ -31,6 +31,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * Bean Service Annotation.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ * @author <a href="mailto:jpechane@redhat.com">jpechane@redhat.com</a>
  * @see org.switchyard.component.bean.Reference
  */
 @Target({TYPE, FIELD })
@@ -49,10 +50,14 @@ public @interface Service {
     String name() default EMPTY;
     
     /**
+     * Optional name of the component that implements the service.
+     */
+    String componentName() default EMPTY;
+
+    /**
      * Constant representing a null (i.e. unassigned) value.
      * Annotations are not allowed to have empty values, so a default
      * representation for an empty value is used.
      */
-    public static final String EMPTY = "";
-    
+    public static final String EMPTY = "";    
 }

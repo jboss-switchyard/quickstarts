@@ -63,6 +63,7 @@ public class ServiceAnnotationTest {
         List<ComponentModel> components = _scannedModel.getComposite().getComponents();
         boolean customServiceNameFound = false;
         boolean emptyServiceNameFound = false;
+        boolean customComponentNameFound = false;
         for(ComponentModel component : components) {
             if(component.getName().equals("CustomServiceAnnotationServiceName")){
                 customServiceNameFound = true;
@@ -70,9 +71,13 @@ public class ServiceAnnotationTest {
             if(component.getName().equals("")){
                 emptyServiceNameFound = true;
             }
+            if(component.getName().equals("CustomServiceAnnotationComponentName")){
+                customComponentNameFound = true;
+            }
         }
         Assert.assertTrue(customServiceNameFound);
         Assert.assertFalse(emptyServiceNameFound);
+        Assert.assertTrue(customComponentNameFound);
     }
 
 }
