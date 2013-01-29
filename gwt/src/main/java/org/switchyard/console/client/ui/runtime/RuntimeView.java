@@ -81,6 +81,11 @@ public class RuntimeView extends DisposableViewImpl implements MyView {
     }
 
     @Override
+    public void changeTab(Tab tab, TabData tabData, String historyToken) {
+        _tabPanel.changeTab(tab, tabData, historyToken);
+    }
+
+    @Override
     public void setInSlot(Object slot, Widget content) {
         if (slot == RuntimePresenter.TYPE_SET_TAB_CONTENT) {
             _tabPanel.setContent(content);

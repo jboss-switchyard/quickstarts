@@ -23,7 +23,7 @@ import org.switchyard.console.components.client.internal.ComponentExtensionManag
 import org.switchyard.console.components.client.ui.ComponentConfigurationPresenter;
 import org.switchyard.console.components.client.ui.ComponentConfigurationPresenter.ComponentConfigurationView;
 
-import com.google.gwt.event.shared.EventBus;
+import com.google.web.bindery.event.shared.EventBus;
 
 /**
  * ComponentProviderProxyImpl

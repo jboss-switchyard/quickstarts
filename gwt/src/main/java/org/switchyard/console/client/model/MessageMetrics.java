@@ -18,7 +18,7 @@
  */
 package org.switchyard.console.client.model;
 
-import com.google.gwt.autobean.shared.AutoBean.PropertyName;
+import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
 /**
  * MessageMetrics
@@ -87,13 +87,13 @@ public interface MessageMetrics {
      * @return average processing time
      */
     @PropertyName("averageTime")
-    double getAverageProcessingTime();
+    Double getAverageProcessingTime();
 
     /**
      * @param value average processing time
      */
     @PropertyName("averageTime")
-    void setAverageProcessingTime(double value);
+    void setAverageProcessingTime(Double value);
 
     /**
      * Minimum processing time for a message in TimeUnit.MILLISECONDS.

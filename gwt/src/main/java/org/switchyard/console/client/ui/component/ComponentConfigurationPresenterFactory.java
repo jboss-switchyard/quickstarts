@@ -27,8 +27,8 @@ import org.switchyard.console.components.client.extension.ComponentProvider;
 import org.switchyard.console.components.client.extension.ComponentProviders;
 import org.switchyard.console.components.client.ui.ComponentConfigurationPresenter;
 
-import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 
 /**
  * ComponentConfigurationPresenterFactory

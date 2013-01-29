@@ -34,7 +34,6 @@
     <name>SwitchYard: Console Parent</name>
     <description>SwitchYard Management Console parent project.</description>
     <modules>
-        <module>as7-core</module>
         <module>component</module>
         <module>gwt</module>
         <module>app</module>

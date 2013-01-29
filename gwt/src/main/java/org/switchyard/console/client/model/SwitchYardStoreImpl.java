@@ -43,11 +43,12 @@ import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.dmr.client.ModelNode;
 import org.switchyard.console.client.BeanFactory;
+import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.components.client.model.Component;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.autobean.shared.AutoBeanCodex;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 /**
  * SwitchYardStoreImpl
@@ -68,7 +69,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
     private static final String READ_SERVICE = "read-service";
     private static final String SERVICE_NAME = "service-name";
     private static final String SHOW_METRICS = "show-metrics";
-    private static final String SWITCHYARD = "switchyard";
+    private static final String SWITCHYARD = NameTokens.SUBSYSTEM;
 
     private final DispatchAsync _dispatcher;
 

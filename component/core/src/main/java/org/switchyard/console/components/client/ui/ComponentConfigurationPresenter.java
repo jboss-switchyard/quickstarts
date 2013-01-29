@@ -20,7 +20,7 @@ package org.switchyard.console.components.client.ui;
 
 import org.switchyard.console.components.client.model.Component;
 
-import com.google.gwt.event.shared.EventBus;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
 

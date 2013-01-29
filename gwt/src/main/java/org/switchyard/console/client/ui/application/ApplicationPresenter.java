@@ -32,10 +32,10 @@ import org.switchyard.console.client.model.SwitchYardStore;
 import org.switchyard.console.client.ui.runtime.RuntimePresenter;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;

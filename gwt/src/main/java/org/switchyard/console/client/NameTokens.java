@@ -31,6 +31,9 @@ public final class NameTokens {
     private NameTokens() {
     }
 
+    /** The SwitchYard subsystem name. */
+    public static final String SUBSYSTEM = "switchyard";
+
     /** The subpath for the SwitchYard system configuration view. */
     public static final String SYSTEM_CONFIG_PRESENTER = "switchyard";
     /** The subpath for the SwitchYard applications view. */

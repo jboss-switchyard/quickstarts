@@ -162,4 +162,10 @@ public class GWTPTabPanel implements TabPanel {
         _tabBar.selectTab(_tabs.indexOf(tab), false);
     }
 
+    @Override
+    public void changeTab(Tab tab, TabData tabData, String historyToken) {
+        // tab.setText(tabData.getLabel());
+        // tab.setTargetHistoryToken(historyToken);
+    }
+
 }

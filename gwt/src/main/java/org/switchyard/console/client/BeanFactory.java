@@ -18,6 +18,7 @@
  */
 package org.switchyard.console.client;
 
+import org.jboss.as.console.spi.BeanFactoryExtension;
 import org.switchyard.console.client.model.Application;
 import org.switchyard.console.client.model.ArtifactReference;
 import org.switchyard.console.client.model.ArtifactReferenceCategory;
@@ -32,9 +33,8 @@ import org.switchyard.console.client.model.SystemDetails;
 import org.switchyard.console.client.model.Transformer;
 import org.switchyard.console.components.client.model.Component;
 
-import com.google.gwt.autobean.shared.AutoBean;
-import com.google.gwt.autobean.shared.AutoBeanFactory;
-import com.google.gwt.autobean.shared.AutoBeanFactory.Category;
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 
 /**
  * BeanFactory
@@ -43,7 +43,8 @@ import com.google.gwt.autobean.shared.AutoBeanFactory.Category;
  * 
  * @author Rob Cernich
  */
-@Category({QNameCategory.class, ArtifactReferenceCategory.class})
+@BeanFactoryExtension
+@AutoBeanFactory.Category({QNameCategory.class, ArtifactReferenceCategory.class})
 public interface BeanFactory extends AutoBeanFactory {
 
     /**

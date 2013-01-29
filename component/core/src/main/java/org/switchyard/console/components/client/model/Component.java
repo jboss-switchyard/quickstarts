@@ -48,7 +48,7 @@ public interface Component {
     /**
      * @param types component activation types.
      */
-    public void setgetActivationTypes(Set<String> types);
+    public void setActivationTypes(Set<String> types);
 
     /**
      * @return component properties.

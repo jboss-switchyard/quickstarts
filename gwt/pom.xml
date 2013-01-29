@@ -33,11 +33,9 @@
     <name>SwitchYard: AS7 Management Console Extension</name>
     <description>AS7 management console extension supporting the SwitchYard runtime.</description>
     <dependencies>
-        <!-- XXX: replace with proper AS dependency once console includes extension support. -->
         <dependency>
-            <groupId>org.switchyard.console</groupId>
-            <artifactId>switchyard-console-as7-core</artifactId>
-            <classifier>module</classifier>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-console-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard.console</groupId>

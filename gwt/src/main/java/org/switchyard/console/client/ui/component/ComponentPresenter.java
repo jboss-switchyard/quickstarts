@@ -20,7 +20,7 @@
 package org.switchyard.console.client.ui.component;
 
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.spi.SubsystemExtension;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.model.SwitchYardStore;
 import org.switchyard.console.client.ui.config.ConfigPresenter;
@@ -35,6 +35,7 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
+import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -57,7 +58,8 @@ public class ComponentPresenter extends Presenter<ComponentPresenter.MyView, Com
      * The proxy type used by this presenter.
      */
     @ProxyCodeSplit
-//    @NameToken(NameTokens.COMPONENT_CONFIG_PRESENTER)
+    @NameToken(NameTokens.SYSTEM_CONFIG_PRESENTER)
+    @SubsystemExtension(name = "Runtime Details", group = "SwitchYard", key = "switchyard")
     public interface MyProxy extends Proxy<ComponentPresenter>, Place {
     }
 
@@ -108,7 +110,6 @@ public class ComponentPresenter extends Presenter<ComponentPresenter.MyView, Com
     }
 
     private final PlaceManager _placeManager;
-    private final RevealStrategy _revealStrategy;
     private final SwitchYardStore _switchYardStore;
     private final PresenterFactory _factory;
     private ComponentConfigurationPresenter _presenterWidget;
@@ -120,17 +121,15 @@ public class ComponentPresenter extends Presenter<ComponentPresenter.MyView, Com
      * @param view the injected MyView.
      * @param proxy the injected MyProxy.
      * @param placeManager the injected PlaceManager.
-     * @param revealStrategy the RevealStrategy
      * @param switchYardStore the injected SwitchYardStore.
      * @param factory the PresenterFactory for specialized component presenters.
      */
     @Inject
     public ComponentPresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager placeManager,
-            RevealStrategy revealStrategy, SwitchYardStore switchYardStore, PresenterFactory factory) {
+            SwitchYardStore switchYardStore, PresenterFactory factory) {
         super(eventBus, view, proxy);
 
         _placeManager = placeManager;
-        _revealStrategy = revealStrategy;
         _switchYardStore = switchYardStore;
         _factory = factory;
     }
@@ -152,7 +151,7 @@ public class ComponentPresenter extends Presenter<ComponentPresenter.MyView, Com
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), ConfigPresenter.TYPE_COMPONENT_CONTENT, this);
+        RevealContentEvent.fire(this, ConfigPresenter.TYPE_COMPONENT_CONTENT, this);
     }
 
     private void loadComponent(String componentName) {

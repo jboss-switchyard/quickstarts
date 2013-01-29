@@ -22,10 +22,10 @@ package org.switchyard.console.client.ui.metrics;
 import java.util.List;
 
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.domain.model.ServerInstance;
-import org.jboss.as.console.client.shared.state.CurrentServerSelection;
-import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
+import org.jboss.as.console.client.plugins.RuntimeGroup;
+import org.jboss.as.console.client.shared.state.ServerSelectionChanged;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.spi.RuntimeExtension;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.model.MessageMetrics;
@@ -33,10 +33,10 @@ import org.switchyard.console.client.model.ServiceMetrics;
 import org.switchyard.console.client.model.SwitchYardStore;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
@@ -54,7 +54,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
  * @author Rob Cernich
  */
 public class MetricsPresenter extends Presenter<MetricsPresenter.MyView, MetricsPresenter.MyProxy> implements
-        ServerSelectionEvent.ServerSelectionListener {
+        ServerSelectionChanged.ChangeListener {
 
     /**
      * MyProxy
@@ -63,6 +63,7 @@ public class MetricsPresenter extends Presenter<MetricsPresenter.MyView, Metrics
      */
     @ProxyCodeSplit
     @NameToken(NameTokens.METRICS_PRESENTER)
+    @RuntimeExtension(name = NameTokens.RUNTIME_TEXT, group = RuntimeGroup.METRICS, key = NameTokens.SUBSYSTEM)
     public interface MyProxy extends Proxy<MetricsPresenter>, Place {
     }
 
@@ -106,7 +107,6 @@ public class MetricsPresenter extends Presenter<MetricsPresenter.MyView, Metrics
 
     private final PlaceManager _placeManager;
     private final RevealStrategy _revealStrategy;
-    private final CurrentServerSelection _serverSelection;
     private final SwitchYardStore _switchYardStore;
     private String _serviceName;
 
@@ -118,17 +118,15 @@ public class MetricsPresenter extends Presenter<MetricsPresenter.MyView, Metrics
      * @param proxy the injected MyProxy.
      * @param placeManager the injected PlaceManager.
      * @param revealStrategy the RevealStrategy
-     * @param serverSelection the server selection
      * @param switchYardStore the injected SwitchYardStore.
      */
     @Inject
     public MetricsPresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager placeManager,
-            RevealStrategy revealStrategy, CurrentServerSelection serverSelection, SwitchYardStore switchYardStore) {
+            RevealStrategy revealStrategy, SwitchYardStore switchYardStore) {
         super(eventBus, view, proxy);
 
         _placeManager = placeManager;
         _revealStrategy = revealStrategy;
-        _serverSelection = serverSelection;
         _switchYardStore = switchYardStore;
     }
 
@@ -148,7 +146,7 @@ public class MetricsPresenter extends Presenter<MetricsPresenter.MyView, Metrics
     }
 
     @Override
-    public void onServerSelection(String hostName, final ServerInstance server) {
+    public void onServerSelectionChanged(boolean isRunning) {
         getView().clearMetrics();
 
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
@@ -165,7 +163,7 @@ public class MetricsPresenter extends Presenter<MetricsPresenter.MyView, Metrics
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-        getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
+        getEventBus().addHandler(ServerSelectionChanged.TYPE, this);
     }
 
     @Override
@@ -200,12 +198,8 @@ public class MetricsPresenter extends Presenter<MetricsPresenter.MyView, Metrics
     }
 
     private void loadMetrics() {
-        if (!_serverSelection.isActive()) {
-            Console.warning(Console.CONSTANTS.common_err_server_not_active());
-            getView().setServices(null);
-            getView().clearMetrics();
-            return;
-        }
+        getView().setServices(null);
+        getView().clearMetrics();
         loadSystemMetrics();
         loadServicesList();
         loadServiceMetrics();
