@@ -38,6 +38,13 @@ public class V1CamelNettyTcpBindingModelTest extends V1BaseCamelServiceBindingMo
     private static final Integer PORT = 10230;
     private static final Long RECEIVE_BUFFER_SIZE = 1024l;
     private static final Long SEND_BUFFER_SIZE = 128l;
+    private static final Boolean SSL = true;
+    private static final String SSL_HANDLER = "#myCustomHandler";
+    private static final String PASSPHRASE = "camelRider";
+    private static final String SECURITY_PROVIDER = "BC";
+    private static final String KEY_STORE_FORMAT = "PCKS12";
+    private static final String KEY_STORE_FILE = "#ks";
+    private static final String TRUST_STORE_FILE = "#ts";
     private static final Boolean REUSE_ADDRESS = true;
     private static final Boolean ALLOW_DEFAULT_CODEC = false;
     private static final Integer WORKER_COUNT = 10;
@@ -50,7 +57,8 @@ public class V1CamelNettyTcpBindingModelTest extends V1BaseCamelServiceBindingMo
     private static final String CAMEL_URI = "netty:tcp://google.com:10230?" +
         "receiveBufferSize=1024&sendBufferSize=128&reuseAddress=true&allowDefaultCodec=false&" +
         "workerCount=10&sync=false&disconnect=true&textline=false&tcpNoDelay=true&" +
-        "keepAlive=false";
+        "keepAlive=false&keyStoreFormat=PCKS12&passphrase=camelRider&keyStoreFile=#ks&trustStoreFile=#ts&" +
+        "ssl=true&sslHandler=#myCustomHandler&securityProvider=BC";
 
     public V1CamelNettyTcpBindingModelTest() {
         super(NettyEndpoint.class, CAMEL_XML);
@@ -65,6 +73,13 @@ public class V1CamelNettyTcpBindingModelTest extends V1BaseCamelServiceBindingMo
             .setPort(PORT)
             .setReceiveBufferSize(RECEIVE_BUFFER_SIZE)
             .setSendBufferSize(SEND_BUFFER_SIZE)
+            .setSsl(SSL)
+            .setSslHandler(SSL_HANDLER)
+            .setPassphrase(PASSPHRASE)
+            .setSecurityProvider(SECURITY_PROVIDER)
+            .setKeyStoreFormat(KEY_STORE_FORMAT)
+            .setKeyStoreFile(KEY_STORE_FILE)
+            .setTrustStoreFile(TRUST_STORE_FILE)
             .setReuseAddress(REUSE_ADDRESS)
             .setAllowDefaultCodec(ALLOW_DEFAULT_CODEC)
             .setWorkerCount(WORKER_COUNT)
@@ -82,6 +97,13 @@ public class V1CamelNettyTcpBindingModelTest extends V1BaseCamelServiceBindingMo
         assertEquals(PORT, model.getPort());
         assertEquals(RECEIVE_BUFFER_SIZE, model.getReceiveBufferSize());
         assertEquals(SEND_BUFFER_SIZE, model.getSendBufferSize());
+        assertEquals(SSL, model.isSsl());
+        assertEquals(SSL_HANDLER, model.getSslHandler());
+        assertEquals(SECURITY_PROVIDER, model.getSecurityProvider());
+        assertEquals(PASSPHRASE, model.getPassphrase());
+        assertEquals(KEY_STORE_FORMAT, model.getKeyStoreFormat());
+        assertEquals(KEY_STORE_FILE, model.getKeyStoreFile());
+        assertEquals(TRUST_STORE_FILE, model.getTrustStoreFile());
         assertEquals(REUSE_ADDRESS, model.isReuseAddress());
         assertEquals(ALLOW_DEFAULT_CODEC, model.isAllowDefaultCodec());
         assertEquals(WORKER_COUNT, model.getWorkerCount());

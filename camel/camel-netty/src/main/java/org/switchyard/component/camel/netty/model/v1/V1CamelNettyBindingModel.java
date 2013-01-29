@@ -46,6 +46,14 @@ public abstract class V1CamelNettyBindingModel extends V1BaseCamelBindingModel
     private static final String PORT = "port";
     private static final String RECEIVE_BUFFER_SIZE = "receiveBufferSize";
     private static final String SEND_BUFFER_SIZE = "sendBufferSize";
+    private static final String SSL = "ssl";
+    private static final String SSL_HANDLER = "sslHandler";
+    private static final String PASSPHRASE = "passphrase";
+    private static final String SECURITY_PROVIDER = "securityProvider";
+    private static final String KEY_STORE_FORMAT = "keyStoreFormat";
+    private static final String KEY_STORE_FILE = "keyStoreFile";
+    private static final String TRUST_STORE_FILE = "trustStoreFile";
+    private static final String SSL_CONTEXT_PARAMETERS_REF = "sslContextParametersRef";
     private static final String REUSE_ADDRESS = "reuseAddress";
     private static final String ENCODERS = "encoders";
     private static final String DECODERS = "decoders";
@@ -68,8 +76,9 @@ public abstract class V1CamelNettyBindingModel extends V1BaseCamelBindingModel
         super(name, namespace);
 
         setModelChildrenOrder(HOST, PORT, RECEIVE_BUFFER_SIZE, SEND_BUFFER_SIZE,
-                REUSE_ADDRESS, ENCODERS, DECODERS, ALLOW_DEFAULT_CODEC, WORKER_COUNT,
-                SYNC, DISCONNECT);
+                SSL, SSL_HANDLER, PASSPHRASE, SECURITY_PROVIDER, KEY_STORE_FORMAT,
+                KEY_STORE_FILE, TRUST_STORE_FILE, SSL_CONTEXT_PARAMETERS_REF, REUSE_ADDRESS,
+                ENCODERS, DECODERS, ALLOW_DEFAULT_CODEC, WORKER_COUNT, SYNC, DISCONNECT);
     }
 
     @Override
@@ -110,6 +119,86 @@ public abstract class V1CamelNettyBindingModel extends V1BaseCamelBindingModel
     @Override
     public V1CamelNettyBindingModel setSendBufferSize(Long sendBufferSize) {
         return setConfig(SEND_BUFFER_SIZE, sendBufferSize);
+    }
+
+    @Override
+    public Boolean isSsl() {
+        return getBooleanConfig(SSL);
+    }
+
+    @Override
+    public V1CamelNettyBindingModel setSsl(Boolean ssl) {
+        return setConfig(SSL, ssl);
+    }
+
+    @Override
+    public String getSslHandler() {
+        return getConfig(SSL_HANDLER);
+    }
+
+    @Override
+    public V1CamelNettyBindingModel setSslHandler(String sslHandler) {
+        return setConfig(SSL_HANDLER, sslHandler);
+    }
+
+    @Override
+    public String getPassphrase() {
+        return getConfig(PASSPHRASE);
+    }
+
+    @Override
+    public V1CamelNettyBindingModel setPassphrase(String passphrase) {
+        return setConfig(PASSPHRASE, passphrase);
+    }
+
+    @Override
+    public String getSecurityProvider() {
+        return getConfig(SECURITY_PROVIDER);
+    }
+
+    @Override
+    public V1CamelNettyBindingModel setSecurityProvider(String securityProvider) {
+        return setConfig(SECURITY_PROVIDER, securityProvider);
+    }
+
+    @Override
+    public String getKeyStoreFormat() {
+        return getConfig(KEY_STORE_FORMAT);
+    }
+
+    @Override
+    public V1CamelNettyBindingModel setKeyStoreFormat(String keyStoreFormat) {
+        return setConfig(KEY_STORE_FORMAT, keyStoreFormat);
+    }
+
+    @Override
+    public String getKeyStoreFile() {
+        return getConfig(KEY_STORE_FILE);
+    }
+
+    @Override
+    public V1CamelNettyBindingModel setKeyStoreFile(String keyStoreFile) {
+        return setConfig(KEY_STORE_FILE, keyStoreFile);
+    }
+
+    @Override
+    public String getTrustStoreFile() {
+        return getConfig(TRUST_STORE_FILE);
+    }
+
+    @Override
+    public V1CamelNettyBindingModel setTrustStoreFile(String trustStoreFile) {
+        return setConfig(TRUST_STORE_FILE, trustStoreFile);
+    }
+
+    @Override
+    public String getSslContextParametersRef() {
+        return getConfig(SSL_CONTEXT_PARAMETERS_REF);
+    }
+
+    @Override
+    public V1CamelNettyBindingModel setSslContextParametersRef(String sslContextParametersRef) {
+        return setConfig(SSL_CONTEXT_PARAMETERS_REF, sslContextParametersRef);
     }
 
     @Override

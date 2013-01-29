@@ -21,23 +21,8 @@
             <netty:binding.tcp>
                 <netty:host>google.com</netty:host>
                 <netty:port>10230</netty:port>
-                <netty:receiveBufferSize>1024</netty:receiveBufferSize>
-                <netty:sendBufferSize>128</netty:sendBufferSize>
                 <netty:ssl>true</netty:ssl>
-                <netty:sslHandler>#myCustomHandler</netty:sslHandler>
-                <netty:passphrase>camelRider</netty:passphrase>
-                <netty:securityProvider>BC</netty:securityProvider>
-                <netty:keyStoreFormat>PCKS12</netty:keyStoreFormat>
-                <netty:keyStoreFile>#ks</netty:keyStoreFile>
-                <netty:trustStoreFile>#ts</netty:trustStoreFile>
-                <netty:reuseAddress>true</netty:reuseAddress>
-                <netty:allowDefaultCodec>false</netty:allowDefaultCodec>
-                <netty:workerCount>10</netty:workerCount>
-                <netty:sync>false</netty:sync>
-                <netty:disconnect>true</netty:disconnect>
-                <netty:textline>false</netty:textline>
-                <netty:tcpNoDelay>true</netty:tcpNoDelay>
-                <netty:keepAlive>false</netty:keepAlive>
+                <netty:sslContextParametersRef>#sslConfig</netty:sslContextParametersRef>
             </netty:binding.tcp>
         </sca:service>
     </sca:composite>

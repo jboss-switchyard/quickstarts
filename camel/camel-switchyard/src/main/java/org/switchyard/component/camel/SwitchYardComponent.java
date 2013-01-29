@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.switchyard.component.camel.common.composer.BindingDataCreatorResolver;
 
 /**
  * SwitchYardComponent enable Switchyard services to be exposed through Apache Camel.
@@ -39,11 +40,31 @@ import org.apache.camel.impl.DefaultComponent;
  */
 public class SwitchYardComponent extends DefaultComponent {
 
+    private BindingDataCreatorResolver _bindingDataCreatorResolver = new BindingDataCreatorResolver();
+
     @Override
     protected Endpoint createEndpoint(final String uri, final String path, final Map<String, Object> parameters) throws Exception {
         final String namespace = (String) parameters.remove("namespace");
         final String operationName = (String) parameters.remove("operationName");
         return new SwitchYardEndpoint(uri, this, namespace, operationName);
+    }
+
+    /**
+     * Returns binding data creator resolver.
+     * 
+     * @return An instance of binding data creator.
+     */
+    public BindingDataCreatorResolver getBindingDataCreatorResolver() {
+        return _bindingDataCreatorResolver;
+    }
+
+    /**
+     * Setter which allows to specify custom bindingDataCreator.
+     * 
+     * @param bindingDataCreatorResolver Binding data creator to use.
+     */
+    public void setBindingDataCreatorResolver(BindingDataCreatorResolver bindingDataCreatorResolver) {
+        this._bindingDataCreatorResolver = bindingDataCreatorResolver;
     }
 
 }

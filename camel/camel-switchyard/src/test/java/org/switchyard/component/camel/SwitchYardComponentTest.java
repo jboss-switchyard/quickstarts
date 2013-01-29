@@ -23,6 +23,10 @@ package org.switchyard.component.camel;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
+
 import javax.xml.namespace.QName;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -34,8 +38,12 @@ import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
+import org.switchyard.deploy.Binding;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
+import org.switchyard.policy.Policy;
+import org.switchyard.policy.PolicyUtil;
+import org.switchyard.policy.SecurityPolicy;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
@@ -95,7 +103,25 @@ public class SwitchYardComponentTest extends SwitchYardComponentTestBase {
         final String actualPayload = mockService.getMessages().iterator().next().getMessage().getContent(String.class);
         assertThat(actualPayload, is(equalTo(payload)));
         endpoint.assertIsSatisfied();
-        // endpoint.allMessages().
+    }
+
+    @Test
+    public void customBindingData() throws Exception {
+        List<Policy> policies = Arrays.<Policy>asList(SecurityPolicy.CONFIDENTIALITY);
+        final MockHandler mockService = new MockHandler();
+        _serviceDomain.registerService(new QName(_serviceName), new InOnlyService(), mockService, policies, new Binding(null));
+        _serviceDomain.registerServiceReference(new QName(_serviceName), new InOnlyService("process"));
+        _camelContext.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("netty://foo").to("switchyard://" + _serviceName + "?operationName=process");
+            }
+        });
+        _camelContext.createProducerTemplate().sendBody("netty://foo", "baja");
+
+        LinkedBlockingQueue<Exchange> msgs = mockService.getMessages();
+        Exchange exchange = msgs.iterator().next();
+        assertTrue(PolicyUtil.isProvided(exchange, SecurityPolicy.CONFIDENTIALITY));
     }
 
     @Override
@@ -103,7 +129,7 @@ public class SwitchYardComponentTest extends SwitchYardComponentTestBase {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:input")
-                .to("switchyard://" + _serviceName.toString() + "?operationName=process")
+                .to("switchyard://" + _serviceName + "?operationName=process")
                 .to("mock:result");
             }
         };

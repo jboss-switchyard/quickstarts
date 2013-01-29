@@ -31,12 +31,16 @@ import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.camel.common.CamelConstants;
+import org.switchyard.component.camel.common.composer.BindingDataCreator;
+import org.switchyard.component.camel.common.composer.BindingDataCreatorResolver;
 import org.switchyard.component.camel.common.composer.CamelBindingData;
 import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.common.composer.SecurityBindingData;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.TransactionPolicy;
+import org.switchyard.security.SecurityContext;
 import org.switchyard.selector.OperationSelector;
 
 /**
@@ -90,8 +94,28 @@ public class SwitchYardProducer extends DefaultProducer {
             PolicyUtil.provide(switchyardExchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL);
         }
 
-        Message switchyardMessage = composer.compose(new CamelBindingData(camelExchange.getIn()), switchyardExchange, true);
+        BindingDataCreator<?> bindingCreator = getBindingDataCreator(camelExchange);
+        CamelBindingData bindingData = bindingCreator.createBindingData(camelExchange.getIn());
+        if (bindingData instanceof SecurityBindingData) {
+            // returned binding is contains some security bindings, let's move them to security context
+            SecurityContext.get(switchyardExchange).getCredentials().addAll(
+                ((SecurityBindingData) bindingData).extractCredentials());
+        }
+        Message switchyardMessage = composer.compose(bindingData, switchyardExchange, true);
         switchyardExchange.send(switchyardMessage);
+    }
+
+    /**
+     * Helper method which lookup for BindingDataCreatorResolver and uses returned
+     * instance to create new CamelBindingData.
+     * 
+     * @param camelExchange Camel exchange.
+     * @return Binding data creator.
+     */
+    private BindingDataCreator<?> getBindingDataCreator(org.apache.camel.Exchange camelExchange) {
+        BindingDataCreatorResolver resolver = ((SwitchYardEndpoint) getEndpoint()).getBindingDataCreatorResolver();
+        String resolverKey = camelExchange.getFromEndpoint().getClass().getSimpleName();
+        return resolver.resolveBindingCreator(resolverKey, getEndpoint().getCamelContext());
     }
 
     @SuppressWarnings("unchecked")

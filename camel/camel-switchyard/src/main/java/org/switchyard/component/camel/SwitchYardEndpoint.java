@@ -22,6 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.switchyard.component.camel.common.composer.BindingDataCreatorResolver;
 import org.switchyard.component.camel.common.composer.CamelBindingData;
 import org.switchyard.component.camel.common.composer.CamelComposition;
 import org.switchyard.component.common.composer.MessageComposer;
@@ -124,6 +125,15 @@ public class SwitchYardEndpoint extends DefaultEndpoint {
     @Override
     public boolean isSingleton() {
         return true;
+    }
+
+    /**
+     * Returns component binding data creator resolver.
+     * 
+     * @return Component binding data creator resolver.
+     */
+    public BindingDataCreatorResolver getBindingDataCreatorResolver() {
+        return ((SwitchYardComponent) getComponent()).getBindingDataCreatorResolver();
     }
 
 }

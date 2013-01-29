@@ -90,6 +90,126 @@ public interface CamelNettyBindingModel extends CamelBindingModel {
     CamelNettyBindingModel setSendBufferSize(Long sendBufferSize);
 
     /**
+     * SSL status - on/off.
+     * 
+     * @return True if ssl is enabled for endpoint.
+     */
+    Boolean isSsl();
+
+    /**
+     * Setting to specify whether SSL encryption is applied to this endpoint.
+     * 
+     * @param ssl Should ssl be used.
+     * @return a reference to this binding model
+     */
+    CamelNettyBindingModel setSsl(Boolean ssl);
+
+    /**
+     * Return name of bean instance used as ssl handler.
+     * 
+     * @return Custom ssl handler bean name.
+     */
+    String getSslHandler();
+
+    /**
+     * Sets sslHandler bean name..
+     * 
+     * @param sslHandler Name of bean used as ssl handler.
+     * @return a reference to this binding model
+     */
+    CamelNettyBindingModel setSslHandler(String sslHandler);
+
+    /**
+     * Password bean used to access keystore.
+     * 
+     * @return Keystore password bean reference.
+     */
+    String getPassphrase();
+
+    /**
+     * Specify keystore password.
+     * 
+     * @param passphrase Password.
+     * @return a reference to this binding model
+     */
+    CamelNettyBindingModel setPassphrase(String passphrase);
+
+    /**
+     * Returns security provider name. By default SunX509 is used.
+     * 
+     * @return Security provider name.
+     */
+    String getSecurityProvider();
+
+    /**
+     * Specify security provider name.
+     * 
+     * @param securityProvider Name of JSSE provider.
+     * @return a reference to this binding model
+     */
+    CamelNettyBindingModel setSecurityProvider(String securityProvider);
+
+    /**
+     * Returns keystore format. By default JKS is used.
+     * 
+     * @return Keystore format.
+     */
+    String getKeyStoreFormat();
+
+    /**
+     * Specify keystore format.
+     * 
+     * @param keyStoreFormat Format of the keystore.
+     * @return a reference to this binding model
+     */
+    CamelNettyBindingModel setKeyStoreFormat(String keyStoreFormat);
+
+    /**
+     * Returns name of bean pointing to keystore file.
+     * 
+     * @return Kestore bean name.
+     */
+    String getKeyStoreFile();
+
+    /**
+     * Specify keystore file name.
+     * 
+     * @param keyStoreFile Keystore file bean name.
+     * @return a reference to this binding model
+     */
+    CamelNettyBindingModel setKeyStoreFile(String keyStoreFile);
+
+    /**
+     * Returns name of bean pointing to truststore file.
+     * 
+     * @return Truststore  bean name.
+     */
+    String getTrustStoreFile();
+
+    /**
+     * Specify truststore file name.
+     * 
+     * @param trustStoreFile Name of truststore bean.
+     * @return a reference to this binding model
+     */
+    CamelNettyBindingModel setTrustStoreFile(String trustStoreFile);
+
+    /**
+     * Gets bean reference name representing SSLContextParameters.
+     * 
+     * @return Bean reference name.
+     */
+    String getSslContextParametersRef();
+
+    /**
+     * Specify SSL context parameters reference name.
+     * 
+     * @param sslContextParametersRef Name of bean used to retrieve all SSL related settings.
+     * @return a reference to this binding model
+     */
+    CamelNettyBindingModel setSslContextParametersRef(String sslContextParametersRef);
+
+    /**
      * Socket multiplexing.
      * 
      * @return True if multiplexing is turned on.

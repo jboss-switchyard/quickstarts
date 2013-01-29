@@ -57,6 +57,18 @@ MA  02110-1301, USA.
                     <element name="port" type="int" />
                     <element name="receiveBufferSize" type="long" minOccurs="0" maxOccurs="1"/>
                     <element name="sendBufferSize" type="long" minOccurs="0" maxOccurs="1"/>
+                    <element name="ssl" type="boolean" minOccurs="0" maxOccurs="1" />
+                    <element name="sslHandler" type="string" minOccurs="0" maxOccurs="1" />
+                    <choice minOccurs="0" maxOccurs="1">
+                        <sequence>
+                            <element name="passphrase" type="string" minOccurs="0" maxOccurs="1" />
+                            <element name="securityProvider" type="string" minOccurs="0" maxOccurs="1" />
+                            <element name="keyStoreFormat" type="string" minOccurs="0" maxOccurs="1" />
+                            <element name="keyStoreFile" type="string" minOccurs="0" maxOccurs="1" />
+                            <element name="trustStoreFile" type="string" minOccurs="0" maxOccurs="1" />
+                        </sequence>
+                        <element name="sslContextParametersRef" type="string" />
+                    </choice>
                     <element name="reuseAddress" type="boolean" minOccurs="0" maxOccurs="1" />
                     <element name="encoders" type="string" minOccurs="0" maxOccurs="1" />
                     <element name="decoders" type="string"  minOccurs="0" maxOccurs="1" />
