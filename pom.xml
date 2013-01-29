@@ -96,7 +96,7 @@
         <!-- and this property is required for release assembly. -->
         <version.jaxen>1.1.3</version.jaxen>
         <version.jbossas>7.1.1.Final</version.jbossas>
-        <version.jbossas.console>1.4.0.Final</version.jbossas.console>
+        <version.jbossas.console>1.5.1.Final</version.jbossas.console>
         <!-- Override versions for OpenShift. May use the same version as AS but -->
         <!-- maintaining this override for future flexibility -->
         <version.jbossas.openshift>7.1.0.Final</version.jbossas.openshift>
@@ -110,7 +110,7 @@
         <version.kie>6.0.0.Alpha6</version.kie>
         <version.maven.archetype.plugin>2.0</version.maven.archetype.plugin>
         <version.maven.exec.plugin>1.2</version.maven.exec.plugin>
-        <version.maven.gwt.plugin>2.3.0-1</version.maven.gwt.plugin>
+        <version.maven.gwt.plugin>2.5.0</version.maven.gwt.plugin>
         <version.maven.shade.plugin>1.4</version.maven.shade.plugin>
         <version.maven.plugin.plugin>3.1</version.maven.plugin.plugin>
         <version.mina>2.0.4</version.mina>
@@ -616,18 +616,7 @@
                 <groupId>org.switchyard.console</groupId>
                 <artifactId>switchyard-console-application</artifactId>
                 <version>${project.version}</version>
-                <type>war</type>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard.console</groupId>
-                <artifactId>switchyard-console-as7-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard.console</groupId>
-                <artifactId>switchyard-console-as7-core</artifactId>
-                <classifier>module</classifier>
-                <version>${project.version}</version>
+                <classifier>resources</classifier>
             </dependency>
             <dependency>
                 <groupId>org.switchyard.console</groupId>
