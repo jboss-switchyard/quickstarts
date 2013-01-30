@@ -20,19 +20,41 @@ package org.switchyard.quickstarts.camel.netty.binding;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.security.KeyStore;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
 
 public class TCPClient {
 
     public static void main(String[] args) throws Exception {
-        Socket clientSocket = new Socket("localhost", 3939);
+        KeyStore keystore = KeyStore.getInstance("JKS");
+        keystore.load(new FileInputStream("users.jks"), "changeit".toCharArray());
+
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+        tmf.init(keystore);
+
+        SSLContext context = SSLContext.getInstance("TLS");
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        keyManagerFactory.init(keystore, "changeit".toCharArray());
+
+        context.init(keyManagerFactory.getKeyManagers(), tmf.getTrustManagers(), null);
+
+        SSLSocketFactory sf = context.getSocketFactory();
+
+        Socket clientSocket = sf.createSocket("localhost", 3939);
         DataOutputStream outputStream = new DataOutputStream(clientSocket.getOutputStream());
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.print("Message body to send over TCP: ");
 
         outputStream.write(reader.readLine().getBytes());
+        Thread.sleep(50);
         clientSocket.close();
     }
 
