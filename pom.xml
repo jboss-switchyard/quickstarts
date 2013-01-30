@@ -54,7 +54,6 @@
         <module>camel-service</module>
         <module>camel-soap-proxy</module>
         <module>camel-bus-cdi</module>
-        <module>hornetq-binding</module>
         <module>http-binding</module>
         <module>rest-binding</module>
         <module>rules-camel-cbr</module>
