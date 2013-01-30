@@ -13,7 +13,6 @@ Quickstarts
 * __camel_rest_binding__ : service binding using REST.
 * __camel-service__ : routing service example using the Java DSL and XML route definition languages.
 * __camel-soap-proxy__ : simple pass through between SOAP gateways to demonstrate proxy capabilities.
-* __hornetq-binding__ : service binding using the HornetQ gateway component.
 * __http-binding__ : service binding using the HTTP gateway component.
 * __jca_inflow_hornetq__ : service binding using the JCA component
 * __jca_outbound_hornetq__ : service binding using the JCA component
