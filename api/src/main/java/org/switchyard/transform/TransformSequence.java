@@ -112,6 +112,11 @@ public final class TransformSequence implements Serializable {
             if (transformer == null) {
                 break;
             }
+            
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Transforming Message (" + System.identityHashCode(message) + ") from '" + transformer.getFrom() + "' to '" 
+                    + transformer.getTo() + "' using transformer type '" + transformer.getClass().getName() + "'.");
+            }
 
             Object result;
             if (Message.class.isAssignableFrom(transformer.getFromType())) {
@@ -121,21 +126,17 @@ public final class TransformSequence implements Serializable {
                 // A returned object indicates that the transformation took place and is
                 // used as the new Message payload.
                 result = transformer.transform(message.getContent(transformer.getFromType()));
-                if (result != null) {
-                    message.setContent(result);
-                }
+                message.setContent(result);
             }
+            
+            // We can now remove the 1st element in the sequence.  2nd element will become the
+            // "from" for the next transformation in the sequence, if one is required...
+            _sequence.remove(0);
 
-            if (result != null) {
-                // We can now remove the 1st element in the sequence.  2nd element will become the
-                // "from" for the next transformation in the sequence, if one is required...
-                _sequence.remove(0);
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Transformed Message (" + System.identityHashCode(message) + ") from '" + transformer.getFrom() + "' to '" + transformer.getTo() + "' using transformer type '" + transformer.getClass().getName() + "'.");
-                }
-            } else {
-                LOGGER.warn("Transformer '" + transformer.getClass().getName() + "' returned a null transformation result.  Check input payload matches requirements of the Transformer implementation.");
-                break;
+            if (result == null) {
+                String msg ="Transformer '" + transformer.getClass().getName() + "' returned a null transformation result when transforming from type '" 
+                    + from + "' to type '" + to + "'. Check input payload matches requirements of the Transformer implementation.";
+                LOGGER.warn(msg);
             }
         }
     }

@@ -49,4 +49,21 @@ public class MessageTransformerTest {
 
         Assert.assertEquals(message, transformer.getMessage());
     }
+
+    @Test
+    public void testNullOutputFromTransformation() throws IOException {
+        final QName A = new QName("a");
+        final QName B = new QName("b");
+
+        BaseTransformerRegistry xformReg = new BaseTransformerRegistry();
+        TransformSequence transSequence = TransformSequence.from(A).to(B);
+
+        DefaultMessage message = new DefaultMessage().setContent("testNull");
+        Message2NullTransformer transformer = new Message2NullTransformer();
+
+        xformReg.addTransformer(transformer, A, B);
+        transSequence.apply(message, xformReg);
+        System.out.println(message.getContent());
+        Assert.assertNull(message.getContent());
+    }
 }
