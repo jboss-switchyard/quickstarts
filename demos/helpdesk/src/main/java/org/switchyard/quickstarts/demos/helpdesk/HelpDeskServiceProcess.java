@@ -22,7 +22,6 @@ import org.jbpm.process.workitem.wsht.MinaHTWorkItemHandler;
 import org.switchyard.component.bpm.annotation.BPM;
 import org.switchyard.component.bpm.annotation.StartProcess;
 import org.switchyard.component.bpm.annotation.WorkItemHandler;
-import org.switchyard.component.bpm.work.SwitchYardServiceWorkItemHandler;
 import org.switchyard.component.common.knowledge.KnowledgeConstants;
 import org.switchyard.component.common.knowledge.annotation.Manifest;
 import org.switchyard.component.common.knowledge.annotation.Mapping;
@@ -33,7 +32,7 @@ import org.switchyard.component.common.knowledge.annotation.Resource;
  */
 @BPM(value=HelpDeskService.class,
     manifest=@Manifest(resources=@Resource(location="/META-INF/HelpDeskService.bpmn", type="BPMN2")),
-    workItemHandlers={@WorkItemHandler(SwitchYardServiceWorkItemHandler.class), @WorkItemHandler(MinaHTWorkItemHandler.class)})
+    workItemHandlers={@WorkItemHandler(MinaHTWorkItemHandler.class)})
 public interface HelpDeskServiceProcess extends HelpDeskService {
 
     @Override
