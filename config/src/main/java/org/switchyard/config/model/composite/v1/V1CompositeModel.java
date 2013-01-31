@@ -21,10 +21,15 @@ package org.switchyard.config.model.composite.v1;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.common.property.CompoundPropertyResolver;
+import org.switchyard.common.property.PropertyResolver;
+import org.switchyard.common.property.SystemAndTestPropertyResolver;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
@@ -32,6 +37,7 @@ import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
+import org.switchyard.config.model.property.PropertyModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
@@ -44,13 +50,15 @@ public class V1CompositeModel extends BaseNamedModel implements CompositeModel {
     private List<CompositeServiceModel> _services = new ArrayList<CompositeServiceModel>();
     private List<CompositeReferenceModel> _references = new ArrayList<CompositeReferenceModel>();
     private List<ComponentModel> _components = new ArrayList<ComponentModel>();
-
+    private Map<String, PropertyModel> _properties = new HashMap<String, PropertyModel>();
+    
     /**
      * Constructs a new V1CompositeModel.
      */
     public V1CompositeModel() {
         super(new QName(CompositeModel.DEFAULT_NAMESPACE, CompositeModel.COMPOSITE));
-        setModelChildrenOrder(CompositeServiceModel.SERVICE, CompositeReferenceModel.REFERENCE, ComponentModel.COMPONENT);
+        setModelChildrenOrder(CompositeServiceModel.SERVICE, CompositeReferenceModel.REFERENCE, ComponentModel.COMPONENT, PropertyModel.PROPERTY);
+        setCompositePropertyResolver();
     }
 
     /**
@@ -78,7 +86,15 @@ public class V1CompositeModel extends BaseNamedModel implements CompositeModel {
                 _components.add(component);
             }
         }
-        setModelChildrenOrder(CompositeServiceModel.SERVICE, CompositeReferenceModel.REFERENCE, ComponentModel.COMPONENT);
+        for (Configuration property_config : config.getChildren(PropertyModel.PROPERTY)) {
+            PropertyModel property = (PropertyModel)readModel(property_config);
+            if (property != null) {
+                _properties.put(property.getName(), property);
+            }
+        }
+        
+        setModelChildrenOrder(CompositeServiceModel.SERVICE, CompositeReferenceModel.REFERENCE, ComponentModel.COMPONENT, PropertyModel.PROPERTY);
+        setCompositePropertyResolver();
     }
 
     /**
@@ -151,4 +167,57 @@ public class V1CompositeModel extends BaseNamedModel implements CompositeModel {
         this.setModelAttribute(TARGET_NAMESPACE, namespaceUri);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized PropertyModel getProperty(String name) {
+        return _properties.get(name);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized Map<String, PropertyModel> getProperties() {
+        return Collections.unmodifiableMap(_properties);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public V1CompositeModel addProperty(PropertyModel property) {
+        addChildModel(property);
+        _properties.put(property.getName(), property);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object resolveProperty(String key) {
+        PropertyModel property = getProperty(key);
+        return property != null ? property.getValue() : null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setCompositePropertyResolver() {
+        Configuration parent = getModelConfiguration().getParent();
+        if (parent != null) {
+            PropertyResolver pr = new CompoundPropertyResolver(parent.getPropertyResolver(), this);
+            getModelConfiguration().setPropertyResolver(pr);
+        } else {
+            PropertyResolver pr = new CompoundPropertyResolver(SystemAndTestPropertyResolver.instance(), this);
+            getModelConfiguration().setPropertyResolver(pr);
+        }
+        
+        for (ComponentModel component : _components) {
+            component.setComponentPropertyResolver();
+        }
+    }
 }

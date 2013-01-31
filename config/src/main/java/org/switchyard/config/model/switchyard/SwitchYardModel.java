@@ -103,7 +103,7 @@ public interface SwitchYardModel extends NamedModel {
     public SwitchYardModel setDomain(DomainModel domain);
 
     /**
-     * Sets the domain property resolver based on the curren state of the model.
+     * Sets the domain property resolver based on the current state of the model.
      */
     public void setDomainPropertyResolver();
 

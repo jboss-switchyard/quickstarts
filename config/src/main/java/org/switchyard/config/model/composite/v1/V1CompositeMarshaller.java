@@ -30,6 +30,8 @@ import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.InterfaceModel;
+import org.switchyard.config.model.property.PropertyModel;
+import org.switchyard.config.model.property.v1.V1PropertyModel;
 
 /**
  * Marshalls SCA composite Models.
@@ -87,6 +89,8 @@ public class V1CompositeMarshaller extends BaseMarshaller {
                     return new V1ComponentReferenceModel(config, desc);
                 }
             }
+        } else if (name.equals(PropertyModel.PROPERTY)) {
+            return new V1PropertyModel(config,desc);
         }
         return null;
     }

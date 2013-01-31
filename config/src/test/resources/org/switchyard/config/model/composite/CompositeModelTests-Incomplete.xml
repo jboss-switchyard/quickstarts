@@ -31,6 +31,9 @@ MA  02110-1301, USA.
        <reference name="anotherService">
            <interface.java interface="org.switchyard.example.m1app.AnotherService"/>
        </reference>
+       <property name="composite.foo" value="should be overridden by composite property"/>
+       <property name="component.foo" value="component.bar"/>
+       <property name="component.userName" value="component.${user.name}"/>
     </component>
     <component name="AnotherService">
        <bean:implementation.bean class="org.switchyard.example.m1app.AnotherBean"/>
@@ -38,4 +41,6 @@ MA  02110-1301, USA.
            <interface.java interface="org.switchyard.example.m1app.AnotherService"/>
        </service>
     </component>
+    <property name="composite.foo" value="composite.bar"/>
+    <property name="composite.userName" value="composite.${user.name}"/>
 </composite>

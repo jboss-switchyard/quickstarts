@@ -20,15 +20,18 @@
 package org.switchyard.config.model.composite;
 
 import java.util.List;
+import java.util.Map;
 
+import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.config.model.NamedModel;
+import org.switchyard.config.model.property.PropertyModel;
 
 /**
  * The "component" configuration model.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface ComponentModel extends NamedModel {
+public interface ComponentModel extends NamedModel, PropertyResolver {
 
     /** The "component" name. */
     public static final String COMPONENT = "component";
@@ -78,4 +81,28 @@ public interface ComponentModel extends NamedModel {
      */
     public ComponentModel addReference(ComponentReferenceModel reference);
 
+    /**
+     * Gets a child property model.
+     * @param name property name to get
+     * @return the child property model
+     */
+    public PropertyModel getProperty(String name);
+
+    /**
+     * Gets the map of child property model.
+     * @return map of the child property model
+     */
+    public Map<String, PropertyModel> getProperties();
+    
+    /**
+     * Sets the child properties model.
+     * @param property the child property model
+     * @return this ComponentModel (useful for chaining)
+     */
+    public ComponentModel addProperty(PropertyModel property);
+
+    /**
+     * Sets the component property resolver based on the current state of the model.
+     */
+    public void setComponentPropertyResolver();
 }

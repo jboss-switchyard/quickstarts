@@ -19,8 +19,11 @@
 package org.switchyard.config.model.composite;
 
 import java.util.List;
+import java.util.Map;
 
+import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.config.model.NamedModel;
+import org.switchyard.config.model.property.PropertyModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
@@ -28,7 +31,7 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public interface CompositeModel extends NamedModel {
+public interface CompositeModel extends NamedModel, PropertyResolver {
 
     /** The default SCA namespace. */
     public static final String DEFAULT_NAMESPACE = "http://docs.oasis-open.org/ns/opencsa/sca/200912";
@@ -87,4 +90,29 @@ public interface CompositeModel extends NamedModel {
      */
     public void setTargetNamespace(String namespaceUri);
 
+    /**
+     * Gets a child property model.
+     * @param name property name to get
+     * @return the child property model
+     */
+    public PropertyModel getProperty(String name);
+
+    /**
+     * Gets the map of child property model.
+     * @return map of child property model
+     */
+    public Map<String, PropertyModel> getProperties();
+    
+    /**
+     * Sets the child property model.
+     * @param property the child property model
+     * @return this CompositeModel (useful for chaining)
+     */
+    public CompositeModel addProperty(PropertyModel property);
+
+    /**
+     * Sets the composite property resolver based on the current state of the model.
+     */
+    public void setCompositePropertyResolver();
+    
 }

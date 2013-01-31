@@ -33,6 +33,7 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.common.io.pull.StringPuller;
+import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Model;
@@ -184,6 +185,23 @@ public class CompositeModelTests {
         assertNull(referenceBinding.getService());
     }
 
+    @Test
+    public void testPropertyModel() throws Exception {
+        CompositeModel composite = _puller.pull(COMPLETE_XML, getClass());
+        // Test composite property
+        assertEquals(2, composite.getProperties().size());
+        PropertyResolver compositePr = composite.getModelConfiguration().getPropertyResolver();
+        assertEquals("composite.bar", compositePr.resolveProperty("composite.foo"));
+        assertEquals("composite." + System.getProperty("user.name"), composite.resolveProperty("composite.userName"));
+        // Test component property
+        ComponentModel component = composite.getComponents().get(0);
+        assertEquals(3, component.getProperties().size());
+        PropertyResolver componentPr = component.getModelConfiguration().getPropertyResolver();
+        assertEquals("composite.bar", componentPr.resolveProperty("composite.foo"));
+        assertEquals("component.bar", componentPr.resolveProperty("component.foo"));
+        assertEquals("component." + System.getProperty("user.name"), componentPr.resolveProperty("component.userName"));
+    }
+    
     @Test
     public void testWriteComplete() throws Exception {
         String old_xml = new StringPuller().pull(COMPLETE_XML, getClass());

@@ -186,6 +186,9 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
                 getModelConfiguration().setPropertyResolver(pr);
             }
         }
+        if (_composite != null) {
+            _composite.setCompositePropertyResolver();
+        }
     }
 
 }
