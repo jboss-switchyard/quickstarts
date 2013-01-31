@@ -73,6 +73,7 @@ MA  02110-1301, USA.
             <property name="osName" value="${os.name}"/>
             <property name="whoIsWill" value="iam"/>
             <property name="smooksConfig" value="stuff"/>
+            <property name="soapServiceName" value="MyWebService"/>
             <property name="soapWsdlName" value="service"/>
         </properties>
         <handlers>

@@ -115,8 +115,8 @@ public class StringsTests {
     public void testReplaceCustomProperties() {
         Properties custom = new Properties();
         custom.setProperty("foo", "bar");
-        final String original = "I have a ${foo}.";
-        final String expected = "I have a bar.";
+        final String original = "I have a ${foo} but not a ${baz:wiz}.";
+        final String expected = "I have a bar but not a wiz.";
         final String actual = Strings.replaceProperties(original, new PropertiesPropertyResolver(custom));
         Assert.assertEquals(expected, actual);
     }
@@ -125,8 +125,9 @@ public class StringsTests {
     public void testReplaceCompoundProperties() {
         Properties custom = new Properties();
         custom.setProperty("foo", "bar");
-        final String original = "${user.name} has a ${foo}.";
-        final String expected = System.getProperty("user.name") + " has a bar.";
+        custom.setProperty("emotion", "loves");
+        final String original = "${user.name} has a ${foo}, and he ${emotion:hates} it, unlike his ${sibling:sister}.";
+        final String expected = System.getProperty("user.name") + " has a bar, and he loves it, unlike his sister.";
         PropertyResolver resolver = new CompoundPropertyResolver(SystemPropertiesPropertyResolver.instance(), new PropertiesPropertyResolver(custom));
         final String actual = Strings.replaceProperties(original, resolver);
         Assert.assertEquals(expected, actual);

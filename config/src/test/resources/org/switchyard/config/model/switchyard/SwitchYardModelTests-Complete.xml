@@ -37,7 +37,7 @@ MA  02110-1301, USA.
     <sca:composite name="m1app" targetNamespace="urn:m1app:example:1.0">
         <sca:service name="M1AppService" promote="SimpleService">
             <soap:binding.soap>
-                <soap:port secure="true">MyWebService/SOAPPort</soap:port>
+                <soap:port secure="true">${soapServiceName:SOAPService}/${soapPortName:SOAPPort}</soap:port>
                 <soap:wsdl description="foobar">${soapWsdlName}.wsdl</soap:wsdl>
             </soap:binding.soap>
         </sca:service>
@@ -81,6 +81,7 @@ MA  02110-1301, USA.
             <property name="osName" value="${os.name}"/>
             <property name="whoIsWill" value="iam"/>
             <property name="smooksConfig" value="stuff"/>
+            <property name="soapServiceName" value="MyWebService"/>
             <property name="soapWsdlName" value="service"/>
         </properties>
         <handlers>

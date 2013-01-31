@@ -41,7 +41,7 @@ public class PropertiesPropertyResolver implements PropertyResolver {
      * {@inheritDoc}
      */
     @Override
-    public final String resolveProperty(String key) {
+    public final Object resolveProperty(String key) {
         return _properties.getProperty(key);
     }
 

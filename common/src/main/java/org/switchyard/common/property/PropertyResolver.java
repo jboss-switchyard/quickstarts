@@ -30,6 +30,6 @@ public interface PropertyResolver {
      * @param key the property key
      * @return the property value
      */
-    public String resolveProperty(String key);
+    public Object resolveProperty(String key);
 
 }

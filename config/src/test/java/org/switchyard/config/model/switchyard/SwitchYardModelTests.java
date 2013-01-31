@@ -123,13 +123,14 @@ public class SwitchYardModelTests {
         Assert.assertEquals("TestDomain", domain.getName());
         // Verify property configuration
         PropertiesModel props = domain.getProperties();
-        Assert.assertEquals(7, props.getProperties().size());
+        Assert.assertEquals(8, props.getProperties().size());
         Assert.assertEquals("bar", props.getProperty("foo").getValue());
         Assert.assertEquals("fish", props.getProperty("tuna").getValue());
         Assert.assertEquals(System.getProperty("user.name"), props.getProperty("userName").getValue());
         Assert.assertEquals(System.getProperty("os.name"), props.getProperty("osName").getValue());
         Assert.assertEquals("iam", props.getProperty("whoIsWill").getValue());
         Assert.assertEquals("stuff", props.getProperty("smooksConfig").getValue());
+        Assert.assertEquals("MyWebService", props.getProperty("soapServiceName").getValue());
         Assert.assertEquals("service", props.getProperty("soapWsdlName").getValue());
         Assert.assertEquals(switchyard, domain.getSwitchYard());
         // Verify handler configuration

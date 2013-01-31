@@ -160,7 +160,7 @@ public class V1PropertiesModel extends BaseModel implements PropertiesModel {
      * {@inheritDoc}
      */
     @Override
-    public String resolveProperty(String key) {
+    public Object resolveProperty(String key) {
         PropertyModel property = getProperty(key);
         return property != null ? property.getValue() : null;
     }

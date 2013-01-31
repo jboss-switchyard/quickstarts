@@ -63,8 +63,8 @@ public class CompoundPropertyResolver implements PropertyResolver {
      * {@inheritDoc}
      */
     @Override
-    public String resolveProperty(String key) {
-        String value = null;
+    public Object resolveProperty(String key) {
+        Object value = null;
         for (PropertyResolver resolver : _resolvers) {
             value = resolver.resolveProperty(key);
             if (value != null) {

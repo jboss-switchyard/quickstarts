@@ -256,16 +256,30 @@ public final class Strings {
                 if (r_pos == -1) {
                     break;
                 }
-                String key = str.substring(l_pos + 2, r_pos);
-                String value = resolver.resolveProperty(key);
-                if (value != null) {
+                String prop_key = str.substring(l_pos + 2, r_pos);
+                String real_key;
+                String def_val;
+                int c_pos = prop_key.indexOf(':');
+                if (c_pos > -1) {
+                    real_key = prop_key.substring(0, c_pos);
+                    def_val = prop_key.substring(c_pos + 1, prop_key.length());
+                } else {
+                    real_key = prop_key;
+                    def_val = null;
+                }
+                Object obj_val = resolver.resolveProperty(real_key);
+                if (obj_val == null) {
+                    obj_val = def_val;
+                }
+                if (obj_val != null) {
+                    String str_val = obj_val.toString();
                     String begin = str.substring(0, l_pos);
                     str = new StringBuilder()
                         .append(begin)
-                        .append(value)
+                        .append(str_val)
                         .append(str.substring(r_pos + 1, str.length()))
                         .toString();
-                    l_pos = str.indexOf("${", begin.length() + value.length());
+                    l_pos = str.indexOf("${", begin.length() + str_val.length());
                 } else {
                     l_pos = str.indexOf("${", l_pos + 2);
                 }
