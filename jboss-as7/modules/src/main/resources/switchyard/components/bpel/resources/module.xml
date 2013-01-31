@@ -89,12 +89,15 @@
         <module name="org.jboss.as.server" />
         <module name="org.jboss.msc" />
 
-		<!-- Required by bpel2svg module -->
+		    <!-- Required by bpel2svg module -->
         <module name="batik" />
         <module name="org.codehaus.jettison" />
         
         <module name="org.jaxen"/>
         <module name="net.sourceforge.saxon" services="import" export="false"/>
+
+        <!-- Required for clustering feature -->
+        <module name="org.infinispan" />
     </dependencies>
 
 </module>
