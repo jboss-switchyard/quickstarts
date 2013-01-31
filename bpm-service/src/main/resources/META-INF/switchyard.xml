@@ -29,9 +29,6 @@
                         <resource location="META-INF/ProcessOrder.bpmn" type="BPMN2"/>
                     </resources>
                 </manifest>
-                <workItemHandlers>
-                    <workItemHandler class="org.switchyard.component.bpm.work.SwitchYardServiceWorkItemHandler" name="SwitchYard Service"/>
-                </workItemHandlers>
             </implementation.bpm>
             <service name="ProcessOrder">
                 <interface.java interface="org.switchyard.quickstarts.bpm.service.ProcessOrder"/>
