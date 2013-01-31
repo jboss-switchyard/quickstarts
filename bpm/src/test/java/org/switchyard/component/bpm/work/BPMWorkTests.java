@@ -96,8 +96,7 @@ public class BPMWorkTests {
         Assert.assertEquals("message handled", holder.getValue());
     }
 
-    @BPM(processId="ControlProcess", manifest=@Manifest(resources=@Resource(location=CONTROL_PROCESS_BPMN, type="BPMN2")),
-            workItemHandlers=@WorkItemHandler(SwitchYardServiceWorkItemHandler.class))
+    @BPM(processId="ControlProcess", manifest=@Manifest(resources=@Resource(location=CONTROL_PROCESS_BPMN, type="BPMN2")))
     public interface ControlProcess {
         @StartProcess
         public void process(Object content);

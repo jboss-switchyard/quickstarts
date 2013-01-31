@@ -19,8 +19,14 @@
 package org.switchyard.component.bpm.work;
 
 import java.lang.reflect.Constructor;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.jbpm.process.workitem.wsht.AbstractHTWorkItemHandler;
+import org.jbpm.process.workitem.wsht.LocalHTWorkItemHandler;
 import org.kie.runtime.KieRuntime;
 import org.kie.runtime.KnowledgeRuntime;
 import org.kie.runtime.process.ProcessRuntime;
@@ -39,12 +45,21 @@ import org.switchyard.exception.SwitchYardException;
  */
 public final class WorkItemHandlers {
 
+    private static final String HUMAN_TASK = "Human Task";
+
     private static final Class<?>[][] PARAMETER_TYPES = new Class<?>[][]{
         new Class<?>[]{ProcessRuntime.class},
         new Class<?>[]{KieRuntime.class},
         new Class<?>[]{KnowledgeRuntime.class},
         new Class<?>[0]
     };
+
+    private static final Map<String, Class<? extends WorkItemHandler>> DEFAULT_HANDLERS = new HashMap<String, Class<? extends WorkItemHandler>>();
+    static {
+        DEFAULT_HANDLERS.put(HUMAN_TASK, LocalHTWorkItemHandler.class);
+        DEFAULT_HANDLERS.put(SwitchYardServiceTaskHandler.SERVICE_TASK, SwitchYardServiceTaskHandler.class);
+        DEFAULT_HANDLERS.put(SwitchYardServiceWorkItemHandler.SWITCHYARD_SERVICE, SwitchYardServiceWorkItemHandler.class);
+    }
 
     /**
      * Registers work item handlers.
@@ -54,9 +69,10 @@ public final class WorkItemHandlers {
      * @param domain the service domain
      */
     public static void registerWorkItemHandlers(BPMComponentImplementationModel model, ClassLoader loader, ProcessRuntime runtime, ServiceDomain domain) {
+        String tns = model.getComponent().getTargetNamespace();
+        Set<String> registeredNames = new HashSet<String>();
         WorkItemHandlersModel workItemHandlersModel = model.getWorkItemHandlers();
         if (workItemHandlersModel != null) {
-            String tns = model.getComponent().getTargetNamespace();
             for (WorkItemHandlerModel workItemHandlerModel : workItemHandlersModel.getWorkItemHandlers()) {
                 @SuppressWarnings("unchecked")
                 Class<? extends WorkItemHandler> workItemHandlerClass = (Class<? extends WorkItemHandler>)workItemHandlerModel.getClazz(loader);
@@ -72,17 +88,33 @@ public final class WorkItemHandlers {
                     } else {
                         name = sywih.getName();
                     }
-                    sywih.setTargetNamespace(tns);
-                    sywih.setServiceDomain(domain);
                     sywih.setProcessRuntime(runtime);
+                    sywih.setServiceDomain(domain);
+                    sywih.setTargetNamespace(tns);
                 }
                 if (name == null && workItemHandler instanceof AbstractHTWorkItemHandler) {
-                    name = "Human Task";
+                    name = HUMAN_TASK;
                 }
                 if (name == null) {
                     throw new SwitchYardException("Could not use null name to register workItemHandler: " + workItemHandler.getClass().getName());
                 }
                 runtime.getWorkItemManager().registerWorkItemHandler(name, workItemHandler);
+                registeredNames.add(name);
+            }
+        }
+        for (Entry<String, Class<? extends WorkItemHandler>> entry : DEFAULT_HANDLERS.entrySet()) {
+            String name = entry.getKey();
+            if (!registeredNames.contains(name)) {
+                WorkItemHandler defaultHandler = newWorkItemHandler(entry.getValue(), runtime);
+                if (defaultHandler instanceof SwitchYardWorkItemHandler) {
+                    SwitchYardWorkItemHandler sywih = (SwitchYardWorkItemHandler)defaultHandler;
+                    sywih.setName(name);
+                    sywih.setProcessRuntime(runtime);
+                    sywih.setServiceDomain(domain);
+                    sywih.setTargetNamespace(tns);
+                }
+                runtime.getWorkItemManager().registerWorkItemHandler(name, defaultHandler);
+                registeredNames.add(name);
             }
         }
     }
