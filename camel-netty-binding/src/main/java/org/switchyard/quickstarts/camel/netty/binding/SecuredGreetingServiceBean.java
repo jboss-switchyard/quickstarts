@@ -18,27 +18,27 @@
  */
 package org.switchyard.quickstarts.camel.netty.binding;
 
+import static org.switchyard.policy.SecurityPolicy.AUTHORIZATION;
+import static org.switchyard.policy.SecurityPolicy.CLIENT_AUTHENTICATION;
+import static org.switchyard.policy.SecurityPolicy.CONFIDENTIALITY;
+
+import org.switchyard.annotations.Requires;
+import org.switchyard.component.bean.Service;
 
 /**
  * A POJO Service implementation.
  *
  * @author Lukasz Dywicki
  */
-public class GreetingServiceBean implements GreetingService {
-
-    private final String _type;
+@Requires(security = {CONFIDENTIALITY, CLIENT_AUTHENTICATION, AUTHORIZATION})
+@Service(name ="SecuredGreetingService", componentName ="SecuredGreetingService", value=GreetingService.class)
+public class SecuredGreetingServiceBean extends GreetingServiceBean {
 
     /**
-     * Creates new service bean.
-     * 
-     * @param type Type of service.
+     * Creates secured version of greeting service.
      */
-    protected GreetingServiceBean(String type) {
-        this._type = type;
+    public SecuredGreetingServiceBean() {
+        super("Secured");
     }
 
-    @Override
-    public final void greet(final String name) {
-        System.out.println(_type + ": Hello there " + name + " :-) ");
-    }
 }

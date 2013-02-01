@@ -18,27 +18,21 @@
  */
 package org.switchyard.quickstarts.camel.netty.binding;
 
+import org.switchyard.component.bean.Service;
 
 /**
  * A POJO Service implementation.
  *
  * @author Lukasz Dywicki
  */
-public class GreetingServiceBean implements GreetingService {
-
-    private final String _type;
+@Service(name = "DefaultGreetingService", componentName="DefaultGreetingService", value=GreetingService.class)
+public class DefaultGreetingServiceBean extends GreetingServiceBean {
 
     /**
-     * Creates new service bean.
-     * 
-     * @param type Type of service.
+     * Creates default, unsecured extension of {@link GreetingServiceBean}.
      */
-    protected GreetingServiceBean(String type) {
-        this._type = type;
+    public DefaultGreetingServiceBean() {
+        super("Default");
     }
 
-    @Override
-    public final void greet(final String name) {
-        System.out.println(_type + ": Hello there " + name + " :-) ");
-    }
 }

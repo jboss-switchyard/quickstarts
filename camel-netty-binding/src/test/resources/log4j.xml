@@ -27,6 +27,10 @@
         </layout>
     </appender>
 
+    <logger name="org.switchyard.bus.camel">
+        <level value="DEBUG"/>
+    </logger>
+
     <logger name="org.apache.camel.component.netty.handlers">
         <level value="TRACE"/>
     </logger>

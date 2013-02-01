@@ -27,13 +27,19 @@
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-netty-binding"
         targetNamespace="urn:switchyard-quickstart:camel-netty-binding:0.1.0">
 
-        <service name="GreetingService" promote="GreetingService">
+        <service name="SecuredGreetingService" promote="SecuredGreetingService">
             <netty:binding.tcp>
                 <netty:host>localhost</netty:host>
                 <netty:port>3939</netty:port>
+                <netty:ssl>true</netty:ssl>
+                <netty:passphrase>#password</netty:passphrase>
+                <netty:keyStoreFile>#keyStore</netty:keyStoreFile>
+                <netty:trustStoreFile>#trustStore</netty:trustStoreFile>
                 <netty:allowDefaultCodec>false</netty:allowDefaultCodec>
-                <netty:sync>false</netty:sync>
+                <netty:sync>true</netty:sync>
             </netty:binding.tcp>
+        </service>
+        <service name="DefaultGreetingService" promote="DefaultGreetingService">
             <netty:binding.udp>
                 <netty:host>localhost</netty:host>
                 <netty:port>3940</netty:port>
@@ -42,5 +48,13 @@
             </netty:binding.udp>
         </service>
     </composite>
+
+    <domain>
+        <security callbackHandler="org.switchyard.security.callback.handler.CertificateCallbackHandler" moduleName="netty-security-cert" rolesAllowed="analysts">
+            <properties>
+                <property name="alias" value="users"/>
+            </properties>
+        </security>
+    </domain>
 
 </switchyard>
