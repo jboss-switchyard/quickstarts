@@ -21,6 +21,7 @@ package org.switchyard.component.bean.deploy;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.component.bean.ClientProxyBean;
 import org.switchyard.component.bean.ServiceProxyHandler;
 import org.switchyard.config.model.composite.ComponentModel;
@@ -69,12 +70,14 @@ public class BeanComponentActivator extends BaseActivator {
             return null;
         }
         
+        PropertyResolver resolver = config.getModelConfiguration().getPropertyResolver();
         for (ServiceDescriptor descriptor : _beanDeploymentMetaData.getServiceDescriptors()) {
             if (descriptor.getServiceName().equals(serviceName.getLocalPart())) {
                 ServiceProxyHandler handler = descriptor.getHandler();
                 for (ComponentReferenceModel reference : config.getReferences()) {
                     handler.addReference(getServiceDomain().getServiceReference(reference.getQName()));
                 }
+                handler.injectImplementationProperties(resolver);
                 return handler;
             }
         }

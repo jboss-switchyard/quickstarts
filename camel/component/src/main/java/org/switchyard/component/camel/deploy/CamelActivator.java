@@ -25,16 +25,19 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.camel.SwitchYardCamelContext;
+import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.component.camel.ComponentNameComposer;
 import org.switchyard.component.camel.RouteFactory;
 import org.switchyard.component.camel.SwitchYardConsumer;
 import org.switchyard.component.camel.SwitchYardEndpoint;
+import org.switchyard.component.camel.SwitchYardPropertiesParser;
 import org.switchyard.component.camel.common.CamelConstants;
 import org.switchyard.component.camel.common.composer.CamelComposition;
 import org.switchyard.component.camel.common.deploy.BaseBindingActivator;
@@ -66,6 +69,11 @@ public class CamelActivator extends BaseBindingActivator {
     public ServiceHandler activateService(QName serviceName, ComponentModel config) {
         ServiceHandler handler = null;
 
+        // add switchyard property parser to camel PropertiesComponent
+        PropertiesComponent propertiesComponent = getCamelContext().getComponent("properties", PropertiesComponent.class);
+        PropertyResolver pr = config.getModelConfiguration().getPropertyResolver();
+        propertiesComponent.setPropertiesParser(new SwitchYardPropertiesParser(pr));
+        
         // process service
         for (ComponentServiceModel service : config.getServices()) {
             if (service.getQName().equals(serviceName)) {

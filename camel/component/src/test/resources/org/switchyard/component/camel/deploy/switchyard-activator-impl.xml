@@ -31,6 +31,7 @@
                     <log message="ItemId [${body}]"/>
                     <to uri="switchyard://WarehouseService?operationName=hasItem"/>
                     <log message="Title Name [${body}]"/>
+                    <log message="Properties [{{user.name}}, {{prop.domain}}, {{prop.composite}}, {{prop.component}}]"/>
                 </route>
             </camel:implementation.camel>
             <sca:service name="OrderService" >
@@ -39,7 +40,13 @@
             <sca:reference name="WarehouseService">
                 <sca:interface.java interface="org.switchyard.component.camel.deploy.support.WarehouseService"/>
             </sca:reference>
+            <sca:property name="prop.component" value="prop.component value"/>
         </sca:component>
+        <sca:property name="prop.composite" value="prop.composite value"/>
     </sca:composite>
-
+    <domain>
+        <properties>
+            <property name="prop.domain" value="prop.domain value"/>
+        </properties>
+    </domain>
 </switchyard>

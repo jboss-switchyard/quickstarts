@@ -19,6 +19,7 @@
 
 package org.switchyard.component.bean;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +30,8 @@ import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.ServiceReference;
+import org.switchyard.common.property.PropertyResolver;
+import org.switchyard.common.type.reflect.FieldAccess;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
 import org.switchyard.component.bean.internal.context.ContextProxy;
 import org.switchyard.deploy.ServiceHandler;
@@ -105,6 +108,28 @@ public class ServiceProxyHandler implements ServiceHandler {
         _references.put(reference.getName().getLocalPart(), reference);
     }
 
+    /**
+     * Inject Implementation Properties into Bean component.
+     * @param resolver property resolver
+     */
+    public void injectImplementationProperties(PropertyResolver resolver) {
+        for (Field field : _serviceBean.getClass().getDeclaredFields()) {
+            Property propAnno = field.getAnnotation(Property.class);
+            if (propAnno != null) {
+                Object property = resolver.resolveProperty(propAnno.name());
+                if (property != null) {
+                    if (field.getType().isAssignableFrom(property.getClass())) {
+                        new FieldAccess<Object>(field).write(_serviceBean, property);
+                    } else {
+                        _logger.warn("Property '" + propAnno.name() + "' has incompatible type: Bean '" + _serviceMetadata.getServiceClass().getName()
+                                + "' is expecting '" + field.getType().getName() + "', but was '" + property.getClass().getName() + "'. ignoring...");
+                    }
+                }
+                
+            }
+        }
+    }
+    
     /**
      * Handle the Service bean invocation.
      *
