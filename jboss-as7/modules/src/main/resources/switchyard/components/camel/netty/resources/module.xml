@@ -37,6 +37,9 @@
         <module name="org.switchyard.api"/>
         <module name="org.switchyard.common-camel"/>
         <module name="org.switchyard.config"/>
+        <module name="org.switchyard.security"/>
+        <module name="org.switchyard.component.common"/>
+        <module name="org.jboss.netty"/>
         <module name="org.apache.camel.core"/>
         <module name="org.apache.camel.netty" export="true" optional="true">
             <imports>
