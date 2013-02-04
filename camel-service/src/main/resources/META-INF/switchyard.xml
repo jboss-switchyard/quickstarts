@@ -21,11 +21,16 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+    xmlns:file="urn:switchyard-component-camel-file:config:1.0"
     xmlns:swyd="urn:switchyard-config:switchyard:1.0">
 
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-service"
         targetNamespace="urn:switchyard-quickstart:camel-service:0.1.0">
-        <service name="JavaDSL" promote="JavaDSLBuilder/JavaDSL"/>
+        <service name="JavaDSL" promote="JavaDSLBuilder/JavaDSL">
+            <file:binding.file>
+                <file:directory>data/</file:directory>
+            </file:binding.file>
+        </service>
         <component name="JavaDSLBuilder">
             <reference name="XMLService">
                 <swyd:interface.esb inputType="java:java.lang.String"/>
