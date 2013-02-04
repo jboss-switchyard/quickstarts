@@ -21,13 +21,14 @@ package org.switchyard.quickstarts.camel.service;
 import org.apache.camel.builder.RouteBuilder;
 
 public class JavaDSLBuilder extends RouteBuilder {
-    
+
     public void configure() {
         from("switchyard://JavaDSL")
             .log("Message received in Java DSL Route")
             .log("${body}")
             .split(body(String.class).tokenize("\n"))
-            .filter(body(String.class).startsWith("sally:"))
-            .to("switchyard://XMLService?operationName=acceptMessage");
+            .filter()
+                .groovy("request.getBody().startsWith('sally:')")
+                    .to("switchyard://XMLService?operationName=acceptMessage");
     }
 }
