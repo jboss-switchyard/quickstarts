@@ -20,43 +20,50 @@
   ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
-<module xmlns="urn:jboss:module:1.0" name="org.switchyard.component.camel">
+<module xmlns="urn:jboss:module:1.0" name="org.apache.camel.script">
 
     <resources>
-        <resource-root path="switchyard-component-camel-${project.version}.jar"/>
+        <resource-root path="camel-script-${version.camel}.jar"/>
     </resources>
 
     <dependencies>
         <module name="javax.api"/>
-        <module name="org.switchyard.api"/>
-        <module name="org.switchyard.common"/>
-        <module name="org.switchyard.common-camel"/>
-        <module name="org.switchyard.config"/>
-        <module name="org.switchyard.deploy"/>
-        <module name="org.switchyard.jaxb-impl"/>
-        <module name="org.switchyard.api"/>
-        <module name="org.switchyard.common-camel"/>
-        <module name="org.switchyard.config"/>
-        <module name="org.apache.camel.core" export="true" />
-        <module name="org.apache.camel.script" export="true">
+        <module name="org.slf4j"/>
+        <module name="org.apache.camel.core"/>
+        <module name="org.osgi.core"/>
+        <module name="rhino" export="true">
             <imports>
                 <include path="META-INF/services" />
-                <include path="META-INF/services/org/apache/camel/language/resolver"/>
             </imports>
             <exports>
                 <include path="META-INF/services" />
-                <include path="META-INF/services/org/apache/camel/language/resolver"/>
             </exports>
         </module>
-        <module name="org.switchyard.component.camel.switchyard" export="true">
+        <module name="org.beanshell" export="true">
             <imports>
-                <include path="META-INF/services/org/apache/camel/component"/>
+                <include path="META-INF/services" />
             </imports>
             <exports>
-                <include path="META-INF/services/org/apache/camel/component"/>
+                <include path="META-INF/services" />
             </exports>
         </module>
-        <module name="org.switchyard.component.common.camel">
+        <module name="org.python" export="true">
+            <imports>
+                <include path="META-INF/services" />
+            </imports>
+            <exports>
+                <include path="META-INF/services" />
+            </exports>
+        </module>
+        <module name="org.jruby" export="true">
+            <imports>
+                <include path="META-INF/services" />
+            </imports>
+            <exports>
+                <include path="META-INF/services" />
+            </exports>
+        </module>
+        <module name="org.codehaus.groovy" export="true">
             <imports>
                 <include path="META-INF/services" />
             </imports>
@@ -65,5 +72,4 @@
             </exports>
         </module>
     </dependencies>
-
 </module>
