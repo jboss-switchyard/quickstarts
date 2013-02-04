@@ -36,6 +36,11 @@
     </properties>
     <dependencies>
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-script</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-common-camel</artifactId>
         </dependency>
