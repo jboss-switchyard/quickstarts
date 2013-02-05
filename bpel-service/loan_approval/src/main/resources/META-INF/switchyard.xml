@@ -13,6 +13,7 @@
      <sca:composite name="loanservice" targetNamespace="urn:bpel:test:1.0">
         <sca:service name="loanService" promote="loanService">
             <soap:binding.soap>
+        	<soap:contextMapper includes=".*" soapHeadersType="DOM"/>
                 <soap:wsdl>loanServicePT.wsdl</soap:wsdl>
                 <soap:socketAddr>:18001</soap:socketAddr>
             </soap:binding.soap>

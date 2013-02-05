@@ -67,6 +67,10 @@
 					</query>
                 </to>
             </copy>
+            <copy>
+		<from variable="request" header="conversationId" />
+		<to variable="check" header="conversationId" />
+            </copy>
         </assign>
         
       <invoke partnerLink="assessor" portType="lns:riskAssessmentPT" operation="check" 
@@ -80,6 +84,10 @@
 </tns:RequestResponse>
 </literal></from>
                 <to variable="requestResponse" part="parameter"></to>
+            </copy>
+            <copy>
+		<from variable="checkResponse" header="conversationId" />
+		<to variable="requestResponse" header="conversationId" />
             </copy>
         </assign>
 
