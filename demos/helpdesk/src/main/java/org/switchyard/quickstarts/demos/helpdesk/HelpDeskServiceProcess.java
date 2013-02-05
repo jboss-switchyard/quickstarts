@@ -19,9 +19,6 @@
 package org.switchyard.quickstarts.demos.helpdesk;
 
 import org.jbpm.process.workitem.wsht.MinaHTWorkItemHandler;
-import org.switchyard.component.bpm.annotation.BPM;
-import org.switchyard.component.bpm.annotation.StartProcess;
-import org.switchyard.component.bpm.annotation.WorkItemHandler;
 import org.switchyard.component.common.knowledge.KnowledgeConstants;
 import org.switchyard.component.common.knowledge.annotation.Manifest;
 import org.switchyard.component.common.knowledge.annotation.Mapping;
@@ -30,16 +27,9 @@ import org.switchyard.component.common.knowledge.annotation.Resource;
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-@BPM(value=HelpDeskService.class,
-    manifest=@Manifest(resources=@Resource(location="/META-INF/HelpDeskService.bpmn", type="BPMN2")),
-    workItemHandlers={@WorkItemHandler(MinaHTWorkItemHandler.class)})
 public interface HelpDeskServiceProcess extends HelpDeskService {
 
     @Override
-    @StartProcess(
-        inputs={@Mapping(expression="message.content", variable="ticket")},
-        outputs={@Mapping(expression="ticketAck", variable=KnowledgeConstants.CONTENT_OUTPUT)}
-    )
     public TicketAck openTicket(Ticket ticket);
 
 }

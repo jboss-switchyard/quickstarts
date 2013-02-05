@@ -98,11 +98,6 @@
             <plugin>
                 <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-plugin</artifactId>
-                <configuration>
-                    <scannerClassNames>
-                        <param>org.switchyard.component.bean.config.model.BeanSwitchYardScanner</param>
-                    </scannerClassNames>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>

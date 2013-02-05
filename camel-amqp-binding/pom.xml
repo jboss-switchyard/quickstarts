@@ -103,11 +103,6 @@
                         <goals>
                             <goal>configure</goal>
                         </goals>
-                        <configuration>
-                            <scannerClassNames>
-                                <param>org.switchyard.component.bean.config.model.BeanSwitchYardScanner</param>
-                            </scannerClassNames>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

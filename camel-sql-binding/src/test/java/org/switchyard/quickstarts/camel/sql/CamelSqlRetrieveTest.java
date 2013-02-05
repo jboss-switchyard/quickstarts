@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.switchyard.Exchange;
-import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.java.JavaService;
@@ -41,7 +40,7 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
 @SwitchYardTestCaseConfig(
     config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
     mixins = {CDIMixIn.class},
-    scanners = {BeanSwitchYardScanner.class, TransformSwitchYardScanner.class}
+    scanners = TransformSwitchYardScanner.class
 )
 public class CamelSqlRetrieveTest extends CamelSqlBindingTest {
 

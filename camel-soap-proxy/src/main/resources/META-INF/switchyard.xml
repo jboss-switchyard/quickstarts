@@ -1,47 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ JBoss, Home of Professional Open Source.
-  ~ Copyright 2012, Red Hat, Inc., and individual contributors
-  ~ as indicated by the @author tags. See the copyright.txt file in the
-  ~ distribution for a full listing of individual contributors.
-  ~
-  ~ This is free software; you can redistribute it and/or modify it
-  ~ under the terms of the GNU Lesser General Public License as
-  ~ published by the Free Software Foundation; either version 2.1 of
-  ~ the License, or (at your option) any later version.
-  ~
-  ~ This software is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-  ~ Lesser General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU Lesser General Public
-  ~ License along with this software; if not, write to the Free
-  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
-  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
-  -->
-<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
-    xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-    xmlns:soap="urn:switchyard-component-soap:config:1.0"
-    xmlns:camel="urn:switchyard-component-camel:config:1.0">
-
-    <sca:composite name="camel-soap-proxy" targetNamespace="urn:switchyard-quickstart:camel-soap-proxy:1.0">
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0">
+    <sca:composite xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-soap-proxy" targetNamespace="urn:switchyard-quickstart:camel-soap-proxy:1.0">
         <sca:service name="PromotedProxyService" promote="ProxyService">
-            <soap:binding.soap>
+            <soap:binding.soap xmlns:soap="urn:switchyard-component-soap:config:1.0">
                 <soap:contextMapper/>
                 <soap:wsdl>META-INF/ReverseService.wsdl</soap:wsdl>
                 <soap:contextPath>proxy</soap:contextPath>
             </soap:binding.soap>
         </sca:service>
-        <sca:reference name="PromotedReverseService" promote="ProxyService/ReverseService" multiplicity="0..1">
-            <soap:binding.soap>
+        <sca:reference multiplicity="0..1" name="PromotedReverseService" promote="ProxyService/ReverseService">
+            <soap:binding.soap xmlns:soap="urn:switchyard-component-soap:config:1.0">
                 <soap:contextMapper/>
                 <soap:wsdl>META-INF/ReverseService.wsdl</soap:wsdl>
                 <soap:endpointAddress>http://localhost:8080/ReverseService</soap:endpointAddress>
             </soap:binding.soap>
         </sca:reference>
         <sca:component name="ProxyService">
-            <camel:implementation.camel>
+            <camel:implementation.camel xmlns:camel="urn:switchyard-component-camel:config:1.0">
                 <camel:xml path="META-INF/route.xml"/>
             </camel:implementation.camel>
             <sca:service name="ProxyService">
@@ -52,11 +27,11 @@
             </sca:reference>
         </sca:component>
     </sca:composite>
-    <!-- 
+    <!--
     <domain>
         <handlers>
             <handler class="org.switchyard.handlers.MessageTrace" name="MessageTrace"/>
         </handlers>
     </domain>
-     -->
+    -->
 </switchyard>

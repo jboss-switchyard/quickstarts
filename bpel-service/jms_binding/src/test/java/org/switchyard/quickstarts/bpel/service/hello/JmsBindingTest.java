@@ -28,7 +28,6 @@ import javax.jms.Session;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.SwitchYardTestKit;
@@ -44,8 +43,8 @@ import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(
         config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
-        mixins = {CDIMixIn.class, HornetQMixIn.class},
-        scanners = BeanSwitchYardScanner.class)
+        mixins = {CDIMixIn.class, HornetQMixIn.class}
+)
 public class JmsBindingTest {
     
     private static final String REQUEST_NAME = "HelloRequestQueue";

@@ -30,7 +30,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.common.camel.SwitchYardCamelContext;
-import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.component.test.mixins.transaction.TransactionMixIn;
 import org.switchyard.quickstarts.camel.jpa.binding.domain.Greet;
@@ -40,8 +39,8 @@ import org.switchyard.test.SwitchYardTestKit;
 
 @SwitchYardTestCaseConfig(
     config = SwitchYardTestCaseConfig.SWITCHYARD_XML, 
-    mixins = {CDIMixIn.class, TransactionMixIn.class},
-    scanners = BeanSwitchYardScanner.class)
+    mixins = {CDIMixIn.class, TransactionMixIn.class}
+)
 @RunWith(SwitchYardRunner.class)
 public class CamelJpaBindingStoreTest extends CamelJpaBindingTest {
 

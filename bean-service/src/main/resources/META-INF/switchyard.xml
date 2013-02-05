@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<switchyard xmlns="urn:switchyard-config:switchyard:1.0" name="orders" targetNamespace="urn:switchyard-quickstart:bean-service:0.1.0">
+<?xml version="1.0" encoding="UTF-8"?><switchyard xmlns="urn:switchyard-config:switchyard:1.0" name="orders" targetNamespace="urn:switchyard-quickstart:bean-service:0.1.0">
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="orders" targetNamespace="urn:switchyard-quickstart:bean-service:0.1.0">
         <service name="OrderService" promote="OrderService">
             <interface.wsdl interface="wsdl/OrderService.wsdl#wsdl.porttype(OrderService)"/>
@@ -9,5 +8,24 @@
                 <contextPath>quickstart-bean</contextPath>
             </binding.soap>
         </service>
+        <component name="InventoryService">
+            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.bean.service.InventoryServiceBean"/>
+            <service name="InventoryService">
+                <interface.java interface="org.switchyard.quickstarts.bean.service.InventoryService"/>
+            </service>
+        </component>
+        <component name="OrderService">
+            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.bean.service.OrderServiceBean"/>
+            <service name="OrderService">
+                <interface.java interface="org.switchyard.quickstarts.bean.service.OrderService"/>
+            </service>
+            <reference name="InventoryService">
+                <interface.java interface="org.switchyard.quickstarts.bean.service.InventoryService"/>
+            </reference>
+        </component>
     </composite>
+    <transforms>
+        <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.bean.service.Transformers" from="java:org.switchyard.quickstarts.bean.service.OrderAck" to="{urn:switchyard-quickstart:bean-service:1.0}submitOrderResponse"/>
+        <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.bean.service.Transformers" from="{urn:switchyard-quickstart:bean-service:1.0}submitOrder" to="java:org.switchyard.quickstarts.bean.service.Order"/>
+    </transforms>
 </switchyard>

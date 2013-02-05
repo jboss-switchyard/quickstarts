@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<switchyard xmlns="urn:switchyard-config:switchyard:1.0" name="policy-securty-saml">
+<?xml version="1.0" encoding="UTF-8"?><switchyard xmlns="urn:switchyard-config:switchyard:1.0" name="policy-securty-saml">
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="policy-security-saml" targetNamespace="urn:switchyard-quickstart-demo:policy-security-saml:0.1.0">
         <service name="WorkService" promote="WorkService">
             <interface.wsdl interface="META-INF/WorkService.wsdl#wsdl.porttype(WorkService)"/>
@@ -8,7 +7,18 @@
                 <contextPath>policy-security-saml</contextPath>
             </binding.soap>
         </service>
+        <component name="WorkService">
+            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.demo.policy.security.saml.WorkServiceBean"/>
+            <service name="WorkService" requires="confidentiality clientAuthentication">
+                <interface.java interface="org.switchyard.quickstarts.demo.policy.security.saml.WorkService"/>
+            </service>
+        </component>
     </composite>
+    <transforms>
+        <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.demo.policy.security.saml.Transformers" from="java:org.switchyard.quickstarts.demo.policy.security.saml.WorkAck" to="java:org.switchyard.quickstarts.demo.policy.security.saml.Work"/>
+        <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.demo.policy.security.saml.Transformers" from="java:org.switchyard.quickstarts.demo.policy.security.saml.WorkAck" to="{urn:switchyard-quickstart-demo:policy-security-saml:0.1.0}doWorkResponse"/>
+        <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.demo.policy.security.saml.Transformers" from="{urn:switchyard-quickstart-demo:policy-security-saml:0.1.0}doWork" to="java:org.switchyard.quickstarts.demo.policy.security.saml.Work"/>
+    </transforms>
     <domain>
         <!-- Uncomment this section to trace message exchange activity
         <handlers>
