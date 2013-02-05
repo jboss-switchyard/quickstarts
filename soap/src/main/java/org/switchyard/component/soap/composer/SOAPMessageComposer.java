@@ -54,6 +54,10 @@ import org.w3c.dom.NodeList;
  */
 public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
 
+    // Constant suffix used for the reply wrapper when the composer is configured to 
+    // wrap response messages with operation name.
+    private static final String DOC_LIT_WRAPPED_REPLY_SUFFIX = "Response";
+    
     private static Logger _log = Logger.getLogger(SOAPMessageComposer.class);
     private SOAPMessageComposerModel _config;
     private Port _wsdlPort;
@@ -152,8 +156,9 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
                         String opName = exchange.getContract().getProviderOperation().getName();
                         String ns = getWrapperNamespace(opName, exchange.getPhase() == null);
                         // Don't wrap if it's already wrapped
-                        if (!messageNodeImport.getLocalName().equals(opName)) {
-                            Element wrapper = messageNodeImport.getOwnerDocument().createElementNS(ns, opName);
+                        if (!messageNodeImport.getLocalName().equals(opName + DOC_LIT_WRAPPED_REPLY_SUFFIX)) {
+                            Element wrapper = messageNodeImport.getOwnerDocument().createElementNS(
+                                    ns, opName + DOC_LIT_WRAPPED_REPLY_SUFFIX);
                             wrapper.appendChild(messageNodeImport);
                             messageNodeImport = wrapper;
                         }
