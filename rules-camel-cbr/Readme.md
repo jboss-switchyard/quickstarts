@@ -5,13 +5,13 @@ This quickstart also demonstrates the ability to use MVEL expressions to extract
 The drl resource is specified using annotations within the DestinationServiceRules interface, and checks the id of Widgets to determine the destination to set on their Boxes.
 Then, a Camel route looks at the destination set on the Box for each Widget, and routes it to the appropriate service (RedService, GreenService, or BlueService).
 
-If you would like to watch the rules execution, uncomment these lines in
-src/main/java/org/switchyard/quickstarts/rules/camel/cbr/DestinationServiceRules.java
+If you would like to watch the rules execution, add these lines in
+src/main/resources/META-INF/switchyard.xml:
 ```
-//import org.kie.event.rule.DebugAgendaEventListener;
-//import org.kie.event.rule.DebugWorkingMemoryEventListener;
-//import org.switchyard.component.common.knowledge.annotation.Listener;
-//listeners={@Listener(DebugWorkingMemoryEventListener.class), @Listener(DebugAgendaEventListener.class)},
+<listeners>
+    <listener class="org.kie.event.rule.DebugAgendaEventListener"/>
+    <listener class="org.kie.event.rule.DebugWorkingMemoryEventListener"/>
+</listeners>
 ```
 
 ![Rules Camel CBR Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/rules-camel-cbr/rules-camel-cbr.jpg)

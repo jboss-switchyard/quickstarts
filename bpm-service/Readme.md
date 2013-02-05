@@ -58,8 +58,15 @@ Expected Output:
 </SOAP-ENV:Envelope>
 ```
 
+Test Properties:
+================
+This quickstart also shows (albeit commented out) how one could write a test where test properties within configurations are programmatically overridden.  In switchyard.xml, you see that the binding.soap element's socketAddr port is a dynamic property, like so:
+    <socketAddr>localhost:${soapPort:18001}</socketAddr>
+In WebServiceTest.java, you can see that by uncommenting the commented code, you could set the value of the soapPort property to 18002, and that will be used instead of the default port of 18001.  One could also run the test with a system property overriding the value, which takes highest precedence. (i.e.: -DsoapPort=18003)
+
+Additionally, you can see how a domain property (userName) is retrieved from a system property (${user.name}), which is then mapped into a process instance variable (userName), which can then be used inside the process itself.
+
 ## Further Reading
 
 1. [BPM Service Documentation](https://docs.jboss.org/author/display/SWITCHYARD/BPM+Services)
-
 
