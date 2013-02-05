@@ -32,10 +32,6 @@
       </receive>
 
 		<if>
-		<!-- $check.parameter/check/amount/text() >= 1000 
-		$check.parameter/lns:check/amount >= 1000
-		$check.parameter/check/firstName != 'Fred'
-		-->
    			<condition>
 				<![CDATA[$check.parameter//lns:amount >= 1000]]>
 			</condition>
@@ -69,6 +65,10 @@
 			</literal></from>
 			                <to variable="checkResponse" part="parameter"></to>
 			            </copy>
+				    <copy>
+					<from variable="check" header="conversationId" />
+					<to variable="checkResponse" header="conversationId" />
+				    </copy>
 			        </assign>
 			
 			      <reply partnerLink="assessor" 
