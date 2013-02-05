@@ -105,16 +105,6 @@
             <plugin>
                 <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-plugin</artifactId>
-                <configuration>
-                    <scannerClassNames>
-                        <param>org.switchyard.component.bean.config.model.BeanSwitchYardScanner</param>
-                    </scannerClassNames>
-                    <scanDirectories>
-                        <param>target/classes</param>
-                        <param>src/main/webResources</param>
-                    </scanDirectories>
-                    <outputDirectory>target/switchyard_xml</outputDirectory>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -130,7 +120,7 @@
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                     <webResources>
                         <resource>
-                            <directory>target/switchyard_xml</directory>
+                            <directory>src/main/webResources</directory>
                         </resource>
                     </webResources>
                     <archive>

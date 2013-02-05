@@ -28,7 +28,6 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Exchange;
-import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardRunner;
@@ -48,8 +47,8 @@ import org.switchyard.component.test.mixins.jca.ResourceAdapterConfig;
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(
         config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
-        mixins = {CDIMixIn.class, HornetQMixIn.class, JCAMixIn.class},
-        scanners = BeanSwitchYardScanner.class)
+        mixins = {CDIMixIn.class, HornetQMixIn.class, JCAMixIn.class}
+)
 public class JCAInflowBindingTest {
     
     private SwitchYardTestKit _testKit;

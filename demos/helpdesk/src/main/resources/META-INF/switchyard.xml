@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<switchyard xmlns="urn:switchyard-config:switchyard:1.0" name="helpdesk">
+<?xml version="1.0" encoding="UTF-8"?><switchyard xmlns="urn:switchyard-config:switchyard:1.0" name="helpdesk">
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="helpdesk" targetNamespace="urn:switchyard-quickstart-demo:helpdesk:0.1.0">
         <service name="HelpDeskService" promote="HelpDeskService">
             <interface.wsdl interface="META-INF/HelpDeskService.wsdl#wsdl.porttype(HelpDeskService)"/>
@@ -10,9 +9,43 @@
             </binding.soap>
         </service>
         <component name="HelpDeskService">
+            <implementation.bpm xmlns="urn:switchyard-component-bpm:config:1.0" processId="HelpDeskService">
+                <actions>
+                    <action operation="openTicket" type="START_PROCESS">
+                        <inputs>
+                            <mapping expression="message.content" variable="ticket"/>
+                        </inputs>
+                        <outputs>
+                            <mapping expression="ticketAck" variable="contentOutput"/>
+                        </outputs>
+                    </action>
+                </actions>
+                <manifest>
+                    <resources>
+                        <resource location="/META-INF/HelpDeskService.bpmn" type="BPMN2"/>
+                    </resources>
+                </manifest>
+                <workItemHandlers>
+                    <workItemHandler class="org.jbpm.process.workitem.wsht.MinaHTWorkItemHandler" name="Human Task"/>
+                </workItemHandlers>
+            </implementation.bpm>
+            <service name="HelpDeskService">
+                <interface.java interface="org.switchyard.quickstarts.demos.helpdesk.HelpDeskService"/>
+            </service>
             <reference name="TicketManagementService">
                 <interface.java interface="org.switchyard.quickstarts.demos.helpdesk.TicketManagementService"/>
             </reference>
         </component>
+        <component name="TicketManagementService">
+            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.demos.helpdesk.TicketManagementServiceBean"/>
+            <service name="TicketManagementService">
+                <interface.java interface="org.switchyard.quickstarts.demos.helpdesk.TicketManagementService"/>
+            </service>
+        </component>
     </composite>
+    <transforms>
+        <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.demos.helpdesk.Transformers" from="java:org.switchyard.quickstarts.demos.helpdesk.TicketAck" to="java:org.switchyard.quickstarts.demos.helpdesk.Ticket"/>
+        <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.demos.helpdesk.Transformers" from="java:org.switchyard.quickstarts.demos.helpdesk.TicketAck" to="{urn:switchyard-quickstart-demo:helpdesk:1.0}openTicketResponse"/>
+        <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.demos.helpdesk.Transformers" from="{urn:switchyard-quickstart-demo:helpdesk:1.0}openTicket" to="java:org.switchyard.quickstarts.demos.helpdesk.Ticket"/>
+    </transforms>
 </switchyard>

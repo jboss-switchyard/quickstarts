@@ -33,7 +33,6 @@ import javax.mail.internet.MimeMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
@@ -45,8 +44,7 @@ import org.switchyard.component.test.mixins.cdi.CDIMixIn;
  */
 @SwitchYardTestCaseConfig(
     config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
-    mixins = {CDIMixIn.class},
-    scanners = BeanSwitchYardScanner.class
+    mixins = {CDIMixIn.class}
 )
 @RunWith(SwitchYardRunner.class)
 public class CamelMailBindingTest {

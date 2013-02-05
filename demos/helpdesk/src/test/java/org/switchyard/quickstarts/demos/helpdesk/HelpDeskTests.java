@@ -20,8 +20,6 @@ package org.switchyard.quickstarts.demos.helpdesk;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
-import org.switchyard.component.bpm.config.model.BPMSwitchYardScanner;
 import org.switchyard.component.test.mixins.bpm.BPMMixIn;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
@@ -35,7 +33,7 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(
     config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
-    scanners = {BeanSwitchYardScanner.class, BPMSwitchYardScanner.class, TransformSwitchYardScanner.class},
+    scanners = TransformSwitchYardScanner.class,
     mixins = {BPMMixIn.class, CDIMixIn.class, HTTPMixIn.class}
 )
 public class HelpDeskTests {

@@ -21,18 +21,13 @@ package org.switchyard.quickstarts.rules.interview;
 import org.switchyard.component.common.knowledge.annotation.Container;
 import org.switchyard.component.common.knowledge.annotation.Manifest;
 import org.switchyard.component.common.knowledge.annotation.Mapping;
-import org.switchyard.component.rules.annotation.Execute;
-import org.switchyard.component.rules.annotation.Rules;
 
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-@Rules(value=Interview.class,
-    manifest=@Manifest(container=@Container(sessionName="rules-interview-container")))
 public interface InterviewRules extends Interview {
 
     @Override
-    @Execute(globals=@Mapping(expression="exchange.provider.name.localPart", variable="service"))
     public void verify(Applicant applicant);
 
 }
