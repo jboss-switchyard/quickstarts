@@ -73,11 +73,6 @@
                         <goals>
                             <goal>configure</goal>
                         </goals>
-                        <configuration>
-                            <scannerClassNames>
-                                <param>org.switchyard.component.rules.config.model.RulesSwitchYardScanner</param>
-                            </scannerClassNames>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

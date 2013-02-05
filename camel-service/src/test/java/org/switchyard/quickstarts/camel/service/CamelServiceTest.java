@@ -20,7 +20,6 @@ package org.switchyard.quickstarts.camel.service;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.component.camel.model.RouteScanner;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
@@ -30,8 +29,7 @@ import org.switchyard.test.SwitchYardTestCaseConfig;
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(
         config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
-        mixins = CDIMixIn.class,
-        scanners = RouteScanner.class
+        mixins = CDIMixIn.class
 )
 public class CamelServiceTest {
 

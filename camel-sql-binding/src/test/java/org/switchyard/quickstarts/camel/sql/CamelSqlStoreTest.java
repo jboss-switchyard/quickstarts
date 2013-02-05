@@ -28,7 +28,6 @@ import org.apache.camel.component.timer.TimerComponent;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.common.camel.SwitchYardCamelContext;
-import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.quickstarts.camel.sql.binding.Greeting;
 import org.switchyard.test.Invoker;
@@ -39,7 +38,7 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
 @SwitchYardTestCaseConfig(
     config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
     mixins = {CDIMixIn.class},
-    scanners = {BeanSwitchYardScanner.class, TransformSwitchYardScanner.class}
+    scanners = TransformSwitchYardScanner.class
 )
 public class CamelSqlStoreTest extends CamelSqlBindingTest {
 

@@ -23,7 +23,6 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.SwitchYardTestKit;
@@ -39,7 +38,7 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
 @SwitchYardTestCaseConfig(
         config = SwitchYardTestCaseConfig.SWITCHYARD_XML, 
         mixins = {CDIMixIn.class, HTTPMixIn.class},
-        scanners = {BeanSwitchYardScanner.class, TransformSwitchYardScanner.class})
+        scanners = TransformSwitchYardScanner.class)
 @RunWith(SwitchYardRunner.class)
 public class HttpBindingTest {
 

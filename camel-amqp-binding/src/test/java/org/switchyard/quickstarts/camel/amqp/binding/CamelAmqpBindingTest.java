@@ -39,7 +39,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Exchange;
-import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardRunner;
@@ -49,8 +48,7 @@ import org.switchyard.test.mixins.amqp.AMQPMixIn;
 
 @SwitchYardTestCaseConfig(
         config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
-        mixins = {CDIMixIn.class, AMQPMixIn.class},
-        scanners = BeanSwitchYardScanner.class
+        mixins = {CDIMixIn.class, AMQPMixIn.class}
 )
 @RunWith(SwitchYardRunner.class)
 public class CamelAmqpBindingTest {

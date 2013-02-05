@@ -19,9 +19,7 @@
 package org.switchyard.quickstarts.camel.service;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.switchyard.component.camel.Route;
 
-@Route(JavaDSL.class)
 public class JavaDSLBuilder extends RouteBuilder {
     
     public void configure() {

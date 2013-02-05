@@ -21,7 +21,6 @@ package org.switchyard.quickstarts.transform.jaxb;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
@@ -31,7 +30,6 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(
         config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
-        scanners = {BeanSwitchYardScanner.class},
         mixins = {CDIMixIn.class, HTTPMixIn.class})
 public class WebServiceTest {
 

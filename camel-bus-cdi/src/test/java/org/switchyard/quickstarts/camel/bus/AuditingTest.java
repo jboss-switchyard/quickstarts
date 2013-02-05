@@ -26,7 +26,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Message;
-import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
@@ -38,7 +37,7 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
 @SwitchYardTestCaseConfig(
         config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
         mixins = CDIMixIn.class,
-        scanners = {BeanSwitchYardScanner.class, TransformSwitchYardScanner.class}
+        scanners = TransformSwitchYardScanner.class
 )
 public class AuditingTest {
 
