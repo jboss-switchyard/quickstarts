@@ -32,12 +32,16 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.common.property.CompoundPropertyResolver;
 import org.switchyard.common.property.PropertiesPropertyResolver;
 import org.switchyard.common.property.PropertyResolver;
-import org.switchyard.common.property.SystemPropertiesPropertyResolver;
+import org.switchyard.common.property.SystemAndTestPropertyResolver;
+import org.switchyard.common.property.SystemPropertyResolver;
+import org.switchyard.common.property.TestPropertyResolver;
 
 /**
  * StringsTests.
@@ -128,7 +132,45 @@ public class StringsTests {
         custom.setProperty("emotion", "loves");
         final String original = "${user.name} has a ${foo}, and he ${emotion:hates} it, unlike his ${sibling:sister}.";
         final String expected = System.getProperty("user.name") + " has a bar, and he loves it, unlike his sister.";
-        PropertyResolver resolver = new CompoundPropertyResolver(SystemPropertiesPropertyResolver.instance(), new PropertiesPropertyResolver(custom));
+        PropertyResolver resolver = new CompoundPropertyResolver(SystemPropertyResolver.instance(), new PropertiesPropertyResolver(custom));
+        final String actual = Strings.replaceProperties(original, resolver);
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Before
+    public void beforeReplaceTestProperties() {
+        TestPropertyResolver.instance().getMap().put("test.key", "testValue");
+    }
+
+    @After
+    public void afterReplaceTestProperties() {
+        TestPropertyResolver.instance().getMap().clear();
+    }
+
+    @Test
+    public void testReplaceTestProperties() {
+        final String original = "The test value is ${test.key}.";
+        final String expected = "The test value is testValue.";
+        final String actual = Strings.replaceTestProperties(original);
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testReplaceSystemAndTestProperties() {
+        final String original = "${user.name}'s test value is ${test.key}.";
+        final String expected = System.getProperty("user.name") + "'s test value is testValue.";
+        final String actual = Strings.replaceSystemAndTestProperties(original);
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testReplaceSystemAndTestAndCustomProperties() {
+        Properties custom = new Properties();
+        custom.setProperty("foo", "bar");
+        custom.setProperty("emotion", "loves");
+        final String original = "${user.name} has a ${foo}, and he ${emotion:hates} it, unlike his ${sibling:sister}, who has a ${test.key}.";
+        final String expected = System.getProperty("user.name") + " has a bar, and he loves it, unlike his sister, who has a testValue.";
+        PropertyResolver resolver = new CompoundPropertyResolver(SystemAndTestPropertyResolver.instance(), new PropertiesPropertyResolver(custom));
         final String actual = Strings.replaceProperties(original, resolver);
         Assert.assertEquals(expected, actual);
     }

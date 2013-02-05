@@ -35,7 +35,7 @@ import javax.xml.transform.OutputKeys;
 import org.switchyard.common.io.pull.ElementPuller;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.property.PropertyResolver;
-import org.switchyard.common.property.SystemPropertiesPropertyResolver;
+import org.switchyard.common.property.SystemAndTestPropertyResolver;
 import org.switchyard.common.xml.XMLHelper;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -687,7 +687,7 @@ public class DOMConfiguration extends BaseConfiguration {
         PropertyResolver propertyResolver = (PropertyResolver)_element.getUserData(PROPERTY_RESOLVER_KEY);
         if (propertyResolver == null) {
             Configuration parent = getParent();
-            propertyResolver = parent != null ? parent.getPropertyResolver() : SystemPropertiesPropertyResolver.instance();
+            propertyResolver = parent != null ? parent.getPropertyResolver() : SystemAndTestPropertyResolver.instance();
         }
         return propertyResolver;
     }

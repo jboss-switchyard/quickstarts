@@ -1,15 +1,31 @@
 package org.switchyard.test;
 
+import java.io.StringReader;
 import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.switchyard.config.Configuration;
+import org.switchyard.config.ConfigurationPuller;
 import org.switchyard.test.mixins.AbstractTestMixIn;
+import org.switchyard.test.mixins.PropertyMixIn;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public class SwitchYardTestKitTest {
+
+    @Test
+    public void test_property_mixin() throws Exception {
+        PropertyMixIn pmi = SwitchYardTestKit.newMixInInstance(PropertyMixIn.class, this);
+        Assert.assertNotNull(pmi);
+        pmi.set("test.name", "ThyName");
+        pmi.set("test.value", Integer.valueOf(100));
+        String xml = "<test name='${test.name}'>${test.value}</test>";
+        Configuration config = new ConfigurationPuller().pull(new StringReader(xml));
+        Assert.assertEquals("ThyName", config.getAttribute("name"));
+        Assert.assertEquals("100", config.getValue());
+    }
 
     @Test
     public void test_factory_mixin_creation_static_method() {

@@ -16,41 +16,66 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.common.property;
+package org.switchyard.test.mixins;
 
-import java.util.Properties;
+import java.util.Map;
+
+import org.switchyard.common.property.TestPropertyResolver;
 
 /**
- * Resolves properties from a Properties.
+ * Property Test Mix-In for setting test properties that will be respected in configurations.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class PropertiesPropertyResolver implements PropertyResolver {
-
-    private final Properties _properties;
+public class PropertyMixIn extends AbstractTestMixIn {
 
     /**
-     * Construction with the specified Properties.
-     * @param properties the specified Properties
+     * {@inheritDoc}
      */
-    public PropertiesPropertyResolver(Properties properties) {
-        _properties = properties;
+    @Override
+    public void initialize() {
+        clear();
     }
 
     /**
-     * Gets the Properties.
-     * @return the Properties
+     * Gets the test Map.
+     * @return the test Map
      */
-    public Properties getProperties() {
-        return _properties;
+    public Map<String, Object> getMap() {
+        return TestPropertyResolver.instance().getMap();
+    }
+
+    /**
+     * Gets a test property.
+     * @param key the property key
+     * @return the property value
+     */
+    public Object get(String key) {
+        return getMap().get(key);
+    }
+
+    /**
+     * Sets a test property.
+     * @param key the property key
+     * @param value the property value
+     */
+    public void set(String key, Object value) {
+        getMap().put(key, value);
+    }
+
+    /**
+     * Clears all test properties.
+     */
+    public void clear() {
+        getMap().clear();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final Object resolveProperty(String key) {
-        return _properties.getProperty(key);
+    public void uninitialize() {
+        clear();
     }
 
 }

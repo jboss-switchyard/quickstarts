@@ -20,37 +20,39 @@ package org.switchyard.common.property;
 
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 /**
- * Resolves properties from a Properties.
+ * Resolves properties from System Properties.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class PropertiesPropertyResolver implements PropertyResolver {
+public final class SystemPropertyResolver extends PropertiesPropertyResolver {
 
-    private final Properties _properties;
+    private static final Logger LOGGER = Logger.getLogger(SystemPropertyResolver.class);
 
-    /**
-     * Construction with the specified Properties.
-     * @param properties the specified Properties
-     */
-    public PropertiesPropertyResolver(Properties properties) {
-        _properties = properties;
+    private static final SystemPropertyResolver INSTANCE;
+    static {
+        Properties systemProperties;
+        try {
+            systemProperties = System.getProperties();
+        } catch (SecurityException se) {
+            LOGGER.error("SecurityException while getting System Properties; will default to empty Properties", se);
+            systemProperties = new Properties();
+        }
+        INSTANCE = new SystemPropertyResolver(systemProperties);
+    }
+
+    private SystemPropertyResolver(Properties systemProperties) {
+        super(systemProperties);
     }
 
     /**
-     * Gets the Properties.
-     * @return the Properties
+     * Returns the singleton instance.
+     * @return the singleton instance
      */
-    public Properties getProperties() {
-        return _properties;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final Object resolveProperty(String key) {
-        return _properties.getProperty(key);
+    public static final SystemPropertyResolver instance() {
+        return INSTANCE;
     }
 
 }

@@ -18,31 +18,31 @@
  */
 package org.switchyard.common.property;
 
-import java.util.Properties;
+import java.util.Map;
 
 /**
- * Resolves properties from a Properties.
+ * Resolves properties from a Map.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class PropertiesPropertyResolver implements PropertyResolver {
+public class MapPropertyResolver implements PropertyResolver {
 
-    private final Properties _properties;
+    private final Map<String, Object> _map;
 
     /**
-     * Construction with the specified Properties.
-     * @param properties the specified Properties
+     * Construction with the specified Map.
+     * @param map the specified Map
      */
-    public PropertiesPropertyResolver(Properties properties) {
-        _properties = properties;
+    public MapPropertyResolver(Map<String, Object> map) {
+        _map = map;
     }
 
     /**
-     * Gets the Properties.
-     * @return the Properties
+     * Gets the Map.
+     * @return the Map
      */
-    public Properties getProperties() {
-        return _properties;
+    public Map<String, Object> getMap() {
+        return _map;
     }
 
     /**
@@ -50,7 +50,7 @@ public class PropertiesPropertyResolver implements PropertyResolver {
      */
     @Override
     public final Object resolveProperty(String key) {
-        return _properties.getProperty(key);
+        return _map.get(key);
     }
 
 }

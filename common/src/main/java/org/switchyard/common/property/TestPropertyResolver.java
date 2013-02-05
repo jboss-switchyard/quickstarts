@@ -18,39 +18,31 @@
  */
 package org.switchyard.common.property;
 
-import java.util.Properties;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Resolves properties from a Properties.
+ * Resolves properties from a test Map.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class PropertiesPropertyResolver implements PropertyResolver {
+public final class TestPropertyResolver extends MapPropertyResolver {
 
-    private final Properties _properties;
+    private static final TestPropertyResolver INSTANCE;
+    static {
+        INSTANCE = new TestPropertyResolver(new ConcurrentHashMap<String, Object>());
+    }
 
-    /**
-     * Construction with the specified Properties.
-     * @param properties the specified Properties
-     */
-    public PropertiesPropertyResolver(Properties properties) {
-        _properties = properties;
+    private TestPropertyResolver(Map<String, Object> map) {
+        super(map);
     }
 
     /**
-     * Gets the Properties.
-     * @return the Properties
+     * Returns the singleton instance.
+     * @return the singleton instance
      */
-    public Properties getProperties() {
-        return _properties;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final Object resolveProperty(String key) {
-        return _properties.getProperty(key);
+    public static final TestPropertyResolver instance() {
+        return INSTANCE;
     }
 
 }

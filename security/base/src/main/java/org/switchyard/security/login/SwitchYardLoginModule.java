@@ -95,7 +95,7 @@ public abstract class SwitchYardLoginModule implements LoginModule {
         } else {
             Object value = options.get(name);
             if (value != null) {
-                return Strings.replaceSystemProperties(String.valueOf(value));
+                return Strings.replaceSystemAndTestProperties(String.valueOf(value));
             } else if (required) {
                 throw new IllegalStateException("option [" + name + "] not set");
             }

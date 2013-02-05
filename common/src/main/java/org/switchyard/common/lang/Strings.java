@@ -29,7 +29,9 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.switchyard.common.property.PropertyResolver;
-import org.switchyard.common.property.SystemPropertiesPropertyResolver;
+import org.switchyard.common.property.SystemAndTestPropertyResolver;
+import org.switchyard.common.property.SystemPropertyResolver;
+import org.switchyard.common.property.TestPropertyResolver;
 
 /**
  * Common String Utilities.
@@ -234,12 +236,30 @@ public final class Strings {
     }
 
     /**
-     * Replaces system properties.
+     * Replaces ONLY system properties.
      * @param str the original string
      * @return the modified string
      */
     public static String replaceSystemProperties(String str) {
-        return replaceProperties(str, SystemPropertiesPropertyResolver.instance());
+        return replaceProperties(str, SystemPropertyResolver.instance());
+    }
+
+    /**
+     * Replaces ONLY test properties.
+     * @param str the original string
+     * @return the modified string
+     */
+    public static String replaceTestProperties(String str) {
+        return replaceProperties(str, TestPropertyResolver.instance());
+    }
+
+    /**
+     * Replaces BOTH system and test properties.
+     * @param str the original string
+     * @return the modified string
+     */
+    public static String replaceSystemAndTestProperties(String str) {
+        return replaceProperties(str, SystemAndTestPropertyResolver.instance());
     }
 
     /**
