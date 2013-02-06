@@ -154,7 +154,7 @@ public class RiftsawServiceLocator implements ServiceLocator {
             javax.wsdl.Definition wsdl=WSDLHelper.getWSDLDefinition(crm.getInterface().getInterface());
             javax.wsdl.PortType portType=WSDLHelper.getPortType(crm.getInterface().getInterface(), wsdl);
             
-            re.register(wsdl, portType.getQName(), crm.getQName());
+            re.register(portType, crm.getQName());
 
         } else {
             throw new SwitchYardException("Could not find BPEL implementation associated with reference");
@@ -169,31 +169,18 @@ public class RiftsawServiceLocator implements ServiceLocator {
      */
     public class RegistryEntry {
 
-        private java.util.List<javax.wsdl.Definition> _wsdls=
-                    new java.util.Vector<javax.wsdl.Definition>();
-        private java.util.List<QName> _portTypes=
-                    new java.util.Vector<QName>();
+        private java.util.List<javax.wsdl.PortType> _portTypes=
+                    new java.util.Vector<javax.wsdl.PortType>();
         private java.util.List<QName> _services=
                     new java.util.Vector<QName>();
 
         /**
          * This method registers the wsdl, port type and service details.
          *
-         * @param wsdl The wsdl
          * @param portType The port type
-         * @param service The service
+         * @param service The SwitchYard service
          */
-        public void register(javax.wsdl.Definition wsdl, QName portType, QName service) {
-            
-            // RIFTSAW-476 (workaround)
-            // Check if wsdl defines a service, as this will be how
-            // the resolution is performed.
-            if (wsdl.getServices().size() == 0) {
-                throw new SwitchYardException("WSDL for referenced port type '"
-                        +portType+"' does not contain a Service");
-            }
-            
-            _wsdls.add(wsdl);
+        public void register(javax.wsdl.PortType portType, QName service) {
             _portTypes.add(portType);
             _services.add(service);
         }
@@ -208,31 +195,20 @@ public class RiftsawServiceLocator implements ServiceLocator {
          * @return The service or null if not found
          */
         public Service getService(QName serviceName, String portName, ServiceDomain serviceDomain) {
-            Service ret=null;
-            
-            for (int i=0; ret == null && i < _wsdls.size(); i++) {
-                javax.wsdl.Service service=_wsdls.get(i).getService(serviceName);
-                
-                if (service != null) {
-                    javax.wsdl.Port port=service.getPort(portName);
-                    
-                    if (port != null
-                            && port.getBinding().getPortType().getQName().equals(_portTypes.get(i))) {
-                        QName switchYardService=_services.get(i);
-                        
-                        ServiceReference sref = getServiceDomain(switchYardService).getServiceReference(switchYardService);
-                        
-                        if (sref == null) {
-                            LOG.error("No service found for '"+serviceName+"' (port "+portName+")");
-                            return (null);
-                        }
-                        
-                        ret = new ServiceProxy(sref, port.getBinding().getPortType());
+            Service ret = null;
+            for (int index = 0, count = _services.size(); index < count; ++index) {
+                if (serviceName.equals(_services.get(index))) {
+                    ServiceReference sref = serviceDomain.getServiceReference(serviceName);
+                    if (sref != null) {
+                        ret = new ServiceProxy(sref, _portTypes.get(index));
                     }
+                    break;
                 }
             }
-
-            return (ret);
+            if (ret == null) {
+                LOG.error("No service found for '" + serviceName);
+            }
+            return ret;
         }
     }
 

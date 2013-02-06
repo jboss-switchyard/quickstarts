@@ -18,18 +18,18 @@
 <deploy xmlns="http://www.apache.org/ode/schemas/dd/2007/03"
 	xmlns:ls="http://example.com/loan-approval/loanService/" 
 	xmlns:ra="http://example.com/loan-approval/riskAssessment/"
-	xmlns:examples="http://www.jboss.org/bpel/examples"
-    >
+    xmlns:testDomain="urn:bpel:test:1.0"
+	xmlns:examples="http://www.jboss.org/bpel/examples">
 
 	<!-- loan_approval/loanService example -->
 	<process name="ls:loanApprovalProcess">
 		<active>true</active>
         <process-events generate="all"/>
 		<provide partnerLink="customer">
-			<service name="ls:loanService" port="loanService_Port"/>
+			<service name="testDomain:loanService" port="ignored"/>
 		</provide>
 		<invoke partnerLink="assessor" usePeer2Peer="false">
-			<service name="ra:riskAssessor" port="riskAssessor_Port"/>
+			<service name="testDomain:riskAssessor" port="ignored"/>
 		</invoke>
 	</process>
 	
@@ -38,7 +38,7 @@
 		<active>true</active>
         <process-events generate="all"/>
 		<provide partnerLink="assessor">
-			<service name="ra:riskAssessor" port="riskAssessor_Port"/>
+			<service name="testDomain:riskAssessor" port="ignored"/>
 		</provide>
 	</process>
 
@@ -48,7 +48,7 @@
 		<retired>false</retired>
 		<process-events generate="all"/>
 		<provide partnerLink="client">
-			<service name="examples:SayHelloService" port="SayHelloPort"/>
+			<service name="testDomain:SayHelloService" port="ignored"/>
 		</provide>
 	</process>
 	

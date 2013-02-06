@@ -91,8 +91,7 @@ public class BPELActivator extends BaseActivator {
         if (service.getInterface() == null) {
             throw new SwitchYardException("Interface not defined for component with BPEL implementation");
         }
-            
-        
+
         // take care of references
         for (ComponentReferenceModel crm : config.getReferences()) {
             _locator.addServiceDomain(crm.getQName(), getServiceDomain());
