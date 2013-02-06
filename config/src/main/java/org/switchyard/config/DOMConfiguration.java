@@ -308,14 +308,18 @@ public class DOMConfiguration extends BaseConfiguration {
             } else {
                 attr.setValue(value);
             }
-        } else if (value != null && !XMLNS_ATTRIBUTE_NS_URI.equals(namespaceURI)) {
-            attr = _element.getOwnerDocument().createAttributeNS(namespaceURI, localPart);
-            String prefix = qname.getPrefix();
-            if (prefix != null  && prefix.length() > 0) {
-                attr.setPrefix(prefix);
+        } else if (value != null) {
+            if (XMLNS_ATTRIBUTE_NS_URI.equals(namespaceURI)) {
+                _element.setAttributeNS(XMLNS_ATTRIBUTE_NS_URI, "xmlns:"+localPart, value);
+            } else {
+                attr = _element.getOwnerDocument().createAttributeNS(namespaceURI, localPart);
+                String prefix = qname.getPrefix();
+                if (prefix != null && prefix.length() > 0) {
+                    attr.setPrefix(prefix);
+                }
+                attr.setValue(value);
+                _element.setAttributeNode(attr);
             }
-            attr.setValue(value);
-            _element.setAttributeNode(attr);
         }
         return this;
     }

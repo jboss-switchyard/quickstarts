@@ -46,7 +46,7 @@ public class MergeScanner<M extends Model> implements Scanner<M> {
         _fromOverridesTo = fromOverridesTo;
         List<Scanner<M>> list = new ArrayList<Scanner<M>>();
         if (scanners != null) {
-            for (Scanner<M> scanner : list) {
+            for (Scanner<M> scanner : scanners) {
                 if (scanner != null) {
                     list.add(scanner);
                 }

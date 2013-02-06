@@ -31,6 +31,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.common.io.pull.StringPuller;
+import org.switchyard.config.model.BaseMarshaller;
+import org.switchyard.config.model.BaseNamedModel;
+import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.MergeScanner;
+import org.switchyard.config.model.Model;
+import org.switchyard.config.model.ModelPullerScanner;
+import org.switchyard.config.model.Scanner;
 
 /**
  * ConfigurationTests.
@@ -126,6 +133,10 @@ public class ConfigurationTests {
     @Test
     public void testNamespacesValues() throws Exception {
         Configuration config_one = _cfg_puller.pull(NAMESPACES_XML, getClass());
+        validateNamespacesConfig(config_one);
+    }
+    
+    private void validateNamespacesConfig(Configuration config_one) throws Exception {
         Assert.assertEquals("urn:test", config_one.getAttribute("targetNamespace"));
         Assert.assertEquals("http://a.org/a.xsd", config_one.getQName().getNamespaceURI());
         Assert.assertEquals("bar", config_one.getAttribute("foo"));
@@ -150,6 +161,22 @@ public class ConfigurationTests {
         Assert.assertEquals("", pipes.getNamespaceURI());
         Assert.assertEquals("rusted", pipes.getLocalPart());
         Assert.assertEquals("", pipes.getPrefix());
+    }
+
+    @Test
+    public void testNamespacesMerge() throws Exception {
+        @SuppressWarnings("unchecked")
+        Scanner<TestModel>[] scanners = new Scanner[] {new ModelPullerScanner<Model>(NAMESPACES_XML, getClass().getClassLoader())};
+        MergeScanner<TestModel> merge_scanner = new MergeScanner<TestModel>(TestModel.class, true, scanners);
+        Model model = merge_scanner.scan(null).getModel();
+
+        Configuration config_one = model.getModelConfiguration();
+        try {
+            validateNamespacesConfig(config_one);
+        } catch (Error e) {
+            System.err.println(config_one);
+            throw e;
+        }
     }
 
     @Test
@@ -202,5 +229,27 @@ public class ConfigurationTests {
         Configuration config = _cfg_puller.pull(CDATA_VALUE_XML, getClass());
         Assert.assertEquals("test-simple-value", config.getFirstChild("simple").getValue());
         Assert.assertEquals("test-complex-value", config.getFirstChild("complex").getValue());
+    }
+    
+    public static final class TestModel extends BaseNamedModel {
+
+        public TestModel() {
+            super(new QName("http://a.org/a.xsd", "one"));
+        }
+        
+        public TestModel(Configuration config) {
+            super(config);
+        }
+    }
+    
+    public static final class TestMarshaller extends BaseMarshaller {
+        public TestMarshaller(Descriptor desc) {
+            super(desc);
+        }
+
+        @Override
+        public Model read(Configuration config) {
+            return new TestModel(config);
+        }
     }
 }
