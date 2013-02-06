@@ -72,6 +72,7 @@
 
     <!-- String transforms... -->
     <trfm:transform.java from="java:java.lang.String" to="*" class="org.switchyard.transform.ootb.lang.StringTransforms" />
+    <trfm:transform.java from="java:byte[]" to="java:java.lang.String" class="org.switchyard.transform.ootb.lang.ByteArrayToStringTransformer"/> 
 
     <!-- Number transforms... -->
     <trfm:transform.java from="java:java.lang.Number" to="*" class="org.switchyard.transform.ootb.lang.NumberTransforms" />
