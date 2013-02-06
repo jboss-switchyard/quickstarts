@@ -38,6 +38,7 @@ import org.switchyard.component.common.knowledge.session.KnowledgeSessionFactory
 import org.switchyard.component.common.knowledge.util.Mappings;
 import org.switchyard.component.common.knowledge.util.Resources;
 import org.switchyard.deploy.ServiceHandler;
+import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceOperation;
 
 /**
@@ -198,28 +199,30 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
      */
     public abstract KnowledgeAction getDefaultAction();
 
+    private KnowledgeAction getAction(ServiceOperation serviceOperation) {
+        if (serviceOperation != null) {
+            String operationName = Strings.trimToNull(serviceOperation.getName());
+            if (operationName != null) {
+                return _actions.get(operationName);
+            }
+        }
+        return null;
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public final void handleMessage(Exchange exchange) throws HandlerException {
         if (ExchangePhase.IN.equals(exchange.getPhase())) {
-            String operationName = null;
-            ServiceOperation consumerOperation = exchange.getContract().getConsumerOperation();
-            if (consumerOperation != null) {
-                operationName = Strings.trimToNull(consumerOperation.getName());
-            }
-            if (operationName == null) {
-                ServiceOperation providerOperation = exchange.getContract().getProviderOperation();
-                if (providerOperation != null) {
-                    operationName = Strings.trimToNull(providerOperation.getName());
-                }
-            }
-            KnowledgeAction action = null;
-            if (operationName != null) {
-                action = _actions.get(operationName);
+            ExchangeContract contract = exchange.getContract();
+            KnowledgeAction action = getAction(contract.getProviderOperation());
+            if (action == null) {
+                action = getAction(contract.getConsumerOperation());
             }
             if (action == null) {
+                // we use "default" here instead of getDefaultAction() so that a
+                // user can define a operation="default" in their switchyard.xml
                 action = _actions.get(DEFAULT);
             }
             handleAction(exchange, action);
