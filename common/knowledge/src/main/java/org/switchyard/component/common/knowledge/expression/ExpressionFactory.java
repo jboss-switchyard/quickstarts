@@ -18,6 +18,8 @@
  */
 package org.switchyard.component.common.knowledge.expression;
 
+import org.switchyard.common.property.PropertyResolver;
+import org.switchyard.common.property.SystemAndTestPropertyResolver;
 import org.switchyard.component.common.knowledge.config.model.MappingModel;
 
 /**
@@ -38,9 +40,23 @@ public final class ExpressionFactory {
      * @return the Expression
      */
     public Expression create(String expression, ExpressionType expressionType) {
+        return create(expression, expressionType, null);
+    }
+
+    /**
+     * Creates a new Expression.
+     * @param expression the expression value
+     * @param expressionType the expression type
+     * @param propertyResolver the property resolver
+     * @return the Expression
+     */
+    public Expression create(String expression, ExpressionType expressionType, PropertyResolver propertyResolver) {
+        if (propertyResolver == null) {
+            propertyResolver = SystemAndTestPropertyResolver.instance();
+        }
         switch (expressionType) {
             case MVEL:
-                return new MVELExpression(expression);
+                return new MVELExpression(expression, propertyResolver);
             default:
                 throw new IllegalArgumentException("Unknown expressionType: " + expressionType);
         }
@@ -48,7 +64,7 @@ public final class ExpressionFactory {
 
     /**
      * Creates a new Expression.
-     * @param mappingModel the mapping model which contains the expression value and expression type
+     * @param mappingModel the mapping model which contains the expression value, expression type, and property resolver
      * @return the Expression
      */
     public Expression create(MappingModel mappingModel) {
@@ -56,7 +72,7 @@ public final class ExpressionFactory {
         if (expressionType == null) {
             expressionType = ExpressionType.MVEL;
         }
-        return create(mappingModel.getExpression(), expressionType);
+        return create(mappingModel.getExpression(), expressionType, mappingModel.getModelConfiguration().getPropertyResolver());
     }
 
     /**

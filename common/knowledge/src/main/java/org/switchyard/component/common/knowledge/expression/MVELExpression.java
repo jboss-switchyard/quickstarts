@@ -22,6 +22,11 @@ import java.io.Serializable;
 
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
+import org.mvel2.integration.VariableResolver;
+import org.mvel2.integration.VariableResolverFactory;
+import org.mvel2.integration.impl.ImmutableDefaultFactory;
+import org.mvel2.integration.impl.SimpleValueResolver;
+import org.switchyard.common.property.PropertyResolver;
 
 /**
  * MVELExpression.
@@ -31,14 +36,17 @@ import org.mvel2.ParserContext;
 public class MVELExpression implements Expression {
 
     private final String _expression;
+    private final VariableResolverFactory _resolverFactory;
     private Serializable _compiled;
 
     /**
-     * Creates a new MVELExpression with the specified expression.
+     * Creates a new MVELExpression with the specified expression and {@link PropertyResolver}.
      * @param expression the specified expression
+     * @param propertyResolver the specified {@link PropertyResolver}
      */
-    public MVELExpression(String expression) {
+    public MVELExpression(String expression, PropertyResolver propertyResolver) {
         _expression = expression;
+        _resolverFactory = new PropertyResolverFactory(propertyResolver);
         compile();
     }
 
@@ -77,7 +85,7 @@ public class MVELExpression implements Expression {
      */
     @Override
     public Object evaluate() {
-        return isCompiled() ? MVEL.executeExpression(_compiled) : MVEL.eval(_expression);
+        return isCompiled() ? MVEL.executeExpression(_compiled, _resolverFactory) : MVEL.eval(_expression, _resolverFactory);
     }
 
     /**
@@ -85,7 +93,35 @@ public class MVELExpression implements Expression {
      */
     @Override
     public Object evaluate(Object context) {
-        return isCompiled() ? MVEL.executeExpression(_compiled, context) : MVEL.eval(_expression, context);
+        return isCompiled() ? MVEL.executeExpression(_compiled, context, _resolverFactory) : MVEL.eval(_expression, context, _resolverFactory);
+    }
+
+    @SuppressWarnings("serial")
+    private static final class PropertyResolverFactory extends ImmutableDefaultFactory {
+
+        private final PropertyResolver _propertyResolver;
+
+        private PropertyResolverFactory(PropertyResolver propertyResolver) {
+            _propertyResolver = propertyResolver;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean isResolveable(String name) {
+            return name != null && _propertyResolver.resolveProperty(name) != null;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public VariableResolver getVariableResolver(String name) {
+            Object value = name != null ? _propertyResolver.resolveProperty(name) : null;
+            return new SimpleValueResolver(value);
+        }
+
     }
 
 }
